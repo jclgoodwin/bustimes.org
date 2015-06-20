@@ -1,0 +1,13 @@
+{% include 'header.html' %}
+
+<h1>Bus stops and routes across Great Britain</h1>
+
+<h2>Regions</h2>
+
+<ul>
+{% for r in regions %}
+    <li><a href="{{ r.get_absolute_url }}">{{ r.name }}</a></li>
+{% endfor %}
+</ul>
+
+{% include 'footer.html' %}

@@ -1,0 +1,30 @@
+{% include 'header.html' %}
+
+<div id="breadcrumb">
+    <a href="/">Home</a>
+    ›
+    <a href="{{ adminarea.region.get_absolute_url }}">{{ adminarea.region }}</a>
+    ›
+</div>
+
+<h1>{{ adminarea }}</h1>
+
+{% if districts %}
+	<h2>Districts in {{ adminarea }}</h2>
+
+	<ul>
+	{% for d in districts %}
+	    <li><a href="{{ d.get_absolute_url }}">{{ d.name }}</a></li>
+	{% endfor %}
+	</ul>
+{% endif %}
+
+<h2>Localities in {{ adminarea }}</h2>
+
+<ul>
+{% for l in localities %}
+    <li><a href="{{ l.get_absolute_url }}">{{ l.name }}</a></li>
+{% endfor %}
+</ul>
+
+{% include 'footer.html' %}

@@ -1,0 +1,57 @@
+{% include 'header.html' %}
+
+<div id="breadcrumb">
+    <a href="/">Home</a>
+    ›
+    <a href="{{ stoppoint.admin_area.region.get_absolute_url }}">{{ stoppoint.admin_area.region }}</a>
+    ›
+    <a href="{{ stoppoint.admin_area.get_absolute_url }}">{{ stoppoint.admin_area }}</a>
+    ›
+    {% if stoppoint.locality.district %}
+        <a href="{{ stoppoint.locality.district.get_absolute_url }}">{{ stoppoint.locality.district }}</a>
+        ›
+    {% endif %}
+    <a href="{{ stoppoint.locality.get_absolute_url }}">{{ stoppoint.locality }}</a>
+    ›
+</div>
+
+<h1 itemprop="name">{{ stoppoint }}</h1>
+
+<div id="map"></div>
+
+<img alt="" width="460" height="300" src="https://maps.googleapis.com/maps/api/streetview?size=460x300&amp;location={{ stoppoint.location }}&amp;heading={{ stoppoint.heading }}" />
+
+{% if stoppoint.street %}
+<p>On {{ stoppoint.street }}{% if stoppoint.crossing %}, near {{ stoppoint.crossing }}{% endif %}</p>
+{% endif %}
+
+{% if stoppoint.landmark %}
+<p>Near {{ stoppoint.landmark }}</p>
+{% endif %}
+
+<span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
+    <meta itemprop="latitude" content="{{ stoppoint.location.latitude }}" />
+    <meta itemprop="longitude" content="{{ stoppoint.location.longitude }}" />
+</span>
+
+
+{% if nearby %}
+<aside>
+    <h2>Stops nearby</h2>
+    <ul>
+    {% for s in nearby %}
+        <li><a href="{{ s.get_absolute_url }}">{{ s }}</a></li>
+    {% endfor %}
+    </ul>
+</aside>
+{% endif %}
+
+{% load staticfiles %}
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+<script>
+window.mapLocations = [[{{ stoppoint.location }}, '{{ stoppoint }}']];
+</script>
+<script src="{% static 'js/map.js' %}"></script>
+
+{% include 'footer.html' %}

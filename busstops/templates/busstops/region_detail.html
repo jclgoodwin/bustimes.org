@@ -1,0 +1,18 @@
+{% include 'header.html' %}
+
+<div id="breadcrumb">
+    <a href="/">Home</a>
+    ›
+</div>
+
+<h1>{{ region }}</h1>
+
+<h2>Areas in {{ region }}</h2>
+
+<ul>
+{% for a in areas %}
+    <li><a href="{{ a.get_absolute_url }}">{{ a.name }}</a></li>
+{% endfor %}
+</ul>
+
+{% include 'footer.html' %}
