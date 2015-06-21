@@ -15,7 +15,9 @@ a:hover {
 }
 
 h1 {
+    position: relative;
     line-height: 1.2;
+    z-index: 1;
 }
 
 h2 {
@@ -37,9 +39,6 @@ ul li {
     list-style: square;
 }
 
-header a {
-    max-width: 830px;
-}
 
 header {
     background: #68D3FB;
@@ -61,14 +60,13 @@ header a {
 
 main {
     margin: 0 auto;
-    max-width: 940px;
     padding: 0 20px;
+    position: relative;
 }
 
 #breadcrumb {
     border-bottom: 1px solid #68D3FB;
     margin: 0 -20px;
-    max-width: 940px;
     padding: 20px 20px;
 }
 
@@ -76,19 +74,13 @@ main {
     display: none;
 }
 
-@media (max-width: 939px) {
-    img {
-        max-width: 100%;
-        height: auto;
-    }
-}
-
 #svgmap {
-    float: right;
-    margin-bottom: -180px;
-    position: relative;
-    top: -200px;
-    width: 50%;
+    position: absolute;
+    top: -20px;
+    left: 180px;
+    bottom: 0;
+    transform: scale(.65);
+    transform-origin: 0 0;
 }
 
 #svgmap path {
@@ -99,13 +91,30 @@ main {
     fill: #6a6;
 }
 
-@media (min-width: 940px) {
+@media (max-width: 767px) {
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+@media (min-width: 768px) {
+
+    header a {
+       width: 830px;
+    }
+
+    #breadcrumb,
+    main {
+        width: 940px;
+    }
 
     #map {
         display: block;
         float: right;
         height: 300px;
         margin-left: 20px;
+        margin-bottom: 20px;
         width: 460px;
     }
 
