@@ -10,29 +10,34 @@
 <h1>{{ adminarea }}</h1>
 
 {% if districts %}
-	<h2>Districts in {{ adminarea }}</h2>
+    <h2>Districts in {{ adminarea }}</h2>
 
-	<ul>
-	{% for d in districts %}
-	    <li><a href="{{ d.get_absolute_url }}">{{ d }}</a></li>
-	{% endfor %}
-	</ul>
+    <ul>
+    {% for d in districts %}
+        <li><a href="{{ d.get_absolute_url }}">{{ d }}</a></li>
+    {% endfor %}
+    </ul>
 {% endif %}
 
-<h2>Localities in {{ adminarea }}</h2>
 
-<ul>
-{% for l in localities %}
-    <li><a href="{{ l.get_absolute_url }}">{{ l }}</a></li>
-{% endfor %}
-</ul>
+{% if localities %}
+    <h2>Localities in {{ adminarea }}</h2>
 
-<h2>Stops in {{ adminarea }}</h2>
+    <ul>
+    {% for l in localities %}
+        <li><a href="{{ l.get_absolute_url }}">{{ l }}</a></li>
+    {% endfor %}
+    </ul>
+{% endif %}
 
-<ul>
-{% for s in stops %}
-    <li><a href="{{ s.get_absolute_url }}">{{ s }}</a></li>
-{% endfor %}
-</ul>
+{% if stops %}
+    <h2>Stops in {{ adminarea }}</h2>
+
+    <ul>
+    {% for s in stops %}
+        <li><a href="{{ s.get_absolute_url }}">{{ s }}</a></li>
+    {% endfor %}
+    </ul>
+{% endif %}
 
 {% include 'footer.html' %}
