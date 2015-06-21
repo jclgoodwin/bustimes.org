@@ -83,22 +83,21 @@ main {
     }
 }
 
-    #svgmap {
-        float: right;
-        margin-bottom: -120px;
-        position: relative;
-        top: -140px;
-        width: 50%;
-        z-index: 2;
-    }
+#svgmap {
+    float: right;
+    margin-bottom: -180px;
+    position: relative;
+    top: -200px;
+    width: 50%;
+}
 
-    #svgmap path {
-        fill: #8c8;
-    }
+#svgmap path {
+    fill: #8c8;
+}
 
-    #svgmap .region:hover path {
-    fill: #4c2c92;
-    }
+#svgmap a:hover path {
+    fill: #6a6;
+}
 
 @media (min-width: 940px) {
 
