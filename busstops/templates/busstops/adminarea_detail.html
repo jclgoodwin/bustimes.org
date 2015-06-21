@@ -14,7 +14,7 @@
 
 	<ul>
 	{% for d in districts %}
-	    <li><a href="{{ d.get_absolute_url }}">{{ d.name }}</a></li>
+	    <li><a href="{{ d.get_absolute_url }}">{{ d }}</a></li>
 	{% endfor %}
 	</ul>
 {% endif %}
@@ -23,7 +23,15 @@
 
 <ul>
 {% for l in localities %}
-    <li><a href="{{ l.get_absolute_url }}">{{ l.name }}</a></li>
+    <li><a href="{{ l.get_absolute_url }}">{{ l }}</a></li>
+{% endfor %}
+</ul>
+
+<h2>Stops in {{ adminarea }}</h2>
+
+<ul>
+{% for s in stops %}
+    <li><a href="{{ s.get_absolute_url }}">{{ s }}</a></li>
 {% endfor %}
 </ul>
 

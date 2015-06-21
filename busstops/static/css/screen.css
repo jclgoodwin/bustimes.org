@@ -29,8 +29,6 @@ h2 {
 ul {
     margin: 16px 0;
     padding: 0;
-    /*-webkit-column-count: 4;*/
-    /*-webkit-column-gap: 20px;*/
 }
 
 ul li {
@@ -39,14 +37,8 @@ ul li {
     list-style: square;
 }
 
-/*ul a {
-    padding: 3px 0;
-}*/
-
-main, header a, #breadcrumb {
-    max-width: 940px;
-    margin: 0 auto;
-    padding: 0 20px;
+header a {
+    max-width: 830px;
 }
 
 header {
@@ -54,16 +46,29 @@ header {
 }
 
 header a {
+    background: url(../bus.svg);
+    background-size: 100px auto;
+    background-repeat: no-repeat;
+    background-position: 20px;
     color: black;
     display: block;
     font-size: 24px;
     line-height: 1.2;
+    margin: 0 auto;
     padding: 20px;
+    padding-left: 130px;
+}
+
+main {
+    margin: 0 auto;
+    max-width: 940px;
+    padding: 0 20px;
 }
 
 #breadcrumb {
     border-bottom: 1px solid #68D3FB;
     margin: 0 -20px;
+    max-width: 940px;
     padding: 20px 20px;
 }
 
@@ -78,7 +83,25 @@ header a {
     }
 }
 
+    #svgmap {
+        float: right;
+        margin-bottom: -120px;
+        position: relative;
+        top: -140px;
+        width: 50%;
+        z-index: 2;
+    }
+
+    #svgmap path {
+        fill: #8c8;
+    }
+
+    #svgmap .region:hover path {
+    fill: #4c2c92;
+    }
+
 @media (min-width: 940px) {
+
     #map {
         display: block;
         float: right;
@@ -100,7 +123,7 @@ aside {
 .adsbygoogle,
 footer {
     border-top: 1px solid #68D3FB;
-    clear: right;
+    clear: both;
     margin-top: 24px;
     text-align: center;
 }

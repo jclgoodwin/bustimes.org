@@ -31,7 +31,7 @@ class AdminAreaDetailView(DetailView):
         context = super(AdminAreaDetailView, self).get_context_data(**kwargs)
         context['districts'] = District.objects.filter(admin_area=self.object)#.order_by('name')
         context['localities'] = Locality.objects.filter(admin_area=self.object).order_by('name')
-        # context['stops'] = StopPoint.objects.filter(admin_area=self.object)
+        context['stops'] = StopPoint.objects.filter(admin_area=self.object).order_by('common_name')
         return context
 
 
