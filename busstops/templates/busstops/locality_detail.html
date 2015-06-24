@@ -33,13 +33,20 @@
 {% endfor %}
 </ul>
 
-{% load staticfiles %}
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
-<script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
-<script>
-window.mapLocations = [{% for stop in stops %}[{{ stop.location }}, '{{ stop }}'],{% endfor %}];
-</script>
-<script src="{% static 'js/map.js' %}"></script>
-</script>
+{% if stops %}
+    {% load staticfiles %}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+    <script>
+    window.mapOptions = {
+        locations: [{% for stop in stops %}[{{ stop.location }}, '{{ stop }}'],{% endfor %}],
+        bounds: [[{{ max_latitude }}, {{ max_longitude }}],
+                 [{{ min_latitude }}, {{ min_longitude }}]],
+        center: [{{ mid_latitude }}, {{ mid_longitude }}]
+    };
+    </script>
+    <script src="{% static 'js/map.js' %}?2"></script>
+    </script>
+{% endif %}
 
 {% include 'footer.html' %}

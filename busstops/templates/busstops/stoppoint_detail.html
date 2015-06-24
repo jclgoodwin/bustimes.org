@@ -50,8 +50,10 @@
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
 <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
 <script>
-window.mapLocations = [[{{ stoppoint.location }}, '{{ stoppoint }}']];
+window.mapOptions = {
+    locations: [[{{ stoppoint.location }}, '{{ stoppoint }}']]
+};
 </script>
-<script src="{% static 'js/map.js' %}"></script>
+<script src="{% static 'js/map.js' %}?2"></script>
 
 {% include 'footer.html' %}
