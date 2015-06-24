@@ -13,5 +13,25 @@
 <footer>
 Contains public sector information licensed under the Open Government Licence v3.0.
 </footer>
+
+{% if stops or stoppoint %}
+    {% load staticfiles %}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+    <script>
+    window.mapOptions = {
+    {% if stops %}
+        locations: [{% for stop in stops %}[{{ stop.location }}, '{{ stop }}'],{% endfor %}],
+        bounds: [[{{ max_latitude }}, {{ max_longitude }}],
+                 [{{ min_latitude }}, {{ min_longitude }}]],
+        center: [{{ mid_latitude }}, {{ mid_longitude }}]
+    {% else %}
+        locations: [[{{ stoppoint.location }}, '{{ stoppoint }}']]
+    {% endif %}
+    };
+    </script>
+    <script src="{% static 'js/map.js' %}"></script>
+    </script>
+{% endif %}
 </body>
 </html>

@@ -6,10 +6,8 @@
 <title>{% if object %}{{ object }} – {% endif %}Bus Times</title>
 {% load staticfiles %}
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=PT+Sans:400,700" />
-<link rel="stylesheet" href="{% static "css/screen.css" %}?20150622" />
-{% if object.get_absolute_url %}
-<link rel="canonical" href="https://bustimes.org.uk{{ object.get_absolute_url }}" />
-{% endif %}
+<link rel="stylesheet" href="{% static "css/screen.css" %}" />
+{% if object.get_absolute_url %}<link rel="canonical" href="https://bustimes.org.uk{{ object.get_absolute_url }}" />{% endif %}
 </head>
 <body>
 <header>
