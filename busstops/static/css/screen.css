@@ -76,11 +76,11 @@ main {
 
 #svgmap {
     position: absolute;
-    top: -20px;
-    left: 180px;
+    top: 0;
+    left: 140px;
     bottom: 0;
-    transform: scale(.65);
-    transform-origin: 0 0;
+    width: 218px;
+    height: 388px;
 }
 
 #svgmap path {
