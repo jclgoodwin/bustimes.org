@@ -54,18 +54,6 @@ class LocalityDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(LocalityDetailView, self).get_context_data(**kwargs)
         context['stops'] = StopPoint.objects.filter(locality=self.object).order_by('common_name')
-
-        if context['stops']:
-            coordinates = map(lambda s: s.location, context['stops']);
-            latitudes = map(lambda s: s.latitude, coordinates)
-            longitudes = map(lambda s: s.longitude, coordinates)
-            context['max_longitude'] = max(longitudes)
-            context['min_longitude'] = min(longitudes)
-            context['max_latitude'] = max(latitudes)
-            context['min_latitude'] = min(latitudes)
-            context['mid_longitude'] = (context['min_longitude'] + context['max_longitude']) / 2;
-            context['mid_latitude'] = (context['min_latitude'] + context['max_latitude']) / 2;
-
         return context
 
 
