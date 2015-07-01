@@ -34,8 +34,9 @@ class AdminAreaDetailView(DetailView):
         # Localities in this administrative area that don't belong to any district, if any
         context['localities'] = Locality.objects.filter(admin_area=self.object, district=None).order_by('name')
         # Stops in this administrative area whose locality belongs to a different administrative area
-        # These are usually National Rail/Air/Ferry. The second .exclude() excludes stops near the boundary of two areas
-        context['stops'] = StopPoint.objects.filter(admin_area=self.object).exclude(locality__admin_area=self.object).exclude(locality__admin_area__region=self.object.region).order_by('common_name')
+        # These are usually National Rail/Air/Ferry, but also (more awkwardly) may be around the boundary of two areas
+        context['stops'] = StopPoint.objects.filter(admin_area=self.object).exclude(locality__admin_area=self.object
+            ).exclude(locality__admin_area__region=self.object.region).order_by('common_name')
         return context
 
 
