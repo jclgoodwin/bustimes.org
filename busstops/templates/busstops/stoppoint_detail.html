@@ -1,20 +1,5 @@
 {% include 'header.html' %}
 
-<div id="breadcrumb">
-    <a href="/">Home</a>
-    ›
-    <a href="{{ stoppoint.admin_area.region.get_absolute_url }}">{{ stoppoint.admin_area.region }}</a>
-    ›
-    <a href="{{ stoppoint.admin_area.get_absolute_url }}">{{ stoppoint.admin_area }}</a>
-    ›
-    {% if stoppoint.locality.district %}
-        <a href="{{ stoppoint.locality.district.get_absolute_url }}">{{ stoppoint.locality.district }}</a>
-        ›
-    {% endif %}
-    <a href="{{ stoppoint.locality.get_absolute_url }}">{{ stoppoint.locality }}</a>
-    ›
-</div>
-
 <h1 itemprop="name">{{ stoppoint }}</h1>
 
 {% if not stoppoint.active %}

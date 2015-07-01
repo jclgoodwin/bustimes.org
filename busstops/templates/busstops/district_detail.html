@@ -1,14 +1,5 @@
 {% include 'header.html' %}
 
-<div id="breadcrumb">
-    <a href="/">Home</a>
-    ›
-    <a href="{{ district.admin_area.region.get_absolute_url }}">{{ district.admin_area.region }}</a>
-    ›
-    <a href="{{ district.admin_area.get_absolute_url }}">{{ district.admin_area }}</a>
-    ›
-</div>
-
 <h1>{{ district }}</h1>
 
 <h2>Localities in {{ district }}</h2>

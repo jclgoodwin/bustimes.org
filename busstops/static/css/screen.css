@@ -71,10 +71,27 @@ main {
     position: relative;
 }
 
-#breadcrumb {
+.breadcrumb {
     border-bottom: 1px solid #68D3FB;
     margin: 0 -20px;
+    overflow: hidden;
     padding: 20px 20px;
+}
+
+.breadcrumb li {
+    display: inline;
+}
+
+.breadcrumb li:after {
+    color: #68D3FB;
+    content: '\203A';
+    margin: 0 .5em;
+}
+
+.breadcrumb li:after,
+.breadcrumb a {
+    display: block;
+    float: left;
 }
 
 #map {
@@ -82,12 +99,11 @@ main {
 }
 
 #svgmap {
-    position: absolute;
-    top: 60px;
-    right: 20px;
     bottom: 0;
-    width: 218px;
     height: 388px;
+    position: absolute;
+    right: 20px;
+    width: 218px;
 }
 
 #svgmap path {
@@ -109,11 +125,15 @@ button {
 }
 
 button:before {
-    content: "\01F4CD   ";
+    content: "\01F4CD  ";
 }
 
 button:hover {
     padding: 5px 10px 9px;
+}
+
+button:active {
+    padding: 7px 10px;
 }
 
 @media (max-width: 767px) {
@@ -133,6 +153,7 @@ button:hover {
     main {
         margin: 0 auto;
         width: 940px;
+        position: relative;
     }
 
     #map {

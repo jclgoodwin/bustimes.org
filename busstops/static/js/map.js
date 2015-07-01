@@ -4,8 +4,9 @@
 
         var items = document.getElementsByTagName('li'),
             i,
-            metaElements;
-            locations = [];
+            metaElements,
+            locations = [],
+            labels = [];
 
         for (i = 0; i < items.length; i++) {
             if (items[i].getAttribute('itemtype') === 'https://schema.org/BusStop') {
@@ -14,6 +15,7 @@
                     parseFloat(metaElements[0].getAttribute('content')),
                     parseFloat(metaElements[1].getAttribute('content'))
                     ]);
+                labels.push(items[i].innerHTML);
             }
         }
 
@@ -40,7 +42,7 @@
                 map.setView(locations[0], 17);
             } else {
                 for (i = 0; i < locations.length; i++) {
-                    L.circleMarker(locations[i]).addTo(map).bindPopup(items[i].innerHTML);
+                    L.circleMarker(locations[i]).addTo(map).bindPopup(labels[i]);
                 }
                 var polyline = L.polyline(locations);
                 map.fitBounds(polyline.getBounds());

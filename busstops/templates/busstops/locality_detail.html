@@ -1,18 +1,5 @@
 {% include 'header.html' %}
 
-<div id="breadcrumb">
-    <a href="/">Home</a>
-    ›
-    <a href="{{ locality.admin_area.region.get_absolute_url }}">{{ locality.admin_area.region }}</a>
-    ›
-    <a href="{{ locality.admin_area.get_absolute_url }}">{{ locality.admin_area }}</a>
-    ›
-    {% if locality.district %}
-        <a href="{{ locality.district.get_absolute_url }}">{{ locality.district }}</a>
-        ›
-    {% endif %}
-</div>
-
 <h1>{{ locality }}</h1>
 
 <h2>Stops in {{ locality }}</h2>

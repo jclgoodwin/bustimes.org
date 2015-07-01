@@ -44,6 +44,7 @@ class AdminAreaDetailView(DetailView):
         # These are usually National Rail/Air/Ferry, but also (more awkwardly) may be around the boundary of two areas
         context['stops'] = StopPoint.objects.filter(admin_area=self.object, active=True).exclude(locality__admin_area=self.object
             ).exclude(locality__admin_area__region=self.object.region).order_by('common_name')
+        context['breadcrumb'] = [self.object.region]
         return context
 
 
@@ -53,6 +54,7 @@ class DistrictDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(DistrictDetailView, self).get_context_data(**kwargs)
         context['localities'] = Locality.objects.filter(district=self.object).order_by('name')
+        context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
         return context
 
 
@@ -62,6 +64,7 @@ class LocalityDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(LocalityDetailView, self).get_context_data(**kwargs)
         context['stops'] = StopPoint.objects.filter(locality=self.object, active=True).order_by('common_name')
+        context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
         return context
 
 
@@ -70,5 +73,7 @@ class StopPointDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
-        context['nearby'] = StopPoint.objects.filter(locality=self.object.locality)
+        context['nearby'] = StopPoint.objects.filter(locality=self.object.locality, active=True).exclude(atco_code=self.object.atco_code)
+        # context['services'] = Service.objects.filter(serviceversion__vehiclejourney__journey_pattern__journeypatterntiminglink__start=self.object).distinct()
+        context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area, self.object.locality]
         return context

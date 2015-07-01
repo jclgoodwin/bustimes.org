@@ -16,3 +16,19 @@
 </div>
 </header>
 <main>
+{% if breadcrumb or not regions %}
+<ol class="breadcrumb" itemscope itemtype="http://schema.org/BreadcrumbList">
+    <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+        <a itemprop="item" href="/">
+            <span itemprop="name">Home</span>
+        </a>
+    </li>
+{% for item in breadcrumb %}
+    <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+        <a itemprop="item" href="{{ item.get_absolute_url }}">
+            <span itemprop="name">{{ item }}</span>
+        </a>
+    </li>
+{% endfor %}
+</ol>
+{% endif %}
