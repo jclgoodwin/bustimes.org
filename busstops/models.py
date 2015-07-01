@@ -1,5 +1,6 @@
 from django.db import models
 from geoposition.fields import GeopositionField
+from django.core.urlresolvers import reverse
 
 
 class StopPoint(models.Model):
@@ -62,7 +63,6 @@ class StopPoint(models.Model):
             return 315
 
     def get_absolute_url(self):
-        from django.core.urlresolvers import reverse
         return reverse('stoppoint-detail', args=(self.atco_code,))
 
 
@@ -74,7 +74,6 @@ class Region(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        from django.core.urlresolvers import reverse
         return reverse('region-detail', args=(self.id,))
 
 
@@ -90,7 +89,6 @@ class AdminArea(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        from django.core.urlresolvers import reverse
         return reverse('adminarea-detail', args=(self.id,))
 
 
@@ -103,7 +101,6 @@ class District(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        from django.core.urlresolvers import reverse
         return reverse('district-detail', args=(self.id,))
 
 
@@ -121,7 +118,6 @@ class Locality(models.Model):
         return self.name # TODO qualifier name?
 
     def get_absolute_url(self):
-        from django.core.urlresolvers import reverse
         return reverse('locality-detail', args=(self.id,))
 
 
