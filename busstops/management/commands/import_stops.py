@@ -10,7 +10,7 @@ from busstops.models import StopPoint, Locality, AdminArea
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        StopPoint.objects.all().delete()
+        # StopPoint.objects.all().delete()
 
         reader = csv.reader(sys.stdin)
         next(reader, None)
@@ -36,5 +36,5 @@ class Command(BaseCommand):
                     admin_area=AdminArea.objects.get(id=row[37]),
                     bearing=row[16]
                     )
-                except:
-                    print 'Skipped row: ' + str(row)
+            except:
+                print 'Skipped row: ' + str(row)

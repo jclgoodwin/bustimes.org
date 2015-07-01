@@ -9,7 +9,7 @@ from busstops.models import District, AdminArea
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        District.objects.all().delete()
+        # District.objects.all().delete()
 
         for row in csv.reader(sys.stdin):
             try:
