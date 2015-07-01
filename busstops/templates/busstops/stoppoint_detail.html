@@ -17,9 +17,14 @@
 
 <h1 itemprop="name">{{ stoppoint }}</h1>
 
+{% if not stoppoint.active %}
+<p>This stop is no longer active</p>
+{% endif %}
+
 <div id="map"></div>
 
 <img alt="" width="460" height="300" src="https://maps.googleapis.com/maps/api/streetview?size=460x300&amp;location={{ stoppoint.location }}&amp;heading={{ stoppoint.heading }}" />
+
 
 {% if stoppoint.street %}
 <p>On {{ stoppoint.street }}{% if stoppoint.crossing %}, near {{ stoppoint.crossing }}{% endif %}</p>
@@ -37,7 +42,7 @@
 
 {% if nearby %}
 <aside>
-    <h2>Stops nearby</h2>
+    <h2>Other stops in {{ stoppoint.locality }}</h2>
     <ul>
     {% for s in nearby %}
         <li><a href="{{ s.get_absolute_url }}">{{ s }}</a></li>

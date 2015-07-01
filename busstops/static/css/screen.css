@@ -14,6 +14,11 @@ a:hover {
     text-decoration: underline;
 }
 
+a:focus, a:active {
+    color: black;
+    background-color: #68D3FB;
+}
+
 h1 {
     position: relative;
     line-height: 1.2;
@@ -29,16 +34,20 @@ h2 {
 }
 
 ul {
-    margin: 16px 0;
+    margin: 0;
     padding: 0;
 }
 
 ul li {
-    margin: 0 0 0 20px;
-    padding: 0;
-    list-style: square;
+    line-height: 21px;
+    list-style: none;
+    margin: 0;
 }
 
+ul a {
+    display: block;
+    padding: 3px 0 4px;
+}
 
 header {
     background: #68D3FB;
@@ -48,18 +57,16 @@ header a {
     background: url(../bus.svg);
     background-size: 100px auto;
     background-repeat: no-repeat;
-    background-position: 20px;
+    background-position: right;
     color: black;
-    display: block;
+    display: inline-block;
     font-size: 24px;
-    line-height: 1.2;
-    margin: 0 auto;
     padding: 20px;
-    padding-left: 130px;
+    padding-right: 110px;
 }
 
+
 main {
-    margin: 0 auto;
     padding: 0 20px;
     position: relative;
 }
@@ -77,7 +84,7 @@ main {
 #svgmap {
     position: absolute;
     top: 0;
-    left: 140px;
+    right: 20px;
     bottom: 0;
     width: 218px;
     height: 388px;
@@ -87,6 +94,7 @@ main {
     fill: #8c8;
 }
 
+#svgmap a:focus path,
 #svgmap a:hover path {
     fill: #6a6;
 }
@@ -100,12 +108,13 @@ main {
 
 @media (min-width: 768px) {
 
-    header a {
-       width: 830px;
+    header div {
+        margin: 0 auto;
+        width: 980px;
     }
 
-    #breadcrumb,
     main {
+        margin: 0 auto;
         width: 940px;
     }
 
@@ -118,15 +127,45 @@ main {
         width: 460px;
     }
 
+    #svgmap {
+        left: 200px;
+    }
+
     aside {
         width: 260px;
+    }
+
+    ul a {
+        display: inline-block;
+    }
+
+    ul.long {
+        -webkit-column-count: 3;
+        -webkit-column-gap: 20px;
+    }
+
+    ul.long a {
+        display: block;
     }
 }
 
 aside {
-    padding: 0 19px;
+    padding: 13px 19px;
     border: 1px solid #68D3FB;
+    float: left;
+    margin: 0 20px 20px 0;
 }
+
+aside h2 {
+    font-size: 18px;
+    line-height: 21px;
+    margin: 0 0 10px;
+}
+
+aside ul {
+    margin-top: 0;
+}
+
 
 .adsbygoogle,
 footer {
