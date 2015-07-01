@@ -20,7 +20,7 @@ class RegionDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(RegionDetailView, self).get_context_data(**kwargs)
-        context['areas'] = AdminArea.objects.filter(region=self.object).order_by('name')
+        context['areas'] = AdminArea.objects.filter(region=self.object).exclude(stoppoint=None).order_by('name')
         return context
 
 
@@ -35,7 +35,7 @@ class AdminAreaDetailView(DetailView):
         context['localities'] = Locality.objects.filter(admin_area=self.object, district=None).order_by('name')
         # Stops in this administrative area whose locality belongs to a different administrative area
         # These are usually National Rail/Air/Ferry, but also (more awkwardly) may be around the boundary of two areas
-        context['stops'] = StopPoint.objects.filter(admin_area=self.object).exclude(locality__admin_area=self.object
+        context['stops'] = StopPoint.objects.filter(admin_area=self.object, active=True).exclude(locality__admin_area=self.object
             ).exclude(locality__admin_area__region=self.object.region).order_by('common_name')
         return context
 
@@ -54,7 +54,7 @@ class LocalityDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(LocalityDetailView, self).get_context_data(**kwargs)
-        context['stops'] = StopPoint.objects.filter(locality=self.object).order_by('common_name')
+        context['stops'] = StopPoint.objects.filter(locality=self.object, active=True).order_by('common_name')
         return context
 
 
