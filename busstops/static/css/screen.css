@@ -83,7 +83,7 @@ main {
 
 #svgmap {
     position: absolute;
-    top: 0;
+    top: 60px;
     right: 20px;
     bottom: 0;
     width: 218px;
@@ -97,6 +97,23 @@ main {
 #svgmap a:focus path,
 #svgmap a:hover path {
     fill: #6a6;
+}
+
+button {
+    background: #68D3FB;
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+    padding: 6px 10px 8px;
+    border-radius: 7px;
+}
+
+button:before {
+    content: "\01F4CD   ";
+}
+
+button:hover {
+    padding: 5px 10px 9px;
 }
 
 @media (max-width: 767px) {

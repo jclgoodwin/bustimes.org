@@ -1,4 +1,5 @@
-from django.db import models
+# from django.db import models
+from django.contrib.gis.db import models
 from geoposition.fields import GeopositionField
 from django.core.urlresolvers import reverse
 
@@ -14,8 +15,10 @@ class StopPoint(models.Model):
     crossing    = models.CharField(max_length=48)
     indicator   = models.CharField(max_length=48)
 
-    location = GeopositionField()
-    locality = models.ForeignKey('Locality')
+    latlong = models.PointField()
+    objects = models.GeoManager()
+
+    locality = models.ForeignKey('Locality', editable=False)
     suburb = models.CharField(max_length=48)
     town   = models.CharField(max_length=48) 
     locality_centre = models.BooleanField()

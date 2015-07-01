@@ -23,7 +23,7 @@
 
 <div id="map"></div>
 
-<img alt="" width="460" height="300" src="https://maps.googleapis.com/maps/api/streetview?size=460x300&amp;location={{ stoppoint.location }}&amp;heading={{ stoppoint.heading }}" />
+<img alt="" width="460" height="300" src="https://maps.googleapis.com/maps/api/streetview?size=460x300&amp;location={{ stoppoint.latlong.y }},{{ stoppoint.latlong.x }}&amp;heading={{ stoppoint.heading }}" />
 
 
 {% if stoppoint.street %}
@@ -35,8 +35,8 @@
 {% endif %}
 
 <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
-    <meta itemprop="latitude" content="{{ stoppoint.location.latitude }}" />
-    <meta itemprop="longitude" content="{{ stoppoint.location.longitude }}" />
+    <meta itemprop="latitude" content="{{ stoppoint.latlong.y }}" />
+    <meta itemprop="longitude" content="{{ stoppoint.latlong.x }}" />
 </span>
 
 
