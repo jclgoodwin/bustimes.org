@@ -1,16 +1,14 @@
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
-from busstops.models import StopPoint, Locality, AdminArea, Region, District, Operator, Service, ServiceVersion, JourneyPatternSection, JourneyPatternTimingLink, VehicleJourney, OperatingProfile
+from busstops.models import StopPoint, Locality, AdminArea, Region, District
 # from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from datetime import datetime, date
+# from datetime import datetime, date
 
-from django.contrib.gis.geos import *
-from django.contrib.gis.measure import D
+from django.contrib.gis.geos import Point
 
 def index(request):
     context = {
-        'regions': Region.objects.all(),
-        'operators': Operator.objects.all()
+        'regions': Region.objects.all()
     }
     return render(request, 'index.html', context)
 
