@@ -132,6 +132,7 @@ class Operator(models.Model):
     license_name = models.CharField(max_length=100)
     vehicle_mode = models.CharField(max_length=48)
     parent = models.CharField(max_length=48)
+    region = models.ForeignKey(Region)
 
     def __unicode__(self):
         return self.public_name
