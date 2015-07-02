@@ -2,7 +2,9 @@
 
 <h1>{{ object }}</h1>
 
-{% for version in timetable %}
+<p>Operated by <a href="{{ object.operator.get_absolute_url }}">{{ object.operator }}</a></p>
+
+<!-- {% for version in timetable %}
 
 <h3>{{ version.profile }}</h3>
 
@@ -23,9 +25,9 @@
 </tbody>
 </table>
 
-{% endfor %}
+{% endfor %} -->
 
-<h2>Stops</h2>
+<h2>Stops serviced</h2>
 
 <div id="map"></div>
 
@@ -35,8 +37,8 @@
         <a href="{{ stop.get_absolute_url }}">
         	<span itemprop="name">{{ stop.locality }} {{ stop }}</span>
         	<span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
-        	    <meta itemprop="latitude" content="{{ stop.location.latitude }}" />
-        	    <meta itemprop="longitude" content="{{ stop.location.longitude }}" />
+                   <meta itemprop="latitude" content="{{ stop.latlong.y }}" />
+                   <meta itemprop="longitude" content="{{ stop.latlong.x }}" />
         	</span>
         </a>
     </li>

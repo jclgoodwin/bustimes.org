@@ -74,7 +74,7 @@ class StopPointDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
         context['nearby'] = StopPoint.objects.filter(locality=self.object.locality, active=True).exclude(atco_code=self.object.atco_code)
-        context['services'] = Service.objects.filter(serviceversion__stops=self.object).distinct()
+        context['services'] = Service.objects.filter(stops=self.object).distinct()
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area, self.object.locality]
         return context
 
@@ -94,6 +94,5 @@ class ServiceDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)
         context['breadcrumb'] = [self.object.operator]
-        context['stops'] = StopPoint.objects.filter(serviceversion__service=self.object).distinct()
-
+        context['stops'] = StopPoint.objects.filter(service=self.object).distinct()
         return context

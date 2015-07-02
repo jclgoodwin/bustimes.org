@@ -26,27 +26,36 @@ class Command(BaseCommand):
             operators[local_code] = Operator.objects.get(id=national_code)
         return operators
 
-    def do_service(self, services_element, service_version_name, operators):
+
+    def do_service(self, services_element, service_version_name, operators, root):
 
         for service_element in services_element:
+
             service = Service.objects.get_or_create(
                 service_code=service_element.find('txc:ServiceCode', self.ns).text,
-                defaults={'operator': operators[service_element.find('txc:RegisteredOperatorRef', self.ns).text]},
+                defaults={'operator': operators[service_element.find('txc:RegisteredOperatorRef', self.ns).text.replace('OId_', '')]},
                 )[0]
+
+            for stop_element in root.find('txc:StopPoints', self.ns):
+                try:
+                    stop = StopPoint.objects.get(atco_code=stop_element.find('txc:StopPointRef', self.ns).text)
+                    service.stops.add(stop)
+                    # print 'Added ' + stop.atco_code + ' to ' + service_version.name + ' :)'
+                except:
+                    print 'Couldn\'t add ' + stop.atco_code + ' to ' + service.service_code + ' :('
+
 
             service_version = ServiceVersion(
                 name=service_version_name,
                 service=service,
                 mode=service_element.find('txc:Mode', self.ns).text,
                 description=service_element.find('txc:Description', self.ns).text,
-                line_name=service_element.find('txc:Lines', self.ns)[0][0].text
+                line_name=service_element.find('txc:Lines', self.ns)[0][0].text.split('|', 1)[0] # shorten "N|Turquoise line", for example
                 )
 
             date_element = service_element.find('txc:OperatingPeriod', self.ns)
             start_date_element = date_element.find('txc:StartDate', self.ns)
             end_date_element = date_element.find('txc:EndDate', self.ns)
-
-            # print start_date_element
 
             if end_date_element is not None:
                 end_date = datetime.strptime(end_date_element.text, '%Y-%m-%d')
@@ -55,19 +64,20 @@ class Command(BaseCommand):
                 service_version.end_date = end_date
 
             service_version.start_date = datetime.strptime(start_date_element.text, '%Y-%m-%d')
-
             service_version.save()
-
-        # return service_version # assuming one service version per file
 
 
     def handle(self, *args, **options):
 
-        for root, dirs, files in os.walk('data/Y'):
+        for root, dirs, files in os.walk('../TNDS/'):
 
-            for file in files:
-                print file
-                e = ET.parse('data/Y/' + file).getroot()
-                operators = self.do_operators(e.find('txc:Operators', self.ns))
-                # service_version = 
-                self.do_service(e.find('txc:Services', self.ns), file[3:-4], operators)
+            for file_name in files:
+                print file_name
+                if file_name[-4:] == '.xml':
+                    try:
+                        file_path = os.path.join(root, file_name)
+                        e = ET.parse(file_path).getroot()
+                        operators = self.do_operators(e.find('txc:Operators', self.ns))
+                        self.do_service(e.find('txc:Services', self.ns), file_name[3:-4], operators, e)
+                    except:
+                        print "problem with " + file_path

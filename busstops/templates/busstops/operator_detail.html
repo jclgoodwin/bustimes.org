@@ -2,11 +2,11 @@
 
 <h1>{{ object }}</h1>
 
-<p>A {{ object.vehicle_mode }} operator in {{ object.region }}</p>
+<p>A {{ object.vehicle_mode }} operator in <a href="{{ object.region.get_absolute_url }}">{{ object.region }}</a></p>
 
 <h2>Services</h2>
 
-<ul>
+<ul class="long">
 {% for s in services %}
     <li><a href="{{ s.get_absolute_url }}">{{ s }}</a></li>
 {% endfor %}

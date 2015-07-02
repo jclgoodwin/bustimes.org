@@ -142,11 +142,16 @@ class Operator(models.Model):
 
 
 class Service(models.Model):
-    service_code = models.CharField(max_length=12, primary_key=True)
+    service_code = models.CharField(max_length=24, primary_key=True)
     operator = models.ForeignKey('Operator')
+    stops = models.ManyToManyField(StopPoint)
 
     def __unicode__(self):
-        return self.service_code
+        example_version = ServiceVersion.objects.filter(service=self).first()
+        if example_version is not None:
+            return example_version.line_name + ' - ' + example_version.description
+        else:
+            return self.service_code
 
     def get_absolute_url(self):
         return reverse('service-detail', args=(self.service_code,))
@@ -160,7 +165,6 @@ class ServiceVersion(models.Model):
     description = models.CharField(max_length=100)
     start_date = models.DateField()
     end_date = models.DateField(null=True)
-    stops = models.ManyToManyField(StopPoint, editable=False)
 
     def __unicode__(self):
         return self.line_name + ' ' + self.description
