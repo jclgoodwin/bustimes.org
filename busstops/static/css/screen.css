@@ -200,6 +200,10 @@ button.location {
     ul.long a {
         display: block;
     }
+
+    .adsbygoogle {
+        max-width: 728px;
+    }
 }
 
 aside {
@@ -219,21 +223,26 @@ aside ul {
     margin-top: 0;
 }
 
-
-.adsbygoogle,
 footer {
+    margin-top: 24px;
+}
+
+footer .ad,
+footer p {
     border-top: 1px solid #68D3FB;
     clear: both;
-    margin-top: 24px;
     text-align: center;
+    margin: 0;
+    padding: 18px 20px;
 }
 
 .adsbygoogle {
-    padding: 20px 0;
-    margin-bottom: -24px;
+    display: block;
+    margin: 0 auto;
+    padding: 0;
 }
 
-footer {
+footer p {
     color: #555;
     font-size: 14px;
     padding: 18px 20px 22px;
