@@ -120,7 +120,8 @@ button {
     border: 0;
     cursor: pointer;
     font: inherit;
-    padding: 6px 10px 8px;
+    padding: 5px 10px 7px;
+    border-bottom: 2px solid #68bbfb;
     border-radius: 7px;
 }
 
@@ -129,11 +130,25 @@ button:before {
 }
 
 button:hover {
-    padding: 5px 10px 9px;
+    padding-top: 4px;
+    border-bottom-width: 3px;
 }
 
+button:disabled {
+    color: inherit;
+    cursor: default;
+}
+
+button.loading,
 button:active {
-    padding: 7px 10px;
+    padding-top: 6px;
+    padding-bottom: 8px;
+    background: #68f8fb;
+    border: 0;
+}
+
+button.loading:after {
+    content: "\2026";
 }
 
 @media (max-width: 767px) {

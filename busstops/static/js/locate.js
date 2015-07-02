@@ -5,7 +5,12 @@
     buttons[0].onclick = function() {
         if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function (p) {
-                    window.location.href = '/coordinates/' + p.coords.latitude + ',' + p.coords.longitude;
+                    var x = Math.round(p.coords.longitude * 1000 ) / 1000,
+                        y = Math.round(p.coords.latitude * 1000 ) / 1000;
+                    buttons[0].className = 'loading';
+                    buttons[0].setAttribute('disabled', 'disabled')
+                    buttons[0].innerHTML = 'Finding bus stops near ' + y + ', ' + x;
+                    window.location.href = '/coordinates/' + y + ',' + x;
                 });
         }
     }
