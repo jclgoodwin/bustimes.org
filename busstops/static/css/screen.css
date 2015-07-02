@@ -116,17 +116,13 @@ main {
 }
 
 button {
-    background: #68D3FB;
+    background-color: #68D3FB;
     border: 0;
     cursor: pointer;
     font: inherit;
     padding: 5px 10px 7px;
     border-bottom: 2px solid #68bbfb;
     border-radius: 7px;
-}
-
-button:before {
-    content: "\01F4CD  ";
 }
 
 button:hover {
@@ -143,12 +139,16 @@ button.loading,
 button:active {
     padding-top: 6px;
     padding-bottom: 8px;
-    background: #68f8fb;
+    background-color: #68f8fb;
     border: 0;
 }
 
-button.loading:after {
-    content: "\2026";
+button.location {
+    background-image: url(../location.svg);
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    padding-left: 32px;
+    background-size: 16px 16px;
 }
 
 @media (max-width: 767px) {
