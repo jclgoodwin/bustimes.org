@@ -127,9 +127,9 @@ class Locality(models.Model):
 class Operator(models.Model):
     id = models.CharField(max_length=10, primary_key=True) # e.g. 'YCST'
     short_name = models.CharField(max_length=48)
-    public_name = models.CharField(max_length=48)
-    reference_name = models.CharField(max_length=48)
-    license_name = models.CharField(max_length=48)
+    public_name = models.CharField(max_length=100)
+    reference_name = models.CharField(max_length=100)
+    license_name = models.CharField(max_length=100)
     vehicle_mode = models.CharField(max_length=48)
     parent = models.CharField(max_length=48)
 
