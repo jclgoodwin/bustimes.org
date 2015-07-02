@@ -76,6 +76,17 @@ class Region(models.Model):
     def __unicode__(self):
         return self.name
 
+    def the(self):
+        """
+        The name for use in a sentence, with the definite article prepended if neccessary.
+        E.g. "the East Midlands" (with "the"), or "Scotland" (no need for "the")
+
+        """
+        if self.name[-1:] == 't' or self.name[-2:] == 'ds':
+            return 'the ' + self.name
+        else:
+            return self
+
     def get_absolute_url(self):
         return reverse('region-detail', args=(self.id,))
 
@@ -140,6 +151,16 @@ class Operator(models.Model):
     def get_absolute_url(self):
         return reverse('operator-detail', args=(self.id,))
 
+    def a_mode(self):
+        """
+        'Airline' becomes 'An airline', 'Bus' becomes 'A bus'
+
+        Doesn't support modes that begin with other vowels, because there aren't any (unimog? 'overcraft?)
+        """
+        mode = self.vehicle_mode.lower()
+        if mode[0] == 'a':
+            return 'An ' + mode
+        return 'A ' + mode    
 
 class Service(models.Model):
     service_code = models.CharField(max_length=24, primary_key=True)
