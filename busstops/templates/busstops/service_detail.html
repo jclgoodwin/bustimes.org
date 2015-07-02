@@ -35,11 +35,11 @@
 {% for stop in stops %}
     <li itemscope itemtype="https://schema.org/BusStop">
         <a href="{{ stop.get_absolute_url }}">
-        	<span itemprop="name">{{ stop.locality }} {{ stop }}</span>
-        	<span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
-                   <meta itemprop="latitude" content="{{ stop.latlong.y }}" />
-                   <meta itemprop="longitude" content="{{ stop.latlong.x }}" />
-        	</span>
+            <span itemprop="name">{{ stop.locality }} {{ stop }}</span>
+            <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
+                <meta itemprop="latitude" content="{{ stop.latlong.y }}" />
+                <meta itemprop="longitude" content="{{ stop.latlong.x }}" />
+            </span>
         </a>
     </li>
 {% endfor %}

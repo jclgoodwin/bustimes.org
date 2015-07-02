@@ -160,7 +160,7 @@ class Operator(models.Model):
         mode = self.vehicle_mode.lower()
         if mode[0] == 'a':
             return 'An ' + mode
-        return 'A ' + mode    
+        return 'A ' + mode
 
 class Service(models.Model):
     service_code = models.CharField(max_length=24, primary_key=True)
