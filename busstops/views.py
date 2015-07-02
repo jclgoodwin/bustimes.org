@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
-from busstops.models import StopPoint, Locality, AdminArea, Region, District
+from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
 # from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # from datetime import datetime, date
 
@@ -74,6 +74,26 @@ class StopPointDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
         context['nearby'] = StopPoint.objects.filter(locality=self.object.locality, active=True).exclude(atco_code=self.object.atco_code)
-        # context['services'] = Service.objects.filter(serviceversion__vehiclejourney__journey_pattern__journeypatterntiminglink__start=self.object).distinct()
+        context['services'] = Service.objects.filter(serviceversion__stops=self.object).distinct()
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area, self.object.locality]
+        return context
+
+
+class OperatorDetailView(DetailView):
+    model = Operator
+
+    def get_context_data(self, **kwargs):
+        context = super(OperatorDetailView, self).get_context_data(**kwargs)
+        context['services'] = Service.objects.filter(operator=self.object).distinct()
+        return context
+
+
+class ServiceDetailView(DetailView):
+    model = Service
+
+    def get_context_data(self, **kwargs):
+        context = super(ServiceDetailView, self).get_context_data(**kwargs)
+        context['breadcrumb'] = [self.object.operator]
+        context['stops'] = StopPoint.objects.filter(serviceversion__service=self.object).distinct()
+
         return context

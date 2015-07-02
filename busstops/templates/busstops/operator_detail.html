@@ -1,0 +1,15 @@
+{% include 'header.html' %}
+
+<h1>{{ object }}</h1>
+
+<p>A {{ object.vehicle_mode }} operator in {{ object.region }}</p>
+
+<h2>Services</h2>
+
+<ul>
+{% for s in services %}
+    <li><a href="{{ s.get_absolute_url }}">{{ s }}</a></li>
+{% endfor %}
+</ul>
+
+{% include 'footer.html' %}

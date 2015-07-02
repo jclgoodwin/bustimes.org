@@ -25,6 +25,17 @@
 </span>
 
 
+{% if services %}
+<aside>
+    <h2>Services</h2>
+    <ul>
+    {% for s in services %}
+        <li><a href="{{ s.get_absolute_url }}">{{ s }}</a></li>
+    {% endfor %}
+    </ul>
+</aside>
+{% endif %}
+
 {% if nearby %}
 <aside>
     <h2>Other stops in {{ stoppoint.locality }}</h2>

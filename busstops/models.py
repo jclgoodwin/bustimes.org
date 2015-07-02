@@ -136,3 +136,32 @@ class Operator(models.Model):
 
     def __unicode__(self):
         return self.public_name
+
+    def get_absolute_url(self):
+        return reverse('operator-detail', args=(self.id,))
+
+
+class Service(models.Model):
+    service_code = models.CharField(max_length=12, primary_key=True)
+    operator = models.ForeignKey('Operator')
+
+    def __unicode__(self):
+        return self.service_code
+
+    def get_absolute_url(self):
+        return reverse('service-detail', args=(self.service_code,))
+
+
+class ServiceVersion(models.Model):
+    name = models.CharField(max_length=24, primary_key=True) # e.g. 'YEABCL1-2015-04-10-1'
+    line_name = models.CharField(max_length=10)
+    service = models.ForeignKey(Service, editable=False)
+    mode = models.CharField(max_length=10)
+    description = models.CharField(max_length=100)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True)
+    stops = models.ManyToManyField(StopPoint, editable=False)
+
+    def __unicode__(self):
+        return self.line_name + ' ' + self.description
+
