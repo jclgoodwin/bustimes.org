@@ -30,7 +30,7 @@ h2 {
     font-size: 24px;
     font-weight: normal;
     line-height: 24px;
-    margin: 16px 0;
+    margin: 24px 0 16px;
 }
 
 ul {
@@ -47,6 +47,15 @@ ul li {
 ul a {
     display: block;
     padding: 3px 0 4px;
+}
+
+p {
+    margin: 8px 0;
+}
+
+img {
+    display: block;
+    margin: 24px 0;
 }
 
 header {
@@ -151,15 +160,101 @@ button.location {
     background-size: 16px 16px;
 }
 
-@media (max-width: 767px) {
+.asides {
+    margin: 16px 0;
+    clear: both;
+}
+
+.aside {
+    padding: 8px 15px;
+    border: 1px solid #68D3FB;
+    margin-bottom: 16px;
+}
+
+.aside h2 {
+    border-bottom: 1px solid #68f8fb;
+    font-size: 18px;
+    line-height: 21px;
+    margin: 0 -15px 8px;
+    padding: 0 15px 8px;
+}
+
+.aside ul {
+    margin-top: 0;
+}
+
+footer {
+    margin-top: 24px;
+}
+
+footer .ad,
+footer p {
+    border-top: 1px solid #68D3FB;
+    clear: both;
+    text-align: center;
+    margin: 0;
+}
+
+
+footer .ad {
+    padding: 18px 20px;
+    overflow: hidden;
+}
+
+.adsbygoogle {
+    display: block;
+    margin: 0 auto;
+    padding: 0;
+}
+
+footer p {
+    color: #555;
+    font-size: 14px;
+    padding: 18px 20px 22px;
+}
+
+
+@media (max-width: 500px) {
     img {
         max-width: 100%;
         height: auto;
     }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 480px) {
+    ul.long {
+        -webkit-column-count: 2;
+    }
 
+    .aside {
+        width: 48%;
+        float: left;
+        margin-left: 4%;
+        box-sizing: border-box;
+    }
+
+    .asides .aside:first-child {
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 768px) {
+    #map {
+        display: block;
+        float: right;
+        height: 300px;
+        margin: 16px 0;
+        width: 48%;
+        margin-left: 4%;
+    }
+
+    img {
+        width: 48%;
+        height: auto;
+    }
+}
+
+@media (min-width: 1000px) {
     header div {
         margin: 0 auto;
         width: 980px;
@@ -171,21 +266,22 @@ button.location {
         position: relative;
     }
 
-    #map {
-        display: block;
-        float: right;
-        height: 300px;
-        margin-left: 20px;
-        margin-bottom: 20px;
-        width: 460px;
-    }
-
     #svgmap {
         left: 200px;
     }
 
-    aside {
-        width: 260px;
+    #map {
+        width: 49%;
+        margin-left: 2%;
+    }
+
+    img {
+        width: 49%;
+    }
+
+    .aside {
+        width: 32.667%;
+        margin-left: 2%;
     }
 
     ul a {
@@ -204,46 +300,4 @@ button.location {
     .adsbygoogle {
         max-width: 728px;
     }
-}
-
-aside {
-    padding: 13px 19px;
-    border: 1px solid #68D3FB;
-    float: left;
-    margin: 0 20px 20px 0;
-}
-
-aside h2 {
-    font-size: 18px;
-    line-height: 21px;
-    margin: 0 0 10px;
-}
-
-aside ul {
-    margin-top: 0;
-}
-
-footer {
-    margin-top: 24px;
-}
-
-footer .ad,
-footer p {
-    border-top: 1px solid #68D3FB;
-    clear: both;
-    text-align: center;
-    margin: 0;
-    padding: 18px 20px;
-}
-
-.adsbygoogle {
-    display: block;
-    margin: 0 auto;
-    padding: 0;
-}
-
-footer p {
-    color: #555;
-    font-size: 14px;
-    padding: 18px 20px 22px;
 }

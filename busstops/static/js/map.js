@@ -1,6 +1,6 @@
 (function () {
 
-    if (document.getElementById('map').clientWidth === 460) {
+    if (document.getElementById('map').clientWidth > 0) {
 
         var items = document.getElementsByTagName('li'),
             i,

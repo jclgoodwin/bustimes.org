@@ -6,11 +6,6 @@
 <p>This stop is no longer active</p>
 {% endif %}
 
-<div id="map"></div>
-
-<img alt="" width="460" height="300" src="https://maps.googleapis.com/maps/api/streetview?size=460x300&amp;location={{ stoppoint.latlong.y }},{{ stoppoint.latlong.x }}&amp;heading={{ stoppoint.heading }}" />
-
-
 {% if stoppoint.street %}
 <p>On {{ stoppoint.street }}{% if stoppoint.crossing %}, near {{ stoppoint.crossing }}{% endif %}</p>
 {% endif %}
@@ -19,32 +14,37 @@
 <p>Near {{ stoppoint.landmark }}</p>
 {% endif %}
 
+<div id="map"></div>
+
+<img alt="" width="460" height="300" src="https://maps.googleapis.com/maps/api/streetview?size=460x300&amp;location={{ stoppoint.latlong.y }},{{ stoppoint.latlong.x }}&amp;heading={{ stoppoint.heading }}" />
+
 <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
     <meta itemprop="latitude" content="{{ stoppoint.latlong.y }}" />
     <meta itemprop="longitude" content="{{ stoppoint.latlong.x }}" />
 </span>
 
-
+<div class="asides">
 {% if services %}
-<aside>
+    <div class="aside">
     <h2>Services</h2>
     <ul>
     {% for s in services %}
         <li><a href="{{ s.get_absolute_url }}">{{ s }}</a></li>
     {% endfor %}
     </ul>
-</aside>
+    </div>
 {% endif %}
 
 {% if nearby %}
-<aside>
+<div class="aside">
     <h2>Other stops in {{ stoppoint.locality }}</h2>
     <ul>
     {% for s in nearby %}
         <li><a href="{{ s.get_absolute_url }}">{{ s }}</a></li>
     {% endfor %}
     </ul>
-</aside>
+</div>
 {% endif %}
+</div>
 
 {% include 'footer.html' %}
