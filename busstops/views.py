@@ -38,7 +38,7 @@ class AdminAreaDetailView(DetailView):
         context = super(AdminAreaDetailView, self).get_context_data(**kwargs)
 
         # Districts in this administrative area, if any
-        context['districts'] = District.objects.filter(admin_area=self.object).exclude(locality__stoppoint=None)
+        context['districts'] = District.objects.filter(admin_area=self.object)
 
         # Localities in this administrative area that don't belong to any district, if any
         context['localities'] = Locality.objects.filter(admin_area=self.object, district=None).exclude(stoppoint=None).order_by('name')
@@ -46,7 +46,7 @@ class AdminAreaDetailView(DetailView):
         # Stops in this administrative area whose locality belongs to a different administrative area
         # These are usually National Rail/Air/Ferry, but also (more awkwardly) may be around the boundary of two areas
         if len(context['localities']) is 0 and len(context['districts']) is 0:
-            context['stops'] = StopPoint.objects.filter(admin_area=self.object, active=True).order_by('common_name')
+            context['stops'] = StopPoint.objects.filter(admin_area=self.object).order_by('common_name')
 
         context['breadcrumb'] = [self.object.region]
         return context
