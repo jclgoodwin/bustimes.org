@@ -62,20 +62,20 @@ header a {
     color: black;
     display: inline-block;
     font-size: 24px;
-    padding: 20px;
+    padding: 16px 16px 20px;
     padding-right: 110px;
 }
 
 main {
-    padding: 0 20px;
+    padding: 0 16px;
     position: relative;
 }
 
 .breadcrumb {
     border-bottom: 1px solid #68D3FB;
-    margin: 0 -20px;
+    margin: 0 -16px;
     overflow: hidden;
-    padding: 20px 20px;
+    padding: 16px;
 }
 
 .breadcrumb li {
@@ -99,11 +99,12 @@ main {
 }
 
 #svgmap {
-    bottom: 0;
-    height: 388px;
+    bottom: -10px;
+    height: 440px;
+    left: 50%;
     position: absolute;
-    right: 20px;
-    width: 218px;
+    right: 0;
+    width: 50%;
 }
 
 #svgmap path {
@@ -227,7 +228,13 @@ footer p {
 
     .long li:nth-child(2n-1),
     .asides .aside:first-child {
+        clear: left;
         margin-left: 0;
+    }
+
+    #svgmap {
+        left: 33.333%;
+        width: 66.667%;
     }
 }
 
@@ -245,22 +252,32 @@ footer p {
         width: 48%;
         height: auto;
     }
+
+    #svgmap {
+        left: 25%;
+        right: 50%;
+        width:  25%%;
+    }
+
+    ul a {
+        display: inline-block;
+    }
+
+    ul.long a {
+        display: block;
+    }
 }
 
 @media (min-width: 1000px) {
     header div {
         margin: 0 auto;
-        width: 980px;
+        width: 972px;
     }
 
     main {
         margin: 0 auto;
         width: 940px;
         position: relative;
-    }
-
-    #svgmap {
-        left: 200px;
     }
 
     #map {
@@ -275,21 +292,15 @@ footer p {
     .long li,
     .long li:nth-child(2n-1),
     .asides .aside {
-        width: 32%;
+        clear: none;
         margin-left: 2%;
+        width: 32%;
     }
 
     .long li:nth-child(3n-2),
     .asides .aside:first-child {
+        clear: left;
         margin-left: 0;
-    }
-
-    ul a {
-        display: inline-block;
-    }
-
-    ul.long a {
-        display: block;
     }
 
     .adsbygoogle {
