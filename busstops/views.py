@@ -38,15 +38,15 @@ class AdminAreaDetailView(DetailView):
         context = super(AdminAreaDetailView, self).get_context_data(**kwargs)
 
         # Districts in this administrative area, if any
-        context['districts'] = District.objects.filter(admin_area=self.object)
+        context['districts'] = District.objects.filter(admin_area=self.object, locality__stoppoint__active=True).distinct()
 
         # Localities in this administrative area that don't belong to any district, if any
-        context['localities'] = Locality.objects.filter(admin_area=self.object, district=None).exclude(stoppoint=None).order_by('name')
+        context['localities'] = Locality.objects.filter(admin_area=self.object, district=None, stoppoint__active=True).distinct().order_by('name')
 
         # Stops in this administrative area whose locality belongs to a different administrative area
         # These are usually National Rail/Air/Ferry, but also (more awkwardly) may be around the boundary of two areas
         if len(context['localities']) == 0 and len(context['districts']) == 0:
-            context['stops'] = StopPoint.objects.filter(admin_area=self.object).order_by('common_name')
+            context['stops'] = StopPoint.objects.filter(admin_area=self.object, active=True).order_by('common_name')
 
         context['breadcrumb'] = [self.object.region]
         return context
@@ -57,7 +57,7 @@ class DistrictDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DistrictDetailView, self).get_context_data(**kwargs)
-        context['localities'] = Locality.objects.filter(district=self.object).exclude(stoppoint=None).order_by('name')
+        context['localities'] = Locality.objects.filter(district=self.object, stoppoint__active=True).distinct().order_by('name')
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
         return context
 
@@ -67,7 +67,7 @@ class LocalityDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(LocalityDetailView, self).get_context_data(**kwargs)
-        context['stops'] = StopPoint.objects.filter(locality=self.object).order_by('common_name')
+        context['stops'] = StopPoint.objects.filter(locality=self.object, active=True).order_by('common_name')
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
         return context
 
@@ -77,7 +77,7 @@ class StopPointDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
-        context['nearby'] = StopPoint.objects.filter(locality=self.object.locality).exclude(atco_code=self.object.atco_code)
+        context['nearby'] = StopPoint.objects.filter(locality=self.object.locality, active=True).exclude(atco_code=self.object.atco_code)
         context['services'] = Service.objects.filter(stops=self.object).distinct()
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area, self.object.locality]
         return context
