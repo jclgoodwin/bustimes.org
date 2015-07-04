@@ -10,8 +10,6 @@ from busstops.models import StopPoint, Locality, AdminArea
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        # StopPoint.objects.all().delete()
-
         reader = csv.reader(sys.stdin)
         next(reader, None)
         for row in reader:

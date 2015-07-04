@@ -1,7 +1,6 @@
 import sys
 import csv
 
-from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
 
 from busstops.models import Locality, AdminArea, District
@@ -9,8 +8,6 @@ from busstops.models import Locality, AdminArea, District
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        # Locality.objects.all().delete()
-
         reader = csv.reader(sys.stdin)
         next(reader, None) # skip past header
         for row in reader:

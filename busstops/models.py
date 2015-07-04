@@ -1,6 +1,4 @@
-# from django.db import models
 from django.contrib.gis.db import models
-from geoposition.fields import GeopositionField
 from django.core.urlresolvers import reverse
 
 
@@ -165,7 +163,7 @@ class Operator(models.Model):
 class Service(models.Model):
     service_code = models.CharField(max_length=24, primary_key=True)
     operator = models.ForeignKey('Operator')
-    stops = models.ManyToManyField(StopPoint)
+    stops = models.ManyToManyField(StopPoint, editable=False)
 
     def __unicode__(self):
         example_version = ServiceVersion.objects.filter(service=self).first()

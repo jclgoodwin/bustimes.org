@@ -45,7 +45,7 @@ class AdminAreaDetailView(DetailView):
 
         # Stops in this administrative area whose locality belongs to a different administrative area
         # These are usually National Rail/Air/Ferry, but also (more awkwardly) may be around the boundary of two areas
-        if len(context['localities']) is 0 and len(context['districts']) is 0:
+        if len(context['localities']) == 0 and len(context['districts']) == 0:
             context['stops'] = StopPoint.objects.filter(admin_area=self.object).order_by('common_name')
 
         context['breadcrumb'] = [self.object.region]

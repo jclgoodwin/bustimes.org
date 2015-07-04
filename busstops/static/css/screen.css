@@ -213,16 +213,19 @@ footer p {
 
 @media (min-width: 480px) {
     ul.long {
-        -webkit-column-count: 2;
+        overflow: hidden;
     }
 
-    .aside {
+    .aside,
+    .long li {
+        max-width: 48%;
         width: 48%;
         float: left;
         margin-left: 4%;
         box-sizing: border-box;
     }
 
+    .long li:nth-child(2n-1),
     .asides .aside:first-child {
         margin-left: 0;
     }
@@ -269,18 +272,19 @@ footer p {
         width: 49%;
     }
 
+    ul.long li,
     .aside {
         width: 32.667%;
         margin-left: 2%;
     }
 
-    ul a {
-        display: inline-block;
+    ul.long li:nth-child(3n-1),
+    .asides .aside:first-child {
+        margin-left: 0;
     }
 
-    ul.long {
-        -webkit-column-count: 3;
-        -webkit-column-gap: 20px;
+    ul a {
+        display: inline-block;
     }
 
     ul.long a {

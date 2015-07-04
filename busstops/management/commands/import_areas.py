@@ -1,7 +1,6 @@
 import sys
 import csv
 
-from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
 
 from busstops.models import Region, AdminArea
@@ -9,8 +8,6 @@ from busstops.models import Region, AdminArea
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        # AdminArea.objects.all().delete()
-
         for row in csv.reader(sys.stdin):
             try:
                 AdminArea.objects.create(
