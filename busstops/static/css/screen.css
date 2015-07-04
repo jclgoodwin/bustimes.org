@@ -212,7 +212,7 @@ footer p {
 }
 
 @media (min-width: 480px) {
-    ul.long {
+    .long {
         overflow: hidden;
     }
 
@@ -272,13 +272,14 @@ footer p {
         width: 49%;
     }
 
-    ul.long li,
-    .aside {
-        width: 32.667%;
+    .long li,
+    .long li:nth-child(2n-1),
+    .asides .aside {
+        width: 32%;
         margin-left: 2%;
     }
 
-    ul.long li:nth-child(3n-1),
+    .long li:nth-child(3n-2),
     .asides .aside:first-child {
         margin-left: 0;
     }
