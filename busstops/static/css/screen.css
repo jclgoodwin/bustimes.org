@@ -117,40 +117,34 @@ main {
     fill: #6a6;
 }
 
-button {
+.locate {
     background-color: #68D3FB;
-    border: 0;
-    cursor: pointer;
-    font: inherit;
-    padding: 5px 10px 7px;
+    background-image: url(../location.svg);
+    background-repeat: no-repeat;
+    background-position: 10px 10px;
+    background-size: 16px 16px;
     border-bottom: 2px solid #68bbfb;
     border-radius: 7px;
+    color: black;
+    cursor: pointer;
+    display: inline-block;
+    font: inherit;
+    padding: 5px 10px 7px 32px;
 }
 
-button:hover {
+.locate:hover {
+    text-decoration: none;
     padding-top: 4px;
     border-bottom-width: 3px;
+    background-position: 10px 9px;
 }
 
-button:disabled {
-    color: inherit;
-    cursor: default;
-}
-
-button.loading,
-button:active {
+.locate:active {
     padding-top: 6px;
     padding-bottom: 8px;
     background-color: #68f8fb;
+    background-position: 10px 11px;
     border: 0;
-}
-
-button.location {
-    background-image: url(../location.svg);
-    background-repeat: no-repeat;
-    background-position: 10px center;
-    padding-left: 32px;
-    background-size: 16px 16px;
 }
 
 .asides {
@@ -277,7 +271,6 @@ footer p {
     main {
         margin: 0 auto;
         width: 940px;
-        position: relative;
     }
 
     #map {
@@ -306,4 +299,17 @@ footer p {
     .adsbygoogle {
         max-width: 728px;
     }
+}
+
+.leaflet-container .leaflet-control,
+.leaflet-container .leaflet-popup-content {
+    font-family: "PT Sans", sans-serif;
+    font-size: 14px;
+}
+
+#hugemap .leaflet-control.hugemap-status {
+    background: #fff;
+    background: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    padding: 0 5px;
 }

@@ -38,11 +38,11 @@
             }).addTo(map);
 
             if (locations.length === 1) {
-                L.circleMarker(locations[0]).addTo(map);
+                L.marker(locations[0]).addTo(map);
                 map.setView(locations[0], 17);
             } else {
                 for (i = 0; i < locations.length; i++) {
-                    L.circleMarker(locations[i]).addTo(map).bindPopup(labels[i]);
+                    L.marker(locations[i]).addTo(map).bindPopup(labels[i]);
                 }
                 var polyline = L.polyline(locations);
                 map.fitBounds(polyline.getBounds());

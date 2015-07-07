@@ -1,10 +1,12 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 from django.views.generic.detail import DetailView
 from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
 # from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # from datetime import datetime, date
 
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Polygon
+
 
 def index(request):
     context = {
@@ -12,14 +14,27 @@ def index(request):
     }
     return render(request, 'index.html', context)
 
-def coordinates(request, latitude, longitude):
-    point = Point(map(lambda c: round(c, 4), map(float, (longitude, latitude))))
-    context = {
-        'point': point,
-        'stops': StopPoint.objects.filter(active=True).distance(point).order_by('distance')[:10]
-    }
-    print context['stops']
-    return render(request, 'coordinates.html', context)
+def hugemap(request):
+    return render(request, 'map.html')
+
+def stops(request):
+    bbox = Polygon.from_bbox((request.GET['xmin'], request.GET['ymin'], request.GET['xmax'], request.GET['ymax']))
+    stops = StopPoint.objects.filter(latlong__within=bbox).distinct()
+
+    data = {'type': 'FeeatureCollection', 'features': []}
+    for stop in stops:
+        data['features'].append(
+            {'type': 'Feature',
+            'geometry':
+            {'type': 'Point',
+            'coordinates': [stop.latlong.x, stop.latlong.y]
+            },
+            'properties': {
+            'name': str(stop),
+            'url': stop.get_absolute_url()
+            }}
+            )
+    return JsonResponse(data, safe=False)
 
 
 class RegionDetailView(DetailView):
