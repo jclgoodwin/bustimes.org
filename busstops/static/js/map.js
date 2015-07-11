@@ -37,12 +37,19 @@
                 attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
 
+            var pin = L.icon({
+                iconUrl:    '/static/pin.svg',
+                iconSize:   [16, 22],
+                iconAnchor: [8, 22],
+                popupAnchor: [0, -22],
+            });
+
             if (locations.length === 1) {
-                L.marker(locations[0]).addTo(map);
+                L.marker(locations[0], {icon: pin}).addTo(map);
                 map.setView(locations[0], 17);
             } else {
                 for (i = 0; i < locations.length; i++) {
-                    L.marker(locations[i]).addTo(map).bindPopup(labels[i]);
+                    L.marker(locations[i], {icon: pin}).addTo(map).bindPopup(labels[i]);
                 }
                 var polyline = L.polyline(locations);
                 map.fitBounds(polyline.getBounds());

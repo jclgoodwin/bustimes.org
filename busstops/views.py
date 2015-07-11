@@ -19,9 +19,9 @@ def hugemap(request):
 
 def stops(request):
     bbox = Polygon.from_bbox((request.GET['xmin'], request.GET['ymin'], request.GET['xmax'], request.GET['ymax']))
-    stops = StopPoint.objects.filter(latlong__within=bbox).distinct()
+    stops = StopPoint.objects.filter(latlong__within=bbox)
 
-    data = {'type': 'FeeatureCollection', 'features': []}
+    data = {'type': 'FeatureCollection', 'features': []}
     for stop in stops:
         data['features'].append(
             {'type': 'Feature',
