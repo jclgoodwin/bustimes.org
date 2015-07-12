@@ -2,66 +2,6 @@ from django.contrib.gis.db import models
 from django.core.urlresolvers import reverse
 
 
-class StopPoint(models.Model):
-    "The smallest type of geographical point; a point at which vehicles stop."
-    atco_code = models.CharField(max_length=16, primary_key=True)
-    naptan_code = models.CharField(max_length=16)
-
-    common_name = models.CharField(max_length=48)
-    landmark = models.CharField(max_length=48)
-    street = models.CharField(max_length=48)
-    crossing = models.CharField(max_length=48)
-    indicator = models.CharField(max_length=48)
-
-    latlong = models.PointField()
-    objects = models.GeoManager()
-
-    locality = models.ForeignKey('Locality', editable=False)
-    suburb = models.CharField(max_length=48)
-    town = models.CharField(max_length=48) 
-    locality_centre = models.BooleanField()
-
-    BEARING_CHOICES = (
-        ('N', 'north'),
-        ('NE', 'north east'),
-        ('E', 'east'),
-        ('SE', 'south east'),
-        ('S', 'south'),
-        ('SW', 'south west'),
-        ('W', 'west'),
-        ('NW', 'north west')
-    )
-    bearing = models.CharField(max_length=2, choices=BEARING_CHOICES)
-
-    stop_type = models.CharField(max_length=3)
-    bus_stop_type = models.CharField(max_length=3)
-    timing_status = models.CharField(max_length=3)
-    admin_area = models.ForeignKey('AdminArea')
-    active = models.BooleanField()
-
-    def __unicode__(self):
-        if self.indicator:
-            return "%s (%s)" % (self.common_name, self.indicator)
-        return self.common_name
-
-    def heading(self):
-        "Return the stop's bearing converted to degrees, for use with Google Street View."
-        headings = {
-            'N':    0,
-            'NE':  45,
-            'E':   90,
-            'SE': 135,
-            'S':  180,
-            'SW': 125,
-            'W':  270,
-            'NW': 315,
-        }
-        return headings.get(self.bearing)
-
-    def get_absolute_url(self):
-        return reverse('stoppoint-detail', args=(self.atco_code,))
-
-
 class Region(models.Model):
     "The largest type of geographical area."
     id = models.CharField(max_length=2, primary_key=True)
@@ -138,6 +78,92 @@ class Locality(models.Model):
 
     def get_absolute_url(self):
         return reverse('locality-detail', args=(self.id,))
+
+
+class StopArea(models.Model):
+    id = models.CharField(max_length=16, primary_key=True)
+    name = models.CharField(max_length=48)
+    admin_area = models.ForeignKey(AdminArea)
+
+    TYPE_CHOICES = (
+        ('GPBS', 'on-street pair'),
+        ('GCLS', 'on-street cluster'),
+        ('GAIR', 'airport building'),
+        ('GBCS', 'bus/coach station'),
+        ('GFTD', 'ferry terminal/dock'),
+        ('GTMU', 'tram/metro station'),
+        ('GRLS', 'rail station'),
+        ('GCCH', 'coach service coverage'),
+    )
+    stop_area_type = models.CharField(max_length=4, choices=TYPE_CHOICES)
+
+    parent = models.ForeignKey('StopArea', null=True, editable=False)
+    location = models.PointField(srid=27700)
+    active = models.BooleanField()
+
+    def __unicode__(self):
+        return self.name
+
+
+class StopPoint(models.Model):
+    "The smallest type of geographical point; a point at which vehicles stop."
+    atco_code = models.CharField(max_length=16, primary_key=True)
+    naptan_code = models.CharField(max_length=16)
+
+    common_name = models.CharField(max_length=48)
+    landmark = models.CharField(max_length=48)
+    street = models.CharField(max_length=48)
+    crossing = models.CharField(max_length=48)
+    indicator = models.CharField(max_length=48)
+
+    latlong = models.PointField()
+    objects = models.GeoManager()
+
+    stop_area = models.ForeignKey(StopArea, null=True)
+    locality = models.ForeignKey('Locality', editable=False)
+    suburb = models.CharField(max_length=48)
+    town = models.CharField(max_length=48) 
+    locality_centre = models.BooleanField()
+
+    BEARING_CHOICES = (
+        ('N', 'north'),
+        ('NE', 'north east'),
+        ('E', 'east'),
+        ('SE', 'south east'),
+        ('S', 'south'),
+        ('SW', 'south west'),
+        ('W', 'west'),
+        ('NW', 'north west')
+    )
+    bearing = models.CharField(max_length=2, choices=BEARING_CHOICES)
+
+    stop_type = models.CharField(max_length=3)
+    bus_stop_type = models.CharField(max_length=3)
+    timing_status = models.CharField(max_length=3)
+    admin_area = models.ForeignKey('AdminArea')
+    active = models.BooleanField()
+
+    def __unicode__(self):
+        if self.indicator:
+            return "%s (%s)" % (self.common_name, self.indicator)
+        return self.common_name
+
+    def heading(self):
+        "Return the stop's bearing converted to degrees, for use with Google Street View."
+        headings = {
+            'N':    0,
+            'NE':  45,
+            'E':   90,
+            'SE': 135,
+            'S':  180,
+            'SW': 125,
+            'W':  270,
+            'NW': 315,
+        }
+        return headings.get(self.bearing)
+
+    def get_absolute_url(self):
+        return reverse('stoppoint-detail', args=(self.atco_code,))
 
 
 class Operator(models.Model):

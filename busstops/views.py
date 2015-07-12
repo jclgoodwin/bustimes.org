@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.generic.detail import DetailView
-from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
+from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, ServiceVersion
 # from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # from datetime import datetime, date
 
@@ -100,7 +100,12 @@ class LocalityDetailView(DetailView):
         context = super(LocalityDetailView, self).get_context_data(**kwargs)
         context['stops'] = StopPoint.objects.filter(locality=self.object, active=True).order_by('common_name')
         context['localities'] = Locality.objects.filter(parent=self.object).order_by('name')
-        context['breadcrumb'] = filter(None, [self.object.admin_area.region, self.object.admin_area, self.object.district])
+        context['breadcrumb'] = filter(None, [
+            self.object.admin_area.region,
+            self.object.admin_area,
+            self.object.district,
+            self.object.parent, 
+            ])
         return context
 
 
@@ -109,10 +114,16 @@ class StopPointDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
-        context['nearby'] = StopPoint.objects.filter(
-            locality=self.object.locality, active=True).exclude(atco_code=self.object.atco_code)
-        context['services'] = Service.objects.filter(stops=self.object).distinct()
-        context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area, self.object.locality]
+        if self.object.stop_area:
+            context['nearby'] = StopPoint.objects.filter(
+                stop_area=self.object.stop_area, active=True).exclude(atco_code=self.object.atco_code)
+        context['services'] = Service.objects.filter(stops=self.object).order_by('service_code')
+        context['breadcrumb'] = filter(None, [
+            self.object.admin_area.region,
+            self.object.admin_area,
+            self.object.locality.district,
+            self.object.locality,
+            ])
         return context
 
 

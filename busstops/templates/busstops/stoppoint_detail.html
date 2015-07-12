@@ -38,7 +38,7 @@
 
 {% if nearby %}
 <div class="aside box">
-    <h2>Other stops in {{ stoppoint.locality }}</h2>
+    <h2>Nearby</h2>
     <ul>
     {% for s in nearby %}
         <li><a href="{{ s.get_absolute_url }}">{{ s }}</a></li>
