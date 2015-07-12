@@ -125,25 +125,25 @@ main {
     background-size: 16px 16px;
     border-bottom: 2px solid #68bbfb;
     border-radius: 7px;
-    color: black;
+    color: #000;
     cursor: pointer;
     display: inline-block;
     font: inherit;
+    margin-top: 1px;
     padding: 5px 10px 7px 32px;
+    vertical-align: bottom;
 }
 
 .locate:hover {
     text-decoration: none;
-    padding-top: 4px;
+    margin-top: 0;
     border-bottom-width: 3px;
-    background-position: 10px 9px;
 }
 
 .locate:active {
-    padding-top: 6px;
-    padding-bottom: 8px;
+    margin-top: 3px;
+    border-bottom-width: 1px;
     background-color: #68f8fb;
-    background-position: 10px 11px;
     border: 0;
 }
 
