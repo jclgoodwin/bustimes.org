@@ -38,6 +38,16 @@ def stops(request):
             )
     return JsonResponse(data, safe=False)
 
+def search(request):
+    data = []
+    query = request.GET.get('q')
+    if query:
+        for locality in Locality.objects.filter(name__icontains=query)[:10]:
+            data.append({
+                'name': str(locality) + ', ' + locality.admin_area.name,
+                'url':  locality.get_absolute_url()})
+    return JsonResponse(data, safe=False)
+
 
 class RegionDetailView(DetailView):
     model = Region

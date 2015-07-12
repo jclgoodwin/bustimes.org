@@ -2,11 +2,14 @@
 
 <h1>Bus stops and routes across Great Britain</h1>
 
-<h2>By magic</h2>
+    <a class="locate" href="/map">Find bus stops nearby</a>
+    or
+    <form id="search">
+        <input type="search" id="q" name="q" placeholder="Search places" />
+        <ul id="results"></ul>
+    </form>
 
-<a class="locate" href="/map">Find bus stops nearby</a>
-
-<h2>By region</h2>
+<h2>Regions</h2>
 
 <ul id="regions">
 {% for r in regions %}

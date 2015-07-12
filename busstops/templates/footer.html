@@ -12,7 +12,10 @@
         </script>
     </div>
 
-    <p>Contains public sector information licensed under the Open Government Licence v3.0.</p>
+    <ul>
+        <li>By <a href="https://joshuagoodw.in">Joshua Goodwin</a></li>
+        <li>Contains public sector information licensed under the Open Government Licence v3.0.</li>
+    </ul>
 </footer>
 
 {% if stops or stoppoint %}
@@ -22,6 +25,7 @@
 <script src="{% static 'js/map.js' %}"></script>
 {% elif regions %}
 {% load staticfiles %}
+<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="{% static 'js/svgmap.js' %}"></script>
 {% endif %}
 </body>
