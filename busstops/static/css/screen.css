@@ -153,19 +153,27 @@ main {
 }
 
 .aside {
-    padding: 8px 15px;
-    border: 1px solid #68D3FB;
     margin-bottom: 20px;
 }
 
-.aside h2 {
+.box {
+    padding: 8px 15px;
+    border: 1px solid #68D3FB;
+}
+
+.box h2 {
     font-size: 20px;
     line-height: 21px;
     margin: 4px 0 11px;
 }
 
-.aside ul {
+.box ul {
     margin-top: 0;
+}
+
+.aside img {
+    width: 300px;
+    height: 250px;
 }
 
 footer {
