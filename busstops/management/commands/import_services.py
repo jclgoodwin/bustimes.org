@@ -10,7 +10,9 @@ from datetime import timedelta, date, datetime
 
 class Command(BaseCommand):
 
-    ns = {'txc': 'http://www.transxchange.org.uk/'} # see https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml-with-namespaces
+    # see https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml-with-namespaces
+    ns = {'txc': 'http://www.transxchange.org.uk/'}
+
     now = datetime.today()
 
     def do_operators(self, operators_element):

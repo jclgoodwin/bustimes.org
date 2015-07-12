@@ -22,8 +22,8 @@ class Command(BaseCommand):
                     parent=row[16],
                     region=region,
                     )
-                reference_name=row[2]
-                license_name=row[3]
+                reference_name = row[2]
+                license_name = row[3]
                 if reference_name and reference_name != operator.public_name:
                     operator.reference_name = reference_name
                 if license_name and license_name != operator.public_name and license_name != reference_name:

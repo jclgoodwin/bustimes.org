@@ -1,5 +1,5 @@
 from django.contrib import admin
-from busstops.models import *
+from busstops.models import Region, AdminArea, District, Locality, StopPoint, Operator, Service, ServiceVersion
 
 
 admin.site.register(Region)
