@@ -99,7 +99,8 @@ class LocalityDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(LocalityDetailView, self).get_context_data(**kwargs)
         context['stops'] = StopPoint.objects.filter(locality=self.object, active=True).order_by('common_name')
-        context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
+        context['localities'] = Locality.objects.filter(parent=self.object).order_by('name')
+        context['breadcrumb'] = filter(None, [self.object.admin_area.region, self.object.admin_area, self.object.district])
         return context
 
 

@@ -118,12 +118,18 @@ class District(models.Model):
 
 
 class Locality(models.Model):
+    """
+    A locality within an administrative area, and possibly within a district.
+
+    Localities may be children of other localities...
+    """
     id = models.CharField(max_length=48, primary_key=True)
     name = models.CharField(max_length=48)
     # short_name? 
     qualifier_name = models.CharField(max_length=48, blank=True)
     admin_area = models.ForeignKey(AdminArea)
     district = models.ForeignKey(District, null=True)
+    parent = models.ForeignKey('Locality', null=True)
     easting = models.PositiveIntegerField()
     northing = models.PositiveIntegerField()
 

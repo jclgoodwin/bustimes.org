@@ -2,6 +2,18 @@
 
 <h1>{{ locality }}</h1>
 
+{% if localities %}
+
+<h2>Localities in {{ locality }}</h2>
+
+<ul>
+{% for l in localities %}
+    <li><a href="{{ l.get_absolute_url }}">{{ l }}</a></li>
+{% endfor %}
+</ul>
+
+{% endif %}
+
 <h2>Stops in {{ locality }}</h2>
 
 <div id="map"></div>
