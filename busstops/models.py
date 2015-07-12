@@ -166,10 +166,12 @@ class Operator(models.Model):
 
         Doesn't support modes that begin with other vowels, because there aren't any (unimog? 'overcraft?).
         """
-        mode = self.vehicle_mode.lower()
-        if mode[0] == 'a':
-            return 'An ' + mode
-        return 'A ' + mode
+        mode = str(self.vehicle_mode).lower()
+        if mode:
+            if mode[0] == 'a':
+                return 'An ' + mode
+            return 'A ' + mode
+        return 'A public transport'
 
 
 class Service(models.Model):
