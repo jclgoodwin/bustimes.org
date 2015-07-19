@@ -20,8 +20,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def remove_stupid_indicators():
-        """Remove StopPoint indicator values which are long numbers
-        """
+        "Remove StopPoint indicator values which are long numbers."
         StopPoint.objects.filter(indicator__startswith='220').update(indicator='')
 
     @staticmethod

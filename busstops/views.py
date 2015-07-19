@@ -3,23 +3,30 @@ from django.http import JsonResponse
 from django.views.generic.detail import DetailView
 from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, ServiceVersion
 # from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-# from datetime import datetime, date
+from datetime import datetime, date
 
 from django.contrib.gis.geos import Polygon
 
 
 def index(request):
+    "The home page with a list of regions"
     context = {
         'regions': Region.objects.all()
     }
     return render(request, 'index.html', context)
 
 def hugemap(request):
+    "The biggish JavaScript map"
     return render(request, 'map.html')
 
 def stops(request):
-    bbox = Polygon.from_bbox((request.GET['xmin'], request.GET['ymin'], request.GET['xmax'], request.GET['ymax']))
-    results = StopPoint.objects.filter(latlong__within=bbox)
+    """
+    JSON endpoint accessed by the JavaScript map, listing the active StopPoints within a
+    rectangle, in standard GeoJSON format
+    """
+
+    bounding_box = Polygon.from_bbox([request.GET[key] for key in ('xmin', 'ymin', 'xmax', 'ymax')])
+    results = StopPoint.objects.filter(latlong__within=bounding_box, active=True)
 
     data = {'type': 'FeatureCollection', 'features': []}
     for stop in results:
@@ -36,9 +43,10 @@ def stops(request):
                     }
                 }
             )
-    return JsonResponse(data, safe=False)
+    return JsonResponse(data)
 
 def search(request):
+    "A list of up to 10 localities whose names contain the request.GET['q'] string"
     data = []
     query = request.GET.get('q')
     if query:
@@ -50,6 +58,8 @@ def search(request):
 
 
 class RegionDetailView(DetailView):
+    "A single region and the administrative areas in it"
+
     model = Region
 
     def get_context_data(self, **kwargs):
@@ -59,6 +69,8 @@ class RegionDetailView(DetailView):
 
 
 class AdminAreaDetailView(DetailView):
+    "A single administrative area, and the districts, localities (or stops) in it"
+
     model = AdminArea
 
     def get_context_data(self, **kwargs):
@@ -83,17 +95,21 @@ class AdminAreaDetailView(DetailView):
 
 
 class DistrictDetailView(DetailView):
+    "A single district, and the localities in it"
+
     model = District
 
     def get_context_data(self, **kwargs):
         context = super(DistrictDetailView, self).get_context_data(**kwargs)
         context['localities'] = Locality.objects.filter(
-            district=self.object, stoppoint__active=True).distinct().order_by('name')
+            district=self.object, parent=None, stoppoint__active=True).distinct().order_by('name')
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
         return context
 
 
 class LocalityDetailView(DetailView):
+    "A single locality, its children (if any), and  the stops in it"
+
     model = Locality
 
     def get_context_data(self, **kwargs):
@@ -110,6 +126,8 @@ class LocalityDetailView(DetailView):
 
 
 class StopPointDetailView(DetailView):
+    "A stop, other stops in the same area, and the services servicing it"
+
     model = StopPoint
 
     def get_context_data(self, **kwargs):
@@ -128,6 +146,8 @@ class StopPointDetailView(DetailView):
 
 
 class OperatorDetailView(DetailView):
+    "An operator and the services it operates"
+
     model = Operator
 
     def get_context_data(self, **kwargs):

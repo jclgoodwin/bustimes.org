@@ -1,4 +1,7 @@
+"Model definitions"
+
 from django.contrib.gis.db import models
+from django.contrib.gis.geos import Point
 from django.core.urlresolvers import reverse
 
 
@@ -74,13 +77,21 @@ class Locality(models.Model):
     northing = models.PositiveIntegerField()
 
     def __unicode__(self):
-        return self.name # TODO qualifier name?
+        return self.name
+
+    def qualified_name(self):
+        "Name with a comma and the qualifier_name (e.g. 'York, York')"
+        if self.qualifier_name:
+            return "%s, %s" % (self.name, self.qualifier_name)
+        return self.name
 
     def get_absolute_url(self):
         return reverse('locality-detail', args=(self.id,))
 
 
 class StopArea(models.Model):
+    "A small area containing multiple stops, such as a bus station."
+
     id = models.CharField(max_length=16, primary_key=True)
     name = models.CharField(max_length=48)
     admin_area = models.ForeignKey(AdminArea)
@@ -122,7 +133,7 @@ class StopPoint(models.Model):
     stop_area = models.ForeignKey(StopArea, null=True)
     locality = models.ForeignKey('Locality', editable=False)
     suburb = models.CharField(max_length=48)
-    town = models.CharField(max_length=48) 
+    town = models.CharField(max_length=48)
     locality_centre = models.BooleanField()
 
     BEARING_CHOICES = (
@@ -168,6 +179,7 @@ class StopPoint(models.Model):
 
 class Operator(models.Model):
     "An entity that operates public transport services."
+
     id = models.CharField(max_length=10, primary_key=True) # e.g. 'YCST'
     short_name = models.CharField(max_length=48)
     public_name = models.CharField(max_length=100)
