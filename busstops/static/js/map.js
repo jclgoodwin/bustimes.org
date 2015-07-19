@@ -51,8 +51,9 @@
                 for (i = 0; i < locations.length; i++) {
                     L.marker(locations[i], {icon: pin}).addTo(map).bindPopup(labels[i]);
                 }
-                var polyline = L.polyline(locations);
-                map.fitBounds(polyline.getBounds());
+                map.fitBounds(L.polyline(locations).getBounds(), {
+                    padding: [20, 20]
+                });
             }
         }
 
