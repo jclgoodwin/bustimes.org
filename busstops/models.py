@@ -73,8 +73,7 @@ class Locality(models.Model):
     admin_area = models.ForeignKey(AdminArea)
     district = models.ForeignKey(District, null=True)
     parent = models.ForeignKey('Locality', null=True)
-    easting = models.PositiveIntegerField()
-    northing = models.PositiveIntegerField()
+    location = models.PointField(srid=27700, null=True)
 
     def __unicode__(self):
         return self.name
@@ -128,6 +127,7 @@ class StopPoint(models.Model):
     indicator = models.CharField(max_length=48)
 
     latlong = models.PointField()
+    location = models.PointField(srid=27700, null=True)
     objects = models.GeoManager()
 
     stop_area = models.ForeignKey(StopArea, null=True)
