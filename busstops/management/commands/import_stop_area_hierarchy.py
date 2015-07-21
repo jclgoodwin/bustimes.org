@@ -1,7 +1,7 @@
 """
 Usage:
 
-    $ ./manage.py import_stop_area_hierachy < AreaHierachy.py
+    $ ./manage.py import_stop_area_hierarchy < AreaHierarchy.py
 """
 
 import sys
@@ -14,9 +14,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         reader = csv.reader(sys.stdin)
-        next(reader, None) # skip past header
+        next(reader) # skip past header
         for row in reader:
-            print row
             parent = StopArea.objects.get(id=row[0])
             child = StopArea.objects.get(id=row[0])
             child.parent = parent
