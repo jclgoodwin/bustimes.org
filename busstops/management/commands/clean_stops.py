@@ -5,7 +5,15 @@ from busstops.models import StopPoint
 
 
 class Command(BaseCommand):
-    "Command that tidies the StopPoint objects."
+    """
+    Command that tidies the StopPoint objects in the database (because the NaPTAN data is a bit messy).
+
+    In general, I could use certain heuristics to make this quicker (certain local authorities seem
+    to do particular things wrong) but I'm not doing so yet.
+
+    It might also be better to build this into the import process, or otherwise pre-process the CSV
+    file.
+    """
 
     @staticmethod
     def remove_placeholders():

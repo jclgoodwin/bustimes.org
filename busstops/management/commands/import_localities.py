@@ -20,9 +20,8 @@ class Command(BaseCommand):
                     easting=row[13],
                     northing=row[14],
                     )
-                district = row[10]
-                if district != '310': # bogus value for nonexistent districts
-                    locality.district = District.objects.get(id=district),
+                if row[10] != '310': # bogus value for nonexistent districts
+                    locality.district = District.objects.get(id=row[10])
                 locality.save()
             except:
                 print 'Skipped row: ' + str(row)

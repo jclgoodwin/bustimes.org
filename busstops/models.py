@@ -202,7 +202,7 @@ class Operator(models.Model):
 
         'Airline' becomes 'An airline', 'Bus' becomes 'A bus'.
 
-        Doesn't support modes that begin with other vowels, because there aren't any (unimog? 'overcraft?).
+        Doesn't support mode names that begin with other vowels.
         """
         mode = str(self.vehicle_mode).lower()
         if mode:
@@ -215,7 +215,7 @@ class Operator(models.Model):
 class Service(models.Model):
     "A bus service."
     service_code = models.CharField(max_length=24, primary_key=True)
-    operator = models.ForeignKey('Operator')
+    operator = models.ForeignKey(Operator)
     stops = models.ManyToManyField(StopPoint, editable=False)
 
     def __unicode__(self):
