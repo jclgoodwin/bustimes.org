@@ -1,11 +1,9 @@
+"View definitions."
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.generic.detail import DetailView
-from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, ServiceVersion
-# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from datetime import datetime, date
-
 from django.contrib.gis.geos import Polygon
+from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, ServiceVersion
 
 
 def index(request):
@@ -157,10 +155,12 @@ class OperatorDetailView(DetailView):
 
 
 class ServiceDetailView(DetailView):
+    "A service and the stops it stops at"
+
     model = Service
 
     def get_context_data(self, **kwargs):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)
         context['breadcrumb'] = [self.object.operator]
-        context['stops'] = StopPoint.objects.filter(service=self.object).distinct()
+        context['stops'] = StopPoint.objects.filter(service=self.object)
         return context
