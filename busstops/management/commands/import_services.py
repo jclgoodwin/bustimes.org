@@ -134,9 +134,12 @@ class Command(BaseCommand):
                 name=service_version_name,
                 service=service,
                 mode=service_element.find('txc:Mode', self.ns).text,
-                description=service_element.find('txc:Description', self.ns).text,
                 line_name=service_element.find('txc:Lines', self.ns)[0][0].text.split('|', 1)[0] # shorten "N|Turquoise line", for example
                 )
+
+            description_element = service_element.find('txc:Description', self.ns)
+            if description_element is not None:
+                service_version.description = description_element.text
 
             date_element = service_element.find('txc:OperatingPeriod', self.ns)
             start_date_element = date_element.find('txc:StartDate', self.ns)
