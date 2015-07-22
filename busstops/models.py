@@ -78,7 +78,7 @@ class Locality(models.Model):
     def __unicode__(self):
         return self.name
 
-    def qualified_name(self):
+    def get_qualified_name(self):
         "Name with a comma and the qualifier_name (e.g. 'York, York')"
         if self.qualifier_name:
             return "%s, %s" % (self.name, self.qualifier_name)

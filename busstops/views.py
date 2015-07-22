@@ -48,10 +48,11 @@ def search(request):
     data = []
     query = request.GET.get('q')
     if query:
-        for locality in Locality.objects.filter(name__icontains=query)[:10]:
+        for locality in Locality.objects.filter(name__icontains=query)[:12]:
             data.append({
-                'name': str(locality) + ', ' + locality.admin_area.name,
-                'url':  locality.get_absolute_url()})
+                'name': locality.get_qualified_name(),
+                'url':  locality.get_absolute_url()
+                })
     return JsonResponse(data, safe=False)
 
 
