@@ -192,7 +192,7 @@ class Operator(models.Model):
     def get_absolute_url(self):
         return reverse('operator-detail', args=(self.id,))
 
-    def a_mode(self):
+    def get_a_mode(self):
         """
         Return the the name of the operator's vehicle mode, with the correct indefinite article
         depending on whether it begins with a vowel sound.
@@ -206,13 +206,13 @@ class Operator(models.Model):
             if mode[0] == 'a':
                 return 'An ' + mode
             return 'A ' + mode
-        return 'A public transport'
+        return 'An' # 'An operator'
 
 
 class Service(models.Model):
     "A bus service."
     service_code = models.CharField(max_length=24, primary_key=True)
-    operator = models.ForeignKey(Operator)
+    operator = models.ManyToManyField(Operator)
     stops = models.ManyToManyField(StopPoint, editable=False)
 
     def __unicode__(self):
@@ -221,6 +221,17 @@ class Service(models.Model):
             return example_version.line_name + ' - ' + example_version.description
         else:
             return self.service_code
+
+    def get_a_mode(self):
+        example_version = ServiceVersion.objects.filter(service=self).first()
+        if example_version is not None:
+            mode = example_version.mode
+            if mode[0] == 'a':
+                return 'An ' + mode
+            else:
+                return 'A ' + mode
+        else:
+            return 'A' # 'A service'
 
     def get_absolute_url(self):
         return reverse('service-detail', args=(self.service_code,))
@@ -234,10 +245,11 @@ class ServiceVersion(models.Model):
     Further "versions" exist when services are revised.
     """
     name = models.CharField(max_length=24, primary_key=True) # e.g. 'YEABCL1-2015-04-10-1'
-    line_name = models.CharField(max_length=10)
+    line_name = models.CharField(max_length=24)
     service = models.ForeignKey(Service, editable=False)
     mode = models.CharField(max_length=10)
     description = models.CharField(max_length=100)
+
     start_date = models.DateField()
     end_date = models.DateField(null=True)
 

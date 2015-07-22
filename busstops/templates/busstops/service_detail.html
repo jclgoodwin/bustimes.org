@@ -2,7 +2,7 @@
 
 <h1>{{ object }}</h1>
 
-<p>Operated by <a href="{{ object.operator.get_absolute_url }}">{{ object.operator }}</a></p>
+<p>{{ object.get_a_mode }} service operated by {% for operator in object.operator.all %}<a href="{{ operator.get_absolute_url }}">{{ operator }}</a>{% endfor %}</p>
 
 <!-- {% for version in timetable %}
 
