@@ -24,7 +24,7 @@ class Command(BaseCommand):
                 name=row[1],
                 qualifier_name=row[5],
                 admin_area=AdminArea.objects.get(id=row[9]),
-                location=Point(map(int, (row[13], row[14])), srid=27700),
+                location=Point(int(row[13]), int(row[14]), srid=27700),
                 )
             if row[10] != '310': # bogus value for nonexistent districts
                 locality.district = District.objects.get(id=row[10])

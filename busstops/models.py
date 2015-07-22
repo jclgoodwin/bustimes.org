@@ -72,7 +72,7 @@ class Locality(models.Model):
     qualifier_name = models.CharField(max_length=48, blank=True)
     admin_area = models.ForeignKey(AdminArea)
     district = models.ForeignKey(District, null=True)
-    parent = models.ForeignKey('Locality', null=True)
+    parent = models.ForeignKey('Locality', null=True, editable=False)
     location = models.PointField(srid=27700, null=True)
 
     def __unicode__(self):
@@ -130,7 +130,7 @@ class StopPoint(models.Model):
     location = models.PointField(srid=27700, null=True)
     objects = models.GeoManager()
 
-    stop_area = models.ForeignKey(StopArea, null=True)
+    stop_area = models.ForeignKey(StopArea, null=True, editable=False)
     locality = models.ForeignKey('Locality', editable=False)
     suburb = models.CharField(max_length=48)
     town = models.CharField(max_length=48)
@@ -181,16 +181,13 @@ class Operator(models.Model):
     "An entity that operates public transport services."
 
     id = models.CharField(max_length=10, primary_key=True) # e.g. 'YCST'
-    short_name = models.CharField(max_length=48)
-    public_name = models.CharField(max_length=100)
-    reference_name = models.CharField(max_length=100)
-    license_name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
     vehicle_mode = models.CharField(max_length=48)
     parent = models.CharField(max_length=48)
     region = models.ForeignKey(Region)
 
     def __unicode__(self):
-        return self.public_name
+        return self.name
 
     def get_absolute_url(self):
         return reverse('operator-detail', args=(self.id,))

@@ -26,7 +26,7 @@ class Command(BaseCommand):
             name=smart_text(row[1]),
             admin_area=AdminArea.objects.get(id=row[3]),
             stop_area_type=row[4],
-            location=Point(6, 7),
+            location=Point(int(row[6]), int(row[7]), srid=27700),
             active=(row[12] == 'act'),
             )
 

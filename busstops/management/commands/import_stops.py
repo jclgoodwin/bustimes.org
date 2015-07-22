@@ -10,9 +10,12 @@ from busstops.models import StopPoint, Locality, AdminArea
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        reader = csv.reader(sys.stdin)
-        next(reader, None)
-        for row in reader:
+        rows = enumerate(csv.reader(sys.stdin))
+        next(rows)
+
+        for i, row in rows:
+            if i % 100 ==0:
+                print "At line %d" % i
             try:
                 StopPoint.objects.create(
                     atco_code=row[0],
@@ -24,7 +27,8 @@ class Command(BaseCommand):
                     indicator=row[14],
                     locality=Locality.objects.get(id=row[17]),
                     suburb=row[23],
-                    latlong=Point(map(float, (row[29], row[30]))),
+                    location=Point(int(row[27]), int(row[28]), srid=27700),
+                    latlong=Point(float(row[29]), float(row[30]), srid=4326),
                     stop_type=row[31],
                     bus_stop_type=row[32],
                     timing_status=row[33],
@@ -32,7 +36,9 @@ class Command(BaseCommand):
                     locality_centre=(row[25] == '1'),
                     active=(row[42] == 'act'),
                     admin_area=AdminArea.objects.get(id=row[37]),
-                    bearing=row[16]
+                    bearing=row[16],
                     )
-            except:
+            except UnicodeDecodeError:
                 print 'Skipped row: ' + str(row)
+            except:
+                pass
