@@ -13,6 +13,10 @@
  * Front page things
  */
 (function () {
+
+    /*
+     * SVG map
+     */
     function highlight(href, add) {
         var regionShapeLinks = document.getElementById('svgmap').getElementsByTagName('a');
         for (var i = 0; i < regionShapeLinks.length; i++) {
@@ -37,24 +41,27 @@
         };
     }
 
-
-    $(document.getElementById('search')).submit(function (e) {
-        e.preventDefault();
-        $.get('/search.json', {
-            q: document.getElementById('q').value,
-        }, function(data) {
-            var output = '';
-            for (var i = 0; i < data.length; i++) {
-                output += '<li><a href="' + data[i].url + '">' + data[i].name + '</a></a>';
-            }
-            document.getElementById('results').innerHTML = output;
-        }, 'json');
-    });
-
-    $(document.getElementById('q')).change(function (e) {
+    /*
+     * 'Search places' form
+     */
+    $(document.getElementById('q')).on('keypress', $.debounce(250, function (e) {
+        var resultsElement = document.getElementById('results');
         if (this.value === '') {
-            document.getElementById('results').innerHTML = '';
+            resultsElement.innerHTML = '';
+        } else {
+            $.get('/search.json', {
+                q: this.value,
+            }, function(data) {
+                var output = '';
+                for (var i = 0; i < data.length; i++) {
+                    output += '<li><a href="' + data[i].url + '">' + data[i].name + '</a></a>';
+                }
+                resultsElement.innerHTML = output;
+            }, 'json');
         }
+    }));
+    $(document.getElementById('search')).on('submit', function (e) {
+        e.preventDefault();
     });
 
 })();
