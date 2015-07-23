@@ -70,24 +70,24 @@ class Command(BaseCommand):
 
         national_code_element = operator_element.find('txc:NationalOperatorCode', self.ns)
 
-        try:
-            if national_code_element is not None:
-                operator = Operator.objects.get(id=national_code_element.text)
+        # try:
+        if national_code_element is not None:
+            operator = Operator.objects.get(id=national_code_element.text)
+        else:
+            operator_name = str.replace(
+                operator_element.find('txc:TradingName', self.ns).text,
+                '&amp;',
+                '&'
+                )
+            if operator_name in self.SPECIAL_OPERATORS:
+                operator = Operator.objects.get(id=self.SPECIAL_OPERATORS[operator_name])
             else:
-                operator_name = str.replace(
-                    operator_element.find('txc:TradingName', self.ns).text,
-                    '&amp;',
-                    '&'
-                    )
-                if operator_name in self.SPECIAL_OPERATORS:
-                    operator = Operator.objects.get(id=self.SPECIAL_OPERATORS[operator_name])
-                else:
-                    operator = Operator.objects.get(name=operator_name)
+                operator = Operator.objects.get(name=operator_name)
 
-            return operator
+        return operator
 
-        except:
-            print national_code_element
+        # except:
+            # print national_code_element.text
 
     def do_operators(self, operators_element):
         "Given an Operators element, returns a dict mapping local codes to Operator objects."
@@ -116,25 +116,21 @@ class Command(BaseCommand):
             service.save()
 
             for operator in operators.values():
-                print service
-                print operator
                 service.operator.add(operator)
 
             for stop_element in root.find('txc:StopPoints', self.ns):
                 try:
-                    stop = StopPoint.objects.get(atco_code=stop_element.find('txc:StopPointRef', self.ns).text)
+                    stop_atco_code = stop_element.find('txc:StopPointRef', self.ns).text
+                    stop = StopPoint.objects.get(atco_code=stop_atco_code)
                     service.stops.add(stop)
-                    # print 'Added ' + stop.atco_code + ' to ' + service_version.name + ' :)'
                 except:
-                    print 'Couldn\'t add ' + stop.atco_code + ' to ' + service.service_code + ' :('
-
-            # print Command.get_operating_profile('txc:VehicleJourneys', self.ns).find('txc:VehicleJourney', self.ns).find('txc:OperatingProfile', self.ns)
+                    print "Problem adding stop %s to service %s" % (stop_atco_code, service.service_code)
 
             service_version = ServiceVersion(
                 name=service_version_name,
                 service=service,
                 mode=service_element.find('txc:Mode', self.ns).text,
-                line_name=service_element.find('txc:Lines', self.ns)[0][0].text.split('|', 1)[0] # shorten "N|Turquoise line", for example
+                line_name=service_element.find('txc:Lines', self.ns)[0][0].text.split('|', 1)[0][:24] # shorten "N|Turquoise line", for example
                 )
 
             description_element = service_element.find('txc:Description', self.ns)
