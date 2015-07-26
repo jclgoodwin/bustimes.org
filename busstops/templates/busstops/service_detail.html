@@ -2,7 +2,11 @@
 
 <h1>{{ object }}</h1>
 
-<p>{{ object.get_a_mode }} service operated by {% for operator in object.operator.all %}<a href="{{ operator.get_absolute_url }}">{{ operator }}</a>{% endfor %}</p>
+<p>
+    {{ object.get_a_mode }}
+    service operated by
+    {% for operator in object.operator.all %}{% if not forloop.first %}{% if forloop.last %}, and {% else %}, {% endif %}{% endif %}<a href="{{ operator.get_absolute_url }}">{{ operator }}</a>{% endfor %}
+</p>
 
 <!-- {% for version in timetable %}
 
