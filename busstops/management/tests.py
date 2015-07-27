@@ -50,7 +50,7 @@ class ImportOperatorsTest(TestCase):
         gb = Region.objects.create(id='GB', name='Great Britain')
         scotland = Region.objects.create(id='S', name='Scotland')
 
-        row = ['=FC', 'First Capital Connect', '', '', '', '', '', '', '', '', '', '', 'Admin',
+        row = ['=FC', 'First Capital Connect        ', '', '', '', '', '', '', '', '', '', '', 'Admin',
                'Rail', '', '', 'First']
         operator = self.command.row_to_operator(row)
 

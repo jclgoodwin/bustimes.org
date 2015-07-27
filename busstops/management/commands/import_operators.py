@@ -25,7 +25,7 @@ class Command(BaseCommand):
 
         operator = Operator(
             id=id,
-            name=name,
+            name=name.strip(),
             vehicle_mode=row[13],
             parent=row[16],
             region=region,
