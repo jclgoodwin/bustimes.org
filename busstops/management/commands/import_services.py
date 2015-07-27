@@ -19,6 +19,9 @@ class Command(BaseCommand):
 
     now = datetime.today()
 
+    operator_regex = re.compile(r'^(.+_)?([A-Z]{4})_[A-Za-z0-9]+\.xml$')
+    serviceversion_regex = re.compile(r'(SVR|[A-Z]+_)(.+).xml$')
+
     # map TradingNames to operator IDs where there is no correspondence between the NOC DB and TNDS
     SPECIAL_OPERATORS = {
         'Southwold Town Council': 'SWTC',
@@ -70,29 +73,24 @@ class Command(BaseCommand):
     #         )
     #     print profile
 
-    @staticmethod
-    def get_coach_operator_string(file_name):
-        """
-        Given a file name like 'NATX_G37.xml' or 'Megabus_atco_MEGA_404.xml',
-        returns an operator code like 'NATX', or None.
-        """
-        regex = re.compile(r'^(.+_)?([A-Z]{4})_[A-Za-z0-9]+\.xml$')
-        matches = regex.match(file_name)
+    def get_service_version_name(self, file_name):
+        matches = self.serviceversion_regex.match(file_name)
 
         if matches is not None:
             return matches.group(2)
         else:
-            return None
+            return file_name[:-4]
 
 
     def get_operator(self, operator_element):
-        "Given an operators element, returns an Operator object."
+        "Given an Operator element, returns an Operator object."
 
         national_code_element = operator_element.find('txc:NationalOperatorCode', self.ns)
+        trading_name_element = operator_element.find('txc:TradingName', self.ns)
 
         if national_code_element is not None:
             operator = Operator.objects.get(id=national_code_element.text)
-        else:
+        elif trading_name_element is not None:
             operator_name = str.replace(
                 operator_element.find('txc:TradingName', self.ns).text,
                 '&amp;',
@@ -102,6 +100,8 @@ class Command(BaseCommand):
                 operator = Operator.objects.get(id=self.SPECIAL_OPERATORS[operator_name])
             else:
                 operator = Operator.objects.get(name=operator_name)
+        else:
+            operator = Operator.objects.get(id=operator_element.find('txc:OperatorCode', self.ns).text)
 
         return operator
 
@@ -121,19 +121,26 @@ class Command(BaseCommand):
 
         return operators
 
-    def do_service(self, services_element, service_version_name, operators, root,
+    def do_service(self, services_element, file_name, root,
                    service_descriptions=None):
 
         for service_element in services_element:
+
+            # service
 
             service, created = Service.objects.get_or_create(
                 service_code=service_element.find('txc:ServiceCode', self.ns).text
                 )
 
-            service.save()
+            # service operators:
 
+            operators_element = root.find('txc:Operators', self.ns)
+            operators = self.do_operators(operators_element)
+        
             for operator in operators.values():
                 service.operator.add(operator)
+
+            # service stops:
 
             for stop_element in root.find('txc:StopPoints', self.ns):
                 try:
@@ -143,10 +150,12 @@ class Command(BaseCommand):
                 except:
                     print "Problem adding stop %s to service %s" % (stop_atco_code, service.service_code)
 
+            # service version:
+
             line_name = service_element.find('txc:Lines', self.ns)[0][0].text.split('|', 1)[0][:24] # shorten "N|Turquoise line", for example
 
             service_version = ServiceVersion(
-                name=service_version_name,
+                name=self.get_service_version_name(file_name),
                 service=service,
                 line_name=line_name
                 )
@@ -159,7 +168,7 @@ class Command(BaseCommand):
             if description_element is not None:
                 service_version.description = description_element.text[:100]
             elif service_descriptions is not None:
-                service_version.description = service_descriptions[operators.keys()[0] + line_name]
+                service_version.description = service_descriptions[operators.values()[0].id + line_name]
 
             date_element = service_element.find('txc:OperatingPeriod', self.ns)
             start_date_element = date_element.find('txc:StartDate', self.ns)
@@ -187,24 +196,16 @@ class Command(BaseCommand):
                 
                 file_path = os.path.join(root, file_name)
 
+                # the NCSD has service descriptions are in a separate file:
                 if file_name == 'IncludedServices.csv':
                     with open(file_path) as csv_file:
                         reader = csv.DictReader(csv_file)
-                        services = {}
+                        service_descriptions = {}
                         for row in reader:
                             # e.g. {'NATX323': 'Cardiff - Liverpool'}
-                            services[row['Operator'] + row['LineName']] = row['Description']
+                            service_descriptions[row['Operator'] + row['LineName']] = row['Description']
 
                 elif file_name[-4:] == '.xml':
                     e = ET.parse(file_path).getroot()
 
-                    # try to get the operator code from the file name (for NCSD coach services)
-                    operator = self.get_coach_operator_string(file_name)
-
-                    if operator is not None:
-                        operators = {operator: Operator.objects.get(id=operator)}
-                        print operators
-                    else:
-                        operators = self.do_operators(e.find('txc:Operators', self.ns))
-
-                    self.do_service(e.find('txc:Services', self.ns), file_name[:-4], operators, e, service_descriptions=services)
+                    self.do_service(e.find('txc:Services', self.ns), file_name, e, service_descriptions=services)
