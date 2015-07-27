@@ -24,9 +24,7 @@
         statusBar = L.control({
             position: 'topright'
         }),
-        markers = new L.MarkerClusterGroup({
-            disableClusteringAtZoom: 14
-        });
+        markers = new L.MarkerClusterGroup();
 
     statusBar.onAdd = function () {
         var div = L.DomUtil.create('div', 'hugemap-status');
@@ -40,6 +38,19 @@
         attribution: attribution
     }).addTo(map);
 
+    function processStopsData(data) {
+        var layer = L.geoJson(data, {
+            pointToLayer: function (data, latlng) {
+                return L.marker(latlng, {
+                    icon: pin
+                }).bindPopup('<a href="' + data.properties.url + '">' + data.properties.name + '</a>');
+            }
+        });
+        markers.clearLayers();
+        layer.addTo(markers);
+        statusBar.getContainer().innerHTML = '';
+    }
+
     function loadStops(map, statusBar) {
         var bounds = map.getBounds(),
             hw = map.highwater;
@@ -50,25 +61,14 @@
                 xmax: bounds.getEast(),
                 ymin: bounds.getSouth(),
                 xmin: bounds.getWest(),
-            }, function (data) {
-                var layer = L.geoJson(data, {
-                    pointToLayer: function (data, latlng) {
-                        return L.marker(latlng, {
-                            icon: pin
-                        }).bindPopup('<a href="' + data.properties.url + '">' + data.properties.name + '</a>');
-                    }
-                });
-                markers.clearLayers();
-                layer.addTo(markers);
-                map.highwater = bounds;
-                statusBar.getContainer().innerHTML = '';
-            }, 'json');
+            }, processStopsData, 'json');
+            map.highwater = bounds;
         }
     }
 
     map.on('moveend', function (e) {
         window.location.hash = e.target.getCenter().lat + ',' + e.target.getCenter().lng;
-        if (e.target.getZoom() > 10) {
+        if (e.target.getZoom() > 12) {
             loadStops(this, statusBar);
         } else {
             statusBar.getContainer().innerHTML = 'Please zoom in to see stops';
@@ -76,10 +76,10 @@
     });
 
     if (window.location.hash) {
-        map.setView(window.location.hash.substr(1).split(','), 12);
+        map.setView(window.location.hash.substr(1).split(','), 13);
     } else {
         map.setView([53.833333, -2.416667], 5);
-        map.locate({setView: true, maxZoom: 12});
+        map.locate({setView: true, maxZoom: 13});
     }
 
 })();
