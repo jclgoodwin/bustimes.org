@@ -428,5 +428,32 @@ footer li:first-child:before {
 
 .asides img {
     max-width: 300px;
-    /*height: 250px;*/
+}
+
+#hugemap {
+    height: 640px;
+    height: 90vh;
+    margin: 20px 0;
+}
+
+.marker-cluster {
+    background-clip: padding-box;
+    background-color: #68d3fb;
+    border-radius: 20px;
+}
+
+.marker-cluster div {
+    background-color: #68bbfb;
+    width: 30px;
+    height: 30px;
+    margin-left: 5px;
+    margin-top: 5px;
+
+    text-align: center;
+    border-radius: 15px;
+    font-size: 12px;
+}
+
+.marker-cluster span {
+    line-height: 30px;
 }
