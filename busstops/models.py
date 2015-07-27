@@ -224,7 +224,7 @@ class Service(models.Model):
 
     def get_a_mode(self):
         example_version = ServiceVersion.objects.filter(service=self).first()
-        if example_version is not None:
+        if example_version is not None and example_version.mode:
             mode = example_version.mode
             if mode[0] == 'a':
                 return 'An ' + mode
