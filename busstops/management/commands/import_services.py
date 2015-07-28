@@ -100,10 +100,12 @@ class Command(BaseCommand):
                     operator = Operator.objects.get(id=self.SPECIAL_OPERATORS[operator_name])
                 else:
                     operator = Operator.objects.get(name=operator_name)
-            elif name_on_license_element is not None:
-                operator = Operator.objects.get(name=name_on_license_element.text)
             else:
-                operator = Operator.objects.get(id=operator_element.find('txc:OperatorCode', self.ns).text)
+                possible_operators = Operator.objects.filter(id=operator_element.find('txc:OperatorCode', self.ns).text)
+                if len(possible_operators) == 1:
+                    operator = possible_operators[0]
+                else:
+                    operator = Operator.objects.get(name=name_on_license_element.text)
 
             return operator
 
