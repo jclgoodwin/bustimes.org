@@ -21,7 +21,7 @@ class Command(BaseCommand):
 
     serviceversion_regex = re.compile(r'(SVR|Snapshot[^ _]+_TXC_|[a-z]+_)(.+).xml$')
 
-    # map TradingNames to operator IDs where there is no correspondence between the NOC DB and TNDS
+    # map TradingNames to operator IDs where there is no correspondence between the NOC DB and TNDS:
     SPECIAL_OPERATOR_TRADINGNAMES = {
         'Southwold Town Council': 'SWTC',
         'H.C.Chambers & Son': 'CHMB',
@@ -31,8 +31,14 @@ class Command(BaseCommand):
         'Halesworth Area Community Transport': 'HACT',
         'Dartmouth Steam Railway And River Boat Company': 'DRMR',
     }
+    # map OperatorCodes to operator IDs (ditto):
     SPECIAL_OPERATOR_CODES = {
-        'HIB': 'HIMB',
+        'HIB': 'HIMB', # Holy Island Minibus
+        '1866': 'BPTR', # Burnley & Pendle
+        '2152': 'RSTY', # R S Tyrer & Sons
+        '2916': 'SPCT', # South Pennine Community Transport
+        'RB1': 'RBRO', # Richards Bros
+        'ACY': 'ACYM', # Arriva Cymru/Wales
     }
 
     # @staticmethod
