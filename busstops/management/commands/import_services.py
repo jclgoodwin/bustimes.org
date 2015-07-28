@@ -125,11 +125,32 @@ class Command(BaseCommand):
 
         for service_element in services_element:
 
-            # service
+            # service:
 
-            service, created = Service.objects.get_or_create(
-                service_code=service_element.find('txc:ServiceCode', self.ns).text
-                )
+            line_name = service_element.find('txc:Lines', self.ns)[0][0].text.split('|', 1)[0][:24] # shorten "N|Turquoise line", for example
+
+            mode_element = service_element.find('txc:Mode', self.ns)
+            if mode_element is not None:
+                mode = mode_element.text
+            else:
+                mode = ''
+
+            description_element = service_element.find('txc:Description', self.ns)
+            if description_element is not None:
+                description = description_element.text[:100]
+            elif service_descriptions is not None:
+                description = service_descriptions[operators.values()[0].id + line_name]
+            else:
+                description = ''
+
+            service = Service.objects.update_or_create(
+                service_code=service_element.find('txc:ServiceCode', self.ns).text,
+                defaults=dict(
+                    line_name=line_name,
+                    mode=mode,
+                    description=description
+                    )
+                )[0]
 
             # service operators:
 
@@ -151,23 +172,11 @@ class Command(BaseCommand):
 
             # service version:
 
-            line_name = service_element.find('txc:Lines', self.ns)[0][0].text.split('|', 1)[0][:24] # shorten "N|Turquoise line", for example
-
             service_version = ServiceVersion(
                 name=self.get_service_version_name(file_name),
                 service=service,
-                line_name=line_name
+                description=description
                 )
-
-            mode_element = service_element.find('txc:Mode', self.ns)
-            if mode_element is not None:
-                service_version.mode = mode_element.text
-
-            description_element = service_element.find('txc:Description', self.ns)
-            if description_element is not None:
-                service_version.description = description_element.text[:100]
-            elif service_descriptions is not None:
-                service_version.description = service_descriptions[operators.values()[0].id + line_name]
 
             date_element = service_element.find('txc:OperatingPeriod', self.ns)
             start_date_element = date_element.find('txc:StartDate', self.ns)

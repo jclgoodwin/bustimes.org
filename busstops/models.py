@@ -212,26 +212,25 @@ class Operator(models.Model):
 class Service(models.Model):
     "A bus service."
     service_code = models.CharField(max_length=24, primary_key=True)
+    line_name = models.CharField(max_length=24)
+    description = models.CharField(max_length=100)
+    mode = models.CharField(max_length=10)
     operator = models.ManyToManyField(Operator)
     stops = models.ManyToManyField(StopPoint, editable=False)
 
     def __unicode__(self):
-        example_version = ServiceVersion.objects.filter(service=self).first()
-        if example_version is not None:
-            return example_version.line_name + ' - ' + example_version.description
+        if self.line_name and self.description:
+            return '%s - %s' % (self.line_name, self.description)
         else:
             return self.service_code
 
     def get_a_mode(self):
-        example_version = ServiceVersion.objects.filter(service=self).first()
-        if example_version is not None and example_version.mode:
-            mode = example_version.mode
-            if mode[0] == 'a':
-                return 'An ' + mode
-            else:
-                return 'A ' + mode
+        if not self.mode:
+            return 'A'
+        elif self.mode[0] == 'a':
+            return 'An %s' % self.mode
         else:
-            return 'A' # 'A service'
+            return 'A %s' % self.mode
 
     def get_absolute_url(self):
         return reverse('service-detail', args=(self.service_code,))
@@ -245,14 +244,11 @@ class ServiceVersion(models.Model):
     Further "versions" exist when services are revised.
     """
     name = models.CharField(max_length=24, primary_key=True) # e.g. 'YEABCL1-2015-04-10-1'
-    line_name = models.CharField(max_length=24)
-    service = models.ForeignKey(Service, editable=False)
-    mode = models.CharField(max_length=10)
     description = models.CharField(max_length=100)
-
+    service = models.ForeignKey(Service, editable=False)
     start_date = models.DateField()
     end_date = models.DateField(null=True)
 
     def __unicode__(self):
-        return self.line_name + ' ' + self.description
+        return self.description
 

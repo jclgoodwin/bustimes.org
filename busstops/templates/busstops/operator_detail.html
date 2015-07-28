@@ -6,9 +6,14 @@
 
 <h2>Services</h2>
 
-<ul class="long">
+<ul class="services">
 {% for s in services %}
-    <li><a href="{{ s.get_absolute_url }}">{{ s }}</a></li>
+    <li>
+        <a href="{{ s.get_absolute_url }}">
+            <apan class="name">{{ s.line_name }}</apan>
+            <span class="description">{{s.description }}</span>
+        </a>
+    </li>
 {% endfor %}
 </ul>
 

@@ -151,7 +151,7 @@ class OperatorDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
-        context['services'] = Service.objects.filter(operator=self.object)
+        context['services'] = Service.objects.filter(operator=self.object).order_by('line_name')
         return context
 
 

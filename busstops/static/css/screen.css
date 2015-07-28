@@ -35,7 +35,8 @@ a:hover {
     text-decoration: underline;
 }
 
-a:focus, a:active {
+a:focus,
+a:active {
     color: #000;
     background-color: #68D3FB;
 }
@@ -72,6 +73,26 @@ main ul li {
 main ul a {
     display: block;
     padding: 3px 0 4px;
+}
+
+.services a {
+    display: block;
+    overflow: hidden;
+    padding: 6px 0 8px;
+}
+
+.services .name {
+    color: #68bbfb;
+    display: block;
+    font-size: 40px;
+    line-height: 42px;
+    float: left;
+    margin-right: 14px;
+}
+
+.services a:focus .name,
+.services a:active .name {
+    color: inherit;
 }
 
 header {
@@ -206,6 +227,7 @@ main {
 .box {
     padding: 8px 15px;
     border: 1px solid #68D3FB;
+    box-sizing: border-box;
 }
 
 .box h2 {
@@ -285,7 +307,6 @@ footer li:first-child:before {
         width: 48%;
         float: left;
         margin-left: 4%;
-        box-sizing: border-box;
     }
 
     .long li:nth-child(2n-1),
@@ -328,6 +349,21 @@ footer li:first-child:before {
     ul.long a {
         display: block;
     }
+
+    .services {
+        overflow: hidden;
+    }
+
+    .services li {
+        width: 48.5%;
+        float: left;
+        margin-left: 3%;
+    }
+
+    .services li:nth-child(2n-1) {
+        margin-left: 0;
+    }
+
 }
 
 @media (min-width: 1000px) {
@@ -369,8 +405,7 @@ footer li:first-child:before {
     }
 }
 
-.leaflet-container .leaflet-control,
-.leaflet-container .leaflet-popup-content {
+.leaflet-container div {
     font-family: "PT Sans", sans-serif;
     font-size: 14px;
 }
@@ -393,7 +428,6 @@ footer li:first-child:before {
     border: 1px solid #68D3FB;
     box-shadow: none;
     font: inherit;
-    /*-webkit-appearance: textfield;*/
     outline: none;
     padding: 5px 5px 7px;
     position: relative;
