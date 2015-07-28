@@ -81,7 +81,7 @@ class AdminAreaDetailView(DetailView):
 
         # Localities in this administrative area that don't belong to any district, if any
         context['localities'] = Locality.objects.filter(
-            admin_area=self.object, district=None, stoppoint__active=True
+            admin_area=self.object, district=None, parent=None, stoppoint__active=True,
             ).distinct().order_by('name')
 
         # National Rail/Air/Ferry stops
