@@ -189,6 +189,10 @@ class Command(BaseCommand):
                 description=description
                 )
 
+            if len(service_version.name) > 24:
+                print '%s (from %s) is too long, skipping' % (service_version.name, file_name)
+                break
+
             date_element = service_element.find('txc:OperatingPeriod', self.ns)
             start_date_element = date_element.find('txc:StartDate', self.ns)
             end_date_element = date_element.find('txc:EndDate', self.ns)
