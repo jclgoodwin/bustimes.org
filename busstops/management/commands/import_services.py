@@ -80,39 +80,37 @@ class Command(BaseCommand):
         else:
             return file_name[:-4]
 
-
     def get_operator(self, operator_element):
         "Given an Operator element, returns an Operator object."
 
-        national_code_element = operator_element.find('txc:NationalOperatorCode', self.ns)
-        trading_name_element = operator_element.find('txc:TradingName', self.ns)
-        name_on_license_element = operator_element.find('txc:OperatorNameOnLicence', self.ns)
+        try:
+            national_code_element = operator_element.find('txc:NationalOperatorCode', self.ns)
+            trading_name_element = operator_element.find('txc:TradingName', self.ns)
+            name_on_license_element = operator_element.find('txc:OperatorNameOnLicence', self.ns)
 
-        if national_code_element is not None:
-            operator = Operator.objects.get(id=national_code_element.text)
-        elif trading_name_element is not None:
-            operator_name = str.replace(
-                operator_element.find('txc:TradingName', self.ns).text,
-                '&amp;',
-                '&'
-                )
-            if operator_name in self.SPECIAL_OPERATORS:
-                operator = Operator.objects.get(id=self.SPECIAL_OPERATORS[operator_name])
+            if national_code_element is not None:
+                operator = Operator.objects.get(id=national_code_element.text)
+            elif trading_name_element is not None:
+                operator_name = str.replace(
+                    operator_element.find('txc:TradingName', self.ns).text,
+                    '&amp;',
+                    '&'
+                    )
+                if operator_name in self.SPECIAL_OPERATORS:
+                    operator = Operator.objects.get(id=self.SPECIAL_OPERATORS[operator_name])
+                else:
+                    operator = Operator.objects.get(name=operator_name)
+            elif name_on_license_element is not None:
+                operator = Operator.objects.get(name=name_on_license_element.text)
             else:
-                operator = Operator.objects.get(name=operator_name)
-        elif name_on_license_element is not None:
-            operator = Operator.objects.get(name=name_on_license_element.text)
-        else:
-            try:
                 operator = Operator.objects.get(id=operator_element.find('txc:OperatorCode', self.ns).text)
-            except Exception, error:
-                print str(error)
-                print ET.tostring(operator_element)
-                return None
 
-        return operator
+            return operator
 
-
+        except Exception, error:
+            print str(error)
+            print ET.tostring(operator_element)
+            return None
 
     def do_operators(self, operators_element):
         "Given an Operators element, returns a dict mapping local codes to Operator objects."
