@@ -22,13 +22,17 @@ class Command(BaseCommand):
     serviceversion_regex = re.compile(r'(SVR|Snapshot[A-Za-z]+_TXC_|[A-Z]+_)(.+).xml$')
 
     # map TradingNames to operator IDs where there is no correspondence between the NOC DB and TNDS
-    SPECIAL_OPERATORS = {
+    SPECIAL_OPERATOR_TRADINGNAMES = {
         'Southwold Town Council': 'SWTC',
         'H.C.Chambers & Son': 'CHMB',
         'Bungay and Beccles Area CT': 'BBCT',
         'Stowmarket Minibus & Coach Hire': 'MBCH',
         'Harwich Harbour Ferry': 'HHFS',
         'Halesworth Area Community Transport': 'HACT',
+        'Dartmouth Steam Railway And River Boat Company': 'DRMR',
+    }
+    SPECIAL_OPERATOR_CODES = {
+        'HIB': 'HIMB',
     }
 
     # @staticmethod
@@ -89,25 +93,28 @@ class Command(BaseCommand):
             name_on_license_element = operator_element.find('txc:OperatorNameOnLicence', self.ns)
 
             if national_code_element is not None:
-                operator = Operator.objects.get(id=national_code_element.text)
-            elif trading_name_element is not None:
+                return Operator.objects.get(id=national_code_element.text)
+
+            if trading_name_element is not None:
                 operator_name = str.replace(
                     operator_element.find('txc:TradingName', self.ns).text,
                     '&amp;',
                     '&'
                     )
-                if operator_name in self.SPECIAL_OPERATORS:
-                    operator = Operator.objects.get(id=self.SPECIAL_OPERATORS[operator_name])
-                else:
-                    operator = Operator.objects.get(name=operator_name)
-            else:
-                possible_operators = Operator.objects.filter(id=operator_element.find('txc:OperatorCode', self.ns).text)
-                if len(possible_operators) == 1:
-                    operator = possible_operators[0]
-                else:
-                    operator = Operator.objects.get(name=name_on_license_element.text)
+                if operator_name in self.SPECIAL_OPERATOR_TRADINGNAMES:
+                    return Operator.objects.get(id=self.SPECIAL_OPERATOR_TRADINGNAMES[operator_name])
 
-            return operator
+                return Operator.objects.get(name=operator_name)
+
+            operator_code = operator_element.find('txc:OperatorCode', self.ns).text
+            if operator_code in self.SPECIAL_OPERATOR_CODES:
+                return Operator.objects.get(id=self.SPECIAL_OPERATOR_CODES[operator_code])
+
+            possible_operators = Operator.objects.filter(id=operator_code)
+            if len(possible_operators) == 1:
+                return possible_operators[0]
+
+            return Operator.objects.get(name=name_on_license_element.text)
 
         except Exception, error:
             print str(error)
@@ -137,7 +144,7 @@ class Command(BaseCommand):
 
             # service:
 
-            line_name = service_element.find('txc:Lines', self.ns)[0][0].text.split('|', 1)[0][:24] # shorten "N|Turquoise line", for example
+            line_name = service_element.find('txc:Lines', self.ns)[0][0].text[:24]
 
             mode_element = service_element.find('txc:Mode', self.ns)
             if mode_element is not None:
