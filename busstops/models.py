@@ -224,6 +224,10 @@ class Service(models.Model):
         else:
             return self.service_code
 
+    def has_long_line_name(self):
+        "Is this service's line_name more than 4 characters long?"
+        return len(self.line_name) > 4
+
     def get_a_mode(self):
         if not self.mode:
             return 'A'

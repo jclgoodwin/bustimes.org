@@ -81,13 +81,19 @@ main ul a {
     padding: 6px 0 8px;
 }
 
+.services span {
+    display: block;
+}
+
 .services .name {
     color: #68bbfb;
-    display: block;
-    font-size: 40px;
-    line-height: 42px;
     float: left;
     margin-right: 14px;
+}
+
+.services .name.is-short {
+    font-size: 40px;
+    line-height: 42px;
 }
 
 .services a:focus .name,
@@ -361,6 +367,7 @@ footer li:first-child:before {
     }
 
     .services li:nth-child(2n-1) {
+        clear: left;
         margin-left: 0;
     }
 
