@@ -6,7 +6,7 @@
 
 <h2>Localities in {{ locality }}</h2>
 
-<ul>
+<ul class="long">
 {% for l in localities %}
     <li><a href="{{ l.get_absolute_url }}">{{ l }}</a></li>
 {% endfor %}

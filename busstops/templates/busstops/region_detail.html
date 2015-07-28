@@ -4,7 +4,7 @@
 
 <h2>Areas in {{ region.the }}</h2>
 
-<ul>
+<ul class="long">
 {% for a in areas %}
     <li><a href="{{ a.get_absolute_url }}">{{ a }}</a></li>
 {% endfor %}
