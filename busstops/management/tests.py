@@ -1,8 +1,44 @@
 "Tests for management commands."
 from django.test import TestCase
-from busstops.management.commands import import_stop_areas
-from busstops.management.commands import import_operators
+from busstops.management.commands import import_stop_areas, import_operators, import_services
 from busstops.models import Region, AdminArea
+
+
+class GetServiceVersionNameTest(TestCase):
+    """
+    Test the method that sort of hashes a file name to a shorter,
+    still useful name for a ServiceVersion.
+    """
+
+    command = import_services.Command()
+
+    def test_get_service_version_name(self):
+        "Test with the different styles used in different regions."
+
+        data = (
+            # W:
+            ('SnapshotP&OLloyd_TXC_2015723-0507_FLBO023.xml', '2015723-0507_FLBO023'),
+            ('SnapshotHDHutchinson&Son_TXC_2015723-0503_FLAB000.xml', '2015723-0503_FLAB000'),
+            ('SnapshotConnect2_TXC_2015714-0306_CPAC001.xml', '2015714-0306_CPAC001'),
+            ('SnapshotNewportBus_TXC_2015714-0317_NTAO155.xml', '2015714-0317_NTAO155'),
+            ('SnapshotJohn\'sTravel(MT)_TXC_2015723-0503_MTAO020.xml', '2015723-0503_MTAO020'),
+            # EA, SE:
+            ('suf_56-FRY-1-y08-15.xml', '56-FRY-1-y08-15'),
+            ('ea_21-27-D-y08-1.xml', '21-27-D-y08-1'),
+            ('ea_21-2-_-y08-1.xml', '21-2-_-y08-1'),
+            ('bed_52-FL2-_-y08-1.xml', '52-FL2-_-y08-1'),
+            # NCSD:
+            ('NATX_330.xml', 'NATX_330'),
+            # Y, S
+            ('SVRWLCO021-20121121-13693.xml', 'WLCO021-20121121-13693'),
+            ('SVRABAN007-20150620-9.xml', 'ABAN007-20150620-9'),
+            # NE:
+            ('NE_130_PB2717_21A.xml', 'NE_130_PB2717_21A'),
+            )
+
+        for file_name, name in data:
+            self.assertEqual(self.command.get_service_version_name(file_name), name)
+
 
 class ImportStopAreasTest(TestCase):
     "Test the import_stop_areas command."
