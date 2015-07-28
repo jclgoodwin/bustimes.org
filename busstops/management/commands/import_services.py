@@ -145,6 +145,14 @@ class Command(BaseCommand):
             else:
                 mode = ''
 
+            # service operators:
+            # (doing this preliminary bit now, to make getting NCSD descriptions possible)
+
+            operators_element = root.find('txc:Operators', self.ns)
+            operators = self.do_operators(operators_element)
+
+            # service description:
+
             description_element = service_element.find('txc:Description', self.ns)
             if description_element is not None:
                 description = description_element.text[:100]
@@ -152,6 +160,8 @@ class Command(BaseCommand):
                 description = service_descriptions[operators.values()[0].id + line_name]
             else:
                 description = ''
+
+            # service:
 
             service = Service.objects.update_or_create(
                 service_code=service_element.find('txc:ServiceCode', self.ns).text,
@@ -162,10 +172,7 @@ class Command(BaseCommand):
                     )
                 )[0]
 
-            # service operators:
-
-            operators_element = root.find('txc:Operators', self.ns)
-            operators = self.do_operators(operators_element)
+            # service operators (part 2):
         
             for operator in operators.values():
                 if operator is not None:
@@ -179,7 +186,7 @@ class Command(BaseCommand):
                     stop = StopPoint.objects.get(atco_code=stop_atco_code)
                     service.stops.add(stop)
                 except:
-                    print "Problem adding stop %s to service %s" % (stop_atco_code, service.service_code)
+                    print 'Problem adding stop %s to service %s' % (stop_atco_code, service.service_code)
 
             # service version:
 
@@ -209,7 +216,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        services = None
+        service_descriptions = None
 
         for root, dirs, files in os.walk('../TNDS/'):
 
@@ -231,4 +238,4 @@ class Command(BaseCommand):
                 elif file_name[-4:] == '.xml':
                     e = ET.parse(file_path).getroot()
 
-                    self.do_service(e.find('txc:Services', self.ns), file_name, e, service_descriptions=services)
+                    self.do_service(e.find('txc:Services', self.ns), file_name, e, service_descriptions=service_descriptions)
