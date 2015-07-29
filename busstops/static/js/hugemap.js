@@ -10,7 +10,6 @@
 
     var map = L.map('hugemap', {
             minZoom: 5,
-            maxZoom: 17,
             maxBounds: L.latLngBounds([49.004430, -9.408655], [59.76591, 2.5])
         }),
         attribution = 'Map data &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors | Map tiles &copy; <a href="https://cartodb.com/attributions#basemaps">CartoDB</a>',

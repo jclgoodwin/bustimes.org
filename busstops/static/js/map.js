@@ -1,5 +1,14 @@
 (function () {
 
+    'use strict';
+
+    /*jslint
+        browser: true
+    */
+    /*global
+        L, $
+    */
+
     if (document.getElementById('map').clientWidth > 0) {
 
         var items = document.getElementsByTagName('li'),
@@ -14,35 +23,40 @@
                 locations.push([
                     parseFloat(metaElements[0].getAttribute('content')),
                     parseFloat(metaElements[1].getAttribute('content'))
-                    ]);
+                ]);
                 labels.push(items[i].innerHTML);
             }
         }
 
-        if (! locations.length) {
+        if (!locations.length) {
             metaElements = document.getElementsByTagName('meta');
             for (i = 0; i < metaElements.length; i++) {
                 if (metaElements[i].getAttribute('itemprop') === 'latitude') {
                     locations.push([
                         parseFloat(metaElements[i].getAttribute('content')),
-                        parseFloat(metaElements[i+1].getAttribute('content'))
-                        ]);
+                        parseFloat(metaElements[i + 1].getAttribute('content'))
+                    ]);
                 }
             }
         }
 
         if (locations.length) {
-            var map = L.map('map');
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
+            var map = L.map('map', {
+                    zoom: false,
+                    maxBounds: L.latLngBounds([49.004430, -9.408655], [59.76591, 2.5])
+                }),
+                attribution = 'Map data &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors | Map tiles &copy; <a href="https://cartodb.com/attributions#basemaps">CartoDB</a>',
+                tileURL = (document.location.protocol === 'https:' ? 'https://cartodb-basemaps-{s}.global.ssl.fastly.net' : 'http://{s}.basemaps.cartocdn.com') + '/light_all/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
+                pin = L.icon({
+                    iconUrl:    '/static/pin.svg',
+                    iconSize:   [16, 22],
+                    iconAnchor: [8, 22],
+                    popupAnchor: [0, -22],
+                });
 
-            var pin = L.icon({
-                iconUrl:    '/static/pin.svg',
-                iconSize:   [16, 22],
-                iconAnchor: [8, 22],
-                popupAnchor: [0, -22],
-            });
+            L.tileLayer(tileURL, {
+                attribution: attribution
+            }).addTo(map);
 
             if (locations.length === 1) {
                 L.marker(locations[0], {icon: pin}).addTo(map);
