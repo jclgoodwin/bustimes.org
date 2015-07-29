@@ -29,6 +29,7 @@ class GetServiceVersionNameTest(TestCase):
             ('bed_52-FL2-_-y08-1.xml', '52-FL2-_-y08-1'),
             # NCSD:
             ('NATX_330.xml', 'NATX_330'),
+            ('National Express_NX_atco_NATX_T61.xml', 'NATX_T61'),
             # Y, S
             ('SVRWLCO021-20121121-13693.xml', 'WLCO021-20121121-13693'),
             ('SVRABAN007-20150620-9.xml', 'ABAN007-20150620-9'),

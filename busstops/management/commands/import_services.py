@@ -19,7 +19,7 @@ class Command(BaseCommand):
 
     now = datetime.today()
 
-    serviceversion_regex = re.compile(r'(SVR|Snapshot[^ _]+_TXC_|[a-z]+_)(.+).xml$')
+    serviceversion_regex = re.compile(r'(SVR|Snapshot[^ _]+_TXC_|[a-z]+_|.*_atco_)(.+).xml$')
 
     # map TradingNames to operator IDs where there is no correspondence between the NOC DB and TNDS:
     SPECIAL_OPERATOR_TRADINGNAMES = {
