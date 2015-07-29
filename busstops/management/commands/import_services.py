@@ -39,6 +39,8 @@ class Command(BaseCommand):
         '2916': 'SPCT', # South Pennine Community Transport
         'RB1': 'RBRO', # Richards Bros
         'ACY': 'ACYM', # Arriva Cymru/Wales
+        'RMB': 'RMBL', # Routemaster Buses Ltd
+        'JO1': 'JTMT', # John's Travel (Merthyr Tydfil)
     }
 
     # @staticmethod
