@@ -1,6 +1,6 @@
 {% include 'header.html' %}
 
-<h1>{{ locality }}</h1>
+<h1>{{ locality.get_qualified_name }}</h1>
 
 {% if localities %}
 
@@ -13,6 +13,8 @@
 </ul>
 
 {% endif %}
+
+{% if stops %}
 
 <h2>Stops in {{ locality }}</h2>
 
@@ -31,5 +33,7 @@
     </li>
 {% endfor %}
 </ul>
+
+{% endif %}
 
 {% include 'footer.html' %}
