@@ -4,19 +4,15 @@ Usage:
     $ ./manage.py import_stop_area_hierarchy < AreaHierarchy.py
 """
 
-import sys
-import csv
-
-from django.core.management.base import BaseCommand
+from busstops.management.import_from_csv import ImportFromCSVCommand
 from busstops.models import StopArea
 
-class Command(BaseCommand):
 
-    def handle(self, *args, **options):
-        reader = csv.reader(sys.stdin)
-        next(reader) # skip past header
-        for row in reader:
-            parent = StopArea.objects.get(id=row[0])
-            child = StopArea.objects.get(id=row[0])
-            child.parent = parent
+class Command(ImportFromCSVCommand):
+
+    def handle_row(self, row):
+        child = StopArea.objects.get(id=row['ChildStopAreaCode'])
+        parent_id = row['ParentStopAreaCode']
+        if child.parent_id != parent_id:
+            child.parent = StopArea.objects.get(id=parent_id)
             child.save()

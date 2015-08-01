@@ -4,24 +4,16 @@ Usage:
     $ ./manage.py import_stops_in_area < StopsInArea.csv
 """
 
-import sys
-import csv
-
-from django.core.management.base import BaseCommand
+from busstops.management.import_from_csv import ImportFromCSVCommand
 from busstops.models import StopPoint, StopArea
 
-class Command(BaseCommand):
 
-    def handle(self, *args, **options):
-        reader = csv.reader(sys.stdin)
-        next(reader, None) # skip past header
-        area = None
-        for row in reader:
-            try:
-                if area is None or area.id != row[0]:
-                    area = StopArea.objects.get(id=row[0])
-                stop = StopPoint.objects.get(atco_code=row[1])
-                stop.stop_area = area
-                stop.save()
-            except:
-                print row
+class Command(ImportFromCSVCommand):
+
+    def handle_row(self, row):
+        area_id = row['StopAreaCode']
+        stop = StopPoint.objects.get(atco_code=row['AtcoCode'])
+        if stop.stop_area_id != area_id:
+            area = StopArea.objects.get(id=area_id)
+            stop.stop_area = area
+            stop.save()

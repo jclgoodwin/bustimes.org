@@ -5,19 +5,16 @@ Usage:
 
     import_locality_hierarchy < LocalityHierarchy.csv
 """
-import sys
-import csv
-from django.core.management.base import BaseCommand
+
+from busstops.management.import_from_csv import ImportFromCSVCommand
 from busstops.models import Locality
 
 
-class Command(BaseCommand):
+class Command(ImportFromCSVCommand):
 
-    def handle(self, *args, **options):
-        reader = csv.reader(sys.stdin)
-        next(reader) # skip past header
-        for row in reader:
-            parent = Locality.objects.get(id=row[0])
-            child = Locality.objects.get(id=row[1])
-            child.parent = parent
+    def handle_row(self, row):
+        child = Locality.objects.get(id=row['ChildNptgLocalityCode'])
+        parent_id = row['ParentNptgLocalityCode']
+        if child.parent_id != parent_id:
+            child.parent = Locality.objects.get(id=parent_id)
             child.save()

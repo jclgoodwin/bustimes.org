@@ -5,21 +5,18 @@ Usage:
 
     import_districts > Districts.csv
 """
-import sys
-import csv
 
-from django.core.management.base import BaseCommand
-
+from busstops.management.import_from_csv import ImportFromCSVCommand
 from busstops.models import District, AdminArea
 
-class Command(BaseCommand):
 
-    def handle(self, *args, **options):
-        reader = csv.reader(sys.stdin)
-        next(reader) # skip past header
-        for row in reader:
-            District.objects.create(
-                id=row[0],
-                name=row[1],
-                admin_area=AdminArea.objects.get(id=row[3]),
-                )
+class Command(ImportFromCSVCommand):
+
+    def handle_row(self, row):
+        District.objects.update_or_create(
+            id=row['DistrictCode'],
+            defaults={
+                'name': row['DistrictName'],
+                'admin_area': AdminArea.objects.get(id=row['AdministrativeAreaCode']),
+            }
+        )

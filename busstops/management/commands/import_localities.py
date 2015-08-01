@@ -6,26 +6,26 @@ Usage:
     import_localities < Localities.csv
 """
 
-import sys
-import csv
-from django.core.management.base import BaseCommand
-from django.contrib.gis.geos import Point
+from busstops.management.import_from_csv import ImportFromCSVCommand
 from busstops.models import Locality, AdminArea, District
+from django.contrib.gis.geos import Point
 
 
-class Command(BaseCommand):
+class Command(ImportFromCSVCommand):
 
-    def handle(self, *args, **options):
-        reader = csv.reader(sys.stdin)
-        next(reader) # skip past header
-        for row in reader:
-            locality = Locality(
-                id=row[0],
-                name=row[1],
-                qualifier_name=row[5],
-                admin_area=AdminArea.objects.get(id=row[9]),
-                location=Point(int(row[13]), int(row[14]), srid=27700),
-                )
-            if row[10] != '310': # bogus value for nonexistent districts
-                locality.district = District.objects.get(id=row[10])
-            locality.save()
+    def handle_row(self, row):
+
+        defaults = {
+            'name':           row['LocalityName'],
+            'qualifier_name': row['QualifierName'],
+            'admin_area':     AdminArea.objects.get(id=row['AdministrativeAreaCode']),
+            'location':       Point(int(row['Easting']), int(row['Northing']), srid=27700),
+        }
+
+        if row['NptgDistrictCode'] != '310':
+            defaults['district'] = District.objects.get(id=row['NptgDistrictCode'])
+
+        Locality.objects.update_or_create(
+            id=row['NptgLocalityCode'],
+            defaults=defaults
+        )

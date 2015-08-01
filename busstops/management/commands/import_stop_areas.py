@@ -1,39 +1,26 @@
 """
+Import stop areas from the NPTG.
+
 Usage:
 
-    $ ./manage.py import_stop_areas < StopAreas.py
+    $ ./manage.py import_stop_areas < StopAreas.csv
 """
 
-import sys
-import csv
-
-from django.contrib.gis.geos import Point
-from django.core.management.base import BaseCommand
+from busstops.management.import_from_csv import ImportFromCSVCommand
 from busstops.models import StopArea, AdminArea
+from django.contrib.gis.geos import Point
 
-class Command(BaseCommand):
 
-    @staticmethod
-    def row_to_stoparea(row):
-        """
-        Given a CSV row (a list of strings),
-        returns a StopArea object.
-        """
-        return StopArea(
-            id=row[0],
-            name=row[1].decode('latin1'),
-            admin_area=AdminArea.objects.get(id=row[3]),
-            stop_area_type=row[4],
-            location=Point(int(row[6]), int(row[7]), srid=27700),
-            active=(row[12] == 'act'),
-            )
+class Command(ImportFromCSVCommand):
 
-    def handle(self, *args, **options):
-        reader = csv.reader(sys.stdin)
-        next(reader, None) # skip past header
-        for row in reader:
-            try:
-                stoparea = self.row_to_stoparea(row)
-                stoparea.save()
-            except UnicodeDecodeError:
-                print row
+    def handle_row(self, row):
+        return StopArea.objects.update_or_create(
+            id=row['StopAreaCode'],
+            defaults={
+                'name':            row['Name'].decode('latin1'),
+                'admin_area':      AdminArea.objects.get(id=row['AdministrativeAreaCode']),
+                'stop_area_type':  row['StopAreaType'],
+                'location':        Point(int(row['Easting']), int(row['Northing']), srid=27700),
+                'active':          (row['Status'] == 'act'),
+            }
+        )[0]
