@@ -1,5 +1,6 @@
 "View definitions."
 from django.shortcuts import render
+from django.db.models import Q
 from django.http import JsonResponse
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
@@ -17,16 +18,25 @@ def hugemap(request):
     "The biggish JavaScript map"
     return render(request, 'map.html')
 
+
 def stops(request):
     """
-    JSON endpoint accessed by the JavaScript map, listing the active StopPoints within a
-    rectangle, in standard GeoJSON format
+    JSON endpoint accessed by the JavaScript map,
+    listing the active StopPoints within a rectangle,
+    in standard GeoJSON format
     """
 
-    bounding_box = Polygon.from_bbox([request.GET[key] for key in ('xmin', 'ymin', 'xmax', 'ymax')])
-    results = StopPoint.objects.filter(latlong__within=bounding_box, active=True)
+    bounding_box = Polygon.from_bbox(
+        [request.GET[key] for key in ('xmin', 'ymin', 'xmax', 'ymax')]
+    )
+    results = StopPoint.objects.filter(
+        latlong__within=bounding_box, active=True
+    )
 
-    data = {'type': 'FeatureCollection', 'features': []}
+    data = {
+        'type': 'FeatureCollection',
+        'features': []
+    }
     for stop in results:
         data['features'].append(
             {
@@ -43,8 +53,12 @@ def stops(request):
             )
     return JsonResponse(data)
 
+
 def search(request):
-    "A list of up to 10 localities whose names contain the request.GET['q'] string"
+    """
+    A list of up to 10 localities
+    whose names all contain the `request.GET['q']` string
+    """
     data = []
     query = request.GET.get('q')
     if query:
@@ -52,7 +66,7 @@ def search(request):
             data.append({
                 'name': locality.get_qualified_name(),
                 'url':  locality.get_absolute_url()
-                })
+            })
     return JsonResponse(data, safe=False)
 
 
@@ -75,19 +89,25 @@ class AdminAreaDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(AdminAreaDetailView, self).get_context_data(**kwargs)
 
-        # Districts in this administrative area, if any
+        # Districts in this administrative area,
         context['districts'] = District.objects.filter(
-            admin_area=self.object, locality__stoppoint__active=True).distinct()
+            admin_area=self.object,
+            locality__stoppoint__active=True
+        ).distinct()
 
-        # Localities in this administrative area that don't belong to any district, if any
+        # Districtless localities in this administrative area
         context['localities'] = Locality.objects.filter(
-            admin_area=self.object, district=None, parent=None, stoppoint__active=True,
-            ).distinct().order_by('name')
+            admin_area=self.object,
+            district=None,
+            parent=None,
+        ).distinct().order_by('name')
 
         # National Rail/Air/Ferry stops
         if len(context['localities']) == 0 and len(context['districts']) == 0:
             context['stops'] = StopPoint.objects.filter(
-                admin_area=self.object, active=True).order_by('common_name')
+                admin_area=self.object,
+                active=True
+            ).order_by('common_name')
 
         context['breadcrumb'] = [self.object.region]
         return context
@@ -101,7 +121,11 @@ class DistrictDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(DistrictDetailView, self).get_context_data(**kwargs)
         context['localities'] = Locality.objects.filter(
-            district=self.object, parent=None, stoppoint__active=True).distinct().order_by('name')
+            Q(stoppoint__active=True) |
+            Q(locality__stoppoint__active=True),
+            district=self.object,
+            parent=None
+        ).distinct().order_by('name')
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
         return context
 
@@ -113,16 +137,25 @@ class LocalityDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(LocalityDetailView, self).get_context_data(**kwargs)
-        context['stops'] = StopPoint.objects.filter(locality=self.object, active=True
-            ).order_by('common_name')
-        context['localities'] = Locality.objects.filter(parent=self.object, stoppoint__active=True
-            ).distinct().order_by('name')
+
+        context['stops'] = StopPoint.objects.filter(
+            locality=self.object,
+            active=True
+        ).order_by('common_name')
+
+        context['localities'] = Locality.objects.filter(
+            Q(stoppoint__active=True) |
+            Q(locality__stoppoint__active=True),
+            parent=self.object,
+        ).distinct().order_by('name')
+
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region,
             self.object.admin_area,
             self.object.district,
-            self.object.parent, 
-            ])
+            self.object.parent
+        ])
+
         return context
 
 
@@ -134,8 +167,10 @@ class StopPointDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
         if self.object.stop_area:
-            context['nearby'] = StopPoint.objects.filter(stop_area=self.object.stop_area,
-                active=True).exclude(atco_code=self.object.atco_code).order_by('atco_code')
+            context['nearby'] = StopPoint.objects.filter(
+                stop_area=self.object.stop_area,
+                active=True
+            ).exclude(atco_code=self.object.atco_code).order_by('atco_code')
         context['services'] = Service.objects.filter(stops=self.object).order_by('service_code')
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region,
@@ -143,7 +178,7 @@ class StopPointDetailView(DetailView):
             self.object.locality.district,
             self.object.locality.parent,
             self.object.locality,
-            ])
+        ])
         return context
 
 
