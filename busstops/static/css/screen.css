@@ -255,7 +255,7 @@ footer {
     margin-top: 20px;
 }
 
-footer .advert,
+footer .banner-ad,
 footer ul {
     border-top: 1px solid #68D3FB;
     clear: both;
@@ -264,7 +264,7 @@ footer ul {
 }
 
 
-footer .advert {
+footer .banner-ad {
     padding: 20px;
     overflow: hidden;
 }
