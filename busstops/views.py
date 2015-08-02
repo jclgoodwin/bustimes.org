@@ -91,12 +91,15 @@ class AdminAreaDetailView(DetailView):
 
         # Districts in this administrative area,
         context['districts'] = District.objects.filter(
+            Q(locality__stoppoint__active=True) |
+            Q(locality__locality__stoppoint__active=True),
             admin_area=self.object,
-            locality__stoppoint__active=True
         ).distinct()
 
         # Districtless localities in this administrative area
         context['localities'] = Locality.objects.filter(
+            Q(stoppoint__active=True) |
+            Q(locality__stoppoint__active=True),
             admin_area=self.object,
             district=None,
             parent=None,
