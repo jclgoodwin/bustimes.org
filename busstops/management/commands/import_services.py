@@ -30,6 +30,7 @@ class Command(BaseCommand):
         'Harwich Harbour Ferry': 'HHFS',
         'Halesworth Area Community Transport': 'HACT',
         'Dartmouth Steam Railway And River Boat Company': 'DRMR',
+        'Borderbus': 'BDRB',
     }
     # map OperatorCodes to operator IDs (ditto):
     SPECIAL_OPERATOR_CODES = {
