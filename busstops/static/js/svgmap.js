@@ -22,9 +22,9 @@
         for (var i = 0; i < regionShapeLinks.length; i++) {
             if ('/regions/GB' === href || regionShapeLinks[i].getAttributeNS('http://www.w3.org/1999/xlink', 'href') === href) {
                 if (add) {
-                    regionShapeLinks[i].classList.add('highlight');
+                    regionShapeLinks[i].className += 'highlight';
                 } else {
-                    regionShapeLinks[i].classList.remove('highlight');
+                    regionShapeLinks[i].className = '';
                 }
             }
         }
