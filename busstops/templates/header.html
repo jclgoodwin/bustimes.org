@@ -7,6 +7,9 @@
 <meta name="theme-color" content="#68D3FB" />
 {% load staticfiles %}
 <link rel="stylesheet" href="{% static "css/screen.css" %}" />
+<!--[if lt IE 9]>
+<script src="{% static "js/html5shiv-printshiv.min.js" %}"></script>
+<![endif]-->
 {% if object.get_absolute_url %}<link rel="canonical" href="https://bustimes.org.uk{{ object.get_absolute_url }}" />{% endif %}
 </head>
 <body>

@@ -26,6 +26,13 @@ body {
     margin: 0;
 }
 
+header,
+main,
+aside,
+footer {
+    display: block;
+}
+
 a {
     color: #4c2c92;
     text-decoration: none;
