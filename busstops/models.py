@@ -3,6 +3,8 @@
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
 from django.core.urlresolvers import reverse
+from urllib import urlencode
+import re
 
 
 class Region(models.Model):
@@ -239,6 +241,27 @@ class Service(models.Model):
 
     def get_absolute_url(self):
         return reverse('service-detail', args=(self.service_code,))
+
+    def get_traveline_url(self):
+        if self.net != '':
+            regex = re.compile(r'([0-9]+)-([0-9A-z]+)-([A-Z_])-([a-z0-9]+)-([0-9])')
+            matches = regex.match(self.service_code)
+
+            if matches is not None:
+                query = [('line', matches.group(1).zfill(2) + matches.group(2).zfill(3)),
+                     ('lineVer', matches.group(5)),
+                     ('net', self.net),
+                     ('project', matches.group(4)),
+                     ('outputFormat', '0'),
+                     ('command', 'direct'),
+                     ('itdLPxx_displayHeader', 'false')]
+
+                if matches.group(3) != '_':
+                    query.append(('sup', matches.group(3)))
+
+                base_url = 'http://www.travelinesoutheast.org.uk/se'
+
+                return '%s/XSLT_TTB_REQUEST?%s' % (base_url, urlencode(query))
 
 
 class ServiceVersion(models.Model):

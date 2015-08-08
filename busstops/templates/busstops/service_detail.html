@@ -8,6 +8,14 @@
     {% for operator in object.operator.all %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}<a href="{{ operator.get_absolute_url }}">{{ operator }}</a>{% endfor %}
 </p>
 
+{% if object.net %}
+
+    <h2>Timetable</h2>
+
+    <p><a href="{{ object.get_traveline_url }}">View timetable on the Traveline website</a></p>
+
+{% endif %}
+
 <!-- {% for version in timetable %}
 
 <h3>{{ version.profile }}</h3>
