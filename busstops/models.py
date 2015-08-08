@@ -216,6 +216,7 @@ class Service(models.Model):
     description = models.CharField(max_length=100)
     mode = models.CharField(max_length=10)
     operator = models.ManyToManyField(Operator)
+    net = models.CharField(max_length=3, blank=True)
     stops = models.ManyToManyField(StopPoint, editable=False)
 
     def __unicode__(self):
