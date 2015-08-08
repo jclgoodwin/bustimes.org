@@ -4,25 +4,28 @@ from busstops.management.commands import import_stop_areas, import_operators, im
 from busstops.models import Region, AdminArea
 
 
-class GetServiceVersionNameTest(TestCase):
+class ImportServicesTest(TestCase):
     """
-    Test the method that sort of hashes a file name to a shorter,
-    still useful name for a ServiceVersion.
+    Tests for parts of the command that imports services from TNDS.
     """
 
     command = import_services.Command()
 
     def test_get_service_version_name(self):
-        "Test with the different styles used in different regions."
+        """
+        Given a file name string (in one of several possible region-specific
+        formats) does get_service_version_name() should return a shorter yet
+        equally unique string.
+        """
 
-        data = (
+        data = [
             # W:
             ('SnapshotP&OLloyd_TXC_2015723-0507_FLBO023.xml', '2015723-0507_FLBO023'),
             ('SnapshotHDHutchinson&Son_TXC_2015723-0503_FLAB000.xml', '2015723-0503_FLAB000'),
             ('SnapshotConnect2_TXC_2015714-0306_CPAC001.xml', '2015714-0306_CPAC001'),
             ('SnapshotNewportBus_TXC_2015714-0317_NTAO155.xml', '2015714-0317_NTAO155'),
             ('SnapshotJohn\'sTravel(MT)_TXC_2015723-0503_MTAO020.xml', '2015723-0503_MTAO020'),
-            # EA, SE:
+            # EA, EM, L, WM, SE, SW:
             ('suf_56-FRY-1-y08-15.xml', '56-FRY-1-y08-15'),
             ('ea_21-27-D-y08-1.xml', '21-27-D-y08-1'),
             ('ea_21-2-_-y08-1.xml', '21-2-_-y08-1'),
@@ -35,10 +38,33 @@ class GetServiceVersionNameTest(TestCase):
             ('SVRABAN007-20150620-9.xml', 'ABAN007-20150620-9'),
             # NE:
             ('NE_130_PB2717_21A.xml', 'NE_130_PB2717_21A'),
-            )
+            ]
 
         for file_name, name in data:
             self.assertEqual(self.command.get_service_version_name(file_name), name)
+
+    def test_get_net(self):
+        """
+        Given a file name string
+        get_net() should return a 2-3 character long string if appropriate,
+        or None otherwise.
+        """
+
+        data = [
+            ('ea_21-2-_-y08-1.xml',     'ea'),
+            ('ea_21-27-D-y08-1.xml',    'ea'),
+            ('tfl_52-FL2-_-y08-1.xml',  'tfl'),
+            ('suf_56-FRY-1-y08-15.xml', 'suf'),
+            ('NATX_330.xml',                  None),
+            ('NE_130_PB2717_21A.xml',         None),
+            ('SVRABAN007-20150620-9.xml',     None),
+            ('SVRWLCO021-20121121-13693.xml', None),
+            ('National Express_NX_atco_NATX_T61.xml', None),
+            ('SnapshotNewportBus_TXC_2015714-0317_NTAO155.xml', None),
+            ]
+
+        for file_name, net in data:
+            self.assertEqual(self.command.get_net(file_name), net)
 
 
 class ImportStopAreasTest(TestCase):

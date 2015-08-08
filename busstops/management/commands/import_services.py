@@ -20,6 +20,7 @@ class Command(BaseCommand):
     now = datetime.today()
 
     serviceversion_regex = re.compile(r'(SVR|Snapshot[^ _]+_TXC_|[a-z]+_|.*_atco_)(.+).xml$')
+    net_regex = re.compile(r'([a-z]+)_$')
 
     # map TradingNames to operator IDs where there is no correspondence between the NOC DB and TNDS:
     SPECIAL_OPERATOR_TRADINGNAMES = {
@@ -34,14 +35,14 @@ class Command(BaseCommand):
     }
     # map OperatorCodes to operator IDs (ditto):
     SPECIAL_OPERATOR_CODES = {
-        'HIB': 'HIMB', # Holy Island Minibus
-        '1866': 'BPTR', # Burnley & Pendle
-        '2152': 'RSTY', # R S Tyrer & Sons
-        '2916': 'SPCT', # South Pennine Community Transport
-        'RB1': 'RBRO', # Richards Bros
-        'ACY': 'ACYM', # Arriva Cymru/Wales
-        'RMB': 'RMBL', # Routemaster Buses Ltd
-        'JO1': 'JTMT', # John's Travel (Merthyr Tydfil)
+        'HIB': 'HIMB',   # Holy Island Minibus
+        '1866': 'BPTR',  # Burnley & Pendle
+        '2152': 'RSTY',  # R S Tyrer & Sons
+        '2916': 'SPCT',  # South Pennine Community Transport
+        'RB1': 'RBRO',   # Richards Bros
+        'ACY': 'ACYM',   # Arriva Cymru/Wales
+        'RMB': 'RMBL',   # Routemaster Buses Ltd
+        'JO1': 'JTMT',   # John's Travel (Merthyr Tydfil)
     }
 
     # @staticmethod
@@ -92,6 +93,18 @@ class Command(BaseCommand):
             return matches.group(2)
         else:
             return file_name[:-4]
+
+    def get_net(self, file_name):
+        """
+        Get the service 'net' (for services in the EA, EM, L, WM, SE and SW regions).
+        """
+        matches = self.serviceversion_regex.match(file_name)
+
+        if matches is not None:
+            net_matches = self.net_regex.match(matches.group(1))
+            if net_matches is not None:
+                return net_matches.group(1)
+        return None
 
     def get_operator(self, operator_element):
         "Given an Operator element, returns an Operator object."
@@ -189,7 +202,7 @@ class Command(BaseCommand):
                 )[0]
 
             # service operators (part 2):
-        
+
             for operator in operators.values():
                 if operator is not None:
                     service.operator.add(operator)
@@ -239,7 +252,7 @@ class Command(BaseCommand):
             for i, file_name in enumerate(files):
                 if (i - 1) % 1000 == 0:
                     print i
-                
+
                 file_path = os.path.join(root, file_name)
 
                 # the NCSD has service descriptions are in a separate file:
