@@ -1,13 +1,16 @@
 """
 Command for importing transport services.
 
-So far, all services in the SE, EA, Y and NCSD regions can be imported without known errors.
+So far, all services in the SE, EA, Y and NCSD regions can be imported without
+known errors.
 """
 
 from django.core.management.base import BaseCommand, CommandError
 from busstops.models import Operator, StopPoint, Service, ServiceVersion
 
-import os, re, csv
+import os
+import re
+import csv
 import xml.etree.ElementTree as ET
 from datetime import datetime
 
@@ -35,14 +38,14 @@ class Command(BaseCommand):
     }
     # map OperatorCodes to operator IDs (ditto):
     SPECIAL_OPERATOR_CODES = {
-        'HIB': 'HIMB',   # Holy Island Minibus
+        'HIB':  'HIMB',  # Holy Island Minibus
         '1866': 'BPTR',  # Burnley & Pendle
         '2152': 'RSTY',  # R S Tyrer & Sons
         '2916': 'SPCT',  # South Pennine Community Transport
-        'RB1': 'RBRO',   # Richards Bros
-        'ACY': 'ACYM',   # Arriva Cymru/Wales
-        'RMB': 'RMBL',   # Routemaster Buses Ltd
-        'JO1': 'JTMT',   # John's Travel (Merthyr Tydfil)
+        'RB1':  'RBRO',  # Richards Bros
+        'ACY':  'ACYM',  # Arriva Cymru/Wales
+        'RMB':  'RMBL',  # Routemaster Buses Ltd
+        'JO1':  'JTMT',  # John's Travel (Merthyr Tydfil)
     }
 
     # @staticmethod
@@ -104,7 +107,7 @@ class Command(BaseCommand):
             net_matches = self.net_regex.match(matches.group(1))
             if net_matches is not None:
                 return net_matches.group(1)
-        return None
+        return ''
 
     def get_operator(self, operator_element):
         "Given an Operator element, returns an Operator object."
@@ -197,7 +200,8 @@ class Command(BaseCommand):
                 defaults=dict(
                     line_name=line_name,
                     mode=mode,
-                    description=description
+                    description=description,
+                    net=self.get_net(file_name),
                     )
                 )[0]
 
