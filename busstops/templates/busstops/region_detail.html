@@ -10,4 +10,14 @@
 {% endfor %}
 </ul>
 
+{% if operators %}
+    <h2>Operators in {{ region.the }}</h2>
+
+    <ul class="long">
+    {% for o in operators %}
+        <li><a href="{{ o.get_absolute_url }}">{{ o }}</a></li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
 {% include 'footer.html' %}
