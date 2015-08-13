@@ -211,5 +211,5 @@ class ServiceDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)
         context['breadcrumb'] = self.object.operator.all()
-        context['stops'] = StopPoint.objects.filter(service=self.object)
+        context['stops'] = self.object.stops.all()
         return context
