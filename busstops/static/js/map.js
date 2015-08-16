@@ -41,10 +41,7 @@
         }
 
         if (locations.length) {
-            var map = L.map('map', {
-                    zoom: false,
-                    maxBounds: L.latLngBounds([49.004430, -9.408655], [59.76591, 2.5])
-                }),
+            var map = L.map('map'),
                 attribution = 'Map data &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors | Map tiles &copy; <a href="https://cartodb.com/attributions#basemaps">CartoDB</a>',
                 tileURL = (document.location.protocol === 'https:' ? 'https://cartodb-basemaps-{s}.global.ssl.fastly.net' : 'http://{s}.basemaps.cartocdn.com') + '/light_all/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
                 pin = L.icon({
