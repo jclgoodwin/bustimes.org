@@ -46,6 +46,7 @@ class Command(BaseCommand):
         'ACY':  'ACYM',  # Arriva Cymru/Wales
         'RMB':  'RMBL',  # Routemaster Buses Ltd
         'JO1':  'JTMT',  # John's Travel (Merthyr Tydfil)
+        'CO':   'CFSV',  # Coniston Launch/Ferry
     }
 
     # @staticmethod
