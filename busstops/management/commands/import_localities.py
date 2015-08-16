@@ -16,7 +16,7 @@ class Command(ImportFromCSVCommand):
     def handle_row(self, row):
 
         defaults = {
-            'name':           row['LocalityName'],
+            'name':           row['LocalityName'].replace('\'', '’'),
             'qualifier_name': row['QualifierName'],
             'admin_area':     AdminArea.objects.get(id=row['AdministrativeAreaCode']),
             'location':       Point(int(row['Easting']), int(row['Northing']), srid=27700),
