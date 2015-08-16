@@ -174,7 +174,7 @@ class Command(BaseCommand):
 
             mode_element = service_element.find('txc:Mode', self.ns)
             if mode_element is not None:
-                mode = mode_element.text
+                mode = mode_element.text[:10]
             else:
                 mode = ''
 
