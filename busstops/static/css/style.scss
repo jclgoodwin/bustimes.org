@@ -152,12 +152,12 @@ main li {
     }
 }
 
-#search {
+#search-wrapper {
     display: inline-block;
-    position: relative
+    position: relative;
 }
 
-#search-input {
+#search {
     border: 1px solid $brand-color;
     font: inherit;
     outline: 0;

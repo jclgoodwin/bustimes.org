@@ -44,9 +44,8 @@
     /*
      * 'Search places' form
      */
-    document.getElementById('search').innerHTML += '<ul id="search-results"></ul>';
-    $(document.getElementById('search-input')).on('keypress keydown', $.debounce(250, function (e) {
-        console.log(e);
+    document.getElementById('search').outerHTML += '<ul id="search-results"></ul>';
+    $('#search').on('keypress keydown', $.debounce(250, function (e) {
         var resultsElement = document.getElementById('search-results');
         if (this.value === '') {
             resultsElement.innerHTML = '';
@@ -62,8 +61,5 @@
             }, 'json');
         }
     }));
-    $(document.getElementById('search')).on('submit', function (e) {
-        e.preventDefault();
-    });
 
 })();
