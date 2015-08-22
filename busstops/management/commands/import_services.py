@@ -47,6 +47,20 @@ class Command(BaseCommand):
         'RMB':  'RMBL',  # Routemaster Buses Ltd
         'JO1':  'JTMT',  # John's Travel (Merthyr Tydfil)
         'CO':   'CFSV',  # Coniston Launch/Ferry
+        'MN': 'ALNO',  # Arriva London North
+        'ME': 'METR',  # Metrobus
+        'IF': 'ELBG',  # East London Bus & Coach/Stagecoach London
+        'SK': 'SELK',  # South East London & Kent Bus Co
+        'TCL': 'TRAM',  # Croydon Tram
+        'SL': 'ALSO',  # Arriva London South
+        'WPS': 'WPSA',  # Westminster Passenger Service Association
+        'SV': 'LSOV',  # London Sovereign
+        'KE': 'AMTM',  # Arriva Kent Thameside
+        'TE': 'ABLO',  # Abellio London (West)
+        'TN': 'TOTR',  # Tower Transit/Transportr
+        'UN': 'UNOE',  # Uno
+        'HY': 'NCTP',  # CT Plus
+        'LD': 'ASES',  # Arriva Shires
     }
 
     # @staticmethod
