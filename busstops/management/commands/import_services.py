@@ -44,7 +44,7 @@ class Command(BaseCommand):
         'SOUTH EAST LONDON & KENT BUS COMPANY LTD': 'SELK',
         'TRAMTRACK CROYDON LTD': 'TRAM',
         'Westminster Passenger Service Association': 'WPSA',
-        'LONDON SOVERIGN LIMITED': 'LSOV',
+        'LONDON SOVEREIGN LIMITED': 'LSOV',
         'ABELLIO LONDON (WEST) LIMITED': 'ABLO',
         'TOWER TRANSIT LIMITED': 'TOTR',
         'UNO BUSES LIMITED': 'UNOE',
