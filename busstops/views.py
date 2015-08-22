@@ -130,11 +130,9 @@ class DistrictDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(DistrictDetailView, self).get_context_data(**kwargs)
         context['localities'] = Locality.objects.filter(
-            Q(stoppoint__active=True) |
-            Q(locality__stoppoint__active=True),
-            district=self.object,
-            parent=None
-        ).distinct().order_by('name')
+            Q(stoppoint__active=True) | Q(locality__stoppoint__active=True),
+            district=self.object
+        ).exclude(parent__district=self.object).distinct().order_by('name')
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
         return context
 
@@ -198,7 +196,7 @@ class OperatorDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
-        context['services'] = Service.objects.filter(operator=self.object).order_by('line_name')
+        context['services'] = Service.objects.filter(operator=self.object).order_by('service_code')
         context['breadcrumb'] = [self.object.region]
         return context
 
@@ -210,6 +208,6 @@ class ServiceDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)
-        context['breadcrumb'] = self.object.operator.all()
+        context['breadcrumb'] = [self.object.operator.first().region, self.object.operator.first()]
         context['stops'] = self.object.stops.all()
         return context
