@@ -10,7 +10,7 @@
 {% for s in services %}
     <li>
         <a href="{{ s.get_absolute_url }}">
-            <apan class="name{% if not s.has_long_line_name %} is-short{% endif %}">{{ s.line_name }}</apan>
+            <span class="name{% if not s.has_long_line_name %} is-short{% endif %}">{{ s.line_name }}</span>
             <span class="description">{{s.description }}</span>
         </a>
     </li>
