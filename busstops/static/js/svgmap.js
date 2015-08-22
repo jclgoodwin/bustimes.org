@@ -44,8 +44,10 @@
     /*
      * 'Search places' form
      */
-    $(document.getElementById('q')).on('keypress', $.debounce(250, function (e) {
-        var resultsElement = document.getElementById('results');
+    document.getElementById('search').innerHTML += '<ul id="search-results"></ul>';
+    $(document.getElementById('search-input')).on('keypress keydown', $.debounce(250, function (e) {
+        console.log(e);
+        var resultsElement = document.getElementById('search-results');
         if (this.value === '') {
             resultsElement.innerHTML = '';
         } else {

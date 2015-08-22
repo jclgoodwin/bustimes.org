@@ -4,9 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>{% if object %}{{ object }} – {% endif %}Bus Times</title>
-<meta name="theme-color" content="#68D3FB" />
+<meta name="theme-color" content="#fe9" />
+{% load pipeline %}
+{% stylesheet 'main' %}
 {% load staticfiles %}
-<link rel="stylesheet" href="{% static "css/screen.css" %}" />
 <!--[if lt IE 9]>
 <script src="{% static "js/html5shiv-printshiv.min.js" %}"></script>
 <![endif]-->
