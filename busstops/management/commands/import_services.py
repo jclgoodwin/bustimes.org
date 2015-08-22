@@ -35,6 +35,21 @@ class Command(BaseCommand):
         'Halesworth Area Community Transport': 'HACT',
         'Dartmouth Steam Railway And River Boat Company': 'DRMR',
         'Borderbus': 'BDRB',
+        'ARRIVA LONDON NORTH LIMITED': 'ALNO',
+        'ARRIVA LONDON SOUTH LIMITED': 'ALSO',
+        'ARRIVA THE SHIRES LIMITED': 'ASES',
+        'ARRIVA KENT THAMESIDE LIMITED': 'AMTM',
+        'METROBUS LIMITED': 'METR',
+        'EAST LONDON BUS & COACH COMPANY LIMITED': 'ELBG',
+        'SOUTH EAST LONDON & KENT BUS COMPANY LTD': 'SELK',
+        'TRAMTRACK CROYDON LTD': 'TRAM',
+        'Westminster Passenger Service Association': 'WPSA',
+        'LONDON SOVERIGN LIMITED': 'LSOV',
+        'ABELLIO LONDON (WEST) LIMITED': 'ABLO',
+        'TOWER TRANSIT LIMITED': 'TOTR',
+        'UNO BUSES LIMITED': 'UNOE',
+        'C T PLUS LIMITED': 'NCTP',
+
     }
     # map OperatorCodes to operator IDs (ditto):
     SPECIAL_OPERATOR_CODES = {
@@ -47,20 +62,6 @@ class Command(BaseCommand):
         'RMB':  'RMBL',  # Routemaster Buses Ltd
         'JO1':  'JTMT',  # John's Travel (Merthyr Tydfil)
         'CO':   'CFSV',  # Coniston Launch/Ferry
-        'MN': 'ALNO',  # Arriva London North
-        'ME': 'METR',  # Metrobus
-        'IF': 'ELBG',  # East London Bus & Coach/Stagecoach London
-        'SK': 'SELK',  # South East London & Kent Bus Co
-        'TCL': 'TRAM',  # Croydon Tram
-        'SL': 'ALSO',  # Arriva London South
-        'WPS': 'WPSA',  # Westminster Passenger Service Association
-        'SV': 'LSOV',  # London Sovereign
-        'KE': 'AMTM',  # Arriva Kent Thameside
-        'TE': 'ABLO',  # Abellio London (West)
-        'TN': 'TOTR',  # Tower Transit/Transportr
-        'UN': 'UNOE',  # Uno
-        'HY': 'NCTP',  # CT Plus
-        'LD': 'ASES',  # Arriva Shires
     }
 
     # @staticmethod
@@ -144,7 +145,7 @@ class Command(BaseCommand):
                 if operator_name in self.SPECIAL_OPERATOR_TRADINGNAMES:
                     return Operator.objects.get(id=self.SPECIAL_OPERATOR_TRADINGNAMES[operator_name])
 
-                return Operator.objects.get(name__iexact=operator_name)
+                return Operator.objects.get(name=operator_name)
 
             operator_code = operator_element.find('txc:OperatorCode', self.ns).text
             if operator_code in self.SPECIAL_OPERATOR_CODES:
