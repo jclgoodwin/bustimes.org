@@ -130,7 +130,7 @@ class Command(BaseCommand):
                 if operator_name in self.SPECIAL_OPERATOR_TRADINGNAMES:
                     return Operator.objects.get(id=self.SPECIAL_OPERATOR_TRADINGNAMES[operator_name])
 
-                return Operator.objects.get(name=operator_name)
+                return Operator.objects.get(name__iexact=operator_name)
 
             operator_code = operator_element.find('txc:OperatorCode', self.ns).text
             if operator_code in self.SPECIAL_OPERATOR_CODES:
