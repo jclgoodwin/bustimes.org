@@ -79,10 +79,7 @@ class RegionDetailView(DetailView):
         context = super(RegionDetailView, self).get_context_data(**kwargs)
 
         context['areas'] = AdminArea.objects.filter(region=self.object).exclude(stoppoint=None).order_by('name')
-
-        context['operators'] = Operator.objects.filter(
-            region=self.object
-        ).exclude(service=None).order_by('name')
+        context['operators'] = Operator.objects.filter(region=self.object).exclude(service=None).order_by('name')
 
         return context
 
@@ -208,6 +205,8 @@ class ServiceDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)
-        context['breadcrumb'] = [self.object.operator.first().region, self.object.operator.first()]
+        operator = self.object.operator.select_related('region').first()
+        if operator is not None:
+            context['breadcrumb'] = [operator.region, operator]
         context['stops'] = self.object.stops.all()
         return context
