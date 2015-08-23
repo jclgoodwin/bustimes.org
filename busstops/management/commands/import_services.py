@@ -223,19 +223,20 @@ class Command(BaseCommand):
 
             # service operators (part 2):
 
-            for operator in operators.values():
-                if operator is not None:
-                    service.operator.add(operator)
+            try:
+                service.operator.add(*operators.values())
+            except Exception, error:
+                print str(error)
 
             # service stops:
 
-            for stop_element in root.find('txc:StopPoints', self.ns):
-                try:
-                    stop_atco_code = stop_element.find('txc:StopPointRef', self.ns).text
-                    stop = StopPoint.objects.get(atco_code=stop_atco_code)
-                    service.stops.add(stop)
-                except:
-                    print 'Problem adding stop %s to service %s' % (stop_atco_code, service.service_code)
+            try:
+                stop_elements = root.find('txc:StopPoints', self.ns)
+                stop_ids = [stop.find('txc:StopPointRef', self.ns).text for stop in stop_elements]
+                stops = StopPoint.objects.filter(atco_code__in=stop_ids)
+                service.stops.add(*stops)
+            except Exception, error:
+                print str(error)
 
             # service version:
 
