@@ -178,8 +178,7 @@ class Command(BaseCommand):
 
         return operators
 
-    def do_service(self, services_element, file_name, root,
-                   service_descriptions=None):
+    def do_service(self, services_element, file_name, root, service_descriptions=None):
 
         for service_element in services_element:
 
@@ -205,7 +204,7 @@ class Command(BaseCommand):
             if description_element is not None:
                 description = description_element.text[:100]
             elif service_descriptions is not None:
-                description = service_descriptions[operators.values()[0].id + line_name]
+                description = service_descriptions.get(operators.values()[0].id + line_name, '')
             else:
                 description = ''
 
