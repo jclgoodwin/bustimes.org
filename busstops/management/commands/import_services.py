@@ -49,6 +49,7 @@ class Command(BaseCommand):
         'TOWER TRANSIT LIMITED': 'TOTR',
         'UNO BUSES LIMITED': 'UNOE',
         'C T PLUS LIMITED': 'NCTP',
+        'Gloucestershire': 'SCGL',
 
     }
     # map OperatorCodes to operator IDs (ditto):
@@ -59,6 +60,7 @@ class Command(BaseCommand):
         '2916': 'SPCT',  # South Pennine Community Transport
         'RB1':  'RBRO',  # Richards Bros
         'ACY':  'ACYM',  # Arriva Cymru/Wales
+        'AM0':  'AMID',  # Arriva Midlands
         'RMB':  'RMBL',  # Routemaster Buses Ltd
         'JO1':  'JTMT',  # John's Travel (Merthyr Tydfil)
         'CO':   'CFSV',  # Coniston Launch/Ferry
