@@ -38,7 +38,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         reader = csv.reader(sys.stdin)
-        next(reader) # skip past header
+        next(reader)  # skip past header
         for row in reader:
-            operator = self.row_to_operator(row)
-            operator.save()
+            if row[0] != 'BETC' and row[0] != 'CECT':
+                operator = self.row_to_operator(row)
+                operator.save()
