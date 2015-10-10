@@ -40,6 +40,6 @@ class Command(BaseCommand):
         reader = csv.reader(sys.stdin)
         next(reader)  # skip past header
         for row in reader:
-            if row[0] != 'BETC' and row[0] != 'CECT':
+            if row[0] != 'CECT':
                 operator = self.row_to_operator(row)
                 operator.save()
