@@ -45,14 +45,17 @@ class Command(BaseCommand):
         'TRAMTRACK CROYDON LTD': 'TRAM',
         'Westminster Passenger Service Association': 'WPSA',
         'LONDON SOVEREIGN LIMITED': 'LSOV',
+        'ABELLIO LONDON LIMITED': 'ABLO',
         'ABELLIO LONDON (WEST) LIMITED': 'ABLO',
         'TOWER TRANSIT LIMITED': 'TOTR',
         'UNO BUSES LIMITED': 'UNOE',
         'C T PLUS LIMITED': 'NCTP',
         'Gloucestershire': 'SCGL',
-
+        'BLUE TRIANGLE BUSES LIMITED': 'BTRI',
+        'METROLINE WEST LIMITED': 'MTLN',
+        'LONDON CENTRAL BUS COMPANY LIMITED': 'LONC',
     }
-    # map OperatorCodes to operator IDs (ditto):
+    # map OperatorCodes to operator IDs (ditto, where there is no TradingName):
     SPECIAL_OPERATOR_CODES = {
         'HIB':  'HIMB',  # Holy Island Minibus
         '1866': 'BPTR',  # Burnley & Pendle
