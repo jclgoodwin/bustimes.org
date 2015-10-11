@@ -25,6 +25,11 @@ class ImportServicesTest(TestCase):
             ('SnapshotConnect2_TXC_2015714-0306_CPAC001.xml', '2015714-0306_CPAC001'),
             ('SnapshotNewportBus_TXC_2015714-0317_NTAO155.xml', '2015714-0317_NTAO155'),
             ('SnapshotJohn\'sTravel(MT)_TXC_2015723-0503_MTAO020.xml', '2015723-0503_MTAO020'),
+            ('P&OLloyd_TXC_2015723-0507_FLBO023.xml', '2015723-0507_FLBO023'),
+            ('HDHutchinson&Son_TXC_2015723-0503_FLAB000.xml', '2015723-0503_FLAB000'),
+            ('Connect2_TXC_2015714-0306_CPAC001.xml', '2015714-0306_CPAC001'),
+            ('NewportBus_TXC_2015714-0317_NTAO155.xml', '2015714-0317_NTAO155'),
+            ('John\'sTravel(MT)_TXC_2015723-0503_MTAO020.xml', '2015723-0503_MTAO020'),
             # EA, EM, L, WM, SE, SW:
             ('suf_56-FRY-1-y08-15.xml', '56-FRY-1-y08-15'),
             ('ea_21-27-D-y08-1.xml', '21-27-D-y08-1'),

@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
     now = datetime.today()
 
-    serviceversion_regex = re.compile(r'(SVR|Snapshot[^ _]+_TXC_|[a-z]+_|.*_atco_)(.+).xml$')
+    serviceversion_regex = re.compile(r'(SVR|[^ _]+_TXC_|[a-z]+_|.*_atco_)(.+).xml$')
     net_regex = re.compile(r'([a-z]+)_$')
 
     # map TradingNames to operator IDs where there is no correspondence between the NOC DB and TNDS:
@@ -70,7 +70,8 @@ class Command(BaseCommand):
         'CO':   'CFSV',  # Coniston Launch/Ferry
         'CL':   'CFSV',  # Coniston Launch/Ferry
         'SGI':  'SGIL',  # Steel Group Investments Limited
-        'EYM':  'ETMS',  # East Yorkshire Motor Services
+        'EYM':  'EYMS',  # East Yorkshire Motor Services
+        'WINF': 'WMLC',  # Windermere Lake Cruises/Ferry
     }
 
     # @staticmethod
@@ -132,7 +133,7 @@ class Command(BaseCommand):
             net_matches = self.net_regex.match(matches.group(1))
             if net_matches is not None:
                 return net_matches.group(1)
-        return ''
+        return None
 
     def get_operator(self, operator_element):
         "Given an Operator element, returns an Operator object."
