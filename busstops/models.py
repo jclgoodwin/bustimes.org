@@ -217,7 +217,7 @@ class Service(models.Model):
     line_name = models.CharField(max_length=24)
     description = models.CharField(max_length=100)
     mode = models.CharField(max_length=10)
-    operator = models.ManyToManyField(Operator)
+    operator = models.ManyToManyField(Operator, blank=True)
     net = models.CharField(max_length=3, blank=True)
     stops = models.ManyToManyField(StopPoint, editable=False)
 
