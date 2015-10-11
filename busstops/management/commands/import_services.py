@@ -67,6 +67,8 @@ class Command(BaseCommand):
         'RMB':  'RMBL',  # Routemaster Buses Ltd
         'JO1':  'JTMT',  # John's Travel (Merthyr Tydfil)
         'CO':   'CFSV',  # Coniston Launch/Ferry
+        'SGI':  'SGIL',  # Steel Group Investments Limited
+        'EYM':  'ETMS',  # East Yorkshire Motor Services
     }
 
     # @staticmethod
