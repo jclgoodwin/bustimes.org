@@ -184,7 +184,8 @@ class Command(BaseCommand):
                 local_code = operator_element.find('txc:OperatorCode', self.ns).text
 
             operator = self.get_operator(operator_element)
-            operators[local_code] = operator
+            if operator is not None:
+                operators[local_code] = operator
 
         return operators
 
@@ -232,10 +233,11 @@ class Command(BaseCommand):
 
             # service operators (part 2):
 
-            try:
-                service.operator.add(*operators.values())
-            except Exception, error:
-                print str(error)
+            if operators:
+                try:
+                   service.operator.add(*operators.values())
+                except Exception, error:
+                   print str(error)
 
             # service stops:
 
@@ -285,7 +287,7 @@ class Command(BaseCommand):
 
                 file_path = os.path.join(root, file_name)
 
-                # the NCSD has service descriptions are in a separate file:
+                # the NCSD has service descriptions in a separate file:
                 if file_name == 'IncludedServices.csv':
                     with open(file_path) as csv_file:
                         reader = csv.DictReader(csv_file)
