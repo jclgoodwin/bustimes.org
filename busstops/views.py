@@ -62,6 +62,7 @@ def search(request):
     data = []
     query = request.GET.get('q')
     if query:
+        query = query.strip()
         for locality in Locality.objects.filter(name__icontains=query)[:12]:
             data.append({
                 'name': locality.get_qualified_name(),
