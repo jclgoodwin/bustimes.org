@@ -52,7 +52,7 @@ class ImportServicesTest(TestCase):
         """
         Given a file name string
         get_net() should return a 2-3 character long string if appropriate,
-        or None otherwise.
+        or '' otherwise.
         """
 
         data = [
@@ -60,12 +60,12 @@ class ImportServicesTest(TestCase):
             ('ea_21-27-D-y08-1.xml',    'ea'),
             ('tfl_52-FL2-_-y08-1.xml',  'tfl'),
             ('suf_56-FRY-1-y08-15.xml', 'suf'),
-            ('NATX_330.xml',                  None),
-            ('NE_130_PB2717_21A.xml',         None),
-            ('SVRABAN007-20150620-9.xml',     None),
-            ('SVRWLCO021-20121121-13693.xml', None),
-            ('National Express_NX_atco_NATX_T61.xml', None),
-            ('SnapshotNewportBus_TXC_2015714-0317_NTAO155.xml', None),
+            ('NATX_330.xml',                  ''),
+            ('NE_130_PB2717_21A.xml',         ''),
+            ('SVRABAN007-20150620-9.xml',     ''),
+            ('SVRWLCO021-20121121-13693.xml', ''),
+            ('National Express_NX_atco_NATX_T61.xml', ''),
+            ('SnapshotNewportBus_TXC_2015714-0317_NTAO155.xml', ''),
             ]
 
         for file_name, net in data:

@@ -133,7 +133,7 @@ class Command(BaseCommand):
             net_matches = self.net_regex.match(matches.group(1))
             if net_matches is not None:
                 return net_matches.group(1)
-        return None
+        return ''
 
     def get_operator(self, operator_element):
         "Given an Operator element, returns an Operator object."
