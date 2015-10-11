@@ -54,6 +54,7 @@ class Command(BaseCommand):
         'BLUE TRIANGLE BUSES LIMITED': 'BTRI',
         'METROLINE WEST LIMITED': 'MTLN',
         'LONDON CENTRAL BUS COMPANY LIMITED': 'LONC',
+        'SULLIVAN BUS & COACH LIMITED': 'SULV',
     }
     # map OperatorCodes to operator IDs (ditto, where there is no TradingName):
     SPECIAL_OPERATOR_CODES = {
@@ -67,6 +68,7 @@ class Command(BaseCommand):
         'RMB':  'RMBL',  # Routemaster Buses Ltd
         'JO1':  'JTMT',  # John's Travel (Merthyr Tydfil)
         'CO':   'CFSV',  # Coniston Launch/Ferry
+        'CL':   'CFSV',  # Coniston Launch/Ferry
         'SGI':  'SGIL',  # Steel Group Investments Limited
         'EYM':  'ETMS',  # East Yorkshire Motor Services
     }
