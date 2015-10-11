@@ -159,9 +159,11 @@ main li {
 
 #search {
     border: 1px solid $brand-color;
+    border-radius: 0;
     font: inherit;
     outline: 0;
     padding: .25em;
+    -webkit-appearance: none;
 
     &:focus {
         border-color: $brand-color-darker;
