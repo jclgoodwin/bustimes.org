@@ -144,17 +144,20 @@ class Command(BaseCommand):
                 return Operator.objects.get(id=national_code_element.text)
 
             if trading_name_element is not None:
-                operator_name = str.replace(
-                    operator_element.find('txc:TradingName', self.ns).text,
+                trading_name = str.replace(
+                    trading_name_element.text,
                     '&amp;',
                     '&'
                     )
-                if operator_name in self.SPECIAL_OPERATOR_TRADINGNAMES:
-                    return Operator.objects.get(id=self.SPECIAL_OPERATOR_TRADINGNAMES[operator_name])
-
-                return Operator.objects.get(name=operator_name)
+                if trading_name in self.SPECIAL_OPERATOR_TRADINGNAMES:
+                    return Operator.objects.get(id=self.SPECIAL_OPERATOR_TRADINGNAMES[trading_name])
+                if trading_name == 'Replacement Service':
+                    return None
+                return Operator.objects.get(name=trading_name)
 
             operator_code = operator_element.find('txc:OperatorCode', self.ns).text
+            if operator_code == 'UNKNWN':
+                return None
             if operator_code in self.SPECIAL_OPERATOR_CODES:
                 return Operator.objects.get(id=self.SPECIAL_OPERATOR_CODES[operator_code])
 
