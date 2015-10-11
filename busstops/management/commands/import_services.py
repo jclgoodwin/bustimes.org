@@ -158,7 +158,7 @@ class Command(BaseCommand):
                 return Operator.objects.get(name=trading_name)
 
             operator_code = operator_element.find('txc:OperatorCode', self.ns).text
-            if operator_code == 'UNKNWN':
+            if operator_code == 'UNKWN':
                 return None
             if operator_code in self.SPECIAL_OPERATOR_CODES:
                 return Operator.objects.get(id=self.SPECIAL_OPERATOR_CODES[operator_code])
@@ -299,6 +299,8 @@ class Command(BaseCommand):
                             service_descriptions[row['Operator'] + row['LineName']] = row['Description']
 
                 elif file_name[-4:] == '.xml':
-                    e = ET.parse(file_path).getroot()
-
-                    self.do_service(e.find('txc:Services', self.ns), file_name, e, service_descriptions=service_descriptions)
+                    try:
+                        e = ET.parse(file_path).getroot()
+                        self.do_service(e.find('txc:Services', self.ns), file_name, e, service_descriptions=service_descriptions)
+                    except Exception, error:
+                        print str(error)
