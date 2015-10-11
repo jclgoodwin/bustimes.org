@@ -16,7 +16,7 @@ class Command(ImportFromCSVCommand):
         District.objects.update_or_create(
             id=row['DistrictCode'],
             defaults={
-                'name': row['DistrictName'],
+                'name': row['DistrictName'].replace('\'', u'\u2019'),
                 'admin_area': AdminArea.objects.get(id=row['AdministrativeAreaCode']),
             }
         )
