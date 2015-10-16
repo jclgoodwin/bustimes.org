@@ -11,7 +11,7 @@ from busstops.models import Operator, StopPoint, Service, ServiceVersion
 import os
 import re
 import csv
-import xml.etree.ElementTree as ET
+import xml.etree.cElementTree as ET
 from datetime import datetime
 
 
@@ -55,6 +55,7 @@ class Command(BaseCommand):
         'METROLINE WEST LIMITED': 'MTLN',
         'LONDON CENTRAL BUS COMPANY LIMITED': 'LONC',
         'SULLIVAN BUS & COACH LIMITED': 'SULV',
+        'Notts & Derby': 'Notts and Derby'
     }
     # map OperatorCodes to operator IDs (ditto, where there is no TradingName):
     SPECIAL_OPERATOR_CODES = {
