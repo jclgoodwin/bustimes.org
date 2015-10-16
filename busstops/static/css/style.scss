@@ -131,12 +131,13 @@ main li {
 .breadcrumb {
     border-bottom: 1px solid $brand-color;
     margin: 0 -1em;
-    padding: 0 1em;
+    padding: .5em 1em 0;
     overflow: hidden;
 
     li {
-        display: inline;
+        float: left;
         margin: 0;
+        margin-top: -.5em;
     }
     
     a {
@@ -268,12 +269,11 @@ main li {
 
 .asides {
     clear: both;
-    margin: 1em 0;
     overflow: hidden;
 }
 
 .aside {
-    margin-bottom: 2em;
+    margin-top: 1em;
 }
 
 .box {
@@ -384,10 +384,10 @@ footer {
         max-width: 48%;
         width: 48%;
         float: left;
-        margin: 0;
         margin-left: 4%;
     }
 
+    .long li,
     .long li a {
         margin: 0;
     }
