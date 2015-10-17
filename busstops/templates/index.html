@@ -3,20 +3,20 @@
 <h1>Bus stops and routes across Great Britain</h1>
 
 <a class="button button-locate" href="/map">Find bus stops nearby</a>
-or
-<label for="search">search places:</label>
-<div id="search-wrapper">
-    <input id="search" type="search" />
+<label id="search-wrapper">or search places: <input id="search" type="search" /></label>
+
+<div id="regions">
+
+    <h2>Regions</h2>
+
+    <ul id="regions-list">
+    {% for r in regions %}
+        <li><a href="{{ r.get_absolute_url }}">{{ r }}</a></li>
+    {% endfor %}
+    </ul>
+
+    {% include 'regions.svg' %}
+
 </div>
-
-<h2>Regions</h2>
-
-<ul id="regions">
-{% for r in regions %}
-    <li><a href="{{ r.get_absolute_url }}">{{ r }}</a></li>
-{% endfor %}
-</ul>
-
-{% include 'regions.svg' %}
 
 {% include 'footer.html' %}
