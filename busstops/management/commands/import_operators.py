@@ -17,8 +17,7 @@ class Command(BaseCommand):
         region_id = row[12].replace('Admin', 'GB').replace('ADMIN', 'GB').replace('SC', 'S').replace('YO', 'Y').replace('WA', 'W').replace('LO', 'L')
         region = Region.objects.get(id=region_id)
 
-        if row[1] in ('First', 'Arriva', 'Stagecoach') or row[1][:4] == 'inc.' or row[1][':8] == 'formerly':
-            # uninformative OperatorPublicName
+        if row[1] in ('First', 'Arriva', 'Stagecoach') or row[1].startswith('inc.') or row[1].startswith('formerly'):
             name = row[2]  # OperatorReferenceName
         else:
             name = row[1]  # OperatorPublicName
