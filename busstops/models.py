@@ -4,7 +4,6 @@ from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
 from django.core.urlresolvers import reverse
 from urllib import urlencode
-import re
 
 
 class Region(models.Model):
@@ -244,24 +243,22 @@ class Service(models.Model):
 
     def get_traveline_url(self):
         if self.net != '':
-            regex = re.compile(r'([0-9]+)-([0-9A-z]+)-([A-Z_])-([a-z0-9]+)-([0-9])')
-            matches = regex.match(self.service_code)
+            parts = self.service_code.split('-')
 
-            if matches is not None:
-                query = [('line', matches.group(1).zfill(2) + matches.group(2).zfill(3)),
-                     ('lineVer', matches.group(5)),
+            query = [('line', parts[0].zfill(2) + parts[1].zfill(3)),
+                     ('lineVer', parts[4]),
                      ('net', self.net),
-                     ('project', matches.group(4)),
+                     ('project', parts[3]),
                      ('outputFormat', '0'),
                      ('command', 'direct'),
                      ('itdLPxx_displayHeader', 'false')]
 
-                if matches.group(3) != '_':
-                    query.append(('sup', matches.group(3)))
+            if parts[2] != '_':
+                query.append(('sup', parts[2]))
 
-                base_url = 'http://www.travelinesoutheast.org.uk/se'
+            base_url = 'http://www.travelinesoutheast.org.uk/se'
 
-                return '%s/XSLT_TTB_REQUEST?%s' % (base_url, urlencode(query))
+            return '%s/XSLT_TTB_REQUEST?%s' % (base_url, urlencode(query))
 
 
 class ServiceVersion(models.Model):
