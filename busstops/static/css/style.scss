@@ -162,12 +162,12 @@ main li {
 #search {
     border: 1px solid $brand-color;
     border-radius: 0;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
     font: inherit;
     outline: 0;
     padding: .25em;
     width: 11.5em;
-    -webkit-appearance: none;
-    -webkit-padding-start: 0;
 
     &:focus {
         border-color: $brand-color-darker;
