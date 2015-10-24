@@ -3,13 +3,17 @@ Command for importing transport services.
 
 So far, all services in the SE, EA, Y and NCSD regions can be imported without
 known errors.
+
+Usage:
+
+    ./manage.py import_services EA.zip [EM.zip etc]
 """
 
 from django.core.management.base import BaseCommand, CommandError
 from busstops.models import Operator, StopPoint, Service, ServiceVersion
 
-import os
 import re
+import zipfile
 import csv
 import xml.etree.cElementTree as ET
 from datetime import datetime
@@ -75,6 +79,9 @@ class Command(BaseCommand):
         'WINF': 'WMLC',  # Windermere Lake Cruises/Ferry
         'DPC':  'DPCE',  # (Don) Prentice (Coaches)
     }
+
+    def add_arguments(self, parser):
+        parser.add_argument('filenames', nargs='+', type=str)
 
     # @staticmethod
     # def parse_duration(string):
@@ -289,26 +296,25 @@ class Command(BaseCommand):
 
         service_descriptions = None
 
-        for root, dirs, files in os.walk('../TNDS/'):
+        for filename in options['filenames']:
+            archive = zipfile.ZipFile(filename)
 
-            for i, file_name in enumerate(files):
+            if 'IncludedServices.csv' in archive.namelist():
+                with archive.open('IncludedServices.csv') as csv_file:
+                    reader = csv.DictReader(csv_file)
+                    service_descriptions = {}
+                    for row in reader:
+                        # e.g. {'NATX323': 'Cardiff - Liverpool'}
+                        service_descriptions[row['Operator'] + row['LineName']] = row['Description']
+
+            for i, file_name in enumerate(archive.namelist()):
                 if (i - 1) % 1000 == 0:
                     print i
 
-                file_path = os.path.join(root, file_name)
-
                 # the NCSD has service descriptions in a separate file:
-                if file_name == 'IncludedServices.csv':
-                    with open(file_path) as csv_file:
-                        reader = csv.DictReader(csv_file)
-                        service_descriptions = {}
-                        for row in reader:
-                            # e.g. {'NATX323': 'Cardiff - Liverpool'}
-                            service_descriptions[row['Operator'] + row['LineName']] = row['Description']
-
-                elif file_name[-4:] == '.xml':
+                if file_name.endswith('.xml'):
                     try:
-                        e = ET.parse(file_path).getroot()
+                        e = ET.parse(archive.open(file_name)).getroot()
                         self.do_service(e.find('txc:Services', self.ns), file_name, e, service_descriptions=service_descriptions)
                     except Exception, error:
                         print str(error)
