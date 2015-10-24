@@ -55,7 +55,7 @@ class Command(BaseCommand):
         'METROLINE WEST LIMITED': 'MTLN',
         'LONDON CENTRAL BUS COMPANY LIMITED': 'LONC',
         'SULLIVAN BUS & COACH LIMITED': 'SULV',
-        'Notts & Derby': 'Notts and Derby'
+        'Notts & Derby': 'NDTR'
     }
     # map OperatorCodes to operator IDs (ditto, where there is no TradingName):
     SPECIAL_OPERATOR_CODES = {
@@ -73,6 +73,7 @@ class Command(BaseCommand):
         'SGI':  'SGIL',  # Steel Group Investments Limited
         'EYM':  'EYMS',  # East Yorkshire Motor Services
         'WINF': 'WMLC',  # Windermere Lake Cruises/Ferry
+        'DPC':  'DPCE',  # (Don) Prentice (Coaches)
     }
 
     # @staticmethod
@@ -141,12 +142,10 @@ class Command(BaseCommand):
 
         try:
             national_code_element = operator_element.find('txc:NationalOperatorCode', self.ns)
-            trading_name_element = operator_element.find('txc:TradingName', self.ns)
-            name_on_license_element = operator_element.find('txc:OperatorNameOnLicence', self.ns)
-
             if national_code_element is not None:
                 return Operator.objects.get(id=national_code_element.text)
 
+            trading_name_element = operator_element.find('txc:TradingName', self.ns)
             if trading_name_element is not None:
                 trading_name = str.replace(
                     trading_name_element.text,
@@ -169,7 +168,14 @@ class Command(BaseCommand):
             if len(possible_operators) == 1:
                 return possible_operators[0]
 
-            return Operator.objects.get(name=name_on_license_element.text)
+            name_on_license_element = operator_element.find('txc:OperatorNameOnLicence', self.ns)
+            if name_on_license_element is not None:
+                possible_operators = Operator.objects.filter(name=name_on_license_element.text)
+                if len(possible_operators) == 1:
+                    return possible_operators[0]
+
+            short_name_element = operator_element.find('txc:OperatorShortName', self.ns)
+            return Operator.objects.get(name=short_name_element.text)
 
         except Exception, error:
             print str(error)
