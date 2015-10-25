@@ -180,9 +180,11 @@ class Command(BaseCommand):
                 possible_operators = Operator.objects.filter(name=name_on_license_element.text)
                 if len(possible_operators) == 1:
                     return possible_operators[0]
+            else:
+                short_name_element = operator_element.find('txc:OperatorShortName', self.ns)
+                return Operator.objects.get(name__startswith=short_name_element.text)
 
-            short_name_element = operator_element.find('txc:OperatorShortName', self.ns)
-            return Operator.objects.get(name=short_name_element.text)
+            return None
 
         except Exception, error:
             print str(error)
