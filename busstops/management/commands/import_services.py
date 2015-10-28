@@ -78,6 +78,10 @@ class Command(BaseCommand):
         'EYM':  'EYMS',  # East Yorkshire Motor Services
         'WINF': 'WMLC',  # Windermere Lake Cruises/Ferry
         'DPC':  'DPCE',  # (Don) Prentice (Coaches)
+        'PCV':  'PCVN',  # (Peter) Canavan (Travel)
+        'RGJ':  'RGJS',  # R G Jamieson & Son
+        'DAM':  'DAMC',  # D A & A J MacLean
+        'ADD':  'ADDI',  # Addison News/of Callendar
     }
 
     def add_arguments(self, parser):
