@@ -219,6 +219,7 @@ class Service(models.Model):
     operator = models.ManyToManyField(Operator, blank=True)
     net = models.CharField(max_length=3, blank=True)
     stops = models.ManyToManyField(StopPoint, editable=False)
+    date = models.DateField()
 
     def __unicode__(self):
         if self.line_name and self.description:

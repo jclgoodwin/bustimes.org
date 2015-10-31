@@ -305,6 +305,7 @@ class Command(BaseCommand):
         for filename in options['filenames']:
             archive = zipfile.ZipFile(filename)
 
+            # the NCSD has service descriptions in a separate file:
             if 'IncludedServices.csv' in archive.namelist():
                 with archive.open('IncludedServices.csv') as csv_file:
                     reader = csv.DictReader(csv_file)
@@ -317,7 +318,6 @@ class Command(BaseCommand):
                 if (i - 1) % 1000 == 0:
                     print i
 
-                # the NCSD has service descriptions in a separate file:
                 if file_name.endswith('.xml'):
                     try:
                         e = ET.parse(archive.open(file_name)).getroot()
