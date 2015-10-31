@@ -212,11 +212,9 @@ class Command(BaseCommand):
 
         return operators
 
-    def do_service(self, services_element, file_name, root, service_descriptions=None):
+    def do_service(self, file_name, root, service_descriptions=None):
 
-        for service_element in services_element:
-
-            # service:
+        for service_element in root.find('txc:Services', self.ns):
 
             line_name = service_element.find('txc:Lines', self.ns)[0][0].text[:24]
 
@@ -251,6 +249,7 @@ class Command(BaseCommand):
                     mode=mode,
                     description=description,
                     net=self.get_net(file_name),
+                    date=root.attrib['ModificationDateTime'][:10]
                     )
                 )[0]
 
@@ -258,9 +257,10 @@ class Command(BaseCommand):
 
             if operators:
                 try:
-                   service.operator.add(*operators.values())
+                    service.operator.add(*operators.values())
                 except Exception, error:
-                   print str(error)
+                    print file_name
+                    print str(error)
 
             # service stops:
 
@@ -321,6 +321,6 @@ class Command(BaseCommand):
                 if file_name.endswith('.xml'):
                     try:
                         e = ET.parse(archive.open(file_name)).getroot()
-                        self.do_service(e.find('txc:Services', self.ns), file_name, e, service_descriptions=service_descriptions)
+                        self.do_service(file_name, e, service_descriptions=service_descriptions)
                     except Exception, error:
                         print str(error)
