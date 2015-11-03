@@ -8,11 +8,11 @@
     {% for operator in object.operator.all %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}<a href="{{ operator.get_absolute_url }}">{{ operator }}</a>{% endfor %}
 </p>
 
-{% if object.net != '' %}
+{% if object.net != '' or object.region_id == 'S' %}
 
     <h2>Timetable</h2>
 
-    <p><a href="{{ object.get_traveline_url }}">View timetable on the Traveline website</a></p>
+    <p><a href="{{ object.get_traveline_url }}">View timetable {% if object.region_id == 'S' %}(PDF) on the Traveline Scotland{% else %}on the Traveline{% endif %} website</a></p>
 
 {% endif %}
 

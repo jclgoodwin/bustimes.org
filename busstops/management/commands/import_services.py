@@ -10,7 +10,7 @@ Usage:
 """
 
 from django.core.management.base import BaseCommand, CommandError
-from busstops.models import Operator, StopPoint, Service, ServiceVersion
+from busstops.models import Operator, StopPoint, Service, ServiceVersion, Region
 
 import re
 import zipfile
@@ -212,7 +212,9 @@ class Command(BaseCommand):
 
         return operators
 
-    def do_service(self, file_name, root, service_descriptions=None):
+    def do_service(self, root, region, service_descriptions=None):
+
+        file_name = root.attrib['FileName']
 
         for service_element in root.find('txc:Services', self.ns):
 
@@ -249,6 +251,7 @@ class Command(BaseCommand):
                     mode=mode,
                     description=description,
                     net=self.get_net(file_name),
+                    region=region,
                     date=root.attrib['ModificationDateTime'][:10]
                     )
                 )[0]
@@ -302,8 +305,14 @@ class Command(BaseCommand):
 
         service_descriptions = None
 
-        for filename in options['filenames']:
-            archive = zipfile.ZipFile(filename)
+        for archive_name in options['filenames']:
+
+            if archive_name == 'NCSD.zip':
+                region = Region.objects.get(id='GB')
+            else:
+                region = Region.objects.get(id=archive_name.split('/')[-1][:-4])
+
+            archive = zipfile.ZipFile(archive_name)
 
             # the NCSD has service descriptions in a separate file:
             if 'IncludedServices.csv' in archive.namelist():
@@ -320,7 +329,7 @@ class Command(BaseCommand):
 
                 if file_name.endswith('.xml'):
                     try:
-                        e = ET.parse(archive.open(file_name)).getroot()
-                        self.do_service(file_name, e, service_descriptions=service_descriptions)
+                        root = ET.parse(archive.open(file_name)).getroot()
+                        self.do_service(root, region, service_descriptions=service_descriptions)
                     except Exception, error:
                         print str(error)

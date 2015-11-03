@@ -218,6 +218,7 @@ class Service(models.Model):
     mode = models.CharField(max_length=10)
     operator = models.ManyToManyField(Operator, blank=True)
     net = models.CharField(max_length=3, blank=True)
+    region = models.ForeignKey(Region)
     stops = models.ManyToManyField(StopPoint, editable=False)
     date = models.DateField()
 
@@ -260,6 +261,9 @@ class Service(models.Model):
             base_url = 'http://www.travelinesoutheast.org.uk/se'
 
             return '%s/XSLT_TTB_REQUEST?%s' % (base_url, urlencode(query))
+
+        elif self.region_id == 'S':
+            return 'http://www.travelinescotland.com/pdfs/timetables/' +  self.service_code + '.pdf'
 
 
 class ServiceVersion(models.Model):
