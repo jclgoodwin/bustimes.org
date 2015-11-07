@@ -252,7 +252,7 @@ class Command(BaseCommand):
                     description=description,
                     net=self.get_net(file_name),
                     region=region,
-                    date=root.attrib['ModificationDateTime'][:10]
+                    date=root.attrib['ModificationDateTime'][:10],
                     current=True
                     )
                 )[0]
