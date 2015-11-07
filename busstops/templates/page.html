@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{% block title %}{% if object %}{{ object }} – {% endif %}Bus Times{% endblock %}</title>
+<meta name="theme-color" content="#fe9" />
+{% load pipeline %}
+{% stylesheet 'main' %}
+{% load staticfiles %}
+<!--[if lt IE 9]>
+<script src="{% static "js/html5shiv-printshiv.min.js" %}"></script>
+<![endif]-->
+{% if object.get_absolute_url %}<link rel="canonical" href="https://bustimes.org.uk{{ object.get_absolute_url }}" />{% endif %}
+</head>
+<body>
+<header>
+<div>
+<a href="/">Bus Times <small>(alpha)</small></a>
+</div>
+</header>
+<main>
+{% if breadcrumb or not regions %}
+<ol class="breadcrumb" itemscope itemtype="http://schema.org/BreadcrumbList">
+    <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+        <a itemprop="item" href="/">
+            <span itemprop="name">Home</span>
+        </a>
+    </li>
+{% for item in breadcrumb %}
+    <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+        <a itemprop="item" href="{{ item.get_absolute_url }}">
+            <span itemprop="name">{{ item }}</span>
+        </a>
+    </li>
+{% endfor %}
+</ol>
+{% endif %}
+
+{% block content %}{% endblock %}
+
+</main>
+
+<footer>
+    {% block ad %}
+    <div class="banner-ad">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="auto"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    {% endblock %}
+    <ul>
+        <li>By <a href="https://joshuagoodw.in">Josh</a></li>
+        <li><a href="/cookies">Cookie policy</a></li>
+        <li><a href="/data">Data sources</a></li>
+    </ul>
+</footer>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-65987478-1', 'auto');
+  ga('send', 'pageview');
+</script>
+{% if stops or stoppoint %}
+{% load staticfiles %}
+<link rel="stylesheet" href="{% static 'css/leaflet.css' %}" />
+<script src="{% static 'js/leaflet.js' %}"></script>
+<script src="{% static 'js/map.js' %}"></script>
+{% elif regions %}
+{% load staticfiles %}
+<script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+<script src="{% static 'js/svgmap.js' %}"></script>
+{% endif %}
+</body>
+</html>

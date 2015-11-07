@@ -1,4 +1,8 @@
-{% include 'header.html' %}
+{% extends 'page.html' %}
+
+{% block title %}Map – Bus Times{% endblock %}
+
+{% block content %}
 
 <div id="hugemap"></div>
 
@@ -9,4 +13,4 @@
 <script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
 <script src="{% static 'js/hugemap.js' %}"></script>
 
-{% include 'footer.html' %}
+{% endblock %}

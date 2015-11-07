@@ -1,0 +1,38 @@
+{% extends 'page.html' %}
+
+{% block title %}Data sources – Bus Times{% endblock %}
+
+{% block content %}
+
+<h1>Data sources</h1>
+
+<p>This website uses information from several third-party open data sources, licensed under
+<a href="http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">version 3 of
+the Open Government License</a>.</p>
+
+<h2>National Public Transport Gazzetter</h2>
+
+<p>The <a href="https://data.gov.uk/dataset/nptg">NPTG</a> defines every region, administrative
+area, district and locality in Great Britain.</p>
+
+<h2>National Public Transport Access Node database</h2>
+
+<p>The <a href="https://data.gov.uk/dataset/naptan">NaPTAN</a> database contains every bus stop,
+railway station, ferry terminal, etc in Great Britain. It includes their locations in terms of
+both geographic coordinates and NPTG localities.</p>
+
+<h2>National Operator Codes</h2>
+
+<p>The <a href="http://www.travelinedata.org.uk/traveline-open-data/transport-operations/about-2/">NOC</a>
+database contains every public transport operator in Great Britain.</p>
+
+<h2>Traveline National Dataset</h2>
+
+<p>The <a href="http://www.travelinedata.org.uk/traveline-open-data/traveline-national-dataset/">TNDS</a>
+contains timetables for every bus, light rail, tram and ferry service in Great Britain. Services
+are linked to NaPTAN stops and NOC operators. The dataset is updated roughly every week, and we
+automatically update this site soon after.</p>
+
+{% endblock %}
+
+{% block ad %}{% endblock %}

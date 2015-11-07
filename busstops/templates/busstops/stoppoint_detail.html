@@ -1,4 +1,6 @@
-{% include 'header.html' %}
+{% extends 'page.html' %}
+
+{% block content %}
 
 <h1 itemprop="name">{{ stoppoint }}</h1>
 
@@ -49,4 +51,4 @@
 
 </div>
 
-{% include 'footer.html' %}
+{% endblock %}

@@ -5,6 +5,8 @@ from busstops import views
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
+    url('cookies', views.cookies),
+    url('data', views.data),
     url('map', views.hugemap),
     url('stops.json', views.stops),
     url('search.json', views.search),

@@ -1,4 +1,6 @@
-{% include 'header.html' %}
+{% extends 'page.html' %}
+
+{% block content %}
 
 <h1>{{ object }}</h1>
 
@@ -17,4 +19,4 @@
 {% endfor %}
 </ul>
 
-{% include 'footer.html' %}
+{% endblock %}

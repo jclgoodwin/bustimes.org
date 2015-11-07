@@ -340,6 +340,24 @@ main li {
     }
 }
 
+table {
+    text-align: left;
+    border-collapse: collapse;
+}
+
+tr {
+    border-bottom: 1px solid $brand-color-darker;
+}
+
+th,
+td {
+    padding: .25em 0 .25em 1em;
+
+    &:first-child {
+        padding-left: 0;
+    }
+}
+
 footer {
     margin-top: 1.5em;
 
@@ -460,6 +478,10 @@ footer {
     main {
         margin: 0 auto;
         width: 60em;
+    }
+
+    p {
+        width: 66%;
     }
 
     #svgmap {

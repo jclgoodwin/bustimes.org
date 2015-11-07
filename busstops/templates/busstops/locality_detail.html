@@ -1,4 +1,6 @@
-{% include 'header.html' %}
+{% extends 'page.html' %}
+
+{% block content %}
 
 <h1>{{ locality.get_qualified_name }}</h1>
 
@@ -36,4 +38,4 @@
 
 {% endif %}
 
-{% include 'footer.html' %}
+{% endblock %}

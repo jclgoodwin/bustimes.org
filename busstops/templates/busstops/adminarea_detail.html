@@ -1,4 +1,6 @@
-{% include 'header.html' %}
+{% extends 'page.html' %}
+
+{% block content %}
 
 <h1>{{ adminarea }}</h1>
 
@@ -33,4 +35,4 @@
     </ul>
 {% endif %}
 
-{% include 'footer.html' %}
+{% endblock %}

@@ -1,4 +1,6 @@
-{% include 'header.html' %}
+{% extends 'page.html' %}
+
+{% block content %}
 
 <h1>{{ district }}</h1>
 
@@ -10,4 +12,4 @@
 {% endfor %}
 </ul>
 
-{% include 'footer.html' %}
+{% endblock %}

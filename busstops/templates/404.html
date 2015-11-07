@@ -1,9 +1,11 @@
-{% include 'header.html' %}
+{% extends 'page.html' %}
+
+{% block content %}
 
 <h1>Page not found</h1>
 
 <p>Sorry, this page doesn’t exist.</p>
 
-</main>
-</body>
-</html>
+{% endblock %}
+
+{% block ads %}{% endblock %}

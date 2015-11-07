@@ -14,6 +14,17 @@ def index(request):
     }
     return render(request, 'index.html', context)
 
+
+def cookies(request):
+    "Cookie policy"
+    return render(request, 'cookies.html')
+
+
+def data(request):
+    "Data sources"
+    return render(request, 'data.html')
+
+
 def hugemap(request):
     "The biggish JavaScript map"
     return render(request, 'map.html')
