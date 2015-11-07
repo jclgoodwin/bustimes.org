@@ -208,6 +208,6 @@ class ServiceDetailView(DetailView):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)
         operator = self.object.operator.select_related('region').first()
         if operator is not None:
-            context['breadcrumb'] = [operator.region, operator]
+            context['breadcrumb'] = [self.object.region, operator]
         context['stops'] = self.object.stops.all()
         return context

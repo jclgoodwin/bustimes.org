@@ -253,6 +253,7 @@ class Command(BaseCommand):
                     net=self.get_net(file_name),
                     region=region,
                     date=root.attrib['ModificationDateTime'][:10]
+                    current=True
                     )
                 )[0]
 
@@ -314,6 +315,8 @@ class Command(BaseCommand):
 
             archive = zipfile.ZipFile(archive_name)
 
+            Service.objects.filter(region=region).update(current=False)
+
             # the NCSD has service descriptions in a separate file:
             if 'IncludedServices.csv' in archive.namelist():
                 with archive.open('IncludedServices.csv') as csv_file:
@@ -333,3 +336,5 @@ class Command(BaseCommand):
                         self.do_service(root, region, service_descriptions=service_descriptions)
                     except Exception, error:
                         print str(error)
+
+            Service.objects.filter(region=region, current=False).delete()

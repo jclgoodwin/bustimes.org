@@ -221,6 +221,7 @@ class Service(models.Model):
     region = models.ForeignKey(Region)
     stops = models.ManyToManyField(StopPoint, editable=False)
     date = models.DateField()
+    current = models.BooleanField(default=True)
 
     def __unicode__(self):
         if self.line_name and self.description:
