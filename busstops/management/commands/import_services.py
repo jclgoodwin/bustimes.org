@@ -10,7 +10,7 @@ Usage:
 """
 
 from django.core.management.base import BaseCommand, CommandError
-from busstops.models import Operator, StopPoint, Service, ServiceVersion, Region
+from busstops.models import Operator, StopPoint, Service, Region
 
 import re
 import zipfile
@@ -87,55 +87,6 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('filenames', nargs='+', type=str)
-
-    # @staticmethod
-    # def parse_duration(string):
-    #     """
-    #     Given a TransXChange RunTime string, e.g. 'PT180S',
-    #     returns a timedelta, e.g. 180 seconds.
-
-    #     Thanks to http://stackoverflow.com/a/4628148
-    #     """
-    #     regex = re.compile(r'PT((?P<hours>\d+?)H)?((?P<minutes>\d+?)M)?((?P<seconds>\d+?)S)?')
-    #     matches = regex.match(string).groupdict()
-    #     time_params = {}
-    #     for (name, param) in matches.iteritems():
-    #         if param:
-    #             time_params[name] = int(param)
-    #     return timedelta(**time_params)
-
-    # @staticmethod
-    # def weekday_to_int(weekday):
-    #     weekdays = ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')
-    #     for i, day in enumerate(weekdays):
-    #         if weekday == day:
-    #             return i
-
-    # @staticmethod
-    # def get_operating_profile(element):
-    #     """
-    #     Given an OperatingProfile element,
-    #     returns an OperatingProfile object that is (now) in the database
-    #     """
-    #     regular_days = ','.join(
-    #         map(
-    #             lambda e: weekday_to_int(e.tag[33:]), # tag name with namespace prefix removed
-    #             element.find('txc:RegularDayType', ns).find('txc:DaysOfWeek', ns) # iterable containing children of DaysOfWeek element
-    #             )
-    #         )
-    #     print regular_days
-    #     profile, created = OperatingProfile.objects.get_or_create(
-    #         regular_days=regular_days,
-    #         )
-    #     print profile
-
-    def get_service_version_name(self, file_name):
-        matches = self.serviceversion_regex.match(file_name)
-
-        if matches is not None:
-            return matches.group(2)
-        else:
-            return file_name[:-4]
 
     def get_net(self, file_name):
         """
@@ -280,31 +231,6 @@ class Command(BaseCommand):
                 service.stops.add(*stops)
             except Exception, error:
                 print str(error)
-
-            # service version:
-
-            service_version = ServiceVersion(
-                name=self.get_service_version_name(file_name),
-                service=service,
-                description=description
-                )
-
-            if len(service_version.name) > 24:
-                print '%s (from %s) is too long, skipping' % (service_version.name, file_name)
-                break
-
-            date_element = service_element.find('txc:OperatingPeriod', self.ns)
-            start_date_element = date_element.find('txc:StartDate', self.ns)
-            end_date_element = date_element.find('txc:EndDate', self.ns)
-
-            if end_date_element is not None:
-                end_date = datetime.strptime(end_date_element.text, '%Y-%m-%d')
-                if end_date < self.now:
-                    break
-                service_version.end_date = end_date
-
-            service_version.start_date = datetime.strptime(start_date_element.text, '%Y-%m-%d')
-            service_version.save()
 
 
     def handle(self, *args, **options):

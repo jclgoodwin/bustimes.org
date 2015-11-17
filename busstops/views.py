@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
-from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, ServiceVersion
+from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
 
 
 def index(request):

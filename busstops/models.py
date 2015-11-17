@@ -265,21 +265,3 @@ class Service(models.Model):
 
         elif self.region_id == 'S':
             return 'http://www.travelinescotland.com/pdfs/timetables/' +  self.service_code + '.pdf'
-
-
-class ServiceVersion(models.Model):
-    """
-    A "version" of a service, usually represented as a separate file in a region's TNDS zip archive.
-
-    There are usually at least two versions of a service, one per direction of travel.
-    Further "versions" exist when services are revised.
-    """
-    name = models.CharField(max_length=24, primary_key=True) # e.g. 'YEABCL1-2015-04-10-1'
-    description = models.CharField(max_length=100)
-    service = models.ForeignKey(Service, editable=False)
-    start_date = models.DateField()
-    end_date = models.DateField(null=True)
-
-    def __unicode__(self):
-        return self.description
-
