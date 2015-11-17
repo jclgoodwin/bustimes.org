@@ -17,6 +17,7 @@ import zipfile
 import csv
 import xml.etree.cElementTree as ET
 from datetime import datetime
+from titlecase import titlecase
 
 
 class Command(BaseCommand):
@@ -236,11 +237,15 @@ class Command(BaseCommand):
 
             description_element = service_element.find('txc:Description', self.ns)
             if description_element is not None:
-                description = description_element.text[:100]
+                description = description_element.text
             elif service_descriptions is not None:
                 description = service_descriptions.get(operators.values()[0].id + line_name, '')
             else:
+                print '%s is missing a name' % file_name
                 description = ''
+
+            if description.isupper():
+                description = titlecase(description)
 
             # service:
 
