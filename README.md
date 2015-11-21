@@ -4,14 +4,22 @@
 
 It's [a thing about buses](https://bustimes.org.uk/).
 
-## Dependencies
+## Installing
 
-Python, Django ... there will be a `requirements.txt` soon.
+A database supported by GeoDjango is required – I use PostgreSQL with PostGIS.
+I also use Nginx and uwsgi in production.
 
-A database supported by GeoDjango is required.
-I use SQLite with Spatialite in development, and PostgreSQL with PostGIS in production.
+Here I've noted down some of the commands I used when manually provisioning a new server:
 
-I also use Nginx, uwsgi and Varnish in production.
+    apt-get install postgresql postgresql-contrib
+    apt-get install libpq-dev python-dev gcc
+    apt-get install python-virtualenv
+    virtualenv env
+    . env/bin/activate
+    pip install django django-pipeline psycopg2
+    apt-get install binutils libproj-dev gdal-bin
+    apt-get install postgis
+    apt-get install nginx uwsgi uwsgi-plugin-python
 
 ## Importing data
 

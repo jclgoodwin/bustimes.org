@@ -1,3 +1,5 @@
+env
+data
 .DS_Store
 *.pyc
 settings.py
