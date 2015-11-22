@@ -1,6 +1,7 @@
 env
-data
 .DS_Store
 *.pyc
+data/*/*.zip
+data/*/*.csv
 settings.py
 .sass-cache
