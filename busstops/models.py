@@ -183,8 +183,8 @@ class Operator(models.Model):
 
     id = models.CharField(max_length=10, primary_key=True) # e.g. 'YCST'
     name = models.CharField(max_length=100)
-    vehicle_mode = models.CharField(max_length=48)
-    parent = models.CharField(max_length=48)
+    vehicle_mode = models.CharField(max_length=48, blank=True)
+    parent = models.CharField(max_length=48, blank=True)
     region = models.ForeignKey(Region)
 
     def __unicode__(self):
