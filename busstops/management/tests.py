@@ -43,15 +43,28 @@ class ImportStopAreasTest(TestCase):
     def test_row_to_stoparea(self):
         "Given a row, does row_to_stoparea return a StopArea object with the correct field values?"
 
-        row = ['940GZZBKBON', 'Boness (Boness & Kinneil Railway)', '', '147', 'GTMU', 'U',
-               '300332', '681714', '2007-02-06T14:15:00', '2007-02-06T14:15:00', '0', 'new', 'act']
+        row = {
+            'GridType': 'U',
+            'Status': 'act',
+            'Name': 'Buscot Copse',
+            'AdministrativeAreaCode': '064',
+            'StopAreaType': 'GPBS',
+            'NameLang': '',
+            'StopAreaCode': '030G50780001',
+            'Easting': '460097',
+            'Modification': 'new',
+            'ModificationDateTime': '2015-02-13T15:31:00',
+            'CreationDateTime': '2015-02-13T15:31:00',
+            'RevisionNumber': '0',
+            'Northing': '171718'
+        }
         region = Region.objects.create(id='GB', name='Great Britain')
-        admin_area = AdminArea.objects.create(id=147, atco_code=940, region=region)
-        area = self.command.row_to_stoparea(row)
+        admin_area = AdminArea.objects.create(id=64, atco_code=30, region=region)
+        area = self.command.handle_row(row)
 
-        self.assertEqual(area.id, '940GZZBKBON')
-        self.assertEqual(area.name, 'Boness (Boness & Kinneil Railway)')
-        self.assertEqual(area.stop_area_type, 'GTMU')
+        self.assertEqual(area.id, '030G50780001')
+        self.assertEqual(area.name, 'Buscot Copse')
+        self.assertEqual(area.stop_area_type, 'GPBS')
         self.assertEqual(area.admin_area, admin_area)
         self.assertTrue(area.active)
 
