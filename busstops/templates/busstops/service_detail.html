@@ -7,7 +7,7 @@
 <p>
     {{ object.get_a_mode }}
     service operated by
-    {% for operator in object.operator.all %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}<a href="{{ operator.get_absolute_url }}">{{ operator }}</a>{% endfor %}
+    {% for operator in operators %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}<a href="{{ operator.get_absolute_url }}">{{ operator }}</a>{% endfor %}
 </p>
 
 {% if object.net != '' or object.region_id == 'S' %}

@@ -90,8 +90,8 @@ class RegionDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(RegionDetailView, self).get_context_data(**kwargs)
 
-        context['areas'] = AdminArea.objects.filter(region=self.object).exclude(stoppoint=None).order_by('name')
-        context['operators'] = Operator.objects.filter(region=self.object).exclude(service=None).order_by('name')
+        context['areas'] = AdminArea.objects.filter(region=self.object).order_by('name').distinct() # TODO exclude national coach?
+        context['operators'] = Operator.objects.filter(region=self.object, service__isnull=False).distinct().order_by('name')
 
         return context
 
@@ -104,7 +104,8 @@ class AdminAreaDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(AdminAreaDetailView, self).get_context_data(**kwargs)
 
-        # Districts in this administrative area,
+        # Districts in this administrative area
+        # context['districts'] = District.objects.filter(admin_area=self.object)
         context['districts'] = District.objects.filter(
             Q(locality__stoppoint__active=True) |
             Q(locality__locality__stoppoint__active=True),
@@ -182,11 +183,10 @@ class StopPointDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
-        if self.object.stop_area:
-            context['nearby'] = StopPoint.objects.filter(
-                stop_area=self.object.stop_area,
-                active=True
-            ).exclude(atco_code=self.object.atco_code).order_by('atco_code')
+        context['nearby'] = StopPoint.objects.filter(
+            stop_area=self.object.stop_area_id,
+            active=True
+        ).order_by('atco_code')
         context['services'] = Service.objects.filter(stops=self.object).order_by('service_code')
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region,
@@ -217,8 +217,9 @@ class ServiceDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)
-        operator = self.object.operator.select_related('region').first()
-        if operator is not None:
-            context['breadcrumb'] = [self.object.region, operator]
+        context['operators'] = self.object.operator.all()
+
+        if bool(context['operators']):
+            context['breadcrumb'] = [self.object.region, context['operators'][0]]
         context['stops'] = self.object.stops.all()
         return context

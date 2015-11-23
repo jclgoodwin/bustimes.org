@@ -153,7 +153,7 @@ class StopPoint(models.Model):
     bus_stop_type = models.CharField(max_length=3)
     timing_status = models.CharField(max_length=3)
     admin_area = models.ForeignKey('AdminArea')
-    active = models.BooleanField()
+    active = models.BooleanField(db_index=True)
 
     def __unicode__(self):
         if self.indicator:
@@ -182,7 +182,7 @@ class Operator(models.Model):
     "An entity that operates public transport services."
 
     id = models.CharField(max_length=10, primary_key=True) # e.g. 'YCST'
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     vehicle_mode = models.CharField(max_length=48, blank=True)
     parent = models.CharField(max_length=48, blank=True)
     region = models.ForeignKey(Region)

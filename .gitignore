@@ -3,5 +3,6 @@ env
 *.pyc
 data/*/*.zip
 data/*/*.csv
+data/*.csv
 settings.py
 .sass-cache

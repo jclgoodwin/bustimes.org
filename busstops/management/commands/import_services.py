@@ -127,9 +127,9 @@ class Command(BaseCommand):
             if operator_code in self.SPECIAL_OPERATOR_CODES:
                 return Operator.objects.get(id=self.SPECIAL_OPERATOR_CODES[operator_code])
 
-            possible_operators = Operator.objects.filter(id=operator_code)
-            if len(possible_operators) == 1:
-                return possible_operators[0]
+            possible_operators = Operator.objects.get(id=operator_code)
+            if possible_operators is not None:
+                return possible_operators
 
             name_on_license_element = operator_element.find('txc:OperatorNameOnLicence', self.ns)
             if name_on_license_element is not None:
