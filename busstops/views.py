@@ -105,21 +105,14 @@ class AdminAreaDetailView(DetailView):
         context = super(AdminAreaDetailView, self).get_context_data(**kwargs)
 
         # Districts in this administrative area
-        # context['districts'] = District.objects.filter(admin_area=self.object)
-        context['districts'] = District.objects.filter(
-            Q(locality__stoppoint__active=True) |
-            Q(locality__locality__stoppoint__active=True),
-            admin_area=self.object,
-        ).distinct()
+        context['districts'] = District.objects.filter(admin_area=self.object).distinct()
 
         # Districtless localities in this administrative area
         context['localities'] = Locality.objects.filter(
-            Q(stoppoint__active=True) |
-            Q(locality__stoppoint__active=True),
-            admin_area=self.object,
+            admin_area_id=self.object.id,
             district=None,
             parent=None,
-        ).distinct().order_by('name')
+        ).exclude(stoppoint=None, locality=None).distinct().order_by('name')
 
         # National Rail/Air/Ferry stops
         if len(context['localities']) == 0 and len(context['districts']) == 0:
@@ -140,9 +133,9 @@ class DistrictDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(DistrictDetailView, self).get_context_data(**kwargs)
         context['localities'] = Locality.objects.filter(
-            Q(stoppoint__active=True) | Q(locality__stoppoint__active=True),
-            district=self.object
-        ).exclude(parent__district=self.object).distinct().order_by('name')
+            district=self.object,
+            parent=None
+        ).exclude(stoppoint=None, locality=None).distinct().order_by('name')
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
         return context
 
@@ -185,9 +178,8 @@ class StopPointDetailView(DetailView):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
         if self.object.stop_area_id is not None:
             context['nearby'] = StopPoint.objects.filter(
-                stop_area=self.object.stop_area_id,
-                active=True
-            ).order_by('atco_code')
+                stop_area=self.object.stop_area_id
+            ).exclude(atco_code=self.object.atco_code).order_by('atco_code')
         context['services'] = Service.objects.filter(stops=self.object).order_by('service_code')
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region,
