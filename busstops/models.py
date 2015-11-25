@@ -182,7 +182,7 @@ class Operator(models.Model):
     "An entity that operates public transport services."
 
     id = models.CharField(max_length=10, primary_key=True) # e.g. 'YCST'
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, db_index=True)
     vehicle_mode = models.CharField(max_length=48, blank=True)
     parent = models.CharField(max_length=48, blank=True)
     region = models.ForeignKey(Region)
