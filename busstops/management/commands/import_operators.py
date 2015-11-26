@@ -39,6 +39,6 @@ class Command(BaseCommand):
         reader = csv.reader(sys.stdin)
         next(reader)  # skip past header
         for row in reader:
-            if row[0] not in ('CECT', 'TVSR', 'YHCS', 'HBSY'):
+            if row[0] not in ('CECT'):
                 operator = self.row_to_operator(row)
                 operator.save()
