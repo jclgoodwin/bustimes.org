@@ -46,18 +46,14 @@ header {
         padding: .66667em;
     }
 
+    a:after {
+        content: url(../bus.svg);
+        margin-left: .66667em;
+    }
+
     a:hover {
         background-color: $brand-color-darker;
         text-decoration: none;
-    }
-
-    small {
-        display: inline-block;
-        font-size: .5em;
-        line-height: 1.2em;
-        position: relative;
-        text-decoration: none;
-        vertical-align: top;
     }
 }
 

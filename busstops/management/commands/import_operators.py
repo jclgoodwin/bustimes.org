@@ -22,7 +22,7 @@ class Command(BaseCommand):
         else:
             name = row[1]  # OperatorPublicName
 
-        name = name.replace('\'', u'\u2019')
+        name = name.replace('\'', u'\u2019') # Fancy apostrophe
 
         operator = Operator.objects.update_or_create(
             id=id,
