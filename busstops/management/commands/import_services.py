@@ -29,6 +29,7 @@ class Command(BaseCommand):
 
     serviceversion_regex = re.compile(r'(SVR|[^ _]+_TXC_|[a-z]+_|.*_atco_)(.+).xml$')
     net_regex = re.compile(r'([a-z]+)_$')
+    service_name_regex = re.compile(r'.+,([^ ].+)$')
 
     # map TradingNames to operator IDs where there is no correspondence between the NOC DB and TNDS:
     SPECIAL_OPERATOR_TRADINGNAMES = {
@@ -100,6 +101,17 @@ class Command(BaseCommand):
                 return net_matches.group(1)
         return ''
 
+    def santitize_service_name(self, name):
+        """
+        Given an oddly formatted name from the North East,
+        like 'Bus Station bay 5,Blyth - Grange Road turning circle,Widdrington Station',
+        returns a shorter, more normal version like
+        'Blyth - Widdrington Station'
+        """
+
+        parts = [self.service_name_regex.match(part).group(1) for part in name.split(' - ')]
+        return ' - '.join(parts)
+
     def get_operator(self, operator_element):
         "Given an Operator element, returns an Operator object."
 
@@ -114,7 +126,7 @@ class Command(BaseCommand):
                     trading_name_element.text,
                     '&amp;',
                     '&'
-                    )
+                )
                 if trading_name in self.SPECIAL_OPERATOR_TRADINGNAMES:
                     return Operator.objects.get(id=self.SPECIAL_OPERATOR_TRADINGNAMES[trading_name])
                 if trading_name == 'Replacement Service':
@@ -183,6 +195,8 @@ class Command(BaseCommand):
 
             operators_element = root.find('txc:Operators', self.ns)
             operators = self.do_operators(operators_element)
+            if len(operators) == 0:
+                print file_name
 
             # service description:
 
@@ -198,6 +212,14 @@ class Command(BaseCommand):
             if description.isupper():
                 description = titlecase(description)
 
+            if region.id == 'NE':
+                description = self.santitize_service_name(description)
+
+            if len(description) > 100:
+                print file_name
+                print '% is too long' % description
+                description = description[:100]
+
             # service:
 
             service = Service.objects.update_or_create(
@@ -210,8 +232,8 @@ class Command(BaseCommand):
                     region=region,
                     date=root.attrib['ModificationDateTime'][:10],
                     current=True
-                    )
-                )[0]
+                )
+            )[0]
 
             # service operators (part 2):
 
