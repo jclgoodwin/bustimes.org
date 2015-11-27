@@ -11,7 +11,7 @@ class ImportServicesTest(TestCase):
 
     command = import_services.Command()
 
-    def test_sanitize_service_name(self):
+    def test_sanitize_description(self):
 
         testcases = (
             (
@@ -19,13 +19,13 @@ class ImportServicesTest(TestCase):
                 'Blyth - Widdrington Station'
             ),
             (
-                'Bus Station-Std C,Winlaton - Ryton Comprehensive School,Ryton',
+                '      Bus Station-Std C,Winlaton - Ryton Comprehensive School,Ryton     ',
                 'Winlaton - Ryton'
             ),
         )
 
         for inp, outp in testcases:
-            self.assertEqual(self.command.santitize_service_name(inp), outp)
+            self.assertEqual(self.command.sanitize_description(inp), outp)
 
     def test_get_net(self):
         """

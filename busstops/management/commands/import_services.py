@@ -29,7 +29,7 @@ class Command(BaseCommand):
 
     serviceversion_regex = re.compile(r'(SVR|[^ _]+_TXC_|[a-z]+_|.*_atco_)(.+).xml$')
     net_regex = re.compile(r'([a-z]+)_$')
-    service_name_regex = re.compile(r'.+,([^ ].+)$')
+    description_regex = re.compile(r'.+,([^ ].+)$')
 
     # map TradingNames to operator IDs where there is no correspondence between the NOC DB and TNDS:
     SPECIAL_OPERATOR_TRADINGNAMES = {
@@ -101,15 +101,19 @@ class Command(BaseCommand):
                 return net_matches.group(1)
         return ''
 
-    def santitize_service_name(self, name):
+    def sanitize_description_part(self, part):
+        sanitized_part = self.description_regex.match(part.strip())
+        return sanitized_part.group(1) if sanitized_part is not None else part
+
+    def sanitize_description(self, name):
         """
-        Given an oddly formatted name from the North East,
+        Given an oddly formatted description from the North East,
         like 'Bus Station bay 5,Blyth - Grange Road turning circle,Widdrington Station',
         returns a shorter, more normal version like
         'Blyth - Widdrington Station'
         """
 
-        parts = [self.service_name_regex.match(part).group(1) for part in name.split(' - ')]
+        parts = [self.sanitize_description_part(part) for part in name.split(' - ')]
         return ' - '.join(parts)
 
     def get_operator(self, operator_element):
@@ -213,11 +217,11 @@ class Command(BaseCommand):
                 description = titlecase(description)
 
             if region.id == 'NE':
-                description = self.santitize_service_name(description)
+                description = self.sanitize_description(description)
 
             if len(description) > 100:
                 print file_name
-                print '% is too long' % description
+                print '%s is too long' % description
                 description = description[:100]
 
             # service:
