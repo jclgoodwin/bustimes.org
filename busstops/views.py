@@ -159,6 +159,10 @@ class LocalityDetailView(DetailView):
             parent=self.object,
         ).distinct().order_by('name')
 
+        context['services'] = Service.objects.filter(
+            stops__locality=self.object
+        ).distinct().order_by('service_code')
+
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region,
             self.object.admin_area,

@@ -38,4 +38,19 @@
 
 {% endif %}
 
+{% if services %}
+
+<h2>Services</h2>
+
+<ul>
+{% for service in services %}
+    <li>
+        <a href="{{ service.get_absolute_url }}">{{ service }}</a>
+    </li>
+{% endfor %}
+</ul>
+
+{% endif %}
+
+
 {% endblock %}
