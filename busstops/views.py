@@ -1,10 +1,15 @@
 "View definitions."
-from django.shortcuts import render
+import zipfile
+import os
+from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
 from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
+
+
+DIR = os.path.dirname(__file__)
 
 
 def index(request):
@@ -220,3 +225,16 @@ class ServiceDetailView(DetailView):
             context['breadcrumb'] = [self.object.region, context['operators'][0]]
         context['stops'] = self.object.stops.all()
         return context
+
+
+def service_xml(request, pk):
+    service = get_object_or_404(Service, service_code=pk)
+    archive_name = 'NCSD' if service.region_id == 'GB' else service.region_id
+    archive_path = os.path.join(DIR, '../data/TNDS/', archive_name + '.zip')
+    archive = zipfile.ZipFile(archive_path)
+    file_names = [name for name in archive.namelist() if pk in name]
+
+    bodies = ''
+    for body in (archive.open(file_name).read() for file_name in file_names):
+        bodies += body
+    return HttpResponse(bodies, content_type='text/xml')

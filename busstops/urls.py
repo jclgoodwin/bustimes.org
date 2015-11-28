@@ -17,4 +17,5 @@ urlpatterns = patterns('',
     url(r'^stops/(?P<pk>[-\w]+)/?$', views.StopPointDetailView.as_view(), name='stoppoint-detail'),
     url(r'^operators/(?P<pk>[-\w]+)/?$', views.OperatorDetailView.as_view(), name='operator-detail'),
     url(r'^services/(?P<pk>[-\w]+)/?$', views.ServiceDetailView.as_view(), name='service-detail'),
+    url(r'^services/(?P<pk>[-\w]+)/xml?$', views.service_xml, name='service-xml'),
 )
