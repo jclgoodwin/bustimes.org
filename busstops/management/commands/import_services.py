@@ -219,10 +219,10 @@ class Command(BaseCommand):
             if region.id == 'NE':
                 description = self.sanitize_description(description)
 
-            if len(description) > 100:
+            if len(description) > 128:
                 print file_name
                 print '%s is too long' % description
-                description = description[:100]
+                description = description[:128]
 
             # service:
 

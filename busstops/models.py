@@ -75,6 +75,7 @@ class Locality(models.Model):
     district = models.ForeignKey(District, null=True)
     parent = models.ForeignKey('Locality', null=True, editable=False)
     location = models.PointField(srid=27700, null=True)
+    adjancent = models.ManyToManyField('Locality', related_name='neighbour')
 
     def __unicode__(self):
         return self.name
@@ -214,7 +215,7 @@ class Service(models.Model):
     "A bus service."
     service_code = models.CharField(max_length=24, primary_key=True)
     line_name = models.CharField(max_length=24)
-    description = models.CharField(max_length=100)
+    description = models.CharField(max_length=128)
     mode = models.CharField(max_length=10)
     operator = models.ManyToManyField(Operator, blank=True)
     net = models.CharField(max_length=3, blank=True)
