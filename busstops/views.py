@@ -114,10 +114,11 @@ class AdminAreaDetailView(DetailView):
 
         # Districtless localities in this administrative area
         context['localities'] = Locality.objects.filter(
+            Q(stoppoint__isnull=False) | Q(locality__isnull=False),
             admin_area_id=self.object.id,
             district=None,
-            parent=None,
-        ).exclude(stoppoint=None, locality=None).distinct().order_by('name')
+            parent=None
+        ).distinct().order_by('name')
 
         # National Rail/Air/Ferry stops
         if len(context['localities']) == 0 and len(context['districts']) == 0:
@@ -138,9 +139,10 @@ class DistrictDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(DistrictDetailView, self).get_context_data(**kwargs)
         context['localities'] = Locality.objects.filter(
+            Q(stoppoint__isnull=False) | Q(locality__isnull=False),
             district=self.object,
-            parent=None
-        ).exclude(stoppoint=None, locality=None).distinct().order_by('name')
+            parent=None,
+        ).distinct().order_by('name')
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
         return context
 
