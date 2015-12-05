@@ -1,7 +1,4 @@
-Django==1.8.6
-argparse==1.2.1
+Django==1.9
 django-pipeline==1.5.4
-futures==3.0.3
 psycopg2==2.6.1
 titlecase==0.8.0
-wsgiref==0.1.2
