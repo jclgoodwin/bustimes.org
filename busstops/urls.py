@@ -1,15 +1,14 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-from busstops import views
+from . import views
 
-
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url('cookies', views.cookies),
-    url('data', views.data),
-    url('map', views.hugemap),
-    url('stops.json', views.stops),
-    url('search.json', views.search),
+    url(r'^cookies', views.cookies),
+    url(r'^data', views.data),
+    url(r'^map', views.hugemap),
+    url(r'^stops.json', views.stops),
+    url(r'^search.json', views.search),
     url(r'^regions/(?P<pk>[A-Z]+)/?$', views.RegionDetailView.as_view(), name='region-detail'),
     url(r'^(admin-)?areas/(?P<pk>\d+)/?$', views.AdminAreaDetailView.as_view(), name='adminarea-detail'),
     url(r'^districts/(?P<pk>\d+)/?$', views.DistrictDetailView.as_view(), name='district-detail'),
@@ -17,5 +16,5 @@ urlpatterns = patterns('',
     url(r'^stops/(?P<pk>[-\w]+)/?$', views.StopPointDetailView.as_view(), name='stoppoint-detail'),
     url(r'^operators/(?P<pk>[-\w]+)/?$', views.OperatorDetailView.as_view(), name='operator-detail'),
     url(r'^services/(?P<pk>[-\w]+)/?$', views.ServiceDetailView.as_view(), name='service-detail'),
-    url(r'^services/(?P<pk>[-\w]+)/xml?$', views.service_xml, name='service-xml'),
-)
+    url(r'^services/(?P<pk>[-\w]+)/xml?$', views.service_xml),
+]
