@@ -6,11 +6,14 @@
 
 <p>
     {{ object.get_a_mode }}
-    service operated by
-    {% for operator in operators %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}<a href="{{ operator.get_absolute_url }}">{{ operator }}</a>{% endfor %}
+    service
+    {% if operators %}
+        operated by
+        {% for operator in operators %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}<a href="{{ operator.get_absolute_url }}">{{ operator }}</a>{% endfor %}
+    {% endif %}
 </p>
 
-{% if object.net != '' or object.region_id == 'S' %}
+{% if object.net != '' and object.net != 'tfl' or object.region_id == 'S' %}
 
     <h2>Timetable</h2>
 
