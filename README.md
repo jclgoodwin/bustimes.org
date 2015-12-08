@@ -1,5 +1,7 @@
 # Bus Times
 
+[![Build Status](https://travis-ci.org/jclgoodwin/bustimes.org.uk.svg?branch=master)](https://travis-ci.org/jclgoodwin/bustimes.org.uk)
+
 ## What's this?
 
 It's [a thing about buses](https://bustimes.org.uk/).
