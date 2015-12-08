@@ -2,7 +2,6 @@ language: python
 services:
   - postgresql
 install:
-  - pip install .
   - pip install -r requirements.txt
 env:
   - DJANGO_SETTINGS_MODULE=buses.travis_settings
