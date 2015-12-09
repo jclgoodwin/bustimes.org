@@ -186,7 +186,10 @@ class Command(BaseCommand):
 
         for service_element in root.find('txc:Services', self.ns):
 
-            line_name = service_element.find('txc:Lines', self.ns)[0][0].text[:24]
+            line_name = service_element.find('txc:Lines', self.ns)[0][0].text
+            if len(line_name) > 24:
+                print 'Name "%s" is too long in %s' % (line_name, file_name)
+                line_name = line_name[:24]
 
             mode_element = service_element.find('txc:Mode', self.ns)
             if mode_element is not None:
@@ -201,6 +204,7 @@ class Command(BaseCommand):
             operators = self.do_operators(operators_element)
             if len(operators) == 0:
                 print file_name
+                print ET.tostring(operator_element)
 
             # service description:
 
@@ -220,8 +224,7 @@ class Command(BaseCommand):
                 description = self.sanitize_description(description)
 
             if len(description) > 128:
-                print file_name
-                print '%s is too long' % description
+                print 'Description "%s" is too long in %s' % (description, file_name)
                 description = description[:128]
 
             # service:
