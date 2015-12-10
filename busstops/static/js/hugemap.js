@@ -11,12 +11,14 @@
     var map = L.map('hugemap', {
             minZoom: 5,
             maxZoom: 13,
+            maxBounds: [[60.85, -9.23], [49.84, 2.69]]
+
         }),
         attribution = 'Map data &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors | Map tiles &copy; <a href="https://cartodb.com/attributions#basemaps">CartoDB</a>',
         tileURL = (document.location.protocol === 'https:' ? 'https://cartodb-basemaps-{s}.global.ssl.fastly.net' : 'http://{s}.basemaps.cartocdn.com') + '/light_all/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
         pin = L.icon({
-            iconUrl:    '/static/pin.svg',
-            iconSize:   [16, 22],
+            iconUrl: '/static/pin.svg',
+            iconSize: [16, 22],
             iconAnchor: [8, 22],
             popupAnchor: [0, -22],
         }),
@@ -52,33 +54,35 @@
 
     function loadStops(map, statusBar) {
         var bounds = map.getBounds(),
-            hw = map.highwater;
-        if (!hw || !hw.contains(bounds)) {
-            statusBar.getContainer().innerHTML = 'Loading...';
+            highWater = map.highWater;
+        if (!highWater || !highWater.contains(bounds)) {
+            statusBar.getContainer().innerHTML = 'Loading\u2026';
             $.get('/stops.json', {
                 ymax: bounds.getNorth(),
                 xmax: bounds.getEast(),
                 ymin: bounds.getSouth(),
                 xmin: bounds.getWest(),
             }, processStopsData, 'json');
-            map.highwater = bounds;
+            map.highWater = bounds;
         }
     }
 
     map.on('moveend', function (e) {
-        window.location.hash = e.target.getCenter().lat + ',' + e.target.getCenter().lng;
-        if (e.target.getZoom() > 12) {
+        window.location.hash = e.target.getZoom() + ',' + e.target.getCenter().lat + ',' + e.target.getCenter().lng;
+        if (e.target.getZoom() > 11) {
             loadStops(this, statusBar);
         } else {
             statusBar.getContainer().innerHTML = 'Please zoom in to see stops';
         }
     });
 
-    if (window.location.hash) {
-        map.setView(window.location.hash.substr(1).split(','), 13);
+    var parts = window.location.hash.substr(1).split(',');
+
+    if (parts.length === 3) {
+        map.setView([parts[1], parts[2]], parts[0]);
     } else {
-        map.setView([53.833333, -2.416667], 5);
-        map.locate({setView: true, maxZoom: 13});
+        statusBar.getContainer().innerHTML = 'Finding your location\u2026';
+        map.locate({setView: true});
     }
 
 })();
