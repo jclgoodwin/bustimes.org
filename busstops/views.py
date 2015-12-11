@@ -231,7 +231,12 @@ class ServiceDetailView(DetailView):
 
 def service_xml(request, pk):
     service = get_object_or_404(Service, service_code=pk)
-    archive_name = 'NCSD' if service.region_id == 'GB' else service.region_id
+    if service.region_id == 'GB':
+        archive_name = 'NCSD'
+        parts = pk.split('_')
+        pk = '%s_%s' % (parts[-1], parts[-2])
+    else:
+        archive_name = service.region_id
     archive_path = os.path.join(DIR, '../data/TNDS/', archive_name + '.zip')
     archive = zipfile.ZipFile(archive_path)
     file_names = [name for name in archive.namelist() if pk in name]
