@@ -43,11 +43,7 @@
 
 <footer>
     {% block ad %}
-    <div class="banner-ad">
-        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="auto"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
+    <div class="banner-ad" id="ad"></div>
     {% endblock %}
     <ul>
         <li>By <a href="https://joshuagoodw.in">Josh</a></li>
@@ -65,15 +61,16 @@
   ga('create', 'UA-65987478-1', 'auto');
   ga('send', 'pageview');
 </script>
-{% if stops or stoppoint %}
 {% load staticfiles %}
+{% if stops or stoppoint %}
 <link rel="stylesheet" href="{% static 'css/leaflet.css' %}" />
 <script src="{% static 'js/leaflet.js' %}"></script>
 <script src="{% static 'js/map.js' %}"></script>
 {% elif regions %}
-{% load staticfiles %}
 <script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
 <script src="{% static 'js/svgmap.js' %}"></script>
 {% endif %}
+<script src="{% static 'js/postscribe.min.js' %}"></script>
+<script src="{% static 'js/ad.js' %}"></script>
 </body>
 </html>

@@ -369,10 +369,10 @@ footer {
         padding: 1em;
         overflow: hidden;
     
+        div,
         .adsbygoogle {
             display: block;
             margin: 0 auto;
-            padding: 0;
         }
     }
     
@@ -463,6 +463,14 @@ footer {
         clear: left;
         margin-left: 0;
     }
+
+    .adsbygoogle {
+        max-width: 48em;
+    }
+
+    .banner-ad {
+        height: 6em;
+    }
 }
 
 @media (min-width: 62em) {
@@ -506,9 +514,5 @@ footer {
     .asides .aside:first-child {
         clear: left;
         margin-left: 0;
-    }
-
-    .adsbygoogle {
-        max-width: 48em;
     }
 }
