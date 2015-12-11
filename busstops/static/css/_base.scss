@@ -1,0 +1,397 @@
+@import 'variables';
+@import 'webfonts';
+
+body {
+    color: #222;
+    font-family: "Transport New", sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+header,
+main,
+aside,
+footer {
+    display: block;
+}
+
+main {
+    padding: 0 1em;
+}
+
+a {
+    color: $link-color;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:focus,
+a:active {
+    color: #000;
+    background-color: $brand-color;
+}
+
+header {
+    background: $brand-color;
+
+    a {
+        color: #000;
+        display: inline-block;
+        font-size: 1.5em;
+        line-height: 1;
+        padding: .66667em;
+    }
+
+    a:after {
+        content: url(../bus.svg);
+        margin-left: .66667em;
+    }
+
+    a:hover {
+        background-color: $brand-color-darker;
+        text-decoration: none;
+    }
+}
+
+h1,
+h2 {
+    line-height: 1.2em;
+    margin: .5em 0;
+}
+
+h1 {
+    font-size: 2em;
+}
+
+h2 {
+    font-size: 1.25em;
+    margin-top: 1em;
+}
+
+.button {
+    background: $brand-color;
+    border-bottom: .0625em solid $brand-color-darker;
+    border-radius: .5em;
+    color: inherit;
+    display: inline-block;
+    margin-top: .0625em;
+    margin-bottom: .5em;
+    padding: .5em;
+    padding-bottom: .4em;
+    vertical-align: bottom;
+
+    &:hover {
+        border-bottom-width: .125em;
+        margin-top: 0;
+        text-decoration: none;
+    }
+
+    &:focus,
+    &:active {
+        background-color: $brand-color-darker;
+        border-bottom: 0;
+        margin-top: .125em;
+
+        &:after {
+            content: "\2026";
+        }
+    }
+}
+
+ul, ol, li {
+    list-style: none;
+    padding: 0;
+}
+
+ul, ol {
+    margin: 1em 0;
+}
+
+main li {
+    margin: .25em 0;
+
+    a {
+        display: block;
+        margin-bottom: -.25em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: .125em 0;
+        white-space: nowrap;
+    }
+}
+
+.breadcrumb {
+    border-bottom: 1px solid $brand-color;
+    margin: 0 -1em;
+    padding: .5em 1em 0;
+    overflow: hidden;
+
+    li {
+        float: left;
+        margin: 0;
+        margin-top: -.5em;
+    }
+    
+    a {
+        float: left;
+        padding: .75em 0;
+    }
+    
+    li:after {
+        content: "\203A";
+        float: left;
+        padding: .75em .5em;
+        color: $brand-color;
+    }
+}
+
+#search-wrapper {
+    display: inline-block;
+    position: relative;
+    margin-bottom: .6em;
+}
+
+#search {
+    border: 1px solid $brand-color;
+    border-radius: 0;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    font: inherit;
+    outline: 0;
+    padding: .25em;
+    width: 11.5em;
+
+    &:focus {
+        border-color: $brand-color-darker;
+    }
+}
+
+#search-results {
+    background: white;
+    background: rgba(255, 255, 255, 0.8);
+    display: inline-block;
+    right: 0;
+    margin: 0;
+    margin-top: 2px;
+    position: absolute;
+    top: 2em;
+    width: 11.5em;
+    z-index: 1;
+
+    li {
+        margin: 0;
+    }
+
+    a {
+        border: 1px solid $brand-color-darker;
+        border-top: 0;
+        display: block;
+        margin: 0;
+        overflow: hidden;
+        padding: .3em .4em .2em;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.services {
+    a {
+        display: block;
+        overflow: hidden;
+        white-space: normal;
+    }
+    
+    li {
+        margin-top: 0;
+    }
+    
+    .name {
+        color: #dc7;
+        float: left;
+        margin-right: 1em;
+    
+        &.is-short {
+            font-size: 3em;
+            margin-right: .33em;
+            line-height: 1.2em;
+        }
+    }
+    
+    a:focus .name,
+    a:active .name {
+        color: inherit;
+    }
+}
+
+#regions {
+    margin-top: -.5em;
+    position: relative;
+}
+
+#svgmap {
+    bottom: 0;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    width: auto;
+    max-width: 50%;
+    
+    path {
+        fill: white;
+    }
+
+    a {
+        cursor: pointer;
+    }
+
+    a path {
+        fill: $brand-color-darker;
+    }
+    
+    .highlight,
+    a:focus,
+    a:hover {
+        path {
+            fill: #dc7;
+        }
+    }
+
+    a path.outline {
+        fill: none;
+        stroke: $brand-color-darker;
+        stroke-width: 1px;
+    }
+}
+
+#map {
+    display: none;
+}
+
+.asides {
+    clear: both;
+    overflow: hidden;
+}
+
+.aside {
+    margin-top: 1em;
+}
+
+.box {
+    padding: .5em .75em;
+    border: 1px solid $brand-color;
+    box-sizing: border-box;
+}
+
+.box h2 {
+    margin: .25em 0 .5em;
+}
+
+.box ul {
+    margin: 0;
+}
+
+@media (max-width: 30em) {
+    main img {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+#hugemap {
+    height: 40em;
+    height: 80vh;
+    margin: 1em 0;
+
+    .leaflet-control.hugemap-status {
+        background: #fff;
+        background: rgba(255, 255, 255, 0.8);
+        margin: 0;
+        padding: 0 5px;
+    }
+    
+    .marker-cluster {
+        background-clip: padding-box;
+        background-color: $brand-color;
+        border-radius: 20px;
+    }
+    
+    .marker-cluster div {
+        background-color: $brand-color-darker;
+        width: 30px;
+        height: 30px;
+        margin-left: 5px;
+        margin-top: 5px;
+    
+        text-align: center;
+        border-radius: 15px;
+        font-size: 12px;
+    }
+    
+    .marker-cluster span {
+        line-height: 30px;
+    }
+}
+
+table {
+    text-align: left;
+    border-collapse: collapse;
+}
+
+tr {
+    border-bottom: 1px solid $brand-color-darker;
+}
+
+th,
+td {
+    padding: .25em 0 .25em 1em;
+
+    &:first-child {
+        padding-left: 0;
+    }
+}
+
+footer {
+    margin-top: 1.5em;
+
+    ul,
+    .banner-ad {
+        border-top: 1px solid $brand-color;
+        clear: both;
+        text-align: center;
+        margin: 0;
+    }
+    
+    .banner-ad {
+        padding: 1em;
+        overflow: hidden;
+    
+        div,
+        .adsbygoogle {
+            display: block;
+            margin: 0 auto;
+        }
+    }
+    
+    ul {
+        color: #555;
+        font-size: .75em;
+        padding: 1em;
+    }
+    
+    li {
+        display: inline;
+    
+        &:before {
+            content: "  \2022  ";
+            margin: 0 .25em;
+        }
+        
+        &:first-child:before {
+            display: none;
+        }
+    }
+}

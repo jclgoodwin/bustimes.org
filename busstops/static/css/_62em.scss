@@ -1,0 +1,41 @@
+header div {
+    margin: 0 auto;
+    width: 62em;
+}
+
+main {
+    margin: 0 auto;
+    width: 60em;
+}
+
+p {
+    width: 66%;
+}
+
+#svgmap {
+    left: 25%;
+}
+
+#map {
+    width: 49%;
+    margin-left: 2%;
+}
+
+main img {
+    height: 300px;
+    width: auto;
+}
+
+.long li,
+.long li:nth-child(2n-1),
+.asides .aside {
+    clear: none;
+    margin-left: 2%;
+    width: 32%;
+}
+
+.long li:nth-child(3n-2),
+.asides .aside:first-child {
+    clear: left;
+    margin-left: 0;
+}

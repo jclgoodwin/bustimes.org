@@ -1,0 +1,31 @@
+.long {
+    overflow: hidden;
+}
+
+.aside,
+.long li {
+    max-width: 48%;
+    width: 48%;
+    float: left;
+    margin-left: 4%;
+}
+
+.long li,
+.long li a {
+    margin: 0;
+}
+
+.long li:nth-child(2n-1),
+.asides .aside:first-child {
+    clear: left;
+    margin-left: 0;
+}
+
+#regions ul {
+    width: 33.333%;
+}
+
+#svgmap {
+    left: 33.333%;
+    right: auto;
+}

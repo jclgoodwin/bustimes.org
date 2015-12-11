@@ -6,9 +6,12 @@
 <title>{% block title %}{% if object %}{{ object }} – {% endif %}Bus Times{% endblock %}</title>
 <meta name="theme-color" content="#fe9" />
 {% load pipeline %}
+<!--[if gte IE 9]><!-->
 {% stylesheet 'main' %}
+<!--<![endif]-->
 {% load staticfiles %}
 <!--[if lt IE 9]>
+{% stylesheet 'ie' %}
 <script src="{% static "js/html5shiv-printshiv.min.js" %}"></script>
 <![endif]-->
 {% if object.get_absolute_url %}<link rel="canonical" href="https://bustimes.org.uk{{ object.get_absolute_url }}" />{% endif %}

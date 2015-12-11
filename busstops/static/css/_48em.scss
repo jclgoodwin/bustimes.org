@@ -1,0 +1,40 @@
+#map {
+    display: block;
+    float: right;
+    height: 300px;
+    margin-bottom: 1em;
+    width: 48%;
+    margin-left: 4%;
+}
+
+main img {
+    width: 48%;
+    height: auto;
+}
+
+#regions ul {
+    width: 25%;
+}
+
+.services {
+    overflow: hidden;
+}
+
+.services li {
+    width: 48.5%;
+    float: left;
+    margin-left: 3%;
+}
+
+.services li:nth-child(2n-1) {
+    clear: left;
+    margin-left: 0;
+}
+
+.adsbygoogle {
+    max-width: 48em;
+}
+
+.banner-ad {
+    height: 6em;
+}
