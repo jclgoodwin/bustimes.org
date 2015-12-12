@@ -21,28 +21,21 @@
 
 {% endif %}
 
-<!-- {% for version in timetable %}
 
-<h3>{{ version.profile }}</h3>
+{% if timetable.journeys %}{% for journey in timetable.journeys %}
+    <h2>{{ journey }}</h2>
 
-<table>
-<tbody>
-{% for row in version.patterns %}
-<tr>
-    <th>
-    {{ row.stop.locality }} <a href="{{ row.stop.get_absolute_url }}">{{ row.stop }}</a>
-    </th>
-    {% for time in row.times %}
-    <td>
-    {{ time|time:"H:i" }}
-    </td>
+    <table class="timetable">
+    <tbody>
+    {% for row in journey.rows %}
+        <tr>
+        <th><a href="{{ row.stop.get_absolute_url }}">{{ row.stop }}</a></th>
+        <td>{{ row.time }}</td>
+        </tr>
     {% endfor %}
-</tr>
-{% endfor %}
-</tbody>
-</table>
-
-{% endfor %} -->
+    </tbody>
+    </table>
+{% endfor %}{% else %}
 
 <h2>Stops serviced</h2>
 
@@ -59,7 +52,11 @@
             </span>
         </a>
     </li>
+    </tbody>
+    </table>
 {% endfor %}
 </ul>
+
+{% endif %}
 
 {% endblock %}

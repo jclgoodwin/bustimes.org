@@ -337,12 +337,12 @@ main li {
 }
 
 table {
-    text-align: left;
     border-collapse: collapse;
+    text-align: left;
 }
 
 tr {
-    border-bottom: 1px solid $brand-color-darker;
+    border-bottom: 1px solid $brand-color;
 }
 
 th,
@@ -351,6 +351,15 @@ td {
 
     &:first-child {
         padding-left: 0;
+    }
+}
+
+.timetable {
+    font-size: .875em;
+    margin: 1em 0;
+
+    th {
+        font-weight: normal;
     }
 }
 

@@ -7,6 +7,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
 from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
+from timetables import timetable
 
 
 DIR = os.path.dirname(__file__)
@@ -222,6 +223,8 @@ class ServiceDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)
         context['operators'] = self.object.operator.all()
+
+        context['timetable'] = timetable.Timetable(self.object)
 
         if bool(context['operators']):
             context['breadcrumb'] = [self.object.region, context['operators'][0]]
