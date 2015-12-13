@@ -21,29 +21,6 @@
 
 {% endif %}
 
-<!-- {% for version in timetable %}
-
-<h3>{{ version.profile }}</h3>
-
-<table>
-<tbody>
-{% for row in version.patterns %}
-<tr>
-    <th>
-    {{ row.stop.locality }} <a href="{{ row.stop.get_absolute_url }}">{{ row.stop }}</a>
-    </th>
-    {% for time in row.times %}
-    <td>
-    {{ time|time:"H:i" }}
-    </td>
-    {% endfor %}
-</tr>
-{% endfor %}
-</tbody>
-</table>
-
-{% endfor %} -->
-
 <h2>Stops serviced</h2>
 
 <div id="map"></div>
