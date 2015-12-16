@@ -204,7 +204,7 @@ class Command(BaseCommand):
             operators = self.do_operators(operators_element)
             if len(operators) == 0:
                 print file_name
-                print ET.tostring(operator_element)
+                print ET.tostring(operators_element)
 
             # service description:
 
