@@ -268,10 +268,12 @@ class Command(BaseCommand):
 
         for archive_name in options['filenames']:
 
-            if archive_name == 'NCSD.zip':
+            region_id = archive_name.split('/')[-1][:-4]
+
+            if region_id == 'NCSD':
                 region = Region.objects.get(id='GB')
             else:
-                region = Region.objects.get(id=archive_name.split('/')[-1][:-4])
+                region = Region.objects.get(id=region_id)
 
             archive = zipfile.ZipFile(archive_name)
 
