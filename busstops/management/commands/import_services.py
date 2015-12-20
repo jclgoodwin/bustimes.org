@@ -116,69 +116,46 @@ class Command(BaseCommand):
         parts = [self.sanitize_description_part(part) for part in name.split(' - ')]
         return ' - '.join(parts)
 
+    def get_operator_name(self, operator_element):
+        "Given an Operator element, returns the operator name or None"
+
+        for element_name in ('TradingName', 'OperatorNameOnLicence', 'OperatorShortName'):
+            element = operator_element.find('txc:' + element_name, self.ns)
+            if element is not None:
+                return element.text.replace('&amp;', '&')
+
+    def get_operator_code(self, operator_element):
+        "Given an Operator element, returns the operator code or None"
+
+        element = operator_element.find('txc:NationalOperatorCode', self.ns)
+        if element is not None:
+            return element.text
+
     def get_operator(self, operator_element):
         "Given an Operator element, returns an Operator object."
 
         try:
-            national_code_element = operator_element.find('txc:NationalOperatorCode', self.ns)
-            if national_code_element is not None:
-                return Operator.objects.get(id=national_code_element.text)
+            # Get by national operator code
+            national_code = self.get_operator_code(operator_element)
+            if national_code is not None:
+                return Operator.objects.get(id=national_code)
 
-            trading_name_element = operator_element.find('txc:TradingName', self.ns)
-            if trading_name_element is not None:
-                trading_name = str.replace(
-                    trading_name_element.text,
-                    '&amp;',
-                    '&'
-                )
-                if trading_name in self.SPECIAL_OPERATOR_TRADINGNAMES:
-                    return Operator.objects.get(id=self.SPECIAL_OPERATOR_TRADINGNAMES[trading_name])
-                if trading_name == 'Replacement Service':
-                    return None
-                return Operator.objects.get(name=trading_name)
-
-            operator_code = operator_element.find('txc:OperatorCode', self.ns).text
-            if operator_code == 'UNKWN':
-                return None
-            if operator_code in self.SPECIAL_OPERATOR_CODES:
-                return Operator.objects.get(id=self.SPECIAL_OPERATOR_CODES[operator_code])
-
-            possible_operators = Operator.objects.filter(id=operator_code)
-            if possible_operators is not None:
+            # Get by name
+            operator_name = self.get_operator_name(operator_element)
+            possible_operators = Operator.objects.filter(name=operator_name)
+            if len(possible_operators) == 1:
                 return possible_operators.first()
 
-            name_on_license_element = operator_element.find('txc:OperatorNameOnLicence', self.ns)
-            if name_on_license_element is not None:
-                possible_operators = Operator.objects.filter(name=name_on_license_element.text)
-                if len(possible_operators) == 1:
-                    return possible_operators[0]
-            else:
-                short_name_element = operator_element.find('txc:OperatorShortName', self.ns)
-                return Operator.objects.get(name__startswith=short_name_element.text)
+            if operator_name in self.SPECIAL_OPERATOR_TRADINGNAMES:
+                return Operator.objects.get(id=self.SPECIAL_OPERATOR_TRADINGNAMES[operator_name])
 
-            return None
+            operator_code_element = operator_element.find('txc:OperatorCode', self.ns)
+            if operator_code_element is not None and operator_code_element.text in self.SPECIAL_OPERATOR_CODES:
+                return Operator.objects.get(id=self.SPECIAL_OPERATOR_CODES[operator_code_element.text])
 
         except Exception, error:
             print str(error)
             print ET.tostring(operator_element)
-            return None
-
-    def do_operators(self, operators_element):
-        "Given an Operators element, returns a dict mapping local codes to Operator objects."
-
-        operators = {}
-
-        for operator_element in operators_element:
-            if 'id' in operator_element.attrib:
-                local_code = operator_element.attrib['id']
-            else:
-                local_code = operator_element.find('txc:OperatorCode', self.ns).text
-
-            operator = self.get_operator(operator_element)
-            if operator is not None:
-                operators[local_code] = operator
-
-        return operators
 
     def do_service(self, root, region, service_descriptions=None):
 
@@ -201,7 +178,8 @@ class Command(BaseCommand):
             # (doing this preliminary bit now, to make getting NCSD descriptions possible)
 
             operators_element = root.find('txc:Operators', self.ns)
-            operators = self.do_operators(operators_element)
+            operators = map(self.get_operator, operators_element)
+            operators = filter(None, operators)
             if len(operators) == 0:
                 print file_name
                 print ET.tostring(operators_element)
@@ -212,7 +190,7 @@ class Command(BaseCommand):
             if description_element is not None:
                 description = description_element.text
             elif service_descriptions is not None:
-                description = service_descriptions.get(operators.values()[0].id + line_name, '')
+                description = service_descriptions.get(operators[0].id + line_name, '')
             else:
                 print '%s is missing a name' % file_name
                 description = ''
@@ -246,7 +224,7 @@ class Command(BaseCommand):
 
             if operators:
                 try:
-                    service.operator.add(*operators.values())
+                    service.operator.add(*operators)
                 except Exception, error:
                     print file_name
                     print str(error)
