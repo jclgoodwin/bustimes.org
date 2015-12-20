@@ -187,9 +187,9 @@ class Command(BaseCommand):
         for service_element in root.find('txc:Services', self.ns):
 
             line_name = service_element.find('txc:Lines', self.ns)[0][0].text
-            if len(line_name) > 24:
+            if len(line_name) > 64:
                 print 'Name "%s" is too long in %s' % (line_name, file_name)
-                line_name = line_name[:24]
+                line_name = line_name[:64]
 
             mode_element = service_element.find('txc:Mode', self.ns)
             if mode_element is not None:
