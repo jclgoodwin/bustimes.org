@@ -1,0 +1,4 @@
+NOCCODE,OperatorPublicName,RefNm,OpNm,Licence,TLRegOwn,Mode,ManDivNm,GpNme,EBSRAgent,LO,SW,WM,WA,YO,NW,NE,SC,SE,EA,EM,NI,NX,Megabus,"New Bharat",Terravision,NCSD,Easybus,Yorks_RT,"Travel Enq",Comment,AuditDate,AuditEditor,AuditComment,Duplicate,"Date Ceased","Cessation Comment"
+=CC,c2c,"c2c (ATOC)","National Express Group",,Admin,Rail,"National Express Group,","National Express Group PLC",,,,=CC,=CC,,,CC,,=CC,=CC,=CC,,,,,,,,,,,"2010-03-31 00:00:00","Mark Fell","Intial NOC Build",OK,,
+FABD,First,"First in Aberdeen","First Aberdeen Ltd",PM0000631,SC,Bus,"First Scotland,",First,,,,,,,,FIA,FAB,,,,,,,,,,,,,,"2011-12-23 00:00:00","J Prince","NE CODE Added",OK,,
+ACER,"Ace Travel",,"Ace Travel",,SW,DRT,"Ace Travel,",NoGroup_DRTMode,,,ACE,,,,,,,,,,,,,,,,,,,,"2015-06-04 00:00:00","John Prince","Added for Andy Hole",OK,,

@@ -12,6 +12,8 @@ class ImportFromCSVCommand(BaseCommand):
     Base class for commands for importing data from CSV files (via stdin)
     """
 
+    input = sys.stdin
+
     @staticmethod
     def to_camel_case(field_name):
         """
@@ -30,7 +32,7 @@ class ImportFromCSVCommand(BaseCommand):
         """
         Runs when the command is executed
         """
-        for row in csv.DictReader(sys.stdin):
+        for row in csv.DictReader(self.input):
             try:
                 self.handle_row(row)
             except Exception, error:

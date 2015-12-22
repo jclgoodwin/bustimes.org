@@ -214,7 +214,7 @@ class Operator(models.Model):
 class Service(models.Model):
     "A bus service."
     service_code = models.CharField(max_length=24, primary_key=True)
-    line_name = models.CharField(max_length=24)
+    line_name = models.CharField(max_length=64)
     description = models.CharField(max_length=128)
     mode = models.CharField(max_length=10)
     operator = models.ManyToManyField(Operator, blank=True)
