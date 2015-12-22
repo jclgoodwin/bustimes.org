@@ -22,7 +22,11 @@ class Command(ImportFromCSVCommand):
     @classmethod
     def handle_row(cls, row):
         "Given a CSV row (a list), returns an Operator object"
-        id = row['NOCCODE'].replace('=', '')
+        operator_id = row['NOCCODE'].replace('=', '')
+
+        if operator_id == 'TVSR':
+            return None
+
         region = cls.get_region(row['TLRegOwn'])
 
         if row['OperatorPublicName'] in ('First', 'Arriva', 'Stagecoach') \
@@ -35,7 +39,7 @@ class Command(ImportFromCSVCommand):
         name = name.replace('\'', u'\u2019') # Fancy apostrophe
 
         operator = Operator.objects.update_or_create(
-            id=id,
+            id=operator_id,
             defaults=dict(
                 name=name.strip(),
                 vehicle_mode=row['Mode'].lower().replace('ct operator', 'community transport').replace('drt', 'demand responsive transport'),
