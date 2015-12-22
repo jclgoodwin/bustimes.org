@@ -102,6 +102,9 @@ class VehicleJourney(object):
                     (datetime.combine(date.today(), self.rows[-1].time) + timinglink.runtime).time()
                 ))
 
+    def get_departure_time(self):
+        return self.departure_time
+
     def __str__(self):
         return '%s to %s' % (self.rows[0].stop, self.rows[-1].stop)
 
@@ -114,7 +117,7 @@ class Timetable(object):
         if service.region_id == 'GB':
             parts = service.service_code.split('_')
             service.service_code = '%s_%s' % (parts[-1], parts[-2])
-            archive_path = os.path.join('./data/TNDS/NCSD.zip')
+            archive_path = os.path.join(DIR, '../data/TNDS/NCSD.zip')
         else:
             archive_path = os.path.join(DIR, '../data/TNDS/', service.region_id + '.zip')
 
@@ -141,42 +144,4 @@ class Timetable(object):
             VehicleJourney(element, self.journeypatterns)
             for element in xml.find('txc:VehicleJourneys', NS)
         ]
-
-        # self.journeypatterns = {eleelement) for element in xml.find('txc:StopPoints', NS)}
-
-        # self.journeys = []
-
-        # for vehicle_journey_element in xml.find('txc:VehicleJourneys', NS):
-
-        #     timetable = {}
-
-        #     jpr = vj_element.find('txc:JourneyPatternRef', NS).text
-        #     jpsr = xml.findall(".//txc:JourneyPattern[@id='" + jpr + "']/txc:JourneyPatternSectionRefs", NS)[0].text
-        #     jps_element = xml.findall(".//txc:JourneyPatternSection[@id='" + jpsr + "']", NS)[0]
-
-        #     # first stop
-        #     stop_id = jps_element[0].find('txc:From', NS).find('txc:StopPointRef', NS).text
-        #     stop = self.stops.get(stop_id)
-
-        #     # first departure time
-        #     deptime = time(*map(int, vj_element.find('txc:DepartureTime', NS).text.split(':')))
-
-        #     timetable = [(stop, deptime)]
-
-        #     for jptl_element in jps_element:
-        #         stop_id = jptl_element.find('txc:From', NS).find('txc:StopPointRef', NS).text
-        #         stop = self.stops.get(stop_id)
-
-        #         runtime_matches = runtime_regex.match(jptl_element.find('txc:RunTime', NS).text).groupdict()
-        #         runtime_params = {}
-        #         for (name, param) in runtime_matches.iteritems():
-        #            if param:
-        #                 runtime_params[name] = int(param)
-        #         runtime = timedelta(**runtime_params)
-        #         deptime = (datetime.combine(date.today(), deptime) + runtime).time()
-
-        #         timetable.append((stop, deptime))
-
-        #     self.journeys.append(timetable)
-
-        # self.journeys.sort(key=lambda j: j[0][1])
+        self.journeys.sort(key=VehicleJourney.get_departure_time)

@@ -224,11 +224,13 @@ class ServiceDetailView(DetailView):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)
         context['operators'] = self.object.operator.all()
 
-        context['timetable'] = timetable.Timetable(self.object)
+        if self.object.service_code in ('YSDO447', 'YWAH0B1'):
+            context['timetable'] = timetable.Timetable(self.object)
+        else:
+            context['stops'] = self.object.stops.all()
 
         if bool(context['operators']):
             context['breadcrumb'] = [self.object.region, context['operators'][0]]
-        context['stops'] = self.object.stops.all()
         return context
 
 
