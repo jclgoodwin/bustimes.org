@@ -120,38 +120,45 @@ class Command(BaseCommand):
         "Given an Operator element, returns the operator name or None"
 
         for element_name in ('TradingName', 'OperatorNameOnLicence', 'OperatorShortName'):
-            element = operator_element.find('txc:' + element_name, self.ns)
-            if element is not None:
+            element = operator_element.find('txc:%s' % element_name, self.ns)
+            if element is not None and element.text is not None:
                 return element.text.replace('&amp;', '&')
 
     def get_operator_code(self, operator_element):
         "Given an Operator element, returns the operator code or None"
 
-        element = operator_element.find('txc:NationalOperatorCode', self.ns)
-        if element is not None:
-            return element.text
+        for element_name in ('National', ''):
+            element = operator_element.find('txc:%sOperatorCode' % element_name, self.ns)
+            if element is not None:
+                return element.text
 
     def get_operator(self, operator_element):
         "Given an Operator element, returns an Operator object."
 
         try:
             # Get by national operator code
-            national_code = self.get_operator_code(operator_element)
-            if national_code is not None:
-                return Operator.objects.get(id=national_code)
+            operator_code = self.get_operator_code(operator_element)
+            possible_operators = Operator.objects.filter(id=operator_code)
+            if len(possible_operators) == 1:
+                return possible_operators.first()
 
             # Get by name
             operator_name = self.get_operator_name(operator_element)
-            possible_operators = Operator.objects.filter(name=operator_name)
+
+            if operator_name == 'Replacement Service':
+                return None
+
+            possible_operators = Operator.objects.filter(name__startswith=operator_name)
             if len(possible_operators) == 1:
                 return possible_operators.first()
 
             if operator_name in self.SPECIAL_OPERATOR_TRADINGNAMES:
                 return Operator.objects.get(id=self.SPECIAL_OPERATOR_TRADINGNAMES[operator_name])
 
-            operator_code_element = operator_element.find('txc:OperatorCode', self.ns)
-            if operator_code_element is not None and operator_code_element.text in self.SPECIAL_OPERATOR_CODES:
-                return Operator.objects.get(id=self.SPECIAL_OPERATOR_CODES[operator_code_element.text])
+            if operator_code in self.SPECIAL_OPERATOR_CODES:
+                return Operator.objects.get(id=self.SPECIAL_OPERATOR_CODES[operator_code])
+
+
 
         except Exception, error:
             print str(error)
