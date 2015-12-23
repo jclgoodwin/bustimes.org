@@ -224,7 +224,7 @@ class ServiceDetailView(DetailView):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)
         context['operators'] = self.object.operator.all()
 
-        if self.object.service_code in ('YSDO447', 'YWAH0B1'):
+        if self.object.service_code in ('YSDO447', 'YWAH0B1') or '_MEGA' in self.object.service_code:
             context['timetable'] = timetable.Timetable(self.object)
         else:
             context['stops'] = self.object.stops.all()

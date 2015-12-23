@@ -21,7 +21,7 @@
 
 {% endif %}
 
-{% if timetable.journeys %}{% for journey in timetable.journeys %}
+{% if timetable %}{% for journeypattern in timetable.journeypatterns.values %}{% for journey in journeypattern.journeys %}
     <h2>{{ journey }}</h2>
 
     <table class="timetable">
@@ -34,7 +34,7 @@
     {% endfor %}
     </tbody>
     </table>
-{% endfor %}{% else %}
+{% endfor %}{% endfor %}{% else %}
 
 <h2>Stops serviced</h2>
 
