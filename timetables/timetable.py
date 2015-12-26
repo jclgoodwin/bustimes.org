@@ -45,9 +45,9 @@ class Stop(object):
 
 
 class Row(object):
-    def __init__(self, stop, time):
+    def __init__(self, stop):
         self.stop = stop
-        self.time = time
+        self.times = []
 
 
 class JourneyPattern(object):
@@ -57,7 +57,20 @@ class JourneyPattern(object):
             sections[section_element.text]
             for section_element in element.findall('txc:JourneyPatternSectionRefs', NS)
         ]
-        self.journeys = []
+        self.rows = [
+            Row(self.sections[0].timinglinks[0].from_stop)
+        ]
+        for section in self.sections:
+            for timinglink in section.timinglinks:
+                self.rows.append(Row(timinglink.to_stop))
+        self.element = element
+
+    def get_departure_time(self):
+        return self.rows[0].times[0]
+
+    def __str__(self):
+        return '%s to %s' % (self.rows[0].stop, self.rows[-1].stop)
+
 
 class JourneyPatternSection(object):
     def __init__(self, element, stops):
@@ -100,20 +113,15 @@ class VehicleJourney(object):
             self.journeyref = element.find('txc:VehicleJourneyRef', NS).text
 
     def set_journeypattern(self, journeypattern):
-        self.journeypattern = journeypattern
-        journeypattern.journeys.append(self)
-        self.rows = [
-            Row(self.journeypattern.sections[0].timinglinks[0].from_stop, self.departure_time)
-        ]
-        for section in self.journeypattern.sections:
+        journeypattern.rows[0].times.append(self.departure_time)
+        i = 1
+        for section in journeypattern.sections:
             for timinglink in section.timinglinks:
-                self.rows.append(Row(
-                    timinglink.to_stop,
-                    (datetime.combine(date.today(), self.rows[-1].time) + timinglink.runtime).time()
-            ))
-
-    def get_departure_time(self):
-        return self.departure_time
+                journeypattern.rows[i].times.append(
+                    (datetime.combine(date.today(), journeypattern.rows[i-1].times[-1]) + timinglink.runtime).time()
+                )
+                i += 1
+        self.journeypattern = journeypattern
 
     def __str__(self):
         return '%s to %s' % (self.rows[0].stop, self.rows[-1].stop)
@@ -128,7 +136,7 @@ class Timetable(object):
             service.service_code = '_'.join(service.service_code.split('_')[::-1])
             archive_path = os.path.join(DIR, '../data/TNDS/NCSD.zip')
         else:
-            archive_path = os.path.join(DIR, '../data/TNDS/', service.region_id + '.zip')
+            archive_path = os.path.join(DIR, '../data/TNDS/%s.zip' % service.region_id)
 
         archive = zipfile.ZipFile(archive_path)
         file_names = [name for name in archive.namelist() if service.service_code in name]
@@ -157,5 +165,3 @@ class Timetable(object):
                 journey.set_journeypattern(
                     self.journeys[journey.journeyref]
                 )
-
-        # self.journeys.sort(key=VehicleJourney.get_departure_time)

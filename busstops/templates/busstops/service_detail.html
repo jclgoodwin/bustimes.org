@@ -21,20 +21,21 @@
 
 {% endif %}
 
-{% if timetable %}{% for journeypattern in timetable.journeypatterns.values %}{% for journey in journeypattern.journeys %}
-    <h2>{{ journey }}</h2>
+{% if timetable %}{% for pattern in timetable.journeypatterns.values %}
+    <h2>{{ pattern }}</h2>
 
     <table class="timetable">
     <tbody>
-    {% for row in journey.rows %}
+    {% for row in pattern.rows %}
         <tr>
         <th><a href="{{ row.stop.get_absolute_url }}">{{ row.stop }}</a></th>
-        <td>{{ row.time }}</td>
-        </tr>
+        {% for time in row.times %}
+            <td>{{ time }}</td>
+        {% endfor %}
     {% endfor %}
     </tbody>
     </table>
-{% endfor %}{% endfor %}{% else %}
+{% endfor %}{% else %}
 
 <h2>Stops serviced</h2>
 
