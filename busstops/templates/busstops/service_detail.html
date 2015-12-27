@@ -13,11 +13,11 @@
     {% endif %}
 </p>
 
-{% if object.net != '' and object.net != 'tfl' or object.region_id == 'S' %}
+{% if traveline_url %}
 
     <h2>Timetable</h2>
 
-    <p><a href="{{ object.get_traveline_url }}">View timetable {% if object.region_id == 'S' %}(PDF) on the Traveline Scotland{% else %}on the Traveline{% endif %} website</a></p>
+    <p><a href="{{ traveline_url }}">View timetable {% if object.region_id == 'S' %}(PDF) on the Traveline Scotland{% else %}on the Traveline{% endif %} website</a></p>
 
 {% endif %}
 

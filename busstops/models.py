@@ -245,24 +245,48 @@ class Service(models.Model):
     def get_absolute_url(self):
         return reverse('service-detail', args=(self.service_code,))
 
+    def get_operator_number(self, code):
+        if code in ('MEGA', 'MBGD'):
+            return '11'
+        elif code in ('NATX', 'NXSH', 'NXAP'):
+            return '12'
+        elif code == 'BHAT':
+            return '41'
+        elif code == 'ESYB':
+            return '53'
+        elif code == 'WAIR':
+            return '20'
+        elif code == 'TVSN':
+            return '18'
+
     def get_traveline_url(self):
+
+        if self.region_id == 'S':
+            return 'http://www.travelinescotland.com/pdfs/timetables/%s.pdf' %  self.service_code
+
+        query = None
+
         if self.net != '':
+            if self.net == 'tfl':
+                return None
             parts = self.service_code.split('-')
-
             query = [('line', parts[0].zfill(2) + parts[1].zfill(3)),
-                     ('lineVer', parts[4]),
+                     ('lineVer', parts[4]), # not sure this is needed
                      ('net', self.net),
-                     ('project', parts[3]),
-                     ('outputFormat', '0'),
-                     ('command', 'direct'),
-                     ('itdLPxx_displayHeader', 'false')]
-
+                     ('project', parts[3])]
             if parts[2] != '_':
                 query.append(('sup', parts[2]))
 
+        elif self.region_id == 'GB':
+            parts = self.service_code.split('_')
+            operator_number = self.get_operator_number(parts[1])
+            if operator_number is not None:
+                query = [('line', operator_number + parts[0].zfill(3)),
+                         ('net', 'nrc'),
+                         ('project', 'y08')]
+
+        if query is not None:
+            query.extend([('command', 'direct'),
+                          ('outputFormat', 0)])
             base_url = 'http://www.travelinesoutheast.org.uk/se'
-
             return '%s/XSLT_TTB_REQUEST?%s' % (base_url, urlencode(query))
-
-        elif self.region_id == 'S':
-            return 'http://www.travelinescotland.com/pdfs/timetables/' +  self.service_code + '.pdf'
