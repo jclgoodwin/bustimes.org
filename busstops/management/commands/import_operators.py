@@ -33,8 +33,10 @@ class Command(ImportFromCSVCommand):
             or row['OperatorPublicName'].startswith('inc.') \
             or row['OperatorPublicName'].startswith('formerly'):
             name = row['RefNm']
-        else:
+        elif row['OperatorPublicName'] != '':
             name = row['OperatorPublicName']
+        else:
+            name = row['OpNm']
 
         name = name.replace('\'', u'\u2019') # Fancy apostrophe
 
