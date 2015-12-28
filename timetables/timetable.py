@@ -165,3 +165,5 @@ class Timetable(object):
                 journey.set_journeypattern(
                     self.journeys[journey.journeyref]
                 )
+        self.journeypatterns = self.journeypatterns.values()
+        self.journeypatterns.sort(key=JourneyPattern.get_departure_time)

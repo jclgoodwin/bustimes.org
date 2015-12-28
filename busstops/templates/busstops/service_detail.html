@@ -21,7 +21,7 @@
 
 {% endif %}
 
-{% if timetable %}{% for pattern in timetable.journeypatterns.values %}
+{% if timetable %}{% for pattern in timetable.journeypatterns %}
     <h2>{{ pattern }}</h2>
 
     <table class="timetable">
