@@ -72,6 +72,12 @@ h2 {
     margin-top: 1em;
 }
 
+main p a[href^=http]:after {
+    content: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10'%3E%3Cpath d='M4.3 3.5H.5v6h6V5.7M4.5.5v1l1 1-3 3 2 2 3-3 1 1h1v-5z' fill='white' stroke='%2361c'/%3E%3C/svg%3E");
+    margin-left: .25em;
+    vertical-align: top;
+}
+
 .button {
     background: $brand-color;
     border-bottom: .0625em solid $brand-color-darker;
@@ -338,7 +344,6 @@ main li {
 
 table {
     border-collapse: collapse;
-    text-align: left;
 }
 
 tr {
@@ -348,6 +353,7 @@ tr {
 th,
 td {
     padding: .25em 0 .25em 1em;
+    text-align: left;
 
     &:first-child {
         padding-left: 0;
