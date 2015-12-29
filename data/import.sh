@@ -71,16 +71,27 @@ if [[ $noc_md5_old != $noc_md5_new ]]; then
     ../manage.py import_operators < NOC_DB.csv
 fi
 
+if [[ $USERNAME == '' || $PASSWORD == '' ]]; then
+   echo 'TNDS username and/or password not supplied :('
+   exit 1
+fi
+
 cd TNDS
+workers=0
 for region in ${REGIONS[@]}; do
     region_md5_old=`$md5 $region.zip`
     wget -qN --user=$USERNAME --password=$PASSWORD ftp://ftp.tnds.basemap.co.uk/$region.zip
     region_md5_new=`$md5 $region.zip`
     if [[ $nptg_md5_old != $nptg_md5_new || $naptan_md5_old != $naptan_md5_new || $region_md5_old != $region_md5_new ]]; then
+        workers=$(($workers + 1))
         echo $region
-        # (
+        (
         ../../manage.py import_services $region.zip
-        # ) &
+        ) &
+        if [[ $workers -ge 2 ]]; then
+            wait
+            workers=0
+        fi
     fi
 done
 wait
