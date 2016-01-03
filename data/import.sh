@@ -2,6 +2,7 @@
 
 # Usage:
 #
+#     cd data
 #     ./import.sh username password
 #
 # Where 'username' and 'password' are your username and password for the
@@ -10,7 +11,6 @@
 USERNAME=$1
 PASSWORD=$2
 REGIONS=(EA EM L NE NW S SE SW W WM Y NCSD)
-. ../env/bin/activate
 
 # set $md5 to the name of the system's md5 hash command ('md5' or 'md5sum')
 md5=$(which md5)
@@ -22,6 +22,9 @@ if [[ ! "${md5}" ]]; then
     fi
 fi
 
+mkdir -p NPTG NaPTAN TNDS
+. ../env/bin/activate
+
 cd NPTG
 nptg_md5_old=`$md5 nptgcsv.zip`
 wget -qN http://81.17.70.199/nptg/snapshot/nptgcsv.zip
@@ -32,6 +35,12 @@ if [[ $nptg_md5_old != $nptg_md5_new ]]; then
     echo "  Changes found"
     echo "  Unzipping"
     unzip -oq nptgcsv.zip
+    echo "  Importing regions"
+    ../../manage.py import_regions < Regions.csv
+    echo "  Importing areas"
+    ../../manage.py import_areas < AdminAreas.csv
+    echo "  Importing districts"
+    ../../manage.py import_districts < Districts.csv
     echo "  Importing localities"
     ../../manage.py import_localities < Localities.csv
     echo "  Importing locality hierarchy"
