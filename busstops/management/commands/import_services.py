@@ -275,8 +275,8 @@ class Command(BaseCommand):
                 if file_name.endswith('.xml'):
                     try:
                         root = ET.parse(archive.open(file_name)).getroot()
-                        self.do_service(root, region, service_descriptions=service_descriptions)
+                        self.do_service(root, region_id, service_descriptions=service_descriptions)
                     except Exception, error:
                         print str(error)
 
-            Service.objects.filter(region=region, current=False).delete()
+            Service.objects.filter(region_id=region_id, current=False).delete()
