@@ -9,8 +9,8 @@ Usage:
     ./manage.py import_services EA.zip [EM.zip etc]
 """
 
-from django.core.management.base import BaseCommand, CommandError
-from busstops.models import Operator, StopPoint, Service, Region
+from django.core.management.base import BaseCommand
+from busstops.models import Operator, StopPoint, Service
 
 import re
 import zipfile
