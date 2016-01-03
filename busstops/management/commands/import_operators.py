@@ -5,19 +5,19 @@ Usage:
 """
 
 from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import Operator, Region
+from busstops.models import Operator
 
 
 class Command(ImportFromCSVCommand):
 
     @staticmethod
-    def get_region(region_id):
+    def get_region_id(region_id):
         if region_id in ('ADMIN', 'Admin', ''):
-            region_id = 'GB'
+            return 'GB'
         elif region_id in ('SC', 'YO', 'WA', 'LO'):
-            region_id = region_id[0]
+            return region_id[0]
 
-        return Region.objects.get(id=region_id)
+        return region_id
 
     @classmethod
     def handle_row(cls, row):
@@ -26,8 +26,6 @@ class Command(ImportFromCSVCommand):
 
         if operator_id == 'TVSR':
             return None
-
-        region = cls.get_region(row['TLRegOwn'])
 
         if row['OperatorPublicName'] in ('First', 'Arriva', 'Stagecoach') \
             or row['OperatorPublicName'].startswith('inc.') \
@@ -45,7 +43,7 @@ class Command(ImportFromCSVCommand):
             defaults=dict(
                 name=name.strip(),
                 vehicle_mode=row['Mode'].lower().replace('ct operator', 'community transport').replace('drt', 'demand responsive transport'),
-                region=region,
+                region_id=cls.get_region_id(row['TLRegOwn']),
             )
         )
         return operator

@@ -7,7 +7,7 @@ Usage:
 """
 
 from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import Locality, AdminArea, District
+from busstops.models import Locality
 from django.contrib.gis.geos import Point
 
 
@@ -18,12 +18,12 @@ class Command(ImportFromCSVCommand):
         defaults = {
             'name':           row['LocalityName'].replace('\'', u'\u2019'),
             'qualifier_name': row['QualifierName'],
-            'admin_area':     AdminArea.objects.get(id=row['AdministrativeAreaCode']),
+            'admin_area_id':  row['AdministrativeAreaCode'],
             'location':       Point(int(row['Easting']), int(row['Northing']), srid=27700),
         }
 
         if row['NptgDistrictCode'] != '310':
-            defaults['district'] = District.objects.get(id=row['NptgDistrictCode'])
+            defaults['district_id'] = row['NptgDistrictCode']
 
         Locality.objects.update_or_create(
             id=row['NptgLocalityCode'],

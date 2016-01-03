@@ -7,7 +7,7 @@ Usage:
 """
 
 from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import Region, AdminArea
+from busstops.models import AdminArea
 
 
 class Command(ImportFromCSVCommand):
@@ -20,6 +20,6 @@ class Command(ImportFromCSVCommand):
                 'name':       row['AreaName'],
                 'short_name': row['ShortName'],
                 'country':    row['Country'],
-                'region':     Region.objects.get(id=row['RegionCode']),
+                'region_id':  row['RegionCode'],
             }
         )

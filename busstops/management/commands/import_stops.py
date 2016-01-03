@@ -5,7 +5,7 @@ Usage:
 """
 
 from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import StopPoint, Locality, AdminArea
+from busstops.models import StopPoint
 from django.contrib.gis.geos import Point
 
 
@@ -13,7 +13,7 @@ class Command(ImportFromCSVCommand):
 
     def handle_row(self, row):
         defaults = {
-            'locality': Locality.objects.get(id=row['NptgLocalityCode']),
+            'locality_id': row['NptgLocalityCode'],
             'location': Point(
                 int(row['Easting']),
                 int(row['Northing']),
@@ -26,9 +26,7 @@ class Command(ImportFromCSVCommand):
             ),
             'locality_centre': (row['LocalityCentre'] == '1'),
             'active': (row['Status'] == 'act'),
-            'admin_area': AdminArea.objects.get(
-                id=row['AdministrativeAreaCode']
-            )
+            'admin_area_id': row['AdministrativeAreaCode']
         }
         for django_field_name, naptan_field_name in self.field_names:
             defaults[django_field_name] = row[naptan_field_name].decode('latin1')

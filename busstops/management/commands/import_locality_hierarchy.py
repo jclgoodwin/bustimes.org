@@ -16,5 +16,5 @@ class Command(ImportFromCSVCommand):
         child = Locality.objects.get(id=row['ChildNptgLocalityCode'])
         parent_id = row['ParentNptgLocalityCode']
         if child.parent_id != parent_id:
-            child.parent = Locality.objects.get(id=parent_id)
+            child.parent_id = parent_id
             child.save()

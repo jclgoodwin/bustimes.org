@@ -7,7 +7,7 @@ Usage:
 """
 
 from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import District, AdminArea
+from busstops.models import District
 
 
 class Command(ImportFromCSVCommand):
@@ -17,6 +17,6 @@ class Command(ImportFromCSVCommand):
             id=row['DistrictCode'],
             defaults={
                 'name': row['DistrictName'].replace('\'', u'\u2019'),
-                'admin_area': AdminArea.objects.get(id=row['AdministrativeAreaCode']),
+                'admin_area_id': row['AdministrativeAreaCode'],
             }
         )

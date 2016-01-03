@@ -14,5 +14,5 @@ class Command(ImportFromCSVCommand):
         child = StopArea.objects.get(id=row['ChildStopAreaCode'])
         parent_id = row['ParentStopAreaCode']
         if child.parent_id != parent_id:
-            child.parent = StopArea.objects.get(id=parent_id)
+            child.parent_id = parent_id
             child.save()

@@ -158,13 +158,11 @@ class Command(BaseCommand):
             if operator_code in self.SPECIAL_OPERATOR_CODES:
                 return Operator.objects.get(id=self.SPECIAL_OPERATOR_CODES[operator_code])
 
-
-
         except Exception, error:
             print str(error)
             print ET.tostring(operator_element)
 
-    def do_service(self, root, region, service_descriptions=None):
+    def do_service(self, root, region_id, service_descriptions=None):
 
         file_name = root.attrib['FileName']
 
@@ -205,7 +203,7 @@ class Command(BaseCommand):
             if description.isupper():
                 description = titlecase(description)
 
-            if region.id == 'NE':
+            if region_id == 'NE':
                 description = self.sanitize_description(description)
 
             if len(description) > 128:
@@ -221,7 +219,7 @@ class Command(BaseCommand):
                     mode=mode,
                     description=description,
                     net=self.get_net(file_name),
-                    region=region,
+                    region_id=region_id,
                     date=root.attrib['ModificationDateTime'][:10],
                     current=True
                 )
@@ -254,15 +252,12 @@ class Command(BaseCommand):
         for archive_name in options['filenames']:
 
             region_id = archive_name.split('/')[-1][:-4]
-
             if region_id == 'NCSD':
-                region = Region.objects.get(id='GB')
-            else:
-                region = Region.objects.get(id=region_id)
+                region_id = 'GB'
 
             archive = zipfile.ZipFile(archive_name)
 
-            Service.objects.filter(region=region).update(current=False)
+            Service.objects.filter(region_id=region_id).update(current=False)
 
             # the NCSD has service descriptions in a separate file:
             if 'IncludedServices.csv' in archive.namelist():
