@@ -3,7 +3,7 @@ import zipfile
 import os
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, Http404
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
 from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
@@ -111,7 +111,10 @@ class AdminAreaDetailView(DetailView):
         context = super(AdminAreaDetailView, self).get_context_data(**kwargs)
 
         # Districts in this administrative area
-        context['districts'] = District.objects.filter(admin_area=self.object).distinct()
+        context['districts'] = District.objects.filter(
+            admin_area=self.object,
+            locality__isnull=False
+        ).distinct()
 
         # Districtless localities in this administrative area
         context['localities'] = Locality.objects.filter(
@@ -211,6 +214,9 @@ class OperatorDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
         context['services'] = Service.objects.filter(operator=self.object).order_by('service_code')
+        print context['services']
+        if not context['services'].exists():
+            raise Http404
         context['breadcrumb'] = [self.object.region]
         return context
 
@@ -233,6 +239,7 @@ class ServiceDetailView(DetailView):
 
         if bool(context['operators']):
             context['breadcrumb'] = [self.object.region, context['operators'][0]]
+
         return context
 
 
