@@ -1,21 +1,16 @@
 .long {
-    overflow: hidden;
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+    column-count: 2;
 }
 
-.aside,
-.long li {
+.aside {
     max-width: 48%;
     width: 48%;
     float: left;
     margin-left: 4%;
 }
 
-.long li,
-.long li a {
-    margin: 0;
-}
-
-.long li:nth-child(2n-1),
 .asides .aside:first-child {
     clear: left;
     margin-left: 0;

@@ -118,11 +118,8 @@ ul, ol {
 }
 
 main li {
-    margin: .25em 0;
-
     a {
         display: block;
-        margin-bottom: -.25em;
         overflow: hidden;
         text-overflow: ellipsis;
         padding: .125em 0;
@@ -206,27 +203,21 @@ main li {
 
 .services {
     a {
-        display: block;
-        overflow: hidden;
         white-space: normal;
     }
-    
-    li {
-        margin-top: 0;
-    }
-    
+
     .name {
         color: #dc7;
         float: left;
         margin-right: 1em;
-    
+
         &.is-short {
             font-size: 3em;
             margin-right: .33em;
             line-height: 1.2em;
         }
     }
-    
+
     a:focus .name,
     a:active .name {
         color: inherit;

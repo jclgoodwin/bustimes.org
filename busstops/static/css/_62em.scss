@@ -26,15 +26,18 @@ main img {
     width: auto;
 }
 
-.long li,
-.long li:nth-child(2n-1),
+.long {
+    -webkit-column-count: 3;
+    -moz-column-count: 3;
+    column-count: 3;
+}
+
 .asides .aside {
     clear: none;
     margin-left: 2%;
     width: 32%;
 }
 
-.long li:nth-child(3n-2),
 .asides .aside:first-child {
     clear: left;
     margin-left: 0;

@@ -17,18 +17,9 @@ main img {
 }
 
 .services {
-    overflow: hidden;
-}
-
-.services li {
-    width: 48.5%;
-    float: left;
-    margin-left: 3%;
-}
-
-.services li:nth-child(2n-1) {
-    clear: left;
-    margin-left: 0;
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+    column-count: 2;
 }
 
 .adsbygoogle {
