@@ -2,3 +2,4 @@ Django==1.9
 django-pipeline==1.5.4
 psycopg2==2.6.1
 titlecase==0.8.0
+jinja2=02.8
