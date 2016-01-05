@@ -5,6 +5,7 @@ Base classes for import_* commands
 import sys
 import csv
 from django.core.management.base import BaseCommand
+from django.db import transaction
 
 
 class ImportFromCSVCommand(BaseCommand):
@@ -28,6 +29,7 @@ class ImportFromCSVCommand(BaseCommand):
         """
         raise NotImplementedError
 
+    @transaction.atomic
     def handle(self, *args, **options):
         """
         Runs when the command is executed
