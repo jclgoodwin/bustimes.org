@@ -114,7 +114,7 @@ class AdminAreaDetailView(DetailView):
         context['districts'] = District.objects.filter(
             admin_area=self.object,
             locality__isnull=False
-        ).distinct()
+        ).distinct().order_by('name')
 
         # Districtless localities in this administrative area
         context['localities'] = Locality.objects.filter(
@@ -214,7 +214,6 @@ class OperatorDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
         context['services'] = Service.objects.filter(operator=self.object).order_by('service_code')
-        print context['services']
         if not context['services'].exists():
             raise Http404
         context['breadcrumb'] = [self.object.region]
