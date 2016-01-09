@@ -234,7 +234,7 @@ class ServiceDetailView(DetailView):
         if self.object.service_code in ('YSDO447', 'YWAH0B1') or '_MEGA' in self.object.service_code:
             context['timetable'] = timetable.Timetable(self.object)
         else:
-            context['stops'] = self.object.stops.all()
+            context['stops'] = self.object.stops.all().select_related('locality')
 
         if bool(context['operators']):
             context['breadcrumb'] = [self.object.region, context['operators'][0]]

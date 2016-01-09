@@ -158,7 +158,7 @@ class StopPoint(models.Model):
 
     def __unicode__(self):
         if self.indicator:
-            return "%s (%s)" % (self.common_name, self.indicator)
+            return '%s (%s)' % (self.common_name, self.indicator)
         return self.common_name
 
     def heading(self):
@@ -174,6 +174,13 @@ class StopPoint(models.Model):
             'NW': 315,
         }
         return headings.get(self.bearing)
+
+    def get_qualified_name(self):
+        stop_name = str(self)
+        locality_name = str(self.locality)
+        if locality_name not in stop_name:
+            return '%s %s' % (locality_name, stop_name)
+        return stop_name
 
     def get_absolute_url(self):
         return reverse('stoppoint-detail', args=(self.atco_code,))
