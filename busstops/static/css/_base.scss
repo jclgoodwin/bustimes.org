@@ -141,12 +141,12 @@ main li {
         margin: 0;
         margin-top: -.5em;
     }
-    
+
     a {
         float: left;
         padding: .75em 0;
     }
-    
+
     li:after {
         content: "\203A";
         float: left;
@@ -239,7 +239,7 @@ main li {
     right: 0;
     width: auto;
     max-width: 50%;
-    
+
     path {
         fill: white;
     }
@@ -251,7 +251,7 @@ main li {
     a path {
         fill: $brand-color-darker;
     }
-    
+
     .highlight,
     a:focus,
     a:hover {
@@ -312,25 +312,25 @@ main li {
         margin: 0;
         padding: 0 5px;
     }
-    
+
     .marker-cluster {
         background-clip: padding-box;
         background-color: $brand-color;
         border-radius: 20px;
     }
-    
+
     .marker-cluster div {
         background-color: $brand-color-darker;
         width: 30px;
         height: 30px;
         margin-left: 5px;
         margin-top: 5px;
-    
+
         text-align: center;
         border-radius: 15px;
         font-size: 12px;
     }
-    
+
     .marker-cluster span {
         line-height: 30px;
     }
@@ -374,32 +374,36 @@ footer {
         text-align: center;
         margin: 0;
     }
-    
+
     .banner-ad {
         padding: 1em;
         overflow: hidden;
-    
+
+        img {
+            border: 0;
+        }
+
         div,
         .adsbygoogle {
             display: block;
             margin: 0 auto;
         }
     }
-    
+
     ul {
         color: #555;
         font-size: .75em;
         padding: 1em;
     }
-    
+
     li {
         display: inline;
-    
+
         &:before {
             content: "  \2022  ";
             margin: 0 .25em;
         }
-        
+
         &:first-child:before {
             display: none;
         }

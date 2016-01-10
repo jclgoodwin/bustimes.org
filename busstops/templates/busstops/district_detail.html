@@ -6,10 +6,6 @@
 
 <h2>Localities in {{ district }}</h2>
 
-<ul class="long">
-{% for l in localities %}
-    <li><a href="{{ l.get_absolute_url }}">{{ l }}</a></li>
-{% endfor %}
-</ul>
+{% include 'list.html' with list=localities %}
 
 {% endblock %}

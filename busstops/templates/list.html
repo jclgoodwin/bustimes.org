@@ -1,0 +1,5 @@
+<ul class="long">
+{% for item in list %}
+    <li><a href="{{ item.get_absolute_url }}">{{ item }}</a></li>
+{% endfor %}
+</ul>
