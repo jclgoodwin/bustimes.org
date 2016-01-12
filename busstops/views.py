@@ -2,7 +2,7 @@
 import zipfile
 import os
 from django.shortcuts import render, get_object_or_404
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.http import HttpResponse, JsonResponse, Http404
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
@@ -204,6 +204,12 @@ class StopPointDetailView(DetailView):
             self.object.locality,
         ])
         return context
+
+def operators(request):
+    context = {
+        'operators': Operator.objects.annotate(Count('service'))
+    }
+    return render(request, 'operators.html', context)
 
 
 class OperatorDetailView(DetailView):
