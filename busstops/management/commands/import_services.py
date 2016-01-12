@@ -31,8 +31,9 @@ class Command(BaseCommand):
     net_regex = re.compile(r'([a-z]+)_$')
     description_regex = re.compile(r'.+,([^ ].+)$')
 
-    # map TradingNames to operator IDs where there is no correspondence between the NOC DB and TNDS:
+    # map names to operator IDs where there is no correspondence between the NOC DB and TNDS:
     SPECIAL_OPERATOR_TRADINGNAMES = {
+        'Arriva Northumbria': 'ANUM',
         'Southwold Town Council': 'SWTC',
         'H.C.Chambers & Son': 'CHMB',
         'Bungay and Beccles Area CT': 'BBCT',
