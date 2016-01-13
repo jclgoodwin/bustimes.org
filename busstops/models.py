@@ -169,7 +169,7 @@ class StopPoint(models.Model):
             'E':   90,
             'SE': 135,
             'S':  180,
-            'SW': 125,
+            'SW': 225,
             'W':  270,
             'NW': 315,
         }
