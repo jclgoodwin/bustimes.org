@@ -20,5 +20,3 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('busstops.urls')),
 ]
-
-handler404 = 'busstops.views.page_not_found'
