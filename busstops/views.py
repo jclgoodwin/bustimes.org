@@ -3,7 +3,7 @@ import zipfile
 import os
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Count, Q
-from django.http import HttpResponse, JsonResponse, Http404
+from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
 from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
@@ -43,9 +43,13 @@ def stops(request):
     in standard GeoJSON format
     """
 
-    bounding_box = Polygon.from_bbox(
-        [request.GET[key] for key in ('xmin', 'ymin', 'xmax', 'ymax')]
-    )
+    try:
+        bounding_box = Polygon.from_bbox(
+            [request.GET[key] for key in ('xmin', 'ymin', 'xmax', 'ymax')]
+        )
+    except:
+        return HttpResponseBadRequest()
+
     results = StopPoint.objects.filter(
         latlong__within=bounding_box, active=True
     )
