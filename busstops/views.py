@@ -1,10 +1,11 @@
 "View definitions."
 import zipfile
 import os
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Count, Q
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.views.generic.detail import DetailView
+from django.views.defaults import page_not_found
 from django.contrib.gis.geos import Polygon
 from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
 from timetables import timetable
@@ -268,3 +269,20 @@ def service_xml(request, pk):
     for body in (archive.open(file_name).read() for file_name in file_names):
         bodies += body
     return HttpResponse(bodies, content_type='text/xml')
+
+
+def page_not_found(request):
+    """
+    Redirects from /services/17-N4-_-y08-1 to /services/17-N4-_-y08-2, for example,
+    if the former doesn't exist (any more) and the latter does.
+
+    Otherwise, reverts to the standard 404 view.
+    """
+
+    if request.path.startswith('/services/') and len(request.path.split('-')) == 5:
+        service_code_parts = request.path.split('/')[-1].split('-')[:-1]
+        suggestions = Service.objects.filter(service_code__startswith='-'.join(service_code_parts))
+        if len(suggestions) == 1:
+            return redirect(suggestions.first())
+
+    return page_not_found(request)
