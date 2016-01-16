@@ -26,6 +26,12 @@
 
     <table class="timetable">
     <tbody>
+        <tr>
+        <td></td>
+        {% for journey in pattern.journeys %}
+            <td>{{ journey.operating_profile }}</td>
+        {% endfor %}
+        </tr>
     {% for row in pattern.rows %}
         <tr>
         <th><a href="{{ row.stop.get_absolute_url }}">{{ row.stop }}</a></th>

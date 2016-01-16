@@ -53,6 +53,7 @@ class Row(object):
 class JourneyPattern(object):
     def __init__(self, element, sections):
         self.direction = element.find('txc:Direction', NS).text
+        self.journeys = []
         self.sections = [
             sections[section_element.text]
             for section_element in element.findall('txc:JourneyPatternSectionRefs', NS)
@@ -112,6 +113,8 @@ class VehicleJourney(object):
             # Journey has no direct reference to a JourneyPattern, will set later
             self.journeyref = element.find('txc:VehicleJourneyRef', NS).text
 
+        self.operating_profile = OperatingProfile(element.find('txc:OperatingProfile', NS))
+
     def set_journeypattern(self, journeypattern):
         journeypattern.rows[0].times.append(self.departure_time)
         i = 1
@@ -121,10 +124,32 @@ class VehicleJourney(object):
                     (datetime.combine(date.today(), journeypattern.rows[i-1].times[-1]) + timinglink.runtime).time()
                 )
                 i += 1
+        journeypattern.journeys.append(self)
         self.journeypattern = journeypattern
 
     def __str__(self):
         return '%s to %s' % (self.rows[0].stop, self.rows[-1].stop)
+
+
+class OperatingProfile(object):
+    def __init__(self, element):
+        self.element = element
+
+    def __str__(self):
+        regular_days_element = self.element.find('txc:RegularDayType', NS)
+        days_of_week_element = regular_days_element.find('txc:DaysOfWeek', NS)
+        if days_of_week_element is None:
+            regular_days = [e.tag[33:] for e in regular_days_element]
+        else:
+            regular_days = [e.tag[33:] for e in days_of_week_element]
+
+        string = ', '.join(regular_days)
+
+        if string in ('MondayToFriday', 'Monday, Tuesday, Wednesday, Thursday, Friday'):
+            string = 'Monday to Friday'
+        elif string == 'Monday, Tuesday, Wednesday, Thursday, Friday, Saturday':
+            string = 'Monday to Saturday'
+        return string
 
 
 class Timetable(object):
