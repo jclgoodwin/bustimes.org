@@ -27,8 +27,6 @@ class Command(BaseCommand):
 
     now = datetime.today()
 
-    serviceversion_regex = re.compile(r'(SVR|[^ _]+_TXC_|[a-z]+_|.*_atco_)(.+).xml$')
-    net_regex = re.compile(r'([a-z]+)_$')
     description_regex = re.compile(r'.+,([^ ].+)$')
 
     # map names to operator IDs where there is no correspondence between the NOC DB and TNDS:
@@ -87,22 +85,26 @@ class Command(BaseCommand):
         'ADD':  'ADDI',  # Addison News/of Callendar
     }
 
-    def add_arguments(self, parser):
+    @staticmethod
+    def add_arguments(parser):
         parser.add_argument('filenames', nargs='+', type=str)
 
-    def get_net(self, file_name):
+    @staticmethod
+    def get_net(file_name):
         """
         Get the service 'net' (for services in the EA, EM, L, WM, SE and SW regions).
         """
-        matches = self.serviceversion_regex.match(file_name)
+        parts = file_name.split('-') # ['ea_21', '3', '_', '1']
+        if len(parts) == 5:
+            return parts[0].split('_')[0]
 
-        if matches is not None:
-            net_matches = self.net_regex.match(matches.group(1))
-            if net_matches is not None:
-                return net_matches.group(1)
         return ''
 
     def sanitize_description_part(self, part):
+        """
+        Given an oddly formatted part like 'Bus Station bay 5,Blyth',
+        returns a shorter, more normal version like 'Blyth'
+        """
         sanitized_part = self.description_regex.match(part.strip())
         return sanitized_part.group(1) if sanitized_part is not None else part
 
