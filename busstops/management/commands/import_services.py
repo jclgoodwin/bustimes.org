@@ -144,7 +144,7 @@ class Command(BaseCommand):
             if len(operator_code) == 4:
                 possible_operators = Operator.objects.filter(id=operator_code)
                 if len(possible_operators) == 1:
-                    return possible_operators.first()
+                    return possible_operators[0]
 
             # Get by name
             operator_name = self.get_operator_name(operator_element)
@@ -154,7 +154,7 @@ class Command(BaseCommand):
 
             possible_operators = Operator.objects.filter(name__startswith=operator_name)
             if len(possible_operators) == 1:
-                return possible_operators.first()
+                return possible_operators[0]
 
             if operator_name in self.SPECIAL_OPERATOR_TRADINGNAMES:
                 return Operator.objects.get(id=self.SPECIAL_OPERATOR_TRADINGNAMES[operator_name])

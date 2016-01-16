@@ -22,5 +22,5 @@ class NotFoundRedirectMiddleware(object):
             service_code_parts = request.path.split('/')[-1].split('-')[:-1]
             suggestions = Service.objects.filter(service_code__startswith='-'.join(service_code_parts), current__in=(True, None))
             if len(suggestions) == 1:
-                return redirect(suggestions.first())
+                return redirect(suggestions[0])
         return response
