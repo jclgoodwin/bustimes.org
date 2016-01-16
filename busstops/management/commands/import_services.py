@@ -141,9 +141,10 @@ class Command(BaseCommand):
         try:
             # Get by national operator code
             operator_code = self.get_operator_code(operator_element)
-            possible_operators = Operator.objects.filter(id=operator_code)
-            if len(possible_operators) == 1:
-                return possible_operators.first()
+            if len(operator_code) == 4:
+                possible_operators = Operator.objects.filter(id=operator_code)
+                if len(possible_operators) == 1:
+                    return possible_operators.first()
 
             # Get by name
             operator_name = self.get_operator_name(operator_element)
