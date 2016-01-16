@@ -1,7 +1,7 @@
 "View definitions."
 import zipfile
 import os
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Count, Q
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.views.generic.detail import DetailView
@@ -199,7 +199,7 @@ class StopPointDetailView(DetailView):
             context['nearby'] = StopPoint.objects.filter(
                 stop_area=self.object.stop_area_id
             ).exclude(atco_code=self.object.atco_code).order_by('atco_code')
-        context['services'] = Service.objects.filter(stops=self.object).order_by('service_code')
+        context['services'] = Service.objects.filter(stops=self.object, current__in=(True, None)).order_by('service_code')
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region,
             self.object.admin_area,
@@ -223,7 +223,7 @@ class OperatorDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
-        context['services'] = Service.objects.filter(operator=self.object).order_by('service_code')
+        context['services'] = Service.objects.filter(operator=self.object, current__in=(True, None)).order_by('service_code')
         if not context['services'].exists():
             raise Http404
         context['breadcrumb'] = [self.object.region]
@@ -237,6 +237,10 @@ class ServiceDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)
+
+        if self.object.current is False:
+            return context
+
         context['operators'] = self.object.operator.all()
 
         context['traveline_url'] = self.object.get_traveline_url()
@@ -250,6 +254,16 @@ class ServiceDetailView(DetailView):
             context['breadcrumb'] = [self.object.region, context['operators'][0]]
 
         return context
+
+    def render_to_response(self, context):
+        if self.object.current is False:
+            alternatives = Service.objects.filter(description=self.object.description, current__in=(True, None))
+            if len(alternatives) == 1:
+                return redirect(alternatives[0])
+            else:
+                raise Http404()
+
+        return super(ServiceDetailView, self).render_to_response(context)
 
 
 def service_xml(request, pk):

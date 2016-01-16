@@ -261,7 +261,7 @@ class Command(BaseCommand):
 
             archive = zipfile.ZipFile(archive_name)
 
-            Service.objects.filter(region_id=region_id).update(current=False)
+            Service.objects.filter(region_id=region_id).update(current=None)
 
             # the NCSD has service descriptions in a separate file:
             if 'IncludedServices.csv' in archive.namelist():
@@ -283,4 +283,4 @@ class Command(BaseCommand):
                     except Exception, error:
                         print str(error)
 
-            Service.objects.filter(region_id=region_id, current=False).delete()
+            Service.objects.filter(region_id=region_id, current=None).update(current=False)
