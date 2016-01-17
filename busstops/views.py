@@ -110,6 +110,7 @@ class AdminAreaDetailView(DetailView):
     "A single administrative area, and the districts, localities (or stops) in it"
 
     model = AdminArea
+    queryset = model._default_manager.select_related('region')
 
     def get_context_data(self, **kwargs):
         context = super(AdminAreaDetailView, self).get_context_data(**kwargs)
@@ -143,6 +144,7 @@ class DistrictDetailView(DetailView):
     "A single district, and the localities in it"
 
     model = District
+    queryset = model._default_manager.select_related('admin_area', 'admin_area__region')
 
     def get_context_data(self, **kwargs):
         context = super(DistrictDetailView, self).get_context_data(**kwargs)
@@ -159,6 +161,7 @@ class LocalityDetailView(DetailView):
     "A single locality, its children (if any), and  the stops in it"
 
     model = Locality
+    queryset = model._default_manager.select_related('admin_area', 'admin_area__region', 'district', 'parent')
 
     def get_context_data(self, **kwargs):
         context = super(LocalityDetailView, self).get_context_data(**kwargs)
@@ -192,6 +195,7 @@ class StopPointDetailView(DetailView):
     "A stop, other stops in the same area, and the services servicing it"
 
     model = StopPoint
+    queryset = model._default_manager.select_related('admin_area', 'admin_area__region', 'locality', 'locality__parent')
 
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
@@ -220,12 +224,11 @@ class OperatorDetailView(DetailView):
     "An operator and the services it operates"
 
     model = Operator
+    queryset = model._default_manager.filter(service__current__in=(True, None)).distinct().select_related('region')
 
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
         context['services'] = Service.objects.filter(operator=self.object, current__in=(True, None)).order_by('service_code')
-        if not context['services'].exists():
-            raise Http404
         context['breadcrumb'] = [self.object.region]
         return context
 
@@ -234,6 +237,7 @@ class ServiceDetailView(DetailView):
     "A service and the stops it stops at"
 
     model = Service
+    queryset = model._default_manager.select_related('region')
 
     def get_context_data(self, **kwargs):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)
