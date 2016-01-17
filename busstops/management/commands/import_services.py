@@ -226,18 +226,10 @@ class Command(BaseCommand):
                     net=self.get_net(file_name),
                     region_id=region_id,
                     date=root.attrib['ModificationDateTime'][:10],
-                    current=True
+                    current=True,
+                    operator=operators
                 )
             )[0]
-
-            # service operators (part 2):
-
-            if operators:
-                try:
-                    service.operator.add(*operators)
-                except Exception, error:
-                    print file_name
-                    print str(error)
 
             # service stops:
 
