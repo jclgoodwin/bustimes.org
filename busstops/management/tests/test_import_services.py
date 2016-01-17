@@ -41,6 +41,7 @@ class ImportServicesTest(TestCase):
             ('SVRWLCO021-20121121-13693.xml', ''),
             ('National Express_NX_atco_NATX_T61.xml', ''),
             ('SnapshotNewportBus_TXC_2015714-0317_NTAO155.xml', ''),
+            ('ArrivaCymru51S-Rhyl-StBrigid`s-Denbigh1_TXC_2016108-0319_DGAO051S.xml', ''),
         )
 
         for file_name, net in data:

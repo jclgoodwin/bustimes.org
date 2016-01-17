@@ -96,8 +96,9 @@ class Command(BaseCommand):
         """
         parts = file_name.split('-') # ['ea_21', '3', '_', '1']
         if len(parts) == 5:
-            return parts[0].split('_')[0]
-
+            net = parts[0].split('_')[0]
+            if len(net) <= 3 and net.islower():
+                return net
         return ''
 
     def sanitize_description_part(self, part):
