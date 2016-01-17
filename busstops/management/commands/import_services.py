@@ -215,6 +215,12 @@ class Command(BaseCommand):
                 print 'Description "%s" is too long in %s' % (description, file_name)
                 description = description[:128]
 
+            # stops:
+
+            stop_elements = root.find('txc:StopPoints', self.ns)
+            stop_ids = [stop.find('txc:StopPointRef', self.ns).text for stop in stop_elements]
+            stops = StopPoint.objects.in_bulk(stop_ids)
+
             # service:
 
             service = Service.objects.update_or_create(
@@ -227,20 +233,11 @@ class Command(BaseCommand):
                     region_id=region_id,
                     date=root.attrib['ModificationDateTime'][:10],
                     current=True,
-                    operator=operators
                 )
             )[0]
 
-            # service stops:
-
-            try:
-                stop_elements = root.find('txc:StopPoints', self.ns)
-                stop_ids = [stop.find('txc:StopPointRef', self.ns).text for stop in stop_elements]
-                stops = StopPoint.objects.filter(atco_code__in=stop_ids)
-                service.stops.add(*stops)
-            except Exception, error:
-                print str(error)
-
+            service.operator.add(*operators)
+            service.stops.add(*stops)
 
     def handle(self, *args, **options):
 
