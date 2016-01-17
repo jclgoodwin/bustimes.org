@@ -22,6 +22,9 @@ class Command(ImportFromCSVCommand):
     @classmethod
     def handle_row(cls, row):
         "Given a CSV row (a list), returns an Operator object"
+        if row['Duplicate'] != 'OK':
+            return None
+
         operator_id = row['NOCCODE'].replace('=', '')
 
         if operator_id == 'TVSR':
