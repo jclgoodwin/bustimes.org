@@ -223,7 +223,7 @@ class Service(models.Model):
     service_code = models.CharField(max_length=24, primary_key=True)
     line_name = models.CharField(max_length=64)
     description = models.CharField(max_length=128)
-    mode = models.CharField(max_length=10)
+    mode = models.CharField(max_length=11)
     operator = models.ManyToManyField(Operator, blank=True)
     net = models.CharField(max_length=3, blank=True)
     region = models.ForeignKey(Region)
