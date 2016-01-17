@@ -13,11 +13,23 @@
     {% endif %}
 </p>
 
+{% if operators.0.id == 'MEGA' %}
+    <p><a href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611">Buy tickets from Megabus</a></p>
+{% endif %}
+
 {% if traveline_url %}
 
     <h2>Timetable</h2>
 
-    <p><a href="{{ traveline_url }}">View timetable {% if object.region_id == 'S' %}(PDF) on the Traveline Scotland{% else %}on the Traveline{% endif %} website</a></p>
+    <p><a href="{{ traveline_url }}">View timetable
+        {% if object.net == 'tfl' %}
+            on the Transport for London
+        {% elif region_id == 'S' %}
+            (PDF) on the Traveline Scotland
+        {% else %}
+            on the Traveline
+        {% endif %}
+    website</a></p>
 
 {% endif %}
 

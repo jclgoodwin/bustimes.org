@@ -232,8 +232,10 @@ class Service(models.Model):
     current = models.NullBooleanField(default=True)
 
     def __unicode__(self):
-        if self.line_name and self.description:
-            return '%s - %s' % (self.line_name, self.description)
+        if self.line_name:
+            if self.description:
+                return '%s - %s' % (self.line_name, self.description)
+            return self.line_name
         else:
             return self.service_code
 
@@ -269,12 +271,14 @@ class Service(models.Model):
     def get_traveline_url(self):
 
         if self.region_id == 'S':
-            return 'http://www.travelinescotland.com/pdfs/timetables/%s.pdf' %  self.service_code
+            return 'http://www.travelinescotland.com/pdfs/timetables/%s.pdf' % self.service_code
 
         query = None
 
         if self.net != '':
             if self.net == 'tfl':
+                if self.mode == 'bus':
+                    return 'https://tfl.gov.uk/bus/timetable/%s/' % self.line_name
                 return None
             parts = self.service_code.split('-')
             query = [('line', parts[0].zfill(2) + parts[1].zfill(3)),
