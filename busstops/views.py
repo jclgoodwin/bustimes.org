@@ -233,6 +233,16 @@ class OperatorDetailView(DetailView):
         return context
 
 
+# Experimental proper timetables will be shown for these services
+PIONEERING_SERVICES = (
+    'YSDO447', 'YWAH0B1',
+    # Aldborough Community Bus:
+    '21-1-_-y08-1', '21-2-_-y08-1', '21-3-B-y08-1', '21-6-_-y08-1', '21-8-_-y08-1',
+    # A & P Travel:
+    '20-110-_-y08-1'
+)
+
+
 class ServiceDetailView(DetailView):
     "A service and the stops it stops at"
 
@@ -249,7 +259,7 @@ class ServiceDetailView(DetailView):
 
         context['traveline_url'] = self.object.get_traveline_url()
 
-        if self.object.service_code in ('YSDO447', 'YWAH0B1') or '_MEGA' in self.object.service_code:
+        if self.object.service_code in PIONEERING_SERVICES or '_MEGA' in self.object.service_code:
             context['timetable'] = timetable.Timetable(self.object)
         else:
             context['stops'] = self.object.stops.all().select_related('locality')
