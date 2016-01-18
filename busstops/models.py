@@ -181,7 +181,7 @@ class StopPoint(models.Model):
             if self.indicator.islower():
                 return '%s, %s %s' % (locality_name, self.indicator, self.common_name)
             else:
-                return '%s %s' % (locality_name, stop_name)
+                return '%s %s' % (locality_name, str(self))
         return str(self)
 
     def get_absolute_url(self):
