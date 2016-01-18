@@ -176,11 +176,13 @@ class StopPoint(models.Model):
         return headings.get(self.bearing)
 
     def get_qualified_name(self):
-        stop_name = str(self)
         locality_name = str(self.locality)
-        if locality_name not in stop_name:
-            return '%s %s' % (locality_name, stop_name)
-        return stop_name
+        if locality_name not in self.common_name:
+            if self.indicator.islower():
+                return '%s, %s %s' % (locality_name, self.indicator, self.common_name)
+            else:
+                return '%s %s' % (locality_name, stop_name)
+        return str(self)
 
     def get_absolute_url(self):
         return reverse('stoppoint-detail', args=(self.atco_code,))
