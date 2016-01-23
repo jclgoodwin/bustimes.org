@@ -1,5 +1,5 @@
-Django==1.9
-django-pipeline==1.5.4
+Django>=1.9.1
+django-pipeline>=1.6.4
 psycopg2==2.6.1
 Jinja2==2.8
-titlecase==0.8.0
+titlecase>=0.8.1
