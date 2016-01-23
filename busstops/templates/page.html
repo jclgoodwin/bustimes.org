@@ -45,7 +45,11 @@
 </main>
 <footer>
     {% block ad %}
-    <div class="banner-ad" id="ad"></div>
+    <div class="banner-ad" id="ad">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="auto"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
     {% endblock %}
     <ul>
         <li>By <a href="https://joshuagoodw.in">Josh</a></li>
@@ -72,6 +76,5 @@ ga('send', 'pageview');
 <script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
 <script src="{% static 'js/svgmap.js' %}"></script>
 {% endif %}
-<script src="{% static 'js/ad.js' %}"></script>
 </body>
 </html>
