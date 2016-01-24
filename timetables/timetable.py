@@ -113,7 +113,9 @@ class VehicleJourney(object):
             # Journey has no direct reference to a JourneyPattern, will set later
             self.journeyref = element.find('txc:VehicleJourneyRef', NS).text
 
-        self.operating_profile = OperatingProfile(element.find('txc:OperatingProfile', NS))
+        operatingprofile_element = element.find('txc:OperatingProfile', NS)
+        if operatingprofile_element is not None:
+            self.operating_profile = OperatingProfile(operatingprofile_element)
 
     def set_journeypattern(self, journeypattern):
         journeypattern.rows[0].times.append(self.departure_time)
@@ -143,13 +145,32 @@ class OperatingProfile(object):
         else:
             regular_days = [e.tag[33:] for e in days_of_week_element]
 
-        string = ', '.join(regular_days)
+        if len(regular_days) == 1:
+            if 'To' in regular_days[0]:
+                return regular_days[0].replace('To', ' to ')
+            return regular_days[0] + 's'
 
-        if string in ('MondayToFriday', 'Monday, Tuesday, Wednesday, Thursday, Friday'):
+        string = 's, '.join(regular_days[:-2]) + 's and '.join(regular_days[-2:]) + 's'
+
+        if string == 'Monday, Tuesday, Wednesday, Thursday and Friday':
             string = 'Monday to Friday'
-        elif string == 'Monday, Tuesday, Wednesday, Thursday, Friday, Saturday':
+        elif string == 'Monday, Tuesday, Wednesday, Thursday, Friday and Saturday':
             string = 'Monday to Saturday'
+        elif string == 'Monday, Tuesday, Wednesday, Thursday, Friday, Saturday and Sunday':
+            string = 'Monday to Sunday'
         return string
+
+
+class DateRange(object):
+    def __init__(self, element):
+        self.start = datetime.strptime(element.find('txc:StartDate', NS), '%Y-%m-%d').date()
+        self.end = datetime.strptime(element.find('txc:EndDate', NS), '%Y-%m-%d').date()
+
+    def __str__(self):
+        if self.start == self.end:
+            return str(self.start)
+        else:
+            return '%s to %s' % (str(self.start), str(self.end))
 
 
 class Timetable(object):
@@ -192,3 +213,7 @@ class Timetable(object):
                 )
         self.journeypatterns = self.journeypatterns.values()
         self.journeypatterns.sort(key=JourneyPattern.get_departure_time)
+
+        service_element = xml.find('txc:Services', NS).find('txc:Service', NS)
+        operatingprofile_element = service_element.find('txc:OperatingProfile', NS)
+        self.operating_profile = OperatingProfile(operatingprofile_element)

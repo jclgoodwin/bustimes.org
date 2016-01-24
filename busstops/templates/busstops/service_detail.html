@@ -41,7 +41,7 @@
         <tr>
         <td></td>
         {% for journey in pattern.journeys %}
-            <td>{{ journey.operating_profile }}</td>
+            <td>{% firstof journey.operating_profile timetable.operating_profile %}</td>
         {% endfor %}
         </tr>
     {% for row in pattern.rows %}
