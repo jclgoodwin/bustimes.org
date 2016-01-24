@@ -150,13 +150,13 @@ class OperatingProfile(object):
                 return regular_days[0].replace('To', ' to ')
             return regular_days[0] + 's'
 
-        string = 's, '.join(regular_days[:-2]) + 's and '.join(regular_days[-2:]) + 's'
+        string = 's, '.join(regular_days[:-1]) + 's and ' + regular_days[-1] + 's'
 
-        if string == 'Monday, Tuesday, Wednesday, Thursday and Friday':
+        if string == 'Mondays, Tuesdays, Wednesdays, Thursdays and Fridays':
             string = 'Monday to Friday'
-        elif string == 'Monday, Tuesday, Wednesday, Thursday, Friday and Saturday':
+        elif string == 'Mondays, Tuesdays, Wednesdays, Thursdays, Fridays and Saturdays':
             string = 'Monday to Saturday'
-        elif string == 'Monday, Tuesday, Wednesday, Thursday, Friday, Saturday and Sunday':
+        elif string == 'Mondays, Tuesdays, Wednesdays, Thursdays, Fridays, Saturdays and Sundays':
             string = 'Monday to Sunday'
         return string
 
