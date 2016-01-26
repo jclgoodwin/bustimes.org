@@ -23,11 +23,16 @@ if [[ ! "${md5}" ]]; then
 fi
 
 function import_csv {
-    cmd=$1
-    filename=$2
+    # name of a zip archive:
+    zip=$1
+    # fragment of a Django management command name:
+    cmd=$2
+    # name of a CSV file contained in the zip archive:
+    csv=$3
 
-    tail -n +2 $filename > previous/$filename || touch previous/$filename
-    diff previous/$filename $filename | grep '^> ' | sed 's/^> //' | $cmd
+    tail -n +2 $csv > previous/$csv || touch previous/$csv
+    unzip -oq $zip $csv
+    diff previous/$csv $csv | grep '^> ' | sed 's/^> //' | ../../manage.py import_$cmd
 }
 
 mkdir -p NPTG/previous NaPTAN/previous TNDS
@@ -41,18 +46,16 @@ nptg_md5_new=`$md5 nptgcsv.zip`
 if [[ $nptg_md5_old != $nptg_md5_new ]]; then
     echo "NPTG"
     echo "  Changes found"
-    echo "  Unzipping"
-    unzip -oq nptgcsv.zip
     echo "  Importing regions"
-    import_csv "../../manage.py import_regions" Regions.csv
+    import_csv nptgcsv.zip regions Regions.csv
     echo "  Importing areas"
-    import_csv "../../manage.py import_areas" AdminAreas.csv
+    import_csv nptgcsv.zip areas AdminAreas.csv
     echo "  Importing districts"
-    import_csv "../../manage.py import_districts" Districts.csv
+    import_csv nptgcsv.zip districts Districts.csv
     echo "  Importing localities"
-    import_csv "../../manage.py import_localities" Localities.csv
+    import_csv nptgcsv.zip localities Localities.csv
     echo "  Importing locality hierarchy"
-    import_csv "../../manage.py import_locality_hierarchy" LocalityHierarchy.csv
+    import_csv nptgcsv.zip locality_hierarchy LocalityHierarchy.csv
 fi
 
 cd ../NaPTAN
@@ -64,20 +67,19 @@ if [[ $nptg_md5_old != $nptg_md5_new || $naptan_md5_old != $naptan_md5_new ]]; t
     echo "NaPTAN"
     echo "  Changes found"
     echo "  Unzipping"
-    unzip -oq NaPTANcsv.zip
     (
     echo "  Stops"
-    import_csv "../../manage.py import_stops" Stops.csv
+    import_csv NaPTANcsv.zip stops Stops.csv
     echo "  Cleaning stops"
     ../../manage.py clean_stops
     ) &
     (
     echo "  Stop areas"
-    import_csv "../../manage.py import_stop_areas" StopAreas.csv
+    import_csv NaPTANcsv.zip stops_areas StopAreas.csv
     ) &
     wait
     echo "  Stops in area"
-    import_csv "../../manage.py import_stops_in_area" StopsInArea.csv
+    import_csv NaPTANcsv.zip stops_in_area StopsInArea.csv
 fi
 
 cd ..
