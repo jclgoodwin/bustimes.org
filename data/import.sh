@@ -22,7 +22,15 @@ if [[ ! "${md5}" ]]; then
     fi
 fi
 
-mkdir -p NPTG NaPTAN TNDS
+function import_csv {
+    cmd=$1
+    filename=$2
+
+    tail -n +2 $filename > previous/$filename || touch previous/$filename
+    diff previous/$filename $filename | grep '^> ' | sed 's/^> //' | $cmd
+}
+
+mkdir -p NPTG/previous NaPTAN/previous TNDS
 . ../env/bin/activate
 
 cd NPTG
@@ -36,15 +44,15 @@ if [[ $nptg_md5_old != $nptg_md5_new ]]; then
     echo "  Unzipping"
     unzip -oq nptgcsv.zip
     echo "  Importing regions"
-    ../../manage.py import_regions < Regions.csv
+    import_csv "../../manage.py import_regions" Regions.csv
     echo "  Importing areas"
-    ../../manage.py import_areas < AdminAreas.csv
+    import_csv "../../manage.py import_areas" AdminAreas.csv
     echo "  Importing districts"
-    ../../manage.py import_districts < Districts.csv
+    import_csv "../../manage.py import_districts" Districts.csv
     echo "  Importing localities"
-    ../../manage.py import_localities < Localities.csv
+    import_csv "../../manage.py import_localities" Localities.csv
     echo "  Importing locality hierarchy"
-    ../../manage.py import_locality_hierarchy < LocalityHierarchy.csv
+    import_csv "../../manage.py import_locality_hierarchy" LocalityHierarchy.csv
 fi
 
 cd ../NaPTAN
@@ -59,17 +67,17 @@ if [[ $nptg_md5_old != $nptg_md5_new || $naptan_md5_old != $naptan_md5_new ]]; t
     unzip -oq NaPTANcsv.zip
     (
     echo "  Stops"
-    ../../manage.py import_stops < Stops.csv
+    import_csv "../../manage.py import_stops" Stops.csv
     echo "  Cleaning stops"
     ../../manage.py clean_stops
     ) &
     (
     echo "  Stop areas"
-    ../../manage.py import_stop_areas < StopAreas.csv
+    import_csv "../../manage.py import_stop_areas" StopAreas.csv
     ) &
     wait
     echo "  Stops in area"
-    ../../manage.py import_stops_in_area < StopsInArea.csv
+    import_csv "../../manage.py import_stops_in_area" StopsInArea.csv
 fi
 
 cd ..
