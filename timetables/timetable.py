@@ -45,8 +45,9 @@ class Stop(object):
 
 
 class Row(object):
-    def __init__(self, stop):
+    def __init__(self, stop, timingstatus):
         self.stop = stop
+        self.timingstatus = timingstatus
         self.times = []
 
 
@@ -59,11 +60,11 @@ class JourneyPattern(object):
             for section_element in element.findall('txc:JourneyPatternSectionRefs', NS)
         ]
         self.rows = [
-            Row(self.sections[0].timinglinks[0].from_stop)
+            Row(self.sections[0].timinglinks[0].from_stop, self.sections[0].timinglinks[0].from_timingstatus)
         ]
         for section in self.sections:
             for timinglink in section.timinglinks:
-                self.rows.append(Row(timinglink.to_stop))
+                self.rows.append(Row(timinglink.to_stop, timinglink.to_timingstatus))
         self.element = element
 
     def get_departure_time(self):
