@@ -22,7 +22,7 @@ class Command(ImportFromCSVCommand):
     @classmethod
     def handle_row(cls, row):
         "Given a CSV row (a list), returns an Operator object"
-        if row['Duplicate'] != 'OK':
+        if row['Duplicate'] != 'OK' and row['NOCCODE'] != 'FCYM': # First Cymru is marked as a duplicate even though it isn't
             return None
 
         operator_id = row['NOCCODE'].replace('=', '')

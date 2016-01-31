@@ -75,7 +75,7 @@ if [[ $nptg_md5_old != $nptg_md5_new || $naptan_md5_old != $naptan_md5_new ]]; t
     ) &
     (
     echo "  Stop areas"
-    import_csv NaPTANcsv.zip stops_areas StopAreas.csv
+    import_csv NaPTANcsv.zip stop_areas StopAreas.csv
     ) &
     wait
     echo "  Stops in area"
