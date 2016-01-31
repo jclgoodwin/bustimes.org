@@ -23,24 +23,10 @@ Here I've noted down some of the commands I used when manually provisioning a ne
     apt-get install postgis
     apt-get install nginx uwsgi uwsgi-plugin-python
 
+In an emergency, it's possible to run this on Heroku, but that's relatively expensive.
+
 ## Importing data
 
-[NPTG][nptg] data should be imported in this order:
-
-    ./manage.py import_regions < Regions.csv
-    ./manage.py import_areas < AdminAreas.csv
-    ./manage.py import_districts < Districts.csv
-    ./manage.py import_localities < Localities.csv
-    ./manage.py import_locality_hierarchy < LocalityHierarchy.csv
-
- Then [NaPTAN][naptan] data (the order is less important, as long as StopsInArea is imported last):
-
-    ./manage.py import_stop_areas < StopAreas.csv
-    ./manage.py import_stops < Stops.csv
-    ./manage.py import_stops_in_area < StopsInArea.csv
-
-Then NOC (bus operators) and TNDS (bus services) data can be imported,
-which is slightly more complicated and needs work.
-
-[nptg]: http://data.gov.uk/dataset/nptg
-[naptan]: http://data.gov.uk/dataset/naptan
+[`import.sh`](data/import.sh) will download data from various sources and run the necessary Django [management commands](busstops/management/commands) to import it.
+When run repeatedly, it will only download and import the stuff that's changed.
+It expects to be run from the [`data`](data) directory, and needs a username and password to import TNDS data.
