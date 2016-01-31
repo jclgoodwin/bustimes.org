@@ -213,12 +213,6 @@ class StopPointDetailView(DetailView):
         ])
         return context
 
-def operators(request):
-    context = {
-        'operators': Operator.objects.annotate(Count('service'))
-    }
-    return render(request, 'operators.html', context)
-
 
 class OperatorDetailView(DetailView):
     "An operator and the services it operates"

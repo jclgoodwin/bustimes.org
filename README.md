@@ -23,7 +23,7 @@ Here I've noted down some of the commands I used when manually provisioning a ne
     apt-get install postgis
     apt-get install nginx uwsgi uwsgi-plugin-python
 
-In an emergency, it's possible to run this on Heroku, but that's relatively expensive.
+In an emergency, it's possible to run this on Heroku, but that's relatively expensive, and things like the data import script (see below) expect a persistent file system.
 
 ## Importing data
 
