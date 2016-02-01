@@ -19,27 +19,28 @@ class Command(ImportFromCSVCommand):
 
         return region_id
 
-    @classmethod
-    def handle_row(cls, row):
-        "Given a CSV row (a list), returns an Operator object"
-        if row['Duplicate'] != 'OK' and row['NOCCODE'] != 'FCYM': # First Cymru is marked as a duplicate even though it isn't
-            return None
-
-        operator_id = row['NOCCODE'].replace('=', '')
-
-        if operator_id == 'TVSR':
-            return None
-
+    @staticmethod
+    def get_name(row):
         if row['OperatorPublicName'] in ('First', 'Arriva', 'Stagecoach') \
             or row['OperatorPublicName'].startswith('inc.') \
             or row['OperatorPublicName'].startswith('formerly'):
-            name = row['RefNm']
-        elif row['OperatorPublicName'] != '':
-            name = row['OperatorPublicName']
-        else:
-            name = row['OpNm']
+            if row['RefNm'] != '':
+                return row['RefNm']
+            return row['OpNm']
+        if row['OperatorPublicName'] != '':
+            return row['OperatorPublicName']
+        return row['OpNm']
 
-        name = name.replace('\'', u'\u2019') # Fancy apostrophe
+    @classmethod
+    def handle_row(cls, row):
+        "Given a CSV row (a list), returns an Operator object"
+
+        operator_id = row['NOCCODE'].replace('=', '')
+
+        if operator_id == 'TVSR' or operator_id == 'FMAN' and row['Duplicate'] != 'OK':
+            return None
+
+        name = cls.get_name(row).replace('\'', u'\u2019') # Fancy apostrophe
 
         operator = Operator.objects.update_or_create(
             id=operator_id,
