@@ -114,6 +114,10 @@ class VehicleJourney(object):
             # Journey has no direct reference to a JourneyPattern, will set later
             self.journeyref = element.find('txc:VehicleJourneyRef', NS).text
 
+        note_element = element.find('txc:Note', NS)
+        if note_element is not None:
+            self.note = note_element.find('txc:NoteText', NS).text
+
         operatingprofile_element = element.find('txc:OperatingProfile', NS)
         if operatingprofile_element is not None:
             self.operating_profile = OperatingProfile(operatingprofile_element)
@@ -136,22 +140,24 @@ class VehicleJourney(object):
 
 class OperatingProfile(object):
     def __init__(self, element):
-        self.element = element
+        element = element
 
-    def __str__(self):
-        regular_days_element = self.element.find('txc:RegularDayType', NS)
+        regular_days_element = element.find('txc:RegularDayType', NS)
         days_of_week_element = regular_days_element.find('txc:DaysOfWeek', NS)
         if days_of_week_element is None:
-            regular_days = [e.tag[33:] for e in regular_days_element]
+            self.regular_days = [e.tag[33:] for e in regular_days_element]
         else:
-            regular_days = [e.tag[33:] for e in days_of_week_element]
+            self.regular_days = [e.tag[33:] for e in days_of_week_element]
 
-        if len(regular_days) == 1:
-            if 'To' in regular_days[0]:
-                return regular_days[0].replace('To', ' to ')
-            return regular_days[0] + 's'
+        special_days_element = element.find('txc:RegularDayType', NS)
 
-        string = 's, '.join(regular_days[:-1]) + 's and ' + regular_days[-1] + 's'
+    def __str__(self):
+        if len(self.regular_days) == 1:
+            if 'To' in self.regular_days[0]:
+                return self.regular_days[0].replace('To', ' to ')
+            return self.regular_days[0] + 's'
+
+        string = 's, '.join(self.regular_days[:-1]) + 's and ' + self.regular_days[-1] + 's'
 
         if string == 'Mondays, Tuesdays, Wednesdays, Thursdays and Fridays':
             string = 'Monday to Friday'
