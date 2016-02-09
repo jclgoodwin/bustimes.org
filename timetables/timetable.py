@@ -195,7 +195,7 @@ class Timetable(object):
             for element in xml.findall('.//txc:JourneyPattern', NS)
         }
         self.journeys = {
-            element.find('txc:VehicleJourneyCodeVehicleJourney', NS): VehicleJourney(element, self.journeypatterns)
+            element.find('txc:VehicleJourneyCode', NS): VehicleJourney(element, self.journeypatterns)
             for element in xml.find('txc:VehicleJourneys', NS)
         }
         for journey in self.journeys:
