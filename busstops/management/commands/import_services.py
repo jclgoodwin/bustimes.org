@@ -11,6 +11,7 @@ Usage:
 
 from django.core.management.base import BaseCommand
 from busstops.models import Operator, StopPoint, Service
+from timetables.timetable import Timetable
 
 import re
 import zipfile
@@ -221,6 +222,9 @@ class Command(BaseCommand):
             stop_ids = [stop.find('txc:StopPointRef', self.ns).text for stop in stop_elements]
             stops = StopPoint.objects.in_bulk(stop_ids)
 
+            timetable = Timetable(root)
+            show_timetable = (len(timetable.journeypatterns) <= 3 and len(timetable.journeys) <= 4)
+
             # service:
 
             service = Service.objects.update_or_create(
@@ -233,6 +237,7 @@ class Command(BaseCommand):
                     region_id=region_id,
                     date=root.attrib['ModificationDateTime'][:10],
                     current=True,
+                    show_timetable=show_timetable
                 )
             )[0]
 

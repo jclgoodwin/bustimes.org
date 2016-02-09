@@ -24,8 +24,8 @@ class OperatorAdmin(admin.ModelAdmin):
 
 
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('service_code', '__unicode__', 'mode', 'net', 'region', 'current')
-    list_filter = ('current', ('operator', admin.RelatedOnlyFieldListFilter), 'mode', 'net', 'region')
+    list_display = ('service_code', '__unicode__', 'mode', 'net', 'region', 'current', 'show_timetable')
+    list_filter = ('show_timetable', 'current', ('operator', admin.RelatedOnlyFieldListFilter), 'mode', 'net', 'region')
     search_fields = ('service_code', 'line_name', 'description')
     raw_id_fields = ('operator',)
     ordering = ('service_code',)

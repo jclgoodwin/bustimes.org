@@ -232,6 +232,7 @@ class Service(models.Model):
     stops = models.ManyToManyField(StopPoint, editable=False)
     date = models.DateField()
     current = models.NullBooleanField(default=True)
+    show_timetable = models.BooleanField(default=False)
 
     def __unicode__(self):
         if self.line_name:

@@ -181,22 +181,7 @@ class DateRange(object):
 
 
 class Timetable(object):
-
-    def __init__(self, service):
-        # now = datetime.today()
-
-        if service.region_id == 'GB':
-            service.service_code = '_'.join(service.service_code.split('_')[::-1])
-            archive_path = os.path.join(DIR, '../data/TNDS/NCSD.zip')
-        else:
-            archive_path = os.path.join(DIR, '../data/TNDS/%s.zip' % service.region_id)
-
-        archive = zipfile.ZipFile(archive_path)
-        file_names = [name for name in archive.namelist() if service.service_code in name]
-
-        xml_file = archive.open(file_names[0])
-        xml = ET.parse(xml_file).getroot()
-
+    def __init__(self, xml):
         self.stops = {
             element.find('txc:StopPointRef', NS).text: Stop(element)
             for element in xml.find('txc:StopPoints', NS)
@@ -223,4 +208,21 @@ class Timetable(object):
 
         service_element = xml.find('txc:Services', NS).find('txc:Service', NS)
         operatingprofile_element = service_element.find('txc:OperatingProfile', NS)
-        self.operating_profile = OperatingProfile(operatingprofile_element)
+        if operatingprofile_element is not None:
+            self.operating_profile = OperatingProfile(operatingprofile_element)
+
+
+def timetable_from_service(service):
+    if service.region_id == 'GB':
+        service.service_code = '_'.join(service.service_code.split('_')[::-1])
+        archive_path = os.path.join(DIR, '../data/TNDS/NCSD.zip')
+    else:
+        archive_path = os.path.join(DIR, '../data/TNDS/%s.zip' % service.region_id)
+
+    archive = zipfile.ZipFile(archive_path)
+    file_names = [name for name in archive.namelist() if service.service_code in name]
+
+    xml_file = archive.open(file_names[0])
+    xml = ET.parse(xml_file).getroot()
+
+    return Timetable(xml)
