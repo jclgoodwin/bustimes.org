@@ -7,6 +7,8 @@ body {
     font-size: 16px;
     line-height: 1.5;
     margin: 0;
+    // http://blog.55minutes.com/2012/04/iphone-text-resizing/
+    -webkit-text-size-adjust: 100%;
 }
 
 header,
@@ -64,7 +66,7 @@ h2 {
 }
 
 h1 {
-    font-size: 2em;
+    font-size: 1.75em;
 }
 
 h2 {
@@ -151,7 +153,7 @@ main li {
         content: "\203A";
         float: left;
         padding: .75em .5em;
-        color: $brand-color;
+        color: $brand-color-darker;
     }
 }
 
@@ -357,10 +359,10 @@ td {
 .timetable {
     font-size: .875em;
     margin: 1em 0;
-    white-space: nowrap;
 
     th {
         font-weight: normal;
+        white-space: nowrap;
     }
 }
 
@@ -400,6 +402,7 @@ footer {
         display: inline;
 
         &:before {
+            color: $brand-color-darker;
             content: "  \2022  ";
             margin: 0 .25em;
         }
