@@ -1,4 +1,6 @@
-{% extends 'page.html' %}
+{% extends amp|yesno:'page_amp.html,page.html' %}
+
+{% block head %}<link rel="amphtml" href="https://bustimes.org.uk{{ object.get_absolute_url }}?amp" />{% endblock %}
 
 {% block content %}
 
