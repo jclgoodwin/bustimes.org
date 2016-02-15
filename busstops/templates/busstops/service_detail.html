@@ -33,7 +33,7 @@
 
 {% endif %}
 
-{% if timetable %}{% for pattern in timetable.journeypatterns %}
+{% for pattern in timetable.journeypatterns %}
     <h2>{{ pattern }}</h2>
 
     <table class="timetable">
@@ -57,13 +57,13 @@
         <td></td>
         {% for journey in pattern.journeys %}
             <td>
-                {% if journey.note %}{{ journey.note }}{% endif %}
+                {% for note in journey.notes %}{{ note }}{% if not forloop.last %}<br />{% endif %}{% endfor %}
             </td>
         {% endfor %}
         </tr>
     </tfoot>
     </table>
-{% endfor %}{% else %}
+{% empty %}
 
 <h2>Stops serviced</h2>
 
@@ -83,6 +83,6 @@
 {% endfor %}
 </ul>
 
-{% endif %}
+{% endfor %}
 
 {% endblock %}
