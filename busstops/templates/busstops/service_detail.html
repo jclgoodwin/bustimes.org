@@ -33,20 +33,20 @@
 
 {% endif %}
 
-{% for pattern in timetable.journeypatterns %}
-    <h2>{{ pattern }}</h2>
+{% for grouping in timetable.groupings %}{% if grouping.journeys %}
+    <h2>{{ grouping.direction.capitalize }}</h2>
 
     <table class="timetable">
     <tbody>
         <tr>
         <td></td>
-        {% for journey in pattern.journeys %}
+        {% for journey in grouping.journeys %}
             <td>{% firstof journey.operating_profile timetable.operating_profile %}</td>
         {% endfor %}
         </tr>
-    {% for row in pattern.rows %}
+    {% for row in grouping.rows %}
         <tr>
-        <th><a href="{{ row.stop.get_absolute_url }}">{{ row.stop }}</a></th>
+        <th><a href="{{ row.part.stop.get_absolute_url }}">{{ row.part.stop }}</a></th>
         {% for time in row.times %}
             <td>{{ time }}</td>
         {% endfor %}
@@ -55,15 +55,15 @@
     <tfoot>
         <tr>
         <td></td>
-        {% for journey in pattern.journeys %}
+        {% for journey in grouping.journeys %}
             <td>
-                {% for note in journey.notes %}{{ note }}{% if not forloop.last %}<br />{% endif %}{% endfor %}
+                {{ journey.notes|join:'<br />' }}
             </td>
         {% endfor %}
         </tr>
     </tfoot>
     </table>
-{% empty %}
+{% endif %}{% empty %}
 
 <h2>Stops serviced</h2>
 
