@@ -4,7 +4,6 @@ import zipfile
 import xml.etree.cElementTree as ET
 from datetime import date, datetime, timedelta
 
-
 DIR = os.path.dirname(__file__)
 NS = {
     'txc': 'http://www.transxchange.org.uk/'
@@ -12,7 +11,6 @@ NS = {
 DURATION_REGEX = re.compile(
     r'PT((?P<hours>\d+?)H)?((?P<minutes>\d+?)M)?((?P<seconds>\d+?)S)?'
 )
-
 
 def parse_duration(string):
     "Given a string returns a timetelta"
@@ -30,7 +28,7 @@ class Stop(object):
         self.common_name = element.find('txc:CommonName', NS).text
         locality_element = element.find('txc:LocalityName', NS)
         if locality_element is not None:
-            self.locality = locality_element.text.replace(' (Norfk)', '')#.replace(' City Centre', '').replace(' (Town Centre)', '') 
+            self.locality = locality_element.text
         else:
             self.locality = None
 
@@ -47,14 +45,14 @@ class Stop(object):
 class Row(object):
     def __init__(self, part):
         self.part = part
+        part.row = self
         self.times = []
 
     def get_sequencenumber(self):
-        if self.part.sequencenumber:
-            return self.part.sequencenumber
-        elif len(self.part.sequencenumbers):
-            return max(self.part.sequencenumbers)
-        return 0
+        # counter-intuitively, don't bother checking for an actual sequence number
+        # because we only currently use this for services without sequence numbers
+        return self.part.parent.id
+
 
 class Grouping(object):
     def __init__(self, direction):
@@ -70,30 +68,37 @@ class JourneyPattern(object):
             sections[section_element.text]
             for section_element in element.findall('txc:JourneyPatternSectionRefs', NS)
         ]
-        self.rows = {}
-        self.rows[self.sections[0].timinglinks[0].origin.stop.atco_code] = Row(self.sections[0].timinglinks[0].origin)
 
+        origin = self.sections[0].timinglinks[0].origin
+
+        self.rows = []
+        self.rows.append(Row(origin))
         for section in self.sections:
             for timinglink in section.timinglinks:
-                self.rows[timinglink.destination.stop.atco_code] = Row(timinglink.destination)
+                self.rows.append(Row(timinglink.destination))
 
         direction = element.find('txc:Direction', NS).text
         if direction == 'outbound':
             self.grouping = outbound_grouping
         else:
             self.grouping = inbound_grouping
-        for atco_code, row in self.rows.iteritems():
-            self.grouping.rows[atco_code] = row
 
-    def is_outbound(self):
-        return self.direction == 'outbound'
-
-    def is_inbound(self):
-        return self.direction == 'inbound'
-
-    def __str__(self):
-        rows = self.rows.values()
-        return '%s to %s' % (rows[0].part.stop, rows[-1].part.stop)
+        if origin.sequencenumber is not None:
+            for row in self.rows:
+                self.grouping.rows[row.part.sequencenumber] = row
+        else:
+            visited_stops = []
+            i = 0
+            for row in self.rows:
+                if row.part.stop.atco_code not in self.grouping.rows:
+                    self.grouping.rows[row.part.stop.atco_code] = row
+                elif row.part.stop.atco_code in visited_stops:
+                    i += 1
+                    self.grouping.rows[i] = row
+                    row.part.row = row
+                else:
+                    row.part.row = self.grouping.rows[row.part.stop.atco_code]
+                visited_stops.append(row.part.stop.atco_code)
 
 
 class JourneyPatternSection(object):
@@ -111,8 +116,6 @@ class JourneyPatternStopUsage(object):
         self.sequencenumber = element.get('SequenceNumber')
         if self.sequencenumber is not None:
             self.sequencenumber = int(self.sequencenumber)
-        else:
-            self.sequencenumbers = []
         self.stop = stops.get(element.find('txc:StopPointRef', NS).text)
         self.timingstatus = element.find('txc:TimingStatus', NS).text
 
@@ -120,12 +123,17 @@ class JourneyPatternStopUsage(object):
         if waittime_element is not None:
             self.waittime = parse_duration(waittime_element.text)
 
+        self.row = None
+        self.parent = None
+
 
 class JourneyPatternTimingLink(object):
     def __init__(self, element, stops):
         self.origin = JourneyPatternStopUsage(element.find('txc:From', NS), stops)
         self.destination = JourneyPatternStopUsage(element.find('txc:To', NS), stops)
+        self.origin.parent = self.destination.parent = self
         self.runtime = parse_duration(element.find('txc:RunTime', NS).text)
+        self.id = element.get('id')
 
 
 class VehicleJourney(object):
@@ -150,35 +158,28 @@ class VehicleJourney(object):
         if operatingprofile_element is not None:
             self.operating_profile = OperatingProfile(operatingprofile_element)
 
-    def set_journeypattern(self):
-        journeypattern.journeys.append(self)
-        journeypattern.grouping.journeys.append(self)
-
     def add_times(self):
+        row_length = len(self.journeypattern.grouping.rows.values()[0].times)
+
         stopusage = self.journeypattern.sections[0].timinglinks[0].origin
         time = self.departure_time
-        row = self.journeypattern.grouping.rows.get(stopusage.stop.atco_code)
-        row.times.append(time)
-
-        if row.part.sequencenumber is None:
-            i = 1
-            row.part.sequencenumbers.append(i)
+        if stopusage.sequencenumber is not None:
+            self.journeypattern.grouping.rows.get(stopusage.sequencenumber).times.append(time)
+        else:
+            stopusage.row.times.append(time)
 
         for section in self.journeypattern.sections:
             for timinglink in section.timinglinks:
                 stopusage = timinglink.destination
                 time = (datetime.combine(date.today(), time) + timinglink.runtime).time()
-                row = self.journeypattern.grouping.rows.get(stopusage.stop.atco_code)
-                row.times.append(time)
+                if stopusage.sequencenumber is not None:
+                    row = self.journeypattern.grouping.rows.get(stopusage.sequencenumber)
+                    row.times.append(time)
+                else:
+                    stopusage.row.times.append(time)
 
-                if row.part.sequencenumber is None:
-                    i += 1
-                    row.part.sequencenumbers.append(i)
-
-        # bulk out other rows
-        row_length = len(row.times)
         for row in self.journeypattern.grouping.rows.values():
-            if len(row.times) < row_length:
+            if len(row.times) == row_length:
                 row.times.append('')
 
     def get_departure_time(self):
@@ -245,8 +246,8 @@ class DateRange(object):
 
 class Timetable(object):
     def __init__(self, xml):
-        self.outbound_grouping = Grouping('outbound')
-        self.inbound_grouping = Grouping('inbound')
+        outbound_grouping = Grouping('outbound')
+        inbound_grouping = Grouping('inbound')
 
         stops = {
             element.find('txc:StopPointRef', NS).text: Stop(element)
@@ -257,7 +258,7 @@ class Timetable(object):
             for element in xml.find('txc:JourneyPatternSections', NS)
         }
         journeypatterns = {
-            element.get('id'): JourneyPattern(element, journeypatternsections, self.outbound_grouping, self.inbound_grouping)
+            element.get('id'): JourneyPattern(element, journeypatternsections, outbound_grouping, inbound_grouping)
             for element in xml.findall('.//txc:JourneyPattern', NS)
         }
 
@@ -277,22 +278,20 @@ class Timetable(object):
         journeys.sort(key=VehicleJourney.get_departure_time)
         journeys.sort(key=VehicleJourney.get_order)
         for journey in journeys:
+            journey.journeypattern.journeys.append(journey)
             journey.journeypattern.grouping.journeys.append(journey)
             journey.add_times()
 
-        self.journeypatterns = journeypatterns.values()
-
-        self.outbound_grouping.rows = self.outbound_grouping.rows.values()
-        self.outbound_grouping.rows.sort(key=Row.get_sequencenumber)
-        self.inbound_grouping.rows = self.inbound_grouping.rows.values()
-        self.inbound_grouping.rows.sort(key=Row.get_sequencenumber)
+        self.groupings = (outbound_grouping, inbound_grouping)
+        for grouping in self.groupings:
+            grouping.rows = grouping.rows.values()
+            if len(grouping.rows) and grouping.rows[0].part.sequencenumber is None:
+                grouping.rows.sort(key=Row.get_sequencenumber)
 
         service_element = xml.find('txc:Services', NS).find('txc:Service', NS)
         operatingprofile_element = service_element.find('txc:OperatingProfile', NS)
         if operatingprofile_element is not None:
             self.operating_profile = OperatingProfile(operatingprofile_element)
-
-        self.groupings = [self.outbound_grouping, self.inbound_grouping]
 
 
 def timetable_from_service(service):
