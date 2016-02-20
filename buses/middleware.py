@@ -20,7 +20,7 @@ class NotFoundRedirectMiddleware(object):
         if (response.status_code == 404 and request.path.startswith('/services/')
                 and len(request.path.split('-')) == 5):
             service_code_parts = request.path.split('/')[-1].split('-')[:-1]
-            suggestions = Service.objects.filter(service_code__startswith='-'.join(service_code_parts), current__in=(True, None))
+            suggestions = Service.objects.filter(service_code__startswith='-'.join(service_code_parts)).exclude(current=False)
             if len(suggestions) == 1:
                 return redirect(suggestions[0])
         return response
