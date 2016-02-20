@@ -348,7 +348,7 @@ table {
 
 th,
 td {
-    padding: .25em 0 .25em 1em;
+    padding: .25em .5em .25em .5em;
     text-align: left;
 
     &:first-child {
@@ -360,7 +360,16 @@ td {
     font-size: .875em;
     margin: 1em 0;
 
+    tr:first-child td {
+        border-left: 1px solid $brand-color;
+
+        &:first-child {
+            border-left: 0;
+        }
+    }
+
     th {
+        border-right: 1px solid $brand-color;
         font-weight: normal;
         white-space: nowrap;
     }

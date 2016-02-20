@@ -57,6 +57,8 @@ class Row(object):
 class Grouping(object):
     def __init__(self, direction):
         self.direction = direction
+        self.column_heads = []
+        self.column_feet = []
         self.journeys = []
         self.rows = {}
 
@@ -244,6 +246,18 @@ class DateRange(object):
             return '%s to %s' % (str(self.start), str(self.end))
 
 
+class ColumnHead(object):
+    def __init__(self, operatingprofile, span):
+        self.operatingprofile = operatingprofile
+        self.span = span
+
+
+class ColumnFoot(object):
+    def __init__(self, notes, span):
+        self.notes = notes
+        self.span = span
+
+
 class Timetable(object):
     def __init__(self, xml):
         outbound_grouping = Grouping('outbound')
@@ -282,16 +296,43 @@ class Timetable(object):
             journey.journeypattern.grouping.journeys.append(journey)
             journey.add_times()
 
+        service_element = xml.find('txc:Services', NS).find('txc:Service', NS)
+        operatingprofile_element = service_element.find('txc:OperatingProfile', NS)
+        if operatingprofile_element is not None:
+            self.operating_profile = OperatingProfile(operatingprofile_element)
+
         self.groupings = (outbound_grouping, inbound_grouping)
         for grouping in self.groupings:
             grouping.rows = grouping.rows.values()
             if len(grouping.rows) and grouping.rows[0].part.sequencenumber is None:
                 grouping.rows.sort(key=Row.get_sequencenumber)
 
-        service_element = xml.find('txc:Services', NS).find('txc:Service', NS)
-        operatingprofile_element = service_element.find('txc:OperatingProfile', NS)
-        if operatingprofile_element is not None:
-            self.operating_profile = OperatingProfile(operatingprofile_element)
+            previous_operatingprofile = None
+            previous_notes = None
+            head_span = 0
+            foot_span = 0
+            for journey in grouping.journeys:
+                if not hasattr(journey, 'operating_profile'):
+                    previous_operatingprofile = None
+                else:
+                    if str(previous_operatingprofile) != str(journey.operating_profile):
+                        if previous_operatingprofile is not None:
+                            grouping.column_heads.append(ColumnHead(previous_operatingprofile, head_span))
+                            head_span = 0
+                        previous_operatingprofile = journey.operating_profile
+                if not hasattr(journey, 'notes'):
+                    previous_notes = None
+                else:
+                    if str(previous_notes) != str(journey.notes):
+                        if previous_notes is not None:
+                            grouping.column_feet.append(ColumnFoot(previous_notes, foot_span))
+                            foot_span = 0
+                        previous_notes = journey.notes
+                head_span += 1
+                foot_span += 1
+            grouping.column_heads.append(ColumnHead(previous_operatingprofile, foot_span))
+            grouping.column_feet.append(ColumnFoot(previous_notes, foot_span))
+
 
 
 def timetable_from_service(service):

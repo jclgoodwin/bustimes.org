@@ -38,30 +38,24 @@
 
     <table class="timetable">
     <tbody>
-        <tr>
-        <td></td>
-        {% for journey in grouping.journeys %}
-            <td>{% firstof journey.operating_profile timetable.operating_profile %}</td>
-        {% endfor %}
-        </tr>
+    <tr><td></td>
+    {% for column in grouping.column_heads %}
+        <td colspan="{{ column.span }}">{% firstof column.operatingprofile timetable.operating_profile %}</td>
+    {% endfor %}
+    </tr>
     {% for row in grouping.rows %}
-        <tr>
-        <th><a href="{{ row.part.stop.get_absolute_url }}">{{ row.part.stop }}</a></th>
+        <tr><th><a href="{{ row.part.stop.get_absolute_url }}">{{ row.part.stop }}</a></th>
         {% for time in row.times %}
             <td>{{ time }}</td>
         {% endfor %}
+        </tr>
     {% endfor %}
     </tbody>
-    <tfoot>
-        <tr>
-        <td></td>
-        {% for journey in grouping.journeys %}
-            <td>
-                {{ journey.notes|join:'<br />' }}
-            </td>
-        {% endfor %}
-        </tr>
-    </tfoot>
+    <tfoot><tr><td></td>
+    {% for column in grouping.column_feet %}
+        <td colspan="{{ column.span }}">{{ column.notes|join:'<br />' }}</td>
+    {% endfor %}
+    </tr></tfoot>
     </table>
 {% endif %}{% empty %}
 
