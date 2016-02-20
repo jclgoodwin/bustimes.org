@@ -148,7 +148,7 @@ class VehicleJourney(object):
 
         note_elements = element.findall('txc:Note', NS)
         if note_elements is not None:
-            self.notes = [element.find('txc:NoteText', NS).text for element in note_elements]
+            self.notes = [note_element.find('txc:NoteText', NS).text for note_element in note_elements]
 
         operatingprofile_element = element.find('txc:OperatingProfile', NS)
         if operatingprofile_element is not None:
