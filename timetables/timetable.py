@@ -85,10 +85,6 @@ class JourneyPattern(object):
         for atco_code, row in self.rows.iteritems():
             self.grouping.rows[atco_code] = row
 
-
-    # def get_departure_time(self):
-        # return self.rows.values()[0]
-
     def is_outbound(self):
         return self.direction == 'outbound'
 
@@ -188,8 +184,10 @@ class VehicleJourney(object):
     def get_departure_time(self):
         return self.departure_time
 
-    # def __str__(self):
-    #     return '%s to %s' % (self.rows[0].stop, self.rows[-1].stop)
+    def get_order(self):
+        if hasattr(self, 'operating_profile'):
+            return self.operating_profile.get_order()
+        return 0
 
 
 class OperatingProfile(object):
@@ -220,6 +218,17 @@ class OperatingProfile(object):
         elif string == 'Mondays, Tuesdays, Wednesdays, Thursdays, Fridays, Saturdays and Sundays':
             string = 'Monday to Sunday'
         return string
+
+    def get_order(self):
+        if self.regular_days[0][:3] == 'Mon':
+            return 0
+        if self.regular_days[0][:3] == 'Sat':
+            return 1
+        if self.regular_days[0][:3] == 'Sun':
+            return 2
+        if self.regular_days[0][:3] == 'Hol':
+            return 3
+        return 0
 
 
 class DateRange(object):
@@ -266,6 +275,7 @@ class Timetable(object):
 
         journeys = journeys.values()
         journeys.sort(key=VehicleJourney.get_departure_time)
+        journeys.sort(key=VehicleJourney.get_order)
         for journey in journeys:
             journey.journeypattern.grouping.journeys.append(journey)
             journey.add_times()

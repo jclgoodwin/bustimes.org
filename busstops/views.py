@@ -227,31 +227,6 @@ class OperatorDetailView(DetailView):
         return context
 
 
-# Experimental proper timetables will be shown for these services
-PIONEERING_SERVICES = (
-    'YSDO447', 'YWAH0B1',
-    '20-S14-_-y08-1',
-    # Aldborough Community Bus:
-    '21-1-_-y08-1', '21-2-_-y08-1', '21-3-B-y08-1', '21-6-_-y08-1', '21-8-_-y08-1',
-    # A & P Travel:
-    '20-110-_-y08-1',
-
-    # '20-150-A-y08-1',
-    # Sanders:
-    '21-9A-A-y08-1',
-    '21-16-A-y08-1',
-    '21-24-_-y08-1',
-    '21-25-C-y08-1',
-    '21-26-A-y08-1',
-    '21-80-_-y08-1',
-    '21-98-_-y08-1',
-    # '21-45A-_-y08-1',
-    # Lynx:
-    # '21-35B-A-y08-1',
-    '21-X35-_-y08-1',
-)
-
-
 class ServiceDetailView(DetailView):
     "A service and the stops it stops at"
 
