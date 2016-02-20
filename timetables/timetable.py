@@ -292,7 +292,7 @@ class Timetable(object):
         journeys.sort(key=VehicleJourney.get_departure_time)
         journeys.sort(key=VehicleJourney.get_order)
         for journey in journeys:
-            journey.journeypattern.journeys.append(journey)
+            # journey.journeypattern.journeys.append(journey)
             journey.journeypattern.grouping.journeys.append(journey)
             journey.add_times()
 
@@ -332,7 +332,6 @@ class Timetable(object):
                 foot_span += 1
             grouping.column_heads.append(ColumnHead(previous_operatingprofile, foot_span))
             grouping.column_feet.append(ColumnFoot(previous_notes, foot_span))
-
 
 
 def timetable_from_service(service):

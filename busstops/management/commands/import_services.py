@@ -140,33 +140,30 @@ class Command(BaseCommand):
     def get_operator(self, operator_element):
         "Given an Operator element, returns an Operator object."
 
-        try:
-            # Get by national operator code
-            operator_code = self.get_operator_code(operator_element)
-            if len(operator_code) == 4:
-                possible_operators = Operator.objects.filter(id=operator_code)
-                if len(possible_operators) == 1:
-                    return possible_operators[0]
-
-            # Get by name
-            operator_name = self.get_operator_name(operator_element)
-
-            if operator_name == 'Replacement Service':
-                return None
-
-            possible_operators = Operator.objects.filter(name__startswith=operator_name)
+        # Get by national operator code
+        operator_code = self.get_operator_code(operator_element)
+        if len(operator_code) == 4:
+            possible_operators = Operator.objects.filter(id=operator_code)
             if len(possible_operators) == 1:
                 return possible_operators[0]
 
-            if operator_name in self.SPECIAL_OPERATOR_TRADINGNAMES:
-                return Operator.objects.get(id=self.SPECIAL_OPERATOR_TRADINGNAMES[operator_name])
+        # Get by name
+        operator_name = self.get_operator_name(operator_element)
 
-            if operator_code in self.SPECIAL_OPERATOR_CODES:
-                return Operator.objects.get(id=self.SPECIAL_OPERATOR_CODES[operator_code])
+        if operator_name in ('Replacement Service', 'UNKWN'):
+            return None
 
-        except Exception, error:
-            print str(error)
-            print ET.tostring(operator_element)
+        possible_operators = Operator.objects.filter(name__startswith=operator_name)
+        if len(possible_operators) == 1:
+            return possible_operators[0]
+
+        if operator_name in self.SPECIAL_OPERATOR_TRADINGNAMES:
+            return Operator.objects.get(id=self.SPECIAL_OPERATOR_TRADINGNAMES[operator_name])
+
+        if operator_code in self.SPECIAL_OPERATOR_CODES:
+            return Operator.objects.get(id=self.SPECIAL_OPERATOR_CODES[operator_code])
+
+        print ET.tostring(operator_element)
 
     def do_service(self, root, region_id, service_descriptions=None):
 
@@ -191,9 +188,6 @@ class Command(BaseCommand):
             operators_element = root.find('txc:Operators', self.ns)
             operators = map(self.get_operator, operators_element)
             operators = filter(None, operators)
-            if len(operators) == 0:
-                print file_name
-                print ET.tostring(operators_element)
 
             # service description:
 
@@ -222,8 +216,11 @@ class Command(BaseCommand):
             stop_ids = [stop.find('txc:StopPointRef', self.ns).text for stop in stop_elements]
             stops = StopPoint.objects.in_bulk(stop_ids)
 
-            timetable = Timetable(root)
-            show_timetable = (len(timetable.journeypatterns) <= 3 and len(timetable.journeys) <= 4)
+            try:
+                timetable = Timetable(root)
+                show_timetable = (len(timetable.groupings[0].journeys) < 10 and len(timetable.groupings[1].journeys) < 10)
+            except AttributeError:
+                show_timetable = False
 
             # service:
 
@@ -249,7 +246,7 @@ class Command(BaseCommand):
         service_descriptions = None
 
         for archive_name in options['filenames']:
-
+            print archive_name
             region_id = archive_name.split('/')[-1][:-4]
             if region_id == 'NCSD':
                 region_id = 'GB'
@@ -268,14 +265,11 @@ class Command(BaseCommand):
                         service_descriptions[row['Operator'] + row['LineName']] = row['Description']
 
             for i, file_name in enumerate(archive.namelist()):
-                if (i - 1) % 1000 == 0:
+                if i % 100 == 0:
                     print i
 
                 if file_name.endswith('.xml'):
-                    try:
-                        root = ET.parse(archive.open(file_name)).getroot()
-                        self.do_service(root, region_id, service_descriptions=service_descriptions)
-                    except Exception, error:
-                        print str(error)
+                    root = ET.parse(archive.open(file_name)).getroot()
+                    self.do_service(root, region_id, service_descriptions=service_descriptions)
 
             Service.objects.filter(region_id=region_id, current=None).update(current=False)
