@@ -35,8 +35,4 @@ class ImportFromCSVCommand(BaseCommand):
         Runs when the command is executed
         """
         for row in csv.DictReader(self.input):
-            try:
-                self.handle_row(row)
-            except Exception, error:
-                print str(error)
-                print row
+            self.handle_row(row)
