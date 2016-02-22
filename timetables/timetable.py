@@ -179,6 +179,8 @@ class VehicleJourney(object):
                     row.times.append(time)
                 else:
                     stopusage.row.times.append(time)
+                if hasattr(stopusage, 'waittime'):
+                    time = (datetime.combine(date.today(), time) + stopusage.waittime).time()
 
         for row in self.journeypattern.grouping.rows.values():
             if len(row.times) == row_length:
