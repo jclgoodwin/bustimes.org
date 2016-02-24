@@ -255,11 +255,10 @@ class ServiceDetailView(DetailView):
 
     def render_to_response(self, context):
         if self.object.current is False:
-            alternatives = Service.objects.filter(description=self.object.description).exclude(current=False)
-            if len(alternatives) == 1:
-                return redirect(alternatives[0])
-            else:
-                raise Http404()
+            alternative = Service.objects.filter(description=self.object.description).exclude(current=False).first()
+            if alternative is not None:
+                return redirect(alternative)
+            raise Http404()
 
         return super(ServiceDetailView, self).render_to_response(context)
 
