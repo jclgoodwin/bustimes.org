@@ -102,7 +102,7 @@ class Command(BaseCommand):
         if len(parts) == 5:
             net = parts[0].split('_')[0]
             if len(net) <= 3 and net.islower():
-                return (net, '-'.join(parts[:-1]), parts[-1])
+                return (net, '-'.join(parts[:-1]), parts[-1][:-4])
         return ('', None, None)
 
     def sanitize_description_part(self, part):
