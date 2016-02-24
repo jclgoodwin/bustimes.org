@@ -228,6 +228,7 @@ class Service(models.Model):
     mode = models.CharField(max_length=11)
     operator = models.ManyToManyField(Operator, blank=True)
     net = models.CharField(max_length=3, blank=True)
+    line_ver = models.PositiveIntegerField(null=True, blank=True)
     region = models.ForeignKey(Region)
     stops = models.ManyToManyField(StopPoint, editable=False)
     date = models.DateField()

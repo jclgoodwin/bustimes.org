@@ -91,16 +91,19 @@ class Command(BaseCommand):
         parser.add_argument('filenames', nargs='+', type=str)
 
     @staticmethod
-    def get_net(file_name):
+    def get_net_service_code_and_line_ver(file_name):
         """
-        Get the service 'net' (for services in the EA, EM, L, WM, SE and SW regions).
+        Given a file name like 'ea_21-45A-_-y08-1.xml',
+        returns a (net, service_code, line_ver) tuple like ('ea', 'ea_21-45A-_-y08', '1')
+
+        Given any other sort of file name, returns ('', None, None)
         """
         parts = file_name.split('-') # ['ea_21', '3', '_', '1']
         if len(parts) == 5:
             net = parts[0].split('_')[0]
             if len(net) <= 3 and net.islower():
-                return net
-        return ''
+                return (net, '-'.join(parts[:-1]), parts[-1])
+        return ('', None, None)
 
     def sanitize_description_part(self, part):
         """
@@ -222,15 +225,22 @@ class Command(BaseCommand):
             except AttributeError:
                 show_timetable = False
 
+            # net and service code:
+
+            net, service_code, line_ver = self.get_net_service_code_and_line_ver(file_name)
+            if service_code is None:
+                service_code = service_element.find('txc:ServiceCode', self.ns).text
+
             # service:
 
             service = Service.objects.update_or_create(
-                service_code=service_element.find('txc:ServiceCode', self.ns).text,
+                service_code=service_code,
                 defaults=dict(
                     line_name=line_name,
                     mode=mode,
                     description=description,
-                    net=self.get_net(file_name),
+                    net=net,
+                    line_ver=line_ver,
                     region_id=region_id,
                     date=root.attrib['ModificationDateTime'][:10],
                     current=True,
