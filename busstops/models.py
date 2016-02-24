@@ -286,7 +286,7 @@ class Service(models.Model):
                 return None
             parts = self.service_code.split('-')
             query = [('line', parts[0].zfill(2) + parts[1].zfill(3)),
-                     ('lineVer', parts[4]), # not sure this is needed
+                     ('lineVer', self.line_ver or parts[4]),
                      ('net', self.net),
                      ('project', parts[3])]
             if parts[2] != '_':
