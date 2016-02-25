@@ -224,6 +224,9 @@ class Command(BaseCommand):
                 show_timetable = (len(timetable.groupings[0].journeys) < 10 and len(timetable.groupings[1].journeys) < 10)
             except AttributeError:
                 show_timetable = False
+            except IndexError as e:
+                show_timetable = False
+                print e, file_name
 
             # net and service code:
 
