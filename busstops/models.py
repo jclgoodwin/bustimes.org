@@ -285,7 +285,7 @@ class Service(models.Model):
                     return 'https://tfl.gov.uk/bus/timetable/%s/' % self.line_name
                 return None
             parts = self.service_code.split('-')
-            query = [('line', parts[0].zfill(2) + parts[1].zfill(3)),
+            query = [('line', parts[0].split('_')[-1].zfill(2) + parts[1].zfill(3)),
                      ('lineVer', self.line_ver or parts[4]),
                      ('net', self.net),
                      ('project', parts[3])]
