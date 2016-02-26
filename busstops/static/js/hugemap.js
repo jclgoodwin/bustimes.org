@@ -56,12 +56,10 @@
             highWater = map.highWater;
         if (!highWater || !highWater.contains(bounds)) {
             statusBar.getContainer().innerHTML = 'Loading\u2026';
-            $.get('/stops.json', {
-                ymax: bounds.getNorth(),
-                xmax: bounds.getEast(),
-                ymin: bounds.getSouth(),
-                xmin: bounds.getWest(),
-            }, processStopsData, 'json');
+            reqwest(
+                '/stops.json?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest(),
+                processStopsData
+            );
             map.highWater = bounds;
         }
     }

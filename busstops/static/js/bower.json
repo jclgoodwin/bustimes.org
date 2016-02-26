@@ -1,0 +1,24 @@
+{
+  "name": "bustimes.org.uk",
+  "homepage": "https://github.com/jclgoodwin/bustimes.org.uk",
+  "authors": [
+    "Josh Goodwin <j@joshuagoodw.in>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "html5shiv": "^3.7.3",
+    "throttle-debounce": "^0.1.1",
+    "reqwest": "^2.0.5"
+  }
+}
