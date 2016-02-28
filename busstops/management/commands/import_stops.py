@@ -29,7 +29,7 @@ class Command(ImportFromCSVCommand):
             'admin_area_id': row['AdministrativeAreaCode']
         }
         for django_field_name, naptan_field_name in self.field_names:
-            defaults[django_field_name] = row[naptan_field_name].decode('latin1')
+            defaults[django_field_name] = unicode(row[naptan_field_name], errors='ignore')
 
         StopPoint.objects.update_or_create(atco_code=row['AtcoCode'], defaults=defaults)
 

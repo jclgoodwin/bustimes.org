@@ -181,8 +181,8 @@ class StopPoint(models.Model):
             if self.indicator.islower() and len(self.indicator) <= 3:
                 return '%s, %s %s' % (locality_name, self.indicator, self.common_name)
             else:
-                return '%s %s' % (locality_name, str(self))
-        return str(self)
+                return '%s %s' % (locality_name, unicode(self))
+        return unicode(self)
 
     def get_absolute_url(self):
         return reverse('stoppoint-detail', args=(self.atco_code,))
