@@ -281,7 +281,7 @@ class Service(models.Model):
 
         if self.net != '':
             if self.net == 'tfl':
-                if self.mode == 'bus':
+                if self.mode == 'bus' and len(self.line_name) <= 4:
                     return 'https://tfl.gov.uk/bus/timetable/%s/' % self.line_name
                 return None
             parts = self.service_code.split('-')
