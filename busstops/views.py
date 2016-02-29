@@ -100,7 +100,7 @@ class RegionDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(RegionDetailView, self).get_context_data(**kwargs)
 
-        context['areas'] = AdminArea.objects.filter(region=self.object).order_by('name').distinct() # TODO exclude national coach?
+        context['areas'] = AdminArea.objects.filter(region=self.object).order_by('name')
         context['operators'] = Operator.objects.filter(region=self.object, service__isnull=False).distinct().order_by('name')
 
         return context
@@ -218,7 +218,7 @@ class OperatorDetailView(DetailView):
     "An operator and the services it operates"
 
     model = Operator
-    queryset = model._default_manager.distinct().select_related('region')
+    queryset = model._default_manager.defer('parent').select_related('region')
 
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
