@@ -33,7 +33,7 @@
 
 {% endif %}
 
-{% for grouping in timetable.groupings %}{% if grouping.journeys %}
+{% if timetable %}{% for grouping in timetable.groupings %}{% if grouping.journeys %}
     <h2>{{ grouping.direction.capitalize }}</h2>
 
     <div class="timetable-wrapper">
@@ -63,7 +63,9 @@
     </tr></tfoot>
     </table>
     </div>
-{% endif %}{% empty %}
+{% endif %}{% endfor %}
+<p>Traveline National Dataset, {{ service.date }}</p>
+{% else %}
 
 <h2>Stops serviced</h2>
 
@@ -83,6 +85,6 @@
 {% endfor %}
 </ul>
 
-{% endfor %}
+{% endif %}
 
 {% endblock %}
