@@ -25,7 +25,7 @@ def parse_duration(string):
 class Stop(object):
     def __init__(self, element, stops):
         self.atco_code = element.find('txc:StopPointRef', NS).text
-        self.stop = stops.filter(atco_code=self.atco_code).first()
+        self.stop = stops.get(self.atco_code)
         self.common_name = element.find('txc:CommonName', NS).text
         locality_element = element.find('txc:LocalityName', NS)
         if locality_element is not None:
@@ -347,4 +347,4 @@ def timetable_from_service(service, stops):
     xml_file = archive.open(file_names[0])
     xml = ET.parse(xml_file).getroot()
 
-    return Timetable(xml, stops)
+    return Timetable(xml, {stop.atco_code: stop for stop in stops})
