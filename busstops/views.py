@@ -139,6 +139,13 @@ class AdminAreaDetailView(DetailView):
         context['breadcrumb'] = [self.object.region]
         return context
 
+    def render_to_response(self, context):
+        if len(context['districts']) + len(context['localities']) == 1:
+            if len(context['districts']) == 1:
+                return redirect(context['districts'][0])
+            return redirect(context['localities'][0])
+        return super(AdminAreaDetailView, self).render_to_response(context)
+
 
 class DistrictDetailView(DetailView):
     "A single district, and the localities in it"
@@ -155,6 +162,11 @@ class DistrictDetailView(DetailView):
         ).distinct().order_by('name')
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
         return context
+
+    def render_to_response(self, context):
+        if len(context['localities']) == 1:
+            return redirect(context['localities'][0])
+        return super(DistrictDetailView, self).render_to_response(context)
 
 
 class LocalityDetailView(DetailView):
