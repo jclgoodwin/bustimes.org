@@ -45,7 +45,11 @@
     {% endfor %}
     </tr>
     {% for row in grouping.rows %}
-        <tr><th><a href="{{ row.part.stop.get_absolute_url }}">{{ row.part.stop }}</a></th>
+        <tr><th>
+        {% if row.part.stop.stop %}
+            <a href="{{ row.part.stop.stop.get_absolute_url }}">{{ row.part.stop.stop.get_qualified_name }}</a>
+        {% else %}{{ row.part.stop }}{% endif %}
+        </th>
         {% for time in row.times %}
             <td>{{ time }}</td>
         {% endfor %}

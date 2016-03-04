@@ -23,8 +23,9 @@ def parse_duration(string):
 
 
 class Stop(object):
-    def __init__(self, element):
+    def __init__(self, element, stops):
         self.atco_code = element.find('txc:StopPointRef', NS).text
+        self.stop = stops.filter(atco_code=self.atco_code).first()
         self.common_name = element.find('txc:CommonName', NS).text
         locality_element = element.find('txc:LocalityName', NS)
         if locality_element is not None:
@@ -37,9 +38,6 @@ class Stop(object):
             return self.common_name
         else:
             return '%s %s' % (self.locality, self.common_name)
-
-    def get_absolute_url(self):
-        return '/stops/%s' % self.atco_code
 
 
 class Row(object):
@@ -261,12 +259,12 @@ class ColumnFoot(object):
 
 
 class Timetable(object):
-    def __init__(self, xml):
+    def __init__(self, xml, stops=None):
         outbound_grouping = Grouping('outbound')
         inbound_grouping = Grouping('inbound')
 
         stops = {
-            element.find('txc:StopPointRef', NS).text: Stop(element)
+            element.find('txc:StopPointRef', NS).text: Stop(element, stops)
             for element in xml.find('txc:StopPoints', NS)
         }
         journeypatternsections = {
@@ -336,7 +334,7 @@ class Timetable(object):
             grouping.column_feet.append(ColumnFoot(previous_notes, foot_span))
 
 
-def timetable_from_service(service):
+def timetable_from_service(service, stops):
     if service.region_id == 'GB':
         service.service_code = '_'.join(service.service_code.split('_')[::-1])
         archive_path = os.path.join(DIR, '../data/TNDS/NCSD.zip')
@@ -349,4 +347,4 @@ def timetable_from_service(service):
     xml_file = archive.open(file_names[0])
     xml = ET.parse(xml_file).getroot()
 
-    return Timetable(xml)
+    return Timetable(xml, stops)
