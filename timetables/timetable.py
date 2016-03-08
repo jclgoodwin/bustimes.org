@@ -25,7 +25,8 @@ def parse_duration(string):
 class Stop(object):
     def __init__(self, element, stops):
         self.atco_code = element.find('txc:StopPointRef', NS).text
-        self.stop = stops.get(self.atco_code)
+        if stops is not None:
+            self.stop = stops.get(self.atco_code)
         self.common_name = element.find('txc:CommonName', NS).text
         locality_element = element.find('txc:LocalityName', NS)
         if locality_element is not None:
