@@ -348,7 +348,7 @@ table {
 
 th,
 td {
-    padding: .25em .5em .25em .5em;
+    padding: .25em .5em;
     text-align: left;
 
     &:first-child {
@@ -357,12 +357,12 @@ td {
 }
 
 .timetable-wrapper {
+    margin: 1em 0;
     overflow: auto;
 }
 
 .timetable {
     font-size: .875em;
-    margin: 1em 0;
 
     tr:first-child td {
         border-left: 1px solid $brand-color;
