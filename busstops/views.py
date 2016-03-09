@@ -1,8 +1,10 @@
 "View definitions."
 import zipfile
 import os
+import re
+import operator
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Count, Q
+from django.db.models import Q
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
@@ -54,25 +56,20 @@ def stops(request):
         latlong__within=bounding_box, active=True
     )
 
-    data = {
+    return JsonResponse({
         'type': 'FeatureCollection',
-        'features': []
-    }
-    for stop in results:
-        data['features'].append(
-            {
-                'type': 'Feature',
-                'geometry': {
-                    'type': 'Point',
-                    'coordinates': [stop.latlong.x, stop.latlong.y]
-                },
-                'properties': {
-                    'name': str(stop),
-                    'url': stop.get_absolute_url()
-                    }
-                }
-            )
-    return JsonResponse(data)
+        'features': [{
+            'type': 'Feature',
+            'geometry': {
+                'type': 'Point',
+                'coordinates': [stop.latlong.x, stop.latlong.y]
+            },
+            'properties': {
+                'name': str(stop),
+                'url': stop.get_absolute_url()
+            }
+        } for stop in results]
+    })
 
 
 def search(request):
@@ -81,14 +78,16 @@ def search(request):
     whose names all contain the `request.GET['q']` string
     """
     data = []
-    query = request.GET.get('q')
-    if query:
-        query = query.strip()
-        for locality in Locality.objects.filter(name__icontains=query)[:12]:
-            data.append({
-                'name': locality.get_qualified_name(),
-                'url':  locality.get_absolute_url()
-            })
+    term = request.GET.get('q')
+    if term:
+        parts = re.split('[^\w]', term)
+        query = reduce(operator.and_, (Locality.objects.filter(name__icontains=part) for part in parts))
+
+        data = [{
+            'name': locality.get_qualified_name(),
+            'url':  locality.get_absolute_url()
+        } for locality in query[:12]]
+
     return JsonResponse(data, safe=False)
 
 
