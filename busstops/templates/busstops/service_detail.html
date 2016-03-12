@@ -37,6 +37,8 @@
     <h2>{{ grouping.direction.capitalize }}</h2>
 
     <div class="timetable-wrapper">
+    <input type="checkbox" id="show-all-stops-{{ grouping.direction }}" />
+    <label for="show-all-stops-{{ grouping.direction }}">Show all stops</label>
     <table class="timetable">
     <tbody>
     <tr><td></td>
@@ -45,7 +47,7 @@
     {% endfor %}
     </tr>
     {% for row in grouping.rows %}
-        <tr><th>
+        <tr class="{{ row.part.timingstatus }}"><th>
         {% if row.part.stop.stop %}
             <a href="{{ row.part.stop.stop.get_absolute_url }}">{{ row.part.stop.stop.get_qualified_name }}</a>
         {% else %}{{ row.part.stop }}{% endif %}

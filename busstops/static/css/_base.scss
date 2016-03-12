@@ -357,13 +357,21 @@ td {
 }
 
 .timetable-wrapper {
+    font-size: .875em;
     margin: 1em 0;
     overflow: auto;
+
+
+    input {
+        vertical-align: top;
+    }
+}
+
+input:not(:checked) + label + .timetable tr.OTH {
+    display: none;
 }
 
 .timetable {
-    font-size: .875em;
-
     tr:first-child td {
         border-left: 1px solid $brand-color;
 
