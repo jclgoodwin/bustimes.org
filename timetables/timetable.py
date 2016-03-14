@@ -293,9 +293,9 @@ class Timetable(object):
         journeys.sort(key=VehicleJourney.get_departure_time)
         journeys.sort(key=VehicleJourney.get_order)
         for journey in journeys:
-            # journey.journeypattern.journeys.append(journey)
-            journey.journeypattern.grouping.journeys.append(journey)
-            journey.add_times()
+            if not hasattr(journey, 'operating_profile') or str(journey.operating_profile) != 'HolidaysOnlys':
+                journey.journeypattern.grouping.journeys.append(journey)
+                journey.add_times()
 
         service_element = xml.find('txc:Services', NS).find('txc:Service', NS)
         operatingprofile_element = service_element.find('txc:OperatingProfile', NS)

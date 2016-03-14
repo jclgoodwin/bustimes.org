@@ -221,7 +221,7 @@ class Command(BaseCommand):
 
             try:
                 timetable = Timetable(root)
-                show_timetable = (len(timetable.groupings[0].journeys) < 10 and len(timetable.groupings[1].journeys) < 10)
+                show_timetable = (len(timetable.groupings[0].journeys) < 30 and len(timetable.groupings[1].journeys) < 30)
             except AttributeError:
                 show_timetable = False
             except IndexError as e:
