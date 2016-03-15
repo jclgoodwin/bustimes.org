@@ -2,18 +2,27 @@ h1 {
     font-size: 2em;
 }
 
-#map {
-    display: block;
-    float: right;
-    height: 300px;
-    margin-bottom: 1em;
-    width: 48%;
-    margin-left: 4%;
+main img {
+    width: 48.5%;
+    height: auto;
 }
 
-main img {
-    width: 48%;
-    height: auto;
+.map-wrapper {
+    display: block;
+    float: right;
+    margin-bottom: 1em;
+    margin-left: 3%;
+    padding-top: 48.5% * .75;
+    position: relative;
+    width: 48.5%;
+}
+
+#map {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 
 #regions ul {

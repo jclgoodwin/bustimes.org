@@ -16,14 +16,14 @@ p {
     left: 25%;
 }
 
-#map {
-    width: 49%;
-    margin-left: 2%;
+main img {
+    width: 48.75%;
 }
 
-main img {
-    height: 300px;
-    width: auto;
+.map-wrapper {
+    margin-left: 2.5%;
+    padding-top: 48.75% * .75;
+    width: 48.75%;
 }
 
 .long {
@@ -34,8 +34,8 @@ main img {
 
 .asides .aside {
     clear: none;
-    margin-left: 2%;
-    width: 32%;
+    margin-left: 2.5%;
+    width: 32.6%;
 }
 
 .asides .aside:first-child {
