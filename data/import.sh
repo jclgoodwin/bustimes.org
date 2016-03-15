@@ -10,7 +10,7 @@
 
 USERNAME=$1
 PASSWORD=$2
-REGIONS=(EA EM L NE NW S SE SW W WM Y NCSD)
+REGIONS=(NCSD EA W EM Y NW S WM SW SE NE L) # roughly in ascending size order
 
 # set $md5 to the name of the system's md5 hash command ('md5' or 'md5sum')
 md5=$(which md5)
@@ -96,20 +96,19 @@ if [[ $USERNAME == '' || $PASSWORD == '' ]]; then
 fi
 
 cd TNDS
-workers=0
+i=0
 for region in ${REGIONS[@]}; do
     region_md5_old=`$md5 $region.zip`
     wget -qN --user=$USERNAME --password=$PASSWORD ftp://ftp.tnds.basemap.co.uk/$region.zip
     region_md5_new=`$md5 $region.zip`
     if [[ $nptg_md5_old != $nptg_md5_new || $naptan_md5_old != $naptan_md5_new || $region_md5_old != $region_md5_new ]]; then
-        workers=$(($workers + 1))
-        echo $region
         (
         ../../manage.py import_services $region.zip
         ) &
-        if [[ $workers -ge 2 ]]; then
-            wait
-            workers=0
+        # allow up to 4 concurrent subshells
+        i=$(($i + 1))
+        if [[ $i > 3 ]]; then
+            wait %$(($i - 3))
         fi
     fi
 done
