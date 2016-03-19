@@ -340,6 +340,8 @@ def get_filenames(service, namelist):
         return (name for name in namelist if name.startswith(service.service_code + '-'))
     elif service.region_id in ('GB', 'W'):
         return (name for name in namelist if name.endswith('_' + service.service_code + '.xml'))
+    elif service.region_id == 'NE':
+        return (service.service_code + '.xml',)
     else:
         return ('SVR' + service.service_code + '.xml',)
 
