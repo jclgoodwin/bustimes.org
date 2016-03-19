@@ -335,6 +335,21 @@ class Timetable(object):
             grouping.column_feet.append(ColumnFoot(previous_notes, foot_span))
 
 
+def get_filenames(service, namelist):
+    if service.net:
+        return (name for name in namelist if name.startswith(service.service_code + '-'))
+    elif service.region_id in ('GB', 'W'):
+        return (name for name in namelist if name.endswith('_' + service.service_code + '.xml'))
+    else:
+        return ('SVR' + service.service_code + '.xml',)
+
+
+def timetable_from_filename(filename, zipfile, stops):
+    xmlfile = zipfile.open(filename)
+    xml = ET.parse(xmlfile).getroot()
+    return Timetable(xml, stops)
+
+
 def timetable_from_service(service, stops):
     if service.region_id == 'GB':
         service.service_code = '_'.join(service.service_code.split('_')[::-1])
@@ -342,10 +357,12 @@ def timetable_from_service(service, stops):
     else:
         archive_path = os.path.join(DIR, '../data/TNDS/%s.zip' % service.region_id)
 
-    archive = zipfile.ZipFile(archive_path)
-    file_names = [name for name in archive.namelist() if service.service_code in name]
+    try:
+        archive = zipfile.ZipFile(archive_path)
+    except zipfile.BadZipfile:
+        return None
 
-    xml_file = archive.open(file_names[0])
-    xml = ET.parse(xml_file).getroot()
+    stops = {stop.atco_code: stop for stop in stops}
+    filenames = get_filenames(service, archive.namelist())
+    return (timetable_from_filename(filename, archive, stops) for filename in filenames)
 
-    return Timetable(xml, {stop.atco_code: stop for stop in stops})

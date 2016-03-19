@@ -257,9 +257,8 @@ class ServiceDetailView(DetailView):
         stops = self.object.stops.all().select_related('locality')
 
         if self.object.show_timetable or '_MEGA' in self.object.service_code or 'timetable' in self.request.GET:
-            context['timetable'] = timetable.timetable_from_service(self.object, stops)
-        else:
-            context['stops'] = stops
+            context['timetables'] = timetable.timetable_from_service(self.object, stops)
+        context['stops'] = stops
 
         if bool(context['operators']):
             context['breadcrumb'] = [self.object.region, context['operators'][0]]
