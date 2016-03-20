@@ -3,3 +3,4 @@ django-pipeline>=1.6.4
 psycopg2==2.6.1
 Jinja2==2.8
 titlecase>=0.8.1
+git+https://github.com/jclgoodwin/django-template-minifier.git
