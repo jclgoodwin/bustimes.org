@@ -46,11 +46,18 @@ class Row(object):
         self.part = part
         part.row = self
         self.times = []
+        self.sequencenumbers = {}
 
     def get_sequencenumber(self):
         # counter-intuitively, don't bother checking for an actual sequence number
         # because we only currently use this for services without sequence numbers
         return self.part.parent.id
+
+    def __lt__(self, other):
+        for key in self.sequencenumbers:
+            if key in other.sequencenumbers:
+                return self.sequencenumbers[key] < other.sequencenumbers[key]
+        return max(self.sequencenumbers.values()) < max(other.sequencenumbers.values())
 
 
 class Grouping(object):
@@ -64,6 +71,7 @@ class Grouping(object):
 
 class JourneyPattern(object):
     def __init__(self, element, sections, outbound_grouping, inbound_grouping):
+        self.id = element.attrib.get('id')
         self.journeys = []
         self.sections = [
             sections[section_element.text]
@@ -86,19 +94,23 @@ class JourneyPattern(object):
 
         if origin.sequencenumber is not None:
             for row in self.rows:
-                self.grouping.rows[row.part.sequencenumber] = row
+                if row.part.sequencenumber not in self.grouping.rows:
+                    self.grouping.rows[row.part.sequencenumber] = row
         else:
             visited_stops = []
             i = 0
             for row in self.rows:
                 if row.part.stop.atco_code not in self.grouping.rows:
                     self.grouping.rows[row.part.stop.atco_code] = row
+                    row.sequencenumbers[self.id] = i
                 elif row.part.stop.atco_code in visited_stops:
-                    i += 1
                     self.grouping.rows[i] = row
                     row.part.row = row
+                    row.sequencenumbers[self.id] = i
                 else:
                     row.part.row = self.grouping.rows[row.part.stop.atco_code]
+                    row.part.row.sequencenumbers[self.id] = i
+                i += 1
                 visited_stops.append(row.part.stop.atco_code)
 
 
@@ -306,7 +318,7 @@ class Timetable(object):
         for grouping in self.groupings:
             grouping.rows = grouping.rows.values()
             if len(grouping.rows) and grouping.rows[0].part.sequencenumber is None:
-                grouping.rows.sort(key=Row.get_sequencenumber)
+                grouping.rows.sort()
 
             previous_operatingprofile = None
             previous_notes = None
