@@ -34,6 +34,53 @@ class Command(BaseCommand):
         StopPoint.objects.filter(indicator__startswith='220').update(indicator='')
 
     @staticmethod
+    def normalise_indicators():
+        to_proper_case = (
+            'opp',
+            'adj',
+            'at',
+            'nr',
+            'on',
+            'o/s',
+            'in',
+            'behind',
+            'before',
+            'after',
+            'N-bound',
+            'NE-bound',
+            'E-bound',
+            'SE-bound',
+            'S-bound',
+            'SW-bound',
+            'W-bound',
+            'NW-bound',
+        )
+        for indicator in to_proper_case:
+            StopPoint.objects.filter(indicator__iexact=indicator).update(indicator=indicator)
+
+        mapping = (
+            ('near', 'nr'),
+            ('at ', 'at'),
+            ('opp ', 'opp'),
+            ('opposite', 'opp'),
+            ('opposite ', 'opp'),
+            ('adjacent', 'adj'),
+            ('before ', 'before'),
+            ('outside', 'o/s'),
+            ('outside ', 'o/s'),
+            ('N bound', 'N-bound'),
+            ('NE bound', 'NE-bound'),
+            ('E bound', 'E-bound'),
+            ('SE bound', 'SE-bound'),
+            ('S bound', 'S-bound'),
+            ('SW bound', 'SW-bound'),
+            ('W bound', 'W-bound'),
+            ('NW bound', 'NW-bound'),
+        )
+        for indicator, normalised in mapping:
+            StopPoint.objects.filter(indicator__iexact=indicator).update(indicator=normalised)
+
+    @staticmethod
     def replace_backticks():
         "Replace ` with ' in StopPoint fields"
         for attr in ('common_name', 'street', 'landmark', 'crossing'):
@@ -47,5 +94,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.remove_placeholders()
         self.remove_stupid_indicators()
+        self.normalise_indicators()
         self.replace_backticks()
 

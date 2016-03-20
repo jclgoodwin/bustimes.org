@@ -178,7 +178,7 @@ class StopPoint(models.Model):
     def get_qualified_name(self):
         locality_name = unicode(self.locality)
         if locality_name.replace('\'', '').replace(u'\u2019', '') not in self.common_name.replace('\'', ''):
-            if self.indicator.islower() and len(self.indicator) <= 3:
+            if self.indicator in ('opp', 'adj', 'at', 'o/s', 'nr', 'before', 'after', 'by', 'on', 'in'):
                 return '%s, %s %s' % (locality_name, self.indicator, self.common_name)
             else:
                 return '%s %s' % (locality_name, unicode(self))
