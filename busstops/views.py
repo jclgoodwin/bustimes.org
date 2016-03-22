@@ -126,14 +126,14 @@ class AdminAreaDetailView(DetailView):
             admin_area_id=self.object.id,
             district=None,
             parent=None
-        ).distinct().order_by('name')
+        ).defer('location').distinct().order_by('name')
 
         # National Rail/Air/Ferry stops
         if len(context['localities']) == 0 and len(context['districts']) == 0:
             context['stops'] = StopPoint.objects.filter(
                 admin_area=self.object,
                 active=True
-            ).order_by('common_name')
+            ).defer('location').order_by('common_name')
 
         context['breadcrumb'] = [self.object.region]
         return context
@@ -158,7 +158,7 @@ class DistrictDetailView(DetailView):
             Q(stoppoint__isnull=False) | Q(locality__isnull=False),
             district=self.object,
             parent=None,
-        ).distinct().order_by('name')
+        ).defer('location').distinct().order_by('name')
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
         return context
 
@@ -186,7 +186,7 @@ class LocalityDetailView(DetailView):
             Q(stoppoint__active=True) |
             Q(locality__stoppoint__active=True),
             parent=self.object,
-        ).distinct().order_by('name')
+        ).defer('location').distinct().order_by('name')
 
         context['services'] = Service.objects.filter(
             stops__locality=self.object
@@ -213,7 +213,7 @@ class StopPointDetailView(DetailView):
         if self.object.stop_area_id is not None:
             context['nearby'] = StopPoint.objects.filter(
                 stop_area=self.object.stop_area_id
-            ).exclude(atco_code=self.object.atco_code).order_by('atco_code')
+            ).defer('location').exclude(atco_code=self.object.atco_code).order_by('atco_code')
         context['services'] = Service.objects.filter(stops=self.object).exclude(current=False).order_by('service_code')
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region,
@@ -254,7 +254,7 @@ class ServiceDetailView(DetailView):
 
         context['traveline_url'] = self.object.get_traveline_url()
 
-        stops = self.object.stops.all().select_related('locality')
+        stops = self.object.stops.all().select_related('locality').defer('location', 'locality__location')
 
         if self.object.show_timetable or '_MEGA' in self.object.service_code or 'timetable' in self.request.GET:
             context['timetables'] = timetable.timetable_from_service(self.object, stops)
