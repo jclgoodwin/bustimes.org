@@ -1,6 +1,5 @@
 import os
 import re
-import zipfile
 import xml.etree.cElementTree as ET
 from datetime import date, datetime, timedelta
 
@@ -47,11 +46,6 @@ class Row(object):
         part.row = self
         self.times = []
         self.sequencenumbers = {}
-
-    def get_sequencenumber(self):
-        # counter-intuitively, don't bother checking for an actual sequence number
-        # because we only currently use this for services without sequence numbers
-        return self.part.parent.id
 
     def __lt__(self, other):
         for key in self.sequencenumbers:
@@ -246,11 +240,14 @@ class OperatingProfile(object):
             return 3
         return 0
 
+    def __ne__(self, other):
+        return str(self) != str(other)
+
 
 class DateRange(object):
     def __init__(self, element):
-        self.start = datetime.strptime(element.find('txc:StartDate', NS), '%Y-%m-%d').date()
-        self.end = datetime.strptime(element.find('txc:EndDate', NS), '%Y-%m-%d').date()
+        self.start = datetime.strptime(element.find('txc:StartDate', NS).text, '%Y-%m-%d').date()
+        self.end = datetime.strptime(element.find('txc:EndDate', NS).text, '%Y-%m-%d').date()
 
     def __str__(self):
         if self.start == self.end:
@@ -328,7 +325,7 @@ class Timetable(object):
                 if not hasattr(journey, 'operating_profile'):
                     previous_operatingprofile = None
                 else:
-                    if str(previous_operatingprofile) != str(journey.operating_profile):
+                    if previous_operatingprofile != journey.operating_profile:
                         if previous_operatingprofile is not None:
                             grouping.column_heads.append(ColumnHead(previous_operatingprofile, head_span))
                             head_span = 0
@@ -347,36 +344,36 @@ class Timetable(object):
             grouping.column_feet.append(ColumnFoot(previous_notes, foot_span))
 
 
-def get_filenames(service, namelist):
-    if service.net:
-        return (name for name in namelist if name.startswith(service.service_code + '-'))
-    elif service.region_id in ('GB', 'W'):
-        return (name for name in namelist if name.endswith('_' + service.service_code + '.xml'))
-    elif service.region_id == 'NE':
+def get_filenames(service, path):
+    if service.region_id == 'NE':
         return (service.service_code + '.xml',)
-    else:
+    elif service.region_id in ('Y', 'S', 'NW'):
         return ('SVR' + service.service_code + '.xml',)
+    else:
+        namelist = os.walk(path)
+        if service.net:
+            return (name for name in namelist if name.startswith(service.service_code + '-'))
+        else:
+            return (name for name in namelist if name.endswith('_' + service.service_code + '.xml'))
 
 
-def timetable_from_filename(filename, zipfile, stops):
-    xmlfile = zipfile.open(filename)
-    xml = ET.parse(xmlfile).getroot()
-    return Timetable(xml, stops)
-
+def timetable_from_filename(filename, stops):
+    try:
+        with open(filename) as file:
+            xml = ET.parse(file).getroot()
+            return Timetable(xml, stops)
+    except IOError:
+        return None
 
 def timetable_from_service(service, stops):
     if service.region_id == 'GB':
-        service.service_code = '_'.join(service.service_code.split('_')[::-1])
-        archive_path = os.path.join(DIR, '../data/TNDS/NCSD.zip')
+        # service.service_code = '_'.join(service.service_code.split('_')[::-1])
+        path = os.path.join(DIR, '../data/TNDS/NCSD/')
     else:
-        archive_path = os.path.join(DIR, '../data/TNDS/%s.zip' % service.region_id)
+        path = os.path.join(DIR, '../data/TNDS/%s/' % service.region_id)
 
-    try:
-        archive = zipfile.ZipFile(archive_path)
-    except zipfile.BadZipfile:
-        return None
+    filenames = get_filenames(service, path)
 
     stops = {stop.atco_code: stop for stop in stops}
-    filenames = get_filenames(service, archive.namelist())
-    return (timetable_from_filename(filename, archive, stops) for filename in filenames)
 
+    return filter(None, (timetable_from_filename(os.path.join(path, filename), stops) for filename in filenames))
