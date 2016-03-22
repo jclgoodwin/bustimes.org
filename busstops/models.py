@@ -9,7 +9,7 @@ from urllib import urlencode
 class Region(models.Model):
     "The largest type of geographical area."
     id = models.CharField(max_length=2, primary_key=True)
-    name = models.CharField(max_length=48)
+    name = models.CharField(max_length=48, db_index=True)
 
     def __unicode__(self):
         return self.name
@@ -32,7 +32,7 @@ class AdminArea(models.Model):
     """
     id = models.PositiveIntegerField(primary_key=True)
     atco_code = models.PositiveIntegerField()
-    name = models.CharField(max_length=48)
+    name = models.CharField(max_length=48, db_index=True)
     short_name = models.CharField(max_length=48)
     country = models.CharField(max_length=3)
     region = models.ForeignKey(Region)
@@ -51,7 +51,7 @@ class District(models.Model):
     Note: some administrative areas *do not* have districts.
     """
     id = models.PositiveIntegerField(primary_key=True)
-    name = models.CharField(max_length=48)
+    name = models.CharField(max_length=48, db_index=True)
     admin_area = models.ForeignKey(AdminArea)
 
     def __unicode__(self):
@@ -68,7 +68,7 @@ class Locality(models.Model):
     Localities may be children of other localities...
     """
     id = models.CharField(max_length=48, primary_key=True)
-    name = models.CharField(max_length=48)
+    name = models.CharField(max_length=48, db_index=True)
     # short_name? 
     qualifier_name = models.CharField(max_length=48, blank=True)
     admin_area = models.ForeignKey(AdminArea)
