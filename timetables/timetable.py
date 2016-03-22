@@ -350,7 +350,7 @@ def get_filenames(service, path):
     elif service.region_id in ('Y', 'S', 'NW'):
         return ('SVR' + service.service_code + '.xml',)
     else:
-        namelist = os.walk(path)
+        namelist = os.listdir(path)
         if service.net:
             return (name for name in namelist if name.startswith(service.service_code + '-'))
         else:
