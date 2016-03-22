@@ -70,16 +70,18 @@ if [[ $nptg_md5_old != $nptg_md5_new || $naptan_md5_old != $naptan_md5_new ]]; t
     (
     echo "  Stops"
     import_csv NaPTANcsv.zip stops Stops.csv
-    echo "  Cleaning stops"
-    ../../manage.py clean_stops
     ) &
     (
     echo "  Stop areas"
     import_csv NaPTANcsv.zip stop_areas StopAreas.csv
     ) &
     wait
+    (
     echo "  Stops in area"
     import_csv NaPTANcsv.zip stops_in_area StopsInArea.csv
+    echo "  Cleaning stops"
+    ../../manage.py clean_stops
+    ) &
 fi
 
 cd ..
