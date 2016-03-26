@@ -350,9 +350,15 @@ def get_filenames(service, path):
     elif service.region_id in ('Y', 'S', 'NW'):
         return ('SVR' + service.service_code + '.xml',)
     else:
-        namelist = os.listdir(path)
+        try:
+            namelist = os.listdir(path)
+        except OSError:
+            return ()
         if service.net:
             return (name for name in namelist if name.startswith(service.service_code + '-'))
+        elif service.region_id == 'GB':
+            parts = service.service_code.split('_')
+            return (name for name in namelist if name.endswith('_' + parts[1] + '_' + parts[0] + '.xml'))
         else:
             return (name for name in namelist if name.endswith('_' + service.service_code + '.xml'))
 
@@ -362,13 +368,14 @@ def timetable_from_filename(filename, stops):
         with open(filename) as file:
             xml = ET.parse(file).getroot()
             return Timetable(xml, stops)
-    except IOError:
+    except (IOError):
         return None
+
 
 def timetable_from_service(service, stops):
     if service.region_id == 'GB':
         # service.service_code = '_'.join(service.service_code.split('_')[::-1])
-        path = os.path.join(DIR, '../data/TNDS/NCSD/')
+        path = os.path.join(DIR, '../data/TNDS/NCSD/NCSD_TXC/')
     else:
         path = os.path.join(DIR, '../data/TNDS/%s/' % service.region_id)
 
