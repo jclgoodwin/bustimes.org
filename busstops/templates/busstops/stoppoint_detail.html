@@ -22,7 +22,9 @@
     <div id="map"></div>
 </div>
 
-<img alt="" width="480" height="360" src="https://maps.googleapis.com/maps/api/streetview?size=480x360&amp;location={{ stoppoint.latlong.y }},{{ stoppoint.latlong.x }}&amp;heading={{ stoppoint.heading }}" />
+<div class="image-wrapper">
+    <img alt="" width="480" height="360" src="https://maps.googleapis.com/maps/api/streetview?size=480x360&amp;location={{ stoppoint.latlong.y }},{{ stoppoint.latlong.x }}&amp;heading={{ stoppoint.get_heading }}" />
+</div>
 
 <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
     <meta itemprop="latitude" content="{{ stoppoint.latlong.y }}" />

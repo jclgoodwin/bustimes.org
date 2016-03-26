@@ -138,6 +138,9 @@ class StopPoint(models.Model):
     town = models.CharField(max_length=48, blank=True)
     locality_centre = models.BooleanField()
 
+    tfl = models.BooleanField(default=False)
+    heading = models.PositiveIntegerField(null=True, blank=True)
+
     BEARING_CHOICES = (
         ('N', 'north'),
         ('NE', 'north east'),
@@ -195,8 +198,10 @@ class StopPoint(models.Model):
             return '%s (%s)' % (self.common_name, self.indicator)
         return self.common_name
 
-    def heading(self):
+    def get_heading(self):
         "Return the stop's bearing converted to degrees, for use with Google Street View."
+        if self.heading:
+            return self.heading
         headings = {
             'N':    0,
             'NE':  45,
