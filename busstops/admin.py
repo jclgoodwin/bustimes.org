@@ -4,6 +4,7 @@ from busstops.models import Region, AdminArea, District, Locality, StopArea, Sto
 
 class StopPointAdmin(admin.ModelAdmin):
     list_display = ('atco_code', 'naptan_code', 'locality', 'admin_area', '__unicode__')
+    list_filter = ('stop_type', 'bus_stop_type', 'timing_status')
     search_fields = ('common_name',)
     ordering = ('atco_code',)
 

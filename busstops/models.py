@@ -122,11 +122,11 @@ class StopPoint(models.Model):
     atco_code = models.CharField(max_length=16, primary_key=True)
     naptan_code = models.CharField(max_length=16)
 
-    common_name = models.CharField(max_length=48)
-    landmark = models.CharField(max_length=48)
-    street = models.CharField(max_length=48)
-    crossing = models.CharField(max_length=48)
-    indicator = models.CharField(max_length=48)
+    common_name = models.CharField(max_length=48, db_index=True)
+    landmark = models.CharField(max_length=48, blank=True)
+    street = models.CharField(max_length=48, blank=True)
+    crossing = models.CharField(max_length=48, blank=True)
+    indicator = models.CharField(max_length=48, blank=True)
 
     latlong = models.PointField()
     location = models.PointField(srid=27700, null=True)
@@ -134,8 +134,8 @@ class StopPoint(models.Model):
 
     stop_area = models.ForeignKey(StopArea, null=True, editable=False)
     locality = models.ForeignKey('Locality', editable=False)
-    suburb = models.CharField(max_length=48)
-    town = models.CharField(max_length=48)
+    suburb = models.CharField(max_length=48, blank=True)
+    town = models.CharField(max_length=48, blank=True)
     locality_centre = models.BooleanField()
 
     BEARING_CHOICES = (
@@ -148,11 +148,45 @@ class StopPoint(models.Model):
         ('W', 'west'),
         ('NW', 'north west')
     )
-    bearing = models.CharField(max_length=2, choices=BEARING_CHOICES)
+    bearing = models.CharField(max_length=2, choices=BEARING_CHOICES, blank=True)
 
-    stop_type = models.CharField(max_length=3)
-    bus_stop_type = models.CharField(max_length=3)
-    timing_status = models.CharField(max_length=3)
+    STOP_TYPE_CHOICES = (
+        ('AIR', 'Airport entrance'),
+        ('GAT', 'Air airside area'),
+        ('FTD', 'Ferry terminal/dock entrance'),
+        ('FER', 'Ferry/dock berth area'),
+        ('FBT', 'Ferry berth'), # ?
+        ('RSE', 'Rail station entrance'),
+        ('RLY', 'Rail platform access area'),
+        ('RPL', 'Rail platform'), # ?
+        ('TMU', 'Tram/metro/underground entrance'),
+        ('MET', 'MET'), # ?
+        ('PLT', 'Metro and underground platform access area'),
+        ('BCE', 'Bus/coach station entrance'),
+        ('BCS', 'Bus/coach bay/stand/stance within bus/coach station'),
+        ('BCQ', 'Bus/coach bay'), # ?
+        ('BCT', 'On street bus/coach/tram stop'),
+        ('TXR', 'Taxi rank (head of)'),
+        ('STR', 'Shared taxi rank (head of)'),
+    )
+    stop_type = models.CharField(max_length=3, choices=STOP_TYPE_CHOICES)
+
+    BUS_STOP_TYPE_CHOICES = (
+        ('MKD', 'Marked (pole, shelter etc)'),
+        ('HAR', 'Hail and ride'),
+        ('CUS', 'Custom (unmarked, or only marked on road)'),
+        ('FLX', 'Flexible zone'),
+    )
+    bus_stop_type = models.CharField(max_length=3, choices=BUS_STOP_TYPE_CHOICES, blank=True)
+
+    TIMING_STATUS_CHOICES = (
+        ('PPT', 'Principal point'),
+        ('TIP', 'Time info point'),
+        ('PTP', 'Principal and time info point'),
+        ('OTH', 'Other bus stop'),
+    )
+    timing_status = models.CharField(max_length=3, choices=TIMING_STATUS_CHOICES, blank=True)
+
     admin_area = models.ForeignKey('AdminArea')
     active = models.BooleanField(db_index=True)
 
@@ -232,7 +266,7 @@ class Service(models.Model):
     region = models.ForeignKey(Region)
     stops = models.ManyToManyField(StopPoint, editable=False)
     date = models.DateField()
-    current = models.NullBooleanField(default=True)
+    current = models.NullBooleanField(default=True, db_index=True)
     show_timetable = models.BooleanField(default=False)
 
     def __unicode__(self):
