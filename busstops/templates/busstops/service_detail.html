@@ -61,7 +61,7 @@
     </tbody>
     <tfoot><tr><td></td>
     {% for column in grouping.column_feet %}
-        <td colspan="{{ column.span }}">{{ column.notes|join:'<br />' }}</td>
+        <td colspan="{{ column.span }}">{{ column.notes|join:'<br />'|urlize }}</td>
     {% endfor %}
     </tr></tfoot>
     </table>
