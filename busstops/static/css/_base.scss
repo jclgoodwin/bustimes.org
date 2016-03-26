@@ -296,10 +296,16 @@ main li {
     margin: 0;
 }
 
-@media (max-width: 30em) {
-    main img {
-        max-width: 100%;
+.image-wrapper {
+    margin-bottom: 1em;
+    padding-top: 75%;
+    position: relative;
+
+    img {
         height: auto;
+        width: 100%;
+        position: absolute;
+        top: 0;
     }
 }
 

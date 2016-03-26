@@ -20,6 +20,11 @@ main img {
     width: 48.75%;
 }
 
+.image-wrapper {
+    padding-top: 48.75% * .75;
+    width: 48.75%;
+}
+
 .map-wrapper {
     margin-left: 2.5%;
     padding-top: 48.75% * .75;
@@ -35,7 +40,7 @@ main img {
 .asides .aside {
     clear: none;
     margin-left: 2.5%;
-    width: 32.6%;
+    width: 31.66%;
 }
 
 .asides .aside:first-child {
