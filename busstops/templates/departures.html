@@ -1,0 +1,20 @@
+{% if departures %}
+<div class="aside box" id="departures">
+    <h2>Next departures</h2>
+    <table>
+        <tbody>
+        {% for item in departures %}
+            <tr>
+                <td>{{ item.time|time:"H:i" }}</td>
+                <td>
+                {% if item.service %}
+                    <a href={{ item.service.get_absolute_url }}>{{ item.service.line_name }}</a>
+                {% endif %}
+                </td>
+                <td>{{ item.destination }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}

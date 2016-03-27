@@ -34,6 +34,12 @@
 <div class="asides">
 
 {% if services %}
+    {% if stoppoint.tfl %}
+        <!--esi
+        <esi:include src="{{ stoppoint.get_absolute_url }}/departures"/>
+        -->
+    {% endif %}
+
     <div class="aside box">
     <h2>Services</h2>
     <ul>

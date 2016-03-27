@@ -3,6 +3,8 @@ import zipfile
 import os
 import re
 import operator
+import requests
+from datetime import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
@@ -222,6 +224,20 @@ class StopPointDetailView(DetailView):
             self.object.locality,
         ])
         return context
+
+
+def departures(request, pk):
+    stop = get_object_or_404(StopPoint, pk=pk)
+    services = {service.line_name: service for service in Service.objects.filter(stops=pk).exclude(current=False)}
+    if stop.tfl:
+        req = requests.get('https://api.tfl.gov.uk/StopPoint/%s/arrivals' % pk)
+        items = ({
+            'time': datetime.strptime(item.get('expectedArrival'), '%Y-%m-%dT%H:%M:%SZ'),
+            'service': services.get(item.get('lineName')),
+            'destination': item.get('destinationName'),
+        } for item in req.json())
+        return render(request, 'departures.html', {'departures': items})
+
 
 
 class OperatorDetailView(DetailView):
