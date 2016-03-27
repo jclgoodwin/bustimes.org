@@ -38,8 +38,10 @@
     <h2>{{ grouping.direction.capitalize }}</h2>
 
     <div class="timetable-wrapper">
-    <input type="checkbox" id="show-all-stops-{{ grouping.direction }}" />
-    <label for="show-all-stops-{{ grouping.direction }}">Show all stops</label>
+    {% if grouping.has_minor_stops %}
+        <input type="checkbox" id="show-all-stops-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" />
+        <label for="show-all-stops-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">Show all stops</label>
+    {% endif %}
     <table class="timetable">
     <tbody>
     <tr><td></td>

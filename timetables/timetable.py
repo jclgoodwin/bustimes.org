@@ -62,6 +62,12 @@ class Grouping(object):
         self.journeys = []
         self.rows = {}
 
+    def has_minor_stops(self):
+        for row in self.rows:
+            if row.part.timingstatus == 'OTH':
+                return True
+        return False
+
 
 class JourneyPattern(object):
     def __init__(self, element, sections, outbound_grouping, inbound_grouping):
