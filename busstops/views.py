@@ -4,6 +4,7 @@ import os
 import re
 import operator
 import requests
+import pytz
 from datetime import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
@@ -64,7 +65,7 @@ def stops(request):
             'type': 'Feature',
             'geometry': {
                 'type': 'Point',
-                'coordinates': [stop.latlong.x, stop.latlong.y]
+                'coordinates': (stop.latlong.x, stop.latlong.y)
             },
             'properties': {
                 'name': str(stop),
@@ -230,9 +231,11 @@ def departures(request, pk):
     stop = get_object_or_404(StopPoint, pk=pk)
     services = {service.line_name: service for service in Service.objects.filter(stops=pk).exclude(current=False)}
     if stop.tfl:
+        timezone = pytz.timezone('Europe/London')
+
         req = requests.get('https://api.tfl.gov.uk/StopPoint/%s/arrivals' % pk)
         items = ({
-            'time': datetime.strptime(item.get('expectedArrival'), '%Y-%m-%dT%H:%M:%SZ'),
+            'time': timezone.fromutc(datetime.strptime(item.get('expectedArrival'), '%Y-%m-%dT%H:%M:%SZ')),
             'service': services.get(item.get('lineName')),
             'destination': item.get('destinationName'),
         } for item in req.json())
