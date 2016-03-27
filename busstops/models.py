@@ -1,9 +1,8 @@
 "Model definitions"
 
-from django.contrib.gis.db import models
-from django.contrib.gis.geos import Point
-from django.core.urlresolvers import reverse
 from urllib import urlencode
+from django.contrib.gis.db import models
+from django.core.urlresolvers import reverse
 
 
 class Region(models.Model):
@@ -297,7 +296,8 @@ class Service(models.Model):
     def get_absolute_url(self):
         return reverse('service-detail', args=(self.service_code,))
 
-    def get_operator_number(self, code):
+    @staticmethod
+    def get_operator_number(code):
         if code in ('MEGA', 'MBGD'):
             return '11'
         elif code in ('NATX', 'NXSH', 'NXAP'):

@@ -31,9 +31,9 @@ class ImportServicesTest(TestCase):
         """
 
         data = (
-            ('ea_21-2-_-y08-1.xml',  ('ea', 'ea_21-2-_-y08', '1')),
-            ('ea_21-27-D-y08-1.xml',  ('ea', 'ea_21-27-D-y08', '1')),
-            ('tfl_52-FL2-_-y08-1.xml', ('tfl', 'tfl_52-FL2-_-y08','1')),
+            ('ea_21-2-_-y08-1.xml', ('ea', 'ea_21-2-_-y08', '1')),
+            ('ea_21-27-D-y08-1.xml', ('ea', 'ea_21-27-D-y08', '1')),
+            ('tfl_52-FL2-_-y08-1.xml', ('tfl', 'tfl_52-FL2-_-y08', '1')),
             ('suf_56-FRY-1-y08-15.xml', ('suf', 'suf_56-FRY-1-y08', '15')),
             ('NATX_330.xml', ('', None, None)),
             ('NE_130_PB2717_21A.xml', ('', None, None)),
@@ -44,6 +44,6 @@ class ImportServicesTest(TestCase):
             ('ArrivaCymru51S-Rhyl-StBrigid`s-Denbigh1_TXC_2016108-0319_DGAO051S.xml', ('', None, None)),
         )
 
-        for file_name, tuple in data:
-            self.assertEqual(self.command.get_net_service_code_and_line_ver(file_name), tuple)
+        for file_name, parts in data:
+            self.assertEqual(self.command.get_net_service_code_and_line_ver(file_name), parts)
 

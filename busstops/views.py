@@ -49,7 +49,7 @@ def stops(request):
         bounding_box = Polygon.from_bbox(
             [request.GET[key] for key in ('xmin', 'ymin', 'xmax', 'ymax')]
         )
-    except:
+    except KeyError:
         return HttpResponseBadRequest()
 
     results = StopPoint.objects.filter(
@@ -77,18 +77,17 @@ def search(request):
     A list of up to 10 localities
     whose names all contain the `request.GET['q']` string
     """
-    data = []
     term = request.GET.get('q')
     if term:
         parts = re.split('[^\w]', term)
         query = reduce(operator.and_, (Locality.objects.filter(name__icontains=part) for part in parts))
 
-        data = [{
+        response = [{
             'name': locality.get_qualified_name(),
             'url':  locality.get_absolute_url()
         } for locality in query[:12]]
 
-    return JsonResponse(data, safe=False)
+        return JsonResponse(response, safe=False)
 
 
 class RegionDetailView(DetailView):
@@ -254,11 +253,10 @@ class ServiceDetailView(DetailView):
 
         context['traveline_url'] = self.object.get_traveline_url()
 
-        stops = self.object.stops.all().select_related('locality').defer('location', 'locality__location')
+        context['stops'] = self.object.stops.all().select_related('locality').defer('location', 'locality__location')
 
         if self.object.show_timetable or '_MEGA' in self.object.service_code or 'timetable' in self.request.GET:
-            context['timetables'] = timetable.timetable_from_service(self.object, stops)
-        context['stops'] = stops
+            context['timetables'] = timetable.timetable_from_service(self.object, context['stops'])
 
         if bool(context['operators']):
             context['breadcrumb'] = [self.object.region, context['operators'][0]]
@@ -276,7 +274,7 @@ class ServiceDetailView(DetailView):
 
 
 def service_xml(request, pk):
-    service = get_object_or_404(Service, service_code=pk)
+    service = get_object_or_404(Service, pk=pk)
     if service.region_id == 'GB':
         archive_name = 'NCSD'
         parts = pk.split('_')
