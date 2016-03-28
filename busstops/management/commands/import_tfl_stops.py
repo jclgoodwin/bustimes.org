@@ -39,7 +39,7 @@ class Command(ImportFromCSVCommand):
 
         if row['Heading'] != '':
             stop.heading = row['Heading']
-        stop.common_name = self.get_name(stop.atco_code)
+        stop.common_name = self.get_name(stop.atco_code) or stop.common_name
         stop.tfl = True
 
         if stop.street.isupper():
