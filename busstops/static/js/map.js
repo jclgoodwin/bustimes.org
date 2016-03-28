@@ -24,7 +24,7 @@
                     parseFloat(metaElements[0].getAttribute('content')),
                     parseFloat(metaElements[1].getAttribute('content'))
                 ]);
-                labels.push(items[i].innerHTML);
+                labels.push(items[i]);
             }
         }
 
@@ -49,7 +49,13 @@
                     iconSize:   [16, 22],
                     iconAnchor: [8, 22],
                     popupAnchor: [0, -22],
-                });
+                }),
+                setUpPopup = function(location, label) {
+                    var marker = L.marker(location, {icon: pin}).addTo(map).bindPopup(label.innerHTML);
+                    label.getElementsByTagName('a')[0].onmouseover = function() {
+                        marker.openPopup();
+                    };
+                };
 
             L.tileLayer(tileURL, {
                 attribution: attribution
@@ -60,10 +66,10 @@
                 map.setView(locations[0], 17);
             } else {
                 for (i = 0; i < locations.length; i++) {
-                    L.marker(locations[i], {icon: pin}).addTo(map).bindPopup(labels[i]);
+                    setUpPopup(locations[i], labels[i], items[i]);
                 }
                 map.fitBounds(L.polyline(locations).getBounds(), {
-                    padding: [20, 20]
+                    padding: [10, 20]
                 });
             }
         }
