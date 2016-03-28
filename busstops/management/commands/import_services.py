@@ -10,6 +10,7 @@ Usage:
 """
 
 from django.core.management.base import BaseCommand
+from django.db import transaction
 from busstops.models import Operator, StopPoint, Service
 from timetables.timetable import Timetable
 
@@ -254,35 +255,36 @@ class Command(BaseCommand):
             service.operator.add(*operators)
             service.stops.add(*stops)
 
+    @transaction.atomic
+    def handle_region(archive_name):
+        region_id = archive_name.split('/')[-1][:-4]
+        if region_id == 'NCSD':
+            region_id = 'GB'
+
+        archive = zipfile.ZipFile(archive_name)
+
+        Service.objects.filter(region_id=region_id).update(current=False)
+
+        # the NCSD has service descriptions in a separate file:
+        if 'IncludedServices.csv' in archive.namelist():
+            with archive.open('IncludedServices.csv') as csv_file:
+                reader = csv.DictReader(csv_file)
+                service_descriptions = {}
+                for row in reader:
+                    # e.g. {'NATX323': 'Cardiff - Liverpool'}
+                    service_descriptions[row['Operator'] + row['LineName']] = row['Description']
+        else:
+            service_descriptions = None
+
+        for i, file_name in enumerate(archive.namelist()):
+            if i % 100 == 0:
+                print i
+
+            if file_name.endswith('.xml'):
+                root = ET.parse(archive.open(file_name)).getroot()
+                self.do_service(root, region_id, service_descriptions=service_descriptions)
+
     def handle(self, *args, **options):
-
-        service_descriptions = None
-
         for archive_name in options['filenames']:
             print archive_name
-            region_id = archive_name.split('/')[-1][:-4]
-            if region_id == 'NCSD':
-                region_id = 'GB'
-
-            archive = zipfile.ZipFile(archive_name)
-
-            Service.objects.filter(region_id=region_id).update(current=None)
-
-            # the NCSD has service descriptions in a separate file:
-            if 'IncludedServices.csv' in archive.namelist():
-                with archive.open('IncludedServices.csv') as csv_file:
-                    reader = csv.DictReader(csv_file)
-                    service_descriptions = {}
-                    for row in reader:
-                        # e.g. {'NATX323': 'Cardiff - Liverpool'}
-                        service_descriptions[row['Operator'] + row['LineName']] = row['Description']
-
-            for i, file_name in enumerate(archive.namelist()):
-                if i % 100 == 0:
-                    print i
-
-                if file_name.endswith('.xml'):
-                    root = ET.parse(archive.open(file_name)).getroot()
-                    self.do_service(root, region_id, service_descriptions=service_descriptions)
-
-            Service.objects.filter(region_id=region_id, current=None).update(current=False)
+            self.handle_region(archive_name)

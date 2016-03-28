@@ -17,10 +17,14 @@ class NotFoundRedirectMiddleware(object):
     """
 
     def process_response(self, request, response):
-        if (response.status_code == 404 and request.path.startswith('/services/')
+        if (response.status_code == 404
+                and request.path.startswith('/services/')
                 and len(request.path.split('-')) >= 4):
             service_code_parts = request.path.split('/')[-1].split('-')[:4]
-            suggestion = Service.objects.filter(service_code__icontains='-'.join(service_code_parts)).exclude(current=False).first()
+            suggestion = Service.objects.filter(
+                service_code__icontains='-'.join(service_code_parts),
+                current=True
+            ).first()
             if suggestion is not None:
                 return redirect(suggestion)
         return response

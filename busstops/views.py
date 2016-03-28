@@ -192,8 +192,9 @@ class LocalityDetailView(DetailView):
         ).defer('location').distinct().order_by('name')
 
         context['services'] = Service.objects.filter(
-            stops__locality=self.object
-        ).distinct().exclude(current=False).order_by('service_code')
+            stops__locality=self.object,
+            current=True
+        ).distinct().order_by('service_code')
 
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region,
@@ -217,7 +218,7 @@ class StopPointDetailView(DetailView):
             context['nearby'] = StopPoint.objects.filter(
                 stop_area=self.object.stop_area_id
             ).defer('location').exclude(atco_code=self.object.atco_code).order_by('atco_code')
-        context['services'] = Service.objects.filter(stops=self.object).exclude(current=False).order_by('service_code')
+        context['services'] = Service.objects.filter(stops=self.object, current=True).order_by('service_code')
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region,
             self.object.admin_area,
@@ -230,7 +231,7 @@ class StopPointDetailView(DetailView):
 
 def departures(request, pk):
     stop = get_object_or_404(StopPoint, pk=pk)
-    services = {service.line_name: service for service in Service.objects.filter(stops=pk).exclude(current=False)}
+    services = {service.line_name: service for service in Service.objects.filter(stops=pk, current=True)}
     if stop.tfl:
         timezone = pytz.timezone('Europe/London')
 
@@ -269,7 +270,7 @@ class ServiceDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)
 
-        if self.object.current is False:
+        if not self.object.current:
             return context
 
         context['operators'] = self.object.operator.all()
@@ -287,8 +288,8 @@ class ServiceDetailView(DetailView):
         return context
 
     def render_to_response(self, context):
-        if self.object.current is False:
-            alternative = Service.objects.filter(description=self.object.description).exclude(current=False).first()
+        if not self.object.current:
+            alternative = Service.objects.filter(description=self.object.description, current=True).first()
             if alternative is not None:
                 return redirect(alternative)
             raise Http404()

@@ -270,7 +270,7 @@ class Service(models.Model):
     region = models.ForeignKey(Region)
     stops = models.ManyToManyField(StopPoint, editable=False)
     date = models.DateField()
-    current = models.NullBooleanField(default=True, db_index=True)
+    current = models.BooleanField(default=True, db_index=True)
     show_timetable = models.BooleanField(default=False)
 
     def __unicode__(self):
