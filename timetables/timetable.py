@@ -86,8 +86,8 @@ class JourneyPattern(object):
             for timinglink in section.timinglinks:
                 self.rows.append(Row(timinglink.destination))
 
-        direction = element.find('txc:Direction', NS).text
-        if direction == 'outbound':
+        direction_element = element.find('txc:Direction', NS)
+        if direction_element is not None and direction_element.text == 'outbound':
             self.grouping = outbound_grouping
         else:
             self.grouping = inbound_grouping

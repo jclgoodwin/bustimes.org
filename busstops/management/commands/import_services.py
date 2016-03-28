@@ -223,9 +223,7 @@ class Command(BaseCommand):
             try:
                 timetable = Timetable(root)
                 show_timetable = (len(timetable.groupings[0].journeys) < 30 and len(timetable.groupings[1].journeys) < 30)
-            except AttributeError:
-                show_timetable = False
-            except IndexError as e:
+            except (AttributeError, IndexError) as e:
                 show_timetable = False
                 print e, file_name
 
@@ -256,7 +254,7 @@ class Command(BaseCommand):
             service.stops.add(*stops)
 
     @transaction.atomic
-    def handle_region(archive_name):
+    def handle_region(self, archive_name):
         region_id = archive_name.split('/')[-1][:-4]
         if region_id == 'NCSD':
             region_id = 'GB'
