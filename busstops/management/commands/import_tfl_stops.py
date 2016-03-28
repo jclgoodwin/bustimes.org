@@ -4,6 +4,7 @@ Usage:
     ./manage.py import_tfl_stops < data/tfl/bus-stops.csv
 """
 
+import requests
 from titlecase import titlecase
 
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -13,6 +14,15 @@ from busstops.models import StopPoint
 
 
 class Command(ImportFromCSVCommand):
+
+    @staticmethod
+    def get_name(atco_code):
+        """
+        Given a stop's ATCO code, returns the best-formatted version of its common name from the
+        TfL API
+        """
+        data = requests.get('https://api.tfl.gov.uk/StopPoint/%s' % atco_code).json()
+        return data.get('commonName')
 
     def handle_row(self, row):
         if row['Naptan_Atco'] in (None, '', 'NONE'):
@@ -29,6 +39,7 @@ class Command(ImportFromCSVCommand):
 
         if row['Heading'] != '':
             stop.heading = row['Heading']
+        stop.common_name = self.get_name(stop.atco_code)
         stop.tfl = True
 
         if stop.street.isupper():
