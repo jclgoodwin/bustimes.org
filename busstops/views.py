@@ -6,6 +6,7 @@ import operator
 import requests
 import pytz
 from datetime import datetime
+from django.utils.text import slugify
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
@@ -239,7 +240,10 @@ def departures(request, pk):
             'service': services.get(item.get('lineName')),
             'destination': item.get('destinationName'),
         } for item in req.json())
-        return render(request, 'departures.html', {'departures': items})
+        return render(request, 'departures.html', {
+            'departures': items,
+            'tfl': 'https://tfl.gov.uk/bus/stop/%s/%s' % (stop.atco_code, slugify(stop.common_name))
+        })
 
 
 

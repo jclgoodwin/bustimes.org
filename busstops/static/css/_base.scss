@@ -405,6 +405,13 @@ input:not(:checked) + label + .timetable tr.OTH {
     tr {
         border: 0;
     }
+
+    .credit {
+        font-size: .75em;
+        margin-bottom: 0;
+        text-align: right;
+        width: auto;
+    }
 }
 
 footer {
