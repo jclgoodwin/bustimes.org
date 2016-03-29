@@ -12,16 +12,6 @@ USERNAME=$1
 PASSWORD=$2
 REGIONS=(NCSD EA W EM Y NW S WM SW SE NE L) # roughly in ascending size order
 
-# set $md5 to the name of the system's md5 hash command ('md5' or 'md5sum')
-md5=$(which md5)
-if [[ ! "${md5}" ]]; then
-    md5=$(which md5sum)
-    if [[ ! "${md5}" ]]; then
-        echo "Neither md5 nor md5sum found :("
-        exit 1
-    fi
-fi
-
 function import_csv {
     # name of a zip archive:
     zip=$1
@@ -32,18 +22,18 @@ function import_csv {
 
     tail -n +2 $csv > previous/$csv || touch previous/$csv
     unzip -oq $zip $csv
-    diff previous/$csv $csv | grep '^> ' | sed 's/^> //' | ../../manage.py import_$cmd
+    diff -h previous/$csv $csv | grep '^> ' | sed 's/^> //' | ../../manage.py import_$cmd
 }
 
 mkdir -p NPTG/previous NaPTAN/previous TNDS
 . ../env/bin/activate
 
 cd NPTG
-nptg_md5_old=`$md5 nptgcsv.zip`
+nptg_old=`date -r nptgcsv.zip`
 wget -qN http://81.17.70.199/nptg/snapshot/nptgcsv.zip
-nptg_md5_new=`$md5 nptgcsv.zip`
+nptg_new=`date -r nptgcsv.zip`
 
-if [[ $nptg_md5_old != $nptg_md5_new ]]; then
+if [[ $nptg_old != $nptg_new ]]; then
     echo "NPTG"
     echo "  Changes found"
     echo "  Importing regions"
@@ -59,11 +49,11 @@ if [[ $nptg_md5_old != $nptg_md5_new ]]; then
 fi
 
 cd ../NaPTAN
-naptan_md5_old=`$md5 NaPTANcsv.zip`
+naptan_old=`date -r NaPTANcsv.zip`
 wget -qN http://81.17.70.199/NaPTAN/snapshot/NaPTANcsv.zip
-naptan_md5_new=`$md5 NaPTANcsv.zip`
+naptan_new=`date -r NaPTANcsv.zip`
 
-if [[ $nptg_md5_old != $nptg_md5_new || $naptan_md5_old != $naptan_md5_new ]]; then
+if [[ $nptg_old$naptan_old != $nptg_new$naptan_new ]]; then
     echo "NaPTAN"
     echo "  Changes found"
     echo "  Unzipping"
@@ -85,10 +75,10 @@ if [[ $nptg_md5_old != $nptg_md5_new || $naptan_md5_old != $naptan_md5_new ]]; t
 fi
 
 cd ..
-noc_md5_old=`$md5 NOC_DB.csv`
+noc_old=`date -r NOC_DB.csv`
 wget -qN http://mytraveline.info/NOC/NOC_DB.csv
-noc_md5_new=`$md5 NOC_DB.csv`
-if [[ $noc_md5_old != $noc_md5_new ]]; then
+noc_new=`date -r NOC_DB.csv`
+if [[ $noc_old != $noc_new ]]; then
     ../manage.py import_operators < NOC_DB.csv
 fi
 
@@ -98,20 +88,15 @@ if [[ $USERNAME == '' || $PASSWORD == '' ]]; then
 fi
 
 cd TNDS
-i=0
 for region in ${REGIONS[@]}; do
-    region_md5_old=`$md5 $region.zip`
+    region_old=`date -r $region.zip`
     wget -qN --user=$USERNAME --password=$PASSWORD ftp://ftp.tnds.basemap.co.uk/$region.zip
-    region_md5_new=`$md5 $region.zip`
-    if [[ $nptg_md5_old != $nptg_md5_new || $naptan_md5_old != $naptan_md5_new || $region_md5_old != $region_md5_new ]]; then
-        (
+    region_new=`date -r $region.zip`
+    if [[ $nptg_old$naptan_old$region_old != $nptg_new$naptan_new$region_new ]]; then
         ../../manage.py import_services $region.zip
-        ) &
-        # allow up to 4 concurrent subshells
-        i=$(($i + 1))
-        if [[ $i > 3 ]]; then
-            wait %$(($i - 3))
-        fi
+        unzip -oq $region.zip $region.zip -d $region
+        find $region -type -mtime +2 -delete
+        find $region -type f -empty -delete
     fi
 done
 wait
