@@ -94,8 +94,8 @@ for region in ${REGIONS[@]}; do
     region_new=`date -r $region.zip`
     if [[ $nptg_old$naptan_old$region_old != $nptg_new$naptan_new$region_new ]]; then
         ../../manage.py import_services $region.zip
-        unzip -oq $region.zip $region.zip -d $region
-        find $region -type -mtime +2 -delete
+        unzip -oq $region.zip -d $region
+        find $region -type f -mtime +2 -delete
         find $region -type f -empty -delete
     fi
 done
