@@ -125,7 +125,7 @@ class AdminAreaDetailView(DetailView):
 
         # Districtless localities in this administrative area
         context['localities'] = Locality.objects.filter(
-            Q(stoppoint__isnull=False) | Q(locality__isnull=False),
+            Q(stoppoint__active=True) | Q(locality__stoppoint__active=True),
             admin_area_id=self.object.id,
             district=None,
             parent=None
@@ -158,7 +158,7 @@ class DistrictDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(DistrictDetailView, self).get_context_data(**kwargs)
         context['localities'] = Locality.objects.filter(
-            Q(stoppoint__isnull=False) | Q(locality__isnull=False),
+            Q(stoppoint__active=True) | Q(locality__stoppoint__active=True),
             district=self.object,
             parent=None,
         ).defer('location').distinct().order_by('name')
@@ -180,21 +180,24 @@ class LocalityDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(LocalityDetailView, self).get_context_data(**kwargs)
 
-        context['stops'] = StopPoint.objects.filter(
-            locality=self.object,
-            active=True
-        ).order_by('common_name')
-
         context['localities'] = Locality.objects.filter(
             Q(stoppoint__active=True) |
             Q(locality__stoppoint__active=True),
             parent=self.object,
         ).defer('location').distinct().order_by('name')
 
-        context['services'] = Service.objects.filter(
-            stops__locality=self.object,
-            current=True
-        ).distinct().order_by('service_code')
+        context['stops'] = StopPoint.objects.filter(
+            locality=self.object,
+            active=True
+        ).order_by('common_name')
+
+        if len(context['localities']) == 0 and len(context['stops']) == 0:
+            raise Http404()
+        elif len(context['stops']) != 0:
+            context['services'] = Service.objects.filter(
+                stops__locality=self.object,
+                current=True
+            ).distinct().order_by('service_code')
 
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region,
@@ -219,6 +222,8 @@ class StopPointDetailView(DetailView):
                 stop_area=self.object.stop_area_id
             ).defer('location').exclude(atco_code=self.object.atco_code).order_by('atco_code')
         context['services'] = Service.objects.filter(stops=self.object, current=True).order_by('service_code')
+        if not self.object.active and len(context['services']) == 0:
+            raise Http404()
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region,
             self.object.admin_area,
@@ -257,6 +262,8 @@ class OperatorDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
         context['services'] = Service.objects.filter(operator=self.object).exclude(current=False).order_by('service_code')
+        if len(context['services']) == 0:
+            raise Http404()
         context['breadcrumb'] = [self.object.region]
         return context
 
