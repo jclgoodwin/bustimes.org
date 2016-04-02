@@ -29,9 +29,9 @@ mkdir -p NPTG/previous NaPTAN/previous TNDS
 . ../env/bin/activate
 
 cd NPTG
-nptg_old=`date -r nptgcsv.zip`
+nptg_old=`ls -l nptgcsv.zip`
 wget -qN http://81.17.70.199/nptg/snapshot/nptgcsv.zip
-nptg_new=`date -r nptgcsv.zip`
+nptg_new=`ls -l nptgcsv.zip`
 
 if [[ $nptg_old != $nptg_new ]]; then
     echo "NPTG"
@@ -49,9 +49,9 @@ if [[ $nptg_old != $nptg_new ]]; then
 fi
 
 cd ../NaPTAN
-naptan_old=`date -r NaPTANcsv.zip`
+naptan_old=`ls -l NaPTANcsv.zip`
 wget -qN http://81.17.70.199/NaPTAN/snapshot/NaPTANcsv.zip
-naptan_new=`date -r NaPTANcsv.zip`
+naptan_new=`ls -l NaPTANcsv.zip`
 
 if [[ $nptg_old$naptan_old != $nptg_new$naptan_new ]]; then
     echo "NaPTAN"
@@ -75,9 +75,9 @@ if [[ $nptg_old$naptan_old != $nptg_new$naptan_new ]]; then
 fi
 
 cd ..
-noc_old=`date -r NOC_DB.csv`
+noc_old=`ls -l NOC_DB.csv`
 wget -qN http://mytraveline.info/NOC/NOC_DB.csv
-noc_new=`date -r NOC_DB.csv`
+noc_new=`ls -l NOC_DB.csv`
 if [[ $noc_old != $noc_new ]]; then
     ../manage.py import_operators < NOC_DB.csv
 fi
@@ -89,9 +89,9 @@ fi
 
 cd TNDS
 for region in ${REGIONS[@]}; do
-    region_old=`date -r $region.zip`
+    region_old=`ls -l $region.zip`
     wget -qN --user=$USERNAME --password=$PASSWORD ftp://ftp.tnds.basemap.co.uk/$region.zip
-    region_new=`date -r $region.zip`
+    region_new=`ls -l $region.zip`
     if [[ $nptg_old$naptan_old$region_old != $nptg_new$naptan_new$region_new ]]; then
         ../../manage.py import_services $region.zip
         unzip -oq $region.zip -d $region
