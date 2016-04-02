@@ -213,11 +213,10 @@ class VehicleJourney(object):
             return False
         if hasattr(self.operating_profile, 'nonoperation_days') and self.operating_profile is not None:
             for daterange in self.operating_profile.nonoperation_days:
-                if daterange.end < NOW:
+                if daterange.end < NOW or daterange.start > NOW:
                     return True
             return False
         return True
-
 
 class OperatingProfile(object):
     def __init__(self, element):
