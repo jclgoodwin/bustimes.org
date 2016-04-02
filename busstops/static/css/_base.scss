@@ -73,7 +73,8 @@ h2 {
     margin-top: 1em;
 }
 
-main p a[href^=http]:after {
+main p a[href^=http]:after,
+table a[href^=http]:after {
     content: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10'%3E%3Cpath d='M4.3 3.5H.5v6h6V5.7M4.5.5v1l1 1-3 3 2 2 3-3 1 1h1v-5z' fill='white' stroke='%2361c'/%3E%3C/svg%3E");
     margin-left: .25em;
     vertical-align: top;
@@ -438,6 +439,36 @@ footer {
             display: block;
             margin: 0 auto;
         }
+    }
+
+    .megabus {
+        background: url(https://www.awin1.com/cshow.php?s=260973&v=2678&q=124736&r=242611);
+        display: block;
+        height: 250px;
+        margin: 0 auto;
+        overflow: hidden;
+        text-indent: 100%;
+        width: 300px;
+    }
+
+    .newcastle {
+        background: url(https://www.awin1.com/cshow.php?s=259862&v=2678&q=124178&r=242611);
+    }
+
+    .manchester {
+        background: url(https://www.awin1.com/cshow.php?s=259861&v=2678&q=124178&r=242611);
+    }
+
+    .birmingham {
+        background: url(https://www.awin1.com/cshow.php?s=259848&v=2678&q=124173&r=242611);
+    }
+
+    .bristol {
+        background: url(https://www.awin1.com/cshow.php?s=259856&v=2678&q=124173&r=242611);
+    }
+
+    .leeds {
+        background: url(https://www.awin1.com/cshow.php?s=259857&v=2678&q=124173&r=242611);
     }
 
     ul {
