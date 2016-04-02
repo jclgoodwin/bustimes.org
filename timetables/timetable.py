@@ -213,7 +213,7 @@ class VehicleJourney(object):
             return False
         if hasattr(self.operating_profile, 'nonoperation_days') and self.operating_profile is not None:
             for daterange in self.operating_profile.nonoperation_days:
-                if daterange.end.finishes_in_past() or daterange.starts_in_future():
+                if daterange.finishes_in_past() or daterange.starts_in_future():
                     return True
             return False
         return True
