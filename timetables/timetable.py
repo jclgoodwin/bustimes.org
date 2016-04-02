@@ -10,6 +10,7 @@ NS = {
 DURATION_REGEX = re.compile(
     r'PT((?P<hours>\d+?)H)?((?P<minutes>\d+?)M)?((?P<seconds>\d+?)S)?'
 )
+NOW = date.today()
 
 def parse_duration(string):
     "Given a string returns a timetelta"
@@ -205,34 +206,63 @@ class VehicleJourney(object):
             return self.operating_profile.get_order()
         return 0
 
+    def should_show(self):
+        if not hasattr(self, 'operating_profile'):
+            return True
+        if str(self.operating_profile) == 'HolidaysOnlys':
+            return False
+        if hasattr(self.operating_profile, 'nonoperation_days') and self.operating_profile is not None:
+            for daterange in self.operating_profile.nonoperation_days:
+                if daterange.end < NOW:
+                    return True
+            return False
+        return True
+
 
 class OperatingProfile(object):
     def __init__(self, element):
         element = element
 
         regular_days_element = element.find('txc:RegularDayType', NS)
-        days_of_week_element = regular_days_element.find('txc:DaysOfWeek', NS)
-        if days_of_week_element is None:
+        week_days_element = regular_days_element.find('txc:DaysOfWeek', NS)
+        if week_days_element is None:
             self.regular_days = [e.tag[33:] for e in regular_days_element]
         else:
-            self.regular_days = [e.tag[33:] for e in days_of_week_element]
+            self.regular_days = [e.tag[33:] for e in week_days_element]
 
-        # special_days_element = element.find('txc:RegularDayType', NS)
+        special_days_element = element.find('txc:SpecialDaysOperation', NS)
+        if special_days_element is not None:
+            nonoperation_days_element = special_days_element.find('txc:DaysOfNonOperation', NS)
+            if nonoperation_days_element is not None:
+                self.nonoperation_days = [DateRange(element) for element in nonoperation_days_element.findall('txc:DateRange', NS)]
+
+            operation_days_element = special_days_element.find('txc:DaysOfOperation', NS)
+            if operation_days_element is not None:
+                self.operation_days = [DateRange(element) for element in operation_days_element.findall('txc:DateRange', NS)]
 
     def __str__(self):
         if len(self.regular_days) == 1:
             if 'To' in self.regular_days[0]:
-                return self.regular_days[0].replace('To', ' to ')
-            return self.regular_days[0] + 's'
+                string = self.regular_days[0].replace('To', ' to ')
+            else:
+                string = self.regular_days[0] + 's'
 
-        string = 's, '.join(self.regular_days[:-1]) + 's and ' + self.regular_days[-1] + 's'
+        else:
+            string = 's, '.join(self.regular_days[:-1]) + 's and ' + self.regular_days[-1] + 's'
 
-        if string == 'Mondays, Tuesdays, Wednesdays, Thursdays and Fridays':
-            string = 'Monday to Friday'
-        elif string == 'Mondays, Tuesdays, Wednesdays, Thursdays, Fridays and Saturdays':
-            string = 'Monday to Saturday'
-        elif string == 'Mondays, Tuesdays, Wednesdays, Thursdays, Fridays, Saturdays and Sundays':
-            string = 'Monday to Sunday'
+            if string == 'Mondays, Tuesdays, Wednesdays, Thursdays and Fridays':
+                string = 'Monday to Friday'
+            elif string == 'Mondays, Tuesdays, Wednesdays, Thursdays, Fridays and Saturdays':
+                string = 'Monday to Saturday'
+            elif string == 'Mondays, Tuesdays, Wednesdays, Thursdays, Fridays, Saturdays and Sundays':
+                string = 'Monday to Sunday'
+
+        # if hasattr(self, 'nonoperation_days'):
+        #     string = string + '\nNot ' + ', '.join(map(str, self.nonoperation_days))
+
+        # if hasattr(self, 'operation_days'):
+        #     string = string + '\n' + ', '.join(map(str, self.operation_days))
+
         return string
 
     def get_order(self):
@@ -257,9 +287,32 @@ class DateRange(object):
 
     def __str__(self):
         if self.start == self.end:
-            return str(self.start)
+            return self.start.strftime('%-d %B %Y')
         else:
             return '%s to %s' % (str(self.start), str(self.end))
+
+    def starts_in_future(self):
+        return self.start > NOW
+
+    def finishes_in_past(self):
+        return self.end < NOW
+
+
+class OperatingPeriod(DateRange):
+    def __str__(self):
+        if self.start == self.end:
+            return self.start.strftime('on %-d %B %Y')
+        else:
+            if self.starts_in_future():
+                if self.start.year == self.end.year:
+                    if self.start.month == self.end.month:
+                        start_format = '%-d'
+                    else:
+                        start_format = '%-d %B'
+                else:
+                    start_format = '%-d %B %Y'
+                return 'from %s to %s' % (self.start.strftime(start_format), self.end.strftime('%-d %B %Y'))
+        return ''
 
 
 class ColumnHead(object):
@@ -308,7 +361,7 @@ class Timetable(object):
         journeys.sort(key=VehicleJourney.get_departure_time)
         journeys.sort(key=VehicleJourney.get_order)
         for journey in journeys:
-            if not hasattr(journey, 'operating_profile') or str(journey.operating_profile) != 'HolidaysOnlys':
+            if journey.should_show():
                 journey.journeypattern.grouping.journeys.append(journey)
                 journey.add_times()
 
@@ -316,6 +369,8 @@ class Timetable(object):
         operatingprofile_element = service_element.find('txc:OperatingProfile', NS)
         if operatingprofile_element is not None:
             self.operating_profile = OperatingProfile(operatingprofile_element)
+
+        self.operating_period = OperatingPeriod(service_element.find('txc:OperatingPeriod', NS))
 
         self.groupings = (outbound_grouping, inbound_grouping)
         for grouping in self.groupings:

@@ -35,7 +35,7 @@
 
 {% for timetable in timetables %}
     {% for grouping in timetable.groupings %}{% if grouping.journeys %}
-    <h2>{{ grouping.direction.capitalize }}</h2>
+    <h2>{{ grouping.direction.capitalize }} {{ timetable.operating_period }}</h2>
 
     <div class="timetable-wrapper">
     {% if grouping.has_minor_stops %}
@@ -46,7 +46,7 @@
     <tbody>
     <tr><td></td>
     {% for column in grouping.column_heads %}
-        <td colspan="{{ column.span }}">{% firstof column.operatingprofile timetable.operating_profile %}</td>
+        <td colspan="{{ column.span }}">{% firstof column.operatingprofile|linebreaksbr timetable.operating_profile|linebreaksbr %}</td>
     {% endfor %}
     </tr>
     {% for row in grouping.rows %}
