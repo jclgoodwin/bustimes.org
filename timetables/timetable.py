@@ -213,7 +213,7 @@ class VehicleJourney(object):
             return False
         if hasattr(self.operating_profile, 'nonoperation_days') and self.operating_profile is not None:
             for daterange in self.operating_profile.nonoperation_days:
-                if daterange.end < NOW or daterange.start > NOW:
+                if daterange.end.finishes_in_past() or daterange.starts_in_future():
                     return True
             return False
         return True
@@ -302,16 +302,17 @@ class OperatingPeriod(DateRange):
     def __str__(self):
         if self.start == self.end:
             return self.start.strftime('on %-d %B %Y')
-        else:
-            if self.starts_in_future():
-                if self.start.year == self.end.year:
-                    if self.start.month == self.end.month:
-                        start_format = '%-d'
-                    else:
-                        start_format = '%-d %B'
+        elif self.starts_in_future():
+            if self.end is None:
+                return self.start.strftime('from %-d %B %Y')
+            elif self.end is not None and self.start.year == self.end.year:
+                if self.start.month == self.end.month:
+                    start_format = '%-d'
                 else:
-                    start_format = '%-d %B %Y'
-                return 'from %s to %s' % (self.start.strftime(start_format), self.end.strftime('%-d %B %Y'))
+                    start_format = '%-d %B'
+            else:
+                start_format = '%-d %B %Y'
+            return 'from %s to %s' % (self.start.strftime(start_format), self.end.strftime('%-d %B %Y'))
         return ''
 
 
