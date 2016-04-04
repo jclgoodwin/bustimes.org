@@ -90,8 +90,10 @@ def search(request):
             'name': locality.get_qualified_name(),
             'url':  locality.get_absolute_url()
         } for locality in query[:12]]
+    else:
+        response = []
 
-        return JsonResponse(response, safe=False)
+    return JsonResponse(response, safe=False)
 
 
 class RegionDetailView(DetailView):

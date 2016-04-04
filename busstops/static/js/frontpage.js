@@ -46,12 +46,13 @@
     document.getElementById('search').outerHTML += '<ul id="search-results"></ul>';
     document.getElementById('search').onkeydown = debounce(250, function () {
         var i,
-            resultsElement = document.getElementById('search-results');
+            resultsElement = document.getElementById('search-results'),
+            value = String.prototype.trim ? this.value.trim() : this.value;
 
-        if (this.value === '') {
+        if (value === '') {
             resultsElement.innerHTML = '';
         } else {
-            reqwest('/search.json?q=' + this.value, function (res) {
+            reqwest('/search.json?q=' + value, function (res) {
                 var output = '';
                 for (i = 0; i < res.length; i += 1) {
                     output += '<li><a href="' + res[i].url + '">' + res[i].name + '</a></a>';
