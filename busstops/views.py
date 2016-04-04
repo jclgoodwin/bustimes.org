@@ -162,7 +162,6 @@ class DistrictDetailView(DetailView):
         context['localities'] = Locality.objects.filter(
             Q(stoppoint__active=True) | Q(locality__stoppoint__active=True),
             district=self.object,
-            parent=None,
         ).defer('location').distinct().order_by('name')
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
         return context
