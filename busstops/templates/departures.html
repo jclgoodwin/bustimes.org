@@ -1,23 +1,38 @@
 {% if departures %}
 <div class="aside box">
     <h2>Next departures</h2>
-    <table>
+    {% for item in departures %}
+        {% ifchanged item.time.date %}
+            {% if not forloop.first %}
+                </tbody>
+                </table>
+                <h3>{{ item.time|date:"l" }}</h3>
+            {% elif today < item.time.date %}
+                <h3>{{ item.time|date:"l" }}</h3>
+            {% endif %}
+        <table>
         <tbody>
-        {% for item in departures %}
-            <tr>
-                <td>{{ item.time|time:"H:i" }}</td>
-                <td>
-                {% if item.service %}
-                    <a href={{ item.service.get_absolute_url }}>{{ item.service.line_name }}</a>
-                {% endif %}
-                </td>
-                <td>{{ item.destination }}</td>
+        {% endifchanged %}
+        <tr>
+            <td>{{ item.time.time }}</td>
+            <td>
+            {% if item.service.line_name %}
+                <a href={{ item.service.get_absolute_url }}>{{ item.service.line_name }}</a>
+            {% elif item.service %}{{ item.service }}{% endif %}
+            </td>
+            <td>{{ item.destination }}</td>
             </tr>
-        {% endfor %}
+        {% if forloop.last %}
         </tbody>
-    </table>
+        </table>
+        {% endif %}
+    {% endfor %}
     <p class="credit">
+    {% if tfl %}
         Data from <a href={{ tfl }}>Transport for London</a>
+    {% else %}
+        Data from <a href=http://www.transportapi.com/>Transport API</a>
+    {% endif %}
     </p>
 </div>
 {% endif %}

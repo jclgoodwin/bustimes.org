@@ -3,9 +3,6 @@ import zipfile
 import os
 import re
 import operator
-import requests
-import pytz
-from datetime import datetime
 from django.utils.text import slugify
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
@@ -13,7 +10,7 @@ from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequ
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
 from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
-from timetables import timetable
+from timetables import timetable, live
 
 
 DIR = os.path.dirname(__file__)
@@ -243,20 +240,10 @@ class StopPointDetailView(DetailView):
 def departures(request, pk):
     stop = get_object_or_404(StopPoint, pk=pk)
     services = {service.line_name: service for service in Service.objects.filter(stops=pk, current=True)}
+    context = live.get_departures(stop, services)
     if stop.tfl:
-        timezone = pytz.timezone('Europe/London')
-
-        req = requests.get('https://api.tfl.gov.uk/StopPoint/%s/arrivals' % pk)
-        items = ({
-            'time': timezone.fromutc(datetime.strptime(item.get('expectedArrival'), '%Y-%m-%dT%H:%M:%SZ')),
-            'service': services.get(item.get('lineName')),
-            'destination': item.get('destinationName'),
-        } for item in req.json())
-        return render(request, 'departures.html', {
-            'departures': items,
-            'tfl': 'https://tfl.gov.uk/bus/stop/%s/%s' % (stop.atco_code, slugify(stop.common_name))
-        })
-
+        context['tfl'] = 'https://tfl.gov.uk/bus/stop/%s/%s' % (stop.atco_code, slugify(stop.common_name))
+    return render(request, 'departures.html', context)
 
 
 class OperatorDetailView(DetailView):
