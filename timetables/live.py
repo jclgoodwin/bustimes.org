@@ -4,7 +4,7 @@ import re
 from datetime import datetime, date
 from django.conf import settings
 
-DESTINATION_REGEX = re.compile(r'.*\((.*)\)')
+DESTINATION_REGEX = re.compile(r'.+\((.+)\)')
 TODAY = date.today()
 NOW = datetime.now()
 
@@ -27,9 +27,9 @@ def transportapi_row(item, services):
     else:
         departure_time = datetime.strptime(item['best_departure_estimate'], '%H:%M')
     destination = item.get('direction')
-    destination_matches = DESTINATION_REGEX.match(destination).groups()
+    destination_matches = DESTINATION_REGEX.match(destination)
     if destination_matches is not None:
-        destination = destination_matches[0]
+        destination = destination_matches.groups()[0]
     return {
         'time': departure_datetime or departure_time,
         'service': services.get(item.get('line')) or item.get('line'),
