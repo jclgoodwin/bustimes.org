@@ -218,13 +218,18 @@ class StopPointDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
-        if self.object.stop_area_id is not None:
-            context['nearby'] = StopPoint.objects.filter(
-                stop_area=self.object.stop_area_id
-            ).defer('location').exclude(atco_code=self.object.atco_code).order_by('atco_code')
+
         context['services'] = Service.objects.filter(stops=self.object, current=True).order_by('service_code')
+
         if not self.object.active and len(context['services']) == 0:
             raise Http404()
+
+        if self.object.stop_area_id is not None:
+            context['nearby'] = StopPoint.objects.filter(
+                stop_area=self.object.stop_area_id,
+                active=True
+            ).defer('location').exclude(atco_code=self.object.atco_code).order_by('atco_code')
+
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region,
             self.object.admin_area,
