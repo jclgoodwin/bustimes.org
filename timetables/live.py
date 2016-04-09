@@ -23,7 +23,7 @@ def get_tfl_departures(stop, services):
 
 def transportapi_row(item, services):
     if 'date' in item:
-        departure_datetime = datetime.strptime(item['date'] + ' ' + item['best_departure_estimate'], '%Y-%m-%d %H:%M')
+        departure_time = datetime.strptime(item['date'] + ' ' + item['best_departure_estimate'], '%Y-%m-%d %H:%M')
     else:
         departure_time = datetime.strptime(item['best_departure_estimate'], '%H:%M')
     destination = item.get('direction')
@@ -31,7 +31,7 @@ def transportapi_row(item, services):
     if destination_matches is not None:
         destination = destination_matches.groups()[0]
     return {
-        'time': departure_datetime or departure_time,
+        'time': departure_time,
         'service': services.get(item.get('line')) or item.get('line'),
         'destination': destination,
     }
