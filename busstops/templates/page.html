@@ -49,9 +49,9 @@
         {% elif breadcrumb.2.id == 252 %}
             <a href="https://www.awin1.com/cread.php?s=259860&v=2678&q=124178&r=242611" class="megabus leeds" rel="nofollow">Megabus</a>
         {% else %}
-            <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-            <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="auto"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            <script src="{% static 'js/bower_components/postscribe/dist/postscribe.min.js' %}"></script>
+            <script src="{% static 'js/bower_components/reqwest/reqwest.min.js' %}"></script>
+            <script src="{% static 'js/ad.js' %}"></script>
         {% endif %}
     </div>
     {% endblock %}
