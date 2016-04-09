@@ -395,6 +395,14 @@ input:not(:checked) + label + .timetable tr.OTH {
         border-right: 1px solid $brand-color;
         font-weight: normal;
         white-space: nowrap;
+
+        a {
+            display: block;
+            margin: -.25em -.5em;
+            margin-left: 0;
+            padding: .25em .5em;
+            padding-left: 0;
+        }
     }
 }
 
@@ -403,13 +411,19 @@ input:not(:checked) + label + .timetable tr.OTH {
         margin: 0 -.5em;
     }
 
+    tr {
+        border: 0;
+    }
+
     td {
         padding: .125em .5em;
         vertical-align: top;
-    }
 
-    tr {
-        border: 0;
+        a {
+            display: block;
+            margin: -.125em -.5em;
+            padding: .125em .5em;
+        }
     }
 
     .credit {
