@@ -22,6 +22,8 @@ def get_tfl_departures(stop, services):
 
 
 def transportapi_row(item, services):
+    if item['best_departure_estimate'] is None:
+        return
     if 'date' in item:
         departure_time = datetime.strptime(item['date'] + ' ' + item['best_departure_estimate'], '%Y-%m-%d %H:%M')
     else:
@@ -32,7 +34,7 @@ def transportapi_row(item, services):
         destination = destination_matches.groups()[0]
     return {
         'time': departure_time,
-        'service': services.get(item.get('line')) or item.get('line'),
+        'service': services.get(item.get('line').split('--')[0]) or item.get('line'),
         'destination': destination,
     }
 
@@ -46,7 +48,7 @@ def get_transportapi_departures(stop, services):
     })
     departures = req.json().get('departures')
     if departures and 'all' in departures:
-        return (transportapi_row(item, services) for item in departures.get('all'))
+        return filter(None, (transportapi_row(item, services) for item in departures.get('all')))
     return ()
 
 
