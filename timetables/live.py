@@ -55,6 +55,7 @@ def get_departures(stop, services):
     now = datetime.now()
     if stop.tfl:
         departures = get_tfl_departures(stop, services)
+        max_age = 360
     else:
         departures = get_transportapi_departures(stop, services)
         if len(departures) > 0:
@@ -62,7 +63,9 @@ def get_departures(stop, services):
             if expiry.year == 1900:
                 expiry = expiry.combine(today, expiry.time())
             max_age = (expiry - now).seconds
+        else:
+            max_age = 3600
     return ({
         'departures': departures,
         'today': today,
-    }, max_age or 360)
+    }, max_age)
