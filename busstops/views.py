@@ -7,6 +7,7 @@ from django.utils.text import slugify
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
+from django.views.decorators.cache import patch_cache_control
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
 from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
@@ -240,10 +241,12 @@ class StopPointDetailView(DetailView):
 def departures(request, pk):
     stop = get_object_or_404(StopPoint, pk=pk)
     services = {service.line_name: service for service in Service.objects.filter(stops=pk, current=True)}
-    context = live.get_departures(stop, services)
+    context, max_age = live.get_departures(stop, services)
     if stop.tfl:
         context['tfl'] = 'https://tfl.gov.uk/bus/stop/%s/%s' % (stop.atco_code, slugify(stop.common_name))
-    return render(request, 'departures.html', context)
+    response = render(request, 'departures.html', context)
+    patch_cache_control(response, max_age=max_age, public=True)
+    return response
 
 
 class OperatorDetailView(DetailView):
@@ -274,9 +277,7 @@ class ServiceDetailView(DetailView):
             return context
 
         context['operators'] = self.object.operator.all()
-
         context['traveline_url'] = self.object.get_traveline_url()
-
         context['stops'] = self.object.stops.all().select_related('locality').defer('location', 'locality__location')
 
         if self.object.show_timetable or '_MEGA' in self.object.service_code or 'timetable' in self.request.GET:

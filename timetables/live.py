@@ -5,8 +5,6 @@ from datetime import datetime, date
 from django.conf import settings
 
 DESTINATION_REGEX = re.compile(r'.+\((.+)\)')
-TODAY = date.today()
-NOW = datetime.now()
 
 
 def get_tfl_departures(stop, services):
@@ -53,11 +51,18 @@ def get_transportapi_departures(stop, services):
 
 
 def get_departures(stop, services):
+    today = date.today()
+    now = datetime.now()
     if stop.tfl:
         departures = get_tfl_departures(stop, services)
     else:
         departures = get_transportapi_departures(stop, services)
-    return {
+        if len(departures) > 0:
+            expiry = departures[0]['time']
+            if expiry.year == 1900:
+                expiry = expiry.combine(today, expiry.time())
+            max_age = (expiry - now).seconds
+    return ({
         'departures': departures,
-        'today': TODAY,
-    }
+        'today': today,
+    }, max_age or 360)
