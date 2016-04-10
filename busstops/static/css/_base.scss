@@ -372,6 +372,7 @@ td {
     font-size: .875em;
     margin: 1em 0;
     overflow: auto;
+    -webkit-overflow-scrolling: touch;
 
     input {
         vertical-align: top;
