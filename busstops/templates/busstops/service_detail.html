@@ -46,7 +46,7 @@
     <tbody>
     <tr><td></td>
     {% for column in grouping.column_heads %}
-        <td colspan="{{ column.span }}">{% firstof column.operatingprofile|linebreaksbr timetable.operating_profile|linebreaksbr %}</td>
+        <td colspan="{{ column.span }}">{% firstof column.operatingprofile timetable.operating_profile as operatingprofile %}{{ operatingprofile|linebreaksbr }}</td>
     {% endfor %}
     </tr>
     {% for row in grouping.rows %}
