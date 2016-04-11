@@ -60,7 +60,7 @@ def get_departures(stop, services):
             expiry = departures[0]['time']
             if expiry.year == 1900:
                 expiry = expiry.combine(today, expiry.time())
-            if now > expiry:
+            if now < expiry:
                 max_age = (expiry - now).seconds + 60
             else:
                 max_age = 60
