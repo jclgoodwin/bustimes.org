@@ -10,8 +10,6 @@ DESTINATION_REGEX = re.compile(r'.+\((.+)\)')
 def get_tfl_departures(stop, services):
     timezone = pytz.timezone('Europe/London')
     req = requests.get('http://api.tfl.gov.uk/StopPoint/%s/arrivals' % stop.pk)
-    print req.status_code
-    print req.json()
     return ({
         'time': timezone.fromutc(datetime.strptime(item.get('expectedArrival'), '%Y-%m-%dT%H:%M:%SZ')),
         'service': services.get(item.get('lineName')) or item.get('lineName'),
@@ -55,14 +53,17 @@ def get_departures(stop, services):
     now = datetime.now()
     if stop.tfl:
         departures = get_tfl_departures(stop, services)
-        max_age = 360
+        max_age = 120
     else:
         departures = get_transportapi_departures(stop, services)
         if len(departures) > 0:
             expiry = departures[0]['time']
             if expiry.year == 1900:
                 expiry = expiry.combine(today, expiry.time())
-            max_age = (expiry - now).seconds
+            if now > expiry:
+                max_age = (expiry - now).seconds + 60
+            else:
+                max_age = 60
         else:
             max_age = 3600
     return ({
