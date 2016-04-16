@@ -26,7 +26,7 @@ class NotFoundRedirectMiddleware(object):
                     current=True
                 ).first()
             elif request.path.startswith('/stops/'):
-                suggestion = StopPoint.objects.only('atco_code').get(naptan_code=request.path.split('/')[-1])
+                suggestion = StopPoint.objects.only('atco_code').filter(naptan_code=request.path.split('/')[-1]).first()
             if suggestion is not None:
                 return redirect(suggestion)
         return response
