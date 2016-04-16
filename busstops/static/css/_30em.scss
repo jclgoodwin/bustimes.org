@@ -9,15 +9,14 @@
     max-width: 480px;
 }
 
-.aside {
-    width: 48.5%;
-    float: left;
-    margin-left: 3%;
+.asides {
+    margin: 0 -1.5%;
 }
 
-.asides .aside:first-child {
-    clear: left;
-    margin-left: 0;
+.aside {
+    width: 47%;
+    float: left;
+    margin: 1em 1.5% 0;
 }
 
 #regions ul {

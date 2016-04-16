@@ -33,13 +33,11 @@ main img {
     column-count: 3;
 }
 
-.asides .aside {
-    clear: none;
-    margin-left: 2.5%;
-    width: 31.66%;
+.asides {
+    margin: 0 -1.25%;
 }
 
-.asides .aside:first-child {
-    clear: left;
-    margin-left: 0;
+.aside {
+    margin: 1em 1.25% 0;
+    width: 30.83%;
 }
