@@ -271,6 +271,13 @@ class Operator(models.Model):
         return 'An' # 'An operator'
 
 
+class StopUsage(models.Model):
+    service = models.ForeignKey('Service', on_delete=models.CASCADE)
+    stop = models.ForeignKey('StopPoint', on_delete=models.CASCADE)
+    direction = models.CharField(max_length=8, db_index=True)
+    order = models.PositiveIntegerField()
+
+
 class Service(models.Model):
     "A bus service."
     service_code = models.CharField(max_length=24, primary_key=True)
@@ -281,7 +288,7 @@ class Service(models.Model):
     net = models.CharField(max_length=3, blank=True)
     line_ver = models.PositiveIntegerField(null=True, blank=True)
     region = models.ForeignKey(Region)
-    stops = models.ManyToManyField(StopPoint, editable=False)
+    stops = models.ManyToManyField(StopPoint, editable=False, through=StopUsage)
     date = models.DateField()
     current = models.BooleanField(default=True, db_index=True)
     show_timetable = models.BooleanField(default=False)
