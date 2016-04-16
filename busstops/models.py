@@ -120,6 +120,13 @@ class LiveSource(models.Model):
     "A source of live departure information for a stop point"
     name = models.CharField(max_length=4, primary_key=True)
 
+    def __unicode__(self):
+        if self.name == 'Y':
+            return 'Yorkshire'
+        if self.name == 'TfL':
+            return 'Transport for London'
+        return self.name
+
 
 class StopPoint(models.Model):
     "The smallest type of geographical point; a point at which vehicles stop."

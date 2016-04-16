@@ -10,7 +10,10 @@ from titlecase import titlecase
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import StopPoint
+from busstops.models import StopPoint, LiveSource
+
+
+tfl = LiveSource.objects.get(pk='TfL')
 
 
 class Command(ImportFromCSVCommand):
@@ -21,8 +24,12 @@ class Command(ImportFromCSVCommand):
         Given a stop's ATCO code, returns the best-formatted version of its common name from the
         TfL API
         """
-        data = requests.get('https://api.tfl.gov.uk/StopPoint/%s' % atco_code).json()
-        return data.get('commonName')
+        try:
+            data = requests.get('https://api.tfl.gov.uk/StopPoint/%s' % atco_code).json()
+            return data.get('commonName')
+        except ValueError as error:
+            print error, atco_code
+            return None
 
     def handle_row(self, row):
         if row['Naptan_Atco'] in (None, '', 'NONE'):
@@ -33,18 +40,20 @@ class Command(ImportFromCSVCommand):
         except ObjectDoesNotExist:
             try:
                 stop = StopPoint.objects.get(pk__contains=row['Naptan_Atco'])
-            except (ObjectDoesNotExist, MultipleObjectsReturned) as e:
-                print e, row
+            except (ObjectDoesNotExist, MultipleObjectsReturned) as error:
+                print error, row
                 return None
 
         if row['Heading'] != '':
             stop.heading = row['Heading']
         stop.common_name = self.get_name(stop.atco_code) or stop.common_name
-        stop.tfl = True
 
         if stop.street.isupper():
             stop.street = titlecase(stop.street)
         if stop.landmark.isupper():
             stop.landmark = titlecase(stop.landmark)
 
+        stop.live_sources.add(tfl)
+
         stop.save()
+

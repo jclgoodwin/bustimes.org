@@ -28,8 +28,8 @@
         {% endif %}
     {% endfor %}
     <p class="credit">
-    {% if tfl %}
-        Data from <a href={{ tfl }}>Transport for London</a>
+    {% if source %}
+        Data from <a href={{ source.url }}>{{ source.name }}</a>
     {% else %}
         Data from <a href=http://www.transportapi.com/>Transport API</a>
     {% endif %}
