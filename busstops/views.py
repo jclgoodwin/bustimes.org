@@ -103,7 +103,7 @@ class RegionDetailView(DetailView):
         context = super(RegionDetailView, self).get_context_data(**kwargs)
 
         context['areas'] = AdminArea.objects.filter(region=self.object).order_by('name')
-        context['operators'] = Operator.objects.filter(region=self.object, service__isnull=False).distinct().order_by('name')
+        context['operators'] = Operator.objects.filter(region=self.object, service__current=True).distinct().order_by('name')
 
         return context
 
@@ -236,6 +236,34 @@ class StopPointDetailView(DetailView):
             self.object.locality,
         ])
         return context
+
+
+def stop_json(request, pk):
+    stop = get_object_or_404(StopPoint, pk=pk)
+    return JsonResponse({
+        'atco_code': stop.atco_code,
+        'naptan_code': stop.naptan_code,
+        'common_name': stop.common_name,
+        'landmark': stop.landmark,
+        'street': stop.street,
+        'crossing': stop.crossing,
+        'indicator': stop.indicator,
+        # 'latlong': stop.latlong,
+        # 'location': stop.location,
+        'stop_area': stop.stop_area_id,
+        'locality': stop.locality_id,
+        'suburb': stop.suburb,
+        'town': stop.town,
+        'locality_centre': stop.locality_centre,
+        'tfl': stop.tfl,
+        'heading': stop.heading,
+        'bearing': stop.bearing,
+        'stop_type': stop.stop_type,
+        'bus_stop_type': stop.bus_stop_type,
+        'timing_status': stop.timing_status,
+        'admin_area': stop.admin_area_id,
+        'active': stop.active,
+    })
 
 
 def departures(request, pk):
