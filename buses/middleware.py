@@ -1,6 +1,6 @@
 from django.middleware.common import BrokenLinkEmailsMiddleware
 from django.shortcuts import redirect
-from busstops.models import Service
+from busstops.models import Service, StopPoint
 
 class BrokenLinkEmailsMiddleware(BrokenLinkEmailsMiddleware, object):
 
@@ -17,14 +17,16 @@ class NotFoundRedirectMiddleware(object):
     """
 
     def process_response(self, request, response):
-        if (response.status_code == 404
-                and request.path.startswith('/services/')
-                and len(request.path.split('-')) >= 4):
-            service_code_parts = request.path.split('/')[-1].split('-')[:4]
-            suggestion = Service.objects.filter(
-                service_code__icontains='-'.join(service_code_parts),
-                current=True
-            ).first()
+        if response.status_code == 404:
+            suggestion = None
+            if request.path.startswith('/services/') and len(request.path.split('-')) >= 4:
+                service_code_parts = request.path.split('/')[-1].split('-')[:4]
+                suggestion = Service.objects.filter(
+                    service_code__icontains='-'.join(service_code_parts),
+                    current=True
+                ).first()
+            elif request.path.startswith('/stops/'):
+                suggestion = StopPoint.objects.only('atco_code').get(naptan_code=request.path.split('/')[-1])
             if suggestion is not None:
                 return redirect(suggestion)
         return response
