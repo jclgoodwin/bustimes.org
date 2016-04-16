@@ -3,7 +3,6 @@ import zipfile
 import os
 import re
 import operator
-from django.utils.text import slugify
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
@@ -248,14 +247,14 @@ def stop_json(request, pk):
         'street': stop.street,
         'crossing': stop.crossing,
         'indicator': stop.indicator,
-        # 'latlong': stop.latlong,
-        # 'location': stop.location,
+        'latlong': list(stop.latlong),
+        'latlong': list(stop.latlong),
         'stop_area': stop.stop_area_id,
         'locality': stop.locality_id,
         'suburb': stop.suburb,
         'town': stop.town,
         'locality_centre': stop.locality_centre,
-        'tfl': stop.tfl,
+        'live_sources': list(stop.live_sources.values_list('name', flat=True)),
         'heading': stop.heading,
         'bearing': stop.bearing,
         'stop_type': stop.stop_type,
@@ -263,15 +262,13 @@ def stop_json(request, pk):
         'timing_status': stop.timing_status,
         'admin_area': stop.admin_area_id,
         'active': stop.active,
-    })
+    }, safe=False)
 
 
 def departures(request, pk):
     stop = get_object_or_404(StopPoint, pk=pk)
     services = {service.line_name: service for service in Service.objects.filter(stops=pk, current=True)}
     context, max_age = live.get_departures(stop, services)
-    if stop.tfl:
-        context['tfl'] = 'https://tfl.gov.uk/bus/stop/%s/%s' % (stop.atco_code, slugify(stop.common_name))
     response = render(request, 'departures.html', context)
     patch_cache_control(response, max_age=max_age, public=True)
     return response

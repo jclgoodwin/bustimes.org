@@ -3,6 +3,8 @@ import pytz
 import re
 from datetime import datetime, date
 from django.conf import settings
+from django.utils.text import slugify
+
 
 DESTINATION_REGEX = re.compile(r'.+\((.+)\)')
 
@@ -51,8 +53,10 @@ def get_transportapi_departures(stop, services):
 def get_departures(stop, services):
     today = date.today()
     now = datetime.now()
-    if stop.tfl:
+    tfl = False
+    if 'TfL' in stop.live_sources.values_list('name', flat=True):
         departures = get_tfl_departures(stop, services)
+        tfl = 'https://tfl.gov.uk/bus/stop/%s/%s' % (stop.atco_code, slugify(stop.common_name))
         max_age = 120
     else:
         departures = get_transportapi_departures(stop, services)
@@ -69,4 +73,5 @@ def get_departures(stop, services):
     return ({
         'departures': departures,
         'today': today,
+        'tfl': tfl,
     }, max_age)

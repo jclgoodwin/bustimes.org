@@ -4,7 +4,7 @@ from busstops.models import Region, AdminArea, District, Locality, StopArea, Sto
 
 class StopPointAdmin(admin.ModelAdmin):
     list_display = ('atco_code', 'naptan_code', 'locality', 'admin_area', '__unicode__')
-    list_filter = ('stop_type', 'bus_stop_type', 'timing_status')
+    list_filter = ('stop_type', 'bus_stop_type', 'timing_status', 'live_sources')
     search_fields = ('common_name',)
     ordering = ('atco_code',)
 
@@ -28,14 +28,18 @@ class ServiceAdmin(admin.ModelAdmin):
     list_display = ('service_code', '__unicode__', 'mode', 'net', 'region', 'current', 'show_timetable')
     list_filter = ('show_timetable', 'current', ('operator', admin.RelatedOnlyFieldListFilter), 'mode', 'net', 'region')
     search_fields = ('service_code', 'line_name', 'description')
-    raw_id_fields = ('operator',)
+    raw_id_fields = ('operator', 'stops')
     ordering = ('service_code',)
+
+
+class LocalityAdmin(admin.ModelAdmin):
+    raw_id_fields = ('adjacent',)
 
 
 admin.site.register(Region)
 admin.site.register(AdminArea)
 admin.site.register(District)
-admin.site.register(Locality)
+admin.site.register(Locality, LocalityAdmin)
 admin.site.register(StopArea)
 admin.site.register(StopPoint, StopPointAdmin)
 admin.site.register(Operator, OperatorAdmin)

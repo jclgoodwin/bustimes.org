@@ -74,7 +74,7 @@ class Locality(models.Model):
     district = models.ForeignKey(District, null=True)
     parent = models.ForeignKey('Locality', null=True, editable=False)
     location = models.PointField(srid=27700, null=True)
-    adjancent = models.ManyToManyField('Locality', related_name='neighbour')
+    adjacent = models.ManyToManyField('Locality', related_name='neighbour')
 
     def __unicode__(self):
         return self.name
@@ -116,10 +116,15 @@ class StopArea(models.Model):
         return self.name
 
 
+class LiveSource(models.Model):
+    "A source of live departure information for a stop point"
+    name = models.CharField(max_length=4, primary_key=True)
+
+
 class StopPoint(models.Model):
     "The smallest type of geographical point; a point at which vehicles stop."
     atco_code = models.CharField(max_length=16, primary_key=True)
-    naptan_code = models.CharField(max_length=16)
+    naptan_code = models.CharField(max_length=16, db_index=True)
 
     common_name = models.CharField(max_length=48, db_index=True)
     landmark = models.CharField(max_length=48, blank=True)
@@ -137,7 +142,8 @@ class StopPoint(models.Model):
     town = models.CharField(max_length=48, blank=True)
     locality_centre = models.BooleanField()
 
-    tfl = models.BooleanField(default=False)
+    live_sources = models.ManyToManyField(LiveSource)
+
     heading = models.PositiveIntegerField(null=True, blank=True)
 
     BEARING_CHOICES = (

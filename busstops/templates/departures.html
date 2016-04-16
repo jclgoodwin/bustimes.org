@@ -14,7 +14,7 @@
         <tbody>
         {% endifchanged %}
         <tr>
-            <td>{{ item.time.time }}</td>
+            <td>{% firstof item.time.time item.time %}</td>
             <td>
             {% if item.service.line_name %}
                 <a href={{ item.service.get_absolute_url }}>{{ item.service.line_name }}</a>
