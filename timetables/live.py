@@ -20,8 +20,8 @@ def get_tfl_departures(stop, services):
     } for item in req.json()) if req.status_code == 200 else ()
 
 
-def get_molly_departures(stop, services):
-    req = requests.get('http://tsy.acislive.com/pip/stop_simulator_table.asp', {
+def get_acis_departures(prefix, stop, services):
+    req = requests.get('http://%s.acislive.com/pip/stop_simulator_table.asp' % prefix, {
         'naptan': stop.naptan_code
     })
     if req.status_code != 200:
@@ -73,9 +73,16 @@ def get_departures(stop, services):
     source = None
     live_sources = stop.live_sources.values_list('name', flat=True)
     if 'Y' in live_sources: # Yorkshire
-        departures = get_molly_departures(stop, services)
+        departures = get_acis_departures('tsy', stop, services)
         source = {
             'url': 'http://wymetro.acislive.com/pip/stop_simulator.asp?NaPTAN=%s' % stop.naptan_code,
+            'name': 'ACIS Live'
+        }
+        max_age = 60
+    elif 'Kent' in live_sources:
+        departures = get_acis_departures('kent', stop, services)
+        source = {
+            'url': 'http://kent.acislive.com/pip/stop_simulator.asp?NaPTAN=%s' % stop.naptan_code,
             'name': 'ACIS Live'
         }
         max_age = 60
