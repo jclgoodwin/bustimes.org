@@ -96,6 +96,7 @@ for region in ${REGIONS[@]}; do
         ../../manage.py import_services $region.zip
         unzip -oq $region.zip -d $region
         find $region -type f -mtime +2 -delete
+        unzip -oq $region.zip -d $region
         find $region -type f -empty -delete
     fi
 done

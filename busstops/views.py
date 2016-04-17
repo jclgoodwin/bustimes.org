@@ -340,4 +340,4 @@ def service_xml(request, pk):
     bodies = ''
     for body in (archive.open(file_name).read() for file_name in file_names):
         bodies += body
-    return HttpResponse(bodies, content_type='text/xml')
+    return HttpResponse(bodies, content_type='text/plain')
