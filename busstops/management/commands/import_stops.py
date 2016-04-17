@@ -14,11 +14,6 @@ class Command(ImportFromCSVCommand):
     def handle_row(self, row):
         defaults = {
             'locality_id': row['NptgLocalityCode'],
-            'location': Point(
-                int(row['Easting']),
-                int(row['Northing']),
-                srid=27700
-            ),
             'latlong': Point(
                 float(row['Longitude']),
                 float(row['Latitude']),

@@ -73,7 +73,7 @@ class Locality(models.Model):
     admin_area = models.ForeignKey(AdminArea)
     district = models.ForeignKey(District, null=True)
     parent = models.ForeignKey('Locality', null=True, editable=False)
-    location = models.PointField(srid=27700, null=True)
+    latlong = models.PointField(null=True)
     adjacent = models.ManyToManyField('Locality', related_name='neighbour')
 
     def __unicode__(self):
@@ -109,7 +109,7 @@ class StopArea(models.Model):
     stop_area_type = models.CharField(max_length=4, choices=TYPE_CHOICES)
 
     parent = models.ForeignKey('StopArea', null=True, editable=False)
-    location = models.PointField(srid=27700)
+    latlong = models.PointField(null=True)
     active = models.BooleanField()
 
     def __unicode__(self):
@@ -139,8 +139,7 @@ class StopPoint(models.Model):
     crossing = models.CharField(max_length=48, blank=True)
     indicator = models.CharField(max_length=48, blank=True)
 
-    latlong = models.PointField()
-    location = models.PointField(srid=27700, null=True)
+    latlong = models.PointField(null=True)
     objects = models.GeoManager()
 
     stop_area = models.ForeignKey(StopArea, null=True, editable=False)

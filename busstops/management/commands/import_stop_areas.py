@@ -20,7 +20,7 @@ class Command(ImportFromCSVCommand):
                 'name':            row['Name'].decode('latin1'),
                 'admin_area':      AdminArea.objects.get(id=row['AdministrativeAreaCode']),
                 'stop_area_type':  row['StopAreaType'],
-                'location':        Point(int(row['Easting']), int(row['Northing']), srid=27700),
+                'latlong':         Point(int(row['Easting']), int(row['Northing']), srid=27700),
                 'active':          (row['Status'] == 'act'),
             }
         )[0]

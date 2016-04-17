@@ -63,7 +63,7 @@ def stops(request):
             'type': 'Feature',
             'geometry': {
                 'type': 'Point',
-                'coordinates': (stop.latlong.x, stop.latlong.y)
+                'coordinates': tuple(stop.latlong)
             },
             'properties': {
                 'name': str(stop),
@@ -128,14 +128,14 @@ class AdminAreaDetailView(DetailView):
             admin_area_id=self.object.id,
             district=None,
             parent=None
-        ).defer('location').distinct().order_by('name')
+        ).defer('latlong').distinct().order_by('name')
 
         # National Rail/Air/Ferry stops
         if len(context['localities']) == 0 and len(context['districts']) == 0:
             context['stops'] = StopPoint.objects.filter(
                 admin_area=self.object,
                 active=True
-            ).defer('location').order_by('common_name')
+            ).order_by('common_name')
 
         context['breadcrumb'] = [self.object.region]
         return context
@@ -159,7 +159,7 @@ class DistrictDetailView(DetailView):
         context['localities'] = Locality.objects.filter(
             Q(stoppoint__active=True) | Q(locality__stoppoint__active=True),
             district=self.object,
-        ).defer('location').distinct().order_by('name')
+        ).defer('latlong').distinct().order_by('name')
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
         return context
 
@@ -182,7 +182,7 @@ class LocalityDetailView(DetailView):
             Q(stoppoint__active=True) |
             Q(locality__stoppoint__active=True),
             parent=self.object,
-        ).defer('location').distinct().order_by('name')
+        ).defer('latlong').distinct().order_by('name')
 
         context['stops'] = StopPoint.objects.filter(
             locality=self.object,
@@ -225,7 +225,7 @@ class StopPointDetailView(DetailView):
             context['nearby'] = StopPoint.objects.filter(
                 stop_area=self.object.stop_area_id,
                 active=True
-            ).defer('location').exclude(atco_code=self.object.atco_code).order_by('atco_code')
+            ).defer('latlong').exclude(atco_code=self.object.atco_code).order_by('atco_code')
 
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region,
@@ -247,7 +247,6 @@ def stop_json(request, pk):
         'street': stop.street,
         'crossing': stop.crossing,
         'indicator': stop.indicator,
-        'latlong': list(stop.latlong),
         'latlong': list(stop.latlong),
         'stop_area': stop.stop_area_id,
         'locality': stop.locality_id,
@@ -282,10 +281,13 @@ class OperatorDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
-        context['services'] = Service.objects.filter(operator=self.object).exclude(current=False).order_by('service_code')
+        context['services'] = Service.objects.filter(operator=self.object, current=True).order_by('service_code')
         if len(context['services']) == 0:
             raise Http404()
+        areas = AdminArea.objects.filter(stoppoint__service__in=context['services']).distinct()
         context['breadcrumb'] = [self.object.region]
+        if len(areas) == 1:
+            context['breadcrumb'].append(areas[0])
         return context
 
 
@@ -303,7 +305,7 @@ class ServiceDetailView(DetailView):
 
         context['operators'] = self.object.operator.all()
         context['traveline_url'] = self.object.get_traveline_url()
-        context['stops'] = self.object.stops.all().select_related('locality').defer('location', 'locality__location')
+        context['stops'] = self.object.stops.all().select_related('locality').defer('locality__latlong')
 
         if self.object.show_timetable or '_MEGA' in self.object.service_code or 'timetable' in self.request.GET:
             context['timetables'] = timetable.timetable_from_service(self.object, context['stops'])
