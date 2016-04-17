@@ -49,7 +49,7 @@ def transportapi_row(item, services):
         destination = destination_matches.groups()[0]
     return {
         'time': departure_time,
-        'service': services.get(item.get('line').split('--')[0]) or item.get('line'),
+        'service': services.get(item.get('line').split('--')[0].split('|')[0]) or item.get('line'),
         'destination': destination,
     }
 

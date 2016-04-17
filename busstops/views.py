@@ -247,13 +247,13 @@ def stop_json(request, pk):
         'street': stop.street,
         'crossing': stop.crossing,
         'indicator': stop.indicator,
-        'latlong': list(stop.latlong),
+        'latlong': tuple(stop.latlong),
         'stop_area': stop.stop_area_id,
         'locality': stop.locality_id,
         'suburb': stop.suburb,
         'town': stop.town,
         'locality_centre': stop.locality_centre,
-        'live_sources': list(stop.live_sources.values_list('name', flat=True)),
+        'live_sources': tuple(stop.live_sources.values_list('name', flat=True)),
         'heading': stop.heading,
         'bearing': stop.bearing,
         'stop_type': stop.stop_type,
@@ -266,7 +266,7 @@ def stop_json(request, pk):
 
 def departures(request, pk):
     stop = get_object_or_404(StopPoint, pk=pk)
-    services = {service.line_name: service for service in Service.objects.filter(stops=pk, current=True)}
+    services = {service.line_name.split('|')[0]: service for service in Service.objects.filter(stops=pk, current=True)}
     context, max_age = live.get_departures(stop, services)
     response = render(request, 'departures.html', context)
     patch_cache_control(response, max_age=max_age, public=True)
