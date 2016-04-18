@@ -247,6 +247,11 @@ class Operator(models.Model):
     parent = models.CharField(max_length=48, blank=True)
     region = models.ForeignKey(Region)
 
+    address = models.CharField(max_length=128, blank=True)
+    url = models.URLField(blank=True)
+    email = models.EmailField(blank=True)
+    phone = models.CharField(max_length=128, blank=True)
+
     def __unicode__(self):
         return self.name
 

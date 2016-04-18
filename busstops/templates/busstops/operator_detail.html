@@ -19,4 +19,23 @@
 {% endfor %}
 </ul>
 
+{% if object.address or object.url or object.email or object.phone %}
+    <h2>Contact {{ object }}</h2>
+
+    <div class="contact-details">
+    {% if object.address %}
+        {{ object.address|linebreaks }}
+    {% endif %}
+    {% if object.url %}
+        <p>{{ object.url|urlize }}</p>
+    {% endif %}
+    {% if object.email %}
+        <p>{{ object.email|urlize }}</p>
+    {% endif %}
+    {% if object.phone %}
+        <p>{{ object.phone }}</p>
+    {% endif %}
+    </div>
+{% endif %}
+
 {% endblock %}

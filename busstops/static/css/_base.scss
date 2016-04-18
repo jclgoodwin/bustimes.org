@@ -219,10 +219,12 @@ main li {
     .name {
         color: #dc7;
         float: left;
+        margin-bottom: .5em;
         margin-right: 1em;
 
         &.is-short {
             font-size: 3em;
+            margin-bottom: 0;
             margin-right: .33em;
             line-height: 1.2em;
         }

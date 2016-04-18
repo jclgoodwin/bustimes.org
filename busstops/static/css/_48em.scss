@@ -33,6 +33,23 @@ h1 {
     -webkit-column-count: 2;
     -moz-column-count: 2;
     column-count: 2;
+    -webkit-column-gap: 1em;
+    -moz-column-gap: 1em;
+    column-gap: 1em;
+
+}
+
+.contact-details {
+    overflow: hidden;
+    margin: 0 -.5em;
+
+    p {
+        box-sizing: border-box;
+        float: left;
+        margin: .5em 0;
+        padding: 0 .5em;
+        width: 50%;
+    }
 }
 
 .adsbygoogle {
