@@ -234,7 +234,7 @@ class Command(BaseCommand):
             except (AttributeError, IndexError) as e:
                 print e, file_name
                 show_timetable = False
-                stop_usages = [StopUsage(service_id=service_code, stop_id=stop) for stop in stops]
+                stop_usages = [StopUsage(service_id=service_code, stop_id=stop, order=0) for stop in stops]
 
 
             # service:

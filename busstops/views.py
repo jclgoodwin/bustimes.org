@@ -305,7 +305,7 @@ class ServiceDetailView(DetailView):
 
         context['operators'] = self.object.operator.all()
         context['traveline_url'] = self.object.get_traveline_url()
-        context['stops'] = self.object.stops.all().select_related('locality').defer('locality__latlong')
+        context['stops'] = self.object.stops.all().distinct().select_related('locality').defer('locality__latlong')
 
         if self.object.show_timetable or '_MEGA' in self.object.service_code or 'timetable' in self.request.GET:
             context['timetables'] = timetable.timetable_from_service(self.object, context['stops'])
