@@ -157,7 +157,7 @@ class Command(BaseCommand):
         if operator_name in ('Replacement Service', 'UNKWN'):
             return None
 
-        possible_operators = Operator.objects.filter(name__startswith=operator_name)
+        possible_operators = Operator.objects.filter(name__istartswith=operator_name)
         if len(possible_operators) == 1:
             return possible_operators[0]
 
@@ -234,7 +234,7 @@ class Command(BaseCommand):
             except (AttributeError, IndexError) as e:
                 print e, file_name
                 show_timetable = False
-                stop_usages = [StopUsage(service_id=service_code, stop=stop) for stop in stops]
+                stop_usages = [StopUsage(service_id=service_code, stop_id=stop) for stop in stops]
 
 
             # service:
