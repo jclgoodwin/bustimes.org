@@ -11,7 +11,7 @@ Usage:
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from busstops.models import Operator, StopPoint, Service
+from busstops.models import Operator, StopPoint, Service, StopUsage
 from timetables.timetable import Timetable
 
 import re
@@ -214,6 +214,12 @@ class Command(BaseCommand):
                 print 'Description "%s" is too long in %s' % (description, file_name)
                 description = description[:128]
 
+            # net and service code:
+
+            net, service_code, line_ver = self.get_net_service_code_and_line_ver(file_name)
+            if service_code is None:
+                service_code = service_element.find('txc:ServiceCode', self.ns).text
+
             # stops:
 
             stop_elements = root.find('txc:StopPoints', self.ns)
@@ -223,15 +229,13 @@ class Command(BaseCommand):
             try:
                 timetable = Timetable(root)
                 show_timetable = (len(timetable.groupings[0].journeys) < 60 and len(timetable.groupings[1].journeys) < 60)
+                stop_usages = [StopUsage(service_id=service_code, stop=stops.get(row.part.stop.atco_code), direction='outbound', order=i) for i, row in enumerate(timetable.groupings[0].rows)]
+                stop_usages += [StopUsage(service_id=service_code, stop=stops.get(row.part.stop.atco_code), direction='inbound', order=i) for i, row in enumerate(timetable.groupings[1].rows)]
             except (AttributeError, IndexError) as e:
-                show_timetable = False
                 print e, file_name
+                show_timetable = False
+                stop_usages = [StopUsage(service_id=service_code, stop=stop) for stop in stops]
 
-            # net and service code:
-
-            net, service_code, line_ver = self.get_net_service_code_and_line_ver(file_name)
-            if service_code is None:
-                service_code = service_element.find('txc:ServiceCode', self.ns).text
 
             # service:
 
@@ -250,8 +254,9 @@ class Command(BaseCommand):
                 )
             )[0]
 
+            service.stops.clear()
+            StopUsage.objects.bulk_create(stop_usages)
             service.operator.add(*operators)
-            service.stops.add(*stops)
 
     @transaction.atomic
     def handle_region(self, archive_name):
