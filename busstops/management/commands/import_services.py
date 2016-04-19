@@ -229,8 +229,8 @@ class Command(BaseCommand):
             try:
                 timetable = Timetable(root)
                 show_timetable = (len(timetable.groupings[0].journeys) < 60 and len(timetable.groupings[1].journeys) < 60)
-                stop_usages = [StopUsage(service_id=service_code, stop=stops.get(row.part.stop.atco_code), direction='outbound', order=i) for i, row in enumerate(timetable.groupings[0].rows)]
-                stop_usages += [StopUsage(service_id=service_code, stop=stops.get(row.part.stop.atco_code), direction='inbound', order=i) for i, row in enumerate(timetable.groupings[1].rows)]
+                stop_usages = [StopUsage(service_id=service_code, stop_id=row.part.stop.atco_code, direction='outbound', order=i) for i, row in enumerate(timetable.groupings[0].rows) if stops.get(row.part.stop.atco_code)]
+                stop_usages += [StopUsage(service_id=service_code, stop_id=row.part.stop.atco_code, direction='inbound', order=i) for i, row in enumerate(timetable.groupings[1].rows) if stops.get(row.part.stop.atco_code)]
             except (AttributeError, IndexError) as e:
                 print e, file_name
                 show_timetable = False
