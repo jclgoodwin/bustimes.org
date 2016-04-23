@@ -211,7 +211,7 @@ class StopPointDetailView(DetailView):
     "A stop, other stops in the same area, and the services servicing it"
 
     model = StopPoint
-    queryset = model._default_manager.select_related('admin_area', 'admin_area__region', 'locality', 'locality__parent')
+    queryset = model._default_manager.select_related('admin_area', 'admin_area__region', 'locality', 'locality__parent', 'locality__district')
 
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
@@ -222,10 +222,10 @@ class StopPointDetailView(DetailView):
             raise Http404()
 
         if self.object.stop_area_id is not None:
-            context['nearby'] = StopPoint.objects.filter(
-                stop_area=self.object.stop_area_id,
-                active=True
-            ).defer('latlong').exclude(atco_code=self.object.atco_code).order_by('atco_code')
+            context['nearby'] = StopPoint.objects.filter(stop_area=self.object.stop_area_id)
+        else:
+            context['nearby'] = StopPoint.objects.filter(common_name=self.object.common_name, locality=self.object.locality)
+        context['nearby'] = context['nearby'].filter(active=True).exclude(pk=self.object.pk).defer('latlong').order_by('atco_code')
 
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region,
