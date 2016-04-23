@@ -9,22 +9,24 @@
     */
 
     var map = L.map('hugemap', {
-            minZoom: 5,
-            maxZoom: 13,
+            minZoom: 6,
             maxBounds: [[60.85, -9.23], [49.84, 2.69]]
         }),
         attribution = 'Map data &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors | Map tiles &copy; <a href="https://cartodb.com/attributions#basemaps">CartoDB</a>',
         tileURL = (document.location.protocol === 'https:' ? 'https://cartodb-basemaps-{s}.global.ssl.fastly.net' : 'http://{s}.basemaps.cartocdn.com') + '/light_all/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
         pin = L.icon({
-            iconUrl: '/static/pin.svg',
-            iconSize: [16, 22],
+            iconUrl:    '/static/pin.svg',
+            iconSize:   [16, 22],
             iconAnchor: [8, 22],
             popupAnchor: [0, -22],
         }),
         statusBar = L.control({
             position: 'topright'
         }),
-        markers = new L.MarkerClusterGroup();
+        markers = new L.MarkerClusterGroup({
+            disableClusteringAtZoom: 15,
+            maxClusterRadius: 50
+        });
 
     statusBar.onAdd = function () {
         var div = L.DomUtil.create('div', 'hugemap-status');
@@ -39,44 +41,74 @@
     }).addTo(map);
 
     function processStopsData(data) {
+        var sidebar = document.getElementById('sidebar');
+        sidebar.innerHTML = '<h2>Stops</h2>';
+        var ul = document.createElement('ul');
         var layer = L.geoJson(data, {
             pointToLayer: function (data, latlng) {
-                return L.marker(latlng, {
+                var li = document.createElement('li');
+                var a = document.createElement('a');
+                var marker = L.marker(latlng, {
                     icon: pin
-                }).bindPopup('<a href="' + data.properties.url + '">' + data.properties.name + '</a>');
+                });
+
+                a.innerHTML = data.properties.name;
+                a.href = data.properties.url;
+
+                marker.bindPopup(a.outerHTML);
+
+                a.onmouseover = function() {
+                    window.movedByAccident = true;
+                    marker.openPopup();
+                };
+
+                li.appendChild(a);
+                ul.appendChild(li);
+
+                return marker;
             }
         });
+        sidebar.appendChild(ul);
         markers.clearLayers();
         layer.addTo(markers);
         statusBar.getContainer().innerHTML = '';
+
     }
 
     function loadStops(map, statusBar) {
-        var bounds = map.getBounds(),
-            highWater = map.highWater;
-        if (!highWater || !highWater.contains(bounds)) {
-            statusBar.getContainer().innerHTML = 'Loading\u2026';
-            reqwest(
-                '/stops.json?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest(),
-                processStopsData
-            );
-            map.highWater = bounds;
-        }
+        var bounds = map.getBounds();
+        statusBar.getContainer().innerHTML = 'Loading\u2026';
+        reqwest(
+            '/stops.json?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest(),
+            processStopsData
+        );
+        map.highWater = bounds;
     }
 
     map.on('moveend', function (e) {
-        window.location.hash = e.target.getZoom() + ',' + e.target.getCenter().lat + ',' + e.target.getCenter().lng;
-        if (e.target.getZoom() > 11) {
+        if (window.movedByAccident) {
+            window.movedByAccident = false;
+            return;
+        }
+
+        var latLng = e.target.getCenter();
+
+        localStorage.setItem('location', Math.round(latLng.lat * 1000) / 1000 + ',' + Math.round(latLng.lng * 1000) / 1000);
+
+        if (e.target.getZoom() > 13) {
             loadStops(this, statusBar);
         } else {
             statusBar.getContainer().innerHTML = 'Please zoom in to see stops';
         }
     });
 
-    var parts = window.location.hash.substr(1).split(',');
+    map.on('locationfound', function (event) {
+        localStorage.setItem('location', event.latitude.toString() + ',' + event.longitude);
+    });
 
-    if (parts.length === 3) {
-        map.setView([parts[1], parts[2]], parts[0]);
+    if (localStorage && localStorage.getItem('location')) {
+        var parts = localStorage.getItem('location').split(',');
+        map.setView([parts[0], parts[1]], 14);
     } else {
         statusBar.getContainer().innerHTML = 'Finding your location\u2026';
         map.locate({setView: true});

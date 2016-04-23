@@ -9,6 +9,7 @@ from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequ
 from django.views.decorators.cache import patch_cache_control
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
+from django.contrib.gis.db.models.functions import Centroid, Distance
 from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
 from timetables import timetable, live
 
@@ -54,8 +55,11 @@ def stops(request):
         return HttpResponseBadRequest()
 
     results = StopPoint.objects.filter(
-        latlong__within=bounding_box, active=True
-    )
+        latlong__within=bounding_box,
+        active=True
+    ).select_related('locality').annotate(
+        distance=Distance('latlong', bounding_box.centroid)
+    ).order_by('distance').defer('locality__latlong')
 
     return JsonResponse({
         'type': 'FeatureCollection',
@@ -66,8 +70,8 @@ def stops(request):
                 'coordinates': tuple(stop.latlong)
             },
             'properties': {
-                'name': str(stop),
-                'url': stop.get_absolute_url()
+                'name': stop.get_qualified_name(),
+                'url': stop.get_absolute_url(),
             }
         } for stop in results]
     })

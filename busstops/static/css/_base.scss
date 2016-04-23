@@ -316,10 +316,19 @@ main li {
     }
 }
 
+#sidebar {
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    bottom: 0;
+    left: 0;
+    padding: 0 1em;
+    width: 100%;
+    overflow: auto;
+}
+
 #hugemap {
-    height: 40em;
-    height: 80vh;
-    margin: 1em 0;
+    height: 50%;
 
     .leaflet-control.hugemap-status {
         background: #fff;
@@ -329,13 +338,14 @@ main li {
     }
 
     .marker-cluster {
-        background-clip: padding-box;
-        background-color: $brand-color;
+        // background-clip: padding-box;
+        background: $brand-color;
         border-radius: 20px;
+        box-shadow: 0 1px 5px rgba(0,0,0,0.65);
     }
 
     .marker-cluster div {
-        background-color: $brand-color-darker;
+        background: #fff;
         width: 30px;
         height: 30px;
         margin-left: 5px;
@@ -431,7 +441,7 @@ input:not(:checked) + label + .timetable tr.OTH {
 
     .credit {
         font-size: .75em;
-        margin-bottom: 0;
+        margin: .3em 0 0;
         text-align: right;
     }
 }
