@@ -12,6 +12,6 @@
     }
 
     if (departures) {
-        reqwest(window.location.href + '/departures', getDeparturesCallback);
+        reqwest(window.location.pathname + '/departures', getDeparturesCallback);
     }
 })();
