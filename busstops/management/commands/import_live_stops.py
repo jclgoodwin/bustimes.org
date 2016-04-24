@@ -16,6 +16,9 @@ from busstops.models import StopPoint, LiveSource
 kent = LiveSource.objects.get_or_create(name='Kent')[0]
 yorkshire = LiveSource.objects.get_or_create(name='Y')[0]
 travelwest = LiveSource.objects.get_or_create(name='west')[0]
+ayrshire = LiveSource.objects.get_or_create(name='ayr')[0]
+buckinghamshire = LiveSource.objects.get_or_create(name='buck')[0]
+cambridgeshire = LiveSource.objects.get_or_create(name='camb')[0]
 
 
 
@@ -55,6 +58,18 @@ class Command(BaseCommand):
         sleep(1)
 
     def handle(self, *args, **options):
+
+        print 'cambridgeshire'
+        for stop in StopPoint.objects.filter(admin_area__id=71, live_sources=None).exclude(service=None):
+            self.maybe_add_acisconnect_source(stop, cambridgeshire, 'cambridgeshire')
+
+        print 'buckinghamshire'
+        for stop in StopPoint.objects.filter(admin_area__id=70, live_sources=None).exclude(service=None):
+            self.maybe_add_acisconnect_source(stop, buckinghamshire, 'buckinghamshire')
+
+        print 'ayrshire'
+        for stop in StopPoint.objects.filter(admin_area__id__in=(138, 132, 120), live_sources=None).exclude(service=None):
+            self.maybe_add_acisconnect_source(stop, ayrshire, 'ayrshire')
 
         print 'west'
         for stop in StopPoint.objects.filter(admin_area__id__in=(1, 9), live_sources=None).exclude(service=None):

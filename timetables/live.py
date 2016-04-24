@@ -84,51 +84,53 @@ def get_transportapi_departures(stop, services):
 
 def get_departures(stop, services):
     today = date.today()
-    now = datetime.now()
-    source = None
     live_sources = stop.live_sources.values_list('name', flat=True)
-    if 'Y' in live_sources: # Yorkshire
-        departures = get_acislive_departures('tsy', stop, services)
-        source = {
-            'url': 'http://wymetro.acislive.com/pip/stop_simulator.asp?NaPTAN=%s' % stop.naptan_code,
-            'name': 'ACIS Live'
-        }
-        max_age = 60
-    elif 'Kent' in live_sources:
-        departures = get_acislive_departures('kent', stop, services)
-        source = {
-            'url': 'http://kent.acislive.com/pip/stop_simulator.asp?NaPTAN=%s' % stop.naptan_code,
-            'name': 'ACIS Live'
-        }
-        max_age = 60
-    elif 'west' in live_sources:
-        departures = get_acisconnect_departures('travelwest', stop, services)
-        source = {
-            'url': 'http://travelwest.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % stop.pk,
-            'name': 'vixConnect'
-        }
-        max_age = 60
-    elif 'TfL' in live_sources:
-        departures = get_tfl_departures(stop, services)
-        source = {
-            'url': 'https://tfl.gov.uk/bus/stop/%s/%s' % (stop.atco_code, slugify(stop.common_name)),
-            'name': 'Transport for London'
-        }
-        max_age = 60
-    else:
-        departures = get_transportapi_departures(stop, services)
-        if len(departures) > 0:
-            expiry = departures[0]['time']
-            if expiry.year == 1900:
-                expiry = expiry.combine(today, expiry.time())
-            if now < expiry:
-                max_age = (expiry - now).seconds + 60
-            else:
-                max_age = 60
+
+    if 'TfL' in live_sources:
+        return ({
+            'departures': get_tfl_departures(stop, services),
+            'today': today,
+            'source': {
+                'url': 'https://tfl.gov.uk/bus/stop/%s/%s' % (stop.atco_code, slugify(stop.common_name)),
+                'name': 'Transport for London'
+            }
+        }, 60)
+
+    for live_source_name, prefix in (('Y', 'wymetro'), ('Kent', 'kent')):
+        if live_source_name in live_sources:
+            return ({
+                'departures': get_acislive_departures(prefix, stop, services),
+                'today': today,
+                'source': {
+                    'url': 'http://%s.acislive.com/pip/stop_simulator.asp?NaPTAN=%s' % (prefix, stop.naptan_code),
+                    'name': 'ACIS Live'
+                }
+            }, 60)
+
+    for live_source_name, prefix in (('ayr', 'ayrshire'), ('west', 'travelwest'), ('buck', 'buckinghamshire'), ('camb', 'cambridgeshire')):
+        if live_source_name in live_sources:
+            return ({
+                'departures': get_acisconnect_departures(prefix, stop, services),
+                'source': {
+                    'url': 'http://%s.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % (prefix, stop.pk),
+                    'name': 'vixConnect'
+                }
+            }, 60)
+
+    departures = get_transportapi_departures(stop, services)
+    if len(departures) > 0:
+        now = datetime.now()
+        expiry = departures[0]['time']
+        if expiry.year == 1900:
+            expiry = expiry.combine(today, expiry.time())
+        if now < expiry:
+            max_age = (expiry - now).seconds + 60
         else:
-            max_age = 3600
+            max_age = 60
+    else:
+        max_age = 3600
     return ({
         'departures': departures,
         'today': today,
-        'source': source,
+        'source': None,
     }, max_age)
