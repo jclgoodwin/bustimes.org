@@ -20,7 +20,7 @@ def get_tfl_departures(stop, services):
     } for item in req.json()) if req.status_code == 200 else ()
 
 
-def get_acis_departures(prefix, stop, services):
+def get_acislive_departures(prefix, stop, services):
     req = requests.get('http://%s.acislive.com/pip/stop_simulator_table.asp' % prefix, {
         'naptan': stop.naptan_code
     })
@@ -33,6 +33,21 @@ def get_acis_departures(prefix, stop, services):
         'time': row[2],
         'service': services.get(row[0]) or row[0],
         'destination': row[1]
+    } for row in rows)
+
+
+def get_acisconnect_departures(prefix, stop, services):
+    req = requests.get('http://%s.acisconnect.com/Text/WebDisplay.aspx' % prefix, {
+        'stopRef': stop.pk
+    })
+    if req.status_code != 200:
+        return ()
+    soup = BeautifulSoup(req.text, 'html.parser')
+    rows = (row.findAll('td') for row in soup.find(id='GridViewRTI').findAll('tr')[1:])
+    return ({
+        'time': row[4].text.replace('1 Mins', '1 min').replace('Mins', 'mins'),
+        'service': services.get(row[0].text) or row[0].text,
+        'destination': row[2].text
     } for row in rows)
 
 
@@ -73,17 +88,24 @@ def get_departures(stop, services):
     source = None
     live_sources = stop.live_sources.values_list('name', flat=True)
     if 'Y' in live_sources: # Yorkshire
-        departures = get_acis_departures('tsy', stop, services)
+        departures = get_acislive_departures('tsy', stop, services)
         source = {
             'url': 'http://wymetro.acislive.com/pip/stop_simulator.asp?NaPTAN=%s' % stop.naptan_code,
             'name': 'ACIS Live'
         }
         max_age = 60
     elif 'Kent' in live_sources:
-        departures = get_acis_departures('kent', stop, services)
+        departures = get_acislive_departures('kent', stop, services)
         source = {
             'url': 'http://kent.acislive.com/pip/stop_simulator.asp?NaPTAN=%s' % stop.naptan_code,
             'name': 'ACIS Live'
+        }
+        max_age = 60
+    elif 'west' in live_sources:
+        departures = get_acisconnect_departures('travelwest', stop, services)
+        source = {
+            'url': 'http://travelwest.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % stop.pk,
+            'name': 'vixConnect'
         }
         max_age = 60
     elif 'TfL' in live_sources:
