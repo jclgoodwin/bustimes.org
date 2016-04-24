@@ -9,7 +9,7 @@ from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequ
 from django.views.decorators.cache import patch_cache_control
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
-from django.contrib.gis.db.models.functions import Centroid, Distance
+from django.contrib.gis.db.models.functions import Distance
 from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
 from timetables import timetable, live
 
