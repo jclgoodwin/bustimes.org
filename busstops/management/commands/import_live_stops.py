@@ -87,7 +87,7 @@ class Command(BaseCommand):
             self.maybe_add_acisconnect_source(stop, cardiff, 'cardiff')
 
         print 'swindon'
-        for stop in StopPoint.objects.filter(admin_area__id=57), live_sources=None).exclude(service=None):
+        for stop in StopPoint.objects.filter(admin_area__id=57, live_sources=None).exclude(service=None):
             self.maybe_add_acisconnect_source(stop, swindon, 'swindon')
 
         return
