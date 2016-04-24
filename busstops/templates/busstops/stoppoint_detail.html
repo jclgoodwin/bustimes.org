@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<div itemscope itemtype="https://schema.org/BusStop">
+
 <h1 itemprop="name">{{ stoppoint.get_qualified_name }}</h1>
 
 {% if not stoppoint.active %}
@@ -54,6 +56,8 @@
     </ul>
 </div>
 {% endif %}
+
+</div>
 
 </div>
 
