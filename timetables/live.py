@@ -107,7 +107,11 @@ def get_departures(stop, services):
                 }
             }, 60)
 
-    for live_source_name, prefix in (('ayr', 'ayrshire'), ('west', 'travelwest'), ('buck', 'buckinghamshire'), ('camb', 'cambridgeshire')):
+    for live_source_name, prefix in (
+            ('ayr', 'ayrshire'), ('west', 'travelwest'), ('buck', 'buckinghamshire'),
+            ('camb', 'cambridgeshire'), ('aber', 'aberdeen'), ('card', 'cardiff'),
+            ('swin', 'swindon')
+    ):
         if live_source_name in live_sources:
             return ({
                 'departures': get_acisconnect_departures(prefix, stop, services),

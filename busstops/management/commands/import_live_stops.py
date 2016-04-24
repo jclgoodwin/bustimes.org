@@ -19,6 +19,9 @@ travelwest = LiveSource.objects.get_or_create(name='west')[0]
 ayrshire = LiveSource.objects.get_or_create(name='ayr')[0]
 buckinghamshire = LiveSource.objects.get_or_create(name='buck')[0]
 cambridgeshire = LiveSource.objects.get_or_create(name='camb')[0]
+aberdeen = LiveSource.objects.get_or_create(name='aber')[0]
+cardiff = LiveSource.objects.get_or_create(name='card')[0]
+swindon = LiveSource.objects.get_or_create(name='swin')[0]
 
 
 
@@ -74,6 +77,18 @@ class Command(BaseCommand):
         print 'west'
         for stop in StopPoint.objects.filter(admin_area__id__in=(1, 9), live_sources=None).exclude(service=None):
             self.maybe_add_acisconnect_source(stop, travelwest, 'travelwest')
+
+        print 'aberdeen'
+        for stop in StopPoint.objects.filter(admin_area__id=111, live_sources=None).exclude(service=None):
+            self.maybe_add_acisconnect_source(stop, aberdeen, 'aberdeen')
+
+        print 'cardiff'
+        for stop in StopPoint.objects.filter(admin_area__id=11, live_sources=None).exclude(service=None):
+            self.maybe_add_acisconnect_source(stop, cardiff, 'cardiff')
+
+        print 'swindon'
+        for stop in StopPoint.objects.filter(admin_area__id=57), live_sources=None).exclude(service=None):
+            self.maybe_add_acisconnect_source(stop, swindon, 'swindon')
 
         return
 
