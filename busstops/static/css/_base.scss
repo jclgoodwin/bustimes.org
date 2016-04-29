@@ -49,6 +49,7 @@ header {
 
     a:after {
         content: url("/static/svg/bus.svg");
+        display: inline-block;
         margin-left: .66667em;
     }
 
