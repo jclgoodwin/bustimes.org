@@ -43,7 +43,10 @@ def get_acisconnect_departures(prefix, stop, services):
     if req.status_code != 200:
         return ()
     soup = BeautifulSoup(req.text, 'html.parser')
-    rows = (row.findAll('td') for row in soup.find(id='GridViewRTI').findAll('tr')[1:])
+    table = soup.find(id='GridViewRTI')
+    if table is None:
+        return ()
+    rows = (row.findAll('td') for row in table.findAll('tr')[1:])
     return ({
         'time': row[4].text.replace('1 Mins', '1 min').replace('Mins', 'mins'),
         'service': services.get(row[0].text) or row[0].text,
