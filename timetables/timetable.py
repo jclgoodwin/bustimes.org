@@ -429,7 +429,7 @@ def timetable_from_filename(filename, stops):
     try:
         with open(filename) as file:
             xml = ET.parse(file).getroot()
-            return Timetable(xml, stops)
+        return Timetable(xml, stops)
     except (IOError):
         return None
 

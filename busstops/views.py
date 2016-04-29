@@ -331,17 +331,18 @@ class ServiceDetailView(DetailView):
 
 def service_xml(request, pk):
     service = get_object_or_404(Service, pk=pk)
+
     if service.region_id == 'GB':
-        archive_name = 'NCSD'
-        parts = pk.split('_')
-        pk = '%s_%s' % (parts[-1], parts[-2])
+        # service.service_code = '_'.join(service.service_code.split('_')[::-1])
+        path = os.path.join(DIR, '../data/TNDS/NCSD/NCSD_TXC/')
     else:
-        archive_name = service.region_id
-    archive_path = os.path.join(DIR, '../data/TNDS/', archive_name + '.zip')
-    archive = zipfile.ZipFile(archive_path)
-    file_names = [name for name in archive.namelist() if pk in name]
+        path = os.path.join(DIR, '../data/TNDS/%s/' % service.region_id)
+
+    filenames = timetable.get_filenames(service, path)
 
     bodies = ''
-    for body in (archive.open(file_name).read() for file_name in file_names):
-        bodies += body
+    for filename in filenames:
+        with open(os.path.join(path, filename)) as file:
+            bodies += file.read()
+
     return HttpResponse(bodies, content_type='text/plain')
