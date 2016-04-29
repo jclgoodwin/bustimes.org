@@ -272,10 +272,8 @@ class Command(BaseCommand):
         if 'IncludedServices.csv' in archive.namelist():
             with archive.open('IncludedServices.csv') as csv_file:
                 reader = csv.DictReader(csv_file)
-            service_descriptions = {}
-            for row in reader:
                 # e.g. {'NATX323': 'Cardiff - Liverpool'}
-                service_descriptions[row['Operator'] + row['LineName']] = row['Description']
+                service_descriptions = {row['Operator'] + row['LineName']: row['Description'] for row in reader}
         else:
             service_descriptions = None
 
