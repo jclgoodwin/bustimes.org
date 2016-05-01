@@ -3,5 +3,5 @@
 {% endfor %}
 {{ object }}
 {% for stop in object.stops.all %}
-    {{ stop }}
+    {{ stop.get_qualified_name }}
 {% endfor %}
