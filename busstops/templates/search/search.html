@@ -1,0 +1,25 @@
+{% extends 'page.html' %}
+
+{% block content %}
+
+<h1>Search</h1>
+
+<form method="get" action="/search" class="search">
+
+<p>{{ form.q }} <input type="submit" value="Search" /></p>
+
+{% if query %}
+    {% if page.object_list %}
+        <ul>
+        {% for result in page.object_list %}
+            <li><a href="{{ result.object.get_absolute_url }}">{% firstof result.object.get_qualified_name result.object %}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No results found for ‘{{ query }}’</p>
+    {% endif %}
+{% endif %}
+
+</form>
+
+{% endblock %}

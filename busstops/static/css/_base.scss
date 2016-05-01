@@ -86,12 +86,15 @@ table a[href^=http]:after {
     vertical-align: top;
 }
 
-.button {
+.button,
+input[type=submit] {
     background: $brand-color;
+    border: 0;
     border-bottom: .0625em solid $brand-color-darker;
     border-radius: .5em;
     color: inherit;
     display: inline-block;
+    font: inherit;
     margin-top: .0625em;
     margin-bottom: .5em;
     padding: .5em;
@@ -169,7 +172,8 @@ main li {
     margin-bottom: .6em;
 }
 
-#search {
+#search,
+input[type=search] {
     border: 1px solid $brand-color;
     border-radius: 0;
     box-sizing: border-box;
@@ -209,6 +213,13 @@ main li {
         padding: .3em .4em .2em;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+}
+
+.search {
+    input[type=submit] {
+        margin-bottom: -.125em;
+        outline: 0;
     }
 }
 

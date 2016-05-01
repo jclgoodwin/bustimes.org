@@ -1,0 +1,7 @@
+{% for operator in object.operator.all %}
+    {{ operator }}
+{% endfor %}
+{{ object }}
+{% for stop in object.stops.all %}
+    {{ stop }}
+{% endfor %}
