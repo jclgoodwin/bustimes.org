@@ -6,7 +6,13 @@
 
 <a class="button button-locate" href="/map">Find bus stops nearby</a>
 
-<label id="search-wrapper"> or search places: <input id="search" type="text" /></label>
+<form method="get" action="/search" class="search">
+    <label>
+        or search:
+        <input name="q" type="search" required />
+        <input type="submit" value="Search" />
+    </label>
+</form>
 
 <div id="regions">
 

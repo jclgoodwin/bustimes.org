@@ -1,5 +1,7 @@
 {% extends 'page.html' %}
 
+{% block title %}{% firstof query 'Search' %} – Bus Times{% endblock %}
+
 {% block content %}
 
 <h1>Search</h1>
@@ -9,14 +11,13 @@
 <p>{{ form.q }} <input type="submit" value="Search" /></p>
 
 {% if query %}
+    <h2>{{ paginator.count }} results found for ‘{{ query }}’</h2>
     {% if page.object_list %}
         <ul>
         {% for result in page.object_list %}
             <li><a href="{{ result.object.get_absolute_url }}">{% firstof result.object.get_qualified_name result.object %}</a></li>
         {% endfor %}
         </ul>
-    {% else %}
-        <p>No results found for ‘{{ query }}’</p>
     {% endif %}
 {% endif %}
 

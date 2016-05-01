@@ -1,8 +1,5 @@
 "View definitions."
-import zipfile
 import os
-import re
-import operator
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
@@ -75,26 +72,6 @@ def stops(request):
             }
         } for stop in results]
     })
-
-
-def search(request):
-    """
-    A list of up to 10 localities
-    whose names all contain the `request.GET['q']` string
-    """
-    term = request.GET.get('q')
-    if term:
-        parts = re.split('[^\w]', term)
-        query = reduce(operator.and_, (Locality.objects.filter(name__icontains=part) for part in parts))
-
-        response = [{
-            'name': locality.get_qualified_name(),
-            'url':  locality.get_absolute_url()
-        } for locality in query[:12]]
-    else:
-        response = []
-
-    return JsonResponse(response, safe=False)
 
 
 class RegionDetailView(DetailView):

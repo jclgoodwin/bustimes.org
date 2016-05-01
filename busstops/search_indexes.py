@@ -14,7 +14,7 @@ class LocalityIndex(indexes.SearchIndex, indexes.Indexable):
 
 
     def read_queryset(self, using=None):
-        return self.get_model().objects.all()
+        return self.get_model().objects.all().defer('latlong')
 
 
 class OperatorIndex(indexes.SearchIndex, indexes.Indexable):

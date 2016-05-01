@@ -36,6 +36,10 @@ a:active {
     background-color: $brand-color;
 }
 
+label {
+    cursor: pointer;
+}
+
 header {
     background: $brand-color;
 
@@ -166,13 +170,6 @@ main li {
     }
 }
 
-#search-wrapper {
-    display: inline-block;
-    position: relative;
-    margin-bottom: .6em;
-}
-
-#search,
 input[type=search] {
     border: 1px solid $brand-color;
     border-radius: 0;
@@ -188,39 +185,17 @@ input[type=search] {
     }
 }
 
-#search-results {
-    background: white;
-    background: rgba(255, 255, 255, 0.8);
-    display: inline-block;
-    right: 0;
-    margin: 0;
-    margin-top: 2px;
-    position: absolute;
-    top: 2em;
-    width: 11.5em;
-    z-index: 1;
-
-    li {
-        margin: 0;
-    }
-
-    a {
-        border: 1px solid $brand-color-darker;
-        border-top: 0;
-        display: block;
-        margin: 0;
-        overflow: hidden;
-        padding: .3em .4em .2em;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-}
-
 .search {
     input[type=submit] {
         margin-bottom: -.125em;
         outline: 0;
     }
+}
+
+.button-locate + .search {
+    display: inline-block;
+    position: relative;
+    margin-bottom: .6em;
 }
 
 .services {
