@@ -104,6 +104,7 @@ input[type=submit] {
     padding: .5em;
     padding-bottom: .4em;
     vertical-align: bottom;
+    -webkit-appearance: none;
 
     &:hover {
         border-bottom-width: .125em;
@@ -121,6 +122,40 @@ input[type=submit] {
             content: "\2026";
         }
     }
+}
+
+input[type=search] {
+    border: 1px solid $brand-color;
+    border-radius: 0;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    font: inherit;
+    outline: 0;
+    padding: .25em;
+    padding-right: 0;
+    width: 11.5em;
+    -webkit-appearance: none;
+
+    &::-webkit-search-decoration {
+        -webkit-appearance: none;
+    }
+
+    &:focus {
+        border-color: $brand-color-darker;
+    }
+}
+
+.search {
+    input[type=submit] {
+        margin-bottom: -.125em;
+        outline: 0;
+    }
+}
+
+.button-locate + .search {
+    display: inline-block;
+    position: relative;
+    margin-bottom: .6em;
 }
 
 ul, ol, li {
@@ -168,34 +203,6 @@ main li {
         padding: .75em .5em;
         color: $brand-color-darker;
     }
-}
-
-input[type=search] {
-    border: 1px solid $brand-color;
-    border-radius: 0;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    font: inherit;
-    outline: 0;
-    padding: .25em;
-    width: 11.5em;
-
-    &:focus {
-        border-color: $brand-color-darker;
-    }
-}
-
-.search {
-    input[type=submit] {
-        margin-bottom: -.125em;
-        outline: 0;
-    }
-}
-
-.button-locate + .search {
-    display: inline-block;
-    position: relative;
-    margin-bottom: .6em;
 }
 
 .services {
