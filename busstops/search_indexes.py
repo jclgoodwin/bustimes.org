@@ -1,5 +1,6 @@
 from haystack import indexes
 from busstops.models import Locality, Operator, Service
+from django.db.models import Q
 
 
 class LocalityIndex(indexes.SearchIndex, indexes.Indexable):
@@ -9,7 +10,8 @@ class LocalityIndex(indexes.SearchIndex, indexes.Indexable):
         return Locality
 
     def index_queryset(self, using=None):
-        return self.get_model().objects.exclude(locality__isnull=True, stoppoint__isnull=True).distinct()
+        return self.get_model().objects.filter(Q(stoppoint__active=True) | Q(locality__stoppoint__active=True)).defer('latlong').distinct()
+
 
     def read_queryset(self, using=None):
         return self.get_model().objects.all()
