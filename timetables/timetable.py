@@ -239,7 +239,7 @@ class OperatingProfile(object):
             if operation_days_element is not None:
                 self.operation_days = [DateRange(element) for element in operation_days_element.findall('txc:DateRange', NS)]
 
-    def __unicode__(self):
+    def __str__(self):
         if len(self.regular_days) == 1:
             if 'To' in self.regular_days[0]:
                 string = self.regular_days[0].replace('To', ' to ')
