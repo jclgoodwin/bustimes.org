@@ -3,8 +3,10 @@ services:
   - postgresql
 install:
   - pip install -r requirements.txt
+  - pip install coveralls
 env:
   - DJANGO_SETTINGS_MODULE=buses.travis_settings
 before_script:
   - psql -U postgres -c "create extension postgis"
-script: ./manage.py test
+script:
+  - coverage run --source=buses,busstops,timetables manage.py test
