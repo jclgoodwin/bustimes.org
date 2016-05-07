@@ -164,6 +164,13 @@ class VehicleJourney(object):
             # instead it as a reference to a similar journey with does
             self.journeyref = element.find('txc:VehicleJourneyRef', NS).text
 
+        start_deadrun_element = element.find('txc:StartDeadRun', NS)
+        if start_deadrun_element is not None:
+            self.start_deadrun = start_deadrun_element.find('txc:ShortWorking', NS).find('txc:JourneyPatternTimingLinkRef', NS).text
+        end_deadrun_element = element.find('txc:EndDeadRun', NS)
+        if end_deadrun_element is not None:
+            self.end_deadrun = end_deadrun_element.find('txc:ShortWorking', NS).find('txc:JourneyPatternTimingLinkRef', NS).text
+
         note_elements = element.findall('txc:Note', NS)
         if note_elements is not None:
             self.notes = [note_element.find('txc:NoteText', NS).text for note_element in note_elements]
@@ -182,15 +189,23 @@ class VehicleJourney(object):
         else:
             stopusage.row.times.append(time)
 
+        deadrun = hasattr(self, 'start_deadrun')
         for section in self.journeypattern.sections:
             for timinglink in section.timinglinks:
                 stopusage = timinglink.destination
                 time = (datetime.combine(date.today(), time) + timinglink.runtime).time()
-                if stopusage.sequencenumber is not None:
-                    row = self.journeypattern.grouping.rows.get(stopusage.sequencenumber)
-                    row.times.append(time)
-                else:
-                    stopusage.row.times.append(time)
+
+                if deadrun and hasattr(self, 'start_deadrun') and self.start_deadrun == timinglink.id:
+                    deadrun = False
+                if not deadrun:
+                    if stopusage.sequencenumber is not None:
+                        row = self.journeypattern.grouping.rows.get(stopusage.sequencenumber)
+                        row.times.append(time)
+                    else:
+                        stopusage.row.times.append(time)
+
+                if hasattr(self, 'end_deadrun') and self.end_deadrun == timinglink.id:
+                    deadrun = True
                 if hasattr(stopusage, 'waittime'):
                     time = (datetime.combine(date.today(), time) + stopusage.waittime).time()
 
