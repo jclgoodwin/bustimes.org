@@ -6,3 +6,4 @@ data/*.csv
 settings.py
 .sass-cache
 **/bower_components
+.coverage

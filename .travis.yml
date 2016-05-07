@@ -7,6 +7,8 @@ install:
 env:
   - DJANGO_SETTINGS_MODULE=buses.travis_settings
 before_script:
-  - psql -U postgres -c "create extension postgis"
+  psql -U postgres -c "create extension postgis"
 script:
-  - coverage run --source=buses,busstops,timetables manage.py test
+  coverage run --source=buses,busstops,timetables manage.py test
+after_success:
+  coveralls
