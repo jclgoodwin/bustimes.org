@@ -21,3 +21,6 @@ urlpatterns = [
     url(r'^search', include('haystack.urls')),
     url(r'^', include('busstops.urls')),
 ]
+
+
+handler404 = 'busstops.views.not_found'

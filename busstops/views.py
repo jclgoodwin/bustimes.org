@@ -22,6 +22,26 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+def not_found(request):
+    if request.resolver_match and request.resolver_match.url_name == 'service-detail':
+        pk = request.resolver_match.kwargs.get('pk')
+        service = Service.objects.filter(pk=pk).first()
+        localities = Locality.objects.filter(stoppoint__service=service).distinct()
+        context = {
+            'service': service,
+            'localities': localities,
+        }
+    else:
+        context = None
+    response = render(request, '404.html', context)
+    response.status_code = 404
+    return response
+
+
+def offline(request):
+    return render(request, 'offline.html')
+
+
 def cookies(request):
     "Cookie policy"
     return render(request, 'cookies.html')
