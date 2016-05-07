@@ -151,7 +151,7 @@ class JourneyPatternTimingLink(object):
 
 
 class VehicleJourney(object):
-    def __init__(self, element, journeypatterns):
+    def __init__(self, element, journeypatterns, servicedorganisations):
         self.departure_time = datetime.strptime(
             element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
         ).time()
@@ -170,7 +170,7 @@ class VehicleJourney(object):
 
         operatingprofile_element = element.find('txc:OperatingProfile', NS)
         if operatingprofile_element is not None:
-            self.operating_profile = OperatingProfile(operatingprofile_element)
+            self.operating_profile = OperatingProfile(operatingprofile_element, servicedorganisations)
 
     def add_times(self):
         row_length = len(self.journeypattern.grouping.rows.values()[0].times)
@@ -218,26 +218,64 @@ class VehicleJourney(object):
             return False
         return True
 
+
+# class ServicedOrganisation(object):
+
+
 class OperatingProfile(object):
-    def __init__(self, element):
+    def __init__(self, element, servicedorganisations):
         element = element
 
         regular_days_element = element.find('txc:RegularDayType', NS)
         week_days_element = regular_days_element.find('txc:DaysOfWeek', NS)
+
         if week_days_element is None:
             self.regular_days = [e.tag[33:] for e in regular_days_element]
         else:
             self.regular_days = [e.tag[33:] for e in week_days_element]
 
+
         special_days_element = element.find('txc:SpecialDaysOperation', NS)
+
         if special_days_element is not None:
             nonoperation_days_element = special_days_element.find('txc:DaysOfNonOperation', NS)
+
             if nonoperation_days_element is not None:
-                self.nonoperation_days = [DateRange(element) for element in nonoperation_days_element.findall('txc:DateRange', NS)]
+                self.nonoperation_days = map(DateRange, nonoperation_days_element.findall('txc:DateRange', NS))
 
             operation_days_element = special_days_element.find('txc:DaysOfOperation', NS)
+
             if operation_days_element is not None:
-                self.operation_days = [DateRange(element) for element in operation_days_element.findall('txc:DateRange', NS)]
+                self.operation_days = map(DateRange, operation_days_element.findall('txc:DateRange', NS))
+
+
+        servicedorg_days_element = element.find('txc:ServicedOrganisationDayType', NS)
+        if servicedorg_days_element is not None:
+
+            # days of non operation
+            servicedorg_noop_element = servicedorg_days_element.find('txc:DaysOfNonOperation', NS)
+            if servicedorg_noop_element is not None:
+                noop_hols_element = servicedorg_noop_element.find('txc:Holidays', NS)
+                noop_workingdays_element = servicedorg_noop_element.find('txc:WorkingDays', NS)
+
+                if noop_hols_element is not None:
+                    self.servicedorganisation_nonoperation_holidays = noop_hols_element.find('txc:ServicedOrganisationRef', NS).text
+
+                if noop_workingdays_element is not None:
+                    self.servicedorganisation_nonoperation_workingdays = noop_workingdays_element.find('txc:ServicedOrganisationRef', NS).text
+
+            # days of operation
+            servicedorg_op_element = servicedorg_days_element.find('txc:DaysOfOperation', NS)
+            if servicedorg_op_element is not None:
+                op_hols_element = servicedorg_op_element.find('txc:Holidays', NS)
+                op_workingdays_element = servicedorg_op_element.find('txc:WorkingDays', NS)
+
+                if op_hols_element is not None:
+                    self.servicedorganisation_operation_holidays = op_hols_element.find('txc:ServicedOrganisationRef', NS).text
+
+                if op_workingdays_element is not None:
+                    self.servicedorganisation_operation_workingdays = op_workingdays_element.find('txc:ServicedOrganisationRef', NS).text
+
 
     def __str__(self):
         if len(self.regular_days) == 1:
@@ -261,6 +299,15 @@ class OperatingProfile(object):
 
         # if hasattr(self, 'operation_days'):
         #     string = string + '\n' + ', '.join(map(str, self.operation_days))
+
+        if hasattr(self, 'servicedorganisation_nonoperation_holidays'):
+            string = string + '\nSchool days'
+        if hasattr(self, 'servicedorganisation_operation_holidays'):
+            string = string + '\nSchool holidays'
+        if hasattr(self, 'servicedorganisation_nonoperation_workingdays'):
+            string = string + '\nSchool holidays'
+        if hasattr(self, 'servicedorganisation_operation_workingdays'):
+            string = string + '\nSchool days'
 
         return string
 
@@ -346,9 +393,11 @@ class Timetable(object):
             for element in xml.findall('.//txc:JourneyPattern', NS)
         }
 
+        servicedorganisations = xml.find('txc:ServicedOrganisations', NS)
+
         # time calculation begins here:
         journeys = {
-            element.find('txc:VehicleJourneyCode', NS).text: VehicleJourney(element, journeypatterns)
+            element.find('txc:VehicleJourneyCode', NS).text: VehicleJourney(element, journeypatterns, servicedorganisations)
             for element in xml.find('txc:VehicleJourneys', NS)
         }
 
@@ -369,7 +418,7 @@ class Timetable(object):
         service_element = xml.find('txc:Services', NS).find('txc:Service', NS)
         operatingprofile_element = service_element.find('txc:OperatingProfile', NS)
         if operatingprofile_element is not None:
-            self.operating_profile = OperatingProfile(operatingprofile_element)
+            self.operating_profile = OperatingProfile(operatingprofile_element, servicedorganisations)
 
         self.operating_period = OperatingPeriod(service_element.find('txc:OperatingPeriod', NS))
 
