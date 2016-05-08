@@ -466,7 +466,7 @@ class Timetable(object):
                         previous_notes = journey.notes
                 head_span += 1
                 foot_span += 1
-            grouping.column_heads.append(ColumnHead(previous_operatingprofile, foot_span))
+            grouping.column_heads.append(ColumnHead(previous_operatingprofile, head_span))
             grouping.column_feet.append(ColumnFoot(previous_notes, foot_span))
 
 
