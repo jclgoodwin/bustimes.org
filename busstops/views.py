@@ -7,7 +7,9 @@ from django.views.decorators.cache import patch_cache_control
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
 from django.contrib.gis.db.models.functions import Distance
-from busstops.models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
+from django.core.mail import mail_admins
+from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
+from .forms import ContactForm
 from timetables import timetable, live
 
 
@@ -40,6 +42,27 @@ def not_found(request):
 
 def offline(request):
     return render(request, 'offline.html')
+
+
+def contact(request):
+    submitted = False
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            mail_admins(
+                'Contact',
+                form.cleaned_data['message'] + '\n\n' + form.cleaned_data['name'] + '\n\n' + form.cleaned_data['email'] + '\n\n' + form.cleaned_data['referrer'],
+            )
+            submitted = True
+    else:
+        referrer = request.META.get('HTTP_REFERER')
+        form = ContactForm(initial={
+            'referrer': referrer
+        })
+    return render(request, 'contact.html', {
+        'form': form,
+        'submitted': submitted
+    })
 
 
 def cookies(request):

@@ -1,9 +1,14 @@
 from django.conf.urls import url
+from django.conf import settings
+from django.conf.urls.static import static
+from os import path
 
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
+    url(r'^$', views.index),
+    url(r'^offline/?$', views.offline),
+    url(r'^contact/?$', views.contact),
     url(r'^cookies/?$', views.cookies),
     url(r'^data/?$', views.data),
     url(r'^map/?$', views.hugemap),

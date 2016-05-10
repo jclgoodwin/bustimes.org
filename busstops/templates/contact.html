@@ -1,0 +1,32 @@
+{% extends 'page.html' %}
+
+{% block title %}Contact – Bus Times{% endblock %}
+
+{% block content %}
+
+{% if submitted %}
+
+<h1>Thank you</h1>
+
+<p>Your message has been sent.</p>
+
+{% else %}
+
+<h1>Contact</h1>
+
+<p>You can contact me about this website and the information on it. I will do my best to reply.</p>
+
+<p>Please bear in mind that this is just a scrappy independent website operated by one person. I’m
+not a bus operator or a council.</p>
+
+<form action="/contact" method="post">
+	{% csrf_token %}
+	{{ form.as_p }}
+	<input type=submit />
+</form>
+
+{% endif %}
+
+{% endblock %}
+
+{% block ad %}{% endblock %}

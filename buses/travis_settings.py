@@ -7,6 +7,8 @@ INSTALLED_APPS = (
     'busstops',
 )
 
+ROOT_URLCONF = 'buses.urls'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
