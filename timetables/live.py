@@ -54,6 +54,24 @@ def get_acisconnect_departures(prefix, stop, services):
     } for row in rows)
 
 
+def get_yorkshire_departures(stop, services):
+    req = requests.get('http://yorkshire.acisconnect.com/Text/WebDisplay.aspx', {
+        'stopRef': stop.naptan_code
+    })
+    if req.status_code != 200:
+        return ()
+    soup = BeautifulSoup(req.text, 'html.parser')
+    table = soup.find(id='GridViewRTI')
+    if table is None:
+        return ()
+    rows = (row.findAll('td') for row in table.findAll('tr')[1:])
+    return ({
+        'time': row[2].text.replace('1 Mins', '1 min').replace('Mins', 'mins'),
+        'service': services.get(row[0].text) or row[0].text,
+        'destination': row[1].text
+    } for row in rows)
+
+
 def transportapi_row(item, services):
     if item['best_departure_estimate'] is None:
         return
@@ -99,7 +117,16 @@ def get_departures(stop, services):
             }
         }, 60)
 
-    for live_source_name, prefix in (('Y', 'wymetro'), ('Kent', 'kent')):
+    if 'Y' in live_sources:
+        return ({
+            'departures': get_yorkshire_departures(stop, services),
+            'source': {
+                'url': 'http://yorkshire.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % stop.naptan_code,
+                'name': 'Your Next Bus'
+            }
+        }, 60)
+
+    for live_source_name, prefix in (('Kent', 'kent'),):
         if live_source_name in live_sources:
             return ({
                 'departures': get_acislive_departures(prefix, stop, services),
