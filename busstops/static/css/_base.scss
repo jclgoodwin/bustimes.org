@@ -258,6 +258,8 @@ main li {
     .highlight,
     a:focus,
     a:hover {
+        outline: 0;
+
         path {
             fill: #dc7;
         }
