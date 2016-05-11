@@ -7,7 +7,7 @@ INSTALLED_APPS = (
     'busstops',
 )
 
-ROOT_URLCONF = 'buses.urls'
+ROOT_URLCONF = 'busstops.urls'
 
 DATABASES = {
     'default': {
