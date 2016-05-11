@@ -1,5 +1,11 @@
+import os
+import xml.etree.cElementTree as ET
 from django.test import TestCase
-from busstops.management.commands import import_services
+from ...models import Operator, Service
+from ..commands import import_services
+
+
+DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class ImportServicesTest(TestCase):
@@ -47,3 +53,17 @@ class ImportServicesTest(TestCase):
         for file_name, parts in data:
             self.assertEqual(self.command.get_net_service_code_and_line_ver(file_name), parts)
 
+    def test_do_service(self):
+        whippet = Operator.objects.create(pk='WHIP', region_id='EA', name='Whippet Coaches')
+
+        with open(os.path.join(DIR, 'fixtures/ea_20-45-A-y08-1.xml')) as file:
+            root = ET.parse(file).getroot()
+
+        self.command.do_service(root, 'EA', None)
+
+        service = Service.objects.get(pk='ea_20-45-A-y08')
+
+        self.assertEqual(str(service), '45 - Huntingdon - St Ives')
+        self.assertTrue(service.show_timetable)
+        self.assertEqual(service.operator.first(), whippet)
+        self.assertEqual(service.get_traveline_url(), 'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST?line=20045&lineVer=1&net=ea&project=y08&sup=A&command=direct&outputFormat=0')
