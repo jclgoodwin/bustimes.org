@@ -16,14 +16,11 @@
 <![endif]-->
 {% if object.get_absolute_url %}<link rel="canonical" href="https://bustimes.org.uk{{ object.get_absolute_url }}" />{% endif %}
 {% block head %}{% endblock %}
+<script type="application/ld+json">{"@context":"http://schema.org","@type":"WebSite","url":"https://bustimes.org.uk","name":"Bus Times","potentialAction":{"@type":"SearchAction","target":"https://bustimes.org.uk/search?q={q}","query-input":"required name=q"}}</script>
 </head>
 <body>
 {% block header %}
-<header>
-<div itemscope itemtype="http://schema.org/WebSite">
-<a href="/" itemprop="url"><span itemprop="name">Bus Times</span></a>
-</div>
-</header>
+<header><div><a href="/">Bus Times</a></div></header>
 {% endblock %}
 <main>
 {% block breadcrumb %}{% include 'breadcrumb.html' %}{% endblock %}
@@ -100,9 +97,7 @@ ga('send', 'pageview');
 <script async src="{% static 'js/departures.js' %}"></script>
 {% endif %}
 {% elif regions %}
-<script src="{% static 'js/bower_components/reqwest/reqwest.min.js' %}"></script>
-<script src="{% static 'js/bower_components/throttle-debounce/dist/throttle-debounce.min.js' %}"></script>
-<script async src="{% static 'js/frontpage.js' %}"></script>
+{% javascript 'frontpage' %}
 {% endif %}
 </body>
 </html>

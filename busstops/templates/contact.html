@@ -20,9 +20,9 @@
 not a bus operator or a council.</p>
 
 <form action="/contact" method="post">
-	{% csrf_token %}
-	{{ form.as_p }}
-	<input type=submit />
+{% csrf_token %}
+{{ form.as_p }}
+<input type=submit />
 </form>
 
 {% endif %}
