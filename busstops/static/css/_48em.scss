@@ -1,3 +1,18 @@
+header div,
+main {
+    margin: 0 auto;
+}
+
+.narrow {
+    header div {
+        width: 48em;
+    }
+
+    main {
+        width: 46em;
+    }
+}
+
 h1 {
     font-size: 2em;
 }

@@ -130,6 +130,13 @@ textarea {
     display: block;
 }
 
+.errorlist {
+    color: red;
+    float: right;
+    font-size: 0.875em;
+    margin: 0 0 -1em;
+}
+
 input[type=text],
 input[type=email],
 input[type=search],
@@ -142,19 +149,20 @@ textarea {
     outline: 0;
     padding: .25em;
     padding-right: 0;
-    width: 18em;
+    width: 100%;
+    -webkit-appearance: none;
 
     &:focus {
         border-color: $brand-color-darker;
     }
+
+    .errorlist + p & {
+        border-color: red;
+    }
 }
 
-input[type=search] {
+input[type=search]::-webkit-search-decoration {
     -webkit-appearance: none;
-
-    &::-webkit-search-decoration {
-        -webkit-appearance: none;
-    }
 }
 
 .search {
