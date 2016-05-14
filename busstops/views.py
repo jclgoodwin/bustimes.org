@@ -7,7 +7,7 @@ from django.views.decorators.cache import patch_cache_control
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
 from django.contrib.gis.db.models.functions import Distance
-from django.core.mail import mail_admins
+from django.core.mail import EmailMessage
 from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
 from .forms import ContactForm
 from timetables import timetable, live
@@ -49,10 +49,14 @@ def contact(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
-            mail_admins(
-                'Contact',
-                form.cleaned_data['message'] + '\n\n' + form.cleaned_data['name'] + '\n\n' + form.cleaned_data['email'] + '\n\n' + form.cleaned_data['referrer'],
+            message = EmailMessage(
+                form.cleaned_data['message'][:50],
+                form.cleaned_data['referrer'] + '\n\n' + form.cleaned_data['message'],
+                '%s <%s>' % (form.cleaned_data['name'], 'contact@bustimes.org.uk'),
+                ('contact@bustimes.org.uk',),
+                reply_to=(form.cleaned_data['email'],),
             )
+            message.send()
             submitted = True
     else:
         referrer = request.META.get('HTTP_REFERER')
