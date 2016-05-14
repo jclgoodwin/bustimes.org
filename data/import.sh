@@ -8,6 +8,11 @@
 # Where 'username' and 'password' are your username and password for the
 # Traveline National Dataset FTP server
 
+if [ `ps -e | grep -c $(basename $0)` -gt 2 ]; then
+    echo "An import appears to be running already"
+    exit 0
+fi
+
 USERNAME=$1
 PASSWORD=$2
 REGIONS=(NCSD EA W EM Y NW S WM SW SE NE L) # roughly in ascending size order
@@ -46,6 +51,7 @@ if [[ $nptg_old != $nptg_new ]]; then
     import_csv nptgcsv.zip localities Localities.csv
     echo "  Importing locality hierarchy"
     import_csv nptgcsv.zip locality_hierarchy LocalityHierarchy.csv
+    ../../manage.py update_index busstops.Locality --remove
 fi
 
 cd ../NaPTAN
@@ -80,6 +86,7 @@ wget -qN http://mytraveline.info/NOC/NOC_DB.csv
 noc_new=`ls -l NOC_DB.csv`
 if [[ $noc_old != $noc_new ]]; then
     ../manage.py import_operators < NOC_DB.csv
+    ../manage.py update_index busstops.Operator --remove
 fi
 
 if [[ $USERNAME == '' || $PASSWORD == '' ]]; then
@@ -93,6 +100,7 @@ for region in ${REGIONS[@]}; do
     wget -qN --user=$USERNAME --password=$PASSWORD ftp://ftp.tnds.basemap.co.uk/$region.zip
     region_new=`ls -l $region.zip`
     if [[ $nptg_old$naptan_old$region_old != $nptg_new$naptan_new$region_new ]]; then
+        updated_services=1
         ../../manage.py import_services $region.zip
         unzip -oq $region.zip -d $region
         find $region -type f -mtime +2 -delete
@@ -100,4 +108,4 @@ for region in ${REGIONS[@]}; do
         find $region -type f -empty -delete
     fi
 done
-wait
+[ $updated_services ] && ../../manage.py update_index --remove
