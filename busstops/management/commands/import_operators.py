@@ -37,7 +37,7 @@ class Command(ImportFromCSVCommand):
 
         operator_id = row['NOCCODE'].replace('=', '')
 
-        if operator_id == 'TVSR' or operator_id == 'FMAN' and row['Duplicate'] != 'OK':
+        if operator_id in ('TVSR', 'HBSY') or (operator_id == 'FMAN' and row['Duplicate'] != 'OK'):
             return None
 
         name = cls.get_name(row).replace('\'', u'\u2019') # Fancy apostrophe
