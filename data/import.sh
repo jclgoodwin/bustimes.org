@@ -8,7 +8,7 @@
 # Where 'username' and 'password' are your username and password for the
 # Traveline National Dataset FTP server
 
-if [ `ps -e | grep -c $(basename $0)` -gt 2 ]; then
+if [ `ps -e | grep -c import.sh` -gt 2 ]; then
     echo "An import appears to be running already"
     exit 0
 fi
