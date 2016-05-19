@@ -36,6 +36,13 @@ def get_acislive_departures(prefix, stop, services):
     } for row in rows)
 
 
+def get_acisconnect_time(cell):
+    text = cell.text
+    if text == '1 Mins':
+        return '1 min'
+    return text.replace('Mins', 'mins')
+
+
 def get_acisconnect_departures(prefix, stop, services):
     req = requests.get('http://%s.acisconnect.com/Text/WebDisplay.aspx' % prefix, {
         'stopRef': stop.pk
@@ -48,7 +55,7 @@ def get_acisconnect_departures(prefix, stop, services):
         return ()
     rows = (row.findAll('td') for row in table.findAll('tr')[1:])
     return ({
-        'time': row[4].text.replace('1 Mins', '1 min').replace('Mins', 'mins'),
+        'time': get_acisconnect_time(row[4]),
         'service': services.get(row[0].text) or row[0].text,
         'destination': row[2].text
     } for row in rows)
@@ -66,7 +73,7 @@ def get_yorkshire_departures(stop, services):
         return ()
     rows = (row.findAll('td') for row in table.findAll('tr')[1:])
     return ({
-        'time': row[2].text.replace('1 Mins', '1 min').replace('Mins', 'mins'),
+        'time': get_acisconnect_time(row[2]),
         'service': services.get(row[0].text) or row[0].text,
         'destination': row[1].text
     } for row in rows)
