@@ -26,7 +26,9 @@
                     parseFloat(metaElements[0].getAttribute('content')),
                     parseFloat(metaElements[1].getAttribute('content'))
                 ];
-                locations.push(latLng);
+                if (items[i].className != '') {
+                    locations.push(latLng);
+                }
                 if (items[i].className != 'OTH') {
                     mainLocations.push(latLng);
                     labels.push(items[i]);
@@ -74,9 +76,11 @@
                 for (i = 0; i < mainLocations.length; i++) {
                     setUpPopup(mainLocations[i], labels[i], items[i]);
                 }
-                var polyline = L.polyline(locations, {color: '#000', weight: 2});
-                polyline.addTo(map);
-                map.fitBounds(polyline.getBounds(), {
+                if (locations.length) {
+                    var polyline = L.polyline(locations, {color: '#000', weight: 2});
+                    polyline.addTo(map);
+                }
+                map.fitBounds((polyline || L.polyline(mainLocations)).getBounds(), {
                     padding: [10, 20]
                 });
             }
