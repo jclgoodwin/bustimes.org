@@ -410,8 +410,13 @@ td {
     }
 }
 
-input:not(:checked) + label + .timetable tr.OTH {
-    display: none;
+input:not(:checked) + label {
+    + .timetable,
+    + .route {
+        .OTH {
+            display: none;
+        }
+    }
 }
 
 .timetable {

@@ -76,9 +76,11 @@
 {% ifchanged stopusage.direction %}
     {% if not forloop.first %}</ul>{% endif %}
     <h2>{{ stopusage.direction.capitalize }}</h2>
-    <ul>
+    <input type="checkbox" id="show-all-stops-{{ forloop.counter }}" />
+    <label for="show-all-stops-{{ forloop.counter }}">Show all stops</label>
+    <ul class="route">
 {% endifchanged %}
-    <li itemscope itemtype="https://schema.org/BusStop">
+    <li class="{{ stopusage.timing_status }}" itemscope itemtype="https://schema.org/BusStop">
         <a href="{{ stopusage.stop.get_absolute_url }}">
             <span itemprop="name">{{ stopusage.stop.get_qualified_name }}</span>
             <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
