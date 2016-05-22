@@ -5,6 +5,21 @@ from django.contrib.gis.db import models
 from django.core.urlresolvers import reverse
 
 
+TIMING_STATUS_CHOICES = (
+    ('PPT', 'Principal point'),
+    ('TIP', 'Time info point'),
+    ('PTP', 'Principal and time info point'),
+    ('OTH', 'Other bus stop'),
+)
+
+
+class ValidateOnSaveMixin(object):
+    def save(self, force_insert=False, force_update=False, **kwargs):
+        if not (force_insert or force_update):
+            self.full_clean()
+        super(ValidateOnSaveMixin, self).save(force_insert, force_update, **kwargs)
+
+
 class Region(models.Model):
     "The largest type of geographical area."
     id = models.CharField(max_length=2, primary_key=True)
@@ -193,12 +208,6 @@ class StopPoint(models.Model):
     )
     bus_stop_type = models.CharField(max_length=3, choices=BUS_STOP_TYPE_CHOICES, blank=True)
 
-    TIMING_STATUS_CHOICES = (
-        ('PPT', 'Principal point'),
-        ('TIP', 'Time info point'),
-        ('PTP', 'Principal and time info point'),
-        ('OTH', 'Other bus stop'),
-    )
     timing_status = models.CharField(max_length=3, choices=TIMING_STATUS_CHOICES, blank=True)
 
     admin_area = models.ForeignKey('AdminArea')
@@ -280,12 +289,14 @@ class StopUsage(models.Model):
     stop = models.ForeignKey('StopPoint', on_delete=models.CASCADE)
     direction = models.CharField(max_length=8, db_index=True)
     order = models.PositiveIntegerField()
+    timing_status = models.CharField(max_length=3, choices=TIMING_STATUS_CHOICES)
 
 
 class Service(models.Model):
     "A bus service."
     service_code = models.CharField(max_length=24, primary_key=True)
     line_name = models.CharField(max_length=64)
+    line_brand = models.CharField(max_length=64)
     description = models.CharField(max_length=128)
     mode = models.CharField(max_length=11)
     operator = models.ManyToManyField(Operator, blank=True)
@@ -298,10 +309,8 @@ class Service(models.Model):
     show_timetable = models.BooleanField(default=False)
 
     def __unicode__(self):
-        if self.line_name:
-            if self.description:
-                return '%s - %s' % (self.line_name, self.description)
-            return self.line_name
+        if self.line_name or self.line_brand or self.description:
+            return ' - '.join(filter(None, (self.line_name, self.line_brand, self.description)))
         else:
             return self.service_code
 

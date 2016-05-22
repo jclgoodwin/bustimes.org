@@ -179,6 +179,13 @@ class Command(BaseCommand):
         for service_element in root.find('txc:Services', self.ns):
 
             line_name = service_element.find('txc:Lines', self.ns)[0][0].text
+            if '|' in line_name:
+                line_name_parts = line_name.split('|', 1)
+                line_name = line_name_parts[0]
+                line_brand = line_name_parts[1]
+            else:
+                line_brand = ''
+
             if len(line_name) > 64:
                 print 'Name "%s" is too long in %s' % (line_name, file_name)
                 line_name = line_name[:64]
@@ -232,8 +239,16 @@ class Command(BaseCommand):
             try:
                 timetable = Timetable(root)
                 show_timetable = (len(timetable.groupings[0].journeys) < 60 and len(timetable.groupings[1].journeys) < 60)
-                stop_usages = [StopUsage(service_id=service_code, stop_id=row.part.stop.atco_code, direction='outbound', order=i) for i, row in enumerate(timetable.groupings[0].rows) if stops.get(row.part.stop.atco_code)]
-                stop_usages += [StopUsage(service_id=service_code, stop_id=row.part.stop.atco_code, direction='inbound', order=i) for i, row in enumerate(timetable.groupings[1].rows) if stops.get(row.part.stop.atco_code)]
+                stop_usages = [
+                    StopUsage(service_id=service_code, stop_id=row.part.stop.atco_code, direction='outbound', order=i, timing_status=row.part.timing_status)
+                    for i, row in enumerate(timetable.groupings[0].rows)
+                    if stops.get(row.part.stop.atco_code)
+                ]
+                stop_usages += [
+                    StopUsage(service_id=service_code, stop_id=row.part.stop.atco_code, direction='inbound', order=i, timing_status=row.part.timing_status)
+                    for i, row in enumerate(timetable.groupings[1].rows)
+                    if stops.get(row.part.stop.atco_code)
+                ]
             except (AttributeError, IndexError) as e:
                 print e, file_name
                 show_timetable = False
@@ -246,6 +261,7 @@ class Command(BaseCommand):
                 service_code=service_code,
                 defaults=dict(
                     line_name=line_name,
+                    line_brand=line_brand,
                     mode=mode,
                     description=description,
                     net=net,

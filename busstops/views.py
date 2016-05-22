@@ -341,10 +341,15 @@ class ServiceDetailView(DetailView):
 
         context['operators'] = self.object.operator.all()
         context['traveline_url'] = self.object.get_traveline_url()
-        context['stops'] = self.object.stops.all().select_related('locality').defer('locality__latlong')
 
         if self.object.show_timetable or '_MEGA' in self.object.service_code or 'timetable' in self.request.GET:
-            context['timetables'] = timetable.timetable_from_service(self.object, context['stops'])
+            stops = self.object.stops.all().select_related('locality').defer('latlong', 'locality__latlong')
+            context['timetables'] = timetable.timetable_from_service(self.object, stops)
+        else:
+            context['stopusages'] = self.object.stopusage_set.all().select_related('stop__locality').defer(
+                'stop__locality__latlong'
+            ).order_by('direction', 'order')
+
 
         if bool(context['operators']):
             context['breadcrumb'] = [self.object.region, context['operators'][0]]
