@@ -150,7 +150,7 @@ def get_departures(stop, services):
     for live_source_name, prefix in (
             ('ayr', 'ayrshire'), ('west', 'travelwest'), ('buck', 'buckinghamshire'),
             ('camb', 'cambridgeshire'), ('aber', 'aberdeen'), ('card', 'cardiff'),
-            ('swin', 'swindon')
+            ('swin', 'swindon'), ('metr', 'metrobus')
     ):
         if live_source_name in live_sources:
             return ({

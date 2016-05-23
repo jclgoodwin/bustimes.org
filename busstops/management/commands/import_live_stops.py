@@ -7,6 +7,7 @@ Usage:
 """
 
 import requests
+import json
 from bs4 import BeautifulSoup
 from time import sleep
 from django.core.management.base import BaseCommand
@@ -22,6 +23,7 @@ cambridgeshire = LiveSource.objects.get_or_create(name='camb')[0]
 aberdeen = LiveSource.objects.get_or_create(name='aber')[0]
 cardiff = LiveSource.objects.get_or_create(name='card')[0]
 swindon = LiveSource.objects.get_or_create(name='swin')[0]
+metrobus = LiveSource.objects.get_or_create(name='metr')[0]
 
 
 
@@ -60,44 +62,51 @@ class Command(BaseCommand):
             print text
         sleep(1)
 
+    @staticmethod
+    def get_clustered_stops(subdomain):
+        url = 'http://%s.acisconnect.com/ConnectService.svc/GetClusteredStops' % subdomain
+        params = {
+            'topLeft': {'lon': -100, 'lat': 100, 'CLASS_NAME': 'OpenLayers.LonLat'},
+            'bottomRight': {'lon': 100, 'lat': -100, 'CLASS_NAME': 'OpenLayers.LonLat'},
+            'zoomLevel': 5
+        }
+        response = requests.post(url, json=params)
+        json_string = response.json().get('d').replace('MapStopResponse=', '')
+        parsed_json = json.loads(json_string)
+        return parsed_json['Stops'] if 'Stops' in parsed_json else parsed_json['AllFoundStops']
+
+    @staticmethod
+    def get_stops_for_cluster(subdomain, cluster_id):
+        url = 'http://%s.acisconnect.com/ConnectService.svc/GetStopsForCluster' % subdomain
+        params = {
+            'clusterID': cluster_id
+        }
+        response = requests.post(url, json=params)
+        json_string = response.json().get('d').replace('MapStopResponse=', '')
+        parsed_json = json.loads(json_string)
+        print response.text
+        sleep(1)
+        return parsed_json['Stops']
+
     def handle(self, *args, **options):
+        for subdomain, livesource in (
+            ('cambridgeshire', cambridgeshire),
+            ('buckinghamshire', buckinghamshire),
+            ('ayrshire', ayrshire),
+            ('travelwest', travelwest),
+            ('aberdeen', aberdeen),
+            ('cardiff', cardiff),
+            ('swindon', swindon),
+            ('metrobus', metrobus)
+        ):
+            print subdomain
+            stop_ids = []
+            for cluster in self.get_clustered_stops(subdomain):
+                if cluster['ClusterCount'] == 1:
+                    stop_ids.append(cluster['StopRef'])
+                else:
+                    stop_ids.extend((stop['StopRef'] for stop in self.get_stops_for_cluster(subdomain, cluster['ClusterId'])))
+            print stop_ids
+            stoppoints = StopPoint.objects.filter(pk__in=stop_ids)
+            livesource.stoppoint_set.add(*stoppoints)
 
-        print 'cambridgeshire'
-        for stop in StopPoint.objects.filter(admin_area__id=71, live_sources=None).exclude(service=None):
-            self.maybe_add_acisconnect_source(stop, cambridgeshire, 'cambridgeshire')
-
-        print 'buckinghamshire'
-        for stop in StopPoint.objects.filter(admin_area__id=70, live_sources=None).exclude(service=None):
-            self.maybe_add_acisconnect_source(stop, buckinghamshire, 'buckinghamshire')
-
-        print 'ayrshire'
-        for stop in StopPoint.objects.filter(admin_area__id__in=(138, 132, 120), live_sources=None).exclude(service=None):
-            self.maybe_add_acisconnect_source(stop, ayrshire, 'ayrshire')
-
-        print 'west'
-        for stop in StopPoint.objects.filter(admin_area__id__in=(1, 9), live_sources=None).exclude(service=None):
-            self.maybe_add_acisconnect_source(stop, travelwest, 'travelwest')
-
-        print 'aberdeen'
-        for stop in StopPoint.objects.filter(admin_area__id=111, live_sources=None).exclude(service=None):
-            self.maybe_add_acisconnect_source(stop, aberdeen, 'aberdeen')
-
-        print 'cardiff'
-        for stop in StopPoint.objects.filter(admin_area__id=11, live_sources=None).exclude(service=None):
-            self.maybe_add_acisconnect_source(stop, cardiff, 'cardiff')
-
-        print 'swindon'
-        for stop in StopPoint.objects.filter(admin_area__id=57, live_sources=None).exclude(service=None):
-            self.maybe_add_acisconnect_source(stop, swindon, 'swindon')
-
-        return
-
-        print 'kent'
-        stops = StopPoint.objects.filter(pk__startswith='240', live_sources=None).exclude(service=None)
-        for stop in stops:
-            self.maybe_add_live_source(stop, kent, 'kent')
-
-        print 'yorkshire'
-        stops = StopPoint.objects.filter(admin_area__region__name='Yorkshire', live_sources=None).exclude(service=None)
-        for stop in stops:
-            self.maybe_add_live_source(stop, yorkshire, 'tsy')
