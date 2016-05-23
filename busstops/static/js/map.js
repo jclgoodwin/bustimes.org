@@ -14,7 +14,7 @@
         var items = document.getElementsByTagName('li'),
             i,
             metaElements,
-            latLng = [],
+            latLng,
             locations = [],
             mainLocations = [],
             labels = [];

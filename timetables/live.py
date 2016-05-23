@@ -98,15 +98,18 @@ def transportapi_row(item, services):
 
 
 def get_transportapi_departures(stop, services):
-    req = requests.get('http://transportapi.com/v3/uk/bus/stop/%s/live.json' % stop.atco_code, {
-       'app_id': settings.TRANSPORTAPI_APP_ID,
-       'app_key': settings.TRANSPORTAPI_APP_KEY,
-       'nextbuses': 'no',
-       'group': 'no',
-    })
-    departures = req.json().get('departures')
-    if departures and 'all' in departures:
-        return filter(None, (transportapi_row(item, services) for item in departures.get('all')))
+    try:
+        req = requests.get('http://transportapi.com/v3/uk/bus/stop/%s/live.json' % stop.atco_code, {
+           'app_id': settings.TRANSPORTAPI_APP_ID,
+           'app_key': settings.TRANSPORTAPI_APP_KEY,
+           'nextbuses': 'no',
+           'group': 'no',
+        })
+        departures = req.json().get('departures')
+        if departures and 'all' in departures:
+            return filter(None, (transportapi_row(item, services) for item in departures.get('all')))
+    except requests.exceptions.ConnectionError as e:
+        print e
     return ()
 
 
