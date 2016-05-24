@@ -472,21 +472,23 @@ class Timetable(object):
 
 def get_filenames(service, path):
     if service.region_id == 'NE':
-        return (service.service_code + '.xml',)
-    elif service.region_id in ('Y', 'S', 'NW'):
-        return ('SVR' + service.service_code + '.xml',)
+        return (service.pk + '.xml',)
+    elif service.region_id in ('S', 'NW'):
+        return ('SVR' + service.pk + '.xml',)
     else:
         try:
             namelist = os.listdir(path)
         except OSError:
             return ()
         if service.net:
-            return (name for name in namelist if name.startswith(service.service_code + '-'))
+            return (name for name in namelist if name.startswith(service.pk + '-'))
         elif service.region_id == 'GB':
-            parts = service.service_code.split('_')
+            parts = service.pk.split('_')
             return (name for name in namelist if name.endswith('_' + parts[1] + '_' + parts[0] + '.xml'))
+        elif service.region_id == 'Y':
+            return (name for name in namelist if name.startswith(service.pk + '-') or name == 'SVR' + service.pk + '.xml')
         else:
-            return (name for name in namelist if name.endswith('_' + service.service_code + '.xml'))
+            return (name for name in namelist if name.endswith('_' + service.pk + '.xml'))
 
 
 def timetable_from_filename(filename, stops):
