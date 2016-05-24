@@ -86,7 +86,7 @@ class Command(BaseCommand):
         parsed_json = json.loads(json_string)
         print response.text
         sleep(1)
-        return parsed_json['Stops']
+        return parsed_json['Stops'] if 'Stops' in parsed_json else parsed_json['AllFoundStops']
 
     def handle(self, *args, **options):
         for subdomain, livesource in (
