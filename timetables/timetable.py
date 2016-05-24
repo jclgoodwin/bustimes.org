@@ -486,7 +486,7 @@ def get_filenames(service, path):
             parts = service.pk.split('_')
             return (name for name in namelist if name.endswith('_' + parts[1] + '_' + parts[0] + '.xml'))
         elif service.region_id == 'Y':
-            return (name for name in namelist if name.startswith(service.pk + '-') or name == 'SVR' + service.pk + '.xml')
+            return (name for name in namelist if name.startswith('SVR' + service.pk + '-') or name == 'SVR' + service.pk + '.xml')
         else:
             return (name for name in namelist if name.endswith('_' + service.pk + '.xml'))
 
