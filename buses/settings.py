@@ -5,6 +5,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ['SECRET_KEY']
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'bustimes.org.uk').split()
 
+DEBUG = bool(os.environ.get('DEBUG', False))
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -27,7 +29,7 @@ MIDDLEWARE_CLASSES = (
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
-    } if os.environ.get('TRAVIS') else {
+    } if DEBUG else {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
         'URL': 'http://127.0.0.1:9200/',
         'INDEX_NAME': 'haystack',
@@ -46,8 +48,11 @@ DATABASES = {
 }
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/home/josh/bustimes-static/'
-STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+STATIC_ROOT = os.environ.get('STATIC_ROOT', '/home/josh/bustimes-static/')
+if DEBUG:
+    STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
+else:
+    STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -57,7 +62,6 @@ PIPELINE = {
     'COMPILERS': [
         'pipeline.compilers.sass.SASSCompiler',
     ],
-    'PIPELINE_ENABLED': True,
     'STYLESHEETS': {
         'main': {
             'source_filenames': (
@@ -94,6 +98,9 @@ TEMPLATES = [
                 ('django.template.loaders.cached.Loader', (
                     'template_minifier.template.loaders.app_directories.Loader',
                 )),
+            ),
+            'context_processors': (
+                'django.contrib.auth.context_processors.auth',
             )
         }
     }
