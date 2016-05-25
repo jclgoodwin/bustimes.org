@@ -1,5 +1,6 @@
 import os
 
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ['SECRET_KEY']
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'bustimes.org.uk').split()
@@ -45,8 +46,17 @@ DATABASES = {
 }
 
 STATIC_URL = '/static/'
-
+STATIC_ROOT = '/home/josh/bustimes-static/'
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'pipeline.finders.PipelineFinder',
+)
 PIPELINE = {
+    'COMPILERS': [
+        'pipeline.compilers.sass.SASSCompiler',
+    ],
     'PIPELINE_ENABLED': True,
     'STYLESHEETS': {
         'main': {
@@ -70,6 +80,9 @@ PIPELINE = {
             'output_filename': 'js/frontpage.min.js',
         },
     },
+    'YUGLIFY_BINARY': './node_modules/.bin/yuglify',
+    'CSS_COMPRESSOR': None,
+    'SASS_ARGUMENTS': '--style compressed --trace',
 }
 
 TEMPLATE_MINIFER_STRIP_FUNCTION = 'buses.utils.minify'
@@ -85,3 +98,11 @@ TEMPLATES = [
         }
     }
 ]
+
+TIME_FORMAT = 'H:i'
+DATE_FORMAT = 'j F Y'
+TIME_ZONE = 'Europe/London'
+USE_I18N = False
+
+TRANSPORTAPI_APP_ID = os.environ.get('TRANSPORTAPI_APP_ID')
+TRANSPORTAPI_APP_KEY = os.environ.get('TRANSPORTAPI_APP_KEY')
