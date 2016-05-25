@@ -25,6 +25,8 @@ MIDDLEWARE_CLASSES = (
 
 HAYSTACK_CONNECTIONS = {
     'default': {
+        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
+    } if os.environ.get('TRAVIS') else {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
         'URL': 'http://127.0.0.1:9200/',
         'INDEX_NAME': 'haystack',
