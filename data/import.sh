@@ -86,6 +86,7 @@ wget -qN http://mytraveline.info/NOC/NOC_DB.csv
 noc_new=`ls -l NOC_DB.csv`
 if [[ $noc_old != $noc_new ]]; then
     ../manage.py import_operators < NOC_DB.csv
+    ../manage.py correct_operator_regions
     ../manage.py update_index busstops.Operator --remove
 fi
 
