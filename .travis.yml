@@ -4,9 +4,6 @@ services:
 install:
   - pip install -r requirements.txt
   - pip install coveralls
-env:
-  - SECRET_KEY=qdArLfsJxwp5mtp8Dtr8npunUB3XzLruXuWa5jAC
-  - DATABASE_USER=postgres
 before_script:
   psql -U postgres -c "create extension postgis"
 script:
