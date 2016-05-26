@@ -31,7 +31,7 @@ def get_acislive_departures(prefix, stop, services):
     rows = (cells[i * 4 - 4:i * 4] for i in range(1, (len(cells)/4) + 1))
     return ({
         'time': row[2],
-        'service': services.get(row[0]) or row[0],
+        'service': services.get(row[0].lower()) or row[0],
         'destination': row[1]
     } for row in rows)
 
@@ -92,7 +92,7 @@ def transportapi_row(item, services):
         destination = destination_matches.groups()[0]
     return {
         'time': departure_time,
-        'service': services.get(item.get('line').split('--')[0].split('|')[0]) or item.get('line'),
+        'service': services.get(item.get('line').lower().split('--', 1)[0].split('|', 1)[0]) or item.get('line'),
         'destination': destination,
     }
 

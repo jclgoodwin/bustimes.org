@@ -11,7 +11,7 @@ class Command(BaseCommand):
                 operator.region = regions[0]
                 operator.save()
             else:
-                print operator, operator.region, regions
+                print 'consider moving', operator, 'from', operator.region, 'to', regions
 
     def handle(self, *args, **options):
         for operator in Operator.objects.all():
