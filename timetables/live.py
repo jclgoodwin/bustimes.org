@@ -74,7 +74,7 @@ def get_yorkshire_departures(stop, services):
     rows = (row.findAll('td') for row in table.findAll('tr')[1:])
     return ({
         'time': get_acisconnect_time(row[2]),
-        'service': services.get(row[0].text).lower() or row[0].text,
+        'service': services.get(row[0].text.lower()) or row[0].text,
         'destination': row[1].text
     } for row in rows)
 
