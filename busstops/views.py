@@ -302,7 +302,7 @@ def stop_json(request, pk):
 
 def departures(request, pk):
     stop = get_object_or_404(StopPoint, pk=pk)
-    services = {service.line_name.split('|', 1)[0]: service for service in Service.objects.filter(stops=pk, current=True)}
+    services = {service.line_name.split('|', 1)[0].lower(): service for service in Service.objects.filter(stops=pk, current=True)}
     context, max_age = live.get_departures(stop, services)
     response = render(request, 'departures.html', context)
     patch_cache_control(response, max_age=max_age, public=True)

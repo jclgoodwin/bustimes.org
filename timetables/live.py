@@ -15,7 +15,7 @@ def get_tfl_departures(stop, services):
     req = requests.get('http://api.tfl.gov.uk/StopPoint/%s/arrivals' % stop.pk)
     return ({
         'time': timezone.fromutc(datetime.strptime(item.get('expectedArrival'), '%Y-%m-%dT%H:%M:%SZ')),
-        'service': services.get(item.get('lineName')) or item.get('lineName'),
+        'service': services.get(item.get('lineName').lower()) or item.get('lineName'),
         'destination': item.get('destinationName'),
     } for item in req.json()) if req.status_code == 200 else ()
 
@@ -56,7 +56,7 @@ def get_acisconnect_departures(prefix, stop, services):
     rows = (row.findAll('td') for row in table.findAll('tr')[1:])
     return ({
         'time': get_acisconnect_time(row[4]),
-        'service': services.get(row[0].text) or row[0].text,
+        'service': services.get(row[0].text.lower()) or row[0].text,
         'destination': row[2].text
     } for row in rows)
 
@@ -74,7 +74,7 @@ def get_yorkshire_departures(stop, services):
     rows = (row.findAll('td') for row in table.findAll('tr')[1:])
     return ({
         'time': get_acisconnect_time(row[2]),
-        'service': services.get(row[0].text) or row[0].text,
+        'service': services.get(row[0].text).lower() or row[0].text,
         'destination': row[1].text
     } for row in rows)
 
