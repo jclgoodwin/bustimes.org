@@ -526,6 +526,10 @@ footer {
         color: #555;
         font-size: .75em;
         padding: 1em;
+
+        a {
+            padding: 1.33em .25em;
+        }
     }
 
     li {
@@ -534,7 +538,6 @@ footer {
         &:before {
             color: $brand-color-darker;
             content: "  \2022  ";
-            margin: 0 .25em;
         }
 
         &:first-child:before {
