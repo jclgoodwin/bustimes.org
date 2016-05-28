@@ -3,9 +3,12 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ['SECRET_KEY']
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'bustimes.org.uk').split()
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'bustimes.org.uk\n127.0.0.1').split()
 
 DEBUG = bool(os.environ.get('DEBUG', False))
+
+SERVER_EMAIL = 'contact@bustimes.org.uk'
+ADMINS = (('Josh', 'contact@bustimes.org.uk'),)
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -23,6 +26,9 @@ INSTALLED_APPS = (
 ROOT_URLCONF = 'buses.urls'
 
 MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'busstops.middleware.NotFoundRedirectMiddleware',
 )
 
@@ -101,6 +107,7 @@ TEMPLATES = [
             ),
             'context_processors': (
                 'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
             )
         }
     }
