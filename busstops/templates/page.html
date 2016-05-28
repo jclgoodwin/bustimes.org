@@ -32,13 +32,22 @@
     {% block ad %}
     <div class="banner-ad" id="ad">
     <script>
-      (function(d, s, id) {
-        if (navigator.userAgent.indexOf('Android') != -1 || navigator.userAgent.indexOf('iPhone') != -1) {
+      (function(d, s, id, ua) {
+        if (ua.indexOf('Android') != -1 || ua.indexOf('iPhone') != -1) {
           var js, fjs = d.getElementsByTagName(s)[0];
           if (d.getElementById(id)) return;
           js = d.createElement(s); js.id = id;
           js.src = "//connect.facebook.net/en_US/sdk/xfbml.ad.js#xfbml=1&version=v2.5&appId=485255881677580";
           fjs.parentNode.insertBefore(js, fjs);
+          window.fbAsyncInit = function() {
+            FB.Event.subscribe('ad.error', function() {
+              var js = d.createElement(s);
+              js.async = true;
+              js.src = '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+              d.body.appendChild(js);
+              (adsbygoogle = window.adsbygoogle || []).push({});
+            });
+          }
         } else {
           var js = d.createElement(s);
           js.async = true;
@@ -46,7 +55,7 @@
           d.body.appendChild(js);
           (adsbygoogle = window.adsbygoogle || []).push({});
         }
-      }(document, 'script', 'facebook-jssdk'));
+      }(document, 'script', 'facebook-jssdk', navigator.userAgent));
     </script>
     <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="auto"></ins>
     <div class="fb-ad" data-placementid="485255881677580_485287535007748" data-format="300x250" data-testmode="false"></div>
