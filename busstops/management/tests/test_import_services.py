@@ -56,8 +56,8 @@ class ImportServicesTest(TestCase):
     def test_do_service(self):
         whippet = Operator.objects.create(pk='WHIP', region_id='EA', name='Whippet Coaches')
 
-        with open(os.path.join(DIR, 'fixtures/ea_20-45-A-y08-1.xml')) as file:
-            root = ET.parse(file).getroot()
+        with open(os.path.join(DIR, 'fixtures/ea_20-45-A-y08-1.xml')) as xml_file:
+            root = ET.parse(xml_file).getroot()
 
         self.command.do_service(root, 'EA', None)
 

@@ -1,7 +1,7 @@
-from django.test import TestCase
-from busstops.management.commands import import_stop_areas, import_operators, import_services
-from busstops.models import Region, AdminArea, Operator
 import os
+from django.test import TestCase
+from ...models import Region, Operator
+from ..commands import import_operators
 
 
 DIR = os.path.dirname(os.path.abspath(__file__))

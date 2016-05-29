@@ -1,7 +1,7 @@
 "Tests for management commands."
 from django.test import TestCase
-from busstops.management.commands import import_stop_areas
-from busstops.models import Region, AdminArea
+from ...models import Region, AdminArea
+from ..commands import import_stop_areas
 
 
 class ImportStopAreasTest(TestCase):
