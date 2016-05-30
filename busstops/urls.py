@@ -1,6 +1,5 @@
 from django.conf.urls import url
 from django.conf import settings
-from os import path
 
 from django.contrib import staticfiles
 from . import views
@@ -24,3 +23,8 @@ urlpatterns = [
     url(r'^services/(?P<pk>[^/]+)/?$', views.ServiceDetailView.as_view(), name='service-detail'),
     url(r'^services/(?P<pk>[^/]+).xml$', views.service_xml),
 ]
+
+if settings.DEBUG:
+    urlpatterns += [
+        url(r'^(?P<path>serviceworker.js)$', staticfiles.views.serve),
+    ]
