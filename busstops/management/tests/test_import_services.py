@@ -18,6 +18,15 @@ class ImportServicesTest(TestCase):
         cls.whippet = Operator.objects.create(pk='WHIP', region_id='EA', name='Whippet Coaches')
         cls.megabus = Operator.objects.create(pk='MEGA', region_id='GB', name='Megabus')
         cls.aberdeen = Operator.objects.create(pk='FABD', region_id='S', name='First Aberdeen')
+        cls.blue_triangle = Operator.objects.create(pk='BTRI', region_id='L', name='Blue Triangle')
+        cls.blue_triangle_element = ET.fromstring("""
+            <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_BE">
+                <txc:OperatorCode>BE</txc:OperatorCode>
+                <txc:OperatorShortName>BLUE TRIANGLE BUSES LIM</txc:OperatorShortName>
+                <txc:OperatorNameOnLicence>BLUE TRIANGLE BUSES LIMITED</txc:OperatorNameOnLicence>
+                <txc:TradingName>BLUE TRIANGLE BUSES LIMITED</txc:TradingName>
+            </txc:Operator>
+        """)
 
     def test_sanitize_description(self):
 
@@ -41,7 +50,6 @@ class ImportServicesTest(TestCase):
         get_net() should return a (net, service_code, line_ver) tuple if appropriate,
         or ('', None, None) otherwise.
         """
-
         data = (
             ('ea_21-2-_-y08-1.xml', ('ea', 'ea_21-2-_-y08', '1')),
             ('ea_21-27-D-y08-1.xml', ('ea', 'ea_21-27-D-y08', '1')),
@@ -58,6 +66,23 @@ class ImportServicesTest(TestCase):
 
         for file_name, parts in data:
             self.assertEqual(self.command.get_net_service_code_and_line_ver(file_name), parts)
+
+    def test_get_operator_name(self):
+        self.assertEqual(self.command.get_operator_name(self.blue_triangle_element), """BLUE TRIANGLE BUSES LIMITED""")
+
+    def test_get_operator(self):
+        element = ET.fromstring("""
+            <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_RRS">
+                <txc:OperatorCode>RRS</txc:OperatorCode>
+                <txc:OperatorShortName>Replacement Service</txc:OperatorShortName>
+                <txc:OperatorNameOnLicence>Replacement Service</txc:OperatorNameOnLicence>
+                <txc:TradingName>Replacement Service</txc:TradingName>
+            </txc:Operator>
+        """)
+        self.assertIsNone(self.command.get_operator(element))
+
+        # test SPECIAL_OPERATOR_TRADINGNAMES
+        self.assertEqual(self.blue_triangle, self.command.get_operator(self.blue_triangle_element))
 
     def do_service(self, filename, region, service_descriptions=None):
         with open(os.path.join(DIR, 'fixtures/%s.xml' % filename)) as xml_file:
