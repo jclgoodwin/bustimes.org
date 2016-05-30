@@ -112,8 +112,8 @@ class ViewsTests(TestCase):
             'ymin': '52.8',
             'xmin': '1.0',
         })
-        self.assertEqual(response.status_code, 200)
-
+        self.assertEqual('FeatureCollection', response.json()['type'])
+        self.assertIn('features', response.json())
 
     def test_stop(self):
         response = self.client.get('/stops/2900M114')
