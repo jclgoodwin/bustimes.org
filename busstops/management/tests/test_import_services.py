@@ -15,7 +15,7 @@ class ImportServicesTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.whippet = Operator.objects.create(pk='WHIP', region_id='EA', name='Whippet Coaches')
+        cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
         cls.megabus = Operator.objects.create(pk='MEGA', region_id='GB', name='Megabus')
         cls.aberdeen = Operator.objects.create(pk='FABD', region_id='S', name='First Aberdeen')
         cls.blue_triangle = Operator.objects.create(pk='BTRI', region_id='L', name='Blue Triangle')
@@ -91,13 +91,15 @@ class ImportServicesTest(TestCase):
         self.command.do_service(root, region, service_descriptions)
 
     def test_do_service_ea(self):
-        self.do_service('ea_20-45-A-y08-1', 'EA')
-        service = Service.objects.get(pk='ea_20-45-A-y08')
+        self.do_service('ea_21-13B-B-y08-1', 'EA')
+        service = Service.objects.get(pk='ea_21-13B-B-y08')
 
-        self.assertEqual(str(service), '45 - Huntingdon - St Ives')
+        self.assertEqual(str(service), '13B - Turquoise Line - Norwich - Wymondham - Attleborough')
+        self.assertEqual(service.line_name, '13B')
+        self.assertEqual(service.line_brand, 'Turquoise Line')
         self.assertTrue(service.show_timetable)
-        self.assertEqual(service.operator.first(), self.whippet)
-        self.assertEqual(service.get_traveline_url(), 'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST?line=20045&lineVer=1&net=ea&project=y08&sup=A&command=direct&outputFormat=0')
+        self.assertEqual(service.operator.first(), self.fecs)
+        self.assertEqual(service.get_traveline_url(), 'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0')
 
     def test_do_service_ncsd(self):
         self.do_service('Megabus_Megabus14032016 163144_MEGA_M11A', 'GB', {'MEGAM11A': 'Belgravia - Liverpool'})
