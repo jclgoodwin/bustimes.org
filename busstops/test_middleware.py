@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Region, Operator, Service
+from .models import Region, Service
 
 
 class MiddlewareTests(TestCase):
