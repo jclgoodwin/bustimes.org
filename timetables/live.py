@@ -124,7 +124,7 @@ class TransportApiDepartures(Departures):
         }
 
     def get_response(self):
-        return requests.get('http://transportapi.com/v3/uk/bus/stop/%s/live.json' % stop.atco_code, {
+        return requests.get('http://transportapi.com/v3/uk/bus/stop/%s/live.json' % self.stop.atco_code, {
            'app_id': settings.TRANSPORTAPI_APP_ID,
            'app_key': settings.TRANSPORTAPI_APP_KEY,
            'nextbuses': 'no',
