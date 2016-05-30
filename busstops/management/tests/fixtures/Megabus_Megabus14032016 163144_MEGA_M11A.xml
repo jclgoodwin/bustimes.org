@@ -1,0 +1,824 @@
+<?xml version="1.0"?>
+<TransXChange xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.transxchange.org.uk/ http://www.transxchange.org.uk/schema/2.1/TransXChange_general.xsd" CreationDateTime="2016-04-29T13:51:35.9134352+01:00" ModificationDateTime="2016-04-29T13:51:35.9134352+01:00" Modification="new" RevisionNumber="1" FileName="TXC.xml" SchemaVersion="2.1" xmlns="http://www.transxchange.org.uk/">
+  <StopPoints>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800SHIC0G1</StopPointRef>
+      <CommonName>Shudehill Interchange</CommonName>
+      <LocalityName>Shudehill</LocalityName>
+      <LocalityQualifier>Manchester City Centre</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2800S42098F</StopPointRef>
+      <CommonName>Liverpool One Bus Station</CommonName>
+      <LocalityName>Liverpool</LocalityName>
+      <LocalityQualifier>Liverpool</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>490014051N</StopPointRef>
+      <CommonName>Victoria Coach Station</CommonName>
+      <LocalityName>Belgravia</LocalityName>
+      <LocalityQualifier>Victoria</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>490016736W</StopPointRef>
+      <CommonName>Victoria Coach Station Arrivals</CommonName>
+      <LocalityName>Victoria</LocalityName>
+      <LocalityQualifier>London</LocalityQualifier>
+    </AnnotatedStopPointRef>
+  </StopPoints>
+  <JourneyPatternSections>
+    <JourneyPatternSection id="JPSection-1">
+      <JourneyPatternTimingLink id="JPSection-1-SEC2-POS3">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT290M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-2">
+      <JourneyPatternTimingLink id="JPSection-2-SEC2-POS3">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT290M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-3">
+      <JourneyPatternTimingLink id="JPSection-3-SEC3-POS4">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT270M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-4">
+      <JourneyPatternTimingLink id="JPSection-4-SEC3-POS4">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT270M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-5">
+      <JourneyPatternTimingLink id="JPSection-5-SEC10-POS9">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT285M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-6">
+      <JourneyPatternTimingLink id="JPSection-6-SEC10-POS9">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT285M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-7">
+      <JourneyPatternTimingLink id="JPSection-7-SEC1-POS1">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>2800S42098F</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT65M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-7-SEC1-POS2">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT285M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-8">
+      <JourneyPatternTimingLink id="JPSection-8-SEC6-POS5">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT285M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-9">
+      <JourneyPatternTimingLink id="JPSection-9-SEC7-POS6">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT255M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-10">
+      <JourneyPatternTimingLink id="JPSection-10-SEC8-POS7">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT300M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-11">
+      <JourneyPatternTimingLink id="JPSection-11-SEC9-POS8">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT270M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-12">
+      <JourneyPatternTimingLink id="JPSection-12-SEC11-POS10">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT240M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-12-SEC11-POS11">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>2800S42098F</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT65M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-13">
+      <JourneyPatternTimingLink id="JPSection-13-SEC13-POS12">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT290M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+  </JourneyPatternSections>
+  <Operators>
+    <Operator id="OId_MEGA">
+      <OperatorCode>MEGA</OperatorCode>
+      <OperatorShortName>Megabus</OperatorShortName>
+      <OperatorNameOnLicence>Stagecoach Megabus</OperatorNameOnLicence>
+    </Operator>
+  </Operators>
+  <Services>
+    <Service>
+      <ServiceCode>M11A_MEGA</ServiceCode>
+      <Lines>
+        <Line id="l_M11A_MEGA">
+          <LineName>M11A</LineName>
+        </Line>
+      </Lines>
+      <OperatingPeriod>
+        <StartDate>2014-05-19</StartDate>
+        <EndDate>2099-12-31</EndDate>
+      </OperatingPeriod>
+      <RegisteredOperatorRef>OId_MEGA</RegisteredOperatorRef>
+      <StopRequirements>
+        <NoNewStopsRequired />
+      </StopRequirements>
+      <Mode>coach</Mode>
+      <StandardService>
+        <Origin>490014051N</Origin>
+        <Destination>2800S42098F</Destination>
+        <JourneyPattern id="JP68">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-7</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP69">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-1</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP70">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-3</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP71">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-2</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP72">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-4</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP74">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-8</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP75">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-9</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP76">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-10</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP77">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-11</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP78">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-5</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP80">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-12</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP81">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-6</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP82">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-13</JourneyPatternSectionRefs>
+        </JourneyPattern>
+      </StandardService>
+    </Service>
+  </Services>
+  <VehicleJourneys>
+    <VehicleJourney>
+      <PrivateCode>RY01C</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToSunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-05-19</StartDate>
+              <EndDate>2016-03-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>RY01C</VehicleJourneyCode>
+      <ServiceRef>M11A_MEGA</ServiceRef>
+      <LineRef>l_M11A_MEGA</LineRef>
+      <JourneyPatternRef>JP68</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>02:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>SG36D</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-05-19</StartDate>
+              <EndDate>2016-03-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>SG36D</VehicleJourneyCode>
+      <ServiceRef>M11A_MEGA</ServiceRef>
+      <LineRef>l_M11A_MEGA</LineRef>
+      <JourneyPatternRef>JP69</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>08:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J74</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-05-19</StartDate>
+              <EndDate>2016-03-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J74</VehicleJourneyCode>
+      <ServiceRef>M11A_MEGA</ServiceRef>
+      <LineRef>l_M11A_MEGA</LineRef>
+      <JourneyPatternRef>JP70</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>09:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>DU12</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>DU12</VehicleJourneyCode>
+      <ServiceRef>M11A_MEGA</ServiceRef>
+      <LineRef>l_M11A_MEGA</LineRef>
+      <JourneyPatternRef>JP71</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>09:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>DU13</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-05-19</StartDate>
+              <EndDate>2015-04-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>DU13</VehicleJourneyCode>
+      <ServiceRef>M11A_MEGA</ServiceRef>
+      <LineRef>l_M11A_MEGA</LineRef>
+      <JourneyPatternRef>JP72</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>11:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>DU14</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-05-19</StartDate>
+              <EndDate>2015-05-03</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>DU14</VehicleJourneyCode>
+      <ServiceRef>M11A_MEGA</ServiceRef>
+      <LineRef>l_M11A_MEGA</LineRef>
+      <VehicleJourneyRef>DU12</VehicleJourneyRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>13:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>SG36B</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToSunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-05-19</StartDate>
+              <EndDate>2016-03-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>SG36B</VehicleJourneyCode>
+      <ServiceRef>M11A_MEGA</ServiceRef>
+      <LineRef>l_M11A_MEGA</LineRef>
+      <JourneyPatternRef>JP74</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>10:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>DU11</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-05-19</StartDate>
+              <EndDate>2015-04-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>DU11</VehicleJourneyCode>
+      <ServiceRef>M11A_MEGA</ServiceRef>
+      <LineRef>l_M11A_MEGA</LineRef>
+      <JourneyPatternRef>JP75</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>19:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J80</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>J80</VehicleJourneyCode>
+      <ServiceRef>M11A_MEGA</ServiceRef>
+      <LineRef>l_M11A_MEGA</LineRef>
+      <JourneyPatternRef>JP76</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>13:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J76</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-05-19</StartDate>
+              <EndDate>2015-04-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J76</VehicleJourneyCode>
+      <ServiceRef>M11A_MEGA</ServiceRef>
+      <LineRef>l_M11A_MEGA</LineRef>
+      <JourneyPatternRef>JP77</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>16:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J77</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-05-19</StartDate>
+              <EndDate>2015-05-03</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J77</VehicleJourneyCode>
+      <ServiceRef>M11A_MEGA</ServiceRef>
+      <LineRef>l_M11A_MEGA</LineRef>
+      <JourneyPatternRef>JP78</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>18:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J78</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-05-19</StartDate>
+              <EndDate>2015-04-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J78</VehicleJourneyCode>
+      <ServiceRef>M11A_MEGA</ServiceRef>
+      <LineRef>l_M11A_MEGA</LineRef>
+      <VehicleJourneyRef>J76</VehicleJourneyRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>20:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>RY02B</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToSunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-05-19</StartDate>
+              <EndDate>2016-03-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>RY02B</VehicleJourneyCode>
+      <ServiceRef>M11A_MEGA</ServiceRef>
+      <LineRef>l_M11A_MEGA</LineRef>
+      <JourneyPatternRef>JP80</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>23:45:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J75</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToSunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-05-19</StartDate>
+              <EndDate>2016-03-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J75</VehicleJourneyCode>
+      <ServiceRef>M11A_MEGA</ServiceRef>
+      <LineRef>l_M11A_MEGA</LineRef>
+      <JourneyPatternRef>JP81</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>15:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>SG36C</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToSunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-05-19</StartDate>
+              <EndDate>2016-03-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>SG36C</VehicleJourneyCode>
+      <ServiceRef>M11A_MEGA</ServiceRef>
+      <LineRef>l_M11A_MEGA</LineRef>
+      <JourneyPatternRef>JP82</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>16:30:00</DepartureTime>
+    </VehicleJourney>
+  </VehicleJourneys>
+</TransXChange>

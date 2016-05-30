@@ -13,6 +13,12 @@ class ImportServicesTest(TestCase):
 
     command = import_services.Command()
 
+    @classmethod
+    def setUpTestData(cls):
+        cls.whippet = Operator.objects.create(pk='WHIP', region_id='EA', name='Whippet Coaches')
+        cls.megabus = Operator.objects.create(pk='MEGA', region_id='GB', name='Megabus')
+        cls.aberdeen = Operator.objects.create(pk='FABD', region_id='S', name='First Aberdeen')
+
     def test_sanitize_description(self):
 
         testcases = (
@@ -53,17 +59,35 @@ class ImportServicesTest(TestCase):
         for file_name, parts in data:
             self.assertEqual(self.command.get_net_service_code_and_line_ver(file_name), parts)
 
-    def test_do_service(self):
-        whippet = Operator.objects.create(pk='WHIP', region_id='EA', name='Whippet Coaches')
-
-        with open(os.path.join(DIR, 'fixtures/ea_20-45-A-y08-1.xml')) as xml_file:
+    def do_service(self, filename, region, service_descriptions=None):
+        with open(os.path.join(DIR, 'fixtures/%s.xml' % filename)) as xml_file:
             root = ET.parse(xml_file).getroot()
 
-        self.command.do_service(root, 'EA', None)
+        self.command.do_service(root, region, service_descriptions)
 
+    def test_do_service_ea(self):
+        self.do_service('ea_20-45-A-y08-1', 'EA')
         service = Service.objects.get(pk='ea_20-45-A-y08')
 
         self.assertEqual(str(service), '45 - Huntingdon - St Ives')
         self.assertTrue(service.show_timetable)
-        self.assertEqual(service.operator.first(), whippet)
+        self.assertEqual(service.operator.first(), self.whippet)
         self.assertEqual(service.get_traveline_url(), 'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST?line=20045&lineVer=1&net=ea&project=y08&sup=A&command=direct&outputFormat=0')
+
+    def test_do_service_ncsd(self):
+        self.do_service('Megabus_Megabus14032016 163144_MEGA_M11A', 'GB', {'MEGAM11A': 'Belgravia - Liverpool'})
+        service = Service.objects.get(pk='M11A_MEGA')
+
+        self.assertEqual(str(service), 'M11A - Belgravia - Liverpool')
+        self.assertTrue(service.show_timetable)
+        self.assertEqual(service.operator.first(), self.megabus)
+        self.assertEqual(service.get_traveline_url(), 'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST?line=11M11A&net=nrc&project=y08&command=direct&outputFormat=0')
+
+    def test_do_service_scotland(self):
+        self.do_service('SVRABBN017', 'S')
+        service = Service.objects.get(pk='ABBN017')
+
+        self.assertEqual(str(service), 'N17 - Aberdeen - Dyce')
+        self.assertTrue(service.show_timetable)
+        self.assertEqual(service.operator.first(), self.aberdeen)
+        self.assertEqual(service.get_traveline_url(), 'http://www.travelinescotland.com/pdfs/timetables/ABBN017.pdf')
