@@ -45,3 +45,6 @@ class ImportOperatorsTest(TestCase):
     def test_operator_mode(self):
         """Is an operator mode like 'DRT' expanded correctly to 'demand responsive transport'?"""
         self.assertEqual(self.ace_travel.vehicle_mode, 'demand responsive transport')
+        self.assertEqual(self.ace_travel.get_a_mode(), 'A demand responsive transport')
+        self.assertEqual(self.c2c.get_a_mode(), 'A rail')
+        self.assertEqual(self.first_aberdeen.get_a_mode(), 'A bus')
