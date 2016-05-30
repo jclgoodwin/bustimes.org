@@ -4,8 +4,8 @@ Usage:
     ./manage.py import_operators < NOC_db.csv
 """
 
-from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import Operator
+from ..import_from_csv import ImportFromCSVCommand
+from ...models import Operator
 
 
 class Command(ImportFromCSVCommand):

@@ -4,8 +4,8 @@ Usage:
     $ ./manage.py import_stops_in_area < StopsInArea.csv
 """
 
-from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import StopPoint
+from ..import_from_csv import ImportFromCSVCommand
+from ...models import StopPoint
 
 
 class Command(ImportFromCSVCommand):

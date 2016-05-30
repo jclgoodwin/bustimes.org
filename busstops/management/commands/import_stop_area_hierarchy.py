@@ -4,8 +4,8 @@ Usage:
     $ ./manage.py import_stop_area_hierarchy < AreaHierarchy.py
 """
 
-from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import StopArea
+from ..import_from_csv import ImportFromCSVCommand
+from ...models import StopArea
 
 
 class Command(ImportFromCSVCommand):

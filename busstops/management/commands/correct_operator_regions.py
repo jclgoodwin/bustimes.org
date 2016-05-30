@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from busstops.models import Operator, Region
+from ...models import Operator, Region
 
 
 class Command(BaseCommand):

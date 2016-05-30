@@ -5,8 +5,8 @@ Usage:
 """
 
 import requests
-from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import Operator
+from ..import_from_csv import ImportFromCSVCommand
+from ...models import Operator
 
 
 class Command(ImportFromCSVCommand):

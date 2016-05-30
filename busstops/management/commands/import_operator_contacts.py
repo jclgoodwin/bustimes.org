@@ -7,7 +7,7 @@ Usage:
 import xml.etree.cElementTree as ET
 import sys
 from django.core.management.base import BaseCommand
-from busstops.models import Operator
+from ...models import Operator
 
 
 class Command(BaseCommand):

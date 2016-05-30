@@ -9,8 +9,8 @@ from titlecase import titlecase
 
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
-from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import StopPoint, LiveSource
+from ..import_from_csv import ImportFromCSVCommand
+from ...models import StopPoint, LiveSource
 
 
 tfl = LiveSource.objects.get(pk='TfL')

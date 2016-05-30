@@ -166,7 +166,7 @@ def get_departures(stop, services):
             'departures': AcisLiveDepartures('kent', stop, services).get_departures(),
             'today': today,
             'source': {
-                'url': 'http://%s.acislive.com/pip/stop_simulator.asp?NaPTAN=%s' % (prefix, stop.naptan_code),
+                'url': 'http://%s.acislive.com/pip/stop_simulator.asp?NaPTAN=%s' % ('kent', stop.naptan_code),
                 'name': 'ACIS Live'
             }
         }, 60)

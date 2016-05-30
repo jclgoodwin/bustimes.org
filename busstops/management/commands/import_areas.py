@@ -6,8 +6,8 @@ Usage:
     import_areas < AdminAreas.csv
 """
 
-from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import AdminArea
+from ..import_from_csv import ImportFromCSVCommand
+from ...models import AdminArea
 
 
 class Command(ImportFromCSVCommand):

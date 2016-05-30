@@ -11,7 +11,7 @@ import json
 from bs4 import BeautifulSoup
 from time import sleep
 from django.core.management.base import BaseCommand
-from busstops.models import StopPoint, LiveSource
+from ...models import StopPoint, LiveSource
 
 
 kent = LiveSource.objects.get_or_create(name='Kent')[0]

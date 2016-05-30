@@ -11,7 +11,7 @@ Usage:
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from busstops.models import Operator, StopPoint, Service, StopUsage
+from ...models import Operator, StopPoint, Service, StopUsage
 from timetables.timetable import Timetable
 
 import re

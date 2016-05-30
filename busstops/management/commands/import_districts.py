@@ -6,8 +6,8 @@ Usage:
     import_districts > Districts.csv
 """
 
-from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import District
+from ..import_from_csv import ImportFromCSVCommand
+from ...models import District
 
 
 class Command(ImportFromCSVCommand):

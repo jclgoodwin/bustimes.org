@@ -6,8 +6,8 @@ Usage:
     import_localities < Localities.csv
 """
 
-from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import Locality
+from ..import_from_csv import ImportFromCSVCommand
+from ...models import Locality
 from django.contrib.gis.geos import Point
 
 

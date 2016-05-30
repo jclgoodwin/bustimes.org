@@ -6,8 +6,8 @@ Usage:
     ./manage.py import_regions < Regions.csv
 """
 
-from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import Region
+from ..import_from_csv import ImportFromCSVCommand
+from ...models import Region
 
 
 class Command(ImportFromCSVCommand):

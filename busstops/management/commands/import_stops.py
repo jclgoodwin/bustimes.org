@@ -4,8 +4,8 @@ Usage:
     ./manage.py import_stops < Stops.csv
 """
 
-from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import StopPoint
+from ..import_from_csv import ImportFromCSVCommand
+from ...models import StopPoint
 from django.contrib.gis.geos import Point
 
 

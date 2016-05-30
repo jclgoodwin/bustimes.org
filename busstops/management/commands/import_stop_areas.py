@@ -6,8 +6,8 @@ Usage:
     $ ./manage.py import_stop_areas < StopAreas.csv
 """
 
-from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import StopArea, AdminArea
+from ..import_from_csv import ImportFromCSVCommand
+from ...models import StopArea, AdminArea
 from django.contrib.gis.geos import Point
 
 

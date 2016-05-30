@@ -6,8 +6,8 @@ Usage:
     import_locality_hierarchy < LocalityHierarchy.csv
 """
 
-from busstops.management.import_from_csv import ImportFromCSVCommand
-from busstops.models import Locality
+from ..import_from_csv import ImportFromCSVCommand
+from ...models import Locality
 
 
 class Command(ImportFromCSVCommand):

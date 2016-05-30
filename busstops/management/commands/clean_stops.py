@@ -1,7 +1,7 @@
 "Tidy up the NaPTAN data."
 
 from django.core.management.base import BaseCommand
-from busstops.models import StopPoint
+from ...models import StopPoint
 
 
 class Command(BaseCommand):
