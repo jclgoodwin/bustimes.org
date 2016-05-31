@@ -87,14 +87,6 @@ self.addEventListener('fetch', event => {
 
     // For HTML requests, try the network first, fall back to the cache, finally the offline page
     if (request.headers.get('Accept').indexOf('text/html') !== -1) {
-        // Fix for Chrome bug: https://code.google.com/p/chromium/issues/detail?id=573937
-        request = new Request(url, {
-            method: 'GET',
-            headers: request.headers,
-            mode: request.mode == 'navigate' ? 'cors' : request.mode,
-            credentials: request.credentials,
-            redirect: request.redirect
-        });
         event.respondWith(
             fetch(request)
                 .then(response => {
