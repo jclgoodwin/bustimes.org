@@ -53,6 +53,9 @@ DATABASES = {
     },
 }
 
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+
 STATIC_URL = '/static/'
 STATIC_ROOT = os.environ.get('STATIC_ROOT', '/home/josh/bustimes-static/')
 if DEBUG:
