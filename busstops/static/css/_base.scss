@@ -128,6 +128,7 @@ input[type=text],
 input[type=email],
 textarea {
     display: block;
+    width: 100%;
 }
 
 .errorlist {
@@ -149,7 +150,6 @@ textarea {
     outline: 0;
     padding: .25em;
     padding-right: 0;
-    width: 100%;
     -webkit-appearance: none;
 
     &:focus {

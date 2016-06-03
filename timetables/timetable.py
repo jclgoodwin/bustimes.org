@@ -193,6 +193,9 @@ class VehicleJourney(object):
         for section in self.journeypattern.sections:
             for timinglink in section.timinglinks:
                 stopusage = timinglink.destination
+                if hasattr(timinglink.origin, 'waittime'):
+                    time = (datetime.combine(date.today(), time) + timinglink.origin.waittime).time()
+
                 time = (datetime.combine(date.today(), time) + timinglink.runtime).time()
 
                 if deadrun and hasattr(self, 'start_deadrun') and self.start_deadrun == timinglink.id:
