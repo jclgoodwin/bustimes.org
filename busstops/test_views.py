@@ -1,7 +1,29 @@
 from django.test import TestCase
+from django.core import mail
 from django.contrib.gis.geos import Point
 from .models import Region, AdminArea, District, Locality, StopPoint, Operator, Service
 
+
+class ContactTests(TestCase):
+    def test_contact_get(self):
+        response = self.client.get('/contact')
+        self.assertEqual(response.status_code, 200)
+
+    def test_empty_contact_post(self):
+        response = self.client.post('/contact')
+        self.assertFalse(response.context['form'].is_valid())
+
+    def test_contact_post(self):
+        response = self.client.post('/contact', {
+            'name': 'Rufus Herring',
+            'email': 'rufus@example.com',
+            'message': 'Dear John,\r\n\r\nHow are you?\r\n\r\nAll the best,\r\nRufus',
+            'referrer': 'https://www.yahoo.com'
+        })
+        self.assertEqual('Dear John,', mail.outbox[0].subject)
+        self.assertEqual('Rufus Herring <contact@bustimes.org.uk>', mail.outbox[0].from_email)
+        self.assertEqual(['rufus@example.com'], mail.outbox[0].reply_to)
+        self.assertEqual(['contact@bustimes.org.uk'], mail.outbox[0].to)
 
 class ViewsTests(TestCase):
     @classmethod
@@ -70,14 +92,6 @@ class ViewsTests(TestCase):
         for route in ('/cookies', '/data', '/map'):
             response = self.client.get(route)
             self.assertEqual(response.status_code, 200)
-
-    def test_contact_get(self):
-        response = self.client.get('/contact')
-        self.assertEqual(response.status_code, 200)
-
-    def test_contact_post(self):
-        response = self.client.post('/contact')
-        self.assertFalse(response.context['form'].is_valid())
 
     def test_region(self):
         response = self.client.get('/regions/N')

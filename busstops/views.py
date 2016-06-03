@@ -49,16 +49,14 @@ def contact(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
-            subject = form.cleaned_data['message'][:50]
-            if '\n' in subject:
-                subject = subject.split(None, 1)[0]
+            subject = form.cleaned_data['message'][:50].splitlines()[0]
             message = '\n\n'.join((
                 form.cleaned_data['message'],
                 form.cleaned_data['referrer'],
-                request.META.get('HTTP_USER_AGENT')
+                str(request.META.get('HTTP_USER_AGENT'))
             ))
             message = EmailMessage(
-                form.cleaned_data['message'][:50],
+                subject,
                 message,
                 '%s <%s>' % (form.cleaned_data['name'], 'contact@bustimes.org.uk'),
                 ('contact@bustimes.org.uk',),
