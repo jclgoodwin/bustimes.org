@@ -1,0 +1,61 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.10.0]
+    method: GET
+    uri: http://tsy.acislive.com/pip/stop_simulator_table.asp?naptan=32900215
+  response:
+    body: {string: !!python/unicode "\r\n    <html>\r\n    <head>\r\n\t    \r\n\t\
+        \    <META HTTP-EQUIV=\"Refresh\" CONTENT=\"60\">\r\n\t    \r\n\t    <LINK\
+        \ REL=\"stylesheet\" TYPE=\"text/css\" HREF=\"/style/PIPstyle_common.asp\"\
+        \ TITLE=\"style\">\r\n\t    <script src=\"/common/pip.js\" language=\"javascript\"\
+        \ type=\"text/javascript\"></script>\r\n\t    \r\n\t    <script language=\"\
+        javascript\">\r\n\t    <!--\r\n    \t\r\n\t    function init() {\r\n\t\t \
+        \   update_title();\r\n\t\t    start_backup_refresh_timer();\r\n\t    }\r\n\
+        \    \t\r\n\t    function update_title() {\r\n\t\t    parent.ss_title.location.reload();\r\
+        \n\t\t    //parent.ss_title.location.href=parent.ss_title.location.href;\r\
+        \n\t    }\r\n    \t\r\n\t    function start_backup_refresh_timer() {\r\n\t\
+        \t    // This may seem odd. But there has been a report of\r\n\t\t    // the\
+        \ meta-refresh failing one one occasion?!?. So here\r\n\t\t    // is a 'backup'\
+        \ in case of browser problems....\r\n\t\t    \r\n\t\t    setTimeout(\"self.location.reload()\"\
+        , 70000);\r\n\t\t    \r\n\t    }\r\n    \t\r\n\t    function link_open(theURL,\
+        \ theName, popW, popH, scroll) { // V 1.0\r\n\t\t    var winleft = (screen.width\
+        \ - popW) / 2;\r\n\t\t    var winUp = (screen.height - popH) / 2;\r\n\t\t\
+        \    winProp = 'width='+popW+',height='+popH+',left='+winleft+',t op='+winUp+',scrollbars='+scroll+',resizable'\r\
+        \n\t\t    Win = window.open(theURL, theName, winProp)\r\n\t\t    if (parseInt(navigator.appVersion)\
+        \ >= 4){\r\n\t\t\t    Win.window.focus();\r\n\t\t    }\r\n\t    }\r\n    \t\
+        \r\n\t    //-->\r\n\t    </script>\r\n    </head>\r\n    <body class=\"ss_table\"\
+        \ onload=\"javascript:init();\">\r\n\t    <table class=pipdetail cellpadding='0'\
+        \ cellspacing='0'><td width='25%' nowrap>66&nbsp;</td><td width='35%' class='destination'\
+        \ nowrap>York Sport Village&nbsp;</td><td width='20%' align='right' nowrap>1\
+        \ min&nbsp;</td><td width='20%' nowrap>LF&nbsp;</td></tr><td width='25%' nowrap>44&nbsp;</td><td\
+        \ width='35%' class='destination' nowrap>Heslington East Int&nbsp;</td><td\
+        \ width='20%' align='right' nowrap>9 mins&nbsp;</td><td width='20%' nowrap>LF&nbsp;</td></tr><td\
+        \ width='25%' nowrap>66&nbsp;</td><td width='35%' class='destination' nowrap>York\
+        \ Sport Village&nbsp;</td><td width='20%' align='right' nowrap>18:42&nbsp;</td><td\
+        \ width='20%' nowrap>&nbsp;&nbsp;</td></tr><td width='25%' nowrap>44&nbsp;</td><td\
+        \ width='35%' class='destination' nowrap>Heslington East Int&nbsp;</td><td\
+        \ width='20%' align='right' nowrap>18:53&nbsp;</td><td width='20%' nowrap>&nbsp;&nbsp;</td></tr><td\
+        \ width='25%' nowrap>66&nbsp;</td><td width='35%' class='destination' nowrap>York\
+        \ Sport Village&nbsp;</td><td width='20%' align='right' nowrap>39 mins&nbsp;</td><td\
+        \ width='20%' nowrap>LF&nbsp;</td></tr><td width='25%' nowrap>44&nbsp;</td><td\
+        \ width='35%' class='destination' nowrap>Heslington East Int&nbsp;</td><td\
+        \ width='20%' align='right' nowrap>19:13&nbsp;</td><td width='20%' nowrap>&nbsp;&nbsp;</td></tr><td\
+        \ width='25%' nowrap>66&nbsp;</td><td width='35%' class='destination' nowrap>York\
+        \ Sport Village&nbsp;</td><td width='20%' align='right' nowrap>59 mins&nbsp;</td><td\
+        \ width='20%' nowrap>LF&nbsp;</td></tr></table>\r\n    </body>\r\n    </html>\r\
+        \n"}
+    headers:
+      cache-control: [private]
+      content-length: ['2962']
+      content-type: [text/html]
+      date: ['Sun, 05 Jun 2016 17:24:17 GMT']
+      server: [Microsoft-IIS/5.0]
+      set-cookie: [ASPSESSIONIDASBDADAB=DGPEDANBEMLFJHEFFEFKJKCB; path=/]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+version: 1

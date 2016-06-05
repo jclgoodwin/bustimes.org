@@ -1,0 +1,104 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.10.0]
+    method: GET
+    uri: http://yorkshire.acisconnect.com/Text/WebDisplay.aspx?stopRef=32900215
+  response:
+    body: {string: !!python/unicode "\r\n\r\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML\
+        \ 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"\
+        >\r\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\r\n<head><title>\r\n\t\
+        vixConnect\r\n</title><link rel=\"shortcut icon\" href=\"/Page_Content/Default/Images/favicon.ico?v=1.8\"\
+        \ /></head>\r\n<body>\r\n    <form method=\"post\" action=\"./WebDisplay.aspx?stopRef=32900215\"\
+        \ id=\"form1\">\r\n<input type=\"hidden\" name=\"__VIEWSTATE\" id=\"__VIEWSTATE\"\
+        \ value=\"/wEPDwUJMzE0NDE3MTY5D2QWAgIDD2QWBgIDD2QWAmYPZBYCAgEPFgIeBFRleHQFsgQ8IURPQ1RZUEUgaHRtbD4NCjxodG1sIGxhbmc9ImVuIj4NCjxoZWFkPg0KDQogICAgPG1ldGEgY2hhcnNldD0idXRmLTgiPg0KICAgIDxtZXRhIGNvbnRlbnQ9IklFPWVkZ2UiIGh0dHAtZXF1aXY9IlgtVUEtQ29tcGF0aWJsZSI+DQogICAgPG1ldGEgY29udGVudD0id2lkdGg9ZGV2aWNlLXdpZHRoLCBpbml0aWFsLXNjYWxlPTEiIG5hbWU9InZpZXdwb3J0Ij4NCiAgICA8bWV0YSBjb250ZW50PSIiIG5hbWU9ImRlc2NyaXB0aW9uIj4NCiAgICA8bWV0YSBjb250ZW50PSIiIG5hbWU9ImF1dGhvciI+DQogICAgPGxpbmsgaHJlZj0iL2ltYWdlcy9mYXZpY29uLmljbyIgcmVsPSJpY29uIj4NCiAgICA8dGl0bGU+V1kgTWV0cm88L3RpdGxlPg0KICAgIDxtZXRhIG5hbWU9InZpZXdwb3J0IiBjb250ZW50PSJ3aWR0aD1kZXZpY2Utd2lkdGgsIGluaXRpYWwtc2NhbGU9MS4wIj4NCiAgICA8IS0tIEJvb3RzdHJhcCAtLT4NCiAgICA8bGluayBocmVmPSIvUGFnZV9Db250ZW50L0RlZmF1bHQvTWV0cm9TdHlsZXNUZXh0LmNzcyIgcmVsPSJzdHlsZXNoZWV0IiAvPg0KPC9oZWFkPg0KPC9odG1sPg0KZAIFD2QWAmYPZBYOAgMPFgIfAAWAATxzcGFuIGNsYXNzPSJlbXBoYXNpc2UiPkRlcGFydHVyZTwvc3Bhbj4gaW5mb3JtYXRpb24gZm9yIDxzcGFuIGNsYXNzPSJlbXBoYXNpc2UiPjwvc3Bhbj4gYXQgPHNwYW4gY2xhc3M9ImVtcGhhc2lzZSI+MTg6MjQ8L3NwYW4+ZAIFDxYCHwAFMVN0b3AgUmVmOiA8c3BhbiBjbGFzcz0iZW1waGFzaXNlIj4zMjkwMDIxNTwvc3Bhbj5kAgcPPCsAEQMADxYEHgtfIURhdGFCb3VuZGceC18hSXRlbUNvdW50AgdkAQ8UKwAEPCsABQEAFgQeCURhdGFGaWVsZAUYSm91cm5leVB1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\"\
+        \ />\r\n\r\n\r\n<script src=\"/ScriptResource.axd?d=QNTrodopzUqzMtJeEk1Ph15GrqEHuZXekdGiam7Gtc7G0WeCSEKO7CMnXJLbMWay7oXEyzC3IWvr6xmt1_rVje4xNWIVpg0O4HBuH2lhQwzgH9bzYhWoi_lt6nJIJQ9-TjddgH36YoAyBh3qJALe2B3daJS03KppSisWuKY0CR41&amp;t=5f9d5645\"\
+        \ type=\"text/javascript\"></script>\r\n<script src=\"../Scripts/page/audit.release.js\"\
+        \ type=\"text/javascript\"></script>\r\n<script src=\"/ScriptResource.axd?d=m99ZJjFoZOgHI1hTAjojwsL8EAdU-sOQLBWssrB3lk0H8SojVYpektDSS7w2uEQ9K9qG8sI_YGLfENCQCoOzG44y-nFaU-RoczBxlA7UBDI7WWhgGzkqJi2rU7JF-L6DgPqoe6IYn2yyPaWWl2kFgErU7ESV1jPtOU2X8FPOnZQ1&amp;t=5f9d5645\"\
+        \ type=\"text/javascript\"></script>\r\n<input type=\"hidden\" name=\"__VIEWSTATEGENERATOR\"\
+        \ id=\"__VIEWSTATEGENERATOR\" value=\"B5743445\" />\r\n<input type=\"hidden\"\
+        \ name=\"__EVENTVALIDATION\" id=\"__EVENTVALIDATION\" value=\"/wEdAAWFnUcwgB+VEQNqm44hdPjUBSQ+BOPJgPaIfvOC6/j4WY2+K5Rdmk/7s2uffD0jtbFNLlNJhxgDG+LHuDcClHAvTabGGLaWs5Jxf8sotPOe6SsInFmmvE9uE2FNEgbGXr7WUsSPulxvM2lBerRDyEGI\"\
+        \ />\r\n    <div>\r\n        \r\n\r\n        <div id=\"header\">\r\n     \
+        \       <div id=\"HeaderControl_HeaderContainer\">\r\n\t\r\n    <!DOCTYPE\
+        \ html>\r\n<html lang=\"en\">\r\n<head>\r\n\r\n    <meta charset=\"utf-8\"\
+        >\r\n    <meta content=\"IE=edge\" http-equiv=\"X-UA-Compatible\">\r\n   \
+        \ <meta content=\"width=device-width, initial-scale=1\" name=\"viewport\"\
+        >\r\n    <meta content=\"\" name=\"description\">\r\n    <meta content=\"\"\
+        \ name=\"author\">\r\n    <link href=\"/images/favicon.ico\" rel=\"icon\"\
+        >\r\n    <title>WY Metro</title>\r\n    <meta name=\"viewport\" content=\"\
+        width=device-width, initial-scale=1.0\">\r\n    <!-- Bootstrap -->\r\n   \
+        \ <link href=\"/Page_Content/Default/MetroStylesText.css\" rel=\"stylesheet\"\
+        \ />\r\n</head>\r\n</html>\r\n\r\n\r\n</div>\r\n        </div>\r\n       \
+        \     \r\n        <div id=\"UpdatePanel1\">\r\n\t\r\n                <input\
+        \ type=\"hidden\" name=\"hidTimeOption\" id=\"hidTimeOption\" value=\"UseDepartureTimes\"\
+        \ />\r\n                <p class=\"titleLine\">\r\n                    <span\
+        \ class=\"emphasise\">Departure</span> information for <span class=\"emphasise\"\
+        ></span> at <span class=\"emphasise\">18:24</span>\r\n                </p>\r\
+        \n\r\n                <p>\r\n                    Stop Ref: <span class=\"\
+        emphasise\">32900215</span>\r\n                </p>\r\n\r\n              \
+        \  <div>\r\n\t\t<table class=\"webDisplayTable\" cellspacing=\"0\" rules=\"\
+        all\" border=\"1\" id=\"GridViewRTI\">\r\n\t\t\t<tr>\r\n\t\t\t\t<th class=\"\
+        header-cell\" scope=\"col\">Service</th><th class=\"header-cell\" scope=\"\
+        col\">To</th><th class=\"header-cell\" scope=\"col\">Time</th><th class=\"\
+        header-cell\" scope=\"col\">Low Floor</th>\r\n\t\t\t</tr><tr>\r\n\t\t\t\t\
+        <td class=\"body-cell\">66</td><td class=\"body-cell\">York Sport Village</td><td\
+        \ class=\"body-cell\" align=\"right\">1 Mins</td><td class=\"body-cell\">Yes</td>\r\
+        \n\t\t\t</tr><tr class=\"oddrow\">\r\n\t\t\t\t<td class=\"body-cell\">44</td><td\
+        \ class=\"body-cell\">Heslington East Int</td><td class=\"body-cell\" align=\"\
+        right\">9 Mins</td><td class=\"body-cell\">Yes</td>\r\n\t\t\t</tr><tr>\r\n\
+        \t\t\t\t<td class=\"body-cell\">66</td><td class=\"body-cell\">York Sport\
+        \ Village</td><td class=\"body-cell\" align=\"right\">18:42</td><td class=\"\
+        body-cell\">&nbsp;</td>\r\n\t\t\t</tr><tr class=\"oddrow\">\r\n\t\t\t\t<td\
+        \ class=\"body-cell\">44</td><td class=\"body-cell\">Heslington East Int</td><td\
+        \ class=\"body-cell\" align=\"right\">18:53</td><td class=\"body-cell\">&nbsp;</td>\r\
+        \n\t\t\t</tr><tr>\r\n\t\t\t\t<td class=\"body-cell\">66</td><td class=\"body-cell\"\
+        >York Sport Village</td><td class=\"body-cell\" align=\"right\">38 Mins</td><td\
+        \ class=\"body-cell\">Yes</td>\r\n\t\t\t</tr><tr class=\"oddrow\">\r\n\t\t\
+        \t\t<td class=\"body-cell\">44</td><td class=\"body-cell\">Heslington East\
+        \ Int</td><td class=\"body-cell\" align=\"right\">19:13</td><td class=\"body-cell\"\
+        >&nbsp;</td>\r\n\t\t\t</tr><tr>\r\n\t\t\t\t<td class=\"body-cell\">66</td><td\
+        \ class=\"body-cell\">York Sport Village</td><td class=\"body-cell\" align=\"\
+        right\">58 Mins</td><td class=\"body-cell\">Yes</td>\r\n\t\t\t</tr>\r\n\t\t\
+        </table>\r\n\t</div>\r\n\r\n                \r\n\r\n                <p>\r\n\
+        \                    \r\n                </p>\r\n\r\n                <p>\r\
+        \n                    <a id=\"lbShowArrivals\" title=\"Change between showing\
+        \ Arrivals and Departures\" class=\"timeOption\" href=\"javascript:__doPostBack(&#39;lbShowArrivals&#39;,&#39;&#39;)\"\
+        >Show arrivals</a>\r\n                    \r\n                </p>\r\n\r\n\
+        \                <p>\r\n                    \r\n                </p>\r\n\r\
+        \n                <p>\r\n                    <a id=\"LinkButtonEarlyDeparture\"\
+        \ title=\"View earlier times\" class=\"aspNetDisabled\">Earlier times</a>\r\
+        \n                </p>\r\n\r\n                <p>\r\n                    <a\
+        \ id=\"LinkButtonLateDeparture\" title=\"View later times\" href=\"javascript:__doPostBack(&#39;LinkButtonLateDeparture&#39;,&#39;&#39;)\"\
+        >Later times</a>\r\n                </p>\r\n\r\n                \r\n\r\n \
+        \               \r\n\r\n                <p>\r\n                    <a id=\"\
+        LinkSearchAgain\" title=\"Perform another search\" href=\"Default.aspx\">Search\
+        \ again</a>\r\n                </p>\r\n\r\n                <input type=\"\
+        hidden\" name=\"CurrentOffset\" id=\"CurrentOffset\" value=\"0\" />\r\n  \
+        \              <span id=\"RefreshTimer\" style=\"display:none;\"></span>\r\
+        \n            \r\n</div>\r\n\r\n        <div id=\"footer\">\r\n          \
+        \  \r\n    <hr id=\"FooterSeparatorLine\" />\r\n<div id=\"FooterControl_PrivacyPolicyPanel\"\
+        >\r\n\t\r\n    <a id=\"FooterControl_PrivacyPolicyLink\" title=\"View the\
+        \ sites privacy policy\" href=\"/Text/PrivacyPolicy.aspx?back=%2fText%2fWebDisplay.aspx%3fstopRef%3d32900215\"\
+        >Privacy Policy</a>\r\n\r\n</div>\r\n\r\n<div id=\"FooterControl_FooterContainer\"\
+        >\r\n\t\r\n    \r\n\r\n</div>\r\n        </div>\r\n    </div>\r\n    \r\n\r\
+        \n<script type=\"text/javascript\">\r\n//<![CDATA[\r\nif(!auditUsage){auditUsage\
+        \ = new AuditUsage(auditSettings={\"Mode\":\"GoogleAnalytics\",\"Account\"\
+        :\"UA-42679341-1\"}, false);}Sys.Application.add_init(function() {\r\n   \
+        \ $create(Sys.UI._Timer, {\"enabled\":true,\"interval\":30000,\"uniqueID\"\
+        :\"RefreshTimer\"}, null, null, $get(\"RefreshTimer\"));\r\n});\r\n//]]>\r\
+        \n</script>\r\n</form>\r\n</body>\r\n</html>\r\n"}
+    headers:
+      cache-control: [private]
+      content-length: ['9645']
+      content-type: [text/html; charset=utf-8]
+      date: ['Sun, 05 Jun 2016 17:24:18 GMT']
+      server: [Microsoft-IIS/7.5]
+      set-cookie: [ASP.NET_SessionId=4bvtd51pik32fgpqgxghyevr; path=/; HttpOnly]
+      x-aspnet-version: [4.0.30319]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+version: 1
