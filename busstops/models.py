@@ -295,9 +295,9 @@ class StopUsage(models.Model):
 class Service(models.Model):
     "A bus service."
     service_code = models.CharField(max_length=24, primary_key=True)
-    line_name = models.CharField(max_length=64)
-    line_brand = models.CharField(max_length=64)
-    description = models.CharField(max_length=128)
+    line_name = models.CharField(max_length=64, blank=True)
+    line_brand = models.CharField(max_length=64, blank=True)
+    description = models.CharField(max_length=128, blank=True)
     mode = models.CharField(max_length=11)
     operator = models.ManyToManyField(Operator, blank=True)
     net = models.CharField(max_length=3, blank=True)

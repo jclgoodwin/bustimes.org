@@ -185,7 +185,10 @@ def get_departures(stop, services):
                 }
             }, 60)
 
-    departures = TransportApiDepartures(stop, services).get_departures()
+    try:
+        departures = TransportApiDepartures(stop, services).get_departures()
+    except requests.exceptions.ConnectionError:
+        departures = ()
     if len(departures) > 0:
         now = datetime.now()
         expiry = departures[0]['time']

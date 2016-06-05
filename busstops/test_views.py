@@ -25,6 +25,7 @@ class ContactTests(TestCase):
         self.assertEqual(['rufus@example.com'], mail.outbox[0].reply_to)
         self.assertEqual(['contact@bustimes.org.uk'], mail.outbox[0].to)
 
+
 class ViewsTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -137,6 +138,17 @@ class ViewsTests(TestCase):
         self.assertContains(response, 'heading=270')
         self.assertContains(response, 'leaflet.js')
         self.assertContains(response, 'map.js')
+
+    def test_stop_json(self):
+        response = self.client.get('/stops/2900M114.json')
+        json = response.json()
+        self.assertTrue(json['active'])
+        self.assertEqual(json['admin_area'], 91)
+        self.assertEqual(json['atco_code'], '2900M114')
+        self.assertEqual(json['latlong'], [52.8566019427, 1.0331935468])
+        self.assertEqual(json['live_sources'], [])
+        self.assertIsNone(json['heading'])
+        self.assertIsNone(json['stop_area'])
 
     def test_inactive_stop(self):
         response = self.client.get('/stops/2900M115')
