@@ -8,16 +8,24 @@ from busstops.models import Service
 class TimetableTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.service = Service.objects.create(
+        cls.ne_service = Service.objects.create(
             pk='NE_130_PC4736_572',
             line_name='572',
             description='Ravenstonedale - Barnard Castle',
             region_id='NE',
             date='2016-05-05'
         )
+        cls.nw_service = Service.objects.create(
+            pk='60023943',
+            line_name='289',
+            description='Northwich - Knutsford - High Legh - Altrincham',
+            region_id='NW',
+            date='2016-05-24'
+        )
 
     def test_get_filename(self):
-        self.assertEqual(timetable.get_filenames(self.service, None), ('NE_130_PC4736_572.xml',))
+        self.assertEqual(timetable.get_filenames(self.ne_service, None), ('NE_130_PC4736_572.xml',))
+        self.assertEqual(timetable.get_filenames(self.nw_service, None), ('SVR60023943.xml',))
 
 
 class DateRangeTest(TestCase):

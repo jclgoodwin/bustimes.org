@@ -1,5 +1,6 @@
 import vcr
 import live
+import datetime
 from django.test import TestCase
 from busstops.models import StopPoint, Service
 
@@ -101,3 +102,22 @@ class LiveDeparturesTest(TestCase):
         with vcr.use_cassette('data/vcr/acislive_yorkshire.yaml'):
             departures = live.AcisLiveDepartures('tsy', self.yorkshire_stop, Service.objects.all()).get_departures()
         self._test_acis_yorkshire(departures)
+
+    def test_transporapi_row(self):
+        row = live.TransportApiDepartures(self.yorkshire_stop, Service.objects.all()).get_row({
+            'direction': 'Bus Station (Norwich City Centre)',
+            'source': 'Traveline timetable (nextbuses disabled)',
+            'line_name': 'X44',
+            'aimed_departure_time': '12:05',
+            'date': '2016-06-06',
+            'best_departure_estimate': '12:05',
+            'mode': 'bus',
+            'operator': 'SNDR',
+            'line': 'X44',
+            'dir': 'outbound'
+        })
+        self.assertEqual(row, {
+            'destination': 'Norwich City Centre',
+            'service': 'X44',
+            'time': datetime.datetime(2016, 6, 6, 12, 5)
+        })
