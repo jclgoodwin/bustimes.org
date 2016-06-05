@@ -8,3 +8,4 @@ git+https://github.com/jclgoodwin/django-template-minifier.git
 pytz==2016.4
 requests==2.10.0
 git+https://github.com/django-haystack/django-haystack.git
+vcrpy==1.7.4

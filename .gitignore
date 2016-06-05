@@ -2,7 +2,10 @@ env
 .DS_Store
 *.pyc
 data/*/
+!data/vcr/
+data/*.xml
 data/*.csv
 .sass-cache
+node_modules
 **/bower_components
 .coverage
