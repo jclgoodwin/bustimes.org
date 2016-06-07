@@ -156,6 +156,8 @@ class VehicleJourney(object):
             element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
         ).time()
 
+        self.code = element.find('txc:VehicleJourneyCode', NS).text
+
         journeypatternref_element = element.find('txc:JourneyPatternRef', NS)
         if journeypatternref_element is not None:
             self.journeypattern = journeypatterns[journeypatternref_element.text]
@@ -414,9 +416,12 @@ class Timetable(object):
         servicedorganisations = xml.find('txc:ServicedOrganisations', NS)
 
         # time calculation begins here:
-        journeys = {
-            element.find('txc:VehicleJourneyCode', NS).text: VehicleJourney(element, journeypatterns, servicedorganisations)
+        journeys = (
+            VehicleJourney(element, journeypatterns, servicedorganisations)
             for element in xml.find('txc:VehicleJourneys', NS)
+        )
+        journeys = {
+            journey.code: journey for journey in journeys if journey.should_show()
         }
 
         # some journeys did not have a direct reference to a journeypattern,
@@ -429,9 +434,8 @@ class Timetable(object):
         journeys.sort(key=VehicleJourney.get_departure_time)
         journeys.sort(key=VehicleJourney.get_order)
         for journey in journeys:
-            if journey.should_show():
-                journey.journeypattern.grouping.journeys.append(journey)
-                journey.add_times()
+            journey.journeypattern.grouping.journeys.append(journey)
+            journey.add_times()
 
         service_element = xml.find('txc:Services', NS).find('txc:Service', NS)
         operatingprofile_element = service_element.find('txc:OperatingProfile', NS)
