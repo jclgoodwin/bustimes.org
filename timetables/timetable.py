@@ -186,12 +186,13 @@ class VehicleJourney(object):
 
         stopusage = self.journeypattern.sections[0].timinglinks[0].origin
         time = self.departure_time
-        if stopusage.sequencenumber is not None:
-            self.journeypattern.grouping.rows.get(stopusage.sequencenumber).times.append(time)
-        else:
-            stopusage.row.times.append(time)
-
         deadrun = hasattr(self, 'start_deadrun')
+        if not deadrun:
+            if stopusage.sequencenumber is not None:
+                self.journeypattern.grouping.rows.get(stopusage.sequencenumber).times.append(time)
+            else:
+                stopusage.row.times.append(time)
+
         for section in self.journeypattern.sections:
             for timinglink in section.timinglinks:
                 stopusage = timinglink.destination
