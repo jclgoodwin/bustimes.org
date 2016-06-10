@@ -2,7 +2,7 @@ import vcr
 import live
 import datetime
 from django.test import TestCase
-from busstops.models import StopPoint, Service
+from busstops.models import LiveSource, StopPoint, Service
 
 
 class LiveDeparturesTest(TestCase):
@@ -14,8 +14,11 @@ class LiveDeparturesTest(TestCase):
             locality_centre=False,
             active=True,
             admin_area_id=1,
-            locality_id=1
+            locality_id=1,
         )
+        cls.london_stop.live_sources.add('TfL')
+
+        cls.cardiff = LiveSource.objects.create(pk='card')
         cls.cardiff_stop = StopPoint.objects.create(
             pk='5710WDB48471',
             common_name='Wood Street',
@@ -24,6 +27,9 @@ class LiveDeparturesTest(TestCase):
             admin_area_id=1,
             locality_id=1
         )
+        cls.cardiff_stop.live_sources.add('card')
+
+        cls.yorkshire = LiveSource.objects.create(pk='Y')
         cls.yorkshire_stop = StopPoint.objects.create(
             pk='3290YYA00215',
             naptan_code='32900215',
@@ -33,6 +39,7 @@ class LiveDeparturesTest(TestCase):
             admin_area_id=1,
             locality_id=1
         )
+        cls.yorkshire_stop.live_sources.add('Y')
 
     def test_tfl(self):
         stop = self.london_stop
@@ -44,6 +51,12 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(2016, row['time'].date().year)
         self.assertEqual(6, row['time'].date().month)
         self.assertEqual(5, row['time'].date().day)
+
+        departures = live.get_departures(stop, ())[0]
+        self.assertEqual(departures['source'], {
+            'url': 'https://tfl.gov.uk/bus/stop/490014721F/wilmot-street',
+            'name': 'Transport for London'
+        })
 
     def test_acisconnect_cardiff(self):
         stop = self.cardiff_stop
@@ -72,6 +85,12 @@ class LiveDeparturesTest(TestCase):
             'time': '49 mins'
         })
 
+        departures = live.get_departures(self.cardiff_stop, ())[0]
+        self.assertEqual(departures['source'], {
+            'url': 'http://cardiff.acisconnect.com/Text/WebDisplay.aspx?stopRef=5710WDB48471',
+            'name': 'vixConnect'
+        })
+
     def _test_acis_yorkshire(self, departures):
         self.assertEqual(departures.next(), {
             'destination': 'York Sport Village',
@@ -92,6 +111,12 @@ class LiveDeparturesTest(TestCase):
             'destination': 'Heslington East Int',
             'service': '44',
             'time': '18:53',
+        })
+
+        departures = live.get_departures(self.yorkshire_stop, ())[0]
+        self.assertEqual(departures['source'], {
+            'url': 'http://yorkshire.acisconnect.com/Text/WebDisplay.aspx?stopRef=32900215',
+            'name': 'Your Next Bus'
         })
 
     def test_acis_yorkshire(self):

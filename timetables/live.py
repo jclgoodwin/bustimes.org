@@ -144,7 +144,7 @@ def get_departures(stop, services):
 
     if 'TfL' in live_sources:
         return ({
-            'departures': TflDepartures(stop, services).get_departures(),
+            'departures': TflDepartures(stop, services),
             'today': today,
             'source': {
                 'url': 'https://tfl.gov.uk/bus/stop/%s/%s' % (stop.atco_code, slugify(stop.common_name)),
@@ -154,7 +154,7 @@ def get_departures(stop, services):
 
     if 'Y' in live_sources:
         return ({
-            'departures': AcisConnectDepartures('yorkshire', stop, services).get_departures(),
+            'departures': AcisConnectDepartures('yorkshire', stop, services),
             'source': {
                 'url': 'http://yorkshire.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % stop.naptan_code,
                 'name': 'Your Next Bus'
@@ -163,7 +163,7 @@ def get_departures(stop, services):
 
     if 'Kent' in live_sources:
         return ({
-            'departures': AcisLiveDepartures('kent', stop, services).get_departures(),
+            'departures': AcisLiveDepartures('kent', stop, services),
             'today': today,
             'source': {
                 'url': 'http://%s.acislive.com/pip/stop_simulator.asp?NaPTAN=%s' % ('kent', stop.naptan_code),
@@ -178,7 +178,7 @@ def get_departures(stop, services):
     ):
         if live_source_name in live_sources:
             return ({
-                'departures': AcisConnectDepartures(prefix, stop, services).get_departures(),
+                'departures': AcisConnectDepartures(prefix, stop, services),
                 'source': {
                     'url': 'http://%s.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % (prefix, stop.pk),
                     'name': 'vixConnect'

@@ -13,7 +13,7 @@ from ...models import Region
 class Command(ImportFromCSVCommand):
 
     def handle_row(self, row):
-        Region.objects.update_or_create(
+        return Region.objects.update_or_create(
             id=row['RegionCode'],
             defaults={
                 'name': row['RegionName']
