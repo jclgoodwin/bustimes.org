@@ -153,7 +153,7 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(departures.get_row(rows[0]), {
             'destination': 'Hellesdon, Bush Roa',
             'service': '37',
-            'time': datetime.datetime(2016, 6, 10, 22, 15)
+            'time': datetime.datetime.combine(datetime.date.today(), datetime.time(22, 15))
         })
         self.assertEqual(departures.get_row(rows[1]), {
             'destination': 'Sheringham',

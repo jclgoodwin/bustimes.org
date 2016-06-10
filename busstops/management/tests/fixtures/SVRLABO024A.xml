@@ -1,0 +1,5414 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TransXChange xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.transxchange.org.uk/ http://www.transxchange.org.uk/schema/2.1/TransXChange_general.xsd" CreationDateTime="2016-05-24T11:49:00-00:00" ModificationDateTime="2016-05-24T11:49:00-00:00" Modification="new" RevisionNumber="0" FileName="SVRLABO024A.xml" SchemaVersion="2.1" RegistrationDocument="false" xmlns="http://www.transxchange.org.uk/">
+  <ServicedOrganisations>
+    <ServicedOrganisation>
+      <OrganisationCode>4</OrganisationCode>
+      <Name>
+Bank Holidays
+</Name>
+      <WorkingDays>
+        <DateRange>
+          <StartDate>2016-03-25</StartDate>
+          <EndDate>2016-03-25</EndDate>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-03-28</StartDate>
+          <EndDate>2016-03-28</EndDate>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-05-02</StartDate>
+          <EndDate>2016-05-02</EndDate>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-05-30</StartDate>
+          <EndDate>2016-05-30</EndDate>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-08-29</StartDate>
+          <EndDate>2016-08-29</EndDate>
+        </DateRange>
+      </WorkingDays>
+    </ServicedOrganisation>
+  </ServicedOrganisations>
+  <StopPoints>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580BBS0004</StopPointRef>
+      <CommonName>Bus Station</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580BLA0125</StopPointRef>
+      <CommonName>Town Hall</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580BLA0085</StopPointRef>
+      <CommonName>Blackburn College</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580BLA0076</StopPointRef>
+      <CommonName>Montague Street</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580WSF0019</StopPointRef>
+      <CommonName>St Wilfrids School</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580WSF0020</StopPointRef>
+      <CommonName>The Griffin</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580WIT0002</StopPointRef>
+      <CommonName>Bulls Head</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580WIT0004</StopPointRef>
+      <CommonName>Markham Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580WIT0009</StopPointRef>
+      <CommonName>Witton Park</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580CHT0008</StopPointRef>
+      <CommonName>Tower Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580CHT0004</StopPointRef>
+      <CommonName>Cecilia Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580CHT0002</StopPointRef>
+      <CommonName>The Beehive</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580CHT0009</StopPointRef>
+      <CommonName>The Crescent</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580CHT0014</StopPointRef>
+      <CommonName>Woodlands Avenue</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580FCW0008</StopPointRef>
+      <CommonName>Three Arches</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580FCW0001</StopPointRef>
+      <CommonName>Feildens Arms</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580FCW0010</StopPointRef>
+      <CommonName>Tintagel Close</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LAA00285</StopPointRef>
+      <CommonName>Toll Bar</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LAA16422</StopPointRef>
+      <CommonName>Finnington Lane</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500OLO00003</StopPointRef>
+      <CommonName>Alghero</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500STA00001</StopPointRef>
+      <CommonName>Stanworth Terrace</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250010003</StopPointRef>
+      <CommonName>Post Office</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500498</StopPointRef>
+      <CommonName>Hare and Hounds</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LA00165</StopPointRef>
+      <CommonName>Prospect Terrace</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LA00164</StopPointRef>
+      <CommonName>Health Centre</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250010791</StopPointRef>
+      <CommonName>Hartington Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250010793</StopPointRef>
+      <CommonName>School Lane</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LA00160</StopPointRef>
+      <CommonName>War Memorial</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LAA16134</StopPointRef>
+      <CommonName>Windsor Drive</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250010794</StopPointRef>
+      <CommonName>St Johns School</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250015723</StopPointRef>
+      <CommonName>Sandy Lane</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250012008</StopPointRef>
+      <CommonName>Bett Lane</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500565</StopPointRef>
+      <CommonName>Golden Lion</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500DCL487</StopPointRef>
+      <CommonName>Millbrook Close</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2393</StopPointRef>
+      <CommonName>Red Lion Hotel</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2392</StopPointRef>
+      <CommonName>Town Lane</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2387</StopPointRef>
+      <CommonName>Blackburn Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500DCL488</StopPointRef>
+      <CommonName>Gorse Close</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250011117</StopPointRef>
+      <CommonName>Guildford Avenue</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2388</StopPointRef>
+      <CommonName>Merton Grove</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2390</StopPointRef>
+      <CommonName>Motorway Bridge</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250011105</StopPointRef>
+      <CommonName>Bretherton Arms</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250015509</StopPointRef>
+      <CommonName>Brown Street</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2950</StopPointRef>
+      <CommonName>Seymour Street</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250011115</StopPointRef>
+      <CommonName>St James Bowling Club</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2499</StopPointRef>
+      <CommonName>Sacred Heart RCPS</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2497</StopPointRef>
+      <CommonName>Eldon Street</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500DCL3384</StopPointRef>
+      <CommonName>Railway Station</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250020908</StopPointRef>
+      <CommonName>Bus Station</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250020903</StopPointRef>
+      <CommonName>Bus Station</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500510</StopPointRef>
+      <CommonName>Rail Station</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500DCL489</StopPointRef>
+      <CommonName>Eldon Street</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2498</StopPointRef>
+      <CommonName>Worthy Street</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250011106</StopPointRef>
+      <CommonName>Brookes Arms</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250015667</StopPointRef>
+      <CommonName>Bus Depot</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2500</StopPointRef>
+      <CommonName>Eaves Lane</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2951</StopPointRef>
+      <CommonName>Aniline Street</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2952</StopPointRef>
+      <CommonName>St Peters Street</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2391</StopPointRef>
+      <CommonName>The Lock and Quay</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2389</StopPointRef>
+      <CommonName>Merton Grove</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2955</StopPointRef>
+      <CommonName>Guildford Avenue</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2956</StopPointRef>
+      <CommonName>Gorse Close</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2398</StopPointRef>
+      <CommonName>Moss Lane jct</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250011921</StopPointRef>
+      <CommonName>Town Lane</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500576</StopPointRef>
+      <CommonName>Red Lion Hotel</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG2394</StopPointRef>
+      <CommonName>Millbrook Close</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LAA15730</StopPointRef>
+      <CommonName>Golden Lion</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LA00133</StopPointRef>
+      <CommonName>Bett Lane</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LAA16133</StopPointRef>
+      <CommonName>Buckholes Farm</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LA00161</StopPointRef>
+      <CommonName>Windsor Drive</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500502</StopPointRef>
+      <CommonName>War Memorial</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LA00162</StopPointRef>
+      <CommonName>Woodland View</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LAA16135</StopPointRef>
+      <CommonName>Hartington Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LA00163</StopPointRef>
+      <CommonName>Health Centre</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500192</StopPointRef>
+      <CommonName>Prospect Terrace</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LAA16137</StopPointRef>
+      <CommonName>Twist Moor Lane</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LAA16331</StopPointRef>
+      <CommonName>Gladstone Terrace</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500ABY00001</StopPointRef>
+      <CommonName>Hare and Hounds</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250010005</StopPointRef>
+      <CommonName>School</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250010004</StopPointRef>
+      <CommonName>Royal Hotel</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250010001</StopPointRef>
+      <CommonName>East View Terrace</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250010006</StopPointRef>
+      <CommonName>Stanworth Terrace</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500OLO00004</StopPointRef>
+      <CommonName>Alghero</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LAA16421</StopPointRef>
+      <CommonName>Finnington Lane</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LAA00286</StopPointRef>
+      <CommonName>Toll Bar</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580FCW0011</StopPointRef>
+      <CommonName>Tintagel Close</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580FCW0002</StopPointRef>
+      <CommonName>Feildens Arms</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580FCW0009</StopPointRef>
+      <CommonName>Three Arches</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580CHT0013</StopPointRef>
+      <CommonName>Woodlands Avenue</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580CHT0010</StopPointRef>
+      <CommonName>The Crescent</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580CHT0001</StopPointRef>
+      <CommonName>The Beehive</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580CHT0003</StopPointRef>
+      <CommonName>Cecilia Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580CHT0007</StopPointRef>
+      <CommonName>Tower Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580WIT0008</StopPointRef>
+      <CommonName>Witton Park</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580WIT0003</StopPointRef>
+      <CommonName>Buncer Lane</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580WIT0001</StopPointRef>
+      <CommonName>Bulls Head</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580WSF0021</StopPointRef>
+      <CommonName>The Griffin</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580WSF0018</StopPointRef>
+      <CommonName>St Wilfrids School</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580BLA0077</StopPointRef>
+      <CommonName>Montague Street</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580BLA0049</StopPointRef>
+      <CommonName>Blackburn College</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580BLA0038</StopPointRef>
+      <CommonName>Debenhams</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2580BBS0000</StopPointRef>
+      <CommonName>Arrival Stand</CommonName>
+    </AnnotatedStopPointRef>
+  </StopPoints>
+  <RouteSections>
+    <RouteSection id="LABO024A014">
+      <RouteLink id="LABO024A014_358215">
+        <From>
+          <StopPointRef>2580BBS0004</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0125</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358216">
+        <From>
+          <StopPointRef>2580BLA0125</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0085</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358217">
+        <From>
+          <StopPointRef>2580BLA0085</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0076</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358218">
+        <From>
+          <StopPointRef>2580BLA0076</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580WSF0019</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358219">
+        <From>
+          <StopPointRef>2580WSF0019</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580WSF0020</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358220">
+        <From>
+          <StopPointRef>2580WSF0020</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0002</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358221">
+        <From>
+          <StopPointRef>2580WIT0002</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0004</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358222">
+        <From>
+          <StopPointRef>2580WIT0004</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0009</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358223">
+        <From>
+          <StopPointRef>2580WIT0009</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0008</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358224">
+        <From>
+          <StopPointRef>2580CHT0008</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0004</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358225">
+        <From>
+          <StopPointRef>2580CHT0004</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0002</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358226">
+        <From>
+          <StopPointRef>2580CHT0002</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0009</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358227">
+        <From>
+          <StopPointRef>2580CHT0009</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0014</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358228">
+        <From>
+          <StopPointRef>2580CHT0014</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0008</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358229">
+        <From>
+          <StopPointRef>2580FCW0008</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0001</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358230">
+        <From>
+          <StopPointRef>2580FCW0001</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0010</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358231">
+        <From>
+          <StopPointRef>2580FCW0010</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LAA00285</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358232">
+        <From>
+          <StopPointRef>2500LAA00285</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16422</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358233">
+        <From>
+          <StopPointRef>2500LAA16422</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500OLO00003</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358234">
+        <From>
+          <StopPointRef>2500OLO00003</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500STA00001</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358235">
+        <From>
+          <StopPointRef>2500STA00001</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250010003</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358236">
+        <From>
+          <StopPointRef>250010003</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500498</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358237">
+        <From>
+          <StopPointRef>2500498</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LA00165</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358238">
+        <From>
+          <StopPointRef>2500LA00165</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LA00164</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358239">
+        <From>
+          <StopPointRef>2500LA00164</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250010791</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358240">
+        <From>
+          <StopPointRef>250010791</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250010793</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358241">
+        <From>
+          <StopPointRef>250010793</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LA00160</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358242">
+        <From>
+          <StopPointRef>2500LA00160</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16134</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358243">
+        <From>
+          <StopPointRef>2500LAA16134</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250010794</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358244">
+        <From>
+          <StopPointRef>250010794</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250015723</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358245">
+        <From>
+          <StopPointRef>250015723</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250012008</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358246">
+        <From>
+          <StopPointRef>250012008</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500565</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358247">
+        <From>
+          <StopPointRef>2500565</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500DCL487</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358248">
+        <From>
+          <StopPointRef>2500DCL487</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2393</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358249">
+        <From>
+          <StopPointRef>2500IMG2393</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2392</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358250">
+        <From>
+          <StopPointRef>2500IMG2392</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2387</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358251">
+        <From>
+          <StopPointRef>2500IMG2387</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500DCL488</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358252">
+        <From>
+          <StopPointRef>2500DCL488</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250011117</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358253">
+        <From>
+          <StopPointRef>250011117</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2388</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358254">
+        <From>
+          <StopPointRef>2500IMG2388</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2390</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358255">
+        <From>
+          <StopPointRef>2500IMG2390</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250011105</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358256">
+        <From>
+          <StopPointRef>250011105</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250015509</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358257">
+        <From>
+          <StopPointRef>250015509</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2950</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358258">
+        <From>
+          <StopPointRef>2500IMG2950</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250011115</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358259">
+        <From>
+          <StopPointRef>250011115</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2499</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358260">
+        <From>
+          <StopPointRef>2500IMG2499</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2497</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358261">
+        <From>
+          <StopPointRef>2500IMG2497</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500DCL3384</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A014_358262">
+        <From>
+          <StopPointRef>2500DCL3384</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250020908</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="LABO024A013">
+      <RouteLink id="LABO024A013_358162">
+        <From>
+          <StopPointRef>250020903</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500510</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358163">
+        <From>
+          <StopPointRef>2500510</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500DCL489</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358164">
+        <From>
+          <StopPointRef>2500DCL489</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2498</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358165">
+        <From>
+          <StopPointRef>2500IMG2498</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250011106</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358166">
+        <From>
+          <StopPointRef>250011106</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250015667</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358167">
+        <From>
+          <StopPointRef>250015667</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2500</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358168">
+        <From>
+          <StopPointRef>2500IMG2500</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2951</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358169">
+        <From>
+          <StopPointRef>2500IMG2951</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2952</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358170">
+        <From>
+          <StopPointRef>2500IMG2952</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2391</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358171">
+        <From>
+          <StopPointRef>2500IMG2391</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2389</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358172">
+        <From>
+          <StopPointRef>2500IMG2389</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2955</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358173">
+        <From>
+          <StopPointRef>2500IMG2955</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2956</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358174">
+        <From>
+          <StopPointRef>2500IMG2956</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2398</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358175">
+        <From>
+          <StopPointRef>2500IMG2398</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250011921</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358176">
+        <From>
+          <StopPointRef>250011921</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500576</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358177">
+        <From>
+          <StopPointRef>2500576</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2394</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358178">
+        <From>
+          <StopPointRef>2500IMG2394</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LAA15730</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358179">
+        <From>
+          <StopPointRef>2500LAA15730</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LA00133</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358180">
+        <From>
+          <StopPointRef>2500LA00133</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16133</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358181">
+        <From>
+          <StopPointRef>2500LAA16133</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LA00161</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358182">
+        <From>
+          <StopPointRef>2500LA00161</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500502</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358183">
+        <From>
+          <StopPointRef>2500502</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LA00162</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358184">
+        <From>
+          <StopPointRef>2500LA00162</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16135</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358185">
+        <From>
+          <StopPointRef>2500LAA16135</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LA00163</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358186">
+        <From>
+          <StopPointRef>2500LA00163</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500192</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358187">
+        <From>
+          <StopPointRef>2500192</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16137</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358188">
+        <From>
+          <StopPointRef>2500LAA16137</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16331</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358189">
+        <From>
+          <StopPointRef>2500LAA16331</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500ABY00001</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358190">
+        <From>
+          <StopPointRef>2500ABY00001</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250010005</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358191">
+        <From>
+          <StopPointRef>250010005</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250010004</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358192">
+        <From>
+          <StopPointRef>250010004</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250010001</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358193">
+        <From>
+          <StopPointRef>250010001</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>250010006</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358194">
+        <From>
+          <StopPointRef>250010006</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500OLO00004</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358195">
+        <From>
+          <StopPointRef>2500OLO00004</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16421</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358196">
+        <From>
+          <StopPointRef>2500LAA16421</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2500LAA00286</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358197">
+        <From>
+          <StopPointRef>2500LAA00286</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0011</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358198">
+        <From>
+          <StopPointRef>2580FCW0011</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0002</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358199">
+        <From>
+          <StopPointRef>2580FCW0002</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0009</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358200">
+        <From>
+          <StopPointRef>2580FCW0009</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0013</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358201">
+        <From>
+          <StopPointRef>2580CHT0013</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0010</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358202">
+        <From>
+          <StopPointRef>2580CHT0010</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0001</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358203">
+        <From>
+          <StopPointRef>2580CHT0001</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0003</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358204">
+        <From>
+          <StopPointRef>2580CHT0003</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0007</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358205">
+        <From>
+          <StopPointRef>2580CHT0007</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0008</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358206">
+        <From>
+          <StopPointRef>2580WIT0008</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0003</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358207">
+        <From>
+          <StopPointRef>2580WIT0003</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0001</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358208">
+        <From>
+          <StopPointRef>2580WIT0001</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580WSF0021</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358209">
+        <From>
+          <StopPointRef>2580WSF0021</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580WSF0018</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358210">
+        <From>
+          <StopPointRef>2580WSF0018</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0077</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358211">
+        <From>
+          <StopPointRef>2580BLA0077</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0049</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358212">
+        <From>
+          <StopPointRef>2580BLA0049</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0038</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="LABO024A013_358213">
+        <From>
+          <StopPointRef>2580BLA0038</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>2580BBS0000</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+  </RouteSections>
+  <Routes>
+    <Route id="LABO024A014">
+      <Description>BLACKBURN - BRINSCALL - CHORLEY
+</Description>
+      <RouteSectionRef>LABO024A014</RouteSectionRef>
+    </Route>
+    <Route id="LABO024A013">
+      <Description>CHORLEY - BRINSCALL - BLACKBURN
+</Description>
+      <RouteSectionRef>LABO024A013</RouteSectionRef>
+    </Route>
+  </Routes>
+  <JourneyPatternSections>
+    <JourneyPatternSection id="JPS_LABO024A-3">
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358215">
+        <From>
+          <StopPointRef>2580BBS0004</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0125</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358215</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358216">
+        <From>
+          <StopPointRef>2580BLA0125</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0085</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358216</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358217">
+        <From>
+          <StopPointRef>2580BLA0085</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0076</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358217</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358218">
+        <From>
+          <StopPointRef>2580BLA0076</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WSF0019</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358218</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358219">
+        <From>
+          <StopPointRef>2580WSF0019</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WSF0020</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358219</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358220">
+        <From>
+          <StopPointRef>2580WSF0020</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0002</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358220</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358221">
+        <From>
+          <StopPointRef>2580WIT0002</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0004</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358221</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358222">
+        <From>
+          <StopPointRef>2580WIT0004</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0009</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358222</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358223">
+        <From>
+          <StopPointRef>2580WIT0009</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0008</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358223</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358224">
+        <From>
+          <StopPointRef>2580CHT0008</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0004</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358224</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358225">
+        <From>
+          <StopPointRef>2580CHT0004</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0002</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358225</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358226">
+        <From>
+          <StopPointRef>2580CHT0002</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0009</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358226</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358227">
+        <From>
+          <StopPointRef>2580CHT0009</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0014</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358227</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358228">
+        <From>
+          <StopPointRef>2580CHT0014</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0008</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358228</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358229">
+        <From>
+          <StopPointRef>2580FCW0008</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358229</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358230">
+        <From>
+          <StopPointRef>2580FCW0001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0010</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358230</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358231">
+        <From>
+          <StopPointRef>2580FCW0010</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA00285</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358231</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358232">
+        <From>
+          <StopPointRef>2500LAA00285</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16422</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358232</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358233">
+        <From>
+          <StopPointRef>2500LAA16422</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500OLO00003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358233</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358234">
+        <From>
+          <StopPointRef>2500OLO00003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500STA00001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358234</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358235">
+        <From>
+          <StopPointRef>2500STA00001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250010003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358235</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358236">
+        <From>
+          <StopPointRef>250010003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500498</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358236</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358237">
+        <From>
+          <StopPointRef>2500498</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LA00165</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358237</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358238">
+        <From>
+          <StopPointRef>2500LA00165</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LA00164</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358238</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358239">
+        <From>
+          <StopPointRef>2500LA00164</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250010791</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358239</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358240">
+        <From>
+          <StopPointRef>250010791</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250010793</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358240</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358241">
+        <From>
+          <StopPointRef>250010793</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LA00160</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358241</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358242">
+        <From>
+          <StopPointRef>2500LA00160</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16134</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358242</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358243">
+        <From>
+          <StopPointRef>2500LAA16134</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250010794</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358243</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358244">
+        <From>
+          <StopPointRef>250010794</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250015723</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358244</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358245">
+        <From>
+          <StopPointRef>250015723</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250012008</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358245</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358246">
+        <From>
+          <StopPointRef>250012008</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500565</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358246</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358247">
+        <From>
+          <StopPointRef>2500565</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500DCL487</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358247</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358248">
+        <From>
+          <StopPointRef>2500DCL487</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2393</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358248</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358249">
+        <From>
+          <StopPointRef>2500IMG2393</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2392</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358249</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358250">
+        <From>
+          <StopPointRef>2500IMG2392</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2387</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358250</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358251">
+        <From>
+          <StopPointRef>2500IMG2387</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500DCL488</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358251</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358252">
+        <From>
+          <StopPointRef>2500DCL488</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250011117</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358252</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358253">
+        <From>
+          <StopPointRef>250011117</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2388</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358253</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358254">
+        <From>
+          <StopPointRef>2500IMG2388</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2390</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358254</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358255">
+        <From>
+          <StopPointRef>2500IMG2390</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250011105</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358255</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358256">
+        <From>
+          <StopPointRef>250011105</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250015509</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358256</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358257">
+        <From>
+          <StopPointRef>250015509</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2950</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358257</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358258">
+        <From>
+          <StopPointRef>2500IMG2950</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250011115</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358258</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358259">
+        <From>
+          <StopPointRef>250011115</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2499</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358259</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358260">
+        <From>
+          <StopPointRef>2500IMG2499</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2497</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358260</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358261">
+        <From>
+          <StopPointRef>2500IMG2497</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500DCL3384</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358261</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-3_358262">
+        <From>
+          <StopPointRef>2500DCL3384</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250020908</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358262</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPS_LABO024A-4">
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358215">
+        <From>
+          <StopPointRef>2580BBS0004</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0125</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358215</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358216">
+        <From>
+          <StopPointRef>2580BLA0125</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0085</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358216</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358217">
+        <From>
+          <StopPointRef>2580BLA0085</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0076</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358217</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358218">
+        <From>
+          <StopPointRef>2580BLA0076</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WSF0019</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358218</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358219">
+        <From>
+          <StopPointRef>2580WSF0019</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WSF0020</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358219</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358220">
+        <From>
+          <StopPointRef>2580WSF0020</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0002</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358220</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358221">
+        <From>
+          <StopPointRef>2580WIT0002</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0004</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358221</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358222">
+        <From>
+          <StopPointRef>2580WIT0004</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0009</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358222</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358223">
+        <From>
+          <StopPointRef>2580WIT0009</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0008</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358223</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358224">
+        <From>
+          <StopPointRef>2580CHT0008</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0004</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358224</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358225">
+        <From>
+          <StopPointRef>2580CHT0004</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0002</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358225</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358226">
+        <From>
+          <StopPointRef>2580CHT0002</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0009</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358226</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358227">
+        <From>
+          <StopPointRef>2580CHT0009</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0014</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358227</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358228">
+        <From>
+          <StopPointRef>2580CHT0014</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0008</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358228</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358229">
+        <From>
+          <StopPointRef>2580FCW0008</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358229</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358230">
+        <From>
+          <StopPointRef>2580FCW0001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0010</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358230</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358231">
+        <From>
+          <StopPointRef>2580FCW0010</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA00285</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358231</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358232">
+        <From>
+          <StopPointRef>2500LAA00285</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16422</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358232</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358233">
+        <From>
+          <StopPointRef>2500LAA16422</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500OLO00003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358233</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358234">
+        <From>
+          <StopPointRef>2500OLO00003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500STA00001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358234</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358235">
+        <From>
+          <StopPointRef>2500STA00001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250010003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358235</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358236">
+        <From>
+          <StopPointRef>250010003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500498</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358236</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358237">
+        <From>
+          <StopPointRef>2500498</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LA00165</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358237</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358238">
+        <From>
+          <StopPointRef>2500LA00165</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LA00164</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358238</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358239">
+        <From>
+          <StopPointRef>2500LA00164</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250010791</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358239</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358240">
+        <From>
+          <StopPointRef>250010791</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250010793</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358240</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358241">
+        <From>
+          <StopPointRef>250010793</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LA00160</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358241</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358242">
+        <From>
+          <StopPointRef>2500LA00160</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16134</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358242</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358243">
+        <From>
+          <StopPointRef>2500LAA16134</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250010794</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358243</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358244">
+        <From>
+          <StopPointRef>250010794</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250015723</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358244</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358245">
+        <From>
+          <StopPointRef>250015723</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250012008</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358245</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358246">
+        <From>
+          <StopPointRef>250012008</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500565</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358246</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358247">
+        <From>
+          <StopPointRef>2500565</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500DCL487</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358247</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358248">
+        <From>
+          <StopPointRef>2500DCL487</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2393</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358248</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358249">
+        <From>
+          <StopPointRef>2500IMG2393</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2392</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358249</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358250">
+        <From>
+          <StopPointRef>2500IMG2392</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2387</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358250</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358251">
+        <From>
+          <StopPointRef>2500IMG2387</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500DCL488</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358251</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358252">
+        <From>
+          <StopPointRef>2500DCL488</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250011117</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358252</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358253">
+        <From>
+          <StopPointRef>250011117</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2388</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358253</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358254">
+        <From>
+          <StopPointRef>2500IMG2388</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2390</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358254</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358255">
+        <From>
+          <StopPointRef>2500IMG2390</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250011105</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358255</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358256">
+        <From>
+          <StopPointRef>250011105</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250015509</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358256</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358257">
+        <From>
+          <StopPointRef>250015509</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2950</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358257</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358258">
+        <From>
+          <StopPointRef>2500IMG2950</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250011115</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358258</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358259">
+        <From>
+          <StopPointRef>250011115</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2499</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358259</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358260">
+        <From>
+          <StopPointRef>2500IMG2499</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2497</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358260</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358261">
+        <From>
+          <StopPointRef>2500IMG2497</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500DCL3384</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358261</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-4_358262">
+        <From>
+          <StopPointRef>2500DCL3384</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250020908</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A014_358262</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPS_LABO024A-5">
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358162">
+        <From>
+          <StopPointRef>250020903</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500510</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358162</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358163">
+        <From>
+          <StopPointRef>2500510</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500DCL489</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358163</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358164">
+        <From>
+          <StopPointRef>2500DCL489</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2498</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358164</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358165">
+        <From>
+          <StopPointRef>2500IMG2498</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250011106</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358165</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358166">
+        <From>
+          <StopPointRef>250011106</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250015667</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358166</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358167">
+        <From>
+          <StopPointRef>250015667</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2500</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358167</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358168">
+        <From>
+          <StopPointRef>2500IMG2500</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358168</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358169">
+        <From>
+          <StopPointRef>2500IMG2951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2952</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358169</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358170">
+        <From>
+          <StopPointRef>2500IMG2952</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2391</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358170</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358171">
+        <From>
+          <StopPointRef>2500IMG2391</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2389</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358171</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358172">
+        <From>
+          <StopPointRef>2500IMG2389</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2955</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358172</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358173">
+        <From>
+          <StopPointRef>2500IMG2955</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2956</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358173</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358174">
+        <From>
+          <StopPointRef>2500IMG2956</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2398</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358174</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358175">
+        <From>
+          <StopPointRef>2500IMG2398</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250011921</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358175</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358176">
+        <From>
+          <StopPointRef>250011921</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500576</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358176</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358177">
+        <From>
+          <StopPointRef>2500576</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2394</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358177</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358178">
+        <From>
+          <StopPointRef>2500IMG2394</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA15730</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358178</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358179">
+        <From>
+          <StopPointRef>2500LAA15730</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LA00133</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358179</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358180">
+        <From>
+          <StopPointRef>2500LA00133</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16133</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358180</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358181">
+        <From>
+          <StopPointRef>2500LAA16133</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LA00161</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358181</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358182">
+        <From>
+          <StopPointRef>2500LA00161</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500502</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358182</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358183">
+        <From>
+          <StopPointRef>2500502</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LA00162</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358183</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358184">
+        <From>
+          <StopPointRef>2500LA00162</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16135</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358184</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358185">
+        <From>
+          <StopPointRef>2500LAA16135</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LA00163</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358185</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358186">
+        <From>
+          <StopPointRef>2500LA00163</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500192</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358186</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358187">
+        <From>
+          <StopPointRef>2500192</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16137</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358187</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358188">
+        <From>
+          <StopPointRef>2500LAA16137</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16331</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358188</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358189">
+        <From>
+          <StopPointRef>2500LAA16331</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500ABY00001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358189</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358190">
+        <From>
+          <StopPointRef>2500ABY00001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250010005</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358190</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358191">
+        <From>
+          <StopPointRef>250010005</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250010004</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358191</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358192">
+        <From>
+          <StopPointRef>250010004</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250010001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358192</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358193">
+        <From>
+          <StopPointRef>250010001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250010006</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358193</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358194">
+        <From>
+          <StopPointRef>250010006</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500OLO00004</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358194</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358195">
+        <From>
+          <StopPointRef>2500OLO00004</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16421</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358195</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358196">
+        <From>
+          <StopPointRef>2500LAA16421</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA00286</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358196</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358197">
+        <From>
+          <StopPointRef>2500LAA00286</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0011</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358197</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358198">
+        <From>
+          <StopPointRef>2580FCW0011</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0002</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358198</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358199">
+        <From>
+          <StopPointRef>2580FCW0002</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0009</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358199</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358200">
+        <From>
+          <StopPointRef>2580FCW0009</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0013</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358200</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358201">
+        <From>
+          <StopPointRef>2580CHT0013</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0010</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358201</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358202">
+        <From>
+          <StopPointRef>2580CHT0010</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358202</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358203">
+        <From>
+          <StopPointRef>2580CHT0001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358203</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358204">
+        <From>
+          <StopPointRef>2580CHT0003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0007</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358204</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358205">
+        <From>
+          <StopPointRef>2580CHT0007</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0008</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358205</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358206">
+        <From>
+          <StopPointRef>2580WIT0008</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358206</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358207">
+        <From>
+          <StopPointRef>2580WIT0003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358207</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358208">
+        <From>
+          <StopPointRef>2580WIT0001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WSF0021</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358208</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358209">
+        <From>
+          <StopPointRef>2580WSF0021</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WSF0018</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358209</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358210">
+        <From>
+          <StopPointRef>2580WSF0018</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0077</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358210</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358211">
+        <From>
+          <StopPointRef>2580BLA0077</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0049</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358211</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358212">
+        <From>
+          <StopPointRef>2580BLA0049</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0038</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358212</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-5_358213">
+        <From>
+          <StopPointRef>2580BLA0038</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580BBS0000</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358213</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPS_LABO024A-6">
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358162">
+        <From>
+          <StopPointRef>250020903</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500510</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358162</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358163">
+        <From>
+          <StopPointRef>2500510</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500DCL489</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358163</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358164">
+        <From>
+          <StopPointRef>2500DCL489</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2498</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358164</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358165">
+        <From>
+          <StopPointRef>2500IMG2498</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250011106</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358165</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358166">
+        <From>
+          <StopPointRef>250011106</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250015667</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358166</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358167">
+        <From>
+          <StopPointRef>250015667</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2500</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358167</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358168">
+        <From>
+          <StopPointRef>2500IMG2500</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358168</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358169">
+        <From>
+          <StopPointRef>2500IMG2951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2952</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358169</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358170">
+        <From>
+          <StopPointRef>2500IMG2952</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2391</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358170</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358171">
+        <From>
+          <StopPointRef>2500IMG2391</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2389</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358171</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358172">
+        <From>
+          <StopPointRef>2500IMG2389</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2955</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358172</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358173">
+        <From>
+          <StopPointRef>2500IMG2955</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2956</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358173</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358174">
+        <From>
+          <StopPointRef>2500IMG2956</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2398</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358174</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358175">
+        <From>
+          <StopPointRef>2500IMG2398</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250011921</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358175</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358176">
+        <From>
+          <StopPointRef>250011921</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500576</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358176</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358177">
+        <From>
+          <StopPointRef>2500576</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500IMG2394</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358177</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358178">
+        <From>
+          <StopPointRef>2500IMG2394</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA15730</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358178</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358179">
+        <From>
+          <StopPointRef>2500LAA15730</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LA00133</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358179</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358180">
+        <From>
+          <StopPointRef>2500LA00133</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16133</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358180</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358181">
+        <From>
+          <StopPointRef>2500LAA16133</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LA00161</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358181</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358182">
+        <From>
+          <StopPointRef>2500LA00161</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500502</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358182</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358183">
+        <From>
+          <StopPointRef>2500502</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LA00162</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358183</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358184">
+        <From>
+          <StopPointRef>2500LA00162</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16135</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358184</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358185">
+        <From>
+          <StopPointRef>2500LAA16135</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LA00163</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358185</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358186">
+        <From>
+          <StopPointRef>2500LA00163</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500192</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358186</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358187">
+        <From>
+          <StopPointRef>2500192</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16137</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358187</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358188">
+        <From>
+          <StopPointRef>2500LAA16137</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16331</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358188</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358189">
+        <From>
+          <StopPointRef>2500LAA16331</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500ABY00001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358189</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358190">
+        <From>
+          <StopPointRef>2500ABY00001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250010005</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358190</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358191">
+        <From>
+          <StopPointRef>250010005</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250010004</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358191</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358192">
+        <From>
+          <StopPointRef>250010004</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250010001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358192</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358193">
+        <From>
+          <StopPointRef>250010001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>250010006</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358193</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358194">
+        <From>
+          <StopPointRef>250010006</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500OLO00004</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358194</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358195">
+        <From>
+          <StopPointRef>2500OLO00004</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA16421</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358195</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358196">
+        <From>
+          <StopPointRef>2500LAA16421</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2500LAA00286</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358196</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358197">
+        <From>
+          <StopPointRef>2500LAA00286</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0011</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358197</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358198">
+        <From>
+          <StopPointRef>2580FCW0011</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0002</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358198</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358199">
+        <From>
+          <StopPointRef>2580FCW0002</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580FCW0009</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358199</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358200">
+        <From>
+          <StopPointRef>2580FCW0009</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0013</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358200</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358201">
+        <From>
+          <StopPointRef>2580CHT0013</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0010</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358201</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358202">
+        <From>
+          <StopPointRef>2580CHT0010</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358202</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358203">
+        <From>
+          <StopPointRef>2580CHT0001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358203</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358204">
+        <From>
+          <StopPointRef>2580CHT0003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580CHT0007</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358204</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358205">
+        <From>
+          <StopPointRef>2580CHT0007</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0008</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358205</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358206">
+        <From>
+          <StopPointRef>2580WIT0008</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358206</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358207">
+        <From>
+          <StopPointRef>2580WIT0003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WIT0001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358207</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358208">
+        <From>
+          <StopPointRef>2580WIT0001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WSF0021</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358208</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358209">
+        <From>
+          <StopPointRef>2580WSF0021</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580WSF0018</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358209</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358210">
+        <From>
+          <StopPointRef>2580WSF0018</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0077</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358210</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358211">
+        <From>
+          <StopPointRef>2580BLA0077</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0049</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358211</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358212">
+        <From>
+          <StopPointRef>2580BLA0049</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580BLA0038</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358212</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_LABO024A-6_358213">
+        <From>
+          <StopPointRef>2580BLA0038</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>2580BBS0000</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>LABO024A013_358213</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+  </JourneyPatternSections>
+  <Operators>
+    <Operator id="1012">
+      <NationalOperatorCode>SCMY</NationalOperatorCode>
+      <OperatorCode>1012</OperatorCode>
+      <OperatorShortName>Stagecoach In Lancashire</OperatorShortName>
+    </Operator>
+  </Operators>
+  <Services>
+    <Service>
+      <ServiceCode>LABO024A</ServiceCode>
+      <Lines>
+        <Line id="0">
+          <LineName>24A</LineName>
+        </Line>
+      </Lines>
+      <OperatingPeriod>
+        <StartDate>2016-05-01</StartDate>
+        <EndDate>2099-12-31</EndDate>
+      </OperatingPeriod>
+      <RegisteredOperatorRef>1012</RegisteredOperatorRef>
+      <StopRequirements>
+        <NoNewStopsRequired />
+      </StopRequirements>
+      <Mode>bus</Mode>
+      <Description>CHORLEY - BRINSCALL - BLACKBURN</Description>
+      <StandardService>
+        <Origin>CHORLEY</Origin>
+        <Destination>BLACKBURN</Destination>
+        <JourneyPattern id="JPS_LABO024A-3">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPS_LABO024A-3</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JPS_LABO024A-4">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPS_LABO024A-4</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JPS_LABO024A-5">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPS_LABO024A-5</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JPS_LABO024A-6">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPS_LABO024A-6</JourneyPatternSectionRefs>
+        </JourneyPattern>
+      </StandardService>
+    </Service>
+  </Services>
+  <VehicleJourneys>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Monday />
+            <Tuesday />
+            <Wednesday />
+            <Thursday />
+            <Friday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82105</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>19:12:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Monday />
+            <Tuesday />
+            <Wednesday />
+            <Thursday />
+            <Friday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82106</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-4</JourneyPatternRef>
+      <StartDeadRun>
+        <ShortWorking>
+          <JourneyPatternTimingLinkRef>JPS_LABO024A-4_358237</JourneyPatternTimingLinkRef>
+        </ShortWorking>
+      </StartDeadRun>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>21:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Monday />
+            <Tuesday />
+            <Wednesday />
+            <Thursday />
+            <Friday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82107</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-4</JourneyPatternRef>
+      <StartDeadRun>
+        <ShortWorking>
+          <JourneyPatternTimingLinkRef>JPS_LABO024A-4_358237</JourneyPatternTimingLinkRef>
+        </ShortWorking>
+      </StartDeadRun>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>22:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82108</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>19:12:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82109</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-4</JourneyPatternRef>
+      <StartDeadRun>
+        <ShortWorking>
+          <JourneyPatternTimingLinkRef>JPS_LABO024A-4_358237</JourneyPatternTimingLinkRef>
+        </ShortWorking>
+      </StartDeadRun>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>21:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82110</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-4</JourneyPatternRef>
+      <StartDeadRun>
+        <ShortWorking>
+          <JourneyPatternTimingLinkRef>JPS_LABO024A-4_358237</JourneyPatternTimingLinkRef>
+        </ShortWorking>
+      </StartDeadRun>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>22:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82111</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-4</JourneyPatternRef>
+      <StartDeadRun>
+        <ShortWorking>
+          <JourneyPatternTimingLinkRef>JPS_LABO024A-4_358237</JourneyPatternTimingLinkRef>
+        </ShortWorking>
+      </StartDeadRun>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>09:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82112</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>10:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82113</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>11:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82114</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>12:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82115</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>13:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82116</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>14:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82117</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>15:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82118</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>16:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82119</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>17:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82120</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>18:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82121</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>19:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82122</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-4</JourneyPatternRef>
+      <StartDeadRun>
+        <ShortWorking>
+          <JourneyPatternTimingLinkRef>JPS_LABO024A-4_358237</JourneyPatternTimingLinkRef>
+        </ShortWorking>
+      </StartDeadRun>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>09:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82123</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>10:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82124</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>11:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82125</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>12:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82126</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>13:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82127</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>14:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82128</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>15:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82129</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>16:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82130</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>17:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82131</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>18:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82132</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-3</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>19:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Monday />
+            <Tuesday />
+            <Wednesday />
+            <Thursday />
+            <Friday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82133</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-5</JourneyPatternRef>
+      <EndDeadRun>
+        <ShortWorking>
+          <JourneyPatternTimingLinkRef>JPS_LABO024A-5_358189</JourneyPatternTimingLinkRef>
+        </ShortWorking>
+      </EndDeadRun>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>20:35:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Monday />
+            <Tuesday />
+            <Wednesday />
+            <Thursday />
+            <Friday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82134</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-5</JourneyPatternRef>
+      <EndDeadRun>
+        <ShortWorking>
+          <JourneyPatternTimingLinkRef>JPS_LABO024A-5_358189</JourneyPatternTimingLinkRef>
+        </ShortWorking>
+      </EndDeadRun>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>22:05:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Monday />
+            <Tuesday />
+            <Wednesday />
+            <Thursday />
+            <Friday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82135</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-5</JourneyPatternRef>
+      <EndDeadRun>
+        <ShortWorking>
+          <JourneyPatternTimingLinkRef>JPS_LABO024A-5_358189</JourneyPatternTimingLinkRef>
+        </ShortWorking>
+      </EndDeadRun>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>23:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82136</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-5</JourneyPatternRef>
+      <EndDeadRun>
+        <ShortWorking>
+          <JourneyPatternTimingLinkRef>JPS_LABO024A-5_358189</JourneyPatternTimingLinkRef>
+        </ShortWorking>
+      </EndDeadRun>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>20:35:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82137</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-5</JourneyPatternRef>
+      <EndDeadRun>
+        <ShortWorking>
+          <JourneyPatternTimingLinkRef>JPS_LABO024A-5_358189</JourneyPatternTimingLinkRef>
+        </ShortWorking>
+      </EndDeadRun>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>22:05:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82138</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-5</JourneyPatternRef>
+      <EndDeadRun>
+        <ShortWorking>
+          <JourneyPatternTimingLinkRef>JPS_LABO024A-5_358189</JourneyPatternTimingLinkRef>
+        </ShortWorking>
+      </EndDeadRun>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>23:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82139</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>09:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82140</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>10:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82141</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>11:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82142</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>12:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82143</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>13:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82144</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>14:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82145</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>15:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82146</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>16:27:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82147</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>17:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82148</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>18:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82149</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-5</JourneyPatternRef>
+      <EndDeadRun>
+        <ShortWorking>
+          <JourneyPatternTimingLinkRef>JPS_LABO024A-5_358189</JourneyPatternTimingLinkRef>
+        </ShortWorking>
+      </EndDeadRun>
+      <Note>
+        <NoteCode>$C</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council and Chorley Borough Coun</NoteText>
+      </Note>
+      <DepartureTime>19:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82150</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>09:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82151</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>10:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82152</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>11:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82153</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>12:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82154</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>13:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82155</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>14:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82156</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>15:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82157</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>16:27:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82158</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>17:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82159</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-6</JourneyPatternRef>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>18:28:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>1012</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <HolidaysOnly />
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfOperation>
+            <AllBankHolidays />
+          </DaysOfOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>82160</VehicleJourneyCode>
+      <ServiceRef>LABO024A</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_LABO024A-5</JourneyPatternRef>
+      <EndDeadRun>
+        <ShortWorking>
+          <JourneyPatternTimingLinkRef>JPS_LABO024A-5_358189</JourneyPatternTimingLinkRef>
+        </ShortWorking>
+      </EndDeadRun>
+      <Note>
+        <NoteCode>$</NoteCode>
+        <NoteText>Operated on behalf of Lancashire County Council</NoteText>
+      </Note>
+      <DepartureTime>19:28:00</DepartureTime>
+    </VehicleJourney>
+  </VehicleJourneys>
+</TransXChange>

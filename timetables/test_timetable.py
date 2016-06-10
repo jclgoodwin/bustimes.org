@@ -1,4 +1,3 @@
-import os
 import xml.etree.cElementTree as ET
 import timetable
 from django.test import TestCase
@@ -26,6 +25,38 @@ class TimetableTest(TestCase):
     def test_get_filename(self):
         self.assertEqual(timetable.get_filenames(self.ne_service, None), ('NE_130_PC4736_572.xml',))
         self.assertEqual(timetable.get_filenames(self.nw_service, None), ('SVR60023943.xml',))
+
+    def test_timetable_none(self):
+        """timetable_from_filename should return None if there is an error"""
+        none = timetable.timetable_from_filename('./busstops/management/tests/fixtures/ea_21-13B-B-y08-1', None)
+        self.assertIsNone(none)
+
+    def test_timetables(self):
+        timetable_ea = timetable.timetable_from_filename('./busstops/management/tests/fixtures/ea_21-13B-B-y08-1.xml', None)
+
+        self.assertEqual('Monday to Sunday', str(timetable_ea.operating_profile))
+        self.assertEqual('', str(timetable_ea.operating_period))
+
+        self.assertEqual(3, len(timetable_ea.groupings[0].column_heads))
+        self.assertEqual(13, len(timetable_ea.groupings[0].journeys))
+
+        self.assertEqual(3, len(timetable_ea.groupings[1].column_heads))
+        self.assertEqual(14, len(timetable_ea.groupings[1].journeys))
+
+        self.assertTrue(timetable_ea.groupings[1].has_minor_stops())
+        self.assertEqual(87, len(timetable_ea.groupings[1].rows))
+        self.assertEqual('Leys Lane', timetable_ea.groupings[1].rows[0].part.stop.common_name)
+
+
+        megabus = timetable.timetable_from_filename('./busstops/management/tests/fixtures/Megabus_Megabus14032016 163144_MEGA_M11A.xml', None)
+        self.assertFalse(megabus.groupings[0].has_minor_stops())
+        self.assertFalse(megabus.groupings[1].has_minor_stops())
+
+
+        timetable_ne = timetable.timetable_from_filename('./busstops/management/tests/fixtures/NE_03_SCC_X6_1.xml', None)
+        timetable_scotland = timetable.timetable_from_filename('./busstops/management/tests/fixtures/SVRABBN017.xml', None)
+        timetable_deadruns = timetable.timetable_from_filename('./busstops/management/tests/fixtures/SVRLABO024A.xml', None)
+
 
 
 class DateRangeTest(TestCase):

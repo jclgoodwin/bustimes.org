@@ -10,7 +10,6 @@ NS = {
 DURATION_REGEX = re.compile(
     r'PT((?P<hours>\d+?)H)?((?P<minutes>\d+?)M)?((?P<seconds>\d+?)S)?'
 )
-NOW = date.today()
 
 def parse_duration(string):
     "Given a string returns a timetelta"
@@ -360,10 +359,10 @@ class DateRange(object):
             return '%s to %s' % (str(self.start), str(self.end))
 
     def starts_in_future(self):
-        return self.start > NOW
+        return self.start > date.today()
 
     def finishes_in_past(self):
-        return self.end < NOW
+        return self.end < date.today()
 
 
 class OperatingPeriod(DateRange):
