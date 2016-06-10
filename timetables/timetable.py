@@ -422,7 +422,7 @@ class Timetable(object):
             for element in xml.find('txc:VehicleJourneys', NS)
         )
         journeys = {
-            journey.code: journey for journey in journeys if journey.should_show()
+            journey.code: journey for journey in journeys
         }
 
         # some journeys did not have a direct reference to a journeypattern,
@@ -431,7 +431,7 @@ class Timetable(object):
             if hasattr(journey, 'journeyref'):
                 journey.journeypattern = journeys[journey.journeyref].journeypattern
 
-        journeys = journeys.values()
+        journeys = filter(VehicleJourney.should_show, journeys.values())
         journeys.sort(key=VehicleJourney.get_departure_time)
         journeys.sort(key=VehicleJourney.get_order)
         for journey in journeys:
