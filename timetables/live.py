@@ -107,12 +107,11 @@ class AcisConnectDepartures(AcisDepartures):
 
 class TransportApiDepartures(Departures):
     def get_row(self, item):
-        if item['best_departure_estimate'] is None:
-            return
         if 'date' in item:
             departure_time = datetime.strptime(item['date'] + ' ' + item['best_departure_estimate'], '%Y-%m-%d %H:%M')
         else:
-            departure_time = datetime.strptime(item['best_departure_estimate'], '%H:%M')
+            departure_time = datetime.strptime(item['best_departure_estimate'], '%H:%M').time()
+            departure_time = datetime.combine(date.today(), departure_time)
         destination = item.get('direction')
         destination_matches = DESTINATION_REGEX.match(destination)
         if destination_matches is not None:
@@ -139,13 +138,12 @@ class TransportApiDepartures(Departures):
 
 
 def get_departures(stop, services):
-    today = date.today()
     live_sources = stop.live_sources.values_list('name', flat=True)
 
     if 'TfL' in live_sources:
         return ({
             'departures': TflDepartures(stop, services),
-            'today': today,
+            'today': date.today(),
             'source': {
                 'url': 'https://tfl.gov.uk/bus/stop/%s/%s' % (stop.atco_code, slugify(stop.common_name)),
                 'name': 'Transport for London'
@@ -164,7 +162,6 @@ def get_departures(stop, services):
     if 'Kent' in live_sources:
         return ({
             'departures': AcisLiveDepartures('kent', stop, services),
-            'today': today,
             'source': {
                 'url': 'http://%s.acislive.com/pip/stop_simulator.asp?NaPTAN=%s' % ('kent', stop.naptan_code),
                 'name': 'ACIS Live'
@@ -192,8 +189,6 @@ def get_departures(stop, services):
     if len(departures) > 0:
         now = datetime.now()
         expiry = departures[0]['time']
-        if expiry.year == 1900:
-            expiry = expiry.combine(today, expiry.time())
         if now < expiry:
             max_age = (expiry - now).seconds + 60
         else:
@@ -202,6 +197,6 @@ def get_departures(stop, services):
         max_age = 3600
     return ({
         'departures': departures,
-        'today': today,
+        'today': date.today(),
         'source': None,
     }, max_age)

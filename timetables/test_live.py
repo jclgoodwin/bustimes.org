@@ -42,9 +42,8 @@ class LiveDeparturesTest(TestCase):
         cls.yorkshire_stop.live_sources.add('Y')
 
     def test_tfl(self):
-        stop = self.london_stop
         with vcr.use_cassette('data/vcr/tfl.yaml'):
-            departures = live.TflDepartures(stop, Service.objects.all()).get_departures()
+            departures = live.TflDepartures(self.london_stop, Service.objects.all()).get_departures()
         row = departures.next()
         self.assertEqual('Stratford City', row['destination'])
         self.assertEqual('388', row['service'])
@@ -52,16 +51,15 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(6, row['time'].date().month)
         self.assertEqual(5, row['time'].date().day)
 
-        departures = live.get_departures(stop, ())[0]
+        departures = live.get_departures(self.london_stop, ())[0]
         self.assertEqual(departures['source'], {
             'url': 'https://tfl.gov.uk/bus/stop/490014721F/wilmot-street',
             'name': 'Transport for London'
         })
 
     def test_acisconnect_cardiff(self):
-        stop = self.cardiff_stop
         with vcr.use_cassette('data/vcr/cardiff.yaml'):
-            departures = live.AcisConnectDepartures('cardiff', stop, Service.objects.all()).get_departures()
+            departures = live.AcisConnectDepartures('cardiff', self.cardiff_stop, Service.objects.all()).get_departures()
 
         self.assertEqual(departures.next(), {
             'destination': 'Churchill Way HL',
@@ -129,20 +127,36 @@ class LiveDeparturesTest(TestCase):
         self._test_acis_yorkshire(departures)
 
     def test_transporapi_row(self):
-        row = live.TransportApiDepartures(self.yorkshire_stop, Service.objects.all()).get_row({
-            'direction': 'Bus Station (Norwich City Centre)',
+        departures = live.TransportApiDepartures(None, ())
+        rows = ({
+            'direction': 'Hellesdon, Bush Roa',
+            'expected_departure_time': '22:15',
+            'line_name': '37',
+            'aimed_departure_time': '22:17',
+            'source': 'VIX',
+            'best_departure_estimate': '22:15',
+            'mode': 'bus',
+            'operator': 'FECS',
+            'line': '37'
+        }, {
+            'direction': 'Railway Approach (Sheringham)',
             'source': 'Traveline timetable (nextbuses disabled)',
-            'line_name': 'X44',
-            'aimed_departure_time': '12:05',
-            'date': '2016-06-06',
-            'best_departure_estimate': '12:05',
+            'line_name': '44A',
+            'aimed_departure_time': '22:47',
+            'date': '2016-06-10',
+            'best_departure_estimate': '22:47',
             'mode': 'bus',
             'operator': 'SNDR',
-            'line': 'X44',
-            'dir': 'outbound'
+            'line': '44A',
+            'dir': 'inbound'
         })
-        self.assertEqual(row, {
-            'destination': 'Norwich City Centre',
-            'service': 'X44',
-            'time': datetime.datetime(2016, 6, 6, 12, 5)
+        self.assertEqual(departures.get_row(rows[0]), {
+            'destination': 'Hellesdon, Bush Roa',
+            'service': '37',
+            'time': datetime.datetime(2016, 6, 10, 22, 15)
+        })
+        self.assertEqual(departures.get_row(rows[1]), {
+            'destination': 'Sheringham',
+            'service': '44A',
+            'time': datetime.datetime(2016, 6, 10, 22, 47)
         })
