@@ -104,9 +104,11 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'OPTIONS': {
             'loaders': (
-                ('django.template.loaders.cached.Loader', (
-                    'template_minifier.template.loaders.app_directories.Loader',
-                )),
+                'template_minifier.template.loaders.app_directories.Loader' if DEBUG else (
+                    'django.template.loaders.cached.Loader', (
+                        'template_minifier.template.loaders.app_directories.Loader',
+                    )
+                ),
             ),
             'context_processors': (
                 'django.contrib.auth.context_processors.auth',

@@ -202,7 +202,7 @@ class VehicleJourney(object):
                 time = (datetime.combine(date.today(), time) + timinglink.runtime).time()
 
                 if deadrun and hasattr(self, 'start_deadrun') and self.start_deadrun == timinglink.id:
-                    deadrun = False
+                    deadrun = False # end of dead run
                 if not deadrun:
                     if stopusage.sequencenumber is not None:
                         row = self.journeypattern.grouping.rows.get(stopusage.sequencenumber)
@@ -211,7 +211,7 @@ class VehicleJourney(object):
                         stopusage.row.times.append(time)
 
                 if hasattr(self, 'end_deadrun') and self.end_deadrun == timinglink.id:
-                    deadrun = True
+                    deadrun = True # start of dead run
                 if hasattr(stopusage, 'waittime'):
                     time = (datetime.combine(date.today(), time) + stopusage.waittime).time()
 
