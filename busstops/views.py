@@ -300,11 +300,9 @@ def stop_json(request, pk):
 
 def departures(request, pk):
     stop = get_object_or_404(StopPoint, pk=pk)
-    departures = live.get_departures(stop, Service.objects.filter(stops=pk, current=True))
-    if hasattr(departures, 'get_departures'):
-        context, max_age = departures.get_departures()
-    else:
-        context, max_age = departures
+    context, max_age = live.get_departures(stop, Service.objects.filter(stops=pk, current=True))
+    if hasattr(context['departures'], 'get_departures'):
+        context['departures'] = context['departures'].get_departures()
     response = render(request, 'departures.html', context)
     patch_cache_control(response, max_age=max_age, public=True)
     return response
