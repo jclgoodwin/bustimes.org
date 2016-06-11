@@ -25,7 +25,7 @@ class Departures(object):
         """Returns the Service matching a line name (case-insensitively), or a line name string"""
         return self.services.get(line_name.lower(), line_name)
 
-    def departures_from_response(response):
+    def departures_from_response(self, res):
         raise NotImplementedError
 
     def get_departures(self):
@@ -127,20 +127,36 @@ class TransportApiDepartures(Departures):
 
     def get_response(self):
         return requests.get('http://transportapi.com/v3/uk/bus/stop/%s/live.json' % self.stop.atco_code, {
-           'app_id': settings.TRANSPORTAPI_APP_ID,
-           'app_key': settings.TRANSPORTAPI_APP_KEY,
-           'nextbuses': 'no',
-           'group': 'no',
+            'app_id': settings.TRANSPORTAPI_APP_ID,
+            'app_key': settings.TRANSPORTAPI_APP_KEY,
+            'nextbuses': 'no',
+            'group': 'no',
         })
 
-    def departures_from_response(self, response):
-        departures = response.json().get('departures')
+    def departures_from_response(self, res):
+        departures = res.json().get('departures')
         if departures and 'all' in departures:
             return filter(None, (self.get_row(item) for item in departures.get('all')))
         return ()
 
 
+def get_max_age(departures, now):
+    """
+    Given a list of departures and the current time, returns a max_age in seconds
+    (for use in a cache-control header)
+    """
+    if len(departures) > 0:
+        expiry = departures[0]['time']
+        if now < expiry:
+            return (expiry - now).seconds + 60
+        return 60
+    return 3600
+
 def get_departures(stop, services):
+    """
+    Given a StopPoint object and an iterable of Service objects,
+    returns a tuple containing a context dictionary and a max_age integer
+    """
     live_sources = stop.live_sources.values_list('name', flat=True)
 
     if 'TfL' in live_sources:
@@ -189,17 +205,8 @@ def get_departures(stop, services):
         departures = TransportApiDepartures(stop, services).get_departures()
     except requests.exceptions.ConnectionError:
         departures = ()
-    if len(departures) > 0:
-        now = datetime.now()
-        expiry = departures[0]['time']
-        if now < expiry:
-            max_age = (expiry - now).seconds + 60
-        else:
-            max_age = 60
-    else:
-        max_age = 3600
     return ({
         'departures': departures,
         'today': date.today(),
         'source': None,
-    }, max_age)
+    }, get_max_age(departures, time.now()))
