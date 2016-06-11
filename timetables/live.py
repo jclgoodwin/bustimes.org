@@ -142,7 +142,7 @@ class TransportApiDepartures(Departures):
 
 def get_max_age(departures, now):
     """
-    Given a list of departures and the current time, returns a max_age in seconds
+    Given a list of departures and the current datetime, returns a max_age in seconds
     (for use in a cache-control header)
     """
     if len(departures) > 0:
@@ -209,4 +209,4 @@ def get_departures(stop, services):
         'departures': departures,
         'today': date.today(),
         'source': None,
-    }, get_max_age(departures, time.now()))
+    }, get_max_age(departures, datetime.now()))
