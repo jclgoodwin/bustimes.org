@@ -11,15 +11,16 @@
 
     if (document.getElementById('map').clientWidth > 0) {
 
-        var items = document.getElementsByTagName('li'),
-            i,
-            metaElements,
-            latLng,
-            locations = [],
-            mainLocations = [],
-            labels = [];
+        var h1 = document.getElementsByTagName('h1')[0],
+            items = document.getElementsByTagName('li'),
+            i, // transient
+            metaElements, // transient
+            latLng, // transient
+            locations = [], // locations used to draw a polyline for bus routes
+            mainLocations = [], // locations with labels
+            labels = []; // label elements
 
-        for (i = 0; i < items.length; i++) {
+        for (i = items.length - 1; i >= 0; i -= 1) {
             if (items[i].getAttribute('itemtype') === 'https://schema.org/BusStop') {
                 metaElements = items[i].getElementsByTagName('meta');
                 latLng = [
@@ -36,7 +37,8 @@
             }
         }
 
-        if (!mainLocations.length) {
+        // Add the main stop (for the stop point detail page)
+        if (h1.getAttribute('itemprop') === 'name') {
             metaElements = document.getElementsByTagName('meta');
             for (i = 0; i < metaElements.length; i++) {
                 if (metaElements[i].getAttribute('itemprop') === 'latitude') {
@@ -44,6 +46,7 @@
                         parseFloat(metaElements[i].getAttribute('content')),
                         parseFloat(metaElements[i + 1].getAttribute('content'))
                     ]);
+                    break;
                 }
             }
         }
@@ -58,24 +61,35 @@
                     iconAnchor: [8, 22],
                     popupAnchor: [0, -22],
                 }),
+                pinWhite = L.icon({
+                    iconUrl:    '/static/pin-white.svg',
+                    iconSize:   [16, 22],
+                    iconAnchor: [8, 22],
+                }),
                 setUpPopup = function(location, label) {
-                    var marker = L.marker(location, {icon: pin}).addTo(map).bindPopup(label.innerHTML);
-                    label.getElementsByTagName('a')[0].onmouseover = function() {
-                        marker.openPopup();
-                    };
+                    var marker = L.marker(location, {icon: pin}).addTo(map).bindPopup(label.innerHTML),
+                        a = label.getElementsByTagName('a');
+                    if (a.length) {
+                        a[0].onmouseover = function() {
+                            marker.openPopup();
+                        };
+                    }
                 };
 
             L.tileLayer(tileURL, {
                 attribution: attribution
             }).addTo(map);
 
-            if (mainLocations.length === 1) {
-                L.marker(mainLocations[0], {icon: pin}).addTo(map);
-                map.setView(mainLocations[0], 17);
+            for (i = labels.length - 1; i >= 0; i -= 1) {
+                setUpPopup(mainLocations[i], labels[i], items[i]);
+                L.marker(mainLocations[i], {icon: pinWhite}).addTo(map);
+            }
+
+            if (mainLocations.length > labels.length) { // on a stop point detail page
+                i = mainLocations.length - 1;
+                L.marker(mainLocations[i], {icon: pin}).addTo(map);
+                map.setView(mainLocations[i], 17);
             } else {
-                for (i = 0; i < mainLocations.length; i++) {
-                    setUpPopup(mainLocations[i], labels[i], items[i]);
-                }
                 if (locations.length) {
                     var polyline = L.polyline(locations, {color: '#000', weight: 2});
                     polyline.addTo(map);

@@ -259,7 +259,7 @@ class StopPointDetailView(DetailView):
             context['nearby'] = StopPoint.objects.filter(stop_area=self.object.stop_area_id)
         else:
             context['nearby'] = StopPoint.objects.filter(common_name=self.object.common_name, locality=self.object.locality)
-        context['nearby'] = context['nearby'].filter(active=True).exclude(pk=self.object.pk).defer('latlong').order_by('atco_code')
+        context['nearby'] = context['nearby'].filter(active=True).exclude(pk=self.object.pk).order_by('atco_code')
 
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region,

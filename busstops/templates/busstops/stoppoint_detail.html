@@ -49,11 +49,7 @@
 {% if nearby %}
 <div class="aside box">
     <h2>Nearby</h2>
-    <ul>
-    {% for s in nearby %}
-        <li><a href="{{ s.get_absolute_url }}">{{ s }}</a></li>
-    {% endfor %}
-    </ul>
+    {% include 'stops.html' with stops=nearby %}
 </div>
 {% endif %}
 
