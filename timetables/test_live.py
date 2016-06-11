@@ -129,6 +129,16 @@ class LiveDeparturesTest(TestCase):
     def test_transporapi_row(self):
         departures = live.TransportApiDepartures(None, ())
         rows = ({
+            'direction': 'Gunton,Weston Road,',
+            'expected_departure_time': None,
+            'line_name': '101',
+            'aimed_departure_time': None,
+            'source': 'VIX',
+            'best_departure_estimate': None,
+            'mode': 'bus',
+            'operator': 'FECS',
+            'line': '101'
+        }, {
             'direction': 'Hellesdon, Bush Roa',
             'expected_departure_time': '22:15',
             'line_name': '37',
@@ -150,12 +160,13 @@ class LiveDeparturesTest(TestCase):
             'line': '44A',
             'dir': 'inbound'
         })
-        self.assertEqual(departures.get_row(rows[0]), {
+        self.assertIsNone(departures.get_row(rows[0]))
+        self.assertEqual(departures.get_row(rows[1]), {
             'destination': 'Hellesdon, Bush Roa',
             'service': '37',
             'time': datetime.datetime.combine(datetime.date.today(), datetime.time(22, 15))
         })
-        self.assertEqual(departures.get_row(rows[1]), {
+        self.assertEqual(departures.get_row(rows[2]), {
             'destination': 'Sheringham',
             'service': '44A',
             'time': datetime.datetime(2016, 6, 10, 22, 47)

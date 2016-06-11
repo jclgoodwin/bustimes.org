@@ -107,10 +107,13 @@ class AcisConnectDepartures(AcisDepartures):
 
 class TransportApiDepartures(Departures):
     def get_row(self, item):
+        time = item['best_departure_estimate']
+        if time is None:
+            return
         if 'date' in item:
-            departure_time = datetime.strptime(item['date'] + ' ' + item['best_departure_estimate'], '%Y-%m-%d %H:%M')
+            departure_time = datetime.strptime(item['date'] + ' ' + time, '%Y-%m-%d %H:%M')
         else:
-            departure_time = datetime.strptime(item['best_departure_estimate'], '%H:%M').time()
+            departure_time = datetime.strptime(time, '%H:%M').time()
             departure_time = datetime.combine(date.today(), departure_time)
         destination = item.get('direction')
         destination_matches = DESTINATION_REGEX.match(destination)
