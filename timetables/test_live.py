@@ -57,6 +57,26 @@ class LiveDeparturesTest(TestCase):
             'name': 'Transport for London'
         })
 
+        with vcr.use_cassette('data/vcr/tfl.yaml'):
+            response = self.client.get('/stops/' + self.london_stop.pk + '/departures')
+        self.assertEqual(response['cache-control'], 'public, max-age=60')
+        self.assertHTMLEqual(response.content, """
+            <div class="aside box">
+                <h2>Next departures</h2>
+                <table><tbody>
+                <tr><td>17:59</td><td>388</td><td>Stratford City</td></tr>
+                <tr><td>17:42</td><td>388</td><td>Stratford City</td></tr>
+                <tr><td>18:02</td><td>8</td><td>Bow Church</td></tr>
+                <tr><td>17:57</td><td>8</td><td>Bow Church</td></tr>
+                <tr><td>17:48</td><td>8</td><td>Bow Church</td></tr>
+                <tr><td>17:47</td><td>D3</td><td>Bethnal Green, Chest Hospital</td></tr>
+                </tbody></table>
+                <p class="credit">Data from <a href=https://tfl.gov.uk/bus/stop/490014721F/wilmot-street>Transport for London</a></p>
+            </div>
+        """)
+        self.assertEqual(response.status_code, 200)
+
+
     def test_acisconnect_cardiff(self):
         with vcr.use_cassette('data/vcr/cardiff.yaml'):
             departures = live.AcisConnectDepartures('cardiff', self.cardiff_stop, Service.objects.all()).get_departures()
