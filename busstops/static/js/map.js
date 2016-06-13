@@ -52,22 +52,29 @@
         }
 
         if (mainLocations.length) {
-            var map = L.map('map'),
-                attribution = 'Map data &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors | Map tiles &copy; <a href="https://cartodb.com/attributions#basemaps">CartoDB</a>',
-                tileURL = (document.location.protocol === 'https:' ? 'https://cartodb-basemaps-{s}.global.ssl.fastly.net' : 'http://{s}.basemaps.cartocdn.com') + '/light_all/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
+            var map = L.map('map', {
+                    zoomControl: false,
+                    dragging: false,
+                    touchZoom: false,
+                    scrollWheelZoom: false,
+                    doubleClickZoom: false,
+                    boxZoom: false
+                }),
+                tileURL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoiamdvb2R3aW4iLCJhIjoiY2lsODI1OTJqMDAxa3dsbHp6YTIzZW04YiJ9.-gz3QoFQ82JS1uYpaQC7PA',
+                attribution = '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> | © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                 pin = L.icon({
                     iconUrl:    '/static/pin.svg',
                     iconSize:   [16, 22],
                     iconAnchor: [8, 22],
-                    popupAnchor: [0, -22],
                 }),
                 pinWhite = L.icon({
                     iconUrl:    '/static/pin-white.svg',
                     iconSize:   [16, 22],
                     iconAnchor: [8, 22],
+                    popupAnchor: [0, -22],
                 }),
                 setUpPopup = function(location, label) {
-                    var marker = L.marker(location, {icon: pin}).addTo(map).bindPopup(label.innerHTML),
+                    var marker = L.marker(location, {icon: pinWhite}).addTo(map).bindPopup(label.innerHTML),
                         a = label.getElementsByTagName('a');
                     if (a.length) {
                         a[0].onmouseover = function() {
@@ -77,13 +84,10 @@
                 };
 
             L.tileLayer(tileURL, {
-                attribution: attribution
+                tileSize: 512,
+                zoomOffset: -1,
+                attribution: attribution,
             }).addTo(map);
-
-            for (i = labels.length - 1; i >= 0; i -= 1) {
-                setUpPopup(mainLocations[i], labels[i], items[i]);
-                L.marker(mainLocations[i], {icon: pinWhite}).addTo(map);
-            }
 
             if (mainLocations.length > labels.length) { // on a stop point detail page
                 i = mainLocations.length - 1;
@@ -97,6 +101,10 @@
                 map.fitBounds((polyline || L.polyline(mainLocations)).getBounds(), {
                     padding: [10, 20]
                 });
+            }
+
+            for (i = labels.length - 1; i >= 0; i -= 1) {
+                setUpPopup(mainLocations[i], labels[i], items[i]);
             }
         }
 
