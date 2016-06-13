@@ -255,6 +255,14 @@ class StopPointDetailView(DetailView):
         if not self.object.active and len(context['services']) == 0:
             raise Http404()
 
+        text = ', '.join(filter(None, [
+            'on ' + self.object.street if self.object.street else None,
+            'near ' + self.object.crossing if self.object.crossing else None,
+            'near ' + self.object.landmark if self.object.landmark else None,
+        ]))
+        if text:
+            context['text'] = text[0].upper() + text[1:]
+
         if self.object.stop_area_id is not None:
             context['nearby'] = StopPoint.objects.filter(stop_area=self.object.stop_area_id)
         else:

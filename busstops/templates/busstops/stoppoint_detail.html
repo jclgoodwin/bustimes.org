@@ -10,12 +10,8 @@
 <p>This stop is no longer active</p>
 {% endif %}
 
-{% if stoppoint.street %}
-<p>On {{ stoppoint.street }}{% if stoppoint.crossing %}, near {{ stoppoint.crossing }}{% endif %}</p>
-{% endif %}
-
-{% if stoppoint.landmark %}
-<p>Near {{ stoppoint.landmark }}</p>
+{% if text %}
+<p>{{ text }}</p>
 {% endif %}
 
 <div class="map-wrapper">
