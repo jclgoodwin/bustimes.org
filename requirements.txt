@@ -1,10 +1,10 @@
-beautifulsoup4>=4.4.1
-Django>=1.9.5
-django-pipeline>=1.6.7
+beautifulsoup4==4.4.1
+coveralls==1.1
+Django==1.9.7
+django-pipeline==1.6.8
+django-template-minifier==1.0
 psycopg2==2.6.1
-Jinja2==2.8
-titlecase>=0.8.1
-git+https://github.com/jclgoodwin/django-template-minifier.git
 pytz==2016.4
 requests==2.10.0
-vcrpy==1.7.4
+titlecase==0.8.1
+vcrpy==1.8.0
