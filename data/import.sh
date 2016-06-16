@@ -89,7 +89,7 @@ if [[ $noc_old != $noc_new ]]; then
     ../manage.py import_operators < NOC_DB.csv
     ../manage.py correct_operator_regions
     ../manage.py import_operator_contacts < nocrecords.xml
-    ../manage.py import_scotch_operator_contacts
+    ../manage.py import_scotch_operator_contacts < NOC_DB.csv
     ../manage.py update_index busstops.Operator --remove
 fi
 

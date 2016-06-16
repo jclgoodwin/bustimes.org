@@ -32,5 +32,3 @@ class Command(ImportFromCSVCommand):
                 operator.email = scotch['email']
                 operator.phone = scotch['phone']
                 operator.save()
-        else:
-            cls.do_operator(operator, row)
