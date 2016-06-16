@@ -1,7 +1,8 @@
-import os
+import os, vcr
 from django.test import TestCase
 from ...models import Region, Operator
-from ..commands import import_operators, import_scotch_operator_contacts
+with vcr.use_cassette('data/vcr/scotch_operators.yaml'):
+    from ..commands import import_operators, import_scotch_operator_contacts
 
 
 DIR = os.path.dirname(os.path.abspath(__file__))
