@@ -1,7 +1,7 @@
 import os
 from django.test import TestCase
 from ...models import Region, Operator
-from ..commands import import_operators
+from ..commands import import_operators, import_scotch_operator_contacts
 
 
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -48,3 +48,12 @@ class ImportOperatorsTest(TestCase):
         self.assertEqual(self.ace_travel.get_a_mode(), 'A demand responsive transport')
         self.assertEqual(self.c2c.get_a_mode(), 'A rail')
         self.assertEqual(self.first_aberdeen.get_a_mode(), 'A bus')
+
+    def test_import_scotch_operator_contacts(self):
+        command = import_scotch_operator_contacts.Command()
+        command.input = open(os.path.join(DIR, 'fixtures/NOC_DB.csv'))
+        command.handle()
+
+        first_aberdeen = Operator.objects.get(id='FABD')
+        self.assertEqual(first_aberdeen.name, 'First Aberdeen')
+        self.assertEqual(first_aberdeen.url, 'http://www.firstgroup.com/aberdeen')
