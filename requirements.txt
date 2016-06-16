@@ -1,6 +1,7 @@
 beautifulsoup4==4.4.1
 coveralls==1.1
 Django==1.9.7
+django-haystack==2.5.dev1
 django-pipeline==1.6.8
 django-template-minifier==1.0
 psycopg2==2.6.1
