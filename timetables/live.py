@@ -119,6 +119,8 @@ class TransportApiDepartures(Departures):
         destination_matches = DESTINATION_REGEX.match(destination)
         if destination_matches is not None:
             destination = destination_matches.groups()[0]
+        elif item['source'] == 'VIX' and ',' in destination:
+            destination = destination.split(',', 1)[0]
         return {
             'time': departure_time,
             'service': self.get_service(item.get('line').split('--', 1)[0].split('|', 1)[0]),
