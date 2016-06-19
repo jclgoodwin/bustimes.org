@@ -1,0 +1,43 @@
+header,
+.breadcrumb,
+input,
+label,
+footer {
+    display: none;
+}
+
+body,
+a {
+    color: black;
+}
+
+main {
+    margin: 0;
+    padding: 0;
+    width: auto;
+}
+
+h1 {
+    font-size: 1.25em;
+    /*line-height: 1em;*/
+    margin: 0;
+}
+
+h2 {
+    font-size: 1em;
+    margin: 0;
+}
+
+.timetable-wrapper {
+    margin-top: 0;
+}
+
+table tbody tr,
+.timetable tr:first-child td,
+.timetable th {
+    border-color: #eee;
+}
+
+main p a[href^=http] {
+    display: none;
+}
