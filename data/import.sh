@@ -110,6 +110,7 @@ for region in ${REGIONS[@]}; do
         find $region -type f -mtime +2 -delete
         unzip -oq $region.zip -d $region
         find $region -type f -empty -delete
+        ../corrections.sh
     fi
 done
 [ $updated_services ] && ../../manage.py update_index --remove
