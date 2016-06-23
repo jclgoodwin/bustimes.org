@@ -9,22 +9,38 @@ class TimetableTest(TestCase):
     def setUpTestData(cls):
         cls.ne_service = Service.objects.create(
             pk='NE_130_PC4736_572',
-            line_name='572',
-            description='Ravenstonedale - Barnard Castle',
             region_id='NE',
             date='2016-05-05'
         )
         cls.nw_service = Service.objects.create(
             pk='60023943',
-            line_name='289',
-            description='Northwich - Knutsford - High Legh - Altrincham',
             region_id='NW',
             date='2016-05-24'
+        )
+        cls.ea_service = Service.objects.create(
+            pk='ea_21-13B-B-y08',
+            region_id='EA',
+            date='2016-05-24',
+            net='ea'
+        )
+        cls.gb_service = Service.objects.create(
+            pk='M11A_MEGA',
+            region_id='GB',
+            date='2016-05-24',
         )
 
     def test_get_filename(self):
         self.assertEqual(timetable.get_filenames(self.ne_service, None), ('NE_130_PC4736_572.xml',))
         self.assertEqual(timetable.get_filenames(self.nw_service, None), ('SVR60023943.xml',))
+
+        self.assertEqual(timetable.get_filenames(self.ea_service, ''), ())
+        ea_filenames = timetable.get_filenames(self.ea_service, './busstops/management/tests/fixtures/')
+        self.assertEqual(ea_filenames.next(), 'ea_21-13B-B-y08-1.xml')
+        self.assertRaises(StopIteration, ea_filenames.next)
+
+        gb_filenames = timetable.get_filenames(self.gb_service, './busstops/management/tests/fixtures/')
+        self.assertEqual(gb_filenames.next(), 'Megabus_Megabus14032016 163144_MEGA_M11A.xml')
+        self.assertRaises(StopIteration, gb_filenames.next)
 
     def test_timetable_none(self):
         """timetable_from_filename should return None if there is an error"""
@@ -47,16 +63,13 @@ class TimetableTest(TestCase):
         self.assertEqual(87, len(timetable_ea.groupings[1].rows))
         self.assertEqual('Leys Lane', timetable_ea.groupings[1].rows[0].part.stop.common_name)
 
-
         megabus = timetable.timetable_from_filename('./busstops/management/tests/fixtures/Megabus_Megabus14032016 163144_MEGA_M11A.xml', None)
         self.assertFalse(megabus.groupings[0].has_minor_stops())
         self.assertFalse(megabus.groupings[1].has_minor_stops())
 
-
         timetable_ne = timetable.timetable_from_filename('./busstops/management/tests/fixtures/NE_03_SCC_X6_1.xml', None)
         timetable_scotland = timetable.timetable_from_filename('./busstops/management/tests/fixtures/SVRABBN017.xml', None)
         timetable_deadruns = timetable.timetable_from_filename('./busstops/management/tests/fixtures/SVRLABO024A.xml', None)
-
 
 
 class DateRangeTest(TestCase):
