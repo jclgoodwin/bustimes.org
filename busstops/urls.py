@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^services/(?P<pk>[^/]+).xml$', views.service_xml),
 ]
 
-if settings.DEBUG:
+if settings.DEBUG and hasattr(staticfiles, 'views'):
     urlpatterns += [
         url(r'^(?P<path>serviceworker.js)$', staticfiles.views.serve),
     ]
