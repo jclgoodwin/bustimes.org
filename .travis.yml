@@ -3,7 +3,8 @@ cache: pip
 services:
   - postgresql
 before_script:
-  psql -U postgres -c "create extension postgis"
+  psql -U postgres -c 'create extension postgis';
+  psql -U postgres -c 'create database bustimes'
 script:
   coverage run --source=buses,busstops,timetables manage.py test
 after_success:
