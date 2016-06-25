@@ -458,14 +458,14 @@ class Timetable(object):
             for journey in grouping.journeys:
                 if not hasattr(journey, 'operating_profile'):
                     previous_operatingprofile = None
-                elif previous_operatingprofile == journey.operating_profile:
-                    in_a_row += 1
-                else:
+                elif previous_operatingprofile != journey.operating_profile:
                     if previous_operatingprofile is not None:
                         grouping.column_heads.append(ColumnHead(previous_operatingprofile, head_span))
                         head_span = 0
-                        in_a_row = 0
                     previous_operatingprofile = journey.operating_profile
+                    in_a_row = 0
+                else:
+                    in_a_row += 1
                 if not hasattr(journey, 'notes'):
                     previous_notes = None
                 elif str(previous_notes) != str(journey.notes):
@@ -473,8 +473,8 @@ class Timetable(object):
                         grouping.column_feet.append(ColumnFoot(previous_notes, foot_span))
                         foot_span = 0
                     previous_notes = journey.notes
-                journey.in_a_row = in_a_row
                 head_span += 1
+                journey.in_a_row = in_a_row
                 foot_span += 1
             grouping.column_heads.append(ColumnHead(previous_operatingprofile, head_span))
             grouping.column_feet.append(ColumnFoot(previous_notes, foot_span))
