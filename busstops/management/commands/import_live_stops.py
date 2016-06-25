@@ -48,7 +48,6 @@ class Command(BaseCommand):
 
     @staticmethod
     def maybe_add_acisconnect_source(stop, live_source, prefix):
-        print stop.get_absolute_url()
         url = 'http://%s.acisconnect.com/Text/WebDisplay.aspx' % prefix
         request = requests.get(
             url,
