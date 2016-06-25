@@ -60,8 +60,8 @@
                     doubleClickZoom: false,
                     boxZoom: false
                 }),
-                tileURL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoiamdvb2R3aW4iLCJhIjoiY2lsODI1OTJqMDAxa3dsbHp6YTIzZW04YiJ9.-gz3QoFQ82JS1uYpaQC7PA',
-                attribution = '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> | © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                tileURL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                attribution = '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                 pin = L.icon({
                     iconUrl:    '/static/pin.svg',
                     iconSize:   [16, 22],
@@ -84,8 +84,6 @@
                 };
 
             L.tileLayer(tileURL, {
-                tileSize: 512,
-                zoomOffset: -1,
                 attribution: attribution,
             }).addTo(map);
 
