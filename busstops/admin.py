@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 from django.db.models import Count
 from busstops.models import Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service
@@ -20,6 +21,12 @@ class OperatorAdmin(admin.ModelAdmin):
 
     def service_count(self, obj):
         return obj.service_count
+
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        formfield = super(OperatorAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+        if db_field.name == 'address':
+            formfield.widget = forms.Textarea(attrs=formfield.widget.attrs)
+        return formfield
 
     service_count.admin_order_field = 'service_count'
 
