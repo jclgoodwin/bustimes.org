@@ -54,7 +54,13 @@
         {% else %}{{ row.part.stop }}{% endif %}
         </th>
         {% for time in row.times %}
-            <td>{{ time }}</td>
+            {% if time != None %}
+                {% if time.text %}
+                    <td colspan="{{ time.colspan }}" rowspan="{{ time.rowspan }}">{{ time.text }}</td>
+                {% else %}
+                    <td>{{ time }}</td>
+                {% endif %}
+            {% endif %}
         {% endfor %}
         </tr>
     {% endfor %}

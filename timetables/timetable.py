@@ -54,6 +54,18 @@ class Row(object):
         return max(self.sequencenumbers.values()) < max(other.sequencenumbers.values())
 
 
+class Cell(object):
+    def __init__(self, colspan, rowspan, timedelta):
+        self.colspan = colspan
+        self.rowspan = rowspan
+        if timedelta.seconds == 3600:
+            self.text = 'then hourly until'
+        elif timedelta.seconds % 3600 == 0:
+            self.text = 'then every %d hours until' % timedelta.seconds / 3600
+        else:
+            self.text = 'then every %d minutes until' % timedelta.seconds / 60
+
+
 class Grouping(object):
     def __init__(self, direction):
         self.direction = direction
@@ -181,6 +193,7 @@ class VehicleJourney(object):
             self.operating_profile = OperatingProfile(operatingprofile_element, servicedorganisations)
 
     def add_times(self):
+        today = date.today()
         row_length = len(self.journeypattern.grouping.rows.values()[0].times)
 
         stopusage = self.journeypattern.sections[0].timinglinks[0].origin
@@ -196,9 +209,9 @@ class VehicleJourney(object):
             for timinglink in section.timinglinks:
                 stopusage = timinglink.destination
                 if hasattr(timinglink.origin, 'waittime'):
-                    time = (datetime.combine(date.today(), time) + timinglink.origin.waittime).time()
+                    time = (datetime.combine(today, time) + timinglink.origin.waittime).time()
 
-                time = (datetime.combine(date.today(), time) + timinglink.runtime).time()
+                time = (datetime.combine(today, time) + timinglink.runtime).time()
 
                 if deadrun and hasattr(self, 'start_deadrun') and self.start_deadrun == timinglink.id:
                     deadrun = False # end of dead run
@@ -397,6 +410,8 @@ class ColumnFoot(object):
 
 class Timetable(object):
     def __init__(self, xml, stops=None):
+        today = date.today()
+
         outbound_grouping = Grouping('outbound')
         inbound_grouping = Grouping('inbound')
 
@@ -451,11 +466,15 @@ class Timetable(object):
                 grouping.rows.sort()
 
             previous_operatingprofile = None
+            previous_journeypattern = None
             previous_notes = None
             head_span = 0
             in_a_row = 0
+            previous_difference = None
+            difference = None
+            previous_departure_time = None
             foot_span = 0
-            for journey in grouping.journeys:
+            for i, journey in enumerate(grouping.journeys):
                 if not hasattr(journey, 'operating_profile'):
                     previous_operatingprofile = None
                 elif previous_operatingprofile != journey.operating_profile:
@@ -464,8 +483,21 @@ class Timetable(object):
                         head_span = 0
                     previous_operatingprofile = journey.operating_profile
                     in_a_row = 0
-                else:
-                    in_a_row += 1
+                elif previous_journeypattern == journey.journeypattern:
+                    difference = datetime.combine(today, journey.departure_time) - datetime.combine(today, previous_departure_time)
+                    if difference == previous_difference:
+                        in_a_row += 1
+                    else:
+                        in_a_row = 0
+                elif in_a_row > 1:
+                    grouping.rows[0].times[i - in_a_row - 1] = Cell(in_a_row, len(grouping.rows), difference)
+                    for j in range(i - in_a_row, i - 1):
+                        grouping.rows[0].times[j] = None
+                    for row in grouping.rows[1:]:
+                        for j in range(i - in_a_row - 1, i - 1):
+                            row.times[j] = None
+                    in_a_row = 0
+
                 if not hasattr(journey, 'notes'):
                     previous_notes = None
                 elif str(previous_notes) != str(journey.notes):
@@ -473,8 +505,11 @@ class Timetable(object):
                         grouping.column_feet.append(ColumnFoot(previous_notes, foot_span))
                         foot_span = 0
                     previous_notes = journey.notes
+                previous_journeypattern = journey.journeypattern
                 head_span += 1
                 journey.in_a_row = in_a_row
+                previous_difference = difference
+                previous_departure_time = journey.departure_time
                 foot_span += 1
             grouping.column_heads.append(ColumnHead(previous_operatingprofile, head_span))
             grouping.column_feet.append(ColumnFoot(previous_notes, foot_span))
