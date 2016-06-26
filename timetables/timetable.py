@@ -485,13 +485,11 @@ class Timetable(object):
                     if in_a_row > 1:
                         abbreviate(grouping, i, in_a_row - 1, difference)
                     in_a_row = 0
-                elif previous_journeypattern == journey.journeypattern:
+                elif previous_journeypattern.id == journey.journeypattern.id:
                     difference = datetime.combine(today, journey.departure_time) - datetime.combine(today, previous_departure_time)
-                    if difference == previous_difference:
+                    if previous_difference and difference == previous_difference:
                         in_a_row += 1
                     else:
-                        if in_a_row > 1:
-                           abbreviate(grouping, i, in_a_row - 1, difference)
                         in_a_row = 0
                 elif in_a_row > 1:
                     abbreviate(grouping, i, in_a_row - 1, difference)
@@ -520,9 +518,9 @@ def abbreviate(grouping, i, in_a_row, difference):
     grouping.rows[0].times[i - in_a_row - 1] = Cell(in_a_row, len(grouping.rows), difference)
     for j in range(i - in_a_row, i - 1):
         grouping.rows[0].times[j] = None
+    for j in range(i - in_a_row - 1, i - 1):
         for row in grouping.rows[1:]:
-            for j in range(i - in_a_row - 1, i - 1):
-                row.times[j] = None
+            row.times[j] = None
 
 
 def get_filenames(service, path):
