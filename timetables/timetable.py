@@ -61,9 +61,9 @@ class Cell(object):
         if timedelta.seconds == 3600:
             self.text = 'then hourly until'
         elif timedelta.seconds % 3600 == 0:
-            self.text = 'then every %d hours until' % timedelta.seconds / 3600
+            self.text = 'then every %d hours until' % (timedelta.seconds / 3600)
         else:
-            self.text = 'then every %d minutes until' % timedelta.seconds / 60
+            self.text = 'then every %d minutes until' % (timedelta.seconds / 60)
 
 
 class Grouping(object):
@@ -482,20 +482,19 @@ class Timetable(object):
                         grouping.column_heads.append(ColumnHead(previous_operatingprofile, head_span))
                         head_span = 0
                     previous_operatingprofile = journey.operating_profile
+                    if in_a_row > 1:
+                        abbreviate(grouping, i, in_a_row - 1, difference)
                     in_a_row = 0
                 elif previous_journeypattern == journey.journeypattern:
                     difference = datetime.combine(today, journey.departure_time) - datetime.combine(today, previous_departure_time)
                     if difference == previous_difference:
                         in_a_row += 1
                     else:
+                        if in_a_row > 1:
+                           abbreviate(grouping, i, in_a_row - 1, difference)
                         in_a_row = 0
                 elif in_a_row > 1:
-                    grouping.rows[0].times[i - in_a_row - 1] = Cell(in_a_row, len(grouping.rows), difference)
-                    for j in range(i - in_a_row, i - 1):
-                        grouping.rows[0].times[j] = None
-                    for row in grouping.rows[1:]:
-                        for j in range(i - in_a_row - 1, i - 1):
-                            row.times[j] = None
+                    abbreviate(grouping, i, in_a_row - 1, difference)
                     in_a_row = 0
 
                 if not hasattr(journey, 'notes'):
@@ -511,8 +510,19 @@ class Timetable(object):
                 previous_difference = difference
                 previous_departure_time = journey.departure_time
                 foot_span += 1
+            if in_a_row > 1:
+                abbreviate(grouping, len(grouping.journeys), in_a_row - 1, difference)
             grouping.column_heads.append(ColumnHead(previous_operatingprofile, head_span))
             grouping.column_feet.append(ColumnFoot(previous_notes, foot_span))
+
+
+def abbreviate(grouping, i, in_a_row, difference):
+    grouping.rows[0].times[i - in_a_row - 1] = Cell(in_a_row, len(grouping.rows), difference)
+    for j in range(i - in_a_row, i - 1):
+        grouping.rows[0].times[j] = None
+        for row in grouping.rows[1:]:
+            for j in range(i - in_a_row - 1, i - 1):
+                row.times[j] = None
 
 
 def get_filenames(service, path):
