@@ -490,9 +490,12 @@ class Timetable(object):
                     if previous_difference and difference == previous_difference:
                         in_a_row += 1
                     else:
+                        if in_a_row > 1:
+                            abbreviate(grouping, i, in_a_row - 1, difference)
                         in_a_row = 0
-                elif in_a_row > 1:
-                    abbreviate(grouping, i, in_a_row - 1, difference)
+                else:
+                    if in_a_row > 1:
+                        abbreviate(grouping, i, in_a_row - 1, difference)
                     in_a_row = 0
 
                 if not hasattr(journey, 'notes'):
@@ -502,6 +505,7 @@ class Timetable(object):
                         grouping.column_feet.append(ColumnFoot(previous_notes, foot_span))
                         foot_span = 0
                     previous_notes = journey.notes
+
                 previous_journeypattern = journey.journeypattern
                 head_span += 1
                 journey.in_a_row = in_a_row
