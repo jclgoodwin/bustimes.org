@@ -238,7 +238,7 @@ class Command(BaseCommand):
 
             try:
                 timetable = Timetable(root)
-                show_timetable = (len(timetable.groupings[0].journeys) < 60 and len(timetable.groupings[1].journeys) < 60)
+                show_timetable = (len(filter(None, timetable.groupings[0].rows[0].times)) < 60 and len(filter(None, timetable.groupings[1].rows[0].times)) < 60)
                 stop_usages = [
                     StopUsage(service_id=service_code, stop_id=row.part.stop.atco_code, direction='outbound', order=i, timing_status=row.part.timingstatus)
                     for i, row in enumerate(timetable.groupings[0].rows)

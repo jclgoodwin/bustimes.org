@@ -481,9 +481,9 @@ class Timetable(object):
                     if previous_operatingprofile is not None:
                         grouping.column_heads.append(ColumnHead(previous_operatingprofile, head_span))
                         head_span = 0
+                        if in_a_row > 1:
+                            abbreviate(grouping, i, in_a_row - 1, difference)
                     previous_operatingprofile = journey.operating_profile
-                    if in_a_row > 1:
-                        abbreviate(grouping, i, in_a_row - 1, difference)
                     in_a_row = 0
                 elif previous_journeypattern.id == journey.journeypattern.id:
                     difference = datetime.combine(today, journey.departure_time) - datetime.combine(today, previous_departure_time)
