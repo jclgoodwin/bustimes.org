@@ -482,7 +482,7 @@ class Timetable(object):
                         grouping.column_heads.append(ColumnHead(previous_operatingprofile, head_span))
                         head_span = 0
                         if in_a_row > 1:
-                            abbreviate(grouping, i, in_a_row - 1, difference)
+                            abbreviate(grouping, i, in_a_row - 1, previous_difference)
                     previous_operatingprofile = journey.operating_profile
                     in_a_row = 0
                 elif previous_journeypattern.id == journey.journeypattern.id:
@@ -495,7 +495,7 @@ class Timetable(object):
                         in_a_row = 0
                 else:
                     if in_a_row > 1:
-                        abbreviate(grouping, i, in_a_row - 1, difference)
+                        abbreviate(grouping, i, in_a_row - 1, previous_difference)
                     in_a_row = 0
 
                 if not hasattr(journey, 'notes'):
@@ -508,21 +508,21 @@ class Timetable(object):
 
                 previous_journeypattern = journey.journeypattern
                 head_span += 1
-                journey.in_a_row = in_a_row
                 previous_difference = difference
+                difference = None
                 previous_departure_time = journey.departure_time
                 foot_span += 1
             if in_a_row > 1:
-                abbreviate(grouping, len(grouping.journeys), in_a_row - 1, difference)
+                abbreviate(grouping, len(grouping.journeys), in_a_row - 1, previous_difference)
             grouping.column_heads.append(ColumnHead(previous_operatingprofile, head_span))
             grouping.column_feet.append(ColumnFoot(previous_notes, foot_span))
 
 
 def abbreviate(grouping, i, in_a_row, difference):
-    grouping.rows[0].times[i - in_a_row - 1] = Cell(in_a_row, len(grouping.rows), difference)
-    for j in range(i - in_a_row, i - 1):
-        grouping.rows[0].times[j] = None
+    grouping.rows[0].times[i - in_a_row - 2] = Cell(in_a_row + 1, len(grouping.rows), difference)
     for j in range(i - in_a_row - 1, i - 1):
+        grouping.rows[0].times[j] = None
+    for j in range(i - in_a_row - 2, i - 1):
         for row in grouping.rows[1:]:
             row.times[j] = None
 
