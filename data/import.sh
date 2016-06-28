@@ -34,29 +34,29 @@ mkdir -p NPTG/previous NaPTAN/previous TNDS
 . ../env/bin/activate
 
 cd NPTG
-nptg_old=`ls -l nptgcsv.zip`
-wget -qN http://81.17.70.199/nptg/snapshot/nptgcsv.zip
-nptg_new=`ls -l nptgcsv.zip`
+nptg_old=`ls -l Nptgcsv.zip`
+wget -qN http://naptan.app.dft.gov.uk/datarequest/nptg.ashx?format=csv
+nptg_new=`ls -l Nptgcsv.zip`
 
 if [[ $nptg_old != $nptg_new ]]; then
     echo "NPTG"
     echo "  Changes found"
     echo "  Importing regions"
-    import_csv nptgcsv.zip regions Regions.csv
+    import_csv Nptgcsv.zip regions Regions.csv
     echo "  Importing areas"
-    import_csv nptgcsv.zip areas AdminAreas.csv
+    import_csv Nptgcsv.zip areas AdminAreas.csv
     echo "  Importing districts"
-    import_csv nptgcsv.zip districts Districts.csv
+    import_csv Nptgcsv.zip districts Districts.csv
     echo "  Importing localities"
-    import_csv nptgcsv.zip localities Localities.csv
+    import_csv Nptgcsv.zip localities Localities.csv
     echo "  Importing locality hierarchy"
-    import_csv nptgcsv.zip locality_hierarchy LocalityHierarchy.csv
+    import_csv Nptgcsv.zip locality_hierarchy LocalityHierarchy.csv
     ../../manage.py update_index busstops.Locality --remove
 fi
 
 cd ../NaPTAN
 naptan_old=`ls -l NaPTANcsv.zip`
-wget -qN http://81.17.70.199/NaPTAN/snapshot/NaPTANcsv.zip
+wget -qN http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv
 naptan_new=`ls -l NaPTANcsv.zip`
 
 if [[ $nptg_old$naptan_old != $nptg_new$naptan_new ]]; then
