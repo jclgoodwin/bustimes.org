@@ -35,7 +35,7 @@ mkdir -p NPTG/previous NaPTAN/previous TNDS
 
 cd NPTG
 nptg_old=`ls -l Nptgcsv.zip`
-wget -qN http://naptan.app.dft.gov.uk/datarequest/nptg.ashx?format=csv
+wget -qN -O Nptgcsv.zip http://naptan.app.dft.gov.uk/datarequest/nptg.ashx?format=csv
 nptg_new=`ls -l Nptgcsv.zip`
 
 if [[ $nptg_old != $nptg_new ]]; then
@@ -56,7 +56,7 @@ fi
 
 cd ../NaPTAN
 naptan_old=`ls -l NaPTANcsv.zip`
-wget -qN http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv
+wget -q -O NaPTANcsv.zip http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv
 naptan_new=`ls -l NaPTANcsv.zip`
 
 if [[ $nptg_old$naptan_old != $nptg_new$naptan_new ]]; then
