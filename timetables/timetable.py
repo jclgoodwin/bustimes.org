@@ -491,7 +491,7 @@ class Timetable(object):
                         in_a_row += 1
                     else:
                         if in_a_row > 1:
-                            abbreviate(grouping, i, in_a_row - 1, difference)
+                            abbreviate(grouping, i, in_a_row - 1, previous_difference)
                         in_a_row = 0
                 else:
                     if in_a_row > 1:
