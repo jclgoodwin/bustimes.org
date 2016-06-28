@@ -26,7 +26,7 @@ class Command(ImportFromCSVCommand):
         for django_field_name, naptan_field_name in self.field_names:
             defaults[django_field_name] = unicode(row[naptan_field_name], errors='ignore')
 
-        StopPoint.objects.update_or_create(atco_code=row['AtcoCode'], defaults=defaults)
+        StopPoint.objects.update_or_create(atco_code=row['ATCOCode'], defaults=defaults)
 
     def __init__(self, *args, **kwargs):
         super(Command, self).__init__(*args, **kwargs)

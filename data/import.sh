@@ -34,30 +34,30 @@ mkdir -p NPTG/previous NaPTAN/previous TNDS
 . ../env/bin/activate
 
 cd NPTG
-nptg_old=`ls -l Nptgcsv.zip`
-wget -qN -O Nptgcsv.zip http://naptan.app.dft.gov.uk/datarequest/nptg.ashx?format=csv
-nptg_new=`ls -l Nptgcsv.zip`
+nptg_old=`shasum nptg.ashx\?format\=csv`
+wget -qN http://naptan.app.dft.gov.uk/datarequest/nptg.ashx?format=csv
+nptg_new=`shasum nptg.ashx\?format\=csv`
 
 if [[ $nptg_old != $nptg_new ]]; then
     echo "NPTG"
     echo "  Changes found"
     echo "  Importing regions"
-    import_csv Nptgcsv.zip regions Regions.csv
+    import_csv nptg.ashx\?format\=csv regions Regions.csv
     echo "  Importing areas"
-    import_csv Nptgcsv.zip areas AdminAreas.csv
+    import_csv nptg.ashx\?format\=csv areas AdminAreas.csv
     echo "  Importing districts"
-    import_csv Nptgcsv.zip districts Districts.csv
+    import_csv nptg.ashx\?format\=csv districts Districts.csv
     echo "  Importing localities"
-    import_csv Nptgcsv.zip localities Localities.csv
+    import_csv nptg.ashx\?format\=csv localities Localities.csv
     echo "  Importing locality hierarchy"
-    import_csv Nptgcsv.zip locality_hierarchy LocalityHierarchy.csv
+    import_csv nptg.ashx\?format\=csv locality_hierarchy LocalityHierarchy.csv
     ../../manage.py update_index busstops.Locality --remove
 fi
 
 cd ../NaPTAN
-naptan_old=`ls -l NaPTANcsv.zip`
-wget -q -O NaPTANcsv.zip http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv
-naptan_new=`ls -l NaPTANcsv.zip`
+naptan_old=`shasum Naptan.ashx\?format\=csv`
+wget -qN http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv
+naptan_new=`shasum Naptan.ashx\?format\=csv`
 
 if [[ $nptg_old$naptan_old != $nptg_new$naptan_new ]]; then
     echo "NaPTAN"
@@ -65,16 +65,16 @@ if [[ $nptg_old$naptan_old != $nptg_new$naptan_new ]]; then
     echo "  Unzipping"
     (
     echo "  Stops"
-    import_csv NaPTANcsv.zip stops Stops.csv
+    import_csv Naptan.ashx\?format\=csv stops Stops.csv
     ) &
     (
     echo "  Stop areas"
-    import_csv NaPTANcsv.zip stop_areas StopAreas.csv
+    import_csv Naptan.ashx\?format\=csv stop_areas StopAreas.csv
     ) &
     wait
     (
     echo "  Stops in area"
-    import_csv NaPTANcsv.zip stops_in_area StopsInArea.csv
+    import_csv Naptan.ashx\?format\=csv stops_in_area StopsInArea.csv
     echo "  Cleaning stops"
     ../../manage.py clean_stops
     ) &
