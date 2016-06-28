@@ -12,8 +12,8 @@ DURATION_REGEX = re.compile(
 )
 
 def parse_duration(string):
-    "Given a string returns a timetelta"
-
+    """Given an ISO 8601 formatted duration string like "PT2M", returns a timedelta
+    """
     matches = DURATION_REGEX.match(string).groupdict().iteritems()
     params = {
         key: int(value) for key, value in matches if value is not None
@@ -22,6 +22,8 @@ def parse_duration(string):
 
 
 class Stop(object):
+    """Represents TransXChange StopPoint, optionally with a reference to a busstops.models.StopPoint
+    """
     def __init__(self, element, stops):
         self.atco_code = element.find('txc:StopPointRef', NS).text
         if stops is not None:
@@ -41,6 +43,9 @@ class Stop(object):
 
 
 class Row(object):
+    """A row in a grouping in a timetable.
+    Each row is associated with a Stop, and a list of times
+    """
     def __init__(self, part):
         self.part = part
         part.row = self
@@ -55,18 +60,24 @@ class Row(object):
 
 
 class Cell(object):
-    def __init__(self, colspan, rowspan, timedelta):
+    """Represents a special cell in a timetable, spanning multiple rows and columns,
+    with some text like "then every 5 minutes until"
+    """
+    def __init__(self, colspan, rowspan, duration):
         self.colspan = colspan
         self.rowspan = rowspan
-        if timedelta.seconds == 3600:
+        if duration.seconds == 3600:
             self.text = 'then hourly until'
-        elif timedelta.seconds % 3600 == 0:
-            self.text = 'then every %d hours until' % (timedelta.seconds / 3600)
+        elif duration.seconds % 3600 == 0:
+            self.text = 'then every %d hours until' % (duration.seconds / 3600)
         else:
-            self.text = 'then every %d minutes until' % (timedelta.seconds / 60)
+            self.text = 'then every %d minutes until' % (duration.seconds / 60)
 
 
 class Grouping(object):
+    """Probably either "outbound" or "inbound".
+    (Could perhaps be extended to group by weekends, bank holidays in the future)
+    """
     def __init__(self, direction):
         self.direction = direction
         self.column_heads = []
@@ -82,6 +93,8 @@ class Grouping(object):
 
 
 class JourneyPattern(object):
+    """A collection of JourneyPatternSections, in order
+    """
     def __init__(self, element, sections, outbound_grouping, inbound_grouping):
         self.id = element.attrib.get('id')
         self.journeys = []
@@ -127,6 +140,8 @@ class JourneyPattern(object):
 
 
 class JourneyPatternSection(object):
+    """A collection of JourneyPatternStopUsages, in order
+    """
     def __init__(self, element, stops):
         self.timinglinks = [
             JourneyPatternTimingLink(timinglink_element, stops)
@@ -135,7 +150,8 @@ class JourneyPatternSection(object):
 
 
 class JourneyPatternStopUsage(object):
-    """Represents either a 'From' or 'To' element in TransXChange"""
+    """Represents either a 'From' or 'To' element in TransXChange
+    """
     def __init__(self, element, stops):
         # self.activity = element.find('txc:Activity', NS).text
         self.sequencenumber = element.get('SequenceNumber')
@@ -162,6 +178,10 @@ class JourneyPatternTimingLink(object):
 
 
 class VehicleJourney(object):
+    """A journey represents a scheduled journey that happens at most once per day.
+    A sort of "instance" of a JourneyPattern, made distinct by having its own start time,
+    and possibly operating profile and dead run
+    """
     def __init__(self, element, journeypatterns, servicedorganisations):
         self.departure_time = datetime.strptime(
             element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
