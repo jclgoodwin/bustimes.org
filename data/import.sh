@@ -33,51 +33,57 @@ function import_csv {
 mkdir -p NPTG/previous NaPTAN/previous TNDS
 . ../env/bin/activate
 
-cd NPTG
-nptg_old=`shasum nptg.ashx\?format\=csv`
-wget -qN http://naptan.app.dft.gov.uk/datarequest/nptg.ashx?format=csv
-nptg_new=`shasum nptg.ashx\?format\=csv`
+dft_old=`shasum NPTGLastSubs_Load.ashx`
+wget -qN http://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx
+dft_new=`shasum NPTGLastSubs_Load.ashx`
 
-if [[ $nptg_old != $nptg_new ]]; then
-    echo "NPTG"
-    echo "  Changes found"
-    echo "  Importing regions"
-    import_csv nptg.ashx\?format\=csv regions Regions.csv
-    echo "  Importing areas"
-    import_csv nptg.ashx\?format\=csv areas AdminAreas.csv
-    echo "  Importing districts"
-    import_csv nptg.ashx\?format\=csv districts Districts.csv
-    echo "  Importing localities"
-    import_csv nptg.ashx\?format\=csv localities Localities.csv
-    echo "  Importing locality hierarchy"
-    import_csv nptg.ashx\?format\=csv locality_hierarchy LocalityHierarchy.csv
-    ../../manage.py update_index busstops.Locality --remove
-fi
+if [[ $dft_old != $dft_new ]]; then
+    cd NPTG
+    nptg_old=`shasum nptg.ashx\?format\=csv`
+    wget -qN http://naptan.app.dft.gov.uk/datarequest/nptg.ashx?format=csv
+    nptg_new=`shasum nptg.ashx\?format\=csv`
 
-cd ../NaPTAN
-naptan_old=`shasum Naptan.ashx\?format\=csv`
-wget -qN http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv
-naptan_new=`shasum Naptan.ashx\?format\=csv`
+    if [[ $nptg_old != $nptg_new ]]; then
+        echo "NPTG"
+        echo "  Changes found"
+        echo "  Importing regions"
+        import_csv nptg.ashx\?format\=csv regions Regions.csv
+        echo "  Importing areas"
+        import_csv nptg.ashx\?format\=csv areas AdminAreas.csv
+        echo "  Importing districts"
+        import_csv nptg.ashx\?format\=csv districts Districts.csv
+        echo "  Importing localities"
+        import_csv nptg.ashx\?format\=csv localities Localities.csv
+        echo "  Importing locality hierarchy"
+        import_csv nptg.ashx\?format\=csv locality_hierarchy LocalityHierarchy.csv
+        ../../manage.py update_index busstops.Locality --remove
+    fi
 
-if [[ $nptg_old$naptan_old != $nptg_new$naptan_new ]]; then
-    echo "NaPTAN"
-    echo "  Changes found"
-    echo "  Unzipping"
-    (
-    echo "  Stops"
-    import_csv Naptan.ashx\?format\=csv stops Stops.csv
-    ) &
-    (
-    echo "  Stop areas"
-    import_csv Naptan.ashx\?format\=csv stop_areas StopAreas.csv
-    ) &
-    wait
-    (
-    echo "  Stops in area"
-    import_csv Naptan.ashx\?format\=csv stops_in_area StopsInArea.csv
-    echo "  Cleaning stops"
-    ../../manage.py clean_stops
-    ) &
+    cd ../NaPTAN
+    naptan_old=`shasum Naptan.ashx\?format\=csv`
+    wget -qN http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv
+    naptan_new=`shasum Naptan.ashx\?format\=csv`
+
+    if [[ $nptg_old$naptan_old != $nptg_new$naptan_new ]]; then
+        echo "NaPTAN"
+        echo "  Changes found"
+        echo "  Unzipping"
+        (
+        echo "  Stops"
+        iport_csv Naptan.ashx\?format\=csv stops Stops.csv
+        ) &
+        (
+        echo "  Stop areas"
+        import_csv Naptan.ashx\?format\=csv stop_areas StopAreas.csv
+        ) &
+        wait
+        (
+        echo "  Stops in area"
+        import_csv Naptan.ashx\?format\=csv stops_in_area StopsInArea.csv
+        echo "  Cleaning stops"
+        ../../manage.py clean_stops
+        ) &
+    fi
 fi
 
 cd ..
