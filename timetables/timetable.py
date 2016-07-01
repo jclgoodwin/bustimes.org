@@ -570,8 +570,8 @@ def get_filenames(service, path):
 
 def timetable_from_filename(filename, stops):
     try:
-        with open(filename) as file:
-            xml = ET.parse(file).getroot()
+        with open(filename) as xmlfile:
+            xml = ET.parse(xmlfile).getroot()
         return Timetable(xml, stops)
     except (IOError):
         return None

@@ -43,7 +43,10 @@ class LiveDeparturesTest(TestCase):
 
     def test_tfl(self):
         with vcr.use_cassette('data/vcr/tfl.yaml'):
-            departures = live.TflDepartures(self.london_stop, Service.objects.all()).get_departures()
+            departures = live.TflDepartures(
+                self.london_stop,
+                Service.objects.all()
+            ).get_departures()
         row = departures.next()
         self.assertEqual('Stratford City', row['destination'])
         self.assertEqual('388', row['service'])
@@ -79,7 +82,9 @@ class LiveDeparturesTest(TestCase):
 
     def test_acisconnect_cardiff(self):
         with vcr.use_cassette('data/vcr/cardiff.yaml'):
-            departures = live.AcisConnectDepartures('cardiff', self.cardiff_stop, Service.objects.all()).get_departures()
+            departures = live.AcisConnectDepartures(
+                'cardiff', self.cardiff_stop, Service.objects.all()
+            ).get_departures()
 
         self.assertEqual(departures.next(), {
             'destination': 'Churchill Way HL',

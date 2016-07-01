@@ -1,7 +1,8 @@
+# coding=utf-8
 import os
 import xml.etree.cElementTree as ET
 from django.test import TestCase
-from ...models import Operator, Service
+from ...models import Operator, Service, Region
 from ..commands import import_services
 
 
@@ -9,27 +10,35 @@ DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class ImportServicesTest(TestCase):
-    """Tests for parts of the command that imports services from TNDS"""
+    "Tests for parts of the command that imports services from TNDS"
 
     command = import_services.Command()
 
     @classmethod
     def setUpTestData(cls):
+        cls.ea = Region.objects.create(pk='EA', name='East Anglia')
+        cls.gb = Region.objects.create(pk='GB', name='Großbritannien')
+        cls.sc = Region.objects.create(pk='S', name='Scotland')
         cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
         cls.megabus = Operator.objects.create(pk='MEGA', region_id='GB', name='Megabus')
         cls.aberdeen = Operator.objects.create(pk='FABD', region_id='S', name='First Aberdeen')
         cls.blue_triangle = Operator.objects.create(pk='BTRI', region_id='L', name='Blue Triangle')
         cls.blue_triangle_element = ET.fromstring("""
-            <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_BE">
+            <txc:Operator xmlns:txc='http://www.transxchange.org.uk/' id='OId_BE'>
                 <txc:OperatorCode>BE</txc:OperatorCode>
                 <txc:OperatorShortName>BLUE TRIANGLE BUSES LIM</txc:OperatorShortName>
                 <txc:OperatorNameOnLicence>BLUE TRIANGLE BUSES LIMITED</txc:OperatorNameOnLicence>
                 <txc:TradingName>BLUE TRIANGLE BUSES LIMITED</txc:TradingName>
             </txc:Operator>
         """)
+        cls.do_service('ea_21-13B-B-y08-1', 'EA')
+        cls.ea_service = Service.objects.get(pk='ea_21-13B-B-y08')
+        cls.do_service('Megabus_Megabus14032016 163144_MEGA_M11A', 'GB', {'MEGAM11A': 'Belgravia - Liverpool'})
+        cls.gb_service = Service.objects.get(pk='M11A_MEGA')
+        cls.do_service('SVRABBN017', 'S')
+        cls.sc_service = Service.objects.get(pk='ABBN017')
 
     def test_sanitize_description(self):
-
         testcases = (
             (
                 'Bus Station bay 5,Blyth - Grange Road turning circle,Widdrington Station',
@@ -68,7 +77,7 @@ class ImportServicesTest(TestCase):
             self.assertEqual(self.command.get_net_service_code_and_line_ver(file_name), parts)
 
     def test_get_operator_name(self):
-        self.assertEqual(self.command.get_operator_name(self.blue_triangle_element), """BLUE TRIANGLE BUSES LIMITED""")
+        self.assertEqual(self.command.get_operator_name(self.blue_triangle_element), 'BLUE TRIANGLE BUSES LIMITED')
 
     def test_get_operator(self):
         element = ET.fromstring("""
@@ -84,15 +93,15 @@ class ImportServicesTest(TestCase):
         # test SPECIAL_OPERATOR_TRADINGNAMES
         self.assertEqual(self.blue_triangle, self.command.get_operator(self.blue_triangle_element))
 
-    def do_service(self, filename, region, service_descriptions=None):
+    @classmethod
+    def do_service(cls, filename, region, service_descriptions=None):
         with open(os.path.join(DIR, 'fixtures/%s.xml' % filename)) as xml_file:
             root = ET.parse(xml_file).getroot()
 
-        self.command.do_service(root, region, service_descriptions)
+        cls.command.do_service(root, region, service_descriptions)
 
     def test_do_service_ea(self):
-        self.do_service('ea_21-13B-B-y08-1', 'EA')
-        service = Service.objects.get(pk='ea_21-13B-B-y08')
+        service = self.ea_service
 
         self.assertEqual(str(service), '13B - Turquoise Line - Norwich - Wymondham - Attleborough')
         self.assertEqual(service.line_name, '13B')
@@ -101,20 +110,27 @@ class ImportServicesTest(TestCase):
         self.assertEqual(service.operator.first(), self.fecs)
         self.assertEqual(service.get_traveline_url(), 'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0')
 
+        res = self.client.get(service.get_absolute_url())
+        self.assertEqual(res.context_data['breadcrumb'], [self.ea, self.fecs])
+
     def test_do_service_ncsd(self):
-        self.do_service('Megabus_Megabus14032016 163144_MEGA_M11A', 'GB', {'MEGAM11A': 'Belgravia - Liverpool'})
-        service = Service.objects.get(pk='M11A_MEGA')
+        service = self.gb_service
 
         self.assertEqual(str(service), 'M11A - Belgravia - Liverpool')
         self.assertTrue(service.show_timetable)
         self.assertEqual(service.operator.first(), self.megabus)
         self.assertEqual(service.get_traveline_url(), 'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST?line=11M11A&net=nrc&project=y08&command=direct&outputFormat=0')
 
+        res = self.client.get(service.get_absolute_url())
+        self.assertEqual(res.context_data['breadcrumb'], [self.gb, self.megabus])
+
     def test_do_service_scotland(self):
-        self.do_service('SVRABBN017', 'S')
-        service = Service.objects.get(pk='ABBN017')
+        service = self.sc_service
 
         self.assertEqual(str(service), 'N17 - Aberdeen - Dyce')
         self.assertTrue(service.show_timetable)
         self.assertEqual(service.operator.first(), self.aberdeen)
         self.assertEqual(service.get_traveline_url(), 'http://www.travelinescotland.com/pdfs/timetables/ABBN017.pdf')
+
+        res = self.client.get(service.get_absolute_url())
+        self.assertEqual(res.context_data['breadcrumb'], [self.sc, self.aberdeen])

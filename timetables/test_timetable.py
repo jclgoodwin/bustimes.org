@@ -1,5 +1,6 @@
 import xml.etree.cElementTree as ET
 import timetable
+from datetime import time
 from django.test import TestCase
 from busstops.models import Service
 
@@ -63,9 +64,16 @@ class TimetableTest(TestCase):
         self.assertEqual(87, len(timetable_ea.groupings[1].rows))
         self.assertEqual('Leys Lane', timetable_ea.groupings[1].rows[0].part.stop.common_name)
 
-        megabus = timetable.timetable_from_filename('./busstops/management/tests/fixtures/Megabus_Megabus14032016 163144_MEGA_M11A.xml', None)
+        megabus = timetable.timetable_from_filename(
+            './busstops/management/tests/fixtures/Megabus_Megabus14032016 163144_MEGA_M11A.xml',
+            None
+        )
         self.assertFalse(megabus.groupings[0].has_minor_stops())
         self.assertFalse(megabus.groupings[1].has_minor_stops())
+        self.assertEqual(
+            megabus.groupings[0].rows[0].times,
+            [time(13, 0), time(15, 0), time(16, 0), time(16, 30), time(18, 0), time(20, 0), time(23, 45)]
+        )
 
         timetable_ne = timetable.timetable_from_filename('./busstops/management/tests/fixtures/NE_03_SCC_X6_1.xml', None)
         timetable_scotland = timetable.timetable_from_filename('./busstops/management/tests/fixtures/SVRABBN017.xml', None)
