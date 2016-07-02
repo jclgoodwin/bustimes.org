@@ -322,6 +322,12 @@ class OperatorDetailView(DetailView):
     model = Operator
     queryset = model._default_manager.defer('parent').select_related('region')
 
+    def get_object(self, queryset=None):
+        pk = self.kwargs.get('pk')
+        if pk is not None and not pk.isupper():
+            self.kwargs['pk'] = pk.upper()
+        return super(OperatorDetailView, self).get_object(queryset)
+
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
         context['services'] = Service.objects.filter(operator=self.object, current=True).order_by('service_code')
