@@ -70,7 +70,7 @@ if [[ $dft_old != $dft_new ]]; then
         echo "  Unzipping"
         (
         echo "  Stops"
-        iport_csv Naptan.ashx\?format\=csv stops Stops.csv
+        import_csv Naptan.ashx\?format\=csv stops Stops.csv
         ) &
         (
         echo "  Stop areas"
