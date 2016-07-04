@@ -104,13 +104,16 @@ class ImportServicesTest(TestCase):
 
         tnds_destination = os.path.join(DIR, '../../../data/TNDS')
         if region == 'GB':
-            region = 'NCSD/NCSD_TXC'
-        region_destination = os.path.join(tnds_destination, region)
-        if not os.path.exists(region_destination):
+            destination = os.path.join(tnds_destination, 'NCSD/NCSD_TXC')
+        else:
+            destination = os.path.join(tnds_destination, region)
+        if not os.path.exists(destination):
             if not os.path.exists(tnds_destination):
                 os.mkdir(tnds_destination)
-            os.mkdir(region_destination)
-        shutil.copy(path, region_destination)
+            if region == 'GB':
+                os.mkdir(os.path.join(tnds_destination, 'NCSD'))
+            os.mkdir(destination)
+        shutil.copy(path, destination)
 
     def test_do_service_ea(self):
         service = self.ea_service
