@@ -1,8 +1,9 @@
-import requests
-import pytz
 import re
-from bs4 import BeautifulSoup
+import pytz
 from datetime import datetime, date
+
+import requests
+from bs4 import BeautifulSoup
 from django.conf import settings
 from django.utils.text import slugify
 
@@ -39,7 +40,9 @@ class TflDepartures(Departures):
     def departures_from_response(self, res):
         timezone = pytz.timezone('Europe/London')
         return ({
-            'time': timezone.fromutc(datetime.strptime(item.get('expectedArrival'), '%Y-%m-%dT%H:%M:%SZ')),
+            'time': timezone.fromutc(
+                datetime.strptime(item.get('expectedArrival'), '%Y-%m-%dT%H:%M:%SZ')
+            ),
             'service': self.get_service(item.get('lineName')),
             'destination': item.get('destinationName'),
         } for item in res.json()) if res.status_code == 200 else ()
@@ -128,7 +131,8 @@ class TransportApiDepartures(Departures):
         }
 
     def get_response(self):
-        return requests.get('http://transportapi.com/v3/uk/bus/stop/%s/live.json' % self.stop.atco_code, {
+        url = 'http://transportapi.com/v3/uk/bus/stop/%s/live.json' % self.stop.atco_code
+        return requests.get(url, {
             'app_id': settings.TRANSPORTAPI_APP_ID,
             'app_key': settings.TRANSPORTAPI_APP_KEY,
             'nextbuses': 'no',

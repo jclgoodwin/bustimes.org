@@ -2,8 +2,8 @@ from django.test import TestCase
 from ..commands import import_regions, import_districts, import_areas
 
 
-class ImportStopAreasTest(TestCase):
-    "Test the import_stop_areas command."
+class ImportRegions(TestCase):
+    "Test the import_regions command."
 
     @classmethod
     def setUpTestData(cls):

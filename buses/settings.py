@@ -8,7 +8,7 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'bustimes.org.uk\n127.0.0.1').sp
 DEBUG = bool(os.environ.get('DEBUG', False))
 
 SERVER_EMAIL = 'contact@bustimes.org.uk'
-ADMINS = (('Josh', 'contact@bustimes.org.uk'),)
+ADMINS = MANAGERS = (('Josh', 'contact@bustimes.org.uk'),)
 
 INSTALLED_APPS = (
     'django.contrib.admin',

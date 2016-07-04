@@ -6,6 +6,7 @@ django-haystack==2.5.dev1
 django-pipeline==1.6.8
 django-template-minifier==1.0
 psycopg2==2.6.1
+pylint-django==0.7.2
 pytz==2016.4
 requests==2.10.0
 titlecase==0.8.1

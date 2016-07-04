@@ -1,5 +1,6 @@
 # coding=utf-8
 import os
+import shutil
 import xml.etree.cElementTree as ET
 from django.test import TestCase
 from ...models import Operator, Service, Region
@@ -21,7 +22,7 @@ class ImportServicesTest(TestCase):
         cls.sc = Region.objects.create(pk='S', name='Scotland')
         cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
         cls.megabus = Operator.objects.create(pk='MEGA', region_id='GB', name='Megabus')
-        cls.aberdeen = Operator.objects.create(pk='FABD', region_id='S', name='First Aberdeen')
+        cls.fabd = Operator.objects.create(pk='FABD', region_id='S', name='First Aberdeen')
         cls.blue_triangle = Operator.objects.create(pk='BTRI', region_id='L', name='Blue Triangle')
         cls.blue_triangle_element = ET.fromstring("""
             <txc:Operator xmlns:txc='http://www.transxchange.org.uk/' id='OId_BE'>
@@ -53,7 +54,7 @@ class ImportServicesTest(TestCase):
         for inp, outp in testcases:
             self.assertEqual(self.command.sanitize_description(inp), outp)
 
-    def test_get_net_service_code_and_line_ver(self):
+    def test_infer_from_file_name(self):
         """
         Given a file name string
         get_net() should return a (net, service_code, line_ver) tuple if appropriate,
@@ -74,7 +75,7 @@ class ImportServicesTest(TestCase):
         )
 
         for file_name, parts in data:
-            self.assertEqual(self.command.get_net_service_code_and_line_ver(file_name), parts)
+            self.assertEqual(self.command.infer_from_file_name(file_name), parts)
 
     def test_get_operator_name(self):
         self.assertEqual(self.command.get_operator_name(self.blue_triangle_element), 'BLUE TRIANGLE BUSES LIMITED')
@@ -95,10 +96,21 @@ class ImportServicesTest(TestCase):
 
     @classmethod
     def do_service(cls, filename, region, service_descriptions=None):
-        with open(os.path.join(DIR, 'fixtures/%s.xml' % filename)) as xml_file:
+        path = os.path.join(DIR, 'fixtures/%s.xml' % filename)
+        with open(path) as xml_file:
             root = ET.parse(xml_file).getroot()
 
         cls.command.do_service(root, region, service_descriptions)
+
+        tnds_destination = os.path.join(DIR, '../../../data/TNDS')
+        if region == 'GB':
+            region = 'NCSD/NCSD_TXC'
+        region_destination = os.path.join(tnds_destination, region)
+        if not os.path.exists(region_destination):
+            if not os.path.exists(tnds_destination):
+                os.mkdir(tnds_destination)
+            os.mkdir(region_destination)
+        shutil.copy(path, region_destination)
 
     def test_do_service_ea(self):
         service = self.ea_service
@@ -112,6 +124,12 @@ class ImportServicesTest(TestCase):
 
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data['breadcrumb'], [self.ea, self.fecs])
+        self.assertContains(res, """
+            <tr class="OTH">
+                <th>Norwich Brunswick Road</th>
+                <td>19:48</td><td>19:48</td><td>22:56</td><td>22:56</td><td>08:57</td><td>09:57</td><td>10:57</td><td>17:57</td>
+            </tr>
+        """, html=True)
 
     def test_do_service_ncsd(self):
         service = self.gb_service
@@ -123,14 +141,23 @@ class ImportServicesTest(TestCase):
 
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data['breadcrumb'], [self.gb, self.megabus])
+        self.assertTemplateUsed(res, 'busstops/service_detail.html')
+        self.assertContains(res, '<h1>M11A - Belgravia - Liverpool</h1>', html=True)
+        self.assertContains(
+            res,
+            '<td colspan="8">Book at <a href="http://megabus.com" rel="nofollow">megabus.com</a> or 0900 1600900 (65p/min + network charges)</td>',
+            html=True
+        )
 
     def test_do_service_scotland(self):
         service = self.sc_service
 
         self.assertEqual(str(service), 'N17 - Aberdeen - Dyce')
         self.assertTrue(service.show_timetable)
-        self.assertEqual(service.operator.first(), self.aberdeen)
+        self.assertEqual(service.operator.first(), self.fabd)
         self.assertEqual(service.get_traveline_url(), 'http://www.travelinescotland.com/pdfs/timetables/ABBN017.pdf')
 
         res = self.client.get(service.get_absolute_url())
-        self.assertEqual(res.context_data['breadcrumb'], [self.sc, self.aberdeen])
+        self.assertEqual(res.context_data['breadcrumb'], [self.sc, self.fabd])
+        self.assertTemplateUsed(res, 'busstops/service_detail.html')
+        self.assertContains(res, '<td colspan="5" rowspan="62">then every 30 minutes until</td>', html=True)

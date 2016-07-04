@@ -1,8 +1,8 @@
 import xml.etree.cElementTree as ET
-import timetable
 from datetime import time
 from django.test import TestCase
 from busstops.models import Service
+from timetables import timetable
 
 
 class TimetableTest(TestCase):
@@ -76,9 +76,31 @@ class TimetableTest(TestCase):
         )
 
         timetable_ne = timetable.timetable_from_filename('./busstops/management/tests/fixtures/NE_03_SCC_X6_1.xml', None)
-        timetable_scotland = timetable.timetable_from_filename('./busstops/management/tests/fixtures/SVRABBN017.xml', None)
-        timetable_deadruns = timetable.timetable_from_filename('./busstops/management/tests/fixtures/SVRLABO024A.xml', None)
+        self.assertEqual(timetable_ne.groupings[0].column_heads[0].span, 16)
+        self.assertEqual(timetable_ne.groupings[0].column_heads[1].span, 14)
+        self.assertEqual(timetable_ne.groupings[0].column_heads[2].span, 4)
+        self.assertEqual(timetable_ne.groupings[0].rows[0].times[:3], [time(7, 0), time(8, 0), time(9, 0)])
+        self.assertEqual(timetable_ne.groupings[0].rows[0].times[-3].colspan, 2)
+        self.assertEqual(timetable_ne.groupings[0].rows[0].times[-3].rowspan, 88)
+        self.assertIsNone(timetable_ne.groupings[1].rows[0].times[-12])
+        self.assertEqual(timetable_ne.groupings[1].rows[0].times[-13].colspan, 2)
 
+        timetable_scotland = timetable.timetable_from_filename('./busstops/management/tests/fixtures/SVRABBN017.xml', None)
+        self.assertEqual(timetable_scotland.groupings[0].column_feet[0].span, 14)
+        self.assertEqual(timetable_scotland.groupings[0].column_feet[0].notes, [])
+
+        timetable_deadruns = timetable.timetable_from_filename('./busstops/management/tests/fixtures/SVRLABO024A.xml', None)
+        self.assertEqual(timetable_deadruns.groupings[0].rows[-25].times[:3], [time(20, 58), time(22, 28), time(23, 53)])
+        self.assertEqual(timetable_deadruns.groupings[0].rows[-24].times[:7], ['', '', '', '', '', '', time(9, 51)])
+        self.assertEqual(timetable_deadruns.groupings[0].rows[-20].times[:6], ['', '', '', '', '', ''])
+        self.assertEqual(timetable_deadruns.groupings[0].rows[-12].times[:6], ['', '', '', '', '', ''])
+        self.assertEqual(timetable_deadruns.groupings[0].rows[-8].times[:6], ['', '', '', '', '', ''])
+        self.assertEqual(timetable_deadruns.groupings[0].rows[-7].times[:6], ['', '', '', '', '', ''])
+        self.assertEqual(timetable_deadruns.groupings[0].rows[-5].times[:6], ['', '', '', '', '', ''])
+        self.assertEqual(timetable_deadruns.groupings[0].rows[-4].times[:6], ['', '', '', '', '', ''])
+        self.assertEqual(timetable_deadruns.groupings[0].rows[-3].times[:6], ['', '', '', '', '', ''])
+        self.assertEqual(timetable_deadruns.groupings[0].rows[-2].times[:7], ['', '', '', '', '', '', time(10, 5)])
+        self.assertEqual(timetable_deadruns.groupings[0].rows[-1].times[:7], ['', '', '', '', '', '', time(10, 7)])
 
 class DateRangeTest(TestCase):
     def test_single_date(self):

@@ -9,17 +9,17 @@ Usage:
     ./manage.py import_services EA.zip [EM.zip etc]
 """
 
-from django.core.management.base import BaseCommand
-from django.db import transaction
-from ...models import Operator, StopPoint, Service, StopUsage
-from timetables.timetable import Timetable
-
 import re
 import zipfile
 import csv
 import xml.etree.cElementTree as ET
 from datetime import datetime
 from titlecase import titlecase
+
+from django.core.management.base import BaseCommand
+from django.db import transaction
+from ...models import Operator, StopPoint, Service, StopUsage
+from timetables.timetable import Timetable
 
 
 class Command(BaseCommand):
@@ -95,7 +95,7 @@ class Command(BaseCommand):
         parser.add_argument('filenames', nargs='+', type=str)
 
     @staticmethod
-    def get_net_service_code_and_line_ver(file_name):
+    def infer_from_file_name(file_name):
         """
         Given a file name like 'ea_21-45A-_-y08-1.xml',
         returns a (net, service_code, line_ver) tuple like ('ea', 'ea_21-45A-_-y08', '1')
@@ -109,15 +109,17 @@ class Command(BaseCommand):
                 return (net, '-'.join(parts[:-1]), parts[-1][:-4])
         return ('', None, None)
 
-    def sanitize_description_part(self, part):
+    @classmethod
+    def sanitize_description_part(cls, part):
         """
         Given an oddly formatted part like 'Bus Station bay 5,Blyth',
         returns a shorter, more normal version like 'Blyth'
         """
-        sanitized_part = self.description_regex.match(part.strip())
+        sanitized_part = cls.description_regex.match(part.strip())
         return sanitized_part.group(1) if sanitized_part is not None else part
 
-    def sanitize_description(self, name):
+    @classmethod
+    def sanitize_description(cls, name):
         """
         Given an oddly formatted description from the North East,
         like 'Bus Station bay 5,Blyth - Grange Road turning circle,Widdrington Station',
@@ -125,37 +127,40 @@ class Command(BaseCommand):
         'Blyth - Widdrington Station'
         """
 
-        parts = [self.sanitize_description_part(part) for part in name.split(' - ')]
+        parts = [cls.sanitize_description_part(part) for part in name.split(' - ')]
         return ' - '.join(parts)
 
-    def get_operator_name(self, operator_element):
+    @classmethod
+    def get_operator_name(cls, operator_element):
         "Given an Operator element, returns the operator name or None"
 
         for element_name in ('TradingName', 'OperatorNameOnLicence', 'OperatorShortName'):
-            element = operator_element.find('txc:%s' % element_name, self.ns)
+            element = operator_element.find('txc:%s' % element_name, cls.ns)
             if element is not None and element.text is not None:
                 return element.text.replace('&amp;', '&')
 
-    def get_operator_code(self, operator_element):
+    @classmethod
+    def get_operator_code(cls, operator_element):
         "Given an Operator element, returns the operator code or None"
 
         for element_name in ('National', ''):
-            element = operator_element.find('txc:%sOperatorCode' % element_name, self.ns)
+            element = operator_element.find('txc:%sOperatorCode' % element_name, cls.ns)
             if element is not None:
                 return element.text
 
-    def get_operator(self, operator_element):
+    @classmethod
+    def get_operator(cls, operator_element):
         "Given an Operator element, returns an Operator object."
 
         # Get by national operator code
-        operator_code = self.get_operator_code(operator_element)
+        operator_code = cls.get_operator_code(operator_element)
         if len(operator_code) == 4:
             possible_operators = Operator.objects.filter(id=operator_code)
             if len(possible_operators) == 1:
                 return possible_operators[0]
 
         # Get by name
-        operator_name = self.get_operator_name(operator_element)
+        operator_name = cls.get_operator_name(operator_element)
 
         if operator_name in ('Replacement Service', 'UNKWN'):
             return None
@@ -164,33 +169,42 @@ class Command(BaseCommand):
         if len(possible_operators) == 1:
             return possible_operators[0]
 
-        if operator_name in self.SPECIAL_OPERATOR_TRADINGNAMES:
-            return Operator.objects.get(id=self.SPECIAL_OPERATOR_TRADINGNAMES[operator_name])
+        if operator_name in cls.SPECIAL_OPERATOR_TRADINGNAMES:
+            return Operator.objects.get(id=cls.SPECIAL_OPERATOR_TRADINGNAMES[operator_name])
 
-        if operator_code in self.SPECIAL_OPERATOR_CODES:
-            return Operator.objects.get(id=self.SPECIAL_OPERATOR_CODES[operator_code])
+        if operator_code in cls.SPECIAL_OPERATOR_CODES:
+            return Operator.objects.get(id=cls.SPECIAL_OPERATOR_CODES[operator_code])
 
         print ET.tostring(operator_element)
 
-    def do_service(self, root, region_id, service_descriptions=None):
+    @classmethod
+    def get_line_name_and_brand(cls, service_element, file_name):
+        line_name = service_element.find('txc:Lines', cls.ns)[0][0].text
+        if '|' in line_name:
+            line_name_parts = line_name.split('|', 1)
+            line_name = line_name_parts[0]
+            line_brand = line_name_parts[1]
+        else:
+            line_brand = ''
+
+        if len(line_name) > 64:
+            print 'Name "%s" is too long in %s' % (line_name, file_name)
+            line_name = line_name[:64]
+
+        return (line_name, line_brand)
+
+    @classmethod
+    def do_service(cls, root, region_id, service_descriptions=None):
 
         file_name = root.attrib['FileName']
 
-        for service_element in root.find('txc:Services', self.ns):
+        for service_element in root.find('txc:Services', cls.ns):
 
-            line_name = service_element.find('txc:Lines', self.ns)[0][0].text
-            if '|' in line_name:
-                line_name_parts = line_name.split('|', 1)
-                line_name = line_name_parts[0]
-                line_brand = line_name_parts[1]
-            else:
-                line_brand = ''
+            line_name, line_brand = cls.get_line_name_and_brand(
+                service_element, file_name
+            )
 
-            if len(line_name) > 64:
-                print 'Name "%s" is too long in %s' % (line_name, file_name)
-                line_name = line_name[:64]
-
-            mode_element = service_element.find('txc:Mode', self.ns)
+            mode_element = service_element.find('txc:Mode', cls.ns)
             if mode_element is not None:
                 mode = mode_element.text
             else:
@@ -199,13 +213,13 @@ class Command(BaseCommand):
             # service operators:
             # (doing this preliminary bit now, to make getting NCSD descriptions possible)
 
-            operators_element = root.find('txc:Operators', self.ns)
-            operators = map(self.get_operator, operators_element)
+            operators_element = root.find('txc:Operators', cls.ns)
+            operators = map(cls.get_operator, operators_element)
             operators = filter(None, operators)
 
             # service description:
 
-            description_element = service_element.find('txc:Description', self.ns)
+            description_element = service_element.find('txc:Description', cls.ns)
             if description_element is not None:
                 description = description_element.text
             elif service_descriptions is not None:
@@ -218,7 +232,7 @@ class Command(BaseCommand):
                 description = titlecase(description)
 
             if region_id == 'NE':
-                description = self.sanitize_description(description)
+                description = cls.sanitize_description(description)
 
             if len(description) > 128:
                 print 'Description "%s" is too long in %s' % (description, file_name)
@@ -226,14 +240,14 @@ class Command(BaseCommand):
 
             # net and service code:
 
-            net, service_code, line_ver = self.get_net_service_code_and_line_ver(file_name)
+            net, service_code, line_ver = cls.infer_from_file_name(file_name)
             if service_code is None:
-                service_code = service_element.find('txc:ServiceCode', self.ns).text
+                service_code = service_element.find('txc:ServiceCode', cls.ns).text
 
             # stops:
 
-            stop_elements = root.find('txc:StopPoints', self.ns)
-            stop_ids = [stop.find('txc:StopPointRef', self.ns).text for stop in stop_elements]
+            stop_elements = root.find('txc:StopPoints', cls.ns)
+            stop_ids = [stop.find('txc:StopPointRef', cls.ns).text for stop in stop_elements]
             stops = StopPoint.objects.in_bulk(stop_ids)
 
             try:
@@ -282,7 +296,8 @@ class Command(BaseCommand):
             service.operator.add(*operators)
 
     @transaction.atomic
-    def handle_region(self, archive_name):
+    @classmethod
+    def handle_region(cls, archive_name):
         region_id = archive_name.split('/')[-1][:-4]
         if region_id == 'NCSD':
             region_id = 'GB'
@@ -306,9 +321,10 @@ class Command(BaseCommand):
 
             if file_name.endswith('.xml'):
                 root = ET.parse(archive.open(file_name)).getroot()
-                self.do_service(root, region_id, service_descriptions=service_descriptions)
+                cls.do_service(root, region_id, service_descriptions=service_descriptions)
 
-    def handle(self, *args, **options):
+    @classmethod
+    def handle(cls, *args, **options):
         for archive_name in options['filenames']:
             print archive_name
-            self.handle_region(archive_name)
+            cls.handle_region(archive_name)

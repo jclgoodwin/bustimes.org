@@ -6,10 +6,10 @@ Usage:
     ./manage.py import_live_stops
 """
 
+from time import sleep
 import requests
 import json
 from bs4 import BeautifulSoup
-from time import sleep
 from django.core.management.base import BaseCommand
 from ...models import StopPoint, LiveSource
 
@@ -89,14 +89,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for subdomain, livesource in (
-            ('cambridgeshire', cambridgeshire),
-            ('buckinghamshire', buckinghamshire),
-            ('ayrshire', ayrshire),
-            ('travelwest', travelwest),
-            ('aberdeen', aberdeen),
-            ('cardiff', cardiff),
-            ('swindon', swindon),
-            ('metrobus', metrobus)
+                ('cambridgeshire', cambridgeshire),
+                ('buckinghamshire', buckinghamshire),
+                ('ayrshire', ayrshire),
+                ('travelwest', travelwest),
+                ('aberdeen', aberdeen),
+                ('cardiff', cardiff),
+                ('swindon', swindon),
+                ('metrobus', metrobus)
         ):
             print subdomain
             stop_ids = []

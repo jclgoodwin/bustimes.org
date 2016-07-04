@@ -1,7 +1,7 @@
+import os
 from django.test import TestCase
 from ...models import Region, Operator
 from ..commands import import_operator_contacts
-import os
 
 
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -22,12 +22,12 @@ class ImportOperatorContactTest(TestCase):
         self.assertEqual(
             self.command.format_address('8 Market Place, Hartlepool TS24 7SB'),
             '8 Market Place\nHartlepool\nTS24 7SB'
-        ) 
+        )
         self.assertEqual(self.command.format_address('TS24 7SB'), 'TS24 7SB')
 
     def test_imported_data(self):
         sanders_coaches = Operator.objects.get(pk='SNDR')
-        self.assertEqual(sanders_coaches.address, 'Sanders Coaches\nHeath Drive\nHolt\nNR25 6ER') 
+        self.assertEqual(sanders_coaches.address, 'Sanders Coaches\nHeath Drive\nHolt\nNR25 6ER')
         self.assertEqual(sanders_coaches.phone, '01263 712800')
-        self.assertEqual(sanders_coaches.email, 'charles@sanderscoaches.com') 
-        self.assertEqual(sanders_coaches.url, 'http://www.sanderscoaches.com') 
+        self.assertEqual(sanders_coaches.email, 'charles@sanderscoaches.com')
+        self.assertEqual(sanders_coaches.url, 'http://www.sanderscoaches.com')

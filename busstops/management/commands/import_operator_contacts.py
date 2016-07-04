@@ -43,7 +43,7 @@ class Command(BaseCommand):
             email = public_name.find('TTRteEnq').text
             phone = public_name.find('FareEnq').text
 
-            if website or address or email or tel:
+            if website or address or email or phone:
                 if website:
                     website = website.split('#')[-2]
                     if '.' in website and 'mailto:' not in website:

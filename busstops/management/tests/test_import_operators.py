@@ -1,4 +1,5 @@
-import os, vcr
+import os
+import vcr
 from django.test import TestCase
 from ...models import Region, Operator
 with vcr.use_cassette('data/vcr/scotch_operators.yaml'):
@@ -50,7 +51,7 @@ class ImportOperatorsTest(TestCase):
         self.assertEqual(self.c2c.get_a_mode(), 'A rail')
         self.assertEqual(self.first_aberdeen.get_a_mode(), 'A bus')
 
-    def test_import_scotch_operator_contacts(self):
+    def test_scotch_operator_contacts(self):
         command = import_scotch_operator_contacts.Command()
         command.input = open(os.path.join(DIR, 'fixtures/NOC_DB.csv'))
         command.handle()

@@ -199,10 +199,12 @@ class VehicleJourney(object):
 
         start_deadrun_element = element.find('txc:StartDeadRun', NS)
         if start_deadrun_element is not None:
-            self.start_deadrun = start_deadrun_element.find('txc:ShortWorking', NS).find('txc:JourneyPatternTimingLinkRef', NS).text
+            short_working_element = start_deadrun_element.find('txc:ShortWorking', NS)
+            self.start_deadrun = short_working_element.find('txc:JourneyPatternTimingLinkRef', NS).text
         end_deadrun_element = element.find('txc:EndDeadRun', NS)
         if end_deadrun_element is not None:
-            self.end_deadrun = end_deadrun_element.find('txc:ShortWorking', NS).find('txc:JourneyPatternTimingLinkRef', NS).text
+            short_working_element = end_deadrun_element.find('txc:ShortWorking', NS)
+            self.end_deadrun = short_working_element.find('txc:JourneyPatternTimingLinkRef', NS).text
 
         note_elements = element.findall('txc:Note', NS)
         if note_elements is not None:
@@ -506,7 +508,10 @@ class Timetable(object):
                     previous_operatingprofile = journey.operating_profile
                     in_a_row = 0
                 elif previous_journeypattern.id == journey.journeypattern.id:
-                    difference = datetime.combine(today, journey.departure_time) - datetime.combine(today, previous_departure_time)
+                    difference = (
+                        datetime.combine(today, journey.departure_time)
+                        - datetime.combine(today, previous_departure_time)
+                    )
                     if previous_difference and difference == previous_difference:
                         in_a_row += 1
                     else:
@@ -573,7 +578,7 @@ def timetable_from_filename(filename, stops):
         with open(filename) as xmlfile:
             xml = ET.parse(xmlfile).getroot()
         return Timetable(xml, stops)
-    except (IOError):
+    except IOError:
         return None
 
 

@@ -1,0 +1,73 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.10.0]
+    method: GET
+    uri: http://api.tfl.gov.uk/StopPoint/490014721F/arrivals
+  response:
+    body: {string: !!python/unicode ''}
+    headers:
+      accept-ranges: [bytes]
+      age: ['0']
+      connection: [keep-alive]
+      date: ['Sun, 05 Jun 2016 16:38:17 GMT']
+      location: ['https://api.tfl.gov.uk/StopPoint/490014721F/arrivals']
+      server: [Varnish]
+      via: [1.1 varnish]
+      x-banning: ['']
+      x-cache: [MISS]
+      x-varnish: ['2101098754']
+    status: {code: 302, message: 'https://api.tfl.gov.uk/StopPoint/490014721F/arrivals'}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.10.0]
+    method: GET
+    uri: https://api.tfl.gov.uk/StopPoint/490014721F/arrivals
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA+WWX2/TMBTFv0oU8dhW8d84fhvtxkBVQTQSaIiHNPGoReJEjttRIb47N2kAMcpS
+        MSUPTKoi+fjIx3Z+vTcfvvrP3KFSvvTj23x2UenZG6tqZVzidGlml8Zpp1XdqJlOG23iPej0J77O
+        YLkpDjiKmBCEglRWyra+uA1DE3+vtjrN1cvGu3zL8DJ+BT6TVC4xrUijIEA0xOgK9PqYskqKZqvv
+        dF6Uzls7q5SD2Vyb40JEiG7YOY9ClSfutrRFJzYLZtqq9jgw1mZT7kwG6kYlVptPoIVRY1K106ZL
+        /rmx+xPtmrCXNiPz5todwOJ0AaakqGASB4hPA/ixGHFJhAzoDCN209nicn08HlwMpnzipztr4WKX
+        ZdrJTaYr7xKb1TC4TtLPRh280nqv88y7glSYV18qOJHKLqzV+yT/I5ZFEPsrcqn36pSHtJ6izH5c
+        4WZX+98mg3HCiOABoVj0UrJecbxYLZ4KJaGkQElwihIcDgUJxZL1QUKJxCNDggmnEUXnlJL4Bv5D
+        +PGQ3ENkJECel3fefLuz6bYPDsxmmItTJYRyMggdoQywpOhBOsBDJELj0jHllAjEiWDn4cHZ/4/H
+        X2sHQgQN1WHg7Ud9HSaUJBq9eEQMC8HPoyN8AsUDAR3iFB1M0KE6C3z14L7OIiTB48JBWBhEHB79
+        cLxn0eU8fjwcGfmdjgUZCQ/ltibJvRewIbie+RYc3nVZV9rB+/rXL1ZGxVDEQJPjfcSEkvFTxHz8
+        DkLfogTaDAAA
+    headers:
+      access-control-allow-headers: [Content-Type]
+      access-control-allow-methods: ['GET,POST,PUT,DELETE,OPTIONS']
+      access-control-allow-origin: ['*']
+      age: ['0']
+      api-entity-payload: [Prediction]
+      cache-control: ['public, max-age=10']
+      connection: [keep-alive]
+      content-encoding: [gzip]
+      content-length: ['579']
+      content-type: [application/json; charset=utf-8]
+      date: ['Sun, 05 Jun 2016 16:38:17 GMT']
+      server: [Microsoft-IIS/8.5]
+      via: [1.1 varnish]
+      x-aspnet-version: [4.0.30319]
+      x-backend: [api]
+      x-backend-url: [/StopPoint/490014721F/arrivals]
+      x-banning: ['']
+      x-cache: [MISS]
+      x-cacheable: [Yes. Cacheable]
+      x-hash-url: [/stoppoint/490014721f/arrivals]
+      x-ttl: ['10.000']
+      x-ttl-rule: ['765']
+      x-varnish: [10.73.2.250, '2101098788']
+    status: {code: 200, message: OK}
+version: 1

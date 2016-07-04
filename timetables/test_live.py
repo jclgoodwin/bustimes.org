@@ -1,6 +1,6 @@
-import vcr
-import live
 import datetime
+import vcr
+from . import live
 from django.test import TestCase
 from busstops.models import LiveSource, StopPoint, Service
 
@@ -42,7 +42,7 @@ class LiveDeparturesTest(TestCase):
         cls.yorkshire_stop.live_sources.add('Y')
 
     def test_tfl(self):
-        with vcr.use_cassette('data/vcr/tfl.yaml'):
+        with vcr.use_cassette('data/vcr/tfl_arrivals.yaml'):
             departures = live.TflDepartures(
                 self.london_stop,
                 Service.objects.all()
@@ -60,7 +60,7 @@ class LiveDeparturesTest(TestCase):
             'name': 'Transport for London'
         })
 
-        with vcr.use_cassette('data/vcr/tfl.yaml'):
+        with vcr.use_cassette('data/vcr/tfl_arrivals.yaml'):
             response = self.client.get('/stops/' + self.london_stop.pk + '/departures')
         self.assertEqual(response['cache-control'], 'public, max-age=60')
         self.assertHTMLEqual(response.content, """
@@ -144,11 +144,19 @@ class LiveDeparturesTest(TestCase):
 
     def test_acis_yorkshire(self):
         with vcr.use_cassette('data/vcr/acisconnect_yorkshire.yaml'):
-            departures = live.AcisConnectDepartures('yorkshire', self.yorkshire_stop, Service.objects.all()).get_departures()
+            departures = live.AcisConnectDepartures(
+                'yorkshire',
+                self.yorkshire_stop,
+                Service.objects.all()
+            ).get_departures()
         self._test_acis_yorkshire(departures)
 
         with vcr.use_cassette('data/vcr/acislive_yorkshire.yaml'):
-            departures = live.AcisLiveDepartures('tsy', self.yorkshire_stop, Service.objects.all()).get_departures()
+            departures = live.AcisLiveDepartures(
+                'tsy',
+                self.yorkshire_stop,
+                Service.objects.all()
+            ).get_departures()
         self._test_acis_yorkshire(departures)
 
     def test_transporapi_row(self):

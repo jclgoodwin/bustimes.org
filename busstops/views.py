@@ -127,7 +127,19 @@ def stops(request):
     })
 
 
-class RegionDetailView(DetailView):
+class UppercasePrimaryKeyMixin(object):
+    """
+    Normalises the primary key argument to uppercase.
+    For example, turns 'ea' or 'sndr' to 'EA' or 'SNDR'
+    """
+    def get_object(self, queryset=None):
+        pk = self.kwargs.get('pk')
+        if pk is not None and not pk.isupper():
+            self.kwargs['pk'] = pk.upper()
+        return super(UppercasePrimaryKeyMixin, self).get_object(queryset)
+
+
+class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
     "A single region and the administrative areas in it"
 
     model = Region
@@ -203,7 +215,7 @@ class DistrictDetailView(DetailView):
         return super(DistrictDetailView, self).render_to_response(context)
 
 
-class LocalityDetailView(DetailView):
+class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
     "A single locality, its children (if any), and  the stops in it"
 
     model = Locality
@@ -241,7 +253,7 @@ class LocalityDetailView(DetailView):
         return context
 
 
-class StopPointDetailView(DetailView):
+class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
     "A stop, other stops in the same area, and the services servicing it"
 
     model = StopPoint
@@ -316,17 +328,11 @@ def departures(request, pk):
     return response
 
 
-class OperatorDetailView(DetailView):
+class OperatorDetailView(UppercasePrimaryKeyMixin, DetailView):
     "An operator and the services it operates"
 
     model = Operator
     queryset = model._default_manager.defer('parent').select_related('region')
-
-    def get_object(self, queryset=None):
-        pk = self.kwargs.get('pk')
-        if pk is not None and not pk.isupper():
-            self.kwargs['pk'] = pk.upper()
-        return super(OperatorDetailView, self).get_object(queryset)
 
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)

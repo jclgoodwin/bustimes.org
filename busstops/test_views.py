@@ -5,6 +5,8 @@ from .models import Region, AdminArea, District, Locality, StopPoint, Operator, 
 
 
 class ContactTests(TestCase):
+    """Tests for the contact form and view"""
+
     def test_contact_get(self):
         response = self.client.get('/contact')
         self.assertEqual(response.status_code, 200)
@@ -20,6 +22,7 @@ class ContactTests(TestCase):
             'message': 'Dear John,\r\n\r\nHow are you?\r\n\r\nAll the best,\r\nRufus',
             'referrer': 'https://www.yahoo.com'
         })
+        self.assertContains(response, '<h1>Thank you</h1>', html=True)
         self.assertEqual('Dear John,', mail.outbox[0].subject)
         self.assertEqual('Rufus Herring <contact@bustimes.org.uk>', mail.outbox[0].from_email)
         self.assertEqual(['rufus@example.com'], mail.outbox[0].reply_to)
@@ -27,12 +30,20 @@ class ContactTests(TestCase):
 
 
 class ViewsTests(TestCase):
+    """Boring tests for various views"""
+
     @classmethod
     def setUpTestData(cls):
         cls.north = Region.objects.create(pk='N', name='North')
-        cls.norfolk = AdminArea.objects.create(id=91, atco_code=91, region=cls.north, name='Norfolk')
-        cls.north_norfolk = District.objects.create(id=91, admin_area=cls.norfolk, name='North Norfolk')
-        cls.melton_constable = Locality.objects.create(id='E0048689', admin_area=cls.norfolk, name='Melton Constable')
+        cls.norfolk = AdminArea.objects.create(
+            id=91, atco_code=91, region=cls.north, name='Norfolk'
+        )
+        cls.north_norfolk = District.objects.create(
+            id=91, admin_area=cls.norfolk, name='North Norfolk'
+        )
+        cls.melton_constable = Locality.objects.create(
+            id='E0048689', admin_area=cls.norfolk, name='Melton Constable'
+        )
         cls.inactive_stop = StopPoint.objects.create(
             pk='2900M115',
             common_name='Bus Shelter',
@@ -76,8 +87,12 @@ class ViewsTests(TestCase):
             date='1984-01-01',
             region=cls.north
         )
-        cls.chariots = Operator.objects.create(pk='AINS', name='Ainsley\'s Chariots', vehicle_mode='airline', region_id='N')
-        cls.nuventure = Operator.objects.create(pk='VENT', name='Nu-Venture', vehicle_mode='bus', region_id='N')
+        cls.chariots = Operator.objects.create(
+            pk='AINS', name='Ainsley\'s Chariots', vehicle_mode='airline', region_id='N'
+        )
+        cls.nuventure = Operator.objects.create(
+            pk='VENT', name='Nu-Venture', vehicle_mode='bus', region_id='N'
+        )
         cls.service.operator.add(cls.chariots)
 
     def test_index(self):
@@ -96,12 +111,19 @@ class ViewsTests(TestCase):
 
     def test_region(self):
         response = self.client.get('/regions/N')
-        self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'North')
-        self.assertInHTML('<h1>North</h1>', response.content)
-        self.assertInHTML('<a href="/areas/91">Norfolk</a>', response.content)
+        self.assertContains(response, '<h1>North</h1>')
+        self.assertContains(response, '<a href="/areas/91">Norfolk</a>')
         self.assertContains(response, 'Chariots')
         self.assertNotContains(response, 'Nu-Venture')
+
+    def test_lowercase_region(self):
+        response = self.client.get('/regions/n')
+        self.assertContains(
+            response, '<link rel="canonical" href="https://bustimes.org.uk/regions/N" />'
+        )
+        self.assertEqual(response.status_code, 200)
+
 
     def test_admin_area(self):
         """Admin area containing just one child should redirect to that child"""

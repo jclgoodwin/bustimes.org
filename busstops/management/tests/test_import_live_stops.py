@@ -1,7 +1,7 @@
 import vcr
 from django.test import TestCase
 from ...models import StopPoint, LiveSource
-from ..commands import import_live_stops
+from ..commands import import_live_stops, import_tfl_stops
 
 
 class ImportLiveStopsTest(TestCase):
@@ -23,3 +23,8 @@ class ImportLiveStopsTest(TestCase):
         with vcr.use_cassette('data/vcr/cardiff.yaml'):
             self.command.maybe_add_acisconnect_source(self.cardiff_stop, self.cardiff, 'cardiff')
         self.assertEquals(StopPoint.objects.get(pk=self.cardiff_stop.pk).live_sources.all()[0], self.cardiff)
+
+    def test_tfl(self):
+        tfl_command = import_tfl_stops.Command()
+        with vcr.use_cassette('data/vcr/tfl.yaml'):
+            self.assertEqual('Wilmot Street', tfl_command.get_name('490014721F'))
