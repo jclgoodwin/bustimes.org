@@ -84,9 +84,10 @@ if [[ $dft_old != $dft_new ]]; then
         ../../manage.py clean_stops
         ) &
     fi
+
+    cd ..
 fi
 
-cd ..
 noc_old=`ls -l NOC_DB.csv`
 wget -qN http://mytraveline.info/NOC/NOC_DB.csv
 wget -qN www.travelinedata.org.uk/noc/api/1.0/nocrecords.xml

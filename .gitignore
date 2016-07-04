@@ -3,6 +3,7 @@ env
 *.pyc
 data/*/
 !data/vcr/
+data/*.ashx
 data/*.xml
 data/*.csv
 .sass-cache
