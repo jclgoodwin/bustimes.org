@@ -8,6 +8,6 @@ before_script:
   - ./manage.py migrate
 script:
   - coverage run --source=buses,busstops,timetables manage.py test
-  - pylint buses busstops timetables
+  - pylint buses busstops timetables | cat
 after_success:
   coveralls
