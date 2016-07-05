@@ -1,3 +1,5 @@
+"""Tests for live departures
+"""
 import datetime
 import vcr
 from . import live
@@ -6,6 +8,8 @@ from busstops.models import LiveSource, StopPoint, Service
 
 
 class LiveDeparturesTest(TestCase):
+    """Tests for live departures
+    """
     @classmethod
     def setUpTestData(cls):
         cls.london_stop = StopPoint.objects.create(
@@ -42,6 +46,8 @@ class LiveDeparturesTest(TestCase):
         cls.yorkshire_stop.live_sources.add('Y')
 
     def test_tfl(self):
+        """Test the Transport for London live departures source
+        """
         with vcr.use_cassette('data/vcr/tfl_arrivals.yaml'):
             departures = live.TflDepartures(
                 self.london_stop,
@@ -81,6 +87,8 @@ class LiveDeparturesTest(TestCase):
 
 
     def test_acisconnect_cardiff(self):
+        """Test the Cardiff live departures source
+        """
         with vcr.use_cassette('data/vcr/cardiff.yaml'):
             departures = live.AcisConnectDepartures(
                 'cardiff', self.cardiff_stop, Service.objects.all()
@@ -115,6 +123,8 @@ class LiveDeparturesTest(TestCase):
         })
 
     def _test_acis_yorkshire(self, departures):
+        """Test one of the Yorkshire live departures sources against the same set of data
+        """
         self.assertEqual(departures.next(), {
             'destination': 'York Sport Village',
             'service': '66',
@@ -143,6 +153,8 @@ class LiveDeparturesTest(TestCase):
         })
 
     def test_acis_yorkshire(self):
+        """Test the two possible (old, new) Yorkshire live departure sources against the same data
+        """
         with vcr.use_cassette('data/vcr/acisconnect_yorkshire.yaml'):
             departures = live.AcisConnectDepartures(
                 'yorkshire',
@@ -160,6 +172,8 @@ class LiveDeparturesTest(TestCase):
         self._test_acis_yorkshire(departures)
 
     def test_transporapi_row(self):
+        """Test the get_row() method for Transport API departures
+        """
         departures = live.TransportApiDepartures(None, ())
         rows = ({
             'direction': 'Gunton,Weston Road,',
@@ -206,6 +220,8 @@ class LiveDeparturesTest(TestCase):
         })
 
     def test_max_age(self):
+        """Test the get_max_age() method
+        """
         # Empty departures list should be cached for 3600 seconds
         self.assertEqual(live.get_max_age((), datetime.datetime(2016, 6, 10, 22, 47)), 3600)
 

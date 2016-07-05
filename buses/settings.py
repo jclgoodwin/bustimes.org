@@ -1,3 +1,6 @@
+"""These settings rely on various environment variables being set
+"""
+
 import os
 
 

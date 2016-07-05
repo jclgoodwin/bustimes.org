@@ -22,7 +22,8 @@ def parse_duration(string):
 
 
 class Stop(object):
-    """Represents TransXChange StopPoint, optionally with a reference to a busstops.models.StopPoint
+    """Represents a TransXChange StopPoint,
+    optionally with a reference to a busstops.models.StopPoint
     """
     def __init__(self, element, stops):
         self.atco_code = element.find('txc:StopPointRef', NS).text
