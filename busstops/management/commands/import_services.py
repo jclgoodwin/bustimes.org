@@ -295,8 +295,8 @@ class Command(BaseCommand):
             StopUsage.objects.bulk_create(stop_usages)
             service.operator.add(*operators)
 
-    @transaction.atomic
     @classmethod
+    @transaction.atomic
     def handle_region(cls, archive_name):
         region_id = archive_name.split('/')[-1][:-4]
         if region_id == 'NCSD':
