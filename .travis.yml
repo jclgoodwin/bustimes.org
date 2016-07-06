@@ -7,7 +7,7 @@ before_script:
   - psql -U postgres -c 'create database bustimes'
   - ./manage.py migrate
 script:
-  - coverage run --source=buses,busstops,timetables manage.py test -v 3 --parallel 4
+  - coverage run --source=buses,busstops,timetables manage.py test -v 3
   - pylint buses busstops timetables | cat
 after_success:
   coveralls
