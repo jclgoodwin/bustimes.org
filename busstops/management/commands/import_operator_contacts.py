@@ -4,16 +4,13 @@ Usage:
     ./manage.py import_operator_contacts < nocrecords.xml
 """
 
-import xml.etree.cElementTree as ET
+from bs4 import BeautifulSoup
 import sys
 from django.core.management.base import BaseCommand
 from ...models import Operator
 
 
 class Command(BaseCommand):
-
-    input = sys.stdin
-
     @classmethod
     def format_address(cls, address):
         address_parts = address.split(', ')
@@ -25,23 +22,23 @@ class Command(BaseCommand):
         return '\n'.join(address_parts)
 
     def handle(self, *args, **options):
-        root = ET.parse(self.input).getroot()
+        soup = BeautifulSoup(sys.stdin, 'html.parser')
         noc_codes = {
-            record.find('PubNmId').text: record.find('NOCCODE').text
-            for record in root.find('NOCTable')
+            record.find('pubnmid').text: record.find('noccode').text
+            for record in soup.find('noctable')
         }
 
-        for public_name in root.find('PublicName'):
-            noc_code = noc_codes.get(public_name.find('PubNmId').text)
+        for public_name in soup.find('publicname'):
+            noc_code = noc_codes.get(public_name.find('pubnmid').text)
 
             operator = Operator.objects.filter(pk=noc_code.replace('=', '')).first()
             if not operator:
                 break
 
-            website = public_name.find('Website').text
-            address = public_name.find('ComplEnq').text
-            email = public_name.find('TTRteEnq').text
-            phone = public_name.find('FareEnq').text
+            website = public_name.find('website').text
+            address = public_name.find('complenq').text
+            email = public_name.find('ttrteenq').text
+            phone = public_name.find('fareenq').text
 
             if website or address or email or phone:
                 if website:
@@ -55,4 +52,7 @@ class Command(BaseCommand):
                     operator.email = email
                 if phone:
                     operator.phone = phone
-                operator.save()
+                try:
+                    operator.save()
+                except Exception as e:
+                    print e, operator
