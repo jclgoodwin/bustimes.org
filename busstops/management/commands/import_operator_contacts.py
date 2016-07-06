@@ -24,7 +24,8 @@ class Command(BaseCommand):
         return '\n'.join(address_parts)
 
     def handle(self, *args, **options):
-        soup = BeautifulSoup(sys.stdin, 'html.parser')
+        soup = BeautifulSoup(self.input, 'html.parser')
+
         noc_codes = {
             record.find('pubnmid').text: record.find('noccode').text
             for record in soup.find('noctable')
