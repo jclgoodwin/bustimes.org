@@ -1,0 +1,117 @@
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    server_name localhost;
+
+    location / {
+        return 301 https://bustimes.org.uk$request_uri;
+    }
+
+    location /nginx_status {
+        stub_status on;
+        access_log off;
+        allow 127.0.0.1;
+        allow ::1;
+        deny all;
+    }
+}
+
+server {
+    listen 443 ssl http2 deferred;
+    listen [::]:443 ssl http2 deferred;
+
+    server_name bustimes.org.uk www.bustimes.org.uk;
+
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 10m;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers   EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
+    ssl_prefer_server_ciphers on;
+    ssl_certificate     /home/josh/bustimes-certs/bustimes.pem;
+    ssl_certificate_key /home/josh/bustimes-certs/bustimes.key;
+    add_header Strict-Transport-Security 'max-age=31536000; preload';
+
+    if ($http_host != 'bustimes.org.uk') {
+        return 301 https://bustimes.org.uk$request_uri;
+    }
+
+    location / {
+        add_header 'content-security-policy' "default-src https:; script-src https: 'unsafe-inline'; style-src https: 'unsafe-inline'; img-src https: data:";
+        proxy_set_header X-Real-IP       $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_pass http://127.0.0.1:6081;
+    }
+
+    location ~* /departures$ {
+        if ($http_referer !~ 'bustimes.org.uk') {
+            return 403;
+        }
+        proxy_set_header X-Real-IP       $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_pass http://127.0.0.1:6081;
+    }
+
+    location /static/ {
+        alias /home/josh/bustimes-static/;
+        expires 1M;
+        add_header 'access-control-allow-origin' 'http://webcache.googleusercontent.com,http://localhost:8000';
+    }
+
+    location ~* ^/(favicon.ico$|manifest.json$|fonts/) {
+        root /home/josh/bustimes-static/;
+        expires 1M;
+        add_header 'access-control-allow-origin' 'http://webcache.googleusercontent.com,http://localhost:8000';
+    }
+
+    location /serviceworker.js {
+        root /home/josh/bustimes-static/;
+        expires 2d;
+    }
+
+    location ~* ^/apple-touch-icon(-.+)?.png$ {
+        alias /home/josh/bustimes-static/apple-touch-icon.png;
+        expires 1M;
+    }
+
+    location = /googlee6b1f63032004295.html {
+        return 200 'google-site-verification: googlee6b1f63032004295.html';
+    }
+
+    location = /robots.txt {
+        return 200 'User-agent: *\nDisallow: /admin/\nDisallow: /stops/*/departures';
+    }
+}
+
+server {
+    listen 8080;
+    listen [::]:8080;
+    access_log off;
+
+    allow 127.0.0.1;
+    allow ::1;
+    deny all;
+
+    charset utf-8;
+
+    location / {
+        set_real_ip_from 127.0.0.1;
+        real_ip_header X-Forwarded-For;
+        uwsgi_pass 127.0.0.1:3031;
+        include uwsgi_params;
+    }
+}
+
+server {
+    listen 80;
+    root /var/cache/munin/www;
+    server_name munin.bustimes.org.uk;
+
+    location ^~ /munin-cgi/munin-cgi-graph/ {
+        access_log off;
+        fastcgi_split_path_info ^(/munin-cgi/munin-cgi-graph)(.*);
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+        fastcgi_pass unix:/var/run/munin/fcgi-graph.sock;
+        include fastcgi_params;
+    }
+}
