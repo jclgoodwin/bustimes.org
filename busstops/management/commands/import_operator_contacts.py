@@ -11,6 +11,8 @@ from ...models import Operator
 
 
 class Command(BaseCommand):
+    input = sys.stdin
+
     @classmethod
     def format_address(cls, address):
         address_parts = address.split(', ')
