@@ -27,21 +27,21 @@ class Command(BaseCommand):
         soup = BeautifulSoup(self.input, 'html.parser')
 
         noc_codes = {
-            record.find('pubnmid').text: record.find('noccode').text
-            for record in soup.find('noctable')
+            record.pubnmid.string: record.noccode.string
+            for record in soup.noctable.find_all('noctablerecord')
         }
 
-        for public_name in soup.find('publicname'):
-            noc_code = noc_codes.get(public_name.find('pubnmid').text)
+        for public_name in soup.publicname.find_all('publicnamerecord'):
+            noc_code = noc_codes.get(public_name.pubnmid.string)
 
             operator = Operator.objects.filter(pk=noc_code.replace('=', '')).first()
             if not operator:
                 break
 
-            website = public_name.find('website').text
-            address = public_name.find('complenq').text
-            email = public_name.find('ttrteenq').text
-            phone = public_name.find('fareenq').text
+            website = public_name.website.string
+            address = public_name.complenq.string
+            email = public_name.ttrteenq.string
+            phone = public_name.fareenq.string
 
             if website or address or email or phone:
                 if website:
