@@ -88,6 +88,9 @@ class Command(BaseCommand):
         'RGJ':  'RGJS',  # R G Jamieson & Son
         'DAM':  'DAMC',  # D A & A J MacLean
         'ADD':  'ADDI',  # Addison News/of Callendar
+        '2744': 'YTIG',  # Huddersfield Bus Company/Yorkshire Tiger
+        'ALI': 'AMDD',   # Alasdair MacDonald
+        'EWE': 'EWEN',   # Ewens Coach Hire
     }
 
     @staticmethod
