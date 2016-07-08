@@ -99,6 +99,10 @@ server {
         real_ip_header X-Forwarded-For;
         uwsgi_pass 127.0.0.1:3031;
         include uwsgi_params;
+        uwsgi_connect_timeout 10s;
+        uwsgi_read_timeout    10s;
+        uwsgi_send_timeout    10s;
+
     }
 }
 
