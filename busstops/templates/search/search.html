@@ -11,7 +11,7 @@
 <p>{{ form.q }} <input type="submit" value="Search" /></p>
 
 {% if query %}
-    <h2>{{ paginator.count }} results found for ‘{{ query }}’</h2>
+    <h2>{{ paginator.count }} result{{ paginator.count|pluralize }} found for ‘{{ query }}’</h2>
     {% if page.object_list %}
         <ul>
         {% for result in page.object_list %}

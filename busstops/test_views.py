@@ -124,6 +124,10 @@ class ViewsTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+    def test_search(self):
+        response = self.client.get('/search?q=melton')
+        self.assertContains(response, '1 result found')
+        self.assertContains(response, 'Melton Constable')
 
     def test_admin_area(self):
         """Admin area containing just one child should redirect to that child"""
