@@ -18,8 +18,9 @@ from titlecase import titlecase
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from ...models import Operator, StopPoint, Service, StopUsage
+
 from timetables.timetable import Timetable
+from ...models import Operator, StopPoint, Service, StopUsage
 
 
 class Command(BaseCommand):
@@ -88,7 +89,7 @@ class Command(BaseCommand):
         'RGJ':  'RGJS',  # R G Jamieson & Son
         'DAM':  'DAMC',  # D A & A J MacLean
         'ADD':  'ADDI',  # Addison News/of Callendar
-        '2744': 'YTIG',  # Huddersfield Bus Company/Yorkshire Tiger
+        'HBSY': 'YTIG',  # Huddersfield Bus Company/Yorkshire Tiger
         'ALI': 'AMDD',   # Alasdair MacDonald
         'EWE': 'EWEN',   # Ewens Coach Hire
     }
@@ -157,10 +158,9 @@ class Command(BaseCommand):
 
         # Get by national operator code
         operator_code = cls.get_operator_code(operator_element)
-        if len(operator_code) == 4:
-            possible_operators = Operator.objects.filter(id=operator_code)
-            if len(possible_operators) == 1:
-                return possible_operators[0]
+        possible_operators = Operator.objects.filter(id=operator_code)
+        if possible_operators:
+            return possible_operators[0]
 
         # Get by name
         operator_name = cls.get_operator_name(operator_element)
@@ -255,10 +255,10 @@ class Command(BaseCommand):
 
             try:
                 timetable = Timetable(root)
-                if len(timetable.groupings[0].rows):
-                    show_timetable = (len(filter(None, timetable.groupings[0].rows[0].times)) < 60)
-                else:
-                    show_timetable = (len(filter(None, timetable.groupings[1].rows[0].times)) < 60)
+
+                show_timetable = True
+                for grouping in timetable.groupings:
+                    show_timetable = show_timetable and (len(grouping.journeys) < 60 or len(filter(None, grouping.rows[0].times)) < 40)
 
                 stop_usages = [
                     StopUsage(service_id=service_code, stop_id=row.part.stop.atco_code, direction='outbound', order=i, timing_status=row.part.timingstatus)
