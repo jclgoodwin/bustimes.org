@@ -59,8 +59,8 @@ SPECIAL_OPERATOR_TRADINGNAMES = {
     'SULLIVAN BUS & COACH LIMITED': 'SULV',
     'Notts & Derby': 'NDTR',
     'LIVERPOOL CITY SIGHTS': 'CISI',
-    'WDC': 'WDCB'  # Western Dales Community Bus,
-    'Rothbury Securities Ltd': 'ROTH',
+    'WDC': 'WDCB',  # Western Dales Community Bus
+    'Rothbury Securities Ltd': 'ROTH'
 }
 # map OperatorCodes to operator IDs (ditto, where there is no TradingName):
 SPECIAL_OPERATOR_CODES = {
