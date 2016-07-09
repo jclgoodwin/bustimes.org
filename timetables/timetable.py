@@ -357,14 +357,15 @@ class OperatingProfile(object):
         return string
 
     def get_order(self):
-        if self.regular_days[0][:3] == 'Mon':
-            return 0
-        if self.regular_days[0][:3] == 'Sat':
-            return 1
-        if self.regular_days[0][:3] == 'Sun':
-            return 2
-        if self.regular_days[0][:3] == 'Hol':
-            return 3
+        if self.regular_days:
+            if self.regular_days[0][:3] == 'Mon':
+                return 0
+            if self.regular_days[0][:3] == 'Sat':
+                return 1
+            if self.regular_days[0][:3] == 'Sun':
+                return 2
+            if self.regular_days[0][:3] == 'Hol':
+                return 3
         return 0
 
     def __ne__(self, other):
