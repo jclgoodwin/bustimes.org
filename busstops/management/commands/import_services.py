@@ -60,7 +60,11 @@ SPECIAL_OPERATOR_TRADINGNAMES = {
     'Notts & Derby': 'NDTR',
     'LIVERPOOL CITY SIGHTS': 'CISI',
     'WDC': 'WDCB',  # Western Dales Community Bus
-    'Rothbury Securities Ltd': 'ROTH'
+    'Rothbury Securities Ltd': 'ROTH',
+    'KL': 'KELC',  # Keswick Launch Company
+    'Carters Heritage Buses': 'CTCS',
+    'King Harry Ferry Co': 'KHFC',
+    'Fal River Ferries': 'KHFC'
 }
 # map OperatorCodes to operator IDs (ditto, where there is no TradingName):
 SPECIAL_OPERATOR_CODES = {
