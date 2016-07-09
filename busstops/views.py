@@ -8,9 +8,9 @@ from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
 from django.contrib.gis.db.models.functions import Distance
 from django.core.mail import EmailMessage
+from timetables import timetable, live
 from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
 from .forms import ContactForm
-from timetables import timetable, live
 
 
 DIR = os.path.dirname(__file__)
@@ -177,7 +177,7 @@ class AdminAreaDetailView(DetailView):
         ).defer('latlong').distinct().order_by('name')
 
         # National Rail/Air/Ferry stops
-        if len(context['localities']) == 0 and len(context['districts']) == 0:
+        if not (context['localities'] or context['districts']):
             context['stops'] = StopPoint.objects.filter(
                 admin_area=self.object,
                 active=True
@@ -188,7 +188,7 @@ class AdminAreaDetailView(DetailView):
 
     def render_to_response(self, context):
         if len(context['districts']) + len(context['localities']) == 1:
-            if len(context['districts']) == 1:
+            if not context['localities']:
                 return redirect(context['districts'][0])
             return redirect(context['localities'][0])
         return super(AdminAreaDetailView, self).render_to_response(context)
@@ -235,9 +235,9 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             active=True
         ).order_by('common_name')
 
-        if len(context['localities']) == 0 and len(context['stops']) == 0:
+        if not (context['localities'] or context['stops']):
             raise Http404()
-        elif len(context['stops']) != 0:
+        elif context['stops']:
             context['services'] = Service.objects.filter(
                 stops__locality=self.object,
                 current=True
@@ -264,7 +264,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         context['services'] = Service.objects.filter(stops=self.object, current=True).distinct().order_by('service_code')
 
-        if not self.object.active and len(context['services']) == 0:
+        if not (self.object.active or context['services']):
             raise Http404()
 
         text = ', '.join(filter(None, [
@@ -337,7 +337,7 @@ class OperatorDetailView(UppercasePrimaryKeyMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
         context['services'] = Service.objects.filter(operator=self.object, current=True).order_by('service_code')
-        if len(context['services']) == 0:
+        if not context['services']:
             raise Http404()
         areas = AdminArea.objects.filter(stoppoint__service__in=context['services']).distinct()
         context['breadcrumb'] = [self.object.region]

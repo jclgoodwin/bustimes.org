@@ -1,5 +1,4 @@
 import os
-import re
 import xml.etree.cElementTree as ET
 from datetime import date, datetime
 from django.utils.dateparse import parse_duration
@@ -8,10 +7,6 @@ DIR = os.path.dirname(__file__)
 NS = {
     'txc': 'http://www.transxchange.org.uk/'
 }
-DURATION_REGEX = re.compile(
-    r'PT((?P<hours>\d+?)H)?((?P<minutes>\d+?)M)?((?P<seconds>\d+?)S)?'
-)
-
 
 class Stop(object):
     """Represents a TransXChange StopPoint,
@@ -326,20 +321,21 @@ class OperatingProfile(object):
 
 
     def __str__(self):
-        if len(self.regular_days) == 1:
-            if 'To' in self.regular_days[0]:
-                string = self.regular_days[0].replace('To', ' to ')
+        if self.regular_days:
+            if len(self.regular_days) == 1:
+                if 'To' in self.regular_days[0]:
+                    string = self.regular_days[0].replace('To', ' to ')
+                else:
+                    string = self.regular_days[0] + 's'
             else:
-                string = self.regular_days[0] + 's'
-        elif len(self.regular_days) > 0:
-            string = '%ss and %s' % ('s, '.join(self.regular_days[:-1]), self.regular_days[-1] + 's')
+                string = '%ss and %s' % ('s, '.join(self.regular_days[:-1]), self.regular_days[-1] + 's')
 
-            if string == 'Mondays, Tuesdays, Wednesdays, Thursdays and Fridays':
-                string = 'Monday to Friday'
-            elif string == 'Mondays, Tuesdays, Wednesdays, Thursdays, Fridays and Saturdays':
-                string = 'Monday to Saturday'
-            elif string == 'Mondays, Tuesdays, Wednesdays, Thursdays, Fridays, Saturdays and Sundays':
-                string = 'Monday to Sunday'
+                if string == 'Mondays, Tuesdays, Wednesdays, Thursdays and Fridays':
+                    string = 'Monday to Friday'
+                elif string == 'Mondays, Tuesdays, Wednesdays, Thursdays, Fridays and Saturdays':
+                    string = 'Monday to Saturday'
+                elif string == 'Mondays, Tuesdays, Wednesdays, Thursdays, Fridays, Saturdays and Sundays':
+                    string = 'Monday to Sunday'
 
         # if hasattr(self, 'nonoperation_days'):
         #     string = string + '\nNot ' + ', '.join(map(str, self.nonoperation_days))
@@ -445,12 +441,11 @@ class Timetable(object):
         servicedorganisations = xml.find('txc:ServicedOrganisations', NS)
 
         # time calculation begins here:
-        journeys = (
-            VehicleJourney(element, journeypatterns, servicedorganisations)
-            for element in xml.find('txc:VehicleJourneys', NS)
-        )
         journeys = {
-            journey.code: journey for journey in journeys
+            journey.code: journey for journey in (
+                VehicleJourney(element, journeypatterns, servicedorganisations)
+                for element in xml.find('txc:VehicleJourneys', NS)
+            )
         }
 
         # some journeys did not have a direct reference to a journeypattern,
