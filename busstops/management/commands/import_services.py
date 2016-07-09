@@ -59,7 +59,8 @@ SPECIAL_OPERATOR_TRADINGNAMES = {
     'SULLIVAN BUS & COACH LIMITED': 'SULV',
     'Notts & Derby': 'NDTR',
     'LIVERPOOL CITY SIGHTS': 'CISI',
-    'WDC': 'WDCB'  # Western Dales Community Bus
+    'WDC': 'WDCB'  # Western Dales Community Bus,
+    'Rothbury Securities Ltd': 'ROTH',
 }
 # map OperatorCodes to operator IDs (ditto, where there is no TradingName):
 SPECIAL_OPERATOR_CODES = {
@@ -161,9 +162,10 @@ class Command(BaseCommand):
 
         # Get by national operator code
         operator_code = cls.get_operator_code(operator_element)
-        possible_operators = Operator.objects.filter(id=operator_code)
-        if possible_operators:
-            return possible_operators[0]
+        if len(operator_code) > 2 or operator_code == 'BR':
+            possible_operators = Operator.objects.filter(id=operator_code)
+            if possible_operators:
+                return possible_operators[0]
 
         # Get by name
         operator_name = cls.get_operator_name(operator_element)
