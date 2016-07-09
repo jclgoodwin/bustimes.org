@@ -336,6 +336,8 @@ class OperatingProfile(object):
                     string = 'Monday to Saturday'
                 elif string == 'Mondays, Tuesdays, Wednesdays, Thursdays, Fridays, Saturdays and Sundays':
                     string = 'Monday to Sunday'
+        else:
+            string = ''
 
         # if hasattr(self, 'nonoperation_days'):
         #     string = string + '\nNot ' + ', '.join(map(str, self.nonoperation_days))
