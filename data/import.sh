@@ -113,10 +113,10 @@ for region in ${REGIONS[@]}; do
     if [[ $nptg_old$naptan_old$region_old != $nptg_new$naptan_new$region_new ]]; then
         updated_services=1
         ../../manage.py import_services $region.zip
-        unzip -oq $region.zip -d $region
-        find $region -type f -mtime +2 -delete
-        unzip -oq $region.zip -d $region
-        find $region -type f -empty -delete
+        unzip -q $region.zip -d ${region}_new
+        mv $region ${region}_old
+        mv ${region_new} ${region}
+        rm -r ${region}_old
         ../corrections.sh
     fi
 done

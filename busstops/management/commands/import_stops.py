@@ -4,9 +4,9 @@ Usage:
     ./manage.py import_stops < Stops.csv
 """
 
+from django.contrib.gis.geos import Point
 from ..import_from_csv import ImportFromCSVCommand
 from ...models import StopPoint
-from django.contrib.gis.geos import Point
 
 
 class Command(ImportFromCSVCommand):
