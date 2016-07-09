@@ -1,7 +1,8 @@
 import os
 import re
 import xml.etree.cElementTree as ET
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
+from django.utils.dateparse import parse_duration
 
 DIR = os.path.dirname(__file__)
 NS = {
@@ -10,15 +11,6 @@ NS = {
 DURATION_REGEX = re.compile(
     r'PT((?P<hours>\d+?)H)?((?P<minutes>\d+?)M)?((?P<seconds>\d+?)S)?'
 )
-
-def parse_duration(string):
-    """Given an ISO 8601 formatted duration string like "PT2M", returns a timedelta
-    """
-    matches = DURATION_REGEX.match(string).groupdict().iteritems()
-    params = {
-        key: int(value) for key, value in matches if value is not None
-    }
-    return timedelta(**params)
 
 
 class Stop(object):
@@ -339,9 +331,8 @@ class OperatingProfile(object):
                 string = self.regular_days[0].replace('To', ' to ')
             else:
                 string = self.regular_days[0] + 's'
-
-        else:
-            string = 's, '.join(self.regular_days[:-1]) + 's and ' + self.regular_days[-1] + 's'
+        elif len(self.regular_days) > 0:
+            string = '%ss and %s' % ('s, '.join(self.regular_days[:-1]), self.regular_days[-1] + 's')
 
             if string == 'Mondays, Tuesdays, Wednesdays, Thursdays and Fridays':
                 string = 'Monday to Friday'
@@ -357,13 +348,13 @@ class OperatingProfile(object):
         #     string = string + '\n' + ', '.join(map(str, self.operation_days))
 
         if hasattr(self, 'servicedorganisation_nonoperation_holidays'):
-            string = string + '\nSchool days'
+            string += '\nSchool days'
         if hasattr(self, 'servicedorganisation_operation_holidays'):
-            string = string + '\nSchool holidays'
+            string += '\nSchool holidays'
         if hasattr(self, 'servicedorganisation_nonoperation_workingdays'):
-            string = string + '\nSchool holidays'
+            string += '\nSchool holidays'
         if hasattr(self, 'servicedorganisation_operation_workingdays'):
-            string = string + '\nSchool days'
+            string += '\nSchool days'
 
         return string
 
@@ -555,23 +546,23 @@ def abbreviate(grouping, i, in_a_row, difference):
 
 def get_filenames(service, path):
     if service.region_id == 'NE':
-        return (service.pk + '.xml',)
+        return ('%s.xml' % service.pk,)
     elif service.region_id in ('S', 'NW'):
-        return ('SVR' + service.pk + '.xml',)
+        return ('SVR%s.xml' % service.pk,)
     else:
         try:
             namelist = os.listdir(path)
         except OSError:
             return ()
         if service.net:
-            return (name for name in namelist if name.startswith(service.pk + '-'))
+            return (name for name in namelist if name.startswith('%s-' % service.pk))
         elif service.region_id == 'GB':
             parts = service.pk.split('_')
-            return (name for name in namelist if name.endswith('_' + parts[1] + '_' + parts[0] + '.xml'))
+            return (name for name in namelist if name.endswith('_%s_%s.xml' % (parts[1], parts[0])))
         elif service.region_id == 'Y':
-            return (name for name in namelist if name.startswith('SVR' + service.pk + '-') or name == 'SVR' + service.pk + '.xml')
+            return (name for name in namelist if name.startswith('SVR%s-' % service.pk) or name == 'SVR%s.xml' % service.pk)
         else:
-            return (name for name in namelist if name.endswith('_' + service.pk + '.xml'))
+            return (name for name in namelist if name.endswith('_%s.xml' % service.pk))
 
 
 def timetable_from_filename(filename, stops):
@@ -591,7 +582,6 @@ def timetable_from_service(service, stops):
         path = os.path.join(DIR, '../data/TNDS/%s/' % service.region_id)
 
     filenames = get_filenames(service, path)
-
     stops = {stop.atco_code: stop for stop in stops}
-
-    return filter(None, (timetable_from_filename(os.path.join(path, filename), stops) for filename in filenames))
+    timetables = (timetable_from_filename(os.path.join(path, name), stops) for name in filenames)
+    return (timetable for timetable in timetables if timetable is not None)

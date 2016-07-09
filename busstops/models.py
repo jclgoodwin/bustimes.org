@@ -83,7 +83,7 @@ class Locality(models.Model):
     """
     id = models.CharField(max_length=48, primary_key=True)
     name = models.CharField(max_length=48, db_index=True)
-    # short_name? 
+    # short_name?
     qualifier_name = models.CharField(max_length=48, blank=True)
     admin_area = models.ForeignKey(AdminArea)
     district = models.ForeignKey(District, null=True)
@@ -310,7 +310,8 @@ class Service(models.Model):
 
     def __unicode__(self):
         if self.line_name or self.line_brand or self.description:
-            return ' - '.join(filter(None, (self.line_name, self.line_brand, self.description)))
+            parts = (self.line_name, self.line_brand, self.description)
+            return ' - '.join(part for part in parts if part != '')
         else:
             return self.service_code
 
