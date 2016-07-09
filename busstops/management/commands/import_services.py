@@ -23,6 +23,71 @@ from timetables.timetable import Timetable
 from ...models import Operator, StopPoint, Service, StopUsage
 
 
+# map names to operator IDs where there is no correspondence between the NOC DB and TNDS:
+SPECIAL_OPERATOR_TRADINGNAMES = {
+    'Arriva Northumbria': 'ANUM',
+    'Southwold Town Council': 'SWTC',
+    'H.C.Chambers & Son': 'CHMB',
+    'Bungay and Beccles Area CT': 'BBCT',
+    'Stowmarket Minibus & Coach Hire': 'MBCH',
+    'Harwich Harbour Ferry': 'HHFS',
+    'Halesworth Area Community Transport': 'HACT',
+    'Dartmouth Steam Railway And River Boat Company': 'DRMR',
+    'Borderbus': 'BDRB',
+    'ARRIVA LONDON NORTH LIMITED': 'ALNO',
+    'ARRIVA LONDON SOUTH LIMITED': 'ALSO',
+    'ARRIVA THE SHIRES LIMITED': 'ASES',
+    'ARRIVA KENT THAMESIDE LIMITED': 'AMTM',
+    'METROBUS LIMITED': 'METR',
+    'EAST LONDON BUS & COACH COMPANY LIMITED': 'ELBG',
+    'SOUTH EAST LONDON & KENT BUS COMPANY LTD': 'SELK',
+    'TRAMTRACK CROYDON LTD': 'TRAM',
+    'Westminster Passenger Service Association': 'WPSA',
+    'First Cornwall': 'FCWL',
+    'IoW Floating Bridge': 'IOWC',
+    'Ladies Only Travel': 'YLOT',
+    'LONDON SOVEREIGN LIMITED': 'LSOV',
+    'ABELLIO LONDON LIMITED': 'ABLO',
+    'ABELLIO LONDON (WEST) LIMITED': 'ABLO',
+    'TOWER TRANSIT LIMITED': 'TOTR',
+    'UNO BUSES LIMITED': 'UNOE',
+    'C T PLUS LIMITED': 'NCTP',
+    'Gloucestershire': 'SCGL',
+    'BLUE TRIANGLE BUSES LIMITED': 'BTRI',
+    'METROLINE WEST LIMITED': 'MTLN',
+    'LONDON CENTRAL BUS COMPANY LIMITED': 'LONC',
+    'SULLIVAN BUS & COACH LIMITED': 'SULV',
+    'Notts & Derby': 'NDTR',
+    'LIVERPOOL CITY SIGHTS': 'CISI',
+    'WDC': 'WDCB'  # Western Dales Community Bus
+}
+# map OperatorCodes to operator IDs (ditto, where there is no TradingName):
+SPECIAL_OPERATOR_CODES = {
+    'HIB':  'HIMB',  # Holy Island Minibus
+    '1866': 'BPTR',  # Burnley & Pendle
+    '2152': 'RSTY',  # R S Tyrer & Sons
+    '2916': 'SPCT',  # South Pennine Community Transport
+    'RB1':  'RBRO',  # Richards Bros
+    'ACY':  'ACYM',  # Arriva Cymru/Wales
+    'AM0':  'AMID',  # Arriva Midlands
+    'RMB':  'RMBL',  # Routemaster Buses Ltd
+    'JO1':  'JTMT',  # John's Travel (Merthyr Tydfil)
+    'CO':   'CFSV',  # Coniston Launch/Ferry
+    'CL':   'CFSV',  # Coniston Launch/Ferry
+    'SGI':  'SGIL',  # Steel Group Investments Limited
+    'EYM':  'EYMS',  # East Yorkshire Motor Services
+    'WINF': 'WMLC',  # Windermere Lake Cruises/Ferry
+    'DPC':  'DPCE',  # (Don) Prentice (Coaches)
+    'PCV':  'PCVN',  # (Peter) Canavan (Travel)
+    'RGJ':  'RGJS',  # R G Jamieson & Son
+    'DAM':  'DAMC',  # D A & A J MacLean
+    'ADD':  'ADDI',  # Addison News/of Callendar
+    'HBSY': 'YTIG',  # Huddersfield Bus Company/Yorkshire Tiger
+    'ALI': 'AMDD',   # Alasdair MacDonald
+    'EWE': 'EWEN',   # Ewens Coach Hire
+}
+
+
 class Command(BaseCommand):
 
     # see https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml-with-namespaces
@@ -31,68 +96,6 @@ class Command(BaseCommand):
     now = datetime.today()
 
     description_regex = re.compile(r'.+,([^ ].+)$')
-
-    # map names to operator IDs where there is no correspondence between the NOC DB and TNDS:
-    SPECIAL_OPERATOR_TRADINGNAMES = {
-        'Arriva Northumbria': 'ANUM',
-        'Southwold Town Council': 'SWTC',
-        'H.C.Chambers & Son': 'CHMB',
-        'Bungay and Beccles Area CT': 'BBCT',
-        'Stowmarket Minibus & Coach Hire': 'MBCH',
-        'Harwich Harbour Ferry': 'HHFS',
-        'Halesworth Area Community Transport': 'HACT',
-        'Dartmouth Steam Railway And River Boat Company': 'DRMR',
-        'Borderbus': 'BDRB',
-        'ARRIVA LONDON NORTH LIMITED': 'ALNO',
-        'ARRIVA LONDON SOUTH LIMITED': 'ALSO',
-        'ARRIVA THE SHIRES LIMITED': 'ASES',
-        'ARRIVA KENT THAMESIDE LIMITED': 'AMTM',
-        'METROBUS LIMITED': 'METR',
-        'EAST LONDON BUS & COACH COMPANY LIMITED': 'ELBG',
-        'SOUTH EAST LONDON & KENT BUS COMPANY LTD': 'SELK',
-        'TRAMTRACK CROYDON LTD': 'TRAM',
-        'Westminster Passenger Service Association': 'WPSA',
-        'First Cornwall': 'FCWL',
-        'IoW Floating Bridge': 'IOWC',
-        'Ladies Only Travel': 'YLOT',
-        'LONDON SOVEREIGN LIMITED': 'LSOV',
-        'ABELLIO LONDON LIMITED': 'ABLO',
-        'ABELLIO LONDON (WEST) LIMITED': 'ABLO',
-        'TOWER TRANSIT LIMITED': 'TOTR',
-        'UNO BUSES LIMITED': 'UNOE',
-        'C T PLUS LIMITED': 'NCTP',
-        'Gloucestershire': 'SCGL',
-        'BLUE TRIANGLE BUSES LIMITED': 'BTRI',
-        'METROLINE WEST LIMITED': 'MTLN',
-        'LONDON CENTRAL BUS COMPANY LIMITED': 'LONC',
-        'SULLIVAN BUS & COACH LIMITED': 'SULV',
-        'Notts & Derby': 'NDTR'
-    }
-    # map OperatorCodes to operator IDs (ditto, where there is no TradingName):
-    SPECIAL_OPERATOR_CODES = {
-        'HIB':  'HIMB',  # Holy Island Minibus
-        '1866': 'BPTR',  # Burnley & Pendle
-        '2152': 'RSTY',  # R S Tyrer & Sons
-        '2916': 'SPCT',  # South Pennine Community Transport
-        'RB1':  'RBRO',  # Richards Bros
-        'ACY':  'ACYM',  # Arriva Cymru/Wales
-        'AM0':  'AMID',  # Arriva Midlands
-        'RMB':  'RMBL',  # Routemaster Buses Ltd
-        'JO1':  'JTMT',  # John's Travel (Merthyr Tydfil)
-        'CO':   'CFSV',  # Coniston Launch/Ferry
-        'CL':   'CFSV',  # Coniston Launch/Ferry
-        'SGI':  'SGIL',  # Steel Group Investments Limited
-        'EYM':  'EYMS',  # East Yorkshire Motor Services
-        'WINF': 'WMLC',  # Windermere Lake Cruises/Ferry
-        'DPC':  'DPCE',  # (Don) Prentice (Coaches)
-        'PCV':  'PCVN',  # (Peter) Canavan (Travel)
-        'RGJ':  'RGJS',  # R G Jamieson & Son
-        'DAM':  'DAMC',  # D A & A J MacLean
-        'ADD':  'ADDI',  # Addison News/of Callendar
-        'HBSY': 'YTIG',  # Huddersfield Bus Company/Yorkshire Tiger
-        'ALI': 'AMDD',   # Alasdair MacDonald
-        'EWE': 'EWEN',   # Ewens Coach Hire
-    }
 
     @staticmethod
     def add_arguments(parser):
@@ -172,11 +175,11 @@ class Command(BaseCommand):
         if len(possible_operators) == 1:
             return possible_operators[0]
 
-        if operator_name in cls.SPECIAL_OPERATOR_TRADINGNAMES:
-            return Operator.objects.get(id=cls.SPECIAL_OPERATOR_TRADINGNAMES[operator_name])
+        if operator_name in SPECIAL_OPERATOR_TRADINGNAMES:
+            return Operator.objects.get(id=SPECIAL_OPERATOR_TRADINGNAMES[operator_name])
 
-        if operator_code in cls.SPECIAL_OPERATOR_CODES:
-            return Operator.objects.get(id=cls.SPECIAL_OPERATOR_CODES[operator_code])
+        if operator_code in SPECIAL_OPERATOR_CODES:
+            return Operator.objects.get(id=SPECIAL_OPERATOR_CODES[operator_code])
 
         print ET.tostring(operator_element)
 
