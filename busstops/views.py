@@ -397,8 +397,8 @@ def service_xml(request, pk):
     filenames = timetable.get_filenames(service, path)
 
     bodies = ''
-    for filename in filenames:
-        with open(os.path.join(path, filename)) as file:
-            bodies += file.read()
+    for name in filenames:
+        with open(os.path.join(path, name)) as open_file:
+            bodies += open_file.read()
 
     return HttpResponse(bodies, content_type='text/plain')

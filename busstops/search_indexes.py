@@ -1,6 +1,6 @@
 from haystack import indexes
-from busstops.models import Locality, Operator, Service
 from django.db.models import Q
+from busstops.models import Locality, Operator, Service
 
 
 class LocalityIndex(indexes.SearchIndex, indexes.Indexable):

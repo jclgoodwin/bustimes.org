@@ -4,8 +4,8 @@ Usage:
     ./manage.py import_operator_contacts < nocrecords.xml
 """
 
-from bs4 import BeautifulSoup
 import sys
+from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand
 from ...models import Operator
 

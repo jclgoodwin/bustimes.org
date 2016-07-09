@@ -202,4 +202,3 @@ class ViewsTests(TestCase):
     def test_service_not_found(self):
         response = self.client.get('/services/45A')
         self.assertEqual(response.status_code, 404)
-

@@ -25,4 +25,3 @@ class MiddlewareTests(TestCase):
         response = self.client.get('/services/21-45-A-y08-9')
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, '/services/ea_21-45-A-y08')
-

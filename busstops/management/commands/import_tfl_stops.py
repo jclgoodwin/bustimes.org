@@ -56,4 +56,3 @@ class Command(ImportFromCSVCommand):
         stop.live_sources.add(tfl)
 
         stop.save()
-

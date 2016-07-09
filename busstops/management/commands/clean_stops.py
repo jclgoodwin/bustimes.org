@@ -128,4 +128,3 @@ class Command(BaseCommand):
         self.remove_stupid_indicators()
         self.normalise_indicators()
         self.replace_backticks()
-

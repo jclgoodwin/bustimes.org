@@ -22,4 +22,3 @@ class Command(BaseCommand):
             # move Cumbria to the North West
             regions = Region.objects.filter(adminarea__locality__stoppoint__service__operator=operator).distinct()
             self.maybe_move_operator(operator, regions)
-

@@ -1,7 +1,10 @@
 from django import forms
 from django.contrib import admin
 from django.db.models import Count
-from busstops.models import Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service
+from busstops.models import (
+    Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service
+)
+
 
 class StopPointAdmin(admin.ModelAdmin):
     list_display = ('atco_code', 'naptan_code', 'locality', 'admin_area', '__unicode__')

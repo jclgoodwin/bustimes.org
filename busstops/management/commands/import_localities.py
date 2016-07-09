@@ -6,9 +6,9 @@ Usage:
     import_localities < Localities.csv
 """
 
+from django.contrib.gis.geos import Point
 from ..import_from_csv import ImportFromCSVCommand
 from ...models import Locality
-from django.contrib.gis.geos import Point
 
 
 class Command(ImportFromCSVCommand):

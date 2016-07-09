@@ -2,9 +2,9 @@
 """
 import datetime
 import vcr
-from . import live
 from django.test import TestCase
 from busstops.models import LiveSource, StopPoint, Service
+from . import live
 
 
 class LiveDeparturesTest(TestCase):

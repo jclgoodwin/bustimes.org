@@ -7,8 +7,8 @@ Usage:
 """
 
 from time import sleep
-import requests
 import json
+import requests
 from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand
 from ...models import StopPoint, LiveSource
@@ -108,4 +108,3 @@ class Command(BaseCommand):
             print stop_ids
             stoppoints = StopPoint.objects.filter(pk__in=stop_ids)
             livesource.stoppoint_set.add(*stoppoints)
-

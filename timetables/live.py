@@ -1,8 +1,8 @@
 import re
-import pytz
 from datetime import datetime, date
 
 import requests
+import pytz
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.utils.text import slugify
