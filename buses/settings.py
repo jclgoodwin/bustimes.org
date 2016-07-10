@@ -45,6 +45,7 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 HAYSTACK_IDENTIFIER_METHOD = 'buses.utils.get_identifier'
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.BaseSignalProcessor'
 
 DATABASES = {
     'default': {

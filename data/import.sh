@@ -50,7 +50,7 @@ if [[ $nptg_old != $nptg_new ]]; then
     import_csv nptg.ashx\?format\=csv localities Localities.csv
     echo "  Importing locality hierarchy"
     import_csv nptg.ashx\?format\=csv locality_hierarchy LocalityHierarchy.csv
-    ../../manage.py update_index busstops.Locality --remove
+    # ../../manage.py update_index busstops.Locality --remove
 fi
 
 
@@ -115,4 +115,4 @@ for region in ${REGIONS[@]}; do
         ../corrections.sh
     fi
 done
-[ $updated_services ] && ../../manage.py update_index --remove
+# [ $updated_services ] && ../../manage.py update_index --remove
