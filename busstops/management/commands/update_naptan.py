@@ -43,9 +43,9 @@ class Command(BaseCommand):
         old_rows = self.get_old_rows()
 
         changed_regions, changed_areas = self.get_diff(new_rows, old_rows)
-        print changed_regions, changed_areas
 
         if changed_areas:
+            print changed_regions, changed_areas
             response = requests.get(
                 'http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx',
                 {
