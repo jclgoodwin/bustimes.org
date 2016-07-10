@@ -165,6 +165,17 @@ class JourneyPatternTimingLink(object):
         self.id = element.get('id')
 
 
+def get_deadruns(journey_element):
+    start_element = journey_element.find('txc:StartDeadRun', NS)
+    end_element = journey_element.find('txc:EndDeadRun', NS)
+    return (get_deadrun_ref(start_element), get_deadrun_ref(end_element))
+
+
+def get_deadrun_ref(deadrun_element):
+    if deadrun_element is not None:
+        return deadrun_element.find('txc:ShortWorking', NS).find('txc:JourneyPatternTimingLinkRef', NS).text
+
+
 class VehicleJourney(object):
     """A journey represents a scheduled journey that happens at most once per day.
     A sort of "instance" of a JourneyPattern, made distinct by having its own start time,
@@ -185,18 +196,13 @@ class VehicleJourney(object):
             # instead it as a reference to a similar journey with does
             self.journeyref = element.find('txc:VehicleJourneyRef', NS).text
 
-        start_deadrun_element = element.find('txc:StartDeadRun', NS)
-        if start_deadrun_element is not None:
-            short_working_element = start_deadrun_element.find('txc:ShortWorking', NS)
-            self.start_deadrun = short_working_element.find('txc:JourneyPatternTimingLinkRef', NS).text
-        end_deadrun_element = element.find('txc:EndDeadRun', NS)
-        if end_deadrun_element is not None:
-            short_working_element = end_deadrun_element.find('txc:ShortWorking', NS)
-            self.end_deadrun = short_working_element.find('txc:JourneyPatternTimingLinkRef', NS).text
+        self.start_deadrun, self.end_deadrun = get_deadruns(element)
 
         note_elements = element.findall('txc:Note', NS)
         if note_elements is not None:
-            self.notes = [note_element.find('txc:NoteText', NS).text for note_element in note_elements]
+            self.notes = [
+                note_element.find('txc:NoteText', NS).text for note_element in note_elements
+            ]
 
         operatingprofile_element = element.find('txc:OperatingProfile', NS)
         if operatingprofile_element is not None:
@@ -208,7 +214,7 @@ class VehicleJourney(object):
 
         stopusage = self.journeypattern.sections[0].timinglinks[0].origin
         time = self.departure_time
-        deadrun = hasattr(self, 'start_deadrun')
+        deadrun = self.start_deadrun is not None
         if not deadrun:
             if stopusage.sequencenumber is not None:
                 self.journeypattern.grouping.rows.get(stopusage.sequencenumber).times.append(time)
@@ -223,16 +229,16 @@ class VehicleJourney(object):
 
                 time = (datetime.combine(today, time) + timinglink.runtime).time()
 
-                if deadrun and hasattr(self, 'start_deadrun') and self.start_deadrun == timinglink.id:
-                    deadrun = False # end of dead run
-                if not deadrun:
-                    if stopusage.sequencenumber is not None:
-                        row = self.journeypattern.grouping.rows.get(stopusage.sequencenumber)
-                        row.times.append(time)
-                    else:
-                        stopusage.row.times.append(time)
+                if deadrun:
+                    if self.start_deadrun == timinglink.id:
+                        deadrun = False # end of dead run
+                elif stopusage.sequencenumber is not None:
+                    row = self.journeypattern.grouping.rows.get(stopusage.sequencenumber)
+                    row.times.append(time)
+                else:
+                    stopusage.row.times.append(time)
 
-                if hasattr(self, 'end_deadrun') and self.end_deadrun == timinglink.id:
+                if self.end_deadrun == timinglink.id:
                     deadrun = True # start of dead run
                 if hasattr(stopusage, 'waittime'):
                     time = (datetime.combine(date.today(), time) + stopusage.waittime).time()
