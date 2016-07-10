@@ -110,7 +110,7 @@ for region in ${REGIONS[@]}; do
         ../../manage.py import_services $region.zip
         unzip -q $region.zip -d ${region}_new
         mv $region ${region}_old
-        mv ${region_new} ${region}
+        mv ${region}_new $region
         rm -r ${region}_old
         ../corrections.sh
     fi
