@@ -488,7 +488,14 @@ class Timetable(object):
             foot_span = 0
             for i, journey in enumerate(grouping.journeys):
                 if not hasattr(journey, 'operating_profile'):
-                    previous_operatingprofile = None
+                    if previous_operatingprofile is False:
+                        difference = (
+                            datetime.combine(today, journey.departure_time)
+                            - datetime.combine(today, previous_departure_time)
+                        )
+                        if previous_difference and difference == previous_difference:
+                            in_a_row += 1
+                    previous_operatingprofile = False
                 elif previous_operatingprofile != journey.operating_profile:
                     if previous_operatingprofile is not None:
                         grouping.column_heads.append(ColumnHead(previous_operatingprofile, head_span))
