@@ -26,7 +26,6 @@ swindon = LiveSource.objects.get_or_create(name='swin')[0]
 metrobus = LiveSource.objects.get_or_create(name='metr')[0]
 
 
-
 class Command(BaseCommand):
 
     @staticmethod

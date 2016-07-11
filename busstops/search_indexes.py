@@ -10,8 +10,10 @@ class LocalityIndex(indexes.SearchIndex, indexes.Indexable):
         return Locality
 
     def index_queryset(self, using=None):
-        return self.get_model().objects.filter(Q(stoppoint__active=True) | Q(locality__stoppoint__active=True)).defer('latlong').distinct()
-
+        return self.get_model().objects.filter(
+            Q(stoppoint__active=True) |
+            Q(locality__stoppoint__active=True)
+        ).defer('latlong').distinct()
 
     def read_queryset(self, using=None):
         return self.get_model().objects.all().defer('latlong')
@@ -37,7 +39,9 @@ class ServiceIndex(indexes.SearchIndex, indexes.Indexable):
         return Service
 
     def index_queryset(self, using=None):
-        return self.get_model().objects.filter(current=True).prefetch_related('operator', 'stops', 'stops__locality').defer('stops__latlong', 'stops__locality__latlong').distinct()
+        return self.get_model().objects.filter(current=True).prefetch_related(
+            'operator', 'stops', 'stops__locality'
+        ).defer('stops__latlong', 'stops__locality__latlong').distinct()
 
     def read_queryset(self, using=None):
         return self.get_model().objects.all()

@@ -68,7 +68,7 @@ class AcisLiveDepartures(AcisDepartures):
             return ()
         soup = BeautifulSoup(res.text, 'html.parser')
         cells = [cell.text.strip() for cell in soup.find_all('td')]
-        rows = (cells[i * 4 - 4:i * 4] for i in range(1, (len(cells)/4) + 1))
+        rows = (cells[i * 4 - 4:i * 4] for i in range(1, (len(cells) / 4) + 1))
         return ({
             'time': row[2],
             'service': self.get_service(row[0]),
@@ -160,6 +160,7 @@ def get_max_age(departures, now):
             return (expiry - now).seconds + 60
         return 60
     return 3600
+
 
 def get_departures(stop, services):
     """

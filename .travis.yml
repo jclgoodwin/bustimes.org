@@ -9,5 +9,6 @@ before_script:
 script:
   - coverage run --source=buses,busstops,timetables manage.py test -v 3
   - pylint buses busstops timetables | cat
+  - flake8 buses busstops timetables | cat
 after_success:
   coveralls

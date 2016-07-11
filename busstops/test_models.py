@@ -49,8 +49,8 @@ class OperatorTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.north = Region.objects.create(pk='N', name='North')
-        #cls.south_yorkshire = AdminArea.objects.create(pk=1, atco_code=1, region=cls.north, name='South Yorkshire')
-        #cls.north_yorkshire = AdminArea.objects.create(pk=2, atco_code=2, region=cls.north, name='North Yorkshire')
+        #  cls.south_yorkshire = AdminArea.objects.create(pk=1, atco_code=1, region=cls.north, name='South Yorkshire')
+        #  cls.north_yorkshire = AdminArea.objects.create(pk=2, atco_code=2, region=cls.north, name='North Yorkshire')
 
         cls.chariots = Operator.objects.create(pk='CHAR', name='Ainsley\'s Chariots', region=cls.north)
 

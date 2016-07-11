@@ -8,6 +8,7 @@ NS = {
     'txc': 'http://www.transxchange.org.uk/'
 }
 
+
 class Stop(object):
     """Represents a TransXChange StopPoint,
     optionally with a reference to a busstops.models.StopPoint
@@ -231,7 +232,7 @@ class VehicleJourney(object):
 
                 if deadrun:
                     if self.start_deadrun == timinglink.id:
-                        deadrun = False # end of dead run
+                        deadrun = False  # end of dead run
                 elif stopusage.sequencenumber is not None:
                     row = self.journeypattern.grouping.rows.get(stopusage.sequencenumber)
                     row.times.append(time)
@@ -239,7 +240,7 @@ class VehicleJourney(object):
                     stopusage.row.times.append(time)
 
                 if self.end_deadrun == timinglink.id:
-                    deadrun = True # start of dead run
+                    deadrun = True  # start of dead run
                 if hasattr(stopusage, 'waittime'):
                     time = (datetime.combine(date.today(), time) + stopusage.waittime).time()
 
@@ -496,8 +497,8 @@ class Timetable(object):
                 if not hasattr(journey, 'operating_profile'):
                     if previous_operatingprofile is False:
                         difference = (
-                            datetime.combine(today, journey.departure_time)
-                            - datetime.combine(today, previous_departure_time)
+                            datetime.combine(today, journey.departure_time) -
+                            datetime.combine(today, previous_departure_time)
                         )
                         if previous_difference and difference == previous_difference:
                             in_a_row += 1
@@ -512,8 +513,8 @@ class Timetable(object):
                     in_a_row = 0
                 elif previous_journeypattern.id == journey.journeypattern.id:
                     difference = (
-                        datetime.combine(today, journey.departure_time)
-                        - datetime.combine(today, previous_departure_time)
+                        datetime.combine(today, journey.departure_time) -
+                        datetime.combine(today, previous_departure_time)
                     )
                     if previous_difference and difference == previous_difference:
                         in_a_row += 1

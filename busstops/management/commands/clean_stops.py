@@ -122,7 +122,6 @@ class Command(BaseCommand):
                 setattr(stop, attr, value)
                 stop.save()
 
-
     def handle(self, *args, **options):
         self.remove_placeholders()
         self.remove_stupid_indicators()

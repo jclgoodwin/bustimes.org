@@ -9,7 +9,6 @@ from ...models import Operator
 
 
 class Command(ImportFromCSVCommand):
-
     @staticmethod
     def get_region_id(region_id):
         if region_id in ('ADMIN', 'Admin', ''):
@@ -21,9 +20,11 @@ class Command(ImportFromCSVCommand):
 
     @staticmethod
     def get_name(row):
-        if row['OperatorPublicName'] in ('First', 'Arriva', 'Stagecoach') \
-            or row['OperatorPublicName'].startswith('inc.') \
-            or row['OperatorPublicName'].startswith('formerly'):
+        if (
+            row['OperatorPublicName'] in ('First', 'Arriva', 'Stagecoach') or
+            row['OperatorPublicName'].startswith('inc.') or
+            row['OperatorPublicName'].startswith('formerly')
+        ):
             if row['RefNm'] != '':
                 return row['RefNm']
             return row['OpNm']
@@ -40,7 +41,7 @@ class Command(ImportFromCSVCommand):
         if operator_id in ('TVSR', 'HBSY') or (operator_id == 'FMAN' and row['Duplicate'] != 'OK'):
             return None
 
-        name = cls.get_name(row).replace('\'', u'\u2019') # Fancy apostrophe
+        name = cls.get_name(row).replace('\'', u'\u2019')  # Fancy apostrophe
         defaults = {
             'name': name.strip(),
             'vehicle_mode': row['Mode'].lower().replace('ct operator', 'community transport').replace('drt', 'demand responsive transport'),

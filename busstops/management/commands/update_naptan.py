@@ -56,7 +56,7 @@ class Command(BaseCommand):
             )
 
             with open('naptan.zip', 'wb') as new_file:
-                for chunk in response.iter_content(chunk_size=1024): 
+                for chunk in response.iter_content(chunk_size=1024):
                     new_file.write(chunk)
 
             with open(JSON_NAME, 'w') as new_file:

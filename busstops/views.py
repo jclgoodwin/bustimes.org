@@ -369,7 +369,6 @@ class ServiceDetailView(DetailView):
                 'stop__locality__latlong'
             ).order_by('direction', 'order')
 
-
         if bool(context['operators']):
             context['breadcrumb'] = [self.object.region, context['operators'][0]]
 

@@ -16,10 +16,10 @@ class Command(ImportFromCSVCommand):
     def handle_row(self, row):
 
         defaults = {
-            'name':           row['LocalityName'].replace('\'', u'\u2019'),
+            'name': row['LocalityName'].replace('\'', u'\u2019'),
             'qualifier_name': row['QualifierName'],
-            'admin_area_id':  row['AdministrativeAreaCode'],
-            'latlong':        Point(int(row['Easting']), int(row['Northing']), srid=27700),
+            'admin_area_id': row['AdministrativeAreaCode'],
+            'latlong': Point(int(row['Easting']), int(row['Northing']), srid=27700),
         }
 
         if row['NptgDistrictCode'] != '310':

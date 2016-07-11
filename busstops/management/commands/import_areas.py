@@ -16,10 +16,10 @@ class Command(ImportFromCSVCommand):
         AdminArea.objects.update_or_create(
             id=row['AdministrativeAreaCode'],
             defaults={
-                'atco_code':  row['AtcoAreaCode'],
-                'name':       row['AreaName'],
+                'atco_code': row['AtcoAreaCode'],
+                'name': row['AreaName'],
                 'short_name': row['ShortName'],
-                'country':    row['Country'],
-                'region_id':  row['RegionCode'],
+                'country': row['Country'],
+                'region_id': row['RegionCode'],
             }
         )

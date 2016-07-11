@@ -68,25 +68,25 @@ SPECIAL_OPERATOR_TRADINGNAMES = {
 }
 # map OperatorCodes to operator IDs (ditto, where there is no TradingName):
 SPECIAL_OPERATOR_CODES = {
-    'HIB':  'HIMB',  # Holy Island Minibus
+    'HIB': 'HIMB',  # Holy Island Minibus
     '1866': 'BPTR',  # Burnley & Pendle
     '2152': 'RSTY',  # R S Tyrer & Sons
     '2916': 'SPCT',  # South Pennine Community Transport
-    'RB1':  'RBRO',  # Richards Bros
-    'ACY':  'ACYM',  # Arriva Cymru/Wales
-    'AM0':  'AMID',  # Arriva Midlands
-    'RMB':  'RMBL',  # Routemaster Buses Ltd
-    'JO1':  'JTMT',  # John's Travel (Merthyr Tydfil)
-    'CO':   'CFSV',  # Coniston Launch/Ferry
-    'CL':   'CFSV',  # Coniston Launch/Ferry
-    'SGI':  'SGIL',  # Steel Group Investments Limited
-    'EYM':  'EYMS',  # East Yorkshire Motor Services
+    'RB1': 'RBRO',  # Richards Bros
+    'ACY': 'ACYM',  # Arriva Cymru/Wales
+    'AM0': 'AMID',  # Arriva Midlands
+    'RMB': 'RMBL',  # Routemaster Buses Ltd
+    'JO1': 'JTMT',  # John's Travel (Merthyr Tydfil)
+    'CO': 'CFSV',  # Coniston Launch/Ferry
+    'CL': 'CFSV',  # Coniston Launch/Ferry
+    'SGI': 'SGIL',  # Steel Group Investments Limited
+    'EYM': 'EYMS',  # East Yorkshire Motor Services
     'WINF': 'WMLC',  # Windermere Lake Cruises/Ferry
-    'DPC':  'DPCE',  # (Don) Prentice (Coaches)
-    'PCV':  'PCVN',  # (Peter) Canavan (Travel)
-    'RGJ':  'RGJS',  # R G Jamieson & Son
-    'DAM':  'DAMC',  # D A & A J MacLean
-    'ADD':  'ADDI',  # Addison News/of Callendar
+    'DPC': 'DPCE',  # (Don) Prentice (Coaches)
+    'PCV': 'PCVN',  # (Peter) Canavan (Travel)
+    'RGJ': 'RGJS',  # R G Jamieson & Son
+    'DAM': 'DAMC',  # D A & A J MacLean
+    'ADD': 'ADDI',  # Addison News/of Callendar
     'HBSY': 'YTIG',  # Huddersfield Bus Company/Yorkshire Tiger
     'ALI': 'AMDD',   # Alasdair MacDonald
     'EWE': 'EWEN',   # Ewens Coach Hire
@@ -114,7 +114,7 @@ class Command(BaseCommand):
 
         Given any other sort of file name, returns ('', None, None)
         """
-        parts = file_name.split('-') # ['ea_21', '3', '_', '1']
+        parts = file_name.split('-')  # ['ea_21', '3', '_', '1']
         if len(parts) == 5:
             net = parts[0].split('_')[0]
             if len(net) <= 3 and net.islower():

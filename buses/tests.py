@@ -14,9 +14,7 @@ class UtilsTests(TestCase):
         self.assertEqual(minify("""
                    \n
             <marquee>
-                {% if foo %}
-     
-                    {% if bar %}
+                {% if foo %}\n     \n                    {% if bar %}
                         <strong>Golf sale</strong>  \n
                     {% endif %}
                 {% endif %}

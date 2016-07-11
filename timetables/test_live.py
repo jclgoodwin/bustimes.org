@@ -85,7 +85,6 @@ class LiveDeparturesTest(TestCase):
         """)
         self.assertEqual(response.status_code, 200)
 
-
     def test_acisconnect_cardiff(self):
         """Test the Cardiff live departures source
         """

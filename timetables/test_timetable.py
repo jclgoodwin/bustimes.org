@@ -102,6 +102,7 @@ class TimetableTest(TestCase):
         self.assertEqual(timetable_deadruns.groupings[0].rows[-2].times[:7], ['', '', '', '', '', '', time(10, 5)])
         self.assertEqual(timetable_deadruns.groupings[0].rows[-1].times[:7], ['', '', '', '', '', '', time(10, 7)])
 
+
 class DateRangeTest(TestCase):
     def test_single_date(self):
         element = ET.fromstring("""

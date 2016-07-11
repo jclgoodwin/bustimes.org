@@ -184,16 +184,16 @@ class StopPoint(models.Model):
         ('GAT', 'Air airside area'),
         ('FTD', 'Ferry terminal/dock entrance'),
         ('FER', 'Ferry/dock berth area'),
-        ('FBT', 'Ferry berth'), # ?
+        ('FBT', 'Ferry berth'),  # ?
         ('RSE', 'Rail station entrance'),
         ('RLY', 'Rail platform access area'),
-        ('RPL', 'Rail platform'), # ?
+        ('RPL', 'Rail platform'),  # ?
         ('TMU', 'Tram/metro/underground entrance'),
-        ('MET', 'MET'), # ?
+        ('MET', 'MET'),  # ?
         ('PLT', 'Metro and underground platform access area'),
         ('BCE', 'Bus/coach station entrance'),
         ('BCS', 'Bus/coach bay/stand/stance within bus/coach station'),
-        ('BCQ', 'Bus/coach bay'), # ?
+        ('BCQ', 'Bus/coach bay'),  # ?
         ('BCT', 'On street bus/coach/tram stop'),
         ('TXR', 'Taxi rank (head of)'),
         ('STR', 'Shared taxi rank (head of)'),
@@ -223,13 +223,13 @@ class StopPoint(models.Model):
         if self.heading:
             return self.heading
         headings = {
-            'N':    0,
-            'NE':  45,
-            'E':   90,
+            'N': 0,
+            'NE': 45,
+            'E': 90,
             'SE': 135,
-            'S':  180,
+            'S': 180,
             'SW': 225,
-            'W':  270,
+            'W': 270,
             'NW': 315,
         }
         return headings.get(self.bearing)
@@ -250,7 +250,7 @@ class StopPoint(models.Model):
 class Operator(models.Model):
     "An entity that operates public transport services."
 
-    id = models.CharField(max_length=10, primary_key=True) # e.g. 'YCST'
+    id = models.CharField(max_length=10, primary_key=True)  # e.g. 'YCST'
     name = models.CharField(max_length=100, db_index=True)
     vehicle_mode = models.CharField(max_length=48, blank=True)
     parent = models.CharField(max_length=48, blank=True)
@@ -281,7 +281,7 @@ class Operator(models.Model):
             if mode[0] == 'a':
                 return 'An ' + mode
             return 'A ' + mode
-        return 'An' # 'An operator'
+        return 'An'  # 'An operator'
 
 
 class StopUsage(models.Model):
