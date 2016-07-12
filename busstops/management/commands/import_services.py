@@ -267,7 +267,7 @@ class Command(BaseCommand):
 
                 show_timetable = True
                 for grouping in timetable.groupings:
-                    show_timetable = show_timetable and (len(grouping.journeys) < 60 or len(filter(None, grouping.rows[0].times)) < 40)
+                    show_timetable = show_timetable and (len(grouping.journeys) < 30 or len(filter(None, grouping.rows[0].times)) < 30)
 
                 stop_usages = [
                     StopUsage(service_id=service_code, stop_id=row.part.stop.atco_code, direction='outbound', order=i, timing_status=row.part.timingstatus)

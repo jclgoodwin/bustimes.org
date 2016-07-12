@@ -61,25 +61,20 @@ naptan_new=`shasum naptan.zip`
 
 if [[ $naptan_old != $naptan_new ]]; then
     echo "NaPTAN"
-    (
-    echo "  Stops"
-    unzip -oq naptan.zip Stops.csv
-    ../../manage.py import_stops < Stops.csv
-    ) &
-    (
-    echo "  Stop areas"
-    unzip -oq naptan.zip StopAreas.csv
-    ../../manage.py import_stop_areas < StopAreas.csv
-    ) &
-    wait
-    (
-    echo "  Stops in area"
-    unzip -oq naptan.zip StopsInArea.csv
-    ../../manage.py import_stops_in_area < StopsInArea.csv
-    echo "  Cleaning stops"
-    ../../manage.py clean_stops
-    ) &
+    unzip -oq naptan.zip
+    for file in `ls *csv.zip`; do
+        unzip -oq $file Stops.csv StopAreas.csv StopsInArea.csv
+        echo " " $file
+        echo "  Stops"
+        ../../manage.py import_stops < Stops.csv
+        echo "  Stop areas"
+        ../../manage.py import_stop_areas < StopAreas.csv
+        echo "  Stops in area"
+        ../../manage.py import_stops_in_area < StopsInArea.csv
+        rm $file
+    done
 fi
+
 
 cd ..
 
@@ -92,7 +87,7 @@ if [[ $noc_old != $noc_new ]]; then
     ../manage.py correct_operator_regions
     ../manage.py import_operator_contacts < nocrecords.xml
     ../manage.py import_scotch_operator_contacts < NOC_DB.csv
-    ../manage.py update_index busstops.Operator --remove
+#    ../manage.py update_index busstops.Operator --remove
 fi
 
 if [[ $USERNAME == '' || $PASSWORD == '' ]]; then
@@ -105,7 +100,7 @@ for region in ${REGIONS[@]}; do
     region_old=`ls -l $region.zip`
     wget -qN --user=$USERNAME --password=$PASSWORD ftp://ftp.tnds.basemap.co.uk/$region.zip
     region_new=`ls -l $region.zip`
-    if [[ $nptg_old$naptan_old$region_old != $nptg_new$naptan_new$region_new ]]; then
+    if [[ $region_old != $region_new ]]; then
         updated_services=1
         ../../manage.py import_services $region.zip
         unzip -q $region.zip -d ${region}_new
