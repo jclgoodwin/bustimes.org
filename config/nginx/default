@@ -18,26 +18,34 @@ server {
 }
 
 server {
-    listen 443 ssl http2 deferred;
-    listen [::]:443 ssl http2 deferred;
+    listen 443      deferred ssl http2;
+    listen [::]:443 deferred ssl http2;
 
     server_name bustimes.org.uk www.bustimes.org.uk;
 
+    index index.html;
+    root /home/josh/bustimes-static/;
+
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    resolver 8.8.4.4 8.8.8.8 valid=300s;
+    resolver_timeout 10s;
     ssl_session_cache   shared:SSL:10m;
+    ssl_buffer_size     8k;
     ssl_session_timeout 10m;
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
     ssl_ciphers   EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
     ssl_prefer_server_ciphers on;
     ssl_certificate     /home/josh/bustimes-certs/bustimes.pem;
     ssl_certificate_key /home/josh/bustimes-certs/bustimes.key;
-    add_header Strict-Transport-Security 'max-age=31536000; preload';
 
     if ($http_host != 'bustimes.org.uk') {
         return 301 https://bustimes.org.uk$request_uri;
     }
 
     location / {
-        add_header 'content-security-policy' "default-src https:; script-src https: 'unsafe-inline'; style-src https: 'unsafe-inline'; img-src https: data:";
+        add_header 'strict-transport-security' 'max-age=31536000; preload; includeSubDomains' always;
+        add_header 'content-security-policy' "default-src https:; script-src https: 'unsafe-inline'; style-src https: 'unsafe-inline'; img-src https: data:" always;
         proxy_set_header X-Real-IP       $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_pass http://127.0.0.1:6081;
@@ -59,13 +67,11 @@ server {
     }
 
     location ~* ^/(favicon.ico$|manifest.json$|fonts/) {
-        root /home/josh/bustimes-static/;
         expires 1M;
         add_header 'access-control-allow-origin' 'http://webcache.googleusercontent.com,http://localhost:8000';
     }
 
     location /serviceworker.js {
-        root /home/josh/bustimes-static/;
         expires 2d;
     }
 
