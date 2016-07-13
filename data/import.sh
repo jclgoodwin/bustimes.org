@@ -8,6 +8,8 @@
 # Where 'username' and 'password' are your username and password for the
 # Traveline National Dataset FTP server
 
+trap "echo Exited!; exit;" SIGINT SIGTERM
+
 if [ `ps -e | grep -c import.sh` -gt 2 ]; then
     echo "An import appears to be running already"
     exit 0
@@ -64,13 +66,16 @@ if [[ $naptan_old != $naptan_new ]]; then
     unzip -oq naptan.zip
     for file in `ls *csv.zip`; do
         unzip -oq $file Stops.csv StopAreas.csv StopsInArea.csv
-        echo " " $file
+        echo " "$file
         echo "  Stops"
-        ../../manage.py import_stops < Stops.csv
+        ../../manage.py import_stops < Stops.csv || exit
         echo "  Stop areas"
-        ../../manage.py import_stop_areas < StopAreas.csv
+        ../../manage.py import_stop_areas < StopAreas.csv || exit
+    done
+    for file in `ls *csv.zip`; do
+        echo " "$file
         echo "  Stops in area"
-        ../../manage.py import_stops_in_area < StopsInArea.csv
+        ../../manage.py import_stops_in_area < StopsInArea.csv || exit
         rm $file
     done
 fi
