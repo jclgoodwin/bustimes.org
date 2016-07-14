@@ -26,18 +26,7 @@ server {
     index index.html;
     root /home/josh/bustimes-static/;
 
-    ssl_stapling on;
-    ssl_stapling_verify on;
-    resolver 8.8.4.4 8.8.8.8 valid=300s;
-    resolver_timeout 10s;
-    ssl_session_cache   shared:SSL:10m;
-    ssl_buffer_size     8k;
-    ssl_session_timeout 10m;
-    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-    ssl_ciphers   EECDH+CHACHA20:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
-    ssl_prefer_server_ciphers on;
-    ssl_certificate     /home/josh/bustimes-certs/bustimes.pem;
-    ssl_certificate_key /home/josh/bustimes-certs/bustimes.key;
+    include ssl;
 
     if ($http_host != 'bustimes.org.uk') {
         return 301 https://bustimes.org.uk$request_uri;
@@ -73,6 +62,9 @@ server {
 
     location /serviceworker.js {
         expires 2d;
+    }
+
+    location /.well-known/ {
     }
 
     location ~* ^/apple-touch-icon(-.+)?.png$ {
@@ -113,9 +105,14 @@ server {
 }
 
 server {
-    listen 80;
-    root /var/cache/munin/www;
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
     server_name munin.bustimes.org.uk;
+
+    root /var/cache/munin/www;
+
+    include ssl;
 
     location ^~ /munin-cgi/munin-cgi-graph/ {
         access_log off;
