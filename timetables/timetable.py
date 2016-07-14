@@ -603,4 +603,4 @@ def timetable_from_service(service):
 
     filenames = get_filenames(service, path)
     timetables = (timetable_from_filename(os.path.join(path, name)) for name in filenames)
-    return (timetable for timetable in timetables if timetable is not None)
+    return [timetable for timetable in timetables if timetable is not None]

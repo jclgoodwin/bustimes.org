@@ -255,7 +255,6 @@ class Command(BaseCommand):
             # net and service code:
 
             net, service_code, line_ver = cls.infer_from_file_name(root.attrib['FileName'])
-            print net, service_code, line_ver
             if service_code is None:
                 service_code = service_element.find('txc:ServiceCode', cls.ns).text
 
