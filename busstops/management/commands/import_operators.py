@@ -21,9 +21,9 @@ class Command(ImportFromCSVCommand):
     @staticmethod
     def get_name(row):
         if (
-            row['OperatorPublicName'] in ('First', 'Arriva', 'Stagecoach') or
-            row['OperatorPublicName'].startswith('inc.') or
-            row['OperatorPublicName'].startswith('formerly')
+                row['OperatorPublicName'] in ('First', 'Arriva', 'Stagecoach') or
+                row['OperatorPublicName'].startswith('inc.') or
+                row['OperatorPublicName'].startswith('formerly')
         ):
             if row['RefNm'] != '':
                 return row['RefNm']
@@ -37,14 +37,20 @@ class Command(ImportFromCSVCommand):
         "Given a CSV row (a list), returns an Operator object"
 
         operator_id = row['NOCCODE'].replace('=', '')
-
         if operator_id in ('TVSR', 'HBSY') or (operator_id == 'FMAN' and row['Duplicate'] != 'OK'):
             return None
 
         name = cls.get_name(row).replace('\'', u'\u2019')  # Fancy apostrophe
+
+        mode = row['Mode'].lower()
+        if mode == 'ct operator':
+            mode = 'community transport'
+        elif mode == 'drt':
+            mode = 'demand responsive transport'
+
         defaults = {
             'name': name.strip(),
-            'vehicle_mode': row['Mode'].lower().replace('ct operator', 'community transport').replace('drt', 'demand responsive transport'),
+            'vehicle_mode': mode,
             'region_id': cls.get_region_id(row['TLRegOwn']),
         }
 

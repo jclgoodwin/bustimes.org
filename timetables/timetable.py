@@ -576,14 +576,11 @@ def get_filenames(service, path):
 
 
 def timetable_from_filename(filename):
-     try:
-        if filename[-4:] == '.xml':
-            with open(filename) as xmlfile:
-                xml = ET.parse(xmlfile).getroot()
-            return Timetable(xml)
-        return unpickle_timetable(filename)
-     except IOError:
-         return None
+    if filename[-4:] == '.xml':
+        with open(filename) as xmlfile:
+            xml = ET.parse(xmlfile).getroot()
+        return Timetable(xml)
+    return unpickle_timetable(filename)
 
 
 def unpickle_timetable(filename):
