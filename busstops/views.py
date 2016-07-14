@@ -368,7 +368,7 @@ class ServiceDetailView(DetailView):
                 for grouping in table.groupings:
                     for row in grouping.rows:
                         row.part.stop.stop = stops.get(row.part.stop.atco_code)
-        else:
+        if 'timetables' not in context or context['timetables'] == []:
             context['stopusages'] = self.object.stopusage_set.all().select_related('stop__locality').defer(
                 'stop__locality__latlong'
             ).order_by('direction', 'order')
