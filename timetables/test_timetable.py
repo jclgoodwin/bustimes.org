@@ -31,8 +31,8 @@ class TimetableTest(TestCase):
         )
 
     def test_get_filename(self):
-        self.assertEqual(timetable.get_filenames(self.ne_service, None), ('NE_130_PC4736_572.xml',))
-        self.assertEqual(timetable.get_filenames(self.nw_service, None), ('SVR60023943.xml',))
+        self.assertEqual(timetable.get_filenames(self.ne_service, None), ('NE_130_PC4736_572',))
+        self.assertEqual(timetable.get_filenames(self.nw_service, None), ('SVR60023943',))
 
         self.assertEqual(timetable.get_filenames(self.ea_service, ''), ())
         ea_filenames = timetable.get_filenames(self.ea_service, './busstops/management/tests/fixtures/')
@@ -40,16 +40,15 @@ class TimetableTest(TestCase):
         self.assertRaises(StopIteration, ea_filenames.next)
 
         gb_filenames = timetable.get_filenames(self.gb_service, './busstops/management/tests/fixtures/')
-        self.assertEqual(gb_filenames.next(), 'Megabus_Megabus14032016 163144_MEGA_M11A.xml')
         self.assertRaises(StopIteration, gb_filenames.next)
 
     def test_timetable_none(self):
         """timetable_from_filename should return None if there is an error"""
-        none = timetable.timetable_from_filename('./busstops/management/tests/fixtures/ea_21-13B-B-y08-1', None)
+        none = timetable.timetable_from_filename('./busstops/management/tests/fixtures/ea_21-13B-B-y08-')
         self.assertIsNone(none)
 
     def test_timetables(self):
-        timetable_ea = timetable.timetable_from_filename('./busstops/management/tests/fixtures/ea_21-13B-B-y08-1.xml', None)
+        timetable_ea = timetable.timetable_from_filename('./busstops/management/tests/fixtures/ea_21-13B-B-y08-1.xml')
 
         self.assertEqual('Monday to Sunday', str(timetable_ea.operating_profile))
         self.assertEqual('', str(timetable_ea.operating_period))
@@ -65,8 +64,7 @@ class TimetableTest(TestCase):
         self.assertEqual('Leys Lane', timetable_ea.groupings[1].rows[0].part.stop.common_name)
 
         megabus = timetable.timetable_from_filename(
-            './busstops/management/tests/fixtures/Megabus_Megabus14032016 163144_MEGA_M11A.xml',
-            None
+            './busstops/management/tests/fixtures/Megabus_Megabus14032016 163144_MEGA_M11A.xml'
         )
         self.assertFalse(megabus.groupings[0].has_minor_stops())
         self.assertFalse(megabus.groupings[1].has_minor_stops())
@@ -75,7 +73,7 @@ class TimetableTest(TestCase):
             [time(13, 0), time(15, 0), time(16, 0), time(16, 30), time(18, 0), time(20, 0), time(23, 45)]
         )
 
-        timetable_ne = timetable.timetable_from_filename('./busstops/management/tests/fixtures/NE_03_SCC_X6_1.xml', None)
+        timetable_ne = timetable.timetable_from_filename('./busstops/management/tests/fixtures/NE_03_SCC_X6_1.xml')
         self.assertEqual(timetable_ne.groupings[0].column_heads[0].span, 16)
         self.assertEqual(timetable_ne.groupings[0].column_heads[1].span, 14)
         self.assertEqual(timetable_ne.groupings[0].column_heads[2].span, 4)
@@ -85,11 +83,11 @@ class TimetableTest(TestCase):
         self.assertIsNone(timetable_ne.groupings[1].rows[0].times[-12])
         self.assertEqual(timetable_ne.groupings[1].rows[0].times[-13].colspan, 2)
 
-        timetable_scotland = timetable.timetable_from_filename('./busstops/management/tests/fixtures/SVRABBN017.xml', None)
+        timetable_scotland = timetable.timetable_from_filename('./busstops/management/tests/fixtures/SVRABBN017.xml')
         self.assertEqual(timetable_scotland.groupings[0].column_feet[0].span, 14)
         self.assertEqual(timetable_scotland.groupings[0].column_feet[0].notes, [])
 
-        timetable_deadruns = timetable.timetable_from_filename('./busstops/management/tests/fixtures/SVRLABO024A.xml', None)
+        timetable_deadruns = timetable.timetable_from_filename('./busstops/management/tests/fixtures/SVRLABO024A.xml')
         self.assertEqual(timetable_deadruns.groupings[0].rows[-25].times[:3], [time(20, 58), time(22, 28), time(23, 53)])
         self.assertEqual(timetable_deadruns.groupings[0].rows[-24].times[:7], ['', '', '', '', '', '', time(9, 51)])
         self.assertEqual(timetable_deadruns.groupings[0].rows[-20].times[:6], ['', '', '', '', '', ''])

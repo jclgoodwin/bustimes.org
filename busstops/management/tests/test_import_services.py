@@ -1,6 +1,5 @@
 # coding=utf-8
 import os
-import shutil
 import xml.etree.cElementTree as ET
 from django.test import TestCase
 from ...models import Operator, Service, Region
@@ -96,24 +95,12 @@ class ImportServicesTest(TestCase):
 
     @classmethod
     def do_service(cls, filename, region, service_descriptions=None):
-        path = os.path.join(DIR, 'fixtures/%s.xml' % filename)
+        filename = '%s.xml' % filename
+        path = os.path.join(DIR, 'fixtures/%s' % filename)
         with open(path) as xml_file:
             root = ET.parse(xml_file).getroot()
 
-        cls.command.do_service(root, region, service_descriptions)
-
-        tnds_destination = os.path.join(DIR, '../../../data/TNDS')
-        if region == 'GB':
-            destination = os.path.join(tnds_destination, 'NCSD/NCSD_TXC')
-        else:
-            destination = os.path.join(tnds_destination, region)
-        if not os.path.exists(destination):
-            if not os.path.exists(tnds_destination):
-                os.mkdir(tnds_destination)
-            if region == 'GB':
-                os.mkdir(os.path.join(tnds_destination, 'NCSD'))
-            os.mkdir(destination)
-        shutil.copy(path, destination)
+        cls.command.do_service(root, region, filename, service_descriptions)
 
     def test_do_service_ea(self):
         service = self.ea_service

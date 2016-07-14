@@ -111,12 +111,6 @@ for region in "${REGIONS[@]}"; do
     if [[ $region_old != $region_new ]]; then
         # updated_services=1
         ../../manage.py import_services $region.zip
-        unzip -q "$region.zip" -d ${region}_new
-        aws s3 cp --recursive $region/ s3://bustimes-test/"${date}"-$region
-        mv $region ${region}_old
-        mv ${region}_new $region
-        rm -r ${region}_old
-        ../corrections.sh
     fi
 done
 # [ $updated_services ] && ../../manage.py update_index --remove

@@ -9,9 +9,11 @@ Usage:
     ./manage.py import_services EA.zip [EM.zip etc]
 """
 
+import os
 import re
 import zipfile
 import csv
+import cPickle as pickle
 import xml.etree.cElementTree as ET
 from datetime import datetime
 from titlecase import titlecase
@@ -22,6 +24,8 @@ from django.db import transaction
 from timetables.timetable import Timetable
 from ...models import Operator, StopPoint, Service, StopUsage
 
+
+DIR = os.path.dirname(os.path.realpath(__file__))
 
 # map names to operator IDs where there is no correspondence between the NOC DB and TNDS:
 SPECIAL_OPERATOR_TRADINGNAMES = {
@@ -206,9 +210,7 @@ class Command(BaseCommand):
         return (line_name, line_brand)
 
     @classmethod
-    def do_service(cls, root, region_id, service_descriptions=None):
-
-        file_name = root.attrib['FileName']
+    def do_service(cls, root, region_id, file_name, service_descriptions=None):
 
         for service_element in root.find('txc:Services', cls.ns):
 
@@ -252,7 +254,8 @@ class Command(BaseCommand):
 
             # net and service code:
 
-            net, service_code, line_ver = cls.infer_from_file_name(file_name)
+            net, service_code, line_ver = cls.infer_from_file_name(root.attrib['FileName'])
+            print net, service_code, line_ver
             if service_code is None:
                 service_code = service_element.find('txc:ServiceCode', cls.ns).text
 
@@ -268,6 +271,16 @@ class Command(BaseCommand):
                 show_timetable = True
                 for grouping in timetable.groupings:
                     show_timetable = show_timetable and (len(grouping.journeys) < 30 or len(filter(None, grouping.rows[0].times)) < 30)
+
+                if show_timetable:
+                    tnds_dir = os.path.join(DIR, '../../../data/TNDS')
+                    pickle_dir = os.path.join(tnds_dir, 'NCSD' if region_id == 'GB' else region_id)
+                    if not os.path.exists(pickle_dir):
+                        if not os.path.exists(tnds_dir):
+                            os.mkdir(tnds_dir)
+                        os.mkdir(pickle_dir)
+                    with open('%s/%s' % (pickle_dir, file_name[:-4]), 'wb') as open_file:
+                        pickle.dump(timetable, open_file)
 
                 stop_usages = [
                     StopUsage(service_id=service_code, stop_id=row.part.stop.atco_code, direction='outbound', order=i, timing_status=row.part.timingstatus)
@@ -333,7 +346,7 @@ class Command(BaseCommand):
 
             if file_name.endswith('.xml'):
                 root = ET.parse(archive.open(file_name)).getroot()
-                cls.do_service(root, region_id, service_descriptions=service_descriptions)
+                cls.do_service(root, region_id, file_name, service_descriptions=service_descriptions)
 
     @classmethod
     def handle(cls, *args, **options):

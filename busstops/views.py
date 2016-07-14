@@ -363,7 +363,7 @@ class ServiceDetailView(DetailView):
 
         if self.object.show_timetable or '_MEGA' in self.object.service_code or 'timetable' in self.request.GET:
             stops = self.object.stops.all().select_related('locality').defer('latlong', 'locality__latlong')
-            context['timetables'] = timetable.timetable_from_service(self.object, stops)
+            context['timetables'] = timetable.timetable_from_service(self.object)
         else:
             context['stopusages'] = self.object.stopusage_set.all().select_related('stop__locality').defer(
                 'stop__locality__latlong'
@@ -389,7 +389,7 @@ def service_xml(request, pk):
 
     if service.region_id == 'GB':
         # service.service_code = '_'.join(service.service_code.split('_')[::-1])
-        path = os.path.join(DIR, '../data/TNDS/NCSD/NCSD_TXC/')
+        path = os.path.join(DIR, '../data/TNDS/NCSD/')
     else:
         path = os.path.join(DIR, '../data/TNDS/%s/' % service.region_id)
 

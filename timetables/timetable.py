@@ -1,4 +1,5 @@
 import os
+import cPickle as pickle
 import xml.etree.cElementTree as ET
 from datetime import date, datetime
 from django.utils.dateparse import parse_duration
@@ -10,13 +11,10 @@ NS = {
 
 
 class Stop(object):
-    """Represents a TransXChange StopPoint,
-    optionally with a reference to a busstops.models.StopPoint
+    """Represents a TransXChange StopPoint
     """
-    def __init__(self, element, stops):
+    def __init__(self, element):
         self.atco_code = element.find('txc:StopPointRef', NS).text
-        if stops is not None:
-            self.stop = stops.get(self.atco_code)
         self.common_name = element.find('txc:CommonName', NS).text
         locality_element = element.find('txc:LocalityName', NS)
         if locality_element is not None:
@@ -429,14 +427,14 @@ class ColumnFoot(object):
 
 
 class Timetable(object):
-    def __init__(self, xml, stops=None):
+    def __init__(self, xml):
         today = date.today()
 
         outbound_grouping = Grouping('outbound')
         inbound_grouping = Grouping('inbound')
 
         stops = {
-            element.find('txc:StopPointRef', NS).text: Stop(element, stops)
+            element.find('txc:StopPointRef', NS).text: Stop(element)
             for element in xml.find('txc:StopPoints', NS)
         }
         journeypatternsections = {
@@ -558,9 +556,9 @@ def abbreviate(grouping, i, in_a_row, difference):
 
 def get_filenames(service, path):
     if service.region_id == 'NE':
-        return ('%s.xml' % service.pk,)
+        return (service.pk,)
     elif service.region_id in ('S', 'NW'):
-        return ('SVR%s.xml' % service.pk,)
+        return ('SVR%s' % service.pk,)
     else:
         try:
             namelist = os.listdir(path)
@@ -570,30 +568,39 @@ def get_filenames(service, path):
             return (name for name in namelist if name.startswith('%s-' % service.pk))
         elif service.region_id == 'GB':
             parts = service.pk.split('_')
-            return (name for name in namelist if name.endswith('_%s_%s.xml' % (parts[1], parts[0])))
+            return (name for name in namelist if name.endswith('_%s_%s' % (parts[1], parts[0])))
         elif service.region_id == 'Y':
-            return (name for name in namelist if name.startswith('SVR%s-' % service.pk) or name == 'SVR%s.xml' % service.pk)
+            return (name for name in namelist if name.startswith('SVR%s-' % service.pk) or name == 'SVR%s' % service.pk)
         else:
-            return (name for name in namelist if name.endswith('_%s.xml' % service.pk))
+            return (name for name in namelist if name.endswith('_%s' % service.pk))
 
 
-def timetable_from_filename(filename, stops):
+def timetable_from_filename(filename):
+     try:
+        if filename[-4:] == '.xml':
+            with open(filename) as xmlfile:
+                xml = ET.parse(xmlfile).getroot()
+            return Timetable(xml)
+        return unpickle_timetable(filename)
+     except IOError:
+         return None
+
+
+def unpickle_timetable(filename):
     try:
-        with open(filename) as xmlfile:
-            xml = ET.parse(xmlfile).getroot()
-        return Timetable(xml, stops)
+        with open(filename) as open_file:
+            return pickle.load(open_file)
     except IOError:
         return None
 
 
-def timetable_from_service(service, stops):
+def timetable_from_service(service):
     if service.region_id == 'GB':
-        # service.service_code = '_'.join(service.service_code.split('_')[::-1])
-        path = os.path.join(DIR, '../data/TNDS/NCSD/NCSD_TXC/')
+        path = 'NCSD'
     else:
-        path = os.path.join(DIR, '../data/TNDS/%s/' % service.region_id)
+        path = service.region_id
+    path = os.path.join(DIR, '../data/TNDS/%s/' % path)
 
     filenames = get_filenames(service, path)
-    stops = {stop.atco_code: stop for stop in stops}
-    timetables = (timetable_from_filename(os.path.join(path, name), stops) for name in filenames)
+    timetables = (timetable_from_filename(os.path.join(path, name)) for name in filenames)
     return (timetable for timetable in timetables if timetable is not None)
