@@ -100,7 +100,7 @@ class ImportServicesTest(TestCase):
         with open(path) as xml_file:
             root = ET.parse(xml_file).getroot()
         if region == 'GB':
-            filename = '%s/NCSD_TXC' % filename
+            filename = 'NCSD_TXC/%s' % filename
         cls.command.do_service(root, region, filename, service_descriptions)
 
     def test_do_service_ea(self):

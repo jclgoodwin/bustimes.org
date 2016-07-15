@@ -284,12 +284,11 @@ class Command(BaseCommand):
                 if show_timetable:
                     for grouping in timetable.groupings:
                         del grouping.journeys
-                    tnds_dir = os.path.join(DIR, '../../../data/TNDS')
-                    pickle_dir = os.path.join(tnds_dir, 'NCSD' if region_id == 'GB' else region_id)
+                    pickle_dir = os.path.join(DIR, '../../../data/TNDS', 'NCSD' if region_id == 'GB' else region_id)
                     if not os.path.exists(pickle_dir):
-                        if not os.path.exists(tnds_dir):
-                            os.mkdir(tnds_dir)
-                        os.mkdir(pickle_dir)
+                        os.makedirs(pickle_dir)
+                        if region_id == 'GB':
+                            os.mkdir(os.path.join(pickle_dir, 'NCSD_TXC'))
                     with open('%s/%s' % (pickle_dir, file_name[:-4]), 'wb') as open_file:
                         pickle.dump(timetable, open_file)
 
