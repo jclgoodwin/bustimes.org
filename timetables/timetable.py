@@ -593,10 +593,9 @@ def unpickle_timetable(filename):
 
 def timetable_from_service(service):
     if service.region_id == 'GB':
-        path = 'NCSD'
+        path = os.path.join(DIR, '../data/TNDS/NCSD/NCSD_TXC/')
     else:
-        path = service.region_id
-    path = os.path.join(DIR, '../data/TNDS/%s/' % path)
+        path = os.path.join(DIR, '../data/TNDS/%s/' % service.region_id)
 
     filenames = get_filenames(service, path)
     timetables = (timetable_from_filename(os.path.join(path, name)) for name in filenames)

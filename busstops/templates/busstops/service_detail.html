@@ -32,7 +32,7 @@
 {% endif %}
 
 {% for timetable in timetables %}
-    {% for grouping in timetable.groupings %}{% if grouping.journeys %}
+    {% for grouping in timetable.groupings %}{% if grouping.rows.0.times %}
     <h2>{{ grouping.direction.capitalize }} {{ timetable.operating_period }}</h2>
 
     <div class="timetable-wrapper">

@@ -267,20 +267,6 @@ class Command(BaseCommand):
             try:
                 timetable = Timetable(root)
 
-                show_timetable = True
-                for grouping in timetable.groupings:
-                    show_timetable = show_timetable and (len(grouping.journeys) < 30 or len(filter(None, grouping.rows[0].times)) < 30)
-
-                if show_timetable:
-                    tnds_dir = os.path.join(DIR, '../../../data/TNDS')
-                    pickle_dir = os.path.join(tnds_dir, 'NCSD' if region_id == 'GB' else region_id)
-                    if not os.path.exists(pickle_dir):
-                        if not os.path.exists(tnds_dir):
-                            os.mkdir(tnds_dir)
-                        os.mkdir(pickle_dir)
-                    with open('%s/%s' % (pickle_dir, file_name[:-4]), 'wb') as open_file:
-                        pickle.dump(timetable, open_file)
-
                 stop_usages = [
                     StopUsage(service_id=service_code, stop_id=row.part.stop.atco_code, direction='outbound', order=i, timing_status=row.part.timingstatus)
                     for i, row in enumerate(timetable.groupings[0].rows)
@@ -291,6 +277,22 @@ class Command(BaseCommand):
                     for i, row in enumerate(timetable.groupings[1].rows)
                     if stops.get(row.part.stop.atco_code)
                 ]
+
+                show_timetable = True
+                for grouping in timetable.groupings:
+                    show_timetable = show_timetable and (len(grouping.journeys) < 30 or len(filter(None, grouping.rows[0].times)) < 30)
+                if show_timetable:
+                    for grouping in timetable.groupings:
+                        del grouping.journeys
+                    tnds_dir = os.path.join(DIR, '../../../data/TNDS')
+                    pickle_dir = os.path.join(tnds_dir, 'NCSD' if region_id == 'GB' else region_id)
+                    if not os.path.exists(pickle_dir):
+                        if not os.path.exists(tnds_dir):
+                            os.mkdir(tnds_dir)
+                        os.mkdir(pickle_dir)
+                    with open('%s/%s' % (pickle_dir, file_name[:-4]), 'wb') as open_file:
+                        pickle.dump(timetable, open_file)
+
             except (AttributeError, IndexError) as e:
                 print e, file_name
                 show_timetable = False
