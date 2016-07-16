@@ -1,3 +1,4 @@
+# coding=utf-8
 from django.test import TestCase
 from django.core import mail
 from django.contrib.gis.geos import Point
@@ -88,7 +89,13 @@ class ViewsTests(TestCase):
             region=cls.north
         )
         cls.chariots = Operator.objects.create(
-            pk='AINS', name='Ainsley\'s Chariots', vehicle_mode='airline', region_id='N'
+            pk='AINS',
+            name='Ainsley\'s Chariots',
+            vehicle_mode='airline',
+            region_id='N',
+            address='10 King Road\nIpswich',
+            phone='0800 1111',
+            url='isyourgirlfriendahorse.com'
         )
         cls.nuventure = Operator.objects.create(
             pk='VENT', name='Nu-Venture', vehicle_mode='bus', region_id='N'
@@ -183,8 +190,10 @@ class ViewsTests(TestCase):
     def test_operator_found(self):
         response = self.client.get('/operators/AINS')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Chariots')
         self.assertContains(response, 'An airline operator in')
+        self.assertContains(response, 'Contact Ainsley&#39;s Chariots')
+        self.assertContains(response, '10 King Road<br />Ipswich')
+        self.assertContains(response, 'http://isyourgirlfriendahorse.com')
 
     def test_operator_not_found(self):
         """An operator with no services should should return a 404 response"""

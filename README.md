@@ -28,6 +28,6 @@ In an emergency, it's possible to run this on Heroku, but that's relatively expe
 
 ## Importing data
 
-[`import.sh`](data/import.sh) will download data from various sources and run the necessary Django [management commands](busstops/management/commands) to import it.
+[`import.sh`](data/import.sh) will download data from various [sources](https://bustimes.org.uk/data) and run the necessary Django [management commands](busstops/management/commands) to import it.
 When run repeatedly, it will only download and import the stuff that's changed.
 It expects to be run from the [`data`](data) directory, and needs a username and password to import TNDS data.
