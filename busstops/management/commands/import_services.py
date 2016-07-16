@@ -280,7 +280,7 @@ class Command(BaseCommand):
 
                 show_timetable = True
                 for grouping in timetable.groupings:
-                    show_timetable = show_timetable and (len(grouping.journeys) < 30 or len(filter(None, grouping.rows[0].times)) < 30)
+                    show_timetable = show_timetable and (len(grouping.journeys) < 40 or len([time for time in grouping.rows[0].times if time is not None]) < 40)
                 if show_timetable:
                     for grouping in timetable.groupings:
                         del grouping.journeys
