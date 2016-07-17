@@ -173,7 +173,7 @@ class LiveDeparturesTest(TestCase):
     def test_transporapi_row(self):
         """Test the get_row() method for Transport API departures
         """
-        departures = live.TransportApiDepartures(None, ())
+        departures = live.TransportApiDepartures(self.yorkshire_stop, ())
         rows = ({
             'direction': 'Gunton,Weston Road,',
             'expected_departure_time': None,
@@ -217,6 +217,17 @@ class LiveDeparturesTest(TestCase):
             'service': '44A',
             'time': datetime.datetime(2016, 6, 10, 22, 47)
         })
+
+        request_args = departures.get_request_args()
+        self.assertEqual(
+            request_args,
+            ('http://transportapi.com/v3/uk/bus/stop/3290YYA00215/live.json', {
+                'app_id': None,
+                'app_key': None,
+                'nextbuses': 'no',
+                'group': 'no',
+            })
+        )
 
     def test_max_age(self):
         """Test the get_max_age() method

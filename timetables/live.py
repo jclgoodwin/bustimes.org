@@ -19,11 +19,11 @@ class Departures(object):
             for service in services
         }
 
-    def get_response_args(self):
+    def get_request_args(self):
         raise NotImplementedError
 
     def get_response(self):
-        return requests.get(*self.get_response_args())
+        return requests.get(*self.get_request_args())
 
     def get_service(self, line_name):
         """Returns the Service matching a line name (case-insensitively), or a line name string"""
@@ -37,7 +37,7 @@ class Departures(object):
 
 
 class TflDepartures(Departures):
-    def get_response_args(self):
+    def get_request_args(self):
         return ('http://api.tfl.gov.uk/StopPoint/%s/arrivals' % self.stop.pk,)
 
     def departures_from_response(self, res):
@@ -58,7 +58,7 @@ class AcisDepartures(Departures):
 
 
 class AcisLiveDepartures(AcisDepartures):
-    def get_response_args(self):
+    def get_request_args(self):
         return ('http://%s.acislive.com/pip/stop_simulator_table.asp' % self.prefix, {
             'naptan': self.stop.naptan_code
         })
@@ -84,7 +84,7 @@ class AcisConnectDepartures(AcisDepartures):
             return '1 min'
         return text.replace('Mins', 'mins')
 
-    def get_response_args(self):
+    def get_request_args(self):
         return ('http://%s.acisconnect.com/Text/WebDisplay.aspx' % self.prefix, {
             'stopRef': self.stop.naptan_code if self.prefix == 'yorkshire' else self.stop.pk
         })
@@ -133,7 +133,7 @@ class TransportApiDepartures(Departures):
             'destination': destination,
         }
 
-    def get_response_args(self):
+    def get_request_args(self):
         url = 'http://transportapi.com/v3/uk/bus/stop/%s/live.json' % self.stop.atco_code
         return (url, {
             'app_id': settings.TRANSPORTAPI_APP_ID,

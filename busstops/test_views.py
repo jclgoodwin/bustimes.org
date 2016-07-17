@@ -95,6 +95,7 @@ class ViewsTests(TestCase):
             region_id='N',
             address='10 King Road\nIpswich',
             phone='0800 1111',
+            email='ainsley@example.com',
             url='isyourgirlfriendahorse.com'
         )
         cls.nuventure = Operator.objects.create(
@@ -193,6 +194,7 @@ class ViewsTests(TestCase):
         self.assertContains(response, 'An airline operator in')
         self.assertContains(response, 'Contact Ainsley&#39;s Chariots')
         self.assertContains(response, '10 King Road<br />Ipswich')
+        self.assertContains(response, 'mailto:ainsley@example.com')
         self.assertContains(response, 'http://isyourgirlfriendahorse.com')
 
     def test_operator_not_found(self):
