@@ -34,9 +34,12 @@ class Command(BaseCommand):
         for public_name in soup.publicname.find_all('publicnamerecord'):
             noc_code = noc_codes.get(public_name.pubnmid.string)
 
-            operator = Operator.objects.filter(pk=noc_code.replace('=', '')).first()
-            if not operator:
-                break
+            if noc_code:
+                operator = Operator.objects.filter(pk=noc_code.replace('=', '')).first()
+                if not operator:
+                    continue
+            else:
+                continue
 
             website = public_name.website.string
             address = public_name.complenq.string
@@ -53,9 +56,7 @@ class Command(BaseCommand):
                     operator.address = self.format_address(address)
                 if email:
                     operator.email = email
-                if phone:
+                if phone and len(phone) <= 128:
                     operator.phone = phone
-                try:
-                    operator.save()
-                except Exception as e:
-                    print e, operator
+
+                operator.save()

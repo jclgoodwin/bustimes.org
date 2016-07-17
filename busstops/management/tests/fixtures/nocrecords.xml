@@ -30,5 +30,24 @@
             <DataOwner></DataOwner>
             <Website>www.sanderscoaches.com#http://www.sanderscoaches.com#</Website>
         </PublicNameRecord>
+        <publicnamerecord>
+            <pubnmid>95938</pubnmid>
+            <operatorpublicname></operatorpublicname>
+            <pubnmqual></pubnmqual>
+            <ttrteenq></ttrteenq>
+            <fareenq></fareenq>
+            <lostpropenq></lostpropenq>
+            <disruptenq></disruptenq>
+            <complenq></complenq>
+            <twitter></twitter>
+            <facebook></facebook>
+            <linkedin></linkedin>
+            <youtube></youtube>
+            <changedate></changedate>
+            <changeagent></changeagent>
+            <changecomment></changecomment>
+            <ceaseddate></ceaseddate>
+            <dataowner></dataowner><website></website>
+        </publicnamerecord>
     </PublicName>
 </travelinedata>
