@@ -2,6 +2,7 @@
 """
 
 import os
+import sys
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -13,7 +14,7 @@ DEBUG = bool(os.environ.get('DEBUG', False))
 SERVER_EMAIL = 'contact@bustimes.org.uk'
 ADMINS = MANAGERS = (('Josh', 'contact@bustimes.org.uk'),)
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -23,7 +24,9 @@ INSTALLED_APPS = (
     'haystack',
     'busstops',
     'pipeline',
-)
+]
+if DEBUG and 'test' not in sys.argv:
+    INSTALLED_APPS += ['debug_toolbar']
 
 ROOT_URLCONF = 'buses.urls'
 
