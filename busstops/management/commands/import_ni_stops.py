@@ -4,13 +4,15 @@ Usage:
     ./manage.py import_ni_stops < bus-stop-list-february-2016.csv
 """
 
-from ..import_from_csv import ImportFromCSVCommand
-from ...models import StopPoint, Locality, AdminArea
 from django.contrib.gis.geos import Point
+from ..import_from_csv import ImportFromCSVCommand
+from ...models import StopPoint
 
 
 class Command(ImportFromCSVCommand):
-
+    """
+    Imports Northern Irish bus stops
+    """
     def handle_row(self, row):
         defaults = {
             'latlong': Point(

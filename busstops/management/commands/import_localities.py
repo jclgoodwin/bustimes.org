@@ -1,6 +1,4 @@
 """
-Import localities from the NPTG.
-
 Usage:
 
     import_localities < Localities.csv
@@ -12,9 +10,10 @@ from ...models import Locality
 
 
 class Command(ImportFromCSVCommand):
-
+    """
+    Imports localities from the NPTG
+    """
     def handle_row(self, row):
-
         defaults = {
             'name': row['LocalityName'].replace('\'', u'\u2019'),
             'qualifier_name': row['QualifierName'],

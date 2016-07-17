@@ -1,6 +1,4 @@
 """
-Add hierarchies to localities imported from the NPTG.
-
 Usage:
 
     import_locality_hierarchy < LocalityHierarchy.csv
@@ -11,7 +9,9 @@ from ...models import Locality
 
 
 class Command(ImportFromCSVCommand):
-
+    """
+    Sets parent localities
+    """
     def handle_row(self, row):
         child = Locality.objects.get(id=row['ChildNptgLocalityCode'])
         parent_id = row['ParentNptgLocalityCode']
