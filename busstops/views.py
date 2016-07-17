@@ -362,16 +362,18 @@ class ServiceDetailView(DetailView):
         context['traveline_url'] = self.object.get_traveline_url()
 
         if self.object.show_timetable or '_MEGA' in self.object.service_code or 'timetable' in self.request.GET:
-            stops = {stop.pk: stop for stop in self.object.stops.all().select_related('locality').defer('latlong', 'locality__latlong')}
             context['timetables'] = timetable.timetable_from_service(self.object)
-            for table in context['timetables']:
-                for grouping in table.groupings:
-                    for row in grouping.rows:
-                        row.part.stop.stop = stops.get(row.part.stop.atco_code)
+
         if 'timetables' not in context or context['timetables'] == []:
             context['stopusages'] = self.object.stopusage_set.all().select_related('stop__locality').defer(
                 'stop__locality__latlong'
             ).order_by('direction', 'order')
+        else:
+            stops = {stop.pk: stop for stop in self.object.stops.all().select_related('locality').defer('latlong', 'locality__latlong')}
+            for table in context['timetables']:
+                for grouping in table.groupings:
+                    for row in grouping.rows:
+                        row.part.stop.stop = stops.get(row.part.stop.atco_code)
 
         if bool(context['operators']):
             context['breadcrumb'] = [self.object.region, context['operators'][0]]
