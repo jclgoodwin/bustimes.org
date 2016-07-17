@@ -64,7 +64,7 @@ ga('send', 'pageview');
 <link rel="stylesheet" property="styleseet" href="{% static 'css/leaflet.css' %}" />
 <script src="{% static 'js/leaflet.js' %}"></script>
 <script async src="{% static 'js/map.js' %}"></script>
-{% if stoppoint and services %}
+{% if stoppoint and services or not stoppoint.locality %}
 <script src="{% static 'js/bower_components/reqwest/reqwest.min.js' %}"></script>
 <script async src="{% static 'js/departures.js' %}"></script>
 {% endif %}

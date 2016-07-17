@@ -157,7 +157,7 @@ class AdminAreaDetailView(DetailView):
     "A single administrative area, and the districts, localities (or stops) in it"
 
     model = AdminArea
-    queryset = model._default_manager.select_related('region')
+    queryset = model.objects.select_related('region')
 
     def get_context_data(self, **kwargs):
         context = super(AdminAreaDetailView, self).get_context_data(**kwargs)
@@ -198,7 +198,7 @@ class DistrictDetailView(DetailView):
     "A single district, and the localities in it"
 
     model = District
-    queryset = model._default_manager.select_related('admin_area', 'admin_area__region')
+    queryset = model.objects.select_related('admin_area', 'admin_area__region')
 
     def get_context_data(self, **kwargs):
         context = super(DistrictDetailView, self).get_context_data(**kwargs)
@@ -219,7 +219,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
     "A single locality, its children (if any), and  the stops in it"
 
     model = Locality
-    queryset = model._default_manager.select_related('admin_area', 'admin_area__region', 'district', 'parent')
+    queryset = model.objects.select_related('admin_area', 'admin_area__region', 'district', 'parent')
 
     def get_context_data(self, **kwargs):
         context = super(LocalityDetailView, self).get_context_data(**kwargs)
@@ -257,7 +257,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
     "A stop, other stops in the same area, and the services servicing it"
 
     model = StopPoint
-    queryset = model._default_manager.select_related('admin_area', 'admin_area__region', 'locality', 'locality__parent', 'locality__district')
+    queryset = model.objects.select_related('admin_area', 'admin_area__region', 'locality', 'locality__parent', 'locality__district')
 
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
@@ -282,10 +282,10 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         context['nearby'] = context['nearby'].filter(active=True).exclude(pk=self.object.pk).order_by('atco_code')
 
         context['breadcrumb'] = filter(None, [
-            self.object.admin_area.region,
+            self.object.admin_area.region if self.object.admin_area else Region.objects.get(pk='NI'),
             self.object.admin_area,
-            self.object.locality.district,
-            self.object.locality.parent,
+            self.object.locality.district if self.object.locality else None,
+            self.object.locality.parent if self.object.locality else None,
             self.object.locality,
         ])
         return context
@@ -332,7 +332,7 @@ class OperatorDetailView(UppercasePrimaryKeyMixin, DetailView):
     "An operator and the services it operates"
 
     model = Operator
-    queryset = model._default_manager.defer('parent').select_related('region')
+    queryset = model.objects.defer('parent').select_related('region')
 
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
@@ -350,7 +350,7 @@ class ServiceDetailView(DetailView):
     "A service and the stops it stops at"
 
     model = Service
-    queryset = model._default_manager.select_related('region')
+    queryset = model.objects.select_related('region')
 
     def get_context_data(self, **kwargs):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)

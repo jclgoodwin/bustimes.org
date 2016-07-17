@@ -29,9 +29,11 @@
 
 <div class="asides">
 
-{% if services %}
+{% if services or stoppoint.locality == None %}
     <div class="aside" id="departures"></div>
+{% endif %}
 
+{% if services %}
     <div class="aside box">
     <h2>Services</h2>
     <ul>

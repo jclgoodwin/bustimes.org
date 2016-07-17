@@ -211,6 +211,15 @@ def get_departures(stop, services):
                 }
             }, 60)
 
+    if stop.pk.startswith('7000000'):
+        return ({
+            'departures': AcisConnectDepartures('belfast', stop, services),
+            'source': {
+                'url': 'http://belfast.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % stop.pk,
+                'name': 'vixConnect'
+            }
+        }, 60)
+
     try:
         departures = TransportApiDepartures(stop, services).get_departures()
     except requests.exceptions.ConnectionError:

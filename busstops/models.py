@@ -158,7 +158,7 @@ class StopPoint(models.Model):
     objects = models.GeoManager()
 
     stop_area = models.ForeignKey(StopArea, null=True, editable=False)
-    locality = models.ForeignKey('Locality', editable=False)
+    locality = models.ForeignKey('Locality', null=True, editable=False)
     suburb = models.CharField(max_length=48, blank=True)
     town = models.CharField(max_length=48, blank=True)
     locality_centre = models.BooleanField()
@@ -210,7 +210,7 @@ class StopPoint(models.Model):
 
     timing_status = models.CharField(max_length=3, choices=TIMING_STATUS_CHOICES, blank=True)
 
-    admin_area = models.ForeignKey('AdminArea')
+    admin_area = models.ForeignKey('AdminArea', null=True)
     active = models.BooleanField(db_index=True)
 
     def __unicode__(self):
@@ -235,12 +235,13 @@ class StopPoint(models.Model):
         return headings.get(self.bearing)
 
     def get_qualified_name(self):
-        locality_name = unicode(self.locality).replace(' Town Centre', '').replace(' City Centre', '')
-        if locality_name.replace('\'', '').replace(u'\u2019', '') not in self.common_name.replace('\'', ''):
-            if self.indicator in ('opp', 'adj', 'at', 'o/s', 'nr', 'before', 'after', 'by', 'on', 'in'):
-                return '%s, %s %s' % (locality_name, self.indicator, self.common_name)
-            else:
-                return '%s %s' % (locality_name, unicode(self))
+        if self.locality is not None:
+            locality_name = unicode(self.locality).replace(' Town Centre', '').replace(' City Centre', '')
+            if locality_name.replace('\'', '').replace(u'\u2019', '') not in self.common_name.replace('\'', ''):
+                if self.indicator in ('opp', 'adj', 'at', 'o/s', 'nr', 'before', 'after', 'by', 'on', 'in'):
+                    return '%s, %s %s' % (locality_name, self.indicator, self.common_name)
+                else:
+                    return '%s %s' % (locality_name, unicode(self))
         return unicode(self)
 
     def get_absolute_url(self):
