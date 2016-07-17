@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     'busstops',
     'pipeline',
 ]
-if DEBUG and 'test' not in sys.argv:
+if DEBUG and 'test' not in sys.argv and not bool(os.environ.get('TRAVIS')):
     INSTALLED_APPS += ['debug_toolbar']
 
 ROOT_URLCONF = 'buses.urls'
