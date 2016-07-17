@@ -216,7 +216,7 @@ class DistrictDetailView(DetailView):
 
 
 class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
-    "A single locality, its children (if any), and  the stops in it"
+    "A single locality, its children (if any), and the stops in it"
 
     model = Locality
     queryset = model.objects.select_related('admin_area', 'admin_area__region', 'district', 'parent')
@@ -369,11 +369,14 @@ class ServiceDetailView(DetailView):
                 'stop__locality__latlong'
             ).order_by('direction', 'order')
         else:
-            stops = {stop.pk: stop for stop in self.object.stops.all().select_related('locality').defer('latlong', 'locality__latlong')}
+            stops_dict = {
+                stop.pk: stop for stop in self.object.stops.all().select_related('locality')
+                .defer('latlong', 'locality__latlong')
+            }
             for table in context['timetables']:
                 for grouping in table.groupings:
                     for row in grouping.rows:
-                        row.part.stop.stop = stops.get(row.part.stop.atco_code)
+                        row.part.stop.stop = stops_dict.get(row.part.stop.atco_code)
 
         if bool(context['operators']):
             context['breadcrumb'] = [self.object.region, context['operators'][0]]

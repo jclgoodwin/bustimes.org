@@ -32,7 +32,6 @@ class Command(BaseCommand):
             if not old_rows or cells != old_cells:
                 if cells[0] not in changed_regions:
                     changed_regions.append(cells[0])
-                print cells[1], 'changed'
                 changed_areas.append(cells[2])
 
         return (changed_regions, changed_areas)

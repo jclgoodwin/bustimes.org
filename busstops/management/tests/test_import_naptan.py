@@ -5,10 +5,39 @@ Tests for importing NaPTAN data
 import os
 from django.test import TestCase
 from ...models import Region, AdminArea, StopPoint
-from ..commands import import_stop_areas, import_stops, clean_stops
+from ..commands import update_naptan, import_stop_areas, import_stops, clean_stops
 
 
 DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+class UpdateNaptanTest(TestCase):
+    """
+    Test the update_naptan command
+    """
+    command = update_naptan.Command()
+
+    def test_get_diff(self):
+        new_rows = [{
+            'id': 1,
+            'cell': [
+                'S',
+                'Aberdeen',
+                '639',
+                '07/06/2016',
+                '1354',
+                '143',
+                '0',
+                '0',
+                '0',
+                '0',
+                '0',
+                'V2',
+                '7/17/2016'
+            ]
+        }]
+        self.assertEqual(self.command.get_diff(new_rows, None), (['S'], ['639']))
+        self.assertEqual(self.command.get_diff(new_rows, new_rows), ([], []))
 
 
 class ImportStopAreasTest(TestCase):
