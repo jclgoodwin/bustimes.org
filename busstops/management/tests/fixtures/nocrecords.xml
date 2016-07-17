@@ -2,6 +2,13 @@
 <travelinedata reportName="NOC_Complete" generationDate="2016-05-20T17:17:29Z">
     <NOCTable>
         <NOCTableRecord>
+            <NOCCODE>POOP</NOCCODE>
+            <OperatorPublicName>Fictional Coaches</OperatorPublicName>
+            <VOSA_PSVLicenseName>Fictional Coaches Gmbh</VOSA_PSVLicenseName>
+            <OpId>4</OpId>
+            <PubNmId>44</PubNmId>
+        </NOCTableRecord>
+        <NOCTableRecord>
             <NOCCODE>SNDR</NOCCODE>
             <OperatorPublicName>Sanders Coaches</OperatorPublicName>
             <VOSA_PSVLicenseName>Sanders Coaches Ltd</VOSA_PSVLicenseName>
@@ -10,6 +17,44 @@
         </NOCTableRecord>
     </NOCTable>
     <PublicName>
+        <publicnamerecord>
+            <pubnmid>44</pubnmid>
+            <operatorpublicname></operatorpublicname>
+            <pubnmqual></pubnmqual>
+            <ttrteenq></ttrteenq>
+            <fareenq></fareenq>
+            <lostpropenq></lostpropenq>
+            <disruptenq></disruptenq>
+            <complenq></complenq>
+            <twitter></twitter>
+            <facebook></facebook>
+            <linkedin></linkedin>
+            <youtube></youtube>
+            <changedate></changedate>
+            <changeagent></changeagent>
+            <changecomment></changecomment>
+            <ceaseddate></ceaseddate>
+            <dataowner></dataowner><website></website>
+        </publicnamerecord>
+        <publicnamerecord>
+            <pubnmid>95938</pubnmid>
+            <operatorpublicname></operatorpublicname>
+            <pubnmqual></pubnmqual>
+            <ttrteenq></ttrteenq>
+            <fareenq></fareenq>
+            <lostpropenq></lostpropenq>
+            <disruptenq></disruptenq>
+            <complenq></complenq>
+            <twitter></twitter>
+            <facebook></facebook>
+            <linkedin></linkedin>
+            <youtube></youtube>
+            <changedate></changedate>
+            <changeagent></changeagent>
+            <changecomment></changecomment>
+            <ceaseddate></ceaseddate>
+            <dataowner></dataowner><website></website>
+        </publicnamerecord>
         <PublicNameRecord>
             <PubNmId>95266</PubNmId>
             <OperatorPublicName>Sanders Coaches</OperatorPublicName>
@@ -30,24 +75,5 @@
             <DataOwner></DataOwner>
             <Website>www.sanderscoaches.com#http://www.sanderscoaches.com#</Website>
         </PublicNameRecord>
-        <publicnamerecord>
-            <pubnmid>95938</pubnmid>
-            <operatorpublicname></operatorpublicname>
-            <pubnmqual></pubnmqual>
-            <ttrteenq></ttrteenq>
-            <fareenq></fareenq>
-            <lostpropenq></lostpropenq>
-            <disruptenq></disruptenq>
-            <complenq></complenq>
-            <twitter></twitter>
-            <facebook></facebook>
-            <linkedin></linkedin>
-            <youtube></youtube>
-            <changedate></changedate>
-            <changeagent></changeagent>
-            <changecomment></changecomment>
-            <ceaseddate></ceaseddate>
-            <dataowner></dataowner><website></website>
-        </publicnamerecord>
     </PublicName>
 </travelinedata>
