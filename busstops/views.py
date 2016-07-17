@@ -148,7 +148,8 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
         context = super(RegionDetailView, self).get_context_data(**kwargs)
 
         context['areas'] = AdminArea.objects.filter(region=self.object).order_by('name')
-        context['operators'] = Operator.objects.filter(region=self.object, service__current=True).distinct().order_by('name')
+        context['operators'] = Operator.objects.filter(region=self.object, service__current=True
+            ).distinct().order_by('name')
 
         return context
 
@@ -257,12 +258,14 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
     "A stop, other stops in the same area, and the services servicing it"
 
     model = StopPoint
-    queryset = model.objects.select_related('admin_area', 'admin_area__region', 'locality', 'locality__parent', 'locality__district')
+    queryset = model.objects.select_related('admin_area', 'admin_area__region', 'locality',
+        'locality__parent', 'locality__district')
 
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
 
-        context['services'] = Service.objects.filter(stops=self.object, current=True).distinct().order_by('service_code')
+        context['services'] = Service.objects.filter(stops=self.object, current=True
+            ).distinct().order_by('service_code')
 
         if not (self.object.active or context['services']):
             raise Http404()
@@ -278,8 +281,10 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         if self.object.stop_area_id is not None:
             context['nearby'] = StopPoint.objects.filter(stop_area=self.object.stop_area_id)
         else:
-            context['nearby'] = StopPoint.objects.filter(common_name=self.object.common_name, locality=self.object.locality)
-        context['nearby'] = context['nearby'].filter(active=True).exclude(pk=self.object.pk).order_by('atco_code')
+            context['nearby'] = StopPoint.objects.filter(
+                common_name=self.object.common_name, locality=self.object.locality)
+        context['nearby'] = context['nearby'].filter(active=True).exclude(pk=self.object.pk
+            ).order_by('atco_code')
 
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region if self.object.admin_area else Region.objects.get(pk='NI'),
@@ -336,7 +341,8 @@ class OperatorDetailView(UppercasePrimaryKeyMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
-        context['services'] = Service.objects.filter(operator=self.object, current=True).order_by('service_code')
+        context['services'] = Service.objects.filter(operator=self.object, current=True).order_by(
+            'service_code')
         if not context['services']:
             raise Http404()
         areas = AdminArea.objects.filter(stoppoint__service__in=context['services']).distinct()
@@ -361,18 +367,20 @@ class ServiceDetailView(DetailView):
         context['operators'] = self.object.operator.all()
         context['traveline_url'] = self.object.get_traveline_url()
 
-        if self.object.show_timetable or '_MEGA' in self.object.service_code or 'timetable' in self.request.GET:
+        if (
+                self.object.show_timetable or
+                '_MEGA' in self.object.service_code or
+                'timetable' in self.request.GET
+        ):
             context['timetables'] = timetable.timetable_from_service(self.object)
 
         if 'timetables' not in context or context['timetables'] == []:
-            context['stopusages'] = self.object.stopusage_set.all().select_related('stop__locality').defer(
-                'stop__locality__latlong'
-            ).order_by('direction', 'order')
+            context['stopusages'] = self.object.stopusage_set.all().select_related(
+                'stop__locality'
+            ).defer('stop__locality__latlong').order_by('direction', 'order')
         else:
-            stops_dict = {
-                stop.pk: stop for stop in self.object.stops.all().select_related('locality')
-                .defer('latlong', 'locality__latlong')
-            }
+            stops_dict = {stop.pk: stop for stop in self.object.stops.all().select_related(
+                'locality').defer('latlong', 'locality__latlong')}
             for table in context['timetables']:
                 for grouping in table.groupings:
                     for row in grouping.rows:
@@ -385,7 +393,8 @@ class ServiceDetailView(DetailView):
 
     def render_to_response(self, context):
         if not self.object.current:
-            alternative = Service.objects.filter(description=self.object.description, current=True).first()
+            alternative = Service.objects.filter(description=self.object.description, current=True
+                ).first()
             if alternative is not None:
                 return redirect(alternative)
             raise Http404()
