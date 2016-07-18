@@ -67,20 +67,22 @@ if [[ "$naptan_old" != "$naptan_new" ]]; then
     unzip -oq naptan.zip
 fi
 
-for file in *csv.zip; do
-    unzip -oq "$file" Stops.csv StopAreas.csv StopsInArea.csv
-    echo " $file"
-    echo "  Stops"
-    ../../manage.py import_stops < Stops.csv || exit
-    echo "  Stop areas"
-    ../../manage.py import_stop_areas < StopAreas.csv || exit
-done
-for file in *csv.zip; do
-    echo " $file"
-    echo "  Stops in area"
-    ../../manage.py import_stops_in_area < StopsInArea.csv || exit
-    rm "$file"
-done
+if [ -f *csv.zip ]; then
+    for file in *csv.zip; do
+        unzip -oq "$file" Stops.csv StopAreas.csv StopsInArea.csv
+        echo " $file"
+        echo "  Stops"
+        ../../manage.py import_stops < Stops.csv || exit
+        echo "  Stop areas"
+        ../../manage.py import_stop_areas < StopAreas.csv || exit
+    done
+    for file in *csv.zip; do
+        echo " $file"
+        echo "  Stops in area"
+        ../../manage.py import_stops_in_area < StopsInArea.csv || exit
+        rm "$file"
+    done
+fi
 
 
 cd ..

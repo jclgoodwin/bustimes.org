@@ -17,6 +17,14 @@ class ImportLiveStopsTest(TestCase):
         )
         cls.command = import_live_stops.Command()
         cls.cardiff = LiveSource.objects.create(name='card')
+        cls.london_stop = StopPoint.objects.create(
+            pk='490014721F',
+            common_name='Wrong Road',
+            locality_centre=False,
+            active=True,
+            admin_area_id=1,
+            locality_id=1
+        )
 
     def test_import_acisconnect(self):
         self.assertEquals(0, len(self.cardiff_stop.live_sources.all()))
@@ -26,5 +34,17 @@ class ImportLiveStopsTest(TestCase):
 
     def test_tfl(self):
         tfl_command = import_tfl_stops.Command()
+
+        self.assertIsNone(tfl_command.handle_row({'Naptan_Atco': 'NONE'}))
+        self.assertIsNone(tfl_command.handle_row({'Naptan_Atco': '87'}))
+        self.assertIsNone(tfl_command.handle_row({'Naptan_Atco': '7'}))
+
         with vcr.use_cassette('data/vcr/tfl.yaml'):
-            self.assertEqual('Wilmot Street', tfl_command.get_name('490014721F'))
+            tfl_command.handle_row({
+                'Naptan_Atco': '490014721F',
+                'Heading': 42
+            })
+
+        london_stop = StopPoint.objects.get(atco_code='490014721F')
+        self.assertEqual(42, london_stop.get_heading())
+        self.assertEqual('Wilmot Street', london_stop.common_name)

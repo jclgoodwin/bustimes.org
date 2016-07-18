@@ -25,9 +25,10 @@ def index(request):
 
 
 def not_found(request):
+    "Custom 404 handler view"
     if request.resolver_match and request.resolver_match.url_name == 'service-detail':
-        pk = request.resolver_match.kwargs.get('pk')
-        service = Service.objects.filter(pk=pk).first()
+        service_code = request.resolver_match.kwargs.get('pk')
+        service = Service.objects.filter(service_code=service_code).first()
         localities = Locality.objects.filter(stoppoint__service=service).distinct()
         context = {
             'service': service,
@@ -41,23 +42,25 @@ def not_found(request):
 
 
 def offline(request):
+    "Offline page (for service worker)"
     return render(request, 'offline.html')
 
 
 def contact(request):
+    "Contact page with form"
     submitted = False
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
             subject = form.cleaned_data['message'][:50].splitlines()[0]
-            message = '\n\n'.join((
+            body = '\n\n'.join((
                 form.cleaned_data['message'],
                 form.cleaned_data['referrer'],
                 str(request.META.get('HTTP_USER_AGENT'))
             ))
             message = EmailMessage(
                 subject,
-                message,
+                body,
                 '%s <%s>' % (form.cleaned_data['name'], 'contact@bustimes.org.uk'),
                 ('contact@bustimes.org.uk',),
                 reply_to=(form.cleaned_data['email'],),
@@ -96,7 +99,6 @@ def stops(request):
     listing the active StopPoints within a rectangle,
     in standard GeoJSON format
     """
-
     try:
         bounding_box = Polygon.from_bbox(
             [request.GET[key] for key in ('xmin', 'ymin', 'xmax', 'ymax')]
@@ -105,8 +107,7 @@ def stops(request):
         return HttpResponseBadRequest()
 
     results = StopPoint.objects.filter(
-        latlong__within=bounding_box,
-        active=True
+        latlong__within=bounding_box, active=True
     ).select_related('locality').annotate(
         distance=Distance('latlong', bounding_box.centroid)
     ).order_by('distance').defer('locality__latlong')
@@ -128,14 +129,16 @@ def stops(request):
 
 
 class UppercasePrimaryKeyMixin(object):
-    """
-    Normalises the primary key argument to uppercase.
-    For example, turns 'ea' or 'sndr' to 'EA' or 'SNDR'
-    """
+    "Normalises the primary key argument to uppercase"
     def get_object(self, queryset=None):
-        pk = self.kwargs.get('pk')
-        if pk is not None and not pk.isupper():
-            self.kwargs['pk'] = pk.upper()
+        """
+        Given a pk argument like 'ea' or 'sndr',
+        converts it to 'EA' or 'SNDR',
+        then otherwise behaves like ordinary get_object
+        """
+        primary_key = self.kwargs.get('pk')
+        if primary_key is not None and not primary_key.isupper():
+            self.kwargs['pk'] = primary_key.upper()
         return super(UppercasePrimaryKeyMixin, self).get_object(queryset)
 
 
@@ -148,8 +151,8 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
         context = super(RegionDetailView, self).get_context_data(**kwargs)
 
         context['areas'] = AdminArea.objects.filter(region=self.object).order_by('name')
-        context['operators'] = Operator.objects.filter(region=self.object, service__current=True
-            ).distinct().order_by('name')
+        context['operators'] = Operator.objects.filter(
+            region=self.object, service__current=True).distinct().order_by('name')
 
         return context
 
@@ -220,7 +223,9 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
     "A single locality, its children (if any), and the stops in it"
 
     model = Locality
-    queryset = model.objects.select_related('admin_area', 'admin_area__region', 'district', 'parent')
+    queryset = model.objects.select_related(
+        'admin_area', 'admin_area__region', 'district', 'parent'
+    )
 
     def get_context_data(self, **kwargs):
         context = super(LocalityDetailView, self).get_context_data(**kwargs)
@@ -258,14 +263,16 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
     "A stop, other stops in the same area, and the services servicing it"
 
     model = StopPoint
-    queryset = model.objects.select_related('admin_area', 'admin_area__region', 'locality',
-        'locality__parent', 'locality__district')
+    queryset = model.objects.select_related(
+        'admin_area', 'admin_area__region', 'locality', 'locality__parent', 'locality__district'
+    )
 
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
 
-        context['services'] = Service.objects.filter(stops=self.object, current=True
-            ).distinct().order_by('service_code')
+        context['services'] = Service.objects.filter(
+            stops=self.object, current=True
+        ).distinct().order_by('service_code')
 
         if not (self.object.active or context['services']):
             raise Http404()
@@ -283,8 +290,9 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         else:
             context['nearby'] = StopPoint.objects.filter(
                 common_name=self.object.common_name, locality=self.object.locality)
-        context['nearby'] = context['nearby'].filter(active=True).exclude(pk=self.object.pk
-            ).order_by('atco_code')
+        context['nearby'] = context['nearby'].filter(active=True).exclude(
+            pk=self.object.pk
+        ).order_by('atco_code')
 
         context['breadcrumb'] = filter(None, [
             self.object.admin_area.region if self.object.admin_area else Region.objects.get(pk='NI'),
@@ -393,8 +401,9 @@ class ServiceDetailView(DetailView):
 
     def render_to_response(self, context):
         if not self.object.current:
-            alternative = Service.objects.filter(description=self.object.description, current=True
-                ).first()
+            alternative = Service.objects.filter(
+                description=self.object.description, current=True
+            ).first()
             if alternative is not None:
                 return redirect(alternative)
             raise Http404()

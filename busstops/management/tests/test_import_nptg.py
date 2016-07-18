@@ -1,40 +1,38 @@
+import os
 from django.test import TestCase
-from ..commands import import_regions, import_districts, import_areas
+from ..commands import import_regions, import_areas, import_districts
+from ...models import Region, AdminArea, District
 
 
-class ImportRegions(TestCase):
-    "Test the import_regions command."
+DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+class ImportNPTGTest(TestCase):
+    """
+    Test the import_regions, import_areas, import_districts and
+    import_localities commands
+    """
+    @staticmethod
+    def do_import(command, filename):
+        filename = os.path.join(DIR, 'fixtures/%s.csv' % filename)
+        with open(filename) as open_file:
+            command.input = open_file
+            command.handle()
 
     @classmethod
     def setUpTestData(cls):
-        command = import_regions.Command()
-        cls.east_anglia = command.handle_row({
-            'RegionCode': 'EA',
-            'RegionName': 'East Anglia',
-            'RegionNameLang': '',
-            'CreationDateTime': '2006-01-25T07:54:31',
-            'RevisionNumber': '0',
-            'ModificationDateTime': '2006-01-25T07:54:31',
-            'Modification': ''
-        })[0]
-        cls.east_midlands = command.handle_row({
-            'RegionCode': 'EM',
-            'RegionName': 'East Midlands',
-            'RegionNameLang': '',
-            'CreationDateTime': '2006-01-25T07:54:31',
-            'RevisionNumber': '0',
-            'ModificationDateTime': '2006-01-25T07:54:31',
-            'Modification': ''
-        })[0]
-        cls.london = command.handle_row({
-            'RegionCode': 'L',
-            'RegionName': 'London',
-            'RegionNameLang': '',
-            'CreationDateTime': '2006-01-25T07:54:31',
-            'RevisionNumber': '0',
-            'ModificationDateTime': '2006-01-25T07:54:31',
-            'Modification': ''
-        })[0]
+        cls.do_import(import_regions.Command(), 'Regions')
+        cls.do_import(import_areas.Command(), 'AdminAreas')
+        cls.do_import(import_districts.Command(), 'Districts')
+
+        cls.east_anglia = Region.objects.get(id='EA')
+        cls.east_midlands = Region.objects.get(id='EM')
+        cls.london = Region.objects.get(id='L')
+
+        cls.cambs = AdminArea.objects.get(pk=71)
+        cls.derby = AdminArea.objects.get(pk=17)
+
+        cls.district = District.objects.get(pk=29)
 
     def test_regions(self):
         self.assertEqual(self.east_anglia.id, 'EA')
@@ -45,3 +43,17 @@ class ImportRegions(TestCase):
 
         self.assertEqual(self.london.id, 'L')
         self.assertEqual(self.london.the(), 'London')
+
+    def test_areas(self):
+        self.assertEqual(self.cambs.pk, 71)
+        self.assertEqual(str(self.cambs), 'Cambridgeshire')
+        self.assertEqual(str(self.cambs.region), 'East Anglia')
+
+        self.assertEqual(self.derby.pk, 17)
+        self.assertEqual(str(self.derby), 'Derby')
+        self.assertEqual(self.derby.region.the(), 'the East Midlands')
+
+    def test_districts(self):
+        self.assertEqual(self.district.pk, 29)
+        self.assertEqual(str(self.district), 'Cambridge')
+        self.assertEqual(str(self.district.admin_area), 'Cambridgeshire')

@@ -8,7 +8,7 @@ django-template-minifier==1.0
 psycopg2==2.6.2
 flake8==2.6.2
 pylint-django==0.7.2
-pytz==2016.6
+pytz==2016.6.1
 requests==2.10.0
 titlecase==0.8.1
-vcrpy==1.8.0
+vcrpy==1.9.0
