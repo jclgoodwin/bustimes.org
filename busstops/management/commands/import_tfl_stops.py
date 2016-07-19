@@ -13,7 +13,7 @@ from ..import_from_csv import ImportFromCSVCommand
 from ...models import StopPoint, LiveSource
 
 
-tfl = LiveSource.objects.get(pk='TfL')
+TFL = LiveSource.objects.get(pk='TfL')
 
 
 class Command(ImportFromCSVCommand):
@@ -53,6 +53,6 @@ class Command(ImportFromCSVCommand):
         if stop.landmark.isupper():
             stop.landmark = titlecase(stop.landmark)
 
-        stop.live_sources.add(tfl)
+        stop.live_sources.add(TFL)
 
         stop.save()

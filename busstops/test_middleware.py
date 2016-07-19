@@ -23,5 +23,4 @@ class MiddlewareTests(TestCase):
 
     def test_not_found_redirect(self):
         response = self.client.get('/services/21-45-A-y08-9')
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, '/services/ea_21-45-A-y08')
+        self.assertRedirects(response, '/services/ea_21-45-A-y08')

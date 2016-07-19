@@ -32,13 +32,13 @@ class Command(ImportFromCSVCommand):
         }
 
         for django_field_name, naptan_field_name in self.field_names:
-            value = unicode(row[naptan_field_name], errors='ignore').strip()
+            value = row[naptan_field_name].strip()
             if django_field_name in ('street', 'crossing', 'landmark'):
                 if value in ('-', '--', '---', '*', 'TBA', 'unknown'):
                     value = ''
                 elif value.isupper():
                     value = titlecase(value)
-            defaults[django_field_name] = value
+            defaults[django_field_name] = unicode(value, errors='ignore')
 
         if defaults['indicator'] in clean_stops.INDICATORS_TO_REPLACE:
             defaults['indicator'] = clean_stops.INDICATORS_TO_REPLACE.get(
