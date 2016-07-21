@@ -42,14 +42,13 @@ class TflDepartures(Departures):
 
     def departures_from_response(self, res):
         timezone = pytz.timezone('Europe/London')
-        if res.status_code == 200:
-            return ({
-                'time': timezone.fromutc(
-                    datetime.strptime(item.get('expectedArrival'), '%Y-%m-%dT%H:%M:%SZ')
-                ),
-                'service': self.get_service(item.get('lineName')),
-                'destination': item.get('destinationName'),
-            } for item in res.json())
+        return ({
+            'time': timezone.fromutc(
+                datetime.strptime(item.get('expectedArrival'), '%Y-%m-%dT%H:%M:%SZ')
+            ),
+            'service': self.get_service(item.get('lineName')),
+            'destination': item.get('destinationName'),
+        } for item in res.json())
 
 
 class AcisDepartures(Departures):
@@ -65,8 +64,6 @@ class AcisLiveDepartures(AcisDepartures):
         })
 
     def departures_from_response(self, res):
-        if res.status_code != 200:
-            return
         soup = BeautifulSoup(res.text, 'html.parser')
         cells = [cell.text.strip() for cell in soup.find_all('td')]
         rows = (cells[i * 4 - 4:i * 4] for i in range(1, (len(cells) / 4) + 1))
@@ -91,8 +88,6 @@ class AcisConnectDepartures(AcisDepartures):
         })
 
     def departures_from_response(self, res):
-        if res.status_code != 200:
-            return
         soup = BeautifulSoup(res.text, 'html.parser')
         table = soup.find(id='GridViewRTI')
         if table is None:
@@ -154,7 +149,7 @@ def get_max_age(departures, now):
     Given a list of departures and the current datetime, returns a max_age in seconds
     (for use in a cache-control header)
     """
-    if len(departures) > 0:
+    if departures and len(departures) > 0:
         expiry = departures[0]['time']
         if now < expiry:
             return (expiry - now).seconds + 60
