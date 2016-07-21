@@ -1,0 +1,10 @@
+LocationID,PTI_REF_GIS,Latitude,Longitude,Easting,Northing,IG_Code,Stop_Name,DepotOpsArea,Timing_Point,TP_Name,Fare_Stage,FS_Name,ServiceDirection,Modified
+1,700000000000,54.55282813,-6.045230527,326529,368926,695455,Mount Eagles,Belfast Metro Ops,F,,F,,Outward,03/07/2012 11:38
+2,700000000001,54.60095409,-5.92369963,334233.03,374507.66,708740.69,Queens Square,Belfast Metro Ops,F,,F,,Outward,30/07/2015 10:39
+3,700000000002,54.55514336,-6.042831962,326677,369188,695865,Lagmore Reservoir,Belfast Metro Ops,F,,F,,Inward,09/11/2011 15:50
+4,700000000003,54.60061918,-5.918671994,334559,374480,709039,Station Street,Belfast Metro Ops,F,,F,,Outward,09/11/2011 15:51
+5,700000000004,54.55487698,-6.041917236,326737,369160,695897,Lagmore Avenue (Teeling Avenue),Belfast Metro Ops,T,Lagmore Ave(Teeling Ave),T,Lagmore Avenue (Teeling Avenue),Inward,10/01/2012 14:34
+6,700000000005,54.60014111,-5.908142001,335241,374447,709688,Short Strand (Newtownards Road),Belfast Metro Ops,T,Short Strand/N'Ards Road,T,Short Strand (Newtownards Road),Outward,09/11/2011 15:50
+7,700000000006,54.55389131,-6.039862218,326873,369054,695927,Lagmore Avenue (Glendowan Park),Belfast Metro Ops,F,,F,,Inward,10/01/2012 14:37
+8,700000000007,54.59979164,-5.905080292,335440,374414,709854,Tower Street,Belfast Metro Ops,F,,F,,Outward,10/01/2012 14:30
+9,700000000008,54.55414505,-6.03280128,327329,369095,696424,Lagmore Avenue (Glenferna),Belfast Metro Ops,F,,F,,Inward,09/11/2011 15:54

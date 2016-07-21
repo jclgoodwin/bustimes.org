@@ -97,7 +97,11 @@ class Command(BaseCommand):
                 if cluster['ClusterCount'] == 1:
                     stop_ids.append(cluster['StopRef'])
                 else:
-                    stop_ids.extend((stop['StopRef'] for stop in self.get_stops_for_cluster(subdomain, cluster['ClusterId'])))
+                    stop_ids.extend(
+                        (stop['StopRef'] for stop in self.get_stops_for_cluster(
+                            subdomain, cluster['ClusterId']
+                        ))
+                    )
             print stop_ids
             stoppoints = StopPoint.objects.filter(pk__in=stop_ids)
             livesource.stoppoint_set.add(*stoppoints)

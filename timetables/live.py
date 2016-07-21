@@ -42,13 +42,14 @@ class TflDepartures(Departures):
 
     def departures_from_response(self, res):
         timezone = pytz.timezone('Europe/London')
-        return ({
-            'time': timezone.fromutc(
-                datetime.strptime(item.get('expectedArrival'), '%Y-%m-%dT%H:%M:%SZ')
-            ),
-            'service': self.get_service(item.get('lineName')),
-            'destination': item.get('destinationName'),
-        } for item in res.json()) if res.status_code == 200 else ()
+        if res.status_code == 200:
+            return ({
+                'time': timezone.fromutc(
+                    datetime.strptime(item.get('expectedArrival'), '%Y-%m-%dT%H:%M:%SZ')
+                ),
+                'service': self.get_service(item.get('lineName')),
+                'destination': item.get('destinationName'),
+            } for item in res.json())
 
 
 class AcisDepartures(Departures):
@@ -65,7 +66,7 @@ class AcisLiveDepartures(AcisDepartures):
 
     def departures_from_response(self, res):
         if res.status_code != 200:
-            return ()
+            return
         soup = BeautifulSoup(res.text, 'html.parser')
         cells = [cell.text.strip() for cell in soup.find_all('td')]
         rows = (cells[i * 4 - 4:i * 4] for i in range(1, (len(cells) / 4) + 1))
@@ -91,11 +92,11 @@ class AcisConnectDepartures(AcisDepartures):
 
     def departures_from_response(self, res):
         if res.status_code != 200:
-            return ()
+            return
         soup = BeautifulSoup(res.text, 'html.parser')
         table = soup.find(id='GridViewRTI')
         if table is None:
-            return ()
+            return
         rows = (row.findAll('td') for row in table.findAll('tr')[1:])
         if self.prefix == 'yorkshire':
             return ({
@@ -146,7 +147,6 @@ class TransportApiDepartures(Departures):
         departures = res.json().get('departures')
         if departures and 'all' in departures:
             return filter(None, (self.get_row(item) for item in departures.get('all')))
-        return ()
 
 
 def get_max_age(departures, now):
@@ -220,10 +220,7 @@ def get_departures(stop, services):
             }
         }, 60)
 
-    try:
-        departures = TransportApiDepartures(stop, services).get_departures()
-    except requests.exceptions.ConnectionError:
-        departures = ()
+    departures = TransportApiDepartures(stop, services).get_departures()
     return ({
         'departures': departures,
         'today': date.today(),

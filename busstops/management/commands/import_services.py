@@ -267,20 +267,22 @@ class Command(BaseCommand):
             try:
                 timetable = Timetable(root)
 
-                stop_usages = [
-                    StopUsage(service_id=service_code, stop_id=row.part.stop.atco_code, direction='outbound', order=i, timing_status=row.part.timingstatus)
-                    for i, row in enumerate(timetable.groupings[0].rows)
-                    if stops.get(row.part.stop.atco_code)
-                ]
-                stop_usages += [
-                    StopUsage(service_id=service_code, stop_id=row.part.stop.atco_code, direction='inbound', order=i, timing_status=row.part.timingstatus)
-                    for i, row in enumerate(timetable.groupings[1].rows)
-                    if stops.get(row.part.stop.atco_code)
-                ]
+                stop_usages = []
+                for grouping in timetable.groupings:
+                    stop_usages += [
+                        StopUsage(
+                            service_id=service_code, stop_id=row.part.stop.atco_code,
+                            direction=grouping.direction, order=i, timing_status=row.part.timingstatus
+                        )
+                        for i, row in enumerate(grouping.rows) if row.part.stop.atco_code in stops
+                    ]
 
                 show_timetable = True
                 for grouping in timetable.groupings:
-                    show_timetable = show_timetable and (len(grouping.journeys) < 40 or len([time for time in grouping.rows[0].times if time is not None]) < 40)
+                    show_timetable = show_timetable and (
+                        len(grouping.journeys) < 40 or
+                        len([time for time in grouping.rows[0].times if time is not None]) < 40
+                    )
                 if show_timetable:
                     for grouping in timetable.groupings:
                         del grouping.journeys
@@ -296,7 +298,6 @@ class Command(BaseCommand):
                 print e, file_name
                 show_timetable = False
                 stop_usages = [StopUsage(service_id=service_code, stop_id=stop, order=0) for stop in stops]
-
 
             # service:
 

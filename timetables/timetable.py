@@ -556,23 +556,23 @@ def abbreviate(grouping, i, in_a_row, difference):
 
 def get_filenames(service, path):
     if service.region_id == 'NE':
-        return (service.pk,)
+        return [service.pk]
     elif service.region_id in ('S', 'NW'):
-        return ('SVR%s' % service.pk,)
+        return ['SVR%s' % service.pk]
     else:
         try:
             namelist = os.listdir(path)
         except OSError:
-            return ()
+            return
         if service.net:
-            return (name for name in namelist if name.startswith('%s-' % service.pk))
+            return [name for name in namelist if name.startswith('%s-' % service.pk)]
         elif service.region_id == 'GB':
             parts = service.pk.split('_')
-            return (name for name in namelist if name.endswith('_%s_%s' % (parts[1], parts[0])))
+            return [name for name in namelist if name.endswith('_%s_%s' % (parts[1], parts[0]))]
         elif service.region_id == 'Y':
-            return (name for name in namelist if name.startswith('SVR%s-' % service.pk) or name == 'SVR%s' % service.pk)
+            return [name for name in namelist if name.startswith('SVR%s-' % service.pk) or name == 'SVR%s' % service.pk]
         else:
-            return (name for name in namelist if name.endswith('_%s' % service.pk))
+            return [name for name in namelist if name.endswith('_%s' % service.pk)]
 
 
 def timetable_from_filename(filename):
@@ -588,7 +588,7 @@ def unpickle_timetable(filename):
         with open(filename) as open_file:
             return pickle.load(open_file)
     except IOError:
-        return None
+        return
 
 
 def timetable_from_service(service):

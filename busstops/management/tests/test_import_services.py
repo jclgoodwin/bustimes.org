@@ -111,14 +111,19 @@ class ImportServicesTest(TestCase):
         self.assertEqual(service.line_brand, 'Turquoise Line')
         self.assertTrue(service.show_timetable)
         self.assertEqual(service.operator.first(), self.fecs)
-        self.assertEqual(service.get_traveline_url(), 'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0')
+        self.assertEqual(
+            service.get_traveline_url(),
+            'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST' +
+            '?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0'
+        )
 
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data['breadcrumb'], [self.ea, self.fecs])
         self.assertContains(res, """
             <tr class="OTH">
                 <th>Norwich Brunswick Road</th>
-                <td>19:48</td><td>19:48</td><td>22:56</td><td>22:56</td><td>08:57</td><td>09:57</td><td>10:57</td><td>17:57</td>
+                <td>19:48</td><td>19:48</td><td>22:56</td><td>22:56</td>
+                <td>08:57</td><td>09:57</td><td>10:57</td><td>17:57</td>
             </tr>
         """, html=True)
 
@@ -128,7 +133,11 @@ class ImportServicesTest(TestCase):
         self.assertEqual(str(service), 'M11A - Belgravia - Liverpool')
         self.assertTrue(service.show_timetable)
         self.assertEqual(service.operator.first(), self.megabus)
-        self.assertEqual(service.get_traveline_url(), 'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST?line=11M11A&net=nrc&project=y08&command=direct&outputFormat=0')
+        self.assertEqual(
+            service.get_traveline_url(),
+            'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST' +
+            '?line=11M11A&net=nrc&project=y08&command=direct&outputFormat=0'
+        )
 
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data['breadcrumb'], [self.gb, self.megabus])
@@ -136,7 +145,9 @@ class ImportServicesTest(TestCase):
         self.assertContains(res, '<h1>M11A - Belgravia - Liverpool</h1>', html=True)
         self.assertContains(
             res,
-            '<td colspan="8">Book at <a href="http://megabus.com" rel="nofollow">megabus.com</a> or 0900 1600900 (65p/min + network charges)</td>',
+            """
+            <td colspan="8">Book at <a href="http://megabus.com" rel="nofollow">megabus.com</a>
+            or 0900 1600900 (65p/min + network charges)</td>""",
             html=True
         )
 

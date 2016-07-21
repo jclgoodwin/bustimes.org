@@ -31,16 +31,15 @@ class TimetableTest(TestCase):
         )
 
     def test_get_filename(self):
-        self.assertEqual(timetable.get_filenames(self.ne_service, None), ('NE_130_PC4736_572',))
-        self.assertEqual(timetable.get_filenames(self.nw_service, None), ('SVR60023943',))
+        self.assertEqual(timetable.get_filenames(self.ne_service, None), ['NE_130_PC4736_572'])
+        self.assertEqual(timetable.get_filenames(self.nw_service, None), ['SVR60023943'])
 
-        self.assertEqual(timetable.get_filenames(self.ea_service, ''), ())
+        self.assertIsNone(timetable.get_filenames(self.ea_service, ''))
         ea_filenames = timetable.get_filenames(self.ea_service, './busstops/management/tests/fixtures/')
-        self.assertEqual(ea_filenames.next(), 'ea_21-13B-B-y08-1.xml')
-        self.assertRaises(StopIteration, ea_filenames.next)
+        self.assertEqual(['ea_21-13B-B-y08-1.xml'], ea_filenames)
 
         gb_filenames = timetable.get_filenames(self.gb_service, './busstops/management/tests/fixtures/')
-        self.assertRaises(StopIteration, gb_filenames.next)
+        self.assertEqual([], gb_filenames)
 
     def test_timetable_none(self):
         """timetable_from_filename should return None if there is an error"""
