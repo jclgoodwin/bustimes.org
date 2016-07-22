@@ -119,7 +119,7 @@ TEMPLATES = [
         'OPTIONS': {
             'debug': DEBUG,
             'loaders': (
-                'template_minifier.template.loaders.app_directories.Loader' if DEBUG else (
+                'django.template.loaders.app_directories.Loader' if DEBUG else (
                     'django.template.loaders.cached.Loader', (
                         'template_minifier.template.loaders.app_directories.Loader',
                     )

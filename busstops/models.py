@@ -335,19 +335,16 @@ class Service(models.Model):
     def get_operator_number(code):
         if code in ('MEGA', 'MBGD'):
             return '11'
-        elif code in ('NATX', 'NXSH', 'NXAP'):
+        if code in ('NATX', 'NXSH', 'NXAP'):
             return '12'
-        elif code == 'BHAT':
-            return '41'
-        elif code == 'ESYB':
-            return '53'
-        elif code == 'WAIR':
-            return '20'
-        elif code == 'TVSN':
-            return '18'
+        return {
+            'BHAT': '41',
+            'ESYB': '53',
+            'WAIR': '20',
+            'TVSN': '18'
+        }.get(code)
 
     def get_traveline_url(self):
-
         if self.region_id == 'S':
             return 'http://www.travelinescotland.com/pdfs/timetables/%s.pdf' % self.service_code
 
