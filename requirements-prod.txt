@@ -1,0 +1,4 @@
+elasticsearch==2.3.0
+python-memcached==1.58
+git+https://github.com/jclgoodwin/django-template-minifier.git
+
