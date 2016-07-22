@@ -288,7 +288,7 @@ class ServicedOrganisation(object):
 
         # Days of operation:
         op_element = element.find('txc:DaysOfOperation', NS)
-        if servicedorg_op_element:
+        if op_element:
             op_hols_element = op_element.find('txc:Holidays/txc:ServicedOrganisationRef', NS)
             op_workingdays_element = op_element.find('txc:WorkingDays/txc:ServicedOrganisationRef', NS)
 
