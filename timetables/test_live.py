@@ -80,7 +80,9 @@ class LiveDeparturesTest(TestCase):
                 <tr><td>17:48</td><td>8</td><td>Bow Church</td></tr>
                 <tr><td>17:47</td><td>D3</td><td>Bethnal Green, Chest Hospital</td></tr>
                 </tbody></table>
-                <p class="credit">Data from <a href=https://tfl.gov.uk/bus/stop/490014721F/wilmot-street>Transport for London</a></p>
+                <p class="credit">Data from
+                <a href=https://tfl.gov.uk/bus/stop/490014721F/wilmot-street>
+                Transport for London</a></p>
             </div>
         """)
         self.assertEqual(response.status_code, 200)
