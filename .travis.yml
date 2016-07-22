@@ -12,3 +12,6 @@ script:
   - flake8 buses busstops timetables | cat
 after_success:
   coveralls
+addons:
+  code_climate:
+    repo_token: 708f1fa88951cbab1881a4dd1ec450962596762244e871a62a59a537dc6eeefd
