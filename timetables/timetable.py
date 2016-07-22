@@ -472,7 +472,7 @@ class Timetable(object):
         # but rather a reference to another journey with a reference to a journeypattern
         for journey in journeys_by_code.values():
             if hasattr(journey, 'journeyref'):
-                journey.journeypattern = journeys[journey.journeyref].journeypattern
+                journey.journeypattern = journeys_by_code[journey.journeyref].journeypattern
 
         journeys = [journey for journey in journeys_by_code.values() if journey.should_show()]
         journeys.sort(key=VehicleJourney.get_departure_time)
