@@ -53,9 +53,9 @@ class ImportServicesTest(TestCase):
         for inp, outp in testcases:
             self.assertEqual(self.command.sanitize_description(inp), outp)
 
-    def test_infer_from_file_name(self):
+    def test_infer_from_filename(self):
         """
-        Given a file name string
+        Given a filename string
         get_net() should return a (net, service_code, line_ver) tuple if appropriate,
         or ('', None, None) otherwise.
         """
@@ -73,8 +73,8 @@ class ImportServicesTest(TestCase):
             ('ArrivaCymru51S-Rhyl-StBrigid`s-Denbigh1_TXC_2016108-0319_DGAO051S.xml', ('', None, None)),
         )
 
-        for file_name, parts in data:
-            self.assertEqual(self.command.infer_from_file_name(file_name), parts)
+        for filename, parts in data:
+            self.assertEqual(self.command.infer_from_filename(filename), parts)
 
     def test_get_operator_name(self):
         self.assertEqual(self.command.get_operator_name(self.blue_triangle_element), 'BLUE TRIANGLE BUSES LIMITED')

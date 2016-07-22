@@ -19,6 +19,7 @@ from datetime import datetime
 from titlecase import titlecase
 
 from django.core.management.base import BaseCommand
+from django.core.cache import cache
 from django.db import transaction
 
 from timetables.timetable import Timetable
@@ -111,14 +112,14 @@ class Command(BaseCommand):
         parser.add_argument('filenames', nargs='+', type=str)
 
     @staticmethod
-    def infer_from_file_name(file_name):
+    def infer_from_filename(filename):
         """
-        Given a file name like 'ea_21-45A-_-y08-1.xml',
+        Given a filename like 'ea_21-45A-_-y08-1.xml',
         returns a (net, service_code, line_ver) tuple like ('ea', 'ea_21-45A-_-y08', '1')
 
-        Given any other sort of file name, returns ('', None, None)
+        Given any other sort of filename, returns ('', None, None)
         """
-        parts = file_name.split('-')  # ['ea_21', '3', '_', '1']
+        parts = filename.split('-')  # ['ea_21', '3', '_', '1']
         if len(parts) == 5:
             net = parts[0].split('_')[0]
             if len(net) <= 3 and net.islower():
@@ -194,7 +195,7 @@ class Command(BaseCommand):
         print ET.tostring(operator_element)
 
     @classmethod
-    def get_line_name_and_brand(cls, service_element, file_name):
+    def get_line_name_and_brand(cls, service_element, filename):
         line_name = service_element.find('txc:Lines', cls.ns)[0][0].text
         if '|' in line_name:
             line_name_parts = line_name.split('|', 1)
@@ -204,18 +205,18 @@ class Command(BaseCommand):
             line_brand = ''
 
         if len(line_name) > 64:
-            print 'Name "%s" is too long in %s' % (line_name, file_name)
+            print 'Name "%s" is too long in %s' % (line_name, filename)
             line_name = line_name[:64]
 
         return (line_name, line_brand)
 
     @classmethod
-    def do_service(cls, root, region_id, file_name, service_descriptions=None):
+    def do_service(cls, root, region_id, filename, service_descriptions=None):
 
         for service_element in root.find('txc:Services', cls.ns):
 
             line_name, line_brand = cls.get_line_name_and_brand(
-                service_element, file_name
+                service_element, filename
             )
 
             mode_element = service_element.find('txc:Mode', cls.ns)
@@ -239,7 +240,7 @@ class Command(BaseCommand):
             elif service_descriptions is not None:
                 description = service_descriptions.get(operators[0].id + line_name, '')
             else:
-                print '%s is missing a name' % file_name
+                print '%s is missing a name' % filename
                 description = ''
 
             if description.isupper():
@@ -249,12 +250,12 @@ class Command(BaseCommand):
                 description = cls.sanitize_description(description)
 
             if len(description) > 128:
-                print 'Description "%s" is too long in %s' % (description, file_name)
+                print 'Description "%s" is too long in %s' % (description, filename)
                 description = description[:128]
 
             # net and service code:
 
-            net, service_code, line_ver = cls.infer_from_file_name(root.attrib['FileName'])
+            net, service_code, line_ver = cls.infer_from_filename(root.attrib['FileName'])
             if service_code is None:
                 service_code = service_element.find('txc:ServiceCode', cls.ns).text
 
@@ -293,11 +294,13 @@ class Command(BaseCommand):
                         os.makedirs(pickle_dir)
                         if region_id == 'GB':
                             os.mkdir(os.path.join(pickle_dir, 'NCSD_TXC'))
-                    with open('%s/%s' % (pickle_dir, file_name[:-4]), 'wb') as open_file:
+                    basename = filename[:-4]
+                    with open('%s/%s' % (pickle_dir, basename), 'wb') as open_file:
                         pickle.dump(timetable, open_file)
+                    cache.set('%s/%s' % (region_id, basename.replace(' ', '')), timetable)
 
             except (AttributeError, IndexError) as e:
-                print e, file_name
+                print e, filename
                 show_timetable = False
                 stop_usages = [StopUsage(service_id=service_code, stop_id=stop, order=0) for stop in stops]
 
@@ -343,13 +346,13 @@ class Command(BaseCommand):
         else:
             service_descriptions = None
 
-        for i, file_name in enumerate(archive.namelist()):
+        for i, filename in enumerate(archive.namelist()):
             if i % 100 == 0:
                 print i
 
-            if file_name.endswith('.xml'):
-                root = ET.parse(archive.open(file_name)).getroot()
-                cls.do_service(root, region_id, file_name, service_descriptions=service_descriptions)
+            if filename.endswith('.xml'):
+                root = ET.parse(archive.open(filename)).getroot()
+                cls.do_service(root, region_id, filename, service_descriptions=service_descriptions)
 
     @classmethod
     def handle(cls, *args, **options):

@@ -34,4 +34,4 @@ sed -i'.bak' 's/<\/ServicedOrganisationDayType>//'  S/SVRHIAO89*.xml
 sed -i'.bak' 's/<VehicleJourney>/<VehicleJourney><Note><NoteText>1st and 3rd Thursday of each month only<\/NoteText><\/Note>/' S/SVRHIAO890.xml
 sed -i'.bak' 's/<VehicleJourney>/<VehicleJourney><Note><NoteText>4th Thursday of each month only<\/NoteText><\/Note>/' S/SVRHIAO891.xml
 
-rm */*.bak
+rm ./*/*.bak

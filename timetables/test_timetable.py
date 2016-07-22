@@ -5,7 +5,11 @@ from busstops.models import Service
 from timetables import timetable
 
 
+FIXTURES_DIR = './busstops/management/tests/fixtures/'
+
+
 class TimetableTest(TestCase):
+    """Tests some timetables generated directly from XML files"""
     @classmethod
     def setUpTestData(cls):
         cls.ne_service = Service.objects.create(
@@ -30,24 +34,29 @@ class TimetableTest(TestCase):
             date='2016-05-24',
         )
 
-    def test_get_filename(self):
+    def test_get_filenames(self):
+        """
+        get_filenames should get filenames for a service,
+        using different heuristics depending on the service's region
+        """
         self.assertEqual(timetable.get_filenames(self.ne_service, None), ['NE_130_PC4736_572'])
         self.assertEqual(timetable.get_filenames(self.nw_service, None), ['SVR60023943'])
 
         self.assertIsNone(timetable.get_filenames(self.ea_service, ''))
-        ea_filenames = timetable.get_filenames(self.ea_service, './busstops/management/tests/fixtures/')
+        ea_filenames = timetable.get_filenames(self.ea_service, FIXTURES_DIR)
         self.assertEqual(['ea_21-13B-B-y08-1.xml'], ea_filenames)
 
-        gb_filenames = timetable.get_filenames(self.gb_service, './busstops/management/tests/fixtures/')
+        gb_filenames = timetable.get_filenames(self.gb_service, FIXTURES_DIR)
         self.assertEqual([], gb_filenames)
 
     def test_timetable_none(self):
         """timetable_from_filename should return None if there is an error"""
-        none = timetable.timetable_from_filename('./busstops/management/tests/fixtures/ea_21-13B-B-y08-')
+        none = timetable.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-')
         self.assertIsNone(none)
 
-    def test_timetables(self):
-        timetable_ea = timetable.timetable_from_filename('./busstops/management/tests/fixtures/ea_21-13B-B-y08-1.xml')
+    def test_timetable_ea(self):
+        """Test a timetable from the East Anglia region"""
+        timetable_ea = timetable.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-1.xml')
 
         self.assertEqual('Monday to Sunday', str(timetable_ea.operating_profile))
         self.assertEqual('', str(timetable_ea.operating_period))
@@ -62,46 +71,68 @@ class TimetableTest(TestCase):
         self.assertEqual(87, len(timetable_ea.groupings[1].rows))
         self.assertEqual('Leys Lane', timetable_ea.groupings[1].rows[0].part.stop.common_name)
 
+    def test_timetable_megabus(self):
+        """Test a timetable from the National Coach Services Database"""
         megabus = timetable.timetable_from_filename(
-            './busstops/management/tests/fixtures/Megabus_Megabus14032016 163144_MEGA_M11A.xml'
+            FIXTURES_DIR, 'Megabus_Megabus14032016 163144_MEGA_M11A.xml'
         )
         self.assertFalse(megabus.groupings[0].has_minor_stops())
         self.assertFalse(megabus.groupings[1].has_minor_stops())
-        self.assertEqual(
-            megabus.groupings[0].rows[0].times,
-            [time(13, 0), time(15, 0), time(16, 0), time(16, 30), time(18, 0), time(20, 0), time(23, 45)]
-        )
+        self.assertEqual(megabus.groupings[0].rows[0].times, [
+            time(13, 0), time(15, 0), time(16, 0), time(16, 30), time(18, 0), time(20, 0),
+            time(23, 45)
+        ])
 
-        timetable_ne = timetable.timetable_from_filename('./busstops/management/tests/fixtures/NE_03_SCC_X6_1.xml')
+    def test_timetable_ne(self):
+        """Test timetable with some abbreviations"""
+        timetable_ne = timetable.timetable_from_filename(FIXTURES_DIR, 'NE_03_SCC_X6_1.xml')
         self.assertEqual(timetable_ne.groupings[0].column_heads[0].span, 16)
         self.assertEqual(timetable_ne.groupings[0].column_heads[1].span, 14)
         self.assertEqual(timetable_ne.groupings[0].column_heads[2].span, 4)
-        self.assertEqual(timetable_ne.groupings[0].rows[0].times[:3], [time(7, 0), time(8, 0), time(9, 0)])
+        self.assertEqual(
+            timetable_ne.groupings[0].rows[0].times[:3], [time(7, 0), time(8, 0), time(9, 0)]
+        )
+        # Test abbreviations (check the colspan and rowspan attributes of Cells)
         self.assertEqual(timetable_ne.groupings[0].rows[0].times[-3].colspan, 2)
         self.assertEqual(timetable_ne.groupings[0].rows[0].times[-3].rowspan, 88)
         self.assertIsNone(timetable_ne.groupings[1].rows[0].times[-12])
         self.assertEqual(timetable_ne.groupings[1].rows[0].times[-13].colspan, 2)
 
-        timetable_scotland = timetable.timetable_from_filename('./busstops/management/tests/fixtures/SVRABBN017.xml')
+    def test_timetable_scotland(self):
+        """Test a Scotch timetable with a 14 column wide empty foot"""
+        timetable_scotland = timetable.timetable_from_filename(FIXTURES_DIR, 'SVRABBN017.xml')
         self.assertEqual(timetable_scotland.groupings[0].column_feet[0].span, 14)
         self.assertEqual(timetable_scotland.groupings[0].column_feet[0].notes, [])
 
-        timetable_deadruns = timetable.timetable_from_filename('./busstops/management/tests/fixtures/SVRLABO024A.xml')
-        self.assertEqual(timetable_deadruns.groupings[0].rows[-25].times[:3], [time(20, 58), time(22, 28), time(23, 53)])
-        self.assertEqual(timetable_deadruns.groupings[0].rows[-24].times[:7], ['', '', '', '', '', '', time(9, 51)])
-        self.assertEqual(timetable_deadruns.groupings[0].rows[-20].times[:6], ['', '', '', '', '', ''])
-        self.assertEqual(timetable_deadruns.groupings[0].rows[-12].times[:6], ['', '', '', '', '', ''])
-        self.assertEqual(timetable_deadruns.groupings[0].rows[-8].times[:6], ['', '', '', '', '', ''])
-        self.assertEqual(timetable_deadruns.groupings[0].rows[-7].times[:6], ['', '', '', '', '', ''])
-        self.assertEqual(timetable_deadruns.groupings[0].rows[-5].times[:6], ['', '', '', '', '', ''])
-        self.assertEqual(timetable_deadruns.groupings[0].rows[-4].times[:6], ['', '', '', '', '', ''])
-        self.assertEqual(timetable_deadruns.groupings[0].rows[-3].times[:6], ['', '', '', '', '', ''])
-        self.assertEqual(timetable_deadruns.groupings[0].rows[-2].times[:7], ['', '', '', '', '', '', time(10, 5)])
-        self.assertEqual(timetable_deadruns.groupings[0].rows[-1].times[:7], ['', '', '', '', '', '', time(10, 7)])
+    def test_timetable_deadruns(self):
+        """Test a timetable with some dead runs which should be respected"""
+        deadruns = timetable.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml')
+        self.assertEqual(
+            deadruns.groupings[0].rows[-25].times[:3], [time(20, 58), time(22, 28), time(23, 53)]
+        )
+        self.assertEqual(
+            deadruns.groupings[0].rows[-24].times[:7], ['', '', '', '', '', '', time(9, 51)]
+        )
+        self.assertEqual(deadruns.groupings[0].rows[-20].times[:6], ['', '', '', '', '', ''])
+        self.assertEqual(deadruns.groupings[0].rows[-12].times[:6], ['', '', '', '', '', ''])
+        self.assertEqual(deadruns.groupings[0].rows[-8].times[:6], ['', '', '', '', '', ''])
+        self.assertEqual(deadruns.groupings[0].rows[-7].times[:6], ['', '', '', '', '', ''])
+        self.assertEqual(deadruns.groupings[0].rows[-5].times[:6], ['', '', '', '', '', ''])
+        self.assertEqual(deadruns.groupings[0].rows[-4].times[:6], ['', '', '', '', '', ''])
+        self.assertEqual(deadruns.groupings[0].rows[-3].times[:6], ['', '', '', '', '', ''])
+        self.assertEqual(
+            deadruns.groupings[0].rows[-2].times[:7], ['', '', '', '', '', '', time(10, 5)]
+        )
+        self.assertEqual(
+            deadruns.groupings[0].rows[-1].times[:7], ['', '', '', '', '', '', time(10, 7)]
+        )
 
 
 class DateRangeTest(TestCase):
+    """Tests for DateRanges"""
+
     def test_single_date(self):
+        """Test a DateRange starting and ending on the same date"""
         element = ET.fromstring("""
             <DateRange xmlns="http://www.transxchange.org.uk/">
                 <StartDate>2001-05-01</StartDate>
@@ -113,6 +144,7 @@ class DateRangeTest(TestCase):
         self.assertFalse(date_range.starts_in_future())
 
     def test_past_range(self):
+        """Test a DateRange starting and ending in the past"""
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
                 <StartDate>2001-05-01</StartDate>
@@ -124,7 +156,10 @@ class DateRangeTest(TestCase):
 
 
 class OperatingPeriodTest(TestCase):
+    """Tests for OperatingPeriods"""
+
     def test_single_date(self):
+        """Test an OperatingPeriod starting and ending on the same date"""
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
                 <StartDate>2001-05-01</StartDate>
@@ -136,6 +171,7 @@ class OperatingPeriodTest(TestCase):
         self.assertFalse(operating_period.starts_in_future())
 
     def test_open_ended(self):
+        """Test an OperatingPeriod starting in the future, with no specified end"""
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
                 <StartDate>2021-09-01</StartDate>
@@ -146,6 +182,7 @@ class OperatingPeriodTest(TestCase):
         self.assertTrue(operating_period.starts_in_future())
 
     def test_future_long_range(self):
+        """Test an OperatingPeriod starting and ending in different years in the future"""
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
                 <StartDate>2021-09-01</StartDate>
@@ -157,6 +194,7 @@ class OperatingPeriodTest(TestCase):
         self.assertTrue(operating_period.starts_in_future())
 
     def test_future_medium_range(self):
+        """Test an OperatingPeriod starting and ending in the same year in the future"""
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
                 <StartDate>2056-02-01</StartDate>
@@ -168,6 +206,7 @@ class OperatingPeriodTest(TestCase):
         self.assertTrue(operating_period.starts_in_future())
 
     def test_future_short_range(self):
+        """Test an OperatingPeriod starting and ending in the same month in the future"""
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
                 <StartDate>2056-02-01</StartDate>
@@ -179,6 +218,10 @@ class OperatingPeriodTest(TestCase):
         self.assertTrue(operating_period.starts_in_future())
 
     def test_past_range(self):
+        """
+        An OperatingPeriod starting and ending in the same month in the past
+        should not be displayed
+        """
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
                 <StartDate>2001-05-01</StartDate>
