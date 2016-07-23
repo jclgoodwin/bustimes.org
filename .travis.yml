@@ -12,6 +12,15 @@ script:
   - flake8 buses busstops timetables
 after_success:
   coveralls
+virtualenv:
+  system_site_packages: true
 addons:
+  apt:
+    packages:
+    - pylint
+    - python-bs4
+    - python-lxml
+    - python-psycopg2
+    - python-requests
   code_climate:
     repo_token: 708f1fa88951cbab1881a4dd1ec450962596762244e871a62a59a537dc6eeefd
