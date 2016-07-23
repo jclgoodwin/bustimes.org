@@ -185,7 +185,7 @@ class VehicleJourney(object):
     A sort of "instance" of a JourneyPattern, made distinct by having its own start time,
     and possibly operating profile and dead run
     """
-    def __init__(self, element, journeypatterns, servicedorganisations):
+    def __init__(self, element, journeypatterns, servicedorgs):
         self.departure_time = datetime.strptime(
             element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
         ).time()
@@ -210,7 +210,7 @@ class VehicleJourney(object):
 
         operatingprofile_element = element.find('txc:OperatingProfile', NS)
         if operatingprofile_element is not None:
-            self.operating_profile = OperatingProfile(operatingprofile_element, servicedorganisations)
+            self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
 
     def add_times(self):
         today = date.today()
@@ -264,7 +264,7 @@ class VehicleJourney(object):
             return True
         if str(self.operating_profile) == 'HolidaysOnlys':
             return False
-        if hasattr(self.operating_profile, 'nonoperation_days') and self.operating_profile is not None:
+        if hasattr(self.operating_profile, 'nonoperation_days'):
             for daterange in self.operating_profile.nonoperation_days:
                 if daterange.finishes_in_past() or daterange.starts_in_future():
                     return True
@@ -576,7 +576,7 @@ def get_filenames(service, path):
     try:
         namelist = os.listdir(path)
     except OSError:
-        return
+        return []
     if service.net:
         return [name for name in namelist if name.startswith('%s-' % service.pk)]
     if service.region_id == 'GB':

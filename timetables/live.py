@@ -64,7 +64,7 @@ class AcisLiveDepartures(AcisDepartures):
         })
 
     def departures_from_response(self, res):
-        soup = BeautifulSoup(res.text, 'html.parser')
+        soup = BeautifulSoup(res.text, 'lxml')
         cells = [cell.text.strip() for cell in soup.find_all('td')]
         rows = (cells[i * 4 - 4:i * 4] for i in range(1, (len(cells) / 4) + 1))
         return ({
@@ -88,7 +88,7 @@ class AcisConnectDepartures(AcisDepartures):
         })
 
     def departures_from_response(self, res):
-        soup = BeautifulSoup(res.text, 'html.parser')
+        soup = BeautifulSoup(res.text, 'lxml')
         table = soup.find(id='GridViewRTI')
         if table is None:
             return
