@@ -99,6 +99,7 @@ SPECIAL_OPERATOR_CODES = {
 
 
 class Command(BaseCommand):
+    "Command that imports bus services from a zip file"
 
     # see https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml-with-namespaces
     ns = {'txc': 'http://www.transxchange.org.uk/'}
@@ -196,6 +197,10 @@ class Command(BaseCommand):
 
     @classmethod
     def get_line_name_and_brand(cls, service_element, filename):
+        """
+        Given a Service element and (purely for debugging) a filename
+        returns a (line_name, line_brand) tuple
+        """
         line_name = service_element.find('txc:Lines', cls.ns)[0][0].text
         if '|' in line_name:
             line_name_parts = line_name.split('|', 1)
@@ -212,7 +217,10 @@ class Command(BaseCommand):
 
     @classmethod
     def do_service(cls, root, region_id, filename, service_descriptions=None):
-
+        """
+        Given a root element, region ID, filename, and optional dictionary of service descriptions
+        (for the NCSD), does stuff
+        """
         for service_element in root.find('txc:Services', cls.ns):
 
             line_name, line_brand = cls.get_line_name_and_brand(
@@ -299,8 +307,8 @@ class Command(BaseCommand):
                         pickle.dump(timetable, open_file)
                     cache.set('%s/%s' % (region_id, basename.replace(' ', '')), timetable)
 
-            except (AttributeError, IndexError) as e:
-                print e, filename
+            except (AttributeError, IndexError) as error:
+                print error, filename
                 show_timetable = False
                 stop_usages = [StopUsage(service_id=service_code, stop_id=stop, order=0) for stop in stops]
 

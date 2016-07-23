@@ -42,7 +42,7 @@ class TimetableTest(TestCase):
         self.assertEqual(timetable.get_filenames(self.ne_service, None), ['NE_130_PC4736_572'])
         self.assertEqual(timetable.get_filenames(self.nw_service, None), ['SVR60023943'])
 
-        self.assertIsNone(timetable.get_filenames(self.ea_service, ''))
+        self.assertEqual(timetable.get_filenames(self.ea_service, 'poo'), [])
         ea_filenames = timetable.get_filenames(self.ea_service, FIXTURES_DIR)
         self.assertEqual(['ea_21-13B-B-y08-1.xml'], ea_filenames)
 
