@@ -313,8 +313,7 @@ class Service(models.Model):
         if self.line_name or self.line_brand or self.description:
             parts = (self.line_name, self.line_brand, self.description)
             return ' - '.join(part for part in parts if part != '')
-        else:
-            return self.service_code
+        return self.service_code
 
     def has_long_line_name(self):
         "Is this service's line_name more than 4 characters long?"
@@ -323,10 +322,9 @@ class Service(models.Model):
     def get_a_mode(self):
         if not self.mode:
             return 'A'
-        elif self.mode[0] == 'a':
+        if self.mode[0] == 'a':
             return 'An %s' % self.mode
-        else:
-            return 'A %s' % self.mode
+        return 'A %s' % self.mode
 
     def get_absolute_url(self):
         return reverse('service-detail', args=(self.service_code,))
@@ -344,17 +342,23 @@ class Service(models.Model):
             'TVSN': '18'
         }.get(code)
 
+    def get_tfl_url(self):
+        if self.mode == 'bus' and len(self.line_name) <= 4:
+            return 'https://tfl.gov.uk/bus/timetable/%s/' % self.line_name
+
+    def get_scotland_url(self):
+        return 'http://www.travelinescotland.com/pdfs/timetables/%s.pdf' % self.service_code
+
     def get_traveline_url(self):
         if self.region_id == 'S':
-            return 'http://www.travelinescotland.com/pdfs/timetables/%s.pdf' % self.service_code
+            return self.get_scotland_url()
 
         query = None
 
         if self.net != '':
             if self.net == 'tfl':
-                if self.mode == 'bus' and len(self.line_name) <= 4:
-                    return 'https://tfl.gov.uk/bus/timetable/%s/' % self.line_name
-                return None
+                return self.get_tfl_url()
+
             parts = self.service_code.split('-')
             query = [('line', parts[0].split('_')[-1].zfill(2) + parts[1].zfill(3)),
                      ('lineVer', self.line_ver or parts[4]),

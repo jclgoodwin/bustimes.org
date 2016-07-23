@@ -333,7 +333,6 @@ class OperatingProfile(object):
         if servicedorg_days_element is not None:
             self.servicedorganisation = ServicedOrganisation(servicedorg_days_element, servicedorgs)
 
-
     def __str__(self):
         if self.regular_days:
             if len(self.regular_days) == 1:
