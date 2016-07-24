@@ -324,7 +324,7 @@ class Command(BaseCommand):
                     net=net,
                     line_ver=line_ver,
                     region_id=region_id,
-                    date=root.attrib['ModificationDateTime'][:10],
+                    date=root.attrib['CreationDateTime'][:10],
                     current=True,
                     show_timetable=show_timetable
                 )
