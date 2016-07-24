@@ -14,6 +14,30 @@ from .forms import ContactForm
 
 
 DIR = os.path.dirname(__file__)
+FIRST_OPERATORS = {
+    'FABD': 'aberdeen',
+    'FTVA': 'berkshire-thames-valley',
+    'FBRA': 'bradford',
+    'FBRI': 'bristol-bath-and-west',
+    'FCWL': 'cornwall',
+    'FESX': 'essex',
+    'FGLA': 'greater-glasgow',
+    'FMAN': 'greater-manchester',
+    'FHAL': 'halifax-calder-valley-huddersfield',
+    'FLDS': 'leeds',
+    'FLEI': 'leicester',
+    'FECS': 'norfolk-suffolk',
+    'FHAM': 'portsmouth-fareham-gosport',
+    'FPOT': 'potteries',
+    'FBOS': 'somerset',
+    'FCYM': 'south-west-wales',
+    'FSCE': 'south-east-and-central-scotland',
+    'FSYO': 'south-yorkshire',
+    'FSOT': 'southampton',
+    'FDOR': 'wessex-dorset-south-somerset',
+    'FSMR': 'worcestershie',
+    'FYOR': 'york'
+}
 
 
 def index(request):
@@ -409,42 +433,18 @@ class ServiceDetailView(DetailView):
         if bool(context['operators']):
             operator = context['operators']
             context['breadcrumb'] = [self.object.region, context['operators'][0]]
-            first_operators = {
-                'FABD': 'aberdeen',
-                'FTVA': 'berkshire-thames-valley',
-                'FBRA': 'bradford',
-                'FBRI': 'bristol-bath-and-west',
-                'FCWL': 'cornwall',
-                'FESX': 'essex',
-                'FGLA': 'greater-glasgow',
-                'FMAN': 'greater-manchester',
-                'FHAL': 'halifax-calder-valley-huddersfield',
-                'FLDS': 'leeds',
-                'FLEI': 'leicester',
-                'FECS': 'norfolk-suffolk',
-                'FHAM': 'portsmouth-fareham-gosport',
-                'FPOT': 'potteries',
-                'FBOS': 'somerset',
-                'FCYM': 'south-west-wales',
-                'FSCE': 'south-east-and-central-scotland',
-                'FSYO': 'south-yorkshire',
-                'FSOT': 'southampton',
-                'FDOR': 'wessex-dorset-south-somerset',
-                'FSMR': 'worcestershie',
-                'FYOR': 'york'
-            }
             for operator in context['operators']:
                 if operator.pk == 'MEGA':
                     context['links'].append({
                         'url': 'https://www.awin1.com/awclick.php?mid=2678&id=242611',
                         'text': 'Buy tickets from Megabus'
                     })
-                elif operator.pk in first_operators:
+                elif operator.pk in FIRST_OPERATORS:
                     context['links'].append({
-                        'url': 'https://www.firstgroup.com/%s/tickets' % first_operators[operator.pk],
+                        'url': 'https://www.firstgroup.com/%s/tickets' % FIRST_OPERATORS[operator.pk],
                         'text': 'Fares and tickets on the %s website' % operator.name
                     })
-                elif operator.url:
+                elif operator.url.startswith('http'):
                     context['links'].append({
                         'url': operator.url,
                         'text': '%s website' % operator.name

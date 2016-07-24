@@ -8,6 +8,7 @@ import sys
 from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand
 from ...models import Operator
+from ...views import FIRST_OPERATORS
 
 
 class Command(BaseCommand):
@@ -39,6 +40,13 @@ class Command(BaseCommand):
                 if not operator:
                     continue
             else:
+                continue
+
+            if operator.pk in FIRST_OPERATORS:
+                operator.url = 'https://www.firstgroup.com/%s' % FIRST_OPERATORS[operator.pk]
+                operator.email = ''
+                operator.phone = ''
+                operator.save()
                 continue
 
             website = public_name.website.string
