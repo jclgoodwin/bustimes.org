@@ -403,10 +403,17 @@ class ServiceDetailView(DetailView):
     def render_to_response(self, context):
         if not self.object.current:
             alternative = Service.objects.filter(
-                description=self.object.description, current=True
+                description=self.object.description,
+                current=True
+            ).first() or Service.objects.filter(
+                line_name=self.object.line_name,
+                stopusage__stop_id=self.object.stopusage_set.first().stop_id,
+                current=True
             ).first()
+
             if alternative is not None:
                 return redirect(alternative)
+
             raise Http404()
 
         return super(ServiceDetailView, self).render_to_response(context)
