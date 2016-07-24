@@ -10,6 +10,8 @@ script:
   - coverage run --source=buses,busstops,timetables manage.py test -v 3 --parallel 2
   - pylint buses busstops timetables | cat
   - flake8 buses busstops timetables
+after_script:
+  - codeclimate-test-reporter
 after_success:
   coveralls
 virtualenv:
