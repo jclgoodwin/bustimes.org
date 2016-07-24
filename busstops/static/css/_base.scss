@@ -485,6 +485,10 @@ input:not(:checked) + label {
     }
 }
 
+.contact-details {
+    word-wrap: break-word;
+}
+
 footer {
     margin-top: 1.5em;
 
