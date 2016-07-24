@@ -34,19 +34,19 @@ class TimetableTest(TestCase):
             date='2016-05-24',
         )
 
-    def test_get_filenames(self):
+    def test_get_pickle_filenames(self):
         """
-        get_filenames should get filenames for a service,
+        get_pickle_filenames should get filenames for a service,
         using different heuristics depending on the service's region
         """
-        self.assertEqual(timetable.get_filenames(self.ne_service, None), ['NE_130_PC4736_572'])
-        self.assertEqual(timetable.get_filenames(self.nw_service, None), ['SVR60023943'])
+        self.assertEqual(timetable.get_pickle_filenames(self.ne_service, None), ['NE_130_PC4736_572'])
+        self.assertEqual(timetable.get_pickle_filenames(self.nw_service, None), ['SVR60023943'])
 
-        self.assertEqual(timetable.get_filenames(self.ea_service, 'poo'), [])
-        ea_filenames = timetable.get_filenames(self.ea_service, FIXTURES_DIR)
+        self.assertEqual(timetable.get_pickle_filenames(self.ea_service, 'poo'), [])
+        ea_filenames = timetable.get_pickle_filenames(self.ea_service, FIXTURES_DIR)
         self.assertEqual(['ea_21-13B-B-y08-1.xml'], ea_filenames)
 
-        gb_filenames = timetable.get_filenames(self.gb_service, FIXTURES_DIR)
+        gb_filenames = timetable.get_pickle_filenames(self.gb_service, FIXTURES_DIR)
         self.assertEqual([], gb_filenames)
 
     def test_timetable_none(self):

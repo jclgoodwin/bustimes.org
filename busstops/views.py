@@ -1,6 +1,5 @@
 "View definitions."
 import os
-import zipfile
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
@@ -421,18 +420,9 @@ class ServiceDetailView(DetailView):
 
 def service_xml(request, pk):
     service = get_object_or_404(Service, service_code=pk)
-    if service.region_id == 'GB':
-        archive_name = 'NCSD'
-        parts = pk.split('_')
-        pk = '%s_%s' % (parts[-1], parts[-2])
-    else:
-        archive_name = service.region_id
-    archive_path = os.path.join(DIR, '../data/TNDS/', archive_name + '.zip')
-    archive = zipfile.ZipFile(archive_path)
-    file_names = (name for name in archive.namelist() if pk in name)
 
     bodies = ''
-    for body in (archive.open(file_name).read() for file_name in file_names):
-        bodies += body
+    for file in timetable.get_files_from_zipfile(service):
+        bodies += file.read()
 
     return HttpResponse(bodies, content_type='text/plain')

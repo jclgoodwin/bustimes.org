@@ -1,4 +1,5 @@
 import os
+import zipfile
 import cPickle as pickle
 import xml.etree.cElementTree as ET
 from datetime import date, datetime
@@ -566,7 +567,7 @@ def abbreviate(grouping, i, in_a_row, difference):
             row.times[j] = None
 
 
-def get_filenames(service, path):
+def get_pickle_filenames(service, path):
     """Given a Service and a folder path, returns a list of filenames
     """
     if service.region_id == 'NE':
@@ -588,6 +589,23 @@ def get_filenames(service, path):
             if name.startswith('SVR%s-' % service.pk) or name == 'SVR%s' % service.pk
         ]
     return [name for name in namelist if name.endswith('_%s' % service.pk)]
+
+
+def get_files_from_zipfile(service):
+    """Given a Service, returns an iterable of open files from the relevant zipfile
+    """
+    service_code = service.service_code
+    if service.region_id == 'GB':
+        archive_name = 'NCSD'
+        parts = service_code.split('_')
+        service_code = '_%s_%s' % (parts[-1], parts[-2])
+    else:
+        archive_name = service.region_id
+    archive_path = os.path.join(DIR, '../data/TNDS/', archive_name + '.zip')
+    archive = zipfile.ZipFile(archive_path)
+    filenames = (name for name in archive.namelist() if service_code in name)
+
+    return (archive.open(filename) for filename in filenames)
 
 
 def timetable_from_filename(path, filename):
@@ -625,6 +643,8 @@ def timetable_from_service(service):
     else:
         path = os.path.join(DIR, '../data/TNDS/%s/' % service.region_id)
 
-    filenames = get_filenames(service, path)
-    timetables = (timetable_from_filename(path, name) for name in filenames)
-    return [timetable for timetable in timetables if timetable is not None]
+    filenames = get_pickle_filenames(service, path)
+    if filenames:
+        timetables = (timetable_from_filename(path, name) for name in filenames)
+        return [timetable for timetable in timetables if timetable is not None]
+    return [Timetable(ET.parse(file)) for file in get_files_from_zipfile(service)]
