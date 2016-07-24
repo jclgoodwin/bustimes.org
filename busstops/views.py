@@ -407,7 +407,7 @@ class ServiceDetailView(DetailView):
                 current=True
             ).first() or Service.objects.filter(
                 line_name=self.object.line_name,
-                stopusage__stop_id=self.object.stopusage_set.first().stop_id,
+                stopusage__stop_id__in=self.object.stopusage_set.values_list('stop_id', flat=True),
                 current=True
             ).first()
 
