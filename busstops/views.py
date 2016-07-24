@@ -373,7 +373,19 @@ class ServiceDetailView(DetailView):
             return context
 
         context['operators'] = self.object.operator.all()
-        context['traveline_url'] = self.object.get_traveline_url()
+        context['links'] = []
+        traveline_url = self.object.get_traveline_url()
+        if traveline_url:
+            if self.object.net == 'tfl':
+                traveline_text = 'on the Transport for London'
+            elif self.object.region_id == 'S':
+                traveline_text = '(PDF) on the Traveline Scotland'
+            else:
+                traveline_text = 'on the Traveline'
+            context['links'].append({
+                'url': traveline_url,
+                'text': 'Timetable %s website' % traveline_text
+            })
 
         if (
                 self.object.show_timetable or
@@ -395,7 +407,48 @@ class ServiceDetailView(DetailView):
                         row.part.stop.stop = stops_dict.get(row.part.stop.atco_code)
 
         if bool(context['operators']):
+            operator = context['operators']
             context['breadcrumb'] = [self.object.region, context['operators'][0]]
+            first_operators = {
+                'FABD': 'aberdeen',
+                'FTVA': 'berkshire-thames-valley',
+                'FBRA': 'bradford',
+                'FBRI': 'bristol-bath-and-west',
+                'FCWL': 'cornwall',
+                'FESX': 'essex',
+                'FGLA': 'greater-glasgow',
+                'FMAN': 'greater-manchester',
+                'FHAL': 'halifax-calder-valley-huddersfield',
+                'FLDS': 'leeds',
+                'FLEI': 'leicester',
+                'FECS': 'norfolk-suffolk',
+                'FHAM': 'portsmouth-fareham-gosport',
+                'FPOT': 'potteries',
+                'FBOS': 'somerset',
+                'FCYM': 'south-west-wales',
+                'FSCE': 'south-east-and-central-scotland',
+                'FSYO': 'south-yorkshire',
+                'FSOT': 'southampton',
+                'FDOR': 'wessex-dorset-south-somerset',
+                'FSMR': 'worcestershie',
+                'FYOR': 'york'
+            }
+            for operator in context['operators']:
+                if operator.pk == 'MEGA':
+                    context['links'].append({
+                        'url': 'https://www.awin1.com/awclick.php?mid=2678&id=242611',
+                        'text': 'Buy tickets from Megabus'
+                    })
+                elif operator.pk in first_operators:
+                    context['links'].append({
+                        'url': 'https://www.firstgroup.com/%s/tickets' % first_operators[operator.pk],
+                        'text': 'Fares and tickets on the %s website' % operator.name
+                    })
+                elif operator.url:
+                    context['links'].append({
+                        'url': operator.url,
+                        'text': '%s website' % operator.name
+                    })
 
         return context
 

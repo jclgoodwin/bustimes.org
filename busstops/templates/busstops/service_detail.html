@@ -13,24 +13,6 @@
     {% endif %}
 </p>
 
-{% if operators.0.id == 'MEGA' %}
-    <p><a href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611" rel="nofollow">Buy tickets from Megabus</a></p>
-{% endif %}
-
-{% if traveline_url %}
-
-    <p><a href="{{ traveline_url }}" rel="nofollow">View timetable
-        {% if object.net == 'tfl' %}
-            on the Transport for London
-        {% elif object.region_id == 'S' %}
-            (PDF) on the Traveline Scotland
-        {% else %}
-            on the Traveline
-        {% endif %}
-    website</a></p>
-
-{% endif %}
-
 {% for timetable in timetables %}
     {% for grouping in timetable.groupings %}{% if grouping.rows.0.times %}
     <h2>{{ grouping.direction.capitalize }} {{ timetable.operating_period }}</h2>
@@ -99,5 +81,14 @@
 {% endfor %}
 
 {% endfor %}
+
+{% if links %}
+    <h2>More information</h2>
+    <ul class="bulleted">
+    {% for link in links %}
+       <li><a href="{{ link.url }}">{{ link.text }}</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
 
 {% endblock %}
