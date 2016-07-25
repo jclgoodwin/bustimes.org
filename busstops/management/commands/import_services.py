@@ -297,6 +297,7 @@ class Command(BaseCommand):
                         del grouping.journeys
                         for row in grouping.rows:
                             row.times = [time for time in row.times if time is not None]
+                            del row.sequencenumbers
                     pickle_dir = os.path.join(DIR, '../../../data/TNDS', 'NCSD' if region_id == 'GB' else region_id)
                     if not os.path.exists(pickle_dir):
                         os.makedirs(pickle_dir)
