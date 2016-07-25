@@ -216,6 +216,10 @@ table {
     }
 }
 
+.bulleted a {
+    white-space: normal;
+}
+
 .breadcrumb {
     border-bottom: 1px solid $brand-color;
     margin: 0 -1em;
@@ -513,32 +517,6 @@ footer {
             display: block;
             margin: 0 auto;
         }
-    }
-
-    .megabus {
-        background: url(https://www.awin1.com/cshow.php?s=260973&v=2678&q=124736&r=242611);
-        display: block;
-        height: 250px;
-        margin: 0 auto;
-        overflow: hidden;
-        text-indent: 100%;
-        width: 300px;
-    }
-
-    .manchester {
-        background: url(https://www.awin1.com/cshow.php?s=259858&v=2678&q=124173&r=242611);
-    }
-
-    .birmingham {
-        background: url(https://www.awin1.com/cshow.php?s=259848&v=2678&q=124173&r=242611);
-    }
-
-    .bristol {
-        background: url(https://www.awin1.com/cshow.php?s=259856&v=2678&q=124173&r=242611);
-    }
-
-    .leeds {
-        background: url(https://www.awin1.com/cshow.php?s=259857&v=2678&q=124173&r=242611);
     }
 
     ul {
