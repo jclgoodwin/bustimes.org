@@ -1,6 +1,7 @@
 beautifulsoup4==4.5.0
 elasticsearch==2.3.0
 psycopg2==2.6.2
+python-dateutil==2.5.3
 python-memcached==1.58
 git+https://github.com/jclgoodwin/django-template-minifier.git
 lxml==3.6.1

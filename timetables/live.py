@@ -3,12 +3,14 @@ from datetime import datetime, date
 
 import requests
 import pytz
+import dateutil.parser
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.utils.text import slugify
 
 
 DESTINATION_REGEX = re.compile(r'.+\((.+)\)')
+LOCAL_TIMEZONE = pytz.timezone('Europe/London')
 
 
 class Departures(object):
@@ -41,11 +43,8 @@ class TflDepartures(Departures):
         return ('http://api.tfl.gov.uk/StopPoint/%s/arrivals' % self.stop.pk,)
 
     def departures_from_response(self, res):
-        timezone = pytz.timezone('Europe/London')
         return ({
-            'time': timezone.fromutc(
-                datetime.strptime(item.get('expectedArrival'), '%Y-%m-%dT%H:%M:%SZ')
-            ),
+            'time': dateutil.parser.parse(item.get('expectedArrival')).astimezone(LOCAL_TIMEZONE),
             'service': self.get_service(item.get('lineName')),
             'destination': item.get('destinationName'),
         } for item in res.json())

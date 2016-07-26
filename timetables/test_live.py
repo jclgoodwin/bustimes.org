@@ -57,8 +57,8 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual('Stratford City', row['destination'])
         self.assertEqual('388', row['service'])
         self.assertEqual(2016, row['time'].date().year)
-        self.assertEqual(6, row['time'].date().month)
-        self.assertEqual(5, row['time'].date().day)
+        self.assertEqual(7, row['time'].date().month)
+        self.assertEqual(26, row['time'].date().day)
 
         departures = live.get_departures(self.london_stop, ())[0]
         self.assertEqual(departures['source'], {
@@ -73,12 +73,17 @@ class LiveDeparturesTest(TestCase):
             <div class="aside box">
                 <h2>Next departures</h2>
                 <table><tbody>
-                <tr><td>17:59</td><td>388</td><td>Stratford City</td></tr>
-                <tr><td>17:42</td><td>388</td><td>Stratford City</td></tr>
-                <tr><td>18:02</td><td>8</td><td>Bow Church</td></tr>
-                <tr><td>17:57</td><td>8</td><td>Bow Church</td></tr>
-                <tr><td>17:48</td><td>8</td><td>Bow Church</td></tr>
-                <tr><td>17:47</td><td>D3</td><td>Bethnal Green, Chest Hospital</td></tr>
+                    <tr><td>18:44</td><td>388</td><td>Stratford City</td></tr>
+                    <tr><td>18:26</td><td>388</td><td>Stratford City</td></tr>
+                    <tr><td>18:26</td><td>8</td><td>Bow Church</td></tr>
+                    <tr><td>18:44</td><td>8</td><td>Bow Church</td></tr>
+                    <tr><td>18:49</td><td>8</td><td>Bow Church</td></tr>
+                    <tr><td>18:33</td><td>8</td><td>Bow Church</td></tr>
+                    <tr><td>18:37</td><td>8</td><td>Bow Church</td></tr>
+                    <tr><td>18:22</td><td>8</td><td>Bow Church</td></tr>
+                    <tr><td>18:44</td><td>D3</td><td>Bethnal Green, Chest Hospital</td></tr>
+                    <tr><td>18:33</td><td>D3</td><td>Bethnal Green, Chest Hospital</td></tr>
+                    <tr><td>18:23</td><td>D3</td><td>Bethnal Green, Chest Hospital</td></tr>
                 </tbody></table>
                 <p class="credit">Data from
                 <a href=https://tfl.gov.uk/bus/stop/490014721F/wilmot-street>

@@ -21,6 +21,7 @@ addons:
     packages:
     - pylint
     - python-bs4
+    - python-dateutil
     - python-lxml
     - python-psycopg2
     - python-requests
