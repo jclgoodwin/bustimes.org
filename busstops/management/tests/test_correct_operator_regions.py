@@ -1,6 +1,6 @@
 from django.test import TestCase
 from ...models import Region, Operator, Service
-from ..commands import correct_operator_regions  
+from ..commands import correct_operator_regions
 
 
 class CorretcOperatorRegionsTest(TestCase):
