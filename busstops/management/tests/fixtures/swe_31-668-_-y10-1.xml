@@ -1,0 +1,1335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TransXChange xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.transxchange.org.uk/ http://www.transxchange.org.uk/schema/2.1/TransXChange_general.xsd" CreationDateTime="2016-07-22T17:32:53.7310835+01:00" ModificationDateTime="2016-07-22T17:32:53.7310835+01:00" Modification="new" RevisionNumber="3" FileName="swe_31-668-_-y10-1.xml" SchemaVersion="2.1" xmlns="http://www.transxchange.org.uk/">
+  <ServicedOrganisations>
+    <ServicedOrganisation>
+      <OrganisationCode>SOId_XX-COSch</OrganisationCode>
+      <Name>Cornwall School Holidays</Name>
+      <Holidays>
+        <DateRange>
+          <StartDate>2017-12-21</StartDate>
+          <EndDate>2018-01-03</EndDate>
+          <Description>COSch: Christmas Holiday</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2017-02-13</StartDate>
+          <EndDate>2017-02-17</EndDate>
+          <Description>COSch: Spring Half Term</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2017-10-23</StartDate>
+          <EndDate>2017-10-27</EndDate>
+          <Description>COSch: Autumn Half Term</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2017-07-27</StartDate>
+          <EndDate>2017-09-01</EndDate>
+          <Description>COSch: Summer Holiday</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2017-05-29</StartDate>
+          <EndDate>2017-06-02</EndDate>
+          <Description>COSch: Summer Half Term</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2017-04-03</StartDate>
+          <EndDate>2017-04-17</EndDate>
+          <Description>COSch: Easter Holiday</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2018-02-12</StartDate>
+          <EndDate>2018-02-16</EndDate>
+          <Description>COSch: Spring Half Term</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2018-03-30</StartDate>
+          <EndDate>2018-04-13</EndDate>
+          <Description>COSch: Easter Holiday</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-02-15</StartDate>
+          <EndDate>2016-02-19</EndDate>
+          <Description>COSch: Spring Half Term</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-03-25</StartDate>
+          <EndDate>2016-04-08</EndDate>
+          <Description>COSch: Easter Holiday</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-12-19</StartDate>
+          <EndDate>2017-01-02</EndDate>
+          <Description>COSch: Christmas Holiday</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-10-24</StartDate>
+          <EndDate>2016-10-28</EndDate>
+          <Description>COSch: Autumn Half Term</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-07-25</StartDate>
+          <EndDate>2016-09-02</EndDate>
+          <Description>COSch: Summer Holiday</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-05-30</StartDate>
+          <EndDate>2016-06-03</EndDate>
+          <Description>COSch: Summer Half Term</Description>
+        </DateRange>
+      </Holidays>
+    </ServicedOrganisation>
+    <ServicedOrganisation>
+      <OrganisationCode>SOId_XX-DESch</OrganisationCode>
+      <Name>Devon School Holidays</Name>
+      <Holidays>
+        <DateRange>
+          <StartDate>2016-10-21</StartDate>
+          <EndDate>2016-10-30</EndDate>
+          <Description>DESch: Autumn Half Term</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2015-10-26</StartDate>
+          <EndDate>2015-10-30</EndDate>
+          <Description>DESch: Autumn Half Term</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2015-12-21</StartDate>
+          <EndDate>2016-01-01</EndDate>
+          <Description>DESch: Christmas Holiday</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-03-25</StartDate>
+          <EndDate>2016-04-10</EndDate>
+          <Description>DESch: Easter Holiday</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-07-23</StartDate>
+          <EndDate>2016-08-31</EndDate>
+          <Description>DESch: Summer Holiday</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-05-28</StartDate>
+          <EndDate>2016-06-05</EndDate>
+          <Description>DESch: Summer Half Term</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-02-15</StartDate>
+          <EndDate>2016-02-19</EndDate>
+          <Description>DESch: Spring Half Term</Description>
+        </DateRange>
+      </Holidays>
+    </ServicedOrganisation>
+    <ServicedOrganisation>
+      <OrganisationCode>SOId_XX-DEBar</OrganisationCode>
+      <Name>Devon Barnstaple College</Name>
+      <Holidays>
+        <DateRange>
+          <StartDate>2016-07-03</StartDate>
+          <EndDate>2016-09-02</EndDate>
+          <Description>DEBar: Summer Holiday</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2015-10-26</StartDate>
+          <EndDate>2015-10-30</EndDate>
+          <Description>DEBar: Autumn Half Term</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-05-30</StartDate>
+          <EndDate>2016-06-03</EndDate>
+          <Description>DEBar: Summer Half Term</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-02-15</StartDate>
+          <EndDate>2016-02-19</EndDate>
+          <Description>DEBar: Spring Half Term</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-03-25</StartDate>
+          <EndDate>2016-04-08</EndDate>
+          <Description>DEBar: Easter Holiday</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2015-12-21</StartDate>
+          <EndDate>2016-01-01</EndDate>
+          <Description>DEBar: Christmas Holiday</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-10-24</StartDate>
+          <EndDate>2016-10-28</EndDate>
+          <Description>DEBar: Autumn Half Term</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-12-21</StartDate>
+          <EndDate>2017-01-03</EndDate>
+          <Description>DEBar: Christmas Holiday</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2017-03-31</StartDate>
+          <EndDate>2017-04-17</EndDate>
+          <Description>DEBar: Easter Holiday</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2017-02-13</StartDate>
+          <EndDate>2017-02-17</EndDate>
+          <Description>DEBar: Spring Half Term</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2017-05-29</StartDate>
+          <EndDate>2017-06-02</EndDate>
+          <Description>DEBar: Summer Half Term</Description>
+        </DateRange>
+        <DateRange>
+          <StartDate>2017-07-04</StartDate>
+          <EndDate>2017-09-04</EndDate>
+          <Description>DEBar: Summer Holiday</Description>
+        </DateRange>
+      </Holidays>
+    </ServicedOrganisation>
+  </ServicedOrganisations>
+  <StopPoints>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEX28601</StopPointRef>
+      <CommonName>Lower School</CommonName>
+      <Indicator>NE-bound</Indicator>
+      <LocalityName>Crediton</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEA11994</StopPointRef>
+      <CommonName>Barnfield School</CommonName>
+      <Indicator>NE-bound</Indicator>
+      <LocalityName>Crediton</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEA10056</StopPointRef>
+      <CommonName>Shop</CommonName>
+      <Indicator>SE-bound</Indicator>
+      <LocalityName>Crediton</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEZ05196</StopPointRef>
+      <CommonName>Spruce Park</CommonName>
+      <Indicator>SE-bound</Indicator>
+      <LocalityName>Crediton</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEC10503</StopPointRef>
+      <CommonName>The Crown</CommonName>
+      <Indicator>N-bound</Indicator>
+      <LocalityName>Crediton</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEC10506</StopPointRef>
+      <CommonName>Parish Church</CommonName>
+      <Indicator>W-bound</Indicator>
+      <LocalityName>Crediton</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEC10625</StopPointRef>
+      <CommonName>Union Terrace</CommonName>
+      <Indicator>W-bound</Indicator>
+      <LocalityName>Crediton</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEC10509</StopPointRef>
+      <CommonName>Lloyds Bank</CommonName>
+      <Indicator>W-bound</Indicator>
+      <LocalityName>Crediton</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEA05962</StopPointRef>
+      <CommonName>Green</CommonName>
+      <Indicator>W-bound</Indicator>
+      <LocalityName>Crediton</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEZ05151</StopPointRef>
+      <CommonName>Churchill Drive</CommonName>
+      <Indicator>E-bound</Indicator>
+      <LocalityName>Crediton</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEA11866</StopPointRef>
+      <CommonName>Lamb Inn</CommonName>
+      <Indicator>NW-bound</Indicator>
+      <LocalityName>Sandford (Devon)</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEX28590</StopPointRef>
+      <CommonName>School</CommonName>
+      <Indicator>opp</Indicator>
+      <LocalityName>Sandford (Devon)</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEA56968</StopPointRef>
+      <CommonName>Stone's Hill Cottages</CommonName>
+      <Indicator>N-bound</Indicator>
+      <LocalityName>Sandford (Devon)</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEA56969</StopPointRef>
+      <CommonName>Pidsley Lane</CommonName>
+      <Indicator>N-bound</Indicator>
+      <LocalityName>Sandford (Devon)</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEA11871</StopPointRef>
+      <CommonName>Post Office</CommonName>
+      <Indicator>adj</Indicator>
+      <LocalityName>Kennerleigh</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEA56966</StopPointRef>
+      <CommonName>Tridley Foot</CommonName>
+      <Indicator>S-bound</Indicator>
+      <LocalityName>Black Dog</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEB10868</StopPointRef>
+      <CommonName>Black Dog Inn</CommonName>
+      <Indicator>opp</Indicator>
+      <LocalityName>Black Dog</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEB10869</StopPointRef>
+      <CommonName>Thelbridge Cross Inn</CommonName>
+      <Indicator>opp</Indicator>
+      <LocalityName>Witheridge</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEB10870</StopPointRef>
+      <CommonName>Thelbridge Cross Inn</CommonName>
+      <Indicator>SE-bound</Indicator>
+      <LocalityName>Witheridge</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEB10867</StopPointRef>
+      <CommonName>Black Dog Inn</CommonName>
+      <Indicator>adj</Indicator>
+      <LocalityName>Black Dog</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEA56965</StopPointRef>
+      <CommonName>Tridley Foot</CommonName>
+      <Indicator>N-bound</Indicator>
+      <LocalityName>Black Dog</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEA11872</StopPointRef>
+      <CommonName>Post Office</CommonName>
+      <Indicator>opp</Indicator>
+      <LocalityName>Kennerleigh</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEC56970</StopPointRef>
+      <CommonName>Pidsley Lane</CommonName>
+      <Indicator>S-bound</Indicator>
+      <LocalityName>Sandford (Devon)</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEA56967</StopPointRef>
+      <CommonName>Stone's Hill Cottages</CommonName>
+      <Indicator>S-bound</Indicator>
+      <LocalityName>Sandford (Devon)</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEX28591</StopPointRef>
+      <CommonName>School</CommonName>
+      <Indicator>S-bound</Indicator>
+      <LocalityName>Sandford (Devon)</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEA11865</StopPointRef>
+      <CommonName>The Square</CommonName>
+      <Indicator>SE-bound</Indicator>
+      <LocalityName>Sandford (Devon)</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEA56762</StopPointRef>
+      <CommonName>Churchill Drive</CommonName>
+      <Indicator>W-bound</Indicator>
+      <LocalityName>Crediton</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEC10515</StopPointRef>
+      <CommonName>Green</CommonName>
+      <Indicator>E-bound</Indicator>
+      <LocalityName>Crediton</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEC10516</StopPointRef>
+      <CommonName>opp Tesco Metro</CommonName>
+      <Indicator>Stop B</Indicator>
+      <LocalityName>Crediton</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEC10507</StopPointRef>
+      <CommonName>Memorial</CommonName>
+      <Indicator>SE-bound</Indicator>
+      <LocalityName>Crediton</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEC10505</StopPointRef>
+      <CommonName>Snooker Hall</CommonName>
+      <Indicator>E-bound</Indicator>
+      <LocalityName>Crediton</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1100DEC10502</StopPointRef>
+      <CommonName>The Crown</CommonName>
+      <Indicator>S-bound</Indicator>
+      <LocalityName>Crediton</LocalityName>
+      <LocalityQualifier>Devon</LocalityQualifier>
+    </AnnotatedStopPointRef>
+  </StopPoints>
+  <RouteSections>
+    <RouteSection id="RS_31-668-_-y10-1-H-1">
+      <RouteLink id="RL_31-668-_-y10-1-H-1-1">
+        <From>
+          <StopPointRef>1100DEB10870</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEB10867</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-H-1-2">
+        <From>
+          <StopPointRef>1100DEB10867</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEA56965</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-H-1-3">
+        <From>
+          <StopPointRef>1100DEA56965</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEA11872</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-H-1-4">
+        <From>
+          <StopPointRef>1100DEA11872</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEC56970</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-H-1-5">
+        <From>
+          <StopPointRef>1100DEC56970</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEA56967</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-H-1-6">
+        <From>
+          <StopPointRef>1100DEA56967</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEX28591</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-H-1-7">
+        <From>
+          <StopPointRef>1100DEX28591</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEA11865</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-H-1-8">
+        <From>
+          <StopPointRef>1100DEA11865</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEA56762</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-H-1-9">
+        <From>
+          <StopPointRef>1100DEA56762</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEC10515</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-H-1-11">
+        <From>
+          <StopPointRef>1100DEC10515</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEC10516</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-H-1-13">
+        <From>
+          <StopPointRef>1100DEC10516</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEC10507</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-H-1-15">
+        <From>
+          <StopPointRef>1100DEC10507</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEC10505</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-H-1-17">
+        <From>
+          <StopPointRef>1100DEC10505</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEC10502</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-H-1-19">
+        <From>
+          <StopPointRef>1100DEC10502</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEZ05196</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-H-1-21">
+        <From>
+          <StopPointRef>1100DEZ05196</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEA10056</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-H-1-23">
+        <From>
+          <StopPointRef>1100DEA10056</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEX28601</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS_31-668-_-y10-1-R-2">
+      <RouteLink id="RL_31-668-_-y10-1-R-2-1">
+        <From>
+          <StopPointRef>1100DEX28601</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEA11994</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-R-2-2">
+        <From>
+          <StopPointRef>1100DEA11994</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEA10056</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-R-2-3">
+        <From>
+          <StopPointRef>1100DEA10056</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEZ05196</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-R-2-4">
+        <From>
+          <StopPointRef>1100DEZ05196</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEC10503</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-R-2-5">
+        <From>
+          <StopPointRef>1100DEC10503</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEC10506</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-R-2-6">
+        <From>
+          <StopPointRef>1100DEC10506</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEC10625</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-R-2-7">
+        <From>
+          <StopPointRef>1100DEC10625</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEC10509</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-R-2-8">
+        <From>
+          <StopPointRef>1100DEC10509</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEA05962</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-R-2-9">
+        <From>
+          <StopPointRef>1100DEA05962</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEZ05151</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-R-2-10">
+        <From>
+          <StopPointRef>1100DEZ05151</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEA11866</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-R-2-11">
+        <From>
+          <StopPointRef>1100DEA11866</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEX28590</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-R-2-12">
+        <From>
+          <StopPointRef>1100DEX28590</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEA56968</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-R-2-13">
+        <From>
+          <StopPointRef>1100DEA56968</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEA56969</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-R-2-14">
+        <From>
+          <StopPointRef>1100DEA56969</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEA11871</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-R-2-15">
+        <From>
+          <StopPointRef>1100DEA11871</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEA56966</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-R-2-16">
+        <From>
+          <StopPointRef>1100DEA56966</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEB10868</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL_31-668-_-y10-1-R-2-17">
+        <From>
+          <StopPointRef>1100DEB10868</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>1100DEB10869</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+  </RouteSections>
+  <Routes>
+    <Route id="R_31-668-_-y10-1-H-1">
+      <PrivateCode>R_31-668-_-y10-1-H-1</PrivateCode>
+      <Description>Thelbridge Cross Inn - Lower School</Description>
+      <RouteSectionRef>RS_31-668-_-y10-1-H-1</RouteSectionRef>
+    </Route>
+    <Route id="R_31-668-_-y10-1-R-2">
+      <PrivateCode>R_31-668-_-y10-1-R-2</PrivateCode>
+      <Description>Lower School - Thelbridge Cross Inn</Description>
+      <RouteSectionRef>RS_31-668-_-y10-1-R-2</RouteSectionRef>
+    </Route>
+  </Routes>
+  <JourneyPatternSections>
+    <JourneyPatternSection id="JPS_31-668-_-y10-1-1-1-H">
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-1-H-1-2">
+        <From SequenceNumber="1">
+          <Activity>pickUp</Activity>
+          <StopPointRef>1100DEB10870</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="2">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEB10867</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-H-1-1</RouteLinkRef>
+        <RunTime>PT7M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-1-H-1-3">
+        <From SequenceNumber="2">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEB10867</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="3">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA56965</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-H-1-2</RouteLinkRef>
+        <RunTime>PT3M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-1-H-1-4">
+        <From SequenceNumber="3">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA56965</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="4">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA11872</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-H-1-3</RouteLinkRef>
+        <RunTime>PT5M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-1-H-1-5">
+        <From SequenceNumber="4">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA11872</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="5">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC56970</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-H-1-4</RouteLinkRef>
+        <RunTime>PT3M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-1-H-1-6">
+        <From SequenceNumber="5">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC56970</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="6">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA56967</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-H-1-5</RouteLinkRef>
+        <RunTime>PT2M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-1-H-1-7">
+        <From SequenceNumber="6">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA56967</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="7">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEX28591</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-H-1-6</RouteLinkRef>
+        <RunTime>PT2M40S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-1-H-1-8">
+        <From SequenceNumber="7">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEX28591</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="8">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA11865</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-H-1-7</RouteLinkRef>
+        <RunTime>PT20S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-1-H-1-9">
+        <From SequenceNumber="8">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA11865</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="9">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA56762</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-H-1-8</RouteLinkRef>
+        <RunTime>PT8M8S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-1-H-1-11">
+        <From SequenceNumber="9">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA56762</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="10">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10515</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-H-1-9</RouteLinkRef>
+        <RunTime>PT1M20S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-1-H-1-13">
+        <From SequenceNumber="10">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10515</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="11">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10516</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-H-1-11</RouteLinkRef>
+        <RunTime>PT59S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-1-H-1-15">
+        <From SequenceNumber="11">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10516</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="12">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10507</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-H-1-13</RouteLinkRef>
+        <RunTime>PT1M24S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-1-H-1-17">
+        <From SequenceNumber="12">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10507</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="13">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10505</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-H-1-15</RouteLinkRef>
+        <RunTime>PT1M9S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-1-H-1-19">
+        <From SequenceNumber="13">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10505</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="14">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10502</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-H-1-17</RouteLinkRef>
+        <RunTime>PT49S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-1-H-1-21">
+        <From SequenceNumber="14">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10502</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="15">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEZ05196</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-H-1-19</RouteLinkRef>
+        <RunTime>PT2M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-1-H-1-23">
+        <From SequenceNumber="15">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEZ05196</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="16">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA10056</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-H-1-21</RouteLinkRef>
+        <RunTime>PT1M1S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-1-H-1-25">
+        <From SequenceNumber="16">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA10056</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="17">
+          <Activity>setDown</Activity>
+          <StopPointRef>1100DEX28601</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-H-1-23</RouteLinkRef>
+        <RunTime>PT1M10S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPS_31-668-_-y10-1-2-2-R">
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-2">
+        <From SequenceNumber="1">
+          <Activity>pickUp</Activity>
+          <StopPointRef>1100DEX28601</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="2">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA11994</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-1</RouteLinkRef>
+        <RunTime>PT29S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-3">
+        <From SequenceNumber="2">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA11994</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="3">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA10056</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-2</RouteLinkRef>
+        <RunTime>PT37S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-4">
+        <From SequenceNumber="3">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA10056</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="4">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEZ05196</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-3</RouteLinkRef>
+        <RunTime>PT57S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-5">
+        <From SequenceNumber="4">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEZ05196</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="5">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10503</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-4</RouteLinkRef>
+        <RunTime>PT1M53S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-6">
+        <From SequenceNumber="5">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10503</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="6">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10506</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-5</RouteLinkRef>
+        <RunTime>PT1M2S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-7">
+        <From SequenceNumber="6">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10506</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="7">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10625</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-6</RouteLinkRef>
+        <RunTime>PT1M3S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-8">
+        <From SequenceNumber="7">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10625</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="8">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10509</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-7</RouteLinkRef>
+        <RunTime>PT56S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-9">
+        <From SequenceNumber="8">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEC10509</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="9">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA05962</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-8</RouteLinkRef>
+        <RunTime>PT1M13S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-10">
+        <From SequenceNumber="9">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA05962</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="10">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEZ05151</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-9</RouteLinkRef>
+        <RunTime>PT1M8S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-11">
+        <From SequenceNumber="10">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEZ05151</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="11">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA11866</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-10</RouteLinkRef>
+        <RunTime>PT7M42S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-12">
+        <From SequenceNumber="11">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA11866</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="12">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEX28590</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-11</RouteLinkRef>
+        <RunTime>PT30S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-13">
+        <From SequenceNumber="12">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEX28590</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="13">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA56968</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-12</RouteLinkRef>
+        <RunTime>PT4M30S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-14">
+        <From SequenceNumber="13">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA56968</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="14">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA56969</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-13</RouteLinkRef>
+        <RunTime>PT2M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-15">
+        <From SequenceNumber="14">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA56969</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="15">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA11871</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-14</RouteLinkRef>
+        <RunTime>PT3M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-16">
+        <From SequenceNumber="15">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA11871</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="16">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA56966</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-15</RouteLinkRef>
+        <RunTime>PT4M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-17">
+        <From SequenceNumber="16">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEA56966</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="17">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEB10868</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-16</RouteLinkRef>
+        <RunTime>PT4M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPL_31-668-_-y10-1-2-R-2-18">
+        <From SequenceNumber="17">
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1100DEB10868</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="18">
+          <Activity>setDown</Activity>
+          <StopPointRef>1100DEB10869</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL_31-668-_-y10-1-R-2-17</RouteLinkRef>
+        <RunTime>PT7M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+  </JourneyPatternSections>
+  <Operators>
+    <Operator id="OId_TU">
+      <NationalOperatorCode>TNTR</NationalOperatorCode>
+      <OperatorCode>TU</OperatorCode>
+      <OperatorShortName>Turners Tours</OperatorShortName>
+      <OperatorNameOnLicence>Turners Tours</OperatorNameOnLicence>
+      <TradingName>Turners Tours</TradingName>
+    </Operator>
+  </Operators>
+  <Services>
+    <Service>
+      <ServiceCode>31-668-_-y10-1</ServiceCode>
+      <PrivateCode>31-668-_-y10-1</PrivateCode>
+      <Lines>
+        <Line id="31-668-_-y10-1">
+          <LineName>668</LineName>
+        </Line>
+      </Lines>
+      <OperatingPeriod>
+        <StartDate>2016-07-18</StartDate>
+        <EndDate>2016-09-16</EndDate>
+      </OperatingPeriod>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2015-12-24</StartDate>
+              <EndDate>2016-01-01</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <RegisteredOperatorRef>OId_TU</RegisteredOperatorRef>
+      <StopRequirements>
+        <NoNewStopsRequired />
+      </StopRequirements>
+      <Mode>bus</Mode>
+      <Description>Thelbridge Cross - Crediton</Description>
+      <StandardService>
+        <Origin>Thelbridge Cross Inn</Origin>
+        <Destination>Lower School</Destination>
+        <JourneyPattern id="JP_31-668-_-y10-1-1-H-1">
+          <DestinationDisplay>Crediton</DestinationDisplay>
+          <Direction>outbound</Direction>
+          <RouteRef>R_31-668-_-y10-1-H-1</RouteRef>
+          <JourneyPatternSectionRefs>JPS_31-668-_-y10-1-1-1-H</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP_31-668-_-y10-1-2-R-2">
+          <DestinationDisplay>Witheridge</DestinationDisplay>
+          <Direction>inbound</Direction>
+          <RouteRef>R_31-668-_-y10-1-R-2</RouteRef>
+          <JourneyPatternSectionRefs>JPS_31-668-_-y10-1-2-2-R</JourneyPatternSectionRefs>
+        </JourneyPattern>
+      </StandardService>
+    </Service>
+  </Services>
+  <VehicleJourneys>
+    <VehicleJourney>
+      <PrivateCode>swe-31-668-_-y10-1-1-T0</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <ServicedOrganisationDayType>
+          <DaysOfNonOperation>
+            <Holidays>
+              <ServicedOrganisationRef>SOId_XX-DESch</ServicedOrganisationRef>
+            </Holidays>
+          </DaysOfNonOperation>
+        </ServicedOrganisationDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2015-12-24</StartDate>
+              <EndDate>2016-01-01</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ_31-668-_-y10-1-1-T0</VehicleJourneyCode>
+      <ServiceRef>31-668-_-y10-1</ServiceRef>
+      <LineRef>31-668-_-y10-1</LineRef>
+      <JourneyPatternRef>JP_31-668-_-y10-1-1-H-1</JourneyPatternRef>
+      <DepartureTime>08:02:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>swe-31-668-_-y10-1-2-T0</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <ServicedOrganisationDayType>
+          <DaysOfNonOperation>
+            <Holidays>
+              <ServicedOrganisationRef>SOId_XX-DESch</ServicedOrganisationRef>
+            </Holidays>
+          </DaysOfNonOperation>
+        </ServicedOrganisationDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2015-12-24</StartDate>
+              <EndDate>2016-01-01</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ_31-668-_-y10-1-2-T0</VehicleJourneyCode>
+      <ServiceRef>31-668-_-y10-1</ServiceRef>
+      <LineRef>31-668-_-y10-1</LineRef>
+      <JourneyPatternRef>JP_31-668-_-y10-1-2-R-2</JourneyPatternRef>
+      <DepartureTime>15:23:00</DepartureTime>
+    </VehicleJourney>
+  </VehicleJourneys>
+</TransXChange>

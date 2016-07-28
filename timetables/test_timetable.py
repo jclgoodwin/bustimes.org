@@ -33,6 +33,11 @@ class TimetableTest(TestCase):
             region_id='GB',
             date='2016-05-24',
         )
+        cls.gb_service = Service.objects.create(
+            pk='swe_31-668-_-y10',
+            region_id='SW',
+            date='2016-05-24',
+        )
 
     def test_get_pickle_filenames(self):
         """
@@ -125,6 +130,14 @@ class TimetableTest(TestCase):
         )
         self.assertEqual(
             deadruns.groupings[0].rows[-1].times[:7], ['', '', '', '', '', '', time(10, 7)]
+        )
+
+    def test_timetable_servicedorg(self):
+        """Test a timetable with a ServicedOrganisation"""
+        timetable_sw = timetable.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml')
+        self.assertEqual(
+            str(timetable_sw.groupings[0].column_heads[0].operatingprofile),
+            'Monday to Friday\nSchool days'
         )
 
 
