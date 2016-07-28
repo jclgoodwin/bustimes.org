@@ -86,7 +86,7 @@
     <h2>More information</h2>
     <ul class="bulleted">
     {% for link in links %}
-       <li><a href="{{ link.url }}">{{ link.text }}</a></li>
+       <li><a href="{{ link.url }}" rel="nofollow">{{ link.text }}</a></li>
         {% endfor %}
     </ul>
 {% endif %}
