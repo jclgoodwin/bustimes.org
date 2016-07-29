@@ -1,5 +1,5 @@
 import re
-from datetime import datetime, date
+import datetime
 
 import requests
 import pytz
@@ -108,14 +108,18 @@ class AcisConnectDepartures(AcisDepartures):
 
 class TransportApiDepartures(Departures):
     def get_row(self, item):
+        today = datetime.date.today()
         time = item['best_departure_estimate']
         if time is None:
             return
         if 'date' in item:
-            departure_time = datetime.strptime(item['date'] + ' ' + time, '%Y-%m-%d %H:%M')
+            departure_time = dateutil.parser.parse(item['date'] + ' ' + time)
+            if departure_time.date() > today:
+                return
         else:
-            departure_time = datetime.strptime(time, '%H:%M').time()
-            departure_time = datetime.combine(date.today(), departure_time)
+            departure_time = datetime.datetime.combine(
+                today, dateutil.parser.parse(time).time()
+            )
         destination = item.get('direction')
         destination_matches = DESTINATION_REGEX.match(destination)
         if destination_matches is not None:
@@ -140,23 +144,24 @@ class TransportApiDepartures(Departures):
     def departures_from_response(self, res):
         departures = res.json().get('departures')
         if departures and 'all' in departures:
-            today = date.today()
-            return [
-                item for item in map(self.get_row, departures['all'])
-                if item is not None and item.get('time').date() <= today
-            ]
+            return filter(None, map(self.get_row, departures['all']))
 
 
 def get_max_age(departures, now):
     """
-    Given a list of departures and the current datetime, returns a max_age in seconds
-    (for use in a cache-control header)
+    Given a list of departures and the current datetime, returns an appropriate max_age in seconds
+    (for use in a cache-control header) (for costly Transport API departures)
     """
-    if departures and len(departures) > 0:
-        expiry = departures[0]['time']
-        if now < expiry:
-            return (expiry - now).seconds + 60
-        return 60
+    if departures is not None:
+        if len(departures) > 0:
+            expiry = departures[0]['time']
+            if now < expiry:
+                return (expiry - now).seconds + 60
+            return 60
+        midnight = datetime.datetime.combine(
+            now.date() + datetime.timedelta(days=1), datetime.time(0)
+        )
+        return (midnight - now).seconds
     return 3600
 
 
@@ -170,7 +175,7 @@ def get_departures(stop, services):
     if 'TfL' in live_sources:
         return ({
             'departures': TflDepartures(stop, services),
-            'today': date.today(),
+            'today': datetime.date.today(),
             'source': {
                 'url': 'https://tfl.gov.uk/bus/stop/%s/%s' % (stop.atco_code, slugify(stop.common_name)),
                 'name': 'Transport for London'
@@ -221,6 +226,6 @@ def get_departures(stop, services):
     departures = TransportApiDepartures(stop, services).get_departures()
     return ({
         'departures': departures,
-        'today': date.today(),
+        'today': datetime.date.today(),
         'source': None,
-    }, get_max_age(departures, datetime.now()))
+    }, get_max_age(departures, datetime.datetime.now()))
