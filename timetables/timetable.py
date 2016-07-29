@@ -33,7 +33,7 @@ class Stop(object):
     def is_at(self, locality_name):
         if self.locality:
             return locality_name in self.locality
-        if self.stop.locality:
+        if self.stop and self.stop.locality:
             return locality_name in self.stop.locality.name
 
 
