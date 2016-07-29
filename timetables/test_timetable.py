@@ -64,7 +64,7 @@ class TimetableTest(TestCase):
         timetable_ea = timetable.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-1.xml')
 
         self.assertEqual('Monday to Sunday', str(timetable_ea.operating_profile))
-        self.assertEqual('', str(timetable_ea.operating_period))
+        self.assertEqual('until 21 October 2016', str(timetable_ea.operating_period))
 
         self.assertEqual(3, len(timetable_ea.groupings[0].column_heads))
         self.assertEqual(13, len(timetable_ea.groupings[0].journeys))
