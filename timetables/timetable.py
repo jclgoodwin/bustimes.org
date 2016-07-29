@@ -30,6 +30,12 @@ class Stop(object):
         else:
             return '%s %s' % (self.locality, self.common_name)
 
+    def is_at(self, locality_name):
+        if self.locality:
+            return locality_name in self.locality
+        if self.stop.locality:
+            return locality_name in self.stop.locality.name
+
 
 class Row(object):
     """A row in a grouping in a timetable.
@@ -67,8 +73,9 @@ class Grouping(object):
     """Probably either "outbound" or "inbound".
     (Could perhaps be extended to group by weekends, bank holidays in the future)
     """
-    def __init__(self, direction):
+    def __init__(self, direction, service_description_parts):
         self.direction = direction
+        self.service_description_parts = service_description_parts
         self.column_heads = []
         self.column_feet = []
         self.journeys = []
@@ -79,6 +86,23 @@ class Grouping(object):
             if row.part.timingstatus == 'OTH':
                 return True
         return False
+
+    def starts_at(self, locality_name):
+        return self.rows[0].part.stop.is_at(locality_name)
+
+    def ends_at(self, locality_name):
+        return self.rows[-1].part.stop.is_at(locality_name)
+
+    def __unicode__(self):
+        if hasattr(self, 'service_description_parts') and self.service_description_parts:
+            start = self.service_description_parts[0]
+            end = self.service_description_parts[-1]
+            if self.starts_at(start) or self.ends_at(end):
+                return ' - '.join(self.service_description_parts)
+            elif self.starts_at(end) or self.ends_at(start):
+                self.service_description_parts.reverse()
+                return ' - '.join(self.service_description_parts)
+        return self.direction.capitalize()
 
 
 class JourneyPattern(object):
@@ -447,8 +471,13 @@ class Timetable(object):
     def __init__(self, xml):
         today = date.today()
 
-        outbound_grouping = Grouping('outbound')
-        inbound_grouping = Grouping('inbound')
+        description_element = xml.find('txc:Services/txc:Service/txc:Description', NS)
+        if description_element is not None:
+            description_parts = description_element.text.split(' - ')
+        else:
+            description_parts = None
+        outbound_grouping = Grouping('outbound', description_parts)
+        inbound_grouping = Grouping('inbound', description_parts)
 
         stops = {
             element.find('txc:StopPointRef', NS).text: Stop(element)

@@ -15,7 +15,7 @@
 
 {% for timetable in timetables %}
     {% for grouping in timetable.groupings %}{% if grouping.rows.0.times %}
-    <h2>{{ grouping.direction.capitalize }} {{ timetable.operating_period }}</h2>
+    <h2>{{ grouping }} {{ timetable.operating_period }}</h2>
 
     <div class="timetable-wrapper">
     {% if grouping.has_minor_stops %}
