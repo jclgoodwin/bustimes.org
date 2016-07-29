@@ -423,7 +423,7 @@ class OperatingPeriod(DateRange):
             return 'from %s to %s' % (
                 self.start.strftime(start_format), self.end.strftime('%-d %B %Y')
             )
-        elif self.end.year == date.today().year:
+        elif self.end is not None and self.end.year == date.today().year:
             return self.end.strftime('until %-d %B %Y')
         return ''
 
