@@ -383,6 +383,9 @@ class OperatingProfile(object):
                 return 3
         return 0
 
+    def __eq__(self, other):
+        return str(self) == str(other)
+
     def __ne__(self, other):
         return str(self) != str(other)
 
