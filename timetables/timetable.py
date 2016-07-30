@@ -32,9 +32,12 @@ class Stop(object):
 
     def is_at(self, locality_name):
         if self.locality:
-            return locality_name in self.locality
-        if self.stop and self.stop.locality:
-            return locality_name in self.stop.locality.name
+            if locality_name in self.locality:
+                return True
+        elif self.stop:
+            if locality_name in self.stop.locality:
+                return True
+        return locality_name in self.common_name
 
 
 class Row(object):
@@ -99,7 +102,7 @@ class Grouping(object):
             end = self.service_description_parts[-1]
             if self.starts_at(start) or self.ends_at(end):
                 return ' - '.join(self.service_description_parts)
-            elif self.starts_at(end) or self.ends_at(start):
+            if self.starts_at(end) or self.ends_at(start):
                 self.service_description_parts.reverse()
                 return ' - '.join(self.service_description_parts)
         return self.direction.capitalize()
