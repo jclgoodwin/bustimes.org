@@ -3,7 +3,7 @@ import os
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
-from django.views.decorators.cache import patch_cache_control
+from django.utils.cache import patch_response_headers
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
 from django.contrib.gis.db.models.functions import Distance
@@ -361,7 +361,7 @@ def departures(request, pk):
     if hasattr(context['departures'], 'get_departures'):
         context['departures'] = context['departures'].get_departures()
     response = render(request, 'departures.html', context)
-    patch_cache_control(response, max_age=max_age, public=True)
+    patch_response_headers(response, cache_timeout=max_age)
     return response
 
 
