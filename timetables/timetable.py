@@ -4,7 +4,9 @@ import cPickle as pickle
 import xml.etree.cElementTree as ET
 from datetime import date, datetime
 from django.utils.dateparse import parse_duration
+from django.utils.text import slugify
 from django.core.cache import cache
+import titlecase
 
 DIR = os.path.dirname(__file__)
 NS = {
@@ -30,14 +32,12 @@ class Stop(object):
         else:
             return '%s %s' % (self.locality, self.common_name)
 
-    def is_at(self, locality_name):
-        if self.locality:
-            if locality_name in self.locality or self.locality in locality_name:
-                return True
-        elif self.stop:
-            if locality_name in self.stop.locality.name or self.stop.locality.name in locality_name:
-                return True
-        return locality_name in self.common_name or locality_name in self.common_name
+    def is_at(self, text):
+        locality_name = slugify(self.stop.locality.name if self.stop else self.locality)
+        if locality_name and locality_name in text or text in locality_name:
+            return True
+        name = slugify(self.common_name)
+        return text in name or name in text
 
 
 class Row(object):
@@ -98,8 +98,8 @@ class Grouping(object):
 
     def __unicode__(self):
         if hasattr(self, 'service_description_parts') and self.service_description_parts:
-            start = self.service_description_parts[0]
-            end = self.service_description_parts[-1]
+            start = slugify(self.service_description_parts[0])
+            end = slugify(self.service_description_parts[-1])
             if self.starts_at(start) or self.ends_at(end):
                 return ' - '.join(self.service_description_parts)
             if self.starts_at(end) or self.ends_at(start):
@@ -476,6 +476,8 @@ class Timetable(object):
 
         description_element = xml.find('txc:Services/txc:Service/txc:Description', NS)
         if description_element is not None:
+            if description_element.text.isupper():
+                description_element.text = titlecase.titlecase(description_element.text)
             description_parts = description_element.text.split(' - ')
         else:
             description_parts = None
@@ -682,6 +684,7 @@ def timetable_from_service(service):
 
     filenames = get_pickle_filenames(service, path)
     if filenames:
-        timetables = (timetable_from_filename(path, name) for name in filenames)
-        return [timetable for timetable in timetables if timetable is not None]
+        timetables = filter(None, (timetable_from_filename(path, name) for name in filenames))
+        if timetables:
+            return timetables
     return [Timetable(ET.parse(file)) for file in get_files_from_zipfile(service)]
