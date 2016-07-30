@@ -35,7 +35,7 @@ class Stop(object):
             if locality_name in self.locality:
                 return True
         elif self.stop:
-            if locality_name in self.stop.locality:
+            if locality_name in self.stop.locality.name:
                 return True
         return locality_name in self.common_name
 
