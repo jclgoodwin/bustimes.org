@@ -72,14 +72,14 @@ if compgen -G "*csv.zip" > /dev/null; then
         unzip -oq "$file" Stops.csv StopAreas.csv StopsInArea.csv
         echo " $file"
         echo "  Stops"
-        ../../manage.py import_stops < Stops.csv || continue
+        tr -d '\000' < Stops.csv | ../../manage.py import_stops
         echo "  Stop areas"
-        ../../manage.py import_stop_areas < StopAreas.csv || continue
+        tr -d '\000' < StopAreas.csv | ../../manage.py import_stop_areas
     done
     for file in *csv.zip; do
         echo " $file"
         echo "  Stops in area"
-        ../../manage.py import_stops_in_area < StopsInArea.csv || continue
+        tr -d '\000' < StopsInArea.csv |../../manage.py import_stops_in_area || continue
         rm "$file"
     done
 fi
