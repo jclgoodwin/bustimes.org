@@ -1,3 +1,4 @@
+"""Tests for timetables and date ranges"""
 import xml.etree.cElementTree as ET
 from datetime import time
 from django.test import TestCase

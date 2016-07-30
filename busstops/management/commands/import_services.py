@@ -96,13 +96,12 @@ SPECIAL_OPERATOR_CODES = {
     'ALI': 'AMDD',   # Alasdair MacDonald
     'EWE': 'EWEN',   # Ewens Coach Hire
 }
+# see https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml-with-namespaces
+NS = {'txc': 'http://www.transxchange.org.uk/'}
 
 
 class Command(BaseCommand):
     "Command that imports bus services from a zip file"
-
-    # see https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml-with-namespaces
-    ns = {'txc': 'http://www.transxchange.org.uk/'}
 
     now = datetime.today()
 
@@ -153,7 +152,7 @@ class Command(BaseCommand):
         "Given an Operator element, returns the operator name or None"
 
         for element_name in ('TradingName', 'OperatorNameOnLicence', 'OperatorShortName'):
-            element = operator_element.find('txc:%s' % element_name, cls.ns)
+            element = operator_element.find('txc:%s' % element_name, NS)
             if element is not None and element.text is not None:
                 return element.text.replace('&amp;', '&')
 
@@ -162,7 +161,7 @@ class Command(BaseCommand):
         "Given an Operator element, returns the operator code or None"
 
         for element_name in ('National', ''):
-            element = operator_element.find('txc:%sOperatorCode' % element_name, cls.ns)
+            element = operator_element.find('txc:%sOperatorCode' % element_name, NS)
             if element is not None:
                 return element.text
 
@@ -201,7 +200,7 @@ class Command(BaseCommand):
         Given a Service element and (purely for debugging) a filename
         returns a (line_name, line_brand) tuple
         """
-        line_name = service_element.find('txc:Lines', cls.ns)[0][0].text
+        line_name = service_element.find('txc:Lines', NS)[0][0].text
         if '|' in line_name:
             line_name_parts = line_name.split('|', 1)
             line_name = line_name_parts[0]
@@ -221,13 +220,13 @@ class Command(BaseCommand):
         Given a root element, region ID, filename, and optional dictionary of service descriptions
         (for the NCSD), does stuff
         """
-        for service_element in root.find('txc:Services', cls.ns):
+        for service_element in root.find('txc:Services', NS):
 
             line_name, line_brand = cls.get_line_name_and_brand(
                 service_element, filename
             )
 
-            mode_element = service_element.find('txc:Mode', cls.ns)
+            mode_element = service_element.find('txc:Mode', NS)
             if mode_element is not None:
                 mode = mode_element.text
             else:
@@ -236,13 +235,12 @@ class Command(BaseCommand):
             # service operators:
             # (doing this preliminary bit now, to make getting NCSD descriptions possible)
 
-            operators_element = root.find('txc:Operators', cls.ns)
-            operators = map(cls.get_operator, operators_element)
-            operators = filter(None, operators)
+            operators_element = root.find('txc:Operators', NS)
+            operators = filter(None, map(cls.get_operator, operators_element))
 
             # service description:
 
-            description_element = service_element.find('txc:Description', cls.ns)
+            description_element = service_element.find('txc:Description', NS)
             if description_element is not None:
                 description = description_element.text
             elif service_descriptions is not None:
@@ -265,12 +263,12 @@ class Command(BaseCommand):
 
             net, service_code, line_ver = cls.infer_from_filename(root.attrib['FileName'])
             if service_code is None:
-                service_code = service_element.find('txc:ServiceCode', cls.ns).text
+                service_code = service_element.find('txc:ServiceCode', NS).text
 
             # stops:
 
-            stop_elements = root.find('txc:StopPoints', cls.ns)
-            stop_ids = [stop.find('txc:StopPointRef', cls.ns).text for stop in stop_elements]
+            stop_elements = root.find('txc:StopPoints', NS)
+            stop_ids = [stop.find('txc:StopPointRef', NS).text for stop in stop_elements]
             stops = StopPoint.objects.in_bulk(stop_ids)
 
             try:

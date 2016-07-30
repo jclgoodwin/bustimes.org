@@ -1,3 +1,4 @@
+"""Various ways of getting live departures from some web service"""
 import re
 import datetime
 
@@ -14,6 +15,7 @@ LOCAL_TIMEZONE = pytz.timezone('Europe/London')
 
 
 class Departures(object):
+    """Abstract class for getting departures from a source"""
     def __init__(self, stop, services):
         self.stop = stop
         self.services = {
@@ -22,23 +24,33 @@ class Departures(object):
         }
 
     def get_request_args(self):
+        """Returns a list of arguments to pass to get_response: probably a URL
+        string by a dictionary of HTTP GET parameters
+        """
         raise NotImplementedError
 
     def get_response(self):
-        return requests.get(*self.get_request_args())
+        return requests.get(*self.get_request_args(), headers={'User-Agent': 'https://bustimes.org.uk'})
 
     def get_service(self, line_name):
-        """Returns the Service matching a line name (case-insensitively), or a line name string"""
+        """Given a line name string, returns the Service matching a line name
+        (case-insensitively), or a line name string
+        """
         return self.services.get(line_name.lower(), line_name)
 
     def departures_from_response(self, res):
+        """Given a Response object from the requests module,
+        returns a list of departures
+        """
         raise NotImplementedError
 
     def get_departures(self):
+        """Returns a list of departures"""
         return self.departures_from_response(self.get_response())
 
 
 class TflDepartures(Departures):
+    """Departures from the Transport for London API"""
     def get_request_args(self):
         return ('http://api.tfl.gov.uk/StopPoint/%s/arrivals' % self.stop.pk,)
 
@@ -51,12 +63,14 @@ class TflDepartures(Departures):
 
 
 class AcisDepartures(Departures):
+    """Departures from a website ending in .acisconnect.com or .acislive.com"""
     def __init__(self, prefix, stop, services):
         self.prefix = prefix
         super(AcisDepartures, self).__init__(stop, services)
 
 
 class AcisLiveDepartures(AcisDepartures):
+    """Departures from an old-fashioned website ending in .acislive.com"""
     def get_request_args(self):
         return ('http://%s.acislive.com/pip/stop_simulator_table.asp' % self.prefix, {
             'naptan': self.stop.naptan_code
@@ -74,8 +88,12 @@ class AcisLiveDepartures(AcisDepartures):
 
 
 class AcisConnectDepartures(AcisDepartures):
+    """Departures from a website ending in '.acisconnect.com'"""
     @staticmethod
     def get_time(cell):
+        """Given a Beautiful Soup element, returns its text made nicer
+        ('1 Mins' becomes '1 min', '2 Mins' becomes '2 mins')
+        """
         text = cell.text
         if text == '1 Mins':
             return '1 min'
@@ -107,6 +125,7 @@ class AcisConnectDepartures(AcisDepartures):
 
 
 class TransportApiDepartures(Departures):
+    """Departures from Transport API"""
     @staticmethod
     def _get_destination(item):
         destination = item['direction']
@@ -157,9 +176,9 @@ class TransportApiDepartures(Departures):
 
 
 def get_max_age(departures, now):
-    """
-    Given a list of departures and the current datetime, returns an appropriate max_age in seconds
-    (for use in a cache-control header) (for costly Transport API departures)
+    """Given a list of departures and the current datetime, returns an
+    appropriate max_age in seconds (for use in a cache-control header)
+    (for costly Transport API departures)
     """
     if departures is not None:
         if len(departures) > 0:
@@ -175,8 +194,7 @@ def get_max_age(departures, now):
 
 
 def get_departures(stop, services):
-    """
-    Given a StopPoint object and an iterable of Service objects,
+    """Given a StopPoint object and an iterable of Service objects,
     returns a tuple containing a context dictionary and a max_age integer
     """
     live_sources = stop.live_sources.values_list('name', flat=True)
@@ -210,9 +228,14 @@ def get_departures(stop, services):
         }, 60)
 
     for live_source_name, prefix in (
-            ('ayr', 'ayrshire'), ('west', 'travelwest'), ('buck', 'buckinghamshire'),
-            ('camb', 'cambridgeshire'), ('aber', 'aberdeen'), ('card', 'cardiff'),
-            ('swin', 'swindon'), ('metr', 'metrobus')
+            ('ayr', 'ayrshire'),
+            ('west', 'travelwest'),
+            ('buck', 'buckinghamshire'),
+            ('camb', 'cambridgeshire'),
+            ('aber', 'aberdeen'),
+            ('card', 'cardiff'),
+            ('swin', 'swindon'),
+            ('metr', 'metrobus')
     ):
         if live_source_name in live_sources:
             return ({

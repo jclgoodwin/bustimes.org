@@ -1,3 +1,6 @@
+"""Represent TransXChange concepts, and generate a matrix timetable from
+TransXChange documents
+"""
 import os
 import zipfile
 import cPickle as pickle
@@ -15,16 +18,16 @@ NS = {
 
 
 class Stop(object):
-    """Represents a TransXChange StopPoint
-    """
+    """A TransXChange StopPoint."""
+    stop = None
+    locality = None
+
     def __init__(self, element):
         self.atco_code = element.find('txc:StopPointRef', NS).text
         self.common_name = element.find('txc:CommonName', NS).text
         locality_element = element.find('txc:LocalityName', NS)
         if locality_element is not None:
             self.locality = locality_element.text
-        else:
-            self.locality = None
 
     def __unicode__(self):
         if self.locality is None or self.locality in self.common_name:
@@ -33,6 +36,10 @@ class Stop(object):
             return '%s %s' % (self.locality, self.common_name)
 
     def is_at(self, text):
+        """Whether a given slugified tring roughly matches either
+        this stop's locality's name, or this stop's name
+        (e.g. 'kings-lynn' matches 'kings-lynn-bus-station' and vice versa).
+        """
         locality_name = slugify(self.stop.locality.name if self.stop else self.locality)
         if locality_name and locality_name in text or text in locality_name:
             return True
@@ -42,7 +49,7 @@ class Stop(object):
 
 class Row(object):
     """A row in a grouping in a timetable.
-    Each row is associated with a Stop, and a list of times
+    Each row is associated with a Stop, and a list of times.
     """
     def __init__(self, part):
         self.part = part
@@ -59,7 +66,7 @@ class Row(object):
 
 class Cell(object):
     """Represents a special cell in a timetable, spanning multiple rows and columns,
-    with some text like "then every 5 minutes until"
+    with some text like 'then every 5 minutes until'.
     """
     def __init__(self, colspan, rowspan, duration):
         self.colspan = colspan
@@ -73,8 +80,8 @@ class Cell(object):
 
 
 class Grouping(object):
-    """Probably either "outbound" or "inbound".
-    (Could perhaps be extended to group by weekends, bank holidays in the future)
+    """Probably either 'outbound' or 'inbound'.
+    (Could perhaps be extended to group by weekends, bank holidays in the future).
     """
     def __init__(self, direction, service_description_parts):
         self.direction = direction
@@ -109,8 +116,7 @@ class Grouping(object):
 
 
 class JourneyPattern(object):
-    """A collection of JourneyPatternSections, in order
-    """
+    """A collection of JourneyPatternSections, in order."""
     def __init__(self, element, sections, outbound_grouping, inbound_grouping):
         self.id = element.attrib.get('id')
         self.journeys = []
@@ -156,8 +162,7 @@ class JourneyPattern(object):
 
 
 class JourneyPatternSection(object):
-    """A collection of JourneyPatternStopUsages, in order
-    """
+    """A collection of JourneyPatternStopUsages, in order."""
     def __init__(self, element, stops):
         self.timinglinks = [
             JourneyPatternTimingLink(timinglink_element, stops)
@@ -166,8 +171,7 @@ class JourneyPatternSection(object):
 
 
 class JourneyPatternStopUsage(object):
-    """Represents either a 'From' or 'To' element in TransXChange
-    """
+    """Either a 'From' or 'To' element in TransXChange."""
     def __init__(self, element, stops):
         # self.activity = element.find('txc:Activity', NS).text
         self.sequencenumber = element.get('SequenceNumber')
@@ -194,24 +198,24 @@ class JourneyPatternTimingLink(object):
 
 
 def get_deadruns(journey_element):
-    """Given a VehicleJourney element, returns a tuple
-    """
+    """Given a VehicleJourney element, return a tuple."""
     start_element = journey_element.find('txc:StartDeadRun', NS)
     end_element = journey_element.find('txc:EndDeadRun', NS)
     return (get_deadrun_ref(start_element), get_deadrun_ref(end_element))
 
 
 def get_deadrun_ref(deadrun_element):
-    """Given a StartDeadRun or EndDeadRun element, returns the ID of a JourneyPetternTimingLink
+    """Given a StartDeadRun or EndDeadRun element,
+    return the ID of a JourneyPetternTimingLink.
     """
     if deadrun_element is not None:
         return deadrun_element.find('txc:ShortWorking/txc:JourneyPatternTimingLinkRef', NS).text
 
 
 class VehicleJourney(object):
-    """A journey represents a scheduled journey that happens at most once per day.
-    A sort of "instance" of a JourneyPattern, made distinct by having its own start time,
-    and possibly operating profile and dead run
+    """A journey represents a scheduled journey that happens at most once per
+    day. A sort of "instance" of a JourneyPattern, made distinct by having its
+    own start time (and possibly operating profile and dead run).
     """
     def __init__(self, element, journeypatterns, servicedorgs):
         self.departure_time = datetime.strptime(
@@ -597,7 +601,7 @@ class Timetable(object):
 
 
 def abbreviate(grouping, i, in_a_row, difference):
-    """Given a Grouping, and a timedetlta, modifes each row and """
+    """Given a Grouping, and a timedetlta, modify each row and..."""
     grouping.rows[0].times[i - in_a_row - 2] = Cell(in_a_row + 1, len(grouping.rows), difference)
     for j in range(i - in_a_row - 1, i - 1):
         grouping.rows[0].times[j] = None
@@ -607,8 +611,7 @@ def abbreviate(grouping, i, in_a_row, difference):
 
 
 def get_pickle_filenames(service, path):
-    """Given a Service and a folder path, returns a list of filenames
-    """
+    """Given a Service and a folder path, return a list of filenames."""
     if service.region_id == 'NE':
         return [service.pk]
     if service.region_id in ('S', 'NW'):
@@ -631,7 +634,8 @@ def get_pickle_filenames(service, path):
 
 
 def get_files_from_zipfile(service):
-    """Given a Service, returns an iterable of open files from the relevant zipfile
+    """Given a Service,
+    return an iterable of open files from the relevant zipfile.
     """
     service_code = service.service_code
     if service.region_id == 'GB':
@@ -648,8 +652,7 @@ def get_files_from_zipfile(service):
 
 
 def timetable_from_filename(path, filename):
-    """Given a path and filename, joins them, and returns a Timetable
-    """
+    """Given a path and filename, join them, and return a Timetable."""
     if filename[-4:] == '.xml':
         with open(os.path.join(path, filename)) as xmlfile:
             xml = ET.parse(xmlfile).getroot()
@@ -664,9 +667,7 @@ def timetable_from_filename(path, filename):
 
 
 def unpickle_timetable(filename):
-    """Given a filename, tries to open it and unpickle the contents,
-    or returns None on failure
-    """
+    """Given a filename, try to open it and unpickle the contents."""
     try:
         with open(filename) as open_file:
             return pickle.load(open_file)
@@ -675,8 +676,7 @@ def unpickle_timetable(filename):
 
 
 def timetable_from_service(service):
-    """Given a Service, returns a list of Timetables
-    """
+    """Given a Service, return a list of Timetables."""
     if service.region_id == 'GB':
         path = os.path.join(DIR, '../data/TNDS/NCSD/NCSD_TXC/')
     else:
@@ -687,4 +687,4 @@ def timetable_from_service(service):
         timetables = filter(None, (timetable_from_filename(path, name) for name in filenames))
         if timetables:
             return timetables
-    return [Timetable(ET.parse(file)) for file in get_files_from_zipfile(service)]
+    return [Timetable(ET.parse(xml_file)) for xml_file in get_files_from_zipfile(service)]

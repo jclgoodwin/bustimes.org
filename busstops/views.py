@@ -475,7 +475,7 @@ def service_xml(request, pk):
     service = get_object_or_404(Service, service_code=pk)
 
     bodies = ''
-    for file in timetable.get_files_from_zipfile(service):
-        bodies += file.read()
+    for xml_file in timetable.get_files_from_zipfile(service):
+        bodies += xml_file.read()
 
     return HttpResponse(bodies, content_type='text/plain')
