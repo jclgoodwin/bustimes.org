@@ -225,6 +225,20 @@ class LiveDeparturesTest(TestCase):
             'time': datetime.datetime(2016, 6, 10, 22, 47)
         })
 
+        east_scotland_row = departures.get_row({
+            'mode': 'bus',
+            'line': 'N55',
+            'line_name': 'N55',
+            'direction': 'Edinburgh',
+            'operator': 'Stagecoach',
+            'aimed_departure_time': None,
+            'expected_departure_time': '27:02',
+            'best_departure_estimate': '27:02',
+            'source': 'Scotland East'
+        })
+        self.assertEqual(east_scotland_row['destination'], 'Edinburgh')
+        self.assertEqual(east_scotland_row['time'].time(), datetime.time(3, 2))
+
         request_args = departures.get_request_args()
         self.assertEqual(
             request_args,

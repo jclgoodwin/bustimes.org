@@ -107,6 +107,16 @@ class AcisConnectDepartures(AcisDepartures):
 
 
 class TransportApiDepartures(Departures):
+    @staticmethod
+    def _get_destination(item):
+        destination = item['direction']
+        destination_matches = DESTINATION_REGEX.match(destination)
+        if destination_matches is not None:
+            destination = destination_matches.groups()[0]
+        elif item['source'] == 'VIX' and ',' in destination:
+            destination = destination.split(',', 1)[0]
+        return destination
+
     def get_row(self, item):
         today = datetime.date.today()
         time = item['best_departure_estimate']
@@ -117,19 +127,18 @@ class TransportApiDepartures(Departures):
             if departure_time.date() > today:
                 return
         else:
+            hour = int(time[:2])
+            while hour > 23:
+                hour -= 24
+                time = '%s%s' % (hour, time[2:])
+                today += datetime.timedelta(days=1)
             departure_time = datetime.datetime.combine(
                 today, dateutil.parser.parse(time).time()
             )
-        destination = item.get('direction')
-        destination_matches = DESTINATION_REGEX.match(destination)
-        if destination_matches is not None:
-            destination = destination_matches.groups()[0]
-        elif item['source'] == 'VIX' and ',' in destination:
-            destination = destination.split(',', 1)[0]
         return {
             'time': departure_time,
             'service': self.get_service(item.get('line').split('--', 1)[0].split('|', 1)[0]),
-            'destination': destination,
+            'destination': self._get_destination(item),
         }
 
     def get_request_args(self):
