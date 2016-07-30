@@ -32,12 +32,12 @@ class Stop(object):
 
     def is_at(self, locality_name):
         if self.locality:
-            if locality_name in self.locality:
+            if locality_name in self.locality or self.locality in locality_name:
                 return True
         elif self.stop:
-            if locality_name in self.stop.locality.name:
+            if locality_name in self.stop.locality.name or self.stop.locality.name in locality_name:
                 return True
-        return locality_name in self.common_name
+        return locality_name in self.common_name or locality_name in self.common_name
 
 
 class Row(object):
