@@ -15,6 +15,18 @@ DIR = os.path.dirname(__file__)
 NS = {
     'txc': 'http://www.transxchange.org.uk/'
 }
+# A safe date far from any daylight savings changes or leap seconds
+DUMMY_DATE = date(2016, 4, 5)
+
+
+def time_between(end, start):
+    """Return the timedelta between two times (by converting them to datetimes)."""
+    return datetime.combine(DUMMY_DATE, end) - datetime.combine(DUMMY_DATE, start)
+
+
+def add_time(time, delta):
+    """Add a timededelta the delta between two times (by naively converting them to datetimes)."""
+    return (datetime.combine(DUMMY_DATE, time) + delta).time()
 
 
 class Stop(object):
@@ -102,6 +114,62 @@ class Grouping(object):
 
     def ends_at(self, locality_name):
         return self.rows[-1].part.stop.is_at(locality_name)
+
+    def populate_row_times(self):
+        self.rows = self.rows.values()
+
+        if not self.journeys:
+            return
+
+        if self.rows and self.rows[0].part.sequencenumber is None:
+            self.rows.sort()
+
+        prev_journey = None
+        head_span = 0
+        in_a_row = 0
+        prev_difference = None
+        difference = None
+        foot_span = 0
+        for i, journey in enumerate(self.journeys):
+            if prev_journey:
+                if not journey.operating_profile and not prev_journey.operating_profile:
+                    difference = time_between(journey.departure_time, prev_journey.departure_time)
+                    if prev_difference == difference:
+                        in_a_row += 1
+                elif prev_journey.operating_profile != journey.operating_profile:
+                    self.column_heads.append(ColumnHead(prev_journey.operating_profile, head_span))
+                    head_span = 0
+                    if in_a_row > 1:
+                        abbreviate(self, i, in_a_row - 1, prev_difference)
+                    in_a_row = 0
+                elif prev_journey.journeypattern.id == journey.journeypattern.id:
+                    difference = time_between(journey.departure_time, prev_journey.departure_time)
+                    if difference == prev_difference:
+                        in_a_row += 1
+                    else:
+                        if in_a_row > 1:
+                            abbreviate(self, i, in_a_row - 1, prev_difference)
+                        in_a_row = 0
+                else:
+                    if in_a_row > 1:
+                        abbreviate(self, i, in_a_row - 1, prev_difference)
+                    in_a_row = 0
+
+                if str(prev_journey.notes) != str(journey.notes):
+                    if prev_journey.notes:
+                        self.column_feet.append(ColumnFoot(prev_journey.notes.values(), foot_span))
+                        foot_span = 0
+
+            head_span += 1
+            prev_difference = difference
+            difference = None
+            if journey:
+                prev_journey = journey
+            foot_span += 1
+        if in_a_row > 1:
+            abbreviate(self, len(self.journeys), in_a_row - 1, prev_difference)
+        self.column_heads.append(ColumnHead(prev_journey.operating_profile, head_span))
+        self.column_feet.append(ColumnFoot(prev_journey.notes.values(), foot_span))
 
     def __unicode__(self):
         if hasattr(self, 'service_description_parts') and self.service_description_parts:
@@ -217,6 +285,8 @@ class VehicleJourney(object):
     day. A sort of "instance" of a JourneyPattern, made distinct by having its
     own start time (and possibly operating profile and dead run).
     """
+    operating_profile = None
+
     def __init__(self, element, journeypatterns, servicedorgs):
         self.departure_time = datetime.strptime(
             element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
@@ -236,16 +306,16 @@ class VehicleJourney(object):
 
         note_elements = element.findall('txc:Note', NS)
         if note_elements is not None:
-            self.notes = [
-                note_element.find('txc:NoteText', NS).text for note_element in note_elements
-            ]
+            self.notes = {
+                note_element.find('txc:NoteCode', NS).text: note_element.find('txc:NoteText', NS).text
+                for note_element in note_elements
+            }
 
         operatingprofile_element = element.find('txc:OperatingProfile', NS)
         if operatingprofile_element is not None:
             self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
 
     def add_times(self):
-        today = date.today()
         row_length = len(self.journeypattern.grouping.rows.values()[0].times)
 
         stopusage = self.journeypattern.sections[0].timinglinks[0].origin
@@ -261,9 +331,9 @@ class VehicleJourney(object):
             for timinglink in section.timinglinks:
                 stopusage = timinglink.destination
                 if hasattr(timinglink.origin, 'waittime'):
-                    time = (datetime.combine(today, time) + timinglink.origin.waittime).time()
+                    time = add_time(time, timinglink.origin.waittime)
 
-                time = (datetime.combine(today, time) + timinglink.runtime).time()
+                time = add_time(time, timinglink.runtime)
 
                 if deadrun:
                     if self.start_deadrun == timinglink.id:
@@ -277,7 +347,7 @@ class VehicleJourney(object):
                 if self.end_deadrun == timinglink.id:
                     deadrun = True  # start of dead run
                 if hasattr(stopusage, 'waittime'):
-                    time = (datetime.combine(date.today(), time) + stopusage.waittime).time()
+                    time = add_time(time, stopusage.waittime)
 
         for row in self.journeypattern.grouping.rows.values():
             if len(row.times) == row_length:
@@ -287,7 +357,7 @@ class VehicleJourney(object):
         return self.departure_time
 
     def get_order(self):
-        if hasattr(self, 'operating_profile'):
+        if self.operating_profile:
             return self.operating_profile.get_order()
         return 0
 
@@ -476,8 +546,6 @@ class ColumnFoot(object):
 
 class Timetable(object):
     def __init__(self, xml):
-        today = date.today()
-
         description_element = xml.find('txc:Services/txc:Service/txc:Description', NS)
         if description_element is not None:
             if description_element.text.isupper():
@@ -533,71 +601,7 @@ class Timetable(object):
 
         self.groupings = (outbound_grouping, inbound_grouping)
         for grouping in self.groupings:
-            grouping.rows = grouping.rows.values()
-            if len(grouping.rows) and grouping.rows[0].part.sequencenumber is None:
-                grouping.rows.sort()
-
-            previous_operatingprofile = None
-            previous_journeypattern = None
-            previous_notes = None
-            head_span = 0
-            in_a_row = 0
-            previous_difference = None
-            difference = None
-            previous_departure_time = None
-            foot_span = 0
-            for i, journey in enumerate(grouping.journeys):
-                if not hasattr(journey, 'operating_profile'):
-                    if previous_operatingprofile is False:
-                        difference = (
-                            datetime.combine(today, journey.departure_time) -
-                            datetime.combine(today, previous_departure_time)
-                        )
-                        if previous_difference and difference == previous_difference:
-                            in_a_row += 1
-                    previous_operatingprofile = False
-                elif previous_operatingprofile != journey.operating_profile:
-                    if previous_operatingprofile is not None:
-                        grouping.column_heads.append(ColumnHead(previous_operatingprofile, head_span))
-                        head_span = 0
-                        if in_a_row > 1:
-                            abbreviate(grouping, i, in_a_row - 1, previous_difference)
-                    previous_operatingprofile = journey.operating_profile
-                    in_a_row = 0
-                elif previous_journeypattern.id == journey.journeypattern.id:
-                    difference = (
-                        datetime.combine(today, journey.departure_time) -
-                        datetime.combine(today, previous_departure_time)
-                    )
-                    if previous_difference and difference == previous_difference:
-                        in_a_row += 1
-                    else:
-                        if in_a_row > 1:
-                            abbreviate(grouping, i, in_a_row - 1, previous_difference)
-                        in_a_row = 0
-                else:
-                    if in_a_row > 1:
-                        abbreviate(grouping, i, in_a_row - 1, previous_difference)
-                    in_a_row = 0
-
-                if not hasattr(journey, 'notes'):
-                    previous_notes = None
-                elif str(previous_notes) != str(journey.notes):
-                    if previous_notes is not None:
-                        grouping.column_feet.append(ColumnFoot(previous_notes, foot_span))
-                        foot_span = 0
-                    previous_notes = journey.notes
-
-                previous_journeypattern = journey.journeypattern
-                head_span += 1
-                previous_difference = difference
-                difference = None
-                previous_departure_time = journey.departure_time
-                foot_span += 1
-            if in_a_row > 1:
-                abbreviate(grouping, len(grouping.journeys), in_a_row - 1, previous_difference)
-            grouping.column_heads.append(ColumnHead(previous_operatingprofile, head_span))
-            grouping.column_feet.append(ColumnFoot(previous_notes, foot_span))
+            grouping.populate_row_times()
 
 
 def abbreviate(grouping, i, in_a_row, difference):
