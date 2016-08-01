@@ -2,6 +2,7 @@
 TransXChange documents
 """
 import os
+import re
 import zipfile
 import cPickle as pickle
 import xml.etree.cElementTree as ET
@@ -17,6 +18,7 @@ NS = {
 }
 # A safe date far from any daylight savings changes or leap seconds
 DUMMY_DATE = date(2016, 4, 5)
+DESCRIPTION_REGEX = re.compile(r'.+,([^ ].+)$')
 
 
 def time_between(end, start):
@@ -27,6 +29,14 @@ def time_between(end, start):
 def add_time(time, delta):
     """Add a timededelta the delta between two times (by naively converting them to datetimes)."""
     return (datetime.combine(DUMMY_DATE, time) + delta).time()
+
+
+def sanitize_description_part(part):
+    """Given an oddly formatted part like 'Bus Station bay 5,Blyth',
+    returns a shorter, more normal version like 'Blyth'
+    """
+    sanitized_part = DESCRIPTION_REGEX.match(part.strip())
+    return sanitized_part.group(1) if sanitized_part is not None else part
 
 
 class Stop(object):
@@ -115,7 +125,7 @@ class Grouping(object):
     def ends_at(self, locality_name):
         return self.rows[-1].part.stop.is_at(locality_name)
 
-    def populate_row_times(self):
+    def do_heads_and_feet(self):
         self.rows = self.rows.values()
 
         if not self.journeys:
@@ -185,7 +195,7 @@ class Grouping(object):
 
 class JourneyPattern(object):
     """A collection of JourneyPatternSections, in order."""
-    def __init__(self, element, sections, outbound_grouping, inbound_grouping):
+    def __init__(self, element, sections, (outbound_grouping, inbound_grouping)):
         self.id = element.attrib.get('id')
         self.journeys = []
         self.sections = [
@@ -545,16 +555,37 @@ class ColumnFoot(object):
 
 
 class Timetable(object):
+    def __get_journeys(self, xml, servicedorgs):
+        journeys = {
+            journey.code: journey for journey in (
+                VehicleJourney(element, self.journeypatterns, servicedorgs)
+                for element in xml.find('txc:VehicleJourneys', NS)
+            )
+        }
+
+        # some journeys did not have a direct reference to a journeypattern,
+        # but rather a reference to another journey with a reference to a journeypattern
+        for journey in journeys.values():
+            if hasattr(journey, 'journeyref'):
+                journey.journeypattern = journeys[journey.journeyref].journeypattern
+
+        return [journey for journey in journeys.values() if journey.should_show()]
+
     def __init__(self, xml):
-        description_element = xml.find('txc:Services/txc:Service/txc:Description', NS)
+        service_element = xml.find('txc:Services/txc:Service', NS)
+
+        description_element = service_element.find('txc:Description', NS)
         if description_element is not None:
             if description_element.text.isupper():
                 description_element.text = titlecase.titlecase(description_element.text)
-            description_parts = description_element.text.split(' - ')
+            description_parts = map(sanitize_description_part, description_element.text.split(' - '))
         else:
             description_parts = None
-        outbound_grouping = Grouping('outbound', description_parts)
-        inbound_grouping = Grouping('inbound', description_parts)
+
+        self.groupings = (
+            Grouping('outbound', description_parts),
+            Grouping('inbound', description_parts)
+        )
 
         stops = {
             element.find('txc:StopPointRef', NS).text: Stop(element)
@@ -564,44 +595,30 @@ class Timetable(object):
             element.get('id'): JourneyPatternSection(element, stops)
             for element in xml.find('txc:JourneyPatternSections', NS)
         }
-        journeypatterns = {
-            element.get('id'): JourneyPattern(element, journeypatternsections, outbound_grouping, inbound_grouping)
-            for element in xml.findall('.//txc:JourneyPattern', NS)
+        self.journeypatterns = {
+            element.get('id'): JourneyPattern(element, journeypatternsections, self.groupings)
+            for element in service_element.findall('txc:StandardService/txc:JourneyPattern', NS)
         }
 
-        servicedorganisations = xml.find('txc:ServicedOrganisations', NS)
+        servicedorgs = xml.find('txc:ServicedOrganisations', NS)
 
         # time calculation begins here:
-        journeys_by_code = {
-            journey.code: journey for journey in (
-                VehicleJourney(element, journeypatterns, servicedorganisations)
-                for element in xml.find('txc:VehicleJourneys', NS)
-            )
-        }
+        journeys = self.__get_journeys(xml, servicedorgs)
 
-        # some journeys did not have a direct reference to a journeypattern,
-        # but rather a reference to another journey with a reference to a journeypattern
-        for journey in journeys_by_code.values():
-            if hasattr(journey, 'journeyref'):
-                journey.journeypattern = journeys_by_code[journey.journeyref].journeypattern
-
-        journeys = [journey for journey in journeys_by_code.values() if journey.should_show()]
         journeys.sort(key=VehicleJourney.get_departure_time)
         journeys.sort(key=VehicleJourney.get_order)
         for journey in journeys:
             journey.journeypattern.grouping.journeys.append(journey)
             journey.add_times()
 
-        service_element = xml.find('txc:Services/txc:Service', NS)
         operatingprofile_element = service_element.find('txc:OperatingProfile', NS)
-        if operatingprofile_element is not None:
-            self.operating_profile = OperatingProfile(operatingprofile_element, servicedorganisations)
+        if operatingprofile_element:
+            self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
 
         self.operating_period = OperatingPeriod(service_element.find('txc:OperatingPeriod', NS))
 
-        self.groupings = (outbound_grouping, inbound_grouping)
         for grouping in self.groupings:
-            grouping.populate_row_times()
+            grouping.do_heads_and_feet()
 
 
 def abbreviate(grouping, i, in_a_row, difference):

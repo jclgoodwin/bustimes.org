@@ -10,7 +10,6 @@ Usage:
 """
 
 import os
-import re
 import zipfile
 import csv
 import cPickle as pickle
@@ -22,7 +21,7 @@ from django.core.management.base import BaseCommand
 from django.core.cache import cache
 from django.db import transaction
 
-from timetables.timetable import Timetable
+from timetables.timetable import Timetable, sanitize_description_part
 from ...models import Operator, StopPoint, Service, StopUsage
 
 
@@ -105,8 +104,6 @@ class Command(BaseCommand):
 
     now = datetime.today()
 
-    description_regex = re.compile(r'.+,([^ ].+)$')
-
     @staticmethod
     def add_arguments(parser):
         parser.add_argument('filenames', nargs='+', type=str)
@@ -126,17 +123,8 @@ class Command(BaseCommand):
                 return (net, '-'.join(parts[:-1]), parts[-1][:-4])
         return ('', None, None)
 
-    @classmethod
-    def sanitize_description_part(cls, part):
-        """
-        Given an oddly formatted part like 'Bus Station bay 5,Blyth',
-        returns a shorter, more normal version like 'Blyth'
-        """
-        sanitized_part = cls.description_regex.match(part.strip())
-        return sanitized_part.group(1) if sanitized_part is not None else part
-
-    @classmethod
-    def sanitize_description(cls, name):
+    @staticmethod
+    def sanitize_description(name):
         """
         Given an oddly formatted description from the North East,
         like 'Bus Station bay 5,Blyth - Grange Road turning circle,Widdrington Station',
@@ -144,7 +132,7 @@ class Command(BaseCommand):
         'Blyth - Widdrington Station'
         """
 
-        parts = [cls.sanitize_description_part(part) for part in name.split(' - ')]
+        parts = [sanitize_description_part(part) for part in name.split(' - ')]
         return ' - '.join(parts)
 
     @classmethod
