@@ -37,8 +37,8 @@
         </th>
         {% for time in row.times %}
             {% if time != None %}
-                {% if time.text %}
-                    <td colspan="{{ time.colspan }}" rowspan="{{ time.rowspan }}">{{ time.text }}</td>
+                {% if time.colspan %}
+                    <td colspan="{{ time.colspan }}" rowspan="{{ time.rowspan }}">{{ time }}</td>
                 {% else %}
                     <td>{{ time }}</td>
                 {% endif %}

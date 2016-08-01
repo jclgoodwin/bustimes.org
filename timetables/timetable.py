@@ -48,7 +48,7 @@ class Stop(object):
         self.atco_code = element.find('txc:StopPointRef', NS).text
         self.common_name = element.find('txc:CommonName', NS).text
         locality_element = element.find('txc:LocalityName', NS)
-        if locality_element:
+        if locality_element is not None:
             self.locality = locality_element.text
 
     def __unicode__(self):
@@ -95,11 +95,13 @@ class Cell(object):
         self.duration = duration
 
     def __unicode__(self):
+        if hasattr(self, 'text'):
+            return self.text
         if self.duration.seconds == 3600:
             return 'then hourly until'
         if self.duration.seconds % 3600 == 0:
-            return 'then every %d hours until' % (duration.seconds / 3600)
-        return 'then every %d minutes until' % (duration.seconds / 60)
+            return 'then every %d hours until' % (self.duration.seconds / 3600)
+        return 'then every %d minutes until' % (self.duration.seconds / 60)
 
 
 class Grouping(object):
@@ -389,7 +391,7 @@ class ServicedOrganisation(object):
     def __init__(self, element, servicedorgs):
         # Days of non-operation:
         noop_element = element.find('txc:DaysOfNonOperation', NS)
-        if noop_element:
+        if noop_element is not None:
             noop_hols_element = noop_element.find('txc:Holidays/txc:ServicedOrganisationRef', NS)
             noop_workingdays_element = noop_element.find('txc:WorkingDays/txc:ServicedOrganisationRef', NS)
 
@@ -401,7 +403,7 @@ class ServicedOrganisation(object):
 
         # Days of operation:
         op_element = element.find('txc:DaysOfOperation', NS)
-        if op_element:
+        if op_element is not None:
             op_hols_element = op_element.find('txc:Holidays/txc:ServicedOrganisationRef', NS)
             op_workingdays_element = op_element.find('txc:WorkingDays/txc:ServicedOrganisationRef', NS)
 

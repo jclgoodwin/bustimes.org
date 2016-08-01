@@ -16,9 +16,7 @@ class LiveDeparturesTest(TestCase):
             pk='490014721F',
             common_name='Wilmot Street',
             locality_centre=False,
-            active=True,
-            admin_area_id=1,
-            locality_id=1,
+            active=True
         )
         cls.london_stop.live_sources.add('TfL')
 
@@ -27,9 +25,7 @@ class LiveDeparturesTest(TestCase):
             pk='5710WDB48471',
             common_name='Wood Street',
             locality_centre=False,
-            active=True,
-            admin_area_id=1,
-            locality_id=1
+            active=True
         )
         cls.cardiff_stop.live_sources.add('card')
 
@@ -39,9 +35,7 @@ class LiveDeparturesTest(TestCase):
             naptan_code='32900215',
             common_name='Victoria Bar',
             locality_centre=False,
-            active=True,
-            admin_area_id=1,
-            locality_id=1
+            active=True
         )
         cls.yorkshire_stop.live_sources.add('Y')
 

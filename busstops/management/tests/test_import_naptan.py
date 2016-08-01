@@ -4,7 +4,7 @@ Tests for importing NaPTAN data
 
 import os
 from django.test import TestCase
-from ...models import Region, AdminArea, StopPoint
+from ...models import Region, AdminArea, StopPoint, Locality
 from ..commands import update_naptan, import_stop_areas, import_stops, clean_stops
 
 
@@ -81,6 +81,11 @@ class StopsTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
+        cls.region = Region.objects.create(id='GB', name='Great Britain')
+        cls.admin_area = AdminArea.objects.create(id=9, atco_code=2, region_id='GB')
+        cls.locality_1 = Locality.objects.create(id='E0035604', admin_area_id=9)
+        cls.locality_2 = Locality.objects.create(id='E0044440', admin_area_id=9)
+
         command = import_stops.Command()
         command.input = open(os.path.join(DIR, 'fixtures/Stops.csv'))
         command.handle()

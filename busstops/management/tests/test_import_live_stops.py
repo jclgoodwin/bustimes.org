@@ -11,9 +11,7 @@ class ImportLiveStopsTest(TestCase):
             pk='5710WDB48471',
             common_name='Wood Street',
             locality_centre=False,
-            active=True,
-            admin_area_id=1,
-            locality_id=1
+            active=True
         )
         cls.command = import_live_stops.Command()
         cls.cardiff = LiveSource.objects.create(name='card')
@@ -21,9 +19,7 @@ class ImportLiveStopsTest(TestCase):
             pk='490014721F',
             common_name='Wrong Road',
             locality_centre=False,
-            active=True,
-            admin_area_id=1,
-            locality_id=1
+            active=True
         )
 
     def test_import_acisconnect(self):

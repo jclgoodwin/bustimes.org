@@ -2,7 +2,7 @@
 import xml.etree.cElementTree as ET
 from datetime import time
 from django.test import TestCase
-from busstops.models import Service
+from busstops.models import Region, Service
 from timetables import timetable
 
 
@@ -13,6 +13,12 @@ class TimetableTest(TestCase):
     """Tests some timetables generated directly from XML files"""
     @classmethod
     def setUpTestData(cls):
+        cls.north_east = Region.objects.create(pk='NE')
+        cls.north_west = Region.objects.create(pk='NW')
+        cls.east_anglia = Region.objects.create(pk='EA')
+        cls.great_britain = Region.objects.create(pk='GB')
+        cls.south_west = Region.objects.create(pk='SW')
+
         cls.ne_service = Service.objects.create(
             pk='NE_130_PC4736_572',
             region_id='NE',
@@ -34,7 +40,7 @@ class TimetableTest(TestCase):
             region_id='GB',
             date='2016-05-24',
         )
-        cls.gb_service = Service.objects.create(
+        cls.sw_service = Service.objects.create(
             pk='swe_31-668-_-y10',
             region_id='SW',
             date='2016-05-24',
