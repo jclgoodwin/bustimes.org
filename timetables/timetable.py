@@ -48,22 +48,21 @@ class Stop(object):
         self.atco_code = element.find('txc:StopPointRef', NS).text
         self.common_name = element.find('txc:CommonName', NS).text
         locality_element = element.find('txc:LocalityName', NS)
-        if locality_element is not None:
+        if locality_element:
             self.locality = locality_element.text
 
     def __unicode__(self):
-        if self.locality is None or self.locality in self.common_name:
+        if not self.locality or self.locality in self.common_name:
             return self.common_name
-        else:
-            return '%s %s' % (self.locality, self.common_name)
+        return '%s %s' % (self.locality, self.common_name)
 
     def is_at(self, text):
         """Whether a given slugified tring roughly matches either
         this stop's locality's name, or this stop's name
         (e.g. 'kings-lynn' matches 'kings-lynn-bus-station' and vice versa).
         """
-        locality_name = slugify(self.stop.locality.name if self.stop else self.locality)
-        if locality_name and locality_name in text or text in locality_name:
+        name = slugify(self.stop.locality.name if self.stop else self.locality)
+        if name and name in text or text in name:
             return True
         name = slugify(self.common_name)
         return text in name or name in text
@@ -93,12 +92,14 @@ class Cell(object):
     def __init__(self, colspan, rowspan, duration):
         self.colspan = colspan
         self.rowspan = rowspan
-        if duration.seconds == 3600:
-            self.text = 'then hourly until'
-        elif duration.seconds % 3600 == 0:
-            self.text = 'then every %d hours until' % (duration.seconds / 3600)
-        else:
-            self.text = 'then every %d minutes until' % (duration.seconds / 60)
+        self.duration = duration
+
+    def __unicode__(self):
+        if self.duration.seconds == 3600:
+            return 'then hourly until'
+        if self.duration.seconds % 3600 == 0:
+            return 'then every %d hours until' % (duration.seconds / 3600)
+        return 'then every %d minutes until' % (duration.seconds / 60)
 
 
 class Grouping(object):
