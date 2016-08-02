@@ -11,7 +11,7 @@ from ...models import Operator
 class Command(ImportFromCSVCommand):
     @staticmethod
     def get_region_id(region_id):
-        if region_id in ('ADMIN', 'Admin', ''):
+        if region_id in ('ADMIN', 'Admin', 'Taxi', ''):
             return 'GB'
         elif region_id in ('SC', 'YO', 'WA', 'LO'):
             return region_id[0]
@@ -40,7 +40,7 @@ class Command(ImportFromCSVCommand):
         if operator_id in ('TVSR', 'HBSY') or (operator_id == 'FMAN' and row['Duplicate'] != 'OK'):
             return None
 
-        name = cls.get_name(row).replace('\'', u'\u2019')  # Fancy apostrophe
+        name = unicode(cls.get_name(row), errors='ignore').replace('\'', u'\u2019')  # Fancy apostrophe
 
         mode = row['Mode'].lower()
         if mode == 'ct operator':
