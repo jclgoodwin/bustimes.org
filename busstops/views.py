@@ -192,7 +192,8 @@ class AdminAreaDetailView(DetailView):
 
         # Districts in this administrative area
         context['districts'] = District.objects.filter(
-            admin_area=self.object
+            admin_area=self.object,
+            locality__stoppoint__active=True
         ).distinct().order_by('name')
 
         # Districtless localities in this administrative area
