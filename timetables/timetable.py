@@ -169,9 +169,8 @@ class Grouping(object):
                     in_a_row = 0
 
                 if str(prev_journey.notes) != str(journey.notes):
-                    if prev_journey.notes:
-                        self.column_feet.append(ColumnFoot(prev_journey.notes.values(), foot_span))
-                        foot_span = 0
+                    self.column_feet.append(ColumnFoot(prev_journey.notes.values(), foot_span))
+                    foot_span = 0
 
             head_span += 1
             prev_difference = difference
