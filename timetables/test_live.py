@@ -63,7 +63,7 @@ class LiveDeparturesTest(TestCase):
         with vcr.use_cassette('data/vcr/tfl_arrivals.yaml'):
             response = self.client.get('/stops/' + self.london_stop.pk + '/departures')
         self.assertEqual(response['cache-control'], 'max-age=60')
-        self.assertHTMLEqual(response.content, """
+        self.assertContains(response, """
             <div class="aside box">
                 <h2>Next departures</h2>
                 <table><tbody>
@@ -83,8 +83,7 @@ class LiveDeparturesTest(TestCase):
                 <a href=https://tfl.gov.uk/bus/stop/490014721F/wilmot-street>
                 Transport for London</a></p>
             </div>
-        """)
-        self.assertEqual(response.status_code, 200)
+        """, html=True)
 
     def test_acisconnect_cardiff(self):
         """Test the Cardiff live departures source

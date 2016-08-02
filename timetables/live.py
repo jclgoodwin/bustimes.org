@@ -79,7 +79,7 @@ class AcisLiveDepartures(AcisDepartures):
     def departures_from_response(self, res):
         soup = BeautifulSoup(res.text, 'lxml')
         cells = [cell.text.strip() for cell in soup.find_all('td')]
-        rows = (cells[i * 4 - 4:i * 4] for i in range(1, (len(cells) / 4) + 1))
+        rows = (cells[i * 4 - 4:i * 4] for i in range(1, int(len(cells) / 4) + 1))
         return ({
             'time': row[2],
             'service': self.get_service(row[0]),

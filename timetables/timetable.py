@@ -693,7 +693,7 @@ def timetable_from_filename(path, filename):
 def unpickle_timetable(filename):
     """Given a filename, try to open it and unpickle the contents."""
     try:
-        with open(filename) as open_file:
+        with open(filename, 'rb') as open_file:
             return pickle.load(open_file)
     except IOError:
         return
