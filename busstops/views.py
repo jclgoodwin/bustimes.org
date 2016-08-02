@@ -192,8 +192,7 @@ class AdminAreaDetailView(DetailView):
 
         # Districts in this administrative area
         context['districts'] = District.objects.filter(
-            admin_area=self.object,
-            locality__isnull=False
+            admin_area=self.object
         ).distinct().order_by('name')
 
         # Districtless localities in this administrative area
@@ -232,7 +231,7 @@ class DistrictDetailView(DetailView):
         context = super(DistrictDetailView, self).get_context_data(**kwargs)
         context['localities'] = Locality.objects.filter(
             Q(stoppoint__active=True) | Q(locality__stoppoint__active=True),
-            district=self.object,
+            district=self.object
         ).defer('latlong').distinct().order_by('name')
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
         return context
