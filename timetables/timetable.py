@@ -376,7 +376,7 @@ class VehicleJourney(object):
         return 0
 
     def should_show(self):
-        if not hasattr(self, 'operating_profile'):
+        if not self.operating_profile:
             return True
         if not self.operating_profile.regular_days:
             return False
@@ -440,6 +440,8 @@ class OperatingProfile(object):
                     day_range_bounds = [WEEKDAYS[i] for i in day.split('To')]
                     day_range = range(day_range_bounds[0], day_range_bounds[1] + 1)
                     self.regular_days += [DayOfWeek(i) for i in day_range]
+                elif day == 'Weekend':
+                    self.regular_days += [DayOfWeek(5), DayOfWeek(6)]
                 else:
                     self.regular_days.append(DayOfWeek(day))
 
