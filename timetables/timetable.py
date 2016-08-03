@@ -431,14 +431,10 @@ class DayOfWeek(object):
 class OperatingProfile(object):
     def __init__(self, element, servicedorgs):
         element = element
-        regular_days_element = element.find('txc:RegularDayType', NS)
-        week_days_element = regular_days_element.find('txc:DaysOfWeek', NS)
 
+        week_days_element = element.find('txc:RegularDayType/txc:DaysOfWeek', NS)
         self.regular_days = []
-
-        if week_days_element is None:
-            regular_days = [e.tag[33:] for e in regular_days_element]
-        else:
+        if week_days_element is not None:
             for day in [e.tag[33:] for e in week_days_element]:
                 if 'To' in day:
                     day_range_bounds = [WEEKDAYS[i] for i in day.split('To')]

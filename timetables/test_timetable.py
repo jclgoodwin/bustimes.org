@@ -97,7 +97,6 @@ class TimetableTest(TestCase):
         ])
         self.assertEqual(len(megabus.groupings[1].column_heads), 5)
 
-
     def test_timetable_ne(self):
         """Test timetable with some abbreviations"""
         timetable_ne = timetable.timetable_from_filename(FIXTURES_DIR, 'NE_03_SCC_X6_1.xml')
