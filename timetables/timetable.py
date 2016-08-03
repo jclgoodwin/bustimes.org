@@ -6,6 +6,7 @@ import re
 import zipfile
 import cPickle as pickle
 import xml.etree.cElementTree as ET
+import calendar
 from datetime import date, datetime
 from django.utils.dateparse import parse_duration
 from django.utils.text import slugify
@@ -19,6 +20,7 @@ NS = {
 # A safe date far from any daylight savings changes or leap seconds
 DUMMY_DATE = date(2016, 4, 5)
 DESCRIPTION_REGEX = re.compile(r'.+,([^ ].+)$')
+WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}
 
 
 def time_between(end, start):
@@ -376,7 +378,9 @@ class VehicleJourney(object):
     def should_show(self):
         if not hasattr(self, 'operating_profile'):
             return True
-        if str(self.operating_profile) == 'HolidaysOnlys':
+        if not self.operating_profile.regular_days:
+            return False
+        if self.operating_profile.is_rubbish():
             return False
         if hasattr(self.operating_profile, 'nonoperation_days'):
             for daterange in self.operating_profile.nonoperation_days:
@@ -413,17 +417,35 @@ class ServicedOrganisation(object):
                 self.operation_workingdays = op_workingdays_element.text
 
 
+class DayOfWeek(object):
+    def __init__(self, day):
+        if type(day) is int:
+            self.day = day
+        else:
+            self.day = WEEKDAYS[day]
+
+    def __repr__(self):
+        return calendar.day_name[self.day]
+
+
 class OperatingProfile(object):
     def __init__(self, element, servicedorgs):
         element = element
-
         regular_days_element = element.find('txc:RegularDayType', NS)
         week_days_element = regular_days_element.find('txc:DaysOfWeek', NS)
 
+        self.regular_days = []
+
         if week_days_element is None:
-            self.regular_days = [e.tag[33:] for e in regular_days_element]
+            regular_days = [e.tag[33:] for e in regular_days_element]
         else:
-            self.regular_days = [e.tag[33:] for e in week_days_element]
+            for day in [e.tag[33:] for e in week_days_element]:
+                if 'To' in day:
+                    day_range_bounds = [WEEKDAYS[i] for i in day.split('To')]
+                    day_range = range(day_range_bounds[0], day_range_bounds[1] + 1)
+                    self.regular_days += [DayOfWeek(i) for i in day_range]
+                else:
+                    self.regular_days.append(DayOfWeek(day))
 
         # Special Days:
 
@@ -450,19 +472,11 @@ class OperatingProfile(object):
     def __str__(self):
         if self.regular_days:
             if len(self.regular_days) == 1:
-                if 'To' in self.regular_days[0]:
-                    string = self.regular_days[0].replace('To', ' to ')
-                else:
-                    string = self.regular_days[0] + 's'
+                string = '%ss' % self.regular_days[0]
+            elif len(self.regular_days) - 1 == self.regular_days[-1].day - self.regular_days[0].day:
+                string = '%s to %s' % (self.regular_days[0], self.regular_days[-1])
             else:
-                string = '%ss and %s' % ('s, '.join(self.regular_days[:-1]), self.regular_days[-1] + 's')
-
-                if string == 'Mondays, Tuesdays, Wednesdays, Thursdays and Fridays':
-                    string = 'Monday to Friday'
-                elif string == 'Mondays, Tuesdays, Wednesdays, Thursdays, Fridays and Saturdays':
-                    string = 'Monday to Saturday'
-                elif string == 'Mondays, Tuesdays, Wednesdays, Thursdays, Fridays, Saturdays and Sundays':
-                    string = 'Monday to Sunday'
+                string = '%ss and %ss' % ('s, '.join(map(str, self.regular_days[:-1])), self.regular_days[-1])
         else:
             string = ''
 
@@ -484,16 +498,17 @@ class OperatingProfile(object):
 
         return string
 
+    def is_rubbish(self):
+        return (
+            len(self.regular_days) == 1 and
+            hasattr(self, 'nonoperation_days') and
+            self.regular_days[0].day in (2, 3, 4, 5, 6)
+            and 24 <= len(self.nonoperation_days) <= 27
+        )
+
     def get_order(self):
         if self.regular_days:
-            if self.regular_days[0][:3] == 'Mon':
-                return 0
-            if self.regular_days[0][:3] == 'Sat':
-                return 1
-            if self.regular_days[0][:3] == 'Sun':
-                return 2
-            if self.regular_days[0][:3] == 'Hol':
-                return 3
+            return self.regular_days[0].day
         return 0
 
     def __eq__(self, other):
@@ -513,7 +528,7 @@ class DateRange(object):
         if self.start == self.end:
             return self.start.strftime('%-d %B %Y')
         else:
-            return '%s to %s' % (str(self.start), str(self.end))
+            return '%s to %s' % (self.start, self.end)
 
     def starts_in_future(self):
         return self.start > date.today()

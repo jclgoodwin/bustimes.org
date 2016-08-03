@@ -90,10 +90,13 @@ class TimetableTest(TestCase):
         )
         self.assertFalse(megabus.groupings[0].has_minor_stops())
         self.assertFalse(megabus.groupings[1].has_minor_stops())
+        self.assertEqual(len(megabus.groupings[0].column_heads), 2)
         self.assertEqual(megabus.groupings[0].rows[0].times, [
-            time(13, 0), time(15, 0), time(16, 0), time(16, 30), time(18, 0), time(20, 0),
-            time(23, 45)
+            time(15, 0), time(16, 30), time(23, 45), time(13, 0), time(16, 0), time(18, 0),
+            time(20, 0)
         ])
+        self.assertEqual(len(megabus.groupings[1].column_heads), 5)
+
 
     def test_timetable_ne(self):
         """Test timetable with some abbreviations"""
