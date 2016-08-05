@@ -2,8 +2,10 @@
 import xml.etree.cElementTree as ET
 from datetime import time
 from django.test import TestCase
-from busstops.models import Region, Service
 from . import txc
+
+
+FIXTURES_DIR = './busstops/management/tests/fixtures/'
 
 
 class TimetableTest(TestCase):
@@ -11,12 +13,12 @@ class TimetableTest(TestCase):
 
     def test_timetable_none(self):
         """timetable_from_filename should return None if there is an error"""
-        none = timetable.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-')
+        none = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-')
         self.assertIsNone(none)
 
     def test_timetable_ea(self):
         """Test a timetable from the East Anglia region"""
-        timetable_ea = timetable.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-1.xml')
+        timetable_ea = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-1.xml')
 
         self.assertEqual('Monday to Sunday', str(timetable_ea.operating_profile))
         self.assertEqual('until 21 October 2016', str(timetable_ea.operating_period))
@@ -33,7 +35,7 @@ class TimetableTest(TestCase):
 
     def test_timetable_megabus(self):
         """Test a timetable from the National Coach Services Database"""
-        megabus = timetable.timetable_from_filename(
+        megabus = txc.timetable_from_filename(
             FIXTURES_DIR, 'Megabus_Megabus14032016 163144_MEGA_M11A.xml'
         )
         self.assertFalse(megabus.groupings[0].has_minor_stops())
@@ -47,7 +49,7 @@ class TimetableTest(TestCase):
 
     def test_timetable_ne(self):
         """Test timetable with some abbreviations"""
-        timetable_ne = timetable.timetable_from_filename(FIXTURES_DIR, 'NE_03_SCC_X6_1.xml')
+        timetable_ne = txc.timetable_from_filename(FIXTURES_DIR, 'NE_03_SCC_X6_1.xml')
         self.assertEqual(timetable_ne.groupings[0].column_heads[0].span, 16)
         self.assertEqual(timetable_ne.groupings[0].column_heads[1].span, 14)
         self.assertEqual(timetable_ne.groupings[0].column_heads[2].span, 4)
@@ -62,13 +64,13 @@ class TimetableTest(TestCase):
 
     def test_timetable_scotland(self):
         """Test a Scotch timetable with a 14 column wide empty foot"""
-        timetable_scotland = timetable.timetable_from_filename(FIXTURES_DIR, 'SVRABBN017.xml')
+        timetable_scotland = txc.timetable_from_filename(FIXTURES_DIR, 'SVRABBN017.xml')
         self.assertEqual(timetable_scotland.groupings[0].column_feet[0].span, 14)
         self.assertEqual(timetable_scotland.groupings[0].column_feet[0].notes, [])
 
     def test_timetable_deadruns(self):
         """Test a timetable with some dead runs which should be respected"""
-        deadruns = timetable.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml')
+        deadruns = txc.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml')
         self.assertEqual(
             deadruns.groupings[0].rows[-25].times[:3], [time(20, 58), time(22, 28), time(23, 53)]
         )
@@ -91,7 +93,7 @@ class TimetableTest(TestCase):
 
     def test_timetable_servicedorg(self):
         """Test a timetable with a ServicedOrganisation"""
-        timetable_sw = timetable.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml')
+        timetable_sw = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml')
         self.assertEqual(
             str(timetable_sw.groupings[0].column_heads[0].operatingprofile),
             'Monday to Friday\nSchool days'
@@ -109,7 +111,7 @@ class DateRangeTest(TestCase):
                 <EndDate>2001-05-01</EndDate>
             </DateRange>
         """)
-        date_range = timetable.DateRange(element)
+        date_range = txc.DateRange(element)
         self.assertEqual(str(date_range), '1 May 2001')
         self.assertFalse(date_range.starts_in_future())
 
@@ -121,7 +123,7 @@ class DateRangeTest(TestCase):
                 <EndDate>2002-05-01</EndDate>
             </OperatingPeriod>
         """)
-        date_range = timetable.DateRange(element)
+        date_range = txc.DateRange(element)
         self.assertEqual(str(date_range), '2001-05-01 to 2002-05-01')
 
 
@@ -136,7 +138,7 @@ class OperatingPeriodTest(TestCase):
                 <EndDate>2001-05-01</EndDate>
             </OperatingPeriod>
         """)
-        operating_period = timetable.OperatingPeriod(element)
+        operating_period = txc.OperatingPeriod(element)
         self.assertEqual(str(operating_period), 'on 1 May 2001')
         self.assertFalse(operating_period.starts_in_future())
 
@@ -147,7 +149,7 @@ class OperatingPeriodTest(TestCase):
                 <StartDate>2021-09-01</StartDate>
             </OperatingPeriod>
         """)
-        operating_period = timetable.OperatingPeriod(element)
+        operating_period = txc.OperatingPeriod(element)
         self.assertEqual(str(operating_period), 'from 1 September 2021')
         self.assertTrue(operating_period.starts_in_future())
 
@@ -159,7 +161,7 @@ class OperatingPeriodTest(TestCase):
                 <EndDate>2056-02-02</EndDate>
             </OperatingPeriod>
         """)
-        operating_period = timetable.OperatingPeriod(element)
+        operating_period = txc.OperatingPeriod(element)
         self.assertEqual(str(operating_period), 'from 1 September 2021 to 2 February 2056')
         self.assertTrue(operating_period.starts_in_future())
 
@@ -171,7 +173,7 @@ class OperatingPeriodTest(TestCase):
                 <EndDate>2056-06-02</EndDate>
             </OperatingPeriod>
         """)
-        operating_period = timetable.OperatingPeriod(element)
+        operating_period = txc.OperatingPeriod(element)
         self.assertEqual(str(operating_period), 'from 1 February to 2 June 2056')
         self.assertTrue(operating_period.starts_in_future())
 
@@ -183,7 +185,7 @@ class OperatingPeriodTest(TestCase):
                 <EndDate>2056-02-05</EndDate>
             </OperatingPeriod>
         """)
-        operating_period = timetable.OperatingPeriod(element)
+        operating_period = txc.OperatingPeriod(element)
         self.assertEqual(str(operating_period), 'from 1 to 5 February 2056')
         self.assertTrue(operating_period.starts_in_future())
 
@@ -198,5 +200,5 @@ class OperatingPeriodTest(TestCase):
                 <EndDate>2002-05-01</EndDate>
             </OperatingPeriod>
         """)
-        operating_period = timetable.OperatingPeriod(element)
+        operating_period = txc.OperatingPeriod(element)
         self.assertEqual(str(operating_period), '')

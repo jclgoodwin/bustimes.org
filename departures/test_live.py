@@ -47,7 +47,7 @@ class LiveDeparturesTest(TestCase):
                 self.london_stop,
                 Service.objects.all()
             ).get_departures()
-        row = departures.next()
+        row = next(departures)
         self.assertEqual('Stratford City', row['destination'])
         self.assertEqual('388', row['service'])
         self.assertEqual(2016, row['time'].date().year)
@@ -93,23 +93,23 @@ class LiveDeparturesTest(TestCase):
                 'cardiff', self.cardiff_stop, Service.objects.all()
             ).get_departures()
 
-        self.assertEqual(departures.next(), {
+        self.assertEqual(next(departures), {
             'destination': 'Churchill Way HL',
             'service': '9',
             'time': '15 mins'
         })
 
-        self.assertEqual(departures.next(), {
+        self.assertEqual(next(departures), {
             'destination': 'Churchill Way HL',
             'service': '9',
             'time': '45 mins'
         })
 
-        row = departures.next()
+        row = next(departures)
         self.assertEqual('Pengam Green Tesco', row['destination'])
         self.assertEqual('11', row['service'])
 
-        self.assertEqual(departures.next(), {
+        self.assertEqual(next(departures), {
             'destination': 'Customhouse Str JL',
             'service': '95',
             'time': '49 mins'
@@ -124,22 +124,22 @@ class LiveDeparturesTest(TestCase):
     def _test_acis_yorkshire(self, departures):
         """Test one of the Yorkshire live departures sources against the same set of data
         """
-        self.assertEqual(departures.next(), {
+        self.assertEqual(next(departures), {
             'destination': 'York Sport Village',
             'service': '66',
             'time': '1 min',
         })
-        self.assertEqual(departures.next(), {
+        self.assertEqual(next(departures), {
             'destination': 'Heslington East Int',
             'service': '44',
             'time': '9 mins',
         })
-        self.assertEqual(departures.next(), {
+        self.assertEqual(next(departures), {
             'destination': 'York Sport Village',
             'service': '66',
             'time': '18:42',
         })
-        self.assertEqual(departures.next(), {
+        self.assertEqual(next(departures), {
             'destination': 'Heslington East Int',
             'service': '44',
             'time': '18:53',
