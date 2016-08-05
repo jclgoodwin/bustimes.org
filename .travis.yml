@@ -1,4 +1,8 @@
 language: python
+python:
+#  - "2.7"
+  - "3.4"
+  - "3.5"
 cache: pip
 services:
   - postgresql
@@ -10,8 +14,6 @@ script:
   - coverage run --source=buses,busstops,timetables manage.py test -v 3
   - pylint buses busstops timetables | cat
   - flake8 buses busstops timetables
-after_script:
-  - codeclimate-test-reporter
 after_success:
   coveralls
 virtualenv:
@@ -25,5 +27,3 @@ addons:
     - python-lxml
     - python-psycopg2
     - python-requests
-  code_climate:
-    repo_token: 708f1fa88951cbab1881a4dd1ec450962596762244e871a62a59a537dc6eeefd

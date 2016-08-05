@@ -8,11 +8,14 @@ Usage:
 
     ./manage.py import_services EA.zip [EM.zip etc]
 """
-
+from __future__ import print_function
 import os
 import zipfile
 import csv
-import cPickle as pickle
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 import xml.etree.cElementTree as ET
 from datetime import datetime
 from titlecase import titlecase
@@ -21,7 +24,7 @@ from django.core.management.base import BaseCommand
 from django.core.cache import cache
 from django.db import transaction
 
-from timetables.timetable import Timetable, sanitize_description_part
+from txc.txc import Timetable, sanitize_description_part
 from ...models import Operator, StopPoint, Service, StopUsage
 
 
@@ -180,7 +183,7 @@ class Command(BaseCommand):
         if len(possible_operators) == 1:
             return possible_operators[0]
 
-        print ET.tostring(operator_element)
+        print(ET.tostring(operator_element))
 
     @classmethod
     def get_line_name_and_brand(cls, service_element, filename):
@@ -197,7 +200,7 @@ class Command(BaseCommand):
             line_brand = ''
 
         if len(line_name) > 64:
-            print 'Name "%s" is too long in %s' % (line_name, filename)
+            print('Name "%s" is too long in %s' % (line_name, filename))
             line_name = line_name[:64]
 
         return (line_name, line_brand)
@@ -224,7 +227,7 @@ class Command(BaseCommand):
             # (doing this preliminary bit now, to make getting NCSD descriptions possible)
 
             operators_element = root.find('txc:Operators', NS)
-            operators = filter(None, map(cls.get_operator, operators_element))
+            operators = [operator for operator in map(cls.get_operator, operators_element) if operator]
 
             # service description:
 
@@ -234,7 +237,7 @@ class Command(BaseCommand):
             elif service_descriptions is not None:
                 description = service_descriptions.get(operators[0].id + line_name, '')
             else:
-                print '%s is missing a name' % filename
+                print('%s is missing a name' % filename)
                 description = ''
 
             if description.isupper():
@@ -244,7 +247,7 @@ class Command(BaseCommand):
                 description = cls.sanitize_description(description)
 
             if len(description) > 128:
-                print 'Description "%s" is too long in %s' % (description, filename)
+                print('Description "%s" is too long in %s' % (description, filename))
                 description = description[:128]
 
             # net and service code:
@@ -295,7 +298,7 @@ class Command(BaseCommand):
                     cache.set('%s/%s' % (region_id, basename.replace(' ', '')), timetable)
 
             except (AttributeError, IndexError) as error:
-                print error, filename
+                print(error, filename)
                 show_timetable = False
                 stop_usages = [StopUsage(service_id=service_code, stop_id=stop, order=0) for stop in stops]
 
@@ -345,7 +348,7 @@ class Command(BaseCommand):
 
         for i, filename in enumerate(archive.namelist()):
             if i % 100 == 0:
-                print i
+                print(i)
 
             if filename.endswith('.xml'):
                 root = ET.parse(archive.open(filename)).getroot()
@@ -354,5 +357,5 @@ class Command(BaseCommand):
     @classmethod
     def handle(cls, *args, **options):
         for archive_name in options['filenames']:
-            print archive_name
+            print(archive_name)
             cls.handle_region(archive_name)

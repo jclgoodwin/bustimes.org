@@ -3,7 +3,7 @@ Usage:
 
     ./manage.py import_live_stops
 """
-
+from __future__ import print_function, unicode_literals
 from time import sleep
 import json
 import requests
@@ -22,7 +22,7 @@ LIVE_SOURCES = {
     'cardiff': LiveSource.objects.get_or_create(name='card')[0],
     'metrobus': LiveSource.objects.get_or_create(name='metr')[0],
     'swindon': LiveSource.objects.get_or_create(name='swin')[0],
-    'travelwest': LiveSource.objects.get_or_create(name='west')[0],
+    'travelwest': LiveSource.objects.get_or_create(name='west')[0]
 }
 
 
@@ -38,14 +38,14 @@ class Command(BaseCommand):
             url,
             {'naptan': stop.naptan_code}
         )
-        print request.url
+        print(request.url)
         soup = BeautifulSoup(request.text, 'html.parser')
         if soup.title and soup.title.text != 'Sorry':
             stop.live_sources.add(live_source)
-            print soup.title
+            print(soup.title)
         else:
-            print soup.title
-        print '\n'
+            print(soup.title)
+        print('\n')
         sleep(1)
 
     @staticmethod
@@ -60,7 +60,7 @@ class Command(BaseCommand):
         if 'System unavailable' not in text:
             stop.live_sources.add(live_source)
         else:
-            print text
+            print(text)
         sleep(1)
 
     @staticmethod
@@ -85,13 +85,13 @@ class Command(BaseCommand):
         response = requests.post(url, json=params)
         json_string = response.json().get('d').replace('MapStopResponse=', '')
         parsed_json = json.loads(json_string)
-        print response.text
+        print(response.text)
         sleep(1)
         return parsed_json['Stops'] if 'Stops' in parsed_json else parsed_json['AllFoundStops']
 
     def handle(self, *args, **options):
         for subdomain, livesource in LIVE_SOURCES.iteritems():
-            print subdomain
+            print(subdomain)
             stop_ids = []
             for cluster in self.get_clustered_stops(subdomain):
                 if cluster['ClusterCount'] == 1:
@@ -102,6 +102,6 @@ class Command(BaseCommand):
                             subdomain, cluster['ClusterId']
                         ))
                     )
-            print stop_ids
+            print(stop_ids)
             stoppoints = StopPoint.objects.filter(pk__in=stop_ids)
             livesource.stoppoint_set.add(*stoppoints)

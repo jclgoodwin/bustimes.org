@@ -3,7 +3,7 @@ Usage:
 
     ./manage.py import_operators < NOC_db.csv
 """
-
+from __future__ import unicode_literals
 from ..import_from_csv import ImportFromCSVCommand
 from ...models import Operator
 
@@ -40,7 +40,7 @@ class Command(ImportFromCSVCommand):
         if operator_id in ('TVSR', 'HBSY') or (operator_id == 'FMAN' and row['Duplicate'] != 'OK'):
             return None
 
-        name = unicode(cls.get_name(row), errors='ignore').replace('\'', u'\u2019')  # Fancy apostrophe
+        name = cls.get_name(row).replace('\'', '\u2019')  # Fancy apostrophe
 
         mode = row['Mode'].lower()
         if mode == 'ct operator':

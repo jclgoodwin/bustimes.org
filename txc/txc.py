@@ -3,8 +3,10 @@ TransXChange documents
 """
 import os
 import re
-import zipfile
-import cPickle as pickle
+try:
+    import pickle
+except ImportError:
+    import cPickle as pickle
 import xml.etree.cElementTree as ET
 import calendar
 from datetime import date, datetime
@@ -13,7 +15,6 @@ from django.utils.text import slugify
 from django.core.cache import cache
 import titlecase
 
-DIR = os.path.dirname(__file__)
 NS = {
     'txc': 'http://www.transxchange.org.uk/'
 }
@@ -53,7 +54,7 @@ class Stop(object):
         if locality_element is not None:
             self.locality = locality_element.text
 
-    def __unicode__(self):
+    def __str__(self):
         if not self.locality or self.locality in self.common_name:
             return self.common_name
         return '%s %s' % (self.locality, self.common_name)
@@ -96,7 +97,7 @@ class Cell(object):
         self.rowspan = rowspan
         self.duration = duration
 
-    def __unicode__(self):
+    def __str__(self):
         if hasattr(self, 'text'):
             return self.text
         if self.duration.seconds == 3600:
@@ -131,7 +132,7 @@ class Grouping(object):
         return self.rows[-1].part.stop.is_at(locality_name)
 
     def do_heads_and_feet(self):
-        self.rows = self.rows.values()
+        self.rows = list(self.rows.values())
 
         if not self.journeys:
             return
@@ -171,7 +172,7 @@ class Grouping(object):
                     in_a_row = 0
 
                 if str(prev_journey.notes) != str(journey.notes):
-                    self.column_feet.append(ColumnFoot(prev_journey.notes.values(), foot_span))
+                    self.column_feet.append(ColumnFoot(list(prev_journey.notes.values()), foot_span))
                     foot_span = 0
 
             head_span += 1
@@ -183,9 +184,9 @@ class Grouping(object):
         if in_a_row > 1:
             abbreviate(self, len(self.journeys), in_a_row - 1, prev_difference)
         self.column_heads.append(ColumnHead(prev_journey.operating_profile, head_span))
-        self.column_feet.append(ColumnFoot(prev_journey.notes.values(), foot_span))
+        self.column_feet.append(ColumnFoot(list(prev_journey.notes.values()), foot_span))
 
-    def __unicode__(self):
+    def __str__(self):
         if hasattr(self, 'service_description_parts') and self.service_description_parts:
             start = slugify(self.service_description_parts[0])
             end = slugify(self.service_description_parts[-1])
@@ -199,7 +200,7 @@ class Grouping(object):
 
 class JourneyPattern(object):
     """A collection of JourneyPatternSections, in order."""
-    def __init__(self, element, sections, (outbound_grouping, inbound_grouping)):
+    def __init__(self, element, sections, groupings):
         self.id = element.attrib.get('id')
         self.journeys = []
         self.sections = [
@@ -217,9 +218,9 @@ class JourneyPattern(object):
 
         direction_element = element.find('txc:Direction', NS)
         if direction_element is not None and direction_element.text == 'outbound':
-            self.grouping = outbound_grouping
+            self.grouping = groupings[0]
         else:
-            self.grouping = inbound_grouping
+            self.grouping = groupings[1]
 
         if origin.sequencenumber is not None:
             for row in self.rows:
@@ -330,7 +331,7 @@ class VehicleJourney(object):
             self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
 
     def add_times(self):
-        row_length = len(self.journeypattern.grouping.rows.values()[0].times)
+        row_length = len(next(iter(self.journeypattern.grouping.rows.values())).times)
 
         stopusage = self.journeypattern.sections[0].timinglinks[0].origin
         time = self.departure_time
@@ -363,7 +364,7 @@ class VehicleJourney(object):
                 if hasattr(stopusage, 'waittime'):
                     time = add_time(time, stopusage.waittime)
 
-        for row in self.journeypattern.grouping.rows.values():
+        for row in iter(self.journeypattern.grouping.rows.values()):
             if len(row.times) == row_length:
                 row.times.append('')
 
@@ -453,12 +454,12 @@ class OperatingProfile(object):
             nonoperation_days_element = special_days_element.find('txc:DaysOfNonOperation', NS)
 
             if nonoperation_days_element is not None:
-                self.nonoperation_days = map(DateRange, nonoperation_days_element.findall('txc:DateRange', NS))
+                self.nonoperation_days = list(map(DateRange, nonoperation_days_element.findall('txc:DateRange', NS)))
 
             operation_days_element = special_days_element.find('txc:DaysOfOperation', NS)
 
             if operation_days_element is not None:
-                self.operation_days = map(DateRange, operation_days_element.findall('txc:DateRange', NS))
+                self.operation_days = list(map(DateRange, operation_days_element.findall('txc:DateRange', NS)))
 
         # Serviced Organisation:
 
@@ -580,11 +581,11 @@ class Timetable(object):
 
         # some journeys did not have a direct reference to a journeypattern,
         # but rather a reference to another journey with a reference to a journeypattern
-        for journey in journeys.values():
+        for journey in iter(journeys.values()):
             if hasattr(journey, 'journeyref'):
                 journey.journeypattern = journeys[journey.journeyref].journeypattern
 
-        return [journey for journey in journeys.values() if journey.should_show()]
+        return [journey for journey in iter(journeys.values()) if journey.should_show()]
 
     def __init__(self, xml):
         service_element = xml.find('txc:Services/txc:Service', NS)
@@ -593,7 +594,7 @@ class Timetable(object):
         if description_element is not None:
             if description_element.text.isupper():
                 description_element.text = titlecase.titlecase(description_element.text)
-            description_parts = map(sanitize_description_part, description_element.text.split(' - '))
+            description_parts = list(map(sanitize_description_part, description_element.text.split(' - ')))
         else:
             description_parts = None
 
@@ -646,47 +647,6 @@ def abbreviate(grouping, i, in_a_row, difference):
             row.times[j] = None
 
 
-def get_pickle_filenames(service, path):
-    """Given a Service and a folder path, return a list of filenames."""
-    if service.region_id == 'NE':
-        return [service.pk]
-    if service.region_id in ('S', 'NW'):
-        return ['SVR%s' % service.pk]
-    try:
-        namelist = os.listdir(path)
-    except OSError:
-        return []
-    if service.net:
-        return [name for name in namelist if name.startswith('%s-' % service.pk)]
-    if service.region_id == 'GB':
-        parts = service.pk.split('_')
-        return [name for name in namelist if name.endswith('_%s_%s' % (parts[1], parts[0]))]
-    if service.region_id == 'Y':
-        return [
-            name for name in namelist
-            if name.startswith('SVR%s-' % service.pk) or name == 'SVR%s' % service.pk
-        ]
-    return [name for name in namelist if name.endswith('_%s' % service.pk)]
-
-
-def get_files_from_zipfile(service):
-    """Given a Service,
-    return an iterable of open files from the relevant zipfile.
-    """
-    service_code = service.service_code
-    if service.region_id == 'GB':
-        archive_name = 'NCSD'
-        parts = service_code.split('_')
-        service_code = '_%s_%s' % (parts[-1], parts[-2])
-    else:
-        archive_name = service.region_id
-    archive_path = os.path.join(DIR, '../data/TNDS/', archive_name + '.zip')
-    archive = zipfile.ZipFile(archive_path)
-    filenames = (name for name in archive.namelist() if service_code in name)
-
-    return (archive.open(filename) for filename in filenames)
-
-
 def timetable_from_filename(path, filename):
     """Given a path and filename, join them, and return a Timetable."""
     if filename[-4:] == '.xml':
@@ -709,18 +669,3 @@ def unpickle_timetable(filename):
             return pickle.load(open_file)
     except IOError:
         return
-
-
-def timetable_from_service(service):
-    """Given a Service, return a list of Timetables."""
-    if service.region_id == 'GB':
-        path = os.path.join(DIR, '../data/TNDS/NCSD/NCSD_TXC/')
-    else:
-        path = os.path.join(DIR, '../data/TNDS/%s/' % service.region_id)
-
-    filenames = get_pickle_filenames(service, path)
-    if filenames:
-        timetables = filter(None, (timetable_from_filename(path, name) for name in filenames))
-        if timetables:
-            return timetables
-    return [Timetable(ET.parse(xml_file)) for xml_file in get_files_from_zipfile(service)]

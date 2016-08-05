@@ -16,7 +16,7 @@ class Command(ImportFromCSVCommand):
         return StopArea.objects.update_or_create(
             id=row['StopAreaCode'],
             defaults={
-                'name': row['Name'].decode('latin1'),
+                'name': row['Name'],
                 'admin_area': AdminArea.objects.get(id=row['AdministrativeAreaCode']),
                 'stop_area_type': row['StopAreaType'],
                 'latlong': Point(int(row['Easting']), int(row['Northing']), srid=27700),

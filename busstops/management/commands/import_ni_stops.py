@@ -20,7 +20,7 @@ class Command(ImportFromCSVCommand):
                 float(row['Latitude']),
                 srid=4326
             ),
-            'common_name': row['Stop_Name'].decode('utf-8', 'replace'),
+            'common_name': row['Stop_Name'],
             'locality_centre': False,
             'active': True,
             'indicator': row['ServiceDirection'].lower()

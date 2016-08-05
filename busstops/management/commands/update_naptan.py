@@ -1,9 +1,8 @@
-# import csv
+from __future__ import print_function
 import json
 import requests
 
 from django.core.management.base import BaseCommand
-# from django.db import transaction
 
 
 JSON_NAME = 'NPTGLastSubs_Load.ashx'
@@ -44,7 +43,7 @@ class Command(BaseCommand):
         changed_regions, changed_areas = self.get_diff(new_rows, old_rows)
 
         if changed_areas:
-            print changed_regions, changed_areas
+            print(changed_regions, changed_areas)
             response = requests.get(
                 'http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx',
                 {

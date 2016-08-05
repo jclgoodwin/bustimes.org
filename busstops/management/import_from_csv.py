@@ -20,7 +20,7 @@ class ImportFromCSVCommand(BaseCommand):
         """
         Given a string like 'naptan_code', returns a string like 'NaptanCode'
         """
-        return ''.join([s.title() for s in field_name.split('_')])
+        return ''.join(s.title() for s in field_name.split('_'))
 
     def handle_row(self, row):
         """

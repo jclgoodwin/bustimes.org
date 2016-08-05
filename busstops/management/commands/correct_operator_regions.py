@@ -1,3 +1,4 @@
+from __future__ import print_function
 from django.core.management.base import BaseCommand
 from ...models import Operator, Region
 
@@ -14,7 +15,7 @@ class Command(BaseCommand):
     @staticmethod
     def maybe_print(output):
         if output is not None:
-            print output
+            print(output)
 
     def handle(self, *args, **options):
         for operator in Operator.objects.all():

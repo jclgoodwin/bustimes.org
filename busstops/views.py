@@ -1,4 +1,6 @@
 "View definitions."
+
+from __future__ import unicode_literals
 import os
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
@@ -8,7 +10,8 @@ from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
 from django.contrib.gis.db.models.functions import Distance
 from django.core.mail import EmailMessage
-from timetables import timetable, live
+from departures import live
+from .utils import timetable_from_service, get_files_from_zipfile
 from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
 from .forms import ContactForm
 
@@ -273,12 +276,12 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
                 current=True
             ).distinct().order_by('service_code')
 
-        context['breadcrumb'] = filter(None, [
+        context['breadcrumb'] = (crumb for crumb in [
             self.object.admin_area.region,
             self.object.admin_area,
             self.object.district,
             self.object.parent
-        ])
+        ] if crumb is not None)
 
         return context
 
@@ -301,11 +304,11 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         if not (self.object.active or context['services']):
             raise Http404()
 
-        text = ', '.join(filter(None, [
+        text = ', '.join(part for part in (
             'on ' + self.object.street if self.object.street else None,
             'near ' + self.object.crossing if self.object.crossing else None,
             'near ' + self.object.landmark if self.object.landmark else None,
-        ]))
+        ) if part is not None)
         if text:
             context['text'] = text[0].upper() + text[1:]
 
@@ -318,13 +321,13 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
             pk=self.object.pk
         ).order_by('atco_code')
 
-        context['breadcrumb'] = filter(None, [
+        context['breadcrumb'] = (crumb for crumb in (
             self.object.admin_area.region if self.object.admin_area else Region.objects.get(pk='NI'),
             self.object.admin_area,
             self.object.locality.district if self.object.locality else None,
             self.object.locality.parent if self.object.locality else None,
             self.object.locality,
-        ])
+        ) if crumb is not None)
         return context
 
 
@@ -416,7 +419,7 @@ class ServiceDetailView(DetailView):
                 '_MEGA' in self.object.service_code or
                 'timetable' in self.request.GET
         ):
-            context['timetables'] = timetable.timetable_from_service(self.object)
+            context['timetables'] = timetable_from_service(self.object)
 
         if 'timetables' not in context or context['timetables'] == []:
             context['stopusages'] = self.object.stopusage_set.all().select_related(
@@ -475,7 +478,7 @@ def service_xml(request, pk):
     service = get_object_or_404(Service, service_code=pk)
 
     bodies = ''
-    for xml_file in timetable.get_files_from_zipfile(service):
+    for xml_file in get_files_from_zipfile(service):
         bodies += xml_file.read()
 
     return HttpResponse(bodies, content_type='text/plain')

@@ -1,6 +1,13 @@
 "Model definitions"
 
-from urllib import urlencode
+
+from __future__ import unicode_literals
+
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
 from django.contrib.gis.db import models
 from django.core.urlresolvers import reverse
 
@@ -25,7 +32,7 @@ class Region(models.Model):
     id = models.CharField(max_length=2, primary_key=True)
     name = models.CharField(max_length=48, db_index=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def the(self):
@@ -51,7 +58,7 @@ class AdminArea(models.Model):
     country = models.CharField(max_length=3)
     region = models.ForeignKey(Region)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self):
@@ -68,7 +75,7 @@ class District(models.Model):
     name = models.CharField(max_length=48, db_index=True)
     admin_area = models.ForeignKey(AdminArea)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self):
@@ -91,7 +98,7 @@ class Locality(models.Model):
     latlong = models.PointField(null=True)
     adjacent = models.ManyToManyField('Locality', related_name='neighbour')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_qualified_name(self):
@@ -127,7 +134,7 @@ class StopArea(models.Model):
     latlong = models.PointField(null=True)
     active = models.BooleanField()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -135,7 +142,7 @@ class LiveSource(models.Model):
     "A source of live departure information for a stop point"
     name = models.CharField(max_length=4, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.name == 'Y':
             return 'Yorkshire'
         if self.name == 'TfL':
@@ -213,7 +220,7 @@ class StopPoint(models.Model):
     admin_area = models.ForeignKey('AdminArea', null=True)
     active = models.BooleanField(db_index=True)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.indicator:
             return '%s (%s)' % (self.common_name, self.indicator)
         return self.common_name
@@ -236,13 +243,13 @@ class StopPoint(models.Model):
 
     def get_qualified_name(self):
         if self.locality is not None:
-            locality_name = unicode(self.locality).replace(' Town Centre', '').replace(' City Centre', '')
-            if locality_name.replace('\'', '').replace(u'\u2019', '') not in self.common_name.replace('\'', ''):
+            locality_name = str(self.locality).replace(' Town Centre', '').replace(' City Centre', '')
+            if locality_name.replace('\'', '').replace('\u2019', '') not in self.common_name.replace('\'', ''):
                 if self.indicator in ('opp', 'adj', 'at', 'o/s', 'nr', 'before', 'after', 'by', 'on', 'in'):
                     return '%s, %s %s' % (locality_name, self.indicator, self.common_name)
                 else:
-                    return '%s %s' % (locality_name, unicode(self))
-        return unicode(self)
+                    return '%s %s' % (locality_name, self)
+        return str(self)
 
     def get_absolute_url(self):
         return reverse('stoppoint-detail', args=(self.atco_code,))
@@ -262,7 +269,7 @@ class Operator(models.Model, ValidateOnSaveMixin):
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=128, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def get_absolute_url(self):
@@ -309,7 +316,7 @@ class Service(models.Model):
     current = models.BooleanField(default=True, db_index=True)
     show_timetable = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.line_name or self.line_brand or self.description:
             parts = (self.line_name, self.line_brand, self.description)
             return ' - '.join(part for part in parts if part != '')

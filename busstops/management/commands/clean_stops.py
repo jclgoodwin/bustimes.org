@@ -110,7 +110,7 @@ class Command(BaseCommand):
         for indicator in INDICATORS_TO_PROPER_CASE:
             StopPoint.objects.filter(indicator__iexact=indicator).update(indicator=indicator)
 
-        for indicator, replacement in INDICATORS_TO_REPLACE.iteritems():
+        for indicator, replacement in INDICATORS_TO_REPLACE.items():
             StopPoint.objects.filter(indicator__iexact=indicator).update(indicator=replacement)
 
     @staticmethod

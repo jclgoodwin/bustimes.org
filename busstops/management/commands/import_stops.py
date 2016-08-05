@@ -3,7 +3,7 @@ Usage:
 
     ./manage.py import_stops < Stops.csv
 """
-
+from __future__ import unicode_literals
 from django.contrib.gis.geos import Point
 from titlecase import titlecase
 from . import clean_stops
@@ -38,9 +38,9 @@ class Command(ImportFromCSVCommand):
                     value = ''
                 elif value.isupper():
                     value = titlecase(value)
-            defaults[django_field_name] = unicode(value, errors='ignore')
+            defaults[django_field_name] = value
 
-        if defaults['indicator'] in clean_stops.INDICATORS_TO_REPLACE:
+        if defaults.get('indicator') in clean_stops.INDICATORS_TO_REPLACE:
             defaults['indicator'] = clean_stops.INDICATORS_TO_REPLACE.get(
                 defaults['indicator']
             )

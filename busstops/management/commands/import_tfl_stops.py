@@ -3,7 +3,7 @@ Usage:
 
     ./manage.py import_tfl_stops < data/tfl/bus-stops.csv
 """
-
+from __future__ import print_function
 import requests
 from titlecase import titlecase
 
@@ -28,7 +28,7 @@ class Command(ImportFromCSVCommand):
             data = requests.get('https://api.tfl.gov.uk/StopPoint/%s' % atco_code).json()
             return data.get('commonName')
         except ValueError as error:
-            print error, atco_code
+            print(error, atco_code)
             return None
 
     def handle_row(self, row):
@@ -41,7 +41,7 @@ class Command(ImportFromCSVCommand):
             try:
                 stop = StopPoint.objects.get(pk__contains=row['Naptan_Atco'])
             except (ObjectDoesNotExist, MultipleObjectsReturned) as error:
-                print error, row
+                print(error, row)
                 return None
 
         if row['Heading'] != '':
