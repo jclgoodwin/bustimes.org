@@ -34,8 +34,6 @@ class ImportServicesTest(TestCase):
         """)
         cls.do_service('ea_21-13B-B-y08-1', 'EA')
         cls.ea_service = Service.objects.get(pk='ea_21-13B-B-y08')
-        cls.do_service('ea_21-45A-_-y08-1', 'EA')
-        cls.ea_horrible = Service.objects.get(pk='ea_21-45A-_-y08')
         cls.do_service('Megabus_Megabus14032016 163144_MEGA_M11A', 'GB', {'MEGAM11A': 'Belgravia - Liverpool'})
         cls.gb_service = Service.objects.get(pk='M11A_MEGA')
         cls.do_service('SVRABBN017', 'S')
