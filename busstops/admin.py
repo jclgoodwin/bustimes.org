@@ -7,7 +7,7 @@ from busstops.models import (
 
 
 class StopPointAdmin(admin.ModelAdmin):
-    list_display = ('atco_code', 'naptan_code', 'locality', 'admin_area', '__unicode__')
+    list_display = ('atco_code', 'naptan_code', 'locality', 'admin_area', '__str__')
     list_filter = ('admin_area',)
     search_fields = ('common_name',)
     ordering = ('atco_code',)
@@ -35,7 +35,7 @@ class OperatorAdmin(admin.ModelAdmin):
 
 
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('service_code', '__unicode__', 'mode', 'net', 'region', 'current', 'show_timetable')
+    list_display = ('service_code', '__str__', 'mode', 'net', 'region', 'current', 'show_timetable')
     list_filter = ('show_timetable', 'current', ('operator', admin.RelatedOnlyFieldListFilter), 'mode', 'net', 'region')
     search_fields = ('service_code', 'line_name', 'description')
     raw_id_fields = ('operator', 'stops')
