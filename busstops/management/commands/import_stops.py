@@ -3,7 +3,7 @@ Usage:
 
     ./manage.py import_stops < Stops.csv
 """
-from __future__ import unicode_literals
+
 from django.contrib.gis.geos import Point
 from titlecase import titlecase
 from . import clean_stops

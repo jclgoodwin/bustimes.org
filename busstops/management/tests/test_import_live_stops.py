@@ -23,10 +23,10 @@ class ImportLiveStopsTest(TestCase):
         )
 
     def test_import_acisconnect(self):
-        self.assertEquals(0, len(self.cardiff_stop.live_sources.all()))
+        self.assertEqual(0, len(self.cardiff_stop.live_sources.all()))
         with vcr.use_cassette('data/vcr/cardiff.yaml'):
             self.command.maybe_add_acisconnect_source(self.cardiff_stop, self.cardiff, 'cardiff')
-        self.assertEquals(StopPoint.objects.get(pk=self.cardiff_stop.pk).live_sources.all()[0], self.cardiff)
+        self.assertEqual(StopPoint.objects.get(pk=self.cardiff_stop.pk).live_sources.all()[0], self.cardiff)
 
     def test_tfl(self):
         tfl_command = import_tfl_stops.Command()

@@ -3,7 +3,7 @@ Usage:
 
     ./manage.py import_live_stops
 """
-from __future__ import print_function, unicode_literals
+
 from time import sleep
 import json
 import requests
@@ -90,7 +90,7 @@ class Command(BaseCommand):
         return parsed_json['Stops'] if 'Stops' in parsed_json else parsed_json['AllFoundStops']
 
     def handle(self, *args, **options):
-        for subdomain, livesource in LIVE_SOURCES.iteritems():
+        for subdomain, livesource in LIVE_SOURCES.items():
             print(subdomain)
             stop_ids = []
             for cluster in self.get_clustered_stops(subdomain):

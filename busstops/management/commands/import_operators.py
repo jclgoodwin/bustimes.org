@@ -3,7 +3,7 @@ Usage:
 
     ./manage.py import_operators < NOC_db.csv
 """
-from __future__ import unicode_literals
+
 from ..import_from_csv import ImportFromCSVCommand
 from ...models import Operator
 

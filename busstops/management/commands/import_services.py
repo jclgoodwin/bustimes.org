@@ -8,14 +8,11 @@ Usage:
 
     ./manage.py import_services EA.zip [EM.zip etc]
 """
-from __future__ import print_function
+
 import os
 import zipfile
 import csv
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
+import pickle
 import xml.etree.cElementTree as ET
 from datetime import datetime
 from titlecase import titlecase

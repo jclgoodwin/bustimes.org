@@ -3,7 +3,7 @@ Usage:
 
     ./manage.py import_tfl_stops < data/tfl/bus-stops.csv
 """
-from __future__ import print_function
+
 import requests
 from titlecase import titlecase
 
