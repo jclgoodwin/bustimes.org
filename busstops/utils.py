@@ -61,4 +61,4 @@ def timetable_from_service(service):
         timetables = [timetable for timetable in maybe_timetables if timetable]
         if timetables:
             return timetables
-    return [Timetable(ET.parse(xml_file)) for xml_file in get_files_from_zipfile(service)]
+    return [txc.Timetable(ET.parse(xml_file)) for xml_file in get_files_from_zipfile(service)]
