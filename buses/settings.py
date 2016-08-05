@@ -21,12 +21,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
     'haystack',
     'busstops',
     'pipeline',
 ]
 if DEBUG and 'test' not in sys.argv and not bool(os.environ.get('TRAVIS')):
     INSTALLED_APPS += ['debug_toolbar']
+    DEBUG_TOOLBAR_PANELS = ['debug_toolbar.panels.profiling.ProfilingPanel']
 
 ROOT_URLCONF = 'buses.urls'
 
@@ -35,6 +37,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'busstops.middleware.NotFoundRedirectMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 )
 
 HAYSTACK_CONNECTIONS = {
