@@ -95,8 +95,6 @@ class Cell(object):
         self.duration = duration
 
     def __str__(self):
-        if hasattr(self, 'text'):
-            return self.text
         if self.duration.seconds == 3600:
             return 'then hourly until'
         if self.duration.seconds % 3600 == 0:
@@ -417,7 +415,7 @@ class ServicedOrganisation(object):
 
 class DayOfWeek(object):
     def __init__(self, day):
-        if type(day) is int:
+        if isinstance(day, int):
             self.day = day
         else:
             self.day = WEEKDAYS[day]

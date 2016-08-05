@@ -1,7 +1,8 @@
+
 import os
 import zipfile
-from txc import txc
 import xml.etree.cElementTree as ET
+from txc import txc
 
 
 DIR = os.path.dirname(__file__)
