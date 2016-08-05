@@ -172,7 +172,7 @@ class TransportApiDepartures(Departures):
     def departures_from_response(self, res):
         departures = res.json().get('departures')
         if departures and 'all' in departures:
-            return filter(None, map(self.get_row, departures['all']))
+            return [row for row in map(self.get_row, departures['all']) if row]
 
 
 def get_max_age(departures, now):
