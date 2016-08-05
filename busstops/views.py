@@ -1,6 +1,5 @@
 "View definitions."
 
-from __future__ import unicode_literals
 import os
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
@@ -479,6 +478,6 @@ def service_xml(request, pk):
 
     bodies = ''
     for xml_file in get_files_from_zipfile(service):
-        bodies += xml_file.read()
+        bodies += xml_file.read().decode()
 
     return HttpResponse(bodies, content_type='text/plain')

@@ -3,10 +3,7 @@ TransXChange documents
 """
 import os
 import re
-try:
-    import pickle
-except ImportError:
-    import cPickle as pickle
+import pickle as pickle
 import xml.etree.cElementTree as ET
 import calendar
 from datetime import date, datetime
