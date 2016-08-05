@@ -1,7 +1,7 @@
 language: python
 python:
-#  - "2.7"
-  - "3.2"
+  - "3.4"
+  - "3.5"
 cache: pip
 services:
   - postgresql
@@ -15,14 +15,3 @@ script:
   - flake8 buses busstops timetables
 after_success:
   coveralls
-virtualenv:
-  system_site_packages: true
-addons:
-  apt:
-    packages:
-    - pylint
-    - python-bs4
-    - python-dateutil
-    - python-lxml
-    - python-psycopg2
-    - python-requests
