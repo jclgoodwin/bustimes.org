@@ -1,8 +1,13 @@
 "Model definitions"
 
-from urllib.parse import urlencode
+from __future__ import unicode_literals
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
 from django.contrib.gis.db import models
 from django.core.urlresolvers import reverse
+from django.utils.encoding import python_2_unicode_compatible
 
 
 TIMING_STATUS_CHOICES = (
@@ -20,6 +25,7 @@ class ValidateOnSaveMixin(object):
         super(ValidateOnSaveMixin, self).save(force_insert, force_update, **kwargs)
 
 
+@python_2_unicode_compatible
 class Region(models.Model):
     "The largest type of geographical area."
     id = models.CharField(max_length=2, primary_key=True)
@@ -39,6 +45,7 @@ class Region(models.Model):
         return reverse('region-detail', args=(self.id,))
 
 
+@python_2_unicode_compatible
 class AdminArea(models.Model):
     """
     An administrative area within a region,
@@ -58,6 +65,7 @@ class AdminArea(models.Model):
         return reverse('adminarea-detail', args=(self.id,))
 
 
+@python_2_unicode_compatible
 class District(models.Model):
     """
     A district within an administrative area.
@@ -75,6 +83,7 @@ class District(models.Model):
         return reverse('district-detail', args=(self.id,))
 
 
+@python_2_unicode_compatible
 class Locality(models.Model):
     """
     A locality within an administrative area, and possibly within a district.
@@ -104,6 +113,7 @@ class Locality(models.Model):
         return reverse('locality-detail', args=(self.id,))
 
 
+@python_2_unicode_compatible
 class StopArea(models.Model):
     "A small area containing multiple stops, such as a bus station."
 
@@ -131,6 +141,7 @@ class StopArea(models.Model):
         return self.name
 
 
+@python_2_unicode_compatible
 class LiveSource(models.Model):
     "A source of live departure information for a stop point"
     name = models.CharField(max_length=4, primary_key=True)
@@ -143,6 +154,7 @@ class LiveSource(models.Model):
         return self.name
 
 
+@python_2_unicode_compatible
 class StopPoint(models.Model):
     "The smallest type of geographical point; a point at which vehicles stop."
     atco_code = models.CharField(max_length=16, primary_key=True)
@@ -293,6 +305,7 @@ class StopUsage(models.Model):
     timing_status = models.CharField(max_length=3, choices=TIMING_STATUS_CHOICES)
 
 
+@python_2_unicode_compatible
 class Service(models.Model):
     "A bus service."
     service_code = models.CharField(max_length=24, primary_key=True)

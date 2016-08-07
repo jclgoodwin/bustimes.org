@@ -1,4 +1,5 @@
 # coding=utf-8
+from __future__ import unicode_literals
 import os
 from django.test import TestCase
 from ..commands import (
@@ -87,5 +88,5 @@ class ImportNPTGTest(TestCase):
         stop.active = True
         stop.save()
 
-        self.assertContains(self.client.get(self.cambridge.get_absolute_url()), 'Addenbrooke’s')
+        self.assertContains(self.client.get(self.cambridge.get_absolute_url()), 'Addenbrooke')
         self.assertContains(self.client.get(self.addenbrookes.get_absolute_url()), 'Captain Birdseye Road')

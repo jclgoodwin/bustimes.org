@@ -1,6 +1,7 @@
 """Represent TransXChange concepts, and generate a matrix timetable from
 TransXChange documents
 """
+from __future__ import print_function
 import os
 import re
 import pickle as pickle
@@ -83,7 +84,6 @@ class Row(object):
             if key in other.sequencenumbers:
                 return self.sequencenumbers[key] < other.sequencenumbers[key]
         return max(self.sequencenumbers.values()) < max(other.sequencenumbers.values())
-
 
 class Cell(object):
     """Represents a special cell in a timetable, spanning multiple rows and columns,
@@ -363,13 +363,10 @@ class VehicleJourney(object):
             if len(row.times) == row_length:
                 row.times.append('')
 
-    def get_departure_time(self):
-        return self.departure_time
-
     def get_order(self):
         if self.operating_profile:
-            return self.operating_profile.get_order()
-        return 0
+            return (self.operating_profile.get_order(), self.departure_time)
+        return (0, self.departure_time)
 
     def should_show(self):
         if not self.operating_profile:
@@ -616,14 +613,13 @@ class Timetable(object):
         # time calculation begins here:
         journeys = self.__get_journeys(xml, servicedorgs)
 
-        journeys.sort(key=VehicleJourney.get_departure_time)
         journeys.sort(key=VehicleJourney.get_order)
         for journey in journeys:
             journey.journeypattern.grouping.journeys.append(journey)
             journey.add_times()
 
         operatingprofile_element = service_element.find('txc:OperatingProfile', NS)
-        if operatingprofile_element:
+        if operatingprofile_element is not None:
             self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
 
         self.operating_period = OperatingPeriod(service_element.find('txc:OperatingPeriod', NS))
