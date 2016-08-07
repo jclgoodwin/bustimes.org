@@ -79,11 +79,6 @@ class Row(object):
         self.times = []
         self.sequencenumbers = {}
 
-    def __lt__(self, other):
-        for key in self.sequencenumbers:
-            if key in other.sequencenumbers:
-                return self.sequencenumbers[key] < other.sequencenumbers[key]
-        return max(self.sequencenumbers.values()) < max(other.sequencenumbers.values())
 
 class Cell(object):
     """Represents a special cell in a timetable, spanning multiple rows and columns,
@@ -111,6 +106,7 @@ class Grouping(object):
         self.service_description_parts = service_description_parts
         self.column_heads = []
         self.column_feet = []
+        self.journeypatterns = []
         self.journeys = []
         self.rows = {}
 
@@ -133,7 +129,8 @@ class Grouping(object):
             return
 
         if self.rows and self.rows[0].part.sequencenumber is None:
-            self.rows.sort()
+            for journeypattern in self.journeypatterns:
+                self.rows.sort(key=lambda r, j=journeypattern: r.sequencenumbers.get(j.id, 0))
 
         prev_journey = None
         head_span = 0
@@ -205,26 +202,27 @@ class JourneyPattern(object):
 
         origin = self.sections[0].timinglinks[0].origin
 
-        self.rows = []
-        self.rows.append(Row(origin))
+        rows = []
+        rows.append(Row(origin))
         for section in self.sections:
             for timinglink in section.timinglinks:
-                self.rows.append(Row(timinglink.destination))
+                rows.append(Row(timinglink.destination))
 
         direction_element = element.find('txc:Direction', NS)
         if direction_element is not None and direction_element.text == 'outbound':
             self.grouping = groupings[0]
         else:
             self.grouping = groupings[1]
+        self.grouping.journeypatterns.append(self)
 
         if origin.sequencenumber is not None:
-            for row in self.rows:
+            for row in rows:
                 if row.part.sequencenumber not in self.grouping.rows:
                     self.grouping.rows[row.part.sequencenumber] = row
         else:
             visited_stops = []
             i = 0
-            for row in self.rows:
+            for row in rows:
                 if row.part.stop.atco_code not in self.grouping.rows:
                     self.grouping.rows[row.part.stop.atco_code] = row
                     row.sequencenumbers[self.id] = i

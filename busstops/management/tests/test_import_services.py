@@ -97,7 +97,7 @@ class ImportServicesTest(TestCase):
     @classmethod
     def do_service(cls, filename, region, service_descriptions=None):
         filename = '%s.xml' % filename
-        path = os.path.join(DIR, 'fixtures/%s' % filename)
+        path = os.path.join(DIR, 'fixtures', filename)
         with open(path) as xml_file:
             root = ET.parse(xml_file).getroot()
         if region == 'GB':
