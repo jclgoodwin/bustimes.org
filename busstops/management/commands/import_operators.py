@@ -9,6 +9,8 @@ from ...models import Operator
 
 
 class Command(ImportFromCSVCommand):
+    input = open(0, encoding='cp1250')
+
     @staticmethod
     def get_region_id(region_id):
         if region_id in ('ADMIN', 'Admin', 'Taxi', ''):
