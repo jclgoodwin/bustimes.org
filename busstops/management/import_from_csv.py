@@ -3,7 +3,6 @@ Base classes for import_* commands
 """
 
 from io import open
-import sys
 import csv
 from django.core.management.base import BaseCommand
 from django.db import transaction

@@ -43,12 +43,11 @@ class Command(BaseCommand):
 
             if noc_code in FIRST_OPERATORS:
                 operator.update(
-                    operator.url='https://www.firstgroup.com/%s' % FIRST_OPERATORS[noc_code],
-                    operator.email='',
-                    operator.phone=''
+                    url='https://www.firstgroup.com/%s' % FIRST_OPERATORS[noc_code],
+                    email='',
+                    phone=''
                 )
                 continue
-
 
             website = public_name.website.string
             address = public_name.complenq.string
