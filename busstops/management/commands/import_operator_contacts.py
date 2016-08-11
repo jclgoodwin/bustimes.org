@@ -34,12 +34,12 @@ class Command(BaseCommand):
         }
 
         for public_name in soup.publicname.find_all('publicnamerecord'):
-            noc_code = noc_codes.get(public_name.pubnmid.string).replace('=', '')
+            noc_code = noc_codes.get(public_name.pubnmid.string)
 
             if not noc_code:
                 continue
 
-            operator = Operator.objects.filter(pk=noc_code)
+            operator = Operator.objects.filter(pk=noc_code.replace('=', ''))
 
             if noc_code in FIRST_OPERATORS:
                 operator.update(
