@@ -12,6 +12,7 @@ from django.utils.text import slugify
 
 DESTINATION_REGEX = re.compile(r'.+\((.+)\)')
 LOCAL_TIMEZONE = pytz.timezone('Europe/London')
+SESSION = requests.Session()
 
 
 class Departures(object):
@@ -23,14 +24,16 @@ class Departures(object):
             for service in services
         }
 
-    def get_request_args(self):
-        """Returns a list of arguments to pass to get_response: probably a URL
-        string by a dictionary of HTTP GET parameters
-        """
+    def get_request_url(self):
+        """Return a URL string to pass to get_response"""
         raise NotImplementedError
 
+    def get_request_params(self):
+        """Return a dictionary of HTTP GET parameters"""
+        return None
+
     def get_response(self):
-        return requests.get(*self.get_request_args(), headers={'User-Agent': 'https://bustimes.org.uk'})
+        return SESSION.get(self.get_request_url(), params=self.get_request_params())
 
     def get_service(self, line_name):
         """Given a line name string, returns the Service matching a line name
@@ -51,8 +54,8 @@ class Departures(object):
 
 class TflDepartures(Departures):
     """Departures from the Transport for London API"""
-    def get_request_args(self):
-        return ('http://api.tfl.gov.uk/StopPoint/%s/arrivals' % self.stop.pk,)
+    def get_request_url(self):
+        return 'http://api.tfl.gov.uk/StopPoint/%s/arrivals' % self.stop.pk
 
     def departures_from_response(self, res):
         return ({
@@ -71,10 +74,13 @@ class AcisDepartures(Departures):
 
 class AcisLiveDepartures(AcisDepartures):
     """Departures from an old-fashioned website ending in .acislive.com"""
-    def get_request_args(self):
-        return ('http://%s.acislive.com/pip/stop_simulator_table.asp' % self.prefix, {
+    def get_request_url(self):
+        return 'http://%s.acislive.com/pip/stop_simulator_table.asp' % self.prefix
+
+    def get_request_params(self):
+        return {
             'naptan': self.stop.naptan_code
-        })
+        }
 
     def departures_from_response(self, res):
         soup = BeautifulSoup(res.text, 'lxml')
@@ -99,10 +105,13 @@ class AcisConnectDepartures(AcisDepartures):
             return '1 min'
         return text.replace('Mins', 'mins')
 
-    def get_request_args(self):
-        return ('http://%s.acisconnect.com/Text/WebDisplay.aspx' % self.prefix, {
+    def get_request_url(self):
+        return 'http://%s.acisconnect.com/Text/WebDisplay.aspx' % self.prefix
+
+    def get_request_params(self):
+        return {
             'stopRef': self.stop.naptan_code if self.prefix == 'yorkshire' else self.stop.pk
-        })
+        }
 
     def departures_from_response(self, res):
         soup = BeautifulSoup(res.text, 'lxml')
@@ -160,14 +169,16 @@ class TransportApiDepartures(Departures):
             'destination': self._get_destination(item),
         }
 
-    def get_request_args(self):
-        url = 'http://transportapi.com/v3/uk/bus/stop/%s/live.json' % self.stop.atco_code
-        return (url, {
+    def get_request_url(self):
+        return 'http://transportapi.com/v3/uk/bus/stop/%s/live.json' % self.stop.atco_code
+
+    def get_request_params(self):
+        return {
             'app_id': settings.TRANSPORTAPI_APP_ID,
             'app_key': settings.TRANSPORTAPI_APP_KEY,
             'nextbuses': 'no',
             'group': 'no',
-        })
+        }
 
     def departures_from_response(self, res):
         departures = res.json().get('departures')
