@@ -25,7 +25,8 @@ class Command(BaseCommand):
         return '\n'.join(address_parts)
 
     def handle(self, *args, **options):
-        soup = BeautifulSoup(self.input, 'html.parser')
+        with open(self.input) as input:
+            soup = BeautifulSoup(input, 'html.parser')
 
         noc_codes = {
             record.pubnmid.string: record.noccode.string

@@ -232,7 +232,6 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(east_scotland_row['destination'], 'Edinburgh')
         self.assertEqual(east_scotland_row['time'].time(), datetime.time(3, 2))
 
-        request_args = departures.get_request_params()
         self.assertEqual(
             departures.get_request_url(),
             'http://transportapi.com/v3/uk/bus/stop/3290YYA00215/live.json'

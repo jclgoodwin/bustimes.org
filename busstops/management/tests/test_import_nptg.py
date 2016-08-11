@@ -19,9 +19,8 @@ class ImportNPTGTest(TestCase):
     @staticmethod
     def do_import(command, filename):
         filename = os.path.join(DIR, 'fixtures/%s.csv' % filename)
-        with open(filename) as open_file:
-            command.input = open_file
-            command.handle()
+        command.input = filename
+        command.handle()
 
     @classmethod
     def setUpTestData(cls):

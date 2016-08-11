@@ -17,7 +17,8 @@ INDICATORS_TO_PROPER_CASE = {
 
 
 class Command(ImportFromCSVCommand):
-    input = open(0, encoding='windows-1252')
+    input = 0
+    encoding = 'windows-1252'
 
     def handle_row(self, row):
         defaults = {

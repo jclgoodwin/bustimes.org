@@ -2,6 +2,7 @@
 Base classes for import_* commands
 """
 
+from io import open
 import sys
 import csv
 from django.core.management.base import BaseCommand
@@ -13,7 +14,8 @@ class ImportFromCSVCommand(BaseCommand):
     Base class for commands for importing data from CSV files (via stdin)
     """
 
-    input = sys.stdin
+    input = 0
+    encoding = None
 
     @staticmethod
     def to_camel_case(field_name):
@@ -34,5 +36,6 @@ class ImportFromCSVCommand(BaseCommand):
         """
         Runs when the command is executed
         """
-        for row in csv.DictReader(self.input):
-            self.handle_row(row)
+        with open(self.input, encoding=self.encoding) as input:
+            for row in csv.DictReader(input):
+                self.handle_row(row)

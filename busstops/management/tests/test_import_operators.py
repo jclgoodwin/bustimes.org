@@ -13,7 +13,7 @@ class ImportOperatorsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         command = import_operators.Command()
-        command.input = open(os.path.join(DIR, 'fixtures/NOC_DB.csv'))
+        command.input = os.path.join(DIR, 'fixtures/NOC_DB.csv')
 
         cls.great_britain = Region.objects.create(id='GB', name='Great Britain')
         cls.scotland = Region.objects.create(id='S', name='Scotland')
@@ -53,7 +53,7 @@ class ImportOperatorsTest(TestCase):
 
     def test_scotch_operator_contacts(self):
         command = import_scotch_operator_contacts.Command()
-        command.input = open(os.path.join(DIR, 'fixtures/NOC_DB.csv'))
+        command.input = os.path.join(DIR, 'fixtures/NOC_DB.csv')
         command.handle()
 
         first_aberdeen = Operator.objects.get(id='FABD')

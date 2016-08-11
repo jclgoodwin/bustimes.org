@@ -87,7 +87,7 @@ class StopsTest(TestCase):
         cls.locality_2 = Locality.objects.create(id='E0044440', admin_area_id=9)
 
         command = import_stops.Command()
-        command.input = open(os.path.join(DIR, 'fixtures/Stops.csv'))
+        command.input = os.path.join(DIR, 'fixtures/Stops.csv')
         command.handle()
 
     def test_imported_stops(self):

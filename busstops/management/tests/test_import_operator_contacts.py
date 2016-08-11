@@ -11,7 +11,7 @@ class ImportOperatorContactTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.command = import_operator_contacts.Command()
-        cls.command.input = open(os.path.join(DIR, 'fixtures/nocrecords.xml'))
+        cls.command.input = os.path.join(DIR, 'fixtures', 'nocrecords.xml')
 
         east_anglia = Region.objects.create(id='EA', name='East Anglia')
         Operator.objects.create(pk='SNDR', region=east_anglia)

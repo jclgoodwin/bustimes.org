@@ -9,7 +9,8 @@ from ...models import Operator
 
 
 class Command(ImportFromCSVCommand):
-    input = open(0, encoding='cp1250')
+    input = 0
+    encoding = 'cp1250'
 
     @staticmethod
     def get_region_id(region_id):
