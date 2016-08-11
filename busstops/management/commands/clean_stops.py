@@ -117,7 +117,7 @@ class Command(BaseCommand):
     def replace_backticks():
         "Replace ` with ' in StopPoint fields"
         for attr in ('common_name', 'street', 'landmark', 'crossing'):
-            for stop in StopPoint.objects.filter(**{attr + '__contains': '`'}):
+            for stop in StopPoint.objects.filter(**{attr + '__contains': '`'}).iterator():
                 value = getattr(stop, attr)
                 value = value.replace('`', '\'')
                 setattr(stop, attr, value)

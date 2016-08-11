@@ -18,17 +18,14 @@ class Command(ImportFromCSVCommand):
 
     @classmethod
     def handle_row(cls, row):
-        operator = Operator.objects.filter(pk=row['NOCCODE']).first()
-
-        if not operator:
-            return
-
         if row['SC']:
             scotch = cls.scotch_operators.get(row['SC'])
+
             if scotch:
-                operator.name = scotch['name']
-                operator.address = scotch['address']
-                operator.url = scotch['url']
-                operator.email = scotch['email']
-                operator.phone = scotch['phone']
-                operator.save()
+                Operator.objects.filter(pk=row['NOCCODE']).update(
+                    name=scotch['name'],
+                    address=scotch['address'],
+                    url=scotch['url'],
+                    email=scotch['email'],
+                    phone=scotch['phone']
+                )

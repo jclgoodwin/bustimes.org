@@ -11,8 +11,6 @@ from ...models import StopArea
 class Command(ImportFromCSVCommand):
 
     def handle_row(self, row):
-        child = StopArea.objects.get(id=row['ChildStopAreaCode'])
-        parent_id = row['ParentStopAreaCode']
-        if child.parent_id != parent_id:
-            child.parent_id = parent_id
-            child.save()
+        StopArea.objects.filter(id=row['ChildStopAreaCode']).update(
+            parent_id=row['ParentStopAreaCode']
+        )

@@ -33,38 +33,39 @@ class Command(BaseCommand):
         }
 
         for public_name in soup.publicname.find_all('publicnamerecord'):
-            noc_code = noc_codes.get(public_name.pubnmid.string)
+            noc_code = noc_codes.get(public_name.pubnmid.string).replace('=', '')
 
-            if noc_code:
-                operator = Operator.objects.filter(pk=noc_code.replace('=', '')).first()
-                if not operator:
-                    continue
-            else:
+            if not noc_code:
                 continue
 
-            if operator.pk in FIRST_OPERATORS:
-                operator.url = 'https://www.firstgroup.com/%s' % FIRST_OPERATORS[operator.pk]
-                operator.email = ''
-                operator.phone = ''
-                operator.save()
+            operator = Operator.objects.filter(pk=noc_code)
+
+            if noc_code in FIRST_OPERATORS:
+                operator.update(
+                    operator.url='https://www.firstgroup.com/%s' % FIRST_OPERATORS[noc_code],
+                    operator.email='',
+                    operator.phone=''
+                )
                 continue
+
 
             website = public_name.website.string
             address = public_name.complenq.string
             email = public_name.ttrteenq.string
             phone = public_name.fareenq.string
 
+            parameters = {}
+
             if website or address or email or phone:
                 if website:
                     website = website.split('#')[-2]
                     if '.' in website and 'mailto:' not in website:
-                        if operator:
-                            operator.url = website
+                        parameters['url'] = website
                 if address and len(address) <= 128 and ', ' in address:
-                    operator.address = self.format_address(address)
+                    parameters['address'] = self.format_address(address)
                 if email:
-                    operator.email = email
+                    parameters['email'] = email
                 if phone and len(phone) <= 128:
-                    operator.phone = phone
+                    parameters['phone'] = phone
 
-                operator.save()
+                operator.update(**parameters)
