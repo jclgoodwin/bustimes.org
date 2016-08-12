@@ -3,8 +3,7 @@ Usage:
 
     ./manage.py import_operator_contacts < nocrecords.xml
 """
-
-import sys
+from io import open
 from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand
 from ...models import Operator
@@ -12,7 +11,7 @@ from ...views import FIRST_OPERATORS
 
 
 class Command(BaseCommand):
-    input = sys.stdin
+    input = 0
 
     @classmethod
     def format_address(cls, address):
@@ -25,7 +24,7 @@ class Command(BaseCommand):
         return '\n'.join(address_parts)
 
     def handle(self, *args, **options):
-        with open(self.input) as input:
+        with open(self.input, encoding='cp1252') as input:
             soup = BeautifulSoup(input, 'html.parser')
 
         noc_codes = {

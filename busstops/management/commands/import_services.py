@@ -337,7 +337,7 @@ class Command(BaseCommand):
         # the NCSD has service descriptions in a separate file:
         if 'IncludedServices.csv' in archive.namelist():
             with archive.open('IncludedServices.csv') as csv_file:
-                reader = csv.DictReader(csv_file)
+                reader = csv.DictReader(line.decode('utf-8') for line in csv_file)
                 # e.g. {'NATX323': 'Cardiff - Liverpool'}
                 service_descriptions = {row['Operator'] + row['LineName']: row['Description'] for row in reader}
         else:

@@ -10,7 +10,6 @@ from ...models import Operator
 
 
 class Command(ImportFromCSVCommand):
-
     scotch_operators = {
         operator['code']: operator
         for operator in requests.get('http://www.travelinescotland.com/lts/operatorList').json()['body']

@@ -14,7 +14,7 @@ class ImportFromCSVCommand(BaseCommand):
     """
 
     input = 0
-    encoding = None
+    encoding = 'cp1252'
 
     @staticmethod
     def to_camel_case(field_name):
