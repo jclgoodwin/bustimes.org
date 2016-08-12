@@ -10,6 +10,7 @@ from pipeline.templatetags import pipeline
 
 register = template.Library()
 
+
 class StylesheetNode(pipeline.StylesheetNode):
     def render_css(self, package, path):
         return self.render_individual_css(package, [path])
@@ -25,11 +26,8 @@ class StylesheetNode(pipeline.StylesheetNode):
 
 @register.tag
 def inline_stylesheet(parser, token):
-    """ Template tag that mimics pipeline's stylesheet tag, but embeds
+    """Template tag that mimics pipeline's stylesheet tag, but embeds
     the resulting CSS directly in the page.
     """
-    try:
-        tag_name, name = token.split_contents()
-    except ValueError:
-        raise template.TemplateSyntaxError('%r requires exactly one argument: the name of a group in the PIPELINE_CSS setting' % token.split_contents()[0])
+    tag_name, name = token.split_contents()
     return StylesheetNode(name)
