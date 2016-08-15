@@ -2,7 +2,8 @@
 import os
 import xml.etree.cElementTree as ET
 from django.test import TestCase
-from ...models import Operator, Service, Region
+from django.contrib.gis.geos import Point
+from ...models import Operator, Service, Region, StopPoint
 from ..commands import import_services
 
 
@@ -20,6 +21,7 @@ class ImportServicesTest(TestCase):
         cls.gb = Region.objects.create(pk='GB', name='Großbritannien')
         cls.sc = Region.objects.create(pk='S', name='Scotland')
         cls.london = Region.objects.create(pk='L', name='London')
+
         cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
         cls.megabus = Operator.objects.create(pk='MEGA', region_id='GB', name='Megabus')
         cls.fabd = Operator.objects.create(pk='FABD', region_id='S', name='First Aberdeen')
@@ -32,6 +34,18 @@ class ImportServicesTest(TestCase):
                 <txc:TradingName>BLUE TRIANGLE BUSES LIMITED</txc:TradingName>
             </txc:Operator>
         """)
+
+        for atco_code, common_name, indicator, lat, lng in (
+            ('639004572', 'Bulls Head', 'adj', -2.5042125060, 53.7423055225),
+            ('639004562', 'Markham Road', 'by"', -2.5083672338, 53.7398252112),
+            ('639004554', 'Witton Park', 'opp', -2.5108434749, 53.7389877672),
+            ('639004552', 'The Griffin', 'adj', -2.4989239373, 53.7425523688)
+        ):
+            StopPoint.objects.create(
+                atco_code=atco_code, locality_centre=False, active=True, common_name=common_name,
+                indicator=indicator, latlong=Point(lng, lat, srid=4326)
+            )
+
         cls.do_service('ea_21-13B-B-y08-1', 'EA')
         cls.ea_service = Service.objects.get(pk='ea_21-13B-B-y08')
         cls.do_service('Megabus_Megabus14032016 163144_MEGA_M11A', 'GB', {'MEGAM11A': 'Belgravia - Liverpool'})

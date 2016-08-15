@@ -321,6 +321,7 @@ class Service(models.Model):
     date = models.DateField()
     current = models.BooleanField(default=True, db_index=True)
     show_timetable = models.BooleanField(default=False)
+    geometry = models.MultiLineStringField(null=True)
 
     def __str__(self):
         if self.line_name or self.line_brand or self.description:

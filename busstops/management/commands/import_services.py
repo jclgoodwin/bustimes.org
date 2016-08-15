@@ -17,6 +17,7 @@ import xml.etree.cElementTree as ET
 from datetime import datetime
 from titlecase import titlecase
 
+from django.contrib.gis.geos import LineString, MultiLineString
 from django.core.management.base import BaseCommand
 from django.core.cache import cache
 from django.db import transaction
@@ -102,8 +103,6 @@ NS = {'txc': 'http://www.transxchange.org.uk/'}
 class Command(BaseCommand):
     "Command that imports bus services from a zip file"
 
-    now = datetime.today()
-
     @staticmethod
     def add_arguments(parser):
         parser.add_argument('filenames', nargs='+', type=str)
@@ -159,7 +158,7 @@ class Command(BaseCommand):
 
         # Get by national operator code
         operator_code = cls.get_operator_code(operator_element)
-        if len(operator_code) > 2 or operator_code == 'BR':
+        if len(operator_code) > 2:
             possible_operators = Operator.objects.filter(id=operator_code)
             if possible_operators:
                 return possible_operators[0]
@@ -255,8 +254,7 @@ class Command(BaseCommand):
 
             # stops:
 
-            stop_elements = root.find('txc:StopPoints', NS)
-            stop_ids = [stop.find('txc:StopPointRef', NS).text for stop in stop_elements]
+            stop_ids = [stop.find('txc:StopPointRef', NS).text for stop in root.find('txc:StopPoints', NS)]
             stops = StopPoint.objects.in_bulk(stop_ids)
 
             try:
@@ -281,6 +279,17 @@ class Command(BaseCommand):
                 if show_timetable:
                     for grouping in timetable.groupings:
                         del grouping.journeys
+                        line_strings = []
+                        for journeypattern in grouping.journeypatterns:
+                            points = []
+                            for section in journeypattern.sections:
+                                for timinglink in section.timinglinks:
+                                    stop = stops.get(timinglink.origin.stop.atco_code)
+                                    if stop:
+                                        points.append(stop.latlong)
+                            line_strings.append(LineString(points))
+                        multi_line_string = MultiLineString(line_strings)
+                        del grouping.journeypatterns
                         for row in grouping.rows:
                             row.times = [time for time in row.times if time is not None]
                             del row.sequencenumbers
@@ -301,7 +310,7 @@ class Command(BaseCommand):
 
             # service:
 
-            service = Service.objects.update_or_create(
+            service, created = Service.objects.update_or_create(
                 service_code=service_code,
                 defaults=dict(
                     line_name=line_name,
@@ -315,13 +324,15 @@ class Command(BaseCommand):
                         root.attrib['CreationDateTime'], root.attrib['ModificationDateTime']
                     )[:10],
                     current=True,
-                    show_timetable=show_timetable
+                    show_timetable=show_timetable,
+                    geometry=multi_line_string
                 )
             )[0]
 
-            service.stops.clear()
+            if not created:
+                service.stops.clear()
             StopUsage.objects.bulk_create(stop_usages)
-            service.operator.add(*operators)
+            service.operator.set(*operators)
 
     @classmethod
     @transaction.atomic
