@@ -36,10 +36,10 @@ class ImportServicesTest(TestCase):
         """)
 
         for atco_code, common_name, indicator, lat, lng in (
-            ('639004572', 'Bulls Head', 'adj', -2.5042125060, 53.7423055225),
-            ('639004562', 'Markham Road', 'by"', -2.5083672338, 53.7398252112),
-            ('639004554', 'Witton Park', 'opp', -2.5108434749, 53.7389877672),
-            ('639004552', 'The Griffin', 'adj', -2.4989239373, 53.7425523688)
+                ('639004572', 'Bulls Head', 'adj', -2.5042125060, 53.7423055225),
+                ('639004562', 'Markham Road', 'by"', -2.5083672338, 53.7398252112),
+                ('639004554', 'Witton Park', 'opp', -2.5108434749, 53.7389877672),
+                ('639004552', 'The Griffin', 'adj', -2.4989239373, 53.7425523688)
         ):
             StopPoint.objects.create(
                 atco_code=atco_code, locality_centre=False, active=True, common_name=common_name,

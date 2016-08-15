@@ -18,10 +18,9 @@ class StylesheetNode(pipeline.StylesheetNode):
     def render_individual_css(self, package, paths, **kwargs):
         html = []
         for path in paths:
-            with codecs.open(staticfiles_storage.path(path), 'r', 'utf-8') as f:
-                html.append(f.read())
-        html = '<style amp-custom>' + '\n'.join(html) + '</style>'
-        return mark_safe(html)
+            with codecs.open(staticfiles_storage.path(path), 'r', 'utf-8') as open_file:
+                html.append(open_file.read())
+        return mark_safe('<style amp-custom>' + '\n'.join(html) + '</style>')
 
 
 @register.tag
@@ -29,5 +28,5 @@ def inline_stylesheet(parser, token):
     """Template tag that mimics pipeline's stylesheet tag, but embeds
     the resulting CSS directly in the page.
     """
-    tag_name, name = token.split_contents()
+    name = token.split_contents()[0]
     return StylesheetNode(name)
