@@ -200,6 +200,19 @@ class Command(BaseCommand):
 
         return (line_name, line_brand)
 
+    @staticmethod
+    def line_string_from_journeypattern(journeypattern, stops):
+        points = []
+        stop = stops.get(journeypattern.sections[0].timinglinks[0].origin.stop.atco_code)
+        if stop:
+            points.append(stop.latlong)
+        for section in journeypattern.sections:
+            for timinglink in section.timinglinks:
+                stop = stops.get(timinglink.destination.stop.atco_code)
+                if stop:
+                    points.append(stop.latlong)
+        return LineString(points)
+
     @classmethod
     def do_service(cls, root, region_id, filename, service_descriptions=None):
         """
@@ -276,17 +289,10 @@ class Command(BaseCommand):
                         len(grouping.journeys) < 40 or
                         len([time for time in grouping.rows[0].times if time is not None]) < 40
                     )
-                    for journeypattern in grouping.journeypatterns:
-                        points = []
-                        for section in journeypattern.sections:
-                            stop = stops.get(section.timinglinks[0].origin.stop.atco_code)
-                            if stop:
-                                points.append(stop.latlong)
-                            for timinglink in section.timinglinks:
-                                stop = stops.get(timinglink.destination.stop.atco_code)
-                                if stop:
-                                    points.append(stop.latlong)
-                        line_strings.append(LineString(points))
+                    line_strings += [
+                        cls.line_string_from_journeypattern(journeypattern, stops)
+                        for journeypattern in grouping.journeypatterns
+                    ]
                 multi_line_string = MultiLineString(line_strings)
 
                 if show_timetable:

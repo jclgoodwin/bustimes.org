@@ -173,8 +173,30 @@ class ImportServicesTest(TestCase):
         self.assertTrue(service.show_timetable)
         self.assertEqual(service.operator.first(), self.fabd)
         self.assertEqual(service.get_traveline_url(), 'http://www.travelinescotland.com/pdfs/timetables/ABBN017.pdf')
+        self.assertEqual(service.geometry.coords[0], (
+            (53.7423055225, -2.504212506), (53.7398252112, -2.5083672338),
+            (53.7389877672, -2.5108434749), (53.7425523688, -2.4989239373)
+        ))
+        self.assertEqual(service.geometry.coords[1], ())
 
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data['breadcrumb'], [self.sc, self.fabd])
         self.assertTemplateUsed(res, 'busstops/service_detail.html')
         self.assertContains(res, '<td colspan="5" rowspan="62">then every 30 minutes until</td>', html=True)
+
+        # Test the fallback version without a timetable (just a list of stops)
+        service.show_timetable = False
+        service.save()
+        res = self.client.get(service.get_absolute_url())
+        self.assertContains(res, '<h2>Outbound</h2>')
+        self.assertContains(res, """
+            <li class="OTH" itemscope itemtype="https://schema.org/BusStop">
+                <a href="/stops/639004554">
+                    <span itemprop="name">Witton Park (opp)</span>
+                    <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
+                        <meta itemprop="latitude" content="-2.5108434749" />
+                        <meta itemprop="longitude" content="53.7389877672" />
+                    </span>
+                </a>
+            </li>
+        """, html=True)
