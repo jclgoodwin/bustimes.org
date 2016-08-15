@@ -28,5 +28,5 @@ def inline_stylesheet(parser, token):
     """Template tag that mimics pipeline's stylesheet tag, but embeds
     the resulting CSS directly in the page.
     """
-    name = token.split_contents()[0]
+    name = token.split_contents()[1]
     return StylesheetNode(name)
