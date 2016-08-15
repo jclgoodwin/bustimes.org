@@ -271,24 +271,25 @@ class Command(BaseCommand):
                     ]
 
                 show_timetable = True
+                line_strings = []
                 for grouping in timetable.groupings:
                     show_timetable = show_timetable and (
                         len(grouping.journeys) < 40 or
                         len([time for time in grouping.rows[0].times if time is not None]) < 40
                     )
+                    for journeypattern in grouping.journeypatterns:
+                        points = []
+                        for section in journeypattern.sections:
+                            for timinglink in section.timinglinks:
+                                stop = stops.get(timinglink.origin.stop.atco_code)
+                                if stop:
+                                    points.append(stop.latlong)
+                        line_strings.append(LineString(points))
+                multi_line_string = MultiLineString(line_strings)
+
                 if show_timetable:
                     for grouping in timetable.groupings:
                         del grouping.journeys
-                        line_strings = []
-                        for journeypattern in grouping.journeypatterns:
-                            points = []
-                            for section in journeypattern.sections:
-                                for timinglink in section.timinglinks:
-                                    stop = stops.get(timinglink.origin.stop.atco_code)
-                                    if stop:
-                                        points.append(stop.latlong)
-                            line_strings.append(LineString(points))
-                        multi_line_string = MultiLineString(line_strings)
                         del grouping.journeypatterns
                         for row in grouping.rows:
                             row.times = [time for time in row.times if time is not None]
@@ -327,12 +328,12 @@ class Command(BaseCommand):
                     show_timetable=show_timetable,
                     geometry=multi_line_string
                 )
-            )[0]
+            )
 
             if not created:
                 service.stops.clear()
             StopUsage.objects.bulk_create(stop_usages)
-            service.operator.set(*operators)
+            service.operator.set(operators)
 
     @classmethod
     @transaction.atomic
