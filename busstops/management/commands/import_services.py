@@ -14,7 +14,6 @@ import zipfile
 import csv
 import pickle
 import xml.etree.cElementTree as ET
-from datetime import datetime
 from titlecase import titlecase
 
 from django.contrib.gis.geos import LineString, MultiLineString
@@ -280,8 +279,11 @@ class Command(BaseCommand):
                     for journeypattern in grouping.journeypatterns:
                         points = []
                         for section in journeypattern.sections:
+                            stop = stops.get(section.timinglinks[0].origin.stop.atco_code)
+                            if stop:
+                                points.append(stop.latlong)
                             for timinglink in section.timinglinks:
-                                stop = stops.get(timinglink.origin.stop.atco_code)
+                                stop = stops.get(timinglink.destination.stop.atco_code)
                                 if stop:
                                     points.append(stop.latlong)
                         line_strings.append(LineString(points))
