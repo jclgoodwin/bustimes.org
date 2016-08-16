@@ -1,3 +1,7 @@
 [run]
 plugins = django_coverage_plugin
-
+source =
+    buses
+    busstops
+    departures
+    txc

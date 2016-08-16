@@ -27,16 +27,16 @@ INSTALLED_APPS = [
     'pipeline',
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'busstops.middleware.NotFoundRedirectMiddleware',
+    'busstops.middleware.not_found_redirect_middleware',
 ]
 
 if DEBUG and 'test' not in sys.argv and not bool(os.environ.get('TRAVIS')):
     INSTALLED_APPS += ['debug_toolbar']
-    MIDDLEWARE_CLASSES += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+    MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
     DEBUG_TOOLBAR_PANELS = [
         'debug_toolbar.panels.versions.VersionsPanel',
         'debug_toolbar.panels.timer.TimerPanel',

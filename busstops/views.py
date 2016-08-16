@@ -50,9 +50,9 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-def not_found(request):
+def not_found(request, exception):
     "Custom 404 handler view"
-    if request.resolver_match and request.resolver_match.url_name == 'service-detail':
+    if exception.args == ('No service found matching the query',):
         service_code = request.resolver_match.kwargs.get('pk')
         service = Service.objects.filter(service_code=service_code).first()
         localities = Locality.objects.filter(stoppoint__service=service).distinct()

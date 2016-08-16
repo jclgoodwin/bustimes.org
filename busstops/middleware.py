@@ -2,13 +2,15 @@ from django.shortcuts import redirect
 from busstops.models import Service, StopPoint
 
 
-class NotFoundRedirectMiddleware(object):
+def not_found_redirect_middleware(get_response):
     """
     Redirects from /services/17-N4-_-y08-1 to /services/17-N4-_-y08-2, for example,
     if the former doesn't exist (any more) and the latter does.
     """
 
-    def process_response(self, request, response):
+    def middleware(request):
+        response = get_response(request)
+
         if response.status_code == 404:
             suggestion = None
 
@@ -34,3 +36,5 @@ class NotFoundRedirectMiddleware(object):
                 return redirect(suggestion)
 
         return response
+
+    return middleware

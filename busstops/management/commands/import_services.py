@@ -211,7 +211,10 @@ class Command(BaseCommand):
                 stop = stops.get(timinglink.destination.stop.atco_code)
                 if stop:
                     points.append(stop.latlong)
-        return LineString(points)
+        try:
+            return LineString(points)
+        except ValueError as error:
+            print(error)
 
     @classmethod
     def do_service(cls, root, region_id, filename, service_descriptions=None):

@@ -1,6 +1,6 @@
 """Tests for timetables and date ranges"""
 import xml.etree.cElementTree as ET
-from datetime import time
+from datetime import time, timedelta
 from django.test import TestCase
 from . import txc
 
@@ -98,6 +98,13 @@ class TimetableTest(TestCase):
             str(timetable_sw.groupings[0].column_heads[0].operatingprofile),
             'Monday to Friday\nSchool days'
         )
+
+
+class CellTest(TestCase):
+    def test_cell(self):
+        self.assertEqual(str(txc.Cell(1, 1, timedelta(minutes=20))), 'then every 20 minutes until')
+        self.assertEqual(str(txc.Cell(1, 1, timedelta(minutes=60))), 'then hourly until')
+        self.assertEqual(str(txc.Cell(1, 1, timedelta(minutes=120))), 'then every 2 hours until')
 
 
 class DateRangeTest(TestCase):

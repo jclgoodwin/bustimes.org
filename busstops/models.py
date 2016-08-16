@@ -6,7 +6,7 @@ try:
 except ImportError:
     from urllib import urlencode
 from django.contrib.gis.db import models
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
 
 
@@ -56,7 +56,7 @@ class AdminArea(models.Model):
     name = models.CharField(max_length=48, db_index=True)
     short_name = models.CharField(max_length=48)
     country = models.CharField(max_length=3)
-    region = models.ForeignKey(Region)
+    region = models.ForeignKey(Region, models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -74,7 +74,7 @@ class District(models.Model):
     """
     id = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(max_length=48, db_index=True)
-    admin_area = models.ForeignKey(AdminArea)
+    admin_area = models.ForeignKey(AdminArea, models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -94,9 +94,9 @@ class Locality(models.Model):
     name = models.CharField(max_length=48, db_index=True)
     # short_name?
     qualifier_name = models.CharField(max_length=48, blank=True)
-    admin_area = models.ForeignKey(AdminArea)
-    district = models.ForeignKey(District, null=True)
-    parent = models.ForeignKey('Locality', null=True, editable=False)
+    admin_area = models.ForeignKey(AdminArea, models.CASCADE)
+    district = models.ForeignKey(District, models.SET_NULL, null=True)
+    parent = models.ForeignKey('Locality', models.SET_NULL, null=True, editable=False)
     latlong = models.PointField(null=True)
     adjacent = models.ManyToManyField('Locality', related_name='neighbour')
 
@@ -119,7 +119,7 @@ class StopArea(models.Model):
 
     id = models.CharField(max_length=16, primary_key=True)
     name = models.CharField(max_length=48)
-    admin_area = models.ForeignKey(AdminArea)
+    admin_area = models.ForeignKey(AdminArea, models.CASCADE)
 
     TYPE_CHOICES = (
         ('GPBS', 'on-street pair'),
@@ -133,7 +133,7 @@ class StopArea(models.Model):
     )
     stop_area_type = models.CharField(max_length=4, choices=TYPE_CHOICES)
 
-    parent = models.ForeignKey('StopArea', null=True, editable=False)
+    parent = models.ForeignKey('StopArea', models.SET_NULL, null=True, editable=False)
     latlong = models.PointField(null=True)
     active = models.BooleanField()
 
@@ -167,10 +167,9 @@ class StopPoint(models.Model):
     indicator = models.CharField(max_length=48, blank=True)
 
     latlong = models.PointField(null=True)
-    objects = models.GeoManager()
 
-    stop_area = models.ForeignKey(StopArea, null=True, editable=False)
-    locality = models.ForeignKey('Locality', null=True, editable=False)
+    stop_area = models.ForeignKey(StopArea, models.SET_NULL, null=True, editable=False)
+    locality = models.ForeignKey('Locality', models.SET_NULL, null=True, editable=False)
     suburb = models.CharField(max_length=48, blank=True)
     town = models.CharField(max_length=48, blank=True)
     locality_centre = models.BooleanField()
@@ -222,7 +221,7 @@ class StopPoint(models.Model):
 
     timing_status = models.CharField(max_length=3, choices=TIMING_STATUS_CHOICES, blank=True)
 
-    admin_area = models.ForeignKey('AdminArea', null=True)
+    admin_area = models.ForeignKey('AdminArea', models.SET_NULL, null=True)
     active = models.BooleanField(db_index=True)
 
     def __str__(self):
@@ -267,7 +266,7 @@ class Operator(models.Model, ValidateOnSaveMixin):
     name = models.CharField(max_length=100, db_index=True)
     vehicle_mode = models.CharField(max_length=48, blank=True)
     parent = models.CharField(max_length=48, blank=True)
-    region = models.ForeignKey(Region)
+    region = models.ForeignKey(Region, models.CASCADE)
 
     address = models.CharField(max_length=128, blank=True)
     url = models.URLField(blank=True)
@@ -298,8 +297,8 @@ class Operator(models.Model, ValidateOnSaveMixin):
 
 
 class StopUsage(models.Model):
-    service = models.ForeignKey('Service', on_delete=models.CASCADE)
-    stop = models.ForeignKey('StopPoint', on_delete=models.CASCADE)
+    service = models.ForeignKey('Service', models.CASCADE)
+    stop = models.ForeignKey('StopPoint', models.CASCADE)
     direction = models.CharField(max_length=8, db_index=True)
     order = models.PositiveIntegerField()
     timing_status = models.CharField(max_length=3, choices=TIMING_STATUS_CHOICES)
@@ -316,7 +315,7 @@ class Service(models.Model):
     operator = models.ManyToManyField(Operator, blank=True)
     net = models.CharField(max_length=3, blank=True)
     line_ver = models.PositiveIntegerField(null=True, blank=True)
-    region = models.ForeignKey(Region)
+    region = models.ForeignKey(Region, models.CASCADE)
     stops = models.ManyToManyField(StopPoint, editable=False, through=StopUsage)
     date = models.DateField()
     current = models.BooleanField(default=True, db_index=True)
