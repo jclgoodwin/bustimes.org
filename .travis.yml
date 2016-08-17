@@ -11,7 +11,7 @@ before_script:
   - psql -U postgres -c 'create database bustimes'
   - ./manage.py migrate
 script:
-  - coverage run --source=buses,busstops,departures,txc manage.py test -v 3
+  - PYTHONWARNINGS=all coverage run manage.py test -v 3
   - pylint buses busstops departures txc | cat
   - flake8 buses busstops departures txc
 after_success:
