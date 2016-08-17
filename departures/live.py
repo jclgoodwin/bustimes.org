@@ -8,8 +8,15 @@ import dateutil.parser
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.utils.text import slugify
+from busstops.models import Operator
 
-
+STAGECOACH_OPERATORS = (
+    'SCMY', 'SDVN', 'SCMN', 'SCEK', 'SCMB', 'SINV', 'SSWL', 'STWS', 'SBLB',
+    'SCWW', 'SCLI', 'SCBL', 'SCCO', 'SYRK', 'SSTY', 'SCNH', 'SCNE', 'SCGL',
+    'SCOX', 'SSPH', 'YSYC', 'SCNW', 'SCHM', 'NFKG', 'SCHT', 'SCHW', 'SCTE',
+    'SCCM', 'SSWN', 'SCBD', 'SCOR', 'SCGR', 'SCEB', 'SCOT', 'SCPB', 'SMSO',
+    'SCHU', 'SCHA', 'STCR', 'STGS', 'SCST', 'CLTL'
+)
 DESTINATION_REGEX = re.compile(r'.+\((.+)\)')
 LOCAL_TIMEZONE = pytz.timezone('Europe/London')
 SESSION = requests.Session()
@@ -186,6 +193,46 @@ class TransportApiDepartures(Departures):
             return [row for row in map(self.get_row, departures['all']) if row]
 
 
+class StagecoachDepartures(Departures):
+    def get_response(self):
+        return SESSION.post(
+            'https://api.stagecoachbus.com/tis/v3/stop-event-query',
+            headers={
+                'Origin': 'https://www.stagecoachbus.com',
+                'Referer': 'https://www.stagecoachbus.com',
+                'X-SC-apiKey': 'ukbusprodapi_9T61Jo3vsbql#!',
+                'X-SC-securityMethod': 'API'
+            },
+            json={
+                'Stops': {
+                    'StopLabel': (self.stop.atco_code,)
+                },
+                'Departure': {
+                    'TargetDepartureTime': {
+                        'value': datetime.datetime.now().isoformat()
+                    }
+                },
+                'ResponseCharacteristics': {
+                    'MaxLaterEvents': {
+                        'value': 20
+                    }
+                },
+                'RequestId': 'bus-stop-query-stagecoach'
+            }
+        )
+
+    def get_row(self, row):
+        service = row['Trip']['Service']['ServiceNumber']
+        return {
+            'time': dateutil.parser.parse(row['ScheduledDepartureTime']['value']),
+            'destination': row['Trip']['DestinationBoard'],
+            'service': self.services.get(service.lower(), service)
+        }
+
+    def departures_from_response(self, response):
+        return map(self.get_row, response.json().get('Events').get('Event'))
+
+
 def get_max_age(departures, now):
     """Given a list of departures and the current datetime, returns an
     appropriate max_age in seconds (for use in a cache-control header)
@@ -266,9 +313,18 @@ def get_departures(stop, services):
             }
         }, 60)
 
+    operators = Operator.objects.filter(service__stops=stop).distinct().values_list('pk', flat=True)
+    if all(operator in STAGECOACH_OPERATORS for operator in operators):
+        return ({
+            'departures': StagecoachDepartures(stop, services),
+        }, 60)
+
     departures = TransportApiDepartures(stop, services).get_departures()
     return ({
         'departures': departures,
         'today': datetime.date.today(),
-        'source': None,
+        'source': {
+            'url': 'http://www.transportapi.com/',
+            'name': 'Transport API',
+        }
     }, get_max_age(departures, datetime.datetime.now()))
