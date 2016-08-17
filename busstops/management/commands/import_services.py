@@ -217,11 +217,25 @@ class Command(BaseCommand):
             print(error)
 
     @classmethod
-    def do_service(cls, root, region_id, filename, service_descriptions=None):
+    def do_service(cls, iterator, region_id, filename, service_descriptions=None):
         """
         Given a root element, region ID, filename, and optional dictionary of service descriptions
         (for the NCSD), does stuff
         """
+        for event, element in iterator:
+            tag = element.tag[33:]
+
+            if tag == 'StopPoints':
+                stop_ids = [stop.find('txc:StopPointRef', NS).text for stop in element]
+#                element.clear()
+            if tag.startswith('Route'):
+                element.clear()
+            elif tag == 'Operators':
+                operators = [operator for operator in map(cls.get_operator, element) if operator]
+                element.clear()
+
+        root = element
+
         for service_element in root.find('txc:Services', NS):
 
             line_name, line_brand = cls.get_line_name_and_brand(
@@ -237,8 +251,6 @@ class Command(BaseCommand):
             # service operators:
             # (doing this preliminary bit now, to make getting NCSD descriptions possible)
 
-            operators_element = root.find('txc:Operators', NS)
-            operators = [operator for operator in map(cls.get_operator, operators_element) if operator]
 
             # service description:
 
@@ -269,7 +281,6 @@ class Command(BaseCommand):
 
             # stops:
 
-            stop_ids = [stop.find('txc:StopPointRef', NS).text for stop in root.find('txc:StopPoints', NS)]
             stops = StopPoint.objects.in_bulk(stop_ids)
 
             try:
@@ -371,8 +382,8 @@ class Command(BaseCommand):
                 print(i)
 
             if filename.endswith('.xml'):
-                root = ET.parse(archive.open(filename)).getroot()
-                cls.do_service(root, region_id, filename, service_descriptions=service_descriptions)
+                iterator = ET.iterparse(archive.open(filename))
+                cls.do_service(iterator, region_id, filename, service_descriptions=service_descriptions)
 
     @classmethod
     def handle(cls, *args, **options):
