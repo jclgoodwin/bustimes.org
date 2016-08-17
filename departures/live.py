@@ -327,8 +327,9 @@ def get_departures(stop, services):
 
     operators = Operator.objects.filter(service__stops=stop).distinct().values_list('pk', flat=True)
     if all(operator in STAGECOACH_OPERATORS for operator in operators):
+        departures = StagecoachDepartures(stop, services, now)
         return ({
-            'departures': StagecoachDepartures(stop, services, now),
+            'departures': departures
         }, get_max_age(departures, now))
 
     departures = TransportApiDepartures(stop, services, now.date()).get_departures()
