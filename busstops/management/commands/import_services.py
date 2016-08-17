@@ -227,7 +227,6 @@ class Command(BaseCommand):
 
             if tag == 'StopPoints':
                 stop_ids = [stop.find('txc:StopPointRef', NS).text for stop in element]
-#                element.clear()
             if tag.startswith('Route'):
                 element.clear()
             elif tag == 'Operators':
@@ -247,10 +246,6 @@ class Command(BaseCommand):
                 mode = mode_element.text
             else:
                 mode = ''
-
-            # service operators:
-            # (doing this preliminary bit now, to make getting NCSD descriptions possible)
-
 
             # service description:
 
