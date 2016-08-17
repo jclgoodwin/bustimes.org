@@ -10,6 +10,7 @@ from django.conf import settings
 from django.utils.text import slugify
 from busstops.models import Operator
 
+
 STAGECOACH_OPERATORS = (
     'SCMY', 'SDVN', 'SCMN', 'SCEK', 'SCMB', 'SINV', 'SSWL', 'STWS', 'SBLB',
     'SCWW', 'SCLI', 'SCBL', 'SCCO', 'SYRK', 'SSTY', 'SCNH', 'SCNE', 'SCGL',
@@ -142,6 +143,10 @@ class AcisConnectDepartures(AcisDepartures):
 
 class TransportApiDepartures(Departures):
     """Departures from Transport API"""
+    def __init__(self, stop, services, today):
+        self.today = today
+        super(TransportApiDepartures, self).__init__(stop, services)
+
     @staticmethod
     def _get_destination(item):
         destination = item['direction']
@@ -153,22 +158,21 @@ class TransportApiDepartures(Departures):
         return destination
 
     def get_row(self, item):
-        today = datetime.date.today()
         time = item['best_departure_estimate']
         if time is None:
             return
         if 'date' in item:
             departure_time = dateutil.parser.parse(item['date'] + ' ' + time)
-            if departure_time.date() > today:
+            if departure_time.date() > self.today:
                 return
         else:
             hour = int(time[:2])
             while hour > 23:
                 hour -= 24
                 time = '%s%s' % (hour, time[2:])
-                today += datetime.timedelta(days=1)
+                self.today += datetime.timedelta(days=1)
             departure_time = datetime.datetime.combine(
-                today, dateutil.parser.parse(time).time()
+                self.today, dateutil.parser.parse(time).time()
             )
         return {
             'time': departure_time,
@@ -194,6 +198,10 @@ class TransportApiDepartures(Departures):
 
 
 class StagecoachDepartures(Departures):
+    def __init__(self, stop, services, now):
+        self.now = now
+        super(StagecoachDepartures, self).__init__(stop, services)
+
     def get_response(self):
         return SESSION.post(
             'https://api.stagecoachbus.com/tis/v3/stop-event-query',
@@ -209,7 +217,7 @@ class StagecoachDepartures(Departures):
                 },
                 'Departure': {
                     'TargetDepartureTime': {
-                        'value': datetime.datetime.now().isoformat()
+                        'value': self.now().isoformat()
                     }
                 },
                 'ResponseCharacteristics': {
@@ -230,7 +238,9 @@ class StagecoachDepartures(Departures):
         }
 
     def departures_from_response(self, response):
-        return map(self.get_row, response.json().get('Events').get('Event'))
+        json = response.json().get('Events')
+        if json:
+            return map(self.get_row, json.get('Event'))
 
 
 def get_max_age(departures, now):
@@ -313,18 +323,20 @@ def get_departures(stop, services):
             }
         }, 60)
 
+    now = datetime.datetime.now()
+
     operators = Operator.objects.filter(service__stops=stop).distinct().values_list('pk', flat=True)
     if all(operator in STAGECOACH_OPERATORS for operator in operators):
         return ({
-            'departures': StagecoachDepartures(stop, services),
-        }, 60)
+            'departures': StagecoachDepartures(stop, services, now),
+        }, get_max_age(departures, now))
 
-    departures = TransportApiDepartures(stop, services).get_departures()
+    departures = TransportApiDepartures(stop, services, now.date()).get_departures()
     return ({
         'departures': departures,
-        'today': datetime.date.today(),
+        'today': now.date(),
         'source': {
             'url': 'http://www.transportapi.com/',
             'name': 'Transport API',
         }
-    }, get_max_age(departures, datetime.datetime.now()))
+    }, get_max_age(departures, now))
