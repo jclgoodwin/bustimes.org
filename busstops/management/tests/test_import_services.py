@@ -173,11 +173,10 @@ class ImportServicesTest(TestCase):
         self.assertTrue(service.show_timetable)
         self.assertEqual(service.operator.first(), self.fabd)
         self.assertEqual(service.get_traveline_url(), 'http://www.travelinescotland.com/pdfs/timetables/ABBN017.pdf')
-        self.assertEqual(service.geometry.coords[0], (
+        self.assertEqual(service.geometry.coords, ((
             (53.7423055225, -2.504212506), (53.7398252112, -2.5083672338),
             (53.7389877672, -2.5108434749), (53.7425523688, -2.4989239373)
-        ))
-        self.assertEqual(service.geometry.coords[1], ())
+        ),))
 
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data['breadcrumb'], [self.sc, self.fabd])
