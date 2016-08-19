@@ -112,11 +112,10 @@ class ImportServicesTest(TestCase):
     def do_service(cls, filename, region, service_descriptions=None):
         filename = '%s.xml' % filename
         path = os.path.join(DIR, 'fixtures', filename)
+        if region == 'GB':
+            filename = 'NCSD_TXC/%s' % filename
         with open(path) as xml_file:
-            root = ET.iterparse(xml_file)
-            if region == 'GB':
-                filename = 'NCSD_TXC/%s' % filename
-            cls.command.do_service(root, region, filename, service_descriptions)
+            cls.command.do_service(xml_file, region, filename, service_descriptions)
 
     def test_do_service_ea(self):
         service = self.ea_service

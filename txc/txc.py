@@ -11,7 +11,7 @@ from datetime import date, datetime
 from django.utils.dateparse import parse_duration
 from django.utils.text import slugify
 from django.core.cache import cache
-import titlecase
+from titlecase import titlecase
 
 NS = {
     'txc': 'http://www.transxchange.org.uk/'
@@ -561,11 +561,11 @@ class ColumnFoot(object):
 
 
 class Timetable(object):
-    def __get_journeys(self, xml, servicedorgs):
+    def __get_journeys(self, journeys_element, servicedorgs):
         journeys = {
             journey.code: journey for journey in (
                 VehicleJourney(element, self.journeypatterns, servicedorgs)
-                for element in xml.find('txc:VehicleJourneys', NS)
+                for element in journeys_element
             )
         }
 
@@ -577,50 +577,78 @@ class Timetable(object):
 
         return [journey for journey in iter(journeys.values()) if journey.should_show()]
 
-    def __init__(self, xml):
-        service_element = xml.find('txc:Services/txc:Service', NS)
+    def __init__(self, open_file):
+        iterator = ET.iterparse(open_file)
 
-        description_element = service_element.find('txc:Description', NS)
-        if description_element is not None:
-            if description_element.text.isupper():
-                description_element.text = titlecase.titlecase(description_element.text)
-            description_parts = list(map(sanitize_description_part, description_element.text.split(' - ')))
-        else:
-            description_parts = None
+        element = None
+        servicedorgs = None
+        description_parts = None
 
-        self.groupings = (
-            Grouping('outbound', description_parts),
-            Grouping('inbound', description_parts)
-        )
+        for event, element in iterator:
+            tag = element.tag[33:]
 
-        stops = {
-            element.find('txc:StopPointRef', NS).text: Stop(element)
-            for element in xml.find('txc:StopPoints', NS)
-        }
-        journeypatternsections = {
-            element.get('id'): JourneyPatternSection(element, stops)
-            for element in xml.find('txc:JourneyPatternSections', NS)
-        }
-        self.journeypatterns = {
-            element.get('id'): JourneyPattern(element, journeypatternsections, self.groupings)
-            for element in service_element.findall('txc:StandardService/txc:JourneyPattern', NS)
-        }
+            if tag == 'StopPoints':
+                self.stops = {
+                    stop.find('txc:StopPointRef', NS).text: Stop(stop)
+                    for stop in element
+                }
+                element.clear()
+            elif tag.startswith('Route'):
+                element.clear()
+            elif tag == 'Operators':
+                self.operators = element
+            elif tag == 'Description':
+                description = element.text
+                element.clear()
+                if description.isupper():
+                    description = titlecase(description)
+                self.description = description
+                description_parts = list(map(sanitize_description_part, description.split(' - ')))
 
-        servicedorgs = xml.find('txc:ServicedOrganisations', NS)
+            elif tag == 'JourneyPatternSections':
+                journeypatternsections = {
+                    section.get('id'): JourneyPatternSection(section, self.stops)
+                    for section in element
+                }
+                element.clear()
+            elif tag == 'StandardService':
+                self.groupings = (
+                    Grouping('outbound', description_parts),
+                    Grouping('inbound', description_parts)
+                )
+                self.journeypatterns = {
+                    pattern.get('id'): JourneyPattern(pattern, journeypatternsections, self.groupings)
+                    for pattern in element.findall('txc:JourneyPattern', NS)
+                }
+                element.clear()
+            elif tag == 'ServicedOrganisations':
+                servicedorgs = element
+            elif tag == 'VehicleJourneys':
+                # time calculation begins here:
+                journeys = self.__get_journeys(element, servicedorgs)
+                element.clear()
+            elif tag == 'Service':
+                mode_element = element.find('txc:Mode', NS)
+                if mode_element is not None:
+                    self.mode = mode_element.text
+                else:
+                    self.mode = ''
+                operatingprofile_element = element.find('txc:OperatingProfile', NS)
+                if operatingprofile_element is not None:
+                    self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
+                self.operating_period = OperatingPeriod(element.find('txc:OperatingPeriod', NS))
+                self.service_code = element.find('txc:ServiceCode', NS).text
 
-        # time calculation begins here:
-        journeys = self.__get_journeys(xml, servicedorgs)
+        self.element = element
+
+        self.date = max(
+            element.attrib['CreationDateTime'], element.attrib['ModificationDateTime']
+        )[:10]
 
         journeys.sort(key=VehicleJourney.get_order)
         for journey in journeys:
             journey.journeypattern.grouping.journeys.append(journey)
             journey.add_times()
-
-        operatingprofile_element = service_element.find('txc:OperatingProfile', NS)
-        if operatingprofile_element is not None:
-            self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
-
-        self.operating_period = OperatingPeriod(service_element.find('txc:OperatingPeriod', NS))
 
         for grouping in self.groupings:
             grouping.do_heads_and_feet()
@@ -640,8 +668,7 @@ def timetable_from_filename(path, filename):
     """Given a path and filename, join them, and return a Timetable."""
     if filename[-4:] == '.xml':
         with open(os.path.join(path, filename)) as xmlfile:
-            xml = ET.parse(xmlfile).getroot()
-        return Timetable(xml)
+            return Timetable(xmlfile)
     cache_prefix = 'GB' if 'NCSD' in path else path.split('/')[-2]
     cache_key = '%s/%s' % (cache_prefix, filename.replace(' ', ''))
     timetable = cache.get(cache_key)

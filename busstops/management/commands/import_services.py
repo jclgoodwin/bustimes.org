@@ -218,142 +218,120 @@ class Command(BaseCommand):
             print(error, points)
 
     @classmethod
-    def do_service(cls, iterator, region_id, filename, service_descriptions=None):
+    def do_service(cls, open_file, region_id, filename, service_descriptions=None):
         """
         Given a root element, region ID, filename, and optional dictionary of service descriptions
         (for the NCSD), does stuff
         """
-        for event, element in iterator:
-            tag = element.tag[33:]
+        timetable = Timetable(open_file)
 
-            if tag == 'StopPoints':
-                stop_ids = [stop.find('txc:StopPointRef', NS).text for stop in element]
-            if tag.startswith('Route'):
-                element.clear()
-            elif tag == 'Operators':
-                operators = [operator for operator in map(cls.get_operator, element) if operator]
-                element.clear()
+        operators = [operator for operator in map(cls.get_operator, timetable.operators) if operator]
 
-        root = element
+        stop_ids = timetable.stops.keys()
 
-        for service_element in root.find('txc:Services', NS):
+        service_element = timetable.element.find('txc:Services/txc:Service', NS)
 
-            line_name, line_brand = cls.get_line_name_and_brand(
-                service_element, filename
-            )
+        line_name, line_brand = cls.get_line_name_and_brand(
+            service_element, filename
+        )
 
-            mode_element = service_element.find('txc:Mode', NS)
-            if mode_element is not None:
-                mode = mode_element.text
-            else:
-                mode = ''
+        # service description:
 
-            # service description:
+        description = timetable.description
+        if service_descriptions is not None:
+            description = service_descriptions.get('%s%s' % (operators[0].id, line_name), '')
+        elif not timetable.description:
+            print('%s is missing a name' % filename)
+            description = ''
 
-            description_element = service_element.find('txc:Description', NS)
-            if description_element is not None:
-                description = description_element.text
-            elif service_descriptions is not None:
-                description = service_descriptions.get(operators[0].id + line_name, '')
-            else:
-                print('%s is missing a name' % filename)
-                description = ''
+        if region_id == 'NE':
+            description = cls.sanitize_description(description)
 
-            if description.isupper():
-                description = titlecase(description)
+        if len(description) > 128:
+            print('Description "%s" is too long in %s' % (description, filename))
+            description = description[:128]
 
-            if region_id == 'NE':
-                description = cls.sanitize_description(description)
+        # net and service code:
 
-            if len(description) > 128:
-                print('Description "%s" is too long in %s' % (description, filename))
-                description = description[:128]
+        net, service_code, line_ver = cls.infer_from_filename(timetable.element.attrib['FileName'])
+        if service_code is None:
+            service_code = timetable.service_code
 
-            # net and service code:
+        # stops:
 
-            net, service_code, line_ver = cls.infer_from_filename(root.attrib['FileName'])
-            if service_code is None:
-                service_code = service_element.find('txc:ServiceCode', NS).text
+        stops = StopPoint.objects.in_bulk(stop_ids)
 
-            # stops:
-
-            stops = StopPoint.objects.in_bulk(stop_ids)
-
-            try:
-                timetable = Timetable(root)
-
-                stop_usages = []
-                for grouping in timetable.groupings:
-                    stop_usages += [
-                        StopUsage(
-                            service_id=service_code, stop_id=row.part.stop.atco_code,
-                            direction=grouping.direction, order=i, timing_status=row.part.timingstatus
-                        )
-                        for i, row in enumerate(grouping.rows) if row.part.stop.atco_code in stops
-                    ]
-
-                show_timetable = True
-                line_strings = []
-                for grouping in timetable.groupings:
-                    show_timetable = show_timetable and (
-                        len(grouping.journeys) < 40 or
-                        len([time for time in grouping.rows[0].times if time is not None]) < 40
+        try:
+            stop_usages = []
+            for grouping in timetable.groupings:
+                stop_usages += [
+                    StopUsage(
+                        service_id=service_code, stop_id=row.part.stop.atco_code,
+                        direction=grouping.direction, order=i, timing_status=row.part.timingstatus
                     )
-                    line_strings += [
-                        cls.line_string_from_journeypattern(journeypattern, stops)
-                        for journeypattern in grouping.journeypatterns
-                    ]
-                multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
+                    for i, row in enumerate(grouping.rows) if row.part.stop.atco_code in stops
+                ]
 
-                if show_timetable:
-                    for grouping in timetable.groupings:
-                        del grouping.journeys
-                        del grouping.journeypatterns
-                        for row in grouping.rows:
-                            row.times = [time for time in row.times if time is not None]
-                            del row.sequencenumbers
-                    pickle_dir = os.path.join(DIR, '../../../data/TNDS', 'NCSD' if region_id == 'GB' else region_id)
-                    if not os.path.exists(pickle_dir):
-                        os.makedirs(pickle_dir)
-                        if region_id == 'GB':
-                            os.mkdir(os.path.join(pickle_dir, 'NCSD_TXC'))
-                    basename = filename[:-4]
-                    with open('%s/%s' % (pickle_dir, basename), 'wb') as open_file:
-                        pickle.dump(timetable, open_file)
+            show_timetable = True
+            line_strings = []
+            for grouping in timetable.groupings:
+                show_timetable = show_timetable and (
+                    len(grouping.journeys) < 40 or
+                    len([time for time in grouping.rows[0].times if time is not None]) < 40
+                )
+                line_strings += [
+                    cls.line_string_from_journeypattern(journeypattern, stops)
+                    for journeypattern in grouping.journeypatterns
+                ]
+            multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
+
+            if show_timetable:
+                for grouping in timetable.groupings:
+                    del grouping.journeys
+                    del grouping.journeypatterns
+                    for row in grouping.rows:
+                        row.times = [time for time in row.times if time is not None]
+                        del row.sequencenumbers
+                pickle_dir = os.path.join(DIR, '../../../data/TNDS', 'NCSD' if region_id == 'GB' else region_id)
+                if not os.path.exists(pickle_dir):
+                    os.makedirs(pickle_dir)
+                    if region_id == 'GB':
+                        os.mkdir(os.path.join(pickle_dir, 'NCSD_TXC'))
+                basename = filename[:-4]
+                with open('%s/%s' % (pickle_dir, basename), 'wb') as open_file:
+                    pickle.dump(timetable, open_file)
                     cache.set('%s/%s' % (region_id, basename.replace(' ', '')), timetable)
 
-            except (AttributeError, IndexError) as error:
-                print(error, filename)
-                show_timetable = False
-                stop_usages = [StopUsage(service_id=service_code, stop_id=stop, order=0) for stop in stops]
+        except (AttributeError, IndexError) as error:
+            print(error, filename)
+            show_timetable = False
+            stop_usages = [StopUsage(service_id=service_code, stop_id=stop, order=0) for stop in stops]
 
-            # service:
+        # service:
 
-            service, created = Service.objects.update_or_create(
-                service_code=service_code,
-                defaults=dict(
-                    line_name=line_name,
-                    line_brand=line_brand,
-                    mode=mode,
-                    description=description,
-                    net=net,
-                    line_ver=line_ver,
-                    region_id=region_id,
-                    date=max(
-                        root.attrib['CreationDateTime'], root.attrib['ModificationDateTime']
-                    )[:10],
-                    current=True,
-                    show_timetable=show_timetable,
-                    geometry=multi_line_string
-                )
+        service, created = Service.objects.update_or_create(
+            service_code=service_code,
+            defaults=dict(
+                line_name=line_name,
+                line_brand=line_brand,
+                mode=timetable.mode,
+                description=description,
+                net=net,
+                line_ver=line_ver,
+                region_id=region_id,
+                date=timetable.date,
+                current=True,
+                show_timetable=show_timetable,
+                geometry=multi_line_string
             )
+        )
 
-            if created:
-                service.operator.add(*operators)
-            else:
-                service.operator.set(operators)
-                service.stops.clear()
-            StopUsage.objects.bulk_create(stop_usages)
+        if created:
+            service.operator.add(*operators)
+        else:
+            service.operator.set(operators)
+            service.stops.clear()
+        StopUsage.objects.bulk_create(stop_usages)
 
     @classmethod
     @transaction.atomic
@@ -362,26 +340,26 @@ class Command(BaseCommand):
         if region_id == 'NCSD':
             region_id = 'GB'
 
-        archive = zipfile.ZipFile(archive_name)
-
         Service.objects.filter(region_id=region_id).update(current=False)
 
-        # the NCSD has service descriptions in a separate file:
-        if 'IncludedServices.csv' in archive.namelist():
-            with archive.open('IncludedServices.csv') as csv_file:
-                reader = csv.DictReader(line.decode('utf-8') for line in csv_file)
-                # e.g. {'NATX323': 'Cardiff - Liverpool'}
-                service_descriptions = {row['Operator'] + row['LineName']: row['Description'] for row in reader}
-        else:
-            service_descriptions = None
+        with zipfile.ZipFile(archive_name) as archive:
 
-        for i, filename in enumerate(archive.namelist()):
-            if i % 100 == 0:
-                print(i)
+            # the NCSD has service descriptions in a separate file:
+            if 'IncludedServices.csv' in archive.namelist():
+                with archive.open('IncludedServices.csv') as csv_file:
+                    reader = csv.DictReader(line.decode('utf-8') for line in csv_file)
+                    # e.g. {'NATX323': 'Cardiff - Liverpool'}
+                    service_descriptions = {row['Operator'] + row['LineName']: row['Description'] for row in reader}
+            else:
+                service_descriptions = None
 
-            if filename.endswith('.xml'):
-                iterator = ET.iterparse(archive.open(filename))
-                cls.do_service(iterator, region_id, filename, service_descriptions=service_descriptions)
+            for i, filename in enumerate(archive.namelist()):
+                if i % 100 == 0:
+                    print(i)
+
+                if filename.endswith('.xml'):
+                    with archive.open(filename) as open_file:
+                        cls.do_service(open_file, region_id, filename, service_descriptions=service_descriptions)
 
     @classmethod
     def handle(cls, *args, **options):
