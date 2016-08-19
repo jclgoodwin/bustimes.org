@@ -217,7 +217,7 @@ class StagecoachDepartures(Departures):
                 },
                 'Departure': {
                     'TargetDepartureTime': {
-                        'value': self.now().isoformat()
+                        'value': self.now.isoformat()
                     }
                 },
                 'ResponseCharacteristics': {
@@ -233,14 +233,14 @@ class StagecoachDepartures(Departures):
         service = row['Trip']['Service']['ServiceNumber']
         return {
             'time': dateutil.parser.parse(row['ScheduledDepartureTime']['value']),
-            'destination': row['Trip']['DestinationBoard'],
+            'destination': row['Trip'].get('DestinationBoard') or row['Trip'].get('Description'),
             'service': self.services.get(service.lower(), service)
         }
 
     def departures_from_response(self, response):
-        json = response.json().get('Events')
-        if json:
-            return map(self.get_row, json.get('Event'))
+        events = response.json().get('Events')
+        if events:
+            return [self.get_row(event) for event in events.get('Event')]
 
 
 def get_max_age(departures, now):
@@ -327,10 +327,10 @@ def get_departures(stop, services):
 
     operators = Operator.objects.filter(service__stops=stop).distinct().values_list('pk', flat=True)
     if all(operator in STAGECOACH_OPERATORS for operator in operators):
-        departures = StagecoachDepartures(stop, services, now)
+        departures = StagecoachDepartures(stop, services, now).get_departures()
         return ({
             'departures': departures
-        }, get_max_age(departures, now))
+        }, 120) # get_max_age(departures, now))
 
     departures = TransportApiDepartures(stop, services, now.date()).get_departures()
     return ({
