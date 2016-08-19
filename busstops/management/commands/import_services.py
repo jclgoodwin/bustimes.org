@@ -348,10 +348,12 @@ class Command(BaseCommand):
                 )
             )
 
-            if not created:
+            if created:
+                service.operator.add(*operators)
+            else:
+                service.operator.set(operators)
                 service.stops.clear()
             StopUsage.objects.bulk_create(stop_usages)
-            service.operator.set(operators)
 
     @classmethod
     @transaction.atomic

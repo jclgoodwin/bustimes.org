@@ -112,7 +112,7 @@ for region in "${REGIONS[@]}"; do
     if [[ $region_old != $region_new ]]; then
         # updated_services=1
         ../../manage.py import_services $region.zip
-        find $region -mtime +1 -delete
+        find $region -type f -mtime +1 -delete
     fi
 done
 # [ $updated_services ] && ../../manage.py update_index --remove

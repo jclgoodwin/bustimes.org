@@ -475,9 +475,5 @@ class ServiceDetailView(DetailView):
 
 def service_xml(request, pk):
     service = get_object_or_404(Service, service_code=pk)
-
-    bodies = ''
-    for xml_file in get_files_from_zipfile(service):
-        bodies += xml_file.read().decode()
-
+    bodies = (xml_file.read().decode() for xml_file in get_files_from_zipfile(service))
     return HttpResponse(bodies, content_type='text/plain')
