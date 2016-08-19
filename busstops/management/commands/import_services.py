@@ -285,6 +285,10 @@ class Command(BaseCommand):
             multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
 
             if show_timetable:
+                del timetable.journeypatterns
+                del timetable.stops
+                del timetable.operators
+                del timetable.element
                 for grouping in timetable.groupings:
                     del grouping.journeys
                     del grouping.journeypatterns
