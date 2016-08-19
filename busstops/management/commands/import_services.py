@@ -212,9 +212,10 @@ class Command(BaseCommand):
                 if stop:
                     points.append(stop.latlong)
         try:
-            return LineString(points)
+            linestring = LineString(points)
+            return linestring
         except ValueError as error:
-            print(error)
+            print(error, points)
 
     @classmethod
     def do_service(cls, iterator, region_id, filename, service_descriptions=None):
@@ -302,7 +303,7 @@ class Command(BaseCommand):
                         cls.line_string_from_journeypattern(journeypattern, stops)
                         for journeypattern in grouping.journeypatterns
                     ]
-                multi_line_string = MultiLineString(line_strings)
+                multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
 
                 if show_timetable:
                     for grouping in timetable.groupings:
