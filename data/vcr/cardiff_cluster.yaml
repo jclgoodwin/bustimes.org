@@ -1,0 +1,35 @@
+interactions:
+- request:
+    body: !!python/unicode '{"clusterID": 791}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['18']
+      Content-Type: [application/json]
+      User-Agent: [python-requests/2.10.0]
+    method: POST
+    uri: http://cardiff.acisconnect.com/ConnectService.svc/GetStopsForCluster
+  response:
+    body: {string: !!python/unicode '{"d":"MapStopResponse={\"Stops\":[{\"AltStopNameLong\":\"\",\"ClusterCount\":1,\"ClusterId\":0,\"IsTimingPoint\":false,\"Latitude\":51.51761,\"Longitude\":-3.15159,\"StopNameLong\":\"Coed-Y-Gores\",\"StopSequenceIndex\":0,\"Type\":0,\"ExtensionData\":{},\"AltStopName\":\"\",\"PublicAccessCode\":\"cdijgpw\",\"StopId\":7814,\"StopName\":\"Coed-Y-Gores
+        (W1)\",\"StopRef\":\"5710AWA10324\"},{\"AltStopNameLong\":\"\",\"ClusterCount\":1,\"ClusterId\":0,\"IsTimingPoint\":false,\"Latitude\":51.51757,\"Longitude\":-3.15133,\"StopNameLong\":\"Coed-Y-Gores\",\"StopSequenceIndex\":0,\"Type\":0,\"ExtensionData\":{},\"AltStopName\":\"\",\"PublicAccessCode\":\"cdijgta\",\"StopId\":7815,\"StopName\":\"Coed-y-Gores
+        (W2)\",\"StopRef\":\"5710AWA10325\"},{\"AltStopNameLong\":\"\",\"ClusterCount\":1,\"ClusterId\":0,\"IsTimingPoint\":false,\"Latitude\":51.52049,\"Longitude\":-3.15119,\"StopNameLong\":\"Wern
+        Goch East\",\"StopSequenceIndex\":0,\"Type\":0,\"ExtensionData\":{},\"AltStopName\":\"\",\"PublicAccessCode\":\"cdimdtm\",\"StopId\":3597,\"StopName\":\"Dwyrain
+        Wern Goch\",\"StopRef\":\"5710AWA10451\"},{\"AltStopNameLong\":\"\",\"ClusterCount\":1,\"ClusterId\":0,\"IsTimingPoint\":false,\"Latitude\":51.52062,\"Longitude\":-3.15118,\"StopNameLong\":\"Wern
+        Goch East\",\"StopSequenceIndex\":0,\"Type\":0,\"ExtensionData\":{},\"AltStopName\":\"\",\"PublicAccessCode\":\"cdimdtj\",\"StopId\":8276,\"StopName\":\"Dwyrain
+        Wern Goch\",\"StopRef\":\"5710AWA10452\"},{\"AltStopNameLong\":\"\",\"ClusterCount\":1,\"ClusterId\":0,\"IsTimingPoint\":false,\"Latitude\":51.51894,\"Longitude\":-3.1535,\"StopNameLong\":\"Wern
+        Goch\",\"StopSequenceIndex\":0,\"Type\":0,\"ExtensionData\":{},\"AltStopName\":\"\",\"PublicAccessCode\":\"cdidmad\",\"StopId\":7813,\"StopName\":\"Wern
+        Goch (I)\",\"StopRef\":\"5710AWA10327\"},{\"AltStopNameLong\":\"\",\"ClusterCount\":1,\"ClusterId\":0,\"IsTimingPoint\":false,\"Latitude\":51.51904,\"Longitude\":-3.15375,\"StopNameLong\":\"Wern
+        Goch\",\"StopSequenceIndex\":0,\"Type\":0,\"ExtensionData\":{},\"AltStopName\":\"\",\"PublicAccessCode\":\"cdidmag\",\"StopId\":7812,\"StopName\":\"Wern
+        Goch (O)\",\"StopRef\":\"5710AWA10326\"}],\"ExtensionData\":{},\"DebugMessage\":null,\"ErrorCode\":0}"}'}
+    headers:
+      cache-control: [private]
+      content-length: ['2215']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 19 Aug 2016 18:49:06 GMT']
+      server: [Microsoft-IIS/7.5]
+      set-cookie: [ASP.NET_SessionId=lorlecndtbhelwwxivyxeosl; path=/; HttpOnly]
+      x-aspnet-version: [4.0.30319]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+version: 1

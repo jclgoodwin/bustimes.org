@@ -28,6 +28,66 @@ class ImportLiveStopsTest(TestCase):
             self.command.maybe_add_acisconnect_source(self.cardiff_stop, self.cardiff, 'cardiff')
         self.assertEqual(StopPoint.objects.get(pk=self.cardiff_stop.pk).live_sources.all()[0], self.cardiff)
 
+        with vcr.use_cassette('data/vcr/cardiff_clustered_stops.yaml'):
+            clustered_stops = self.command.get_clustered_stops('cardiff')
+        self.assertIsInstance(clustered_stops, list)
+        self.assertEqual(clustered_stops[0], {
+            'StopName': 'Keepers Lodge Bridg',
+            'ExtensionData': {},
+            'StopId': 2017,
+            'StopSequenceIndex': 0,
+            'ClusterId': 345,
+            'Longitude': -3.55504,
+            'ClusterCount': 1,
+            'StopRef': '5720AWA12434',
+            'IsTimingPoint': False,
+            'AltStopName': '',
+            'Latitude': 51.49254,
+            'PublicAccessCode': 'vglgpjd',
+            'StopNameLong': 'Waterton',
+            'Type': 0,
+            'AltStopNameLong': ''
+        })
+        self.assertEqual(clustered_stops[445], {
+            'StopName': None,
+            'ExtensionData': {},
+            'StopId': 0,
+            'StopSequenceIndex': 0,
+            'ClusterId': 790,
+            'Longitude': -3.15435,
+            'ClusterCount': 4,
+            'StopRef': None,
+            'IsTimingPoint': False,
+            'AltStopName': None,
+            'Latitude': 51.47945,
+            'PublicAccessCode': None,
+            'StopNameLong': None,
+            'Type': 1,
+            'AltStopNameLong': None
+        })
+
+        with vcr.use_cassette('data/vcr/cardiff_cluster.yaml'):
+            cluster = self.command.get_stops_for_cluster('cardiff', 791)
+        self.assertEqual(len(cluster), 6)
+        self.assertEqual(cluster[0], {
+            'StopName': 'Coed-Y-Gores (W1)',
+            'ExtensionData': {},
+            'StopId': 7814,
+            'StopSequenceIndex': 0,
+            'ClusterId': 0,
+            'Longitude': -3.15159,
+            'ClusterCount': 1,
+            'StopRef':
+            '5710AWA10324',
+            'IsTimingPoint': False,
+            'AltStopName': '',
+            'Latitude': 51.51761,
+            'PublicAccessCode': 'cdijgpw',
+            'StopNameLong': 'Coed-Y-Gores',
+            'Type': 0,
+            'AltStopNameLong': ''
+        })
+
     def test_tfl(self):
         tfl_command = import_tfl_stops.Command()
 

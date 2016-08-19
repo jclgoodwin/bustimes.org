@@ -38,14 +38,9 @@ class Command(BaseCommand):
             url,
             {'naptan': stop.naptan_code}
         )
-        print(request.url)
         soup = BeautifulSoup(request.text, 'html.parser')
         if soup.title and soup.title.text != 'Sorry':
             stop.live_sources.add(live_source)
-            print(soup.title)
-        else:
-            print(soup.title)
-        print('\n')
         sleep(1)
 
     @staticmethod
@@ -59,35 +54,30 @@ class Command(BaseCommand):
         text = soup.find(id='UpdatePanel1').text
         if 'System unavailable' not in text:
             stop.live_sources.add(live_source)
-        else:
-            print(text)
         sleep(1)
 
     @staticmethod
-    def get_clustered_stops(subdomain):
-        url = 'http://%s.acisconnect.com/ConnectService.svc/GetClusteredStops' % subdomain
-        params = {
+    def get_cluster_something(subdomain, path, params):
+        url = 'http://%s.acisconnect.com/ConnectService.svc/Get%s' % (subdomain, path)
+        response = requests.post(url, json=params)
+        json_string = response.json().get('d').replace('MapStopResponse=', '')
+        parsed_json = json.loads(json_string)
+        sleep(1)
+        return parsed_json.get('Stops') or parsed_json.get('AllFoundStops')
+
+    @classmethod
+    def get_clustered_stops(cls, subdomain):
+        return cls.get_cluster_something(subdomain, 'ClusteredStops', {
             'topLeft': {'lon': -100, 'lat': 100, 'CLASS_NAME': 'OpenLayers.LonLat'},
             'bottomRight': {'lon': 100, 'lat': -100, 'CLASS_NAME': 'OpenLayers.LonLat'},
             'zoomLevel': 5
-        }
-        response = requests.post(url, json=params)
-        json_string = response.json().get('d').replace('MapStopResponse=', '')
-        parsed_json = json.loads(json_string)
-        return parsed_json['Stops'] if 'Stops' in parsed_json else parsed_json['AllFoundStops']
+        })
 
-    @staticmethod
-    def get_stops_for_cluster(subdomain, cluster_id):
-        url = 'http://%s.acisconnect.com/ConnectService.svc/GetStopsForCluster' % subdomain
-        params = {
+    @classmethod
+    def get_stops_for_cluster(cls, subdomain, cluster_id):
+        return cls.get_cluster_something(subdomain, 'StopsForCluster', {
             'clusterID': cluster_id
-        }
-        response = requests.post(url, json=params)
-        json_string = response.json().get('d').replace('MapStopResponse=', '')
-        parsed_json = json.loads(json_string)
-        print(response.text)
-        sleep(1)
-        return parsed_json['Stops'] if 'Stops' in parsed_json else parsed_json['AllFoundStops']
+        })
 
     def handle(self, *args, **options):
         for subdomain, livesource in LIVE_SOURCES.items():
