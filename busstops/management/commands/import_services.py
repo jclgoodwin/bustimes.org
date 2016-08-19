@@ -14,7 +14,6 @@ import zipfile
 import csv
 import pickle
 import xml.etree.cElementTree as ET
-from titlecase import titlecase
 
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.core.management.base import BaseCommand
