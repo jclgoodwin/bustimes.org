@@ -597,14 +597,6 @@ class Timetable(object):
                 element.clear()
             elif tag == 'Operators':
                 self.operators = element
-            elif tag == 'Description':
-                description = element.text
-                element.clear()
-                if description.isupper():
-                    description = titlecase(description)
-                self.description = description
-                description_parts = list(map(sanitize_description_part, description.split(' - ')))
-
             elif tag == 'JourneyPatternSections':
                 journeypatternsections = {
                     section.get('id'): JourneyPatternSection(section, self.stops)
@@ -633,11 +625,24 @@ class Timetable(object):
                     self.mode = mode_element.text
                 else:
                     self.mode = ''
+
                 operatingprofile_element = element.find('txc:OperatingProfile', NS)
                 if operatingprofile_element is not None:
                     self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
+
                 self.operating_period = OperatingPeriod(element.find('txc:OperatingPeriod', NS))
+
                 self.service_code = element.find('txc:ServiceCode', NS).text
+
+                description = element.find('txc:Description', NS)
+                if description_element:
+                    description = description_element.text
+                if description.isupper():
+                    description = titlecase(description)
+                self.description = description
+                description_parts = list(map(sanitize_description_part, description.split(' - ')))
+
+                element.clear()
 
         self.element = element
 
