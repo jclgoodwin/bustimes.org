@@ -634,15 +634,13 @@ class Timetable(object):
 
                 self.service_code = element.find('txc:ServiceCode', NS).text
 
-                description = element.find('txc:Description', NS)
-                if description_element:
+                description_element = element.find('txc:Description', NS)
+                if description_element is not None:
                     description = description_element.text
                 if description.isupper():
                     description = titlecase(description)
                 self.description = description
                 description_parts = list(map(sanitize_description_part, description.split(' - ')))
-
-                element.clear()
 
         self.element = element
 
