@@ -7,6 +7,7 @@ import re
 import pickle as pickle
 import xml.etree.cElementTree as ET
 import calendar
+from functools import total_ordering
 from datetime import date, datetime
 from django.utils.dateparse import parse_duration
 from django.utils.text import slugify
@@ -69,6 +70,7 @@ class Stop(object):
         return text in name or name in text
 
 
+@total_ordering
 class Row(object):
     """A row in a grouping in a timetable.
     Each row is associated with a Stop, and a list of times.
@@ -78,6 +80,15 @@ class Row(object):
         part.row = self
         self.times = []
         self.sequencenumbers = {}
+
+    def __le__(self, other):
+        for key in self.sequencenumbers:
+            if key in other.sequencenumbers:
+                return self.sequencenumbers[key] < other.sequencenumbers[key]
+        return True
+
+    def __eq__(self, other):
+        return self is other
 
 
 class Cell(object):
@@ -129,8 +140,7 @@ class Grouping(object):
             return
 
         if self.rows and self.rows[0].part.sequencenumber is None:
-            for journeypattern in self.journeypatterns:
-                self.rows.sort(key=lambda r, j=journeypattern: r.sequencenumbers.get(j.id, 0))
+            self.rows.sort()
 
         prev_journey = None
         head_span = 0
