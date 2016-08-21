@@ -275,7 +275,7 @@ class Command(BaseCommand):
             for grouping in timetable.groupings:
                 show_timetable = show_timetable and (
                     len(grouping.journeys) < 40 or
-                    len([time for time in grouping.rows[0].times if time is not None]) < 40
+                    len(grouping.rows[0].times) < 40
                 )
                 for journeypattern in grouping.journeypatterns:
                     line_string = cls.line_string_from_journeypattern(journeypattern, stops)
@@ -292,7 +292,6 @@ class Command(BaseCommand):
                     del grouping.journeys
                     del grouping.journeypatterns
                     for row in grouping.rows:
-                        row.times = [time for time in row.times if time is not None]
                         del row.sequencenumbers
                 pickle_dir = os.path.join(DIR, '../../../data/TNDS', 'NCSD' if region_id == 'GB' else region_id)
                 if not os.path.exists(pickle_dir):

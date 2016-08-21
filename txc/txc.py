@@ -177,6 +177,8 @@ class Grouping(object):
             abbreviate(self, len(self.journeys), in_a_row - 1, prev_difference)
         self.column_heads.append(ColumnHead(prev_journey.operating_profile, head_span))
         self.column_feet.append(ColumnFoot(list(prev_journey.notes.values()), foot_span))
+        for row in self.rows:
+            row.times = [time for time in row.times if time is not None]
 
     def __str__(self):
         if self.service_description_parts:
