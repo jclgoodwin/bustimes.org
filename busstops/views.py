@@ -54,7 +54,7 @@ def not_found(request, exception):
     "Custom 404 handler view"
     if request.resolver_match and request.resolver_match.url_name == 'service-detail':
         service_code = request.resolver_match.kwargs.get('pk')
-        service = Service.objects.filter(service_code=service_code).first()
+        service = Service.objects.filter(service_code=service_code).defer('geometry').first()
         localities = Locality.objects.filter(stoppoint__service=service).distinct()
         context = {
             'service': service,
@@ -273,7 +273,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             context['services'] = Service.objects.filter(
                 stops__locality=self.object,
                 current=True
-            ).distinct().order_by('service_code')
+            ).defer('geometry').distinct().order_by('service_code')
 
         context['breadcrumb'] = (crumb for crumb in [
             self.object.admin_area.region,
@@ -298,7 +298,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         context['services'] = Service.objects.filter(
             stops=self.object, current=True
-        ).distinct().order_by('service_code')
+        ).defer('geometry').distinct().order_by('service_code')
 
         if not (self.object.active or context['services']):
             raise Http404()
@@ -359,7 +359,7 @@ def stop_json(request, pk):
 
 def departures(request, pk):
     stop = get_object_or_404(StopPoint, pk=pk)
-    context, max_age = live.get_departures(stop, Service.objects.filter(stops=pk, current=True))
+    context, max_age = live.get_departures(stop, Service.objects.filter(stops=pk, current=True).defer('geometry'))
     if hasattr(context['departures'], 'get_departures'):
         context['departures'] = context['departures'].get_departures()
     response = render(request, 'departures.html', context)
@@ -376,7 +376,7 @@ class OperatorDetailView(UppercasePrimaryKeyMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
         context['services'] = Service.objects.filter(operator=self.object, current=True).order_by(
-            'service_code')
+            'service_code').defer('geometry')
         if not context['services']:
             raise Http404()
         areas = AdminArea.objects.filter(stoppoint__service__in=context['services']).distinct()
@@ -459,11 +459,11 @@ class ServiceDetailView(DetailView):
             alternative = Service.objects.filter(
                 description=self.object.description,
                 current=True
-            ).first() or Service.objects.filter(
+            ).defer('geometry').first() or Service.objects.filter(
                 line_name=self.object.line_name,
                 stopusage__stop_id__in=self.object.stopusage_set.values_list('stop_id', flat=True),
                 current=True
-            ).first()
+            ).defer('geometry').first()
 
             if alternative is not None:
                 return redirect(alternative)
