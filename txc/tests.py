@@ -61,10 +61,12 @@ class TimetableTest(TestCase):
         )
         self.assertEqual('Barrow-in-Furness - Kendal', str(timetable_ne.groupings[1]))
         # Test abbreviations (check the colspan and rowspan attributes of Cells)
-        self.assertEqual(timetable_ne.groupings[0].rows[0].times[-3].colspan, 2)
-        self.assertEqual(timetable_ne.groupings[0].rows[0].times[-3].rowspan, 88)
-        self.assertIsNone(timetable_ne.groupings[1].rows[0].times[-12])
-        self.assertEqual(timetable_ne.groupings[1].rows[0].times[-13].colspan, 2)
+        self.assertEqual(timetable_ne.groupings[0].rows[0].times[3].colspan, 6)
+        self.assertEqual(timetable_ne.groupings[0].rows[0].times[3].rowspan, 88)
+        self.assertEqual(timetable_ne.groupings[0].rows[1].times, [
+            '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', time(11, 33), time(17, 33)
+        ])
+        self.assertEqual(timetable_ne.groupings[1].rows[0].times[-2].colspan, 2)
 
     def test_timetable_scotland(self):
         """Test a Scotch timetable with a 14 column wide empty foot"""
