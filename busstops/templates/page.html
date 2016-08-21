@@ -20,7 +20,14 @@
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}">
 {% block header %}
-<header><div><a href="/">Bus Times</a></div></header>
+<header>
+    <div>
+        <a href="/" class="site-name">Bus Times</a>
+        <ul>
+            <li><a href="/map{% if object.latlong %}#{{ object.latlong.y }},{{ object.latlong.x }}{% endif %}">Map</a></li>
+        </ul>
+    </div>
+</header>
 {% endblock %}
 <main>
 {% block breadcrumb %}{% include 'breadcrumb.html' %}{% endblock %}

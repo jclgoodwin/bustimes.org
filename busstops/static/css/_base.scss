@@ -42,24 +42,43 @@ label {
 
 header {
     background: $brand-color;
+    overflow: hidden;
 
     a {
         color: #000;
         display: inline-block;
-        font-size: 1.5em;
-        line-height: 1;
         padding: .66667em;
-    }
-
-    a:after {
-        content: url("/static/svg/bus.svg");
-        display: inline-block;
-        margin-left: .66667em;
+        line-height: 1;
     }
 
     a:hover {
         background-color: $brand-color-darker;
         text-decoration: none;
+    }
+
+    .site-name {
+        font-size: 1.5em;
+        float: left;
+    }
+
+    .site-name:after {
+        content: url("/static/svg/bus.svg");
+        display: inline-block;
+        margin-left: .66667em;
+    }
+
+    ul {
+        float: right;
+        margin: 0;
+
+        li {
+            display: inline;
+        }
+
+        a {
+            line-height: 1.66667em;
+            padding: 1em;
+        }
     }
 }
 

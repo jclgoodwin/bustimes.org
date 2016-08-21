@@ -92,8 +92,10 @@
         }
 
         var latLng = e.target.getCenter();
+        var latLngString = Math.round(latLng.lat * 10000) / 10000 + ',' + Math.round(latLng.lng * 10000) / 10000;
 
-        localStorage.setItem('location', Math.round(latLng.lat * 1000) / 1000 + ',' + Math.round(latLng.lng * 1000) / 1000);
+        history.replaceState(null, null, window.location.pathname + '#' + latLngString);
+        localStorage.setItem('location', latLngString);
 
         if (e.target.getZoom() > 13) {
             loadStops(this, statusBar);
@@ -106,8 +108,13 @@
         localStorage.setItem('location', event.latitude.toString() + ',' + event.longitude);
     });
 
-    if (localStorage && localStorage.getItem('location')) {
-        var parts = localStorage.getItem('location').split(',');
+    var parts;
+    if (window.location.hash) {
+        parts = window.location.hash.substr(1).split(',');
+    } else if (localStorage && localStorage.getItem('location')) {
+        parts = localStorage.getItem('location').split(',');
+    }
+    if (parts) {
         map.setView([parts[0], parts[1]], 14);
     } else {
         statusBar.getContainer().innerHTML = 'Finding your location\u2026';
