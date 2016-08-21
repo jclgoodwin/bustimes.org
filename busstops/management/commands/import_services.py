@@ -277,11 +277,11 @@ class Command(BaseCommand):
                     len(grouping.journeys) < 40 or
                     len([time for time in grouping.rows[0].times if time is not None]) < 40
                 )
-                line_strings += [
-                    cls.line_string_from_journeypattern(journeypattern, stops)
-                    for journeypattern in grouping.journeypatterns
-                ]
-            multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
+                for journeypattern in grouping.journeypatterns:
+                    line_string = cls.line_string_from_journeypattern(journeypattern, stops)
+                    if line_string not in line_strings:
+                        line_strings.append(line_string)
+                multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
 
             if show_timetable:
                 del timetable.journeypatterns
