@@ -59,7 +59,6 @@ class TimetableTest(TestCase):
         self.assertEqual(
             timetable_ne.groupings[0].rows[0].times[:3], [time(7, 0), time(8, 0), time(9, 0)]
         )
-        self.assertEqual('Barrow-in-Furness - Kendal', str(timetable_ne.groupings[1]))
         # Test abbreviations (check the colspan and rowspan attributes of Cells)
         self.assertEqual(timetable_ne.groupings[0].rows[0].times[3].colspan, 6)
         self.assertEqual(timetable_ne.groupings[0].rows[0].times[3].rowspan, 88)
