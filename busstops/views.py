@@ -52,7 +52,7 @@ def index(request):
 
 def not_found(request, exception):
     "Custom 404 handler view"
-    if exception.args == ('No service found matching the query',):
+    if request.resolver_match and request.resolver_match.url_name == 'service-detail':
         service_code = request.resolver_match.kwargs.get('pk')
         service = Service.objects.filter(service_code=service_code).first()
         localities = Locality.objects.filter(stoppoint__service=service).distinct()

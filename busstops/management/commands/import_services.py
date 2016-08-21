@@ -239,9 +239,8 @@ class Command(BaseCommand):
         description = timetable.description
         if service_descriptions is not None:
             description = service_descriptions.get('%s%s' % (operators[0].id, line_name), '')
-        elif not timetable.description:
+        elif not description:
             print('%s is missing a name' % filename)
-            description = ''
 
         if region_id == 'NE':
             description = cls.sanitize_description(description)

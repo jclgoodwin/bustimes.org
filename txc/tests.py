@@ -23,9 +23,11 @@ class TimetableTest(TestCase):
         self.assertEqual('Monday to Sunday', str(timetable_ea.operating_profile))
         self.assertEqual('until 21 October 2016', str(timetable_ea.operating_period))
 
+        self.assertEqual('Norwich - Wymondham - Attleborough', str(timetable_ea.groupings[0]))
         self.assertEqual(3, len(timetable_ea.groupings[0].column_heads))
         self.assertEqual(13, len(timetable_ea.groupings[0].journeys))
 
+        self.assertEqual('Attleborough - Wymondham - Norwich', str(timetable_ea.groupings[1]))
         self.assertEqual(3, len(timetable_ea.groupings[1].column_heads))
         self.assertEqual(14, len(timetable_ea.groupings[1].journeys))
 
@@ -50,12 +52,14 @@ class TimetableTest(TestCase):
     def test_timetable_ne(self):
         """Test timetable with some abbreviations"""
         timetable_ne = txc.timetable_from_filename(FIXTURES_DIR, 'NE_03_SCC_X6_1.xml')
+        self.assertEqual('Kendal - Barrow-in-Furness', str(timetable_ne.groupings[0]))
         self.assertEqual(timetable_ne.groupings[0].column_heads[0].span, 16)
         self.assertEqual(timetable_ne.groupings[0].column_heads[1].span, 14)
         self.assertEqual(timetable_ne.groupings[0].column_heads[2].span, 4)
         self.assertEqual(
             timetable_ne.groupings[0].rows[0].times[:3], [time(7, 0), time(8, 0), time(9, 0)]
         )
+        self.assertEqual('Barrow-in-Furness - Kendal', str(timetable_ne.groupings[1]))
         # Test abbreviations (check the colspan and rowspan attributes of Cells)
         self.assertEqual(timetable_ne.groupings[0].rows[0].times[-3].colspan, 2)
         self.assertEqual(timetable_ne.groupings[0].rows[0].times[-3].rowspan, 88)

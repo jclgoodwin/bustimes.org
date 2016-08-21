@@ -179,7 +179,7 @@ class Grouping(object):
         self.column_feet.append(ColumnFoot(list(prev_journey.notes.values()), foot_span))
 
     def __str__(self):
-        if hasattr(self, 'service_description_parts') and self.service_description_parts:
+        if self.service_description_parts:
             start = slugify(self.service_description_parts[0])
             end = slugify(self.service_description_parts[-1])
             if self.starts_at(start) or self.ends_at(end):
@@ -582,7 +582,6 @@ class Timetable(object):
 
         element = None
         servicedorgs = None
-        description_parts = None
 
         for event, element in iterator:
             tag = element.tag[33:]
@@ -601,16 +600,6 @@ class Timetable(object):
                 journeypatternsections = {
                     section.get('id'): JourneyPatternSection(section, self.stops)
                     for section in element
-                }
-                element.clear()
-            elif tag == 'StandardService':
-                self.groupings = (
-                    Grouping('outbound', description_parts),
-                    Grouping('inbound', description_parts)
-                )
-                self.journeypatterns = {
-                    pattern.get('id'): JourneyPattern(pattern, journeypatternsections, self.groupings)
-                    for pattern in element.findall('txc:JourneyPattern', NS)
                 }
                 element.clear()
             elif tag == 'ServicedOrganisations':
@@ -637,10 +626,22 @@ class Timetable(object):
                 description_element = element.find('txc:Description', NS)
                 if description_element is not None:
                     description = description_element.text
-                if description.isupper():
-                    description = titlecase(description)
-                self.description = description
-                description_parts = list(map(sanitize_description_part, description.split(' - ')))
+                    if description.isupper():
+                        description = titlecase(description)
+                    self.description = description
+                    description_parts = list(map(sanitize_description_part, description.split(' - ')))
+                else:
+                    self.description = ''
+                    description_parts = None
+
+                self.groupings = (
+                    Grouping('outbound', description_parts),
+                    Grouping('inbound', description_parts)
+                )
+                self.journeypatterns = {
+                    pattern.get('id'): JourneyPattern(pattern, journeypatternsections, self.groupings)
+                    for pattern in element.findall('txc:StandardService/txc:JourneyPattern', NS)
+                }
 
         self.element = element
 
