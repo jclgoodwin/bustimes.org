@@ -311,6 +311,9 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         if text:
             context['text'] = text[0].upper() + text[1:]
 
+        context['modes'] = list({service.mode for service in context['services']})
+        context['modes'].sort()
+
         if self.object.stop_area_id is not None:
             context['nearby'] = StopPoint.objects.filter(stop_area=self.object.stop_area_id)
         else:
