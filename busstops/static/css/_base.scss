@@ -494,6 +494,10 @@ input:not(:checked) + label {
         padding: .125em .5em;
         vertical-align: top;
 
+        &:first-child {
+            white-space: nowrap;
+        }
+
         a {
             display: block;
             margin: -.125em -.5em;
