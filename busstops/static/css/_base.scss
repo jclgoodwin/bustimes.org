@@ -528,8 +528,9 @@ footer {
     }
 
     .banner-ad {
-        padding: 1em;
+        min-height: 3.125em;
         overflow: hidden;
+        padding: 1em 0;
 
         img {
             border: 0;
@@ -552,14 +553,6 @@ footer {
         width: 300px;
     }
 
-    .newcastle {
-        background: url(https://www.awin1.com/cshow.php?s=259862&v=2678&q=124178&r=242611);
-    }
-
-    .manchester {
-        background: url(https://www.awin1.com/cshow.php?s=259861&v=2678&q=124178&r=242611);
-    }
-
     .birmingham {
         background: url(https://www.awin1.com/cshow.php?s=259848&v=2678&q=124173&r=242611);
     }
@@ -570,6 +563,10 @@ footer {
 
     .leeds {
         background: url(https://www.awin1.com/cshow.php?s=259857&v=2678&q=124173&r=242611);
+    }
+
+    .manchester {
+        background: url(https://www.awin1.com/cshow.php?s=259858&v=2678&q=124173&r=242611);
     }
 
     ul {
