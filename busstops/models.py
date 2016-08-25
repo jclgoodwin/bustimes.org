@@ -360,7 +360,7 @@ class Service(models.Model):
             return 'https://tfl.gov.uk/bus/timetable/%s/' % self.line_name
 
     def get_scotland_url(self):
-        return 'http://www.travelinescotland.com/pdfs/timetables/%s.pdf' % self.service_code
+        return 'http://www.travelinescotland.com/lts/#/timetables?timetableId=%s&direction=OUTBOUND&queryDate=&queryTime=' % self.service_code
 
     def get_traveline_url(self):
         if self.region_id == 'S':
