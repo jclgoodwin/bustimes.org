@@ -221,7 +221,7 @@ class JourneyPattern(object):
                 rows.append(Row(timinglink.destination))
 
         direction_element = element.find('txc:Direction', NS)
-        if direction_element is not None and direction_element.text == 'outbound':
+        if direction_element is None or direction_element.text == 'outbound':
             self.grouping = groupings[0]
         else:
             self.grouping = groupings[1]
