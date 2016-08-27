@@ -640,7 +640,7 @@ class Timetable(object):
                     description = description_element.text
                     if description.isupper():
                         description = titlecase(description)
-                    self.description = description
+                    self.description = description.replace('Stitians', 'Stithians').replace('Kings Lynn', "King's Lynn")
                     description_parts = list(map(sanitize_description_part, description.split(' - ')))
                 else:
                     self.description = ''
