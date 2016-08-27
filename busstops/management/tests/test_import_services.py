@@ -171,7 +171,11 @@ class ImportServicesTest(TestCase):
         self.assertEqual(str(service), 'N17 - Aberdeen - Dyce')
         self.assertTrue(service.show_timetable)
         self.assertEqual(service.operator.first(), self.fabd)
-        self.assertEqual(service.get_traveline_url(), 'http://www.travelinescotland.com/lts/#/timetables?timetableId=ABBN017&direction=OUTBOUND&queryDate=&queryTime=')
+        self.assertEqual(
+            service.get_traveline_url(),
+            'http://www.travelinescotland.com/lts/#/timetables?' +
+            'timetableId=ABBN017&direction=OUTBOUND&queryDate=&queryTime='
+        )
         self.assertEqual(service.geometry.coords, ((
             (53.7423055225, -2.504212506), (53.7398252112, -2.5083672338),
             (53.7389877672, -2.5108434749), (53.7425523688, -2.4989239373)
