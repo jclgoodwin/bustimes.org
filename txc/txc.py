@@ -7,7 +7,6 @@ import re
 import pickle as pickle
 import xml.etree.cElementTree as ET
 import calendar
-from functools import total_ordering
 from datetime import date, datetime
 from django.utils.dateparse import parse_duration
 from django.utils.text import slugify
@@ -70,7 +69,77 @@ class Stop(object):
         return text in name or name in text
 
 
-@total_ordering
+class Rows(object):
+    def __init__(self):
+        self.head = None
+        self.tail = None
+        self.pointer = None
+        self.rows = {}
+
+    def first(self):
+        if self.head is not None:
+            return self.head
+        return next(iter(self.rows.values()))
+
+    def prepend(self, row):
+        print('prepend %s to %s' % (row, self.head))
+        # if True or row.part.stop.atco_code not in self.rows:
+        #     self.rows[row.part.stop.atco_code] = row
+        # else:
+        #     row.part.row = self.rows[row.part.stop.atco_code]
+
+        row.next = self.head
+        self.head = row
+        if self.tail is None:
+            self.tail = row
+        row.parent = self
+
+    def append(self, row):
+        print('append %s to %s' % (row, self.tail))
+        if True or row.part.stop.atco_code not in self.rows:
+            self.rows[row.part.stop.atco_code] = row
+        else:
+            row.part.row = self.rows[row.part.stop.atco_code]
+
+        row.parent = self
+        if self.head is None:
+            self.head = row
+        if self.tail is not None:
+            self.tail.next = row
+        self.tail = row
+        print(self.tail)
+
+    def __iter__(self):
+        return self
+
+    def __setitem__(self, key, value):
+        self.rows[key] = value
+
+    def __getitem__(self, key):
+        return self.rows[key]
+
+    def __next__(self):
+        if self.pointer is not None:
+            self.pointer = self.pointer.next
+        else:
+            self.pointer = self.head
+
+        if self.pointer is not None:
+            return self.pointer
+
+        self.pointer = None
+
+        raise StopIteration
+
+    def __contains__(self, key):
+        return key in self.rows
+
+    def values(self):
+        if self.head is not None:
+            return [row for row in self]
+        return list(self.rows.values())
+
+
 class Row(object):
     """A row in a grouping in a timetable.
     Each row is associated with a Stop, and a list of times.
@@ -79,16 +148,24 @@ class Row(object):
         self.part = part
         part.row = self
         self.times = []
-        self.sequencenumbers = {}
+        self.next = None
+        self.parent = None
 
-    def __le__(self, other):
-        for key in self.sequencenumbers:
-            if key in other.sequencenumbers:
-                return self.sequencenumbers[key] < other.sequencenumbers[key]
-        return True
+    def append(self, row):
+        if self.parent.tail is self:
+            self.parent.tail = row
+        row.parent = self.parent
+        if True or row.part.stop.atco_code not in self.parent.rows:
+            self.parent.rows[row.part.stop.atco_code] = row
+        else:
+            row.part.row = self.parent.rows[row.part.stop.atco_code]
+        row.next = self.next
+        self.next = row
 
-    def __eq__(self, other):
-        return self is other
+    def __repr__(self):
+        if self.next is not None:
+            return '[%s] -> %s' % (self.part.stop, self.next)
+        return '[%s]' % self.part.stop
 
 
 class Cell(object):
@@ -119,7 +196,7 @@ class Grouping(object):
         self.column_feet = []
         self.journeypatterns = []
         self.journeys = []
-        self.rows = {}
+        self.rows = Rows()
 
     def has_minor_stops(self):
         for row in self.rows:
@@ -134,13 +211,13 @@ class Grouping(object):
         return self.rows[-1].part.stop.is_at(locality_name)
 
     def do_heads_and_feet(self):
-        self.rows = list(self.rows.values())
+        self.rows = self.rows.values()
 
         if not self.journeys:
             return
 
-        if self.rows and self.rows[0].part.sequencenumber is None:
-            self.rows.sort()
+        # if self.rows and self.rows[0].part.sequencenumber is None:
+            # self.rows.sort(key=Row.get_position)
 
         prev_journey = None
         head_span = 0
@@ -233,20 +310,55 @@ class JourneyPattern(object):
                     self.grouping.rows[row.part.sequencenumber] = row
         else:
             visited_stops = []
-            i = 0
-            for row in rows:
-                if row.part.stop.atco_code not in self.grouping.rows:
-                    self.grouping.rows[row.part.stop.atco_code] = row
-                    row.sequencenumbers[self.id] = i
-                elif row.part.stop.atco_code in visited_stops:
-                    self.grouping.rows[i] = row
-                    row.part.row = row
-                    row.sequencenumbers[self.id] = i
+            new = self.grouping.rows.head is None
+            # reused = False
+            # appended = False
+            previous = None
+            for i, row in enumerate(rows):
+                print(self.grouping.direction, i)
+                if new:
+                    self.grouping.rows.append(row)
+                elif row.part.stop.atco_code in self.grouping.rows:
+                    if row.part.stop.atco_code in visited_stops:
+                        previous.append(row)
+                    else:
+                        row.part.row = self.grouping.rows[row.part.stop.atco_code]
+                        row = row.part.row
+                elif previous is None:
+                    self.grouping.rows.prepend(row)
                 else:
-                    row.part.row = self.grouping.rows[row.part.stop.atco_code]
-                    row.part.row.sequencenumbers[self.id] = i
-                i += 1
+                    previous.append(row)
+                # elif appended:
+                #     previous.append(row)
+                # elif row.part.stop.atco_code in self.grouping.rows:
+                #     if previous is not None:
+                #         previous.append(row)
+                #         appended = True
+                #     elif prepended is not None:
+                #         print('b')
+                #         print(prepended)
+                #         previous.append(row)
+                #         prepended = row
+                #         print(row)
+                #     else:
+                #         print('c')
+                #         self.grouping.rows.prepend(row)
+                #         prepended = row
+                # else:
+                #     if row.part.stop.atco_code in visited_stops:
+                #         print('d')
+                #         self.grouping.rows.append(row)
+                #         appended = True
+                #     else:
+                #         print('e')
+                #         row.part.row = self.grouping.rows[row.part.stop.atco_code]
+                #         row = row.part.row
+                #         reused = True
+                previous = row
                 visited_stops.append(row.part.stop.atco_code)
+                print(row.parent)
+                print(self.grouping.rows.head)
+                # print(self.grouping.rows.values())
 
 
 class JourneyPatternSection(object):
@@ -336,14 +448,14 @@ class VehicleJourney(object):
             self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
 
     def add_times(self):
-        row_length = len(next(iter(self.journeypattern.grouping.rows.values())).times)
+        row_length = len(self.journeypattern.grouping.rows.first().times)
 
         stopusage = self.journeypattern.sections[0].timinglinks[0].origin
         time = self.departure_time
         deadrun = self.start_deadrun is not None
         if not deadrun:
             if stopusage.sequencenumber is not None:
-                self.journeypattern.grouping.rows.get(stopusage.sequencenumber).times.append(time)
+                self.journeypattern.grouping.rows[stopusage.sequencenumber].times.append(time)
             else:
                 stopusage.row.times.append(time)
 
@@ -359,7 +471,7 @@ class VehicleJourney(object):
                     if self.start_deadrun == timinglink.id:
                         deadrun = False  # end of dead run
                 elif stopusage.sequencenumber is not None:
-                    row = self.journeypattern.grouping.rows.get(stopusage.sequencenumber)
+                    row = self.journeypattern.grouping.rows[stopusage.sequencenumber]
                     row.times.append(time)
                 else:
                     stopusage.row.times.append(time)
