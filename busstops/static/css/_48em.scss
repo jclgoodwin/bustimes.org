@@ -130,3 +130,21 @@ h1 {
         background: url(https://www.awin1.com/cshow.php?s=259863&v=2678&q=124178&r=242611);
     }
 }
+
+@media (min-height: 48em) {
+    .banner-ad {
+        padding: .75em 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+
+        footer & {
+            border: 0;
+        }
+    }
+
+    body {
+        margin-top: 8.5em;
+    }
+}
