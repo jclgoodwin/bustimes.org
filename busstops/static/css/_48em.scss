@@ -5,11 +5,11 @@ main {
 
 .narrow {
     header div {
-        width: 48em;
+        width: 45.5em + 2em;
     }
 
     main {
-        width: 46em;
+        width: 45.5em;
     }
 }
 
@@ -132,7 +132,20 @@ h1 {
 }
 
 @media (min-height: 48em) {
-    .banner-ad {
+    .wide,
+    .narrow {
+        .banner-ad-hole {
+            display: block;
+            height: 8.5em;
+        }
+    }
+
+    .uncommercial .banner-ad-hole {
+        display: none;
+    }
+
+    footer .banner-ad {
+        border: 0;
         padding: .75em 0;
         position: absolute;
         top: 0;
@@ -142,17 +155,5 @@ h1 {
         .megabus {
             margin: (0.6875em - .25em) auto;
         }
-
-        footer & {
-            border: 0;
-        }
-    }
-
-    .wide, .narrow {
-        margin-top: 8.5em;
-    }
-
-    .uncommercial {
-        margin: 0;
     }
 }
