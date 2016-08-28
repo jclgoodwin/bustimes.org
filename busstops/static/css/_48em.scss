@@ -139,12 +139,20 @@ h1 {
         left: 0;
         right: 0;
 
+        .megabus {
+            margin: (0.6875em - .25em) auto;
+        }
+
         footer & {
             border: 0;
         }
     }
 
-    body {
+    .wide, .narrow {
         margin-top: 8.5em;
+    }
+
+    .uncommercial {
+        margin: 0;
     }
 }
