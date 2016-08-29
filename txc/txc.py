@@ -76,10 +76,43 @@ class Rows(object):
         self.pointer = None
         self.rows = {}
 
+    def __iter__(self):
+        return self
+
+    def __setitem__(self, key, value):
+        self.rows[key] = value
+
+    def __getitem__(self, key):
+        return self.rows[key]
+
+    def __next__(self):
+        if self.pointer is not None:
+            self.pointer = self.pointer.next
+        else:
+            self.pointer = self.head
+
+        if self.pointer is not None:
+            return self.pointer
+
+        self.pointer = None
+
+        raise StopIteration
+
+    def next(self):
+        return self.__next__()
+
+    def __contains__(self, key):
+        return key in self.rows
+
     def first(self):
         if self.head is not None:
             return self.head
         return next(iter(self.rows.values()))
+
+    def values(self):
+        if self.head is not None:
+            return [row for row in self]
+        return list(self.rows.values())
 
     def prepend(self, row):
         if row.part.stop.atco_code not in self:
@@ -106,36 +139,6 @@ class Rows(object):
             self.tail.next = row
         self.tail = row
 
-    def __iter__(self):
-        return self
-
-    def __setitem__(self, key, value):
-        self.rows[key] = value
-
-    def __getitem__(self, key):
-        return self.rows[key]
-
-    def __next__(self):
-        if self.pointer is not None:
-            self.pointer = self.pointer.next
-        else:
-            self.pointer = self.head
-
-        if self.pointer is not None:
-            return self.pointer
-
-        self.pointer = None
-
-        raise StopIteration
-
-    def __contains__(self, key):
-        return key in self.rows
-
-    def values(self):
-        if self.head is not None:
-            return [row for row in self]
-        return list(self.rows.values())
-
 
 class Row(object):
     """A row in a grouping in a timetable.
@@ -148,6 +151,11 @@ class Row(object):
         self.next = None
         self.parent = None
 
+    def __repr__(self):
+        if self.next is not None:
+            return '[%s] -> %s' % (self.part.stop, self.next)
+        return '[%s]' % self.part.stop
+
     def append(self, row, qualifier=''):
         if self.parent.tail is self:
             self.parent.tail = row
@@ -158,11 +166,6 @@ class Row(object):
             row.part.row = self.parent[row.part.stop.atco_code + qualifier]
         row.next = self.next
         self.next = row
-
-    def __repr__(self):
-        if self.next is not None:
-            return '[%s] -> %s' % (self.part.stop, self.next)
-        return '[%s]' % self.part.stop
 
 
 class Cell(object):
