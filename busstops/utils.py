@@ -7,27 +7,38 @@ from txc import txc
 DIR = os.path.dirname(__file__)
 
 
-def get_pickle_filenames(service, path):
-    """Given a Service and a folder path, return a list of filenames."""
+def get_filenames(service, path=None, archive=None):
+    suffix = '' if archive is None else '.xml'
+
     if service.region_id == 'NE':
-        return [service.pk]
+        return ['%s%s' % (service.pk, suffix)]
     if service.region_id in ('S', 'NW'):
-        return ['SVR%s' % service.pk]
+        return ['SVR%s%s' % (service.pk, suffix)]
+
     try:
-        namelist = os.listdir(path)
+        if archive is None:
+            namelist = os.listdir(path)
+        else:
+            namelist = archive.namelist()
     except OSError:
         return []
+
     if service.net:
         return [name for name in namelist if name.startswith('%s-' % service.pk)]
     if service.region_id == 'GB':
         parts = service.pk.split('_')
-        return [name for name in namelist if name.endswith('_%s_%s' % (parts[1], parts[0]))]
+        return [name for name in namelist if name.endswith('_%s_%s%s' % (parts[1], parts[0], suffix))]
     if service.region_id == 'Y':
         return [
             name for name in namelist
-            if name.startswith('SVR%s-' % service.pk) or name == 'SVR%s' % service.pk
+            if name.startswith('SVR%s-' % service.pk) or name == 'SVR%s%s' % (service.pk, suffix)
         ]
-    return [name for name in namelist if name.endswith('_%s' % service.pk)]
+    return [name for name in namelist if name.endswith('_%s%s' % (service.pk, suffix))]
+
+
+def get_pickle_filenames(service, path):
+    """Given a Service and a folder path, return a list of filenames."""
+    return get_filenames(service, path)
 
 
 def get_files_from_zipfile(service):
@@ -41,11 +52,11 @@ def get_files_from_zipfile(service):
         service_code = '_%s_%s' % (parts[-1], parts[-2])
     else:
         archive_name = service.region_id
-    archive_path = os.path.join(DIR, '../data/TNDS/', archive_name + '.zip')
-    archive = zipfile.ZipFile(archive_path)
-    filenames = (name for name in archive.namelist() if service_code in name)
 
-    return (archive.open(filename) for filename in filenames)
+    archive_path = os.path.join(DIR, '../data/TNDS/', archive_name + '.zip')
+    with zipfile.ZipFile(archive_path) as archive:
+        filenames = get_filenames(service, archive=archive)
+        return [archive.open(filename) for filename in filenames]
 
 
 def timetable_from_service(service):

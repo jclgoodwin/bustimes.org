@@ -82,11 +82,10 @@ class Rows(object):
         return next(iter(self.rows.values()))
 
     def prepend(self, row):
-        print('prepend %s to %s' % (row, self.head))
-        # if True or row.part.stop.atco_code not in self.rows:
-        #     self.rows[row.part.stop.atco_code] = row
-        # else:
-        #     row.part.row = self.rows[row.part.stop.atco_code]
+        if row.part.stop.atco_code not in self:
+            self[row.part.stop.atco_code] = row
+        else:
+            row.part.row = self[row.part.stop.atco_code]
 
         row.next = self.head
         self.head = row
@@ -94,12 +93,11 @@ class Rows(object):
             self.tail = row
         row.parent = self
 
-    def append(self, row):
-        print('append %s to %s' % (row, self.tail))
-        if True or row.part.stop.atco_code not in self.rows:
-            self.rows[row.part.stop.atco_code] = row
+    def append(self, row, qualifier=''):
+        if row.part.stop.atco_code + qualifier not in self:
+            self[row.part.stop.atco_code + qualifier] = row
         else:
-            row.part.row = self.rows[row.part.stop.atco_code]
+            row.part.row = self[row.part.stop.atco_code + qualifier]
 
         row.parent = self
         if self.head is None:
@@ -107,7 +105,6 @@ class Rows(object):
         if self.tail is not None:
             self.tail.next = row
         self.tail = row
-        print(self.tail)
 
     def __iter__(self):
         return self
@@ -151,14 +148,14 @@ class Row(object):
         self.next = None
         self.parent = None
 
-    def append(self, row):
+    def append(self, row, qualifier=''):
         if self.parent.tail is self:
             self.parent.tail = row
         row.parent = self.parent
-        if True or row.part.stop.atco_code not in self.parent.rows:
-            self.parent.rows[row.part.stop.atco_code] = row
+        if row.part.stop.atco_code + qualifier not in self.parent:
+            self.parent[row.part.stop.atco_code + qualifier] = row
         else:
-            row.part.row = self.parent.rows[row.part.stop.atco_code]
+            row.part.row = self.parent[row.part.stop.atco_code + qualifier]
         row.next = self.next
         self.next = row
 
@@ -311,16 +308,16 @@ class JourneyPattern(object):
         else:
             visited_stops = []
             new = self.grouping.rows.head is None
-            # reused = False
-            # appended = False
             previous = None
             for i, row in enumerate(rows):
-                print(self.grouping.direction, i)
                 if new:
-                    self.grouping.rows.append(row)
+                    if row.part.stop.atco_code in self.grouping.rows:
+                        self.grouping.rows.append(row, qualifier=str(i))
+                    else:
+                        self.grouping.rows.append(row)
                 elif row.part.stop.atco_code in self.grouping.rows:
                     if row.part.stop.atco_code in visited_stops:
-                        previous.append(row)
+                        previous.append(row, qualifier=str(i))
                     else:
                         row.part.row = self.grouping.rows[row.part.stop.atco_code]
                         row = row.part.row
@@ -328,37 +325,8 @@ class JourneyPattern(object):
                     self.grouping.rows.prepend(row)
                 else:
                     previous.append(row)
-                # elif appended:
-                #     previous.append(row)
-                # elif row.part.stop.atco_code in self.grouping.rows:
-                #     if previous is not None:
-                #         previous.append(row)
-                #         appended = True
-                #     elif prepended is not None:
-                #         print('b')
-                #         print(prepended)
-                #         previous.append(row)
-                #         prepended = row
-                #         print(row)
-                #     else:
-                #         print('c')
-                #         self.grouping.rows.prepend(row)
-                #         prepended = row
-                # else:
-                #     if row.part.stop.atco_code in visited_stops:
-                #         print('d')
-                #         self.grouping.rows.append(row)
-                #         appended = True
-                #     else:
-                #         print('e')
-                #         row.part.row = self.grouping.rows[row.part.stop.atco_code]
-                #         row = row.part.row
-                #         reused = True
                 previous = row
                 visited_stops.append(row.part.stop.atco_code)
-                print(row.parent)
-                print(self.grouping.rows.head)
-                # print(self.grouping.rows.values())
 
 
 class JourneyPatternSection(object):
