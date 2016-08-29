@@ -33,11 +33,13 @@ server {
     }
 
     location / {
-        add_header 'strict-transport-security' 'max-age=31536000; preload; includeSubDomains' always;
-        add_header 'content-security-policy' "default-src https:; script-src https: 'unsafe-inline'; style-src https: 'unsafe-inline'; img-src https: data:" always;
+        add_header strict-transport-security 'max-age=31536000; preload; includeSubDomains' always;
+        add_header content-security-policy   "default-src https:; script-src https: 'unsafe-inline'; style-src https: 'unsafe-inline'; img-src https: data:" always;
+        add_header X-Frame-Options DENY;
         proxy_set_header X-Real-IP       $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_pass http://127.0.0.1:6081;
+        proxy_max_temp_file_size 0;
     }
 
     location ~* /departures$ {
@@ -47,7 +49,10 @@ server {
         proxy_set_header X-Real-IP       $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_pass http://127.0.0.1:6081;
+        proxy_max_temp_file_size 0;
     }
+
+    rewrite ^(.*)&resp_fmts=3$ $1 permanent;
 
     location /static/ {
         alias /home/josh/bustimes-static/;
@@ -55,7 +60,7 @@ server {
         add_header 'access-control-allow-origin' 'http://webcache.googleusercontent.com,http://localhost:8000';
     }
 
-    location ~* ^/(favicon.ico$|manifest.json$|fonts/) {
+    location ~* ^/(favicon.ico$|manifest.json$|rockabox) {
         expires 1M;
         add_header 'access-control-allow-origin' 'http://webcache.googleusercontent.com,http://localhost:8000';
     }
@@ -93,14 +98,18 @@ server {
     charset utf-8;
 
     location / {
-        set_real_ip_from 127.0.0.1;
-        real_ip_header X-Forwarded-For;
         uwsgi_pass 127.0.0.1:3031;
-        include uwsgi_params;
         uwsgi_connect_timeout 10s;
         uwsgi_read_timeout    10s;
         uwsgi_send_timeout    10s;
+    }
 
+    set_real_ip_from 127.0.0.1;
+    real_ip_header X-Forwarded-For;
+    include uwsgi_params;
+
+    location ~ /stops/(.*)/departures {
+        uwsgi_pass 127.0.0.1:3031;
     }
 }
 
