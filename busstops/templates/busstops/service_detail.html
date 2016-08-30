@@ -1,5 +1,7 @@
 {% extends 'page.html' %}
 
+{% load urlise %}
+
 {% block content %}
 
 <h1>{{ object }}</h1>
@@ -47,7 +49,7 @@
     </tbody>
     <tfoot><tr><td></td>
     {% for column in grouping.column_feet %}
-        <td colspan="{{ column.span }}">{{ column.notes|join:'<br />'|urlize }}</td>
+        <td colspan="{{ column.span }}">{{ column.notes|join:'<br />'|urlise }}</td>
     {% endfor %}
     </tr></tfoot>
     </table>

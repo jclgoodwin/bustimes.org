@@ -1,5 +1,7 @@
 {% extends amp|yesno:'page_amp.html,page.html' %}
 
+{% load urlise %}
+
 {% block head %}<link rel="amphtml" href="https://bustimes.org.uk{{ object.get_absolute_url }}?amp" />{% endblock %}
 
 {% block content %}
@@ -31,10 +33,10 @@
         {{ object.address|linebreaks }}
     {% endif %}
     {% if object.url %}
-        <p>{{ object.url|urlize }}</p>
+        <p>{{ object.url|urlise }}</p>
     {% endif %}
     {% if object.email %}
-        <p>{{ object.email|urlize }}</p>
+        <p>{{ object.email|urlise }}</p>
     {% endif %}
     {% if object.phone %}
         <p>{{ object.phone }}</p>

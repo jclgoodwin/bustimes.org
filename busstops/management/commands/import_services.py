@@ -291,6 +291,8 @@ class Command(BaseCommand):
                 for grouping in timetable.groupings:
                     del grouping.journeys
                     del grouping.journeypatterns
+                    for row in grouping.rows:
+                        del row.next
                 pickle_dir = os.path.join(DIR, '../../../data/TNDS', 'NCSD' if region_id == 'GB' else region_id)
                 if not os.path.exists(pickle_dir):
                     os.makedirs(pickle_dir)
