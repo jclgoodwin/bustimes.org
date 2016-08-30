@@ -1,7 +1,6 @@
 """https://github.com/jazzband/django-pipeline/issues/295"""
 
 from __future__ import unicode_literals
-import codecs
 
 from django import template
 from django.template.defaultfilters import stringfilter
