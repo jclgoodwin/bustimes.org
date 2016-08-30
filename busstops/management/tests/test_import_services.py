@@ -160,7 +160,7 @@ class ImportServicesTest(TestCase):
         self.assertContains(
             res,
             """
-            <td colspan="8">Book at <a href="http://megabus.com" rel="nofollow">megabus.com</a>
+            <td colspan="8">Book at <a href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611" rel="nofollow">megabus.com</a>
             or 0900 1600900 (65p/min + network charges)</td>""",
             html=True
         )
