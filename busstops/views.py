@@ -1,5 +1,5 @@
+# coding=utf-8
 "View definitions."
-
 import os
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
@@ -102,6 +102,19 @@ def contact(request):
         'form': form,
         'submitted': submitted
     })
+
+
+def awin_transaction(request):
+    if request.method == 'POST':
+        message = EmailMessage(
+            '💷 New Affiliate Window transaction',
+            str(request.POST['AwinTransactionPush']),
+            '%s <%s>' % ('Bus Times Robot', 'contact@bustimes.org.uk'),
+            ('contact@bustimes.org.uk',),
+        )
+        message.send()
+        return HttpResponse()
+    return HttpResponseBadRequest()
 
 
 def cookies(request):

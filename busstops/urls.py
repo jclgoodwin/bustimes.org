@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^$', views.index),
     url(r'^offline', views.offline),
     url(r'^contact', views.contact),
+    url(r'^awin-transaction', views.awin_transaction),
     url(r'^cookies', views.cookies),
     url(r'^data', views.data),
     url(r'^map', views.hugemap),
@@ -22,7 +23,6 @@ urlpatterns = [
     url(r'^operators/(?P<pk>\w+)', views.OperatorDetailView.as_view(), name='operator-detail'),
     url(r'^services/(?P<pk>[^/]+)\.xml', views.service_xml),
     url(r'^services/(?P<pk>[^/]+)', views.ServiceDetailView.as_view(), name='service-detail'),
-
 ]
 
 if settings.DEBUG and hasattr(staticfiles, 'views'):
