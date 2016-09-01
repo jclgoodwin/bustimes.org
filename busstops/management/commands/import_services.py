@@ -173,9 +173,10 @@ class Command(BaseCommand):
         if operator_code in SPECIAL_OPERATOR_CODES:
             return Operator.objects.get(id=SPECIAL_OPERATOR_CODES[operator_code])
 
-        possible_operators = Operator.objects.filter(name__istartswith=operator_name)
-        if len(possible_operators) == 1:
-            return possible_operators[0]
+        if operator_name:
+            possible_operators = Operator.objects.filter(name__istartswith=operator_name)
+            if len(possible_operators) == 1:
+                return possible_operators[0]
 
         print(ET.tostring(operator_element))
 
