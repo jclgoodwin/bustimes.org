@@ -78,7 +78,8 @@ h1 {
     }
 }
 
-.adsbygoogle {
+.adsbygoogle,
+.adtomation {
     max-width: 45.5em; // 728px
     text-decoration: none;
 
@@ -90,10 +91,14 @@ h1 {
         padding-bottom: .33em;
         text-align: left;
     }
+}
 
-    &:not([data-adsbygoogle-status=done]):before {
-        visibility: hidden;
-    }
+.adsbygoogle:not([data-adsbygoogle-status=done]):before {
+    visibility: hidden;
+}
+
+.adtomation {
+    margin: 0 auto;
 }
 
 .banner-ad {
