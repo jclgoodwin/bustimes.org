@@ -38,7 +38,7 @@
 
 <footer>
     {% block ad %}
-    <div class="banner-ad">
+    <div class="banner-ad" id="ad">
         {% if breadcrumb.1.id == 'MEGA' %}
             <a href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611" class="megabus" rel="nofollow">Megabus</a>
         {% elif breadcrumb.1.id == 42 %}
@@ -54,31 +54,8 @@
         {% elif breadcrumb.2.id == 252 %}
             <a href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611" class="megabus leeds" rel="nofollow">Megabus</a>
         {% else %}
-            <script>
-            (function(d, s, id, ua) {
-                function g() {
-                    var js = d.createElement(s);
-                    js.async = true;
-                    js.src = '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
-                    d.body.appendChild(js);
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                }
-                if (ua.indexOf('Android') !== -1 || ua.indexOf('iPhone') !== -1) {
-                    window.fbAsyncInit = function() {
-                        FB.Event.subscribe('ad.error', g);
-                    };
-                    var js, fjs = d.getElementsByTagName(s)[0];
-                    if (d.getElementById(id)) return;
-                    js = d.createElement(s); js.id = id;
-                    js.src = "//connect.facebook.net/en_US/sdk/xfbml.ad.js#xfbml=1&version=v2.5&appId=485255881677580";
-                    fjs.parentNode.insertBefore(js, fjs);
-                } else {
-                    g();
-                }
-            }(document, 'script', 'facebook-jssdk', navigator.userAgent));
-            </script>
-            <div class="fb-ad" data-placementid="485255881677580_485287535007748" data-format="320x50" data-testmode="false"></div>
-            <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="auto"></ins>
+            <script src="{% static 'js/bower_components/postscribe/dist/postscribe.min.js' %}"></script>
+            <script async src="{% static 'js/ad.js' %}"></script>
         {% endif %}
     </div>
     {% endblock %}
