@@ -189,13 +189,18 @@ class ViewsTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_operator_found(self):
-        response = self.client.get('/operators/AINS')
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'An airline operating company in')
-        self.assertContains(response, 'Contact Ainsley&#39;s Chariots')
-        self.assertContains(response, '10 King Road<br />Ipswich')
-        self.assertContains(response, 'mailto:ainsley@example.com')
-        self.assertContains(response, 'http://isyourgirlfriendahorse.com')
+        normal_response = self.client.get('/operators/AINS')
+        amphtml_response = self.client.get('/operators/AINS?amp')
+
+        for response in (normal_response, amphtml_response):
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, 'An airline operating company in')
+            self.assertContains(response, 'Contact Ainsley&#39;s Chariots')
+            self.assertContains(response, '10 King Road<br />Ipswich')
+            self.assertContains(response, 'mailto:ainsley@example.com')
+            self.assertContains(response, 'http://isyourgirlfriendahorse.com')
+
+        self.assertContains(amphtml_response, '<style amp-custom>@font-face{')
 
     def test_operator_not_found(self):
         """An operator with no services should should return a 404 response"""
