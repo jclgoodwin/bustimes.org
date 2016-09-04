@@ -9,7 +9,7 @@
         var random =  Math.random();
         if (random < .5) {
             window.adtomation={id:'9400117',size:'728x90'};
-            postscribe('#ad', '<div class="adtomation"><script src="//bid.adtomation.com/js/engine.js"></script></div>');
+            postscribe('#ad', '<div class="adtomation"><script src="//bid.adtomation.com/js/engine.js"><\/script></div>');
             return;
         }
     }
