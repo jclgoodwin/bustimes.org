@@ -15,7 +15,7 @@ class StylesheetNode(pipeline.StylesheetNode):
     def render_css(self, package, path):
         return self.render_individual_css(package, [path])
 
-    def render_individual_css(self, package, paths, **kwargs):
+    def render_individual_css(self, _, paths, **kwargs):
         html = []
         for path in paths:
             with codecs.open(staticfiles_storage.path(path), 'r', 'utf-8') as open_file:
@@ -24,7 +24,7 @@ class StylesheetNode(pipeline.StylesheetNode):
 
 
 @register.tag
-def inline_stylesheet(parser, token):
+def inline_stylesheet(_, token):
     """Template tag that mimics pipeline's stylesheet tag, but embeds
     the resulting CSS directly in the page.
     """
