@@ -27,7 +27,7 @@ class ValidateOnSaveMixin(object):
 
 @python_2_unicode_compatible
 class Region(models.Model):
-    "The largest type of geographical area."
+    """The largest type of geographical area"""
     id = models.CharField(max_length=2, primary_key=True)
     name = models.CharField(max_length=48, db_index=True)
 
@@ -35,7 +35,8 @@ class Region(models.Model):
         return self.name
 
     def the(self):
-        "The name for use in a sentence, with the definite article prepended if appropriate."
+        """Return the name for use in a sentence,
+        with the definite article prepended if appropriate"""
         if self.name[-1:] == 't' or self.name[-2:] == 'ds':
             return 'the ' + self.name
         else:
@@ -47,9 +48,8 @@ class Region(models.Model):
 
 @python_2_unicode_compatible
 class AdminArea(models.Model):
-    """
-    An administrative area within a region,
-    or possibly a national transport (rail/air/ferry) network.
+    """An administrative area within a region,
+    or possibly a national transport (rail/air/ferry) network
     """
     id = models.PositiveIntegerField(primary_key=True)
     atco_code = models.PositiveIntegerField()
@@ -67,9 +67,7 @@ class AdminArea(models.Model):
 
 @python_2_unicode_compatible
 class District(models.Model):
-    """
-    A district within an administrative area.
-
+    """A district within an administrative area.
     Note: some administrative areas *do not* have districts.
     """
     id = models.PositiveIntegerField(primary_key=True)
@@ -85,8 +83,8 @@ class District(models.Model):
 
 @python_2_unicode_compatible
 class Locality(models.Model):
-    """
-    A locality within an administrative area, and possibly within a district.
+    """A locality within an administrative area,
+    and possibly within a district.
 
     Localities may be children of other localities...
     """
@@ -104,7 +102,7 @@ class Locality(models.Model):
         return self.name
 
     def get_qualified_name(self):
-        "Name with a comma and the qualifier_name (e.g. 'York, York')"
+        """Return the name and qualifier (e.g. 'Reepham, Lincs')"""
         if self.qualifier_name:
             return "%s, %s" % (self.name, self.qualifier_name)
         return self.name
@@ -115,7 +113,7 @@ class Locality(models.Model):
 
 @python_2_unicode_compatible
 class StopArea(models.Model):
-    "A small area containing multiple stops, such as a bus station."
+    """A small area containing multiple stops, such as a bus station"""
 
     id = models.CharField(max_length=16, primary_key=True)
     name = models.CharField(max_length=48)
@@ -143,7 +141,7 @@ class StopArea(models.Model):
 
 @python_2_unicode_compatible
 class LiveSource(models.Model):
-    "A source of live departure information for a stop point"
+    """A source of live departure information for a stop point"""
     name = models.CharField(max_length=4, primary_key=True)
 
     def __str__(self):
@@ -156,7 +154,8 @@ class LiveSource(models.Model):
 
 @python_2_unicode_compatible
 class StopPoint(models.Model):
-    "The smallest type of geographical point; a point at which vehicles stop."
+    """The smallest type of geographical point.
+    A point at which vehicles stop"""
     atco_code = models.CharField(max_length=16, primary_key=True)
     naptan_code = models.CharField(max_length=16, db_index=True)
 
@@ -260,7 +259,7 @@ class StopPoint(models.Model):
 
 
 class Operator(models.Model, ValidateOnSaveMixin):
-    "An entity that operates public transport services."
+    """An entity that operates public transport services"""
 
     id = models.CharField(max_length=10, primary_key=True)  # e.g. 'YCST'
     name = models.CharField(max_length=100, db_index=True)
@@ -280,13 +279,13 @@ class Operator(models.Model, ValidateOnSaveMixin):
         return reverse('operator-detail', args=(self.id,))
 
     def get_a_mode(self):
-        """
-        Return the the name of the operator's vehicle mode, with the correct indefinite article
+        """Return the the name of the operator's vehicle mode,
+        with the correct indefinite article
         depending on whether it begins with a vowel sound.
 
         'Airline' becomes 'An airline', 'Bus' becomes 'A bus'.
 
-        Doesn't support mode names that begin with other vowels.
+        Doesn't support modes that begin with vowels that aren't A.
         """
         mode = str(self.vehicle_mode).lower()
         if mode:
@@ -297,16 +296,19 @@ class Operator(models.Model, ValidateOnSaveMixin):
 
 
 class StopUsage(models.Model):
+    """A link between a StopPoint and a Service,
+    with an order placing it in a direction (e.g. the first outbound stop)"""
     service = models.ForeignKey('Service', models.CASCADE)
     stop = models.ForeignKey('StopPoint', models.CASCADE)
     direction = models.CharField(max_length=8, db_index=True)
     order = models.PositiveIntegerField()
-    timing_status = models.CharField(max_length=3, choices=TIMING_STATUS_CHOICES)
+    timing_status = models.CharField(max_length=3,
+                                     choices=TIMING_STATUS_CHOICES)
 
 
 @python_2_unicode_compatible
 class Service(models.Model):
-    "A bus service."
+    """A bus service"""
     service_code = models.CharField(max_length=24, primary_key=True)
     line_name = models.CharField(max_length=64, blank=True)
     line_brand = models.CharField(max_length=64, blank=True)
@@ -316,7 +318,8 @@ class Service(models.Model):
     net = models.CharField(max_length=3, blank=True)
     line_ver = models.PositiveIntegerField(null=True, blank=True)
     region = models.ForeignKey(Region, models.CASCADE)
-    stops = models.ManyToManyField(StopPoint, editable=False, through=StopUsage)
+    stops = models.ManyToManyField(StopPoint, editable=False,
+                                   through=StopUsage)
     date = models.DateField()
     current = models.BooleanField(default=True, db_index=True)
     show_timetable = models.BooleanField(default=False)

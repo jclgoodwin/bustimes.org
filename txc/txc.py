@@ -678,7 +678,7 @@ class Timetable(object):
         element = None
         servicedorgs = None
 
-        for event, element in iterator:
+        for _, element in iterator:
             tag = element.tag[33:]
 
             if tag == 'StopPoints':

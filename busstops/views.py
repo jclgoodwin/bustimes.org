@@ -1,9 +1,10 @@
 # coding=utf-8
-"View definitions."
+"""View definitions."""
 import os
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
-from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
+from django.http import (HttpResponse, JsonResponse, Http404,
+                         HttpResponseBadRequest)
 from django.utils.cache import patch_response_headers
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
@@ -11,7 +12,8 @@ from django.contrib.gis.db.models.functions import Distance
 from django.core.mail import EmailMessage
 from departures import live
 from .utils import timetable_from_service, get_files_from_zipfile
-from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service
+from .models import (Region, StopPoint, AdminArea, Locality, District,
+                     Operator, Service)
 from .forms import ContactForm
 
 
@@ -43,16 +45,17 @@ FIRST_OPERATORS = {
 
 
 def index(request):
-    "The home page with a list of regions"
+    """The home page with a list of regions"""
     context = {
         'regions': Region.objects.all()
     }
     return render(request, 'index.html', context)
 
 
-def not_found(request, exception):
-    "Custom 404 handler view"
-    if request.resolver_match and request.resolver_match.url_name == 'service-detail':
+def not_found(request):
+    """Custom 404 handler view"""
+    if (request.resolver_match
+            and request.resolver_match.url_name == 'service-detail'):
         service_code = request.resolver_match.kwargs.get('pk')
         service = Service.objects.filter(service_code=service_code).defer('geometry').first()
         localities = Locality.objects.filter(stoppoint__service=service).distinct()
@@ -68,12 +71,12 @@ def not_found(request, exception):
 
 
 def offline(request):
-    "Offline page (for service worker)"
+    """Offline page (for service worker)"""
     return render(request, 'offline.html')
 
 
 def contact(request):
-    "Contact page with form"
+    """Contact page with form"""
     submitted = False
     if request.method == 'POST':
         form = ContactForm(request.POST)
@@ -87,7 +90,8 @@ def contact(request):
             message = EmailMessage(
                 subject,
                 body,
-                '%s <%s>' % (form.cleaned_data['name'], 'contact@bustimes.org.uk'),
+                '%s <%s>' % (form.cleaned_data['name'],
+                             'contact@bustimes.org.uk'),
                 ('contact@bustimes.org.uk',),
                 reply_to=(form.cleaned_data['email'],),
             )
@@ -105,36 +109,33 @@ def contact(request):
 
 
 def awin_transaction(request):
-    if request.method == 'POST':
-        message = EmailMessage(
-            '💷 New Affiliate Window transaction',
-            str(request.POST['AwinTransactionPush']),
-            '%s <%s>' % ('Bus Times Robot', 'contact@bustimes.org.uk'),
-            ('contact@bustimes.org.uk',),
-        )
-        message.send()
-        return HttpResponse()
-    return HttpResponseBadRequest()
+    message = EmailMessage(
+        '💷 New Affiliate Window transaction',
+        str(request.GET) + str(request.POST),
+        '%s <%s>' % ('Bus Times Robot', 'contact@bustimes.org.uk'),
+        ('contact@bustimes.org.uk',),
+    )
+    message.send()
+    return HttpResponse()
 
 
 def cookies(request):
-    "Cookie policy"
+    """Cookie policy"""
     return render(request, 'cookies.html')
 
 
 def data(request):
-    "Data sources"
+    """Data sources"""
     return render(request, 'data.html')
 
 
 def hugemap(request):
-    "The biggish JavaScript map"
+    """The biggish JavaScript map"""
     return render(request, 'map.html')
 
 
 def stops(request):
-    """
-    JSON endpoint accessed by the JavaScript map,
+    """JSON endpoint accessed by the JavaScript map,
     listing the active StopPoints within a rectangle,
     in standard GeoJSON format
     """
@@ -168,11 +169,10 @@ def stops(request):
 
 
 class UppercasePrimaryKeyMixin(object):
-    "Normalises the primary key argument to uppercase"
+    """Normalises the primary key argument to uppercase"""
     def get_object(self, queryset=None):
-        """
-        Given a pk argument like 'ea' or 'sndr',
-        converts it to 'EA' or 'SNDR',
+        """Given a pk argument like 'ea' or 'sndr',
+        convert it to 'EA' or 'SNDR',
         then otherwise behaves like ordinary get_object
         """
         primary_key = self.kwargs.get('pk')
@@ -182,7 +182,7 @@ class UppercasePrimaryKeyMixin(object):
 
 
 class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
-    "A single region and the administrative areas in it"
+    """A single region and the administrative areas in it"""
 
     model = Region
 
@@ -191,13 +191,16 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         context['areas'] = AdminArea.objects.filter(region=self.object).order_by('name')
         context['operators'] = Operator.objects.filter(
-            region=self.object, service__current=True).distinct().order_by('name')
+            region=self.object, service__current=True
+        ).distinct().order_by('name')
 
         return context
 
 
 class AdminAreaDetailView(DetailView):
-    "A single administrative area, and the districts, localities (or stops) in it"
+    """A single administrative area,
+    and the districts, localities (or stops) in it
+    """
 
     model = AdminArea
     queryset = model.objects.select_related('region')
@@ -238,7 +241,7 @@ class AdminAreaDetailView(DetailView):
 
 
 class DistrictDetailView(DetailView):
-    "A single district, and the localities in it"
+    """A single district, and the localities in it"""
 
     model = District
     queryset = model.objects.select_related('admin_area', 'admin_area__region')
@@ -259,7 +262,7 @@ class DistrictDetailView(DetailView):
 
 
 class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
-    "A single locality, its children (if any), and the stops in it"
+    """A single locality, its children (if any), and the stops in it"""
 
     model = Locality
     queryset = model.objects.select_related(
@@ -299,12 +302,12 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
 
 
 class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
-    "A stop, other stops in the same area, and the services servicing it"
+    """A stop, other stops in the same area, and the services servicing it"""
 
     model = StopPoint
-    queryset = model.objects.select_related(
-        'admin_area', 'admin_area__region', 'locality', 'locality__parent', 'locality__district'
-    )
+    queryset = model.objects.select_related('admin_area', 'admin_area__region',
+                                            'locality', 'locality__parent',
+                                            'locality__district')
 
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
@@ -324,7 +327,8 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         if text:
             context['text'] = text[0].upper() + text[1:]
 
-        context['modes'] = list({service.mode for service in context['services']})
+        context['modes'] = list({service.mode for service in
+                                 context['services']})
         context['modes'].sort()
 
         if self.object.stop_area_id is not None:
@@ -346,7 +350,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         return context
 
 
-def stop_json(request, pk):
+def stop_json(_, pk):
     stop = get_object_or_404(StopPoint, pk=pk)
     return JsonResponse({
         'atco_code': stop.atco_code,
@@ -429,11 +433,8 @@ class ServiceDetailView(DetailView):
                 'text': 'Timetable on the %s website' % traveline_text
             })
 
-        if (
-                self.object.show_timetable or
-                '_MEGA' in self.object.service_code or
-                'timetable' in self.request.GET
-        ):
+        if (self.object.show_timetable or '_MEGA' in self.object.service_code
+                or 'timetable' in self.request.GET):
             context['timetables'] = timetable_from_service(self.object)
 
         if 'timetables' not in context or context['timetables'] == []:
@@ -489,7 +490,7 @@ class ServiceDetailView(DetailView):
         return super(ServiceDetailView, self).render_to_response(context)
 
 
-def service_xml(request, pk):
+def service_xml(_, pk):
     service = get_object_or_404(Service, service_code=pk)
     bodies = (xml_file.read().decode() for xml_file in get_files_from_zipfile(service))
     return HttpResponse(bodies, content_type='text/plain')

@@ -22,7 +22,8 @@ class OperatorAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return Operator.objects.annotate(service_count=Count('service'))
 
-    def service_count(self, obj):
+    @staticmethod
+    def service_count(obj):
         return obj.service_count
 
     def formfield_for_dbfield(self, db_field, **kwargs):
