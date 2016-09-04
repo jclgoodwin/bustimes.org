@@ -19,11 +19,10 @@ class OperatorAdmin(admin.ModelAdmin):
     search_fields = ('id', 'name')
     ordering = ('id',)
 
-    def get_queryset(self, request):
+    def get_queryset(self, _):
         return Operator.objects.annotate(service_count=Count('service'))
 
-    @staticmethod
-    def service_count(obj):
+    def service_count(self, obj):
         return obj.service_count
 
     def formfield_for_dbfield(self, db_field, **kwargs):
