@@ -112,7 +112,7 @@ class Rows(object):
     def values(self):
         if self.head is not None:
             return [row for row in self]
-        return list(self.rows.values())
+        return list(sorted(self.rows.values(), key=lambda r: r.part.sequencenumber))
 
     def prepend(self, row):
         if row.part.stop.atco_code not in self:
