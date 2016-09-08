@@ -30,11 +30,16 @@ class ImportFromCSVCommand(BaseCommand):
         """
         raise NotImplementedError
 
+    @staticmethod
+    def process_rows(rows):
+        return rows
+
     @transaction.atomic
     def handle(self, *args, **options):
         """
         Runs when the command is executed
         """
         with open(self.input, encoding=self.encoding) as input:
-            for row in csv.DictReader(input):
+            rows = csv.DictReader(input)
+            for row in self.process_rows(rows):
                 self.handle_row(row)

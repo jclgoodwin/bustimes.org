@@ -28,3 +28,8 @@ class Command(ImportFromCSVCommand):
                     email=scotch['email'],
                     phone=scotch['phone']
                 )
+
+    @staticmethod
+    def process_rows(rows):
+        return sorted(rows, reverse=True,
+                      key=lambda r: (r['Duplicate'] != 'OK', r['Date Ceased']))
