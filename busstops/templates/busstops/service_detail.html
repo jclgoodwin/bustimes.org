@@ -37,21 +37,23 @@
             <a href="{{ row.part.stop.stop.get_absolute_url }}">{{ row.part.stop.stop.get_qualified_name }}</a>
         {% else %}{{ row.part.stop }}{% endif %}
         </th>
-        {% for time in row.times %}
-            {% if time.colspan %}
-                <td colspan="{{ time.colspan }}" rowspan="{{ time.rowspan }}">{{ time }}</td>
+        {% for cell in row.times %}
+            {% if cell.colspan %}
+                <td colspan="{{ cell.colspan }}" rowspan="{{ cell.rowspan }}">{{ cell }}</td>
             {% else %}
-                <td>{{ time }}</td>
+                <td>{{ cell }}</td>
             {% endif %}
         {% endfor %}
         </tr>
     {% endfor %}
     </tbody>
-    <tfoot><tr><td></td>
-    {% for column in grouping.column_feet %}
-        <td colspan="{{ column.span }}">{{ column.notes|join:'<br />'|urlise }}</td>
-    {% endfor %}
-    </tr></tfoot>
+    {% if grouping.column_feet %}
+        <tfoot><tr><td></td>
+        {% for column in grouping.column_feet %}
+            <td colspan="{{ column.span }}">{{ column.notes|join:'<br />'|urlise }}</td>
+        {% endfor %}
+        </tr></tfoot>
+    {% endif %}
     </table>
     </div>
     {% endif %}{% endfor %}

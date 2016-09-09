@@ -751,6 +751,8 @@ class Timetable(object):
 
         for grouping in self.groupings:
             grouping.do_heads_and_feet()
+            if len(grouping.column_feet) == 1 and not grouping.column_feet[0].notes:
+                del grouping.column_feet
 
 
 def abbreviate(grouping, i, in_a_row, difference):
