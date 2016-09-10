@@ -112,7 +112,7 @@ class Rows(object):
     def values(self):
         if self.head is not None:
             return [row for row in self]
-        return list(sorted(self.rows.values(), key=lambda r: r.part.sequencenumber))
+        return list(sorted(self.rows.values(), key=lambda r: r.part.sequencenumber or float('inf')))
 
     def prepend(self, row):
         if row.part.stop.atco_code not in self:
@@ -215,9 +215,6 @@ class Grouping(object):
 
         if not self.journeys:
             return
-
-        # if self.rows and self.rows[0].part.sequencenumber is None:
-            # self.rows.sort(key=Row.get_position)
 
         prev_journey = None
         head_span = 0
