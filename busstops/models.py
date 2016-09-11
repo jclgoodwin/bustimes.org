@@ -93,10 +93,10 @@ class Locality(models.Model):
     # short_name?
     qualifier_name = models.CharField(max_length=48, blank=True)
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
-    district = models.ForeignKey(District, models.SET_NULL, null=True)
+    district = models.ForeignKey(District, models.SET_NULL, null=True, blank=True)
     parent = models.ForeignKey('Locality', models.SET_NULL, null=True, editable=False)
     latlong = models.PointField(null=True)
-    adjacent = models.ManyToManyField('Locality', related_name='neighbour')
+    adjacent = models.ManyToManyField('Locality', related_name='neighbour', blank=True)
 
     def __str__(self):
         return self.name
@@ -173,7 +173,7 @@ class StopPoint(models.Model):
     town = models.CharField(max_length=48, blank=True)
     locality_centre = models.BooleanField()
 
-    live_sources = models.ManyToManyField(LiveSource)
+    live_sources = models.ManyToManyField(LiveSource, blank=True)
 
     heading = models.PositiveIntegerField(null=True, blank=True)
 
