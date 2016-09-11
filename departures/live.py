@@ -16,7 +16,7 @@ STAGECOACH_OPERATORS = (
     'SCWW', 'SCLI', 'SCBL', 'SCCO', 'SYRK', 'SSTY', 'SCNH', 'SCNE', 'SCGL',
     'SCOX', 'SSPH', 'YSYC', 'SCNW', 'SCHM', 'NFKG', 'SCHT', 'SCHW', 'SCTE',
     'SCCM', 'SSWN', 'SCBD', 'SCOR', 'SCGR', 'SCEB', 'SCOT', 'SCPB', 'SMSO',
-    'SCHU', 'SCHA', 'STCR', 'STGS', 'SCST', 'CLTL'
+    'SCHU', 'SCHA', 'STCR', 'STGS', 'SCST', 'CLTL', 'SCFI'
 )
 DESTINATION_REGEX = re.compile(r'.+\((.+)\)')
 LOCAL_TIMEZONE = pytz.timezone('Europe/London')
