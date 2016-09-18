@@ -9,6 +9,7 @@ Usage:
     ./manage.py import_services EA.zip [EM.zip etc]
 """
 
+from __future__ import print_function
 import os
 import zipfile
 import csv
@@ -160,6 +161,11 @@ class Command(BaseCommand):
         # Get by national operator code
         operator_code = cls.get_operator_code(operator_element)
         if len(operator_code) > 2:
+            if operator_code == 'ROST':
+                if operator_element.attrib['id'] == '2848':  # Rossendale/Harris Travel
+                    operator_code = 'RSNT'
+                # otherwise, the operator element ID is '2079' or '1020',
+                # so leave operator_code as 'ROST' (Rossobus/Rossendalebus/Rossendale Transport)
             possible_operators = Operator.objects.filter(id=operator_code)
             if possible_operators:
                 return possible_operators[0]
@@ -181,7 +187,7 @@ class Command(BaseCommand):
             if len(possible_operators) == 1:
                 return possible_operators[0]
 
-        print(ET.tostring(operator_element))
+        print(ET.tostring(operator_element).decode('utf-8'))
 
     @classmethod
     def get_line_name_and_brand(cls, service_element, filename):
