@@ -67,7 +67,9 @@ SPECIAL_OPERATOR_TRADINGNAMES = {
     'KL': 'KELC',  # Keswick Launch Company
     'Carters Heritage Buses': 'CTCS',
     'King Harry Ferry Co': 'KHFC',
-    'Fal River Ferries': 'KHFC'
+    'Fal River Ferries': 'KHFC',
+    'KPMG THAMES CLIPPERS': 'NTHC',
+    'Stagecoach on Teesside': 'SCNW'
 }
 # map OperatorCodes to operator IDs (ditto, where there is no TradingName):
 SPECIAL_OPERATOR_CODES = {
@@ -93,6 +95,7 @@ SPECIAL_OPERATOR_CODES = {
     'HBSY': 'YTIG',  # Huddersfield Bus Company/Yorkshire Tiger
     'ALI': 'AMDD',   # Alasdair MacDonald
     'EWE': 'EWEN',   # Ewens Coach Hire
+    '712CS': 'CSVC',  # Coach Services
 }
 # see https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml-with-namespaces
 NS = {'txc': 'http://www.transxchange.org.uk/'}
