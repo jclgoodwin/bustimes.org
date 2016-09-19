@@ -19,12 +19,17 @@ class Command(ImportFromCSVCommand):
         return region_id
 
     @staticmethod
-    def get_name(row):
-        if (
-                row['OperatorPublicName'] in ('First', 'Arriva', 'Stagecoach') or
-                row['OperatorPublicName'].startswith('inc.') or
-                row['OperatorPublicName'].startswith('formerly')
-        ):
+    def is_rubbish_name(name):
+        return (
+            name in ('First', 'Arriva', 'Stagecoach') or
+            name.startswith('inc.') or
+            name.startswith('formerly') or
+            name == 'OWENS OF OSWESTRY COACHES LTD'
+        )
+
+    @classmethod
+    def get_name(cls, row):
+        if cls.is_rubbish_name(row['OperatorPublicName']):
             if row['RefNm'] != '':
                 return row['RefNm']
             return row['OpNm']
