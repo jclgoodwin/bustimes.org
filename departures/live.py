@@ -330,7 +330,7 @@ def get_departures(stop, services):
         departures = StagecoachDepartures(stop, services, now).get_departures()
         return ({
             'departures': departures
-        }, get_max_age(departures, now))
+        }, 120)  # get_max_age(departures, now))
 
     departures = TransportApiDepartures(stop, services, now.date()).get_departures()
     return ({
