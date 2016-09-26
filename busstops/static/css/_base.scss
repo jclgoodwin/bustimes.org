@@ -436,8 +436,9 @@ td {
 
 .timetable-wrapper {
     font-size: .875em;
-    margin: 1em 0;
+    margin: 1em -1em;
     overflow: auto;
+    padding: 0 1em;
     -webkit-overflow-scrolling: touch;
 
     input {
