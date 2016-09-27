@@ -10,9 +10,9 @@ DIR = os.path.dirname(__file__)
 def get_filenames(service, path=None, archive=None):
     suffix = '' if archive is None else '.xml'
 
-    if service.region_id == 'NE':
+    if service.region_id in ('NW', 'NE'):
         return ['%s%s' % (service.pk, suffix)]
-    if service.region_id in ('S', 'NW'):
+    if service.region_id == 'S':
         return ['SVR%s%s' % (service.pk, suffix)]
 
     try:
