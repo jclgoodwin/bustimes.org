@@ -85,7 +85,8 @@ def contact(request):
             body = '\n\n'.join((
                 form.cleaned_data['message'],
                 form.cleaned_data['referrer'],
-                str(request.META.get('HTTP_USER_AGENT'))
+                str(request.META.get('HTTP_USER_AGENT')),
+                str(request.META.get('HTTP_X_REAL_IP'))
             ))
             message = EmailMessage(
                 subject,
@@ -111,7 +112,7 @@ def contact(request):
 def awin_transaction(request):
     message = EmailMessage(
         '💷 New Affiliate Window transaction',
-        str(request.GET) + str(request.POST),
+        str(request) + str(request.META) + str(request.GET) + str(request.POST),
         '%s <%s>' % ('Bus Times Robot', 'contact@bustimes.org.uk'),
         ('contact@bustimes.org.uk',),
     )
