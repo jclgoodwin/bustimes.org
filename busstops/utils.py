@@ -56,8 +56,10 @@ def get_files_from_zipfile(service):
     archive_path = os.path.join(DIR, '../data/TNDS/', archive_name + '.zip')
     with zipfile.ZipFile(archive_path) as archive:
         filenames = get_filenames(service, archive=archive)
-        return [archive.open(filename) for filename in filenames]
-
+        try:
+            return [archive.open(filename) for filename in filenames]
+        except KeyError:
+            return []
 
 def timetable_from_service(service):
     """Given a Service, return a list of Timetables."""
