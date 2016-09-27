@@ -61,6 +61,7 @@ def get_files_from_zipfile(service):
         except KeyError:
             return []
 
+
 def timetable_from_service(service):
     """Given a Service, return a list of Timetables."""
     if service.region_id == 'GB':

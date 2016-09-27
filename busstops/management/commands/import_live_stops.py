@@ -4,6 +4,7 @@ Usage:
     ./manage.py import_live_stops
 """
 
+from __future__ import print_function
 from time import sleep
 import json
 import requests

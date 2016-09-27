@@ -3,12 +3,10 @@ Usage:
 
     ./manage.py import_tfl_stops < data/tfl/bus-stops.csv
 """
-
+from __future__ import print_function
 import requests
 from titlecase import titlecase
-
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
-
 from ..import_from_csv import ImportFromCSVCommand
 from ...models import StopPoint, LiveSource
 
