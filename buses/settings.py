@@ -40,7 +40,8 @@ MIDDLEWARE = [
 
 if DEBUG and 'test' not in sys.argv and not bool(os.environ.get('TRAVIS')):
     INSTALLED_APPS += ['debug_toolbar']
-    MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+    MIDDLEWARE_CLASSES = MIDDLEWARE[:-1] + ['debug_toolbar.middleware.DebugToolbarMiddleware']
+    del MIDDLEWARE
     DEBUG_TOOLBAR_PANELS = [
         'debug_toolbar.panels.versions.VersionsPanel',
         'debug_toolbar.panels.timer.TimerPanel',

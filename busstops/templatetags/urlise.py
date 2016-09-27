@@ -12,7 +12,7 @@ register = template.Library()
 
 @register.filter(is_safe=True, needs_autoescape=True)
 @stringfilter
-def urlise(value, _):
+def urlise(value, autoescape=None):
     return mark_safe(
         urlize(value, nofollow=True)
         .replace('">https://', '">')
