@@ -291,7 +291,7 @@ class Command(BaseCommand):
                     line_string = cls.line_string_from_journeypattern(journeypattern, stops)
                     if line_string not in line_strings:
                         line_strings.append(line_string)
-                multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
+            multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
 
             if show_timetable:
                 del timetable.journeypatterns
@@ -317,6 +317,7 @@ class Command(BaseCommand):
             print(error, filename)
             show_timetable = False
             stop_usages = [StopUsage(service_id=service_code, stop_id=stop, order=0) for stop in stops]
+            multi_line_string = None
 
         # service:
 

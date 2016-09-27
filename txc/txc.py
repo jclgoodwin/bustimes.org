@@ -7,8 +7,7 @@ import re
 import pickle as pickle
 import xml.etree.cElementTree as ET
 import calendar
-from datetime import date, datetime
-from django.utils.dateparse import parse_duration
+from datetime import date, datetime, timedelta
 from django.utils.text import slugify
 from django.core.cache import cache
 from titlecase import titlecase
@@ -16,10 +15,25 @@ from titlecase import titlecase
 NS = {
     'txc': 'http://www.transxchange.org.uk/'
 }
-# A safe date far from any daylight savings changes or leap seconds
+# A safe date, far from any daylight savings changes or leap seconds
 DUMMY_DATE = date(2016, 4, 5)
 DESCRIPTION_REGEX = re.compile(r'.+,([^ ].+)$')
+DURATION_REGEX = re.compile(
+    r'PT((?P<hours>-?\d+?)H)?((?P<minutes>-?\d+?)M)?((?P<seconds>-?\d+?)S)?'
+)
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}
+
+
+def parse_duration(string):
+    """Given an ISO 8601 formatted duration string like "PT2M", return a timedelta.
+
+    Unlike django.utils.dateparse parse_duration, may return a negative timedelta
+    """
+    matches = iter(DURATION_REGEX.match(string).groupdict().items())
+    params = {
+        key: int(value) for key, value in matches if value is not None
+    }
+    return timedelta(**params)
 
 
 def time_between(end, start):
@@ -310,6 +324,8 @@ class JourneyPattern(object):
             new = self.grouping.rows.head is None
             previous = None
             for i, row in enumerate(rows):
+                if row.part.stop is None:
+                    break
                 if new:
                     if row.part.stop.atco_code in self.grouping.rows:
                         self.grouping.rows.append(row, qualifier=str(i))
