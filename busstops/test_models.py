@@ -1,5 +1,7 @@
 from django.test import TestCase
-from .models import Region, AdminArea, District, Locality, Operator
+from .models import (
+    Region, AdminArea, District, Locality, LiveSource, Operator, Service
+)
 
 
 class RegionTests(TestCase):
@@ -21,6 +23,19 @@ class RegionTests(TestCase):
 
     def test_get_absolute_url(self):
         self.assertEqual(self.midlands.get_absolute_url(), '/regions/NM')
+
+
+class LiveSourceTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.yorkshire = LiveSource.objects.get_or_create(name='Y')[0]
+        cls.london = LiveSource.objects.get_or_create(name='TfL')[0]
+        cls.dummy = LiveSource.objects.get_or_create(name='foo')[0]
+
+    def test_string(self):
+        self.assertEqual(str(self.yorkshire), 'Yorkshire')
+        self.assertEqual(str(self.london), 'Transport for London')
+        self.assertEqual(str(self.dummy), 'foo')
 
 
 class LocalityTests(TestCase):
@@ -49,10 +64,40 @@ class OperatorTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.north = Region.objects.create(pk='N', name='North')
-        #  cls.south_yorkshire = AdminArea.objects.create(pk=1, atco_code=1, region=cls.north, name='South Yorkshire')
-        #  cls.north_yorkshire = AdminArea.objects.create(pk=2, atco_code=2, region=cls.north, name='North Yorkshire')
-
-        cls.chariots = Operator.objects.create(pk='CHAR', name='Ainsley\'s Chariots', region=cls.north)
+        cls.chariots = Operator.objects.create(pk='CHAR', region=cls.north,
+                                               name='Ainsley\'s Chariots')
 
     def test_get_qualified_name(self):
         self.assertEqual(str(self.chariots), 'Ainsley\'s Chariots')
+
+
+class ServiceTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.region = Region.objects.create(id='L', name='London')
+        cls.london_service = Service.objects.create(
+            service_code='tfl_8-N41-_-y05', net='tfl', line_name='N41',
+            date='2000-1-1', region_id='L'
+        )
+
+    def test_get_qualified_name(self):
+        self.assertIsNone(self.london_service.get_traveline_url())
+
+        self.london_service.mode = 'bus'
+        self.assertEqual(self.london_service.get_traveline_url(),
+                         'https://tfl.gov.uk/bus/timetable/N41/')
+
+    def test_get_operator_number(self):
+        self.assertIsNone(self.london_service.get_operator_number('MGBD'))
+
+        self.assertEqual('11', self.london_service.get_operator_number('MEGA'))
+        self.assertEqual('11', self.london_service.get_operator_number('MBGD'))
+
+        self.assertEqual('12', self.london_service.get_operator_number('NATX'))
+        self.assertEqual('12', self.london_service.get_operator_number('NXSH'))
+        self.assertEqual('12', self.london_service.get_operator_number('NXAP'))
+
+        self.assertEqual('41', self.london_service.get_operator_number('BHAT'))
+        self.assertEqual('53', self.london_service.get_operator_number('ESYB'))
+        self.assertEqual('20', self.london_service.get_operator_number('WAIR'))
+        self.assertEqual('18', self.london_service.get_operator_number('TVSN'))

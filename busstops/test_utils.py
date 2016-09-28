@@ -11,7 +11,7 @@ class UtilsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.north_east = Region.objects.create(pk='NE')
-        cls.north_west = Region.objects.create(pk='NW')
+        cls.scotland = Region.objects.create(pk='S')
         cls.east_anglia = Region.objects.create(pk='EA')
         cls.great_britain = Region.objects.create(pk='GB')
         cls.south_west = Region.objects.create(pk='SW')
@@ -21,9 +21,9 @@ class UtilsTest(TestCase):
             region_id='NE',
             date='2016-05-05'
         )
-        cls.nw_service = Service.objects.create(
-            pk='60023943',
-            region_id='NW',
+        cls.s_service = Service.objects.create(
+            pk='FIAX059',
+            region_id='S',
             date='2016-05-24'
         )
         cls.ea_service = Service.objects.create(
@@ -49,7 +49,7 @@ class UtilsTest(TestCase):
         using different heuristics depending on the service's region
         """
         self.assertEqual(get_pickle_filenames(self.ne_service, None), ['NE_130_PC4736_572'])
-        self.assertEqual(get_pickle_filenames(self.nw_service, None), ['SVR60023943'])
+        self.assertEqual(get_pickle_filenames(self.s_service, None), ['SVRFIAX059'])
 
         self.assertEqual(get_pickle_filenames(self.ea_service, 'poo'), [])
         ea_filenames = get_pickle_filenames(self.ea_service, FIXTURES_DIR)
