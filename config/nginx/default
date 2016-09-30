@@ -21,7 +21,7 @@ server {
     listen 443      deferred ssl http2;
     listen [::]:443 deferred ssl http2;
 
-    server_name bustimes.org.uk www.bustimes.org.uk;
+    server_name bustimes.org.uk;
 
     index index.html;
     root /home/josh/bustimes-static/;
@@ -38,17 +38,8 @@ server {
         add_header X-Frame-Options DENY;
         proxy_set_header X-Real-IP       $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_pass http://127.0.0.1:6081;
-        proxy_max_temp_file_size 0;
-    }
-
-    location ~* /departures$ {
-        if ($http_referer !~ 'bustimes.org.uk') {
-            return 403;
-        }
-        proxy_set_header X-Real-IP       $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_pass http://127.0.0.1:6081;
+        proxy_set_header Host            $host;
+        proxy_pass http://127.0.0.1:6081;  # varnish
         proxy_max_temp_file_size 0;
     }
 
@@ -87,39 +78,20 @@ server {
 }
 
 server {
-    listen 8080;
+    listen localhost:8080;
     listen [::]:8080;
-    access_log off;
 
-    allow 127.0.0.1;
-    allow ::1;
-    deny all;
+    server_name bustimes.org.uk;
+
+    access_log off;
 
     charset utf-8;
 
     location / {
-        proxy_pass http://unix:/home/josh/bustimes.sock;
+        proxy_pass http://unix:/home/josh/bustimes.sock;  # gunicorn
+        proxy_set_header Host $host;
     }
 
     set_real_ip_from 127.0.0.1;
     real_ip_header X-Forwarded-For;
-}
-
-server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
-
-    server_name munin.bustimes.org.uk;
-
-    root /var/cache/munin/www;
-
-    include ssl;
-
-    location ^~ /munin-cgi/munin-cgi-graph/ {
-        access_log off;
-        fastcgi_split_path_info ^(/munin-cgi/munin-cgi-graph)(.*);
-        fastcgi_param PATH_INFO $fastcgi_path_info;
-        fastcgi_pass unix:/var/run/munin/fcgi-graph.sock;
-        include fastcgi_params;
-    }
 }

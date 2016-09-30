@@ -30,7 +30,8 @@
 <div class="asides">
 
 {% if services or stoppoint.locality == None %}
-    <div class="aside" id="departures"></div>
+    <esi:remove><div class="aside" id="departures"></div></esi:remove>
+    <esi:include src="{{ stoppoint.get_absolute_url }}/departures" />
 {% endif %}
 
 {% if services %}

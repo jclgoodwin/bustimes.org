@@ -82,9 +82,11 @@ ga('send', 'pageview');
 <link rel="stylesheet" property="styleseet" href="{% static 'js/bower_components/leaflet/dist/leaflet.css' %}" />
 <script src="{% static 'js/bower_components/leaflet/dist/leaflet.js' %}"></script>
 <script async src="{% static 'js/map.js' %}"></script>
-{% if stoppoint and services or not stoppoint.locality %}
+{% if stoppoint and services %}
+<esi:remove>
 <script src="{% static 'js/bower_components/reqwest/reqwest.min.js' %}"></script>
 <script async src="{% static 'js/departures.js' %}"></script>
+</esi:remove>
 {% endif %}
 {% elif regions %}
 {% javascript 'frontpage' %}
