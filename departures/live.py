@@ -161,16 +161,17 @@ class TransportApiDepartures(Departures):
         time = item['best_departure_estimate']
         if time is None:
             return
-        if 'date' in item:
+        hour = int(time[:2])
+        while hour > 23:
+            hour -= 24
+            time = '%s%s' % (hour, time[2:])
+        departure_time = None
+        if 'date' in item and item['date'] is not None:
             departure_time = dateutil.parser.parse(item['date'] + ' ' + time)
-            if departure_time.date() > self.today:
+            if (item['source'].startswith('Traveline timetable') and
+                    departure_time.date() > self.today):
                 return
-        else:
-            hour = int(time[:2])
-            while hour > 23:
-                hour -= 24
-                time = '%s%s' % (hour, time[2:])
-                self.today += datetime.timedelta(days=1)
+        if departure_time is None:
             departure_time = datetime.datetime.combine(
                 self.today, dateutil.parser.parse(time).time()
             )

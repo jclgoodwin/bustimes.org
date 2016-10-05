@@ -3,6 +3,7 @@
 import datetime
 import vcr
 from django.test import TestCase
+from django.shortcuts import render
 from busstops.models import LiveSource, StopPoint, Service
 from . import live
 
@@ -170,7 +171,7 @@ class LiveDeparturesTest(TestCase):
             ).get_departures()
         self._test_acis_yorkshire(departures)
 
-    def test_transporapi_row(self):
+    def test_transportapi_row(self):
         """Test the get_row() method for Transport API departures
         """
         departures = live.TransportApiDepartures(self.yorkshire_stop, (), datetime.date(2016, 6, 10))
@@ -232,6 +233,23 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(east_scotland_row['destination'], 'Edinburgh')
         self.assertEqual(east_scotland_row['time'].time(), datetime.time(3, 2))
 
+        east_scotland_row_date = departures.get_row({
+            'mode': 'bus',
+            'line': '38',
+            'line_name': '38',
+            'direction': 'Stirling',
+            'operator': 'First',
+            'date': '2016-10-07',
+            'expected_departure_date': '2016-10-07',
+            'aimed_departure_time': '24:32',
+            'expected_departure_time': '24:32',
+            'best_departure_estimate': '24:32',
+            'source': 'Scotland East'
+        })
+        self.assertEqual(east_scotland_row_date['destination'], 'Stirling')
+        self.assertEqual(east_scotland_row_date['time'].time(),
+                         datetime.time(0, 32))
+
         self.assertEqual(
             departures.get_request_url(),
             'http://transportapi.com/v3/uk/bus/stop/3290YYA00215/live.json'
@@ -262,3 +280,32 @@ class LiveDeparturesTest(TestCase):
             'service': '44A',
             'time': datetime.datetime(2016, 6, 10, 22, 47)
         },), datetime.datetime(2016, 6, 10, 10, 50, 50)), 43030)
+
+    def test_render(self):
+        response = render(None, 'departures.html', {
+            'departures': [
+                {
+                    'time': datetime.datetime(1994, 5, 4, 11, 53),
+                    'service': 'X98',
+                    'destination': 'Bratislava'
+                },
+                {
+                    'time': datetime.datetime(1994, 5, 7, 11, 53),
+                    'service': '9',
+                    'destination': 'Shilbottle'
+                }
+            ]
+        })
+        self.assertContains(response, """
+            <div class="aside box">
+                <h2>Next departures</h2>
+                <table><tbody>
+                    <tr><td>11:53</td><td>X98</td><td>Bratislava</td></tr>
+                </tbody></table>
+                <h3>Saturday</h3>
+                <table><tbody>
+                    <tr><td>11:53</td><td>9</td><td>Shilbottle</td></tr>
+                </tbody></table>
+                <p class="credit"></p>
+            </div>
+        """, html=True)
