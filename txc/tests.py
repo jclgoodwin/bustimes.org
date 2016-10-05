@@ -21,7 +21,7 @@ class TimetableTest(TestCase):
         timetable_ea = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-1.xml')
 
         self.assertEqual('Monday to Sunday', str(timetable_ea.operating_profile))
-        self.assertEqual('until 21 October 2016', str(timetable_ea.operating_period))
+        self.assertEqual('', str(timetable_ea.operating_period))
 
         self.assertEqual('Norwich - Wymondham - Attleborough', str(timetable_ea.groupings[0]))
         self.assertEqual(3, len(timetable_ea.groupings[0].column_heads))
@@ -197,15 +197,37 @@ class OperatingPeriodTest(TestCase):
         self.assertEqual(str(operating_period), 'from 1 to 5 February 2056')
         self.assertTrue(operating_period.starts_in_future())
 
+    def test_medium_range(self):
+        """An OperatingPeriod shorter than 40 days should be displayed"""
+        element = ET.fromstring("""
+            <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
+                <StartDate>2015-02-01</StartDate>
+                <EndDate>2015-03-01</EndDate>
+            </OperatingPeriod>
+        """)
+        operating_period = txc.OperatingPeriod(element)
+        self.assertEqual(str(operating_period), 'until 1 March 2015')
+
+    def test_long_range(self):
+        """An OperatingPeriod longer than 40 days should not be displayed"""
+        element = ET.fromstring("""
+            <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
+                <StartDate>2015-02-01</StartDate>
+                <EndDate>2015-05-04</EndDate>
+            </OperatingPeriod>
+        """)
+        operating_period = txc.OperatingPeriod(element)
+        self.assertEqual(str(operating_period), '')
+
     def test_past_range(self):
         """
-        An OperatingPeriod starting and ending in the same month in the past
+        An OperatingPeriod starting and ending in different years in the past
         should not be displayed
         """
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
                 <StartDate>2001-05-01</StartDate>
-                <EndDate>2002-05-01</EndDate>
+                <EndDate>2002-06-01</EndDate>
             </OperatingPeriod>
         """)
         operating_period = txc.OperatingPeriod(element)
