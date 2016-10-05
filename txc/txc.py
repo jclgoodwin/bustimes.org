@@ -651,7 +651,9 @@ class OperatingPeriod(DateRange):
             return 'from %s to %s' % (
                 self.start.strftime(start_format), self.end.strftime('%-d %B %Y')
             )
-        elif self.end is not None and self.end.year == date.today().year:
+        # The end date is often bogus,
+        # but show it if the period seems short enough to be relevant
+        elif self.end is not None and (self.end - self.start).days < 40:
             return self.end.strftime('until %-d %B %Y')
         return ''
 
