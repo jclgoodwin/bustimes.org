@@ -329,7 +329,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
             context['text'] = text[0].upper() + text[1:]
 
         context['modes'] = list({service.mode for service in
-                                 context['services']})
+                                 context['services'] if service.mode})
         context['modes'].sort()
 
         if self.object.stop_area_id is not None:
