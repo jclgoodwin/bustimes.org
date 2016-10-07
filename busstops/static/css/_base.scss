@@ -480,6 +480,13 @@ input:not(:checked) + label {
             text-overflow: ellipsis;
         }
     }
+
+    .OTH {
+        th {
+            max-width: 0;
+            padding-left: 1em;
+        }
+    }
 }
 
 .aside {
