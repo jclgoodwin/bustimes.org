@@ -50,7 +50,6 @@ class NoteAdmin(admin.ModelAdmin):
     raw_id_fields = ('operators', 'services')
 
 
-
 admin.site.register(Region)
 admin.site.register(AdminArea)
 admin.site.register(District)
