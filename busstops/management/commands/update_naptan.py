@@ -1,8 +1,7 @@
 from __future__ import print_function
 import json
 import requests
-from sys import exit
-from zipfile import is_zipfile
+import sys
 from django.core.management.base import BaseCommand
 
 
@@ -54,11 +53,15 @@ class Command(BaseCommand):
                 stream=True
             )
 
-            with open('naptan.zip', 'wb') as new_file:
-                for chunk in response.iter_content(chunk_size=1024):
-                    new_file.write(chunk)
-                if not is_zipfile(new_file):
-                    exit(1)
+            with open('naptan.zip', 'wb') as zip_file:
+                for chunk in response.iter_content(chunk_size=102400):
+                    zip_file.write(chunk)
 
-            with open(JSON_NAME, 'w') as new_file:
-                new_file.write(new_response.text)
+                print(response.headers)
+
+                if response.status_code != 200:
+                    print(response)
+                    sys.exit(1)
+
+            with open(JSON_NAME, 'w') as json_file:
+                json_file.write(new_response.text)
