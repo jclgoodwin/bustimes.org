@@ -421,7 +421,7 @@ class ServiceDetailView(DetailView):
             return context
 
         context['operators'] = self.object.operator.all()
-        context['notes'] = Note.objects.filter(operators__in=context['operators'])
+        context['notes'] = Note.objects.filter(Q(operators=context['operators']) | Q(services=self.object))
         context['links'] = []
         traveline_url = self.object.get_traveline_url()
         if traveline_url:
