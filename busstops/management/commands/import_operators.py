@@ -20,15 +20,19 @@ class Command(ImportFromCSVCommand):
 
     @staticmethod
     def is_rubbish_name(name):
+        """Given an OperatorPublicName, return True if it should be
+        ignored in favour of the RefNm or OpNm fields
+        """
         return (
             name in ('First', 'Arriva', 'Stagecoach') or
             name.startswith('inc.') or
             name.startswith('formerly') or
-            name == 'OWENS OF OSWESTRY COACHES LTD'
+            name in ('OWENS OF OSWESTRY COACHES LTD', 'Oakwood Travel')
         )
 
     @classmethod
     def get_name(cls, row):
+        """Given a row dictionary, returns the best-seeming name string"""
         if cls.is_rubbish_name(row['OperatorPublicName']):
             if row['RefNm'] != '':
                 return row['RefNm']
@@ -39,7 +43,7 @@ class Command(ImportFromCSVCommand):
 
     @classmethod
     def handle_row(cls, row):
-        "Given a CSV row (a list), returns an Operator object"
+        """Given a CSV row (a list), returns an Operator object"""
 
         operator_id = row['NOCCODE'].replace('=', '')
         if operator_id in ('TVSR', 'HBSY') or (operator_id == 'FMAN' and row['Duplicate'] != 'OK'):
