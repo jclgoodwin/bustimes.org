@@ -413,3 +413,6 @@ class Note(models.Model):
 
     def __str__(self):
         return self.text
+
+    def get_absolute_url(self):
+        return (self.operators.first() or self.services.first()).get_absolute_url()
