@@ -455,6 +455,11 @@ input:not(:checked) + label {
     }
 }
 
+.warning {
+    border: 1px solid $brand-color;
+    padding: 1em;
+}
+
 .timetable {
     tr:first-child td {
         border-left: 1px solid $brand-color;

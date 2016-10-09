@@ -10,6 +10,10 @@
 
 <p>{{ object.get_a_mode }} operating company in <a href="{{ object.region.get_absolute_url }}">{{ object.region.the }}</a></p>
 
+{% for note in notes %}
+    <p class="warning">{{ note|safe }}</p>
+{% endfor %}
+
 <h2>Services operated by {{ object }}</h2>
 
 <ul class="services">

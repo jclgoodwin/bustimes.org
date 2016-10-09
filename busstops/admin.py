@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.db.models import Count
 from busstops.models import (
-    Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service
+    Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note
 )
 
 
@@ -46,6 +46,11 @@ class LocalityAdmin(admin.ModelAdmin):
     raw_id_fields = ('adjacent',)
 
 
+class NoteAdmin(admin.ModelAdmin):
+    raw_id_fields = ('operators', 'services')
+
+
+
 admin.site.register(Region)
 admin.site.register(AdminArea)
 admin.site.register(District)
@@ -54,3 +59,4 @@ admin.site.register(StopArea)
 admin.site.register(StopPoint, StopPointAdmin)
 admin.site.register(Operator, OperatorAdmin)
 admin.site.register(Service, ServiceAdmin)
+admin.site.register(Note, NoteAdmin)

@@ -15,6 +15,10 @@
     {% endif %}
 </p>
 
+{% for note in notes %}
+    <p class="warning">{{ note|safe }}</p>
+{% endfor %}
+
 {% for timetable in timetables %}
     {% for grouping in timetable.groupings %}{% if grouping.rows.0.times %}
     <h2>{{ grouping }} {{ timetable.operating_period }}</h2>

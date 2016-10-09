@@ -13,7 +13,7 @@ from django.core.mail import EmailMessage
 from departures import live
 from .utils import timetable_from_service, get_files_from_zipfile
 from .models import (Region, StopPoint, AdminArea, Locality, District,
-                     Operator, Service)
+                     Operator, Service, Note)
 from .forms import ContactForm
 
 
@@ -396,6 +396,7 @@ class OperatorDetailView(UppercasePrimaryKeyMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
+        context['notes'] = Note.objects.filter(operators=self.object)
         context['services'] = Service.objects.filter(operator=self.object, current=True).order_by(
             'service_code').defer('geometry')
         if not context['services']:
@@ -420,6 +421,7 @@ class ServiceDetailView(DetailView):
             return context
 
         context['operators'] = self.object.operator.all()
+        context['notes'] = Note.objects.filter(operators__in=context['operators'])
         context['links'] = []
         traveline_url = self.object.get_traveline_url()
         if traveline_url:

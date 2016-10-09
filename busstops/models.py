@@ -402,3 +402,14 @@ class Service(models.Model):
                           ('outputFormat', 0)])
             base_url = 'http://www.travelinesoutheast.org.uk/se'
             return '%s/XSLT_TTB_REQUEST?%s' % (base_url, urlencode(query))
+
+
+@python_2_unicode_compatible
+class Note(models.Model):
+    """A note about an error in the timetable, the operator going bust, or something"""
+    operators = models.ManyToManyField(Operator, blank=True)
+    services = models.ManyToManyField(Service, blank=True)
+    text = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.text
