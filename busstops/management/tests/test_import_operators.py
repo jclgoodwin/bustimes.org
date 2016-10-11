@@ -44,6 +44,19 @@ class ImportOperatorsTest(TestCase):
         self.assertEqual(self.first_aberdeen.name, 'First in Aberdeen')
         self.assertEqual(self.c2c.name, 'c2c')
 
+        command = import_operators.Command()
+
+        self.assertEqual(command.get_name({
+            'OperatorPublicName': 'Oakwood Travel',
+            'RefNm': '',
+            'OpNm': 'Catch22Bus Ltd'
+        }, 'Catch22Bus Ltd'))
+        self.assertEqual(command.get_name({
+            'OperatorPublicName': '',
+            'RefNm': '',
+            'OpNm': 'Loaches Coaches'
+        }, 'Loaches Coaches'))
+
     def test_operator_mode(self):
         """Is an operator mode like 'DRT' expanded correctly to 'demand responsive transport'?"""
         self.assertEqual(self.ace_travel.vehicle_mode, 'demand responsive transport')

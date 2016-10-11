@@ -102,6 +102,7 @@ class ViewsTests(TestCase):
             pk='VENT', name='Nu-Venture', vehicle_mode='bus', region_id='N'
         )
         cls.service.operator.add(cls.chariots)
+        cls.inactive_service.operator.add(cls.chariots)
 
     def test_index(self):
         response = self.client.get('/')
@@ -221,5 +222,10 @@ class ViewsTests(TestCase):
         self.assertContains(
             response,
             'Sorry, it looks like the  service <strong>45A</strong> no longer exists. It might have',
+            status_code=404
+        )
+        self.assertContains(
+            response,
+            'Services operated by Ainsley',
             status_code=404
         )
