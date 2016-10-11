@@ -8,12 +8,15 @@
 # Where 'username' and 'password' are your username and password for the
 # Traveline National Dataset FTP server
 
-trap "echo Exited!; exit;" SIGINT SIGTERM
+function finish {
+    rmdir /var/lock/bustimes-import 2> /dev/null
+}
+trap finish EXIT SIGINT SIGTERM
 
-if [ "$(pgrep import.sh | wc -l)" -gt 2 ]; then
-    echo "An import appears to be running already"
-    exit 0
-fi
+mkdir /var/lock/bustimes-import || {
+    "An import appears to be running already"
+    exit 1
+}
 
 USERNAME=$1
 PASSWORD=$2
@@ -116,3 +119,5 @@ for region in "${REGIONS[@]}"; do
     fi
 done
 # [ $updated_services ] && ../../manage.py update_index --remove
+
+finish
