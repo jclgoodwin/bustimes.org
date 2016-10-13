@@ -57,10 +57,9 @@ class Command(BaseCommand):
                 for chunk in response.iter_content(chunk_size=102400):
                     zip_file.write(chunk)
 
-                print(response.headers)
-
-                if response.status_code != 200:
+                if response.headers.get('Content-Type') != 'application/zip':
                     print(response)
+                    print(response.headers)
                     sys.exit(1)
 
             with open(JSON_NAME, 'w') as json_file:
