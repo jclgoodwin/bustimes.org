@@ -24,6 +24,8 @@ class ImportOperatorsTest(TestCase):
         cls.first_aberdeen = Operator.objects.get(id='FABD')
         cls.c2c = Operator.objects.get(id='CC')
         cls.ace_travel = Operator.objects.get(id='ACER')
+        cls.weardale = Operator.objects.get(id='WRCT')
+        cls.catch22bus = Operator.objects.get(id='NWOT')
 
     def test_operator_id(self):
         """Is a strange NOC code (with an equals sign) correctly handled?"""
@@ -43,6 +45,8 @@ class ImportOperatorsTest(TestCase):
         """
         self.assertEqual(self.first_aberdeen.name, 'First in Aberdeen')
         self.assertEqual(self.c2c.name, 'c2c')
+        self.assertEqual(self.weardale.name, 'Weardale Community Transport')
+        self.assertEqual(self.catch22bus.name, 'Catch22Bus Ltd')
 
         command = import_operators.Command()
 
@@ -50,12 +54,12 @@ class ImportOperatorsTest(TestCase):
             'OperatorPublicName': 'Oakwood Travel',
             'RefNm': '',
             'OpNm': 'Catch22Bus Ltd'
-        }, 'Catch22Bus Ltd'))
+        }), 'Catch22Bus Ltd')
         self.assertEqual(command.get_name({
             'OperatorPublicName': '',
             'RefNm': '',
             'OpNm': 'Loaches Coaches'
-        }, 'Loaches Coaches'))
+        }), 'Loaches Coaches')
 
     def test_operator_mode(self):
         """Is an operator mode like 'DRT' expanded correctly to 'demand responsive transport'?"""
@@ -63,6 +67,11 @@ class ImportOperatorsTest(TestCase):
         self.assertEqual(self.ace_travel.get_a_mode(), 'A demand responsive transport')
         self.assertEqual(self.c2c.get_a_mode(), 'A rail')
         self.assertEqual(self.first_aberdeen.get_a_mode(), 'A bus')
+        self.assertEqual(self.weardale.get_a_mode(), 'A community transport')
+
+    def test_operator_ignore(self):
+        """Were some rows correctly ignored?"""
+        self.assertFalse(len(Operator.objects.filter(id='TVSR')))
 
     def test_scotch_operator_contacts(self):
         command = import_scotch_operator_contacts.Command()
