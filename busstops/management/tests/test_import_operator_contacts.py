@@ -14,7 +14,8 @@ class ImportOperatorContactTest(TestCase):
         cls.command.input = os.path.join(DIR, 'fixtures', 'nocrecords.xml')
 
         east_anglia = Region.objects.create(id='EA', name='East Anglia')
-        Operator.objects.create(pk='SNDR', region=east_anglia)
+        cls.sanders = Operator.objects.create(pk='SNDR', region=east_anglia)
+        cls.first = Operator.objects.create(pk='FECS', region=east_anglia)
 
         cls.command.handle()
 
@@ -26,8 +27,14 @@ class ImportOperatorContactTest(TestCase):
         self.assertEqual(self.command.format_address('TS24 7SB'), 'TS24 7SB')
 
     def test_imported_data(self):
-        sanders_coaches = Operator.objects.get(pk='SNDR')
-        self.assertEqual(sanders_coaches.address, 'Sanders Coaches\nHeath Drive\nHolt\nNR25 6ER')
-        self.assertEqual(sanders_coaches.phone, '01263 712800')
-        self.assertEqual(sanders_coaches.email, 'charles@sanderscoaches.com')
-        self.assertEqual(sanders_coaches.url, 'http://www.sanderscoaches.com')
+        self.sanders.refresh_from_db()
+        self.assertEqual(self.sanders.address, 'Sanders Coaches\nHeath Drive\nHolt\nNR25 6ER')
+        self.assertEqual(self.sanders.phone, '01263 712800')
+        self.assertEqual(self.sanders.email, 'charles@sanderscoaches.com')
+        self.assertEqual(self.sanders.url, 'http://www.sanderscoaches.com')
+
+        self.first.refresh_from_db()
+        self.assertEqual(self.first.address, '')
+        self.assertEqual(self.first.phone, '')
+        self.assertEqual(self.first.email, '')
+        self.assertEqual(self.first.url, 'https://www.firstgroup.com/norfolk-suffolk')

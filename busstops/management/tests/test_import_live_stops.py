@@ -13,6 +13,12 @@ class ImportLiveStopsTest(TestCase):
             locality_centre=False,
             active=True
         )
+        cls.kent_stop = StopPoint.objects.create(
+            pk='2400A020330A',
+            naptan_code='2400A020330A',
+            locality_centre=False,
+            active=True
+        )
         cls.command = import_live_stops.Command()
         cls.cardiff = LiveSource.objects.create(name='card')
         cls.london_stop = StopPoint.objects.create(
@@ -22,11 +28,26 @@ class ImportLiveStopsTest(TestCase):
             active=True
         )
 
+    def test_import_acislive(self):
+        with vcr.use_cassette('data/vcr/acislive_error.yaml'):
+            self.command.maybe_add_acislive_source(self.cardiff_stop,
+                                                   self.cardiff, 'kent')
+        self.cardiff_stop.refresh_from_db()
+        self.assertFalse(self.cardiff_stop.live_sources.all())
+
+        with vcr.use_cassette('data/vcr/acislive_kent.yaml'):
+            self.command.maybe_add_acislive_source(self.kent_stop,
+                                                   self.cardiff, 'kent')
+        self.kent_stop.refresh_from_db()
+        self.assertEquals(self.cardiff, self.kent_stop.live_sources.all()[0])
+
     def test_import_acisconnect(self):
-        self.assertEqual(0, len(self.cardiff_stop.live_sources.all()))
+        self.assertFalse(self.cardiff_stop.live_sources.all())
         with vcr.use_cassette('data/vcr/cardiff.yaml'):
-            self.command.maybe_add_acisconnect_source(self.cardiff_stop, self.cardiff, 'cardiff')
-        self.assertEqual(StopPoint.objects.get(pk=self.cardiff_stop.pk).live_sources.all()[0], self.cardiff)
+            self.command.maybe_add_acisconnect_source(self.cardiff_stop,
+                                                      self.cardiff, 'cardiff')
+        self.cardiff_stop.refresh_from_db()
+        self.assertEqual(self.cardiff_stop.live_sources.all()[0], self.cardiff)
 
         with vcr.use_cassette('data/vcr/cardiff_clustered_stops.yaml'):
             clustered_stops = self.command.get_clustered_stops('cardiff')
@@ -101,6 +122,6 @@ class ImportLiveStopsTest(TestCase):
                 'Heading': 42
             })
 
-        london_stop = StopPoint.objects.get(atco_code='490014721F')
-        self.assertEqual(42, london_stop.get_heading())
-        self.assertEqual('Wilmot Street', london_stop.common_name)
+        self.london_stop.refresh_from_db()
+        self.assertEqual(42, self.london_stop.get_heading())
+        self.assertEqual('Wilmot Street', self.london_stop.common_name)

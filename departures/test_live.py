@@ -40,6 +40,11 @@ class LiveDeparturesTest(TestCase):
         )
         cls.yorkshire_stop.live_sources.add('Y')
 
+    def test_abstract(self):
+        departures = live.Departures(None, ())
+        self.assertRaises(NotImplementedError, departures.get_request_url)
+        self.assertRaises(NotImplementedError, departures.departures_from_response, None)
+
     def test_tfl(self):
         """Test the Transport for London live departures source
         """
@@ -171,10 +176,11 @@ class LiveDeparturesTest(TestCase):
             ).get_departures()
         self._test_acis_yorkshire(departures)
 
-    def test_transportapi_row(self):
-        """Test the get_row() method for Transport API departures
+    def test_transportapi(self):
+        """Test the get_row and other methods for Transport API departures
         """
-        departures = live.TransportApiDepartures(self.yorkshire_stop, (), datetime.date(2016, 6, 10))
+        departures = live.TransportApiDepartures(self.yorkshire_stop, (),
+                                                 datetime.date(2016, 6, 10))
         rows = ({
             'direction': 'Gunton,Weston Road,',
             'expected_departure_time': None,

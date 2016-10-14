@@ -15,6 +15,10 @@
             <OpId>137609</OpId>
             <PubNmId>95266</PubNmId>
         </NOCTableRecord>
+        <NOCTableRecord>
+            <NOCCODE>FECS</NOCCODE>
+            <PubNmId>42</PubNmId>
+        </NOCTableRecord>
     </NOCTable>
     <PublicName>
         <publicnamerecord>
@@ -26,37 +30,30 @@
             <lostpropenq></lostpropenq>
             <disruptenq></disruptenq>
             <complenq></complenq>
-            <twitter></twitter>
-            <facebook></facebook>
-            <linkedin></linkedin>
-            <youtube></youtube>
-            <changedate></changedate>
-            <changeagent></changeagent>
-            <changecomment></changecomment>
-            <ceaseddate></ceaseddate>
-            <dataowner></dataowner><website></website>
+            <website></website>
         </publicnamerecord>
         <publicnamerecord>
             <pubnmid>95938</pubnmid>
             <operatorpublicname></operatorpublicname>
-            <pubnmqual></pubnmqual>
             <ttrteenq></ttrteenq>
             <fareenq></fareenq>
-            <lostpropenq></lostpropenq>
             <disruptenq></disruptenq>
             <complenq></complenq>
-            <twitter></twitter>
-            <facebook></facebook>
-            <linkedin></linkedin>
-            <youtube></youtube>
-            <changedate></changedate>
-            <changeagent></changeagent>
-            <changecomment></changecomment>
-            <ceaseddate></ceaseddate>
-            <dataowner></dataowner><website></website>
+            <website></website>
         </publicnamerecord>
         <PublicNameRecord>
             <PubNmId>95266</PubNmId>
+            <OperatorPublicName>Sanders Coaches</OperatorPublicName>
+            <!--<PubNmQual></PubNmQual>-->
+            <TTRteEnq>charles@sanderscoaches.com</TTRteEnq>
+            <FareEnq>01263 712800</FareEnq>
+            <!--<LostPropEnq></LostPropEnq>
+            <DisruptEnq></DisruptEnq>-->
+            <ComplEnq>Sanders Coaches, Heath Drive, Holt NR25 6ER</ComplEnq>
+            <Website>www.sanderscoaches.com#http://www.sanderscoaches.com#</Website>
+        </PublicNameRecord>
+        <PublicNameRecord>
+            <PubNmId>42</PubNmId>
             <OperatorPublicName>Sanders Coaches</OperatorPublicName>
             <PubNmQual></PubNmQual>
             <TTRteEnq>charles@sanderscoaches.com</TTRteEnq>
@@ -64,15 +61,6 @@
             <LostPropEnq></LostPropEnq>
             <DisruptEnq></DisruptEnq>
             <ComplEnq>Sanders Coaches, Heath Drive, Holt NR25 6ER</ComplEnq>
-            <Twitter></Twitter>
-            <Facebook></Facebook>
-            <LinkedIn></LinkedIn>
-            <YouTube></YouTube>
-            <ChangeDate></ChangeDate>
-            <ChangeAgent></ChangeAgent>
-            <ChangeComment></ChangeComment>
-            <CeasedDate></CeasedDate>
-            <DataOwner></DataOwner>
             <Website>www.sanderscoaches.com#http://www.sanderscoaches.com#</Website>
         </PublicNameRecord>
     </PublicName>
