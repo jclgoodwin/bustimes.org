@@ -122,7 +122,7 @@ ExecStart=/home/$USER/bustimes.org.uk/env/bin/gunicorn \
   --workers 3 \
   --env SECRET_KEY=bh9ufxfhdsadbgtfgvgbxdfhldffghjdkgbpgfokj6nbvcfr \
   --env DATABASE_USER=bustimes \
-  --env DATABASE_PASSWORD=4B7szonH \
+  --env DATABASE_PASSWORD=$DB_PASS \
   --env TRANSPORTAPI_APP_ID=$TRANSPORAPI_APP_ID \
   --env TRANSPORTAPI_APP_KEY=$TRANSPORAPI_APP_KEY \
   --bind unix:/home/josh/bustimes.sock \
