@@ -19,7 +19,7 @@ NS = {
 DUMMY_DATE = date(2016, 4, 5)
 DESCRIPTION_REGEX = re.compile(r'.+,([^ ].+)$')
 DURATION_REGEX = re.compile(
-    r'PT((?P<hours>-?\d+?)H)?((?P<minutes>-?\d+?)M)?((?P<seconds>-?\d+?)S)?'
+    r'P((?P<days>-?\d+?)D)?T((?P<hours>-?\d+?)H)?((?P<minutes>-?\d+?)M)?((?P<seconds>-?\d+?)S)?'
 )
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}
 
