@@ -14,7 +14,7 @@ function finish {
 trap finish EXIT SIGINT SIGTERM
 
 mkdir /var/lock/bustimes-import || {
-    "An import appears to be running already"
+    echo "An import appears to be running already"
     exit 1
 }
 
