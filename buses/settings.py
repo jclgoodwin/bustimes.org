@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'haystack',
     'busstops',
     'pipeline',
+    'email_obfuscator',
 ]
 
 MIDDLEWARE = [

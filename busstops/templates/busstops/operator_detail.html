@@ -40,7 +40,8 @@
         <p>{{ object.url|urlise }}</p>
     {% endif %}
     {% if object.email %}
-        <p>{{ object.email|urlise }}</p>
+        {% load email_obfuscator %}
+        <p>{{ object.email|obfuscate_mailto }}</p>
     {% endif %}
     {% if object.phone %}
         <p>{{ object.phone }}</p>
