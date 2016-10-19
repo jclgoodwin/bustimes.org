@@ -53,6 +53,17 @@ def sanitize_description_part(part):
     return sanitized_part.group(1) if sanitized_part is not None else part
 
 
+def correct_description(description):
+    """Given an description, return a version with any typos pedantically corrected"""
+    for old, new in (
+            ('Stitians', 'Stithians'),
+            ('Kings Lynn', "King's Lynn"),
+            ('Baasingstoke', "Basingstoke"),
+    ):
+        description = description.replace(old, new)
+    return description
+
+
 class Stop(object):
     """A TransXChange StopPoint."""
     stop = None
@@ -741,7 +752,7 @@ class Timetable(object):
                     description = description_element.text
                     if description.isupper():
                         description = titlecase(description)
-                    self.description = description.replace('Stitians', 'Stithians').replace('Kings Lynn', "King's Lynn")
+                    description = correct_description(description)
                     description_parts = list(map(sanitize_description_part, description.split(' - ')))
                 else:
                     self.description = ''
