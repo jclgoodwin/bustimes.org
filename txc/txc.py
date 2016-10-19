@@ -1,7 +1,6 @@
 """Represent TransXChange concepts, and generate a matrix timetable from
 TransXChange documents
 """
-from __future__ import print_function
 import os
 import re
 import pickle as pickle
@@ -61,14 +60,14 @@ class Stop(object):
 
     def __init__(self, element):
         self.atco_code = element.find('txc:StopPointRef', NS).text
-        self.common_name = element.find('txc:CommonName', NS).text
+        common_name_element = element.find('txc:CommonName', NS)
         locality_element = element.find('txc:LocalityName', NS)
-        if locality_element is not None:
-            self.locality = locality_element.text
+        self.common_name = common_name_element and common_name_element.text
+        self.locality = locality_element and locality_element_text
 
     def __str__(self):
         if not self.locality or self.locality in self.common_name:
-            return self.common_name
+            return self.common_name or self.atco_code
         return '%s %s' % (self.locality, self.common_name)
 
     def is_at(self, text):
@@ -362,6 +361,8 @@ class JourneyPatternStopUsage(object):
         if self.sequencenumber is not None:
             self.sequencenumber = int(self.sequencenumber)
         self.stop = stops.get(element.find('txc:StopPointRef', NS).text)
+        if self.stop is None:
+           self.stop = Stop(element)
         self.timingstatus = element.find('txc:TimingStatus', NS).text
 
         waittime_element = element.find('txc:WaitTime', NS)
