@@ -369,7 +369,7 @@ class JourneyPatternSection(object):
 class JourneyPatternStopUsage(object):
     """Either a 'From' or 'To' element in TransXChange."""
     def __init__(self, element, stops):
-        # self.activity = element.find('txc:Activity', NS).text
+        self.activity = element.find('txc:Activity', NS).text
         self.sequencenumber = element.get('SequenceNumber')
         if self.sequencenumber is not None:
             self.sequencenumber = int(self.sequencenumber)
