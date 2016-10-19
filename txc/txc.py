@@ -60,10 +60,12 @@ class Stop(object):
 
     def __init__(self, element):
         self.atco_code = element.find('txc:StopPointRef', NS).text
-        common_name_element = element.find('txc:CommonName', NS)
-        locality_element = element.find('txc:LocalityName', NS)
-        self.common_name = common_name_element and common_name_element.text
-        self.locality = locality_element and locality_element.text
+        self.common_name = element.find('txc:CommonName', NS)
+        self.locality = element.find('txc:LocalityName', NS)
+        if self.common_name is not None:
+            self.common_name = self.common_name.text
+        if self.locality is not None:
+            self.locality = self.locality.text
 
     def __str__(self):
         if not self.locality or self.locality in self.common_name:
