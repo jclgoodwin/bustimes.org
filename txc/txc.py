@@ -63,7 +63,7 @@ class Stop(object):
         common_name_element = element.find('txc:CommonName', NS)
         locality_element = element.find('txc:LocalityName', NS)
         self.common_name = common_name_element and common_name_element.text
-        self.locality = locality_element and locality_element_text
+        self.locality = locality_element and locality_element.text
 
     def __str__(self):
         if not self.locality or self.locality in self.common_name:
@@ -362,7 +362,7 @@ class JourneyPatternStopUsage(object):
             self.sequencenumber = int(self.sequencenumber)
         self.stop = stops.get(element.find('txc:StopPointRef', NS).text)
         if self.stop is None:
-           self.stop = Stop(element)
+            self.stop = Stop(element)
         self.timingstatus = element.find('txc:TimingStatus', NS).text
 
         waittime_element = element.find('txc:WaitTime', NS)
