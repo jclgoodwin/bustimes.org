@@ -752,8 +752,8 @@ class Timetable(object):
                     description = description_element.text
                     if description.isupper():
                         description = titlecase(description)
-                    description = correct_description(description)
-                    description_parts = list(map(sanitize_description_part, description.split(' - ')))
+                    self.description = correct_description(description)
+                    description_parts = list(map(sanitize_description_part, self.description.split(' - ')))
                 else:
                     self.description = ''
                     description_parts = None
