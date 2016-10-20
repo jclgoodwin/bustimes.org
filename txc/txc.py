@@ -648,7 +648,7 @@ class DateRange(object):
         return self.start > date.today()
 
     def finishes_in_past(self):
-        return self.end < date.today()
+        return self.end and self.end < date.today()
 
 
 class OperatingPeriod(DateRange):
