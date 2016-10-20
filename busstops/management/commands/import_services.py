@@ -320,23 +320,21 @@ class Command(BaseCommand):
             multi_line_string = None
 
         # service:
-
-        service, created = Service.objects.update_or_create(
-            service_code=service_code,
-            defaults=dict(
-                line_name=line_name,
-                line_brand=line_brand,
-                mode=timetable.mode,
-                description=description,
-                net=net,
-                line_ver=line_ver,
-                region_id=region_id,
-                date=timetable.date,
-                current=True,
-                show_timetable=show_timetable,
-                geometry=multi_line_string
-            )
+        defaults = dict(
+            line_name=line_name,
+            line_brand=line_brand,
+            mode=timetable.mode,
+            net=net,
+            line_ver=line_ver,
+            region_id=region_id,
+            date=timetable.date,
+            current=True,
+            show_timetable=show_timetable,
+            geometry=multi_line_string
         )
+        if description:
+            defaults['description'] = description
+        service, created = Service.objects.update_or_create(service_code=service_code, defaults=defaults)
 
         if created:
             service.operator.add(*operators)
