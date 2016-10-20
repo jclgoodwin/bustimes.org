@@ -440,6 +440,7 @@ class ServiceDetailView(DetailView):
                 or 'timetable' in self.request.GET):
             context['timetables'] = [timetable for timetable in timetable_from_service(self.object)
                                      if not timetable.operating_period.finishes_in_past()]
+            context['timetables'].sort(key=lambda t: t.operating_period.start)
 
         if 'timetables' not in context or context['timetables'] == []:
             context['stopusages'] = self.object.stopusage_set.all().select_related(
