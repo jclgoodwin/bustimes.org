@@ -655,8 +655,8 @@ class OperatingPeriod(DateRange):
     def __str__(self):
         if self.start == self.end:
             return self.start.strftime('on %-d %B %Y')
-        elif self.starts_in_future():
-            if self.end is None:
+        if self.starts_in_future():
+            if self.end is None or self.end.year > date.today().year + 1:
                 return self.start.strftime('from %-d %B %Y')
             elif self.end is not None and self.start.year == self.end.year:
                 if self.start.month == self.end.month:
