@@ -634,8 +634,9 @@ class OperatingProfile(object):
 class DateRange(object):
     def __init__(self, element):
         self.start = datetime.strptime(element.find('txc:StartDate', NS).text, '%Y-%m-%d').date()
-        end = element.find('txc:EndDate', NS)
-        self.end = datetime.strptime(end.text, '%Y-%m-%d').date() if end is not None else None
+        self.end = element.find('txc:EndDate', NS)
+        if self.end is not None:
+            self.end = datetime.strptime(self.end.text, '%Y-%m-%d').date()
 
     def __str__(self):
         if self.start == self.end:

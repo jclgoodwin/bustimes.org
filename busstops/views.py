@@ -438,7 +438,8 @@ class ServiceDetailView(DetailView):
 
         if (self.object.show_timetable or '_MEGA' in self.object.service_code
                 or 'timetable' in self.request.GET):
-            context['timetables'] = timetable_from_service(self.object)
+            context['timetables'] = [timetable for timetable in timetable_from_service(self.object)
+                                     if not timetable.operating_period.finishes_in_past()]
 
         if 'timetables' not in context or context['timetables'] == []:
             context['stopusages'] = self.object.stopusage_set.all().select_related(
