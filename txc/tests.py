@@ -1,6 +1,7 @@
 """Tests for timetables and date ranges"""
 import xml.etree.cElementTree as ET
 from datetime import time, timedelta
+from freezegun import freeze_time
 from django.test import TestCase
 from . import txc
 
@@ -161,6 +162,7 @@ class OperatingPeriodTest(TestCase):
         self.assertEqual(str(operating_period), 'from 1 September 2021')
         self.assertTrue(operating_period.starts_in_future())
 
+    @freeze_time('1 May 2004')
     def test_future_long_range(self):
         """Test an OperatingPeriod starting and ending in different years in the future"""
         element = ET.fromstring("""
@@ -170,9 +172,10 @@ class OperatingPeriodTest(TestCase):
             </OperatingPeriod>
         """)
         operating_period = txc.OperatingPeriod(element)
-        self.assertEqual(str(operating_period), 'from 1 September 2021 to 2 February 2056')
+        self.assertEqual(str(operating_period), 'from 1 September 2021')
         self.assertTrue(operating_period.starts_in_future())
 
+    @freeze_time('1 May 2004')
     def test_future_medium_range(self):
         """Test an OperatingPeriod starting and ending in the same year in the future"""
         element = ET.fromstring("""
@@ -182,11 +185,12 @@ class OperatingPeriodTest(TestCase):
             </OperatingPeriod>
         """)
         operating_period = txc.OperatingPeriod(element)
-        self.assertEqual(str(operating_period), 'from 1 February to 2 June 2056')
+        self.assertEqual(str(operating_period), 'from 1 February 2056')
         self.assertTrue(operating_period.starts_in_future())
 
-    def test_future_short_range(self):
-        """Test an OperatingPeriod starting and ending in the same month in the future"""
+    @freeze_time('1 January 2056')
+    def test_short_range(self):
+        """Test an OperatingPeriod starting and ending in the same month in the present"""
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
                 <StartDate>2056-02-01</StartDate>
