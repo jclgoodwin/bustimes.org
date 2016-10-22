@@ -39,7 +39,7 @@ FIRST_OPERATORS = {
     'FSYO': 'south-yorkshire',
     'FSOT': 'southampton',
     'FDOR': 'wessex-dorset-south-somerset',
-    'FSMR': 'worcestershie',
+    'FSMR': 'worcestershire',
     'FYOR': 'york'
 }
 
