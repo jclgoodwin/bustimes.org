@@ -71,7 +71,8 @@ class ImportServicesTest(TestCase):
 
     @staticmethod
     def write_file_to_zipfile(open_zipfile, filename):
-        open_zipfile.write(os.path.join(DIR, 'fixtures', filename), filename)
+        open_zipfile.write(os.path.join(DIR, 'fixtures', filename),
+                           os.path.join('NCSD_TXC', filename))
 
     def test_sanitize_description(self):
         testcases = (
