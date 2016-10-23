@@ -1,0 +1,2708 @@
+<?xml version="1.0"?>
+<TransXChange xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.transxchange.org.uk/ http://www.transxchange.org.uk/schema/2.1/TransXChange_general.xsd" CreationDateTime="2016-08-19T15:45:30.2121670+01:00" ModificationDateTime="2016-08-19T15:45:30.2121670+01:00" Modification="new" RevisionNumber="1" FileName="TXC.xml" SchemaVersion="2.1" xmlns="http://www.transxchange.org.uk/">
+  <StopPoints>
+    <AnnotatedStopPointRef>
+      <StopPointRef>049004705400</StopPointRef>
+      <CommonName>Kingston District Centre</CommonName>
+      <LocalityName>Kingston</LocalityName>
+      <LocalityQualifier>Milton Keynes</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>079073001Z</StopPointRef>
+      <CommonName>Bus Station Express Lounge</CommonName>
+      <LocalityName>Middlesbrough</LocalityName>
+      <LocalityQualifier>Middlesbrough</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800SHIC0G1</StopPointRef>
+      <CommonName>Shudehill Interchange</CommonName>
+      <LocalityName>Shudehill</LocalityName>
+      <LocalityQualifier>Manchester City Centre</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>260003731</StopPointRef>
+      <CommonName>ASDA</CommonName>
+      <LocalityName>Fosse Park</LocalityName>
+      <LocalityQualifier>Fosse Park</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>260007240</StopPointRef>
+      <CommonName>Holywell Way</CommonName>
+      <LocalityName>Loughborough</LocalityName>
+      <LocalityQualifier>Loughborough</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3390BB01</StopPointRef>
+      <CommonName>Broad Marsh Bus Station</CommonName>
+      <LocalityName>Nottingham</LocalityName>
+      <LocalityQualifier>Nottingham</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370010201</StopPointRef>
+      <CommonName>Meadowhall Interchange</CommonName>
+      <LocalityName>Meadowhall</LocalityName>
+      <LocalityQualifier>Sheffield</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>41000008NC67</StopPointRef>
+      <CommonName>John Dobson Street</CommonName>
+      <LocalityName>Newcastle upon Tyne</LocalityName>
+      <LocalityQualifier>Newcastle upon Tyne</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>4100024PARWS</StopPointRef>
+      <CommonName>Sunderland Interchange</CommonName>
+      <LocalityName>Sunderland</LocalityName>
+      <LocalityQualifier>Sunderland</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>4200F156471</StopPointRef>
+      <CommonName>ASDA</CommonName>
+      <LocalityName>Rugby</LocalityName>
+      <LocalityQualifier>Rugby</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>4200F156472</StopPointRef>
+      <CommonName>ASDA</CommonName>
+      <LocalityName>Rugby</LocalityName>
+      <LocalityQualifier>Rugby</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>450014781</StopPointRef>
+      <CommonName>York Street</CommonName>
+      <LocalityName>Leeds City Centre</LocalityName>
+      <LocalityQualifier>Leeds</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>450017207</StopPointRef>
+      <CommonName>Market Street</CommonName>
+      <LocalityName>Huddersfield Town Centre</LocalityName>
+      <LocalityQualifier>Huddersfield</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>450017590</StopPointRef>
+      <CommonName>Hall Ings</CommonName>
+      <LocalityName>Bradford City Centre</LocalityName>
+      <LocalityQualifier>Bradford</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>450030004</StopPointRef>
+      <CommonName>Interchange</CommonName>
+      <LocalityName>Bradford City Centre</LocalityName>
+      <LocalityQualifier>Bradford</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>450030220</StopPointRef>
+      <CommonName>Bus Stn</CommonName>
+      <LocalityName>Leeds City Centre</LocalityName>
+      <LocalityQualifier>Leeds</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>490014051N</StopPointRef>
+      <CommonName>Victoria Coach Station</CommonName>
+      <LocalityName>Belgravia</LocalityName>
+      <LocalityQualifier>Victoria</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>490016736W</StopPointRef>
+      <CommonName>Victoria Coach Station Arrivals</CommonName>
+      <LocalityName>Victoria</LocalityName>
+      <LocalityQualifier>London</LocalityQualifier>
+    </AnnotatedStopPointRef>
+  </StopPoints>
+  <JourneyPatternSections>
+    <JourneyPatternSection id="JPSection-1">
+      <JourneyPatternTimingLink id="JPSection-1-SEC16-POS39">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT45M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC16-POS40">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3390BB01</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT65M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC16-POS41">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3390BB01</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260007240</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT35M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC16-POS42">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260007240</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260003731</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT20M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-2">
+      <JourneyPatternTimingLink id="JPSection-2-SEC16-POS39">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT45M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-2-SEC16-POS40">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3390BB01</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT65M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-2-SEC16-POS41">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3390BB01</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260007240</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT35M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-2-SEC16-POS42">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260007240</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260003731</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT20M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-3">
+      <JourneyPatternTimingLink id="JPSection-3-SEC3-POS10">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT45M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-3-SEC8-POS22">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>079073001Z</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT80M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-3-SEC7-POS19">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>079073001Z</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>4100024PARWS</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT40M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-4">
+      <JourneyPatternTimingLink id="JPSection-4-SEC3-POS10">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT45M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-4-SEC8-POS22">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>079073001Z</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT80M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-4-SEC7-POS19">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>079073001Z</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>4100024PARWS</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT40M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-5">
+      <JourneyPatternTimingLink id="JPSection-5-SEC3-POS10">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT45M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-5-SEC8-POS22">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>079073001Z</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT80M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-5-SEC7-POS19">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>079073001Z</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>4100024PARWS</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT40M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-6">
+      <JourneyPatternTimingLink id="JPSection-6-SEC18-POS45">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>450017207</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030004</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT30M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-6-SEC18-POS46">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030004</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <WaitTime>PT5M</WaitTime>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT35M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-6-SEC18-POS47">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT40M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-7">
+      <JourneyPatternTimingLink id="JPSection-7-SEC18-POS45">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>450017207</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030004</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT30M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-7-SEC18-POS46">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030004</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <WaitTime>PT5M</WaitTime>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT35M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-7-SEC18-POS47">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT40M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-8">
+      <JourneyPatternTimingLink id="JPSection-8-SEC21-POS55">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>079073001Z</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT80M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-8-SEC20-POS53">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT45M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-8-SEC20-POS54">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT235M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-9">
+      <JourneyPatternTimingLink id="JPSection-9-SEC21-POS55">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>079073001Z</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT80M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-9-SEC20-POS53">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT45M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-9-SEC20-POS54">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT235M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-10">
+      <JourneyPatternTimingLink id="JPSection-10-SEC20-POS50">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>41000008NC67</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>4100024PARWS</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT35M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-10-SEC20-POS51">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>4100024PARWS</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>079073001Z</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT40M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-11">
+      <JourneyPatternTimingLink id="JPSection-11-SEC20-POS50">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>41000008NC67</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>4100024PARWS</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT35M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-11-SEC20-POS51">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>4100024PARWS</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>079073001Z</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT40M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-12">
+      <JourneyPatternTimingLink id="JPSection-12-SEC23-POS57">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT40M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-12-SEC23-POS58">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT230M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-13">
+      <JourneyPatternTimingLink id="JPSection-13-SEC23-POS57">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT40M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-13-SEC23-POS58">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT230M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-14">
+      <JourneyPatternTimingLink id="JPSection-14-SEC2-POS8">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT210M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-15">
+      <JourneyPatternTimingLink id="JPSection-15-SEC2-POS8">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT210M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-16">
+      <JourneyPatternTimingLink id="JPSection-16-SEC2-POS8">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT210M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-17">
+      <JourneyPatternTimingLink id="JPSection-17-SEC3-POS10">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT45M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-18">
+      <JourneyPatternTimingLink id="JPSection-18-SEC3-POS10">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT45M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-19">
+      <JourneyPatternTimingLink id="JPSection-19-SEC3-POS10">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT45M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-20">
+      <JourneyPatternTimingLink id="JPSection-20-SEC5-POS12">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT225M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-21">
+      <JourneyPatternTimingLink id="JPSection-21-SEC5-POS12">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT225M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-22">
+      <JourneyPatternTimingLink id="JPSection-22-SEC7-POS20">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>4100024PARWS</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>41000008NC67</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT35M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-23">
+      <JourneyPatternTimingLink id="JPSection-23-SEC7-POS20">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>4100024PARWS</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>41000008NC67</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT35M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-24">
+      <JourneyPatternTimingLink id="JPSection-24-SEC7-POS16">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT220M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-25">
+      <JourneyPatternTimingLink id="JPSection-25-SEC7-POS16">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT220M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-26">
+      <JourneyPatternTimingLink id="JPSection-26-SEC18-POS48">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT245M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-27">
+      <JourneyPatternTimingLink id="JPSection-27-SEC18-POS48">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT245M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-28">
+      <JourneyPatternTimingLink id="JPSection-28-SEC20-POS54">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT235M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-29">
+      <JourneyPatternTimingLink id="JPSection-29-SEC20-POS54">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT235M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-30">
+      <JourneyPatternTimingLink id="JPSection-30-SEC16-POS39">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT45M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-31">
+      <JourneyPatternTimingLink id="JPSection-31-SEC16-POS39">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT45M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-32">
+      <JourneyPatternTimingLink id="JPSection-32-SEC27-POS59">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT50M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-33">
+      <JourneyPatternTimingLink id="JPSection-33-SEC27-POS59">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT50M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-34">
+      <JourneyPatternTimingLink id="JPSection-34-SEC1-POS1">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>049004705400</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT80M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-34-SEC1-POS2">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>049004705400</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>4200F156472</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT45M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-34-SEC1-POS3">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>4200F156472</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260003731</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT30M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-34-SEC1-POS4">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260003731</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260007240</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT30M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-34-SEC1-POS5">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260007240</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT65M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-34-SEC1-POS6">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <WaitTime>PT5M</WaitTime>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT40M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-34-SEC1-POS7">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT80M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-35">
+      <JourneyPatternTimingLink id="JPSection-35-SEC2-POS9">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT60M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-36">
+      <JourneyPatternTimingLink id="JPSection-36-SEC4-POS11">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT255M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-37">
+      <JourneyPatternTimingLink id="JPSection-37-SEC5-POS13">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT65M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-38">
+      <JourneyPatternTimingLink id="JPSection-38-SEC6-POS14">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT285M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-38-SEC6-POS15">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT75M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-39">
+      <JourneyPatternTimingLink id="JPSection-39-SEC7-POS17">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <WaitTime>PT5M</WaitTime>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT55M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-39-SEC7-POS18">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>079073001Z</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT90M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-39-SEC7-POS19">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>079073001Z</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>4100024PARWS</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT40M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-40">
+      <JourneyPatternTimingLink id="JPSection-40-SEC8-POS21">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT260M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-41">
+      <JourneyPatternTimingLink id="JPSection-41-SEC10-POS23">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT250M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-42">
+      <JourneyPatternTimingLink id="JPSection-42-SEC12-POS24">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT240M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-42-SEC12-POS25">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT50M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-43">
+      <JourneyPatternTimingLink id="JPSection-43-SEC13-POS26">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450014781</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT40M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-43-SEC13-POS27">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450014781</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450017590</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT35M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-43-SEC13-POS28">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450017590</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>450017207</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT30M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-44">
+      <JourneyPatternTimingLink id="JPSection-44-SEC14-POS29">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>490014051N</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260003731</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT135M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-44-SEC14-POS30">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260003731</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260007240</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT20M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-44-SEC14-POS31">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260007240</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>3390BB01</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT30M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-45">
+      <JourneyPatternTimingLink id="JPSection-45-SEC15-POS32">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>1800SHIC0G1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450014781</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT60M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-45-SEC15-POS33">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450014781</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT55M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-45-SEC15-POS34">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260007240</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT60M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-45-SEC15-POS35">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260007240</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260003731</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT25M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-45-SEC15-POS36">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260003731</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>4200F156471</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT30M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-45-SEC15-POS37">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>4200F156471</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>049004705400</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT45M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-45-SEC15-POS38">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>049004705400</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT80M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-46">
+      <JourneyPatternTimingLink id="JPSection-46-SEC16-POS43">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260003731</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT165M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-47">
+      <JourneyPatternTimingLink id="JPSection-47-SEC17-POS44">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>260003731</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT150M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-48">
+      <JourneyPatternTimingLink id="JPSection-48-SEC19-POS49">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT210M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-49">
+      <JourneyPatternTimingLink id="JPSection-49-SEC20-POS52">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>079073001Z</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT100M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-49-SEC20-POS53">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>450030220</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT45M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-50">
+      <JourneyPatternTimingLink id="JPSection-50-SEC22-POS56">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>4100024PARWS</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>079073001Z</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT40M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-51">
+      <JourneyPatternTimingLink id="JPSection-51-SEC27-POS60">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT220M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPSection-52">
+      <JourneyPatternTimingLink id="JPSection-52-SEC28-POS61">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370010201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>490016736W</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT219M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+  </JourneyPatternSections>
+  <Operators>
+    <Operator id="OId_MEGA">
+      <OperatorCode>MEGA</OperatorCode>
+      <OperatorShortName>Megabus</OperatorShortName>
+      <OperatorNameOnLicence>Stagecoach Megabus</OperatorNameOnLicence>
+    </Operator>
+  </Operators>
+  <Services>
+    <Service>
+      <ServiceCode>M12_MEGA</ServiceCode>
+      <Lines>
+        <Line id="l_M12_MEGA">
+          <LineName>M12</LineName>
+        </Line>
+      </Lines>
+      <OperatingPeriod>
+        <StartDate>2014-03-31</StartDate>
+        <EndDate>2099-12-31</EndDate>
+      </OperatingPeriod>
+      <RegisteredOperatorRef>OId_MEGA</RegisteredOperatorRef>
+      <StopRequirements>
+        <NoNewStopsRequired />
+      </StopRequirements>
+      <Mode>coach</Mode>
+      <StandardService>
+        <Origin>1800SHIC0G1</Origin>
+        <Destination>490016736W</Destination>
+        <JourneyPattern id="JP83">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-34</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP84">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-14</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-35</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP85">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-15</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-17</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP86">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-36</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-18</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP87">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-20</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-37</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP88">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-38</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP89">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-24</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-39</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-22</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP90">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-40</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-3</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-23</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP91">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-25</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-4</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP92">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-41</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-5</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP93">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-21</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-19</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP96">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-42</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP97">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-16</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-43</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP98">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-44</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP99">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-45</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP100">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-1</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-46</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP101">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-2</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-47</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP102">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-6</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-26</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP103">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-7</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-48</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP104">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-10</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-49</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-28</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP105">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-11</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-8</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP106">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-50</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-9</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP107">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-12</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP108">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-13</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP110">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-30</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-29</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP111">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-31</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-27</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP112">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-32</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-51</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP113">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-33</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JPSection-52</JourneyPatternSectionRefs>
+        </JourneyPattern>
+      </StandardService>
+    </Service>
+  </Services>
+  <VehicleJourneys>
+    <VehicleJourney>
+      <PrivateCode>J79</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToSunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2016-03-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J79</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP83</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>01:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>CN03A</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToSunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2014-10-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>CN03A</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP84</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>08:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>CN03B</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Monday />
+            <Tuesday />
+            <Wednesday />
+            <Thursday />
+            <Saturday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2014-12-26</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>CN03B</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP85</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>11:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J91</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2015-04-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J91</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP86</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>11:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J81</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Monday />
+            <Tuesday />
+            <Wednesday />
+            <Thursday />
+            <Saturday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2015-05-03</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J81</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP87</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>13:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J82</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2015-04-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J82</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP88</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>13:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J15</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Monday />
+            <Tuesday />
+            <Wednesday />
+            <Thursday />
+            <Saturday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2015-05-03</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J15</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP89</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>15:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J16</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2014-12-25</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J16</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP90</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>15:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>DU21</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>DU21</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP91</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>16:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J97</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2015-04-01</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J97</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP92</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>16:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>DU22</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2014-10-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>DU22</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP93</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>17:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J99</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2014-12-23</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J99</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <VehicleJourneyRef>J91</VehicleJourneyRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>17:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>RY04A</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Monday />
+            <Tuesday />
+            <Wednesday />
+            <Thursday />
+            <Saturday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2014-10-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>RY04A</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <VehicleJourneyRef>DU22</VehicleJourneyRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>18:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J101</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2014-12-25</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J101</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP96</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>18:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J87</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Monday />
+            <Tuesday />
+            <Wednesday />
+            <Thursday />
+            <Saturday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2014-10-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J87</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP97</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>19:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J29</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Monday />
+            <Tuesday />
+            <Wednesday />
+            <Thursday />
+            <Saturday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2014-12-26</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J29</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP98</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>21:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>SG36E</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToSunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2016-03-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>SG36E</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP99</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>23:45:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>RY05E</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2015-04-06</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>RY05E</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP100</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>02:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J105</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2015-05-04</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J105</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP101</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>02:45:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J92</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2014-12-26</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J92</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP102</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>04:35:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J93</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2015-04-01</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J93</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP103</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>05:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J37</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2015-05-03</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J37</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP104</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>06:25:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J38</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2015-04-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J38</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP105</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>06:45:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J98</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2014-05-18</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J98</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP106</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>08:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J100</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2014-10-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J100</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP107</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>11:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>CN02A</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToSunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2014-12-26</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>CN02A</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP108</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>12:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J88</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToSunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2014-12-25</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J88</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <VehicleJourneyRef>CN02A</VehicleJourneyRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>13:45:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J94</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Monday />
+            <Tuesday />
+            <Wednesday />
+            <Thursday />
+            <Saturday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2014-10-05</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J94</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP110</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>16:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J95</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2015-05-04</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J95</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP111</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>16:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J56</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2014-05-18</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J56</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP112</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>18:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J57</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>COACH</VehicleTypeCode>
+          <Description>COACH</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Friday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2014-03-31</StartDate>
+              <EndDate>2015-04-06</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J57</VehicleJourneyCode>
+      <ServiceRef>M12_MEGA</ServiceRef>
+      <LineRef>l_M12_MEGA</LineRef>
+      <JourneyPatternRef>JP113</JourneyPatternRef>
+      <Note>
+        <NoteCode>MB1</NoteCode>
+        <NoteText>Book at megabus.com or 0900 1600900 (65p/min + network charges)</NoteText>
+      </Note>
+      <DepartureTime>19:30:00</DepartureTime>
+    </VehicleJourney>
+  </VehicleJourneys>
+</TransXChange>

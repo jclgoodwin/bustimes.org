@@ -1,6 +1,8 @@
 # coding=utf-8
 import os
 import xml.etree.cElementTree as ET
+import zipfile
+from freezegun import freeze_time
 from django.test import TestCase
 from django.contrib.gis.geos import Point
 from ...models import Operator, Service, Region, StopPoint
@@ -48,10 +50,28 @@ class ImportServicesTest(TestCase):
 
         cls.do_service('ea_21-13B-B-y08-1', 'EA')
         cls.ea_service = Service.objects.get(pk='ea_21-13B-B-y08')
-        cls.do_service('Megabus_Megabus14032016 163144_MEGA_M11A', 'GB', {'MEGAM11A': 'Belgravia - Liverpool'})
-        cls.gb_service = Service.objects.get(pk='M11A_MEGA')
         cls.do_service('SVRABBN017', 'S')
         cls.sc_service = Service.objects.get(pk='ABBN017')
+
+        # simulate a National Coach Service Database zip file
+        ncsd_zipfile_path = os.path.join(DIR, 'fixtures/NCSD.zip')
+        with zipfile.ZipFile(ncsd_zipfile_path, 'a') as ncsd_zipfile:
+            cls.write_file_to_zipfile(ncsd_zipfile, 'Megabus_Megabus14032016 163144_MEGA_M11A.xml')
+            cls.write_file_to_zipfile(ncsd_zipfile, 'Megabus_Megabus14032016 163144_MEGA_M12.xml')
+            ncsd_zipfile.writestr(
+                'IncludedServices.csv',
+                'Operator,LineName,Description\nMEGA,M11A,Belgravia - Liverpool\nMEGA,M12,Shudehill - Victoria'
+            )
+        cls.command.handle_region(ncsd_zipfile_path)
+        # clean up
+        os.remove(ncsd_zipfile_path)
+
+        cls.gb_m11a = Service.objects.get(pk='M11A_MEGA')
+        cls.gb_m12 = Service.objects.get(pk='M12_MEGA')
+
+    @staticmethod
+    def write_file_to_zipfile(open_zipfile, filename):
+        open_zipfile.write(os.path.join(DIR, 'fixtures', filename), filename)
 
     def test_sanitize_description(self):
         testcases = (
@@ -117,6 +137,7 @@ class ImportServicesTest(TestCase):
         with open(path) as xml_file:
             cls.command.do_service(xml_file, region, filename, service_descriptions)
 
+    @freeze_time('1 October 2016')
     def test_do_service_ea(self):
         service = self.ea_service
 
@@ -141,8 +162,8 @@ class ImportServicesTest(TestCase):
             </tr>
         """, html=True)
 
-    def test_do_service_ncsd(self):
-        service = self.gb_service
+    def test_do_service_m11a(self):
+        service = self.gb_m11a
 
         self.assertEqual(str(service), 'M11A - Belgravia - Liverpool')
         self.assertTrue(service.show_timetable)
@@ -166,6 +187,31 @@ class ImportServicesTest(TestCase):
             """,
             html=True
         )
+
+    def test_do_service_m12(self):
+        service = self.gb_m12
+
+        res = self.client.get(service.get_absolute_url())
+        groupings = res.context_data['timetables'][0].groupings
+        outbound_stops = [str(row.part.stop) for row in groupings[0].rows]
+        inbound_stops = [str(row.part.stop) for row in groupings[1].rows]
+        self.assertEqual(outbound_stops, [
+            'Belgravia Victoria Coach Station', 'Kingston District Centre', 'Rugby ASDA',
+            'Fosse Park ASDA', 'Loughborough Holywell Way', 'Nottingham Broad Marsh Bus Station',
+            'Meadowhall Interchange', 'Leeds City Centre York Street',
+            'Bradford City Centre Hall Ings', 'Huddersfield Town Centre Market Street',
+            'Leeds City Centre Bus Stn', 'Middlesbrough Bus Station Express Lounge',
+            'Sunderland Interchange', 'Newcastle upon Tyne John Dobson Street',
+            'Shudehill Interchange'
+        ])
+        self.assertEqual(inbound_stops, [
+            'Newcastle upon Tyne John Dobson Street', 'Sunderland Interchange',
+            'Middlesbrough Bus Station Express Lounge', 'Huddersfield Town Centre Market Street',
+            'Bradford City Centre Interchange', 'Leeds City Centre Bus Stn',
+            'Shudehill Interchange', 'Leeds City Centre York Street', 'Meadowhall Interchange',
+            'Nottingham Broad Marsh Bus Station', 'Loughborough Holywell Way', 'Fosse Park ASDA',
+            'Rugby ASDA', 'Kingston District Centre', 'Victoria Coach Station Arrivals'
+        ])
 
     def test_do_service_scotland(self):
         service = self.sc_service
