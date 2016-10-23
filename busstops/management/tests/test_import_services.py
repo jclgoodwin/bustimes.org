@@ -62,7 +62,7 @@ class ImportServicesTest(TestCase):
                 'IncludedServices.csv',
                 'Operator,LineName,Description\nMEGA,M11A,Belgravia - Liverpool\nMEGA,M12,Shudehill - Victoria'
             )
-        cls.command.handle_region(ncsd_zipfile_path)
+        cls.command.handle(filenames=[ncsd_zipfile_path])
         # clean up
         os.remove(ncsd_zipfile_path)
 
