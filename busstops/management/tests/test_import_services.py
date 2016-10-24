@@ -36,6 +36,7 @@ class ImportServicesTest(TestCase):
                 <txc:TradingName>BLUE TRIANGLE BUSES LIMITED</txc:TradingName>
             </txc:Operator>
         """)
+        cls.rjs_of_wem = Operator.objects.create(pk='RJWS', region_id='W', name='RJs of Wem')
 
         for atco_code, common_name, indicator, lat, lng in (
                 ('639004572', 'Bulls Head', 'adj', -2.5042125060, 53.7423055225),
@@ -128,6 +129,15 @@ class ImportServicesTest(TestCase):
 
         # test SPECIAL_OPERATOR_TRADINGNAMES
         self.assertEqual(self.blue_triangle, self.command.get_operator(self.blue_triangle_element))
+
+        self.assertEqual(self.rjs_of_wem, self.command.get_operator(ET.fromstring("""
+            <Operator id="OId_RJW">
+                <OperatorCode>RJW</OperatorCode>
+                <OperatorShortName>R. J's of Wem</OperatorShortName>
+                <OperatorNameOnLicence>R. J's of Wem</OperatorNameOnLicence>
+                <TradingName>R. J's of Wem</TradingName>
+            </Operator>
+        """)))
 
     @classmethod
     def do_service(cls, filename, region, service_descriptions=None):

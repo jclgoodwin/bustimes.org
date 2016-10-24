@@ -70,7 +70,8 @@ SPECIAL_OPERATOR_TRADINGNAMES = {
     'King Harry Ferry Co': 'KHFC',
     'Fal River Ferries': 'KHFC',
     'KPMG THAMES CLIPPERS': 'NTHC',
-    'Stagecoach on Teesside': 'SCNW'
+    'Stagecoach on Teesside': 'SCNW',
+    'R. J\'s of Wem': 'RJWS'
 }
 # map OperatorCodes to operator IDs (ditto, where there is no TradingName):
 SPECIAL_OPERATOR_CODES = {
