@@ -18,7 +18,6 @@ import xml.etree.cElementTree as ET
 
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.core.management.base import BaseCommand
-from django.core.cache import cache
 from django.db import transaction
 
 from txc.txc import Timetable, sanitize_description_part
@@ -310,7 +309,6 @@ class Command(BaseCommand):
                 basename = filename[:-4]
                 with open('%s/%s' % (self.pickle_dir, basename), 'wb') as open_file:
                     pickle.dump(timetable, open_file)
-                # cache.set('%s/%s' % (self.region_id, basename.replace(' ', '')), timetable)
 
         except (AttributeError, IndexError) as error:
             logger.warning('%s, %s', error, filename)
@@ -370,7 +368,9 @@ class Command(BaseCommand):
                 with archive.open('IncludedServices.csv') as csv_file:
                     reader = csv.DictReader(line.decode('utf-8') for line in csv_file)
                     # e.g. {'NATX323': 'Cardiff - Liverpool'}
-                    self.service_descriptions = {row['Operator'] + row['LineName']: row['Description'] for row in reader}
+                    self.service_descriptions = {
+                       row['Operator'] + row['LineName']: row['Description'] for row in reader
+                    }
             else:
                 self.service_descriptions = None
 
