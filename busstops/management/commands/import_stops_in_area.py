@@ -3,9 +3,12 @@ Usage:
 
     $ ./manage.py import_stops_in_area < StopsInArea.csv
 """
-from __future__ import print_function
+import logging
 from ..import_from_csv import ImportFromCSVCommand
 from ...models import StopArea, StopPoint
+
+
+logger = logging.getLogger(__name__)
 
 
 class Command(ImportFromCSVCommand):
@@ -16,4 +19,4 @@ class Command(ImportFromCSVCommand):
                 stop_area_id=row['StopAreaCode']
             )
         else:
-            print(row)
+            logger.error(row)

@@ -158,13 +158,16 @@ class ImportServicesTest(TestCase):
         """)))
 
     @classmethod
-    def do_service(cls, filename, region, service_descriptions=None):
+    def do_service(cls, filename, region_id):
         filename = '%s.xml' % filename
-        path = os.path.join(DIR, 'fixtures', filename)
-        if region == 'GB':
+        if region_id == 'GB':
             filename = 'NCSD_TXC/%s' % filename
+            cls.command.set_region('NCSD.zip')
+        else:
+            cls.command.set_region('%s.zip' % region_id)
+        path = os.path.join(DIR, 'fixtures', filename)
         with open(path) as xml_file:
-            cls.command.do_service(xml_file, region, filename, service_descriptions)
+            cls.command.do_service(xml_file, filename)
 
     @freeze_time('1 October 2016')
     def test_do_service_ea(self):
