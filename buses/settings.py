@@ -71,24 +71,16 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 HAYSTACK_IDENTIFIER_METHOD = 'buses.utils.get_identifier'
-#  HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
-
-if not DEBUG:
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-            'LOCATION': '127.0.0.1:11211',
-        }
-    }
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'USER': os.environ.get('DATABASE_USER'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-        'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
-        'NAME': os.environ.get('DATABASE_NAME', 'bustimes'),
-    },
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASS'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'NAME': os.environ.get('DB_NAME', 'bustimes'),
+        'PORT': os.environ.get('DB_PORT')
+    }
 }
 
 if DEBUG:
