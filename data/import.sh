@@ -8,15 +8,17 @@
 # Where 'username' and 'password' are your username and password for the
 # Traveline National Dataset FTP server
 
-function finish {
-    rmdir /var/lock/bustimes-import 2> /dev/null
-}
-trap finish EXIT SIGINT SIGTERM
 
+# I think it's important that this goes before the `trap`
 mkdir /var/lock/bustimes-import || {
     echo "An import appears to be running already"
     exit 1
 }
+
+function finish {
+    rmdir /var/lock/bustimes-import 2> /dev/null
+}
+trap finish EXIT SIGINT SIGTERM
 
 USERNAME=$1
 PASSWORD=$2
@@ -78,11 +80,8 @@ if compgen -G "*csv.zip" > /dev/null; then
         tr -d '\000' < Stops.csv | ../../manage.py import_stops
         echo "  Stop areas"
         tr -d '\000' < StopAreas.csv | ../../manage.py import_stop_areas
-    done
-    for file in *csv.zip; do
-        echo " $file"
         echo "  Stops in area"
-        tr -d '\000' < StopsInArea.csv |../../manage.py import_stops_in_area || continue
+        tr -d '\000' < StopsInArea.csv | ../../manage.py import_stops_in_area || continue
         rm "$file"
     done
 fi
