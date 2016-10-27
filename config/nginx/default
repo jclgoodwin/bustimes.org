@@ -43,6 +43,10 @@ server {
         proxy_max_temp_file_size 0;
     }
 
+    location /htmlcov/ {
+        root /home/josh/bustimes.org.uk;
+    }
+
     rewrite ^(.*)&resp_fmts=3$ $1 permanent;
 
     location /static/ {

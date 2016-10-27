@@ -10,14 +10,14 @@ sub vcl_recv {
         return (pass);
     }
 
-    if (req.url ~ "/departures" &&
-        (req.http.User-Agent ~ "(?i)(ads|google|bing|msn|yandex|baidu|ro|career|seznam|)bot" ||
-         req.http.User-Agent ~ "(?i)(baidu|jike|symantec)spider" ||
-         req.http.User-Agent ~ "(?i)scanner|slurp|bing" ||
-         req.http.User-Agent ~ "(?i)(web)crawler")
-    ) {
-        return (synth (200, ""));
-    }
+#    if (req.url ~ "/departures" &&
+#        (req.http.User-Agent ~ "(?i)(ads|google|bing|msn|yandex|baidu|ro|career|seznam|)bot" ||
+#         req.http.User-Agent ~ "(?i)(baidu|jike|symantec)spider" ||
+#         req.http.User-Agent ~ "(?i)scanner|slurp|bing" ||
+#         req.http.User-Agent ~ "(?i)(web)crawler")
+#    ) {
+#        return (synth (200, ""));
+#    }
 
     unset req.http.Cookie;
 }
