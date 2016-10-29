@@ -369,7 +369,7 @@ class Command(BaseCommand):
                     reader = csv.DictReader(line.decode('utf-8') for line in csv_file)
                     # e.g. {'NATX323': 'Cardiff - Liverpool'}
                     self.service_descriptions = {
-                       row['Operator'] + row['LineName']: row['Description'] for row in reader
+                        row['Operator'] + row['LineName']: row['Description'] for row in reader
                     }
             else:
                 self.service_descriptions = None

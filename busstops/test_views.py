@@ -204,7 +204,7 @@ class ViewsTests(TestCase):
             self.assertContains(response, 'http://isyourgirlfriendahorse.com')
 
         self.assertContains(amphtml_response, '<style amp-custom>')
-        self.assertContains(amphtml_response, "\"data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10'%3E%3Cpath d='M4.3 3.5H.5v6h6V5.7M4.5.5v1l1 1-3 3 2 2 3-3 1 1h1v-5z' fill='white' stroke='%2361c'/%3E%3C/svg%3E\"")
+        self.assertContains(amphtml_response, "\"data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000")
 
     def test_operator_not_found(self):
         """An operator with no services should should return a 404 response"""
