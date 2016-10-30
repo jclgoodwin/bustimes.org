@@ -655,10 +655,11 @@ class OperatingPeriod(DateRange):
     def __str__(self):
         if self.start == self.end:
             return self.start.strftime('on %-d %B %Y')
-        if self.starts_in_future():
-            if self.end is None or self.end.year > date.today().year + 1:
+        today = date.today()
+        if self.start > today:
+            if self.end is None or self.end.year > today.year + 1:
                 return self.start.strftime('from %-d %B %Y')
-            elif self.end is not None and self.start.year == self.end.year:
+            if self.start.year == self.end.year:
                 if self.start.month == self.end.month:
                     start_format = '%-d'
                 else:
@@ -670,7 +671,7 @@ class OperatingPeriod(DateRange):
             )
         # The end date is often bogus,
         # but show it if the period seems short enough to be relevant
-        elif self.end is not None and (self.end - self.start).days < 40:
+        if self.end is not None and (self.end - today).days < 40:
             return self.end.strftime('until %-d %B %Y')
         return ''
 
