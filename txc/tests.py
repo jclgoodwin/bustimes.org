@@ -22,7 +22,7 @@ class TimetableTest(TestCase):
         timetable_ea = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-1.xml')
 
         self.assertEqual('Monday to Sunday', str(timetable_ea.operating_profile))
-        self.assertEqual('', str(timetable_ea.operating_period))
+        self.assertEqual('until 21 October 2016', str(timetable_ea.operating_period))
 
         self.assertEqual('Norwich - Wymondham - Attleborough', str(timetable_ea.groupings[0]))
         self.assertEqual(3, len(timetable_ea.groupings[0].column_heads))
@@ -212,6 +212,7 @@ class OperatingPeriodTest(TestCase):
         operating_period = txc.OperatingPeriod(element)
         self.assertEqual(str(operating_period), 'until 1 March 2015')
 
+    @freeze_time('2 February 2015')
     def test_long_range(self):
         """An OperatingPeriod longer than 40 days should not be displayed"""
         element = ET.fromstring("""
@@ -224,10 +225,7 @@ class OperatingPeriodTest(TestCase):
         self.assertEqual(str(operating_period), '')
 
     def test_past_range(self):
-        """
-        An OperatingPeriod starting and ending in different years in the past
-        should not be displayed
-        """
+        """An OperatingPeriod starting ending in the past"""
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
                 <StartDate>2001-05-01</StartDate>
@@ -235,4 +233,4 @@ class OperatingPeriodTest(TestCase):
             </OperatingPeriod>
         """)
         operating_period = txc.OperatingPeriod(element)
-        self.assertEqual(str(operating_period), '')
+        self.assertEqual(str(operating_period), 'until 1 June 2002')
