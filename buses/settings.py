@@ -70,7 +70,6 @@ HAYSTACK_CONNECTIONS = {
         'INDEX_NAME': 'haystack',
     },
 }
-HAYSTACK_IDENTIFIER_METHOD = 'buses.utils.get_identifier'
 
 DATABASES = {
     'default': {
