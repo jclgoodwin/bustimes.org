@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 DIR = os.path.dirname(os.path.realpath(__file__))
 
 # map names to operator IDs where there is no correspondence between the NOC DB and TNDS:
-SPECIAL_OPERATOR_TRADINGNAMES = {
+SPECIAL_OPERATOR_NAMES = {
     'Arriva Northumbria': 'ANUM',
     'Southwold Town Council': 'SWTC',
     'H.C.Chambers & Son': 'CHMB',
@@ -71,7 +71,8 @@ SPECIAL_OPERATOR_TRADINGNAMES = {
     'Fal River Ferries': 'KHFC',
     'KPMG THAMES CLIPPERS': 'NTHC',
     'Stagecoach on Teesside': 'SCNW',
-    'R. J\'s of Wem': 'RJWS'
+    'R. J\'s of Wem': 'RJWS',
+    'Owen\'s Travelmaster': 'OWML'
 }
 # map OperatorCodes to operator IDs (ditto, where there is no TradingName):
 SPECIAL_OPERATOR_CODES = {
@@ -179,8 +180,8 @@ class Command(BaseCommand):
         if operator_name in ('Replacement Service', 'UNKWN'):
             return None
 
-        if operator_name in SPECIAL_OPERATOR_TRADINGNAMES:
-            return Operator.objects.get(id=SPECIAL_OPERATOR_TRADINGNAMES[operator_name])
+        if operator_name in SPECIAL_OPERATOR_NAMES:
+            return Operator.objects.get(id=SPECIAL_OPERATOR_NAMES[operator_name])
 
         if operator_code in SPECIAL_OPERATOR_CODES:
             return Operator.objects.get(id=SPECIAL_OPERATOR_CODES[operator_code])

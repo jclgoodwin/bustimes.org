@@ -27,7 +27,7 @@ class Command(ImportFromCSVCommand):
             name in ('First', 'Arriva', 'Stagecoach') or
             name.startswith('inc.') or
             name.startswith('formerly') or
-            name in ('OWENS OF OSWESTRY COACHES LTD', 'Oakwood Travel')
+            name in ('Oakwood Travel')
         )
 
     @classmethod
@@ -46,7 +46,7 @@ class Command(ImportFromCSVCommand):
         """Given a CSV row (a list), returns an Operator object"""
 
         operator_id = row['NOCCODE'].replace('=', '')
-        if operator_id in ('TVSR', 'HBSY') or (operator_id == 'FMAN' and row['Duplicate'] != 'OK'):
+        if operator_id in ('TVSR', 'HBSY', 'OWML') or (operator_id == 'FMAN' and row['Duplicate'] != 'OK'):
             return None
 
         name = cls.get_name(row).replace('\'', '\u2019')  # Fancy apostrophe
