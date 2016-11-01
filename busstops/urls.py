@@ -1,6 +1,5 @@
-from django.conf.urls import url
+from django.conf.urls import include, url
 from django.conf import settings
-
 from django.contrib import staticfiles
 from . import views
 
@@ -26,4 +25,9 @@ urlpatterns = [
 ]
 
 if settings.DEBUG and hasattr(staticfiles, 'views'):
-    urlpatterns.append(url(r'^(?P<path>serviceworker.js)$', staticfiles.views.serve))
+    import debug_toolbar
+
+    urlpatterns += [
+        url(r'^(?P<path>serviceworker.js)$', staticfiles.views.serve),
+        url(r'^__debug__/', include(debug_toolbar.urls))
+    ]
