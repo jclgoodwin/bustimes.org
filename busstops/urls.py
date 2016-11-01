@@ -26,6 +26,4 @@ urlpatterns = [
 ]
 
 if settings.DEBUG and hasattr(staticfiles, 'views'):
-    urlpatterns += [
-        url(r'^(?P<path>serviceworker.js)$', staticfiles.views.serve),
-    ]
+    urlpatterns.append(url(r'^(?P<path>serviceworker.js)$', staticfiles.views.serve))
