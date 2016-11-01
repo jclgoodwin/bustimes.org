@@ -72,7 +72,7 @@ SPECIAL_OPERATOR_NAMES = {
     'KPMG THAMES CLIPPERS': 'NTHC',
     'Stagecoach on Teesside': 'SCNW',
     'R. J\'s of Wem': 'RJWS',
-    'Owen\'s Travelmaster': 'OWML'
+    'Owen\'s Travelmaster': 'OWNC'
 }
 # map OperatorCodes to operator IDs (ditto, where there is no TradingName):
 SPECIAL_OPERATOR_CODES = {
