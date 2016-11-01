@@ -1,7 +1,6 @@
 """Tests for the buses app
 """
 from django.test import TestCase
-from busstops.models import Operator
 from . import utils
 
 
