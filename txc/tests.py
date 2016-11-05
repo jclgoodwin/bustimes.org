@@ -62,7 +62,7 @@ class TimetableTest(TestCase):
         )
         # Test abbreviations (check the colspan and rowspan attributes of Cells)
         self.assertEqual(timetable_ne.groupings[0].rows[0].times[3].colspan, 6)
-        self.assertEqual(timetable_ne.groupings[0].rows[0].times[3].rowspan, 88)
+        self.assertEqual(timetable_ne.groupings[0].rows[0].times[3].rowspan, 117)
         self.assertEqual(timetable_ne.groupings[1].rows[0].times[-2].colspan, 2)
 
     def test_timetable_scotland(self):

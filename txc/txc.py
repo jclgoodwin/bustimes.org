@@ -188,10 +188,16 @@ class Row(object):
         row.parent = self.parent
         if row.part.stop.atco_code + qualifier not in self.parent:
             self.parent[row.part.stop.atco_code + qualifier] = row
+            row.next = self.next
+            self.next = row
         else:
             row.part.row = self.parent[row.part.stop.atco_code + qualifier]
-        row.next = self.next
-        self.next = row
+
+    def is_before(self, row):
+        return row is not None and self.next is not None and (
+            self.next.part.stop.atco_code == row.part.stop.atco_code
+            or self.next.is_before(row)
+        )
 
 
 class Cell(object):
@@ -336,25 +342,26 @@ class JourneyPattern(object):
             new = self.grouping.rows.head is None
             previous = None
             for i, row in enumerate(rows):
+                atco_code = row.part.stop.atco_code
                 if row.part.stop is None:
                     break
                 if new:
-                    if row.part.stop.atco_code in self.grouping.rows:
+                    if atco_code in self.grouping.rows:
                         self.grouping.rows.append(row, qualifier=str(i))
                     else:
                         self.grouping.rows.append(row)
-                elif row.part.stop.atco_code in self.grouping.rows:
-                    if row.part.stop.atco_code in visited_stops:
+                elif atco_code in self.grouping.rows:
+                    if atco_code in visited_stops or self.grouping.rows[atco_code].is_before(previous):
                         previous.append(row, qualifier=str(i))
                     else:
-                        row.part.row = self.grouping.rows[row.part.stop.atco_code]
+                        row.part.row = self.grouping.rows[atco_code]
                         row = row.part.row
                 elif previous is None:
                     self.grouping.rows.prepend(row)
                 else:
                     previous.append(row)
                 previous = row
-                visited_stops.append(row.part.stop.atco_code)
+                visited_stops.append(atco_code)
 
 
 class JourneyPatternSection(object):
