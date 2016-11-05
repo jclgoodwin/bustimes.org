@@ -64,6 +64,13 @@ def correct_description(description):
     return description
 
 
+def get_servicedorganisation_name(element):
+    name_element = element.find('txc:Name', NS)
+    if name_element is not None:
+        return name_element.text
+    return element.find('txc:OrganisationCode', NS).text
+
+
 class Stop(object):
     """A TransXChange StopPoint."""
     stop = None
@@ -143,27 +150,25 @@ class Rows(object):
     def prepend(self, row):
         if row.part.stop.atco_code not in self:
             self[row.part.stop.atco_code] = row
+            row.next = self.head
+            self.head = row
+            if self.tail is None:
+                self.tail = row
+            row.parent = self
         else:
             row.part.row = self[row.part.stop.atco_code]
-
-        row.next = self.head
-        self.head = row
-        if self.tail is None:
-            self.tail = row
-        row.parent = self
 
     def append(self, row, qualifier=''):
         if row.part.stop.atco_code + qualifier not in self:
             self[row.part.stop.atco_code + qualifier] = row
+            row.parent = self
+            if self.head is None:
+                self.head = row
+            if self.tail is not None:
+                self.tail.next = row
+            self.tail = row
         else:
             row.part.row = self[row.part.stop.atco_code + qualifier]
-
-        row.parent = self
-        if self.head is None:
-            self.head = row
-        if self.tail is not None:
-            self.tail.next = row
-        self.tail = row
 
 
 class Row(object):
@@ -521,10 +526,10 @@ class ServicedOrganisation(object):
             noop_workingdays_element = noop_element.find('txc:WorkingDays/txc:ServicedOrganisationRef', NS)
 
             if noop_hols_element is not None:
-                self.nonoperation_holidays = noop_hols_element.text
+                self.nonoperation_holidays = servicedorgs[noop_hols_element.text]
 
             if noop_workingdays_element is not None:
-                self.nonoperation_workingdays = noop_workingdays_element.text
+                self.nonoperation_workingdays = servicedorgs[noop_workingdays_element.text]
 
         # Days of operation:
         op_element = element.find('txc:DaysOfOperation', NS)
@@ -533,10 +538,10 @@ class ServicedOrganisation(object):
             op_workingdays_element = op_element.find('txc:WorkingDays/txc:ServicedOrganisationRef', NS)
 
             if op_hols_element is not None:
-                self.operation_holidays = op_hols_element.text
+                self.operation_holidays = servicedorgs[op_hols_element.text]
 
             if op_workingdays_element is not None:
-                self.operation_workingdays = op_workingdays_element.text
+                self.operation_workingdays = servicedorgs[op_workingdays_element.text]
 
 
 class DayOfWeek(object):
@@ -607,14 +612,17 @@ class OperatingProfile(object):
         #     string = string + '\n' + ', '.join(map(str, self.operation_days))
 
         if hasattr(self, 'servicedorganisation'):
-            if hasattr(self.servicedorganisation, 'nonoperation_holidays'):
-                string += '\nSchool days'
-            if hasattr(self.servicedorganisation, 'operation_holidays'):
-                string += '\nSchool holidays'
-            if hasattr(self.servicedorganisation, 'nonoperation_workingdays'):
-                string += '\nSchool holidays'
-            if hasattr(self.servicedorganisation, 'operation_workingdays'):
-                string += '\nSchool days'
+            for attr, text in (
+                    ('nonoperation_holidays', 'School days'),
+                    ('operation_holidays', 'School holidays'),
+                    ('nonoperation_workingdays', 'School holidays'),
+                    ('operation_workingdays', 'School days'),
+            ):
+                if (
+                        hasattr(self.servicedorganisation, attr)
+                        and getattr(self.servicedorganisation, attr).strip() != 'QE0 : BUS.CIF'
+                ):
+                    string += '\n%s' % text
 
         return string
 
@@ -738,7 +746,11 @@ class Timetable(object):
                 }
                 element.clear()
             elif tag == 'ServicedOrganisations':
-                servicedorgs = element
+                servicedorgs = {
+                    org_element.find('txc:OrganisationCode', NS).text:
+                    get_servicedorganisation_name(org_element)
+                    for org_element in element
+                }
             elif tag == 'VehicleJourneys':
                 # time calculation begins here:
                 journeys = self.__get_journeys(element, servicedorgs)
