@@ -473,6 +473,8 @@ class ServiceDetailView(DetailView):
                         'url': operator.url,
                         'text': '%s website' % operator.name
                     })
+        else:
+            context['breadcrumb'] = [self.object.region]
 
         return context
 
