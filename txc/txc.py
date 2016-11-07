@@ -260,6 +260,7 @@ class Grouping(object):
         difference = None
         foot_span = 0
         for i, journey in enumerate(self.journeys):
+            journey.do_operatingprofile_notes()
             if prev_journey:
                 if not journey.operating_profile and not prev_journey.operating_profile:
                     difference = time_between(journey.departure_time, prev_journey.departure_time)
@@ -497,6 +498,30 @@ class VehicleJourney(object):
             if len(row.times) == row_length:
                 row.times.append('')
 
+    def do_operatingprofile_notes(self):
+        if not self.notes and hasattr(self.operating_profile, 'servicedorganisation'):
+            org = self.operating_profile.servicedorganisation
+            school_days = org.nonoperation_holidays or org.operation_workingdays
+            school_holidays = org.nonoperation_workingdays or org.operation_holidays
+            if school_days is not None and school_holidays is None:
+                if 'QE0' in school_days:
+                    self.notes['Sch'] = 'Only operates on certain days'
+                elif 'College' in school_days:
+                    self.notes['Sch'] = 'College days only'
+                elif 'Uni' in school_days:
+                    self.notes['Sch'] = 'University days only'
+                else:
+                    self.notes['Sch'] = 'School days only'
+            elif school_holidays is not None and school_days is None:
+                if 'QE0' in school_holidays:
+                    self.notes['SH'] = 'Only operates on certain days'
+                elif 'College' in school_holidays:
+                    self.notes['SH'] = 'College holidays only'
+                elif 'Uni' in school_holidays:
+                    self.notes['SH'] = 'University days only'
+                else:
+                    self.notes['SH'] = 'School holidays only'
+
     def get_order(self):
         if self.operating_profile:
             return (self.operating_profile.get_order(), self.departure_time)
@@ -519,6 +544,11 @@ class VehicleJourney(object):
 
 class ServicedOrganisation(object):
     def __init__(self, element, servicedorgs):
+        self.nonoperation_holidays = None
+        self.nonoperation_workingdays = None
+        self.operation_holidays = None
+        self.operation_workingdays = None
+
         # Days of non-operation:
         noop_element = element.find('txc:DaysOfNonOperation', NS)
         if noop_element is not None:
@@ -597,34 +627,11 @@ class OperatingProfile(object):
     def __str__(self):
         if self.regular_days:
             if len(self.regular_days) == 1:
-                string = '%ss' % self.regular_days[0]
-            elif len(self.regular_days) - 1 == self.regular_days[-1].day - self.regular_days[0].day:
-                string = '%s to %s' % (self.regular_days[0], self.regular_days[-1])
-            else:
-                string = '%ss and %ss' % ('s, '.join(map(str, self.regular_days[:-1])), self.regular_days[-1])
-        else:
-            string = ''
-
-        # if hasattr(self, 'nonoperation_days'):
-        #     string = string + '\nNot ' + ', '.join(map(str, self.nonoperation_days))
-
-        # if hasattr(self, 'operation_days'):
-        #     string = string + '\n' + ', '.join(map(str, self.operation_days))
-
-        if hasattr(self, 'servicedorganisation'):
-            for attr, text in (
-                    ('nonoperation_holidays', 'School days'),
-                    ('operation_holidays', 'School holidays'),
-                    ('nonoperation_workingdays', 'School holidays'),
-                    ('operation_workingdays', 'School days'),
-            ):
-                if (
-                        hasattr(self.servicedorganisation, attr)
-                        and getattr(self.servicedorganisation, attr).strip() != 'QE0 : BUS.CIF'
-                ):
-                    string += '\n%s' % text
-
-        return string
+                return '%ss' % self.regular_days[0]
+            if len(self.regular_days) - 1 == self.regular_days[-1].day - self.regular_days[0].day:
+                return '%s to %s' % (self.regular_days[0], self.regular_days[-1])
+            return '%ss and %ss' % ('s, '.join(map(str, self.regular_days[:-1])), self.regular_days[-1])
+        return ''
 
     def is_rubbish(self):
         return (

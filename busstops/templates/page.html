@@ -24,7 +24,7 @@
 {% block header %}
 <header>
     <div>
-        <a href="/" class="site-name">Bus Times</a>
+        <a href="/" class="site-name">{% if object.mode == 'ferry' %}Ferry{% else %}Bus{% endif %} Times</a>
         <ul>
             <li><a href="/map{% if object.latlong %}#{{ object.latlong.y }},{{ object.latlong.x }}{% endif %}">Map</a></li>
         </ul>

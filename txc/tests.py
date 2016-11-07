@@ -96,10 +96,10 @@ class TimetableTest(TestCase):
     def test_timetable_servicedorg(self):
         """Test a timetable with a ServicedOrganisation"""
         timetable_sw = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml')
-        self.assertEqual(
-            str(timetable_sw.groupings[0].column_heads[0].operatingprofile),
-            'Monday to Friday\nSchool days'
-        )
+        self.assertEqual(str(timetable_sw.groupings[0].column_heads[0].operatingprofile),
+                         'Monday to Friday')
+        self.assertEqual(timetable_sw.groupings[0].column_feet[0].notes,
+                         {'Sch': 'School days only'})
 
 
 class CellTest(TestCase):
