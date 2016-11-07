@@ -284,8 +284,8 @@ class Grouping(object):
                         abbreviate(self, i, in_a_row - 1, prev_difference)
                     in_a_row = 0
 
-                if str(prev_journey.notes) != str(journey.notes):
-                    self.column_feet.append(ColumnFoot(list(prev_journey.notes.values()), foot_span))
+                if prev_journey.notes != journey.notes:
+                    self.column_feet.append(ColumnFoot(prev_journey.notes, foot_span))
                     foot_span = 0
 
             head_span += 1
@@ -297,7 +297,7 @@ class Grouping(object):
         if in_a_row > 1:
             abbreviate(self, len(self.journeys), in_a_row - 1, prev_difference)
         self.column_heads.append(ColumnHead(prev_journey.operating_profile, head_span))
-        self.column_feet.append(ColumnFoot(list(prev_journey.notes.values()), foot_span))
+        self.column_feet.append(ColumnFoot(prev_journey.notes, foot_span))
         for row in self.rows:
             row.times = [time for time in row.times if time is not None]
 
