@@ -108,6 +108,8 @@ class Command(BaseCommand):
     "Command that imports bus services from a zip file"
 
     service_descriptions = None
+    pickle_dir = None
+    region_id = None
 
     @staticmethod
     def add_arguments(parser):

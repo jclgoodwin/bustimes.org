@@ -39,7 +39,7 @@ class ImportLiveStopsTest(TestCase):
             self.command.maybe_add_acislive_source(self.kent_stop,
                                                    self.cardiff, 'kent')
         self.kent_stop.refresh_from_db()
-        self.assertEquals(self.cardiff, self.kent_stop.live_sources.all()[0])
+        self.assertEqual(self.cardiff, self.kent_stop.live_sources.all()[0])
 
     def test_import_acisconnect(self):
         self.assertFalse(self.cardiff_stop.live_sources.all())

@@ -1,7 +1,7 @@
 from __future__ import print_function
+import sys
 import json
 import requests
-import sys
 from django.core.management.base import BaseCommand
 
 
