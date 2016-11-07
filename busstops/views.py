@@ -448,6 +448,7 @@ class ServiceDetailView(DetailView):
             context['stopusages'] = self.object.stopusage_set.all().select_related(
                 'stop__locality'
             ).defer('stop__locality__latlong').order_by('direction', 'order')
+            context['has_minor_stops'] = any(s.timing_status == 'OTH' for s in context['stopusages'])
         else:
             stops_dict = {stop.pk: stop for stop in self.object.stops.all().select_related(
                 'locality').defer('latlong', 'locality__latlong')}
