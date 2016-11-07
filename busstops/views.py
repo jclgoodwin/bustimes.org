@@ -351,8 +351,8 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         return context
 
 
-def stop_json(_, primary_key):
-    stop = get_object_or_404(StopPoint, atco_code=primary_key)
+def stop_json(_, pk):
+    stop = get_object_or_404(StopPoint, atco_code=pk)
     return JsonResponse({
         'atco_code': stop.atco_code,
         'naptan_code': stop.naptan_code,
@@ -378,10 +378,10 @@ def stop_json(_, primary_key):
     }, safe=False)
 
 
-def departures(request, primary_key):
-    stop = get_object_or_404(StopPoint, atco_code=primary_key)
+def departures(request, pk):
+    stop = get_object_or_404(StopPoint, atco_code=pk)
     context, max_age = live.get_departures(
-        stop, Service.objects.filter(stops=primary_key, current=True).defer('geometry')
+        stop, Service.objects.filter(stops=pk, current=True).defer('geometry')
     )
     if hasattr(context['departures'], 'get_departures'):
         context['departures'] = context['departures'].get_departures()
@@ -499,7 +499,7 @@ class ServiceDetailView(DetailView):
         return super(ServiceDetailView, self).render_to_response(context)
 
 
-def service_xml(_, primary_key):
-    service = get_object_or_404(Service, service_code=primary_key)
+def service_xml(_, pk):
+    service = get_object_or_404(Service, service_code=pk)
     bodies = (xml_file.read().decode() for xml_file in get_files_from_zipfile(service))
     return HttpResponse(bodies, content_type='text/plain')
