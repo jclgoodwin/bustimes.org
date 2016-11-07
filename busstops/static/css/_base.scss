@@ -232,8 +232,10 @@ table {
 
     a[href^=http]:after {
         content: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10'%3E%3Cpath d='M4.3 3.5H.5v6h6V5.7M4.5.5v1l1 1-3 3 2 2 3-3 1 1h1v-5z' fill='white' stroke='%2361c'/%3E%3C/svg%3E");
+        display: inline-block;
         margin-left: .25em;
         vertical-align: top;
+        width: 0;
     }
 }
 
@@ -488,12 +490,14 @@ input:not(:checked) + label {
         }
     }
 
-    .OTH {
-        th {
-            max-width: 0;
-            padding-left: 1em;
-        }
+    .OTH th {
+        max-width: 0;
+        padding-left: 1em;
     }
+}
+
+.route .OTH a {
+    padding-left: 1em;
 }
 
 .aside {
@@ -549,7 +553,7 @@ footer {
     .banner-ad {
         min-height: 3.125em;
         overflow: hidden;
-        padding: 1em;
+        padding: 1em .625em;
 
         img {
             border: 0;
