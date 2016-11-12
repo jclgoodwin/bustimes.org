@@ -5,13 +5,13 @@
 <h1>{{ region }}</h1>
 
 {% if areas %}
-	<h2>Areas in {{ region.the }}</h2>
+    <h2>Areas in {{ region.the }}</h2>
 
-	{% include 'list.html' with list=areas %}
+    {% include 'list.html' with list=areas %}
 {% endif %}
 
 {% if operators %}
-    <h2>Operators in {{ region.the }}</h2>
+    <h2>Transport operating companies in {{ region.the }}</h2>
 
     {% include 'list.html' with list=operators %}
 {% endif %}

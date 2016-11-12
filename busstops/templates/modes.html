@@ -1,0 +1,1 @@
+{% for mode in modes %}{% if forloop.first %}{{ mode.capitalize }}{% if forloop.last %} {{ noun }}{% endif %}{% elif forloop.last %} and {{ mode}} {{ noun }}{% else %}, {{ mode }}{% endif %}{% empty %}{{ noun.capitalize }}{% endfor %}

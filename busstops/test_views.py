@@ -2,6 +2,7 @@
 from django.test import TestCase
 from django.core import mail
 from django.contrib.gis.geos import Point
+from django.shortcuts import render
 from .models import Region, AdminArea, District, Locality, StopPoint, Operator, Service
 
 
@@ -232,3 +233,24 @@ class ViewsTests(TestCase):
             'Services operated by Ainsley',
             status_code=404
         )
+
+    def test_modes(self):
+        self.assertContains(render(None, 'modes.html', {
+            'modes': ['bus'],
+            'noun': 'services'
+        }), 'Bus services')
+        self.assertContains(render(None, 'modes.html', {
+            'noun': 'services'
+        }), 'Services')
+        self.assertContains(render(None, 'modes.html', {
+            'modes': ['bus', 'coach'],
+            'noun': 'services'
+        }), 'Bus and coach services')
+        self.assertContains(render(None, 'modes.html', {
+            'modes': ['bus', 'coach', 'tram'],
+            'noun': 'services'
+        }), 'Bus, coach and tram services')
+        self.assertContains(render(None, 'modes.html', {
+            'modes': ['bus', 'coach', 'tram', 'cable car'],
+            'noun': 'operators'
+        }), 'Bus, coach, tram and cable car operators')

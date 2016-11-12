@@ -291,6 +291,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
                 stops__locality=self.object,
                 current=True
             ).defer('geometry').distinct().order_by('service_code')
+            context['modes'] = {service.mode for service in context['services'] if service.mode}
 
         context['breadcrumb'] = (crumb for crumb in [
             self.object.admin_area.region,
@@ -328,9 +329,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         if text:
             context['text'] = text[0].upper() + text[1:]
 
-        context['modes'] = list({service.mode for service in
-                                 context['services'] if service.mode})
-        context['modes'].sort()
+        context['modes'] = {service.mode for service in context['services'] if service.mode}
 
         if self.object.stop_area_id is not None:
             context['nearby'] = StopPoint.objects.filter(stop_area=self.object.stop_area_id)
@@ -403,6 +402,7 @@ class OperatorDetailView(UppercasePrimaryKeyMixin, DetailView):
             'service_code').defer('geometry')
         if not context['services']:
             raise Http404()
+        context['modes'] = {service.mode for service in context['services'] if service.mode}
         areas = AdminArea.objects.filter(stoppoint__service__in=context['services']).distinct()
         context['breadcrumb'] = [self.object.region]
         if len(areas) == 1:
