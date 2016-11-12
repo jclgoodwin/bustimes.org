@@ -66,6 +66,14 @@ class TflDepartures(Departures):
         return 'http://api.tfl.gov.uk/StopPoint/%s/arrivals' % self.stop.pk
 
     def departures_from_response(self, res):
+        rows = res.json()
+        if rows:
+            name = rows[0]['stationName']
+            heading = int(rows[0]['bearing'])
+            if name != self.stop.common_name or heading != self.stop.heading:
+                self.stop.common_name = name
+                self.stop.heading = heading
+                self.stop.save()
         return ({
             'time': dateutil.parser.parse(item.get('expectedArrival')).astimezone(LOCAL_TIMEZONE),
             'service': self.get_service(item.get('lineName')),
@@ -269,11 +277,15 @@ def get_departures(stop, services):
     live_sources = stop.live_sources.values_list('name', flat=True)
 
     if 'TfL' in live_sources:
+        departures = TflDepartures(stop, services)
         return ({
-            'departures': TflDepartures(stop, services),
+            'departures': departures,
             'today': datetime.date.today(),
             'source': {
-                'url': 'https://tfl.gov.uk/bus/stop/%s/%s' % (stop.atco_code, slugify(stop.common_name)),
+                # use departures.stop instead of local stop,
+                # in case it was updated in departures_from_response
+                'url': 'https://tfl.gov.uk/bus/stop/%s/%s' % (departures.stop.atco_code,
+                                                              slugify(departures.stop.common_name)),
                 'name': 'Transport for London'
             }
         }, 60)
