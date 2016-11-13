@@ -11,10 +11,17 @@
      */
     function highlight(href, add) {
         var i,
-            regionShapeLinks = document.getElementById('svgmap').getElementsByTagName('a');
+            gb = '/regions/GB' === href,
+            regionShapeLinks = document.getElementById('svgmap');
+
+        if (gb) {
+            regionShapeLinks = regionShapeLinks.getElementsByTagName('g')[0];
+        }
+
+        regionShapeLinks = regionShapeLinks.getElementsByTagName('a');
 
         for (i = regionShapeLinks.length - 1; i >= 0; i -= 1) {
-            if ('/regions/GB' === href || regionShapeLinks[i].getAttributeNS('http://www.w3.org/1999/xlink', 'href') === href) {
+            if (gb || regionShapeLinks[i].getAttributeNS('http://www.w3.org/1999/xlink', 'href') === href) {
                 if (add) {
                     regionShapeLinks[i].setAttribute('class', 'highlight');
                 } else {

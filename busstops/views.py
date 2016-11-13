@@ -47,7 +47,7 @@ FIRST_OPERATORS = {
 def index(request):
     """The home page with a list of regions"""
     context = {
-        'regions': Region.objects.all().exclude(id='NI')
+        'regions': Region.objects.all().order_by('name')
     }
     return render(request, 'index.html', context)
 
