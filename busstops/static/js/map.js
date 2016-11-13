@@ -16,24 +16,18 @@
             i, // transient
             metaElements, // transient
             latLng, // transient
-            locations = [], // locations used to draw a polyline for bus routes
             mainLocations = [], // locations with labels
             labels = []; // label elements
 
         for (i = items.length - 1; i >= 0; i -= 1) {
-            if (items[i].getAttribute('itemtype') === 'https://schema.org/BusStop') {
+            if (items[i].getAttribute('itemtype') === 'https://schema.org/BusStop' && items[i].className != 'OTH') {
                 metaElements = items[i].getElementsByTagName('meta');
                 latLng = [
                     parseFloat(metaElements[0].getAttribute('content')),
                     parseFloat(metaElements[1].getAttribute('content'))
                 ];
-                if (items[i].className != '') {
-                    locations.push(latLng);
-                }
-                if (items[i].className != 'OTH') {
-                    mainLocations.push(latLng);
-                    labels.push(items[i]);
-                }
+                mainLocations.push(latLng);
+                labels.push(items[i]);
             }
         }
 
@@ -92,8 +86,13 @@
                 L.marker(mainLocations[i], {icon: pin}).addTo(map);
                 map.setView(mainLocations[i], 17);
             } else {
-                if (locations.length) {
-                    var polyline = L.polyline(locations, {color: '#000', weight: 2});
+                var polyline;
+                if (window.geometry) {
+                    polyline = L.geoJson(window.geometry, {
+                        style: {
+                            weight: 2
+                        }
+                    });
                     polyline.addTo(map);
                 }
                 map.fitBounds((polyline || L.polyline(mainLocations)).getBounds(), {
