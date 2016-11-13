@@ -237,13 +237,13 @@ class LiveDeparturesTest(TestCase):
             'line': '44A',
             'dir': 'inbound'
         }]}}))
-        self.assertIsNone(rows[0])
-        self.assertEqual(rows[1], {
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0], {
             'destination': 'Hellesdon',
             'service': '37',
             'time': datetime.datetime(2016, 6, 10, 22, 15)
         })
-        self.assertEqual(rows[2], {
+        self.assertEqual(rows[1], {
             'destination': 'Sheringham',
             'service': '44A',
             'time': datetime.datetime(2016, 6, 10, 22, 47)
