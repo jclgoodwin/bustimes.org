@@ -60,8 +60,8 @@ class Command(BaseCommand):
                 elif record_identity == 'QD':
                     service = self.get_route_description(line)
                     route_number = service['route_number'].strip()
+                    service_code = route_number + '_MET'
                     if route_number not in services:
-                        service_code = route_number + '_MET'
                         services[route_number] = {'O': {}, 'I': {}}
                         service = Service.objects.update_or_create(
                             service_code=service_code,
