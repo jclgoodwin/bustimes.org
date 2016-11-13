@@ -2,10 +2,20 @@
 """
 import datetime
 import vcr
+import json
 from django.test import TestCase
 from django.shortcuts import render
 from busstops.models import LiveSource, StopPoint, Service
 from . import live
+
+
+class DummyResponse(object):
+    def __init__(self, text):
+        self.text = text
+
+    def json(self):
+        return json.parse(self.text)
+
 
 
 class LiveDeparturesTest(TestCase):
@@ -176,6 +186,22 @@ class LiveDeparturesTest(TestCase):
             ).get_departures()
         self._test_acis_yorkshire(departures)
 
+    def test_stagecoach(self):
+        stop = StopPoint(atco_code='64803000')
+        with vcr.use_cassette('data/vcr/stagecoach.yaml'):
+            departures = live.StagecoachDepartures(
+                stop, (), datetime.datetime.now()
+            ).get_departures()
+        self.assertEqual(len(departures), 1)
+        self.assertEqual(departures[0]['destination'], 'Perth')
+        self.assertEqual(departures[0]['service'], '36')
+        self.assertEqual(departures[0]['time'].year, 2016)
+        self.assertEqual(departures[0]['time'].month, 11)
+        self.assertEqual(departures[0]['time'].day, 13)
+        self.assertEqual(departures[0]['time'].hour, 18)
+        self.assertEqual(departures[0]['time'].minute, 52)
+        self.assertEqual(departures[0]['time'].second, 28)
+
     def test_transportapi(self):
         """Test the get_row and other methods for Transport API departures
         """
@@ -272,6 +298,9 @@ class LiveDeparturesTest(TestCase):
         """
         # Empty departures list should be cached until midnight
         self.assertEqual(live.get_max_age((), datetime.datetime(2016, 6, 10, 22, 47)), 4380)
+
+        # Error should be cached for 3600 seconds
+        self.assertEqual(live.get_max_age(None, 'chutney'), 3600)
 
         # If the first departure is in the past, cache for 60 seconds
         self.assertEqual(live.get_max_age(({

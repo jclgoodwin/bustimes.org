@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: '{"RequestId": "bus-stop-query-stagecoach", "ResponseCharacteristics": {"MaxLaterEvents":
+      {"value": 20}}, "Stops": {"StopLabel": ["64803000"]}, "Departure": {"TargetDepartureTime":
+      {"value": "2016-11-13T18:42:45.616259"}}}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['221']
+      Content-Type: [application/json]
+      Origin: ['https://www.stagecoachbus.com']
+      Referer: ['https://www.stagecoachbus.com']
+      User-Agent: [python-requests/2.11.1]
+      X-SC-apiKey: [ukbusprodapi_9T61Jo3vsbql#!]
+      X-SC-securityMethod: [API]
+    method: POST
+    uri: https://api.stagecoachbus.com/tis/v3/stop-event-query
+  response:
+    body: {string: '{"RequestId":"bus-stop-query-stagecoach","Stops":{"Stop":[{"StopLabel":"64803000","SMSCode":"73726942","CompassPoint":"NE","Name":"Perth,
+        Prison","Geocode":{"Grid":{"value":"WGS84"},"Longitude":-3.431221435017868,"Latitude":56.38724000005399}}]},"Events":{"Event":[{"StopLabel":"64803000","ScheduledArrivalTime":{"value":"2016-11-13T18:52:28.000Z"},"ScheduledDepartureTime":{"value":"2016-11-13T18:52:28.000Z"},"Trip":{"TripId":"68488","Trunk":true,"Service":{"ServiceId":"XHCO036.O","Mode":"bus","Operator":{"OperatorCode":"SPH","PublicName":"Stagecoach
+        in Perth"},"ServiceNumber":"36","Description":"Glenrothes bus station - Perth
+        bus station","Direction":"outbound"},"DestinationBoard":"Perth"}}]}}'}
+    headers:
+      Access-Control-Allow-Origin: ['https://www.stagecoachbus.com']
+      Connection: [keep-alive]
+      Content-Length: ['701']
+      Content-Type: [application/json]
+      Date: ['Sun, 13 Nov 2016 18:42:42 GMT']
+      Server: [UltraESB/2.3.2 (GA)]
+    status: {code: 200, message: OK}
+version: 1
