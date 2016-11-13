@@ -17,6 +17,9 @@ class UpdateNaptanTest(TestCase):
     """
     command = update_naptan.Command()
 
+    def test_get_old_rows(self):
+        self.assertIsNone(self.command.get_old_rows())
+
     def test_get_diff(self):
         new_rows = [{
             'id': 1,
