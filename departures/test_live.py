@@ -2,7 +2,6 @@
 """
 import datetime
 import vcr
-import json
 from django.test import TestCase
 from django.shortcuts import render
 from busstops.models import LiveSource, StopPoint, Service
@@ -10,12 +9,11 @@ from . import live
 
 
 class DummyResponse(object):
-    def __init__(self, text):
-        self.text = text
+    def __init__(self, data):
+        self.data = data
 
     def json(self):
-        return json.parse(self.text)
-
+        return self.data
 
 
 class LiveDeparturesTest(TestCase):
@@ -207,7 +205,7 @@ class LiveDeparturesTest(TestCase):
         """
         departures = live.TransportApiDepartures(self.yorkshire_stop, (),
                                                  datetime.date(2016, 6, 10))
-        rows = ({
+        rows = departures.departures_from_response(DummyResponse({'departures': {'all': [{
             'direction': 'Gunton,Weston Road,',
             'expected_departure_time': None,
             'line_name': '101',
@@ -238,14 +236,14 @@ class LiveDeparturesTest(TestCase):
             'operator': 'SNDR',
             'line': '44A',
             'dir': 'inbound'
-        })
-        self.assertIsNone(departures.get_row(rows[0]))
-        self.assertEqual(departures.get_row(rows[1]), {
+        }]}}))
+        self.assertIsNone(rows[0])
+        self.assertEqual(rows[1], {
             'destination': 'Hellesdon',
             'service': '37',
             'time': datetime.datetime(2016, 6, 10, 22, 15)
         })
-        self.assertEqual(departures.get_row(rows[2]), {
+        self.assertEqual(rows[2], {
             'destination': 'Sheringham',
             'service': '44A',
             'time': datetime.datetime(2016, 6, 10, 22, 47)
