@@ -26,8 +26,6 @@ class Command(BaseCommand):
 
     @staticmethod
     def get_route_description(line):
-        description = line[12:].strip()
-        name = line[7:11].strip()
         return {
             'transaction_type': line[2:3],
             'operator': line[3:7],
@@ -55,8 +53,10 @@ class Command(BaseCommand):
 
             for line in open_file:
                 record_identity = line[:2]
+                # QS - Journey Header
                 if record_identity == 'QS':
                     direction = self.get_journey_header(line)['direction'].strip()
+                # QD - Route Description
                 elif record_identity == 'QD':
                     service = self.get_route_description(line)
                     route_number = service['route_number'].strip()
@@ -74,9 +74,14 @@ class Command(BaseCommand):
                                 'mode': 'bus'
                             }
                         )
-                elif record_identity in ('QO', 'QI', 'QD'):
+                # QO - Journey Origin
+                # QI - Journey Intermediate
+                # QT - Journey Destination
+                elif record_identity in ('QO', 'QI', 'QT'):
                     atco_code = line[2:14]
                     if atco_code not in services[route_number][direction]:
+                        if atco_code == '00000016    ':
+                            continue
                         if record_identity == 'QI':
                             timing_status = line[26:28]
                             order = 1
@@ -93,5 +98,3 @@ class Command(BaseCommand):
                             timing_status=('PTP' if timing_status == 'T1' else 'OTH'),
                             order=order
                         )
-                # else:
-                    # print(record_identity)
