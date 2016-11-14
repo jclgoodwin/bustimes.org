@@ -1,11 +1,15 @@
 import io
 import os
 from django.core.management.base import BaseCommand
+from django.contrib.gis.geos import Point
+from django.db import transaction
 from busstops.models import Operator, Service, StopPoint, StopUsage
 
 
 class Command(BaseCommand):
     services = {}
+    deferred_stop_codes = []
+    deferred_stops = {}
 
     @staticmethod
     def get_file_header(line):
@@ -43,9 +47,22 @@ class Command(BaseCommand):
             'note_text': line[7:],
         }
 
-    def handle_file(self, open_file):
-        # print(self.get_file_header(open_file.readline()))
+    @staticmethod
+    def get_location(line):
+        return {
+            'atco_code': line[3:15],
+            'common_name': line[15:].strip()
+        }
 
+    @staticmethod
+    def get_location_additional(line):
+        return {
+            'atco_code': line[3:15],
+            'easting': line[15:23].strip(),
+            'northing': line[23:].strip()
+        }
+
+    def handle_file(self, open_file):
         for line in open_file:
             record_identity = line[:2]
             # QS - Journey Header
@@ -80,7 +97,8 @@ class Command(BaseCommand):
                 atco_code = line[2:14]
                 if atco_code not in self.services[service_code][direction]:
                     if not StopPoint.objects.filter(atco_code=atco_code).exists():
-                        print(line)
+                        print(atco_code)
+                        self.deferred_stop_codes.append(atco_code)
                         continue
                     if record_identity == 'QI':
                         timing_status = line[26:28]
@@ -98,7 +116,23 @@ class Command(BaseCommand):
                         timing_status=('PTP' if timing_status == 'T1' else 'OTH'),
                         order=order
                     )
+            elif record_identity == 'QL':
+                location = self.get_location(line)
+                if location['atco_code'] in self.deferred_stop_codes:
+                    self.deferred_stops[location['atco_code']] = StopPoint(**location)
+            elif record_identity == 'QB':
+                location_additional = self.get_location_additional(line)
+                if location_additional['atco_code'] in self.deferred_stop_codes:
+                    self.deferred_stops[location['atco_code']].active = True
+                    self.deferred_stops[location['atco_code']].locality_centre = False
+                    self.deferred_stops[location_additional['atco_code']].latlong = Point(
+                        int(location_additional['easting']),
+                        int(location_additional['northing']),
+                        srid=29902  # Irish Grid
+                    )
+                    self.deferred_stops[location_additional['atco_code']].save()
 
+    @transaction.atomic
     def handle(self, *args, **options):
         Operator.objects.update_or_create(id='MET', name='Translink Metro', region_id='NI')
         Operator.objects.update_or_create(id='ULB', name='Ulsterbus', region_id='NI')
@@ -115,3 +149,5 @@ class Command(BaseCommand):
             for filename in filenames:
                 with io.open(os.path.join(dirpath, filename), encoding='cp1252') as open_file:
                     self.handle_file(open_file)
+
+        Service.objects.filter(region_id='NI', stops__isnull=True).delete()

@@ -26,7 +26,7 @@ class Command(ImportFromCSVCommand):
             'latlong': Point(
                 float(row['Longitude']),
                 float(row['Latitude']),
-                srid=4326
+                srid=4326  # World Geodetic System
             ),
             'locality_centre': (row['LocalityCentre'] == '1'),
             'active': (row['Status'] == 'act'),

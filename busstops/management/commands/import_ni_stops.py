@@ -18,7 +18,7 @@ class Command(ImportFromCSVCommand):
             'latlong': Point(
                 float(row['Longitude']),
                 float(row['Latitude']),
-                srid=4326
+                srid=4326  # World Geodetic System
             ),
             'common_name': row['Stop_Name'],
             'locality_centre': False,
