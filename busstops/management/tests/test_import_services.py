@@ -59,17 +59,16 @@ class ImportServicesTest(TestCase):
         cls.sc_service = Service.objects.get(pk='ABBN017')
 
         # simulate a National Coach Service Database zip file
-        ncsd_zipfile_path = os.path.join(DIR, 'fixtures/NCSD.zip')
-        with zipfile.ZipFile(ncsd_zipfile_path, 'a') as ncsd_zipfile:
+        cls.ncsd_zipfile_path = os.path.join(DIR, 'fixtures/NCSD.zip')
+        with zipfile.ZipFile(cls.ncsd_zipfile_path, 'a') as ncsd_zipfile:
             cls.write_file_to_zipfile(ncsd_zipfile, 'Megabus_Megabus14032016 163144_MEGA_M11A.xml')
             cls.write_file_to_zipfile(ncsd_zipfile, 'Megabus_Megabus14032016 163144_MEGA_M12.xml')
             ncsd_zipfile.writestr(
                 'IncludedServices.csv',
                 'Operator,LineName,Description\nMEGA,M11A,Belgravia - Liverpool\nMEGA,M12,Shudehill - Victoria'
             )
-        cls.command.handle(filenames=[ncsd_zipfile_path])
-        # clean up
-        os.remove(ncsd_zipfile_path)
+        cls.command.handle(filenames=[cls.ncsd_zipfile_path])
+        os.remove(os.path.join(DIR, '../../../data/TNDS/NCSD/NCSD_TXC/Megabus_Megabus14032016 163144_MEGA_M11A'))
 
         cls.gb_m11a = Service.objects.get(pk='M11A_MEGA')
         cls.gb_m12 = Service.objects.get(pk='M12_MEGA')
@@ -195,6 +194,8 @@ class ImportServicesTest(TestCase):
         """, html=True)
 
     def test_do_service_m11a(self):
+        """In the absence a of a pickled file, a timetable should be generated from the zipfile
+        """
         service = self.gb_m11a
 
         self.assertEqual(str(service), 'M11A - Belgravia - Liverpool')
@@ -221,6 +222,8 @@ class ImportServicesTest(TestCase):
         )
 
     def test_do_service_m12(self):
+        """In the presence a of a pickled file, a timetable should be generated from it
+        """
         service = self.gb_m12
 
         res = self.client.get(service.get_absolute_url())
@@ -282,3 +285,9 @@ class ImportServicesTest(TestCase):
                 </a>
             </li>
         """, html=True)
+
+    @classmethod
+    def tearDownClass(cls):
+        os.remove(cls.ncsd_zipfile_path)
+        os.remove(os.path.join(DIR, '../../../data/TNDS/NCSD/NCSD_TXC/Megabus_Megabus14032016 163144_MEGA_M12'))
+        super(ImportServicesTest, cls).tearDownClass()
