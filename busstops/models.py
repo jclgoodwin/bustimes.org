@@ -5,9 +5,11 @@ try:
     from urllib.parse import urlencode
 except ImportError:
     from urllib import urlencode
+from django.conf import settings
 from django.contrib.gis.db import models
 from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
+from .utils import sign_url
 
 
 TIMING_STATUS_CHOICES = (
@@ -253,6 +255,19 @@ class StopPoint(models.Model):
                 else:
                     return '%s %s' % (locality_name, self)
         return str(self)
+
+    def get_streetview_url(self):
+        url = 'https://maps.googleapis.com/maps/api/streetview?%s' % urlencode(
+            (
+                ('size', '480x360'),
+                ('location', '%s,%s' % (self.latlong.y, self.latlong.x)),
+                ('heading', self.get_heading()),
+                ('key', settings.STREETVIEW_KEY)
+            )
+        )
+        if settings.STREETVIEW_SECRET:
+            return sign_url(url, settings.STREETVIEW_SECRET)
+        return url
 
     def get_absolute_url(self):
         return reverse('stoppoint-detail', args=(self.atco_code,))
