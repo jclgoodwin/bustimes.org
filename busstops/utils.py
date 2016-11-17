@@ -38,10 +38,10 @@ def sign_url(input_url=None, secret=None):
     # Encode the binary signature into base64 for use within a URL
     encoded_signature = base64.urlsafe_b64encode(signature.digest())
 
-    original_url = url.scheme + "://" + url.netloc + url.path + "?" + url.query
+    original_url = url.scheme + '://' + url.netloc + url.path + '?' + url.query
 
     # Return signed URL
-    return original_url + "&signature=" + str(encoded_signature)
+    return original_url + '&signature=' + encoded_signature.decode('utf-8')
 
 
 def get_filenames(service, path=None, archive=None):
