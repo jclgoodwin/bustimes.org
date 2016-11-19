@@ -1,7 +1,7 @@
 """Tests for utilities and date ranges"""
 from django.test import TestCase
 from busstops.models import Region, Service
-from .utils import get_pickle_filenames
+from .utils import sign_url, get_pickle_filenames, get_files_from_zipfile
 
 
 FIXTURES_DIR = './busstops/management/tests/fixtures/'
@@ -43,9 +43,14 @@ class UtilsTest(TestCase):
             date='2016-05-24',
         )
 
+    def test_sign_url(self):
+        self.assertEqual(
+            sign_url('http://example.com/?horse=1', 'fish'),
+            'http://example.com/?horse=1&signature=s0RjLnH0GnQYwPTrUuoxZ1MfeRg='
+        )
+
     def test_get_pickle_filenames(self):
-        """
-        get_pickle_filenames should get filenames for a service,
+        """get_pickle_filenames should get filenames for a service,
         using different heuristics depending on the service's region
         """
         self.assertEqual(get_pickle_filenames(self.ne_service, None), ['NE_130_PC4736_572'])
@@ -57,3 +62,6 @@ class UtilsTest(TestCase):
 
         gb_filenames = get_pickle_filenames(self.gb_service, FIXTURES_DIR)
         self.assertEqual([], gb_filenames)
+
+    def test_get_files_from_zipfile(self):
+        self.assertEqual([], get_files_from_zipfile(self.ne_service))

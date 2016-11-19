@@ -62,7 +62,7 @@ class Command(BaseCommand):
             'northing': line[23:].strip()
         }
 
-    def handle_file(self, open_file):
+    def handle_open_file(self, open_file):
         for line in open_file:
             record_identity = line[:2]
             # QS - Journey Header
@@ -132,22 +132,29 @@ class Command(BaseCommand):
                     )
                     self.deferred_stops[location_additional['atco_code']].save()
 
+    @classmethod
+    def handle_file(cls, path):
+        with io.open(path, encoding='cp1252') as open_file:
+            self.handle_open_file(open_file)
+
+    @classmethod
     @transaction.atomic
-    def handle(self, *args, **options):
-        Operator.objects.update_or_create(id='MET', name='Translink Metro', region_id='NI')
-        Operator.objects.update_or_create(id='ULB', name='Ulsterbus', region_id='NI')
-        Operator.objects.update_or_create(id='GLE', name='Goldline Express', region_id='NI')
-        Operator.objects.update_or_create(id='UTS', name='Ulsterbus Town Services', region_id='NI')
-        Operator.objects.update_or_create(id='FY', name='Ulsterbus Foyle', region_id='NI')
+    def handle(cls, *args, **options):
+        for id, name in (
+                ('MET', 'Translink Metro'),
+                ('ULB', 'Ulsterbus'),
+                ('GLE', 'Goldline Express'),
+                ('UTS', 'Ulsterbus Town Services'),
+                ('FY', 'Ulsterbus Foyle')
+        ):
+            Operator.objects.update_or_create(id=id, name=name, region_id='NI')
 
         Service.objects.filter(region_id='NI').delete()
 
-        with io.open('MET20160901v1.cif', encoding='cp1252') as open_file:
-            self.handle_file(open_file)
+        cls.handle_file('MET20160901v1.cif')
 
         for dirpath, _, filenames in os.walk('ULB'):
             for filename in filenames:
-                with io.open(os.path.join(dirpath, filename), encoding='cp1252') as open_file:
-                    self.handle_file(open_file)
+                cls.handle_file(os.path.join(dirpath, filename))
 
         Service.objects.filter(region_id='NI', stops__isnull=True).delete()

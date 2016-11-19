@@ -25,7 +25,7 @@ def sign_url(input_url=None, secret=None):
     url = urlparse(input_url)
 
     # We only need to sign the path+query part of the string
-    url_to_sign = url.path + "?" + url.query
+    url_to_sign = url.path + '?' + url.query
 
     # Decode the private key into its binary format
     # We need to decode the URL-encoded private key
@@ -91,12 +91,13 @@ def get_files_from_zipfile(service):
         archive_name = service.region_id
 
     archive_path = os.path.join(DIR, '../data/TNDS/', archive_name + '.zip')
-    with zipfile.ZipFile(archive_path) as archive:
-        filenames = get_filenames(service, archive=archive)
-        try:
+
+    try:
+        with zipfile.ZipFile(archive_path) as archive:
+            filenames = get_filenames(service, archive=archive)
             return [archive.open(filename) for filename in filenames]
-        except KeyError:
-            return []
+    except zipfile.BadZipfile:
+        return []
 
 
 def timetable_from_service(service):
