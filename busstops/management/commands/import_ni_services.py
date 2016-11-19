@@ -135,7 +135,7 @@ class Command(BaseCommand):
     @classmethod
     def handle_file(cls, path):
         with io.open(path, encoding='cp1252') as open_file:
-            self.handle_open_file(open_file)
+            cls.handle_open_file(open_file)
 
     @classmethod
     @transaction.atomic
