@@ -62,20 +62,21 @@ class Command(BaseCommand):
             'northing': line[23:].strip()
         }
 
-    def handle_open_file(self, open_file):
+    @classmethod
+    def handle_open_file(cls, open_file):
         for line in open_file:
             record_identity = line[:2]
             # QS - Journey Header
             if record_identity == 'QS':
-                direction = self.get_journey_header(line)['direction'].strip()
+                direction = cls.get_journey_header(line)['direction'].strip()
             # QD - Route Description
             elif record_identity == 'QD':
-                service = self.get_route_description(line)
+                service = cls.get_route_description(line)
                 operator = service['operator'].strip().upper()
                 route_number = service['route_number'].strip()
                 service_code = route_number + '_' + operator
-                if service_code not in self.services:
-                    self.services[service_code] = {'O': {}, 'I': {}}
+                if service_code not in cls.services:
+                    cls.services[service_code] = {'O': {}, 'I': {}}
                     try:
                         Service.objects.update_or_create(
                             service_code=service_code,
@@ -95,10 +96,10 @@ class Command(BaseCommand):
             # QT - Journey Destination
             elif record_identity in ('QO', 'QI', 'QT'):
                 atco_code = line[2:14]
-                if atco_code not in self.services[service_code][direction]:
+                if atco_code not in cls.services[service_code][direction]:
                     if not StopPoint.objects.filter(atco_code=atco_code).exists():
                         print(atco_code)
-                        self.deferred_stop_codes.append(atco_code)
+                        cls.deferred_stop_codes.append(atco_code)
                         continue
                     if record_identity == 'QI':
                         timing_status = line[26:28]
@@ -109,7 +110,7 @@ class Command(BaseCommand):
                             order = 0
                         else:
                             order = 2
-                    self.services[service_code][direction][atco_code] = StopUsage.objects.create(
+                    cls.services[service_code][direction][atco_code] = StopUsage.objects.create(
                         service_id=service_code,
                         stop_id=atco_code,
                         direction=('Outbound' if direction == 'O' else 'Inbound'),
@@ -117,20 +118,20 @@ class Command(BaseCommand):
                         order=order
                     )
             elif record_identity == 'QL':
-                location = self.get_location(line)
-                if location['atco_code'] in self.deferred_stop_codes:
-                    self.deferred_stops[location['atco_code']] = StopPoint(**location)
+                location = cls.get_location(line)
+                if location['atco_code'] in cls.deferred_stop_codes:
+                    cls.deferred_stops[location['atco_code']] = StopPoint(**location)
             elif record_identity == 'QB':
-                location_additional = self.get_location_additional(line)
-                if location_additional['atco_code'] in self.deferred_stop_codes:
-                    self.deferred_stops[location['atco_code']].active = True
-                    self.deferred_stops[location['atco_code']].locality_centre = False
-                    self.deferred_stops[location_additional['atco_code']].latlong = Point(
+                location_additional = cls.get_location_additional(line)
+                if location_additional['atco_code'] in cls.deferred_stop_codes:
+                    cls.deferred_stops[location['atco_code']].active = True
+                    cls.deferred_stops[location['atco_code']].locality_centre = False
+                    cls.deferred_stops[location_additional['atco_code']].latlong = Point(
                         int(location_additional['easting']),
                         int(location_additional['northing']),
                         srid=29902  # Irish Grid
                     )
-                    self.deferred_stops[location_additional['atco_code']].save()
+                    cls.deferred_stops[location_additional['atco_code']].save()
 
     @classmethod
     def handle_file(cls, path):
