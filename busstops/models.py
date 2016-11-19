@@ -273,6 +273,7 @@ class StopPoint(models.Model):
         return reverse('stoppoint-detail', args=(self.atco_code,))
 
 
+@python_2_unicode_compatible
 class Operator(models.Model, ValidateOnSaveMixin):
     """An entity that operates public transport services"""
 
