@@ -64,5 +64,5 @@ class UtilsTest(TestCase):
         self.assertEqual([], gb_filenames)
 
     def test_get_files_from_zipfile(self):
-        with self.assertRaises(FileNotFoundError):
+        with self.assertRaises(OSError):
             self.assertEqual([], get_files_from_zipfile(self.ne_service))
