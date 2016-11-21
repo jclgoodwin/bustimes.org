@@ -108,7 +108,7 @@ self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(request).then(response => response || fetch(request).then(response => {
             // If the request is for a static file, stash a copy of this image in the static file cache
-            if (request.url.indexOf('/static/') !== -1) {
+            if (request.url.indexOf('/static/') !== -1 && request.url.indexOf('/static/htmlcov/') === -1) {
                 let copy = response.clone();
                 stashInCache(staticCacheName, request, copy);
             }

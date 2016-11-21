@@ -461,7 +461,7 @@ class ServiceDetailView(DetailView):
             operator = context['operators']
             context['breadcrumb'] = [self.object.region, context['operators'][0]]
             for operator in context['operators']:
-                if operator.pk == 'MEGA':
+                if operator.pk == 'MEGA' or self.object.line_name == 'FALCON':
                     context['links'].append({
                         'url': 'https://www.awin1.com/awclick.php?mid=2678&id=242611',
                         'text': 'Buy tickets from Megabus'
