@@ -146,9 +146,13 @@ class Command(BaseCommand):
                 ('ULB', 'Ulsterbus'),
                 ('GLE', 'Goldline Express'),
                 ('UTS', 'Ulsterbus Town Services'),
-                ('FY', 'Ulsterbus Foyle')
+                ('FY', 'Ulsterbus Foyle'),
+                ('BE', 'Bus Éireann')
         ):
-            Operator.objects.update_or_create(id=id, name=name, region_id='NI')
+            Operator.objects.update_or_create(id=id, name=name, defaults={
+                'region_id': 'NI',
+                'vehicle_mode': 'bus'
+            })
 
         Service.objects.filter(region_id='NI').delete()
 

@@ -99,6 +99,7 @@ SPECIAL_OPERATOR_CODES = {
     'ALI': 'AMDD',   # Alasdair MacDonald
     'EWE': 'EWEN',   # Ewens Coach Hire
     '712CS': 'CSVC',  # Coach Services
+    'TFLR': 'XR'  # TfL Rail
 }
 # see https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml-with-namespaces
 NS = {'txc': 'http://www.transxchange.org.uk/'}
