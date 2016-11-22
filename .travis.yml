@@ -9,7 +9,7 @@ services:
 env:
   - STATIC_ROOT=/home/travis/bustimes-static/ DB_USER=postgres DEBUG=True
 install:
-  - pip install pip wheel
+  - pip install -U pip wheel
   - pip install -r requirements.txt
   - pip install -r requirements-test.txt
 before_script:
