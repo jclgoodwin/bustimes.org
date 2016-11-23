@@ -47,8 +47,12 @@ class Command(ImportFromCSVCommand):
         """Given a CSV row (a list), returns an Operator object"""
 
         operator_id = row['NOCCODE'].replace('=', '')
+        # Avoid duplicates, for operators with multiple National Operator Codes
+        # (Travelsure, Yorkshire Tiger, Owens, and Horseless Carriage Services)
+        # and for operators with multiple different rows for the same NOC
+        # (First Manchester)
         if (
-                operator_id in ('TVSR', 'HBSY', 'OWML')
+                operator_id in ('TVSR', 'HBSY', 'OWML', 'POTD')
                 or operator_id == 'FMAN' and row['Duplicate'] != 'OK'
         ):
             return
