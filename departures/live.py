@@ -295,7 +295,7 @@ def get_departures(stop, services):
 
     # Stagecoach
     operators = Operator.objects.filter(service__stops=stop).distinct().values_list('pk', flat=True)
-    if all(operator in STAGECOACH_OPERATORS for operator in operators):
+    if operators and all(operator in STAGECOACH_OPERATORS for operator in operators):
         departures = StagecoachDepartures(stop, services, now).get_departures()
         return ({
             'departures': departures
