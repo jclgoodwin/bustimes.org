@@ -10,20 +10,37 @@ from ...models import StopPoint
 
 
 SESSION = requests.Session()
+NON_LANDMARK_KEYS = {'road', 'state', 'country_code', 'city', 'county', 'locality', 'country',
+                     'suburb', 'town', 'postcode', 'bus_stop', 'village', 'house_number'}
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        for stop in StopPoint.objects.filter(atco_code__startswith='7000', service__current=True,
-                                             town=''):
+        stops = StopPoint.objects.filter(
+            atco_code__startswith='7000',
+            town='',
+            landmark='',
+            service__current=True
+        ).distinct()
+
+        for stop in stops:
             response = SESSION.get('http://nominatim.openstreetmap.org/reverse', params={
                 'format': 'json',
                 'lon': stop.latlong.x,
                 'lat': stop.latlong.y
             }).json()
-            print(stop.atco_code)
-            print(response)
-            stop.street = response['address']['road']
+
+            print(stop.pk)
+            stop.street = response['address'].get('road', '')
             stop.town = response['address'].get('locality', '')
+
+            landmark_keys = list(set(response['address'].keys()) - NON_LANDMARK_KEYS)
+            if len(landmark_keys) > 0:
+                stop.landmark = response['address'][landmark_keys[0]]
+                print(landmark_keys)
+                print(stop.landmark)
+            else:
+                stop.landmark = ''
+
             stop.save()
-            sleep(1)
+            sleep(2)
