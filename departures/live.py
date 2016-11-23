@@ -276,6 +276,7 @@ def get_departures(stop, services):
     """
     live_sources = stop.live_sources.values_list('name', flat=True)
 
+    # Transport for London
     if 'TfL' in live_sources:
         departures = TflDepartures(stop, services)
         return ({
@@ -290,6 +291,17 @@ def get_departures(stop, services):
             }
         }, 60)
 
+    now = datetime.datetime.now()
+
+    # Stagecoach
+    operators = Operator.objects.filter(service__stops=stop).distinct().values_list('pk', flat=True)
+    if all(operator in STAGECOACH_OPERATORS for operator in operators):
+        departures = StagecoachDepartures(stop, services, now).get_departures()
+        return ({
+            'departures': departures
+        }, 120)  # get_max_age(departures, now))
+
+    # Yorkshire
     if 'Y' in live_sources:
         return ({
             'departures': AcisConnectDepartures('yorkshire', stop, services),
@@ -299,6 +311,7 @@ def get_departures(stop, services):
             }
         }, 60)
 
+    # Kent
     if 'Kent' in live_sources:
         return ({
             'departures': AcisLiveDepartures('kent', stop, services),
@@ -327,6 +340,7 @@ def get_departures(stop, services):
                 }
             }, 60)
 
+    # Belfast
     if stop.pk.startswith('7000000'):
         return ({
             'departures': AcisConnectDepartures('belfast', stop, services),
@@ -336,15 +350,7 @@ def get_departures(stop, services):
             }
         }, 60)
 
-    now = datetime.datetime.now()
-
-    operators = Operator.objects.filter(service__stops=stop).distinct().values_list('pk', flat=True)
-    if all(operator in STAGECOACH_OPERATORS for operator in operators):
-        departures = StagecoachDepartures(stop, services, now).get_departures()
-        return ({
-            'departures': departures
-        }, 120)  # get_max_age(departures, now))
-
+    # Transport API
     departures = TransportApiDepartures(stop, services, now.date()).get_departures()
     return ({
         'departures': departures,
