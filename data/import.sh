@@ -119,4 +119,12 @@ for region in "${REGIONS[@]}"; do
 done
 # [ $updated_services ] && ../../manage.py update_index --remove
 
+# accessibility_old=$(ls -l NOC_DB.csv)
+wget -qN http://naptan.dft.gov.uk/Journeyweb/accessibility/accessibility-data.zip
+accessibility_new=$(ls -l NOC_DB.csv)
+if [[ $accessibility_old != $accessibility_new ]]; then
+    ../../manage.py import_accessibility accessibility-data.zip
+    unzip -oq Accessibility-Data.zip
+fi
+
 finish
