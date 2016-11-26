@@ -226,7 +226,7 @@ class OperatingPeriodTest(TestCase):
         self.assertTrue(operating_period.starts_in_future())
 
     @freeze_time('1 January 2056')
-    def test_short_range(self):
+    def test_short_range_cross_month(self):
         """Test an OperatingPeriod starting and ending in different months in the present"""
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
@@ -239,7 +239,7 @@ class OperatingPeriodTest(TestCase):
         self.assertTrue(operating_period.starts_in_future())
 
     @freeze_time('29 December 2056')
-    def test_short_range(self):
+    def test_short_range_cross_year(self):
         """Test an OperatingPeriod starting and ending in different years in the present"""
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
