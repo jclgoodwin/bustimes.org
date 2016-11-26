@@ -218,7 +218,7 @@ class OperatingPeriodTest(TestCase):
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
                 <StartDate>2056-02-01</StartDate>
-                <EndDate>2056-03-05</EndDate>
+                <EndDate>2056-02-05</EndDate>
             </OperatingPeriod>
         """)
         operating_period = txc.OperatingPeriod(element)
@@ -231,7 +231,7 @@ class OperatingPeriodTest(TestCase):
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
                 <StartDate>2056-02-01</StartDate>
-                <EndDate>2056-02-05</EndDate>
+                <EndDate>2056-03-05</EndDate>
             </OperatingPeriod>
         """)
         operating_period = txc.OperatingPeriod(element)
