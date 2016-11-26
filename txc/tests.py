@@ -19,22 +19,46 @@ class TimetableTest(TestCase):
 
     def test_timetable_ea(self):
         """Test a timetable from the East Anglia region"""
-        timetable_ea = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-1.xml')
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-1.xml')
 
-        self.assertEqual('Monday to Sunday', str(timetable_ea.operating_profile))
-        self.assertEqual('until 21 October 2016', str(timetable_ea.operating_period))
+        self.assertEqual('Monday to Sunday', str(timetable.operating_profile))
+        self.assertEqual('until 21 October 2016', str(timetable.operating_period))
 
-        self.assertEqual('Norwich - Wymondham - Attleborough', str(timetable_ea.groupings[0]))
-        self.assertEqual(3, len(timetable_ea.groupings[0].column_heads))
-        self.assertEqual(13, len(timetable_ea.groupings[0].journeys))
+        self.assertEqual('Norwich - Wymondham - Attleborough', str(timetable.groupings[0]))
+        self.assertEqual(3, len(timetable.groupings[0].column_heads))
+        self.assertEqual(13, len(timetable.groupings[0].journeys))
 
-        self.assertEqual('Attleborough - Wymondham - Norwich', str(timetable_ea.groupings[1]))
-        self.assertEqual(3, len(timetable_ea.groupings[1].column_heads))
-        self.assertEqual(14, len(timetable_ea.groupings[1].journeys))
+        self.assertEqual('Attleborough - Wymondham - Norwich', str(timetable.groupings[1]))
+        self.assertEqual(3, len(timetable.groupings[1].column_heads))
+        self.assertEqual(14, len(timetable.groupings[1].journeys))
 
-        self.assertTrue(timetable_ea.groupings[1].has_minor_stops())
-        self.assertEqual(87, len(timetable_ea.groupings[1].rows))
-        self.assertEqual('Leys Lane', timetable_ea.groupings[1].rows[0].part.stop.common_name)
+        self.assertTrue(timetable.groupings[1].has_minor_stops())
+        self.assertEqual(87, len(timetable.groupings[1].rows))
+        self.assertEqual('Leys Lane', timetable.groupings[1].rows[0].part.stop.common_name)
+
+    def test_timetable_ea_2(self):
+        """Test a timetable with a single OperatingProfile (no per-VehicleJourney ones)"""
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_20-12-_-y08-1.xml')
+
+        self.assertEqual('Monday to Friday', str(timetable.operating_profile))
+        self.assertEqual('', str(timetable.operating_period))
+
+        self.assertEqual('Outbound', str(timetable.groupings[0]))
+        self.assertEqual(1, len(timetable.groupings[0].column_heads))
+        self.assertIsNone(timetable.groupings[0].column_heads[0].operatingprofile)
+        self.assertEqual(21, len(timetable.groupings[0].rows))
+
+        self.assertEqual('[St Ives (Cambs) Bus Station]', str(timetable.groupings[0].rows[0]))
+        self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
+        self.assertEqual(3, timetable.groupings[0].rows[0].times[1].colspan)
+        self.assertEqual(21, timetable.groupings[0].rows[0].times[1].rowspan)
+        self.assertEqual(2, len(timetable.groupings[0].rows[1].times))
+        self.assertEqual(2, len(timetable.groupings[0].rows[20].times))
+
+        self.assertEqual(0, len(timetable.groupings[1].rows))
+
+        with self.assertRaises(IndexError):
+            str(timetable.groupings[1])
 
     def test_timetable_megabus(self):
         """Test a timetable from the National Coach Services Database"""
@@ -194,11 +218,37 @@ class OperatingPeriodTest(TestCase):
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
                 <StartDate>2056-02-01</StartDate>
-                <EndDate>2056-02-05</EndDate>
+                <EndDate>2056-03-05</EndDate>
             </OperatingPeriod>
         """)
         operating_period = txc.OperatingPeriod(element)
         self.assertEqual(str(operating_period), 'from 1 to 5 February 2056')
+        self.assertTrue(operating_period.starts_in_future())
+
+    @freeze_time('1 January 2056')
+    def test_short_range(self):
+        """Test an OperatingPeriod starting and ending in different months in the present"""
+        element = ET.fromstring("""
+            <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
+                <StartDate>2056-02-01</StartDate>
+                <EndDate>2056-02-05</EndDate>
+            </OperatingPeriod>
+        """)
+        operating_period = txc.OperatingPeriod(element)
+        self.assertEqual(str(operating_period), 'from 1 February to 5 March 2056')
+        self.assertTrue(operating_period.starts_in_future())
+
+    @freeze_time('29 December 2056')
+    def test_short_range(self):
+        """Test an OperatingPeriod starting and ending in different years in the present"""
+        element = ET.fromstring("""
+            <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
+                <StartDate>2056-12-30</StartDate>
+                <EndDate>2057-01-05</EndDate>
+            </OperatingPeriod>
+        """)
+        operating_period = txc.OperatingPeriod(element)
+        self.assertEqual(str(operating_period), 'from 30 December 2056 to 5 January 2057')
         self.assertTrue(operating_period.starts_in_future())
 
     def test_medium_range(self):
