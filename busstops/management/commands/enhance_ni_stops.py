@@ -3,8 +3,8 @@
     ./manage.py enhance_ni_stops
 """
 
-import requests
 from time import sleep
+import requests
 from django.core.management.base import BaseCommand
 from ...models import StopPoint
 

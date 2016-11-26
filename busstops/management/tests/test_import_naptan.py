@@ -1,19 +1,17 @@
-"""
-Tests for importing NaPTAN data
+"""Tests for importing NaPTAN data
 """
 
 import os
 from django.test import TestCase
 from ...models import Region, AdminArea, StopPoint, Locality
-from ..commands import update_naptan, import_stop_areas, import_stops, clean_stops
+from ..commands import update_naptan, import_stop_areas, import_stops
 
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class UpdateNaptanTest(TestCase):
-    """
-    Test the update_naptan command
+    """Test the update_naptan command
     """
     command = update_naptan.Command()
 
@@ -44,8 +42,7 @@ class UpdateNaptanTest(TestCase):
 
 
 class ImportStopAreasTest(TestCase):
-    """
-    Test the import_stop_areas command
+    """Test the import_stop_areas command
     """
     command = import_stop_areas.Command()
 
@@ -80,8 +77,8 @@ class ImportStopAreasTest(TestCase):
 
 
 class StopsTest(TestCase):
-    "Test the import_stops and clean_stops commands."
-
+    """Test the import_stops command
+    """
     @classmethod
     def setUpTestData(cls):
         cls.region = Region.objects.create(id='GB', name='Great Britain')
@@ -100,16 +97,6 @@ class StopsTest(TestCase):
 
         # 'DOWNEND ROAD' should be converted to title case
         self.assertEqual(cassell_road.street, 'Downend Road')
-
-        ring_o_bells = StopPoint.objects.get(pk='0610VR1022')
-        self.assertEqual(str(ring_o_bells), 'Ring O`Bells (o/s)')
-        self.assertEqual(ring_o_bells.landmark, 'Ring O`Bells')
-
-    def test_clean_stops(self):
-        clean_stops.Command().handle()
-
-        cassell_road = StopPoint.objects.get(pk='010000001')
-        self.assertEqual(str(cassell_road), 'Cassell Road (SW-bound)')
 
         ring_o_bells = StopPoint.objects.get(pk='0610VR1022')
         self.assertEqual(str(ring_o_bells), 'Ring O\'Bells (o/s)')

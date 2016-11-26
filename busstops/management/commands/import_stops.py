@@ -1,18 +1,85 @@
-"""
-Usage:
+"""Usage:
 
     ./manage.py import_stops < Stops.csv
 """
 
 from django.contrib.gis.geos import Point
 from titlecase import titlecase
-from . import clean_stops
 from ..import_from_csv import ImportFromCSVCommand
 from ...models import StopPoint
 
 
-INDICATORS_TO_PROPER_CASE = {
-    indicator.lower(): indicator for indicator in clean_stops.INDICATORS_TO_PROPER_CASE
+INDICATORS_TO_PROPER_CASE = {indicator.lower(): indicator for indicator in (
+    'opp',
+    'adj',
+    'at',
+    'nr',
+    'on',
+    'o/s',
+    'in',
+    'behind',
+    'before',
+    'after',
+    'N-bound',
+    'NE-bound',
+    'E-bound',
+    'SE-bound',
+    'S-bound',
+    'SW-bound',
+    'W-bound',
+    'NW-bound',
+)}
+
+INDICATORS_TO_REPLACE = {
+    'opp ': 'opp',
+    'opp.': 'opp',
+    'opposite': 'opp',
+    'opposite ': 'opp',
+    'adjacent': 'adj',
+    'near': 'nr',
+    'at ': 'at',
+    'before ': 'before',
+    'outside': 'o/s',
+    'outside ': 'o/s',
+    'os': 'o/s',
+    'N bound': 'N-bound',
+    'N - bound': 'N-bound',
+    'NE bound': 'NE-bound',
+    'NE - bound': 'NE-bound',
+    'E bound': 'E-bound',
+    'E - bound': 'E-bound',
+    'SE bound': 'SE-bound',
+    'SE - bound': 'SE-bound',
+    'S bound': 'S-bound',
+    'S - bound': 'S-bound',
+    'SW bound': 'SW-bound',
+    'SW - bound': 'SW-bound',
+    'W bound': 'W-bound',
+    'W - bound': 'W-bound',
+    'NW bound': 'NW-bound',
+    'NW - bound': 'NW-bound',
+    'nb': 'N-bound',
+    'eb': 'E-bound',
+    'sb': 'S-bound',
+    'wb': 'W-bound',
+    'northbound': 'N-bound',
+    'north bound': 'N-bound',
+    'northeastbound': 'NE-bound',
+    'north east bound': 'NE-bound',
+    'eastbound': 'E-bound',
+    'east-bound': 'E-bound',
+    'east bound': 'E-bound',
+    'south east bound': 'SE-bound',
+    'southbound': 'S-bound',
+    'south bound': 'S-bound',
+    'south west bound': 'SW-bound',
+    'wbound': 'W-bound',
+    'westbound': 'W-bound',
+    'west bound': 'W-bound',
+    'nwbound': 'NW-bound',
+    'northwestbound': 'NW-bound',
+    'northwest bound': 'NW-bound',
+    'north west bound': 'NW-bound',
 }
 
 
@@ -40,16 +107,18 @@ class Command(ImportFromCSVCommand):
                     value = ''
                 elif value.isupper():
                     value = titlecase(value)
-            defaults[django_field_name] = value
+            defaults[django_field_name] = value.replace('`', '\'')  # replace backticks
 
-        if defaults.get('indicator') in clean_stops.INDICATORS_TO_REPLACE:
-            defaults['indicator'] = clean_stops.INDICATORS_TO_REPLACE.get(
+        if defaults.get('indicator') in INDICATORS_TO_REPLACE:
+            defaults['indicator'] = INDICATORS_TO_REPLACE.get(
                 defaults['indicator']
             )
         elif defaults['indicator'].lower() in INDICATORS_TO_PROPER_CASE:
             defaults['indicator'] = INDICATORS_TO_PROPER_CASE.get(
                 defaults['indicator'].lower()
             )
+        elif defaults['indicator'].startswith('220'):
+            defaults['indicator'] = ''
 
         StopPoint.objects.update_or_create(atco_code=row['ATCOCode'], defaults=defaults)
 
