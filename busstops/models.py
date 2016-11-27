@@ -300,16 +300,11 @@ class Operator(models.Model, ValidateOnSaveMixin):
         depending on whether it begins with a vowel sound.
 
         'Airline' becomes 'An airline', 'Bus' becomes 'A bus'.
-
-        Doesn't support modes that begin with vowels that aren't A.
         """
         mode = str(self.vehicle_mode).lower()
-        if mode:
-            if mode[0] == 'a':
-                return 'An ' + mode
-            return 'A ' + mode
-        return 'An'  # 'An operator'
-
+        if not mode or mode[0].lower() in 'aeiou':
+            return 'An ' + mode  # 'An airline operating company' or 'An  operating company'
+        return 'A ' + mode  # 'A hovercraft operating company'
 
 class StopUsage(models.Model):
     """A link between a StopPoint and a Service,
@@ -357,11 +352,9 @@ class Service(models.Model):
         return len(self.line_name) > 4
 
     def get_a_mode(self):
-        if not self.mode:
-            return 'A'
-        if self.mode[0] == 'a':
-            return 'An %s' % self.mode
-        return 'A %s' % self.mode
+        if self.mode and self.mode[0].lower() in 'aeiou':
+            return 'An %s' % self.mode  # 'An underground service'
+        return 'A %s' % self.mode  # 'A bus service' or 'A service'
 
     def get_absolute_url(self):
         return reverse('service-detail', args=(self.service_code,))
