@@ -91,9 +91,9 @@ cd ..
 
 noc_old=$(ls -l NOC_DB.csv)
 wget -qN http://mytraveline.info/NOC/NOC_DB.csv
-wget -qN www.travelinedata.org.uk/noc/api/1.0/nocrecords.xml
 noc_new=$(ls -l NOC_DB.csv)
 if [[ $noc_old != $noc_new ]]; then
+    wget -qN www.travelinedata.org.uk/noc/api/1.0/nocrecords.xml
     ../manage.py import_operators < NOC_DB.csv
     ../manage.py correct_operator_regions
     ../manage.py import_operator_contacts < nocrecords.xml
