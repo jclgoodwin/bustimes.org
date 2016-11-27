@@ -99,7 +99,8 @@ class ImportNaptanTest(TestCase):
 
         cls.service = Service.objects.create(line_name='44', description='Port Talbot Circular',
                                              date='2004-04-04', region_id='GB', service_code='44')
-        StopUsage.objects.create(service=cls.service, stop_id='5820AWN26274', order=0)
+        StopUsage.objects.create(service=cls.service, stop_id='5820AWN26274', order=0)  # Legion
+        StopUsage.objects.create(service=cls.service, stop_id='5820AWN26361', order=1)  # Parkway
 
     def test_stops(self):
         legion = StopPoint.objects.get(pk='5820AWN26274')
@@ -152,7 +153,7 @@ class ImportNaptanTest(TestCase):
                 self.assertEqual(1, len(context_manager.output))
                 self.assertEqual(context_manager.output[0][:32], 'ERROR:busstops.management.comman')
 
-        self.assertEqual(404, self.client.get('/stops/5820AWN26361').status_code)
+        self.assertContains(self.client.get('/stops/5820AWN26361'), 'This stop is no longer active')
 
         legion_request = self.client.get('/stops/5820AWN26274')
         self.assertContains(legion_request, 'On Talbot Road, near Eagle Street, near Port Talbot ' +
