@@ -3,7 +3,7 @@
 
 import os
 from django.test import TestCase
-from ...models import Region, AdminArea, StopPoint, Locality
+from ...models import Region, AdminArea, StopPoint, Locality, Service, StopUsage
 from ..commands import (update_naptan, import_stop_areas, import_stops, import_stops_in_area,
                         import_stop_area_hierarchy)
 
@@ -87,11 +87,20 @@ class ImportNaptanTest(TestCase):
             'StopAreaCode': '030G50780001',
             'AtcoCode': '5820AWN26274',
         })
+        import_stops_in_area.Command().handle_row({
+            'StopAreaCode': '030G50780001',
+            'AtcoCode': '5820AWN26438',
+        })
 
         import_stop_area_hierarchy.Command().handle_row({
             'ChildStopAreaCode': '030G50780001',
             'ParentStopAreaCode': '030G50780002',
         })
+
+        cls.service = Service.objects.create(line_name='44', description='Port Talbot Circular',
+                                             date='2004-04-04', region_id='GB', service_code='44')
+        StopUsage.objects.create(service=cls.service, stop_id='5820AWN26274', order=0)
+
 
     def test_stops(self):
         legion = StopPoint.objects.get(pk='5820AWN26274')
@@ -115,6 +124,10 @@ class ImportNaptanTest(TestCase):
         self.assertEqual(parkway_station.crossing, '')  # '---' should be removed
         self.assertEqual(parkway_station.indicator, '')
 
+        locality_request = self.client.get('/localities/N0078801')
+        self.assertContains(locality_request, 'Services')
+        self.assertContains(locality_request, '44 - Port Talbot Circular')
+
     def test_stop_areas(self):
         """Given a row, does handle_row return a StopArea object with the correct field values?
         """
@@ -135,10 +148,34 @@ class ImportNaptanTest(TestCase):
             with self.assertLogs() as context_manager:
                 import_stops_in_area.Command().handle_row({
                     'StopAreaCode': 'poo',
-                    'AtcoCode': 'poo',
+                    'AtcoCode': 'poo'
                 })
                 self.assertEqual(1, len(context_manager.output))
-                self.assertEqual(context_manager.output[0][:33], 'ERROR:busstops.management.command')
+                self.assertEqual(context_manager.output[0][:32], 'ERROR:busstops.management.comman')
+
+        self.assertEqual(404, self.client.get('/stops/5820AWN26361').status_code)
+
+        legion_request = self.client.get('/stops/5820AWN26274')
+        self.assertContains(legion_request, 'On Talbot Road, near Eagle Street, near Port Talbot ' +
+                            'British Legion')
+        self.assertContains(legion_request, 'Services')
+        self.assertContains(legion_request, '44 - Port Talbot Circular')
+        self.assertContains(legion_request, """
+            <div class="aside box">
+                <h2>Nearby stops</h2>
+                <ul>
+                    <li itemscope itemtype="https://schema.org/BusStop">
+                        <a href="/stops/5820AWN26438">
+                            <span itemprop="name">Ty&#39;n y Twr Club (NE-bound)</span>
+                            <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
+                                <meta itemprop="latitude" content="51.6171316877" />
+                                <meta itemprop="longitude" content="-3.8000765776" />
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        """, html=True)
 
     def test_stop_area_hierarchy(self):
         self.assertIsNone(self.stop_area.parent)
