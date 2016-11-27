@@ -306,6 +306,7 @@ class Operator(models.Model, ValidateOnSaveMixin):
             return 'An ' + mode  # 'An airline operating company' or 'An  operating company'
         return 'A ' + mode  # 'A hovercraft operating company'
 
+
 class StopUsage(models.Model):
     """A link between a StopPoint and a Service,
     with an order placing it in a direction (e.g. the first outbound stop)"""

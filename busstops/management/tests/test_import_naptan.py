@@ -101,7 +101,6 @@ class ImportNaptanTest(TestCase):
                                              date='2004-04-04', region_id='GB', service_code='44')
         StopUsage.objects.create(service=cls.service, stop_id='5820AWN26274', order=0)
 
-
     def test_stops(self):
         legion = StopPoint.objects.get(pk='5820AWN26274')
         self.assertEqual(str(legion), 'The Legion (o/s)')
