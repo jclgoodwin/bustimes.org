@@ -7,3 +7,5 @@ source =
     txc
 omit =
     busstops/migrations/*
+    buses/settings.py
+    buses/wsgi.py
