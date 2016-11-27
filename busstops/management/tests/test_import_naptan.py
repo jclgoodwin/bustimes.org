@@ -82,22 +82,26 @@ class StopsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.region = Region.objects.create(id='GB', name='Great Britain')
-        cls.admin_area = AdminArea.objects.create(id=9, atco_code=2, region_id='GB')
-        cls.locality_1 = Locality.objects.create(id='E0035604', admin_area_id=9)
-        cls.locality_2 = Locality.objects.create(id='E0044440', admin_area_id=9)
+        cls.admin_area = AdminArea.objects.create(id=34, atco_code=2, region_id='GB')
+        cls.locality_1 = Locality.objects.create(id='E0054410', name='Baglan', admin_area_id=34)
+        cls.locality_2 = Locality.objects.create(id='N0078801', name='Port Talbot', admin_area_id=34)
 
         command = import_stops.Command()
         command.input = os.path.join(DIR, 'fixtures/Stops.csv')
         command.handle()
 
     def test_imported_stops(self):
-        cassell_road = StopPoint.objects.get(pk='010000001')
-        self.assertEqual(str(cassell_road), 'Cassell Road (SW-bound)')
-        self.assertEqual(cassell_road.get_heading(), 225)
+        legion = StopPoint.objects.get(pk='5820AWN26274')
+        self.assertEqual(str(legion), 'The Legion (o/s)')
+        self.assertEqual(legion.landmark, 'Port Talbot British Legion')
+        self.assertEqual(legion.crossing, 'Eagle Street')
+        self.assertEqual(legion.get_heading(), 315)
 
-        # 'DOWNEND ROAD' should be converted to title case
-        self.assertEqual(cassell_road.street, 'Downend Road')
+        plaza = StopPoint.objects.get(pk='5820AWN26259')
+        self.assertEqual(plaza.get_qualified_name(), 'Port Talbot Plaza')
+        self.assertEqual(plaza.landmark, 'Port Talbot British Legion')
+        self.assertEqual(plaza.crossing, 'Eagle Street')
+        self.assertEqual(plaza.get_heading(), 135)
 
-        ring_o_bells = StopPoint.objects.get(pk='0610VR1022')
-        self.assertEqual(str(ring_o_bells), 'Ring O\'Bells (o/s)')
-        self.assertEqual(ring_o_bells.landmark, 'Ring O\'Bells')
+        club = StopPoint.objects.get(pk='5820AWN26438')
+        self.assertEqual(str(club), "Ty'n y Twr Club")
