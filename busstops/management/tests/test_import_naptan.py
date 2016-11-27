@@ -104,4 +104,9 @@ class StopsTest(TestCase):
         self.assertEqual(plaza.get_heading(), 135)
 
         club = StopPoint.objects.get(pk='5820AWN26438')
-        self.assertEqual(str(club), "Ty'n y Twr Club")
+        # backtick should be replaced and 'NE - bound' should be normalised
+        self.assertEqual(str(club), "Ty'n y Twr Club (NE-bound)")
+
+        parkway_station = StopPoint.objects.get(pk='5820AWN26361')
+        self.assertEqual(parkway_station.crossing, '')  # '---' should be removed
+        self.assertEqual(parkway_station.indicator, '')
