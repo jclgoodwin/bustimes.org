@@ -4,7 +4,8 @@
 import os
 from django.test import TestCase
 from ...models import Region, AdminArea, StopPoint, Locality
-from ..commands import update_naptan, import_stop_areas, import_stops
+from ..commands import (update_naptan, import_stop_areas, import_stops, import_stops_in_area,
+                        import_stop_area_hierarchy)
 
 
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -41,44 +42,11 @@ class UpdateNaptanTest(TestCase):
         self.assertEqual(self.command.get_diff(new_rows, new_rows), ([], []))
 
 
-class ImportStopAreasTest(TestCase):
-    """Test the import_stop_areas command
+class ImportNaptanTest(TestCase):
+    """Test the import_stops, import_stop_areas, import_stops_in_area and
+    import_stop_area_hierarchy commands
     """
-    command = import_stop_areas.Command()
 
-    def test_row_to_stoparea(self):
-        """
-        Given a row, does row_to_stoparea return a StopArea object with the correct field values?
-        """
-        row = {
-            'GridType': 'U',
-            'Status': 'act',
-            'Name': 'Buscot Copse',
-            'AdministrativeAreaCode': '064',
-            'StopAreaType': 'GPBS',
-            'NameLang': '',
-            'StopAreaCode': '030G50780001',
-            'Easting': '460097',
-            'Modification': 'new',
-            'ModificationDateTime': '2015-02-13T15:31:00',
-            'CreationDateTime': '2015-02-13T15:31:00',
-            'RevisionNumber': '0',
-            'Northing': '171718'
-        }
-        region = Region.objects.create(id='GB', name='Great Britain')
-        admin_area = AdminArea.objects.create(id=64, atco_code=30, region=region)
-        area = self.command.handle_row(row)
-
-        self.assertEqual(area.id, '030G50780001')
-        self.assertEqual(area.name, 'Buscot Copse')
-        self.assertEqual(area.stop_area_type, 'GPBS')
-        self.assertEqual(area.admin_area, admin_area)
-        self.assertTrue(area.active)
-
-
-class StopsTest(TestCase):
-    """Test the import_stops command
-    """
     @classmethod
     def setUpTestData(cls):
         cls.region = Region.objects.create(id='GB', name='Great Britain')
@@ -90,10 +58,46 @@ class StopsTest(TestCase):
         command.input = os.path.join(DIR, 'fixtures/Stops.csv')
         command.handle()
 
-    def test_imported_stops(self):
+        cls.stop_area = import_stop_areas.Command().handle_row({
+            'GridType': 'U',
+            'Status': 'act',
+            'Name': 'Buscot Copse',
+            'AdministrativeAreaCode': '034',
+            'StopAreaType': 'GPBS',
+            'NameLang': '',
+            'StopAreaCode': '030G50780001',
+            'Easting': '460097',
+            'Modification': 'new',
+            'ModificationDateTime': '2015-02-13T15:31:00',
+            'CreationDateTime': '2015-02-13T15:31:00',
+            'RevisionNumber': '0',
+            'Northing': '171718'
+        })
+        cls.stop_area_parent = import_stop_areas.Command().handle_row({
+            'Status': 'act',
+            'Name': 'Buscot Wood',
+            'AdministrativeAreaCode': '034',
+            'StopAreaType': 'GPBS',
+            'StopAreaCode': '030G50780002',
+            'Easting': '460097',
+            'Northing': '171718'
+        })
+
+        import_stops_in_area.Command().handle_row({
+            'StopAreaCode': '030G50780001',
+            'AtcoCode': '5820AWN26274',
+        })
+
+        import_stop_area_hierarchy.Command().handle_row({
+            'ChildStopAreaCode': '030G50780001',
+            'ParentStopAreaCode': '030G50780002',
+        })
+
+    def test_stops(self):
         legion = StopPoint.objects.get(pk='5820AWN26274')
         self.assertEqual(str(legion), 'The Legion (o/s)')
         self.assertEqual(legion.landmark, 'Port Talbot British Legion')
+        self.assertEqual(legion.street, 'Talbot Road')  # converted from 'TALBOT ROAD'
         self.assertEqual(legion.crossing, 'Eagle Street')
         self.assertEqual(legion.get_heading(), 315)
 
@@ -110,3 +114,38 @@ class StopsTest(TestCase):
         parkway_station = StopPoint.objects.get(pk='5820AWN26361')
         self.assertEqual(parkway_station.crossing, '')  # '---' should be removed
         self.assertEqual(parkway_station.indicator, '')
+
+    def test_stop_areas(self):
+        """Given a row, does handle_row return a StopArea object with the correct field values?
+        """
+        self.assertEqual(self.stop_area.id, '030G50780001')
+        self.assertEqual(self.stop_area.name, 'Buscot Copse')
+        self.assertEqual(self.stop_area.stop_area_type, 'GPBS')
+        self.assertEqual(self.stop_area.admin_area, self.admin_area)
+        self.assertTrue(self.stop_area.active)
+
+        self.assertEqual(self.stop_area_parent.id, '030G50780002')
+        self.assertEqual(str(self.stop_area_parent), 'Buscot Wood')
+
+    def test_stops_in_area(self):
+        legion = StopPoint.objects.get(pk='5820AWN26274')
+        self.assertEqual(self.stop_area, legion.stop_area)
+
+        if hasattr(self, 'assertLogs'):
+            with self.assertLogs() as context_manager:
+                import_stops_in_area.Command().handle_row({
+                    'StopAreaCode': 'poo',
+                    'AtcoCode': 'poo',
+                })
+                self.assertEqual(1, len(context_manager.output))
+                self.assertEqual(context_manager.output[0][:33], 'ERROR:busstops.management.command')
+
+    def test_stop_area_hierarchy(self):
+        self.assertIsNone(self.stop_area.parent)
+        self.assertIsNone(self.stop_area_parent.parent)
+
+        self.stop_area.refresh_from_db()
+        self.stop_area_parent.refresh_from_db()
+
+        self.assertEqual(self.stop_area.parent, self.stop_area_parent)
+        self.assertIsNone(self.stop_area_parent.parent)
