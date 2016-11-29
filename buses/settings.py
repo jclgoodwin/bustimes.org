@@ -86,7 +86,7 @@ if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.environ.get('STATIC_ROOT', '/home/josh/bustimes-static/')
+STATIC_ROOT = os.environ.get('STATIC_ROOT', os.path.join(BASE_DIR, '../bustimes-static/'))
 if DEBUG:
     STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
 else:

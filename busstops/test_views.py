@@ -234,6 +234,11 @@ class ViewsTests(TestCase):
             status_code=404
         )
 
+    def test_service_xml(self):
+        response = self.client.get('/services/ea_21-45-A-y08.xml')
+        self.assertEqual(response.type, 'text/plain')
+        self.assertEqual(response.status_code, 200)
+
     def test_modes(self):
         self.assertContains(render(None, 'modes.html', {
             'modes': ['bus'],
