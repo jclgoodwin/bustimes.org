@@ -57,7 +57,7 @@ def get_filenames(service, path=None, archive=None):
             namelist = os.listdir(path)
         else:
             namelist = archive.namelist()
-    except IOError:
+    except OSError:
         return []
 
     if service.net:
@@ -96,7 +96,7 @@ def get_files_from_zipfile(service):
         with zipfile.ZipFile(archive_path) as archive:
             filenames = get_filenames(service, archive=archive)
             return [archive.open(filename) for filename in filenames]
-    except (zipfile.BadZipfile, IOError):
+    except (zipfile.BadZipfile, OSError):
         return []
 
 
