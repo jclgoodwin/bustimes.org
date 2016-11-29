@@ -118,15 +118,9 @@ After=network.target
 User=$USER
 Group=www-data
 WorkingDirectory=/home/$USER/bustimes.org.uk
-ExecStart=/home/$USER/bustimes.org.uk/env/bin/gunicorn \
-  --workers 3 \
-  --env SECRET_KEY=bh9ufxfhdsadbgtfgvgbxdfhldffghjdkgbpgfokj6nbvcfr \
-  --env DATABASE_USER=bustimes \
-  --env DATABASE_PASSWORD=$DB_PASS \
-  --env TRANSPORTAPI_APP_ID=$TRANSPORAPI_APP_ID \
-  --env TRANSPORTAPI_APP_KEY=$TRANSPORAPI_APP_KEY \
-  --bind unix:/home/josh/bustimes.sock \
-  buses.wsgi:application
+ExecStart=/home/$USER/bustimes.org.uk/env/bin/gunicorn --config=file:gunicorn-config.py buses.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
 
 [Install]
 WantedBy=multi-user.target
