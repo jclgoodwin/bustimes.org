@@ -1,21 +1,21 @@
 @font-face {
     font-family: 'Transport New';
+    font-style: normal;
+    font-weight: normal;
     src: url('/static/fonts/transportnew-light.eot');
     src: url('/static/fonts/transportnew-light.eot?#iefix') format('embedded-opentype'),
          url('/static/fonts/transportnew-light.woff2') format('woff2'),
          url('/static/fonts/transportnew-light.woff') format('woff'),
          url('/static/fonts/transportnew-light.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
 }
 
 @font-face {
     font-family: 'Transport New';
+    font-style: normal;
+    font-weight: bold;
     src: url('/static/fonts/transportnew-medium.eot');
     src: url('/static/fonts/transportnew-medium.eot?#iefix') format('embedded-opentype'),
          url('/static/fonts/transportnew-medium.woff2') format('woff2'),
          url('/static/fonts/transportnew-medium.woff') format('woff'),
          url('/static/fonts/transportnew-medium.ttf') format('truetype');
-    font-weight: bold;
-    font-style: normal;
 }

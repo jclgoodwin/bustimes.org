@@ -8,7 +8,7 @@ footer {
 
 body,
 a {
-    color: black;
+    color: #000;
 }
 
 main {
@@ -38,6 +38,6 @@ table tbody tr,
     border-color: #eee;
 }
 
-main p a[href^=http] {
+main p a[href^='http'] {
     display: none;
 }

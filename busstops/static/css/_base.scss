@@ -2,13 +2,13 @@
 // @import 'webfonts';
 
 body {
+    // http://blog.55minutes.com/2012/04/iphone-text-resizing/
+    -webkit-text-size-adjust: 100%;
     color: #222;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-size: 16px;
     line-height: 1.5;
     margin: 0;
-    // http://blog.55minutes.com/2012/04/iphone-text-resizing/
-    -webkit-text-size-adjust: 100%;
 }
 
 header,
@@ -32,8 +32,8 @@ a:hover {
 
 a:focus,
 a:active {
-    color: #000;
     background-color: $brand-color;
+    color: #000;
 }
 
 label {
@@ -57,12 +57,12 @@ header {
     }
 
     .site-name {
-        font-size: 1.5em;
         float: left;
+        font-size: 1.5em;
     }
 
     .site-name:after {
-        content: url("/static/svg/bus.svg");
+        content: url('/static/svg/bus.svg');
         display: inline-block;
         margin-left: .66667em;
     }
@@ -84,9 +84,9 @@ header {
 
 h1,
 h2 {
+    font-weight: 600;
     line-height: 1.2em;
     margin: .5em 0;
-    font-weight: 600;
 }
 
 h1 {
@@ -110,6 +110,7 @@ h3 {
 
 .button,
 input[type=submit] {
+    -webkit-appearance: none;
     background: $brand-color;
     border: 0;
     border-bottom: .0625em solid $brand-color-darker;
@@ -122,7 +123,6 @@ input[type=submit] {
     padding: .5em;
     padding-bottom: .4em;
     vertical-align: bottom;
-    -webkit-appearance: none;
 
     &:hover {
         border-bottom-width: .125em;
@@ -137,7 +137,7 @@ input[type=submit] {
         margin-top: .125em;
 
         &:after {
-            content: "\2026";
+            content: '\2026';
         }
     }
 }
@@ -259,7 +259,7 @@ table {
     }
 
     li:after {
-        content: "\203A";
+        content: '\203A';
         float: left;
         padding: .75em .5em;
         color: $brand-color-darker;
@@ -480,10 +480,10 @@ input:not(:checked) + label {
             display: block;
             margin: -.25em -.5em;
             margin-left: 0;
-            padding: .25em .5em;
-            padding-left: 0;
             max-width: 60vw;
             overflow: hidden;
+            padding: .25em .5em;
+            padding-left: 0;
             text-overflow: ellipsis;
         }
     }
@@ -544,8 +544,8 @@ footer {
     .banner-ad {
         border-top: 1px solid $brand-color;
         clear: both;
-        text-align: center;
         margin: 0;
+        text-align: center;
     }
 
     .banner-ad {
@@ -564,7 +564,7 @@ footer {
     }
 
     .megabus {
-        background: url(https://www.awin1.com/cshow.php?s=260973&v=2678&q=124736&r=242611);
+        background: url('https://www.awin1.com/cshow.php?s=260973&v=2678&q=124736&r=242611');
         display: block;
         height: 250px;
         margin: 0 auto;
@@ -575,19 +575,19 @@ footer {
 
     /*
     .birmingham {
-        background: url(https://www.awin1.com/cshow.php?s=259848&v=2678&q=124173&r=242611);
+        background: url('https://www.awin1.com/cshow.php?s=259848&v=2678&q=124173&r=242611');
     }
 
     .bristol {
-        background: url(https://www.awin1.com/cshow.php?s=259856&v=2678&q=124173&r=242611);
+        background: url('https://www.awin1.com/cshow.php?s=259856&v=2678&q=124173&r=242611');
     }
 
     .leeds {
-        background: url(https://www.awin1.com/cshow.php?s=259857&v=2678&q=124173&r=242611);
+        background: url('https://www.awin1.com/cshow.php?s=259857&v=2678&q=124173&r=242611');
     }
 
     .manchester {
-        background: url(https://www.awin1.com/cshow.php?s=259858&v=2678&q=124173&r=242611);
+        background: url('https://www.awin1.com/cshow.php?s=259858&v=2678&q=124173&r=242611');
     }
     */
 
@@ -604,12 +604,12 @@ footer {
     li {
         display: inline;
 
-        &:before {
+        ::before {
             color: $brand-color-darker;
-            content: "  \2022  ";
+            content: '  \2022  ';
         }
 
-        &:first-child:before {
+        :first-child::before {
             display: none;
         }
     }
