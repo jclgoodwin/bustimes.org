@@ -12,7 +12,6 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'bustimes.org.uk\n127.0.0.1\nloc
 DEBUG = bool(os.environ.get('DEBUG', False))
 
 SERVER_EMAIL = 'contact@bustimes.org.uk'
-ADMINS = MANAGERS = (('Josh', 'contact@bustimes.org.uk'),)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -159,3 +158,14 @@ STREETVIEW_SECRET = os.environ.get('STREETVIEW_SECRET')
 
 TRANSPORTAPI_APP_ID = os.environ.get('TRANSPORTAPI_APP_ID')
 TRANSPORTAPI_APP_KEY = os.environ.get('TRANSPORTAPI_APP_KEY')
+
+try:
+    import raven
+
+    INSTALLED_APPS.append('raven.contrib.django.raven_compat')
+    RAVEN_CONFIG = {
+        'dsn': os.environ.get('SENTRY_DSN'),
+        'release': raven.fetch_git_sha(BASE_DIR)
+    }
+except ImportError:
+    pass
