@@ -846,5 +846,5 @@ def unpickle_timetable(filename):
     try:
         with open(filename, 'rb') as open_file:
             return pickle.load(open_file)
-    except OSError:
+    except IOError:
         return

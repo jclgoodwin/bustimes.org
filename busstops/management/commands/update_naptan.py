@@ -14,7 +14,7 @@ class Command(BaseCommand):
         try:
             with open(JSON_NAME) as old_file:
                 old_json = json.load(old_file)
-        except OSError:
+        except IOError:
             return
         return old_json.get('rows')
 
