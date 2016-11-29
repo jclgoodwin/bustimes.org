@@ -236,7 +236,7 @@ class ViewsTests(TestCase):
 
     def test_service_xml(self):
         response = self.client.get('/services/ea_21-45-A-y08.xml')
-        self.assertEqual(response.type, 'text/plain')
+        self.assertEqual(response['Content-Type'], 'text/plain')
         self.assertEqual(response.status_code, 200)
 
     def test_modes(self):
