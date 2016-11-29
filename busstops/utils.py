@@ -57,7 +57,7 @@ def get_filenames(service, path=None, archive=None):
             namelist = os.listdir(path)
         else:
             namelist = archive.namelist()
-    except IOError:
+    except (IOError, OSError):
         return []
 
     if service.net:
