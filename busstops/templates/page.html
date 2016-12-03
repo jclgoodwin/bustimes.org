@@ -40,7 +40,7 @@
 <footer>
     {% block ad %}
     <div class="banner-ad" id="ad">
-        {% if breadcrumb.1.id == 'MBGD' or breadcrumb.1.id == 'MEGA' %}
+        {% if object.is_megabus or breadcrumb.1.id == 'MBGD' or breadcrumb.1.id == 'MEGA' %}
             <a href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611" class="megabus" rel="nofollow">Megabus</a>
         {% else %}
             <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>

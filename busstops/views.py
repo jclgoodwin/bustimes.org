@@ -414,7 +414,7 @@ class ServiceDetailView(DetailView):
     "A service and the stops it stops at"
 
     model = Service
-    queryset = model.objects.select_related('region')
+    queryset = model.objects.select_related('region').prefetch_related('operator')
 
     def get_context_data(self, **kwargs):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)
@@ -425,18 +425,6 @@ class ServiceDetailView(DetailView):
         context['operators'] = self.object.operator.all()
         context['notes'] = Note.objects.filter(Q(operators__in=context['operators']) | Q(services=self.object))
         context['links'] = []
-        traveline_url = self.object.get_traveline_url()
-        if traveline_url:
-            if self.object.net == 'tfl':
-                traveline_text = 'Transport for London'
-            elif self.object.region_id == 'S':
-                traveline_text = 'Traveline Scotland'
-            else:
-                traveline_text = 'Traveline'
-            context['links'].append({
-                'url': traveline_url,
-                'text': 'Timetable on the %s website' % traveline_text
-            })
 
         if (self.object.show_timetable or '_MEGA' in self.object.service_code
                 or 'timetable' in self.request.GET):
@@ -459,25 +447,39 @@ class ServiceDetailView(DetailView):
 
         if bool(context['operators']):
             operator = context['operators']
-            context['breadcrumb'] = [self.object.region, context['operators'][0]]
-            for operator in context['operators']:
-                if operator.pk == 'MEGA' or self.object.line_name == 'FALCON':
-                    context['links'].append({
-                        'url': 'https://www.awin1.com/awclick.php?mid=2678&id=242611',
-                        'text': 'Buy tickets from Megabus'
-                    })
-                elif operator.pk in FIRST_OPERATORS:
-                    context['links'].append({
-                        'url': 'https://www.firstgroup.com/%s/tickets' % FIRST_OPERATORS[operator.pk],
-                        'text': 'Fares and tickets on the %s website' % operator.name
-                    })
-                elif operator.url.startswith('http'):
-                    context['links'].append({
-                        'url': operator.url,
-                        'text': '%s website' % operator.name
-                    })
+            context['breadcrumb'] = (self.object.region, context['operators'][0])
+            if self.object.is_megabus():
+                context['links'].append({
+                    'url': 'https://www.awin1.com/awclick.php?mid=2678&id=242611',
+                    'text': 'Buy tickets from megabus.com'
+                })
+            else:
+                for operator in context['operators']:
+                    if operator.pk in FIRST_OPERATORS:
+                        context['links'].append({
+                            'url': 'https://www.firstgroup.com/%s/tickets' % FIRST_OPERATORS[operator.pk],
+                            'text': 'Fares and tickets on the %s website' % operator.name
+                        })
+                    elif operator.url.startswith('http'):
+                        context['links'].append({
+                            'url': operator.url,
+                            'text': '%s website' % operator.name
+                        })
         else:
-            context['breadcrumb'] = [self.object.region]
+            context['breadcrumb'] = (self.object.region,)
+
+        traveline_url = self.object.get_traveline_url()
+        if traveline_url:
+            if self.object.net == 'tfl':
+                traveline_text = 'Transport for London'
+            elif self.object.region_id == 'S':
+                traveline_text = 'Traveline Scotland'
+            else:
+                traveline_text = 'Traveline'
+            context['links'].append({
+                'url': traveline_url,
+                'text': 'Timetable on the %s website' % traveline_text
+            })
 
         return context
 

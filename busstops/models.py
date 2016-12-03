@@ -231,7 +231,7 @@ class StopPoint(models.Model):
         return self.common_name
 
     def get_heading(self):
-        "Return the stop's bearing converted to degrees, for use with Google Street View."
+        """Return the stop's bearing converted to degrees, for use with Google Street View."""
         if self.heading:
             return self.heading
         headings = {
@@ -417,6 +417,11 @@ class Service(models.Model):
                           ('outputFormat', 0)])
             base_url = 'http://www.travelinesoutheast.org.uk/se'
             return '%s/XSLT_TTB_REQUEST?%s' % (base_url, urlencode(query))
+
+    def is_megabus(self):
+        return (self.line_name in ('FALCON', 'Oxford Tube')
+                or self.service_code in ('bed_1-X5-Z-y08', 'YWAX062')
+                or any(o.pk in ('MEGA', 'MBGD', 'SCLK')) for pk in self.operator.all())
 
 
 @python_2_unicode_compatible
