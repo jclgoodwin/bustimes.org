@@ -420,8 +420,8 @@ class Service(models.Model):
 
     def is_megabus(self):
         return (self.line_name in ('FALCON', 'Oxford Tube')
-                or self.service_code in ('bed_1-X5-Z-y08', 'YWAX062')
-                or any(o.pk in ('MEGA', 'MBGD', 'SCLK')) for pk in self.operator.all())
+                or self.pk in ('bed_1-X5-Z-y08', 'YWAX062', 'HIAG010', 'FSAM009', 'FSAG009', 'EDAO900', 'EDAAIR0')
+                or any(o.pk == ('MEGA', 'MBGD') for o in self.operator.all()))
 
 
 @python_2_unicode_compatible
