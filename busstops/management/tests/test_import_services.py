@@ -262,7 +262,7 @@ class ImportServicesTest(TestCase):
         ),))
 
         res = self.client.get(service.get_absolute_url())
-        self.assertEqual(res.context_data['breadcrumb'], [self.sc, self.fabd])
+        self.assertEqual(res.context_data['breadcrumb'], (self.sc, self.fabd))
         self.assertTemplateUsed(res, 'busstops/service_detail.html')
         self.assertContains(res, '<td colspan="5" rowspan="62">then every 30 minutes until</td>', html=True)
 
