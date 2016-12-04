@@ -637,8 +637,7 @@ class OperatingProfile(object):
         return (
             len(self.regular_days) == 1 and
             hasattr(self, 'nonoperation_days') and
-            self.regular_days[0].day in (2, 3, 4, 5, 6) and
-            len(self.nonoperation_days) >= 24
+            len(self.nonoperation_days) >= 7
         )
 
     def get_order(self):
