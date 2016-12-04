@@ -18,14 +18,7 @@ main {
 }
 
 h1 {
-    font-size: 1.25em;
-    /*line-height: 1em;*/
-    margin: 0;
-}
-
-h2 {
-    font-size: 1em;
-    margin: 0;
+    font-size: 1.75em;
 }
 
 .timetable-wrapper {

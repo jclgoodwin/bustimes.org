@@ -1,12 +1,12 @@
 .long {
-    -webkit-column-count: 2;
     -moz-column-count: 2;
+    -webkit-column-count: 2;
     column-count: 2;
 }
 
 .image-wrapper {
-    padding-top: 360px;
     max-width: 480px;
+    padding-top: 360px;
 }
 
 .asides {
@@ -14,9 +14,9 @@
 }
 
 .aside {
-    width: 47%;
     float: left;
     margin: 1em 1.5% 0;
+    width: 47%;
 }
 
 #regions ul {
