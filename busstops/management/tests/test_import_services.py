@@ -185,7 +185,7 @@ class ImportServicesTest(TestCase):
         )
 
         res = self.client.get(service.get_absolute_url())
-        self.assertEqual(res.context_data['breadcrumb'], [self.ea, self.fecs])
+        self.assertEqual(res.context_data['breadcrumb'], (self.ea, self.fecs))
         self.assertContains(res, """
             <tr class="OTH">
                 <th>Norwich Brunswick Road</th>
@@ -207,7 +207,7 @@ class ImportServicesTest(TestCase):
         )
 
         res = self.client.get(service.get_absolute_url())
-        self.assertEqual(res.context_data['breadcrumb'], [self.gb, self.megabus])
+        self.assertEqual(res.context_data['breadcrumb'], (self.gb, self.megabus))
         self.assertTemplateUsed(res, 'busstops/service_detail.html')
         self.assertContains(res, '<h1>M11A - Belgravia - Liverpool</h1>', html=True)
         self.assertContains(
