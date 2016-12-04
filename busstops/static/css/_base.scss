@@ -47,8 +47,8 @@ header {
     a {
         color: #000;
         display: inline-block;
-        padding: .66667em;
         line-height: 1;
+        padding: .66667em;
     }
 
     a:hover {
@@ -109,7 +109,7 @@ h3 {
 }
 
 .button,
-input[type=submit] {
+input[type='submit'] {
     -webkit-appearance: none;
     background: $brand-color;
     border: 0;
@@ -118,8 +118,8 @@ input[type=submit] {
     color: inherit;
     display: inline-block;
     font: inherit;
-    margin-top: .0625em;
     margin-bottom: .5em;
+    margin-top: .0625em;
     padding: .5em;
     padding-bottom: .4em;
     vertical-align: bottom;
@@ -142,33 +142,33 @@ input[type=submit] {
     }
 }
 
-input[type=text],
-input[type=email],
+input[type='text'],
+input[type='email'],
 textarea {
     display: block;
     width: 100%;
 }
 
 .errorlist {
-    color: red;
+    color: #F00;
     float: right;
-    font-size: 0.875em;
+    font-size: .875em;
     margin: 0 0 -1em;
 }
 
-input[type=text],
-input[type=email],
-input[type=search],
+input[type='text'],
+input[type='email'],
+input[type='search'],
 textarea {
+    -moz-box-sizing: border-box;
+    -webkit-appearance: none;
     border: 1px solid $brand-color;
     border-radius: 0;
     box-sizing: border-box;
-    -moz-box-sizing: border-box;
     font: inherit;
     outline: 0;
     padding: .25em;
     padding-right: 0;
-    -webkit-appearance: none;
 
     &:focus {
         border-color: $brand-color-darker;
@@ -179,12 +179,12 @@ textarea {
     }
 }
 
-input[type=search]::-webkit-search-decoration {
+input[type='search']::-webkit-search-decoration {
     -webkit-appearance: none;
 }
 
 .search {
-    input[type=submit] {
+    input[type='submit'] {
         margin-bottom: -.125em;
         outline: 0;
     }
@@ -192,20 +192,23 @@ input[type=search]::-webkit-search-decoration {
 
 .button-locate + .search {
     display: inline-block;
-    position: relative;
     margin-bottom: .6em;
+    position: relative;
 
-    input[type=search] {
+    input[type='search'] {
         width: 11.5em;
     }
 }
 
-ul, ol, li {
+ul,
+ol,
+li {
     list-style: none;
     padding: 0;
 }
 
-ul, ol {
+ul,
+ol {
     margin: 1em 0;
 }
 
@@ -216,8 +219,8 @@ main li {
     a {
         display: block;
         overflow: hidden;
-        text-overflow: ellipsis;
         padding: .125em 0;
+        text-overflow: ellipsis;
         white-space: nowrap;
     }
 }
@@ -244,8 +247,8 @@ table {
 .breadcrumb {
     border-bottom: 1px solid $brand-color;
     margin: 0 -1em;
-    padding: .5em 1em 0;
     overflow: hidden;
+    padding: .5em 1em 0;
 
     li {
         float: left;
@@ -259,10 +262,10 @@ table {
     }
 
     li:after {
+        color: $brand-color-darker;
         content: '\203A';
         float: left;
         padding: .75em .5em;
-        color: $brand-color-darker;
     }
 }
 
@@ -279,9 +282,9 @@ table {
 
         &.is-short {
             font-size: 3em;
+            line-height: 1.2em;
             margin-bottom: 0;
             margin-right: .33em;
-            line-height: 1.2em;
         }
     }
 
@@ -299,13 +302,13 @@ table {
 #svgmap {
     bottom: 0;
     height: 100%;
+    max-width: 50%;
     position: absolute;
     right: 0;
     width: auto;
-    max-width: 50%;
 
     path {
-        fill: white;
+        fill: #fff;
     }
 
     a {
@@ -347,9 +350,9 @@ table {
 }
 
 .box {
-    padding: .5em .75em;
     border: 1px solid $brand-color;
     box-sizing: border-box;
+    padding: .5em .75em;
 }
 
 .box h2 {
@@ -367,21 +370,21 @@ table {
 
     img {
         height: auto;
-        width: 100%;
         position: absolute;
         top: 0;
+        width: 100%;
     }
 }
 
 #sidebar {
+    bottom: 0;
     box-sizing: border-box;
+    left: 0;
+    overflow: auto;
+    padding: 0 1em;
     position: absolute;
     top: 50%;
-    bottom: 0;
-    left: 0;
-    padding: 0 1em;
     width: 100%;
-    overflow: auto;
 }
 
 #hugemap {
@@ -389,7 +392,7 @@ table {
 
     .leaflet-control.hugemap-status {
         background: #fff;
-        background: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, .8);
         margin: 0;
         padding: 0 5px;
     }
@@ -398,19 +401,18 @@ table {
         // background-clip: padding-box;
         background: $brand-color;
         border-radius: 20px;
-        box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+        box-shadow: 0 1px 5px rgba(0, 0, 0, .65);
     }
 
     .marker-cluster div {
         background: #fff;
-        width: 30px;
+        border-radius: 15px;
+        font-size: 12px;
         height: 30px;
         margin-left: 5px;
         margin-top: 5px;
-
         text-align: center;
-        border-radius: 15px;
-        font-size: 12px;
+        width: 30px;
     }
 
     .marker-cluster span {
@@ -437,11 +439,11 @@ td {
 }
 
 .timetable-wrapper {
+    -webkit-overflow-scrolling: touch;
     font-size: .875em;
     margin: 1em -1em;
     overflow: auto;
     padding: 0 1em;
-    -webkit-overflow-scrolling: touch;
 
     input {
         vertical-align: top;
@@ -572,24 +574,6 @@ footer {
         text-indent: 100%;
         width: 300px;
     }
-
-    /*
-    .birmingham {
-        background: url('https://www.awin1.com/cshow.php?s=259848&v=2678&q=124173&r=242611');
-    }
-
-    .bristol {
-        background: url('https://www.awin1.com/cshow.php?s=259856&v=2678&q=124173&r=242611');
-    }
-
-    .leeds {
-        background: url('https://www.awin1.com/cshow.php?s=259857&v=2678&q=124173&r=242611');
-    }
-
-    .manchester {
-        background: url('https://www.awin1.com/cshow.php?s=259858&v=2678&q=124173&r=242611');
-    }
-    */
 
     ul {
         color: #555;

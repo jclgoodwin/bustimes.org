@@ -8,8 +8,6 @@ services:
   - postgresql
 env:
   - STATIC_ROOT=/home/travis/bustimes-static/ DB_USER=postgres DEBUG=True
-before_install:
-  - rvm install 2.3.3
 install:
   - pip install -U pip wheel
   - pip install -r requirements.txt
@@ -18,14 +16,13 @@ before_script:
   - psql -U postgres -c 'create extension postgis'
   - psql -U postgres -c 'create database bustimes'
   - ./manage.py migrate
-  - gem install sass scss_lint
+  - gem install sass
   - npm install yuglify sass-lint
   - ./manage.py collectstatic --noinput
 script:
   - PYTHONWARNINGS=all coverage run manage.py test -v 3
   - pylint buses busstops departures txc | cat
   - flake8
-  - scss-lint busstops/static/css | cat
   - sass-lint busstops/static/css/* -vq | cat
 after_success:
   coveralls

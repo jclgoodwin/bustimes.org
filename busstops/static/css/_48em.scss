@@ -33,8 +33,8 @@ h1 {
 }
 
 #sidebar {
-    top: 0;
     left: 67%;
+    top: 0;
     width: 33%;
 }
 
@@ -57,17 +57,17 @@ h1 {
 }
 
 .services {
-    -webkit-column-count: 2;
     -moz-column-count: 2;
-    column-count: 2;
-    -webkit-column-gap: 1em;
     -moz-column-gap: 1em;
+    -webkit-column-count: 2;
+    -webkit-column-gap: 1em;
+    column-count: 2;
     column-gap: 1em;
 }
 
 .contact-details {
-    overflow: hidden;
     margin: 0 -.5em;
+    overflow: hidden;
 
     p {
         box-sizing: border-box;
@@ -78,13 +78,12 @@ h1 {
     }
 }
 
-.adsbygoogle,
-.chitikaAdContainer {
+.adsbygoogle {
     max-width: 45.5em; // 728px
     text-decoration: none;
 
-    &:before {
-        content: "Advertisement";
+    &::before {
+        content: 'Advertisement';
         display: block;
         font-size: .75em;
         line-height: 1em;
@@ -93,80 +92,21 @@ h1 {
     }
 }
 
-.adsbygoogle:not([data-adsbygoogle-status=done]):before {
+.adsbygoogle:not([data-adsbygoogle-status='done'])::before {
     visibility: hidden;
-}
-
-.chitikaAdContainer {
-    margin: 0 auto;
 }
 
 .banner-ad {
     height: 7em;
 
     .megabus {
-        background: url(https://www.awin1.com/cshow.php?s=178399&v=2678&q=97593&r=242611);
+        background: url('https://www.awin1.com/cshow.php?s=178399&v=2678&q=97593&r=242611');
         height: 5.625em;
+        margin: .6875em auto;
         width: 45.5em;
-        margin: 0.6875em auto;
     }
-
-    /*
-    .birmingham {
-        background: url(https://www.awin1.com/cshow.php?s=259853&v=2678&q=124178&r=242611);
-    }
-
-    .bristol {
-        background: url(https://www.awin1.com/cshow.php?s=259859&v=2678&q=124178&r=242611);
-    }
-
-    .leeds {
-        background: url(https://www.awin1.com/cshow.php?s=259860&v=2678&q=124178&r=242611);
-    }
-
-    .manchester {
-        background: url(https://www.awin1.com/cshow.php?s=259861&v=2678&q=124178&r=242611);
-    }
-
-    .newcastle {
-        background: url(https://www.awin1.com/cshow.php?s=259862&v=2678&q=124178&r=242611);
-    }
-
-    .plymouth {
-        background: url(https://www.awin1.com/cshow.php?s=259863&v=2678&q=124178&r=242611);
-    }
-    */
 }
 
 [amphtml] .banner-ad {
     height: auto;
 }
-
-/*
-@media (min-height: 48em) {
-    .wide,
-    .narrow {
-        .banner-ad-hole {
-            display: block;
-            height: 8.5em;
-        }
-    }
-
-    .uncommercial .banner-ad-hole {
-        display: none;
-    }
-
-    footer .banner-ad {
-        border: 0;
-        padding: .75em 0;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-
-        .megabus {
-            margin: (0.6875em - .25em) auto;
-        }
-    }
-}
-*/
