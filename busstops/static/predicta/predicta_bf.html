@@ -1,0 +1,74 @@
+<script type="text/javascript">
+function getParam(p,d,u)
+{
+   var pr = new RegExp(p + "=(.*?)("+ d +"|$)", "gi"),fd = u.match(pr);
+
+   if (fd == null)
+   {
+      return "";
+   }
+   else
+   {
+     return RegExp.$1;
+   }
+}
+
+function writeTag(fe, fep)
+{
+   if(typeof parent.MRMTag != "undefined")
+   {
+      parent.MRMBF[pp] = nd;
+      fep.insertBefore(nd, fe);
+      fep.insertBefore(scpad, fe);
+      fe.style.display = 'none';
+   }
+   else
+   {
+      setTimeout(function(){writeTag(fe, fep);} , 500);
+   } 
+}
+
+var lc = location.search.substring(1);
+var pp = getParam("p",";",lc);
+var dm = getParam("dm","&",lc);
+var ck = getParam("ck","&",lc);
+var pmp = getParam("pmp","&",lc);
+var pt = getParam("pt","&",lc) || "http";
+
+var nd = document.createElement("div");
+var scpc = document.createElement("script");
+scpc.src = "https://"+dm+"/mrm-ad/commons.js";
+var scpad = document.createElement("script");
+scpad.src = pt +"://"+dm+"/mrm-ad/ad/script/?"+pmp;
+
+nd.id="pbf"+(Math.random()*1000);
+nd.style.overflow="visible";
+nd.style.display="block";
+nd.style.position="relative";
+nd.name=nd.id;
+nd.innerHTML = "";
+
+var fe = null;
+try
+{
+   fe = window.frameElement;
+}
+catch(_e){}
+
+if(fe == null)
+{
+   document.write('<script src="'+scpc.src+'"><\/script>');
+   document.write('<script src="'+scpad.src+'"><\/script>');
+}
+else
+{
+   var fep = fe.parentNode;
+   fep.insertBefore(scpc, fe);
+   if(typeof parent.MRMBF == "undefined")
+   {
+      parent.MRMBF = [];
+   }   
+   
+   writeTag(fe, fep);
+}
+</script>

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  
+ </head>
+ <body>
+  <script>
+  var e9={};
+  e9.busted=1;
+  (function(){  
+	var queryParam = window.location.href.split('?');
+    var a = queryParam[1].split('&');
+    var query = {};
+    for (var i = 0; i < a.length; ++i)
+    {
+         var p=a[i].split('=');
+		 query[p[0]] = p.length ===1 ? "" : p[1];
+    }  
+    
+   function writeTagsJS(){
+	   var script = document.createElement("script");
+	   script.src= "//a.tribalfusion.com/real/tags/" +query['site']+"/"+ query['adSpace']+"/tags.js";
+	   document.write(script.outerHTML);
+   }
+   writeTagsJS();
+  
+  })()
+  
+  </script>
+ 
+ </body>
+</html>

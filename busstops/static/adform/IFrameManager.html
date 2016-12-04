@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head></head>
+	<body style="margin:0;padding:0;">
+		<script type="text/javascript" src="http://track.adform.net/banners/scripts/iframe/Adform.IFrameManager.v2.0.js"></script>
+		<script type="text/javascript">
+			Adform.IFrameManager.init();
+			
+			function setTimeoutXSS(method, interval)
+			{
+				return setTimeout(method, interval);
+			}
+			
+			function setIntervalXSS(method, interval)
+			{
+				return setInterval(method, interval);
+			}
+		</script>
+	</body>
+</html>

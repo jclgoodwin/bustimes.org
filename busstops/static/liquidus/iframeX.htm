@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>Liquidus BannerLink</title></head>
+<body>
+<script type="text/javascript">
+var ds = unescape(window.location.href.split("src=")[1]);
+var d = window.location.href.split("/")[2];
+document.domain = "googlesyndication.com";
+
+var t = top.document;
+var es = t.getElementsByTagName("iframe");
+for(var i = 0; i < es.length; i++)  {
+	var e = es[i];
+	if(document.referrer==e.getAttribute("src"))
+	{	var scrObj = e.parentNode.insertBefore(t.createElement("script"), e.parentNode.firstChild);
+		scrObj.setAttribute("type", "text/javascript");
+		scrObj.src = ds;
+		e.style.height = "0px"; }
+}
+</script>
+</body>
+</html>

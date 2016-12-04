@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contobox Iframe Buster</title>
+    <script type="text/javascript">
+        var params = {};
+        (window.onpopstate = function () {
+            var match,
+                pl     = /\+/g,
+                search = /([^&=]+)=?([^&]*)/g,
+                decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+                query  = window.location.search.substring(1);
+            params = {};
+            while (match = search.exec(query)) params[decode(match[1])] = decode(match[2]);
+        })();
+    </script>
+</head>
+<body style="margin: 0;">
+
+<script type='text/javascript'><!--//<![CDATA[
+var m3_u = (location.protocol == 'https:' ? 'https:':'http:') + '//am.contobox.com/frontend/ads/getcode.js?', qa = [];
+document.write ("<scr"+"ipt type='text/javascript' src='" + m3_u);
+for (var p in params) qa.push(p + "=" + params[p]);
+document.write (qa.join('&'));
+document.write ("'><\/scr"+"ipt>");
+//]]>--></script>
+
+</body>
+</html>

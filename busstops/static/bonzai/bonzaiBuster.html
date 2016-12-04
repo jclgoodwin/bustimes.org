@@ -1,0 +1,11 @@
+<head>    
+    <script>
+    var script = document.createElement('script');
+    var protocol = window.location.protocol;    
+    if(typeof(protocol) == "undefined"){
+		protocol = "https:"
+    } 
+    script.src= protocol+"//d306vfj3mhm2bb.cloudfront.net/psf/busting.js"+"?rand="+Math.random();
+    document.getElementsByTagName('head')[0].appendChild(script);
+</script>
+</head>

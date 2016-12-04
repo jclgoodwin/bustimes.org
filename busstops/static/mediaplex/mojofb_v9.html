@@ -1,0 +1,26 @@
+<html><head><script>
+var searchString=location.search.substr(1);
+var myArr=searchString.split("&");
+var myProps=[];
+for(var name=0;name<myArr.length;name++){
+	myProps[name]=myProps[myArr[name].split("=")[0].toLowerCase()]=myArr[name].split("=")[1];
+};
+var str='',intRegex = /[0-9 -]+/;
+var _var=myProps["plid"].match(intRegex);
+if(_var != null){
+try{
+	if(myProps["dontcount"]){
+		str+='<scr' + 'ipt type="text/javascript" src="http://altfarm.mediaplex.com/ad/!js/' + _var+ location.search+'"><\/scri' + 'pt>';
+	}else{
+		if(myProps["__load"]){
+			str="";
+		}else{
+			str+='<scr' + 'ipt type="text/javascript" src="http://altfarm.mediaplex.com/ad/js/'+_var+location.search+'"><\/scri' + 'pt>';
+		}
+	}
+	if(myProps["mojodomain"]){
+		var dparts = document.domain.split(/\./);
+        document.domain = dparts.splice(dparts.length - 2, 2).join('.');
+    }
+}
+catch(oops){}}</script></head><body style="margin:0px;padding:0px;"><script>if(str.length>0){document.write(str);}</script></body></html> 
