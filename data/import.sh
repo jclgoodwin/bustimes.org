@@ -120,6 +120,7 @@ for region in "${REGIONS[@]}"; do
 done
 # [ $updated_services ] && ../../manage.py update_index --remove
 
+cd ..
 accessibility_old=$(ls -l accessibility-data.zip)
 wget -qN http://naptan.dft.gov.uk/Journeyweb/accessibility/accessibility-data.zip
 accessibility_new=$(ls -l accessibility-data.zip)

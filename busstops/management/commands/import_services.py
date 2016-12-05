@@ -72,7 +72,11 @@ SPECIAL_OPERATOR_NAMES = {
     'KPMG THAMES CLIPPERS': 'NTHC',
     'Stagecoach on Teesside': 'SCNW',
     'R. J\'s of Wem': 'RJWS',
-    'Owen\'s Travelmaster': 'OWNC'
+    'Owen\'s Travelmaster': 'OWNC',
+    'Peter Hogg of Jedburgh': 'HOGG',
+    'Fastline Travel': 'FLNE',
+    'Operated by Newport Bus': 'NWPT',
+    'Eurocab Minicoaches': 'ERCB'
 }
 # map OperatorCodes to operator IDs (ditto, where there is no TradingName):
 SPECIAL_OPERATOR_CODES = {
@@ -190,7 +194,8 @@ class Command(BaseCommand):
             return Operator.objects.get(id=SPECIAL_OPERATOR_CODES[operator_code])
 
         if operator_name:
-            possible_operators = Operator.objects.filter(name__istartswith=operator_name)
+            possible_operators = (Operator.objects.filter(name=operator_name)
+                                  or Operator.objects.filter(name__istartswith=operator_name))
             if len(possible_operators) == 1:
                 return possible_operators[0]
 
