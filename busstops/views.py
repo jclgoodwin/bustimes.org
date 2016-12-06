@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.http import (HttpResponse, JsonResponse, Http404,
                          HttpResponseBadRequest)
 from django.utils.cache import patch_response_headers
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
 from django.contrib.gis.db.models.functions import Distance
@@ -109,10 +110,11 @@ def contact(request):
     })
 
 
+@csrf_exempt
 def awin_transaction(request):
     message = EmailMessage(
         '💷 New Affiliate Window transaction',
-        str(request) + str(request.META) + str(request.GET) + str(request.POST),
+        str(request.POST.get('AwinTransactionPush')),
         '%s <%s>' % ('Bus Times Robot', 'contact@bustimes.org.uk'),
         ('contact@bustimes.org.uk',),
     )

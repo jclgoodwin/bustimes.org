@@ -27,6 +27,14 @@ server {
         allow ::1;
         deny all;
     }
+
+    charset utf-8;
+
+    location /awin-transaction {
+        proxy_pass http://gunicorn;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+    }
 }
 
 server {

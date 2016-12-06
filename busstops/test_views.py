@@ -1,4 +1,5 @@
 # coding=utf-8
+import json
 from django.test import TestCase
 from django.core import mail
 from django.contrib.gis.geos import Point
@@ -29,6 +30,35 @@ class ContactTests(TestCase):
         self.assertEqual('Rufus Herring <contact@bustimes.org.uk>', mail.outbox[0].from_email)
         self.assertEqual(['rufus@example.com'], mail.outbox[0].reply_to)
         self.assertEqual(['contact@bustimes.org.uk'], mail.outbox[0].to)
+
+    def test_awin_post(self):
+        self.client.post('/awin-transaction', {
+            'AwinTransactionPush': json.dumps({
+                'transactionId': '244231459',
+                'transactionDate': '2016-12-06 18:35:28',
+                'transactionAmount': '33.7',
+                'commission': '0.67',
+                'affiliateId': '242611',
+                'merchantId': '2678',
+                'groupId': '0',
+                'bannerId': '0',
+                'clickRef': '',
+                'clickThroughTime': '2016-12-06 07:15:24',
+                'clickTime': '2016-12-06 07:15:24',
+                'url': 'https://bustimes.org.uk/services/swe_33-FLC-_-y10',
+                'transactionCurrency': 'GBP',
+                'commissionGroups': [
+                    {
+                        'id': '15250',
+                        'name': 'Default Commission',
+                        'code': 'DEFAULT',
+                        'description': ' You will receive 2% commission '
+                    }
+                ]
+            })
+        })
+        self.assertEqual('💷 New Affiliate Window transaction', mail.outbox[0].subject)
+        self.assertEqual('Bus Times Robot <contact@bustimes.org.uk>', mail.outbox[0].from_email)
 
 
 class ViewsTests(TestCase):
@@ -109,6 +139,11 @@ class ViewsTests(TestCase):
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['regions'][0], self.north)
+
+    def test_offline(self):
+        response = self.client.get('/offline')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Sorry, you don’t seem to be connected to the Internet.')
 
     def test_not_found(self):
         response = self.client.get('/fff')
