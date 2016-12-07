@@ -6,6 +6,6 @@ django-pipeline==1.6.9
 lxml==3.6.4
 psycopg2==2.6.2
 python-dateutil==2.6.0
-pytz==2016.7
+pytz==2016.10
 requests==2.12.3
 titlecase==0.8.1
