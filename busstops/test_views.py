@@ -57,8 +57,8 @@ class ContactTests(TestCase):
                 ]
             })
         })
-        self.assertEqual('💷 New Affiliate Window transaction', mail.outbox[0].subject)
-        self.assertEqual('Bus Times Robot <contact@bustimes.org.uk>', mail.outbox[0].from_email)
+        self.assertEqual('💷 £0.67 on a £33.7 transaction', mail.outbox[0].subject)
+        self.assertEqual('🚌⏰🤖 <contact@bustimes.org.uk>', mail.outbox[0].from_email)
 
 
 class ViewsTests(TestCase):

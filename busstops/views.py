@@ -1,6 +1,7 @@
 # coding=utf-8
 """View definitions."""
 import os
+import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.http import (HttpResponse, JsonResponse, Http404,
@@ -112,11 +113,12 @@ def contact(request):
 
 @csrf_exempt
 def awin_transaction(request):
+    data = json.loads(request.POST.get('AwinTransactionPush'))
     message = EmailMessage(
-        '💷 New Affiliate Window transaction',
-        str(request.POST.get('AwinTransactionPush')),
-        '%s <%s>' % ('Bus Times Robot', 'contact@bustimes.org.uk'),
-        ('contact@bustimes.org.uk',),
+        '💷 £{commission} on a £{transactionAmount} transaction'.format(**data),
+        str(data),
+        '%s <%s>' % ('🚌⏰🤖', 'contact@bustimes.org.uk'),
+        ('contact@bustimes.org.uk',)
     )
     message.send()
     return HttpResponse()
