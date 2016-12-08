@@ -1,5 +1,3 @@
-# pylint: disable=C0103
-
 """
 WSGI config for buses project.
 

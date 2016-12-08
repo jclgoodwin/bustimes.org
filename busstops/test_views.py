@@ -212,14 +212,14 @@ class ViewsTests(TestCase):
 
     def test_stop_json(self):
         response = self.client.get('/stops/2900M114.json')
-        json = response.json()
-        self.assertTrue(json['active'])
-        self.assertEqual(json['admin_area'], 91)
-        self.assertEqual(json['atco_code'], '2900M114')
-        self.assertEqual(json['latlong'], [52.8566019427, 1.0331935468])
-        self.assertEqual(json['live_sources'], [])
-        self.assertIsNone(json['heading'])
-        self.assertIsNone(json['stop_area'])
+        data = response.json()
+        self.assertTrue(data['active'])
+        self.assertEqual(data['admin_area'], 91)
+        self.assertEqual(data['atco_code'], '2900M114')
+        self.assertEqual(data['latlong'], [52.8566019427, 1.0331935468])
+        self.assertEqual(data['live_sources'], [])
+        self.assertIsNone(data['heading'])
+        self.assertIsNone(data['stop_area'])
 
     def test_inactive_stop(self):
         response = self.client.get('/stops/2900M115')

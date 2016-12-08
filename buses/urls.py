@@ -1,5 +1,3 @@
-# pylint: disable=C0103
-
 """buses URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
