@@ -27,7 +27,7 @@ class ContactTests(TestCase):
         })
         self.assertContains(response, '<h1>Thank you</h1>', html=True)
         self.assertEqual('Dear John,', mail.outbox[0].subject)
-        self.assertEqual('Rufus Herring <contact@bustimes.org.uk>', mail.outbox[0].from_email)
+        self.assertEqual('"Rufus Herring" <contact@bustimes.org.uk>', mail.outbox[0].from_email)
         self.assertEqual(['rufus@example.com'], mail.outbox[0].reply_to)
         self.assertEqual(['contact@bustimes.org.uk'], mail.outbox[0].to)
 
