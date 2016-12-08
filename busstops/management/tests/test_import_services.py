@@ -214,7 +214,7 @@ class ImportServicesTest(TestCase):
             res,
             """
             <td colspan="8">Book at <a
-            href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611" rel="nofollow">
+            href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=notes" rel="nofollow">
             megabus.com</a> or 0900 1600900 (65p/min + network charges)</td>
             """,
             html=True

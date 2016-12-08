@@ -17,6 +17,8 @@ def urlise(value, autoescape=None):
         urlize(value, nofollow=True)
         .replace('">https://', '">')
         .replace('">http://', '">')
-        .replace('"http://megabus.com"', '"https://www.awin1.com/awclick.php?mid=2678&amp;id=242611"')
-        .replace('"http://www.megabus.com"', '"https://www.awin1.com/awclick.php?mid=2678&amp;id=242611"')
+        .replace('"http://megabus.com"',
+                 '"https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=notes"')
+        .replace('"http://www.megabus.com"',
+                 '"https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=notes"')
     )
