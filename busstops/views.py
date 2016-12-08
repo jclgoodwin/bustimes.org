@@ -94,7 +94,7 @@ def contact(request):
                 subject,
                 body,
                 '"%s" <%s>' % (form.cleaned_data['name'],
-                             'contact@bustimes.org.uk'),
+                               'contact@bustimes.org.uk'),
                 ('contact@bustimes.org.uk',),
                 reply_to=(form.cleaned_data['email'],),
             )
