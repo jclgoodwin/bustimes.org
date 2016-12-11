@@ -18,6 +18,8 @@
             <li><a href="{{ result.object.get_absolute_url }}">{% firstof result.object.get_qualified_name result.object %}</a></li>
         {% endfor %}
         </ul>
+    {% elif suggestion %}
+        <p>Did you mean <a href="/search?q={{ suggestion }}">{{ suggestion }}</a>?</p>
     {% endif %}
 {% endif %}
 
