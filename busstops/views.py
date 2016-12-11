@@ -113,14 +113,15 @@ def contact(request):
 
 @csrf_exempt
 def awin_transaction(request):
-    data = json.loads(request.POST.get('AwinTransactionPush'))
-    message = EmailMessage(
+    json_string = request.POST.get('AwinTransactionPush')
+    data = json.loads(json_string)
+    message = '\n'.join('%s: %s' % pair for pair in data.items())
+    EmailMessage(
         '💷 £{commission} on a £{transactionAmount} transaction'.format(**data),
-        str(data),
+        message,
         '%s <%s>' % ('🚌⏰🤖', 'contact@bustimes.org.uk'),
         ('contact@bustimes.org.uk',)
-    )
-    message.send()
+    ).send()
     return HttpResponse()
 
 
