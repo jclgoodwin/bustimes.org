@@ -36,6 +36,7 @@ class ImportNIServcesTest(TestCase):
     def setUpTestData(cls):
         cls.norn_iron = Region.objects.create(id='NI', name='Northern Ireland')
         cls.metro = Operator.objects.create(id='MET', name='Translink Metro', region_id='NI')
+        cls.stop = StopPoint.objects.create(atco_code='700000015364', locality_centre=False, active=True)
 
     def test_file_header(self):
         line = 'ATCO-CIF0500Metro                           OMNITIMES       20160802144451\n'
@@ -74,5 +75,13 @@ class ImportNIServcesTest(TestCase):
         self.assertEqual(self.command.services, {'1A_MET': {'I': {}, 'O': {}}})
 
     def test_stop(self):
-        self.command.handle_line('QO7000000153640545UQST1  \n')
-        self.assertEqual(self.command.deferred_stop_codes, ['700000015364'])
+        self.command.handle_open_file(['QO7000000153640545UQST1  \n',
+                                       'QI70000000175005470547BR2 T1  \n',
+                                       'QI70000000091605480548B   T0  \n'])
+        self.assertEqual(self.command.deferred_stop_codes, ['700000001750', '700000000916'])
+        self.command.handle_open_file(['QLN700000001750Royal Avenue (Castle Court)\n',
+                                       'QBN700000001750333746  374496\n'])
+        self.assertEqual(self.command.deferred_stops['700000001750'].common_name,
+                         'Royal Avenue (Castle Court)')
+        self.assertEqual(self.command.deferred_stops['700000001750'].latlong.x, 333746.0)
+        self.assertEqual(self.command.deferred_stops['700000001750'].latlong.y, 374496.0)

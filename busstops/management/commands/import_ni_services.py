@@ -95,7 +95,7 @@ class Command(BaseCommand):
 
     @classmethod
     def handle_location_additional(cls, line):
-        atco_code = line[3:15],
+        atco_code = line[3:15]
         if atco_code in cls.deferred_stops:
             assert atco_code in cls.deferred_stops
             latlong = Point(
