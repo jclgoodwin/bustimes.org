@@ -79,7 +79,9 @@ class Command(BaseCommand):
         atco_code = line[2:14]
         if atco_code not in cls.services[cls.service_code][cls.direction]:
             if not StopPoint.objects.filter(atco_code=atco_code).exists():
-                print(atco_code)
+                if not atco_code.startswith('7'):
+                    print(atco_code)
+                    return
                 cls.deferred_stop_codes.append(atco_code)
             if record_identity == 'QI':
                 timing_status = line[26:28]
