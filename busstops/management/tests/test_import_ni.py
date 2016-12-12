@@ -2,7 +2,7 @@
 """
 import os
 from django.test import TestCase
-from ...models import StopPoint, Region, Operator, Service
+from ...models import StopPoint, Region, Service
 from ..commands import import_ni_stops, import_ni_services
 from .test_import_nptg import ImportNPTGTest
 
@@ -35,8 +35,10 @@ class ImportNIServcesTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.norn_iron = Region.objects.create(id='NI', name='Northern Ireland')
-        cls.metro = Operator.objects.create(id='MET', name='Translink Metro', region_id='NI')
-        cls.stop = StopPoint.objects.create(atco_code='700000015364', locality_centre=False, active=True)
+        cls.command.set_up()
+        cls.stop_1 = StopPoint.objects.create(atco_code='700000015364', locality_centre=False, active=True)
+        cls.stop_2 = StopPoint.objects.create(atco_code='700000000916', locality_centre=False, active=True)
+        cls.stop_3 = StopPoint.objects.create(atco_code='700000001567', locality_centre=False, active=True)
 
     def test_file_header(self):
         line = 'ATCO-CIF0500Metro                           OMNITIMES       20160802144451\n'
@@ -74,14 +76,32 @@ class ImportNIServcesTest(TestCase):
         self.assertEqual(self.command.service_code, '1A_MET')
         self.assertEqual(self.command.services, {'1A_MET': {'I': {}, 'O': {}}})
 
+        service.save()
+
     def test_stop(self):
-        self.command.handle_open_file(['QO7000000153640545UQST1  \n',
+        self.command.handle_open_file(('QO7000000153640545UQST1  \n',
                                        'QI70000000175005470547BR2 T1  \n',
-                                       'QI70000000091605480548B   T0  \n'])
-        self.assertEqual(self.command.deferred_stop_codes, ['700000001750', '700000000916'])
+                                       'QI70000000091605480548B   T0  \n',
+                                       'QT7000000015670609   T1  \n'))
+
+        self.assertEqual(self.command.deferred_stop_codes, ['700000001750'])
+
         self.command.handle_open_file(['QLN700000001750Royal Avenue (Castle Court)\n',
                                        'QBN700000001750333746  374496\n'])
         self.assertEqual(self.command.deferred_stops['700000001750'].common_name,
                          'Royal Avenue (Castle Court)')
         self.assertEqual(self.command.deferred_stops['700000001750'].latlong.x, 333746.0)
         self.assertEqual(self.command.deferred_stops['700000001750'].latlong.y, 374496.0)
+
+        self.assertEqual(self.command.stop_usages[0].stop_id, '700000015364')
+        self.assertEqual(self.command.stop_usages[0].direction, 'Outbound')
+        self.assertEqual(self.command.stop_usages[0].order, 0)
+        self.assertEqual(self.command.stop_usages[1].stop_id, '700000001750')
+        self.assertEqual(self.command.stop_usages[1].direction, 'Outbound')
+        self.assertEqual(self.command.stop_usages[1].order, 1)
+        self.assertEqual(self.command.stop_usages[2].stop_id, '700000000916')
+        self.assertEqual(self.command.stop_usages[2].direction, 'Outbound')
+        self.assertEqual(self.command.stop_usages[2].order, 1)
+        self.assertEqual(self.command.stop_usages[3].stop_id, '700000001567')
+        self.assertEqual(self.command.stop_usages[3].direction, 'Outbound')
+        self.assertEqual(self.command.stop_usages[3].order, 2)

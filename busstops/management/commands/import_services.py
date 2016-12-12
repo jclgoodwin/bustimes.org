@@ -172,11 +172,6 @@ class Command(BaseCommand):
         # Get by national operator code
         operator_code = cls.get_operator_code(operator_element)
         if len(operator_code) > 2:
-            if operator_code == 'ROST':
-                if operator_element.attrib['id'] == '2848':  # Rossendale/Harris Travel
-                    operator_code = 'RSNT'
-                # otherwise, the operator element ID is '2079' or '1020',
-                # so leave operator_code as 'ROST' (Rossobus/Rossendalebus/Rossendale Transport)
             possible_operators = Operator.objects.filter(id=operator_code)
             if possible_operators:
                 return possible_operators[0]

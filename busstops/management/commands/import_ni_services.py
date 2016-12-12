@@ -13,6 +13,22 @@ class Command(BaseCommand):
     deferred_stops = {}
     direction = None
     service_code = None
+    stop_usages = []
+
+    @staticmethod
+    def set_up():
+        for id, name in (
+                ('MET', 'Translink Metro'),
+                ('ULB', 'Ulsterbus'),
+                ('GLE', 'Goldline Express'),
+                ('UTS', 'Ulsterbus Town Services'),
+                ('FY', 'Ulsterbus Foyle'),
+                ('BE', 'Bus Éireann')
+        ):
+            Operator.objects.update_or_create(id=id, name=name, defaults={
+                'region_id': 'NI',
+                'vehicle_mode': 'bus'
+            })
 
     @staticmethod
     def get_file_header(line):
@@ -65,7 +81,6 @@ class Command(BaseCommand):
             if not StopPoint.objects.filter(atco_code=atco_code).exists():
                 print(atco_code)
                 cls.deferred_stop_codes.append(atco_code)
-                return
             if record_identity == 'QI':
                 timing_status = line[26:28]
                 order = 1
@@ -75,13 +90,15 @@ class Command(BaseCommand):
                     order = 0
                 else:
                     order = 2
-            cls.services[cls.service_code][cls.direction][atco_code] = StopUsage(
+            stop_usage = StopUsage(
                 service_id=cls.service_code,
                 stop_id=atco_code,
                 direction=('Outbound' if cls.direction == 'O' else 'Inbound'),
                 timing_status=('PTP' if timing_status == 'T1' else 'OTH'),
                 order=order
             )
+            cls.services[cls.service_code][cls.direction][atco_code] = stop_usage
+            cls.stop_usages.append(stop_usage)
 
     @classmethod
     def handle_location(cls, line):
@@ -107,13 +124,6 @@ class Command(BaseCommand):
             cls.deferred_stops[atco_code].locality_centre = False
             cls.deferred_stops[atco_code].latlong = latlong
             cls.deferred_stops[atco_code].save()
-
-    @staticmethod
-    def get_journey_note(line):
-        return {
-            'note_code': line[2:7],
-            'note_text': line[7:],
-        }
 
     @classmethod
     def handle_line(cls, line):
@@ -145,20 +155,13 @@ class Command(BaseCommand):
             cls.handle_open_file(open_file)
 
     @classmethod
+    def create_stop_usages(cls):
+        StopUsage.objects.bulk_create(cls.stop_usages)
+
+    @classmethod
     @transaction.atomic
     def handle(cls, *args, **options):
-        for id, name in (
-                ('MET', 'Translink Metro'),
-                ('ULB', 'Ulsterbus'),
-                ('GLE', 'Goldline Express'),
-                ('UTS', 'Ulsterbus Town Services'),
-                ('FY', 'Ulsterbus Foyle'),
-                ('BE', 'Bus Éireann')
-        ):
-            Operator.objects.update_or_create(id=id, name=name, defaults={
-                'region_id': 'NI',
-                'vehicle_mode': 'bus'
-            })
+        cls.set_up()
 
         Service.objects.filter(region_id='NI').delete()
 
@@ -167,5 +170,7 @@ class Command(BaseCommand):
         for dirpath, _, filenames in os.walk('ULB'):
             for filename in filenames:
                 cls.handle_file(os.path.join(dirpath, filename))
+
+        cls.create_stop_usages()
 
         Service.objects.filter(region_id='NI', stops__isnull=True).delete()
