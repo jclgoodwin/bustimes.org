@@ -8,7 +8,6 @@ import xml.etree.cElementTree as ET
 import calendar
 from datetime import date, datetime, timedelta, time
 from django.utils.text import slugify
-from django.core.cache import cache
 from titlecase import titlecase
 
 NS = {
@@ -831,13 +830,7 @@ def timetable_from_filename(path, filename):
     if filename[-4:] == '.xml':
         with open(os.path.join(path, filename)) as xmlfile:
             return Timetable(xmlfile)
-    cache_prefix = 'GB' if 'NCSD' in path else path.split('/')[-2]
-    cache_key = '%s/%s' % (cache_prefix, filename.replace(' ', ''))
-    timetable = cache.get(cache_key)
-    if timetable is None:
-        timetable = unpickle_timetable(os.path.join(path, filename))
-        cache.set(cache_key, timetable)
-    return timetable
+    return unpickle_timetable(os.path.join(path, filename))
 
 
 def unpickle_timetable(filename):
