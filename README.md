@@ -10,19 +10,8 @@ It's [a thing about buses](https://bustimes.org.uk/).
 ## Installing
 
 A database supported by GeoDjango is required – I use PostgreSQL with PostGIS.
-I also use Nginx and uwsgi in production.
 
-Here I've noted down some of the commands I used when manually provisioning a new server:
-
-    apt-get install postgresql postgresql-contrib
-    apt-get install libpq-dev python-dev gcc
-    apt-get install python-virtualenv
-    virtualenv env
-    . env/bin/activate
-    pip install django django-pipeline psycopg2
-    apt-get install binutils libproj-dev gdal-bin
-    apt-get install postgis
-    apt-get install nginx uwsgi uwsgi-plugin-python
+I host the production website on a single Linode server. [config/provision.sh](config/provision.sh) some of the necessary steps for setting one up.
 
 In an emergency, it's possible to run this on Heroku, but that's relatively expensive, and things like the data import script (see below) expect a persistent file system.
 
