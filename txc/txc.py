@@ -534,10 +534,10 @@ class VehicleJourney(object):
         if self.operating_profile.is_rubbish():
             return False
         if hasattr(self.operating_profile, 'nonoperation_days'):
+            today = date.today()
             for daterange in self.operating_profile.nonoperation_days:
-                if daterange.finishes_in_past() or daterange.starts_in_future():
-                    return True
-            return False
+                if daterange.start <= today and (not daterange.end or today <= daterange.end):
+                    return False
         return True
 
 
