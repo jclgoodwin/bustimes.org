@@ -8,8 +8,6 @@
 # <UDF name="user" Label="Username" default="josh" />
 # <UDF name="pass" Label="Password" />
 # <UDF name="db_pass" Label="Password" />
-# <UDF name="transportapi_app_id" Label="Transport API app id" />
-# <UDF name="transportapi_app_key" Label="Transport API app key" />
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -118,7 +116,7 @@ After=network.target
 User=$USER
 Group=www-data
 WorkingDirectory=/home/$USER/bustimes.org.uk
-ExecStart=/home/$USER/bustimes.org.uk/env/bin/gunicorn --config=file:gunicorn-config.py buses.wsgi:application
+ExecStart=/home/$USER/bustimes.org.uk/env/bin/gunicorn --config=file:config/gunicorn.py buses.wsgi:application
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
 
