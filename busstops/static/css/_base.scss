@@ -248,7 +248,7 @@ table {
     border-bottom: 1px solid $brand-color;
     margin: 0 -1em;
     overflow: hidden;
-    padding: .5em 1em 0;
+    padding: .5em 0 0 1em;
 
     li {
         float: left;
@@ -261,11 +261,16 @@ table {
         padding: .75em 0;
     }
 
-    li:after {
+    li::after {
         color: $brand-color-darker;
         content: '\203A';
         float: left;
         padding: .75em .5em;
+    }
+
+    li:last-child::after {
+        padding-right: 0;
+        width: 0;
     }
 }
 
