@@ -4,4 +4,4 @@ flake8==3.2.1
 freezegun==0.3.8
 pylint-django==0.7.2
 raven==5.32.0
-vcrpy==1.10.3
+vcrpy==1.10.4

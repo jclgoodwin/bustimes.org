@@ -7,5 +7,5 @@ lxml==3.7.0
 psycopg2==2.6.2
 python-dateutil==2.6.0
 pytz==2016.10
-requests==2.12.3
+requests==2.12.4
 titlecase==0.8.1
