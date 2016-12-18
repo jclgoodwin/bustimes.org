@@ -23,11 +23,12 @@
     {% for grouping in timetable.groupings %}{% if grouping.rows.0.times %}
     <h2>{{ grouping }} {{ timetable.operating_period }}</h2>
 
-    <div class="timetable-wrapper">
+    <div class="timetable-wrapper-wrapper">
     {% if grouping.has_minor_stops %}
         <input type="checkbox" id="show-all-stops-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" />
         <label for="show-all-stops-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">Show all stops</label>
     {% endif %}
+    <div class="timetable-wrapper">
     <table class="timetable">
     <tbody>
     <tr><td></td>
@@ -59,6 +60,7 @@
         </tr></tfoot>
     {% endif %}
     </table>
+    </div>
     </div>
     {% endif %}{% endfor %}
 {% empty %}

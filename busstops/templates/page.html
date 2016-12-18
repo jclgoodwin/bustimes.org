@@ -84,6 +84,8 @@ ga('send', 'pageview');
 {% endif %}
 {% elif regions %}
 {% javascript 'frontpage' %}
+{% elif timetables %}
+<script async src="{% static 'js/timetable.js' %}"></script>
 {% endif %}
 <script async src="{% static 'js/global.js' %}"></script>
 <link rel="stylesheet" property="styleseet" media="print" href="{% static 'css/print.css' %}" />

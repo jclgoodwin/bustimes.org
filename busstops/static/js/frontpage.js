@@ -46,4 +46,4 @@
         regionNameLinks[i].onmouseover = regionNameLinks[i].onfocus = handleMouseOver;
         regionNameLinks[i].onmouseout = regionNameLinks[i].onblur = handleMouseOut;
     }
-})();
+}());

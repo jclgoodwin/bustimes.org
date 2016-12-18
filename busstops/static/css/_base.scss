@@ -351,6 +351,7 @@ table {
 
         &:first-child {
             border-left: 0;
+            padding: 0;
         }
     }
 
@@ -363,7 +364,7 @@ table {
             display: block;
             margin: -.25em -.5em;
             margin-left: 0;
-            max-width: 60vw;
+            max-width: 40vw;
             overflow: hidden;
             padding: .25em .5em;
             padding-left: 0;
@@ -371,9 +372,33 @@ table {
         }
     }
 
-    .OTH th {
-        max-width: 0;
+    .OTH th a {
         padding-left: 1em;
+    }
+}
+
+.fancy {
+    th {
+        border-top: 1px solid $brand-color;
+        margin-top: -1px;
+        padding-right: 0;
+        position: absolute;
+
+        & + td {
+            border-left: 1px solid #fff;
+        }
+
+        a {
+            margin-right: 0;
+        }
+    }
+
+    tbody tr:last-child th {
+        border-bottom: 1px solid $brand-color;
+
+        a {
+            margin-bottom: -4.5px;
+        }
     }
 }
 
@@ -502,22 +527,30 @@ td {
     &:first-child {
         padding-left: 0;
     }
+
+    &:last-child {
+        padding-right: 0;
+    }
 }
 
-.timetable-wrapper {
-    -webkit-overflow-scrolling: touch;
+.timetable-wrapper-wrapper {
     font-size: .875em;
-    margin: 1em -1em;
-    overflow: auto;
-    padding: 0 1em;
+    margin: 1em 0;
 
     input {
         vertical-align: top;
     }
 }
 
+.timetable-wrapper {
+    -webkit-overflow-scrolling: touch;
+    margin-right: -1.1em;
+    overflow: auto;
+    padding-right: 1.1em;
+}
+
 input:not(:checked) + label {
-    + .timetable,
+    + .timetable-wrapper,
     + .route {
         .OTH {
             display: none;
