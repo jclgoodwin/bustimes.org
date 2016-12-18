@@ -57,7 +57,8 @@ def correct_description(description):
     for old, new in (
             ('Stitians', 'Stithians'),
             ('Kings Lynn', "King's Lynn"),
-            ('Baasingstoke', "Basingstoke"),
+            ('Baasingstoke', 'Basingstoke'),
+            ('Tauton', 'Taunton'),
     ):
         description = description.replace(old, new)
     return description
