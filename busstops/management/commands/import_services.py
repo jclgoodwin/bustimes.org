@@ -386,6 +386,8 @@ class Command(BaseCommand):
                     with archive.open(filename) as open_file:
                         self.do_service(open_file, filename)
 
+        Service.objects.filter(region_id=self.region_id, current=False).update(geometry=None)
+
     def handle(self, *args, **options):
         for archive_name in options['filenames']:
             self.handle_region(archive_name)
