@@ -274,7 +274,7 @@ class StopPoint(models.Model):
 
 
 @python_2_unicode_compatible
-class Operator(models.Model, ValidateOnSaveMixin):
+class Operator(ValidateOnSaveMixin, models.Model):
     """An entity that operates public transport services"""
 
     id = models.CharField(max_length=10, primary_key=True)  # e.g. 'YCST'
