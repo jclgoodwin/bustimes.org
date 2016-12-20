@@ -14,8 +14,8 @@ class ImportOperatorContactTest(TestCase):
         cls.command.input = os.path.join(DIR, 'fixtures', 'nocrecords.xml')
 
         east_anglia = Region.objects.create(id='EA', name='East Anglia')
-        cls.sanders = Operator.objects.create(pk='SNDR', region=east_anglia)
-        cls.first = Operator.objects.create(pk='FECS', region=east_anglia)
+        cls.sanders = Operator.objects.create(pk='SNDR', name='Sanders', region=east_anglia)
+        cls.first = Operator.objects.create(pk='FECS', name='First', region=east_anglia)
 
         cls.command.handle()
 

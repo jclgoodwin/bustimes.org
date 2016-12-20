@@ -6,7 +6,7 @@ Usage:
 from __future__ import print_function
 import requests
 from titlecase import titlecase
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from django.core.exceptions import MultipleObjectsReturned
 from ..import_from_csv import ImportFromCSVCommand
 from ...models import StopPoint, LiveSource
 
@@ -35,10 +35,10 @@ class Command(ImportFromCSVCommand):
 
         try:
             stop = StopPoint.objects.get(pk=row['Naptan_Atco'])
-        except ObjectDoesNotExist:
+        except StopPoint.DoesNotExist:
             try:
                 stop = StopPoint.objects.get(pk__contains=row['Naptan_Atco'])
-            except (ObjectDoesNotExist, MultipleObjectsReturned) as error:
+            except (StopPoint.DoesNotExist, MultipleObjectsReturned) as error:
                 print(error, row)
                 return None
 
