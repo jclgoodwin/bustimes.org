@@ -21,6 +21,7 @@ TIMING_STATUS_CHOICES = (
 
 
 class ValidateOnSaveMixin(object):
+    """https://www.xormedia.com/django-model-validation-on-save/"""
     def save(self, force_insert=False, force_update=False, **kwargs):
         if not (force_insert or force_update):
             self.full_clean()

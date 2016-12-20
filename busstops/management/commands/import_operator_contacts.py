@@ -38,14 +38,13 @@ class Command(BaseCommand):
             if not noc_code:
                 continue
 
-            operator = Operator.objects.filter(pk=noc_code.replace('=', ''))
+            operator = Operator.objects.get(pk=noc_code.replace('=', ''))
 
             if noc_code in FIRST_OPERATORS:
-                operator.update(
-                    url='https://www.firstgroup.com/%s' % FIRST_OPERATORS[noc_code],
-                    email='',
-                    phone=''
-                )
+                operator.url = 'https://www.firstgroup.com/%s' % FIRST_OPERATORS[noc_code]
+                operator.email = ''
+                operator.phone = ''
+                operator.save()
                 continue
 
             website = public_name.website.string
@@ -59,12 +58,12 @@ class Command(BaseCommand):
                 if website:
                     website = website.split('#')[-2]
                     if '.' in website and 'mailto:' not in website:
-                        parameters['url'] = website
+                        operator.url = website
                 if address and len(address) <= 128 and ', ' in address:
-                    parameters['address'] = self.format_address(address)
-                if email:
-                    parameters['email'] = email
+                    operator.address = self.format_address(address)
+                if email and '@' in email and ' ' not in email:
+                    operator.email = email
                 if phone and len(phone) <= 128:
-                    parameters['phone'] = phone
+                    operator.phone = phone
 
                 operator.update(**parameters)
