@@ -345,9 +345,33 @@ table {
     display: none;
 }
 
+.timetable-wrapper-wrapper {
+    font-size: .875em;
+    margin: 1em 0;
+
+    input {
+        vertical-align: top;
+    }
+}
+
+.timetable-wrapper {
+    margin-right: -1.1em;
+    overflow: auto;
+}
+
+input:not(:checked) + label {
+    + .timetable-wrapper,
+    + .route {
+        .OTH {
+            display: none;
+        }
+    }
+}
+
 .timetable {
     border-collapse: separate;
     border-spacing: 0;
+    padding-right: 1.1em;
 
     tr:first-child td {
         border-left: 1px solid $brand-color;
@@ -366,6 +390,13 @@ table {
     td,
     th {
         height: 1.5em;
+    }
+
+    tbody {
+        td,
+        th {
+            border-bottom: 1px solid $brand-color;
+        }
     }
 
     th {
@@ -516,13 +547,6 @@ table {
 
 table {
     border-collapse: collapse;
-
-    tbody {
-        td,
-        th {
-            border-bottom: 1px solid $brand-color;
-        }
-    }
 }
 
 th,
@@ -536,28 +560,6 @@ td {
 
     &:last-child {
         padding-right: 0;
-    }
-}
-
-.timetable-wrapper-wrapper {
-    font-size: .875em;
-    margin: 1em 0;
-
-    input {
-        vertical-align: top;
-    }
-}
-
-.timetable-wrapper {
-    overflow: auto;
-}
-
-input:not(:checked) + label {
-    + .timetable-wrapper,
-    + .route {
-        .OTH {
-            display: none;
-        }
     }
 }
 
