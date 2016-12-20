@@ -346,13 +346,26 @@ table {
 }
 
 .timetable {
+    border-collapse: separate;
+    border-spacing: 0;
+
     tr:first-child td {
         border-left: 1px solid $brand-color;
 
         &:first-child {
             border-left: 0;
-            padding: 0;
+            border-right: 1px solid $brand-color;
+            padding: .25em 0;
+
+            + td {
+                border-left: 0;
+            }
         }
+    }
+
+    td,
+    th {
+        height: 1.5em;
     }
 
     th {
@@ -378,26 +391,16 @@ table {
 }
 
 .fancy {
+    tr:first-child td:first-child {
+        position: absolute;
+    }
+
     th {
-        border-top: 1px solid $brand-color;
-        margin-top: -1px;
         padding-right: 0;
         position: absolute;
 
-        & + td {
-            border-left: 1px solid #fff;
-        }
-
         a {
             margin-right: 0;
-        }
-    }
-
-    tbody tr:last-child th {
-        border-bottom: 1px solid $brand-color;
-
-        a {
-            margin-bottom: -4.5px;
         }
     }
 }
@@ -514,8 +517,11 @@ table {
 table {
     border-collapse: collapse;
 
-    tbody tr {
-        border-bottom: 1px solid $brand-color;
+    tbody {
+        td,
+        th {
+            border-bottom: 1px solid $brand-color;
+        }
     }
 }
 
@@ -543,9 +549,7 @@ td {
 }
 
 .timetable-wrapper {
-    margin-right: -1.1em;
     overflow: auto;
-    padding-right: 1.1em;
 }
 
 input:not(:checked) + label {

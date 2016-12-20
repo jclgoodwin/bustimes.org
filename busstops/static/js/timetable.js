@@ -11,13 +11,16 @@ var divs = document.getElementsByTagName('div'),
     i;
 
 function fancify(div) {
-    var firstCellWidth = div.getElementsByTagName('td')[0].offsetWidth + 'px',
+    var firstCell = div.getElementsByTagName('td')[0],
+        firstCellWidth = div.getElementsByTagName('td')[0].offsetWidth + 'px',
         ths = div.getElementsByTagName('th'),
         i;
     for (i = ths.length - 1; i >= 0; i -= 1) {
         ths[i].style.width = firstCellWidth;
         ths[i].style.marginLeft = '-' + firstCellWidth;
     }
+    firstCell.style.width = firstCellWidth;
+    firstCell.style.marginLeft = '-' + firstCellWidth;
     div.style.marginLeft = firstCellWidth;
     div.className += ' fancy';
 }
