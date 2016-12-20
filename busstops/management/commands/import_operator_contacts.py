@@ -5,6 +5,7 @@ Usage:
 """
 from io import open
 from bs4 import BeautifulSoup
+from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand
 from ...models import Operator
 from ...views import FIRST_OPERATORS
@@ -35,10 +36,13 @@ class Command(BaseCommand):
         for public_name in soup.publicname.find_all('publicnamerecord'):
             noc_code = noc_codes.get(public_name.pubnmid.string)
 
-            if not noc_code:
+            if not noc_code or len(noc_code) < 4:
                 continue
 
-            operator = Operator.objects.get(pk=noc_code.replace('=', ''))
+            try:
+                operator = Operator.objects.get(pk=noc_code.replace('=', ''))
+            except Operator.DoesNotExist as e:
+                print(noc_code, e)
 
             if noc_code in FIRST_OPERATORS:
                 operator.url = 'https://www.firstgroup.com/%s' % FIRST_OPERATORS[noc_code]
@@ -55,13 +59,21 @@ class Command(BaseCommand):
             if website or address or email or phone:
                 if website:
                     website = website.split('#')[-2]
-                    if '.' in website and 'mailto:' not in website:
-                        operator.url = website
+                    if '.' in website and 'mailto:' not in website and ' ' not in website:
+                        if website.startswith('http'):
+                            operator.url = website
+                        else:
+                            operator.url = 'http://' + website
                 if address and len(address) <= 128 and ', ' in address:
                     operator.address = self.format_address(address)
-                if email and '@' in email and ' ' not in email:
-                    operator.email = email
+                if email and '@' in email and ' ' not in email.strip():
+                    operator.email = email.strip()
                 if phone and len(phone) <= 128:
                     operator.phone = phone
 
-                operator.save()
+                try:
+                    operator.save()
+                except ValidationError as errors:
+                    if 'email' in dict(errors):
+                        operator.email = ''
+                    operator.save()

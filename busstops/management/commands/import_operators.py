@@ -4,6 +4,7 @@ Usage:
     ./manage.py import_operators < NOC_db.csv
 """
 
+from django.core.exceptions import ValidationError
 from ..import_from_csv import ImportFromCSVCommand
 from ...models import Operator
 
@@ -76,8 +77,10 @@ class Command(ImportFromCSVCommand):
             'region_id': cls.get_region_id(row['TLRegOwn']),
         }
 
-        operator = Operator.objects.update_or_create(
-            id=operator_id,
-            defaults=defaults
-        )
-        return operator
+        try:
+            Operator.objects.update_or_create(
+                id=operator_id,
+                defaults=defaults
+            )
+        except ValidationError as e:
+            print(operator_id, e)
