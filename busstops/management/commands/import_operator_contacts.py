@@ -52,8 +52,6 @@ class Command(BaseCommand):
             email = public_name.ttrteenq.string
             phone = public_name.fareenq.string
 
-            parameters = {}
-
             if website or address or email or phone:
                 if website:
                     website = website.split('#')[-2]
@@ -66,4 +64,4 @@ class Command(BaseCommand):
                 if phone and len(phone) <= 128:
                     operator.phone = phone
 
-                operator.update(**parameters)
+                operator.save()
