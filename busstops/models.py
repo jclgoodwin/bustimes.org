@@ -1,6 +1,7 @@
 "Model definitions"
 
 from __future__ import unicode_literals
+import re
 try:
     from urllib.parse import urlencode
 except ImportError:
@@ -18,6 +19,7 @@ TIMING_STATUS_CHOICES = (
     ('PTP', 'Principal and time info point'),
     ('OTH', 'Other bus stop'),
 )
+SERVICE_ORDER_REGEX = re.compile(r'(\D*)(\d*)(\D*)')
 
 
 class ValidateOnSaveMixin(object):
@@ -360,6 +362,10 @@ class Service(models.Model):
 
     def get_absolute_url(self):
         return reverse('service-detail', args=(self.service_code,))
+
+    def get_order(self):
+        groups = SERVICE_ORDER_REGEX.match(self.line_name).groups()
+        return (groups[0], int(groups[1]) if groups[1] else 0, groups[2])
 
     @staticmethod
     def get_operator_number(code):

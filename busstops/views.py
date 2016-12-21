@@ -292,10 +292,10 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         if not (context['localities'] or context['stops']):
             raise Http404()
         elif context['stops']:
-            context['services'] = Service.objects.filter(
+            context['services'] = sorted(Service.objects.filter(
                 stops__locality=self.object,
                 current=True
-            ).defer('geometry').distinct().order_by('service_code')
+            ).defer('geometry').distinct(), key=Service.get_order)
             context['modes'] = {service.mode for service in context['services'] if service.mode}
 
         context['breadcrumb'] = (crumb for crumb in [
@@ -319,9 +319,9 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
 
-        context['services'] = Service.objects.filter(
+        context['services'] = sorted(Service.objects.filter(
             stops=self.object, current=True
-        ).defer('geometry').distinct().order_by('service_code')
+        ).defer('geometry').distinct(), key=Service.get_order)
 
         if not (self.object.active or context['services']):
             raise Http404()
@@ -398,13 +398,13 @@ class OperatorDetailView(UppercasePrimaryKeyMixin, DetailView):
     "An operator and the services it operates"
 
     model = Operator
-    queryset = model.objects.defer('parent').select_related('region')
+    queryset = model.objects.select_related('region')
 
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
         context['notes'] = Note.objects.filter(operators=self.object)
-        context['services'] = Service.objects.filter(operator=self.object, current=True).order_by(
-            'service_code').defer('geometry')
+        context['services'] = sorted(Service.objects.filter(operator=self.object, current=True).defer('geometry'),
+                                     key=Service.get_order)
         if not context['services']:
             raise Http404()
         context['modes'] = {service.mode for service in context['services'] if service.mode}
