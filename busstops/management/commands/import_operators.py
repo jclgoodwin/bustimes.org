@@ -77,10 +77,7 @@ class Command(ImportFromCSVCommand):
             'region_id': cls.get_region_id(row['TLRegOwn']),
         }
 
-        try:
-            Operator.objects.update_or_create(
-                id=operator_id,
-                defaults=defaults
-            )
-        except ValidationError as e:
-            print(operator_id, e)
+        Operator.objects.update_or_create(
+            id=operator_id,
+            defaults=defaults
+        )

@@ -19,8 +19,7 @@ class Command(ImportFromCSVCommand):
     def handle_row(cls, row):
         if row['SC']:
             scotch = cls.scotch_operators.get(row['SC'])
-
-            if scotch:
+            if scotch and len(row['NOCCODE']) == 4:
                 operator = Operator.objects.get(pk=row['NOCCODE'])
                 operator.name = scotch['name']
                 operator.address = scotch['address']
