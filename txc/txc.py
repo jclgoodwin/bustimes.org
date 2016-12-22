@@ -711,7 +711,7 @@ class ColumnFoot(object):
 
 class Timetable(object):
     def is_empty(self):
-        return all(not grouping.rows[0].times for grouping in self.groupings)
+        return all(not (grouping.rows and grouping.rows[0].times) for grouping in self.groupings)
 
     def __get_journeys(self, journeys_element, servicedorgs):
         journeys = {
