@@ -262,9 +262,9 @@ class Command(BaseCommand):
         if self.region_id == 'NE':
             description = self.sanitize_description(description)
 
-        if len(description) > 128:
+        if len(description) > 255:
             logger.warning('Description "%s" too long in %s', description, filename)
-            description = description[:128]
+            description = description[:255]
 
         # net and service code:
 
