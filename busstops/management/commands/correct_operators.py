@@ -1,6 +1,11 @@
 from __future__ import print_function
+import json
+import os
 from django.core.management.base import BaseCommand
 from ...models import Operator, Region
+
+
+DIR = os.path.dirname(__file__)
 
 
 class Command(BaseCommand):
@@ -30,3 +35,7 @@ class Command(BaseCommand):
                 adminarea__locality__stoppoint__service__operator=operator
             ).distinct()
             self.maybe_print(self.maybe_move_operator(operator, regions))
+
+        with open(os.path.join(DIR, '../../../data/operators.json')) as open_file:
+            for record in json.load(open_file):
+                Operator.objects.filter(id=record['id']).update(**record)

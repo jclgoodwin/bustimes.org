@@ -1,12 +1,12 @@
 from django.test import TestCase
 from ...models import Region, Operator, Service
-from ..commands import correct_operator_regions
+from ..commands import correct_operators
 
 
-class CorretcOperatorRegionsTest(TestCase):
+class CorrectOperatorsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.command = correct_operator_regions.Command()
+        cls.command = correct_operators.Command()
 
         cls.east = Region.objects.create(id='E', name='East')
         cls.west = Region.objects.create(id='W', name='West')
