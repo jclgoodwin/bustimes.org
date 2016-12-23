@@ -290,6 +290,7 @@ class Operator(ValidateOnSaveMixin, models.Model):
     url = models.URLField(blank=True)
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=128, blank=True)
+    twitter = models.CharField(max_length=15, blank=True)
 
     def __str__(self):
         return self.name
@@ -327,7 +328,9 @@ class Service(models.Model):
     service_code = models.CharField(max_length=24, primary_key=True)
     line_name = models.CharField(max_length=64, blank=True)
     line_brand = models.CharField(max_length=64, blank=True)
-    description = models.CharField(max_length=128, blank=True)
+    description = models.CharField(max_length=255, blank=True)
+    outbound_description = models.CharField(max_length=255, blank=True)
+    inbound_description = models.CharField(max_length=255, blank=True)
     mode = models.CharField(max_length=11)
     operator = models.ManyToManyField(Operator, blank=True)
     net = models.CharField(max_length=3, blank=True)
