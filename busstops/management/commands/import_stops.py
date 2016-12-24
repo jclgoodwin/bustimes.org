@@ -31,33 +31,29 @@ INDICATORS_TO_PROPER_CASE = {indicator.lower(): indicator for indicator in (
 )}
 
 INDICATORS_TO_REPLACE = {
-    'opp ': 'opp',
     'opp.': 'opp',
     'opposite': 'opp',
-    'opposite ': 'opp',
     'adjacent': 'adj',
     'near': 'nr',
-    'at ': 'at',
     'before ': 'before',
     'outside': 'o/s',
-    'outside ': 'o/s',
     'os': 'o/s',
-    'N bound': 'N-bound',
-    'N - bound': 'N-bound',
-    'NE bound': 'NE-bound',
-    'NE - bound': 'NE-bound',
-    'E bound': 'E-bound',
-    'E - bound': 'E-bound',
-    'SE bound': 'SE-bound',
-    'SE - bound': 'SE-bound',
-    'S bound': 'S-bound',
-    'S - bound': 'S-bound',
-    'SW bound': 'SW-bound',
-    'SW - bound': 'SW-bound',
-    'W bound': 'W-bound',
-    'W - bound': 'W-bound',
-    'NW bound': 'NW-bound',
-    'NW - bound': 'NW-bound',
+    'n bound': 'N-bound',
+    'n - bound': 'N-bound',
+    'ne bound': 'NE-bound',
+    'ne - bound': 'NE-bound',
+    'e bound': 'E-bound',
+    'e - bound': 'E-bound',
+    'se bound': 'SE-bound',
+    'se - bound': 'SE-bound',
+    's bound': 'S-bound',
+    's - bound': 'S-bound',
+    'sw bound': 'SW-bound',
+    'sw - bound': 'SW-bound',
+    'w bound': 'W-bound',
+    'w - bound': 'W-bound',
+    'nw bound': 'NW-bound',
+    'nw - bound': 'NW-bound',
     'nb': 'N-bound',
     'eb': 'E-bound',
     'sb': 'S-bound',
@@ -102,11 +98,12 @@ class Command(ImportFromCSVCommand):
 
         for django_field_name, naptan_field_name in self.field_names:
             value = row[naptan_field_name].strip()
-            if django_field_name in ('street', 'crossing', 'landmark'):
-                if value in ('-', '--', '---', '*', 'TBA', 'unknown'):
+            if django_field_name in ('street', 'crossing', 'landmark', 'indicator'):
+                if value.lower() in ('-', '--', '---', '*', 'tba', 'unknown', 'n/a',
+                                     'data unavailable'):
                     value = ''
-                elif value.isupper():
-                    value = titlecase(value)
+            if value.isupper() and value != 'YMCA':
+                value = titlecase(value)
             defaults[django_field_name] = value.replace('`', '\'')  # replace backticks
 
         if defaults.get('indicator') in INDICATORS_TO_REPLACE:
