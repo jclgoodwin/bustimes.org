@@ -98,17 +98,17 @@ class Command(ImportFromCSVCommand):
 
         for django_field_name, naptan_field_name in self.field_names:
             value = row[naptan_field_name].strip()
-            if django_field_name in ('street', 'crossing', 'landmark', 'indicator'):
+            if django_field_name in ('street', 'crossing', 'landmark', 'indicator', 'common_name'):
                 if value.lower() in ('-', '--', '---', '*', 'tba', 'unknown', 'n/a',
                                      'data unavailable'):
                     value = ''
-            if value.isupper() and value != 'YMCA':
-                value = titlecase(value)
+                elif value.isupper() and value != 'YMCA':
+                    value = titlecase(value)
             defaults[django_field_name] = value.replace('`', '\'')  # replace backticks
 
-        if defaults.get('indicator') in INDICATORS_TO_REPLACE:
+        if defaults.get('indicator').lower() in INDICATORS_TO_REPLACE:
             defaults['indicator'] = INDICATORS_TO_REPLACE.get(
-                defaults['indicator']
+                defaults['indicator'].lower()
             )
         elif defaults['indicator'].lower() in INDICATORS_TO_PROPER_CASE:
             defaults['indicator'] = INDICATORS_TO_PROPER_CASE.get(
