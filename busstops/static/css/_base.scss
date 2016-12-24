@@ -67,6 +67,11 @@ header {
         margin-left: .66667em;
     }
 
+    .ferry::after {
+        content: url('/static/svg/boat.svg');
+        margin-top: -1em;
+    }
+
     ul {
         float: right;
         margin: 0;
