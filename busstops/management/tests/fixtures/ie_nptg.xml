@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NationalPublicTransportGazetteer CreationDateTime="2011-01-04T08:03:19" ModificationDateTime="2011-01-04T08:03:19" Modification="revise" RevisionNumber="314" FileName="NPTG.xml" SchemaVersion="2.5" xmlns="http://www.naptan.org.uk/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.naptan.org.uk/ http://www.naptan.org.uk/schema/2.5/NPTG.xsd" xml:lang="en" LocationSystem="Grid">
+	<Regions>
+		<Region CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+			<RegionCode>CON</RegionCode>
+			<Name xml:lang="EN">Connaught</Name>
+			<Country>Eire</Country>
+			<AdministrativeAreas>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>846</AdministrativeAreaCode>
+					<AtcoAreaCode>846</AtcoAreaCode>
+					<Name>Galway City</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>847</AdministrativeAreaCode>
+					<AtcoAreaCode>847</AtcoAreaCode>
+					<Name>Galway County</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>848</AdministrativeAreaCode>
+					<AtcoAreaCode>848</AtcoAreaCode>
+					<Name>Leitrim</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>849</AdministrativeAreaCode>
+					<AtcoAreaCode>849</AtcoAreaCode>
+					<Name>Mayo</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>850</AdministrativeAreaCode>
+					<AtcoAreaCode>850</AtcoAreaCode>
+					<Name>Roscommon</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>851</AdministrativeAreaCode>
+					<AtcoAreaCode>851</AtcoAreaCode>
+					<Name>Sligo</Name>
+					<National>false</National>
+				</AdministrativeArea>
+			</AdministrativeAreas>
+		</Region>
+		<Region CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+			<RegionCode>LEI</RegionCode>
+			<Name xml:lang="EN">Leinster</Name>
+			<Country>Eire</Country>
+			<AdministrativeAreas>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>821</AdministrativeAreaCode>
+					<AtcoAreaCode>821</AtcoAreaCode>
+					<Name>Carlow</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>822</AdministrativeAreaCode>
+					<AtcoAreaCode>822</AtcoAreaCode>
+					<Name>Dublin City</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>823</AdministrativeAreaCode>
+					<AtcoAreaCode>823</AtcoAreaCode>
+					<Name>South Dublin</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>824</AdministrativeAreaCode>
+					<AtcoAreaCode>824</AtcoAreaCode>
+					<Name>Fingal</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>825</AdministrativeAreaCode>
+					<AtcoAreaCode>825</AtcoAreaCode>
+					<Name>Dún Laoghaire-Rathdown</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>826</AdministrativeAreaCode>
+					<AtcoAreaCode>826</AtcoAreaCode>
+					<Name>Kildare</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>827</AdministrativeAreaCode>
+					<AtcoAreaCode>827</AtcoAreaCode>
+					<Name>Kilkenny</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>828</AdministrativeAreaCode>
+					<AtcoAreaCode>828</AtcoAreaCode>
+					<Name>Laois</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>829</AdministrativeAreaCode>
+					<AtcoAreaCode>829</AtcoAreaCode>
+					<Name>Longford</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>830</AdministrativeAreaCode>
+					<AtcoAreaCode>830</AtcoAreaCode>
+					<Name>Louth</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>831</AdministrativeAreaCode>
+					<AtcoAreaCode>831</AtcoAreaCode>
+					<Name>Meath</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>832</AdministrativeAreaCode>
+					<AtcoAreaCode>832</AtcoAreaCode>
+					<Name>Offaly</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>833</AdministrativeAreaCode>
+					<AtcoAreaCode>833</AtcoAreaCode>
+					<Name>Westmeath</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>834</AdministrativeAreaCode>
+					<AtcoAreaCode>834</AtcoAreaCode>
+					<Name>Wexford</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>835</AdministrativeAreaCode>
+					<AtcoAreaCode>835</AtcoAreaCode>
+					<Name>Wicklow</Name>
+					<National>false</National>
+				</AdministrativeArea>
+			</AdministrativeAreas>
+		</Region>
+		<Region CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+			<RegionCode>MUN</RegionCode>
+			<Name xml:lang="EN">Munster</Name>
+			<Country>Eire</Country>
+			<AdministrativeAreas>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>836</AdministrativeAreaCode>
+					<AtcoAreaCode>836</AtcoAreaCode>
+					<Name>Clare</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>837</AdministrativeAreaCode>
+					<AtcoAreaCode>837</AtcoAreaCode>
+					<Name>Cork City</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>838</AdministrativeAreaCode>
+					<AtcoAreaCode>838</AtcoAreaCode>
+					<Name>Cork County</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>839</AdministrativeAreaCode>
+					<AtcoAreaCode>839</AtcoAreaCode>
+					<Name>Kerry</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>840</AdministrativeAreaCode>
+					<AtcoAreaCode>840</AtcoAreaCode>
+					<Name>Limerick City</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>841</AdministrativeAreaCode>
+					<AtcoAreaCode>841</AtcoAreaCode>
+					<Name>Limerick County</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>842</AdministrativeAreaCode>
+					<AtcoAreaCode>842</AtcoAreaCode>
+					<Name>Tipperary North</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>843</AdministrativeAreaCode>
+					<AtcoAreaCode>843</AtcoAreaCode>
+					<Name>Tipperary South</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>844</AdministrativeAreaCode>
+					<AtcoAreaCode>844</AtcoAreaCode>
+					<Name>Waterford City</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>845</AdministrativeAreaCode>
+					<AtcoAreaCode>845</AtcoAreaCode>
+					<Name>Waterford County</Name>
+					<National>false</National>
+				</AdministrativeArea>
+			</AdministrativeAreas>
+		</Region>
+		<Region CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+			<RegionCode>ULS</RegionCode>
+			<Name xml:lang="EN">Ulster</Name>
+			<Country>Eire</Country>
+			<AdministrativeAreas>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>852</AdministrativeAreaCode>
+					<AtcoAreaCode>852</AtcoAreaCode>
+					<Name>Cavan</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>853</AdministrativeAreaCode>
+					<AtcoAreaCode>853</AtcoAreaCode>
+					<Name>Donegal</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+					<AdministrativeAreaCode>854</AdministrativeAreaCode>
+					<AtcoAreaCode>854</AtcoAreaCode>
+					<Name>Monaghan</Name>
+					<National>false</National>
+				</AdministrativeArea>
+			</AdministrativeAreas>
+		</Region>
+		<Region CreationDateTime="2011-01-18T11:54:31" ModificationDateTime="2011-01-18T11:54:31" RevisionNumber="0">
+			<RegionCode>ULS_NI</RegionCode>
+			<Name xml:lang="EN">Ulster_NI</Name>
+			<Country>NorthernIreland</Country>
+			<AdministrativeAreas>
+				<AdministrativeArea CreationDateTime="2011-10-24T10:54:21" ModificationDateTime="2011-10-24T10:54:21" RevisionNumber="0">
+					<AdministrativeAreaCode>701</AdministrativeAreaCode>
+					<AtcoAreaCode>701</AtcoAreaCode>
+					<Name>Derry</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-10-24T10:54:21" ModificationDateTime="2011-10-24T10:54:21" RevisionNumber="0">
+					<AdministrativeAreaCode>702</AdministrativeAreaCode>
+					<AtcoAreaCode>702</AtcoAreaCode>
+					<Name>Antrim</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-10-24T10:54:21" ModificationDateTime="2011-10-24T10:54:21" RevisionNumber="0">
+					<AdministrativeAreaCode>703</AdministrativeAreaCode>
+					<AtcoAreaCode>703</AtcoAreaCode>
+					<Name>Down</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-10-24T10:54:21" ModificationDateTime="2011-10-24T10:54:21" RevisionNumber="0">
+					<AdministrativeAreaCode>704</AdministrativeAreaCode>
+					<AtcoAreaCode>704</AtcoAreaCode>
+					<Name>Armagh</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-10-24T10:54:21" ModificationDateTime="2011-10-24T10:54:21" RevisionNumber="0">
+					<AdministrativeAreaCode>705</AdministrativeAreaCode>
+					<AtcoAreaCode>705</AtcoAreaCode>
+					<Name>Fermanagh</Name>
+					<National>false</National>
+				</AdministrativeArea>
+				<AdministrativeArea CreationDateTime="2011-10-24T10:54:21" ModificationDateTime="2011-10-24T10:54:21" RevisionNumber="0">
+					<AdministrativeAreaCode>706</AdministrativeAreaCode>
+					<AtcoAreaCode>706</AtcoAreaCode>
+					<Name>Tyrone</Name>
+					<National>false</National>
+				</AdministrativeArea>
+			</AdministrativeAreas>
+		</Region>
+	</Regions>
+	<NptgLocalities>
+		<NptgLocality CreationDateTime="2011-03-14T10:00:00" ModificationDateTime="2011-03-14T10:00:00" Modification="new">
+			<NptgLocalityCode>E0846001</NptgLocalityCode>
+			<Descriptor>
+				<LocalityName xml:lang="EN">Galway</LocalityName>
+			</Descriptor>
+			<AlternativeDescriptors>
+				<Descriptor>
+					<LocalityName xml:lang="ga">Gaillimh </LocalityName>
+				</Descriptor>
+			</AlternativeDescriptors>
+			<AdministrativeAreaRef>846</AdministrativeAreaRef>
+			<SourceLocalityType>Lo</SourceLocalityType>
+			<Location>
+				<Translation>
+					<GridType>ITM</GridType>
+					<Easting>530004</Easting>
+					<Northing>725342</Northing>
+					<Longitude>-9.049434</Longitude>
+					<Latitude>53.273788</Latitude>
+				</Translation>
+			</Location>
+		</NptgLocality>
+		<NptgLocality CreationDateTime="2011-03-14T10:00:00" ModificationDateTime="2011-03-14T10:00:00" Modification="new">
+			<NptgLocalityCode>E0846002</NptgLocalityCode>
+			<Descriptor>
+				<LocalityName xml:lang="EN">Salthill</LocalityName>
+			</Descriptor>
+			<AlternativeDescriptors>
+				<Descriptor>
+					<LocalityName xml:lang="ga">Bóthar na Trá</LocalityName>
+				</Descriptor>
+			</AlternativeDescriptors>
+			<AdministrativeAreaRef>846</AdministrativeAreaRef>
+			<SourceLocalityType>Lo</SourceLocalityType>
+			<Location>
+				<Translation>
+					<GridType>ITM</GridType>
+					<Easting>528585</Easting>
+					<Northing>724114</Northing>
+					<Longitude>-9.070427</Longitude>
+					<Latitude>53.262565</Latitude>
+				</Translation>
+			</Location>
+		</NptgLocality>
+		<NptgLocality CreationDateTime="2011-03-14T10:00:00" ModificationDateTime="2011-03-14T10:00:00" Modification="new">
+			<NptgLocalityCode>E0846003</NptgLocalityCode>
+			<Descriptor>
+				<LocalityName xml:lang="EN">Dangan</LocalityName>
+			</Descriptor>
+			<AlternativeDescriptors>
+				<Descriptor>
+					<LocalityName xml:lang="ga">An Daingean</LocalityName>
+				</Descriptor>
+			</AlternativeDescriptors>
+			<AdministrativeAreaRef>846</AdministrativeAreaRef>
+			<SourceLocalityType>Lo</SourceLocalityType>
+			<Location>
+				<Translation>
+					<GridType>ITM</GridType>
+					<Easting>528149</Easting>
+					<Northing>727189</Northing>
+					<Longitude>-9.077645</Longitude>
+					<Latitude>53.290138</Latitude>
+				</Translation>
+			</Location>
+		</NptgLocality>
+	</NptgLocalities>
+</NationalPublicTransportGazetteer>

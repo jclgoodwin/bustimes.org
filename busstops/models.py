@@ -42,7 +42,7 @@ class Region(models.Model):
     def the(self):
         """Return the name for use in a sentence,
         with the definite article prepended if appropriate"""
-        if self.name[-1:] == 't' or self.name[-2:] == 'ds':
+        if self.name[-2:] in ('ds', 'st'):
             return 'the ' + self.name
         else:
             return self.name
@@ -59,8 +59,8 @@ class AdminArea(models.Model):
     id = models.PositiveIntegerField(primary_key=True)
     atco_code = models.PositiveIntegerField()
     name = models.CharField(max_length=48, db_index=True)
-    short_name = models.CharField(max_length=48)
-    country = models.CharField(max_length=3)
+    short_name = models.CharField(max_length=48, blank=True)
+    country = models.CharField(max_length=3, blank=True)
     region = models.ForeignKey(Region, models.CASCADE)
 
     def __str__(self):
