@@ -437,6 +437,9 @@ class VehicleJourney(object):
             element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
         ).time()
 
+        sequencenumber = element.get('SequenceNumber')
+        self.sequencenumber = sequencenumber and int(sequencenumber)
+
         self.code = element.find('txc:VehicleJourneyCode', NS).text
 
         journeypatternref_element = element.find('txc:JourneyPatternRef', NS)
@@ -524,8 +527,14 @@ class VehicleJourney(object):
 
     def get_order(self):
         if self.operating_profile:
-            return (self.operating_profile.get_order(), self.departure_time)
-        return (0, self.departure_time)
+            first_order = self.operating_profile.get_order()
+        else:
+            first_order = 0
+        if self.sequencenumber is not None:
+            second_order = self.sequencenumber
+        else:
+            second_order = self.departure_time
+        return (first_order, second_order)
 
     def should_show(self):
         if not self.operating_profile:
