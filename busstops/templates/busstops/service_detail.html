@@ -89,7 +89,9 @@
     {% if forloop.last %}</ul>{% endif %}
 {% endfor %}
 
-<script>window.geometry = {{ object.geometry.merged.json|safe }};</script>
+{% if object.geometry %}
+    <script>window.geometry = {{ object.geometry.merged.json|safe }};</script>
+{% endif %}
 
 {% endfor %}
 
