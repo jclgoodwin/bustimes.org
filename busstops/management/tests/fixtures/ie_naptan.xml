@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<NaPTAN xsi:schemaLocation="http://www.naptan.org.uk/ http://www.naptan.org.uk/schema/2.1/NaPTAN.xsd" CreationDateTime="2013-06-12T11:03:31.4285665+01:00" ModificationDateTime="2013-06-12T11:03:31.4441915+01:00" Modification="new" FileName="NaPTAN700.xml" RevisionNumber="3" SchemaVersion="2.1" xml:lang="en" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.naptan.org.uk/">
+	<StopPoints>
+		<StopPoint CreationDateTime="2013-06-12T11:03:38.7410665+01:00" ModificationDateTime="2013-04-18T13:15:28" Modification="new" Status="active">
+			<AtcoCode>700000004096</AtcoCode>
+			<Descriptor>
+				<CommonName xml:lang="en">Rathfriland</CommonName>
+			</Descriptor>
+			<Place>
+				<LocalityCentre>false</LocalityCentre>
+				<Location>
+					<Longitude>-6.15849970528097</Longitude>
+					<Latitude>54.236552528081</Latitude>
+				</Location>
+			</Place>
+			<StopClassification>
+				<StopType>class_undefined</StopType>
+			</StopClassification>
+			<AdministrativeAreaRef>700</AdministrativeAreaRef>
+		</StopPoint>
+		<StopPoint CreationDateTime="2013-06-12T11:03:38.8191915+01:00" ModificationDateTime="2013-04-15T13:19:55" Modification="new" Status="active">
+			<AtcoCode>700000015422</AtcoCode>
+			<Descriptor>
+				<CommonName xml:lang="en">Europa Buscentre Belfast</CommonName>
+				<Street xml:lang="en">Glengall Street</Street>
+				<Indicator xml:lang="en">In</Indicator>
+			</Descriptor>
+			<Place>
+				<LocalityCentre>false</LocalityCentre>
+				<Location>
+					<Longitude>-5.93626793184173</Longitude>
+					<Latitude>54.5950542848164</Latitude>
+				</Location>
+			</Place>
+			<StopClassification>
+				<StopType>BCT</StopType>
+				<OnStreet>
+					<Bus>
+						<BusStopType>MKD</BusStopType>
+						<TimingStatus>OTH</TimingStatus>
+						<MarkedPoint>
+							<Bearing>
+								<CompassPoint>W</CompassPoint>
+							</Bearing>
+						</MarkedPoint>
+					</Bus>
+				</OnStreet>
+			</StopClassification>
+			<AdministrativeAreaRef>700</AdministrativeAreaRef>
+		</StopPoint>
+		<StopPoint CreationDateTime="2013-06-12T11:03:38.8191915+01:00" ModificationDateTime="2013-04-15T13:16:08" Modification="new" Status="active">
+			<AtcoCode>700000004183</AtcoCode>
+			<Descriptor>
+				<CommonName xml:lang="en">Banbridge</CommonName>
+				<Street xml:lang="en">Newry Street</Street>
+			</Descriptor>
+			<Place>
+				<LocalityCentre>false</LocalityCentre>
+				<Location>
+					<Longitude>-6.27154284054358</Longitude>
+					<Latitude>54.3464550775593</Latitude>
+				</Location>
+			</Place>
+			<StopClassification>
+				<StopType>BCT</StopType>
+				<OnStreet>
+					<Bus>
+						<BusStopType>MKD</BusStopType>
+						<TimingStatus>OTH</TimingStatus>
+						<MarkedPoint>
+							<Bearing>
+								<CompassPoint>SW</CompassPoint>
+							</Bearing>
+						</MarkedPoint>
+					</Bus>
+				</OnStreet>
+			</StopClassification>
+			<AdministrativeAreaRef>700</AdministrativeAreaRef>
+		</StopPoint>
+		<StopPoint CreationDateTime="2013-06-12T11:13:22.7723165+01:00" ModificationDateTime="2013-02-06T14:27:28" Modification="new" Status="active">
+			<AtcoCode>8460TR000124</AtcoCode>
+			<Descriptor>
+				<CommonName xml:lang="en">Supermac's</CommonName>
+				<Street xml:lang="en">Bridge Street</Street>
+				<Indicator xml:lang="en">Opp</Indicator>
+			</Descriptor>
+			<Place>
+				<NptgLocalityRef>E0846001</NptgLocalityRef>
+				<LocalityCentre>false</LocalityCentre>
+				<Location>
+					<Longitude>-9.05469898181141</Longitude>
+					<Latitude>53.2719763661735</Latitude>
+				</Location>
+			</Place>
+			<StopClassification>
+				<StopType>TXR</StopType>
+				<OnStreet>
+					<Taxi>
+						<TaxiRank />
+					</Taxi>
+				</OnStreet>
+			</StopClassification>
+			<StopAreas>
+				<StopAreaRef Modification="new" Status="active" CreationDateTime="2013-06-12T11:13:22.7723165+01:00" ModificationDateTime="2013-06-12T11:13:22.7723165+01:00">847G000242</StopAreaRef>
+			</StopAreas>
+			<AdministrativeAreaRef>846</AdministrativeAreaRef>
+		</StopPoint>
+	</StopPoints>
+</NaPTAN>
