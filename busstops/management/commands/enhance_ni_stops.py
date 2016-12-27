@@ -15,6 +15,8 @@ NON_LANDMARK_KEYS = {'road', 'state', 'country_code', 'city', 'county', 'localit
 
 
 class Command(BaseCommand):
+    delay = 2
+
     def handle(self, *args, **options):
         stops = StopPoint.objects.filter(
             atco_code__startswith='7000',
@@ -39,8 +41,6 @@ class Command(BaseCommand):
                 stop.landmark = response['address'][landmark_keys[0]]
                 print(landmark_keys)
                 print(stop.landmark)
-            else:
-                stop.landmark = ''
 
             stop.save()
-            sleep(2)
+            sleep(self.delay)

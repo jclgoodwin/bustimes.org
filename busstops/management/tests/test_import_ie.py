@@ -68,7 +68,7 @@ class ImportIrelandTest(TestCase):
         self.assertEqual(stop.street, 'Glengall Street')
         self.assertEqual(stop.crossing, '')
         self.assertEqual(stop.indicator, 'in')
-        self.assertEqual(stop.bearing, 'W')
+        self.assertEqual(stop.bearing, '')
         self.assertEqual(stop.timing_status, 'OTH')
         self.assertEqual(stop.latlong.x, -5.93626793184173)
         self.assertEqual(stop.latlong.y, 54.5950542848164)

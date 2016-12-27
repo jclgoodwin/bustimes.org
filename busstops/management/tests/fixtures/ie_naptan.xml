@@ -38,11 +38,6 @@
 					<Bus>
 						<BusStopType>MKD</BusStopType>
 						<TimingStatus>OTH</TimingStatus>
-						<MarkedPoint>
-							<Bearing>
-								<CompassPoint>W</CompassPoint>
-							</Bearing>
-						</MarkedPoint>
 					</Bus>
 				</OnStreet>
 			</StopClassification>
