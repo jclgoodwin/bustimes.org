@@ -22,12 +22,14 @@
         for (i = items.length - 1; i >= 0; i -= 1) {
             if (items[i].getAttribute('itemtype') === 'https://schema.org/BusStop' && items[i].className != 'OTH') {
                 metaElements = items[i].getElementsByTagName('meta');
-                latLng = [
-                    parseFloat(metaElements[0].getAttribute('content')),
-                    parseFloat(metaElements[1].getAttribute('content'))
-                ];
-                mainLocations.push(latLng);
-                labels.push(items[i]);
+                if (metaElements.length) {
+                    latLng = [
+                        parseFloat(metaElements[0].getAttribute('content')),
+                        parseFloat(metaElements[1].getAttribute('content'))
+                    ];
+                    mainLocations.push(latLng);
+                    labels.push(items[i]);
+                }
             }
         }
 

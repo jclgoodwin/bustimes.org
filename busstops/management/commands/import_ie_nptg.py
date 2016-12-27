@@ -1,4 +1,5 @@
-"""https://data.dublinked.ie/dataset/nptg
+"""Import an Irish NPTG XML file, obtainable from
+https://data.dublinked.ie/dataset/nptg
 """
 
 import xml.etree.cElementTree as ET

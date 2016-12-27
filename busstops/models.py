@@ -260,17 +260,18 @@ class StopPoint(models.Model):
         return str(self)
 
     def get_streetview_url(self):
-        url = 'https://maps.googleapis.com/maps/api/streetview?%s' % urlencode(
-            (
-                ('size', '480x360'),
-                ('location', '%s,%s' % (self.latlong.y, self.latlong.x)),
-                ('heading', self.get_heading()),
-                ('key', settings.STREETVIEW_KEY)
+        if self.latlong:
+            url = 'https://maps.googleapis.com/maps/api/streetview?%s' % urlencode(
+                (
+                    ('size', '480x360'),
+                    ('location', '%s,%s' % (self.latlong.y, self.latlong.x)),
+                    ('heading', self.get_heading()),
+                    ('key', settings.STREETVIEW_KEY)
+                )
             )
-        )
-        if settings.STREETVIEW_SECRET:
-            return sign_url(url, settings.STREETVIEW_SECRET)
-        return url
+            if settings.STREETVIEW_SECRET:
+                return sign_url(url, settings.STREETVIEW_SECRET)
+            return url
 
     def get_absolute_url(self):
         return reverse('stoppoint-detail', args=(self.atco_code,))
