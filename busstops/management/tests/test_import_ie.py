@@ -1,20 +1,27 @@
 """Tests for importing Ireland stops and services
 """
 import os
+import zipfile
 from django.test import TestCase
 from django.core.management import call_command
-from ...models import Region, AdminArea, Locality
+from ...models import Region, AdminArea, Locality, StopPoint
 
 
 DIR = os.path.dirname(os.path.abspath(__file__))
+FIXTURES_DIR = os.path.join(DIR, 'fixtures')
 
 
-class ImportNPTGTest(TestCase):
-    """Test the import_ie_nptg command
+class ImportIrelandTest(TestCase):
+    """Test the import_ie_nptg and import_ie_nptg command
     """
     @classmethod
     def setUpTestData(cls):
-        call_command('import_ie_nptg', os.path.join(DIR, 'fixtures', 'ie_nptg.xml'))
+        call_command('import_ie_nptg', os.path.join(FIXTURES_DIR, 'ie_nptg.xml'))
+
+        with zipfile.ZipFile(os.path.join(FIXTURES_DIR, 'NaPTAN700.zip'), 'a') as open_zipfile:
+            open_zipfile.write(os.path.join(FIXTURES_DIR, 'NaPTAN700.xml'))
+
+        call_command('import_ie_naptan_xml', os.path.join(FIXTURES_DIR, 'NaPTAN700.zip'))
 
     def test_regions(self):
         regions = Region.objects.all().order_by('name')
@@ -44,3 +51,21 @@ class ImportNPTGTest(TestCase):
         self.assertEqual(localities[2].admin_area.name, 'Galway City')
         self.assertEqual(localities[2].latlong.x, -9.070427)
         self.assertEqual(localities[2].latlong.y, 53.262565)
+
+    def test_stops(self):
+        stops = StopPoint.objects.all().order_by('atco_code')
+        self.assertEqual(len(stops), 28)
+        self.assertEqual(stops[0].common_name, 'Europa Bus Centre')
+        self.assertEqual(stops[0].stop_type, 'BCT')
+        self.assertEqual(stops[0].bus_stop_type, 'MKD')
+        self.assertEqual(stops[0].timing_status, 'OTH')
+
+        stop = stops.get(atco_code='700000015422')
+        self.assertEqual(stop.common_name, 'Europa Buscentre Belfast')
+        self.assertEqual(stop.street, 'Glengall Street')
+        self.assertEqual(stop.crossing, '')
+        self.assertEqual(stop.indicator, 'in')
+        self.assertEqual(stop.bearing, 'W')
+        self.assertEqual(stop.timing_status, 'OTH')
+        self.assertEqual(stop.latlong.x, -5.93626793184173)
+        self.assertEqual(stop.latlong.y, 54.5950542848164)

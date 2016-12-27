@@ -38,6 +38,8 @@ class Command(BaseCommand):
 
         stop_type = stop_classification_element.find('naptan:StopType', self.ns).text
         if stop_type != 'class_undefined':
+            stop.stop_type = stop_type
+
             bus_element = stop_classification_element.find('naptan:OnStreet/naptan:Bus', self.ns)
 
             bus_stop_type_element = bus_element.find('naptan:BusStopType', self.ns)
@@ -47,6 +49,12 @@ class Command(BaseCommand):
             timing_status_element = bus_element.find('naptan:TimingStatus', self.ns)
             if timing_status_element is not None:
                 stop.timing_status = timing_status_element.text
+
+            compass_point_element = bus_element.find(
+                'naptan:MarkedPoint/naptan:Bearing/naptan:CompassPoint', self.ns
+            )
+            if compass_point_element is not None:
+                stop.bearing = compass_point_element.text
 
         if stop.bus_stop_type == 'type_undefined':
             stop.bus_stop_type = ''
