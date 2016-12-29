@@ -67,16 +67,14 @@ class Command(BaseCommand):
 
         locality_element = place_element.find('naptan:NptgLocalityRef', self.ns)
         if locality_element is not None:
-            if Locality.objects.filter(id=locality_element.text).exists():
-                stop.locality_id = locality_element.text
-            else:
-                print(locality_element.text)
+            if not Locality.objects.filter(id=locality_element.text).exists():
+                Locality.objects.create(id=locality_element)
+            stop.locality_id = locality_element.text
 
         admin_area_id = element.find('naptan:AdministrativeAreaRef', self.ns).text
-        if AdminArea.objects.filter(atco_code=admin_area_id).exists():
-            stop.admin_area_id = admin_area_id
-        else:
-            print(admin_area_id)
+        if not AdminArea.objects.filter(atco_code=admin_area_id).exists():
+            AdminArea.objects.create(id=admin_area_id, atco_code=admin_area_id, region_id='NI')
+        stop.admin_area_id = admin_area_id
 
         stop.save()
 

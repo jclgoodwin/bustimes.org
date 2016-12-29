@@ -32,13 +32,17 @@ class ImportIrelandTest(TestCase):
 
     def test_areas(self):
         areas = AdminArea.objects.all().order_by('name')
-        self.assertEqual(len(areas), 40)
+        self.assertEqual(len(areas), 41)
 
-        self.assertEqual(areas[0].name, 'Antrim')
+        self.assertEqual(areas[0].atco_code, 700)
+        self.assertEqual(areas[0].name, '')
         self.assertEqual(areas[0].region.name, 'Northern Ireland')
 
-        self.assertEqual(areas[2].name, 'Carlow')
-        self.assertEqual(areas[2].region.name, 'Leinster')
+        self.assertEqual(areas[1].name, 'Antrim')
+        self.assertEqual(areas[1].region.name, 'Northern Ireland')
+
+        self.assertEqual(areas[3].name, 'Carlow')
+        self.assertEqual(areas[3].region.name, 'Leinster')
 
     def test_localities(self):
         localities = Locality.objects.all().order_by('name')
