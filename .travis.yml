@@ -21,8 +21,7 @@ before_script:
   - ./manage.py collectstatic --noinput
 script:
   - PYTHONWARNINGS=all coverage run manage.py test -v 3
-  - pylint buses busstops departures txc | cat
   - flake8
-  - sass-lint busstops/static/css/* -vq | cat
+  - sass-lint 'busstops/static/css/*' -v
 after_success:
   coveralls
