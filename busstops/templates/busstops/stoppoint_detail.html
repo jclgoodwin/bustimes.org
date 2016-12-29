@@ -29,7 +29,7 @@
 
 <div class="asides">
 
-{% if services or stoppoint.locality == None %}
+{% if services or 'DB' in object.atco_code %}
     <esi:remove><div class="aside" id="departures"></div></esi:remove>
     <esi:include src="{{ stoppoint.get_absolute_url }}/departures" />
 {% endif %}

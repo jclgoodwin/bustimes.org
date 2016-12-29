@@ -42,8 +42,6 @@ class Command(ImportFromCSVCommand):
         if stop:
             if not stop.indicator:
                 defaults['indicator'] = row['Code']
-            if not stop.common_name:
-                defaults['common_name'] = row['Name without locality']
         else:
             defaults['indicator'] = row['Code']
             defaults['common_name'] = row['Name without locality']

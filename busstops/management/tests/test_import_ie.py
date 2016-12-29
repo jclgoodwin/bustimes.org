@@ -5,6 +5,7 @@ import zipfile
 from django.test import TestCase
 from django.core.management import call_command
 from ...models import Region, AdminArea, Locality, StopPoint
+from ..commands import import_ie_naptan_csv
 
 
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -83,5 +84,30 @@ class ImportIrelandTest(TestCase):
         self.assertEqual(stop.stop_type, 'TXR')
         self.assertEqual(stop.latlong.x, -9.05469898181141)
         self.assertEqual(stop.latlong.y, 53.2719763661735)
+        self.assertEqual(stop.admin_area_id, 846)
+        self.assertEqual(stop.locality_id, 'E0846001')
+
+        import_ie_naptan_csv.Command().handle_row({
+            'Stop number': '17159',
+            'Name without locality': 'Baxter',
+            'Locality': 'Galway',
+            'Locality number': 'E0846001',
+            'Code': 'YYY',
+            'Name': 'Chutney',
+            'NaPTAN stop class': 'BCT',
+            'NaPTANId': '8460TR000124',
+            'Easting': '529650',
+            'Northing': '725146'
+        })
+        stop.refresh_from_db()
+        self.assertEqual(stop.common_name, "Supermac's")
+        self.assertEqual(stop.street, 'Bridge Street')
+        self.assertEqual(stop.crossing, '')
+        self.assertEqual(stop.indicator, 'opp')
+        self.assertEqual(stop.bearing, '')
+        self.assertEqual(stop.timing_status, '')
+        self.assertEqual(stop.stop_type, 'BCT')  # Modified (not sure it should be)
+        self.assertEqual(stop.latlong.x, -9.054698981718873)
+        self.assertEqual(stop.latlong.y, 53.27197636346384)
         self.assertEqual(stop.admin_area_id, 846)
         self.assertEqual(stop.locality_id, 'E0846001')

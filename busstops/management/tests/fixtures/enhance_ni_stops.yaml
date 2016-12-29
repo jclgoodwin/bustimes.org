@@ -1,0 +1,29 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.12.3]
+    method: GET
+    uri: http://nominatim.openstreetmap.org/reverse?lon=-5.905080292&format=json&lat=54.59979164
+  response:
+    body: {string: "{\"place_id\":\"114532477\",\"licence\":\"Data \xA9 OpenStreetMap\
+        \ contributors, ODbL 1.0. http:\\/\\/www.openstreetmap.org\\/copyright\",\"\
+        osm_type\":\"way\",\"osm_id\":\"216627844\",\"lat\":\"54.5998928\",\"lon\"\
+        :\"-5.9046985443727\",\"display_name\":\"Dr Pitt Memorial Park, Newtownards\
+        \ Road, Ballymacarret, County Down, Northern Ireland, BT4 1AD, UK\",\"address\"\
+        :{\"park\":\"Dr Pitt Memorial Park\",\"road\":\"Newtownards Road\",\"locality\"\
+        :\"Ballymacarret\",\"county\":\"County Down\",\"state\":\"Northern Ireland\"\
+        ,\"postcode\":\"BT4 1AD\",\"country\":\"UK\",\"country_code\":\"gb\"},\"boundingbox\"\
+        :[\"54.5997079\",\"54.6000883\",\"-5.9051889\",\"-5.9042098\"]}"}
+    headers:
+      Access-Control-Allow-Methods: ['OPTIONS,GET']
+      Access-Control-Allow-Origin: ['*']
+      Connection: [close]
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Tue, 27 Dec 2016 19:38:56 GMT']
+      Server: [Apache/2.4.18 (Ubuntu)]
+    status: {code: 200, message: OK}
+version: 1

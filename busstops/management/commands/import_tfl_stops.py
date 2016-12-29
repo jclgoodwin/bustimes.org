@@ -11,7 +11,7 @@ from ..import_from_csv import ImportFromCSVCommand
 from ...models import StopPoint, LiveSource
 
 
-TFL = LiveSource.objects.get(pk='TfL')
+TFL = LiveSource.objects.get_or_create(name='TfL')[0]
 
 
 class Command(ImportFromCSVCommand):
