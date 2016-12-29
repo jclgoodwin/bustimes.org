@@ -546,7 +546,11 @@ class VehicleJourney(object):
         if hasattr(self.operating_profile, 'nonoperation_days') and not self.notes:
             today = date.today()
             for daterange in self.operating_profile.nonoperation_days:
-                if daterange.start <= today and (not daterange.end or today <= daterange.end):
+                if (
+                    str(daterange) != '2016-12-27 to 2016-12-30'
+                    and daterange.start <= today
+                    and (not daterange.end or today <= daterange.end)
+                ):
                     return False
         return True
 
