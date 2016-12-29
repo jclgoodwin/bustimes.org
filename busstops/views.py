@@ -54,7 +54,7 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-def not_found(request):
+def not_found(request, exception):
     """Custom 404 handler view"""
     if (request.resolver_match
             and request.resolver_match.url_name == 'service-detail'):

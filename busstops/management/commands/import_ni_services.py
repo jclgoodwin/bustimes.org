@@ -69,9 +69,9 @@ class Command(BaseCommand):
                 'description': route_description,
                 'mode': 'bus'
             }
+            service = Service.objects.update_or_create(service_code=service_code, defaults=defaults)[0]
             if operator:
-                defaults['operator'] = [operator]
-            Service.objects.update_or_create(service_code=service_code, defaults=defaults)
+                service.operator.set((operator,))
 
     @classmethod
     def handle_stop(cls, line):
