@@ -13,20 +13,6 @@ from django.core.management.base import BaseCommand
 from ...models import StopPoint, LiveSource
 
 
-LIVE_SOURCES = {
-    # 'kent': LiveSource.objects.get_or_create(name='Kent')[0],
-    # 'yorkshire': LiveSource.objects.get_or_create(name='Y')[0],
-    'aberdeen': LiveSource.objects.get_or_create(name='aber')[0],
-    'ayrshire': LiveSource.objects.get_or_create(name='ayr')[0],
-    'buckinghamshire': LiveSource.objects.get_or_create(name='buck')[0],
-    'cambridgeshire': LiveSource.objects.get_or_create(name='camb')[0],
-    'cardiff': LiveSource.objects.get_or_create(name='card')[0],
-    'metrobus': LiveSource.objects.get_or_create(name='metr')[0],
-    'swindon': LiveSource.objects.get_or_create(name='swin')[0],
-    'travelwest': LiveSource.objects.get_or_create(name='west')[0]
-}
-
-
 class Command(BaseCommand):
     """
     Adds the relevant live source to stop points
@@ -81,7 +67,20 @@ class Command(BaseCommand):
         })
 
     def handle(self, *args, **options):
-        for subdomain, livesource in LIVE_SOURCES.items():
+        live_sources = {
+            # 'kent': LiveSource.objects.get_or_create(name='Kent')[0],
+            # 'yorkshire': LiveSource.objects.get_or_create(name='Y')[0],
+            'aberdeen': LiveSource.objects.get_or_create(name='aber')[0],
+            'ayrshire': LiveSource.objects.get_or_create(name='ayr')[0],
+            'buckinghamshire': LiveSource.objects.get_or_create(name='buck')[0],
+            'cambridgeshire': LiveSource.objects.get_or_create(name='camb')[0],
+            'cardiff': LiveSource.objects.get_or_create(name='card')[0],
+            'metrobus': LiveSource.objects.get_or_create(name='metr')[0],
+            'swindon': LiveSource.objects.get_or_create(name='swin')[0],
+            'travelwest': LiveSource.objects.get_or_create(name='west')[0]
+        }
+
+        for subdomain, live_source in live_sources.items():
             print(subdomain)
             stop_ids = []
             for cluster in self.get_clustered_stops(subdomain):
@@ -95,4 +94,4 @@ class Command(BaseCommand):
                     )
             print(stop_ids)
             stoppoints = StopPoint.objects.filter(pk__in=stop_ids)
-            livesource.stoppoint_set.add(*stoppoints)
+            live_source.stoppoint_set.add(*stoppoints)

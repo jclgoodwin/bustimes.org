@@ -5,6 +5,8 @@
 			<AtcoCode>700000004096</AtcoCode>
 			<Descriptor>
 				<CommonName xml:lang="en">Rathfriland</CommonName>
+				<!-- This is an unrecognised field. It should cause a warning -->
+				<Crossing xml:lang="en">Ollands Road</Crossing>
 			</Descriptor>
 			<Place>
 				<LocalityCentre>false</LocalityCentre>
@@ -60,7 +62,7 @@
 				<StopType>BCT</StopType>
 				<OnStreet>
 					<Bus>
-						<BusStopType>MKD</BusStopType>
+						<BusStopType>type_undefined</BusStopType>
 						<TimingStatus>OTH</TimingStatus>
 						<MarkedPoint>
 							<Bearing>
@@ -99,6 +101,65 @@
 				<StopAreaRef Modification="new" Status="active" CreationDateTime="2013-06-12T11:13:22.7723165+01:00" ModificationDateTime="2013-06-12T11:13:22.7723165+01:00">847G000242</StopAreaRef>
 			</StopAreas>
 			<AdministrativeAreaRef>846</AdministrativeAreaRef>
+		</StopPoint>
+		<!-- This stop's locality should be created cos it's not present in the NPTG -->
+		<StopPoint CreationDateTime="2013-06-12T11:04:31.6941915+01:00" Modification="new" ModificationDateTime="2013-02-06T14:27:26" Status="active">
+			<AtcoCode>7050B1520901</AtcoCode>
+			<Descriptor>
+				<CommonName xml:lang="en">Belleek</CommonName>
+				<Street xml:lang="en">N3</Street>
+			</Descriptor>
+			<Place>
+				<NptgLocalityRef>E0853142</NptgLocalityRef>
+				<LocalityCentre>false</LocalityCentre>
+				<Location>
+					<Longitude>-8.0985317294645</Longitude>
+					<Latitude>54.4773354609513</Latitude>
+				</Location>
+			</Place>
+			<StopClassification>
+				<StopType>BCT</StopType>
+				<OnStreet>
+					<Bus>
+						<BusStopType>MKD</BusStopType>
+						<TimingStatus>OTH</TimingStatus>
+						<MarkedPoint>
+							<Bearing>
+								<CompassPoint>NW</CompassPoint>
+							</Bearing>
+						</MarkedPoint>
+					</Bus>
+				</OnStreet>
+			</StopClassification>
+			<StopAreas>
+				<StopAreaRef CreationDateTime="2013-06-12T11:04:31.7254415+01:00" Modification="new" ModificationDateTime="2013-06-12T11:04:31.7254415+01:00" Status="active">853G000111</StopAreaRef>
+			</StopAreas>
+			<AdministrativeAreaRef>705</AdministrativeAreaRef>
+		</StopPoint>
+		<!-- This stop has no location. It should cause a warning -->
+		<StopPoint CreationDateTime="2013-06-12T11:06:47.5379415+01:00" ModificationDateTime="2013-02-06T14:27:27" Modification="new" Status="active">
+			<AtcoCode>8250B1002801</AtcoCode>
+			<Descriptor>
+				<CommonName xml:lang="en">Saint Paul's Crescent</CommonName>
+			</Descriptor>
+			<Place>
+				<NptgLocalityRef>E0824005</NptgLocalityRef>
+				<LocalityCentre>false</LocalityCentre>
+				<Location />
+			</Place>
+			<StopClassification>
+				<StopType>BCT</StopType>
+				<OnStreet>
+					<Bus>
+						<BusStopType>MKD</BusStopType>
+						<TimingStatus>OTH</TimingStatus>
+					</Bus>
+				</OnStreet>
+			</StopClassification>
+			<StopAreas>
+				<StopAreaRef Modification="new" Status="active" CreationDateTime="2013-06-12T11:06:47.5379415+01:00" ModificationDateTime="2013-06-12T11:06:47.5379415+01:00">825G000634</StopAreaRef>
+			</StopAreas>
+			<AdministrativeAreaRef>825</AdministrativeAreaRef>
 		</StopPoint>
 	</StopPoints>
 </NaPTAN>

@@ -19,9 +19,8 @@ class ImportNornIronTest(TestCase):
         ImportNPTGTest.do_import(import_ni_stops.Command(), 'bus-stop-list-february-2016')
 
         cls.mount_eagles = StopPoint.objects.get(atco_code='700000000000')
-        cls.ni_stops = StopPoint.objects.filter(atco_code__startswith='7')
-
-        Region.objects.create(id='NI')
+        cls.ni_stops = StopPoint.objects.filter(atco_code__startswith='700')
+        cls.ni = Region(id='NI', name='Northern Ireland').save()
 
     def test_stops(self):
         self.assertEqual(self.mount_eagles.indicator, 'outward')
@@ -46,7 +45,7 @@ class ImportNornIronTest(TestCase):
         self.assertEqual(stop.town, 'Ballymacarret')
 
 
-class ImportNIServcesTest(TestCase):
+class ImportNIServicesTest(TestCase):
     """Test the import_ni_services command
     """
     command = import_ni_services.Command()

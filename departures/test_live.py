@@ -27,6 +27,7 @@ class LiveDeparturesTest(TestCase):
             locality_centre=False,
             active=True
         )
+        LiveSource.objects.create(name='TfL')
         cls.london_stop.live_sources.add('TfL')
 
         cls.cardiff = LiveSource.objects.create(pk='card')

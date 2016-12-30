@@ -1,8 +1,9 @@
 """Tests for importing Ireland stops and services
 """
 import os
+import warnings
 import zipfile
-from django.test import TestCase
+from django.test import TransactionTestCase
 from django.core.management import call_command
 from ...models import Region, AdminArea, Locality, StopPoint
 from ..commands import import_ie_naptan_csv
@@ -10,19 +11,28 @@ from ..commands import import_ie_naptan_csv
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 FIXTURES_DIR = os.path.join(DIR, 'fixtures')
+ZIPFILE_PATH = os.path.join(FIXTURES_DIR, 'ie_naptan.zip')
 
 
-class ImportIrelandTest(TestCase):
+class ImportIrelandTest(TransactionTestCase):
     """Test the import_ie_nptg and import_ie_nptg command
     """
     @classmethod
-    def setUpTestData(cls):
+    def setUp(cls):
         call_command('import_ie_nptg', os.path.join(FIXTURES_DIR, 'ie_nptg.xml'))
 
-        with zipfile.ZipFile(os.path.join(FIXTURES_DIR, 'ie_naptan.zip'), 'a') as open_zipfile:
+        with zipfile.ZipFile(ZIPFILE_PATH, 'a') as open_zipfile:
             open_zipfile.write(os.path.join(FIXTURES_DIR, 'ie_naptan.xml'))
 
-        call_command('import_ie_naptan_xml', os.path.join(FIXTURES_DIR, 'ie_naptan.zip'))
+        with warnings.catch_warnings(record=True) as caught_warnings:
+            call_command('import_ie_naptan_xml', ZIPFILE_PATH)
+            cls.caught_warnings = caught_warnings
+
+        os.remove(ZIPFILE_PATH)
+
+    def test_warnings(self):
+        self.assertEqual(str(self.caught_warnings[0].message), 'Stop 700000004096 has an unexpected property: Crossing')
+        self.assertEqual(str(self.caught_warnings[1].message), 'Stop 8250B1002801 has no location')
 
     def test_regions(self):
         regions = Region.objects.all().order_by('name')
@@ -46,20 +56,24 @@ class ImportIrelandTest(TestCase):
 
     def test_localities(self):
         localities = Locality.objects.all().order_by('name')
-        self.assertEqual(len(localities), 3)
-        self.assertEqual(localities[0].name, 'Dangan')
-        self.assertEqual(localities[0].admin_area.name, 'Galway City')
-        self.assertEqual(localities[0].latlong.x, -9.077645)
-        self.assertEqual(localities[0].latlong.y, 53.290138)
+        self.assertEqual(len(localities), 5)
+        self.assertEqual(localities[0].name, '')
 
-        self.assertEqual(localities[2].name, 'Salthill')
+        self.assertEqual(localities[1].name, '')
+
+        self.assertEqual(localities[2].name, 'Dangan')
         self.assertEqual(localities[2].admin_area.name, 'Galway City')
-        self.assertEqual(localities[2].latlong.x, -9.070427)
-        self.assertEqual(localities[2].latlong.y, 53.262565)
+        self.assertEqual(localities[2].latlong.x, -9.077645)
+        self.assertEqual(localities[2].latlong.y, 53.290138)
+
+        self.assertEqual(localities[4].name, 'Salthill')
+        self.assertEqual(localities[4].admin_area.name, 'Galway City')
+        self.assertEqual(localities[4].latlong.x, -9.070427)
+        self.assertEqual(localities[4].latlong.y, 53.262565)
 
     def test_stops(self):
         stops = StopPoint.objects.all().order_by('atco_code')
-        self.assertEqual(len(stops), 4)
+        self.assertEqual(len(stops), 6)
         self.assertEqual(stops[0].atco_code, '700000004096')
         self.assertEqual(stops[0].common_name, 'Rathfriland')
         self.assertEqual(stops[0].stop_type, '')

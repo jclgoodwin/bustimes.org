@@ -110,6 +110,7 @@ class ImportLiveStopsTest(TestCase):
         })
 
     def test_tfl(self):
+        LiveSource.objects.create(name='TfL')
         tfl_command = import_tfl_stops.Command()
 
         self.assertIsNone(tfl_command.handle_row({'Naptan_Atco': 'NONE'}))

@@ -2,6 +2,7 @@
 https://data.dublinked.ie/dataset/national-public-transport-nodes/resource/6d997756-4dba-40d8-8526-7385735dc345
 """
 
+import warnings
 import zipfile
 import xml.etree.cElementTree as ET
 from django.contrib.gis.geos import Point
@@ -32,7 +33,7 @@ class Command(BaseCommand):
             elif tag == 'Indicator':
                 stop.indicator = subelement.text.lower()
             else:
-                print(subelement)
+                warnings.warn('Stop {} has an unexpected property: {}'.format(stop.atco_code, tag))
 
         stop_classification_element = element.find('naptan:StopClassification', self.ns)
 
@@ -61,20 +62,20 @@ class Command(BaseCommand):
         longitude_element = location_element.find('naptan:Longitude', self.ns)
         latitude_element = location_element.find('naptan:Latitude', self.ns)
         if longitude_element is None:
-            print(ET.tostring(element).decode('utf-8'))
+            warnings.warn('Stop {} has no location'.format(stop.atco_code))
         else:
             stop.latlong = Point(float(longitude_element.text), float(latitude_element.text))
-
-        locality_element = place_element.find('naptan:NptgLocalityRef', self.ns)
-        if locality_element is not None:
-            if not Locality.objects.filter(id=locality_element.text).exists():
-                Locality.objects.create(id=locality_element)
-            stop.locality_id = locality_element.text
 
         admin_area_id = element.find('naptan:AdministrativeAreaRef', self.ns).text
         if not AdminArea.objects.filter(atco_code=admin_area_id).exists():
             AdminArea.objects.create(id=admin_area_id, atco_code=admin_area_id, region_id='NI')
         stop.admin_area_id = admin_area_id
+
+        locality_element = place_element.find('naptan:NptgLocalityRef', self.ns)
+        if locality_element is not None:
+            if not Locality.objects.filter(id=locality_element.text).exists():
+                Locality.objects.create(id=locality_element.text, admin_area_id=admin_area_id)
+            stop.locality_id = locality_element.text
 
         stop.save()
 
