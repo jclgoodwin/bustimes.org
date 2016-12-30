@@ -228,7 +228,7 @@ class ImportServicesTest(TestCase):
         outbound_stops = [str(row.part.stop) for row in groupings[0].rows]
         inbound_stops = [str(row.part.stop) for row in groupings[1].rows]
         self.assertEqual(outbound_stops, [
-            'Belgravia Victoria Coach Station', 'Kingston District Centre', 'Rugby ASDA',
+            'Belgravia Victoria Coach Station', '049004705400', 'Rugby ASDA',
             'Fosse Park ASDA', 'Loughborough Holywell Way', 'Nottingham Broad Marsh Bus Station',
             'Meadowhall Interchange', 'Leeds City Centre York Street',
             'Bradford City Centre Hall Ings', 'Huddersfield Town Centre Market Street',
@@ -242,7 +242,7 @@ class ImportServicesTest(TestCase):
             'Bradford City Centre Interchange', 'Leeds City Centre Bus Stn',
             'Shudehill Interchange', 'Leeds City Centre York Street', 'Meadowhall Interchange',
             'Nottingham Broad Marsh Bus Station', 'Loughborough Holywell Way', 'Fosse Park ASDA',
-            'Rugby ASDA', 'Kingston District Centre', 'Victoria Coach Station Arrivals'
+            'Rugby ASDA', '049004705400', 'Victoria Coach Station Arrivals'
         ])
 
     def test_do_service_scotland(self):
