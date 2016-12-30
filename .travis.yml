@@ -17,11 +17,12 @@ before_script:
   - psql -U postgres -c 'create database bustimes'
   - ./manage.py migrate
   - gem install sass
-  - npm install yuglify sass-lint
-  - ./manage.py collectstatic --noinput
+  - npm install
 script:
+  - ./manage.py collectstatic --noinput
   - PYTHONWARNINGS=all coverage run manage.py test -v 3
   - flake8
   - sass-lint 'busstops/static/css/*' -v
+  - eslint 'busstops/static/js/*.js'
 after_success:
   coveralls
