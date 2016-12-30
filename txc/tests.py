@@ -125,6 +125,14 @@ class TimetableTest(TestCase):
         self.assertEqual(timetable_sw.groupings[0].column_feet[0].notes,
                          {'Sch': 'School days only'})
 
+    def test_timetable_welsh_servicedorg(self):
+        """Test a timetable from Wales (with SequenceNumbers on Journeys),
+        with a university ServicedOrganisation
+        """
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'CGAO305.xml')
+        self.assertEqual(timetable.groupings[0].column_feet[0].notes,
+                         {'Sch': 'University days only'})
+
 
 class CellTest(TestCase):
     def test_cell(self):

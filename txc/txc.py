@@ -521,7 +521,7 @@ class VehicleJourney(object):
                 elif 'College' in school_holidays:
                     self.notes['SH'] = 'College holidays only'
                 elif 'Uni' in school_holidays:
-                    self.notes['SH'] = 'University days only'
+                    self.notes['SH'] = 'University holidays only'
                 else:
                     self.notes['SH'] = 'School holidays only'
 

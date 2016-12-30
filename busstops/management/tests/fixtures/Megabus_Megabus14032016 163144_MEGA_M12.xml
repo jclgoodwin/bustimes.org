@@ -2,12 +2,6 @@
 <TransXChange xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.transxchange.org.uk/ http://www.transxchange.org.uk/schema/2.1/TransXChange_general.xsd" CreationDateTime="2016-08-19T15:45:30.2121670+01:00" ModificationDateTime="2016-08-19T15:45:30.2121670+01:00" Modification="new" RevisionNumber="1" FileName="TXC.xml" SchemaVersion="2.1" xmlns="http://www.transxchange.org.uk/">
   <StopPoints>
     <AnnotatedStopPointRef>
-      <StopPointRef>049004705400</StopPointRef>
-      <CommonName>Kingston District Centre</CommonName>
-      <LocalityName>Kingston</LocalityName>
-      <LocalityQualifier>Milton Keynes</LocalityQualifier>
-    </AnnotatedStopPointRef>
-    <AnnotatedStopPointRef>
       <StopPointRef>079073001Z</StopPointRef>
       <CommonName>Bus Station Express Lounge</CommonName>
       <LocalityName>Middlesbrough</LocalityName>

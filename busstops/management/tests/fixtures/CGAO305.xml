@@ -1,0 +1,811 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TransXChange xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.transxchange.org.uk/ http://www.transxchange.org.uk/schema/2.5/TransXChange_general.xsd" CreationDateTime="2016-12-21T14:23:35" ModificationDateTime="2016-12-21T14:23:35" Modification="revise" RevisionNumber="1" FileName="MidWalesMotorways305-Aberystwyth-Waunfawrcircular1_TXC_20161221-0223_CGAO305.xml" SchemaVersion="2.5" RegistrationDocument="true" xmlns="http://www.transxchange.org.uk/">
+  <ServicedOrganisations>
+    <ServicedOrganisation>
+      <OrganisationCode>AbU</OrganisationCode>
+      <Name>Aberystwyth Uni</Name>
+      <WorkingDays>
+        <DateRange>
+          <StartDate>2015-04-12</StartDate>
+          <EndDate>2015-05-30</EndDate>
+        </DateRange>
+      </WorkingDays>
+    </ServicedOrganisation>
+    <ServicedOrganisation>
+      <OrganisationCode>AU</OrganisationCode>
+      <WorkingDays>
+        <DateRange>
+          <StartDate>2015-09-28</StartDate>
+          <EndDate>2015-12-11</EndDate>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-01-04</StartDate>
+          <EndDate>2016-03-18</EndDate>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-04-11</StartDate>
+          <EndDate>2016-05-27</EndDate>
+        </DateRange>
+        <DateRange>
+          <StartDate>2016-09-26</StartDate>
+          <EndDate>2016-12-16</EndDate>
+        </DateRange>
+        <DateRange>
+          <StartDate>2017-01-09</StartDate>
+          <EndDate>2017-04-07</EndDate>
+        </DateRange>
+        <DateRange>
+          <StartDate>2017-05-01</StartDate>
+          <EndDate>2017-06-02</EndDate>
+        </DateRange>
+        <DateRange>
+          <StartDate>2017-09-25</StartDate>
+          <EndDate>2017-12-15</EndDate>
+        </DateRange>
+        <DateRange>
+          <StartDate>2018-01-08</StartDate>
+          <EndDate>2018-03-23</EndDate>
+        </DateRange>
+      </WorkingDays>
+    </ServicedOrganisation>
+  </ServicedOrganisations>
+  <ServiceCalendars>
+    <ServiceCalendar>
+      <CalendarPeriod>
+        <StartDate>2016-12-19</StartDate>
+        <EndDate>2017-01-02</EndDate>
+      </CalendarPeriod>
+      <Name> Service Calendar</Name>
+      <OperatingDays>
+        <OperatingDay>
+          <Date>2016-12-24</Date>
+          <ServiceDayAssignment />
+        </OperatingDay>
+        <OperatingDay>
+          <Date>2016-12-25</Date>
+          <ServiceDayAssignment />
+        </OperatingDay>
+        <OperatingDay>
+          <Date>2016-12-26</Date>
+          <ServiceDayAssignment />
+        </OperatingDay>
+        <OperatingDay>
+          <Date>2016-12-27</Date>
+          <ServiceDayAssignment />
+        </OperatingDay>
+        <OperatingDay>
+          <Date>2016-12-31</Date>
+          <ServiceDayAssignment />
+        </OperatingDay>
+        <OperatingDay>
+          <Date>2017-01-01</Date>
+          <ServiceDayAssignment />
+        </OperatingDay>
+        <OperatingDay>
+          <Date>2017-01-02</Date>
+          <ServiceDayAssignment />
+        </OperatingDay>
+      </OperatingDays>
+    </ServiceCalendar>
+  </ServiceCalendars>
+  <StopPoints>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230WDB25331</StopPointRef>
+      <CommonName>Aberystwyth Bus Station</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230AWD71090</StopPointRef>
+      <CommonName>Bronglais Hospital</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230AWD71088</StopPointRef>
+      <CommonName>University</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230AWD71086</StopPointRef>
+      <CommonName>Waun Fawr Crossroads</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230AWD71083</StopPointRef>
+      <CommonName>Waunfawr University Top</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230WDB48349</StopPointRef>
+      <CommonName>Llyshendre</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230AWD71084</StopPointRef>
+      <CommonName>Waunfawr</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230WDB48353</StopPointRef>
+      <CommonName>Maesceinion</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230AWD71085</StopPointRef>
+      <CommonName>Maesceinion</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230AWD71080</StopPointRef>
+      <CommonName>Lluest Lodge</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230AWD71079</StopPointRef>
+      <CommonName>Llanbadarn Campus</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230WDB22000</StopPointRef>
+      <CommonName>Llanbadarn Square</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230AWD71069</StopPointRef>
+      <CommonName>Morrisons</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230WDB48314</StopPointRef>
+      <CommonName>Welsh Government Offices</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230WDB22900</StopPointRef>
+      <CommonName>Park &amp; Ride</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230WDB23417</StopPointRef>
+      <CommonName>Police Station</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230WDB47291</StopPointRef>
+      <CommonName>Maesyrafon</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>5230AWD71095</StopPointRef>
+      <CommonName>Park Avenue</CommonName>
+    </AnnotatedStopPointRef>
+  </StopPoints>
+  <RouteSections>
+    <RouteSection id="RS1">
+      <RouteLink id="RL1">
+        <From>
+          <StopPointRef>5230WDB25331</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230AWD71090</StopPointRef>
+        </To>
+        <Distance>851</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL2">
+        <From>
+          <StopPointRef>5230AWD71090</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230AWD71088</StopPointRef>
+        </To>
+        <Distance>445</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL3">
+        <From>
+          <StopPointRef>5230AWD71088</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230AWD71086</StopPointRef>
+        </To>
+        <Distance>429</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL4">
+        <From>
+          <StopPointRef>5230AWD71086</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230AWD71083</StopPointRef>
+        </To>
+        <Distance>131</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL5">
+        <From>
+          <StopPointRef>5230AWD71083</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230WDB48349</StopPointRef>
+        </To>
+        <Distance>212</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL6">
+        <From>
+          <StopPointRef>5230WDB48349</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230AWD71084</StopPointRef>
+        </To>
+        <Distance>322</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL7">
+        <From>
+          <StopPointRef>5230AWD71084</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230WDB48353</StopPointRef>
+        </To>
+        <Distance>196</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL8">
+        <From>
+          <StopPointRef>5230WDB48353</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230AWD71085</StopPointRef>
+        </To>
+        <Distance>267</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL9">
+        <From>
+          <StopPointRef>5230AWD71085</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230AWD71080</StopPointRef>
+        </To>
+        <Distance>294</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL10">
+        <From>
+          <StopPointRef>5230AWD71080</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230AWD71079</StopPointRef>
+        </To>
+        <Distance>518</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL11">
+        <From>
+          <StopPointRef>5230AWD71079</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230WDB22000</StopPointRef>
+        </To>
+        <Distance>568</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL12">
+        <From>
+          <StopPointRef>5230WDB22000</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230AWD71069</StopPointRef>
+        </To>
+        <Distance>777</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL13">
+        <From>
+          <StopPointRef>5230AWD71069</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230WDB48314</StopPointRef>
+        </To>
+        <Distance>927</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL14">
+        <From>
+          <StopPointRef>5230WDB48314</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230WDB22900</StopPointRef>
+        </To>
+        <Distance>236</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL15">
+        <From>
+          <StopPointRef>5230WDB22900</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230WDB23417</StopPointRef>
+        </To>
+        <Distance>62</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL16">
+        <From>
+          <StopPointRef>5230WDB23417</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230WDB47291</StopPointRef>
+        </To>
+        <Distance>705</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL17">
+        <From>
+          <StopPointRef>5230WDB47291</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230AWD71095</StopPointRef>
+        </To>
+        <Distance>168</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RL18">
+        <From>
+          <StopPointRef>5230AWD71095</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>5230WDB25331</StopPointRef>
+        </To>
+        <Distance>438</Distance>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+  </RouteSections>
+  <Routes>
+    <Route id="RT1">
+      <PrivateCode>CGAO305-1</PrivateCode>
+      <Description>Aberystwyth Bus Station - Aberystwyth Bus Station</Description>
+      <RouteSectionRef>RS1</RouteSectionRef>
+    </Route>
+  </Routes>
+  <JourneyPatternSections>
+    <JourneyPatternSection id="JPS1">
+      <JourneyPatternTimingLink id="JPTL1">
+        <From SequenceNumber="1">
+          <StopPointRef>5230WDB25331</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="2">
+          <StopPointRef>5230AWD71090</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL1</RouteLinkRef>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL2">
+        <From SequenceNumber="2">
+          <StopPointRef>5230AWD71090</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="3">
+          <StopPointRef>5230AWD71088</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL2</RouteLinkRef>
+        <RunTime>PT2M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL3">
+        <From SequenceNumber="3">
+          <StopPointRef>5230AWD71088</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="4">
+          <StopPointRef>5230AWD71086</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL3</RouteLinkRef>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL4">
+        <From SequenceNumber="4">
+          <StopPointRef>5230AWD71086</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="5">
+          <StopPointRef>5230AWD71083</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL4</RouteLinkRef>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL5">
+        <From SequenceNumber="5">
+          <StopPointRef>5230AWD71083</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="6">
+          <StopPointRef>5230WDB48349</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL5</RouteLinkRef>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL6">
+        <From SequenceNumber="6">
+          <StopPointRef>5230WDB48349</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="7">
+          <StopPointRef>5230AWD71084</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL6</RouteLinkRef>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL7">
+        <From SequenceNumber="7">
+          <StopPointRef>5230AWD71084</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="8">
+          <StopPointRef>5230WDB48353</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL7</RouteLinkRef>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL8">
+        <From SequenceNumber="8">
+          <StopPointRef>5230WDB48353</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="9">
+          <StopPointRef>5230AWD71085</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL8</RouteLinkRef>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL9">
+        <From SequenceNumber="9">
+          <StopPointRef>5230AWD71085</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="10">
+          <StopPointRef>5230AWD71080</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL9</RouteLinkRef>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL10">
+        <From SequenceNumber="10">
+          <StopPointRef>5230AWD71080</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="11">
+          <StopPointRef>5230AWD71079</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL10</RouteLinkRef>
+        <RunTime>PT3M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL11">
+        <From SequenceNumber="11">
+          <StopPointRef>5230AWD71079</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="12">
+          <StopPointRef>5230WDB22000</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL11</RouteLinkRef>
+        <RunTime>PT2M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL12">
+        <From SequenceNumber="12">
+          <StopPointRef>5230WDB22000</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="13">
+          <StopPointRef>5230AWD71069</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL12</RouteLinkRef>
+        <RunTime>PT3M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL13">
+        <From SequenceNumber="13">
+          <StopPointRef>5230AWD71069</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To SequenceNumber="14">
+          <StopPointRef>5230WDB48314</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL13</RouteLinkRef>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL14">
+        <From SequenceNumber="14">
+          <StopPointRef>5230WDB48314</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="15">
+          <StopPointRef>5230WDB22900</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL14</RouteLinkRef>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL15">
+        <From SequenceNumber="15">
+          <StopPointRef>5230WDB22900</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="16">
+          <StopPointRef>5230WDB23417</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL15</RouteLinkRef>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL16">
+        <From SequenceNumber="16">
+          <StopPointRef>5230WDB23417</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="17">
+          <StopPointRef>5230WDB47291</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL16</RouteLinkRef>
+        <RunTime>PT2M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL17">
+        <From SequenceNumber="17">
+          <StopPointRef>5230WDB47291</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="18">
+          <StopPointRef>5230AWD71095</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RL17</RouteLinkRef>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPTL18">
+        <From SequenceNumber="18">
+          <StopPointRef>5230AWD71095</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To SequenceNumber="19">
+          <StopPointRef>5230WDB25331</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RL18</RouteLinkRef>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+  </JourneyPatternSections>
+  <Operators>
+    <Operator id="O1">
+      <NationalOperatorCode>MWLM</NationalOperatorCode>
+      <OperatorCode>MWLM</OperatorCode>
+      <OperatorShortName>Mid Wales Motorways</OperatorShortName>
+    </Operator>
+  </Operators>
+  <Services>
+    <Service>
+      <ServiceCode>CGAO305</ServiceCode>
+      <PrivateCode>CGAO305</PrivateCode>
+      <Lines>
+        <Line id="SL1">
+          <LineName>305</LineName>
+        </Line>
+      </Lines>
+      <OperatingPeriod>
+        <StartDate>2016-02-16</StartDate>
+      </OperatingPeriod>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <RegisteredOperatorRef>O1</RegisteredOperatorRef>
+      <StopRequirements>
+        <NoNewStopsRequired />
+      </StopRequirements>
+      <Mode>bus</Mode>
+      <Description>Aberystwyth - Waunfawr circular  </Description>
+      <StandardService>
+        <Origin>Aberystwyth</Origin>
+        <Destination>Waunfawr circular</Destination>
+        <JourneyPattern id="JP1">
+          <DestinationDisplay>Aberystwyth Bus Station</DestinationDisplay>
+          <Direction>outbound</Direction>
+          <RouteRef>RT1</RouteRef>
+          <JourneyPatternSectionRefs>JPS1</JourneyPatternSectionRefs>
+        </JourneyPattern>
+      </StandardService>
+    </Service>
+  </Services>
+  <VehicleJourneys>
+    <VehicleJourney SequenceNumber="1">
+      <PrivateCode>305MFMWA1:O:1</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <ServicedOrganisationDayType>
+          <DaysOfOperation>
+            <WorkingDays>
+              <ServicedOrganisationRef>AbU</ServicedOrganisationRef>
+            </WorkingDays>
+          </DaysOfOperation>
+        </ServicedOrganisationDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ1</VehicleJourneyCode>
+      <ServiceRef>CGAO305</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP1</JourneyPatternRef>
+      <DepartureTime>10:25:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="2">
+      <PrivateCode>305MFMWA1:O:2</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <ServicedOrganisationDayType>
+          <DaysOfOperation>
+            <WorkingDays>
+              <ServicedOrganisationRef>AbU</ServicedOrganisationRef>
+            </WorkingDays>
+          </DaysOfOperation>
+        </ServicedOrganisationDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ2</VehicleJourneyCode>
+      <ServiceRef>CGAO305</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP1</JourneyPatternRef>
+      <DepartureTime>11:25:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="3">
+      <PrivateCode>305MFMWA1:O:3</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <ServicedOrganisationDayType>
+          <DaysOfOperation>
+            <WorkingDays>
+              <ServicedOrganisationRef>AbU</ServicedOrganisationRef>
+            </WorkingDays>
+          </DaysOfOperation>
+        </ServicedOrganisationDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ3</VehicleJourneyCode>
+      <ServiceRef>CGAO305</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP1</JourneyPatternRef>
+      <DepartureTime>12:25:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="4">
+      <PrivateCode>305MFMWA1:O:4</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <ServicedOrganisationDayType>
+          <DaysOfOperation>
+            <WorkingDays>
+              <ServicedOrganisationRef>AbU</ServicedOrganisationRef>
+            </WorkingDays>
+          </DaysOfOperation>
+        </ServicedOrganisationDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ4</VehicleJourneyCode>
+      <ServiceRef>CGAO305</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP1</JourneyPatternRef>
+      <DepartureTime>13:25:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="5">
+      <PrivateCode>305MFMWA1:O:5</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <ServicedOrganisationDayType>
+          <DaysOfOperation>
+            <WorkingDays>
+              <ServicedOrganisationRef>AbU</ServicedOrganisationRef>
+            </WorkingDays>
+          </DaysOfOperation>
+        </ServicedOrganisationDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ5</VehicleJourneyCode>
+      <ServiceRef>CGAO305</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP1</JourneyPatternRef>
+      <DepartureTime>14:25:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="6">
+      <PrivateCode>305MFMWA1:O:6</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <ServicedOrganisationDayType>
+          <DaysOfOperation>
+            <WorkingDays>
+              <ServicedOrganisationRef>AbU</ServicedOrganisationRef>
+            </WorkingDays>
+          </DaysOfOperation>
+        </ServicedOrganisationDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ6</VehicleJourneyCode>
+      <ServiceRef>CGAO305</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP1</JourneyPatternRef>
+      <DepartureTime>15:25:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="7">
+      <PrivateCode>305MFMWA1:O:7</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <ServicedOrganisationDayType>
+          <DaysOfOperation>
+            <WorkingDays>
+              <ServicedOrganisationRef>AbU</ServicedOrganisationRef>
+            </WorkingDays>
+          </DaysOfOperation>
+        </ServicedOrganisationDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ7</VehicleJourneyCode>
+      <ServiceRef>CGAO305</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP1</JourneyPatternRef>
+      <DepartureTime>16:25:00</DepartureTime>
+    </VehicleJourney>
+  </VehicleJourneys>
+</TransXChange>
