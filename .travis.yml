@@ -17,6 +17,7 @@ before_script:
   - psql -U postgres -c 'create database bustimes'
   - ./manage.py migrate
   - gem install sass
+  - nvm install node
   - npm install
 script:
   - ./manage.py collectstatic --noinput
