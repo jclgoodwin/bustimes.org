@@ -6,7 +6,7 @@
         browser: true
     */
     /*global
-        L, $
+        L
     */
 
     if (document.getElementById('map').clientWidth > 0) {

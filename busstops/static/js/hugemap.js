@@ -5,7 +5,7 @@
         browser: true
     */
     /*global
-        L, $
+        L, reqwest
     */
 
     var map = L.map('hugemap', {

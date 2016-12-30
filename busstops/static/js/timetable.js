@@ -3,9 +3,6 @@
 /*jslint
     browser: true
 */
-/*global
-    L, $
-*/
 
 var divs = document.getElementsByTagName('div'),
     i;
