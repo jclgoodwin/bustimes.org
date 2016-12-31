@@ -96,7 +96,6 @@ virtualenv -p python3 env
 . env/bin/activate
 pip install -r requirements.txt
 pip install -r requirements-prod.txt
-pip install gunicorn
 
 export SECRET_KEY=f
 
