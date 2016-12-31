@@ -62,7 +62,18 @@ if [[ $nptg_old != $nptg_new ]]; then
 fi
 
 
-cd ../NaPTAN
+cd ..
+ie_nptg_old=$(shasum nptgfinal.xml)
+wget -qN https://data.dublinked.ie/dataset/14ea12be-9d95-4119-8a9b-1e83cb777fa0/resource/3b7d9d7e-5f0d-4462-b123-2466f1641909/download/nptgfinal.xml
+ie_nptg_new=$(shasum nptgfinal.xml)
+if [[ "$ie_nptg_old" != "$ie_nptg_new" ]]; then
+    echo "Irish NPTG"
+    ../manage.py import_ie_nptg nptgfinal.xml
+fi
+
+
+
+cd NaPTAN
 naptan_old=$(shasum naptan.zip)
 ../../manage.py update_naptan
 naptan_new=$(shasum naptan.zip)
@@ -106,12 +117,15 @@ if [[ $USERNAME == '' || $PASSWORD == '' ]]; then
    exit 1
 fi
 
+date=$(date +%Y-%m-%d)
+
 cd TNDS
 for region in "${REGIONS[@]}"; do
     region_old=$(ls -l $region.zip)
     wget -qN --user="$USERNAME" --password="$PASSWORD" ftp://ftp.tnds.basemap.co.uk/$region.zip
     region_new=$(ls -l $region.zip)
     if [[ $region_old != $region_new ]]; then
+        s3cmd put $region.zip s3://bustimes-backup/$region-$date.zip
         # updated_services=1
         /usr/bin/time -v ../../manage.py import_services $region.zip
         # delete older files
