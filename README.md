@@ -22,6 +22,13 @@ I host the production website on a single Linode server. [config/provision.sh](c
   - adds my public key
 - installs Git, Nginx, Postfix, Postgres, etc
 - clones this repository
+- creates a virtualenv environment and installs the required Python modules:
+
+  ```
+  vitualenv env
+  . env/bin/activate
+  pip install -r requirements.txt
+  ```
 
 In an emergency, it's possible to run this on Heroku, but that's relatively expensive, and things like the data import script (see below) expect a persistent file system.
 
