@@ -80,7 +80,19 @@ class ServiceTests(TestCase):
             date='2000-1-1', region_id='L'
         )
 
-    def test_get_qualified_name(self):
+    def test_str(self):
+        self.assertEqual(str(self.london_service), 'N41')
+
+        self.london_service.line_name = ''
+        self.assertEqual(str(self.london_service), 'tfl_8-N41-_-y05')
+
+    def test_get_a_mode(self):
+        self.assertEqual(self.london_service.get_a_mode(), 'A ')
+
+        self.london_service.mode = 'Underground'
+        self.assertEqual(self.london_service.get_a_mode(), 'An Underground')
+
+    def test_get_traveline_url(self):
         self.assertIsNone(self.london_service.get_traveline_url())
 
         self.london_service.mode = 'bus'

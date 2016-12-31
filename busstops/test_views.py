@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.core import mail
 from django.contrib.gis.geos import Point
 from django.shortcuts import render
-from .models import Region, AdminArea, District, Locality, StopPoint, Operator, Service
+from .models import Region, AdminArea, District, Locality, StopPoint, Operator, Service, Note
 
 
 class ContactTests(TestCase):
@@ -119,6 +119,7 @@ class ViewsTests(TestCase):
             date='1984-01-01',
             region=cls.north
         )
+
         cls.chariots = Operator.objects.create(
             pk='AINS',
             name='Ainsley\'s Chariots',
@@ -134,6 +135,11 @@ class ViewsTests(TestCase):
         )
         cls.service.operator.add(cls.chariots)
         cls.inactive_service.operator.add(cls.chariots)
+
+        cls.note = Note.objects.create(
+            text='Mind your head'
+        )
+        cls.note.operators.set((cls.chariots,))
 
     def test_index(self):
         response = self.client.get('/')
@@ -226,6 +232,9 @@ class ViewsTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_operator_found(self):
+        """The normal and Accelerated Mobile pages versions should be mostly the same
+        (but slightly different)
+        """
         normal_response = self.client.get('/operators/AINS')
         amphtml_response = self.client.get('/operators/AINS?amp')
 
@@ -238,6 +247,7 @@ class ViewsTests(TestCase):
                                 '&#110;&#115;&#108;&#101;&#121;&#64;&#101;&#120;&#97;&#109;' +
                                 '&#112;&#108;&#101;&#46;&#99;&#111;&#109;')
             self.assertContains(response, 'http://isyourgirlfriendahorse.com')
+            self.assertContains(response, 'Mind your head')
 
         self.assertContains(amphtml_response, '<style amp-custom>')
         self.assertContains(amphtml_response, "\"data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000")
@@ -250,6 +260,7 @@ class ViewsTests(TestCase):
     def test_service(self):
         response = self.client.get('/services/ea_21-45-A-y08')
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Mind your head')
 
     def test_service_redirect(self):
         response = self.client.get('/services/45B')
