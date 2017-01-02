@@ -71,7 +71,7 @@ class ImportIrelandTest(TransactionTestCase):
         self.assertEqual(localities[4].latlong.x, -9.070427)
         self.assertEqual(localities[4].latlong.y, 53.262565)
 
-    def test_stops(self):
+    def test_stops_from_xml(self):
         stops = StopPoint.objects.all().order_by('atco_code')
         self.assertEqual(len(stops), 6)
         self.assertEqual(stops[0].atco_code, '700000004096')
@@ -105,6 +105,7 @@ class ImportIrelandTest(TransactionTestCase):
         self.assertEqual(stop.admin_area_id, 846)
         self.assertEqual(stop.locality_id, 'E0846001')
 
+    def test_stops_from_csv(self):
         import_ie_naptan_csv.Command().handle_row({
             'Stop number': '17159',
             'Name without locality': 'Baxter',
@@ -117,8 +118,9 @@ class ImportIrelandTest(TransactionTestCase):
             'Easting': '529650',
             'Northing': '725146'
         })
-        stop.refresh_from_db()
-        self.assertEqual(stop.common_name, "Supermac's")
+        stop = StopPoint.objects.get(atco_code='8460TR000124')
+
+        self.assertEqual(stop.common_name, "Supermac's")  # Not modified
         self.assertEqual(stop.street, 'Bridge Street')
         self.assertEqual(stop.indicator, 'opp')
         self.assertEqual(stop.stop_type, 'BCT')  # Modified (not sure it should be)
@@ -126,3 +128,23 @@ class ImportIrelandTest(TransactionTestCase):
         self.assertEqual(stop.latlong.y, 53.27197636346384)
         self.assertEqual(stop.admin_area_id, 846)
         self.assertEqual(stop.locality_id, 'E0846001')
+
+        import_ie_naptan_csv.Command().handle_row({
+            'Easting': '617392',
+            'Name': 'Forte Retail Park',
+            'Northing': '910970',
+            'Locality number': '99032868',
+            'Name without locality': 'Forte Retail Park',
+            'Locality': 'Leck (Donegal)',
+            'NaPTAN stop class': 'BCT',
+            'Code': '1',
+            'NaPTANId': '853000249',
+            'Stop number': '191'
+        })
+        stop = StopPoint.objects.get(atco_code='853000249')
+        self.assertEqual(stop.common_name, 'Forte Retail Park')
+        self.assertEqual(stop.locality.name, 'Leck')
+        self.assertEqual(stop.locality.qualifier_name, 'Donegal')
+
+        # Should run without an error:
+        import_ie_naptan_csv.Command().handle_row({'NaPTANId': ''})

@@ -23,10 +23,8 @@ class Command(ImportFromCSVCommand):
                 admin_area_id=admin_area_id
             )
             if '(' in locality.name:
-                print(locality)
                 locality.qualifier_name = locality.name[locality.name.index('(') + 1:-1]
                 locality.name = locality.name[:locality.name.index('(')].strip()
-                print(locality.get_qualified_name())
             locality.save()
 
         defaults = dict(
@@ -46,7 +44,7 @@ class Command(ImportFromCSVCommand):
             defaults['indicator'] = row['Code']
             defaults['common_name'] = row['Name without locality']
             if len(defaults['common_name']) > 48:
-                print(defaults)
+                print(row)
                 return
         if row['Easting']:
             defaults['latlong'] = Point(
@@ -55,7 +53,7 @@ class Command(ImportFromCSVCommand):
                 srid=2157  # Irish Transverse Mercator
             )
         else:
-            print(defaults)
+            print(row)
             return
 
         StopPoint.objects.update_or_create(atco_code=row['NaPTANId'], defaults=defaults)
