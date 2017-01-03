@@ -3,7 +3,6 @@ TransXChange documents
 """
 import os
 import re
-import pickle as pickle
 import xml.etree.cElementTree as ET
 import calendar
 from datetime import date, datetime, timedelta, time
@@ -541,17 +540,17 @@ class VehicleJourney(object):
             return True
         if not self.operating_profile.regular_days:
             return False
-        if self.operating_profile.is_rubbish():
-            return False
-        if hasattr(self.operating_profile, 'nonoperation_days') and not self.notes:
-            today = date.today()
-            for daterange in self.operating_profile.nonoperation_days:
-                if (
-                    str(daterange) != '2016-12-27 to 2016-12-30'
-                    and daterange.start <= today
-                    and (not daterange.end or today <= daterange.end)
-                ):
-                    return False
+        # if self.operating_profile.is_rubbish():
+        #     return False
+        # if hasattr(self.operating_profile, 'nonoperation_days') and not self.notes:
+        #     today = date.today()
+        #     for daterange in self.operating_profile.nonoperation_days:
+        #         if (
+        #             str(daterange) != '2016-12-27 to 2016-12-30'
+        #             and daterange.start <= today
+        #             and (not daterange.end or today <= daterange.end)
+        #         ):
+        #             return False
         return True
 
 
@@ -745,13 +744,15 @@ class Timetable(object):
 
         return [journey for journey in iter(journeys.values()) if journey.should_show()]
 
-    def __init__(self, open_file, description=None):
+    def __init__(self, open_file, date, description=None):
         iterator = ET.iterparse(open_file)
 
         element = None
         servicedorgs = None
 
         self.description = description
+        self.date = date
+        print(self.date)
 
         for _, element in iterator:
             tag = element.tag[33:]
@@ -845,18 +846,8 @@ def abbreviate(grouping, i, in_a_row, difference):
             row.times[j] = None
 
 
-def timetable_from_filename(path, filename):
+def timetable_from_filename(path, filename, day):
     """Given a path and filename, join them, and return a Timetable."""
     if filename[-4:] == '.xml':
         with open(os.path.join(path, filename)) as xmlfile:
-            return Timetable(xmlfile)
-    return unpickle_timetable(os.path.join(path, filename))
-
-
-def unpickle_timetable(filename):
-    """Given a filename, try to open it and unpickle the contents."""
-    try:
-        with open(filename, 'rb') as open_file:
-            return pickle.load(open_file)
-    except IOError:
-        return
+            return Timetable(xmlfile, day)

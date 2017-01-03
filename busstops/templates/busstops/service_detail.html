@@ -31,11 +31,6 @@
     <div class="timetable-wrapper">
     <table class="timetable">
     <tbody>
-    <tr><td></td>
-    {% for column in grouping.column_heads %}
-        <td colspan="{{ column.span }}">{% firstof column.operatingprofile timetable.operating_profile as operatingprofile %}{{ operatingprofile|linebreaksbr }}</td>
-    {% endfor %}
-    </tr>
     {% for row in grouping.rows %}
         <tr class="{{ row.part.timingstatus }}"><th>
         {% if row.part.stop.stop %}
