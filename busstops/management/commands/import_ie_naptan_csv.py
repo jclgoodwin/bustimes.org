@@ -3,6 +3,7 @@
     ./manage.py import_ie_naptan_csv < naptansept2012p20120911-1428.csv
 """
 
+import warnings
 from django.contrib.gis.geos import Point
 from ..import_from_csv import ImportFromCSVCommand
 from ...models import Locality, StopPoint
@@ -42,10 +43,7 @@ class Command(ImportFromCSVCommand):
                 defaults['indicator'] = row['Code']
         else:
             defaults['indicator'] = row['Code']
-            defaults['common_name'] = row['Name without locality']
-            if len(defaults['common_name']) > 48:
-                print(row)
-                return
+            defaults['common_name'] = row['Name without locality'][:48]
         if row['Easting']:
             defaults['latlong'] = Point(
                 int(row['Easting']),
@@ -53,7 +51,6 @@ class Command(ImportFromCSVCommand):
                 srid=2157  # Irish Transverse Mercator
             )
         else:
-            print(row)
-            return
+            warnings.warn('Stop {} has no location'.format(row))
 
         StopPoint.objects.update_or_create(atco_code=row['NaPTANId'], defaults=defaults)

@@ -146,5 +146,22 @@ class ImportIrelandTest(TransactionTestCase):
         self.assertEqual(stop.locality.name, 'Leck')
         self.assertEqual(stop.locality.qualifier_name, 'Donegal')
 
+        with warnings.catch_warnings(record=True) as caught_warnings:
+            import_ie_naptan_csv.Command().handle_row({
+                'Stop number': '14440',
+                'Name without locality': "Saint Paul's Crescent",
+                'Locality': 'Balbriggan',
+                'Locality number': 'E0824005',
+                'Code': '1',
+                'Name': 'Church',
+                'NaPTAN stop class': 'BCT',
+                'NaPTANId': '8250B1002801',
+                'Easting': '',
+                'Northing': ''
+            })
+            self.assertTrue("8250B1002801'} has no location" in str(caught_warnings[0].message))
+        stop = StopPoint.objects.get(atco_code='8250B1002801')
+        self.assertEqual(stop.indicator, '1')
+
         # Should run without an error:
         import_ie_naptan_csv.Command().handle_row({'NaPTANId': ''})
