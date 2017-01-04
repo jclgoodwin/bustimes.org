@@ -167,14 +167,13 @@ class Command(BaseCommand):
 
     @classmethod
     def get_operator(cls, operator_element):
-        "Given an Operator element, returns an Operator object."
+        "Given an Operator element, returns an operator code for an operator that exists."
 
         # Get by national operator code
         operator_code = cls.get_operator_code(operator_element)
-        if len(operator_code) > 2:
-            possible_operators = Operator.objects.filter(id=operator_code)
-            if possible_operators:
-                return possible_operators[0]
+        if len(operator_code) == 4:
+            if Operator.objects.filter(id=operator_code).exists():
+                return operator_code
 
         # Get by name
         operator_name = cls.get_operator_name(operator_element)
@@ -183,16 +182,16 @@ class Command(BaseCommand):
             return None
 
         if operator_name in SPECIAL_OPERATOR_NAMES:
-            return Operator.objects.get(id=SPECIAL_OPERATOR_NAMES[operator_name])
+            return SPECIAL_OPERATOR_NAMES[operator_name]
 
         if operator_code in SPECIAL_OPERATOR_CODES:
-            return Operator.objects.get(id=SPECIAL_OPERATOR_CODES[operator_code])
+            return SPECIAL_OPERATOR_CODES[operator_code]
 
         if operator_name:
             possible_operators = (Operator.objects.filter(name=operator_name)
                                   or Operator.objects.filter(name__istartswith=operator_name))
             if len(possible_operators) == 1:
-                return possible_operators[0]
+                return possible_operators[0].id
 
         logger.warning('No operator found for element %s',
                        ET.tostring(operator_element).decode('utf-8'))
@@ -255,7 +254,7 @@ class Command(BaseCommand):
 
         description = timetable.description
         if self.service_descriptions is not None:
-            description = self.service_descriptions.get('%s%s' % (operators[0].id, line_name), '')
+            description = self.service_descriptions.get('%s%s' % (operators[0], line_name), '')
         elif not description:
             logger.warning('%s missing a name', filename)
 
