@@ -159,7 +159,7 @@ class ImportIrelandTest(TransactionTestCase):
                 'Easting': '',
                 'Northing': ''
             })
-            self.assertTrue("8250B1002801'} has no location" in str(caught_warnings[0].message))
+            self.assertTrue(' has no location' in str(caught_warnings[0].message))
         stop = StopPoint.objects.get(atco_code='8250B1002801')
         self.assertEqual(stop.indicator, '1')
 
