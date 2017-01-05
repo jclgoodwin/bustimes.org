@@ -5,6 +5,7 @@ import zipfile
 from freezegun import freeze_time
 from django.test import TestCase
 from django.contrib.gis.geos import Point
+from django.core.management import call_command
 from ...models import Operator, Service, Region, StopPoint
 from ..commands import import_services
 
@@ -65,7 +66,7 @@ class ImportServicesTest(TestCase):
                 'IncludedServices.csv',
                 'Operator,LineName,Description\nMEGA,M11A,Belgravia - Liverpool\nMEGA,M12,Shudehill - Victoria'
             )
-        cls.command.handle(filenames=[ncsd_zipfile_path])
+        call_command(cls.command, ncsd_zipfile_path)
         # clean up
         os.remove(ncsd_zipfile_path)
 

@@ -11,5 +11,11 @@
     {
         "id": "SEAD",
         "url": "http://www.seafordanddistrict.co.uk"
+    },
+    {
+        "id": "STAR",
+        "address": "177 Cambridge Street\nAylesbury\nBuckinghamshire\nHP20 1BQ",
+        "url": "http://startravelbuses.co.uk",
+        "phone": "01296 422225"
     }
 ]
