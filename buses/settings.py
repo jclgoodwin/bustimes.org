@@ -71,7 +71,7 @@ if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.environ.get('STATIC_ROOT', os.path.join(BASE_DIR, '../bustimes-static/'))
+STATIC_ROOT = os.environ.get('STATIC_ROOT', os.path.join(BASE_DIR, '..', 'bustimes-static'))
 if DEBUG:
     STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
 else:
@@ -144,6 +144,8 @@ STREETVIEW_SECRET = os.environ.get('STREETVIEW_SECRET')
 
 TRANSPORTAPI_APP_ID = os.environ.get('TRANSPORTAPI_APP_ID')
 TRANSPORTAPI_APP_KEY = os.environ.get('TRANSPORTAPI_APP_KEY')
+
+TNDS_DIR = os.path.join(BASE_DIR, 'data', 'TNDS')
 
 try:
     import raven

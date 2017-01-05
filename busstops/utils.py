@@ -7,10 +7,8 @@ except ImportError:
     from urlparse import urlparse
 import os
 import zipfile
+from django.conf import settings
 from txc import txc
-
-
-DIR = os.path.dirname(__file__)
 
 
 def sign_url(input_url=None, secret=None):
@@ -90,7 +88,7 @@ def get_files_from_zipfile(service):
     else:
         archive_name = service.region_id
 
-    archive_path = os.path.join(DIR, '../data/TNDS/', archive_name + '.zip')
+    archive_path = os.path.join(settings.TNDS_DIR, archive_name + '.zip')
 
     try:
         with zipfile.ZipFile(archive_path) as archive:
@@ -103,9 +101,9 @@ def get_files_from_zipfile(service):
 def timetable_from_service(service):
     """Given a Service, return a list of Timetables."""
     if service.region_id == 'GB':
-        path = os.path.join(DIR, '../data/TNDS/NCSD/NCSD_TXC/')
+        path = os.path.join(settings.TNDS_DIR, 'NCSD', 'NCSD_TXC')
     else:
-        path = os.path.join(DIR, '../data/TNDS/%s/' % service.region_id)
+        path = os.path.join(settings.TNDS_DIR, service.region_id)
 
     filenames = get_pickle_filenames(service, path)
     if filenames:
