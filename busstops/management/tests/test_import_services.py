@@ -155,9 +155,9 @@ class ImportServicesTest(TestCase):
             </txc:Operator>
         """)))
 
-        self.assertEqual('HBSY', self.command.get_operator(ET.fromstring("""
+        self.assertEqual('YTIG', self.command.get_operator(ET.fromstring("""
             <txc:Operator xmlns:txc="http://www.transxchange.org.uk/">
-                <txc:OperatorCode>YTIG</txc:OperatorCode>
+                <txc:OperatorCode>HBSY</txc:OperatorCode>
             </txc:Operator>
         """)))
 
