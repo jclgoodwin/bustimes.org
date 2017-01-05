@@ -27,7 +27,6 @@ class ImportServicesTest(TestCase):
         cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
         cls.megabus = Operator.objects.create(pk='MEGA', region_id='GB', name='Megabus')
         cls.fabd = Operator.objects.create(pk='FABD', region_id='S', name='First Aberdeen')
-        cls.blue_triangle = Operator.objects.create(pk='BTRI', region_id='L', name='Blue Triangle')
         cls.blue_triangle_element = ET.fromstring("""
             <txc:Operator xmlns:txc='http://www.transxchange.org.uk/' id='OId_BE'>
                 <txc:OperatorCode>BE</txc:OperatorCode>
@@ -36,7 +35,6 @@ class ImportServicesTest(TestCase):
                 <txc:TradingName>BLUE TRIANGLE BUSES LIMITED</txc:TradingName>
             </txc:Operator>
         """)
-        cls.rjs_of_wem = Operator.objects.create(pk='RJWS', region_id='EA', name='RJs of Wem')
         cls.bakers_dolphin = Operator.objects.create(pk='BAKE', region_id='S',
                                                      name='Bakers Dolphin')
         cls.bakers_porpoise = Operator.objects.create(pk='DOLP', region_id='S',
@@ -132,9 +130,9 @@ class ImportServicesTest(TestCase):
         self.assertIsNone(self.command.get_operator(element))
 
         # test SPECIAL_OPERATOR_TRADINGNAMES
-        self.assertEqual(self.blue_triangle.id, self.command.get_operator(self.blue_triangle_element))
+        self.assertEqual('BTRI', self.command.get_operator(self.blue_triangle_element))
 
-        self.assertEqual(self.rjs_of_wem.id, self.command.get_operator(ET.fromstring("""
+        self.assertEqual('RJWS', self.command.get_operator(ET.fromstring("""
             <txc:Operator id="OId_RJW" xmlns:txc="http://www.transxchange.org.uk/">
                 <txc:OperatorCode>RJW</txc:OperatorCode>
                 <txc:OperatorShortName>R. J's of Wem</txc:OperatorShortName>
@@ -154,6 +152,12 @@ class ImportServicesTest(TestCase):
             <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_RRS">
                 <txc:OperatorCode>BEAN</txc:OperatorCode>
                 <txc:TradingName>Bakers D</txc:TradingName>
+            </txc:Operator>
+        """)))
+
+        self.assertEqual('HBSY', self.command.get_operator(ET.fromstring("""
+            <txc:Operator xmlns:txc="http://www.transxchange.org.uk/">
+                <txc:OperatorCode>YTIG</txc:OperatorCode>
             </txc:Operator>
         """)))
 
