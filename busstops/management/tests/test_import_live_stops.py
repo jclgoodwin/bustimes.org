@@ -1,3 +1,4 @@
+import warnings
 import vcr
 from django.test import TestCase
 from ...models import StopPoint, LiveSource
@@ -27,6 +28,7 @@ class ImportLiveStopsTest(TestCase):
             locality_centre=False,
             active=True
         )
+        import_live_stops.DELAY = 0
 
     def test_import_acislive(self):
         with vcr.use_cassette('data/vcr/acislive_error.yaml'):
@@ -113,9 +115,18 @@ class ImportLiveStopsTest(TestCase):
         LiveSource.objects.create(name='TfL')
         tfl_command = import_tfl_stops.Command()
 
-        self.assertIsNone(tfl_command.handle_row({'Naptan_Atco': 'NONE'}))
-        self.assertIsNone(tfl_command.handle_row({'Naptan_Atco': '87'}))
-        self.assertIsNone(tfl_command.handle_row({'Naptan_Atco': '7'}))
+        with warnings.catch_warnings(record=True) as caught_warnings:
+            self.assertIsNone(tfl_command.handle_row({'Naptan_Atco': 'NONE'}))
+            self.assertIsNone(tfl_command.handle_row({'Naptan_Atco': '87'}))
+            self.assertIsNone(tfl_command.handle_row({'Naptan_Atco': '7'}))
+            self.assertEqual(
+                str(caught_warnings[0].message),
+                "StopPoint matching query does not exist. {'Naptan_Atco': '87'}"
+            )
+            self.assertEqual(
+                str(caught_warnings[1].message),
+                "get() returned more than one StopPoint -- it returned 2! {'Naptan_Atco': '7'}"
+            )
 
         with vcr.use_cassette('data/vcr/tfl.yaml'):
             tfl_command.handle_row({

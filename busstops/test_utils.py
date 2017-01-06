@@ -1,5 +1,5 @@
 """Tests for utilities and date ranges"""
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from busstops.models import Region, Service
 from .utils import sign_url, get_pickle_filenames, get_files_from_zipfile
 
@@ -63,5 +63,6 @@ class UtilsTest(TestCase):
         gb_filenames = get_pickle_filenames(self.gb_service, FIXTURES_DIR)
         self.assertEqual([], gb_filenames)
 
+    @override_settings(TNDS_DIR=FIXTURES_DIR)
     def test_get_files_from_zipfile(self):
         self.assertEqual([], get_files_from_zipfile(self.ne_service))

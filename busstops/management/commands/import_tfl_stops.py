@@ -3,7 +3,7 @@ Usage:
 
     ./manage.py import_tfl_stops < data/tfl/bus-stops.csv
 """
-from __future__ import print_function
+import warnings
 import requests
 from titlecase import titlecase
 from django.core.exceptions import MultipleObjectsReturned
@@ -26,8 +26,7 @@ class Command(ImportFromCSVCommand):
             data = requests.get('https://api.tfl.gov.uk/StopPoint/%s' % atco_code).json()
             return data.get('commonName')
         except ValueError as error:
-            print(error, atco_code)
-            return None
+            warnings.warn('{} {}'.format(atco_code, error))
 
     def handle_row(self, row):
         if row['Naptan_Atco'] in (None, '', 'NONE'):
@@ -39,8 +38,8 @@ class Command(ImportFromCSVCommand):
             try:
                 stop = StopPoint.objects.get(pk__contains=row['Naptan_Atco'])
             except (StopPoint.DoesNotExist, MultipleObjectsReturned) as error:
-                print(error, row)
-                return None
+                warnings.warn('{} {}'.format(error, row))
+                return
 
         if row['Heading'] != '':
             stop.heading = row['Heading']

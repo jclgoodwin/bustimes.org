@@ -3,6 +3,7 @@ Usage:
 
     ./manage.py import_operator_contacts < nocrecords.xml
 """
+import warnings
 from io import open
 from bs4 import BeautifulSoup
 from django.core.exceptions import ValidationError
@@ -37,12 +38,13 @@ class Command(BaseCommand):
             noc_code = noc_codes.get(public_name.pubnmid.string)
 
             if not noc_code or len(noc_code) < 4:
-                continue
+                continue  # pragma: no cover
 
             try:
                 operator = Operator.objects.get(pk=noc_code.replace('=', ''))
             except Operator.DoesNotExist as e:
-                print(noc_code, e)
+                warnings.warn('{} {}'.format(e, noc_code))
+                continue
 
             if noc_code in FIRST_OPERATORS:
                 operator.url = 'https://www.firstgroup.com/%s' % FIRST_OPERATORS[noc_code]

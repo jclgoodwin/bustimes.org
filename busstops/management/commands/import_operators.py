@@ -59,9 +59,6 @@ class Command(ImportFromCSVCommand):
 
         name = cls.get_name(row).replace('\'', '\u2019')  # Fancy apostrophe
 
-        if name == 'Horseless Carriage Services':
-            name = 'Pride of the Dales'
-
         mode = row['Mode'].lower()
         if mode == 'airline':
             return

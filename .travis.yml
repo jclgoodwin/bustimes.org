@@ -21,7 +21,7 @@ before_script:
   - npm install
 script:
   - ./manage.py collectstatic --noinput
-  - PYTHONWARNINGS=all coverage run manage.py test -v 3
+  - PYTHONWARNINGS=all coverage run manage.py test
   - flake8
   - sass-lint 'busstops/static/css/*' -v
   - eslint 'busstops/static/js/*.js'

@@ -2,8 +2,9 @@
 import os
 import xml.etree.cElementTree as ET
 import zipfile
+import warnings
 from freezegun import freeze_time
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
 from django.core.management import call_command
 from ...models import Operator, Service, Region, StopPoint
@@ -19,6 +20,7 @@ class ImportServicesTest(TestCase):
     command = import_services.Command()
 
     @classmethod
+    @override_settings(TNDS_DIR=os.path.join(DIR, 'fixtures'))
     def setUpTestData(cls):
         cls.ea = Region.objects.create(pk='EA', name='East Anglia')
         cls.gb = Region.objects.create(pk='GB', name='Großbritannien')
@@ -58,7 +60,7 @@ class ImportServicesTest(TestCase):
         cls.sc_service = Service.objects.get(pk='ABBN017')
 
         # simulate a National Coach Service Database zip file
-        ncsd_zipfile_path = os.path.join(DIR, 'fixtures/NCSD.zip')
+        ncsd_zipfile_path = os.path.join(DIR, 'fixtures', 'NCSD.zip')
         with zipfile.ZipFile(ncsd_zipfile_path, 'a') as ncsd_zipfile:
             cls.write_file_to_zipfile(ncsd_zipfile, 'Megabus_Megabus14032016 163144_MEGA_M11A.xml')
             cls.write_file_to_zipfile(ncsd_zipfile, 'Megabus_Megabus14032016 163144_MEGA_M12.xml')
@@ -69,6 +71,9 @@ class ImportServicesTest(TestCase):
         call_command(cls.command, ncsd_zipfile_path)
         # clean up
         os.remove(ncsd_zipfile_path)
+
+        # test re-importing a previously imported service again
+        cls.do_service('Megabus_Megabus14032016 163144_MEGA_M12', 'GB')
 
         cls.gb_m11a = Service.objects.get(pk='M11A_MEGA')
         cls.gb_m12 = Service.objects.get(pk='M12_MEGA')
@@ -142,12 +147,14 @@ class ImportServicesTest(TestCase):
             </txc:Operator>
         """)))
 
-        self.assertIsNone(self.command.get_operator(ET.fromstring("""
-            <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_RRS">
-                <txc:OperatorCode>BEAN</txc:OperatorCode>
-                <txc:TradingName>Bakers</txc:TradingName>
-            </txc:Operator>
-        """)))
+        with warnings.catch_warnings(record=True) as collected_warnings:
+            self.assertIsNone(self.command.get_operator(ET.fromstring("""
+                <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_RRS">
+                    <txc:OperatorCode>BEAN</txc:OperatorCode>
+                    <txc:TradingName>Bakers</txc:TradingName>
+                </txc:Operator>
+            """)))
+            self.assertTrue('No operator found for element' in str(collected_warnings[0].message))
 
         self.assertEqual(self.bakers_dolphin.id, self.command.get_operator(ET.fromstring("""
             <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_RRS">
@@ -166,7 +173,7 @@ class ImportServicesTest(TestCase):
     def do_service(cls, filename, region_id):
         filename = '%s.xml' % filename
         if region_id == 'GB':
-            filename = 'NCSD_TXC/%s' % filename
+            # filename = os.path.join('NCSD_TXC', filename)
             cls.command.set_region('NCSD.zip')
         else:
             cls.command.set_region('%s.zip' % region_id)
@@ -199,6 +206,7 @@ class ImportServicesTest(TestCase):
             </tr>
         """, html=True)
 
+    @override_settings(TNDS_DIR=os.path.join(DIR, 'fixtures'))
     def test_do_service_m11a(self):
         service = self.gb_m11a
 
@@ -225,6 +233,7 @@ class ImportServicesTest(TestCase):
             html=True
         )
 
+    @override_settings(TNDS_DIR=os.path.join(DIR, 'fixtures'))
     def test_do_service_m12(self):
         service = self.gb_m12
 

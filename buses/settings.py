@@ -37,7 +37,7 @@ MIDDLEWARE = [
     'busstops.middleware.not_found_redirect_middleware',
 ]
 
-if DEBUG and 'test' not in sys.argv and not bool(os.environ.get('TRAVIS')):
+if DEBUG and 'runserver' in sys.argv and not bool(os.environ.get('TRAVIS')):
     INTERNAL_IPS = ['127.0.0.1']
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')

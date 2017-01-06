@@ -13,6 +13,9 @@ from django.core.management.base import BaseCommand
 from ...models import StopPoint, LiveSource
 
 
+DELAY = 1
+
+
 class Command(BaseCommand):
     """
     Adds the relevant live source to stop points
@@ -28,7 +31,7 @@ class Command(BaseCommand):
         soup = BeautifulSoup(request.text, 'html.parser')
         if soup.title and soup.title.text != 'Sorry':
             stop.live_sources.add(live_source)
-        sleep(1)
+        sleep(DELAY)
 
     @staticmethod
     def maybe_add_acisconnect_source(stop, live_source, prefix):
@@ -41,7 +44,7 @@ class Command(BaseCommand):
         text = soup.find(id='UpdatePanel1').text
         if 'System unavailable' not in text:
             stop.live_sources.add(live_source)
-        sleep(1)
+        sleep(DELAY)
 
     @staticmethod
     def get_cluster_something(subdomain, path, params):
@@ -49,7 +52,7 @@ class Command(BaseCommand):
         response = requests.post(url, json=params)
         json_string = response.json().get('d').replace('MapStopResponse=', '')
         parsed_json = json.loads(json_string)
-        sleep(1)
+        sleep(DELAY)
         return parsed_json.get('Stops') or parsed_json.get('AllFoundStops')
 
     @classmethod

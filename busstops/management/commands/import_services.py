@@ -10,22 +10,18 @@ Usage:
 """
 
 import os
-import logging
 import zipfile
 import csv
 import pickle
+import warnings
 import xml.etree.cElementTree as ET
-
+from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.core.management.base import BaseCommand
 from django.db import transaction
-
 from txc.txc import Timetable, sanitize_description_part
 from ...models import Operator, StopPoint, Service, StopUsage
 
-
-logger = logging.getLogger(__name__)
-DIR = os.path.dirname(os.path.realpath(__file__))
 
 # map names to operator IDs where there is no correspondence between the NOC DB and TNDS:
 SPECIAL_OPERATOR_NAMES = {
@@ -193,8 +189,8 @@ class Command(BaseCommand):
             if len(possible_operators) == 1:
                 return possible_operators[0].id
 
-        logger.warning('No operator found for element %s',
-                       ET.tostring(operator_element).decode('utf-8'))
+        warnings.warn('No operator found for element %s' %
+                      ET.tostring(operator_element).decode('utf-8'))
 
     @classmethod
     def get_line_name_and_brand(cls, service_element, filename):
@@ -211,7 +207,7 @@ class Command(BaseCommand):
             line_brand = ''
 
         if len(line_name) > 64:
-            logger.warning('Name "%s" too long in %s', line_name, filename)
+            warnings.warn('Name "%s" too long in %s' % (line_name, filename))
             line_name = line_name[:64]
 
         return (line_name, line_brand)
@@ -231,7 +227,7 @@ class Command(BaseCommand):
             linestring = LineString(points)
             return linestring
         except ValueError as error:
-            logger.warning('%s %s', error, points)
+            warnings.warn('%s %s' % (error, points))
 
     def do_service(self, open_file, filename):
         """
@@ -256,13 +252,13 @@ class Command(BaseCommand):
         if self.service_descriptions is not None:
             description = self.service_descriptions.get('%s%s' % (operators[0], line_name), '')
         elif not description:
-            logger.warning('%s missing a name', filename)
+            warnings.warn('%s missing a name' % filename)
 
         if self.region_id == 'NE':
             description = self.sanitize_description(description)
 
         if len(description) > 255:
-            logger.warning('Description "%s" too long in %s', description, filename)
+            warnings.warn('Description "%s" too long in %s' % (description, filename))
             description = description[:255]
 
         # net and service code:
@@ -310,11 +306,11 @@ class Command(BaseCommand):
                     for row in grouping.rows:
                         del row.next
                 basename = filename[:-4]
-                with open('%s/%s' % (self.pickle_dir, basename), 'wb') as open_file:
+                with open(os.path.join(self.pickle_dir, basename), 'wb') as open_file:
                     pickle.dump(timetable, open_file)
 
         except (AttributeError, IndexError) as error:
-            logger.warning('%s, %s', error, filename)
+            warnings.warn('%s, %s' % (error, filename))
             show_timetable = False
             stop_usages = [StopUsage(service_id=service_code, stop_id=stop, order=0) for stop in stops]
             multi_line_string = None
@@ -346,7 +342,7 @@ class Command(BaseCommand):
     def set_region(self, archive_name):
         self.region_id = archive_name.split('/')[-1][:-4]
 
-        self.pickle_dir = os.path.join(DIR, '../../../data/TNDS', self.region_id)
+        self.pickle_dir = os.path.join(settings.TNDS_DIR, self.region_id)
 
         if self.region_id == 'NCSD':
             self.region_id = 'GB'
@@ -358,8 +354,6 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle_region(self, archive_name):
-        logger.info(archive_name)
-
         self.set_region(archive_name)
 
         Service.objects.filter(region_id=self.region_id).update(current=False)
@@ -378,9 +372,6 @@ class Command(BaseCommand):
                 self.service_descriptions = None
 
             for i, filename in enumerate(archive.namelist()):
-                if i % 100 == 0:
-                    logger.info('%s: %s', filename, i)
-
                 if filename.endswith('.xml'):
                     with archive.open(filename) as open_file:
                         self.do_service(open_file, filename)

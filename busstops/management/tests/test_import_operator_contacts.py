@@ -1,4 +1,5 @@
 import os
+import warnings
 from django.test import TestCase
 from ...models import Region, Operator
 from ..commands import import_operator_contacts
@@ -16,8 +17,13 @@ class ImportOperatorContactTest(TestCase):
         east_anglia = Region.objects.create(id='EA', name='East Anglia')
         cls.sanders = Operator.objects.create(pk='SNDR', name='Sanders', region=east_anglia)
         cls.first = Operator.objects.create(pk='FECS', name='First', region=east_anglia)
+        cls.loaches = Operator.objects.create(pk='LCHS', name='Loaches Coaches', region=east_anglia)
 
-        cls.command.handle()
+        with warnings.catch_warnings(record=True) as cls.caught_warnings:
+            cls.command.handle()
+
+    def test_warnings(self):
+        self.assertEqual('Operator matching query does not exist. POOP', str(self.caught_warnings[0].message))
 
     def test_format_address(self):
         self.assertEqual(
@@ -38,3 +44,9 @@ class ImportOperatorContactTest(TestCase):
         self.assertEqual(self.first.phone, '')
         self.assertEqual(self.first.email, '')
         self.assertEqual(self.first.url, 'https://www.firstgroup.com/norfolk-suffolk')
+
+        self.loaches.refresh_from_db()
+        self.assertEqual(self.loaches.address, '')
+        self.assertEqual(self.loaches.phone, '5678')
+        self.assertEqual(self.loaches.email, '')
+        self.assertEqual(self.loaches.url, 'http://www.arrivabus.co.uk')
