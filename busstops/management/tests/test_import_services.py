@@ -182,6 +182,7 @@ class ImportServicesTest(TestCase):
             cls.command.do_service(xml_file, filename)
 
     @freeze_time('1 October 2016')
+    @override_settings(TNDS_DIR=os.path.join(DIR, 'fixtures'))
     def test_do_service_ea(self):
         service = self.ea_service
 
@@ -259,6 +260,7 @@ class ImportServicesTest(TestCase):
             'Rugby ASDA', '049004705400', 'Victoria Coach Station Arrivals'
         ])
 
+    @override_settings(TNDS_DIR=os.path.join(DIR, 'fixtures'))
     def test_do_service_scotland(self):
         service = self.sc_service
 
