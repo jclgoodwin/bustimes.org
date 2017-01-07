@@ -169,6 +169,16 @@ class ImportServicesTest(TestCase):
             </txc:Operator>
         """)))
 
+    def test_get_line_name_and_brand(self):
+        with warnings.catch_warnings(record=True) as caught_warnings:
+            element = ET.fromstring("""<txc:Service xmlns:txc="http://www.transxchange.org.uk/"><txc:Lines><txc:Line>
+                <txc:LineName>Llanfair­pwllgwyngyll­gogery­chwyrn­drobwll­llan­tysilio­gogo­goch P&amp;R</txc:LineName>
+                </txc:Line></txc:Lines></txc:Service>""")
+            line_name_and_brand = self.command.get_line_name_and_brand(element, None)
+            self.assertEqual(line_name_and_brand,
+                             ('Llanfair­pwllgwyngyll­gogery­chwyrn­drobwll­llan­tysilio­gogo­go', ''))
+            self.assertTrue('too long in' in str(caught_warnings[0].message))
+
     @classmethod
     def do_service(cls, filename, region_id):
         filename = '%s.xml' % filename
