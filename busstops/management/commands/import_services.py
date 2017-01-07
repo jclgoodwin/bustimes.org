@@ -25,7 +25,7 @@ from ...models import Operator, StopPoint, Service, StopUsage
 
 # map names to operator IDs where there is no correspondence between the NOC DB and TNDS:
 SPECIAL_OPERATOR_NAMES = {
-    'Arriva Northumbria': 'ANUM',
+    'Arriva Northumbria': 'ANEA',
     'Southwold Town Council': 'SWTC',
     'H.C.Chambers & Son': 'CHMB',
     'Bungay and Beccles Area CT': 'BBCT',
