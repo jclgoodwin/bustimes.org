@@ -79,7 +79,6 @@ h1 {
 }
 
 .adsbygoogle {
-    max-width: 45.5em; // 728px
     text-decoration: none;
 
     &::before {
@@ -87,6 +86,8 @@ h1 {
         display: block;
         font-size: .75em;
         line-height: 1em;
+        max-width: 60.6em; // 728px
+        margin: 0 auto;
         padding-bottom: .33em;
         text-align: left;
     }
