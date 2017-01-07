@@ -238,13 +238,8 @@ class Command(BaseCommand):
 
         operators = [operator for operator in map(self.get_operator, timetable.operators) if operator]
 
-        stop_ids = timetable.stops.keys()
-
-        service_element = timetable.element.find('txc:Services/txc:Service', NS)
-
-        line_name, line_brand = self.get_line_name_and_brand(
-            service_element, filename
-        )
+        line_name, line_brand = self.get_line_name_and_brand(timetable.element.find('txc:Services/txc:Service', NS),
+                                                             filename)
 
         # service description:
 
@@ -269,7 +264,18 @@ class Command(BaseCommand):
 
         # stops:
 
-        stops = StopPoint.objects.in_bulk(stop_ids)
+        stops = StopPoint.objects.in_bulk(timetable.stops.keys())
+
+        defaults = dict(
+            line_name=line_name,
+            line_brand=line_brand,
+            mode=timetable.mode,
+            net=net,
+            line_ver=line_ver,
+            region_id=self.region_id,
+            date=timetable.date,
+            current=True,
+        )
 
         try:
             stop_usages = []
@@ -281,6 +287,7 @@ class Command(BaseCommand):
                     )
                     for i, row in enumerate(grouping.rows) if row.part.stop.atco_code in stops
                 ]
+                defaults[grouping.direction + '_description'] = str(grouping)
 
             show_timetable = True
             line_strings = []
@@ -316,18 +323,8 @@ class Command(BaseCommand):
             multi_line_string = None
 
         # service:
-        defaults = dict(
-            line_name=line_name,
-            line_brand=line_brand,
-            mode=timetable.mode,
-            net=net,
-            line_ver=line_ver,
-            region_id=self.region_id,
-            date=timetable.date,
-            current=True,
-            show_timetable=show_timetable,
-            geometry=multi_line_string
-        )
+        defaults['show_timetable'] = show_timetable
+        defaults['geometry'] = multi_line_string
         if description:
             defaults['description'] = description
         service, created = Service.objects.update_or_create(service_code=service_code, defaults=defaults)

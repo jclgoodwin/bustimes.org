@@ -200,6 +200,8 @@ class ImportServicesTest(TestCase):
         self.assertEqual(service.line_name, '13B')
         self.assertEqual(service.line_brand, 'Turquoise Line')
         self.assertTrue(service.show_timetable)
+        self.assertEqual(service.outbound_description, 'Norwich - Wymondham - Attleborough')
+        self.assertEqual(service.inbound_description, 'Attleborough - Wymondham - Norwich')
         self.assertEqual(service.operator.first(), self.fecs)
         self.assertEqual(
             service.get_traveline_url(),
@@ -296,7 +298,7 @@ class ImportServicesTest(TestCase):
         service.show_timetable = False
         service.save()
         res = self.client.get(service.get_absolute_url())
-        self.assertContains(res, '<h2>Outbound</h2>')
+        self.assertContains(res, 'Outbound')
         self.assertContains(res, """
             <li class="OTH" itemscope itemtype="https://schema.org/BusStop">
                 <a href="/stops/639004554">

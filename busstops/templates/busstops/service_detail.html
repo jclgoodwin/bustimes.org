@@ -70,10 +70,16 @@
 {% for stopusage in stopusages %}
     {% ifchanged stopusage.direction %}
         {% if not forloop.first %}</ul>{% endif %}
-        <h2>{{ stopusage.direction.capitalize }}</h2>
+        <h2>
+            {% if stopusage.direction == 'outbound' %}
+                {% firstof service.outbound_description stopusage.direction.capitalize %}
+            {% elif stopusage.direction == 'inbound' %}
+                {% firstof service.inbound_description stopusage.direction.capitalize %}
+            {% else %}{{ stopusage.direction.capitalize }}{% endif %}
+        </h2>
         {% if has_minor_stops %}
-        <input type="checkbox" id="show-all-stops-{{ forloop.counter }}" />
-        <label for="show-all-stops-{{ forloop.counter }}">Show all stops</label>
+            <input type="checkbox" id="show-all-stops-{{ forloop.counter }}" />
+            <label for="show-all-stops-{{ forloop.counter }}">Show all stops</label>
         {% endif %}
         <ul class="route">
     {% endifchanged %}
