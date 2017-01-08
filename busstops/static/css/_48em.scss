@@ -78,28 +78,7 @@ h1 {
     }
 }
 
-.adsbygoogle {
-    text-decoration: none;
-
-    &::before {
-        content: 'Advertisement';
-        display: block;
-        font-size: .75em;
-        line-height: 1em;
-        max-width: 60.6em; // 728px
-        margin: 0 auto;
-        padding-bottom: .33em;
-        text-align: left;
-    }
-}
-
-.adsbygoogle:not([data-adsbygoogle-status='done'])::before {
-    visibility: hidden;
-}
-
 .banner-ad {
-    height: 7em;
-
     .megabus {
         background: url('https://www.awin1.com/cshow.php?s=178399&v=2678&q=97593&r=242611');
         height: 5.625em;
