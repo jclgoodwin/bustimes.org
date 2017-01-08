@@ -745,11 +745,13 @@ class Timetable(object):
 
         return [journey for journey in iter(journeys.values()) if journey.should_show()]
 
-    def __init__(self, open_file):
+    def __init__(self, open_file, description=None):
         iterator = ET.iterparse(open_file)
 
         element = None
         servicedorgs = None
+
+        self.description = description
 
         for _, element in iterator:
             tag = element.tag[33:]
@@ -801,9 +803,10 @@ class Timetable(object):
                     if description.isupper():
                         description = titlecase(description)
                     self.description = correct_description(description)
+
+                if self.description:
                     description_parts = list(map(sanitize_description_part, self.description.split(' - ')))
                 else:
-                    self.description = ''
                     description_parts = None
 
                 self.groupings = (

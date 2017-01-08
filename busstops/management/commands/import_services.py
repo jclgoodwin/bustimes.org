@@ -234,20 +234,23 @@ class Command(BaseCommand):
         Given a root element, region ID, filename, and optional dictionary of service descriptions
         (for the NCSD), does stuff
         """
-        timetable = Timetable(open_file)
+
+        if self.service_descriptions:
+            filename_parts = filename.split('_')
+            description = self.service_descriptions.get('%s%s' % (filename_parts[-2],
+                                                                  filename_parts[-1][:-4]))
+        else:
+            description = None
+
+        timetable = Timetable(open_file, description)
 
         operators = [operator for operator in map(self.get_operator, timetable.operators) if operator]
 
         line_name, line_brand = self.get_line_name_and_brand(timetable.element.find('txc:Services/txc:Service', NS),
                                                              filename)
-
-        # service description:
-
         description = timetable.description
-        if self.service_descriptions is not None:
-            description = self.service_descriptions.get('%s%s' % (operators[0], line_name), '')
-        elif not description:
-            warnings.warn('%s missing a name' % filename)
+        if not description:
+            warnings.warn('%s missing a description' % filename)
 
         if self.region_id == 'NE':
             description = self.sanitize_description(description)
