@@ -274,20 +274,21 @@ class Command(BaseCommand):
             line_ver=line_ver,
             region_id=self.region_id,
             date=timetable.date,
-            current=True,
+            current=True
         )
 
         try:
             stop_usages = []
             for grouping in timetable.groupings:
-                stop_usages += [
-                    StopUsage(
-                        service_id=service_code, stop_id=row.part.stop.atco_code,
-                        direction=grouping.direction, order=i, timing_status=row.part.timingstatus
-                    )
-                    for i, row in enumerate(grouping.rows) if row.part.stop.atco_code in stops
-                ]
-                defaults[grouping.direction + '_description'] = str(grouping)
+                if grouping.rows:
+                    stop_usages += [
+                        StopUsage(
+                            service_id=service_code, stop_id=row.part.stop.atco_code,
+                            direction=grouping.direction, order=i, timing_status=row.part.timingstatus
+                        )
+                        for i, row in enumerate(grouping.rows) if row.part.stop.atco_code in stops
+                    ]
+                    defaults[grouping.direction + '_description'] = str(grouping)
 
             show_timetable = True
             line_strings = []
