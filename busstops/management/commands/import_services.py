@@ -251,13 +251,12 @@ class Command(BaseCommand):
         description = timetable.description
         if not description:
             warnings.warn('%s missing a description' % filename)
+        elif len(description) > 255:
+            warnings.warn('Description "%s" too long in %s' % (description, filename))
+            description = description[:255]
 
         if self.region_id == 'NE':
             description = self.sanitize_description(description)
-
-        if len(description) > 255:
-            warnings.warn('Description "%s" too long in %s' % (description, filename))
-            description = description[:255]
 
         # net and service code:
 
