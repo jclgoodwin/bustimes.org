@@ -7,16 +7,8 @@ const staticCacheName = version + 'static';
 
 function updateStaticCache() {
     return caches.open(staticCacheName).then(cache => {
-
-        // These items won't block the installation of the Service Worker
-        cache.addAll([
-            '/static/svg/bus.svg',
-            '/static/js/frontpage.min.js',
-        ]);
-
         // These items must be cached for the Service Worker to complete installation
         return cache.addAll([
-            '/static/css/style.css',
             '/offline',
             '/',
         ]);
