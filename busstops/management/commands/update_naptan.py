@@ -37,8 +37,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         new_response = requests.get('http://naptan.app.dft.gov.uk/GridMethods/%s' % JSON_NAME)
-        new_rows = new_response.json().get('rows')
-        old_rows = self.get_old_rows()
+        new_rows = [row for row in new_response.json()['rows'] if row['cell'][0]]
+        old_rows = [row for row in self.get_old_rows() if row['cell'][0]]
 
         changed_regions, changed_areas = self.get_diff(new_rows, old_rows)
 
@@ -54,13 +54,15 @@ class Command(BaseCommand):
             )
 
             with open('naptan.zip', 'wb') as zip_file:
-                for chunk in response.iter_content(chunk_size=102400):
-                    zip_file.write(chunk)
-
                 if response.headers.get('Content-Type') != 'application/zip':
                     print(response)
+                    print(response.url)
+                    print(response.content)
                     print(response.headers)
                     sys.exit(1)
+
+                for chunk in response.iter_content(chunk_size=102400):
+                    zip_file.write(chunk)
 
             with open(JSON_NAME, 'w') as json_file:
                 json_file.write(new_response.text)
