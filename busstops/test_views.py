@@ -213,8 +213,8 @@ class ViewsTests(TestCase):
         self.assertContains(response, 'Norfolk')
         self.assertContains(response, 'Melton Constable, opp Bus Shelter')
         self.assertContains(response, 'heading=270')
-        self.assertContains(response, 'leaflet.js')
-        self.assertContains(response, 'map.js')
+        self.assertContains(response, 'leaflet.')
+        self.assertContains(response, '/static/js/map.')
 
     def test_stop_json(self):
         response = self.client.get('/stops/2900M114.json')
