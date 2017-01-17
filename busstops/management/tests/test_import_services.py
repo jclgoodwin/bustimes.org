@@ -11,7 +11,8 @@ from ...models import Operator, Service, Region, StopPoint
 from ..commands import import_services
 
 
-DIR = os.path.dirname(os.path.abspath(__file__))
+FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            'fixtures')
 
 
 class ImportServicesTest(TestCase):
@@ -20,7 +21,7 @@ class ImportServicesTest(TestCase):
     command = import_services.Command()
 
     @classmethod
-    @override_settings(TNDS_DIR=os.path.join(DIR, 'fixtures'))
+    @override_settings(TNDS_DIR=FIXTURES_DIR)
     def setUpTestData(cls):
         cls.ea = Region.objects.create(pk='EA', name='East Anglia')
         cls.gb = Region.objects.create(pk='GB', name='Großbritannien')
@@ -60,7 +61,7 @@ class ImportServicesTest(TestCase):
         cls.sc_service = Service.objects.get(pk='ABBN017')
 
         # simulate a National Coach Service Database zip file
-        ncsd_zipfile_path = os.path.join(DIR, 'fixtures', 'NCSD.zip')
+        ncsd_zipfile_path = os.path.join(FIXTURES_DIR, 'NCSD.zip')
         with zipfile.ZipFile(ncsd_zipfile_path, 'a') as ncsd_zipfile:
             cls.write_file_to_zipfile(ncsd_zipfile, 'Megabus_Megabus14032016 163144_MEGA_M11A.xml')
             cls.write_file_to_zipfile(ncsd_zipfile, 'Megabus_Megabus14032016 163144_MEGA_M12.xml')
@@ -80,7 +81,7 @@ class ImportServicesTest(TestCase):
 
     @staticmethod
     def write_file_to_zipfile(open_zipfile, filename):
-        open_zipfile.write(os.path.join(DIR, 'fixtures', filename),
+        open_zipfile.write(os.path.join(FIXTURES_DIR, filename),
                            os.path.join('NCSD_TXC', filename))
 
     def test_sanitize_description(self):
@@ -183,16 +184,15 @@ class ImportServicesTest(TestCase):
     def do_service(cls, filename, region_id):
         filename = '%s.xml' % filename
         if region_id == 'GB':
-            # filename = os.path.join('NCSD_TXC', filename)
             cls.command.set_region('NCSD.zip')
         else:
             cls.command.set_region('%s.zip' % region_id)
-        path = os.path.join(DIR, 'fixtures', filename)
+        path = os.path.join(FIXTURES_DIR, filename)
         with open(path) as xml_file:
             cls.command.do_service(xml_file, filename)
 
     @freeze_time('1 October 2016')
-    @override_settings(TNDS_DIR=os.path.join(DIR, 'fixtures'))
+    @override_settings(TNDS_DIR=FIXTURES_DIR)
     def test_do_service_ea(self):
         service = self.ea_service
 
@@ -219,7 +219,7 @@ class ImportServicesTest(TestCase):
             </tr>
         """, html=True)
 
-    @override_settings(TNDS_DIR=os.path.join(DIR, 'fixtures'))
+    @override_settings(TNDS_DIR=FIXTURES_DIR)
     def test_do_service_m11a(self):
         service = self.gb_m11a
 
@@ -246,7 +246,7 @@ class ImportServicesTest(TestCase):
             html=True
         )
 
-    @override_settings(TNDS_DIR=os.path.join(DIR, 'fixtures'))
+    @override_settings(TNDS_DIR=FIXTURES_DIR)
     def test_do_service_m12(self):
         service = self.gb_m12
 
@@ -272,7 +272,7 @@ class ImportServicesTest(TestCase):
             'Rugby ASDA', '049004705400', 'Victoria Coach Station Arrivals'
         ])
 
-    @override_settings(TNDS_DIR=os.path.join(DIR, 'fixtures'))
+    @override_settings(TNDS_DIR=FIXTURES_DIR)
     def test_do_service_scotland(self):
         service = self.sc_service
 
@@ -310,3 +310,21 @@ class ImportServicesTest(TestCase):
                 </a>
             </li>
         """, html=True)
+
+    @classmethod
+    def tearDownClass(cls):
+        super(ImportServicesTest, cls).tearDownClass()
+
+        for parts in (
+                ('EA', 'ea_21-13B-B-y08-1'),
+                ('NCSD', 'NCSD_TXC', 'Megabus_Megabus14032016 163144_MEGA_M11A'),
+                ('NCSD', 'NCSD_TXC', 'Megabus_Megabus14032016 163144_MEGA_M12'),
+                ('NCSD', 'Megabus_Megabus14032016 163144_MEGA_M12'),
+                ('S', 'SVRABBN017')
+        ):
+            os.remove(os.path.join(FIXTURES_DIR, *parts))
+
+        os.rmdir(os.path.join(FIXTURES_DIR, 'EA'))
+        os.rmdir(os.path.join(FIXTURES_DIR, 'NCSD/NCSD_TXC'))
+        os.rmdir(os.path.join(FIXTURES_DIR, 'NCSD'))
+        os.rmdir(os.path.join(FIXTURES_DIR, 'S'))
