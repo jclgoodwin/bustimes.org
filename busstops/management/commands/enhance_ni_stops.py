@@ -38,7 +38,10 @@ class Command(BaseCommand):
 
             landmark_keys = list(set(response['address'].keys()) - NON_LANDMARK_KEYS)
             if len(landmark_keys) > 0:
-                stop.landmark = response['address'][landmark_keys[0]]
+                for key in landmark_keys:
+                    if len(response['address'][key]) <= 48:
+                        stop.landmark = response['address'][key]
+                        break
                 print(landmark_keys)
                 print(stop.landmark)
 
