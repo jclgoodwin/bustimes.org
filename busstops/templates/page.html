@@ -68,15 +68,13 @@ ga('create', 'UA-65987478-1', 'auto');
 {% if object.region_id %}ga('set', 'dimension1', '{{ object.region_id }}');{% endif %}
 ga('send', 'pageview');
 </script>
-{% if not debug %}
 {% load raven %}
 <script src="https://cdn.ravenjs.com/3.9.1/raven.min.js"></script>
 <script>
-Raven.config('{% sentry_public_dsn %}', {
-whitelistUrls: [/bustimes\.org\.uk/.*\.js]
-}).install()
+    Raven.config('{% sentry_public_dsn %}', {
+        whitelistUrls: [/bustimes\.org\.uk\/.*\.js/]
+    }).install();
 </script>
-{% endif %}
 {% if stopusages or stops or stoppoint %}
 <link rel="stylesheet" property="styleseet" href="{% static 'js/bower_components/leaflet/dist/leaflet.css' %}" />
 <script src="{% static 'js/bower_components/leaflet/dist/leaflet.js' %}"></script>
