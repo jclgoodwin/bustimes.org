@@ -443,7 +443,9 @@ class ServiceDetailView(DetailView):
             stops_dict = {stop.pk: stop for stop in self.object.stops.all().select_related(
                 'locality').defer('latlong', 'locality__latlong')}
             for table in context['timetables']:
+                table.groupings = [grouping for grouping in table.groupings if grouping.rows and grouping.rows[0].times]
                 for grouping in table.groupings:
+                    grouping.rows = [row for row in grouping.rows if any(row.times)]
                     for row in grouping.rows:
                         row.part.stop.stop = stops_dict.get(row.part.stop.atco_code)
 

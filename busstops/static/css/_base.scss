@@ -184,6 +184,14 @@ textarea {
     }
 }
 
+select {
+    background: none;
+    border: 1px solid $brand-color;
+    font: inherit;
+    height: 2.5em;
+    vertical-align: top;
+}
+
 input[type='search']::-webkit-search-decoration {
     -webkit-appearance: none;
 }
@@ -361,6 +369,7 @@ table {
 
 .timetable-wrapper {
     margin-right: -1.1em;
+    margin-top: 1em;
     overflow: auto;
 }
 
@@ -378,19 +387,19 @@ input:not(:checked) + label {
     border-spacing: 0;
     padding-right: 1.1em;
 
-    tr:first-child td {
-        border-left: 1px solid $brand-color;
+    // tr:first-child td {
+    //     border-left: 1px solid $brand-color;
 
-        &:first-child {
-            border-left: 0;
-            border-right: 1px solid $brand-color;
-            padding: .25em 0;
+    //     &:first-child {
+    //         border-left: 0;
+    //         border-right: 1px solid $brand-color;
+    //         padding: .25em 0;
 
-            + td {
-                border-left: 0;
-            }
-        }
-    }
+    //         + td {
+    //             border-left: 0;
+    //         }
+    //     }
+    // }
 
     td,
     th {
@@ -437,6 +446,7 @@ input:not(:checked) + label {
 
         a {
             margin-right: 0;
+            max-width: inherit;
         }
     }
 }

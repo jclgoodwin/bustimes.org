@@ -27,10 +27,10 @@
                 <option{% if option.date == timetable.date %} selected{% endif %} value="{{ option.date.isoformat }}">{{ option.day }} {{ option.date }}</option>
             {% endfor %}
         </select>
-        <!-- <input type="submit" value="Change date"> -->
+        <noscript><input type="submit" /></noscript>
     </form>
 
-    {% for grouping in timetable.groupings %}{% if grouping.rows.0.times %}
+    {% for grouping in timetable.groupings %}
     <h2>{{ grouping }} {{ timetable.operating_period }}</h2>
 
     <div class="timetable-wrapper-wrapper">
@@ -67,7 +67,7 @@
     </table>
     </div>
     </div>
-    {% endif %}{% endfor %}
+    {% empty %}<p>Sorry, no journeys found for {{ timetable.date }}</p>{% endfor %}
 {% empty %}
 
 <div class="map-wrapper"><div id="map"></div></div>

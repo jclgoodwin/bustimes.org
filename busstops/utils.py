@@ -101,17 +101,7 @@ def get_files_from_zipfile(service):
 
 def timetable_from_service(service, day=None):
     """Given a Service, return a list of Timetables."""
-    if service.region_id == 'GB':
-        path = os.path.join(settings.TNDS_DIR, 'NCSD', 'NCSD_TXC')
-    else:
-        path = os.path.join(settings.TNDS_DIR, service.region_id)
-
-    filenames = get_pickle_filenames(service, path)
     if day is None:
         day = date.today()
-    if filenames:
-        maybe_timetables = (txc.timetable_from_filename(path, name, day) for name in filenames)
-        timetables = [timetable for timetable in maybe_timetables if timetable]
-        if timetables:
-            return timetables
-    return [txc.Timetable(xml_file, day, service.description) for xml_file in get_files_from_zipfile(service)]
+    timetables = (txc.Timetable(xml_file, day, service.description) for xml_file in get_files_from_zipfile(service))
+    return [timetable for timetable in timetables if hasattr(timetable, 'groupings')]

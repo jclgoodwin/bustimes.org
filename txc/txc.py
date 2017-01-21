@@ -317,7 +317,7 @@ class JourneyPattern(object):
     """A collection of JourneyPatternSections, in order."""
     def __init__(self, element, sections, groupings):
         self.id = element.attrib.get('id')
-        self.journeys = []
+        # self.journeys = []
         self.sections = [
             sections[section_element.text]
             for section_element in element.findall('txc:JourneyPatternSectionRefs', NS)
@@ -431,7 +431,13 @@ class VehicleJourney(object):
     """
     operating_profile = None
 
-    def __init__(self, element, journeypatterns, servicedorgs):
+    def __init__(self, element, journeypatterns, servicedorgs, date):
+        operatingprofile_element = element.find('txc:OperatingProfile', NS)
+        if operatingprofile_element is not None:
+            self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
+            if not self.should_show(date):
+                return
+
         self.departure_time = datetime.strptime(
             element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
         ).time()
@@ -457,10 +463,6 @@ class VehicleJourney(object):
                 note_element.find('txc:NoteCode', NS).text: note_element.find('txc:NoteText', NS).text
                 for note_element in note_elements
             }
-
-        operatingprofile_element = element.find('txc:OperatingProfile', NS)
-        if operatingprofile_element is not None:
-            self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
 
     def add_times(self):
         row_length = len(self.journeypattern.grouping.rows.first().times)
@@ -536,6 +538,8 @@ class VehicleJourney(object):
         return (first_order, second_order)
 
     def should_show(self, date):
+        if not date:
+            return True
         if date.weekday() not in self.operating_profile.regular_days:
             return False
         if hasattr(self.operating_profile, 'nonoperation_days'):
@@ -721,9 +725,9 @@ class Timetable(object):
     def __get_journeys(self, journeys_element, servicedorgs):
         journeys = {
             journey.code: journey for journey in (
-                VehicleJourney(element, self.journeypatterns, servicedorgs)
+                VehicleJourney(element, self.journeypatterns, servicedorgs, self.date)
                 for element in journeys_element
-            )
+            ) if hasattr(journey, 'departure_time')
         }
 
         if self.service_code == '21-584-_-y08-1':
@@ -741,18 +745,14 @@ class Timetable(object):
     def date_options(self):
         start_date = min(self.date, date.today())
         end_date = start_date + timedelta(weeks=2)
-        yield {
-            'date': start_date,
-            'day': calendar.day_name[start_date.weekday()]
-        }
         while start_date <= end_date:
-            start_date += timedelta(days=1)
             weekday = start_date.weekday()
-            if weekday in self.operating_profile.regular_days:
+            if not hasattr(self, 'operating_profile') or weekday in self.operating_profile.regular_days:
                 yield {
                     'date': start_date,
                     'day': calendar.day_name[weekday]
                 }
+            start_date += timedelta(days=1)
 
     def __init__(self, open_file, date, description=None):
         iterator = ET.iterparse(open_file)
@@ -806,9 +806,12 @@ class Timetable(object):
                 operatingprofile_element = element.find('txc:OperatingProfile', NS)
                 if operatingprofile_element is not None:
                     self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
+                    if self.date:
+                        while self.date.weekday() not in self.operating_profile.regular_days:
+                            self.date += timedelta(days=1)
 
                 self.operating_period = OperatingPeriod(element.find('txc:OperatingPeriod', NS))
-                if not self.operating_period.contains(self.date):
+                if self.date and not self.operating_period.contains(self.date):
                     return
 
                 self.service_code = element.find('txc:ServiceCode', NS).text
@@ -843,6 +846,7 @@ class Timetable(object):
         journeys.sort(key=VehicleJourney.get_order)
         for journey in journeys:
             journey.journeypattern.grouping.journeys.append(journey)
+            journey.journeypattern.has_journeys = True
             journey.add_times()
 
         for grouping in self.groupings:

@@ -242,7 +242,7 @@ class Command(BaseCommand):
         else:
             description = None
 
-        timetable = Timetable(open_file, description)
+        timetable = Timetable(open_file, None, description)
 
         operators = [operator for operator in map(self.get_operator, timetable.operators) if operator]
 
@@ -275,7 +275,7 @@ class Command(BaseCommand):
             net=net,
             line_ver=line_ver,
             region_id=self.region_id,
-            date=timetable.date,
+            date=timetable.transxchange_date,
             current=True
         )
 

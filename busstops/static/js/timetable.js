@@ -8,9 +8,9 @@ var divs = document.getElementsByTagName('div'),
     i;
 
 function fancify(div) {
-    var firstCell = div.getElementsByTagName('td')[0],
-        firstCellWidth = div.getElementsByTagName('td')[0].offsetWidth + 'px',
-        ths = div.getElementsByTagName('th'),
+    var ths = div.getElementsByTagName('th'),
+        firstCell = ths[0],
+        firstCellWidth = firstCell.offsetWidth + 'px',
         i;
     for (i = ths.length - 1; i >= 0; i -= 1) {
         ths[i].style.width = firstCellWidth;
