@@ -12,11 +12,11 @@ from busstops.models import Operator
 
 
 STAGECOACH_OPERATORS = (
-    'SCMY', 'SDVN', 'SCMN', 'SCEK', 'SCMB', 'SINV', 'SSWL', 'STWS', 'SBLB',
-    'SCWW', 'SCLI', 'SCBL', 'SCCO', 'SYRK', 'SSTY', 'SCNH', 'SCNE', 'SCGL',
-    'SCOX', 'SSPH', 'YSYC', 'SCNW', 'SCHM', 'NFKG', 'SCHT', 'SCHW', 'SCTE',
-    'SCCM', 'SSWN', 'SCBD', 'SCOR', 'SCGR', 'SCEB', 'SCOT', 'SCPB', 'SMSO',
-    'SCHU', 'SCHA', 'STCR', 'STGS', 'SCST', 'CLTL', 'SCFI'
+    'CLTL', 'ELBG', 'NFKG', 'SBLB', 'SCBD', 'SCBL', 'SCCM', 'SCCO', 'SCCU',
+    'SCEB', 'SCEK', 'SCFI', 'SCGL', 'SCGR', 'SCHA', 'SCHM', 'SCHT', 'SCHU',
+    'SCHW', 'SCLI', 'SCMB', 'SCMN', 'SCMY', 'SCNE', 'SCNH', 'SCNW', 'SCOR',
+    'SCOX', 'SCST', 'SCTE', 'SCWW', 'SDVN', 'SINV', 'SLAN', 'SMSO', 'SSPH',
+    'SSTY', 'SSWL', 'SSWN', 'STCR', 'STGS', 'STLA', 'STWS', 'SYRK', 'YSYC',
 )
 DESTINATION_REGEX = re.compile(r'.+\((.+)\)')
 LOCAL_TIMEZONE = pytz.timezone('Europe/London')
