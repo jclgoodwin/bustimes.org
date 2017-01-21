@@ -9,4 +9,3 @@ source =
 omit =
     busstops/migrations/*
     buses/wsgi.py
-    buses/settings.py
