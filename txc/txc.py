@@ -535,22 +535,13 @@ class VehicleJourney(object):
             second_order = self.departure_time
         return (first_order, second_order)
 
-    def should_show(self):
-        if not self.operating_profile:
-            return True
-        if not self.operating_profile.regular_days:
+    def should_show(self, date):
+        if date.weekday() not in self.operating_profile.regular_days:
             return False
-        # if self.operating_profile.is_rubbish():
-        #     return False
-        # if hasattr(self.operating_profile, 'nonoperation_days') and not self.notes:
-        #     today = date.today()
-        #     for daterange in self.operating_profile.nonoperation_days:
-        #         if (
-        #             str(daterange) != '2016-12-27 to 2016-12-30'
-        #             and daterange.start <= today
-        #             and (not daterange.end or today <= daterange.end)
-        #         ):
-        #             return False
+        if hasattr(self.operating_profile, 'nonoperation_days'):
+            for daterange in self.operating_profile.nonoperation_days:
+                if (daterange.start <= date and daterange.end >= date):
+                    return False
         return True
 
 
@@ -592,6 +583,11 @@ class DayOfWeek(object):
             self.day = day
         else:
             self.day = WEEKDAYS[day]
+
+    def __eq__(self, other):
+        if type(other) == int:
+            return self.day == other
+        return self.day == other.day
 
     def __repr__(self):
         return calendar.day_name[self.day]
@@ -645,12 +641,12 @@ class OperatingProfile(object):
             return '%ss and %ss' % ('s, '.join(map(str, self.regular_days[:-1])), self.regular_days[-1])
         return ''
 
-    def is_rubbish(self):
-        return (
-            len(self.regular_days) == 1 and
-            hasattr(self, 'nonoperation_days') and
-            len(self.nonoperation_days) >= 7
-        )
+    # def is_rubbish(self):
+    #     return (
+    #         len(self.regular_days) == 1 and
+    #         hasattr(self, 'nonoperation_days') and
+    #         len(self.nonoperation_days) >= 7
+    #     )
 
     def get_order(self):
         if self.regular_days:
@@ -677,11 +673,8 @@ class DateRange(object):
         else:
             return '%s to %s' % (self.start, self.end)
 
-    def starts_in_future(self):
-        return self.start > date.today()
-
-    def finishes_in_past(self):
-        return self.end and self.end < date.today()
+    def contains(self, date):
+        return self.start <= date and self.end >= date
 
 
 class OperatingPeriod(DateRange):
@@ -742,7 +735,24 @@ class Timetable(object):
             if hasattr(journey, 'journeyref'):
                 journey.journeypattern = journeys[journey.journeyref].journeypattern
 
-        return [journey for journey in iter(journeys.values()) if journey.should_show()]
+        # return list(journeys.values())
+        return [journey for journey in iter(journeys.values()) if journey.should_show(self.date)]
+
+    def date_options(self):
+        start_date = min(self.date, date.today())
+        end_date = start_date + timedelta(weeks=2)
+        yield {
+            'date': start_date,
+            'day': calendar.day_name[start_date.weekday()]
+        }
+        while start_date <= end_date:
+            start_date += timedelta(days=1)
+            weekday = start_date.weekday()
+            if weekday in self.operating_profile.regular_days:
+                yield {
+                    'date': start_date,
+                    'day': calendar.day_name[weekday]
+                }
 
     def __init__(self, open_file, date, description=None):
         iterator = ET.iterparse(open_file)
@@ -751,8 +761,11 @@ class Timetable(object):
         servicedorgs = None
 
         self.description = description
-        self.date = date
-        print(self.date)
+
+        if type(date) == str:
+            self.date = datetime.strptime(date, '%Y-%m-%d').date()
+        else:
+            self.date = date
 
         for _, element in iterator:
             tag = element.tag[33:]
@@ -795,6 +808,8 @@ class Timetable(object):
                     self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
 
                 self.operating_period = OperatingPeriod(element.find('txc:OperatingPeriod', NS))
+                if not self.operating_period.contains(self.date):
+                    return
 
                 self.service_code = element.find('txc:ServiceCode', NS).text
 
@@ -821,7 +836,7 @@ class Timetable(object):
 
         self.element = element
 
-        self.date = max(
+        self.transxchange_date = max(
             element.attrib['CreationDateTime'], element.attrib['ModificationDateTime']
         )[:10]
 

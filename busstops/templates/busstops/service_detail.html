@@ -19,7 +19,17 @@
     <p class="warning">{{ note|safe }}</p>
 {% endfor %}
 
+
 {% for timetable in timetables %}
+    <form>
+        <select onchange="this.form.submit()" name="date">
+            {% for option in timetable.date_options %}
+                <option{% if option.date == timetable.date %} selected{% endif %} value="{{ option.date.isoformat }}">{{ option.day }} {{ option.date }}</option>
+            {% endfor %}
+        </select>
+        <!-- <input type="submit" value="Change date"> -->
+    </form>
+
     {% for grouping in timetable.groupings %}{% if grouping.rows.0.times %}
     <h2>{{ grouping }} {{ timetable.operating_period }}</h2>
 
