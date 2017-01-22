@@ -63,7 +63,8 @@ class TimetableTest(TestCase):
 
     def test_timetable_megabus(self):
         """Test a timetable from the National Coach Services Database"""
-        megabus = txc.timetable_from_filename(FIXTURES_DIR, 'Megabus_Megabus14032016 163144_MEGA_M11A.xml', '2016-12-02')
+        megabus = txc.timetable_from_filename(FIXTURES_DIR, 'Megabus_Megabus14032016 163144_MEGA_M11A.xml',
+                                              '2016-12-02')
         self.assertFalse(megabus.groupings[0].has_minor_stops())
         self.assertFalse(megabus.groupings[1].has_minor_stops())
         self.assertEqual(len(megabus.groupings[0].column_heads), 2)
