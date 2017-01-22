@@ -731,7 +731,7 @@ class Timetable(object):
         }
 
         if self.service_code == '21-584-_-y08-1':
-            journeys['VJ_21-584-_-y08-1-2-T0'].departure_time = time(9, 20)
+            journeys['VJ_21-584-_-y08-1-2-T0'].departure_time = datetime.time(9, 20)
 
         # some journeys did not have a direct reference to a journeypattern,
         # but rather a reference to another journey with a reference to a journeypattern
