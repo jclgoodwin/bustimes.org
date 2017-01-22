@@ -5,7 +5,7 @@ import os
 import re
 import xml.etree.cElementTree as ET
 import calendar
-from datetime import date, datetime, timedelta, time
+import datetime
 from django.utils.text import slugify
 from titlecase import titlecase
 
@@ -13,7 +13,7 @@ NS = {
     'txc': 'http://www.transxchange.org.uk/'
 }
 # A safe date, far from any daylight savings changes or leap seconds
-DUMMY_DATE = date(2016, 4, 5)
+DUMMY_DATE = datetime.date(2016, 4, 5)
 DESCRIPTION_REGEX = re.compile(r'.+,([^ ].+)$')
 DURATION_REGEX = re.compile(
     r'P((?P<days>-?\d+?)D)?T((?P<hours>-?\d+?)H)?((?P<minutes>-?\d+?)M)?((?P<seconds>-?\d+?)S)?'
@@ -30,17 +30,17 @@ def parse_duration(string):
     params = {
         key: int(value) for key, value in matches if value is not None
     }
-    return timedelta(**params)
+    return datetime.timedelta(**params)
 
 
 def time_between(end, start):
     """Return the timedelta between two times (by converting them to datetimes)."""
-    return datetime.combine(DUMMY_DATE, end) - datetime.combine(DUMMY_DATE, start)
+    return datetime.datetime.combine(DUMMY_DATE, end) - datetime.datetime.combine(DUMMY_DATE, start)
 
 
 def add_time(time, delta):
     """Add a timededelta the delta between two times (by naively converting them to datetimes)."""
-    return (datetime.combine(DUMMY_DATE, time) + delta).time()
+    return (datetime.datetime.combine(DUMMY_DATE, time) + delta).time()
 
 
 def sanitize_description_part(part):
@@ -438,7 +438,7 @@ class VehicleJourney(object):
             if not self.should_show(date):
                 return
 
-        self.departure_time = datetime.strptime(
+        self.departure_time = datetime.datetime.strptime(
             element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
         ).time()
 
@@ -666,10 +666,10 @@ class OperatingProfile(object):
 
 class DateRange(object):
     def __init__(self, element):
-        self.start = datetime.strptime(element.find('txc:StartDate', NS).text, '%Y-%m-%d').date()
+        self.start = datetime.datetime.strptime(element.find('txc:StartDate', NS).text, '%Y-%m-%d').date()
         self.end = element.find('txc:EndDate', NS)
         if self.end is not None:
-            self.end = datetime.strptime(self.end.text, '%Y-%m-%d').date()
+            self.end = datetime.datetime.strptime(self.end.text, '%Y-%m-%d').date()
 
     def __str__(self):
         if self.start == self.end:
@@ -685,7 +685,7 @@ class OperatingPeriod(DateRange):
     def __str__(self):
         if self.start == self.end:
             return self.start.strftime('on %-d %B %Y')
-        today = date.today()
+        today = datetime.date.today()
         if self.start > today:
             if self.end is None or self.end.year > today.year + 1:
                 return self.start.strftime('from %-d %B %Y')
@@ -743,8 +743,8 @@ class Timetable(object):
         return [journey for journey in iter(journeys.values()) if journey.should_show(self.date)]
 
     def date_options(self):
-        start_date = min(self.date, date.today())
-        end_date = start_date + timedelta(weeks=2)
+        start_date = min(self.date, datetime.date.today())
+        end_date = start_date + datetime.timedelta(weeks=2)
         while start_date <= end_date:
             weekday = start_date.weekday()
             if not hasattr(self, 'operating_profile') or weekday in self.operating_profile.regular_days:
@@ -752,7 +752,7 @@ class Timetable(object):
                     'date': start_date,
                     'day': calendar.day_name[weekday]
                 }
-            start_date += timedelta(days=1)
+            start_date += datetime.timedelta(days=1)
 
     def __init__(self, open_file, date, description=None):
         iterator = ET.iterparse(open_file)
@@ -762,8 +762,8 @@ class Timetable(object):
 
         self.description = description
 
-        if type(date) == str:
-            self.date = datetime.strptime(date, '%Y-%m-%d').date()
+        if date and not isinstance(date, datetime.date):
+            self.date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
         else:
             self.date = date
 
@@ -808,7 +808,7 @@ class Timetable(object):
                     self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
                     if self.date:
                         while self.date.weekday() not in self.operating_profile.regular_days:
-                            self.date += timedelta(days=1)
+                            self.date += datetime.timedelta(days=1)
 
                 self.operating_period = OperatingPeriod(element.find('txc:OperatingPeriod', NS))
                 if self.date and not self.operating_period.contains(self.date):
