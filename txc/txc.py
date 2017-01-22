@@ -538,7 +538,7 @@ class VehicleJourney(object):
         return (first_order, second_order)
 
     def should_show(self, date):
-        if not date:
+        if not (date and self.operating_profile):
             return True
         if date.weekday() not in self.operating_profile.regular_days:
             return False

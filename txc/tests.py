@@ -18,30 +18,28 @@ class TimetableTest(TestCase):
         none = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-', '2017-01-21')
         self.assertIsNone(none)
 
-    @skip('Need to adapt to timetable changes')
     def test_timetable_ea(self):
         """Test a timetable from the East Anglia region"""
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-1.xml', '2017-01-21')
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-1.xml', '2016-10-16')
 
         self.assertEqual('Monday to Sunday', str(timetable.operating_profile))
         self.assertEqual('until 21 October 2016', str(timetable.operating_period))
 
         self.assertEqual('Norwich - Wymondham - Attleborough', str(timetable.groupings[0]))
-        self.assertEqual(3, len(timetable.groupings[0].column_heads))
-        self.assertEqual(13, len(timetable.groupings[0].journeys))
+        self.assertEqual(1, len(timetable.groupings[0].column_heads))
+        self.assertEqual(11, len(timetable.groupings[0].journeys))
 
         self.assertEqual('Attleborough - Wymondham - Norwich', str(timetable.groupings[1]))
-        self.assertEqual(3, len(timetable.groupings[1].column_heads))
-        self.assertEqual(14, len(timetable.groupings[1].journeys))
+        self.assertEqual(1, len(timetable.groupings[1].column_heads))
+        self.assertEqual(10, len(timetable.groupings[1].journeys))
 
         self.assertTrue(timetable.groupings[1].has_minor_stops())
         self.assertEqual(87, len(timetable.groupings[1].rows))
         self.assertEqual('Leys Lane', timetable.groupings[1].rows[0].part.stop.common_name)
 
-    @skip('Need to adapt to timetable changes')
     def test_timetable_ea_2(self):
         """Test a timetable with a single OperatingProfile (no per-VehicleJourney ones)"""
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_20-12-_-y08-1.xml')
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_20-12-_-y08-1.xml', '2016-12-02')
 
         self.assertEqual('Monday to Friday', str(timetable.operating_profile))
         self.assertEqual('', str(timetable.operating_period))
@@ -63,12 +61,9 @@ class TimetableTest(TestCase):
         with self.assertRaises(IndexError):
             str(timetable.groupings[1])
 
-    @skip('Need to adapt to timetable changes')
     def test_timetable_megabus(self):
         """Test a timetable from the National Coach Services Database"""
-        megabus = txc.timetable_from_filename(
-            FIXTURES_DIR, 'Megabus_Megabus14032016 163144_MEGA_M11A.xml'
-        )
+        megabus = txc.timetable_from_filename(FIXTURES_DIR, 'Megabus_Megabus14032016 163144_MEGA_M11A.xml', '2016-12-02')
         self.assertFalse(megabus.groupings[0].has_minor_stops())
         self.assertFalse(megabus.groupings[1].has_minor_stops())
         self.assertEqual(len(megabus.groupings[0].column_heads), 2)
@@ -76,7 +71,7 @@ class TimetableTest(TestCase):
             time(15, 0), time(16, 30), time(23, 45), time(13, 0), time(16, 0), time(18, 0),
             time(20, 0)
         ])
-        self.assertEqual(len(megabus.groupings[1].column_heads), 5)
+        self.assertEqual(len(megabus.groupings[1].column_heads), 4)
 
     @skip('Need to adapt to timetable changes')
     def test_timetable_ne(self):
