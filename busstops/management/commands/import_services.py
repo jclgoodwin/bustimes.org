@@ -9,13 +9,10 @@ Usage:
     ./manage.py import_services EA.zip [EM.zip etc]
 """
 
-import os
 import zipfile
 import csv
-import pickle
 import warnings
 import xml.etree.cElementTree as ET
-from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -109,7 +106,6 @@ class Command(BaseCommand):
     "Command that imports bus services from a zip file"
 
     service_descriptions = None
-    pickle_dir = None
     region_id = None
 
     @staticmethod
@@ -305,20 +301,6 @@ class Command(BaseCommand):
                         line_strings.append(line_string)
             multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
 
-            if show_timetable:
-                del timetable.journeypatterns
-                del timetable.stops
-                del timetable.operators
-                del timetable.element
-                for grouping in timetable.groupings:
-                    del grouping.journeys
-                    del grouping.journeypatterns
-                    for row in grouping.rows:
-                        del row.next
-                basename = filename[:-4]
-                with open(os.path.join(self.pickle_dir, basename), 'wb') as open_file:
-                    pickle.dump(timetable, open_file)
-
         except (AttributeError, IndexError) as error:
             warnings.warn('%s, %s' % (error, filename))
             show_timetable = False
@@ -342,15 +324,8 @@ class Command(BaseCommand):
     def set_region(self, archive_name):
         self.region_id = archive_name.split('/')[-1][:-4]
 
-        self.pickle_dir = os.path.join(settings.TNDS_DIR, self.region_id)
-
         if self.region_id == 'NCSD':
             self.region_id = 'GB'
-
-        if not os.path.exists(self.pickle_dir):
-            os.makedirs(self.pickle_dir)
-            if self.region_id == 'GB':
-                os.mkdir(os.path.join(self.pickle_dir, 'NCSD_TXC'))
 
     @transaction.atomic
     def handle_region(self, archive_name):
