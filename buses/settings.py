@@ -3,6 +3,7 @@
 
 import os
 import sys
+import raven
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,6 +26,7 @@ INSTALLED_APPS = [
     'busstops',
     'pipeline',
     'email_obfuscator',
+    'raven.contrib.django.raven_compat'
 ]
 
 MIDDLEWARE = [
@@ -147,13 +149,7 @@ TRANSPORTAPI_APP_KEY = os.environ.get('TRANSPORTAPI_APP_KEY')
 
 TNDS_DIR = os.path.join(BASE_DIR, 'data', 'TNDS')
 
-try:
-    import raven
-
-    INSTALLED_APPS.append('raven.contrib.django.raven_compat')
-    RAVEN_CONFIG = {
-        'dsn': os.environ.get('SENTRY_DSN'),
-        'release': raven.fetch_git_sha(BASE_DIR)
-    }
-except ImportError:
-    pass
+RAVEN_CONFIG = {
+    'dsn': os.environ.get('SENTRY_DSN'),
+    'release': raven.fetch_git_sha(BASE_DIR)
+}
