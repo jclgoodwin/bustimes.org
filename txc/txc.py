@@ -504,20 +504,20 @@ class VehicleJourney(object):
             school_days = org.nonoperation_holidays or org.operation_workingdays
             school_holidays = org.nonoperation_workingdays or org.operation_holidays
             if school_days is not None and school_holidays is None:
-                if 'QE0' in school_days:
+                if 'QE0' in school_days.code:
                     self.notes['Sch'] = 'Only operates on certain days'
-                elif 'College' in school_days:
+                elif 'College' in school_days.code:
                     self.notes['Sch'] = 'College days only'
-                elif 'Uni' in school_days:
+                elif 'Uni' in school_days.code:
                     self.notes['Sch'] = 'University days only'
                 else:
                     self.notes['Sch'] = 'School days only'
             elif school_holidays is not None and school_days is None:
-                if 'QE0' in school_holidays:
+                if 'QE0' in school_holidays.code:
                     self.notes['SH'] = 'Only operates on certain days'
-                elif 'College' in school_holidays:
+                elif 'College' in school_holidays.code:
                     self.notes['SH'] = 'College holidays only'
-                elif 'Uni' in school_holidays:
+                elif 'Uni' in school_holidays.code:
                     self.notes['SH'] = 'University holidays only'
                 else:
                     self.notes['SH'] = 'School holidays only'
@@ -536,8 +536,21 @@ class VehicleJourney(object):
 class ServicedOrganisation(object):
     def __init__(self, element):
         self.code = element.find('txc:OrganisationCode', NS).text
-        self.name = element.find('txc:Name', NS).text
-        self.working_days = [DateRange(e) for e in element.find('txc:WorkingDays', NS)]
+        name_element = element.find('txc:Name', NS)
+        if name_element is not None:
+            self.name = name_element.text
+
+        working_days_element = element.find('txc:WorkingDays', NS)
+        if working_days_element is not None:
+            self.working_days = [DateRange(e) for e in working_days_element]
+        else:
+            self.working_days = []
+
+        holidays_element = element.find('txc:Holidays', NS)
+        if holidays_element is not None:
+            self.holidays = [DateRange(e) for e in holidays_element]
+        else:
+            self.holidays = []
 
 
 class ServicedOrganisationDayType(object):
@@ -652,9 +665,17 @@ class OperatingProfile(object):
             return False
         if hasattr(self, 'servicedorganisation'):
             org = self.servicedorganisation
-            for daterange in org.nonoperation_workingdays.working_days:
-                if daterange.contains(date):
-                    return False
+
+            nonoperation_days = (org.nonoperation_workingdays and org.nonoperation_workingdays.working_days or
+                                 org.nonoperation_holidays and org.nonoperation_holidays.holidays)
+            if nonoperation_days:
+                return not any(daterange.contains(date) for daterange in nonoperation_days)
+
+            operation_days = (org.operation_workingdays and org.operation_workingdays.working_days or
+                              org.operation_holidays and org.operation_holidays.holidays)
+            if operation_days:
+                return any(daterange.contains(date) for daterange in operation_days)
+
         if hasattr(self, 'nonoperation_days'):
             for daterange in self.nonoperation_days:
                 if daterange.contains(date):
@@ -676,7 +697,7 @@ class DateRange(object):
             return '%s to %s' % (self.start, self.end)
 
     def contains(self, date):
-        return self.start <= date and self.end >= date
+        return self.start <= date and (not self.end or self.end >= date)
 
 
 class OperatingPeriod(DateRange):

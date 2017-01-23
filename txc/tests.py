@@ -1,7 +1,6 @@
 """Tests for timetables and date ranges"""
 import xml.etree.cElementTree as ET
 from datetime import time, timedelta, date
-from unittest import skip
 from freezegun import freeze_time
 from django.test import TestCase
 from . import txc
@@ -79,51 +78,37 @@ class TimetableTest(TestCase):
         self.assertEqual(timetable_ne.groupings[1].rows[0].times[:7],
                          [time(5, 20), time(6, 20), time(7, 15), time(8, 10), time(9, 10), time(10, 10), time(11, 10)])
 
-    @skip('Why has this stopped passing!?')
     def test_timetable_scotland(self):
         """Test a Scotch timetable with no foot"""
-        timetable_scotland = txc.timetable_from_filename(FIXTURES_DIR, 'SVRABBN017.xml', '2016-12-13')
+        timetable_scotland = txc.timetable_from_filename(FIXTURES_DIR, 'SVRABBN017.xml', '2017-01-28')
         self.assertFalse(hasattr(timetable_scotland.groupings[0], 'column_feet'))
 
-    @skip('Need to adapt to timetable changes')
     def test_timetable_deadruns(self):
         """Test a timetable with some dead runs which should be respected"""
         deadruns = txc.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml', None)
-        self.assertEqual(
-            deadruns.groupings[0].rows[-25].times[:3], [time(20, 58), time(22, 28), time(23, 53)]
-        )
-        self.assertEqual(
-            deadruns.groupings[0].rows[-24].times[:7], ['', '', '', '', '', '', time(9, 51)]
-        )
-        self.assertEqual(deadruns.groupings[0].rows[-20].times[:6], ['', '', '', '', '', ''])
-        self.assertEqual(deadruns.groupings[0].rows[-12].times[:6], ['', '', '', '', '', ''])
-        self.assertEqual(deadruns.groupings[0].rows[-8].times[:6], ['', '', '', '', '', ''])
-        self.assertEqual(deadruns.groupings[0].rows[-7].times[:6], ['', '', '', '', '', ''])
-        self.assertEqual(deadruns.groupings[0].rows[-5].times[:6], ['', '', '', '', '', ''])
-        self.assertEqual(deadruns.groupings[0].rows[-4].times[:6], ['', '', '', '', '', ''])
-        self.assertEqual(deadruns.groupings[0].rows[-3].times[:6], ['', '', '', '', '', ''])
-        self.assertEqual(
-            deadruns.groupings[0].rows[-2].times[:7], ['', '', '', '', '', '', time(10, 5)]
-        )
-        self.assertEqual(
-            deadruns.groupings[0].rows[-1].times[:7], ['', '', '', '', '', '', time(10, 7)]
-        )
+        self.assertEqual(deadruns.groupings[0].rows[-25].times[-3:], [time(22, 28), time(23, 53), time(23, 53)])
+        self.assertEqual(deadruns.groupings[0].rows[-24].times[-9:], [time(18, 51), '', '', '', '', '', '', '', ''])
+        self.assertEqual(deadruns.groupings[0].rows[-12].times[-9:], [time(19, 0), '', '', '', '', '', '', '', ''])
+        self.assertEqual(deadruns.groupings[0].rows[-8].times[-9:], [time(19, 2), '', '', '', '', '', '', '', ''])
+        self.assertEqual(deadruns.groupings[0].rows[-7].times[-9:], [time(19, 3), '', '', '', '', '', '', '', ''])
+        self.assertEqual(deadruns.groupings[0].rows[-5].times[-9:], [time(19, 4), '', '', '', '', '', '', '', ''])
+        self.assertEqual(deadruns.groupings[0].rows[-4].times[-9:], [time(19, 4), '', '', '', '', '', '', '', ''])
+        self.assertEqual(deadruns.groupings[0].rows[-3].times[-9:], [time(19, 5), '', '', '', '', '', '', '', ''])
+        self.assertEqual(deadruns.groupings[0].rows[-2].times[-8:], ['', '', '', '', '', '', '', ''])
+        self.assertEqual(deadruns.groupings[0].rows[-1].times[-8:], ['', '', '', '', '', '', '', ''])
 
-    @skip('Need to adapt to timetable changes')
     def test_timetable_servicedorg(self):
         """Test a timetable with a ServicedOrganisation"""
-        timetable_sw = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml')
+        timetable_sw = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml', None)
         self.assertEqual(timetable_sw.groupings[0].column_feet[0].notes,
                          {'Sch': 'School days only'})
 
-    @skip('Need to adapt to timetable changes')
     def test_timetable_welsh_servicedorg(self):
         """Test a timetable from Wales (with SequenceNumbers on Journeys),
         with a university ServicedOrganisation
         """
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'CGAO305.xml')
-        self.assertEqual(timetable.groupings[0].column_feet[0].notes,
-                         {'Sch': 'University days only'})
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'CGAO305.xml', '2017-01-23')
+        self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
 
 
 class CellTest(TestCase):
