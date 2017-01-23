@@ -94,7 +94,9 @@
         var latLng = e.target.getCenter();
         var latLngString = Math.round(latLng.lat * 10000) / 10000 + ',' + Math.round(latLng.lng * 10000) / 10000;
 
-        history.replaceState(null, null, window.location.pathname + '#' + latLngString);
+        if (history.replaceState) {
+            history.replaceState(null, null, window.location.pathname + '#' + latLngString);
+        }
         localStorage.setItem('location', latLngString);
 
         if (e.target.getZoom() > 13) {

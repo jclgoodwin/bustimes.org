@@ -8,6 +8,7 @@
     /*global
         L
     */
+    var map = document.getElementById('map');
 
     if (document.getElementById('map').clientWidth > 0) {
 
@@ -48,15 +49,15 @@
         }
 
         if (mainLocations.length) {
-            var map = L.map('map', {
-                    zoomControl: false,
-                    dragging: false,
-                    touchZoom: false,
-                    scrollWheelZoom: false,
-                    doubleClickZoom: false,
-                    boxZoom: false
-                }),
-                tileURL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            map = L.map('map', {
+                zoomControl: false,
+                dragging: false,
+                touchZoom: false,
+                scrollWheelZoom: false,
+                doubleClickZoom: false,
+                boxZoom: false
+            });
+            var tileURL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                 attribution = '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                 pin = L.icon({
                     iconUrl:    '/static/pin.svg',
