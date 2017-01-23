@@ -228,7 +228,6 @@ class Grouping(object):
     def __init__(self, direction, service_description_parts):
         self.direction = direction
         self.service_description_parts = service_description_parts
-        self.column_heads = []
         self.column_feet = []
         self.journeypatterns = []
         self.journeys = []
@@ -253,7 +252,6 @@ class Grouping(object):
             return
 
         prev_journey = None
-        head_span = 0
         in_a_row = 0
         prev_difference = None
         difference = None
@@ -261,13 +259,7 @@ class Grouping(object):
         for i, journey in enumerate(self.journeys):
             journey.do_operatingprofile_notes()
             if prev_journey:
-                if not journey.operating_profile and not prev_journey.operating_profile:
-                    difference = time_between(journey.departure_time, prev_journey.departure_time)
-                    if prev_difference == difference:
-                        in_a_row += 1
-                elif prev_journey.operating_profile != journey.operating_profile:
-                    self.column_heads.append(ColumnHead(prev_journey.operating_profile, head_span))
-                    head_span = 0
+                if prev_journey.operating_profile != journey.operating_profile or prev_journey.notes != journey.notes:
                     if in_a_row > 1:
                         abbreviate(self, i, in_a_row - 1, prev_difference)
                     in_a_row = 0
@@ -287,8 +279,8 @@ class Grouping(object):
                 if prev_journey.notes != journey.notes:
                     self.column_feet.append(ColumnFoot(prev_journey.notes, foot_span))
                     foot_span = 0
+                    in_a_row = 0
 
-            head_span += 1
             prev_difference = difference
             difference = None
             if journey:
@@ -296,7 +288,6 @@ class Grouping(object):
             foot_span += 1
         if in_a_row > 1:
             abbreviate(self, len(self.journeys), in_a_row - 1, prev_difference)
-        self.column_heads.append(ColumnHead(prev_journey.operating_profile, head_span))
         self.column_feet.append(ColumnFoot(prev_journey.notes, foot_span))
         for row in self.rows:
             row.times = [time for time in row.times if time is not None]
@@ -432,6 +423,21 @@ class VehicleJourney(object):
     operating_profile = None
 
     def __init__(self, element, journeypatterns, servicedorgs, date):
+        # ensure the journey has a code and pattern, even if it won't be shown
+        # (because it might be referenced by a shown journey)
+
+        self.code = element.find('txc:VehicleJourneyCode', NS).text
+
+        journeypatternref_element = element.find('txc:JourneyPatternRef', NS)
+        if journeypatternref_element is not None:
+            self.journeypattern = journeypatterns[journeypatternref_element.text]
+        else:
+            # Journey has no direct reference to a JourneyPattern
+            # instead it as a reference to a similar journey with does
+            self.journeyref = element.find('txc:VehicleJourneyRef', NS).text
+
+        # now free to stop if this journey won't be shown
+
         operatingprofile_element = element.find('txc:OperatingProfile', NS)
         if operatingprofile_element is not None:
             self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
@@ -444,16 +450,6 @@ class VehicleJourney(object):
 
         sequencenumber = element.get('SequenceNumber')
         self.sequencenumber = sequencenumber and int(sequencenumber)
-
-        self.code = element.find('txc:VehicleJourneyCode', NS).text
-
-        journeypatternref_element = element.find('txc:JourneyPatternRef', NS)
-        if journeypatternref_element is not None:
-            self.journeypattern = journeypatterns[journeypatternref_element.text]
-        else:
-            # Journey has no direct reference to a JourneyPattern
-            # instead it as a reference to a similar journey with does
-            self.journeyref = element.find('txc:VehicleJourneyRef', NS).text
 
         self.start_deadrun, self.end_deadrun = get_deadruns(element)
 
@@ -527,29 +523,24 @@ class VehicleJourney(object):
                     self.notes['SH'] = 'School holidays only'
 
     def get_order(self):
-        if self.operating_profile:
-            first_order = self.operating_profile.get_order()
-        else:
-            first_order = 0
         if self.sequencenumber is not None:
-            second_order = self.sequencenumber
-        else:
-            second_order = self.departure_time
-        return (first_order, second_order)
+            return self.sequencenumber
+        return self.departure_time
 
     def should_show(self, date):
         if not (date and self.operating_profile):
             return True
-        if date.weekday() not in self.operating_profile.regular_days:
-            return False
-        if hasattr(self.operating_profile, 'nonoperation_days'):
-            for daterange in self.operating_profile.nonoperation_days:
-                if (daterange.start <= date and daterange.end >= date):
-                    return False
-        return True
+        return self.operating_profile.should_show(date)
 
 
 class ServicedOrganisation(object):
+    def __init__(self, element):
+        self.code = element.find('txc:OrganisationCode', NS).text
+        self.name = element.find('txc:Name', NS).text
+        self.working_days = [DateRange(e) for e in element.find('txc:WorkingDays', NS)]
+
+
+class ServicedOrganisationDayType(object):
     def __init__(self, element, servicedorgs):
         self.nonoperation_holidays = None
         self.nonoperation_workingdays = None
@@ -634,7 +625,7 @@ class OperatingProfile(object):
         servicedorg_days_element = element.find('txc:ServicedOrganisationDayType', NS)
 
         if servicedorg_days_element is not None:
-            self.servicedorganisation = ServicedOrganisation(servicedorg_days_element, servicedorgs)
+            self.servicedorganisation = ServicedOrganisationDayType(servicedorg_days_element, servicedorgs)
 
     def __str__(self):
         if self.regular_days:
@@ -644,13 +635,6 @@ class OperatingProfile(object):
                 return '%s to %s' % (self.regular_days[0], self.regular_days[-1])
             return '%ss and %ss' % ('s, '.join(map(str, self.regular_days[:-1])), self.regular_days[-1])
         return ''
-
-    # def is_rubbish(self):
-    #     return (
-    #         len(self.regular_days) == 1 and
-    #         hasattr(self, 'nonoperation_days') and
-    #         len(self.nonoperation_days) >= 7
-    #     )
 
     def get_order(self):
         if self.regular_days:
@@ -662,6 +646,20 @@ class OperatingProfile(object):
 
     def __ne__(self, other):
         return str(self) != str(other)
+
+    def should_show(self, date):
+        if date.weekday() not in self.regular_days:
+            return False
+        if hasattr(self, 'servicedorganisation'):
+            org = self.servicedorganisation
+            for daterange in org.nonoperation_workingdays.working_days:
+                if daterange.contains(date):
+                    return False
+        if hasattr(self, 'nonoperation_days'):
+            for daterange in self.nonoperation_days:
+                if daterange.contains(date):
+                    return False
+        return True
 
 
 class DateRange(object):
@@ -706,12 +704,6 @@ class OperatingPeriod(DateRange):
         return ''
 
 
-class ColumnHead(object):
-    def __init__(self, operatingprofile, span):
-        self.operatingprofile = operatingprofile
-        self.span = span
-
-
 class ColumnFoot(object):
     def __init__(self, notes, span):
         self.notes = notes
@@ -727,7 +719,7 @@ class Timetable(object):
             journey.code: journey for journey in (
                 VehicleJourney(element, self.journeypatterns, servicedorgs, self.date)
                 for element in journeys_element
-            ) if hasattr(journey, 'departure_time')
+            )
         }
 
         if self.service_code == '21-584-_-y08-1':
@@ -788,9 +780,7 @@ class Timetable(object):
                 element.clear()
             elif tag == 'ServicedOrganisations':
                 servicedorgs = {
-                    org_element.find('txc:OrganisationCode', NS).text:
-                    get_servicedorganisation_name(org_element)
-                    for org_element in element
+                    org.code: org for org in (ServicedOrganisation(org_element) for org_element in element)
                 }
             elif tag == 'VehicleJourneys':
                 # time calculation begins here:

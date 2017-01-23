@@ -26,11 +26,9 @@ class TimetableTest(TestCase):
         self.assertEqual('until 21 October 2016', str(timetable.operating_period))
 
         self.assertEqual('Norwich - Wymondham - Attleborough', str(timetable.groupings[0]))
-        self.assertEqual(1, len(timetable.groupings[0].column_heads))
         self.assertEqual(11, len(timetable.groupings[0].journeys))
 
         self.assertEqual('Attleborough - Wymondham - Norwich', str(timetable.groupings[1]))
-        self.assertEqual(1, len(timetable.groupings[1].column_heads))
         self.assertEqual(10, len(timetable.groupings[1].journeys))
 
         self.assertTrue(timetable.groupings[1].has_minor_stops())
@@ -45,8 +43,6 @@ class TimetableTest(TestCase):
         self.assertEqual('', str(timetable.operating_period))
 
         self.assertEqual('Outbound', str(timetable.groupings[0]))
-        self.assertEqual(1, len(timetable.groupings[0].column_heads))
-        self.assertIsNone(timetable.groupings[0].column_heads[0].operatingprofile)
         self.assertEqual(21, len(timetable.groupings[0].rows))
 
         self.assertEqual('[St Ives (Cambs) Bus Station]', str(timetable.groupings[0].rows[0]))
@@ -67,28 +63,21 @@ class TimetableTest(TestCase):
                                               '2016-12-02')
         self.assertFalse(megabus.groupings[0].has_minor_stops())
         self.assertFalse(megabus.groupings[1].has_minor_stops())
-        self.assertEqual(len(megabus.groupings[0].column_heads), 2)
-        self.assertEqual(megabus.groupings[0].rows[0].times, [
-            time(15, 0), time(16, 30), time(23, 45), time(13, 0), time(16, 0), time(18, 0),
-            time(20, 0)
-        ])
-        self.assertEqual(len(megabus.groupings[1].column_heads), 4)
+        self.assertEqual(megabus.groupings[0].rows[0].times,
+                         [time(13, 0), time(15, 0), time(16, 0), time(16, 30), time(18, 0), time(20, 0), time(23, 45)])
 
-    @skip('Need to adapt to timetable changes')
     def test_timetable_ne(self):
         """Test timetable with some abbreviations"""
-        timetable_ne = txc.timetable_from_filename(FIXTURES_DIR, 'NE_03_SCC_X6_1.xml')
+        timetable_ne = txc.timetable_from_filename(FIXTURES_DIR, 'NE_03_SCC_X6_1.xml', '2016-12-15')
         self.assertEqual('Kendal - Barrow-in-Furness', str(timetable_ne.groupings[0]))
-        self.assertEqual(timetable_ne.groupings[0].column_heads[0].span, 16)
-        self.assertEqual(timetable_ne.groupings[0].column_heads[1].span, 14)
-        self.assertEqual(timetable_ne.groupings[0].column_heads[2].span, 4)
         self.assertEqual(
             timetable_ne.groupings[0].rows[0].times[:3], [time(7, 0), time(8, 0), time(9, 0)]
         )
         # Test abbreviations (check the colspan and rowspan attributes of Cells)
         self.assertEqual(timetable_ne.groupings[0].rows[0].times[3].colspan, 6)
         self.assertEqual(timetable_ne.groupings[0].rows[0].times[3].rowspan, 117)
-        self.assertEqual(timetable_ne.groupings[1].rows[0].times[-2].colspan, 2)
+        self.assertEqual(timetable_ne.groupings[1].rows[0].times[:7],
+                         [time(5, 20), time(6, 20), time(7, 15), time(8, 10), time(9, 10), time(10, 10), time(11, 10)])
 
     @skip('Why has this stopped passing!?')
     def test_timetable_scotland(self):
@@ -124,8 +113,6 @@ class TimetableTest(TestCase):
     def test_timetable_servicedorg(self):
         """Test a timetable with a ServicedOrganisation"""
         timetable_sw = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml')
-        self.assertEqual(str(timetable_sw.groupings[0].column_heads[0].operatingprofile),
-                         'Monday to Friday')
         self.assertEqual(timetable_sw.groupings[0].column_feet[0].notes,
                          {'Sch': 'School days only'})
 

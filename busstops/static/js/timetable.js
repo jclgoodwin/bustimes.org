@@ -9,15 +9,18 @@ var divs = document.getElementsByTagName('div'),
 
 function fancify(div) {
     var ths = div.getElementsByTagName('th'),
-        firstCell = ths[0],
-        firstCellWidth = firstCell.offsetWidth + 'px',
+        firstCellWidth,
         i;
+    for (i = ths.length - 1; i >= 0; i -= 1) {
+        if (ths[i].offsetWidth) {
+            firstCellWidth = ths[i].offsetWidth + 'px';
+            break;
+        }
+    }
     for (i = ths.length - 1; i >= 0; i -= 1) {
         ths[i].style.width = firstCellWidth;
         ths[i].style.marginLeft = '-' + firstCellWidth;
     }
-    firstCell.style.width = firstCellWidth;
-    firstCell.style.marginLeft = '-' + firstCellWidth;
     div.style.marginLeft = firstCellWidth;
     div.className += ' fancy';
 }
