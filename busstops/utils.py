@@ -7,8 +7,9 @@ try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse
-from django.conf import settings
 from datetime import date
+from django.conf import settings
+from django.core.cache import cache
 from txc import txc
 
 
@@ -103,5 +104,21 @@ def timetable_from_service(service, day=None):
     """Given a Service, return a list of Timetables."""
     if day is None:
         day = date.today()
+    cache_key = '{}{}'.format(service.pk, day)
+    timetables = cache.get(cache_key)
+    if timetables is not None:
+        return timetables
     timetables = (txc.Timetable(xml_file, day, service.description) for xml_file in get_files_from_zipfile(service))
-    return [timetable for timetable in timetables if hasattr(timetable, 'groupings')]
+    timetables = [timetable for timetable in timetables if hasattr(timetable, 'groupings')]
+    for timetable in timetables:
+        del timetable.journeypatterns
+        del timetable.stops
+        del timetable.operators
+        del timetable.element
+        for grouping in timetable.groupings:
+            del grouping.journeys
+            del grouping.journeypatterns
+            for row in grouping.rows:
+                del row.next
+    cache.set(cache_key, timetables, None)
+    return timetables

@@ -153,3 +153,10 @@ RAVEN_CONFIG = {
     'dsn': os.environ.get('SENTRY_DSN'),
     'release': raven.fetch_git_sha(BASE_DIR)
 }
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}
