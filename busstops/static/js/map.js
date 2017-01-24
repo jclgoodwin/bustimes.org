@@ -10,7 +10,7 @@
     */
     var map = document.getElementById('map');
 
-    if (document.getElementById('map').clientWidth > 0) {
+    if (map && map.clientWidth > 0) {
 
         var h1 = document.getElementsByTagName('h1')[0],
             items = document.getElementsByTagName('li'),
