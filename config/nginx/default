@@ -72,6 +72,7 @@ server {
         alias /home/josh/bustimes-static/;
         expires 1M;
         add_header 'access-control-allow-origin' 'http://webcache.googleusercontent.com,http://localhost:8000';
+        rewrite '^(.*)\.\w{12}(\.\w+)$' $1$2 last;
     }
 
     location ~* ^/(favicon.ico$|manifest.json$|rockabox) {
