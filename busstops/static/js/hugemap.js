@@ -26,7 +26,8 @@
         markers = new L.MarkerClusterGroup({
             disableClusteringAtZoom: 15,
             maxClusterRadius: 50
-        });
+        }),
+        lastReq;
 
     statusBar.onAdd = function () {
         var div = L.DomUtil.create('div', 'hugemap-status');
@@ -72,13 +73,15 @@
         markers.clearLayers();
         layer.addTo(markers);
         statusBar.getContainer().innerHTML = '';
-
     }
 
     function loadStops(map, statusBar) {
         var bounds = map.getBounds();
         statusBar.getContainer().innerHTML = 'Loading\u2026';
-        reqwest(
+        if (lastReq) {
+            lastReq.abort();
+        }
+        lastReq = reqwest(
             '/stops.json?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest(),
             processStopsData
         );
