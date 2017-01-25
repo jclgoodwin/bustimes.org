@@ -108,6 +108,20 @@ PIPELINE = {
             ),
             'output_filename': 'js/frontpage.min.js',
         },
+        'departures': {
+            'source_filenames': (
+                'js/bower_components/reqwest/reqwest.min.js',
+                'js/departures.js',
+            ),
+            'output_filename': 'js/departures.min.js',
+        },
+        'map': {
+            'source_filenames': (
+                'js/bower_components/leaflet/dist/leaflet.js',
+                'js/map.js',
+            ),
+            'output_filename': 'js/map.min.js',
+        },
     },
     'YUGLIFY_BINARY': './node_modules/.bin/yuglify',
     'CSS_COMPRESSOR': None,

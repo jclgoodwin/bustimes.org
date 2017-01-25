@@ -88,12 +88,10 @@ ga('send', 'pageview');
 </script>
 {% if stopusages or stops or stoppoint %}
 <link rel="stylesheet" property="styleseet" href="{% static 'js/bower_components/leaflet/dist/leaflet.css' %}" />
-<script src="{% static 'js/bower_components/leaflet/dist/leaflet.js' %}"></script>
-<script async src="{% static 'js/map.js' %}"></script>
+{% javascript 'map' %}
 {% if stoppoint and services %}
 <esi:remove>
-<script src="{% static 'js/bower_components/reqwest/reqwest.min.js' %}"></script>
-<script async src="{% static 'js/departures.js' %}"></script>
+{% javascript 'departures' %}
 </esi:remove>
 {% endif %}
 {% elif regions %}
