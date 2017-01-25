@@ -122,6 +122,7 @@
     if (parts) {
         map.setView([parts[0], parts[1]], 14);
     } else {
+        map.setView([54, -2.5], 6);
         statusBar.getContainer().innerHTML = 'Finding your location\u2026';
         map.locate({setView: true});
     }
