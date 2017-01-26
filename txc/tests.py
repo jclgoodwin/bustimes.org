@@ -110,6 +110,13 @@ class TimetableTest(TestCase):
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'CGAO305.xml', '2017-01-23')
         self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
 
+    def test_timetable_holidays_only(self):
+        """Test a service with a HolidaysOnly operating profile
+        """
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'twm_6-14B-_-y11-1.xml', '2017-01-23')
+        self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
+        self.assertEqual(0, len(timetable.groupings[1].rows[0].times))
+
 
 class CellTest(TestCase):
     def test_cell(self):

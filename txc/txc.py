@@ -669,6 +669,7 @@ class OperatingProfile(object):
             nonoperation_days = (org.nonoperation_workingdays and org.nonoperation_workingdays.working_days or
                                  org.nonoperation_holidays and org.nonoperation_holidays.holidays)
             if nonoperation_days:
+                # TODO: assume dateranges in order
                 return not any(daterange.contains(date) for daterange in nonoperation_days)
 
             operation_days = (org.operation_workingdays and org.operation_workingdays.working_days or
@@ -818,8 +819,10 @@ class Timetable(object):
                 if operatingprofile_element is not None:
                     self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
                     if self.date:
-                        while self.date.weekday() not in self.operating_profile.regular_days:
-                            self.date += datetime.timedelta(days=1)
+                        regular_days = self.operating_profile.regular_days
+                        if regular_days:
+                            while self.date.weekday() not in regular_days:
+                                self.date += datetime.timedelta(days=1)
 
                 self.operating_period = OperatingPeriod(element.find('txc:OperatingPeriod', NS))
                 if self.date and not self.operating_period.contains(self.date):
