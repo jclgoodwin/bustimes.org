@@ -99,9 +99,11 @@ class TimetableTest(TestCase):
 
     def test_timetable_servicedorg(self):
         """Test a timetable with a ServicedOrganisation"""
-        timetable_sw = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml', None)
-        self.assertEqual(timetable_sw.groupings[0].column_feet[0].notes,
-                         {'Sch': 'School days only'})
+        timetable_during_holiday = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml', '2016-08-31')
+        self.assertEqual([], timetable_during_holiday.groupings[0].rows[0].times)
+
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml', '2016-09-10')
+        self.assertEqual([time(8, 2)], timetable.groupings[0].rows[0].times)
 
     def test_timetable_welsh_servicedorg(self):
         """Test a timetable from Wales (with SequenceNumbers on Journeys),
@@ -109,6 +111,9 @@ class TimetableTest(TestCase):
         """
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'CGAO305.xml', '2017-01-23')
         self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
+
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'CGAO305.xml', None)
+        self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
 
     def test_timetable_holidays_only(self):
         """Test a service with a HolidaysOnly operating profile

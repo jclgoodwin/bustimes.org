@@ -63,13 +63,6 @@ def correct_description(description):
     return description
 
 
-def get_servicedorganisation_name(element):
-    name_element = element.find('txc:Name', NS)
-    if name_element is not None:
-        return name_element.text
-    return element.find('txc:OrganisationCode', NS).text
-
-
 class Stop(object):
     """A TransXChange StopPoint."""
     stop = None
@@ -257,7 +250,6 @@ class Grouping(object):
         difference = None
         foot_span = 0
         for i, journey in enumerate(self.journeys):
-            journey.do_operatingprofile_notes()
             if prev_journey:
                 if prev_journey.operating_profile != journey.operating_profile or prev_journey.notes != journey.notes:
                     if in_a_row > 1:
@@ -498,30 +490,6 @@ class VehicleJourney(object):
             if len(row.times) == row_length:
                 row.times.append('')
 
-    def do_operatingprofile_notes(self):
-        if not self.notes and hasattr(self.operating_profile, 'servicedorganisation'):
-            org = self.operating_profile.servicedorganisation
-            school_days = org.nonoperation_holidays or org.operation_workingdays
-            school_holidays = org.nonoperation_workingdays or org.operation_holidays
-            if school_days is not None and school_holidays is None:
-                if 'QE0' in school_days.code:
-                    self.notes['Sch'] = 'Only operates on certain days'
-                elif 'College' in school_days.code:
-                    self.notes['Sch'] = 'College days only'
-                elif 'Uni' in school_days.code:
-                    self.notes['Sch'] = 'University days only'
-                else:
-                    self.notes['Sch'] = 'School days only'
-            elif school_holidays is not None and school_days is None:
-                if 'QE0' in school_holidays.code:
-                    self.notes['SH'] = 'Only operates on certain days'
-                elif 'College' in school_holidays.code:
-                    self.notes['SH'] = 'College holidays only'
-                elif 'Uni' in school_holidays.code:
-                    self.notes['SH'] = 'University holidays only'
-                else:
-                    self.notes['SH'] = 'School holidays only'
-
     def get_order(self):
         if self.sequencenumber is not None:
             return self.sequencenumber
@@ -649,11 +617,6 @@ class OperatingProfile(object):
             return '%ss and %ss' % ('s, '.join(map(str, self.regular_days[:-1])), self.regular_days[-1])
         return ''
 
-    def get_order(self):
-        if self.regular_days:
-            return self.regular_days[0].day
-        return 0
-
     def __eq__(self, other):
         return str(self) == str(other)
 
@@ -669,7 +632,6 @@ class OperatingProfile(object):
             nonoperation_days = (org.nonoperation_workingdays and org.nonoperation_workingdays.working_days or
                                  org.nonoperation_holidays and org.nonoperation_holidays.holidays)
             if nonoperation_days:
-                # TODO: assume dateranges in order
                 return not any(daterange.contains(date) for daterange in nonoperation_days)
 
             operation_days = (org.operation_workingdays and org.operation_workingdays.working_days or
