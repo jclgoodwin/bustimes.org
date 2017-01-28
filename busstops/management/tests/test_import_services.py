@@ -230,7 +230,7 @@ class ImportServicesTest(TestCase):
         self.assertEqual(
             service.get_traveline_url(),
             'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST' +
-            '?line=11M11A&net=nrc&project=y08&command=direct&outputFormat=0'
+            '?line=11M11&sup=A&net=nrc&project=y08&command=direct&outputFormat=0'
         )
 
         self.assertEqual(res.context_data['breadcrumb'], (self.gb, self.megabus))

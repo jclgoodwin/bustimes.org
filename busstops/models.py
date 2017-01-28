@@ -419,7 +419,8 @@ class Service(models.Model):
             parts = self.service_code.split('_')
             operator_number = self.get_operator_number(parts[1])
             if operator_number is not None:
-                query = [('line', operator_number + parts[0].zfill(3)),
+                query = [('line', operator_number + parts[0][:3].zfill(3)),
+                         ('sup', parts[0][3:]),
                          ('net', 'nrc'),
                          ('project', 'y08')]
 
