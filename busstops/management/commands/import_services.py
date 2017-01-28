@@ -231,29 +231,12 @@ class Command(BaseCommand):
         (for the NCSD), does stuff
         """
 
-        if self.service_descriptions:
-            filename_parts = filename.split('_')
-            description = self.service_descriptions.get('%s%s' % (filename_parts[-2],
-                                                                  filename_parts[-1][:-4]))
-        else:
-            description = None
-
-        timetable = Timetable(open_file, None, description)
+        timetable = Timetable(open_file, None, None)
 
         operators = [operator for operator in map(self.get_operator, timetable.operators) if operator]
 
         line_name, line_brand = self.get_line_name_and_brand(timetable.element.find('txc:Services/txc:Service', NS),
                                                              filename)
-        description = timetable.description
-        if not description:
-            warnings.warn('%s missing a description' % filename)
-        elif len(description) > 255:
-            warnings.warn('Description "%s" too long in %s' % (description, filename))
-            description = description[:255]
-
-        if self.region_id == 'NE':
-            description = self.sanitize_description(description)
-
         # net and service code:
 
         net, service_code, line_ver = self.infer_from_filename(timetable.element.attrib['FileName'])
@@ -310,8 +293,27 @@ class Command(BaseCommand):
         # service:
         defaults['show_timetable'] = show_timetable
         defaults['geometry'] = multi_line_string
-        if description:
+
+        if self.service_descriptions:
+            filename_parts = filename.split('_')
+            operator = filename_parts[-2]
+            line_name = filename_parts[-1][:-4]
+            defaults['outbound_description'] = self.service_descriptions.get('%s%s%s' % (operator, line_name, 'O'), '')
+            defaults['inbound_description'] = self.service_descriptions.get('%s%s%s' % (operator, line_name, 'I'), '')
+            defaults['description'] = defaults['outbound_description'] or defaults['inbound_description']
+        else:
+            description = timetable.description
+            if not description:
+                warnings.warn('%s missing a description' % filename)
+            elif len(description) > 255:
+                warnings.warn('Description "%s" too long in %s' % (description, filename))
+                description = description[:255]
+
+            # if self.region_id == 'NE':
+            #     description = self.sanitize_description(description)
+
             defaults['description'] = description
+
         service, created = Service.objects.update_or_create(service_code=service_code, defaults=defaults)
 
         if created:
@@ -341,7 +343,7 @@ class Command(BaseCommand):
                     reader = csv.DictReader(line.decode('utf-8') for line in csv_file)
                     # e.g. {'NATX323': 'Cardiff - Liverpool'}
                     self.service_descriptions = {
-                        row['Operator'] + row['LineName']: row['Description'] for row in reader
+                        row['Operator'] + row['LineName'] + row['Dir']: row['Description'] for row in reader
                     }
             else:
                 self.service_descriptions = None

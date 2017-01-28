@@ -67,7 +67,7 @@ class ImportServicesTest(TestCase):
             cls.write_file_to_zipfile(ncsd_zipfile, 'Megabus_Megabus14032016 163144_MEGA_M12.xml')
             ncsd_zipfile.writestr(
                 'IncludedServices.csv',
-                'Operator,LineName,Description\nMEGA,M11A,Belgravia - Liverpool\nMEGA,M12,Shudehill - Victoria'
+                'Operator,LineName,Dir,Description\nMEGA,M11A,O,Belgravia - Liverpool\nMEGA,M12,O,Shudehill - Victoria'
             )
         call_command(cls.command, ncsd_zipfile_path)
 
