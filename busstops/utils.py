@@ -47,9 +47,9 @@ def sign_url(input_url=None, secret=None):
 def get_filenames(service, path=None, archive=None):
     suffix = '' if archive is None else '.xml'
 
-    if service.region_id in ('NW', 'NE'):
+    if service.region_id == 'NE':
         return ['%s%s' % (service.pk, suffix)]
-    if service.region_id == 'S':
+    if service.region_id in ('S', 'Y'):
         return ['SVR%s%s' % (service.pk, suffix)]
 
     try:
@@ -62,15 +62,12 @@ def get_filenames(service, path=None, archive=None):
 
     if service.net:
         return [name for name in namelist if name.startswith('%s-' % service.pk)]
+    if service.region_id == 'NW':
+        return [name for name in namelist if name.startswith('%s_' % service.pk)]
     if service.region_id == 'GB':
         parts = service.pk.split('_')
         return [name for name in namelist if name.endswith('_%s_%s%s' % (parts[1], parts[0], suffix))]
-    if service.region_id == 'Y':
-        return [
-            name for name in namelist
-            if name.startswith('SVR%s-' % service.pk) or name == 'SVR%s%s' % (service.pk, suffix)
-        ]
-    return [name for name in namelist if name.endswith('_%s%s' % (service.pk, suffix))]
+    return [name for name in namelist if name.endswith('_%s%s' % (service.pk, suffix))]  # Wales
 
 
 def get_pickle_filenames(service, path):

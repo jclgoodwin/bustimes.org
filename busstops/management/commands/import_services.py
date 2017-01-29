@@ -96,7 +96,8 @@ SPECIAL_OPERATOR_CODES = {
     'ALI': 'AMDD',   # Alasdair MacDonald
     'EWE': 'EWEN',   # Ewens Coach Hire
     '712CS': 'CSVC',  # Coach Services
-    'TFLR': 'XR'  # TfL Rail
+    'TFLR': 'XR',  # TfL Rail
+    'ANUM': 'ANEA',
 }
 # see https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml-with-namespaces
 NS = {'txc': 'http://www.transxchange.org.uk/'}
@@ -242,6 +243,9 @@ class Command(BaseCommand):
         net, service_code, line_ver = self.infer_from_filename(timetable.element.attrib['FileName'])
         if service_code is None:
             service_code = timetable.service_code
+            parts = service_code.split('_')
+            if len(parts) == 5 and parts[0] == 'NW':
+                service_code = '_'.join(parts[:4])
 
         # stops:
 
@@ -274,10 +278,6 @@ class Command(BaseCommand):
             show_timetable = True
             line_strings = []
             for grouping in timetable.groupings:
-                show_timetable = show_timetable and (
-                    len(grouping.journeys) < 40 or
-                    len(grouping.rows[0].times) < 40
-                )
                 for journeypattern in grouping.journeypatterns:
                     line_string = self.line_string_from_journeypattern(journeypattern, stops)
                     if line_string not in line_strings:
@@ -309,9 +309,12 @@ class Command(BaseCommand):
                 warnings.warn('Description "%s" too long in %s' % (description, filename))
                 description = description[:255]
 
-            # if self.region_id == 'NE':
-            #     description = self.sanitize_description(description)
-
+            if self.region_id == 'NE':
+                description = self.sanitize_description(description)
+            elif self.region_id == 'NW':
+                standard_service = timetable.element.find('txc:Services/txc:Service/txc:StandardService', NS)
+                description = '{} - {}'.format(standard_service.find('txc:Origin', NS).text.split(', ')[0],
+                                               standard_service.find('txc:Destination', NS).text.split(', ')[0])
             defaults['description'] = description
 
         service, created = Service.objects.update_or_create(service_code=service_code, defaults=defaults)
