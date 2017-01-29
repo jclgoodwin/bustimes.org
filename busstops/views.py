@@ -478,6 +478,8 @@ class ServiceDetailView(DetailView):
                 traveline_text = 'Transport for London'
             elif self.object.region_id == 'S':
                 traveline_text = 'Traveline Scotland'
+            elif self.object.region_id == 'Y':
+                traveline_text = 'Yorkshire Travel'
             else:
                 traveline_text = 'Traveline'
             context['links'].append({

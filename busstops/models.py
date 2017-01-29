@@ -388,18 +388,22 @@ class Service(models.Model):
         if self.mode == 'bus' and len(self.line_name) <= 4:
             return 'https://tfl.gov.uk/bus/timetable/%s/' % self.line_name
 
-    def get_scotland_url(self):
+    def get_trapeze_url(self):
+        if self.region_id == 'Y':
+            domain = 'yorkshiretravel.net'
+        else:
+            domain = 'travelinescotland.com'
         query = (
             ('timetableId', self.service_code),
             ('direction', 'OUTBOUND'),
             ('queryDate', ''),
             ('queryTime', '')
         )
-        return 'http://www.travelinescotland.com/lts/#/timetables?%s' % urlencode(query)
+        return 'http://www.{}/lts/#/timetables?{}'.format(domain, urlencode(query))
 
     def get_traveline_url(self):
-        if self.region_id == 'S':
-            return self.get_scotland_url()
+        if self.region_id in ('Y', 'S'):
+            return self.get_trapeze_url()
 
         query = None
 
