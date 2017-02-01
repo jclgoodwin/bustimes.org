@@ -100,7 +100,9 @@
         if (history.replaceState) {
             history.replaceState(null, null, window.location.pathname + '#' + latLngString);
         }
-        localStorage.setItem('location', latLngString);
+        if (localStorage) {
+            localStorage.setItem('location', latLngString);
+        }
 
         if (e.target.getZoom() > 13) {
             loadStops(this, statusBar);
@@ -109,9 +111,11 @@
         }
     });
 
-    map.on('locationfound', function (event) {
-        localStorage.setItem('location', event.latitude.toString() + ',' + event.longitude);
-    });
+    if (localStorage) {
+        map.on('locationfound', function (event) {
+            localStorage.setItem('location', event.latitude.toString() + ',' + event.longitude);
+        });
+    }
 
     var parts;
     if (window.location.hash) {
