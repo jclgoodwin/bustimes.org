@@ -1,5 +1,5 @@
 coveralls==1.1
-django_coverage_plugin==1.4.1
+git+https://github.com/PamelaM/django_coverage_plugin@pm/fix_dj110_startup_issues
 flake8==3.2.1
 freezegun==0.3.8
 vcrpy==1.10.5
