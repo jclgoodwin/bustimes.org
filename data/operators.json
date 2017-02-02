@@ -21,5 +21,10 @@
     {
         "id": "YHCS",
         "name": "Pride of the Dales"
+    },
+    {
+        "id": "WWFD",
+        "name": "Wyre Forest Dial-a-Ride",
+        "address": "WFDC Depot\nGreen Street\nKidderminster\nDY10 1HA"
     }
 ]
