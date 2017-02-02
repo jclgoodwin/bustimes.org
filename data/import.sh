@@ -64,7 +64,7 @@ fi
 
 cd ..
 ie_nptg_old=$(shasum nptgfinal.xml)
-wget -qN https://data.dublinked.ie/dataset/14ea12be-9d95-4119-8a9b-1e83cb777fa0/resource/3b7d9d7e-5f0d-4462-b123-2466f1641909/download/nptgfinal.xml
+#wget -qN https://data.dublinked.ie/dataset/14ea12be-9d95-4119-8a9b-1e83cb777fa0/resource/3b7d9d7e-5f0d-4462-b123-2466f1641909/download/nptgfinal.xml
 ie_nptg_new=$(shasum nptgfinal.xml)
 if [[ "$ie_nptg_old" != "$ie_nptg_new" ]]; then
     echo "Irish NPTG"
