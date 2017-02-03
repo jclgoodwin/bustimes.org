@@ -1,3 +1,4 @@
+# coding=utf-8
 import base64
 import hashlib
 import hmac
@@ -11,6 +12,13 @@ from datetime import date
 from django.conf import settings
 from django.core.cache import cache
 from txc import txc
+
+
+def format_gbp(string):
+    amount = float(string)
+    if amount < 1:
+        return '{}p'.format(int(amount * 100))
+    return '£{:.2f}'.format(amount)
 
 
 def sign_url(input_url=None, secret=None):

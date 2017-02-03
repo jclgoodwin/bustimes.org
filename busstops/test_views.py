@@ -57,7 +57,7 @@ class ContactTests(TestCase):
                 ]
             })
         })
-        self.assertEqual('💷 £0.67 on a £33.7 transaction', mail.outbox[0].subject)
+        self.assertEqual('💷 67p on a £33.70 transaction', mail.outbox[0].subject)
         self.assertEqual('🚌⏰🤖 <contact@bustimes.org.uk>', mail.outbox[0].from_email)
 
 

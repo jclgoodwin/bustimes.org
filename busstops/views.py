@@ -13,7 +13,7 @@ from django.contrib.gis.geos import Polygon
 from django.contrib.gis.db.models.functions import Distance
 from django.core.mail import EmailMessage
 from departures import live
-from .utils import timetable_from_service, get_files_from_zipfile
+from .utils import format_gbp, timetable_from_service, get_files_from_zipfile
 from .models import (Region, StopPoint, AdminArea, Locality, District,
                      Operator, Service, Note)
 from .forms import ContactForm
@@ -117,7 +117,7 @@ def awin_transaction(request):
     data = json.loads(json_string)
     message = '\n'.join('%s: %s' % pair for pair in data.items())
     EmailMessage(
-        '💷 £{commission} on a £{transactionAmount} transaction'.format(**data),
+        '💷 {} on a {} transaction'.format(format_gbp(data['commission']), format_gbp(data['transactionAmount'])),
         message,
         '%s <%s>' % ('🚌⏰🤖', 'contact@bustimes.org.uk'),
         ('contact@bustimes.org.uk',)
