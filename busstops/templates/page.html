@@ -14,6 +14,10 @@
 {% stylesheet 'ie' %}
 <script src="{% static "js/bower_components/html5shiv/dist/html5shiv-printshiv.min.js" %}"></script>
 <![endif]-->
+{% if random %}
+<script async type="text/javascript" src="//s.clickiocdn.com/t/pb207948.js"></script>
+<script async type="text/javascript" src="//s.clickiocdn.com/t/common_258.js"></script>
+{% endif %}
 {% if object.get_absolute_url %}<link rel="canonical" href="https://bustimes.org.uk{{ object.get_absolute_url }}" />{% endif %}
 <link rel="manifest" href="/manifest.json" />
 {% block head %}{% endblock %}
@@ -39,6 +43,12 @@
 <footer>
     {% block ad %}
     <div class="banner-ad" id="ad">
+    {% if random %}
+        <script async src='//s.clickiocdn.com/t/common_258.js'></script>
+        <script class='__lxGc__'>
+            ((__lxGc__=window.__lxGc__||{'s':{},'b':0})['s']['_207948']=__lxGc__['s']['_207948']||{'b':{}})['b']['_601460']={'i':__lxGc__.b++};
+        </script>
+    {% else %}
         <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
         <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="horizontal"></ins>
         <script>
@@ -48,6 +58,7 @@
                 enable_page_level_ads: true
             });
         </script>
+    {% endif %}
     </div>
     {% endblock %}
     <ul>
