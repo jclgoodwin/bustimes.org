@@ -8,27 +8,46 @@
 a {
 	display: block;
 	position: absolute;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	left: 0;
+	top: 50%;
+	left: 50%;
+	width: 234px;
+	height: 60px;
+	margin-left: -117px;
+	margin-top: -30px;
+
 	/* hide text */
 	text-indent: 100%;
 	white-space: nowrap;
 	overflow: hidden;
+
 	background: no-repeat center;
-	/* 468 x 60 */
-	background-image: url(https://www.awin1.com/cshow.php?s=178385&v=2678&q=97590&r=242611);
+	background-image: url(https://www.affiliatewindow.com/linkimages/2678/234x60_static_generic.jpg)
+}
+
+@media (min-width: 468px) and (min-height: 60px) {
+	a {
+		width: 468px;
+		margin-left: -234px;
+		background-image: url(https://a1.awin1.com/ads/2678/468x60_static_generic.jpg);
+	}
 }
 
 @media (min-width: 300px) and (min-height: 250px) {
 	a {
+		width: 300px;
+		height: 250px;
+		margin-left: -150px;
+		margin-top: -125px;
 		background-image: url(https://www.awin1.com/cshow.php?s=178346&v=2678&q=97564&r=242611);
 	}
 }
 
 @media (min-width: 728px) and (min-height: 90px) {
 	a {
+		width: 728px;
+		height: 90px;
+		margin-left: -364px;
+		margin-top: -45px;
 		background-image: url(https://www.awin1.com/cshow.php?s=178399&v=2678&q=97593&r=242611);
 	}
 }

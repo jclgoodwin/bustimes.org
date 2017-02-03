@@ -1,4 +1,4 @@
-from random import getrandbits
+from random import randint
 
 
 def amp(request):
@@ -9,5 +9,5 @@ def amp(request):
 
 def random(_):
     return {
-        'random': bool(getrandbits(1))
+        'random': not randint(0, 3)
     }
