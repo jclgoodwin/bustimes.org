@@ -1,6 +1,6 @@
 from django.test import TestCase
 from .models import (
-    Region, AdminArea, District, Locality, LiveSource, Operator, Service
+    Region, AdminArea, District, Locality, LiveSource, Operator, Service, StopPoint
 )
 
 
@@ -99,6 +99,9 @@ class ServiceTests(TestCase):
         self.assertEqual(self.london_service.get_traveline_url(),
                          'https://tfl.gov.uk/bus/timetable/N41/')
 
+        self.london_service.region_id = 'Y'
+        self.assertEqual('http://www.yorkshiretravel.net/', self.london_service.get_traveline_url()[:31])
+
     def test_get_operator_number(self):
         self.assertIsNone(self.london_service.get_operator_number('MGBD'))
 
@@ -113,3 +116,15 @@ class ServiceTests(TestCase):
         self.assertEqual('53', self.london_service.get_operator_number('ESYB'))
         self.assertEqual('20', self.london_service.get_operator_number('WAIR'))
         self.assertEqual('18', self.london_service.get_operator_number('TVSN'))
+
+
+class StopPointTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.ballyblack_church = StopPoint.objects.create(atco_code='700000002498', locality_centre=False, active=True,
+                                                         common_name='Ballyblack Church', town='Ballyblack')
+
+    def test_get_qualified_name(self):
+        self.assertEqual('Ballyblack Church', self.ballyblack_church.get_qualified_name())
+        self.ballyblack_church.common_name = 'Methodist Church'
+        self.assertEqual('Ballyblack Methodist Church', self.ballyblack_church.get_qualified_name())

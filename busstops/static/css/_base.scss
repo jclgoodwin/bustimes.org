@@ -185,8 +185,8 @@ textarea {
 }
 
 select {
-    background: none;
-    border: 1px solid $brand-color;
+    background: #fff;
+    border-color: $brand-color;
     font: inherit;
     height: 2.5em;
     vertical-align: top;

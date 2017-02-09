@@ -261,6 +261,7 @@ class ViewsTests(TestCase):
         response = self.client.get('/services/ea_21-45-A-y08')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Mind your head')
+        self.assertEqual(self.note.get_absolute_url(), '/operators/AINS')
 
     def test_service_redirect(self):
         response = self.client.get('/services/45B')
