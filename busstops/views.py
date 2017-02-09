@@ -340,7 +340,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
             context['nearby'] = StopPoint.objects.filter(stop_area=self.object.stop_area_id)
         else:
             context['nearby'] = StopPoint.objects.filter(
-                common_name=self.object.common_name, locality=self.object.locality)
+                common_name=self.object.common_name, locality=self.object.locality, town=self.object.town)
         context['nearby'] = context['nearby'].filter(active=True).exclude(
             pk=self.object.pk
         ).order_by('atco_code')

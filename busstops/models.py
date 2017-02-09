@@ -257,6 +257,8 @@ class StopPoint(models.Model):
                     return '%s, %s %s' % (locality_name, self.indicator, self.common_name)
                 else:
                     return '%s %s' % (locality_name, self)
+        if self.town:
+            return '{} {}'.format(self.town, self)
         return str(self)
 
     def get_streetview_url(self):
