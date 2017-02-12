@@ -250,14 +250,14 @@ class StopPoint(models.Model):
         return headings.get(self.bearing)
 
     def get_qualified_name(self):
-        if self.locality is not None:
+        if self.locality:
             locality_name = str(self.locality).replace(' Town Centre', '').replace(' City Centre', '')
             if locality_name.replace('\'', '').replace('\u2019', '') not in self.common_name.replace('\'', ''):
                 if self.indicator in ('opp', 'adj', 'at', 'o/s', 'nr', 'before', 'after', 'by', 'on', 'in'):
                     return '%s, %s %s' % (locality_name, self.indicator, self.common_name)
                 else:
                     return '%s %s' % (locality_name, self)
-        if self.town not in self.common_name:
+        elif self.town not in self.common_name:
             return '{} {}'.format(self.town, self)
         return str(self)
 
