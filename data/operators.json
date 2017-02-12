@@ -26,5 +26,12 @@
         "id": "WWFD",
         "name": "Wyre Forest Dial-a-Ride",
         "address": "WFDC Depot\nGreen Street\nKidderminster\nDY10 1HA"
+    },
+    {
+        "id": "BS4U",
+        "name": "Buses 4U",
+        "address": "East Surrey Rural Transport Partnership\nTandridge District Council Offices\n8 Station Road East\nOxted\nSurrey\nRH8 0BT",
+        "email": "rtp@tandridge.gov.uk",
+        "phone": "01883 732791"
     }
 ]
