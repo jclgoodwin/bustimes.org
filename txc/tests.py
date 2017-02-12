@@ -81,7 +81,7 @@ class TimetableTest(TestCase):
     def test_timetable_scotland(self):
         """Test a Scotch timetable with no foot"""
         timetable_scotland = txc.timetable_from_filename(FIXTURES_DIR, 'SVRABBN017.xml', '2017-01-28')
-        self.assertFalse(hasattr(timetable_scotland.groupings[0], 'column_feet'))
+        self.assertEqual(timetable_scotland.groupings[0].column_feet, {})
 
     def test_timetable_deadruns(self):
         """Test a timetable with some dead runs which should be respected"""

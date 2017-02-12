@@ -358,6 +358,30 @@ table {
     display: none;
 }
 
+table {
+    border-collapse: collapse;
+}
+
+td {
+    border-top: 1px solid $brand-color;
+}
+
+th,
+td {
+    border-left: 1px solid $brand-color;
+    padding: .25em .5em;
+    text-align: left;
+
+    &:first-child {
+        border-left: 0;
+        padding-left: 0;
+    }
+
+    &:last-child {
+        padding-right: 0;
+    }
+}
+
 .timetable-wrapper-wrapper {
     font-size: .875em;
     margin: 1em 0;
@@ -387,34 +411,25 @@ input:not(:checked) + label {
     border-spacing: 0;
     padding-right: 1.1em;
 
-    // tr:first-child td {
-    //     border-left: 1px solid $brand-color;
-
-    //     &:first-child {
-    //         border-left: 0;
-    //         border-right: 1px solid $brand-color;
-    //         padding: .25em 0;
-
-    //         + td {
-    //             border-left: 0;
-    //         }
-    //     }
-    // }
+    td {
+        border-left: 0;
+    }
 
     td,
     th {
         height: 1.5em;
     }
 
-    tbody {
+    tbody tr:first-child {
         td,
         th {
-            border-bottom: 1px solid $brand-color;
+            border-top: 0;
         }
     }
 
     th {
         border-right: 1px solid $brand-color;
+        border-top: 1px solid $brand-color;
         font-weight: normal;
         white-space: nowrap;
 
@@ -430,16 +445,22 @@ input:not(:checked) + label {
         }
     }
 
+    tfoot td {
+        border-left: 1px solid $brand-color;
+        border-top: 1px solid $brand-color;
+        vertical-align: top;
+    }
+
+    tfoot td:first-child {
+        border: 0;
+    }
+
     .OTH th a {
         padding-left: 1em;
     }
 }
 
 .fancy {
-    tr:first-child td:first-child {
-        position: absolute;
-    }
-
     th {
         padding-right: 0;
         position: absolute;
@@ -448,6 +469,10 @@ input:not(:checked) + label {
             margin-right: 0;
             max-width: inherit;
         }
+    }
+
+    tfoot td:first-child {
+        position: absolute;
     }
 }
 
@@ -557,24 +582,6 @@ input:not(:checked) + label {
 
     .marker-cluster span {
         line-height: 30px;
-    }
-}
-
-table {
-    border-collapse: collapse;
-}
-
-th,
-td {
-    padding: .25em .5em;
-    text-align: left;
-
-    &:first-child {
-        padding-left: 0;
-    }
-
-    &:last-child {
-        padding-right: 0;
     }
 }
 

@@ -58,11 +58,11 @@
     {% endfor %}
     </tbody>
     {% if grouping.column_feet %}
-        <tfoot><tr><td></td>
-        {% for column in grouping.column_feet %}
-            <td colspan="{{ column.span }}">{{ column.notes.values|join:'<br />'|urlise }}</td>
+        <tfoot>
+        {% for row in grouping.column_feet.values %}
+            <tr><td></td>{% for foot in row %}<td{% if foot.span > 1 %} colspan="{{ foot.span }}"{% endif %}>{% if foot.notes %}{{ foot.notes|urlise }}{% endif %}</td>{% endfor %}</tr>
         {% endfor %}
-        </tr></tfoot>
+        </tfoot>
     {% endif %}
     </table>
     </div>

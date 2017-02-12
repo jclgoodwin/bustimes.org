@@ -221,7 +221,7 @@ class Grouping(object):
     def __init__(self, direction, service_description_parts):
         self.direction = direction
         self.service_description_parts = service_description_parts
-        self.column_feet = []
+        self.column_feet = {}
         self.journeypatterns = []
         self.journeys = []
         self.rows = Rows()
@@ -248,8 +248,25 @@ class Grouping(object):
         in_a_row = 0
         prev_difference = None
         difference = None
-        foot_span = 0
         for i, journey in enumerate(self.journeys):
+            for key in journey.notes:
+                if key in self.column_feet:
+                    if key in prev_journey.notes and prev_journey.notes[key] == journey.notes[key]:
+                        self.column_feet[key][-1].span += 1
+                    else:
+                        self.column_feet[key].append(ColumnFoot(journey.notes[key], 1))
+                else:
+                    if i:
+                        self.column_feet[key] = [ColumnFoot(None, i), ColumnFoot(journey.notes[key], 1)]
+                    else:
+                        self.column_feet[key] = [ColumnFoot(journey.notes[key], 1)]
+            for key in self.column_feet:
+                if key not in journey.notes:
+                    if not self.column_feet[key][-1].notes:
+                        self.column_feet[key][-1].span += 1
+                    else:
+                        self.column_feet[key].append(ColumnFoot(None, 1))
+
             if prev_journey:
                 if prev_journey.operating_profile != journey.operating_profile or prev_journey.notes != journey.notes:
                     if in_a_row > 1:
@@ -268,19 +285,12 @@ class Grouping(object):
                         abbreviate(self, i, in_a_row - 1, prev_difference)
                     in_a_row = 0
 
-                if prev_journey.notes != journey.notes:
-                    self.column_feet.append(ColumnFoot(prev_journey.notes, foot_span))
-                    foot_span = 0
-                    in_a_row = 0
-
             prev_difference = difference
             difference = None
-            if journey:
-                prev_journey = journey
-            foot_span += 1
+            prev_journey = journey
+
         if in_a_row > 1:
             abbreviate(self, len(self.journeys), in_a_row - 1, prev_difference)
-        self.column_feet.append(ColumnFoot(prev_journey.notes, foot_span))
         for row in self.rows:
             row.times = [time for time in row.times if time is not None]
 
@@ -827,8 +837,6 @@ class Timetable(object):
 
         for grouping in self.groupings:
             grouping.do_heads_and_feet()
-            if len(grouping.column_feet) == 1 and not grouping.column_feet[0].notes:
-                del grouping.column_feet
 
 
 def abbreviate(grouping, i, in_a_row, difference):
