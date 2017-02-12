@@ -431,10 +431,10 @@ class ServiceDetailView(DetailView):
         context['notes'] = Note.objects.filter(Q(operators__in=context['operators']) | Q(services=self.object))
         context['links'] = []
 
-        context['timetables'] = timetable_from_service(self.object, self.request.GET.get('date'))
-        # context['timetables'].sort(key=lambda t: t.operating_period.start)
+        if self.object.show_timetable:
+            context['timetables'] = timetable_from_service(self.object, self.request.GET.get('date'))
 
-        if 'timetables' not in context or context['timetables'] == []:
+        if not context.get('timetables'):
             context['stopusages'] = self.object.stopusage_set.all().select_related(
                 'stop__locality'
             ).defer('stop__locality__latlong').order_by('direction', 'order')

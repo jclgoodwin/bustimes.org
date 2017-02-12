@@ -116,14 +116,18 @@ def timetable_from_service(service, day=None):
     timetables = (txc.Timetable(xml_file, day, service.description) for xml_file in get_files_from_zipfile(service))
     timetables = [timetable for timetable in timetables if hasattr(timetable, 'groupings')]
     for timetable in timetables:
-        del timetable.journeypatterns
-        del timetable.stops
-        del timetable.operators
-        del timetable.element
         for grouping in timetable.groupings:
+            if grouping.rows and len(grouping.rows[0].times) > 60:
+                service.show_timetable = False
+                service.save()
+                return
             del grouping.journeys
             del grouping.journeypatterns
             for row in grouping.rows:
                 del row.next
+        del timetable.journeypatterns
+        del timetable.stops
+        del timetable.operators
+        del timetable.element
     cache.set(cache_key, timetables, None)
     return timetables
