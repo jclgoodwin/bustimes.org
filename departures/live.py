@@ -8,7 +8,7 @@ import dateutil.parser
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.utils.text import slugify
-from busstops.models import Operator
+from busstops.models import Operator, StopUsageUsage
 
 
 STAGECOACH_OPERATORS = (
@@ -206,6 +206,20 @@ class TransportApiDepartures(Departures):
             return [row for row in map(self.get_row, departures['all']) if row]
 
 
+class TimetableDepartures(Departures):
+    def __init__(self, stop, services, now):
+        self.now = now
+        super(TimetableDepartures, self).__init__(stop, services)
+
+    def get_departures(self):
+        queryset = StopUsageUsage.objects.filter(datetime__gte=self.now, stop=self.stop).order_by('datetime')
+        return [{
+            'time': suu.datetime,
+            'destination': suu.journey.destination.locality,
+            'service': suu.journey.service
+        } for suu in queryset.select_related('stop', 'journey__destination__locality', 'journey__service')]
+
+
 class StagecoachDepartures(Departures):
     def __init__(self, stop, services, now):
         self.now = now
@@ -350,6 +364,11 @@ def get_departures(stop, services):
                 'name': 'vixConnect'
             }
         }, 60)
+
+    departures = TimetableDepartures(stop, services, now).get_departures()
+    return ({
+        'departures': departures
+    },  60)
 
     # Transport API
     departures = TransportApiDepartures(stop, services, now.date()).get_departures()

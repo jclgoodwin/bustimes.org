@@ -318,11 +318,32 @@ class StopUsage(models.Model):
     """A link between a StopPoint and a Service,
     with an order placing it in a direction (e.g. the first outbound stop)"""
     service = models.ForeignKey('Service', models.CASCADE)
-    stop = models.ForeignKey('StopPoint', models.CASCADE)
+    stop = models.ForeignKey(StopPoint, models.CASCADE)
     direction = models.CharField(max_length=8, db_index=True)
     order = models.PositiveIntegerField()
     timing_status = models.CharField(max_length=3,
                                      choices=TIMING_STATUS_CHOICES)
+
+
+@python_2_unicode_compatible
+class Journey(models.Model):
+    service = models.ForeignKey('Service', models.CASCADE)
+    datetime = models.DateTimeField()
+    destination = models.ForeignKey(StopPoint, models.CASCADE)
+
+    def __str__(self):
+        return '{} {}'.format(self.service, self.datetime)
+
+
+@python_2_unicode_compatible
+class StopUsageUsage(models.Model):
+    journey = models.ForeignKey(Journey, models.CASCADE)
+    stop = models.ForeignKey(StopPoint, models.CASCADE)
+    datetime = models.DateTimeField()
+    order = models.PositiveIntegerField()
+
+    def __str__(self):
+        return '{} {}'.format(self.stop, self.datetime)
 
 
 @python_2_unicode_compatible

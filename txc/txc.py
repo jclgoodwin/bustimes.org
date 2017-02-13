@@ -462,17 +462,12 @@ class VehicleJourney(object):
                 for note_element in note_elements
             }
 
-    def add_times(self):
-        row_length = len(self.journeypattern.grouping.rows.first().times)
-
+    def get_times(self):
         stopusage = self.journeypattern.sections[0].timinglinks[0].origin
         time = self.departure_time
         deadrun = self.start_deadrun is not None
         if not deadrun:
-            if stopusage.sequencenumber is not None:
-                self.journeypattern.grouping.rows[stopusage.sequencenumber].times.append(time)
-            else:
-                stopusage.row.times.append(time)
+            yield(stopusage, time)
 
         for section in self.journeypattern.sections:
             for timinglink in section.timinglinks:
@@ -485,16 +480,22 @@ class VehicleJourney(object):
                 if deadrun:
                     if self.start_deadrun == timinglink.id:
                         deadrun = False  # end of dead run
-                elif stopusage.sequencenumber is not None:
-                    row = self.journeypattern.grouping.rows[stopusage.sequencenumber]
-                    row.times.append(time)
                 else:
-                    stopusage.row.times.append(time)
+                    yield(stopusage, time)
 
                 if self.end_deadrun == timinglink.id:
                     deadrun = True  # start of dead run
                 if hasattr(stopusage, 'waittime'):
                     time = add_time(time, stopusage.waittime)
+
+    def add_times(self):
+        row_length = len(self.journeypattern.grouping.rows.first().times)
+
+        for stopusage, time in self.get_times():
+            if stopusage.sequencenumber is not None:
+                self.journeypattern.grouping.rows[stopusage.sequencenumber].times.append(time)
+            else:
+                stopusage.row.times.append(time)
 
         for row in iter(self.journeypattern.grouping.rows.values()):
             if len(row.times) == row_length:

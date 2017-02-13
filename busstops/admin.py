@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.db.models import Count
 from busstops.models import (
-    Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note
+    Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note, Journey, StopUsageUsage
 )
 
 
@@ -51,6 +51,18 @@ class NoteAdmin(admin.ModelAdmin):
     raw_id_fields = ('operators', 'services')
 
 
+class JourneyAdmin(admin.ModelAdmin):
+    list_display = ('datetime',)
+    ordering = ('datetime',)
+    raw_id_fields = ('service', 'destination')
+
+
+class StopUsageUsageAdmin(admin.ModelAdmin):
+    list_display = ('datetime',)
+    ordering = ('datetime',)
+    raw_id_fields = ('journey', 'stop')
+
+
 admin.site.register(Region)
 admin.site.register(AdminArea)
 admin.site.register(District)
@@ -60,3 +72,5 @@ admin.site.register(StopPoint, StopPointAdmin)
 admin.site.register(Operator, OperatorAdmin)
 admin.site.register(Service, ServiceAdmin)
 admin.site.register(Note, NoteAdmin)
+admin.site.register(Journey, JourneyAdmin)
+admin.site.register(StopUsageUsage, StopUsageUsageAdmin)

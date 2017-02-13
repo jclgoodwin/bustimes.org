@@ -488,11 +488,12 @@ input:not(:checked) + label {
 .aside {
     margin-top: 1em;
 
-    tr {
-        border: 0;
+    table {
+        margin: 0 -.5em;
     }
 
     td {
+        border: 0;
         padding: .125em .5em;
         vertical-align: top;
 
