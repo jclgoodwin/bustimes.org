@@ -217,7 +217,7 @@ class TimetableDepartures(Departures):
             'time': suu.datetime,
             'destination': suu.journey.destination.locality,
             'service': suu.journey.service
-        } for suu in queryset.select_related('stop', 'journey__destination__locality', 'journey__service')]
+        } for suu in queryset.select_related('stop', 'journey__destination__locality', 'journey__service')[:10]]
 
 
 class StagecoachDepartures(Departures):

@@ -46,13 +46,15 @@ class Command(BaseCommand):
 
         day = date.today()
         for service in Service.objects.filter(current=True,
-                                              region__in=('GB', 'EA')).exclude(region__in=('L', 'Y', 'NI')):
-            # print(service)
+                                              region__in=('EA',)).exclude(region__in=('L', 'Y', 'NI')):
+            print(service)
             for i, xml_file in enumerate(get_files_from_zipfile(service)):
                 timetable = txc.Timetable(xml_file, day)
                 if not hasattr(timetable, 'groupings'):
                     continue
                 handle_timetable(service, timetable)
-                for option in list(timetable.date_options())[1:]:
-                    timetable = txc.Timetable(get_files_from_zipfile(service)[i], day)
+                for j, option in enumerate(list(timetable.date_options())[1:]):
+                    if j >= 7:
+                        break
+                    timetable = txc.Timetable(get_files_from_zipfile(service)[i], option['date'])
                     handle_timetable(service, timetable)
