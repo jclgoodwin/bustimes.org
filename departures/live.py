@@ -365,10 +365,12 @@ def get_departures(stop, services):
             }
         }, 60)
 
-    departures = TimetableDepartures(stop, services, now).get_departures()
-    return ({
-        'departures': departures
-    },  60)
+    # Norfolk
+    if stop.atco_code.startswith('290')
+        departures = TimetableDepartures(stop, services, now).get_departures()
+        return ({
+            'departures': departures
+        },  60)
 
     # Transport API
     departures = TransportApiDepartures(stop, services, now.date()).get_departures()
