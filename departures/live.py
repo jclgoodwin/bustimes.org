@@ -366,7 +366,7 @@ def get_departures(stop, services):
         }, 60)
 
     # Norfolk
-    if stop.atco_code.startswith('290')
+    if stop.atco_code.startswith('290'):
         departures = TimetableDepartures(stop, services, now).get_departures()
         return ({
             'departures': departures
