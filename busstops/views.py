@@ -2,6 +2,7 @@
 """View definitions."""
 import os
 import json
+from datetime import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.http import (HttpResponse, JsonResponse, Http404,
@@ -15,7 +16,7 @@ from django.core.mail import EmailMessage
 from departures import live
 from .utils import format_gbp, timetable_from_service, get_files_from_zipfile
 from .models import (Region, StopPoint, AdminArea, Locality, District,
-                     Operator, Service, Note)
+                     Operator, Service, Note, StopUsageUsage)
 from .forms import ContactForm
 
 
@@ -432,7 +433,13 @@ class ServiceDetailView(DetailView):
         context['links'] = []
 
         if self.object.show_timetable:
-            context['timetables'] = timetable_from_service(self.object, self.request.GET.get('date'))
+            date = self.request.GET.get('date')
+            if not date:
+                next_usage = StopUsageUsage.objects.filter(journey__service=self.object,
+                                                           datetime__gte=datetime.now()).order_by('datetime').first()
+                if next_usage:
+                    date = next_usage.datetime.date()
+            context['timetables'] = timetable_from_service(self.object, date)
 
         if not context.get('timetables'):
             context['stopusages'] = self.object.stopusage_set.all().select_related(

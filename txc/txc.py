@@ -740,6 +740,11 @@ class Timetable(object):
                     'day': calendar.day_name[weekday]
                 }
             start_date += datetime.timedelta(days=1)
+        if self.date >= start_date:
+            yield {
+                'date': self.date,
+                'day': calendar.day_name[self.date.weekday()]
+            }
 
     def __init__(self, open_file, date, description=None):
         iterator = ET.iterparse(open_file)
