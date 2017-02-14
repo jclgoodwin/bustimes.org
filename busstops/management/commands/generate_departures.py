@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from txc import txc
-from ...models import Service, Journey, StopUsageUsage, StopPoint
+from ...models import Region, Service, Journey, StopUsageUsage, StopPoint
 from ...utils import get_files_from_zipfile
 
 
@@ -10,7 +10,7 @@ ONE_DAY = timedelta(days=1)
 
 
 def handle_timetable(service, timetable, day):
-    if day.weekday() not in timetable.operating_profile.regular_days:
+    if hasattr(timetable, 'operating_profile') and day.weekday() not in timetable.operating_profile.regular_days:
         return
     if not timetable.operating_period.contains(day):
         return
@@ -44,19 +44,23 @@ def handle_timetable(service, timetable, day):
                 StopUsageUsage.objects.bulk_create(stopusageusages)
 
 
-class Command(BaseCommand):
-    @transaction.atomic
-    def handle(self, *args, **options):
-        Journey.objects.all().delete()
+@transaction.atomic
+def handle_region(region):
+    Journey.objects.filter(service__region=region).delete()
+    day = date.today()
+    for service in Service.objects.filter(region=region, current=True):
+        print(service)
+        for i, xml_file in enumerate(get_files_from_zipfile(service)):
+            timetable = txc.Timetable(xml_file, None)
+            handle_timetable(service, timetable, day)
+            j = 1
+            while j < 7:
+                handle_timetable(service, timetable, day + ONE_DAY * j)
+                j += 1
 
-        day = date.today()
-        for service in Service.objects.filter(current=True,
-                                              region__in=('EA',)).exclude(region__in=('L', 'Y', 'NI')):
-            print(service)
-            for i, xml_file in enumerate(get_files_from_zipfile(service)):
-                timetable = txc.Timetable(xml_file, None)
-                handle_timetable(service, timetable, day)
-                j = 1
-                while j < 7:
-                    handle_timetable(service, timetable, day + ONE_DAY * j)
-                    j += 1
+
+class Command(BaseCommand):
+    def handle(self, *args, **options):
+        for region in Region.objects.all().exclude(id__in=('L', 'Y', 'NI')):
+            print(region)
+            handle_region(region)
