@@ -8,16 +8,16 @@ import dateutil.parser
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.utils.text import slugify
-from busstops.models import Operator, StopUsageUsage
+from busstops.models import StopUsageUsage
 
 
-STAGECOACH_OPERATORS = (
+STAGECOACH_OPERATORS = {
     'CLTL', 'ELBG', 'NFKG', 'SBLB', 'SCBD', 'SCBL', 'SCCM', 'SCCO', 'SCCU',
     'SCEB', 'SCEK', 'SCFI', 'SCGL', 'SCGR', 'SCHA', 'SCHM', 'SCHT', 'SCHU',
     'SCHW', 'SCLI', 'SCMB', 'SCMN', 'SCMY', 'SCNE', 'SCNH', 'SCNW', 'SCOR',
     'SCOX', 'SCST', 'SCTE', 'SCWW', 'SDVN', 'SINV', 'SLAN', 'SMSO', 'SSPH',
     'SSTY', 'SSWL', 'SSWN', 'STCR', 'STGS', 'STLA', 'STWS', 'SYRK', 'YSYC',
-)
+}
 DESTINATION_REGEX = re.compile(r'.+\((.+)\)')
 LOCAL_TIMEZONE = pytz.timezone('Europe/London')
 SESSION = requests.Session()
@@ -308,13 +308,13 @@ def get_departures(stop, services):
     now = datetime.datetime.now()
 
     # Stagecoach
-    operators = Operator.objects.filter(service__stops=stop,
-                                        service__current=True).distinct().values_list('pk', flat=True)
-    if operators and all(operator in STAGECOACH_OPERATORS for operator in operators):
-        departures = StagecoachDepartures(stop, services, now).get_departures()
-        return ({
-            'departures': departures
-        }, 120)  # get_max_age(departures, now))
+    # operators = Operator.objects.filter(service__stops=stop,
+    #                                     service__current=True).distinct().values_list('pk', flat=True)
+    # if operators and all(operator in STAGECOACH_OPERATORS for operator in operators):
+    #     departures = StagecoachDepartures(stop, services, now).get_departures()
+    #     return ({
+    #         'departures': departures
+    #     }, 120)  # get_max_age(departures, now))
 
     # Yorkshire
     if 'Y' in live_sources:
@@ -365,8 +365,7 @@ def get_departures(stop, services):
             }
         }, 60)
 
-    # Norfolk
-    if stop.atco_code.startswith('290'):
+    if stop.admin_area.region_id in {'W', 'EA', 'EM', 'SE', 'SW', 'WM', 'NE', 'NW', 'S'}:
         departures = TimetableDepartures(stop, (), now).get_departures()
         return ({
             'departures': departures,

@@ -6,6 +6,11 @@ from busstops.models import (
 )
 
 
+class AdminAreaAdmin(admin.ModelAdmin):
+    list_display = ('name', 'id', 'atco_code', 'region_id')
+    list_filter = ('region_id',)
+
+
 class StopPointAdmin(admin.ModelAdmin):
     list_display = ('atco_code', 'naptan_code', 'locality', 'admin_area', '__str__')
     list_select_related = ('locality', 'admin_area')
@@ -52,19 +57,18 @@ class NoteAdmin(admin.ModelAdmin):
 
 
 class JourneyAdmin(admin.ModelAdmin):
-    list_display = ('datetime',)
-    ordering = ('datetime',)
+    list_display = ('id', 'datetime',)
+    list_filter = ('service__region',)
     raw_id_fields = ('service', 'destination')
 
 
 class StopUsageUsageAdmin(admin.ModelAdmin):
-    list_display = ('datetime',)
-    ordering = ('datetime',)
+    list_display = ('id', 'datetime',)
     raw_id_fields = ('journey', 'stop')
 
 
 admin.site.register(Region)
-admin.site.register(AdminArea)
+admin.site.register(AdminArea, AdminAreaAdmin)
 admin.site.register(District)
 admin.site.register(Locality, LocalityAdmin)
 admin.site.register(StopArea)

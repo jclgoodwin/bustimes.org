@@ -46,17 +46,27 @@ def handle_timetable(service, timetable, day):
 
 @transaction.atomic
 def handle_region(region):
-    Journey.objects.filter(service__region=region).delete()
-    day = date.today()
+    today = date.today()
+    NEXT_WEEK = today + ONE_DAY * 7
+    # delete journeys before today
+    print('deleting journeys before', today)
+    print(Journey.objects.filter(service__region=region, datetime__date__lt=today).delete())
+    # get the date of the last generated journey
+    last_journey = Journey.objects.filter(service__region=region).order_by('datetime').last()
+    if last_journey:
+        today = last_journey.datetime.date() + ONE_DAY
+        if today > NEXT_WEEK:
+            return
+
     for service in Service.objects.filter(region=region, current=True):
         print(service)
         for i, xml_file in enumerate(get_files_from_zipfile(service)):
             timetable = txc.Timetable(xml_file, None)
-            handle_timetable(service, timetable, day)
-            j = 1
-            while j < 7:
-                handle_timetable(service, timetable, day + ONE_DAY * j)
-                j += 1
+            day = today
+            while day <= NEXT_WEEK:
+                print('generating departures for', day)
+                handle_timetable(service, timetable, day)
+                day += ONE_DAY
 
 
 class Command(BaseCommand):
