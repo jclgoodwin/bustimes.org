@@ -369,14 +369,14 @@ def get_departures(stop, services):
     if stop.atco_code.startswith('290'):
         departures = TimetableDepartures(stop, (), now).get_departures()
         return ({
-            'departures': departures
+            'departures': departures,
+            'today': now.date(),
         },  60)
 
     # Transport API
     departures = TransportApiDepartures(stop, services, now.date()).get_departures()
     return ({
         'departures': departures,
-        'today': now.date(),
         'source': {
             'url': 'http://www.transportapi.com/',
             'name': 'Transport API',
