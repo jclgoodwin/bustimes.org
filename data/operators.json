@@ -33,5 +33,11 @@
         "address": "East Surrey Rural Transport Partnership\nTandridge District Council Offices\n8 Station Road East\nOxted\nSurrey\nRH8 0BT",
         "email": "rtp@tandridge.gov.uk",
         "phone": "01883 732791"
+    },
+    {
+        "id": "GRCC",
+        "address": "21 Dumont Avenue\nSt Osyth\nClacton on Sea\nCO16 8JP",
+        "email": "goridebus@outlook.com",
+        "url": ""
     }
 ]
