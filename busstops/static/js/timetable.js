@@ -8,7 +8,8 @@
     var divs = document.getElementsByTagName('div'),
         i,
         selects = document.getElementsByTagName('select'),
-        options;
+        options,
+        ths;
 
     function fancify(div) {
         var ths = div.getElementsByTagName('th'),
@@ -28,6 +29,14 @@
         div.className += ' fancy';
     }
 
+    function maybeHighlight(tr) {
+        var as = tr.getElementsByTagName('a');
+        if (as.length && as[0].href === document.referrer) {
+            tr.style.display = 'table-row';
+            tr.style.background = '#fe9';
+        }
+    }
+
     for (i = divs.length - 1; i >= 0; i -= 1) {
         if (divs[i].className === 'timetable-wrapper') {
             fancify(divs[i]);
@@ -43,6 +52,13 @@
                 }
                 break;
             }
+        }
+    }
+
+    if (document.referrer.indexOf('/stops/') > -1) {
+        ths = document.getElementsByTagName('th');
+        for (i = ths.length - 1; i >= 0; i -= 1) {
+            maybeHighlight(ths[i].parentNode);
         }
     }
 }());
