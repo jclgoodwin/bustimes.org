@@ -427,6 +427,21 @@ input:not(:checked) + label {
         }
     }
 
+    .referrer {
+        td,
+        th {
+            background: $brand-color;
+        }
+
+        td[colspan] {
+            background: none;
+        }
+
+        a {
+            color: #000;
+        }
+    }
+
     th {
         border-right: 1px solid $brand-color;
         border-top: 1px solid $brand-color;

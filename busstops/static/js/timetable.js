@@ -32,8 +32,7 @@
     function maybeHighlight(tr) {
         var as = tr.getElementsByTagName('a');
         if (as.length && as[0].href === document.referrer) {
-            tr.style.display = 'table-row';
-            tr.style.background = '#fe9';
+            tr.className += ' referrer';
         }
     }
 
