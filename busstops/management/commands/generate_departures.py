@@ -59,12 +59,12 @@ def handle_region(region):
             return
 
     for service in Service.objects.filter(region=region, current=True):
-        print(service)
+        # print(service)
         for i, xml_file in enumerate(get_files_from_zipfile(service)):
             timetable = txc.Timetable(xml_file, None)
             day = today
             while day <= NEXT_WEEK:
-                print('generating departures for', day)
+                # print('generating departures for', day)
                 handle_timetable(service, timetable, day)
                 day += ONE_DAY
 
