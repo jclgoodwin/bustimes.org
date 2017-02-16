@@ -5,6 +5,11 @@
 <title>{% block title %}{% if object %}{% firstof object.get_qualified_name object %} – {% endif %}Bus Times{% endblock %}</title>
 <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1" />
 <meta name="theme-color" content="#fe9" />
+{% if object.get_absolute_url %}
+    <link rel="canonical" href="https://bustimes.org.uk{{ object.get_absolute_url }}" />
+{% endif %}
+<script type="application/ld+json">{"@context":"http://schema.org","@type":"WebSite","url":"https://bustimes.org.uk","name":"Bus Times","potentialAction":{"@type":"SearchAction","target":"https://bustimes.org.uk/search?q={q}","query-input":"required name=q"}}</script>
+<link rel="manifest" href="/manifest.json" />
 {% load pipeline %}
 <!--[if gte IE 9]><!-->
 {% stylesheet 'main' %}
@@ -14,14 +19,10 @@
 {% stylesheet 'ie' %}
 <script src="{% static "js/bower_components/html5shiv/dist/html5shiv-printshiv.min.js" %}"></script>
 <![endif]-->
-{% if random %}
 <script async type="text/javascript" src="//s.clickiocdn.com/t/pb207948.js"></script>
 <script async type="text/javascript" src="//s.clickiocdn.com/t/common_258.js"></script>
-{% endif %}
-{% if object.get_absolute_url %}<link rel="canonical" href="https://bustimes.org.uk{{ object.get_absolute_url }}" />{% endif %}
-<link rel="manifest" href="/manifest.json" />
-{% block head %}{% endblock %}
-<script type="application/ld+json">{"@context":"http://schema.org","@type":"WebSite","url":"https://bustimes.org.uk","name":"Bus Times","potentialAction":{"@type":"SearchAction","target":"https://bustimes.org.uk/search?q={q}","query-input":"required name=q"}}</script>
+{% block head %}
+{% endblock %}
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}">
 {% block header %}
@@ -35,30 +36,25 @@
 </header>
 {% endblock %}
 <main>
-{% block breadcrumb %}{% include 'breadcrumb.html' %}{% endblock %}
-{% block content %}{% endblock %}
+    {% block breadcrumb %}{% include 'breadcrumb.html' %}{% endblock %}
+    {% block content %}{% endblock %}
 </main>
-{% block footer %}
 
+{% block footer %}
 <footer>
     {% block ad %}
     <div class="banner-ad" id="ad">
-    {% if random %}
         <script async src='//s.clickiocdn.com/t/common_258.js'></script>
         <script class='__lxGc__'>
-            ((__lxGc__=window.__lxGc__||{'s':{},'b':0})['s']['_207948']=__lxGc__['s']['_207948']||{'b':{}})['b']['_601460']={'i':__lxGc__.b++};
+            var adWidth = document.getElementById('ad').clientWidth;
+            if (adWidth >= 728) {
+                ((__lxGc__=window.__lxGc__||{'s':{},'b':0})['s']['_207948']=__lxGc__['s']['_207948']||{'b':{}})['b']['_600084']={'i':__lxGc__.b++};
+            } else if (adWidth >= 300) {
+                ((__lxGc__=window.__lxGc__||{'s':{},'b':0})['s']['_207948']=__lxGc__['s']['_207948']||{'b':{}})['b']['_600091']={'i':__lxGc__.b++};
+            } else {
+                ((__lxGc__=window.__lxGc__||{'s':{},'b':0})['s']['_207948']=__lxGc__['s']['_207948']||{'b':{}})['b']['_601460']={'i':__lxGc__.b++};
+            }
         </script>
-    {% else %}
-        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="auto"></ins>
-        <script>
-            (adsbygoogle = window.adsbygoogle || []).push({});
-            (adsbygoogle = window.adsbygoogle || []).push({
-                google_ad_client: "ca-pub-4420219114164200",
-                enable_page_level_ads: true
-            });
-        </script>
-    {% endif %}
     </div>
     {% endblock %}
     <ul>

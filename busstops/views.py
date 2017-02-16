@@ -512,7 +512,9 @@ class ServiceDetailView(DetailView):
 
             raise Http404()
 
-        return super(ServiceDetailView, self).render_to_response(context)
+        response = super(ServiceDetailView, self).render_to_response(context)
+        response['Link'] = '<https://bustimes.org.uk{}>; rel="canonical"'.format(self.object.get_absolute_url())
+        return response
 
 
 def service_xml(_, pk):
