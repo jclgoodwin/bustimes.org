@@ -200,6 +200,10 @@ class Command(BaseCommand):
             line_name_parts = line_name.split('|', 1)
             line_name = line_name_parts[0]
             line_brand = line_name_parts[1]
+        elif line_name == 'ZAP':
+            line_brand = 'Cityzap'
+        elif line_name == 'TAD':
+            line_brand = 'Tadfaster'
         else:
             line_brand = ''
 

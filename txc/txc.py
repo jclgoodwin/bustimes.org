@@ -507,6 +507,9 @@ class VehicleJourney(object):
         return self.departure_time
 
     def should_show(self, date):
+        # Alton Towers
+        if self.code.startswith('VJ_11-X52-_-y08-1') and date < datetime.date(2017, 3, 27):
+            return False
         if not (date and self.operating_profile):
             return True
         return self.operating_profile.should_show(date)
