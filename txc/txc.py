@@ -87,8 +87,8 @@ class Stop(object):
         this stop's locality's name, or this stop's name
         (e.g. 'kings-lynn' matches 'kings-lynn-bus-station' and vice versa).
         """
-        name = slugify(self.stop.locality.name if self.stop else self.locality)
-        if name and name in text or text in name:
+        name = slugify(self.stop.locality if self.stop else self.locality)
+        if name != 'none' and name in text or text in name:
             return True
         name = slugify(self.common_name)
         return text in name or name in text

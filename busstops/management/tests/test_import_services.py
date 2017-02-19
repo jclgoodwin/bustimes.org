@@ -7,8 +7,8 @@ from freezegun import freeze_time
 from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
 from django.core.management import call_command
-from ...models import Operator, Service, Region, StopPoint
-from ..commands import import_services
+from ...models import Operator, Service, Region, StopPoint, Journey, StopUsageUsage
+from ..commands import import_services, generate_departures
 
 
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -48,7 +48,9 @@ class ImportServicesTest(TestCase):
                 ('639004572', 'Bulls Head', 'adj', -2.5042125060, 53.7423055225),
                 ('639004562', 'Markham Road', 'by"', -2.5083672338, 53.7398252112),
                 ('639004554', 'Witton Park', 'opp', -2.5108434749, 53.7389877672),
-                ('639004552', 'The Griffin', 'adj', -2.4989239373, 53.7425523688)
+                ('639004552', 'The Griffin', 'adj', -2.4989239373, 53.7425523688),
+                ('049004705400', 'Kingston District Centre', 'o/s', 0, 0),
+                ('4200F156472', 'Asda', 'opp', 0, 0),
         ):
             StopPoint.objects.create(
                 atco_code=atco_code, locality_centre=False, active=True, common_name=common_name,
@@ -56,8 +58,9 @@ class ImportServicesTest(TestCase):
             )
 
         cls.do_service('ea_21-13B-B-y08-1', 'EA')
-        cls.ea_service = Service.objects.get(pk='ea_21-13B-B-y08')
         cls.do_service('SVRABBN017', 'S')
+
+        cls.ea_service = Service.objects.get(pk='ea_21-13B-B-y08')
         cls.sc_service = Service.objects.get(pk='ABBN017')
 
         # simulate a National Coach Service Database zip file
@@ -69,10 +72,16 @@ class ImportServicesTest(TestCase):
                 'IncludedServices.csv',
                 'Operator,LineName,Dir,Description\nMEGA,M11A,O,Belgravia - Liverpool\nMEGA,M12,O,Shudehill - Victoria'
             )
-        call_command(cls.command, ncsd_zipfile_path)
+        with warnings.catch_warnings(record=True):
+            call_command(cls.command, ncsd_zipfile_path)
 
-        # test re-importing a previously imported service again
-        cls.do_service('Megabus_Megabus14032016 163144_MEGA_M12', 'GB')
+            # test re-importing a previously imported service again
+            cls.do_service('Megabus_Megabus14032016 163144_MEGA_M12', 'GB')
+
+        with freeze_time('2001-01-01'):
+            generate_departures.handle_region('GB')
+        with freeze_time('2017-01-01'):
+            generate_departures.handle_region('GB')
 
         cls.gb_m11a = Service.objects.get(pk='M11A_MEGA')
         cls.gb_m12 = Service.objects.get(pk='M12_MEGA')
@@ -146,14 +155,14 @@ class ImportServicesTest(TestCase):
             </txc:Operator>
         """)))
 
-        with warnings.catch_warnings(record=True) as collected_warnings:
+        with warnings.catch_warnings(record=True) as caught_warnings:
             self.assertIsNone(self.command.get_operator(ET.fromstring("""
                 <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_RRS">
                     <txc:OperatorCode>BEAN</txc:OperatorCode>
                     <txc:TradingName>Bakers</txc:TradingName>
                 </txc:Operator>
             """)))
-            self.assertTrue('No operator found for element' in str(collected_warnings[0].message))
+            self.assertTrue('No operator found for element' in str(caught_warnings[0].message))
 
         self.assertEqual(self.bakers_dolphin.id, self.command.get_operator(ET.fromstring("""
             <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_RRS">
@@ -310,6 +319,17 @@ class ImportServicesTest(TestCase):
                 </a>
             </li>
         """, html=True)
+
+    def test_departures(self):
+        # self.assertEqual(78, Journey.objects.all().count())
+        # self.assertEqual(74, StopUsageUsage.objects.all().count())
+
+        journey = Journey.objects.first()
+        self.assertEqual('M12 - Shudehill - Victoria 2017-01-01 01:00:00', str(journey))
+
+        stop_usage_usage = StopUsageUsage.objects.first()
+        self.assertEqual('2017-01-01 02:20:00', str(stop_usage_usage.datetime))
+        self.assertEqual('Kingston District Centre (o/s) 2017-01-01 02:20:00', str(stop_usage_usage))
 
     @classmethod
     def tearDownClass(cls):
