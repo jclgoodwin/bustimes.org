@@ -341,8 +341,6 @@ class JourneyPattern(object):
             previous = None
             for i, row in enumerate(rows):
                 atco_code = row.part.stop.atco_code
-                if row.part.stop is None:
-                    break
                 if new:
                     if atco_code in self.grouping.rows:
                         self.grouping.rows.append(row, qualifier=str(i))
