@@ -57,13 +57,13 @@ class NoteAdmin(admin.ModelAdmin):
 
 
 class JourneyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'datetime',)
-    list_filter = ('service__region',)
+    list_display = ('id', 'service', 'datetime')
+    list_filter = ('service__region', 'service__operator')
     raw_id_fields = ('service', 'destination')
 
 
 class StopUsageUsageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'datetime',)
+    list_display = ('id', 'datetime')
     raw_id_fields = ('journey', 'stop')
 
 
