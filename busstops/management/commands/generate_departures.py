@@ -1,3 +1,4 @@
+from multiprocessing import Pool
 from datetime import date, timedelta
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -46,6 +47,7 @@ def handle_timetable(service, timetable, day):
 
 @transaction.atomic
 def handle_region(region):
+    print(region)
     today = date.today()
     NEXT_WEEK = today + ONE_DAY * 7
     # delete journeys before today
@@ -71,6 +73,5 @@ def handle_region(region):
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        for region in Region.objects.all().exclude(id__in=('L', 'Y', 'NI')):
-            print(region)
-            handle_region(region)
+        pool = Pool(processes=4)
+        pool.map(handle_region, Region.objects.all().exclude(id__in=('L', 'Y', 'NI')))
