@@ -6,6 +6,7 @@ import re
 import xml.etree.cElementTree as ET
 import calendar
 import datetime
+from functools import cmp_to_key
 from django.utils.text import slugify
 from titlecase import titlecase
 
@@ -499,10 +500,30 @@ class VehicleJourney(object):
             if len(row.times) == row_length:
                 row.times.append('')
 
+    def cmp(self, x, y):
+        x_time = x.departure_time
+        y_time = y.departure_time
+        if (
+            x.journeypattern.sections[0].timinglinks[0].origin.stop.atco_code
+            != y.journeypattern.sections[0].timinglinks[0].origin.stop.atco_code
+        ):
+            times = {part.stop.atco_code: time for part, time in x.get_times()}
+            for part, time in y.get_times():
+                if part.stop.atco_code in times:
+                    if time >= y.departure_time and times[part.stop.atco_code] >= x.departure_time:
+                        x_time = times[part.stop.atco_code]
+                        y_time = time
+                    break
+        if x_time > y_time:
+            return 1
+        if x_time < y_time:
+            return -1
+        return 0
+
     def get_order(self):
         if self.sequencenumber is not None:
             return self.sequencenumber
-        return self.departure_time
+        return cmp_to_key(self.cmp)(self)
 
     def should_show(self, date):
         if not (date and self.operating_profile):
