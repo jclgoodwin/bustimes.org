@@ -69,9 +69,6 @@ class TimetableTest(TestCase):
         """Test timetable with some abbreviations"""
         timetable_ne = txc.timetable_from_filename(FIXTURES_DIR, 'NE_03_SCC_X6_1.xml', '2016-12-15')
         self.assertEqual('Kendal - Barrow-in-Furness', str(timetable_ne.groupings[0]))
-        self.assertEqual(
-            timetable_ne.groupings[0].rows[0].times[:3], [time(7, 0), time(8, 0), time(9, 0)]
-        )
         # Test abbreviations (check the colspan and rowspan attributes of Cells)
         self.assertEqual(timetable_ne.groupings[0].rows[0].times[-1], time(23, 0))
         # self.assertEqual(timetable_ne.groupings[0].rows[0].times[3].rowspan, 117)
