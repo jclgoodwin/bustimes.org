@@ -276,3 +276,57 @@ class OperatingPeriodTest(TestCase):
         """)
         operating_period = txc.OperatingPeriod(element)
         self.assertEqual(str(operating_period), 'until 1 June 2002')
+
+
+class VehicleJourneyTest(TestCase):
+    def test_special_cases(self):
+        journey = txc.VehicleJourney(ET.fromstring("""
+            <VehicleJourney xmlns="http://www.transxchange.org.uk/">
+                <PrivateCode>em-11-X52-_-y08-1-2-T0</PrivateCode>
+                <OperatingProfile>
+                    <RegularDayType>
+                        <DaysOfWeek>
+                            <MondayToFriday />
+                        </DaysOfWeek>
+                    </RegularDayType>
+                    <BankHolidayOperation>
+                        <DaysOfNonOperation>
+                            <GoodFriday />
+                            <MayDay />
+                            <EasterMonday />
+                            <SpringBank />
+                        </DaysOfNonOperation>
+                    </BankHolidayOperation>
+                </OperatingProfile>
+                <VehicleJourneyCode>VJ_11-X52-_-y08-1-2-T0</VehicleJourneyCode>
+                <ServiceRef>11-X52-_-y08-1</ServiceRef>
+                <LineRef>11-X52-_-y08-1</LineRef>
+                <JourneyPatternRef>JP_11-X52-_-y08-1-2-H-2</JourneyPatternRef>
+                <DepartureTime>09:15:00</DepartureTime>
+            </VehicleJourney>
+        """), {'JP_11-X52-_-y08-1-2-H-2': None}, {}, None)
+
+        self.assertFalse(journey.should_show(date(2017, 2, 20)))
+        self.assertTrue(journey.should_show(date(2017, 3, 28)))
+
+        # first Wednesday of the month
+        journey.code = 'VJ_21-NS1-A-y08-1-2-T0'
+        self.assertTrue(journey.should_show(date(2017, 1, 4)))
+        self.assertFalse(journey.should_show(date(2017, 1, 11)))
+        self.assertFalse(journey.should_show(date(2017, 1, 18)))
+        self.assertTrue(journey.should_show(date(2017, 2, 1)))
+        self.assertFalse(journey.should_show(date(2017, 3, 15)))
+
+        # second Wednesday of the month
+        journey.code = 'VJ_21-WRO-X-y08-1-2-T0'
+        self.assertFalse(journey.should_show(date(2017, 1, 4)))
+        self.assertTrue(journey.should_show(date(2017, 1, 11)))
+        self.assertFalse(journey.should_show(date(2017, 1, 18)))
+        self.assertFalse(journey.should_show(date(2017, 1, 25)))
+
+        # third Wednesday of the month
+        journey.code = 'VJ_21-NS2-A-y08-1-2-T0'
+        self.assertFalse(journey.should_show(date(2017, 1, 4)))
+        self.assertFalse(journey.should_show(date(2017, 1, 11)))
+        self.assertTrue(journey.should_show(date(2017, 1, 18)))
+        self.assertFalse(journey.should_show(date(2017, 1, 25)))
