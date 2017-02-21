@@ -141,23 +141,30 @@ def timetable_from_service(service, day=None):
             timetables.append(timetable)
     if len(timetables) > 1:
         timetables = [t for t in timetables if any(g.rows and g.rows[0].times for g in t.groupings)] or timetables[:1]
+
+    timetables = cache.get(service.pk)
+    if timetables is None:
+        timetables = [txc.Timetable(xml_file, day, service.description) for xml_file in get_files_from_zipfile(service)]
+        cache.set(service.pk, timetables, None)
+        for timetable in timetables:
+            # del timetable.journeypatterns
+            del timetable.stops
+            del timetable.operators
+            del timetable.element
+            if hasattr(timetable, 'groupings'):
+                for grouping in timetable.groupings:
+                    if grouping.rows and len(grouping.rows[0].times) > 60:
+                        service.show_timetable = False
+                        service.save()
+                        return
+    else:
+        for timetable in timetables:
+            timetable.set_date(day)
+    timetables = [timetable for timetable in timetables if timetable.operating_period.contains(timetable.date)]
     for timetable in timetables:
         for grouping in timetable.groupings:
-            if grouping.rows and len(grouping.rows[0].times) > 100:
-                service.show_timetable = False
-                service.save()
-                return
-            del grouping.journeys
-            del grouping.journeypatterns
-            for row in grouping.rows:
-                del row.next
-        del timetable.journeypatterns
-        del timetable.stops
-        del timetable.operators
-        del timetable.element
-    expiry = datetime.combine(
-        day + timedelta(days=1), time(0)
-    )
-    max_age = expiry - datetime.now()
-    cache.set(cache_key, timetables, max_age.total_seconds())
-    return timetables
+            for journey in grouping.journeys:
+                if journey.should_show(timetable.date):
+                    journey.add_times()
+
+            grouping.do_heads_and_feet()

@@ -870,8 +870,7 @@ class Timetable(object):
             if hasattr(journey, 'journeyref'):
                 journey.journeypattern = journeys[journey.journeyref].journeypattern
 
-        # return list(journeys.values())
-        return (j for j in iter(journeys.values()) if j.journeypattern and j.should_show(self.date, self))
+        return journeys.values()
 
     def date_options(self):
         start_date = min(self.date, datetime.date.today())
@@ -882,15 +881,21 @@ class Timetable(object):
         if self.date >= start_date:
             yield self.date
 
-    def __init__(self, open_file, date, description=''):
+    def set_date(self, date):
+        if date and not isinstance(date, datetime.date):
+            self.date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+        else:
+            self.date = date
+
+    def __init__(self, open_file, date, description=None):
         iterator = ET.iterparse(open_file)
 
         element = None
         servicedorgs = None
 
         self.description = description
-        self.date = date
         routes = {}
+        self.set_date(date)
 
         for _, element in iterator:
             tag = element.tag[33:]
@@ -946,8 +951,6 @@ class Timetable(object):
                     self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
 
                 self.operating_period = OperatingPeriod(element.find('txc:OperatingPeriod', NS))
-                if self.date and not self.operating_period.contains(self.date):
-                    return
 
                 self.service_code = element.find('txc:ServiceCode', NS).text
 
