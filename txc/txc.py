@@ -862,13 +862,18 @@ class Timetable(object):
             element.attrib['CreationDateTime'], element.attrib['ModificationDateTime']
         )[:10]
 
-        journeys.sort(key=VehicleJourney.get_order)
         for journey in journeys:
             journey.journeypattern.grouping.journeys.append(journey)
             journey.journeypattern.has_journeys = True
-            journey.add_times()
+
+        del journeys
 
         for grouping in self.groupings:
+            grouping.journeys.sort(key=VehicleJourney.get_order)
+
+            for journey in grouping.journeys:
+                journey.add_times()
+
             grouping.do_heads_and_feet()
 
 
