@@ -122,6 +122,26 @@ class TimetableTest(TestCase):
         self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
         self.assertEqual(0, len(timetable.groupings[1].rows[0].times))
 
+    def test_timetable_goole(self):
+        # outside of operating period
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'SVRYEAGT00.xml', '2007-06-27')
+        self.assertFalse(hasattr(timetable, 'groupings'))
+        self.assertEqual('', timetable.mode)
+
+        # during a DaysOfNonOperation
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'SVRYEAGT00.xml', '2012-06-27')
+        self.assertEqual([], timetable.groupings[0].rows[0].times)
+
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'SVRYEAGT00.xml', '2017-01-27')
+        self.assertEqual(timetable.groupings[0].rows[0].times, ['', '', time(9, 48), time(10, 28), time(11, 8),
+                                                                time(11, 48), time(12, 28), time(13, 8), time(13, 48),
+                                                                time(14, 28), time(15, 8), '', ''])
+
+        with freeze_time('21 Feb 2016'):
+            date_options = list(timetable.date_options())
+            self.assertEqual(date_options[0]['date'], date(2016, 2, 21))
+            self.assertEqual(date_options[-1]['date'], date(2017, 1, 27))
+
 
 class CellTest(TestCase):
     def test_cell(self):
