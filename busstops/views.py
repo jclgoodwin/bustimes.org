@@ -432,7 +432,7 @@ class ServiceDetailView(DetailView):
         context['notes'] = Note.objects.filter(Q(operators__in=context['operators']) | Q(services=self.object))
         context['links'] = []
 
-        if self.object.show_timetable:
+        if self.object.show_timetable or self.object.region_id == 'NI':
             date = self.request.GET.get('date')
             if not date:
                 next_usage = StopUsageUsage.objects.filter(journey__service=self.object,

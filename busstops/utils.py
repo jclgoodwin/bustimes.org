@@ -11,7 +11,7 @@ except ImportError:
 from datetime import date
 from django.conf import settings
 from django.core.cache import cache
-from txc import txc
+from txc import txc, ni
 
 
 def format_gbp(string):
@@ -109,6 +109,10 @@ def timetable_from_service(service, day=None):
     """Given a Service, return a list of Timetables."""
     if day is None:
         day = date.today()
+
+    if service.region_id == 'NI':
+        return ni.get_timetable(os.path.join(settings.BASE_DIR, 'data', 'NI', service.pk + '.json'), day)
+
     cache_key = '{}{}'.format(service.pk, day)
     timetables = cache.get(cache_key)
     if timetables is not None:
