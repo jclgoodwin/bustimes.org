@@ -6,7 +6,7 @@
 from time import sleep
 import requests
 from django.core.management.base import BaseCommand
-from ...models import StopPoint
+from ...models import StopPoint, AdminArea
 
 
 SESSION = requests.Session()
@@ -18,10 +18,11 @@ class Command(BaseCommand):
     delay = 2
 
     def handle(self, *args, **options):
+        areas = {'County {}'.format(area.name): area.id for area in AdminArea.objects.filter(region='NI') if area.name}
+
         stops = StopPoint.objects.filter(
             atco_code__startswith='7000',
-            town='',
-            landmark='',
+            admin_area__isnull=True,
             service__current=True
         ).distinct()
 
@@ -35,6 +36,7 @@ class Command(BaseCommand):
             print(stop.pk)
             stop.street = response['address'].get('road', '')
             stop.town = response['address'].get('locality', '')
+            stop.admin_area_id = areas[response['address']['county']]
 
             landmark_keys = list(set(response['address'].keys()) - NON_LANDMARK_KEYS)
             if len(landmark_keys) > 0:
