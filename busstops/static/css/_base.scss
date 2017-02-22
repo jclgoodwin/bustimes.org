@@ -403,6 +403,10 @@ input:not(:checked) + label {
         .OTH {
             display: none;
         }
+
+        .referrer {
+            display: table-row;
+        }
     }
 }
 
