@@ -8,7 +8,7 @@ import dateutil.parser
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.utils.text import slugify
-from busstops.models import StopUsageUsage
+from busstops.models import Operator, StopUsageUsage
 
 
 STAGECOACH_OPERATORS = {
@@ -215,7 +215,7 @@ class TimetableDepartures(Departures):
         queryset = StopUsageUsage.objects.filter(datetime__gte=self.now, stop=self.stop).order_by('datetime')
         return [{
             'time': suu.datetime,
-            'destination': suu.journey.destination.locality,
+            'destination': suu.journey.destination.locality or suu.journey.destination.town,
             'service': suu.journey.service
         } for suu in queryset.select_related('stop', 'journey__destination__locality', 'journey__service')[:10]]
 
@@ -355,8 +355,11 @@ def get_departures(stop, services):
                 }
             }, 60)
 
+    operators = Operator.objects.filter(service__stops=stop,
+                                        service__current=True).distinct().values_list('pk', flat=True)
+
     # Belfast
-    if stop.pk.startswith('7000000'):
+    if all(operator == 'MET' for operator in operators):
         return ({
             'departures': AcisConnectDepartures('belfast', stop, services),
             'source': {
@@ -365,7 +368,7 @@ def get_departures(stop, services):
             }
         }, 60)
 
-    if stop.admin_area.region_id in {'W', 'EA', 'EM', 'SE', 'SW', 'WM', 'NE', 'NW', 'S'}:
+    if not stop.admin_area or stop.admin_area.region_id in {'W', 'EA', 'EM', 'SE', 'SW', 'WM', 'NE', 'NW', 'S', 'NI'}:
         departures = TimetableDepartures(stop, (), now).get_departures()
         return ({
             'departures': departures,

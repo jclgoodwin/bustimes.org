@@ -1,8 +1,9 @@
+import os
 from multiprocessing import Pool
 from datetime import date, timedelta
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from txc import txc
+from txc import txc, ni
 from ...models import Region, Service, Journey, StopUsageUsage, StopPoint
 from ...utils import get_files_from_zipfile
 
@@ -45,6 +46,33 @@ def handle_timetable(service, timetable, day):
                 StopUsageUsage.objects.bulk_create(stopusageusages)
 
 
+def do_ni_service(service, groupings, day):
+    previous_time = None
+    for grouping in groupings:
+        for journey in grouping['Journeys']:
+            if not ni.should_show(journey, day):
+                continue
+
+            stopusageusages = []
+            for i, su in enumerate(journey['StopUsages']):
+                previous_time = su['Departure']
+                if su['Activity'] != 'S' and su['Departure']:
+                    if previous_time and su['Departure'] < previous_time:
+                        print(su)
+                    stopusageusages.append(
+                        StopUsageUsage(datetime='{} {}'.format(day, su['Departure']),
+                                       order=i, stop_id=su['Location'])
+                    )
+
+            departure = journey['StopUsages'][0]['Departure']
+            destination = journey['StopUsages'][-1]['Location']
+            journey = Journey(service=service, datetime='{} {}'.format(day, departure), destination_id=destination)
+            journey.save()
+            for suu in stopusageusages:
+                suu.journey = journey
+            StopUsageUsage.objects.bulk_create(stopusageusages)
+
+
 @transaction.atomic
 def handle_region(region):
     print(region)
@@ -61,12 +89,21 @@ def handle_region(region):
             return
 
     for service in Service.objects.filter(region=region, current=True):
-        # print(service)
+        if region.id == 'NI':
+            path = os.path.join('data', 'NI', service.pk + '.json')
+            if not os.path.exists(path):
+                continue
+            groupings = ni.get_data(path)
+            day = today
+            while day <= NEXT_WEEK:
+                do_ni_service(service, groupings, day)
+                day += ONE_DAY
+            continue
+
         for i, xml_file in enumerate(get_files_from_zipfile(service)):
             timetable = txc.Timetable(xml_file, None)
             day = today
             while day <= NEXT_WEEK:
-                # print('generating departures for', day)
                 handle_timetable(service, timetable, day)
                 day += ONE_DAY
 
@@ -74,4 +111,4 @@ def handle_region(region):
 class Command(BaseCommand):
     def handle(self, *args, **options):
         pool = Pool(processes=4)
-        pool.map(handle_region, Region.objects.all().exclude(id__in=('L', 'Y', 'NI')))
+        pool.map(handle_region, Region.objects.all().exclude(id__in=('L', 'Y')))

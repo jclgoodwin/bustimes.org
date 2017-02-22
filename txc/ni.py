@@ -145,20 +145,25 @@ def handle_journeys(journeys, today):
     return g
 
 
+def get_data(path):
+    with open(path) as open_file:
+        data = json.load(open_file)
+    return (data['Outbound'], data['Inbound'])
+
+
 def get_timetable(path, today):
     if type(today) == str:
         today = datetime.strptime(today, '%Y-%m-%d').date()
 
-    with open(path) as open_file:
-        data = json.load(open_file)
-
     t = Timetable()
 
-    t.groupings.append(handle_journeys(data['Outbound']['Journeys'], today))
-    t.groupings[-1].name = data['Outbound']['Description']
+    outbound, inbound = get_data(path)
 
-    t.groupings.append(handle_journeys(data['Inbound']['Journeys'], today))
-    t.groupings[-1].name = data['Inbound']['Description']
+    t.groupings.append(handle_journeys(outbound['Journeys'], today))
+    t.groupings[-1].name = outbound['Description']
+
+    t.groupings.append(handle_journeys(inbound['Journeys'], today))
+    t.groupings[-1].name = inbound['Description']
 
     t.date = today
     return [t]
