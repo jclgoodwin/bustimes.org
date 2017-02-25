@@ -11,19 +11,20 @@ from ...models import StopPoint, AdminArea
 
 SESSION = requests.Session()
 NON_LANDMARK_KEYS = {'road', 'state', 'country_code', 'city', 'county', 'locality', 'country',
-                     'suburb', 'town', 'postcode', 'bus_stop', 'village', 'house_number'}
+                     'suburb', 'town', 'postcode', 'bus_stop', 'village', 'house_number',
+                     'hamlet', 'state_district', 'city_district'}
 
 
 class Command(BaseCommand):
     delay = 2
 
     def handle(self, *args, **options):
-        areas = {'County {}'.format(area.name): area.id for area in AdminArea.objects.filter(region='NI') if area.name}
+        regions = {'NI', 'UL', 'MU', 'MO', 'CO', 'LE'}
+        areas = {area.name: area.id for area in AdminArea.objects.filter(region__in=regions) if area.name}
 
         stops = StopPoint.objects.filter(
             atco_code__startswith='7000',
-            admin_area__isnull=True,
-            service__current=True
+            osm__isnull=True
         ).distinct()
 
         for stop in stops:
@@ -34,9 +35,17 @@ class Command(BaseCommand):
             }).json()
 
             print(stop.pk)
+            stop.osm = response
             stop.street = response['address'].get('road', '')
-            stop.town = response['address'].get('locality', '')
-            stop.admin_area_id = areas[response['address']['county']]
+            stop.town = response['address'].get('town', '')
+            if 'county' in response['address']:
+                county = response['address']['county']
+                if county in areas:
+                    stop.admin_area_id = areas[county]
+                else:
+                    print(response['address'])
+            else:
+                print(response['address'])
 
             landmark_keys = list(set(response['address'].keys()) - NON_LANDMARK_KEYS)
             if len(landmark_keys) > 0:

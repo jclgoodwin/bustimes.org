@@ -8,6 +8,7 @@ except ImportError:
     from urllib import urlencode
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.contrib.postgres.fields import JSONField
 from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from .utils import sign_url
@@ -227,6 +228,8 @@ class StopPoint(models.Model):
 
     admin_area = models.ForeignKey('AdminArea', models.SET_NULL, null=True)
     active = models.BooleanField(db_index=True)
+
+    osm = JSONField()
 
     def __str__(self):
         if self.indicator:

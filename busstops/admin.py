@@ -50,6 +50,7 @@ class ServiceAdmin(admin.ModelAdmin):
 
 class LocalityAdmin(admin.ModelAdmin):
     raw_id_fields = ('adjacent',)
+    list_filter = ('admin_area', 'admin_area__region')
 
 
 class NoteAdmin(admin.ModelAdmin):
@@ -60,11 +61,13 @@ class JourneyAdmin(admin.ModelAdmin):
     list_display = ('id', 'service', 'datetime')
     list_filter = ('service__region', 'service__operator')
     raw_id_fields = ('service', 'destination')
+    ordering = ('id',)
 
 
 class StopUsageUsageAdmin(admin.ModelAdmin):
     list_display = ('id', 'datetime')
     raw_id_fields = ('journey', 'stop')
+    ordering = ('id',)
 
 
 admin.site.register(Region)

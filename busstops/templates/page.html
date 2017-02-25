@@ -19,8 +19,10 @@
 {% stylesheet 'ie' %}
 <script src="{% static "js/bower_components/html5shiv/dist/html5shiv-printshiv.min.js" %}"></script>
 <![endif]-->
-<script async type="text/javascript" src="//s.clickiocdn.com/t/pb207948.js"></script>
-<script async type="text/javascript" src="//s.clickiocdn.com/t/common_258.js"></script>
+{% if not random %}
+    <script async type="text/javascript" src="//s.clickiocdn.com/t/pb207948.js"></script>
+    <script async type="text/javascript" src="//s.clickiocdn.com/t/common_258.js"></script>
+{% endif %}
 {% block head %}
 {% endblock %}
 </head>
@@ -44,6 +46,17 @@
 <footer>
     {% block ad %}
     <div class="banner-ad" id="ad">
+    {% if random %}
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="auto"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+            (adsbygoogle = window.adsbygoogle || []).push({
+                google_ad_client: "ca-pub-4420219114164200",
+                enable_page_level_ads: true
+            });
+        </script>
+    {% else %}
         <script async src='//s.clickiocdn.com/t/common_258.js'></script>
         <script class='__lxGc__'>
             var adWidth = document.getElementById('ad').clientWidth;
@@ -55,6 +68,7 @@
                 ((__lxGc__=window.__lxGc__||{'s':{},'b':0})['s']['_207948']=__lxGc__['s']['_207948']||{'b':{}})['b']['_601460']={'i':__lxGc__.b++};
             }
         </script>
+    {% endif %}
     </div>
     {% endblock %}
     <ul>

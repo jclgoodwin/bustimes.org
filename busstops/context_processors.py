@@ -9,5 +9,5 @@ def amp(request):
 
 def random(_):
     return {
-        'random': not randint(0, 3)
+        'random': randint(0, 3)
     }

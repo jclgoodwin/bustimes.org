@@ -157,7 +157,7 @@ def stops(request):
         latlong__within=bounding_box, active=True
     ).select_related('locality').annotate(
         distance=Distance('latlong', bounding_box.centroid)
-    ).order_by('distance').defer('locality__latlong')
+    ).order_by('distance').defer('osm', 'locality__latlong')
 
     return JsonResponse({
         'type': 'FeatureCollection',
@@ -234,13 +234,16 @@ class AdminAreaDetailView(DetailView):
             context['stops'] = StopPoint.objects.filter(
                 admin_area=self.object,
                 active=True
-            ).order_by('common_name')
+            ).defer('osm', 'latlong').order_by('common_name')
+        else:
+            context['stops'] = StopPoint.objects.filter(admin_area=self.object, active=True,
+                                                        locality=None).defer('osm', 'latlong').order_by('common_name')
 
         context['breadcrumb'] = [self.object.region]
         return context
 
     def render_to_response(self, context):
-        if len(context['districts']) + len(context['localities']) == 1:
+        if not len(context['stops']) and len(context['districts']) + len(context['localities']) == 1:
             if not context['localities']:
                 return redirect(context['districts'][0])
             return redirect(context['localities'][0])
@@ -288,7 +291,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         context['stops'] = StopPoint.objects.filter(
             locality=self.object,
             active=True
-        ).order_by('common_name')
+        ).defer('osm').order_by('common_name')
 
         if not (context['localities'] or context['stops']):
             raise Http404()
@@ -315,7 +318,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
     model = StopPoint
     queryset = model.objects.select_related('admin_area', 'admin_area__region',
                                             'locality', 'locality__parent',
-                                            'locality__district')
+                                            'locality__district').defer('osm')
 
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
@@ -340,11 +343,11 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         if self.object.stop_area_id is not None:
             context['nearby'] = StopPoint.objects.filter(stop_area=self.object.stop_area_id)
         else:
-            context['nearby'] = StopPoint.objects.filter(
-                common_name=self.object.common_name, locality=self.object.locality, town=self.object.town)
+            context['nearby'] = StopPoint.objects.filter(common_name=self.object.common_name,
+                                                         locality=self.object.locality, town=self.object.town)
         context['nearby'] = context['nearby'].filter(active=True).exclude(
             pk=self.object.pk
-        ).order_by('atco_code')
+        ).order_by('atco_code').defer('osm')
 
         context['breadcrumb'] = (crumb for crumb in (
             self.object.admin_area.region if self.object.admin_area else Region.objects.get(pk='NI'),
@@ -444,11 +447,11 @@ class ServiceDetailView(DetailView):
         if not context.get('timetables'):
             context['stopusages'] = self.object.stopusage_set.all().select_related(
                 'stop__locality'
-            ).defer('stop__locality__latlong').order_by('direction', 'order')
+            ).defer('stop__osm', 'stop__locality__latlong').order_by('direction', 'order')
             context['has_minor_stops'] = any(s.timing_status == 'OTH' for s in context['stopusages'])
         else:
             stops_dict = {stop.pk: stop for stop in self.object.stops.all().select_related(
-                'locality').defer('latlong', 'locality__latlong')}
+                'locality').defer('osm', 'latlong', 'locality__latlong')}
             for table in context['timetables']:
                 table.groupings = [grouping for grouping in table.groupings if grouping.rows and grouping.rows[0].times]
                 for grouping in table.groupings:
