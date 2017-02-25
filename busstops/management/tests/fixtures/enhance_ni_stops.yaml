@@ -5,9 +5,198 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.12.3]
+      User-Agent: [python-requests/2.13.0]
     method: GET
-    uri: http://nominatim.openstreetmap.org/reverse?lon=-5.905080292&format=json&lat=54.59979164
+    uri: http://nominatim.openstreetmap.org/reverse?format=json&lon=-6.045230527&lat=54.55282813
+  response:
+    body: {string: "{\"place_id\":\"206415455\",\"licence\":\"Data \xA9 OpenStreetMap\
+        \ contributors, ODbL 1.0. http:\\/\\/www.openstreetmap.org\\/copyright\",\"\
+        osm_type\":\"node\",\"osm_id\":\"4687835550\",\"lat\":\"54.5528467\",\"lon\"\
+        :\"-6.0451509\",\"display_name\":\"Mount Eagles, Lagmore, Lisburn, County\
+        \ Antrim, Northern Ireland, UK\",\"address\":{\"bus_stop\":\"Mount Eagles\"\
+        ,\"road\":\"Mount Eagles\",\"locality\":\"Lagmore\",\"city\":\"Lisburn\",\"\
+        county\":\"County Antrim\",\"state\":\"Northern Ireland\",\"country\":\"UK\"\
+        ,\"country_code\":\"gb\"},\"boundingbox\":[\"54.5527467\",\"54.5529467\",\"\
+        -6.0452509\",\"-6.0450509\"]}"}
+    headers:
+      Access-Control-Allow-Methods: ['OPTIONS,GET']
+      Access-Control-Allow-Origin: ['*']
+      Connection: [close]
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Sat, 25 Feb 2017 23:23:48 GMT']
+      Server: [Apache/2.4.18 (Ubuntu)]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.13.0]
+    method: GET
+    uri: http://nominatim.openstreetmap.org/reverse?format=json&lon=-5.92369963&lat=54.60095409
+  response:
+    body: {string: "{\"place_id\":\"51868726\",\"licence\":\"Data \xA9 OpenStreetMap\
+        \ contributors, ODbL 1.0. http:\\/\\/www.openstreetmap.org\\/copyright\",\"\
+        osm_type\":\"node\",\"osm_id\":\"3953491994\",\"lat\":\"54.6010518\",\"lon\"\
+        :\"-5.9238543\",\"display_name\":\"Custom House Square Water Feature, Queen's\
+        \ Square, Town Parks, Belfast, County Antrim, Northern Ireland, BT1 1AA, UK\"\
+        ,\"address\":{\"address29\":\"Custom House Square Water Feature\",\"pedestrian\"\
+        :\"Queen's Square\",\"locality\":\"Town Parks\",\"city\":\"Belfast\",\"county\"\
+        :\"County Antrim\",\"state\":\"Northern Ireland\",\"postcode\":\"BT1 1AA\"\
+        ,\"country\":\"UK\",\"country_code\":\"gb\"},\"boundingbox\":[\"54.6009518\"\
+        ,\"54.6011518\",\"-5.9239543\",\"-5.9237543\"]}"}
+    headers:
+      Access-Control-Allow-Methods: ['OPTIONS,GET']
+      Access-Control-Allow-Origin: ['*']
+      Connection: [close]
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Sat, 25 Feb 2017 23:23:48 GMT']
+      Server: [Apache/2.4.18 (Ubuntu)]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.13.0]
+    method: GET
+    uri: http://nominatim.openstreetmap.org/reverse?format=json&lon=-6.042831962&lat=54.55514336
+  response:
+    body: {string: "{\"place_id\":\"206415470\",\"licence\":\"Data \xA9 OpenStreetMap\
+        \ contributors, ODbL 1.0. http:\\/\\/www.openstreetmap.org\\/copyright\",\"\
+        osm_type\":\"way\",\"osm_id\":\"474930673\",\"lat\":\"54.5539293\",\"lon\"\
+        :\"-6.0447956\",\"display_name\":\"Mount Eagles, Lagmore, Lisburn, County\
+        \ Antrim, Northern Ireland, UK\",\"address\":{\"road\":\"Mount Eagles\",\"\
+        locality\":\"Lagmore\",\"city\":\"Lisburn\",\"county\":\"County Antrim\",\"\
+        state\":\"Northern Ireland\",\"country\":\"UK\",\"country_code\":\"gb\"},\"\
+        boundingbox\":[\"54.5529357\",\"54.555326\",\"-6.045085\",\"-6.0423674\"]}"}
+    headers:
+      Access-Control-Allow-Methods: ['OPTIONS,GET']
+      Access-Control-Allow-Origin: ['*']
+      Connection: [close]
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Sat, 25 Feb 2017 23:23:49 GMT']
+      Server: [Apache/2.4.18 (Ubuntu)]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.13.0]
+    method: GET
+    uri: http://nominatim.openstreetmap.org/reverse?format=json&lon=-5.918671994&lat=54.60061918
+  response:
+    body: {string: "{\"place_id\":\"59471006\",\"licence\":\"Data \xA9 OpenStreetMap\
+        \ contributors, ODbL 1.0. http:\\/\\/www.openstreetmap.org\\/copyright\",\"\
+        osm_type\":\"way\",\"osm_id\":\"10154706\",\"lat\":\"54.6005496\",\"lon\"\
+        :\"-5.9176432\",\"display_name\":\"Middlepath Street, Ballymacarret, County\
+        \ Down, Northern Ireland, BT1 3WH, UK\",\"address\":{\"road\":\"Middlepath\
+        \ Street\",\"locality\":\"Ballymacarret\",\"county\":\"County Down\",\"state\"\
+        :\"Northern Ireland\",\"postcode\":\"BT1 3WH\",\"country\":\"UK\",\"country_code\"\
+        :\"gb\"},\"boundingbox\":[\"54.6003073\",\"54.6006963\",\"-5.9193329\",\"\
+        -5.914221\"]}"}
+    headers:
+      Access-Control-Allow-Methods: ['OPTIONS,GET']
+      Access-Control-Allow-Origin: ['*']
+      Connection: [close]
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Sat, 25 Feb 2017 23:23:49 GMT']
+      Server: [Apache/2.4.18 (Ubuntu)]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.13.0]
+    method: GET
+    uri: http://nominatim.openstreetmap.org/reverse?format=json&lon=-6.041917236&lat=54.55487698
+  response:
+    body: {string: "{\"place_id\":\"63365757\",\"licence\":\"Data \xA9 OpenStreetMap\
+        \ contributors, ODbL 1.0. http:\\/\\/www.openstreetmap.org\\/copyright\",\"\
+        osm_type\":\"way\",\"osm_id\":\"15808417\",\"lat\":\"54.5545711\",\"lon\"\
+        :\"-6.0368006\",\"display_name\":\"Lagmore Avenue, Lagmore, Lisburn, County\
+        \ Antrim, Northern Ireland, UK\",\"address\":{\"road\":\"Lagmore Avenue\"\
+        ,\"locality\":\"Lagmore\",\"city\":\"Lisburn\",\"county\":\"County Antrim\"\
+        ,\"state\":\"Northern Ireland\",\"country\":\"UK\",\"country_code\":\"gb\"\
+        },\"boundingbox\":[\"54.5509142\",\"54.5569259\",\"-6.0456739\",\"-6.0277881\"\
+        ]}"}
+    headers:
+      Access-Control-Allow-Methods: ['OPTIONS,GET']
+      Access-Control-Allow-Origin: ['*']
+      Connection: [close]
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Sat, 25 Feb 2017 23:23:49 GMT']
+      Server: [Apache/2.4.18 (Ubuntu)]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.13.0]
+    method: GET
+    uri: http://nominatim.openstreetmap.org/reverse?format=json&lon=-5.908142001&lat=54.60014111
+  response:
+    body: {string: "{\"place_id\":\"132673099\",\"licence\":\"Data \xA9 OpenStreetMap\
+        \ contributors, ODbL 1.0. http:\\/\\/www.openstreetmap.org\\/copyright\",\"\
+        osm_type\":\"way\",\"osm_id\":\"301784437\",\"lat\":\"54.5991591\",\"lon\"\
+        :\"-5.900623\",\"display_name\":\"Newtownards Road, Ballymacarret, County\
+        \ Down, Northern Ireland, BT4 1AD, UK\",\"address\":{\"road\":\"Newtownards\
+        \ Road\",\"locality\":\"Ballymacarret\",\"county\":\"County Down\",\"state\"\
+        :\"Northern Ireland\",\"postcode\":\"BT4 1AD\",\"country\":\"UK\",\"country_code\"\
+        :\"gb\"},\"boundingbox\":[\"54.5981663\",\"54.6001751\",\"-5.9085678\",\"\
+        -5.8928579\"]}"}
+    headers:
+      Access-Control-Allow-Methods: ['OPTIONS,GET']
+      Access-Control-Allow-Origin: ['*']
+      Connection: [close]
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Sat, 25 Feb 2017 23:23:49 GMT']
+      Server: [Apache/2.4.18 (Ubuntu)]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.13.0]
+    method: GET
+    uri: http://nominatim.openstreetmap.org/reverse?format=json&lon=-6.039862218&lat=54.55389131
+  response:
+    body: {string: "{\"place_id\":\"63365757\",\"licence\":\"Data \xA9 OpenStreetMap\
+        \ contributors, ODbL 1.0. http:\\/\\/www.openstreetmap.org\\/copyright\",\"\
+        osm_type\":\"way\",\"osm_id\":\"15808417\",\"lat\":\"54.5545711\",\"lon\"\
+        :\"-6.0368006\",\"display_name\":\"Lagmore Avenue, Lagmore, Lisburn, County\
+        \ Antrim, Northern Ireland, UK\",\"address\":{\"road\":\"Lagmore Avenue\"\
+        ,\"locality\":\"Lagmore\",\"city\":\"Lisburn\",\"county\":\"County Antrim\"\
+        ,\"state\":\"Northern Ireland\",\"country\":\"UK\",\"country_code\":\"gb\"\
+        },\"boundingbox\":[\"54.5509142\",\"54.5569259\",\"-6.0456739\",\"-6.0277881\"\
+        ]}"}
+    headers:
+      Access-Control-Allow-Methods: ['OPTIONS,GET']
+      Access-Control-Allow-Origin: ['*']
+      Connection: [close]
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Sat, 25 Feb 2017 23:23:49 GMT']
+      Server: [Apache/2.4.18 (Ubuntu)]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.13.0]
+    method: GET
+    uri: http://nominatim.openstreetmap.org/reverse?format=json&lon=-5.905080292&lat=54.59979164
   response:
     body: {string: "{\"place_id\":\"114532477\",\"licence\":\"Data \xA9 OpenStreetMap\
         \ contributors, ODbL 1.0. http:\\/\\/www.openstreetmap.org\\/copyright\",\"\
@@ -23,7 +212,34 @@ interactions:
       Access-Control-Allow-Origin: ['*']
       Connection: [close]
       Content-Type: [application/json; charset=UTF-8]
-      Date: ['Tue, 27 Dec 2016 19:38:56 GMT']
+      Date: ['Sat, 25 Feb 2017 23:23:49 GMT']
+      Server: [Apache/2.4.18 (Ubuntu)]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.13.0]
+    method: GET
+    uri: http://nominatim.openstreetmap.org/reverse?format=json&lon=-6.03280128&lat=54.55414505
+  response:
+    body: {string: "{\"place_id\":\"63365757\",\"licence\":\"Data \xA9 OpenStreetMap\
+        \ contributors, ODbL 1.0. http:\\/\\/www.openstreetmap.org\\/copyright\",\"\
+        osm_type\":\"way\",\"osm_id\":\"15808417\",\"lat\":\"54.5545711\",\"lon\"\
+        :\"-6.0368006\",\"display_name\":\"Lagmore Avenue, Lagmore, Lisburn, County\
+        \ Antrim, Northern Ireland, UK\",\"address\":{\"road\":\"Lagmore Avenue\"\
+        ,\"locality\":\"Lagmore\",\"city\":\"Lisburn\",\"county\":\"County Antrim\"\
+        ,\"state\":\"Northern Ireland\",\"country\":\"UK\",\"country_code\":\"gb\"\
+        },\"boundingbox\":[\"54.5509142\",\"54.5569259\",\"-6.0456739\",\"-6.0277881\"\
+        ]}"}
+    headers:
+      Access-Control-Allow-Methods: ['OPTIONS,GET']
+      Access-Control-Allow-Origin: ['*']
+      Connection: [close]
+      Content-Type: [application/json; charset=UTF-8]
+      Date: ['Sat, 25 Feb 2017 23:23:49 GMT']
       Server: [Apache/2.4.18 (Ubuntu)]
     status: {code: 200, message: OK}
 version: 1

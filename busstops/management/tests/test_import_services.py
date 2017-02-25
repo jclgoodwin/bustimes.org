@@ -79,9 +79,9 @@ class ImportServicesTest(TestCase):
             cls.do_service('Megabus_Megabus14032016 163144_MEGA_M12', 'GB')
 
         with freeze_time('2001-01-01'):
-            generate_departures.handle_region('GB')
+            generate_departures.handle_region(Region(id='GB'))
         with freeze_time('2017-01-01'):
-            generate_departures.handle_region('GB')
+            generate_departures.handle_region(Region(id='GB'))
 
         cls.gb_m11a = Service.objects.get(pk='M11A_MEGA')
         cls.gb_m12 = Service.objects.get(pk='M12_MEGA')

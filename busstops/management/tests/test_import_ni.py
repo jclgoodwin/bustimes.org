@@ -45,7 +45,7 @@ class ImportNornIronTest(TestCase):
 
         self.assertEqual(stop.street, 'Newtownards Road')
         self.assertEqual(stop.landmark, 'Dr Pitt Memorial Park')
-        self.assertEqual(stop.town, 'Ballymacarret')
+        self.assertEqual(stop.town, '')
 
 
 class ImportNIServicesTest(TestCase):
