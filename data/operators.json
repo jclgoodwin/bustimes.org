@@ -39,5 +39,9 @@
         "address": "21 Dumont Avenue\nSt Osyth\nClacton on Sea\nCO16 8JP",
         "email": "goridebus@outlook.com",
         "url": ""
+    },
+    {
+        "id": "SPOT",
+        "url": "http://www.spottravel.co.uk/leeds-castle/"
     }
 ]
