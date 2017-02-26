@@ -3,6 +3,7 @@ from multiprocessing import Pool
 from datetime import date, timedelta
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from django.conf import settings
 from txc import txc, ni
 from ...models import Region, Service, Journey, StopUsageUsage, StopPoint
 from ...utils import get_files_from_zipfile
@@ -93,7 +94,7 @@ def handle_region(region):
 
     for service in Service.objects.filter(region=region, current=True):
         if region.id == 'NI':
-            path = os.path.join('data', 'NI', service.pk + '.json')
+            path = os.path.join(settings.DATA_DIR, 'NI', service.pk + '.json')
             if not os.path.exists(path):
                 continue
             groupings = ni.get_data(path)

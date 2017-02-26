@@ -162,7 +162,8 @@ STREETVIEW_SECRET = os.environ.get('STREETVIEW_SECRET')
 TRANSPORTAPI_APP_ID = os.environ.get('TRANSPORTAPI_APP_ID')
 TRANSPORTAPI_APP_KEY = os.environ.get('TRANSPORTAPI_APP_KEY')
 
-TNDS_DIR = os.path.join(BASE_DIR, 'data', 'TNDS')
+DATA_DIR = os.path.join(BASE_DIR, 'data')
+TNDS_DIR = os.path.join(DATA_DIR, 'TNDS')
 
 RAVEN_CONFIG = {
     'dsn': os.environ.get('SENTRY_DSN'),

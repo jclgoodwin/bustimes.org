@@ -3,7 +3,7 @@
 import os
 import vcr
 from freezegun import freeze_time
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from ...models import StopPoint, Region, AdminArea, Service, StopUsage, StopUsageUsage
 from ..commands import import_ni_stops, enhance_ni_stops, import_ni_services, generate_departures
 from .test_import_nptg import ImportNPTGTest
@@ -134,6 +134,7 @@ class GenerateDeparturesTest(TestCase):
     """Test the generate_departures command for Northenr Ireland
     """
     @classmethod
+    @override_settings(DATA_DIR=os.path.join(DIR, 'fixtures'))
     def setUpTestData(cls):
         Region.objects.create(id='NI')
         StopPoint.objects.bulk_create(
