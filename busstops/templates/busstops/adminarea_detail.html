@@ -18,9 +18,9 @@
 {% endif %}
 
 {% if services %}
-    <h2>Services in {{ adminarea }}</h2>
+    <h2>{% include 'modes.html' with modes=modes noun='services' %} in {{ adminarea }}</h2>
 
-    {% include 'list.html' with list=services %}
+    {% include 'services.html' with services=services %}
 {% endif %}
 
 {% endblock %}

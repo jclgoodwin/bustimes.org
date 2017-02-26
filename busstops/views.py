@@ -230,9 +230,10 @@ class AdminAreaDetailView(DetailView):
         ).defer('latlong').distinct().order_by('name')
 
         if not (context['localities'] or context['districts']):
-            context['services'] = Service.objects.filter(stops__admin_area=self.object,
-                                                         current=True).distinct().defer('geometry')
-
+            context['services'] = sorted(Service.objects.filter(stops__admin_area=self.object,
+                                                                current=True).distinct().defer('geometry'),
+                                         key=Service.get_order)
+            context['modes'] = {service.mode for service in context['services'] if service.mode}
         context['breadcrumb'] = [self.object.region]
         return context
 
