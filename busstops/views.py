@@ -229,21 +229,15 @@ class AdminAreaDetailView(DetailView):
             parent=None
         ).defer('latlong').distinct().order_by('name')
 
-        # National Rail/Air/Ferry stops
         if not (context['localities'] or context['districts']):
-            context['stops'] = StopPoint.objects.filter(
-                admin_area=self.object,
-                active=True
-            ).defer('osm', 'latlong').order_by('common_name')
-        else:
-            context['stops'] = StopPoint.objects.filter(admin_area=self.object, active=True,
-                                                        locality=None).defer('osm', 'latlong').order_by('common_name')
+            context['services'] = Service.objects.filter(stops__admin_area=self.object,
+                                                         current=True).distinct().defer('geometry')
 
         context['breadcrumb'] = [self.object.region]
         return context
 
     def render_to_response(self, context):
-        if not len(context['stops']) and len(context['districts']) + len(context['localities']) == 1:
+        if 'services' not in context and len(context['districts']) + len(context['localities']) == 1:
             if not context['localities']:
                 return redirect(context['districts'][0])
             return redirect(context['localities'][0])

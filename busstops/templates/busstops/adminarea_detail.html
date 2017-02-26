@@ -17,10 +17,10 @@
     {% include 'list.html' with list=localities %}
 {% endif %}
 
-{% if stops %}
-    <h2>Stops in {{ adminarea }}</h2>
+{% if services %}
+    <h2>Services in {{ adminarea }}</h2>
 
-    {% include 'list.html' with list=stops %}
+    {% include 'list.html' with list=services %}
 {% endif %}
 
 {% endblock %}
