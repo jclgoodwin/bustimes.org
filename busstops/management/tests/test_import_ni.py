@@ -2,9 +2,10 @@
 """
 import os
 import vcr
+from freezegun import freeze_time
 from django.test import TestCase
-from ...models import StopPoint, Region, AdminArea, Service, StopUsage
-from ..commands import import_ni_stops, enhance_ni_stops, import_ni_services
+from ...models import StopPoint, Region, AdminArea, Service, StopUsage, StopUsageUsage
+from ..commands import import_ni_stops, enhance_ni_stops, import_ni_services, generate_departures
 from .test_import_nptg import ImportNPTGTest
 
 
@@ -126,3 +127,36 @@ class ImportNIServicesTest(TestCase):
         self.assertEqual(self.command.stop_usages[3].stop_id, '700000001567')
         self.assertEqual(self.command.stop_usages[3].direction, 'Outbound')
         self.assertEqual(self.command.stop_usages[3].order, 2)
+
+
+@freeze_time('4 May 2017')
+class GenerateDeparturesTest(TestCase):
+    """Test the generate_departures command for Northenr Ireland
+    """
+    @classmethod
+    def setUpTestData(cls):
+        Region.objects.create(id='NI')
+        StopPoint.objects.bulk_create(
+            (StopPoint(atco_code=atco_code, locality_centre=False, active=True) for atco_code in (
+                '700000012165', '700000012648', '700000012668', '700000012701', '700000012729', '700000012730',
+                '700000012731', '700000012732', '700000012733', '700000012734', '700000012735', '700000012736',
+                '700000012737', '700000012738', '700000012739', '700000012740', '700000012741', '700000012742',
+                '700000012743', '700000012744', '700000012745', '700000012746', '700000012747', '700000012748',
+                '700000012749', '700000012750', '700000012757', '700000012778', '700000012779', '700000012780',
+                '700000012781', '700000012782', '700000012783', '700000015377'
+            ))
+        )
+        Service.objects.create(service_code='95c_ULB', date='2016-01-01', region_id='NI', current=True)
+        generate_departures.handle_region(Region(id='NI'))
+
+    def test_departures(self):
+        response = self.client.get('/stops/700000012733/departures')
+        self.assertContains(response, '<td>18:32</td>')
+        self.assertContains(response, '95c_ULB')
+        self.assertContains(response, '<h3>Friday</h3>')
+        self.assertContains(response, '<h3>Monday</h3>')
+        self.assertContains(response, '<h3>Tuesday</h3>')
+        self.assertContains(response, '<h3>Wednesday</h3>')
+        self.assertContains(response, '<h3>Thursday</h3>')
+
+        self.assertEqual(270, StopUsageUsage.objects.all().count())
