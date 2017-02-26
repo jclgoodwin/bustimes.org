@@ -196,7 +196,7 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(RegionDetailView, self).get_context_data(**kwargs)
 
-        context['areas'] = AdminArea.objects.filter(region=self.object).order_by('name')
+        context['areas'] = AdminArea.objects.filter(region=self.object).exclude(name='').order_by('name')
         context['operators'] = Operator.objects.filter(
             region=self.object, service__current=True
         ).distinct().order_by('name')
@@ -227,7 +227,7 @@ class AdminAreaDetailView(DetailView):
             admin_area_id=self.object.id,
             district=None,
             parent=None
-        ).defer('latlong').distinct().order_by('name')
+        ).exclude(name='').defer('latlong').distinct().order_by('name')
 
         if not (context['localities'] or context['districts']):
             context['services'] = sorted(Service.objects.filter(stops__admin_area=self.object,
