@@ -1,5 +1,5 @@
 coveralls==1.1
-django_coverage_plugin==1.4.2
+django_coverage_plugin==1.5.0
 flake8==3.3.0
 freezegun==0.3.8
 vcrpy==1.10.5
