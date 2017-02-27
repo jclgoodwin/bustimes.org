@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.13.0]
+    method: GET
+    uri: http://transportapi.com/v3/uk/bus/stop/5820AWN26361/live.json?group=no&nextbuses=no
+  response:
+    body: {string: '{"error":"no app_key or app_id parameters provided - see http://transportapi.com
+        for plans and sign-up."}'}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: ['max-age=0, private, must-revalidate']
+      Connection: [Keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 27 Feb 2017 21:35:27 GMT']
+      ETag: [W/"f57088cde67d4b1bdd87890e9cc22a63"]
+      Server: [Apache]
+      Status: [200 OK]
+      Via: [1.1 ID-0002262071213114 uproxy-7]
+      X-Frame-Options: [ALLOWALL]
+      X-Powered-By: [Phusion Passenger 4.0.60]
+      X-Request-Id: [b3b62b48-4736-4e14-a6fe-af08f51c9cea]
+      X-Runtime: ['0.010635']
+      X-Server-ID: [272e76d78df3d41a8b66a17f09ee950a]
+      X-UA-Compatible: [chrome=1]
+      X-XSS-Protection: [1; mode=block]
+    status: {code: 200, message: OK}
+version: 1

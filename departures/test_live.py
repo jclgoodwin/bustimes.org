@@ -58,11 +58,10 @@ class LiveDeparturesTest(TestCase):
         """Test the Transport for London live departures source
         """
         with vcr.use_cassette('data/vcr/tfl_arrivals.yaml'):
-            departures = live.TflDepartures(
+            row = live.TflDepartures(
                 self.london_stop,
                 Service.objects.all()
-            ).get_departures()
-        row = next(departures)
+            ).get_departures()[0]
         self.assertEqual('Stratford City', row['destination'])
         self.assertEqual('388', row['service'])
         self.assertEqual(2016, row['time'].date().year)
@@ -108,23 +107,22 @@ class LiveDeparturesTest(TestCase):
                 'cardiff', self.cardiff_stop, Service.objects.all()
             ).get_departures()
 
-        self.assertEqual(next(departures), {
+        self.assertEqual(departures[0], {
             'destination': 'Churchill Way HL',
             'service': '9',
             'time': '15 mins'
         })
 
-        self.assertEqual(next(departures), {
+        self.assertEqual(departures[1], {
             'destination': 'Churchill Way HL',
             'service': '9',
             'time': '45 mins'
         })
 
-        row = next(departures)
-        self.assertEqual('Pengam Green Tesco', row['destination'])
-        self.assertEqual('11', row['service'])
+        self.assertEqual('Pengam Green Tesco', departures[2]['destination'])
+        self.assertEqual('11', departures[2]['service'])
 
-        self.assertEqual(next(departures), {
+        self.assertEqual(departures[3], {
             'destination': 'Customhouse Str JL',
             'service': '95',
             'time': '49 mins'
@@ -139,26 +137,23 @@ class LiveDeparturesTest(TestCase):
     def _test_acis_yorkshire(self, departures):
         """Test one of the Yorkshire live departures sources against the same set of data
         """
-        self.assertEqual(next(departures), {
+        self.assertEqual(departures[:4], [{
             'destination': 'York Sport Village',
             'service': '66',
             'time': '1 min',
-        })
-        self.assertEqual(next(departures), {
+        }, {
             'destination': 'Heslington East Int',
             'service': '44',
             'time': '9 mins',
-        })
-        self.assertEqual(next(departures), {
+        }, {
             'destination': 'York Sport Village',
             'service': '66',
             'time': '18:42',
-        })
-        self.assertEqual(next(departures), {
+        }, {
             'destination': 'Heslington East Int',
             'service': '44',
             'time': '18:53',
-        })
+        }])
 
         departures = live.get_departures(self.yorkshire_stop, ())[0]
         self.assertEqual(departures['source'], {

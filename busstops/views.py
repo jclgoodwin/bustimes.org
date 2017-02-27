@@ -334,7 +334,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
                 departures['departures'] = departures['departures'].get_departures()
             cache.set(self.object.atco_code, departures, max_age)
 
-        context['departures'] = departures['departures']
+        context.update(departures)
         context['source'] = departures.get('source')
 
         text = ', '.join(part for part in (

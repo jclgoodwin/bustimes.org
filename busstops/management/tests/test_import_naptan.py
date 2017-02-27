@@ -2,6 +2,7 @@
 """
 
 import os
+import vcr
 from django.test import TestCase
 from ...models import Region, AdminArea, StopPoint, Locality, Service, StopUsage
 from ..commands import (update_naptan, import_stop_areas, import_stops, import_stops_in_area,
@@ -153,11 +154,13 @@ class ImportNaptanTest(TestCase):
                 self.assertEqual(1, len(context_manager.output))
                 self.assertEqual(context_manager.output[0][:32], 'ERROR:busstops.management.comman')
 
-        self.assertContains(self.client.get('/stops/5820AWN26361'), 'This stop is no longer active')
+        with vcr.use_cassette(os.path.join(DIR, 'fixtures', '5820AWN26361.yaml')):
+            self.assertContains(self.client.get('/stops/5820AWN26361'), 'This stop is no longer active')
 
-        legion_request = self.client.get('/stops/5820AWN26274')
-        self.assertContains(legion_request, 'On Talbot Road, near Eagle Street, near Port Talbot ' +
-                            'British Legion')
+        with vcr.use_cassette(os.path.join(DIR, 'fixtures', '5820AWN26274.yaml')):
+            legion_request = self.client.get('/stops/5820AWN26274')
+            self.assertContains(legion_request, 'On Talbot Road, near Eagle Street, near Port Talbot ' +
+                                'British Legion')
         self.assertContains(legion_request, 'Services')
         self.assertContains(legion_request, '44 - Port Talbot Circular')
         self.assertContains(legion_request, """

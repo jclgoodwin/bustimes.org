@@ -129,11 +129,11 @@ class ImportNIServicesTest(TestCase):
         self.assertEqual(self.command.stop_usages[3].order, 2)
 
 
-@freeze_time('4 May 2017')
 class GenerateDeparturesTest(TestCase):
     """Test the generate_departures command for Northenr Ireland
     """
     @classmethod
+    @freeze_time('4 May 2017')
     @override_settings(DATA_DIR=os.path.join(DIR, 'fixtures'))
     def setUpTestData(cls):
         Region.objects.create(id='NI')
@@ -150,8 +150,10 @@ class GenerateDeparturesTest(TestCase):
         Service.objects.create(service_code='95c_ULB', date='2016-01-01', region_id='NI', current=True)
         generate_departures.handle_region(Region(id='NI'))
 
+    @freeze_time('3 May 2017 23:50')
     def test_departures(self):
         response = self.client.get('/stops/700000012733/departures')
+        self.assertContains(response, '<h2>Next departures</h2>\n    \n        \n            \n                <h3>Thursday</h3>')
         self.assertContains(response, '<td>18:32</td>')
         self.assertContains(response, '95c_ULB')
         self.assertContains(response, '<h3>Friday</h3>')
@@ -159,5 +161,6 @@ class GenerateDeparturesTest(TestCase):
         self.assertContains(response, '<h3>Tuesday</h3>')
         self.assertContains(response, '<h3>Wednesday</h3>')
         self.assertContains(response, '<h3>Thursday</h3>')
+        self.assertNotContains(response, 'Saturday')
 
         self.assertEqual(270, StopUsageUsage.objects.all().count())

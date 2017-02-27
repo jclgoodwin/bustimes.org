@@ -1,10 +1,15 @@
 # coding=utf-8
+import os
 import json
+import vcr
 from django.test import TestCase
 from django.core import mail
 from django.contrib.gis.geos import Point
 from django.shortcuts import render
 from .models import Region, AdminArea, District, Locality, StopPoint, Operator, Service, Note
+
+
+DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class ContactTests(TestCase):
@@ -208,7 +213,8 @@ class ViewsTests(TestCase):
         self.assertIn('features', response.json())
 
     def test_stop(self):
-        response = self.client.get('/stops/2900M114')
+        with vcr.use_cassette(os.path.join(DIR, '..', 'data', 'vcr', '2900M114.yaml')):
+            response = self.client.get('/stops/2900M114')
         self.assertContains(response, 'North')
         self.assertContains(response, 'Norfolk')
         self.assertContains(response, 'Melton Constable, opp Bus Shelter')
