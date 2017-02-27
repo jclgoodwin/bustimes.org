@@ -36,6 +36,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'busstops.middleware.real_ip_middleware',
     'busstops.middleware.not_found_redirect_middleware',
 ]
 

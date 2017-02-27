@@ -59,7 +59,7 @@ class NoteAdmin(admin.ModelAdmin):
 
 class JourneyAdmin(admin.ModelAdmin):
     list_display = ('id', 'service', 'datetime')
-    list_filter = ('service__region', 'service__operator')
+    list_filter = ('service__region',)
     raw_id_fields = ('service', 'destination')
     ordering = ('id',)
 

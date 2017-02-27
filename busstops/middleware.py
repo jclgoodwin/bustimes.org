@@ -2,6 +2,14 @@ from django.shortcuts import redirect
 from busstops.models import Service, StopPoint
 
 
+def real_ip_middleware(get_response):
+    def middleware(request):
+        if 'HTTP_X_REAL_IP' in request.META:
+            request.META['REMOTE_ADDR'] = request.META['HTTP_X_REAL_IP']
+        return get_response(request)
+    return middleware
+
+
 def not_found_redirect_middleware(get_response):
     """
     Redirects from /services/17-N4-_-y08-1 to /services/17-N4-_-y08-2, for example,
