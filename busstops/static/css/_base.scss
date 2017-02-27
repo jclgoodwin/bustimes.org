@@ -516,7 +516,11 @@ input:not(:checked) + label {
         padding: .125em .5em;
         vertical-align: top;
 
-        &:first-child {
+        &:nth-child(2) {
+            width: 100%;
+        }
+
+        &:last-child {
             white-space: nowrap;
         }
 

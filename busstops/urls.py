@@ -16,7 +16,6 @@ urlpatterns = [
     url(r'^(admin-)?areas/(?P<pk>\d+)', views.AdminAreaDetailView.as_view(), name='adminarea-detail'),
     url(r'^districts/(?P<pk>\d+)', views.DistrictDetailView.as_view(), name='district-detail'),
     url(r'^localities/(?P<pk>\w+)', views.LocalityDetailView.as_view(), name='locality-detail'),
-    url(r'^stops/(?P<pk>\w+)/departures', views.departures),
     url(r'^stops/(?P<pk>\w+)\.json', views.stop_json),
     url(r'^stops/(?P<pk>\w+)', views.StopPointDetailView.as_view(), name='stoppoint-detail'),
     url(r'^operators/(?P<pk>\w+)', views.OperatorDetailView.as_view(), name='operator-detail'),

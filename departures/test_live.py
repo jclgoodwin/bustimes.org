@@ -76,23 +76,23 @@ class LiveDeparturesTest(TestCase):
         })
 
         with vcr.use_cassette('data/vcr/tfl_arrivals.yaml'):
-            response = self.client.get('/stops/' + self.london_stop.pk + '/departures')
-        self.assertEqual(response['cache-control'], 'max-age=60')
+            response = self.client.get('/stops/' + self.london_stop.pk)
+        # self.assertEqual(response['cache-control'], 'max-age=60')
         self.assertContains(response, """
             <div class="aside box">
                 <h2>Next departures</h2>
                 <table><tbody>
-                    <tr><td>18:44</td><td>388</td><td>Stratford City</td></tr>
-                    <tr><td>18:26</td><td>388</td><td>Stratford City</td></tr>
-                    <tr><td>18:26</td><td>8</td><td>Bow Church</td></tr>
-                    <tr><td>18:44</td><td>8</td><td>Bow Church</td></tr>
-                    <tr><td>18:49</td><td>8</td><td>Bow Church</td></tr>
-                    <tr><td>18:33</td><td>8</td><td>Bow Church</td></tr>
-                    <tr><td>18:37</td><td>8</td><td>Bow Church</td></tr>
-                    <tr><td>18:22</td><td>8</td><td>Bow Church</td></tr>
-                    <tr><td>18:44</td><td>D3</td><td>Bethnal Green, Chest Hospital</td></tr>
-                    <tr><td>18:33</td><td>D3</td><td>Bethnal Green, Chest Hospital</td></tr>
-                    <tr><td>18:23</td><td>D3</td><td>Bethnal Green, Chest Hospital</td></tr>
+                    <tr><td>388</td><td>Stratford City</td><td>18:44</td></tr>
+                    <tr><td>388</td><td>Stratford City</td><td>18:26</td></tr>
+                    <tr><td>8</td><td>Bow Church</td><td>18:26</td></tr>
+                    <tr><td>8</td><td>Bow Church</td><td>18:44</td></tr>
+                    <tr><td>8</td><td>Bow Church</td><td>18:49</td></tr>
+                    <tr><td>8</td><td>Bow Church</td><td>18:33</td></tr>
+                    <tr><td>8</td><td>Bow Church</td><td>18:37</td></tr>
+                    <tr><td>8</td><td>Bow Church</td><td>18:22</td></tr>
+                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td><td>18:44</td></tr>
+                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td><td>18:33</td></tr>
+                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td><td>18:23</td></tr>
                 </tbody></table>
                 <p class="credit">Data from
                 <a href=https://tfl.gov.uk/bus/stop/490014721F/wilmot-street>
@@ -334,11 +334,11 @@ class LiveDeparturesTest(TestCase):
             <div class="aside box">
                 <h2>Next departures</h2>
                 <table><tbody>
-                    <tr><td>11:53</td><td>X98</td><td>Bratislava</td></tr>
+                    <tr><td>X98</td><td>Bratislava</td><td>11:53</td></tr>
                 </tbody></table>
                 <h3>Saturday</h3>
                 <table><tbody>
-                    <tr><td>11:53</td><td>9</td><td>Shilbottle</td></tr>
+                    <tr><td>9</td><td>Shilbottle</td><td>11:53</td></tr>
                 </tbody></table>
                 <p class="credit"></p>
             </div>

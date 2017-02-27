@@ -7,11 +7,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.http import (HttpResponse, JsonResponse, Http404,
                          HttpResponseBadRequest)
-from django.utils.cache import patch_response_headers
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
 from django.contrib.gis.db.models.functions import Distance
+from django.core.cache import cache
 from django.core.mail import EmailMessage
 from departures import live
 from .utils import format_gbp, timetable_from_service, get_files_from_zipfile
@@ -325,6 +325,18 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         if not (self.object.active or context['services']):
             raise Http404()
 
+        departures = cache.get(self.object.atco_code)
+        if not departures:
+            departures, max_age = live.get_departures(
+                self.object, context['services']
+            )
+            if hasattr(departures['departures'], 'get_departures'):
+                departures['departures'] = departures['departures'].get_departures()
+            cache.set(self.object.atco_code, departures, max_age)
+
+        context['departures'] = departures['departures']
+        context['source'] = departures.get('source')
+
         text = ', '.join(part for part in (
             'on ' + self.object.street if self.object.street else None,
             'near ' + self.object.crossing if self.object.crossing else None,
@@ -345,10 +357,10 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         ).order_by('atco_code').defer('osm')
 
         context['breadcrumb'] = (crumb for crumb in (
-            self.object.admin_area.region if self.object.admin_area else Region.objects.get(pk='NI'),
+            self.object.admin_area and self.object.admin_area.region,
             self.object.admin_area,
-            self.object.locality.district if self.object.locality else None,
-            self.object.locality.parent if self.object.locality else None,
+            self.object.locality and self.object.locality.district,
+            self.object.locality and self.object.locality.parent,
             self.object.locality,
         ) if crumb is not None)
         return context
@@ -379,18 +391,6 @@ def stop_json(_, pk):
         'admin_area': stop.admin_area_id,
         'active': stop.active,
     }, safe=False)
-
-
-def departures(request, pk):
-    stop = get_object_or_404(StopPoint, atco_code=pk)
-    context, max_age = live.get_departures(
-        stop, Service.objects.filter(stops=pk, current=True).defer('geometry')
-    )
-    if hasattr(context['departures'], 'get_departures'):
-        context['departures'] = context['departures'].get_departures()
-    response = render(request, 'departures.html', context)
-    patch_response_headers(response, cache_timeout=max_age)
-    return response
 
 
 class OperatorDetailView(UppercasePrimaryKeyMixin, DetailView):

@@ -99,11 +99,6 @@ ga('send', 'pageview');
 {% if stopusages or stops or stoppoint %}
 <link rel="stylesheet" property="styleseet" href="{% static 'js/bower_components/leaflet/dist/leaflet.css' %}" />
 {% javascript 'map' %}
-{% if stoppoint and services %}
-<esi:remove>
-{% javascript 'departures' %}
-</esi:remove>
-{% endif %}
 {% elif regions %}
 {% javascript 'frontpage' %}
 {% elif timetables %}

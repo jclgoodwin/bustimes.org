@@ -74,11 +74,11 @@ class TflDepartures(Departures):
                 self.stop.common_name = name
                 self.stop.heading = heading
                 self.stop.save()
-        return ({
+        return [{
             'time': dateutil.parser.parse(item.get('expectedArrival')).astimezone(LOCAL_TIMEZONE),
             'service': self.get_service(item.get('lineName')),
             'destination': item.get('destinationName'),
-        } for item in res.json())
+        } for item in res.json()]
 
 
 class AcisDepartures(Departures):
@@ -102,11 +102,11 @@ class AcisLiveDepartures(AcisDepartures):
         soup = BeautifulSoup(res.text, 'lxml')
         cells = [cell.text.strip() for cell in soup.find_all('td')]
         rows = (cells[i * 4 - 4:i * 4] for i in range(1, int(len(cells) / 4) + 1))
-        return ({
+        return [{
             'time': row[2],
             'service': self.get_service(row[0]),
             'destination': row[1]
-        } for row in rows)
+        } for row in rows]
 
 
 class AcisConnectDepartures(AcisDepartures):
@@ -136,17 +136,16 @@ class AcisConnectDepartures(AcisDepartures):
             return
         rows = (row.findAll('td') for row in table.findAll('tr')[1:])
         if self.prefix == 'yorkshire':
-            return ({
+            return [{
                 'time': self.get_time(row[2]),
                 'service': self.get_service(row[0].text),
                 'destination': row[1].text
-            } for row in rows)
-        else:
-            return ({
-                'time': self.get_time(row[4]),
-                'service': self.get_service(row[0].text),
-                'destination': row[2].text
-            } for row in rows)
+            } for row in rows]
+        return [{
+            'time': self.get_time(row[4]),
+            'service': self.get_service(row[0].text),
+            'destination': row[2].text
+        } for row in rows]
 
 
 class TransportApiDepartures(Departures):
@@ -217,7 +216,7 @@ class TimetableDepartures(Departures):
             'time': suu.datetime,
             'destination': suu.journey.destination.locality or suu.journey.destination.town,
             'service': suu.journey.service
-        } for suu in queryset.select_related('stop', 'journey__destination__locality', 'journey__service')[:10]]
+        } for suu in queryset.select_related('journey__destination__locality', 'journey__service')[:10]]
 
 
 class StagecoachDepartures(Departures):
