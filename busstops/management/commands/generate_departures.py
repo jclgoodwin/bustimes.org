@@ -57,11 +57,12 @@ def do_ni_service(service, groupings, day):
             stopusageusages = []
             for i, su in enumerate(journey['StopUsages']):
                 if su['Location'][0] != '7':
-                    print(service)
+                    print(service, su)
                     continue
+                destination = su['Location']
                 if su['Activity'] != 'S' and su['Departure']:
                     if previous_time and su['Departure'] < previous_time:
-                        print(su)
+                        print(service, su)
                     stopusageusages.append(
                         StopUsageUsage(datetime='{} {}'.format(day, su['Departure']),
                                        order=i, stop_id=su['Location'])
@@ -69,7 +70,6 @@ def do_ni_service(service, groupings, day):
                 previous_time = su['Departure']
 
             departure = stopusageusages[0].datetime
-            destination = journey['StopUsages'][-1]['Location']
             journey = Journey(service=service, datetime=departure, destination_id=destination)
             journey.save()
             for suu in stopusageusages:
