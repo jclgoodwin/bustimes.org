@@ -97,6 +97,6 @@ server {
     }
 
     location = /robots.txt {
-        return 200 'User-agent: *\nDisallow: /admin/\nDisallow: /stops/*/departures';
+        return 200 'User-agent: *\nCrawl-delay: 2\nDisallow: /admin/\nDisallow: /services/*?date=*';
     }
 }
