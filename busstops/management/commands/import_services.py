@@ -236,7 +236,7 @@ class Command(BaseCommand):
         (for the NCSD), does stuff
         """
 
-        timetable = Timetable(open_file, None, None)
+        timetable = Timetable(open_file, None)
 
         operators = [operator for operator in map(self.get_operator, timetable.operators) if operator]
 

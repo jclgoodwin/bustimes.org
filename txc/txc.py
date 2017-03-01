@@ -770,7 +770,7 @@ class Timetable(object):
                 'day': calendar.day_name[self.date.weekday()]
             }
 
-    def __init__(self, open_file, date, description=None):
+    def __init__(self, open_file, date, description=''):
         iterator = ET.iterparse(open_file)
 
         element = None
