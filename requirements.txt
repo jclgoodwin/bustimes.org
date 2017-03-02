@@ -1,10 +1,10 @@
 beautifulsoup4==4.5.3
-Django==1.10.5
+Django==1.10.6
 django-email-obfuscator==0.1.5
 git+https://github.com/django-haystack/django-haystack@master
 django-pipeline==1.6.11
 lxml==3.7.3
-psycopg2==2.6.2
+psycopg2==2.7
 python-dateutil==2.6.0
 pytz==2016.10
 raven==6.0.0
