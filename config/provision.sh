@@ -4,10 +4,10 @@
 # new server. It is specifically supposed to be used as a Linode StackScript,
 # hence these user-defined variables:
 #
-# <UDF name="hostname" Label="Hostname" default="solo" />
+# <UDF name="hostname" Label="Hostname" />
 # <UDF name="user" Label="Username" default="josh" />
 # <UDF name="pass" Label="Password" />
-# <UDF name="db_pass" Label="Password" />
+# <UDF name="db_pass" Label="Database Password" />
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -87,7 +87,7 @@ echo 'grant all privileges on database bustimes to bustimes' | psql
 "
 
 su -l "$USER" -c "
-# clone git repositroy
+# clone git repository
 git clone https://github.com/jclgoodwin/bustimes.org.uk.git
 cd bustimes.org.uk
 
@@ -103,8 +103,10 @@ npm install yuglify bower
 cd busstops/static/js
 ../../../node_modules/.bin/bower install
 cd ../../..
-./manage.py collectstatic
+./manage.py collectstatic --noinput
 ./manage.py sendtestemail --admin
+
+cp config/gunicorn.sample.py config/gunicorn.py
 "
 
 echo "[Unit]

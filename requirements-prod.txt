@@ -1,4 +1,4 @@
 django-template-minifier==1.1.0
 elasticsearch>=2.0.0,<3.0.0
-gunicorn==19.6.0
+gunicorn==19.7.0
 python-memcached==1.58
