@@ -28,4 +28,5 @@ script:
   - sass-lint 'busstops/static/css/*' -v
   - eslint 'busstops/static/js/*.js'
 after_success:
-  coveralls
+  - coveralls
+  - git status
