@@ -94,8 +94,8 @@
             return;
         }
 
-        var latLng = event.target.getCenter();
-        var latLngString = Math.round(latLng.lat * 10000) / 10000 + ',' + Math.round(latLng.lng * 10000) / 10000;
+        var latLng = event.target.getCenter(),
+            latLngString = Math.round(latLng.lat * 10000) / 10000 + ',' + Math.round(latLng.lng * 10000) / 10000;
 
         if (history.replaceState) {
             history.replaceState(null, null, window.location.pathname + '#' + latLngString);
@@ -103,7 +103,9 @@
         if (localStorage) {
             try {
                 localStorage.setItem('location', latLngString);
-            } catch (ignore) {}
+            } catch (ignore) {
+                // never mind
+            }
         }
 
         if (event.target.getZoom() > 13) {
