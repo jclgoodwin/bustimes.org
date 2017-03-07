@@ -127,9 +127,7 @@ for region in "${REGIONS[@]}"; do
     if [[ $region_old != $region_new ]]; then
         s3cmd put $region.zip s3://bustimes-backup/$region-$date.zip
         # updated_services=1
-        /usr/bin/time -v ../../manage.py import_services $region.zip
-        # delete older files
-        find $region -type f ! -newer $region.zip -delete
+        ../../manage.py import_services $region.zip
     fi
 done
 # [ $updated_services ] && ../../manage.py update_index --remove
