@@ -70,11 +70,11 @@
                     iconAnchor: [8, 22],
                     popupAnchor: [0, -22],
                 }),
-                setUpPopup = function(location, label) {
+                setUpPopup = function (location, label) {
                     var marker = L.marker(location, {icon: pinWhite}).addTo(map).bindPopup(label.innerHTML),
                         a = label.getElementsByTagName('a');
                     if (a.length) {
-                        a[0].onmouseover = function() {
+                        a[0].onmouseover = function () {
                             marker.openPopup();
                         };
                     }

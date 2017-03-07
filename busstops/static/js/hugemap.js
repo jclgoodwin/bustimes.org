@@ -88,23 +88,25 @@
         map.highWater = bounds;
     }
 
-    map.on('moveend', function (e) {
+    map.on('moveend', function (event) {
         if (window.movedByAccident) {
             window.movedByAccident = false;
             return;
         }
 
-        var latLng = e.target.getCenter();
+        var latLng = event.target.getCenter();
         var latLngString = Math.round(latLng.lat * 10000) / 10000 + ',' + Math.round(latLng.lng * 10000) / 10000;
 
         if (history.replaceState) {
             history.replaceState(null, null, window.location.pathname + '#' + latLngString);
         }
         if (localStorage) {
-            localStorage.setItem('location', latLngString);
+            try {
+                localStorage.setItem('location', latLngString);
+            } catch (ignore) {}
         }
 
-        if (e.target.getZoom() > 13) {
+        if (event.target.getZoom() > 13) {
             loadStops(this, statusBar);
         } else {
             statusBar.getContainer().innerHTML = 'Please zoom in to see stops';
