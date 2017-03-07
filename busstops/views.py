@@ -432,6 +432,11 @@ class ServiceDetailView(DetailView):
 
         if self.object.show_timetable or self.object.region_id == 'NI':
             date = self.request.GET.get('date')
+            if date:
+                try:
+                    date = datetime.strptime(date, '%Y-%m-%d').date()
+                except ValueError:
+                    date = None
             if not date:
                 next_usage = StopUsageUsage.objects.filter(journey__service=self.object,
                                                            datetime__gte=datetime.now()).order_by('datetime').first()

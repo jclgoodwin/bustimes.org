@@ -14,12 +14,12 @@ class TimetableTest(TestCase):
 
     def test_timetable_none(self):
         """timetable_from_filename should return None if there is an error"""
-        none = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-', '2017-01-21')
+        none = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-', date(2017, 1, 21))
         self.assertIsNone(none)
 
     def test_timetable_ea(self):
         """Test a timetable from the East Anglia region"""
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-1.xml', '2016-10-16')
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-1.xml', date(2016, 10, 16))
 
         self.assertEqual('Monday to Sunday', str(timetable.operating_profile))
         self.assertEqual('until 21 October 2016', str(timetable.operating_period))
@@ -36,7 +36,7 @@ class TimetableTest(TestCase):
 
     def test_timetable_ea_2(self):
         """Test a timetable with a single OperatingProfile (no per-VehicleJourney ones)"""
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_20-12-_-y08-1.xml', '2016-12-02')
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_20-12-_-y08-1.xml', date(2016, 12, 2))
 
         self.assertEqual('Monday to Friday', str(timetable.operating_profile))
         self.assertEqual('', str(timetable.operating_period))
@@ -59,7 +59,7 @@ class TimetableTest(TestCase):
     def test_timetable_megabus(self):
         """Test a timetable from the National Coach Services Database"""
         megabus = txc.timetable_from_filename(FIXTURES_DIR, 'Megabus_Megabus14032016 163144_MEGA_M11A.xml',
-                                              '2016-12-02')
+                                              date(2016, 12, 2))
         self.assertFalse(megabus.groupings[0].has_minor_stops())
         self.assertFalse(megabus.groupings[1].has_minor_stops())
         self.assertEqual(megabus.groupings[0].rows[0].times,
@@ -67,7 +67,7 @@ class TimetableTest(TestCase):
 
     def test_timetable_ne(self):
         """Test timetable with some abbreviations"""
-        timetable_ne = txc.timetable_from_filename(FIXTURES_DIR, 'NE_03_SCC_X6_1.xml', '2016-12-15')
+        timetable_ne = txc.timetable_from_filename(FIXTURES_DIR, 'NE_03_SCC_X6_1.xml', date(2016, 12, 15))
         self.assertEqual('Kendal - Barrow-in-Furness', str(timetable_ne.groupings[0]))
         self.assertEqual(
             timetable_ne.groupings[0].rows[0].times[:3], [time(7, 0), time(8, 0), time(9, 0)]
@@ -80,7 +80,7 @@ class TimetableTest(TestCase):
 
     def test_timetable_scotland(self):
         """Test a Scotch timetable with no foot"""
-        timetable_scotland = txc.timetable_from_filename(FIXTURES_DIR, 'SVRABBN017.xml', '2017-01-28')
+        timetable_scotland = txc.timetable_from_filename(FIXTURES_DIR, 'SVRABBN017.xml', date(2017, 1, 28))
         self.assertEqual(timetable_scotland.groupings[0].column_feet, {})
 
     def test_timetable_deadruns(self):
@@ -99,17 +99,18 @@ class TimetableTest(TestCase):
 
     def test_timetable_servicedorg(self):
         """Test a timetable with a ServicedOrganisation"""
-        timetable_during_holiday = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml', '2016-08-31')
+        timetable_during_holiday = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml',
+                                                               date(2016, 8, 31))
         self.assertEqual([], timetable_during_holiday.groupings[0].rows[0].times)
 
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml', '2016-09-10')
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml', date(2016, 9, 10))
         self.assertEqual([time(8, 2)], timetable.groupings[0].rows[0].times)
 
     def test_timetable_welsh_servicedorg(self):
         """Test a timetable from Wales (with SequenceNumbers on Journeys),
         with a university ServicedOrganisation
         """
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'CGAO305.xml', '2017-01-23')
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'CGAO305.xml', date(2017, 1, 23))
         self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
 
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'CGAO305.xml', None)
@@ -118,21 +119,21 @@ class TimetableTest(TestCase):
     def test_timetable_holidays_only(self):
         """Test a service with a HolidaysOnly operating profile
         """
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'twm_6-14B-_-y11-1.xml', '2017-01-23')
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'twm_6-14B-_-y11-1.xml', date(2017, 1, 23))
         self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
         self.assertEqual(0, len(timetable.groupings[1].rows[0].times))
 
     def test_timetable_goole(self):
         # outside of operating period
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'SVRYEAGT00.xml', '2007-06-27')
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'SVRYEAGT00.xml', date(2007, 6, 27))
         self.assertFalse(hasattr(timetable, 'groupings'))
         self.assertEqual('', timetable.mode)
 
         # during a DaysOfNonOperation
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'SVRYEAGT00.xml', '2012-06-27')
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'SVRYEAGT00.xml', date(2012, 6, 27))
         self.assertEqual([], timetable.groupings[0].rows[0].times)
 
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'SVRYEAGT00.xml', '2017-01-27')
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'SVRYEAGT00.xml', date(2017, 1, 27))
         self.assertEqual(timetable.groupings[0].rows[0].times, ['', '', time(9, 48), time(10, 28), time(11, 8),
                                                                 time(11, 48), time(12, 28), time(13, 8), time(13, 48),
                                                                 time(14, 28), time(15, 8), '', ''])

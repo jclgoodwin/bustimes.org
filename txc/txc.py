@@ -777,11 +777,7 @@ class Timetable(object):
         servicedorgs = None
 
         self.description = description
-
-        if date and not isinstance(date, datetime.date):
-            self.date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
-        else:
-            self.date = date
+        self.date = date
 
         for _, element in iterator:
             tag = element.tag[33:]

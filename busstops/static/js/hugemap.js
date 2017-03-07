@@ -117,7 +117,11 @@
 
     if (localStorage) {
         map.on('locationfound', function (event) {
-            localStorage.setItem('location', event.latitude.toString() + ',' + event.longitude);
+            try {
+                localStorage.setItem('location', event.latitude.toString() + ',' + event.longitude);
+            } catch (ignore) {
+                // never mind
+            }
         });
     }
 
