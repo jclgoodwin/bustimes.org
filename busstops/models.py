@@ -345,6 +345,12 @@ class StopUsageUsage(models.Model):
     datetime = models.DateTimeField()
     order = models.PositiveIntegerField()
 
+    class Meta():
+        index_together = (
+            ('journey', 'datetime'),
+            ('stop', 'datetime')
+        )
+
     def __str__(self):
         return '{} {}'.format(self.stop, self.datetime)
 
