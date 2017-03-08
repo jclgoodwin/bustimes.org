@@ -187,6 +187,10 @@ class ImportServicesTest(TestCase):
                              ('Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch Park ', ''))
             self.assertTrue('too long in' in str(caught_warnings[0].message))
 
+            for (line_name, line_brand) in (('ZAP', 'Cityzap'), ('TAD', 'Tadfaster')):
+                element[0][0][0].text = line_name
+                self.assertEqual(self.command.get_line_name_and_brand(element, None), (line_name, line_brand))
+
     @classmethod
     def do_service(cls, filename, region_id):
         filename = '%s.xml' % filename
@@ -229,7 +233,7 @@ class ImportServicesTest(TestCase):
     @override_settings(TNDS_DIR=FIXTURES_DIR)
     @freeze_time('22 January 2017')
     def test_do_service_m11a(self):
-        res = self.client.get('/services/M11A_MEGA')
+        res = self.client.get('/services/M11A_MEGA?date=ceci n\'est pas une date')
 
         service = res.context_data['object']
 
@@ -244,7 +248,8 @@ class ImportServicesTest(TestCase):
 
         self.assertEqual(res.context_data['breadcrumb'], (self.gb, self.megabus))
         self.assertTemplateUsed(res, 'busstops/service_detail.html')
-        self.assertContains(res, '<h1>M11A - Belgravia - Liverpool</h1>', html=True)
+        self.assertContains(res, '<h1>M11A - Belgravia - Liverpool</h1>')
+        self.assertContains(res, '<option selected value="2017-01-22">Sunday 22 January 2017</option>')
         self.assertContains(
             res,
             """
@@ -258,8 +263,13 @@ class ImportServicesTest(TestCase):
         )
 
     @override_settings(TNDS_DIR=FIXTURES_DIR)
+    @freeze_time('1 Dec 2016')
     def test_do_service_m12(self):
-        res = self.client.get('/services/M12_MEGA?date=2017-01-15')
+        res = self.client.get('/services/M12_MEGA')
+
+        # The date of the next StopUsageUsage should be used, even though today is 1 Dec 2016
+        self.assertContains(res, '<option selected value="2017-01-01">Sunday 1 January 2017</option>')
+
         groupings = res.context_data['timetables'][0].groupings
         outbound_stops = [str(row.part.stop) for row in groupings[0].rows]
         inbound_stops = [str(row.part.stop) for row in groupings[1].rows]
@@ -337,18 +347,3 @@ class ImportServicesTest(TestCase):
 
         # clean up
         os.remove(os.path.join(FIXTURES_DIR, 'NCSD.zip'))
-
-        return
-        for parts in (
-                ('EA', 'ea_21-13B-B-y08-1'),
-                ('NCSD', 'NCSD_TXC', 'Megabus_Megabus14032016 163144_MEGA_M11A'),
-                ('NCSD', 'NCSD_TXC', 'Megabus_Megabus14032016 163144_MEGA_M12'),
-                ('NCSD', 'Megabus_Megabus14032016 163144_MEGA_M12'),
-                ('S', 'SVRABBN017')
-        ):
-            os.remove(os.path.join(FIXTURES_DIR, *parts))
-
-        os.rmdir(os.path.join(FIXTURES_DIR, 'EA'))
-        os.rmdir(os.path.join(FIXTURES_DIR, 'NCSD/NCSD_TXC'))
-        os.rmdir(os.path.join(FIXTURES_DIR, 'NCSD'))
-        os.rmdir(os.path.join(FIXTURES_DIR, 'S'))

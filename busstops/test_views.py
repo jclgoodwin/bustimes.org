@@ -6,7 +6,7 @@ from django.test import TestCase
 from django.core import mail
 from django.contrib.gis.geos import Point
 from django.shortcuts import render
-from .models import Region, AdminArea, District, Locality, StopPoint, Operator, Service, Note
+from .models import Region, AdminArea, District, Locality, StopPoint, StopUsage, Operator, Service, Note
 
 
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -109,6 +109,7 @@ class ViewsTests(TestCase):
             region=cls.north,
             current=False
         )
+        StopUsage.objects.create(service=cls.inactive_service, stop=cls.stop, order=0)
         cls.inactive_service_with_alternative = Service.objects.create(
             pk='45B',
             line_name='45B',
@@ -182,8 +183,17 @@ class ViewsTests(TestCase):
 
     def test_search(self):
         response = self.client.get('/search?q=melton')
-        self.assertContains(response, '1 result found')
+        self.assertContains(response, '1 result found for')
         self.assertContains(response, 'Melton Constable')
+
+        response = self.client.get('/search?q=mlton')
+        self.assertContains(response, '0 results found for')
+
+        response = render(None, 'search/search.html', {
+            'query': True,
+            'suggestion': 'bordeaux'
+        })
+        self.assertContains(response, '<p>Did you mean <a href="/search?q=bordeaux">bordeaux</a>?</p>')
 
     def test_admin_area(self):
         """Admin area containing just one child should redirect to that child"""
@@ -253,7 +263,7 @@ class ViewsTests(TestCase):
                                 '&#110;&#115;&#108;&#101;&#121;&#64;&#101;&#120;&#97;&#109;' +
                                 '&#112;&#108;&#101;&#46;&#99;&#111;&#109;')
             self.assertContains(response, 'http://isyourgirlfriendahorse.com')
-            self.assertContains(response, 'Mind your head')
+            self.assertContains(response, 'Mind your head')  # Note
 
         self.assertContains(amphtml_response, '<style amp-custom>')
         self.assertContains(amphtml_response, "\"data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000")
@@ -281,11 +291,8 @@ class ViewsTests(TestCase):
             'Sorry, it looks like the  service <strong>45A</strong> no longer exists. It might have',
             status_code=404
         )
-        self.assertContains(
-            response,
-            'Services operated by Ainsley',
-            status_code=404
-        )
+        self.assertContains(response, 'Services operated by Ainsley', status_code=404)
+        self.assertContains(response, '<li><a href="/localities/E0048689">Melton Constable</a></li>', status_code=404)
 
     def test_service_xml(self):
         response = self.client.get('/services/ea_21-45-A-y08.xml')

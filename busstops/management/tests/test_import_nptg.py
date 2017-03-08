@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 import os
 from django.test import TestCase
+from .. import import_from_csv
 from ..commands import (
     import_regions, import_areas, import_districts, import_localities, import_locality_hierarchy
 )
@@ -89,3 +90,8 @@ class ImportNPTGTest(TestCase):
 
         self.assertContains(self.client.get(self.cambridge.get_absolute_url()), 'Addenbrooke')
         self.assertContains(self.client.get(self.addenbrookes.get_absolute_url()), 'Captain Birdseye Road')
+
+    def test_super(self):
+        command = import_from_csv.ImportFromCSVCommand()
+        with self.assertRaises(NotImplementedError):
+            command.handle_row(None)
