@@ -9,4 +9,4 @@ python-dateutil==2.6.0
 pytz==2016.10
 raven==6.0.0
 requests==2.13.0
-titlecase==0.8.2
+titlecase==0.9.0
