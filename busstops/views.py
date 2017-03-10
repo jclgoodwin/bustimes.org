@@ -16,7 +16,7 @@ from django.core.mail import EmailMessage
 from departures import live
 from .utils import format_gbp, timetable_from_service, get_files_from_zipfile
 from .models import (Region, StopPoint, AdminArea, Locality, District,
-                     Operator, Service, Note, StopUsageUsage)
+                     Operator, Service, Note, Journey)
 from .forms import ContactForm
 
 
@@ -407,10 +407,7 @@ class OperatorDetailView(UppercasePrimaryKeyMixin, DetailView):
         if not context['services']:
             raise Http404()
         context['modes'] = {service.mode for service in context['services'] if service.mode}
-        areas = AdminArea.objects.filter(stoppoint__service__in=context['services']).distinct()
         context['breadcrumb'] = [self.object.region]
-        if len(areas) == 1:
-            context['breadcrumb'].append(areas[0])
         return context
 
 
@@ -438,8 +435,8 @@ class ServiceDetailView(DetailView):
                 except ValueError:
                     date = None
             if not date:
-                next_usage = StopUsageUsage.objects.filter(journey__service=self.object,
-                                                           datetime__gte=datetime.now()).order_by('datetime').first()
+                next_usage = Journey.objects.filter(service=self.object)
+                next_usage = next_usage.filter(datetime__gte=datetime.now()).order_by('datetime').first()
                 if next_usage:
                     date = next_usage.datetime.date()
             context['timetables'] = timetable_from_service(self.object, date)
