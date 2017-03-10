@@ -146,7 +146,6 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'busstops.context_processors.amp',
-                'busstops.context_processors.random',
             )
         }
     }
