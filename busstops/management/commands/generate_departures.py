@@ -115,4 +115,4 @@ def handle_region(region):
 class Command(BaseCommand):
     def handle(self, *args, **options):
         pool = Pool(processes=4)
-        pool.map(handle_region, Region.objects.all().exclude(id__in=('L', 'Y')))
+        pool.map(handle_region, Region.objects.all().exclude(id='L'))
