@@ -212,56 +212,10 @@ class TimetableDepartures(Departures):
     def get_departures(self):
         queryset = StopUsageUsage.objects.filter(datetime__gte=self.now, stop=self.stop).order_by('datetime')
         return [{
-            'time': suu.datetime.astimezone(),
+            'time': suu.datetime.astimezone(LOCAL_TIMEZONE),
             'destination': suu.journey.destination.locality or suu.journey.destination.town,
             'service': suu.journey.service
         } for suu in queryset.select_related('journey__destination__locality', 'journey__service')[:10]]
-
-
-class StagecoachDepartures(Departures):
-    def __init__(self, stop, services, now):
-        self.now = now
-        super(StagecoachDepartures, self).__init__(stop, services)
-
-    def get_response(self):
-        return SESSION.post(
-            'https://api.stagecoachbus.com/tis/v3/stop-event-query',
-            headers={
-                'Origin': 'https://www.stagecoachbus.com',
-                'Referer': 'https://www.stagecoachbus.com',
-                'X-SC-apiKey': 'ukbusprodapi_9T61Jo3vsbql#!',
-                'X-SC-securityMethod': 'API'
-            },
-            json={
-                'Stops': {
-                    'StopLabel': (self.stop.atco_code,)
-                },
-                'Departure': {
-                    'TargetDepartureTime': {
-                        'value': self.now.isoformat()
-                    }
-                },
-                'ResponseCharacteristics': {
-                    'MaxLaterEvents': {
-                        'value': 20
-                    }
-                },
-                'RequestId': 'bus-stop-query-stagecoach'
-            }
-        )
-
-    def get_row(self, row):
-        service = row['Trip']['Service']['ServiceNumber']
-        return {
-            'time': dateutil.parser.parse(row['ScheduledDepartureTime']['value']),
-            'destination': row['Trip'].get('DestinationBoard') or row['Trip'].get('Description'),
-            'service': self.services.get(service.lower(), service)
-        }
-
-    def departures_from_response(self, response):
-        events = response.json().get('Events')
-        if events:
-            return [self.get_row(event) for event in events.get('Event')]
 
 
 def get_max_age(departures, now):
@@ -303,8 +257,6 @@ def get_departures(stop, services):
             }
         }, 60)
 
-    now = datetime.datetime.now(LOCAL_TIMEZONE)
-
     # Yorkshire
     if 'Y' in live_sources:
         return ({
@@ -325,24 +277,7 @@ def get_departures(stop, services):
             }
         }, 60)
 
-    for live_source_name, prefix in (
-            ('ayr', 'ayrshire'),
-            ('west', 'travelwest'),
-            ('buck', 'buckinghamshire'),
-            ('camb', 'cambridgeshire'),
-            ('aber', 'aberdeen'),
-            ('card', 'cardiff'),
-            ('swin', 'swindon'),
-            ('metr', 'metrobus')
-    ):
-        if live_source_name in live_sources:
-            return ({
-                'departures': AcisConnectDepartures(prefix, stop, services),
-                'source': {
-                    'url': 'http://%s.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % (prefix, stop.pk),
-                    'name': 'vixConnect'
-                }
-            }, 60)
+    now = datetime.datetime.now(LOCAL_TIMEZONE)
 
     operators = Operator.objects.filter(service__stops=stop,
                                         service__current=True).distinct().values_list('pk', flat=True)
@@ -358,7 +293,7 @@ def get_departures(stop, services):
         }, 60)
 
     departures = TimetableDepartures(stop, services, now)
-    services = departures.services
+    services_dict = departures.services
     departures = departures.get_departures()
 
     # Stagecoach
@@ -401,12 +336,48 @@ def get_departures(stop, services):
                         departures.append({
                             'time': aimed,
                             'live': expected,
-                            'service': services.get(monitor['lineRef'], monitor['lineRef']),
+                            'service': services_dict.get(monitor['lineRef'], monitor['lineRef']),
                             'destination': monitor['destinationDisplay']
                         })
                         added = True
             if added:
                 departures.sort(key=lambda d: d['time'])
+
+    for live_source_name, prefix in (
+            ('ayr', 'ayrshire'),
+            ('west', 'travelwest'),
+            ('buck', 'buckinghamshire'),
+            ('camb', 'cambridgeshire'),
+            ('aber', 'aberdeen'),
+            ('card', 'cardiff'),
+            ('swin', 'swindon'),
+            ('metr', 'metrobus')
+    ):
+        if live_source_name in live_sources:
+            live_rows = AcisConnectDepartures(prefix, stop, services).get_departures()
+            if live_rows:
+                for live_row in live_rows:
+                    replaced = False
+                    time = None
+                    if 'min' in live_row['time']:
+                        time = now + datetime.timedelta(minutes=int(live_row['time'].split(' ', 1)[0]))
+                    elif live_row['time'] == 'Due':
+                        time = now
+                    for row in departures:
+                        if row['service'] == live_row['service'] and 'live' not in row:
+                            row['live'] = time
+                            replaced = True
+                            break
+                    if not replaced:
+                        departures.append(live_row)
+            return ({
+                'departures': departures,
+                'today': now.date(),
+                'source': {
+                    'url': 'http://%s.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % (prefix, stop.pk),
+                    'name': 'vixConnect'
+                }
+            }, 60)
 
     return ({
         'departures': departures,

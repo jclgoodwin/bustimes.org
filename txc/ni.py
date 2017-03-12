@@ -101,7 +101,7 @@ def handle_journeys(journeys, today):
     rows_map = {}
 
     for journey in journeys:
-        if not should_show(journey, today.date()):
+        if not should_show(journey, today):
             continue
 
         previous = None
