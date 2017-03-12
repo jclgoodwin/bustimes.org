@@ -10,13 +10,6 @@ from django.utils.text import slugify
 from busstops.models import Operator, StopUsageUsage
 
 
-STAGECOACH_OPERATORS = {
-    'CLTL', 'ELBG', 'NFKG', 'SBLB', 'SCBD', 'SCBL', 'SCCM', 'SCCO', 'SCCU',
-    'SCEB', 'SCEK', 'SCFI', 'SCGL', 'SCGR', 'SCHA', 'SCHM', 'SCHT', 'SCHU',
-    'SCHW', 'SCLI', 'SCMB', 'SCMN', 'SCMY', 'SCNE', 'SCNH', 'SCNW', 'SCOR',
-    'SCOX', 'SCST', 'SCTE', 'SCWW', 'SDVN', 'SINV', 'SLAN', 'SMSO', 'SSPH',
-    'SSTY', 'SSWL', 'SSWN', 'STCR', 'STGS', 'STLA', 'STWS', 'SYRK', 'YSYC',
-}
 DESTINATION_REGEX = re.compile(r'.+\((.+)\)')
 LOCAL_TIMEZONE = pytz.timezone('Europe/London')
 SESSION = requests.Session()
@@ -341,10 +334,10 @@ def get_departures(stop, services):
         }, 60)
 
     operators = Operator.objects.filter(service__stops=stop,
-                                        service__current=True).distinct().values_list('pk', flat=True)
+                                        service__current=True).distinct()
 
     # Belfast
-    if operators and all(operator == 'MET' for operator in operators):
+    if operators and all(operator.code == 'MET' for operator in operators):
         return ({
             'departures': AcisConnectDepartures('belfast', stop, services, now),
             'source': {
@@ -359,7 +352,7 @@ def get_departures(stop, services):
 
     if not departures or (departures[0]['time'] - now) < datetime.timedelta(hours=1):
         # Stagecoach
-        if any(operator in STAGECOACH_OPERATORS for operator in operators):
+        if any(operator.name.startswith('Stagecoach') for operator in operators):
             departures = add_stagecoach_departures(stop, services_dict, departures)
         else:
             for live_source_name, prefix in (
