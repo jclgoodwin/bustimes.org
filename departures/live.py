@@ -248,6 +248,55 @@ def get_max_age(departures, now):
     return 3600
 
 
+def add_stagecoach_departures(stop, services_dict, departures):
+    response = SESSION.post('https://api.stagecoachbus.com/adc/stop-monitor',
+                            headers={
+                                'Origin': 'https://www.stagecoachbus.com',
+                                'Referer': 'https://www.stagecoachbus.com',
+                                'X-SC-apiKey': 'ukbusprodapi_9T61Jo3vsbql#!',
+                                'X-SC-securityMethod': 'API'
+                            },
+                            json={
+                                'StopMonitorRequest': {
+                                    'header': {
+                                        'retailOperation': '',
+                                        'channel': '',
+                                    },
+                                    'stopMonitorQueries': {
+                                        'stopMonitorQuery': [{
+                                            'stopPointLabel': stop.atco_code,
+                                            'servicesFilters': {}
+                                        }]
+                                    }
+                                }
+                            })
+    stop_monitors = response.json()['stopMonitors']
+    if 'stopMonitor' in stop_monitors:
+        added = False
+        for monitor in stop_monitors['stopMonitor'][0]['monitoredCalls']['monitoredCall']:
+            if 'expectedDepartureTime' in monitor:
+                aimed = dateutil.parser.parse(monitor['aimedDepartureTime'])
+                expected = dateutil.parser.parse(monitor['expectedDepartureTime'])
+                replaced = False
+                for departure in departures:
+                    if aimed.time() == departure['time'].time():
+                        departure['live'] = expected
+                        departure['source'] = 'stagecoach'
+                        replaced = True
+                        break
+                if not replaced:
+                    departures.append({
+                        'time': aimed,
+                        'live': expected,
+                        'service': services_dict.get(monitor['lineRef'], monitor['lineRef']),
+                        'destination': monitor['destinationDisplay']
+                    })
+                    added = True
+        if added:
+            departures.sort(key=lambda d: d['time'])
+    return departures
+
+
 def get_departures(stop, services):
     """Given a StopPoint object and an iterable of Service objects,
     returns a tuple containing a context dictionary and a max_age integer
@@ -308,84 +357,41 @@ def get_departures(stop, services):
     services_dict = departures.services
     departures = departures.get_departures()
 
-    # Stagecoach
-    if any(operator in STAGECOACH_OPERATORS for operator in operators):
-        response = SESSION.post('https://api.stagecoachbus.com/adc/stop-monitor',
-                                headers={
-                                    'Origin': 'https://www.stagecoachbus.com',
-                                    'Referer': 'https://www.stagecoachbus.com',
-                                    'X-SC-apiKey': 'ukbusprodapi_9T61Jo3vsbql#!',
-                                    'X-SC-securityMethod': 'API'
-                                },
-                                json={
-                                    'StopMonitorRequest': {
-                                        'header': {
-                                            'retailOperation': '',
-                                            'channel': '',
-                                        },
-                                        'stopMonitorQueries': {
-                                            'stopMonitorQuery': [{
-                                                'stopPointLabel': stop.atco_code,
-                                                'servicesFilters': {}
-                                            }]
-                                        }
-                                    }
-                                })
-        stop_monitors = response.json()['stopMonitors']
-        if 'stopMonitor' in stop_monitors:
-            added = False
-            for monitor in stop_monitors['stopMonitor'][0]['monitoredCalls']['monitoredCall']:
-                if 'expectedDepartureTime' in monitor:
-                    aimed = dateutil.parser.parse(monitor['aimedDepartureTime'])
-                    expected = dateutil.parser.parse(monitor['expectedDepartureTime'])
-                    replaced = False
-                    for departure in departures:
-                        if aimed.time() == departure['time'].time():
-                            departure['live'] = expected
-                            departure['source'] = 'stagecoach'
-                            replaced = True
-                            break
-                    if not replaced:
-                        departures.append({
-                            'time': aimed,
-                            'live': expected,
-                            'service': services_dict.get(monitor['lineRef'], monitor['lineRef']),
-                            'destination': monitor['destinationDisplay']
-                        })
-                        added = True
-            if added:
-                departures.sort(key=lambda d: d['time'])
-    else:
-        for live_source_name, prefix in (
-                ('ayr', 'ayrshire'),
-                ('west', 'travelwest'),
-                ('buck', 'buckinghamshire'),
-                ('camb', 'cambridgeshire'),
-                ('aber', 'aberdeen'),
-                ('card', 'cardiff'),
-                ('swin', 'swindon'),
-                ('metr', 'metrobus')
-        ):
-            if live_source_name in live_sources:
-                live_rows = AcisConnectDepartures(prefix, stop, services, now).get_departures()
-                if live_rows:
-                    for live_row in live_rows:
-                        replaced = False
-                        for row in departures:
-                            if row['service'] == live_row['service'] and 'live' not in row:
-                                row['live'] = live_row['live']
-                                replaced = True
-                                break
-                        if not replaced:
-                            departures.append(live_row)
-                return ({
-                    'departures': departures,
-                    'today': now.date(),
-                    'source': {
-                        'url': 'http://%s.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % (prefix, stop.pk),
-                        'name': 'vixConnect'
-                    }
-                }, 60)
+    if not departures or (departures[0]['time'] - now) < datetime.timedelta(hours=1):
+        # Stagecoach
+        if any(operator in STAGECOACH_OPERATORS for operator in operators):
+            departures = add_stagecoach_departures(stop, services_dict, departures)
+        else:
+            for live_source_name, prefix in (
+                    ('ayr', 'ayrshire'),
+                    ('west', 'travelwest'),
+                    ('buck', 'buckinghamshire'),
+                    ('camb', 'cambridgeshire'),
+                    ('aber', 'aberdeen'),
+                    ('card', 'cardiff'),
+                    ('swin', 'swindon'),
+                    ('metr', 'metrobus')
+            ):
+                if live_source_name in live_sources:
+                    live_rows = AcisConnectDepartures(prefix, stop, services, now).get_departures()
+                    if live_rows:
+                        for live_row in live_rows:
+                            replaced = False
+                            for row in departures:
+                                if row['service'] == live_row['service'] and 'live' not in row:
+                                    row['live'] = live_row['live']
+                                    replaced = True
+                                    break
+                            if not replaced:
+                                departures.append(live_row)
+                    return ({
+                        'departures': departures,
+                        'today': now.date(),
+                        'source': {
+                            'url': 'http://%s.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % (prefix, stop.pk),
+                            'name': 'vixConnect'
+                        }
+                    }, 60)
 
     return ({
         'departures': departures,

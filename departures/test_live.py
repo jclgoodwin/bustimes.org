@@ -147,7 +147,6 @@ class LiveDeparturesTest(TestCase):
     def _test_acis_yorkshire(self, departures):
         """Test one of the Yorkshire live departures sources against the same set of data
         """
-        print(departures)
         self.assertEqual(departures[:4], [{
             'destination': 'York Sport Village',
             'service': '66',
