@@ -4,6 +4,7 @@ import datetime
 import vcr
 from django.test import TestCase
 from django.shortcuts import render
+from freezegun import freeze_time
 from busstops.models import LiveSource, StopPoint, Service
 from . import live
 
@@ -99,24 +100,27 @@ class LiveDeparturesTest(TestCase):
             </div>
         """, html=True)
 
+    @freeze_time('12 Mar 2017 12:00')
     def test_acisconnect_cardiff(self):
         """Test the Cardiff live departures source
         """
         with vcr.use_cassette('data/vcr/cardiff.yaml'):
             departures = live.AcisConnectDepartures(
-                'cardiff', self.cardiff_stop, Service.objects.all()
+                'cardiff', self.cardiff_stop, Service.objects.all(), datetime.datetime.now()
             ).get_departures()
 
         self.assertEqual(departures[0], {
             'destination': 'Churchill Way HL',
             'service': '9',
-            'time': '15 mins'
+            'time': None,
+            'live': datetime.datetime(2017, 3, 12, 12, 15)
         })
 
         self.assertEqual(departures[1], {
             'destination': 'Churchill Way HL',
             'service': '9',
-            'time': '45 mins'
+            'time': None,
+            'live': datetime.datetime(2017, 3, 12, 12, 45)
         })
 
         self.assertEqual('Pengam Green Tesco', departures[2]['destination'])
@@ -125,14 +129,15 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(departures[3], {
             'destination': 'Customhouse Str JL',
             'service': '95',
-            'time': '49 mins'
+            'time': None,
+            'live': datetime.datetime(2017, 3, 12, 12, 49)
         })
 
         with vcr.use_cassette('data/vcr/cardiff.yaml'):
             departures = live.get_departures(self.cardiff_stop, ())[0]
         self.assertTrue('live' in departures['departures'][0])
         self.assertTrue('time' in departures['departures'][0])
-        self.assertFalse('live' in departures['departures'][2])
+        self.assertIsNone(departures['departures'][2]['live'])
         self.assertTrue('time' in departures['departures'][2])
         self.assertEqual(departures['source'], {
             'url': 'http://cardiff.acisconnect.com/Text/WebDisplay.aspx?stopRef=5710WDB48471',
@@ -142,38 +147,41 @@ class LiveDeparturesTest(TestCase):
     def _test_acis_yorkshire(self, departures):
         """Test one of the Yorkshire live departures sources against the same set of data
         """
+        print(departures)
         self.assertEqual(departures[:4], [{
             'destination': 'York Sport Village',
             'service': '66',
-            'time': '1 min',
+            'time': None,
+            'live': datetime.datetime(2017, 3, 12, 12, 1)
         }, {
             'destination': 'Heslington East Int',
             'service': '44',
-            'time': '9 mins',
+            'time': None,
+            'live': datetime.datetime(2017, 3, 12, 12, 9)
         }, {
             'destination': 'York Sport Village',
             'service': '66',
             'time': '18:42',
+            'live': None
         }, {
             'destination': 'Heslington East Int',
             'service': '44',
             'time': '18:53',
+            'live': None
         }])
 
-        departures = live.get_departures(self.yorkshire_stop, ())[0]
-        self.assertEqual(departures['source'], {
-            'url': 'http://yorkshire.acisconnect.com/Text/WebDisplay.aspx?stopRef=32900215',
-            'name': 'Your Next Bus'
-        })
-
+    @freeze_time('12 Mar 2017 12:00')
     def test_acis_yorkshire(self):
         """Test the two possible (old, new) Yorkshire live departure sources against the same data
         """
+        now = datetime.datetime.now()
+
         with vcr.use_cassette('data/vcr/acisconnect_yorkshire.yaml'):
             departures = live.AcisConnectDepartures(
                 'yorkshire',
                 self.yorkshire_stop,
-                Service.objects.all()
+                Service.objects.all(),
+                now
             ).get_departures()
         self._test_acis_yorkshire(departures)
 
@@ -181,9 +189,16 @@ class LiveDeparturesTest(TestCase):
             departures = live.AcisLiveDepartures(
                 'tsy',
                 self.yorkshire_stop,
-                Service.objects.all()
+                Service.objects.all(),
+                now
             ).get_departures()
         self._test_acis_yorkshire(departures)
+
+        departures = live.get_departures(self.yorkshire_stop, ())[0]
+        self.assertEqual(departures['source'], {
+            'url': 'http://yorkshire.acisconnect.com/Text/WebDisplay.aspx?stopRef=32900215',
+            'name': 'Your Next Bus'
+        })
 
     # def test_stagecoach(self):
     #     stop = StopPoint(atco_code='64803000')

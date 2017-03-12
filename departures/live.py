@@ -24,8 +24,9 @@ SESSION = requests.Session()
 
 class Departures(object):
     """Abstract class for getting departures from a source"""
-    def __init__(self, stop, services):
+    def __init__(self, stop, services, now=None):
         self.stop = stop
+        self.now = now
         self.services = {
             service.line_name.split('|', 1)[0].lower(): service
             for service in services
@@ -82,9 +83,19 @@ class TflDepartures(Departures):
 
 class AcisDepartures(Departures):
     """Departures from a website ending in .acisconnect.com or .acislive.com"""
-    def __init__(self, prefix, stop, services):
+    def get_time(self, text):
+        """Given a Beautiful Soup element, returns its text made nicer
+        ('1 Mins' becomes '1 min', '2 Mins' becomes '2 mins')
+        """
+        if 'min' in text.lower():
+            return (None, self.now + datetime.timedelta(minutes=int(text.split(' ', 1)[0])))
+        if text == 'Due':
+            return (None, self.now)
+        return (text, None)
+
+    def __init__(self, prefix, stop, services, now):
         self.prefix = prefix
-        super(AcisDepartures, self).__init__(stop, services)
+        super(AcisDepartures, self).__init__(stop, services, now)
 
 
 class AcisLiveDepartures(AcisDepartures):
@@ -97,35 +108,48 @@ class AcisLiveDepartures(AcisDepartures):
             'naptan': self.stop.naptan_code
         }
 
+    def get_row(self, row):
+        time, live = self.get_time(row[2])
+        return {
+            'time': time,
+            'live': live,
+            'service': self.get_service(row[0]),
+            'destination': row[1]
+        }
+
     def departures_from_response(self, res):
         soup = BeautifulSoup(res.text, 'lxml')
         cells = [cell.text.strip() for cell in soup.find_all('td')]
         rows = (cells[i * 4 - 4:i * 4] for i in range(1, int(len(cells) / 4) + 1))
-        return [{
-            'time': row[2],
-            'service': self.get_service(row[0]),
-            'destination': row[1]
-        } for row in rows]
+        return [self.get_row(row) for row in rows]
 
 
 class AcisConnectDepartures(AcisDepartures):
     """Departures from a website ending in '.acisconnect.com'"""
-    @staticmethod
-    def get_time(cell):
-        """Given a Beautiful Soup element, returns its text made nicer
-        ('1 Mins' becomes '1 min', '2 Mins' becomes '2 mins')
-        """
-        text = cell.text
-        if text == '1 Mins':
-            return '1 min'
-        return text.replace('Mins', 'mins')
-
     def get_request_url(self):
         return 'http://%s.acisconnect.com/Text/WebDisplay.aspx' % self.prefix
 
     def get_request_params(self):
         return {
             'stopRef': self.stop.naptan_code if self.prefix == 'yorkshire' else self.stop.pk
+        }
+
+    def get_yorkshire_row(self, row):
+        time, live = self.get_time(row[2].text)
+        return {
+            'time': time,
+            'live': live,
+            'service': self.get_service(row[0].text),
+            'destination': row[1].text
+        }
+
+    def get_row(self, row):
+        time, live = self.get_time(row[4].text)
+        return {
+            'time': time,
+            'live': live,
+            'service': self.get_service(row[0].text),
+            'destination': row[2].text
         }
 
     def departures_from_response(self, res):
@@ -135,16 +159,8 @@ class AcisConnectDepartures(AcisDepartures):
             return
         rows = (row.findAll('td') for row in table.findAll('tr')[1:])
         if self.prefix == 'yorkshire':
-            return [{
-                'time': self.get_time(row[2]),
-                'service': self.get_service(row[0].text),
-                'destination': row[1].text
-            } for row in rows]
-        return [{
-            'time': self.get_time(row[4]),
-            'service': self.get_service(row[0].text),
-            'destination': row[2].text
-        } for row in rows]
+            return [self.get_yorkshire_row(row) for row in rows]
+        return [self.get_row(row) for row in rows]
 
 
 class TransportApiDepartures(Departures):
@@ -205,10 +221,6 @@ class TransportApiDepartures(Departures):
 
 
 class TimetableDepartures(Departures):
-    def __init__(self, stop, services, now):
-        self.now = now
-        super(TimetableDepartures, self).__init__(stop, services)
-
     def get_departures(self):
         queryset = StopUsageUsage.objects.filter(datetime__gte=self.now, stop=self.stop).order_by('datetime')
         return [{
@@ -257,10 +269,12 @@ def get_departures(stop, services):
             }
         }, 60)
 
+    now = datetime.datetime.now(LOCAL_TIMEZONE)
+
     # Yorkshire
     if 'Y' in live_sources:
         return ({
-            'departures': AcisConnectDepartures('yorkshire', stop, services),
+            'departures': AcisConnectDepartures('yorkshire', stop, services, now),
             'source': {
                 'url': 'http://yorkshire.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % stop.naptan_code,
                 'name': 'Your Next Bus'
@@ -270,14 +284,12 @@ def get_departures(stop, services):
     # Kent
     if 'Kent' in live_sources:
         return ({
-            'departures': AcisLiveDepartures('kent', stop, services),
+            'departures': AcisLiveDepartures('kent', stop, services, now),
             'source': {
                 'url': 'http://%s.acislive.com/pip/stop_simulator.asp?NaPTAN=%s' % ('kent', stop.naptan_code),
                 'name': 'ACIS Live'
             }
         }, 60)
-
-    now = datetime.datetime.now(LOCAL_TIMEZONE)
 
     operators = Operator.objects.filter(service__stops=stop,
                                         service__current=True).distinct().values_list('pk', flat=True)
@@ -285,7 +297,7 @@ def get_departures(stop, services):
     # Belfast
     if operators and all(operator == 'MET' for operator in operators):
         return ({
-            'departures': AcisConnectDepartures('belfast', stop, services),
+            'departures': AcisConnectDepartures('belfast', stop, services, now),
             'source': {
                 'url': 'http://belfast.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % stop.pk,
                 'name': 'vixConnect'
@@ -330,6 +342,7 @@ def get_departures(stop, services):
                     for departure in departures:
                         if aimed.time() == departure['time'].time():
                             departure['live'] = expected
+                            departure['source'] = 'stagecoach'
                             replaced = True
                             break
                     if not replaced:
@@ -342,42 +355,37 @@ def get_departures(stop, services):
                         added = True
             if added:
                 departures.sort(key=lambda d: d['time'])
-
-    for live_source_name, prefix in (
-            ('ayr', 'ayrshire'),
-            ('west', 'travelwest'),
-            ('buck', 'buckinghamshire'),
-            ('camb', 'cambridgeshire'),
-            ('aber', 'aberdeen'),
-            ('card', 'cardiff'),
-            ('swin', 'swindon'),
-            ('metr', 'metrobus')
-    ):
-        if live_source_name in live_sources:
-            live_rows = AcisConnectDepartures(prefix, stop, services).get_departures()
-            if live_rows:
-                for live_row in live_rows:
-                    replaced = False
-                    time = None
-                    if 'min' in live_row['time']:
-                        time = now + datetime.timedelta(minutes=int(live_row['time'].split(' ', 1)[0]))
-                    elif live_row['time'] == 'Due':
-                        time = now
-                    for row in departures:
-                        if row['service'] == live_row['service'] and 'live' not in row:
-                            row['live'] = time
-                            replaced = True
-                            break
-                    if not replaced:
-                        departures.append(live_row)
-            return ({
-                'departures': departures,
-                'today': now.date(),
-                'source': {
-                    'url': 'http://%s.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % (prefix, stop.pk),
-                    'name': 'vixConnect'
-                }
-            }, 60)
+    else:
+        for live_source_name, prefix in (
+                ('ayr', 'ayrshire'),
+                ('west', 'travelwest'),
+                ('buck', 'buckinghamshire'),
+                ('camb', 'cambridgeshire'),
+                ('aber', 'aberdeen'),
+                ('card', 'cardiff'),
+                ('swin', 'swindon'),
+                ('metr', 'metrobus')
+        ):
+            if live_source_name in live_sources:
+                live_rows = AcisConnectDepartures(prefix, stop, services, now).get_departures()
+                if live_rows:
+                    for live_row in live_rows:
+                        replaced = False
+                        for row in departures:
+                            if row['service'] == live_row['service'] and 'live' not in row:
+                                row['live'] = live_row['live']
+                                replaced = True
+                                break
+                        if not replaced:
+                            departures.append(live_row)
+                return ({
+                    'departures': departures,
+                    'today': now.date(),
+                    'source': {
+                        'url': 'http://%s.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % (prefix, stop.pk),
+                        'name': 'vixConnect'
+                    }
+                }, 60)
 
     return ({
         'departures': departures,
