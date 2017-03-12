@@ -7,6 +7,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.http import (HttpResponse, JsonResponse, Http404,
                          HttpResponseBadRequest)
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import DetailView
 from django.contrib.gis.geos import Polygon
@@ -436,7 +437,7 @@ class ServiceDetailView(DetailView):
                     date = None
             if not date:
                 next_usage = Journey.objects.filter(service=self.object)
-                next_usage = next_usage.filter(datetime__gte=datetime.now()).order_by('datetime').first()
+                next_usage = next_usage.filter(datetime__gte=timezone.now()).order_by('datetime').first()
                 if next_usage:
                     date = next_usage.datetime.date()
             context['timetables'] = timetable_from_service(self.object, date)

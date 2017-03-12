@@ -150,10 +150,10 @@ class GenerateDeparturesTest(TestCase):
         Service.objects.create(service_code='95c_ULB', date='2016-01-01', region_id='NI', current=True)
         generate_departures.handle_region(Region(id='NI'))
 
-    @freeze_time('3 May 2017 23:50')
+    @freeze_time('3 May 2017 22:50')
     def test_departures(self):
         response = self.client.get('/stops/700000012733/departures')
-        self.assertContains(response, '<td>18:32</td>', 6)
+        self.assertContains(response, '<td>18:32</td>', 6, html=True)
         self.assertContains(response, '95c_ULB', 6)
         self.assertContains(response, '<h3>Friday</h3>', 1)
         self.assertContains(response, '<h3>Monday</h3>', 1)

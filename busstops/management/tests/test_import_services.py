@@ -335,11 +335,11 @@ class ImportServicesTest(TestCase):
         # self.assertEqual(74, StopUsageUsage.objects.all().count())
 
         journey = Journey.objects.first()
-        self.assertEqual('M12 - Shudehill - Victoria 2017-01-01 01:00:00', str(journey))
+        self.assertEqual('M12 - Shudehill - Victoria 2017-01-01 01:00:00+00:00', str(journey))
 
         stop_usage_usage = StopUsageUsage.objects.first()
-        self.assertEqual('2017-01-01 02:20:00', str(stop_usage_usage.datetime))
-        self.assertEqual('Kingston District Centre (o/s) 2017-01-01 02:20:00', str(stop_usage_usage))
+        self.assertEqual('2017-01-01 01:00:00+00:00', str(stop_usage_usage.datetime))
+        self.assertEqual('Kingston District Centre (o/s) 2017-01-01 01:00:00+00:00', str(stop_usage_usage))
 
     @classmethod
     def tearDownClass(cls):

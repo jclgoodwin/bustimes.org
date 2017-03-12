@@ -20,8 +20,14 @@
             {% elif item.service %}{{ item.service }}{% endif %}
             </td>
             <td>{{ item.destination }}</td>
-            <td>{% firstof item.time.time item.time %}</td>
-            </tr>
+            <td>
+                {% if item.live %}
+                    {{ item.live.time }}⚡
+                {% else %}
+                    {% firstof item.time.time item.time %}
+                {% endif %}
+            </td>
+        </tr>
         {% if forloop.last %}
         </tbody>
         </table>

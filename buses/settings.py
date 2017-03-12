@@ -154,6 +154,7 @@ TEMPLATES = [
 TIME_FORMAT = 'H:i'
 DATE_FORMAT = 'j F Y'
 TIME_ZONE = 'Europe/London'
+USE_TZ = True
 USE_I18N = False
 
 STREETVIEW_KEY = os.environ.get('STREETVIEW_KEY')

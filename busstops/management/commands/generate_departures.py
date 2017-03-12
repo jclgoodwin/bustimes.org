@@ -1,9 +1,10 @@
 import os
 from multiprocessing import Pool
-from datetime import date, timedelta
+from datetime import timedelta, datetime
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.conf import settings
+from django.utils import timezone
 from txc import txc, ni
 from ...models import Region, Service, Journey, StopUsageUsage, StopPoint
 from ...utils import get_files_from_zipfile
@@ -15,7 +16,7 @@ ONE_DAY = timedelta(days=1)
 def handle_timetable(service, timetable, day):
     if hasattr(timetable, 'operating_profile') and day.weekday() not in timetable.operating_profile.regular_days:
         return
-    if not timetable.operating_period.contains(day):
+    if not timetable.operating_period.contains(day.date()):
         return
     # if not hasattr(timetable, 'groupings'):
         # return
@@ -23,19 +24,19 @@ def handle_timetable(service, timetable, day):
         stops = {row.part.stop.atco_code for row in grouping.rows}
         existent_stops = StopPoint.objects.filter(atco_code__in=stops).values_list('atco_code', flat=True)
         for vj in grouping.journeys:
-            if not vj.should_show(day):
+            if not vj.should_show(day.date()):
                 continue
             date = day
             previous_time = None
             stopusageusages = []
-            journey = Journey(service=service, datetime='{} {}'.format(date, vj.departure_time))
+            journey = Journey(service=service, datetime=timezone.make_aware(datetime.combine(date, vj.departure_time)))
             for i, (su, time) in enumerate(vj.get_times()):
                 if previous_time and previous_time > time:
                     date += ONE_DAY
                 if su.stop.atco_code in existent_stops:
                     if not su.activity or su.activity.startswith('pickUp'):
                         stopusageusages.append(
-                            StopUsageUsage(datetime='{} {}'.format(date, time),
+                            StopUsageUsage(datetime=timezone.make_aware(datetime.combine(date, vj.departure_time)),
                                            order=i, stop_id=su.stop.atco_code)
                         )
                     journey.destination_id = su.stop.atco_code
@@ -51,7 +52,7 @@ def do_ni_service(service, groupings, day):
     previous_time = None
     for grouping in groupings:
         for journey in grouping['Journeys']:
-            if not ni.should_show(journey, day):
+            if not ni.should_show(journey, day.date()):
                 continue
 
             stopusageusages = []
@@ -60,15 +61,18 @@ def do_ni_service(service, groupings, day):
                     print(service, su)
                     continue
                 destination = su['Location']
-                if su['Activity'] != 'S' and su['Departure']:
-                    if previous_time and su['Departure'] < previous_time:
-                        print(service, su)
-                    stopusageusages.append(
-                        StopUsageUsage(datetime='{} {}'.format(day, su['Departure']),
-                                       order=i, stop_id=su['Location'])
-                    )
-                previous_time = su['Departure']
-
+                if su['Departure']:
+                    departure = datetime.strptime(su['Departure'], '%H:%M').time()
+                    if su['Activity'] != 'S':
+                        if previous_time and departure < previous_time:
+                            day += ONE_DAY
+                        stopusageusages.append(
+                            StopUsageUsage(datetime=timezone.make_aware(datetime.combine(day, departure)),
+                                           order=i, stop_id=su['Location'])
+                        )
+                else:
+                    departure = None
+                previous_time = departure
             departure = stopusageusages[0].datetime
             journey = Journey(service=service, datetime=departure, destination_id=destination)
             journey.save()
@@ -80,11 +84,11 @@ def do_ni_service(service, groupings, day):
 @transaction.atomic
 def handle_region(region):
     print(region)
-    today = date.today()
+    today = timezone.now()
     NEXT_WEEK = today + ONE_DAY * 7
     # delete journeys before today
     print('deleting journeys before', today)
-    print(Journey.objects.filter(service__region=region, datetime__date__lt=today).delete())
+    print(Journey.objects.filter().delete())
     # get the date of the last generated journey
     last_journey = Journey.objects.filter(service__region=region).order_by('datetime').last()
     if last_journey:

@@ -1,7 +1,6 @@
 """Various ways of getting live departures from some web service"""
 import re
 import datetime
-
 import requests
 import pytz
 import dateutil.parser
@@ -213,7 +212,7 @@ class TimetableDepartures(Departures):
     def get_departures(self):
         queryset = StopUsageUsage.objects.filter(datetime__gte=self.now, stop=self.stop).order_by('datetime')
         return [{
-            'time': suu.datetime,
+            'time': suu.datetime.astimezone(),
             'destination': suu.journey.destination.locality or suu.journey.destination.town,
             'service': suu.journey.service
         } for suu in queryset.select_related('journey__destination__locality', 'journey__service')[:10]]
@@ -304,16 +303,7 @@ def get_departures(stop, services):
             }
         }, 60)
 
-    now = datetime.datetime.now()
-
-    # Stagecoach
-    # operators = Operator.objects.filter(service__stops=stop,
-    #                                     service__current=True).distinct().values_list('pk', flat=True)
-    # if operators and all(operator in STAGECOACH_OPERATORS for operator in operators):
-    #     departures = StagecoachDepartures(stop, services, now).get_departures()
-    #     return ({
-    #         'departures': departures
-    #     }, 120)  # get_max_age(departures, now))
+    now = datetime.datetime.now(LOCAL_TIMEZONE)
 
     # Yorkshire
     if 'Y' in live_sources:
@@ -367,19 +357,58 @@ def get_departures(stop, services):
             }
         }, 60)
 
-    if not stop.admin_area or stop.admin_area.region_id in {'W', 'EA', 'EM', 'SE', 'SW', 'WM', 'NE', 'NW', 'S', 'NI'}:
-        departures = TimetableDepartures(stop, (), now).get_departures()
-        return ({
-            'departures': departures,
-            'today': now.date(),
-        },  60)
+    departures = TimetableDepartures(stop, services, now)
+    services = departures.services
+    departures = departures.get_departures()
 
-    # Transport API
-    departures = TransportApiDepartures(stop, services, now.date()).get_departures()
+    # Stagecoach
+    if any(operator in STAGECOACH_OPERATORS for operator in operators):
+        response = SESSION.post('https://api.stagecoachbus.com/adc/stop-monitor',
+                                headers={
+                                    'Origin': 'https://www.stagecoachbus.com',
+                                    'Referer': 'https://www.stagecoachbus.com',
+                                    'X-SC-apiKey': 'ukbusprodapi_9T61Jo3vsbql#!',
+                                    'X-SC-securityMethod': 'API'
+                                },
+                                json={
+                                    'StopMonitorRequest': {
+                                        'header': {
+                                            'retailOperation': '',
+                                            'channel': '',
+                                        },
+                                        'stopMonitorQueries': {
+                                            'stopMonitorQuery': [{
+                                                'stopPointLabel': stop.atco_code,
+                                                'servicesFilters': {}
+                                            }]
+                                        }
+                                    }
+                                })
+        stop_monitors = response.json()['stopMonitors']
+        if 'stopMonitor' in stop_monitors:
+            added = False
+            for monitor in stop_monitors['stopMonitor'][0]['monitoredCalls']['monitoredCall']:
+                if 'expectedDepartureTime' in monitor:
+                    aimed = dateutil.parser.parse(monitor['aimedDepartureTime'])
+                    expected = dateutil.parser.parse(monitor['expectedDepartureTime'])
+                    replaced = False
+                    for departure in departures:
+                        if aimed.time() == departure['time'].time():
+                            departure['live'] = expected
+                            replaced = True
+                            break
+                    if not replaced:
+                        departures.append({
+                            'time': aimed,
+                            'live': expected,
+                            'service': services.get(monitor['lineRef'], monitor['lineRef']),
+                            'destination': monitor['destinationDisplay']
+                        })
+                        added = True
+            if added:
+                departures.sort(key=lambda d: d['time'])
+
     return ({
         'departures': departures,
-        'source': {
-            'url': 'http://www.transportapi.com/',
-            'name': 'Transport API',
-        }
-    }, get_max_age(departures, now))
+        'today': now.date(),
+    },  60)
