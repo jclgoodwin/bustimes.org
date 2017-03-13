@@ -1,4 +1,5 @@
 # coding=utf-8
+from __future__ import unicode_literals
 import os
 import xml.etree.cElementTree as ET
 import zipfile
