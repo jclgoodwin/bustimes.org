@@ -152,9 +152,6 @@ def get_data(path):
 
 
 def get_timetable(path, today):
-    if type(today) == str:
-        today = datetime.strptime(today, '%Y-%m-%d').date()
-
     t = Timetable()
 
     outbound, inbound = get_data(path)
