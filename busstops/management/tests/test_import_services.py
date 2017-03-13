@@ -78,7 +78,7 @@ class ImportServicesTest(TestCase):
             # test re-importing a previously imported service again
             cls.do_service('Megabus_Megabus14032016 163144_MEGA_M12', 'GB')
 
-        with freeze_time('2001-01-01'):
+        with freeze_time('2016-12-31'):
             generate_departures.handle_region(Region(id='GB'))
         with freeze_time('2017-01-01'):
             generate_departures.handle_region(Region(id='GB'))
@@ -346,9 +346,10 @@ class ImportServicesTest(TestCase):
         """, html=True)
 
     def test_departures(self):
-        # self.assertEqual(78, Journey.objects.all().count())
-        # self.assertEqual(74, StopUsageUsage.objects.all().count())
+        self.assertEqual(16, Journey.objects.all().count())
+        self.assertEqual(24, StopUsageUsage.objects.all().count())
 
+        # This should be the first journey (some earlier journeys should have been deleted)
         journey = Journey.objects.first()
         self.assertEqual('M12 - Shudehill - Victoria 2017-01-01 01:00:00+00:00', str(journey))
 

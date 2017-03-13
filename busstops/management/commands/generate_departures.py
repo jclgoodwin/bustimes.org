@@ -16,7 +16,7 @@ ONE_DAY = timedelta(days=1)
 def handle_timetable(service, timetable, day):
     if hasattr(timetable, 'operating_profile') and day.weekday() not in timetable.operating_profile.regular_days:
         return
-    if not timetable.operating_period.contains(day.date()):
+    if not timetable.operating_period.contains(day):
         return
     # if not hasattr(timetable, 'groupings'):
         # return
@@ -24,7 +24,7 @@ def handle_timetable(service, timetable, day):
         stops = {row.part.stop.atco_code for row in grouping.rows}
         existent_stops = StopPoint.objects.filter(atco_code__in=stops).values_list('atco_code', flat=True)
         for vj in grouping.journeys:
-            if not vj.should_show(day.date()):
+            if not vj.should_show(day):
                 continue
             date = day
             previous_time = None
@@ -52,7 +52,7 @@ def do_ni_service(service, groupings, day):
     previous_time = None
     for grouping in groupings:
         for journey in grouping['Journeys']:
-            if not ni.should_show(journey, day.date()):
+            if not ni.should_show(journey, day):
                 continue
 
             stopusageusages = []
@@ -84,11 +84,12 @@ def do_ni_service(service, groupings, day):
 @transaction.atomic
 def handle_region(region):
     print(region)
-    today = timezone.now()
+    now = timezone.now()
+    today = now.date()
     NEXT_WEEK = today + ONE_DAY * 7
     # delete journeys before today
     print('deleting journeys before', today)
-    print(Journey.objects.filter().delete())
+    print(Journey.objects.filter(service__region=region, datetime__date__lt=now).delete())
     # get the date of the last generated journey
     last_journey = Journey.objects.filter(service__region=region).order_by('datetime').last()
     if last_journey:
