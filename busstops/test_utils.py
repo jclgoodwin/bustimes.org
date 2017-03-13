@@ -44,6 +44,9 @@ class UtilsTest(TestCase):
         )
 
     def test_sign_url(self):
+        self.assertRaises(Exception, sign_url)
+        self.assertRaises(Exception, sign_url, 'fish.co.uk')
+        self.assertRaises(Exception, sign_url, None, 'fish.co.uk')
         self.assertEqual(
             sign_url('http://example.com/?horse=1', 'fish'),
             'http://example.com/?horse=1&signature=s0RjLnH0GnQYwPTrUuoxZ1MfeRg='

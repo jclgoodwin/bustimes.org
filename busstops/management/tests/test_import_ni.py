@@ -129,12 +129,12 @@ class ImportNIServicesTest(TestCase):
         self.assertEqual(self.command.stop_usages[3].order, 2)
 
 
-class GenerateDeparturesTest(TestCase):
-    """Test the generate_departures command for Northenr Ireland
+@override_settings(DATA_DIR=os.path.join(DIR, 'fixtures'))
+class ServiceTest(TestCase):
+    """Test departures and timetables for Northern Ireland
     """
     @classmethod
     @freeze_time('4 May 2017')
-    @override_settings(DATA_DIR=os.path.join(DIR, 'fixtures'))
     def setUpTestData(cls):
         Region.objects.create(id='NI')
         StopPoint.objects.bulk_create(
@@ -150,9 +150,11 @@ class GenerateDeparturesTest(TestCase):
         Service.objects.create(service_code='95c_ULB', date='2016-01-01', region_id='NI', current=True)
         generate_departures.handle_region(Region(id='NI'))
 
+    """Test the generate_departures command
+    """
     @freeze_time('3 May 2017 22:50')
     def test_departures(self):
-        response = self.client.get('/stops/700000012733/departures')
+        response = self.client.get('/stops/700000012733')
         self.assertContains(response, '<td>18:32</td>', 6, html=True)
         self.assertContains(response, '95c_ULB', 6)
         self.assertContains(response, '<h3>Friday</h3>', 1)
@@ -163,3 +165,13 @@ class GenerateDeparturesTest(TestCase):
         self.assertNotContains(response, 'Saturday')
 
         self.assertEqual(270, StopUsageUsage.objects.all().count())
+
+    @freeze_time('12 Mar 2017')
+    def test_timetable(self):
+        response = self.client.get('/services/95c_ULB')
+        self.assertContains(response, '<label for="show-all-stops-1-1">Show all stops</label>')
+        self.assertContains(response, '<h2>Post Office - Roslea - Buscentre - Enniskillen </h2>')
+        self.assertContains(response, '<h2>Enniskillen, Buscentre - Roslea, Post Office </h2>')
+        self.assertEqual(str(response.context_data['timetables'][0].groupings[0].rows[0].times), "['07:35', '07:35']")
+        self.assertEqual(str(response.context_data['timetables'][0].groupings[0].rows[-2].times), "['     ', '08:20']")
+        self.assertEqual(str(response.context_data['timetables'][0].groupings[0].rows[-1].times), "['08:20', '     ']")
