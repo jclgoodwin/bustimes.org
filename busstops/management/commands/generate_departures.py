@@ -118,6 +118,10 @@ def handle_region(region):
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **options):
+    @staticmethod
+    def add_arguments(parser):
+        parser.add_argument('regions', nargs='+', type=str)
+
+    def handle(self, regions, *args, **options):
         pool = Pool(processes=4)
-        pool.map(handle_region, Region.objects.all().exclude(id='L'))
+        pool.map(handle_region, Region.objects.filter(id__in=regions))
