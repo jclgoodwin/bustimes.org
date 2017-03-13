@@ -262,7 +262,8 @@ class ImportServicesTest(TestCase):
             html=True
         )
 
-    @override_settings(TNDS_DIR=FIXTURES_DIR)
+    @override_settings(TNDS_DIR=FIXTURES_DIR,
+                       CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     @freeze_time('1 Dec 2016')
     def test_do_service_m12(self):
         res = self.client.get('/services/M12_MEGA')
@@ -290,6 +291,20 @@ class ImportServicesTest(TestCase):
             'Nottingham Broad Marsh Bus Station', 'Loughborough Holywell Way', 'Fosse Park ASDA',
             'Rugby ASDA', '049004705400', 'Victoria Coach Station Arrivals'
         ])
+
+        with override_settings(TNDS_DIR='this is not a directory'):
+            # should not be cached (because dummy cache)
+            with override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}}):
+                res = self.client.get('/services/M12_MEGA')
+                self.assertEqual([], res.context_data['timetables'])
+
+            # should be cached
+            res = self.client.get('/services/M12_MEGA')
+            self.assertEqual('2017-01-01', str(res.context_data['timetables'][0].date))
+
+            # should not be cached (because different date)
+            res = self.client.get('/services/M12_MEGA?date=2017-01-02')
+            self.assertEqual([], res.context_data['timetables'])
 
     @override_settings(TNDS_DIR=FIXTURES_DIR)
     def test_do_service_scotland(self):
