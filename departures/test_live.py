@@ -2,10 +2,11 @@
 """
 import datetime
 import vcr
+from datetime import time
 from django.test import TestCase
 from django.shortcuts import render
 from freezegun import freeze_time
-from busstops.models import LiveSource, StopPoint, Service, Region, Operator, StopUsage
+from busstops.models import LiveSource, StopPoint, Service, Region, Operator, StopUsage, Journey, StopUsageUsage
 from . import live
 
 
@@ -51,15 +52,21 @@ class LiveDeparturesTest(TestCase):
         cls.yorkshire_stop.live_sources.add('Y')
 
         cls.region = Region.objects.create(id='W', name='Wales')
-        cls.stagecoach_stop = StopPoint.objects.create(atco_code='64803000', active=True,
+        cls.stagecoach_stop = StopPoint.objects.create(atco_code='64801092', active=True,
                                                        locality_centre=False)
         stagecoach_operator = Operator.objects.create(id='SCOX',
                                                       name='Stagecoach Oxenholme',
                                                       region_id='W')
-        stagecoach_service = Service.objects.create(service_code='17', line_name='17', region_id='W',
-                                                    date='2017-01-01')
-        stagecoach_service.operator.add(stagecoach_operator)
-        StopUsage.objects.create(stop=cls.stagecoach_stop, service=stagecoach_service, order=1)
+        cls.stagecoach_service = Service.objects.create(service_code='15', line_name='15',
+                                                        region_id='W', date='2017-01-01')
+        cls.stagecoach_service.operator.add(stagecoach_operator)
+        StopUsage.objects.create(stop=cls.stagecoach_stop, service=cls.stagecoach_service, order=1)
+        journey = Journey.objects.create(datetime='2017-03-14T20:23:00Z', service=cls.stagecoach_service,
+                                         destination=cls.cardiff_stop)
+        StopUsageUsage.objects.bulk_create([
+            StopUsageUsage(journey=journey, order=0, datetime='2017-03-14T20:23:00Z', stop=cls.stagecoach_stop),
+            StopUsageUsage(journey=journey, order=0, datetime='2017-03-14T21:23:00Z', stop=cls.stagecoach_stop)
+        ])
 
     def test_abstract(self):
         departures = live.Departures(None, ())
@@ -210,12 +217,18 @@ class LiveDeparturesTest(TestCase):
             'name': 'Your Next Bus'
         })
 
+    @freeze_time('14 Mar 2017 20:00')
     def test_stagecoach(self):
         with vcr.use_cassette('data/vcr/stagecoach.yaml'):
-            res = self.client.get('/stops/64803000')
-        self.assertContains(res, '<td><a href=/services/17>17</a></td>', html=True)
-        self.assertContains(res, '<td>Perth</td>')
-        self.assertEqual(res.context_data['departures'][-1]['service'], '56')
+            res = self.client.get('/stops/64801092')
+        self.assertContains(res, '<td><a href=/services/15>15</a></td>', html=True)
+        self.assertContains(res, '<td>Hillend</td>')
+        self.assertEqual(res.context_data['departures'][0]['service'], self.stagecoach_service)
+        self.assertEqual(res.context_data['departures'][0]['live'].time(), time(20, 37, 51))
+        self.assertEqual(res.context_data['departures'][1]['service'], '7')
+        self.assertEqual(res.context_data['departures'][1]['live'].time(), time(21, 17, 28))
+        self.assertEqual(res.context_data['departures'][2]['service'], self.stagecoach_service)
+        self.assertEqual(res.context_data['departures'][2]['live'].time(), time(21, 38, 21))
 
     def test_transportapi(self):
         """Test the get_row and other methods for Transport API departures

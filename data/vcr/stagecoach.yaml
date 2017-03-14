@@ -1,7 +1,7 @@
 interactions:
 - request:
     body: '{"StopMonitorRequest": {"header": {"retailOperation": "", "channel": ""},
-      "stopMonitorQueries": {"stopMonitorQuery": [{"stopPointLabel": "64803000", "servicesFilters":
+      "stopMonitorQueries": {"stopMonitorQuery": [{"stopPointLabel": "64801092", "servicesFilters":
       {}}]}}}'
     headers:
       Accept: ['*/*']
@@ -17,14 +17,17 @@ interactions:
     method: POST
     uri: https://api.stagecoachbus.com/adc/stop-monitor
   response:
-    body: {string: '{"stopMonitors":{"stopMonitor":[{"stopPointLabel":"64803000","monitoredCalls":{"monitoredCall":[{"operatorRef":"SCFI","datedVehicleJourneyRef":"28","visitNumber":25,"lineRef":"17","stopPointLabel":"64803000","stopPointName":"Prison","destinationDisplay":"Perth","timingPoint":false,"direction":"INBOUND","vehicleRef":"12304","cancelled":false,"expectedArrivalTime":"2017-03-14T20:59:10Z","expectedDepartureTime":"2017-03-14T20:59:10Z","aimedArrivalTime":"2017-03-14T21:00:00Z","aimedDepartureTime":"2017-03-14T21:00:00Z"},{"operatorRef":"SCFI","datedVehicleJourneyRef":"17","visitNumber":43,"lineRef":"56","stopPointLabel":"64803000","stopPointName":"Prison","destinationDisplay":"Perth","timingPoint":false,"direction":"OUTBOUND","vehicleRef":"12451","cancelled":false,"expectedArrivalTime":"2017-03-14T21:16:18Z","expectedDepartureTime":"2017-03-14T21:16:18Z","aimedArrivalTime":"2017-03-14T21:17:00Z","aimedDepartureTime":"2017-03-14T21:17:00Z"}]}}]}}'}
+    body: {string: '{"stopMonitors":{"stopMonitor":[{"stopPointLabel":"64801092","monitoredCalls":{"monitoredCall":[{"operatorRef":"SCFI","datedVehicleJourneyRef":"42","visitNumber":32,"lineRef":"15","stopPointLabel":"64801092","stopPointName":"South
+        Methven Stree","destinationDisplay":"Perth","timingPoint":true,"direction":"INBOUND","vehicleRef":"12205","cancelled":false,"expectedArrivalTime":"2017-03-14T20:37:51Z","expectedDepartureTime":"2017-03-14T20:37:51Z","aimedArrivalTime":"2017-03-14T20:23:00Z","aimedDepartureTime":"2017-03-14T20:23:00Z"},{"operatorRef":"SCFI","datedVehicleJourneyRef":"137","visitNumber":25,"lineRef":"7","stopPointLabel":"64801092","stopPointName":"South
+        Methven Stree","destinationDisplay":"Hillend","timingPoint":false,"direction":"OUTBOUND","vehicleRef":"12371","cancelled":false,"expectedArrivalTime":"2017-03-14T21:17:28Z","expectedDepartureTime":"2017-03-14T21:17:28Z","aimedArrivalTime":"2017-03-14T21:17:00Z","aimedDepartureTime":"2017-03-14T21:17:00Z"},{"operatorRef":"SCFI","datedVehicleJourneyRef":"46","visitNumber":44,"lineRef":"15","stopPointLabel":"64801092","stopPointName":"South
+        Methven Stree","destinationDisplay":"Perth","timingPoint":true,"direction":"INBOUND","vehicleRef":"12210","cancelled":false,"expectedArrivalTime":"2017-03-14T21:38:21Z","expectedDepartureTime":"2017-03-14T21:38:21Z","aimedArrivalTime":"2017-03-14T21:23:00Z","aimedDepartureTime":"2017-03-14T21:23:00Z"}]}}]}}'}
     headers:
       Accept: ['text/xml, text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2']
       Access-Control-Allow-Origin: ['https://www.stagecoachbus.com']
       Connection: [keep-alive]
-      Content-Length: ['954']
+      Content-Length: ['1419']
       Content-Type: [application/json]
-      Date: ['Tue, 14 Mar 2017 19:55:29 GMT']
+      Date: ['Tue, 14 Mar 2017 20:20:50 GMT']
       Server: [UltraESB/2.3.2 (GA)]
     status: {code: 200, message: OK}
 version: 1

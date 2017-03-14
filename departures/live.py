@@ -274,7 +274,6 @@ def add_stagecoach_departures(stop, services_dict, departures):
                 for departure in departures:
                     if aimed.time() == departure['time'].time():
                         departure['live'] = expected
-                        departure['source'] = 'stagecoach'
                         replaced = True
                         break
                 if not replaced:
