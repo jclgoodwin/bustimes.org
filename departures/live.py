@@ -337,7 +337,7 @@ def get_departures(stop, services):
                                         service__current=True).distinct()
 
     # Belfast
-    if operators and all(operator.code == 'MET' for operator in operators):
+    if operators and all(operator.id == 'MET' for operator in operators):
         return ({
             'departures': AcisConnectDepartures('belfast', stop, services, now),
             'source': {

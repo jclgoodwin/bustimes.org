@@ -5,7 +5,7 @@ import vcr
 from django.test import TestCase
 from django.shortcuts import render
 from freezegun import freeze_time
-from busstops.models import LiveSource, StopPoint, Service
+from busstops.models import LiveSource, StopPoint, Service, Region, Operator, StopUsage
 from . import live
 
 
@@ -50,6 +50,17 @@ class LiveDeparturesTest(TestCase):
         )
         cls.yorkshire_stop.live_sources.add('Y')
 
+        cls.region = Region.objects.create(id='W', name='Wales')
+        cls.stagecoach_stop = StopPoint.objects.create(atco_code='64803000', active=True,
+                                                       locality_centre=False)
+        stagecoach_operator = Operator.objects.create(id='SCOX',
+                                                      name='Stagecoach Oxenholme',
+                                                      region_id='W')
+        stagecoach_service = Service.objects.create(service_code='17', line_name='17', region_id='W',
+                                                    date='2017-01-01')
+        stagecoach_service.operator.add(stagecoach_operator)
+        StopUsage.objects.create(stop=cls.stagecoach_stop, service=stagecoach_service, order=1)
+
     def test_abstract(self):
         departures = live.Departures(None, ())
         self.assertRaises(NotImplementedError, departures.get_request_url)
@@ -61,7 +72,7 @@ class LiveDeparturesTest(TestCase):
         with vcr.use_cassette('data/vcr/tfl_arrivals.yaml'):
             row = live.TflDepartures(
                 self.london_stop,
-                Service.objects.all()
+                ()
             ).get_departures()[0]
         self.assertEqual('Stratford City', row['destination'])
         self.assertEqual('388', row['service'])
@@ -106,7 +117,7 @@ class LiveDeparturesTest(TestCase):
         """
         with vcr.use_cassette('data/vcr/cardiff.yaml'):
             departures = live.AcisConnectDepartures(
-                'cardiff', self.cardiff_stop, Service.objects.all(), datetime.datetime.now()
+                'cardiff', self.cardiff_stop, (), datetime.datetime.now()
             ).get_departures()
 
         self.assertEqual(departures[0], {
@@ -179,7 +190,7 @@ class LiveDeparturesTest(TestCase):
             departures = live.AcisConnectDepartures(
                 'yorkshire',
                 self.yorkshire_stop,
-                Service.objects.all(),
+                (),
                 now
             ).get_departures()
         self._test_acis_yorkshire(departures)
@@ -188,7 +199,7 @@ class LiveDeparturesTest(TestCase):
             departures = live.AcisLiveDepartures(
                 'tsy',
                 self.yorkshire_stop,
-                Service.objects.all(),
+                (),
                 now
             ).get_departures()
         self._test_acis_yorkshire(departures)
@@ -199,21 +210,12 @@ class LiveDeparturesTest(TestCase):
             'name': 'Your Next Bus'
         })
 
-    # def test_stagecoach(self):
-    #     stop = StopPoint(atco_code='64803000')
-    #     with vcr.use_cassette('data/vcr/stagecoach.yaml'):
-    #         departures = live.StagecoachDepartures(
-    #             stop, (), datetime.datetime.now()
-    #         ).get_departures()
-    #     self.assertEqual(len(departures), 1)
-    #     self.assertEqual(departures[0]['destination'], 'Perth')
-    #     self.assertEqual(departures[0]['service'], '36')
-    #     self.assertEqual(departures[0]['time'].year, 2016)
-    #     self.assertEqual(departures[0]['time'].month, 11)
-    #     self.assertEqual(departures[0]['time'].day, 13)
-    #     self.assertEqual(departures[0]['time'].hour, 18)
-    #     self.assertEqual(departures[0]['time'].minute, 52)
-    #     self.assertEqual(departures[0]['time'].second, 28)
+    def test_stagecoach(self):
+        with vcr.use_cassette('data/vcr/stagecoach.yaml'):
+            res = self.client.get('/stops/64803000')
+        self.assertContains(res, '<td><a href=/services/17>17</a></td>', html=True)
+        self.assertContains(res, '<td>Perth</td>')
+        self.assertEqual(res.context_data['departures'][-1]['service'], '56')
 
     def test_transportapi(self):
         """Test the get_row and other methods for Transport API departures
