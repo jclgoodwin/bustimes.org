@@ -1,4 +1,5 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
+from django.contrib.gis.geos import Point
 from .models import (
     Region, AdminArea, District, Locality, LiveSource, Operator, Service, StopPoint
 )
@@ -128,3 +129,14 @@ class StopPointTests(TestCase):
         self.assertEqual('Ballyblack Church', self.ballyblack_church.get_qualified_name())
         self.ballyblack_church.common_name = 'Methodist Church'
         self.assertEqual('Ballyblack Methodist Church', self.ballyblack_church.get_qualified_name())
+
+    @override_settings(STREETVIEW_KEY='-234457789999=AaaaaAbBbcDde',
+                       STREETVIEW_SECRET='EeefgHIiKKLlmNnOOPQQQqqrrRRrSUUuwXyyYzZz')
+    def test_streetview_url(self):
+        self.ballyblack_church.latlong = Point(0, 0)
+        streetview_url = self.ballyblack_church.get_streetview_url()
+        self.assertEqual(streetview_url,
+                         'https://maps.googleapis.com/maps/api/streetview?si' +
+                         'ze=480x360&location=0.0%2C0.0&heading=None&key=-23' +
+                         '4457789999%3DAaaaaAbBbcDde&signature=ulHDbCRCGIPRl' +
+                         '0NQN1yp2FvLE4M=')
