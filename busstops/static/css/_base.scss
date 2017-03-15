@@ -414,6 +414,7 @@ input:not(:checked) + label {
     border-collapse: separate;
     border-spacing: 0;
     padding-right: 1.1em;
+    table-layout: fixed;
 
     td {
         border-left: 0;
@@ -677,4 +678,8 @@ footer {
             display: none;
         }
     }
+}
+
+@media print {
+    @import 'print';
 }
