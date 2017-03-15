@@ -35,7 +35,7 @@ class ValidateOnSaveMixin(object):
 class Region(models.Model):
     """The largest type of geographical area"""
     id = models.CharField(max_length=2, primary_key=True)
-    name = models.CharField(max_length=48, db_index=True)
+    name = models.CharField(max_length=48)
 
     def __str__(self):
         return self.name
@@ -59,7 +59,7 @@ class AdminArea(models.Model):
     """
     id = models.PositiveIntegerField(primary_key=True)
     atco_code = models.PositiveIntegerField()
-    name = models.CharField(max_length=48, db_index=True)
+    name = models.CharField(max_length=48)
     short_name = models.CharField(max_length=48, blank=True)
     country = models.CharField(max_length=3, blank=True)
     region = models.ForeignKey(Region, models.CASCADE)
@@ -77,7 +77,7 @@ class District(models.Model):
     Note: some administrative areas *do not* have districts.
     """
     id = models.PositiveIntegerField(primary_key=True)
-    name = models.CharField(max_length=48, db_index=True)
+    name = models.CharField(max_length=48)
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
 
     def __str__(self):
@@ -95,7 +95,7 @@ class Locality(models.Model):
     Localities may be children of other localities...
     """
     id = models.CharField(max_length=48, primary_key=True)
-    name = models.CharField(max_length=48, db_index=True)
+    name = models.CharField(max_length=48)
     # short_name?
     qualifier_name = models.CharField(max_length=48, blank=True)
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
@@ -165,7 +165,7 @@ class StopPoint(models.Model):
     atco_code = models.CharField(max_length=16, primary_key=True)
     naptan_code = models.CharField(max_length=16, db_index=True)
 
-    common_name = models.CharField(max_length=48, db_index=True)
+    common_name = models.CharField(max_length=48)
     landmark = models.CharField(max_length=48, blank=True)
     street = models.CharField(max_length=48, blank=True)
     crossing = models.CharField(max_length=48, blank=True)
@@ -322,7 +322,7 @@ class StopUsage(models.Model):
     with an order placing it in a direction (e.g. the first outbound stop)"""
     service = models.ForeignKey('Service', models.CASCADE)
     stop = models.ForeignKey(StopPoint, models.CASCADE)
-    direction = models.CharField(max_length=8, db_index=True)
+    direction = models.CharField(max_length=8)
     order = models.PositiveIntegerField()
     timing_status = models.CharField(max_length=3,
                                      choices=TIMING_STATUS_CHOICES)
