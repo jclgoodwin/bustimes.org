@@ -271,12 +271,14 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(rows[0], {
             'destination': 'Hellesdon',
             'service': '37',
-            'time': datetime.datetime(2016, 6, 10, 22, 15)
+            'time': datetime.datetime(2016, 6, 10, 22, 17),
+            'live': datetime.datetime(2016, 6, 10, 22, 15)
         })
         self.assertEqual(rows[1], {
             'destination': 'Sheringham',
             'service': '44A',
-            'time': datetime.datetime(2016, 6, 10, 22, 47)
+            'time': datetime.datetime(2016, 6, 10, 22, 47),
+            'live': None
         })
 
         east_scotland_row = departures.get_row({
@@ -291,7 +293,7 @@ class LiveDeparturesTest(TestCase):
             'source': 'Scotland East'
         })
         self.assertEqual(east_scotland_row['destination'], 'Edinburgh')
-        self.assertEqual(east_scotland_row['time'].time(), datetime.time(3, 2))
+        self.assertEqual(east_scotland_row['live'].time(), datetime.time(3, 2))
 
         east_scotland_row_date = departures.get_row({
             'mode': 'bus',
@@ -307,7 +309,7 @@ class LiveDeparturesTest(TestCase):
             'source': 'Scotland East'
         })
         self.assertEqual(east_scotland_row_date['destination'], 'Stirling')
-        self.assertEqual(east_scotland_row_date['time'].time(),
+        self.assertEqual(east_scotland_row_date['live'].time(),
                          datetime.time(0, 32))
 
         self.assertEqual(
@@ -317,7 +319,6 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(departures.get_request_params(), {
             'app_id': None,
             'app_key': None,
-            'nextbuses': 'no',
             'group': 'no',
         })
 

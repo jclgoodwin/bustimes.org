@@ -172,26 +172,40 @@ class TransportApiDepartures(Departures):
             destination = destination.split(',', 1)[0]
         return destination
 
+    @staticmethod
+    def _get_time(string):
+        if string:
+            hour = int(string[:2])
+            while hour > 23:
+                hour -= 24
+                string = '%s%s' % (hour, string[2:])
+        return string
+
     def get_row(self, item):
-        time = item['best_departure_estimate']
-        if time is None:
+        live_time = self._get_time(item.get('expected_departure_time'))
+        time = self._get_time(item['aimed_departure_time'])
+        if not time:
+            time = live_time
+        if not time:
             return
-        hour = int(time[:2])
-        while hour > 23:
-            hour -= 24
-            time = '%s%s' % (hour, time[2:])
-        departure_time = None
         if item.get('date') is not None:
-            departure_time = dateutil.parser.parse(item['date'] + ' ' + time)
+            time = dateutil.parser.parse(item['date'] + ' ' + time)
+            if live_time:
+                live_time = dateutil.parser.parse(item['date'] + ' ' + live_time)
             if (item['source'].startswith('Traveline timetable') and
-                    departure_time.date() > self.today):
+                    time.date() > self.today):
                 return
-        if departure_time is None:
-            departure_time = datetime.datetime.combine(
+        else:
+            time = datetime.datetime.combine(
                 self.today, dateutil.parser.parse(time).time()
             )
+            if live_time:
+                live_time = datetime.datetime.combine(
+                    self.today, dateutil.parser.parse(live_time).time()
+                )
         return {
-            'time': departure_time,
+            'time': time,
+            'live': live_time,
             'service': self.get_service(item.get('line').split('--', 1)[0].split('|', 1)[0]),
             'destination': self._get_destination(item),
         }
@@ -203,7 +217,6 @@ class TransportApiDepartures(Departures):
         return {
             'app_id': settings.TRANSPORTAPI_APP_ID,
             'app_key': settings.TRANSPORTAPI_APP_KEY,
-            'nextbuses': 'no',
             'group': 'no',
         }
 
@@ -289,6 +302,18 @@ def add_stagecoach_departures(stop, services_dict, departures):
     return departures
 
 
+def blend(departures, live_rows):
+    for live_row in live_rows:
+        replaced = False
+        for row in departures:
+            if row['service'] == live_row['service'] and 'live' not in row:
+                row['live'] = live_row['live']
+                replaced = True
+                break
+        if not replaced:
+            departures.append(live_row)
+
+
 def get_departures(stop, services):
     """Given a StopPoint object and an iterable of Service objects,
     returns a tuple containing a context dictionary and a max_age integer
@@ -367,15 +392,8 @@ def get_departures(stop, services):
                 if live_source_name in live_sources:
                     live_rows = AcisConnectDepartures(prefix, stop, services, now).get_departures()
                     if live_rows:
-                        for live_row in live_rows:
-                            replaced = False
-                            for row in departures:
-                                if row['service'] == live_row['service'] and 'live' not in row:
-                                    row['live'] = live_row['live']
-                                    replaced = True
-                                    break
-                            if not replaced:
-                                departures.append(live_row)
+                        blend(departures, live_rows)
+
                     return ({
                         'departures': departures,
                         'today': now.date(),
@@ -384,6 +402,10 @@ def get_departures(stop, services):
                             'name': 'vixConnect'
                         }
                     }, 60)
+        if stop.atco_code[:3] in {'290'}:
+            live_rows = TransportApiDepartures(stop, services, now.date()).get_departures()
+            if live_rows:
+                blend(departures, live_rows)
 
     return ({
         'departures': departures,
