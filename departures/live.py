@@ -377,7 +377,8 @@ def get_departures(stop, services):
     if not departures or (departures[0]['time'] - now) < datetime.timedelta(hours=1):
         # Stagecoach
         if any(operator.name.startswith('Stagecoach') for operator in operators):
-            departures = add_stagecoach_departures(stop, services_dict, departures)
+            if departures:
+                departures = add_stagecoach_departures(stop, services_dict, departures)
         else:
             for live_source_name, prefix in (
                     ('ayr', 'ayrshire'),
@@ -402,7 +403,7 @@ def get_departures(stop, services):
                             'name': 'vixConnect'
                         }
                     }, 60)
-        if stop.atco_code[:3] in {'290'}:
+        if departures and stop.atco_code[:3] in {'290'}:
             live_rows = TransportApiDepartures(stop, services, now.date()).get_departures()
             if live_rows:
                 blend(departures, live_rows)
