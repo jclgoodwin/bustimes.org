@@ -449,6 +449,10 @@ class VehicleJourney(object):
             element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
         ).time()
 
+        self.operator = element.find('txc:OperatorRef', NS)
+        if self.operator is not None:
+            self.operator = self.operator.text
+
         sequencenumber = element.get('SequenceNumber')
         self.sequencenumber = sequencenumber and int(sequencenumber)
 
@@ -812,6 +816,10 @@ class Timetable(object):
                     self.mode = mode_element.text
                 else:
                     self.mode = ''
+
+                self.operator = element.find('txc:RegisteredOperatorRef', NS)
+                if self.operator is not None:
+                    self.operator = self.operator.text
 
                 operatingprofile_element = element.find('txc:OperatingProfile', NS)
                 if operatingprofile_element is not None:
