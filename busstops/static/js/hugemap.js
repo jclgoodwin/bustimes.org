@@ -125,9 +125,11 @@
         });
     }
 
-    var parts;
+    var parts,
+        shouldLocate = true;
     if (window.location.hash) {
         parts = window.location.hash.substr(1).split(',');
+        shouldLocate = false;
     } else if (localStorage && localStorage.getItem('location')) {
         parts = localStorage.getItem('location').split(',');
     }
@@ -135,6 +137,8 @@
         map.setView([parts[0], parts[1]], 14);
     } else {
         map.setView([54, -2.5], 6);
+    }
+    if (shouldLocate) {
         statusBar.getContainer().innerHTML = 'Finding your location\u2026';
         map.locate({setView: true});
     }
