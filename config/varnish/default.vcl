@@ -10,6 +10,14 @@ sub vcl_recv {
         return (pass);
     }
 
+    if (req.http.User-Agent ~ "(?i)(ads|google|bing|msn|yandex|baidu|ro|career|seznam|)bot" ||
+        req.http.User-Agent ~ "(?i)(baidu|jike|symantec)spider" ||
+        req.http.User-Agent ~ "(?i)scanner" ||
+        req.http.User-Agent ~ "(?i)(web)crawler"
+    ) {
+        set req.http.X-Bot = "bot";
+    }
+
     unset req.http.Cookie;
 }
 
@@ -20,6 +28,12 @@ sub vcl_backend_response {
         if (beresp.status >= 200 && beresp.status < 400) {
             if (bereq.url ~ "^/stops/") {
                 set beresp.ttl = 1m;
+
+                if (beresp.http.Vary) {
+                    set beresp.http.Vary = beresp.http.Vary + ", X-Bot";
+                } else {
+                    set beresp.http.Vary = "X-Bot";
+                }
             } else {
                 set beresp.ttl = 2h;
             }

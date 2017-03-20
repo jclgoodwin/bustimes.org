@@ -314,7 +314,7 @@ def blend(departures, live_rows):
             departures.append(live_row)
 
 
-def get_departures(stop, services):
+def get_departures(stop, services, bot=False):
     """Given a StopPoint object and an iterable of Service objects,
     returns a tuple containing a context dictionary and a max_age integer
     """
@@ -403,7 +403,7 @@ def get_departures(stop, services):
                             'name': 'vixConnect'
                         }
                     }, 60)
-        if departures and stop.atco_code[:3] in {'290'}:
+        if not bot and departures and stop.atco_code[:3] in {'290'}:
             live_rows = TransportApiDepartures(stop, services, now.date()).get_departures()
             if live_rows:
                 blend(departures, live_rows)
