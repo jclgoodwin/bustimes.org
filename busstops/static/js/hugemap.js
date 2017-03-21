@@ -27,7 +27,8 @@
             disableClusteringAtZoom: 15,
             maxClusterRadius: 50
         }),
-        lastReq;
+        lastReq,
+        movedByAccident;
 
     statusBar.onAdd = function () {
         var div = L.DomUtil.create('div', 'hugemap-status');
@@ -59,7 +60,7 @@
                 marker.bindPopup(a.outerHTML);
 
                 a.onmouseover = function() {
-                    window.movedByAccident = true;
+                    movedByAccident = true;
                     marker.openPopup();
                 };
 
@@ -88,15 +89,7 @@
         map.highWater = bounds;
     }
 
-    map.on('moveend', function (event) {
-        if (window.movedByAccident) {
-            window.movedByAccident = false;
-            return;
-        }
-
-        var latLng = event.target.getCenter(),
-            latLngString = Math.round(latLng.lat * 10000) / 10000 + ',' + Math.round(latLng.lng * 10000) / 10000;
-
+    function rememberLocation(latLngString) {
         if (history.replaceState) {
             history.replaceState(null, null, window.location.pathname + '#' + latLngString);
         }
@@ -107,23 +100,31 @@
                 // never mind
             }
         }
+    }
+
+    function handleMoveEnd(event) {
+        if (movedByAccident) {
+            movedByAccident = false;
+            return;
+        }
+
+        var latLng = event.target.getCenter(),
+            latLngString = Math.round(latLng.lat * 10000) / 10000 + ',' + Math.round(latLng.lng * 10000) / 10000;
+
+        rememberLocation(latLngString);
 
         if (event.target.getZoom() > 13) {
             loadStops(this, statusBar);
         } else {
             statusBar.getContainer().innerHTML = 'Please zoom in to see stops';
         }
-    });
-
-    if (localStorage) {
-        map.on('locationfound', function (event) {
-            try {
-                localStorage.setItem('location', event.latitude.toString() + ',' + event.longitude);
-            } catch (ignore) {
-                // never mind
-            }
-        });
     }
+
+    map.on('moveend', Cowboy.debounce(500, handleMoveEnd));
+
+    map.on('locationfound', function () {
+        statusBar.getContainer().innerHTML = '';
+    });
 
     var parts,
         shouldLocate = true;
@@ -142,5 +143,4 @@
         statusBar.getContainer().innerHTML = 'Finding your location\u2026';
         map.locate({setView: true});
     }
-
 })();
