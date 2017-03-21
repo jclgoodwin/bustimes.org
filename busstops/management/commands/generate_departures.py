@@ -18,7 +18,7 @@ def combine_date_time(date, time):
     combo = datetime.combine(date, time)
     try:
         return timezone.make_aware(combo)
-    except NonExistentTimeError as e:
+    except NonExistentTimeError:
         return timezone.make_aware(combo + timedelta(hours=1))
 
 
