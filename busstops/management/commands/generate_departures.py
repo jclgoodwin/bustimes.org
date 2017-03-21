@@ -1,6 +1,7 @@
 import os
 from multiprocessing import Pool
 from datetime import timedelta, datetime
+from pytz.exceptions import NonExistentTimeError
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.conf import settings
@@ -11,6 +12,14 @@ from ...utils import get_files_from_zipfile
 
 
 ONE_DAY = timedelta(days=1)
+
+
+def combine_date_time(date, time):
+    combo = datetime.combine(date, time)
+    try:
+        return timezone.make_aware(combo)
+    except NonExistentTimeError as e:
+        return timezone.make_aware(combo + timedelta(hours=1))
 
 
 def handle_timetable(service, timetable, day):
@@ -29,14 +38,14 @@ def handle_timetable(service, timetable, day):
             date = day
             previous_time = None
             stopusageusages = []
-            journey = Journey(service=service, datetime=timezone.make_aware(datetime.combine(date, vj.departure_time)))
+            journey = Journey(service=service, datetime=combine_date_time(date, vj.departure_time))
             for i, (su, time) in enumerate(vj.get_times()):
                 if previous_time and previous_time > time:
                     date += ONE_DAY
                 if su.stop.atco_code in existent_stops:
                     if not su.activity or su.activity.startswith('pickUp'):
                         stopusageusages.append(
-                            StopUsageUsage(datetime=timezone.make_aware(datetime.combine(date, vj.departure_time)),
+                            StopUsageUsage(datetime=combine_date_time(date, time),
                                            order=i, stop_id=su.stop.atco_code)
                         )
                     journey.destination_id = su.stop.atco_code
@@ -67,7 +76,7 @@ def do_ni_service(service, groupings, day):
                         if previous_time and departure < previous_time:
                             day += ONE_DAY
                         stopusageusages.append(
-                            StopUsageUsage(datetime=timezone.make_aware(datetime.combine(day, departure)),
+                            StopUsageUsage(datetime=combine_date_time(day, departure),
                                            order=i, stop_id=su['Location'])
                         )
                 else:
