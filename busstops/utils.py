@@ -111,7 +111,10 @@ def timetable_from_service(service, day=None):
         day = date.today()
 
     if service.region_id == 'NI':
-        return ni.get_timetable(os.path.join(settings.DATA_DIR, 'NI', service.pk + '.json'), day)
+        path = os.path.join(settings.DATA_DIR, 'NI', service.pk + '.json')
+        if os.path.exists(path):
+            return ni.get_timetable(path, day)
+        return []
 
     cache_key = '{}{}'.format(service.pk, day)
     timetables = cache.get(cache_key)
