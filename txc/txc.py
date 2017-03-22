@@ -90,9 +90,15 @@ class Stop(object):
         """
         name = slugify(self.stop.locality if self.stop else self.locality)
         if name != 'none' and name in text or text in name:
+            if name == text:
+                return 2
             return True
         name = slugify(self.common_name)
-        return text in name or name in text
+        if text in name or name in text:
+            if name == text:
+                return 2
+            return True
+        return False
 
 
 class Rows(object):
@@ -299,9 +305,12 @@ class Grouping(object):
         if self.service_description_parts:
             start = slugify(self.service_description_parts[0])
             end = slugify(self.service_description_parts[-1])
-            if self.starts_at(start) or self.ends_at(end):
+
+            same_score = self.starts_at(start) + self.ends_at(end)
+            reverse_score = self.starts_at(end) + self.ends_at(start)
+            if same_score > reverse_score:
                 return ' - '.join(self.service_description_parts)
-            if self.starts_at(end) or self.ends_at(start):
+            if same_score < reverse_score:
                 self.service_description_parts.reverse()
                 return ' - '.join(self.service_description_parts)
         return self.direction.capitalize()

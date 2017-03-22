@@ -143,6 +143,12 @@ class TimetableTest(TestCase):
             self.assertEqual(date_options[0]['date'], date(2016, 2, 21))
             self.assertEqual(date_options[-1]['date'], date(2017, 1, 27))
 
+    def test_timetable_cardiff_airport(self):
+        """Should be able to distinguish between Cardiff and Cardiff Airport as start and end of a route"""
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'TCAT009.xml', None)
+        self.assertEqual(str(timetable.groupings[0]), 'Cardiff Airport - Cardiff  ')
+        self.assertEqual(str(timetable.groupings[1]), 'Cardiff   - Cardiff Airport')
+
 
 class CellTest(TestCase):
     def test_cell(self):
