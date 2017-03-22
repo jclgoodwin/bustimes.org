@@ -24,10 +24,9 @@ class Command(ImportFromCSVCommand):
         ignored in favour of the RefNm or OpNm fields
         """
         return (
-            name in ('First', 'Arriva', 'Stagecoach') or
+            name in {'First', 'Arriva', 'Stagecoach', 'Oakwood Travel', 'Arriva North West'} or
             name.startswith('inc.') or
             name.startswith('formerly') or
-            name == 'Oakwood Travel' or
             name.isupper()
         )
 
