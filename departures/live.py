@@ -367,6 +367,21 @@ def get_departures(stop, services, bot=False):
             }
         }, 60)
 
+    if stop.atco_code[0] == '8':
+        data = SESSION.get(
+            'https://data.dublinked.ie/cgi-bin/rtpi/realtimebusinformation',
+            params={'stopid': stop.atco_code[-4:]}
+        ).json()
+        departures = [{
+            'time': dateutil.parser.parse(item['scheduleddeparturedatetime']),
+            'live': dateutil.parser.parse(item['departuredatetime']),
+            'destination': item['destination'],
+            'service': item['route']
+        } for item in data['results']]
+        return ({
+            'departures': departures
+        }, 60)
+
     departures = TimetableDepartures(stop, services, now)
     services_dict = departures.services
     departures = departures.get_departures()
