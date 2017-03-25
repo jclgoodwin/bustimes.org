@@ -79,11 +79,11 @@ h1 {
 }
 
 .banner-ad {
-    .megabus {
-        background: url('https://www.awin1.com/cshow.php?s=178399&v=2678&q=97593&r=242611');
-        height: 5.625em;
-        width: 45.5em;
+    @media (min-height: 48em) {
+        display: block;
     }
+
+    min-height: 5.625em;
 }
 
 [amphtml] .banner-ad {

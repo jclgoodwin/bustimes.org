@@ -619,6 +619,20 @@ input:not(:checked) + label {
     word-wrap: break-word;
 }
 
+.banner-ad {
+    display: none;
+    min-height: 3.125em;
+    overflow: hidden;
+    padding: 1em .625em;
+    text-align: center;
+}
+
+.adsbygoogle {
+    display: block;
+    margin: 0 auto;
+    max-width: 60em;
+}
+
 footer {
     margin-top: 1.5em;
 
@@ -626,40 +640,15 @@ footer {
     .banner-ad {
         border-top: 1px solid $brand-color;
         clear: both;
+        display: block;
         margin: 0;
-        text-align: center;
-    }
-
-    .banner-ad {
-        min-height: 3.125em;
-        overflow: hidden;
-        padding: 1em .625em;
-
-        img {
-            border: 0;
-        }
-    }
-
-    .adsbygoogle {
-        display: block;
-        margin: 0 auto;
-        max-width: 60em;
-    }
-
-    .megabus {
-        background: url('https://www.awin1.com/cshow.php?s=260973&v=2678&q=124736&r=242611');
-        display: block;
-        height: 250px;
-        margin: 0 auto;
-        overflow: hidden;
-        text-indent: 100%;
-        width: 300px;
     }
 
     ul {
         color: #555;
         font-size: .75em;
         padding: 1em;
+        text-align: center;
 
         a {
             padding: 1.2em .25em;
