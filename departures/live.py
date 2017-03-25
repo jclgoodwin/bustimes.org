@@ -363,16 +363,6 @@ def get_departures(stop, services, bot=False):
     operators = Operator.objects.filter(service__stops=stop,
                                         service__current=True).distinct()
 
-    # Belfast
-    if operators and all(operator.id == 'MET' for operator in operators):
-        return ({
-            'departures': AcisConnectDepartures('belfast', stop, services, now),
-            'source': {
-                'url': 'http://belfast.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % stop.pk,
-                'name': 'vixConnect'
-            }
-        }, 60)
-
     if stop.atco_code[0] == '8':
         data = SESSION.get(
             'https://data.dublinked.ie/cgi-bin/rtpi/realtimebusinformation',
@@ -421,6 +411,20 @@ def get_departures(stop, services, bot=False):
                             'name': 'vixConnect'
                         }
                     }, 60)
+        # Belfast
+        if operators and any(operator.id == 'MET' for operator in operators):
+            live_rows = AcisConnectDepartures('belfast', stop, services, now).get_departures()
+            if live_rows:
+                blend(departures, live_rows)
+
+                return ({
+                    'departures': departures,
+                    'source': {
+                        'url': 'http://belfast.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % stop.pk,
+                        'name': 'vixConnect'
+                    }
+                }, 60)
+
         if not bot and departures and stop.atco_code[:3] in {'290'}:
             live_rows = TransportApiDepartures(stop, services, now.date()).get_departures()
             if live_rows:
