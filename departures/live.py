@@ -68,7 +68,7 @@ class TflDepartures(Departures):
                 self.stop.heading = heading
                 self.stop.save()
         return [{
-            'time': dateutil.parser.parse(item.get('expectedArrival')).astimezone(LOCAL_TIMEZONE),
+            'live': dateutil.parser.parse(item.get('expectedArrival')).astimezone(LOCAL_TIMEZONE),
             'service': self.get_service(item.get('lineName')),
             'destination': item.get('destinationName'),
         } for item in res.json()]
@@ -77,9 +77,6 @@ class TflDepartures(Departures):
 class AcisDepartures(Departures):
     """Departures from a website ending in .acisconnect.com or .acislive.com"""
     def get_time(self, text):
-        """Given a Beautiful Soup element, returns its text made nicer
-        ('1 Mins' becomes '1 min', '2 Mins' becomes '2 mins')
-        """
         if 'min' in text.lower():
             return (None, self.now + datetime.timedelta(minutes=int(text.split(' ', 1)[0])))
         if text == 'Due':
