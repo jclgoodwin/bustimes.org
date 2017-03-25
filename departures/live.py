@@ -224,13 +224,18 @@ class TransportApiDepartures(Departures):
 
 
 class TimetableDepartures(Departures):
+    def get_row(suu):
+        destination = suu.journey.destination
+        return {
+            'time': suu.datetime.astimezone(LOCAL_TIMEZONE),
+            'destination': destination.locality or destination.town or destination,
+            'service': suu.journey.service
+        }
+
     def get_departures(self):
         queryset = StopUsageUsage.objects.filter(datetime__gte=self.now, stop=self.stop).order_by('datetime')
-        return [{
-            'time': suu.datetime.astimezone(LOCAL_TIMEZONE),
-            'destination': suu.journey.destination.locality or suu.journey.destination.town,
-            'service': suu.journey.service
-        } for suu in queryset.select_related('journey__destination__locality', 'journey__service')[:10]]
+        queryset = queryset.select_related('journey__destination__locality', 'journey__service')[:10]
+        return [self.get_row(suu) for suu in queryset]
 
 
 def get_max_age(departures, now):
