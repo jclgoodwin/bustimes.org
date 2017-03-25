@@ -224,6 +224,7 @@ class TransportApiDepartures(Departures):
 
 
 class TimetableDepartures(Departures):
+    @staticmethod
     def get_row(suu):
         destination = suu.journey.destination
         return {

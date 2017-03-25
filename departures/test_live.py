@@ -83,9 +83,9 @@ class LiveDeparturesTest(TestCase):
             ).get_departures()[0]
         self.assertEqual('Stratford City', row['destination'])
         self.assertEqual('388', row['service'])
-        self.assertEqual(2016, row['time'].date().year)
-        self.assertEqual(7, row['time'].date().month)
-        self.assertEqual(26, row['time'].date().day)
+        self.assertEqual(2016, row['live'].date().year)
+        self.assertEqual(7, row['live'].date().month)
+        self.assertEqual(26, row['live'].date().day)
 
         departures = live.get_departures(self.london_stop, ())[0]
         self.assertEqual(departures['source'], {
@@ -100,17 +100,17 @@ class LiveDeparturesTest(TestCase):
             <div class="aside box">
                 <h2>Next departures</h2>
                 <table><tbody>
-                    <tr><td>388</td><td>Stratford City</td><td>18:44</td></tr>
-                    <tr><td>388</td><td>Stratford City</td><td>18:26</td></tr>
-                    <tr><td>8</td><td>Bow Church</td><td>18:26</td></tr>
-                    <tr><td>8</td><td>Bow Church</td><td>18:44</td></tr>
-                    <tr><td>8</td><td>Bow Church</td><td>18:49</td></tr>
-                    <tr><td>8</td><td>Bow Church</td><td>18:33</td></tr>
-                    <tr><td>8</td><td>Bow Church</td><td>18:37</td></tr>
-                    <tr><td>8</td><td>Bow Church</td><td>18:22</td></tr>
-                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td><td>18:44</td></tr>
-                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td><td>18:33</td></tr>
-                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td><td>18:23</td></tr>
+                    <tr><td>388</td><td>Stratford City</td><td>18:44⚡</td></tr>
+                    <tr><td>388</td><td>Stratford City</td><td>18:26⚡</td></tr>
+                    <tr><td>8</td><td>Bow Church</td><td>18:26⚡</td></tr>
+                    <tr><td>8</td><td>Bow Church</td><td>18:44⚡</td></tr>
+                    <tr><td>8</td><td>Bow Church</td><td>18:49⚡</td></tr>
+                    <tr><td>8</td><td>Bow Church</td><td>18:33⚡</td></tr>
+                    <tr><td>8</td><td>Bow Church</td><td>18:37⚡</td></tr>
+                    <tr><td>8</td><td>Bow Church</td><td>18:22⚡</td></tr>
+                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td><td>18:44⚡</td></tr>
+                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td><td>18:33⚡</td></tr>
+                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td><td>18:23⚡</td></tr>
                 </tbody></table>
                 <p class="credit">Data from
                 <a href=https://tfl.gov.uk/bus/stop/490014721F/wilmot-street>
