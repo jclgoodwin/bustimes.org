@@ -284,8 +284,8 @@ def add_stagecoach_departures(stop, services_dict, departures):
         added = False
         for monitor in stop_monitors['stopMonitor'][0]['monitoredCalls']['monitoredCall']:
             if 'expectedDepartureTime' in monitor:
-                aimed = dateutil.parser.parse(monitor['aimedDepartureTime'])
-                expected = dateutil.parser.parse(monitor['expectedDepartureTime'])
+                aimed, expected = [dateutil.parser.parse(time).astimezone(LOCAL_TIMEZONE)
+                                   for time in (monitor['aimedDepartureTime'], monitor['expectedDepartureTime'])]
                 replaced = False
                 for departure in departures:
                     if aimed.time() == departure['time'].time():

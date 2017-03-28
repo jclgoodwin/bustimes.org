@@ -66,7 +66,8 @@ class LiveDeparturesTest(TestCase):
                                          destination=cls.cardiff_stop)
         StopUsageUsage.objects.bulk_create([
             StopUsageUsage(journey=journey, order=0, datetime='2017-03-14T20:23:00Z', stop=cls.stagecoach_stop),
-            StopUsageUsage(journey=journey, order=0, datetime='2017-03-14T21:23:00Z', stop=cls.stagecoach_stop)
+            StopUsageUsage(journey=journey, order=0, datetime='2017-03-14T21:23:00Z', stop=cls.stagecoach_stop),
+            StopUsageUsage(journey=journey, order=0, datetime='2017-03-28 18:53:00+01:00', stop=cls.stagecoach_stop),
         ])
 
     def test_abstract(self):
@@ -230,6 +231,22 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(res.context_data['departures'][1]['live'].time(), time(21, 17, 28))
         self.assertEqual(res.context_data['departures'][2]['service'], self.stagecoach_service)
         self.assertEqual(res.context_data['departures'][2]['live'].time(), time(21, 38, 21))
+
+    @freeze_time('28 Mar 2017 17:00')
+    def test_stagecoach_timezone(self):
+        with vcr.use_cassette('data/vcr/stagecoach_timezone.yaml'):
+            res = self.client.get('/stops/64801092')
+        self.assertEqual(res.context_data['departures'][0]['destination'].common_name, 'Wood Street')
+        self.assertEqual(res.context_data['departures'][1]['destination'], 'Hillend')
+        self.assertEqual(res.context_data['departures'][2]['destination'], 'Perth')
+        self.assertEqual(res.context_data['departures'][0]['service'].line_name, '15')
+        self.assertEqual(res.context_data['departures'][1]['service'], '7')
+        self.assertEqual(res.context_data['departures'][2]['service'].line_name, '15')
+        self.assertEqual(str(res.context_data['departures'][0]['time']), '2017-03-28 18:53:00+01:00')
+        self.assertEqual(str(res.context_data['departures'][1]['time']), '2017-03-28 19:08:00+01:00')
+        self.assertEqual(str(res.context_data['departures'][1]['live']), '2017-03-28 19:08:25+01:00')
+        self.assertEqual(str(res.context_data['departures'][2]['time']), '2017-03-28 19:20:00+01:00')
+        self.assertEqual(str(res.context_data['departures'][2]['live']), '2017-03-28 19:24:08+01:00')
 
     def test_transportapi(self):
         """Test the get_row and other methods for Transport API departures
