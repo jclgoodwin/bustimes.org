@@ -286,9 +286,12 @@ def add_stagecoach_departures(stop, services_dict, departures):
             if 'expectedDepartureTime' in monitor:
                 aimed, expected = [dateutil.parser.parse(time).astimezone(LOCAL_TIMEZONE)
                                    for time in (monitor['aimedDepartureTime'], monitor['expectedDepartureTime'])]
+                line = monitor['lineRef']
                 replaced = False
                 for departure in departures:
-                    if aimed.time() == departure['time'].time():
+                    if 'live' not in departure and (
+                        line == departure['service'].line_name or aimed.time() == departure['time'].time()
+                    ):
                         departure['live'] = expected
                         replaced = True
                         break
@@ -296,7 +299,7 @@ def add_stagecoach_departures(stop, services_dict, departures):
                     departures.append({
                         'time': aimed,
                         'live': expected,
-                        'service': services_dict.get(monitor['lineRef'], monitor['lineRef']),
+                        'service': services_dict.get(line, line),
                         'destination': monitor['destinationDisplay']
                     })
                     added = True
