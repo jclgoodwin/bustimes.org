@@ -20,6 +20,15 @@ DURATION_REGEX = re.compile(
     r'P((?P<days>-?\d+?)D)?T((?P<hours>-?\d+?)H)?((?P<minutes>-?\d+?)M)?((?P<seconds>-?\d+?)S)?'
 )
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}
+BANK_HOLIDAYS = {
+    datetime.date(2017, 4, 14): ('GoodFriday',),
+    datetime.date(2017, 4, 17): ('EasterMonday',),
+    datetime.date(2017, 5, 1): ('MayDay',),
+    datetime.date(2017, 5, 29): ('SpringBank',),
+    datetime.date(2017, 12, 24): ('ChristmasEve',),
+    datetime.date(2017, 12, 25): ('ChristmasDay',),
+    datetime.date(2017, 12, 26): ('BoxingDay',),
+}
 
 
 def parse_duration(string):
@@ -659,6 +668,20 @@ class OperatingProfile(object):
         if servicedorg_days_element is not None:
             self.servicedorganisation = ServicedOrganisationDayType(servicedorg_days_element, servicedorgs)
 
+        # Bank Holidays
+
+        bank_holidays_operation_element = element.find('txc:BankHolidayOperation/txc:DaysOfOperation', NS)
+        bank_holidays_nonoperation_element = element.find('txc:BankHolidayOperation/txc:DaysOfNonOperation', NS)
+        if bank_holidays_operation_element is not None:
+            self.operation_bank_holidays = [e.tag[33:] for e in bank_holidays_operation_element]
+        else:
+            self.operation_bank_holidays = []
+
+        if bank_holidays_nonoperation_element is not None:
+            self.nonoperation_bank_holidays = [e.tag[33:] for e in bank_holidays_nonoperation_element]
+        else:
+            self.nonoperation_bank_holidays = []
+
     def __str__(self):
         if self.regular_days:
             if len(self.regular_days) == 1:
@@ -675,8 +698,21 @@ class OperatingProfile(object):
         return str(self) != str(other)
 
     def should_show(self, date):
-        if date.weekday() not in self.regular_days:
+        if self.regular_days:
+            if date.weekday() not in self.regular_days:
+                return False
+        if date in BANK_HOLIDAYS:
+            if 'AllBankHolidays' in self.operation_bank_holidays:
+                return True
+            for bank_holiday in BANK_HOLIDAYS[date]:
+                if bank_holiday in self.operation_bank_holidays:
+                    return True
+                if bank_holiday in self.nonoperation_bank_holidays:
+                    return False
             return False
+        elif not self.regular_days:
+            return False
+
         if hasattr(self, 'servicedorganisation'):
             org = self.servicedorganisation
 
@@ -694,6 +730,7 @@ class OperatingProfile(object):
             for daterange in self.nonoperation_days:
                 if daterange.contains(date):
                     return False
+
         return True
 
 
