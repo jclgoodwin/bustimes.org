@@ -704,6 +704,8 @@ class OperatingProfile(object):
         if date in BANK_HOLIDAYS:
             if 'AllBankHolidays' in self.operation_bank_holidays:
                 return True
+            if 'AllBankHolidays' in self.nonoperation_bank_holidays:
+                return False
             for bank_holiday in BANK_HOLIDAYS[date]:
                 if bank_holiday in self.operation_bank_holidays:
                     return True

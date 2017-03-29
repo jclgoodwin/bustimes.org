@@ -336,6 +336,13 @@ class VehicleJourneyTest(TestCase):
         self.assertFalse(journey.should_show(date(2017, 2, 20)))
         self.assertTrue(journey.should_show(date(2017, 3, 28)))
 
+        self.assertTrue(journey.should_show(date(2017, 4, 13)))
+        self.assertFalse(journey.should_show(date(2017, 4, 14)))  # Good Friday
+        self.assertFalse(journey.should_show(date(2017, 4, 15)))
+        self.assertFalse(journey.should_show(date(2017, 4, 16)))
+        self.assertFalse(journey.should_show(date(2017, 4, 17)))  # Easter Monday
+        self.assertTrue(journey.should_show(date(2017, 4, 18)))
+
         # first Wednesday of the month
         journey.code = 'VJ_21-NS1-A-y08-1-2-T0'
         self.assertTrue(journey.should_show(date(2017, 1, 4)))
