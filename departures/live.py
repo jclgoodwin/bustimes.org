@@ -67,11 +67,11 @@ class TflDepartures(Departures):
                 self.stop.common_name = name
                 self.stop.heading = heading
                 self.stop.save()
-        return [{
+        return sorted([{
             'live': dateutil.parser.parse(item.get('expectedArrival')).astimezone(LOCAL_TIMEZONE),
             'service': self.get_service(item.get('lineName')),
             'destination': item.get('destinationName'),
-        } for item in res.json()]
+        } for item in res.json()], key=lambda d: d['live'])
 
 
 class AcisDepartures(Departures):
