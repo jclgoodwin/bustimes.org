@@ -289,20 +289,26 @@ def add_stagecoach_departures(stop, services_dict, departures):
                 line = monitor['lineRef']
                 replaced = False
                 for departure in departures:
-                    if 'live' not in departure and (
-                        line == departure['service'].line_name or aimed.time() == departure['time'].time()
-                    ):
+                    if aimed == departure['time']:
                         departure['live'] = expected
                         replaced = True
                         break
-                if not replaced:
-                    departures.append({
-                        'time': aimed,
-                        'live': expected,
-                        'service': services_dict.get(line, line),
-                        'destination': monitor['destinationDisplay']
-                    })
-                    added = True
+                if replaced:
+                    continue
+                for departure in departures:
+                    if not departure.get('live') and line == departure['service'].line_name:
+                        departure['live'] = expected
+                        replaced = True
+                        break
+                if replaced:
+                    continue
+                departures.append({
+                    'time': aimed,
+                    'live': expected,
+                    'service': services_dict.get(line, line),
+                    'destination': monitor['destinationDisplay']
+                })
+                added = True
         if added:
             departures.sort(key=lambda d: d['time'])
     return departures
