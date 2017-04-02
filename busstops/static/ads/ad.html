@@ -5,55 +5,68 @@
 <title></title>
 <!-- This is occasionally used as a fallback (displayed in an iframe) by Google Adsense) -->
 <style>
-a {
-	display: block;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	width: 234px;
-	height: 60px;
-	margin-left: -117px;
-	margin-top: -30px;
-
-	/* hide text */
-	text-indent: 100%;
-	white-space: nowrap;
-	overflow: hidden;
-
-	background: no-repeat center;
-	background-image: url(https://www.affiliatewindow.com/linkimages/2678/234x60_static_generic.jpg)
+html {
+    height: 100%;
 }
-
-@media (min-width: 468px) and (min-height: 60px) {
-	a {
-		width: 468px;
-		margin-left: -234px;
-		background-image: url(https://a1.awin1.com/ads/2678/468x60_static_generic.jpg);
-	}
+body {
+    margin: 0;
+    min-height: 100%;
+    text-align: center;
 }
-
-@media (min-width: 300px) and (min-height: 250px) {
-	a {
-		width: 300px;
-		height: 250px;
-		margin-left: -150px;
-		margin-top: -125px;
-		background-image: url(https://www.awin1.com/cshow.php?s=178346&v=2678&q=97564&r=242611);
-	}
-}
-
-@media (min-width: 728px) and (min-height: 90px) {
-	a {
-		width: 728px;
-		height: 90px;
-		margin-left: -364px;
-		margin-top: -45px;
-		background-image: url(https://www.awin1.com/cshow.php?s=178399&v=2678&q=97593&r=242611);
-	}
+iframe {
+    border: 0;
 }
 </style>
 </head>
 <body>
-<a target="_blank" href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611">Megabus</a>
+<script>
+function pickRandom(from) {
+    return from[Math.floor(Math.random() * from.length)];
+}
+var iframe = document.createElement('iframe'),
+    width = document.body.clientWidth,
+    height = document.body.clientHeight;
+if (width >= 728 && height >= 90) {
+    iframe.src = pickRandom([
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=48&l=ez&f=ifr&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=48&l=ur1&category=audible&banner=0QR3KVTW2NHPSR46X702&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=48&l=ur1&category=gift_certificates&banner=1A6C54G7EX5E5TK6HAR2&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=48&l=ur1&category=firetv_stick&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=48&l=ur1&category=fire_tablets&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=48&l=ur1&category=kindle&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=48&l=ur1&category=prime&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=48&l=ur1&category=warehousedeals&f=ifr',
+    ]);
+    iframe.width = 728;
+    iframe.height = 90;
+} else if (width >= 468 && height >= 60) {
+    iframe.src = pickRandom([
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=26&l=ez&f=ifr&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=26&l=ur1&category=audible&banner=0QR3KVTW2NHPSR46X702&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=26&l=ur1&category=gift_certificates&banner=1A6C54G7EX5E5TK6HAR2&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=26&l=ur1&category=firetv_stick&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=26&l=ur1&category=fire_tablets&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=26&l=ur1&category=kindle&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=26&l=ur1&category=prime&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=26&l=ur1&category=warehousedeals&f=ifr',
+    ]);
+    iframe.width = 468;
+    iframe.height = 60;
+} else if (width >= 300 && height >= 250) {
+    iframe.src = pickRandom([
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=12&l=ez&f=ifr&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=12&l=ur1&category=audible&banner=0QR3KVTW2NHPSR46X702&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=12&l=ur1&category=gift_certificates&banner=1A6C54G7EX5E5TK6HAR2&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=12&l=ur1&category=firetv_stick&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=12&l=ur1&category=fire_tablets&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=12&l=ur1&category=kindle&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=12&l=ur1&category=prime&f=ifr',
+        '//rcm-eu.amazon-adsystem.com/e/cm?t=joshgood-21&o=2&p=12&l=ur1&category=warehousedeals&f=ifr',
+    ]);
+    iframe.width = 300;
+    iframe.height = 250;
+}
+document.body.append(iframe);
+</script>
 </body>
 </html>
