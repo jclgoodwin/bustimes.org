@@ -11,12 +11,16 @@ register = template.Library()
 @register.filter(is_safe=True, needs_autoescape=True)
 @stringfilter
 def urlise(value, autoescape=None):
+    """Like the built-in Django urlize filter,
+    but strips the 'http://' from the link text,
+    and replaces Megabus URLs with venal Affiliate Window ones
+    """
     return mark_safe(
         urlize(value, nofollow=True)
         .replace('">https://', '">')
         .replace('">http://', '">')
         .replace('"http://megabus.com"',
                  '"https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=notes"')
-        .replace('"http://www.megabus.com"',
+        .replace('"http://uk.megabus.com"',
                  '"https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=notes"')
     )
