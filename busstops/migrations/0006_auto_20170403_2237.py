@@ -26,7 +26,6 @@ class Migration(migrations.Migration):
             field=autoslug.fields.AutoSlugField(default='', editable=True, populate_from='name'),
             preserve_default=False,
         ),
-        migrations.RunPython(update_operator_slugs),
         migrations.AddField(
             model_name='service',
             name='slug',
