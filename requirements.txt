@@ -1,5 +1,6 @@
 beautifulsoup4==4.5.3
 Django==1.10.6
+django-autoslug==1.9.3
 django-email-obfuscator==0.1.5
 git+https://github.com/django-haystack/django-haystack@master
 django-pipeline==1.6.12

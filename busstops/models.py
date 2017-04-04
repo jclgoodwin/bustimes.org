@@ -6,6 +6,7 @@ try:
     from urllib.parse import urlencode
 except ImportError:
     from urllib import urlencode
+from autoslug import AutoSlugField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
@@ -96,6 +97,7 @@ class Locality(models.Model):
     """
     id = models.CharField(max_length=48, primary_key=True)
     name = models.CharField(max_length=48)
+    slug = AutoSlugField(populate_from='name', editable=True)
     # short_name?
     qualifier_name = models.CharField(max_length=48, blank=True)
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
@@ -290,6 +292,7 @@ class Operator(ValidateOnSaveMixin, models.Model):
 
     id = models.CharField(max_length=10, primary_key=True)  # e.g. 'YCST'
     name = models.CharField(max_length=100, db_index=True)
+    slug = AutoSlugField(populate_from='name', unique=True, editable=True)
     vehicle_mode = models.CharField(max_length=48, blank=True)
     parent = models.CharField(max_length=48, blank=True)
     region = models.ForeignKey(Region, models.CASCADE)
@@ -304,7 +307,7 @@ class Operator(ValidateOnSaveMixin, models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('operator-detail', args=(self.id,))
+        return reverse('operator-detail', args=(self.slug or self.id,))
 
     def get_a_mode(self):
         """Return the the name of the operator's vehicle mode,
@@ -366,6 +369,7 @@ class Service(models.Model):
     description = models.CharField(max_length=255, blank=True)
     outbound_description = models.CharField(max_length=255, blank=True)
     inbound_description = models.CharField(max_length=255, blank=True)
+    slug = AutoSlugField(populate_from='description', editable=True)
     mode = models.CharField(max_length=11)
     operator = models.ManyToManyField(Operator, blank=True)
     net = models.CharField(max_length=3, blank=True)

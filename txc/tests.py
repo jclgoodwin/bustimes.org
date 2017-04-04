@@ -34,6 +34,7 @@ class TimetableTest(TestCase):
         self.assertEqual(87, len(timetable.groupings[1].rows))
         self.assertEqual('Leys Lane', timetable.groupings[1].rows[0].part.stop.common_name)
 
+    @freeze_time('1 April 2017')
     def test_timetable_ea_2(self):
         """Test a timetable with a single OperatingProfile (no per-VehicleJourney ones)"""
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_20-12-_-y08-1.xml', date(2016, 12, 2))
