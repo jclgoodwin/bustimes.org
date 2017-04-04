@@ -19,7 +19,7 @@ urlpatterns = [
     url(r'^stops/(?P<pk>\w+)\.json', views.stop_json),
     url(r'^stops/(?P<pk>\w+)', views.StopPointDetailView.as_view(), name='stoppoint-detail'),
     url(r'^operators/(?P<pk>[A-Z]+)$', views.OperatorDetailView.as_view()),
-    url(r'^operators/(?P<slug>\w+)', views.OperatorDetailView.as_view(), name='operator-detail'),
+    url(r'^operators/(?P<slug>[\w-]+)', views.OperatorDetailView.as_view(), name='operator-detail'),
     url(r'^services/(?P<pk>[^/]+)\.xml', views.service_xml),
     url(r'^services/(?P<pk>[^/]+)', views.ServiceDetailView.as_view(), name='service-detail'),
 ]

@@ -251,10 +251,8 @@ class ViewsTests(TestCase):
         """The normal and Accelerated Mobile pages versions should be mostly the same
         (but slightly different)
         """
-        normal_response = self.client.get('/operators/AINS')
-        amphtml_response = self.client.get('/operators/AINS?amp')
-
-        for response in (normal_response, amphtml_response):
+        for url in ('/operators/AINS', '/operators/ainsleys-chariots', '/operators/AINS?amp'):
+            response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, 'An airline operating company in')
             self.assertContains(response, 'Contact Ainsley&#39;s Chariots')
@@ -265,8 +263,8 @@ class ViewsTests(TestCase):
             self.assertContains(response, 'http://isyourgirlfriendahorse.com')
             self.assertContains(response, 'Mind your head')  # Note
 
-        self.assertContains(amphtml_response, '<style amp-custom>')
-        self.assertContains(amphtml_response, "\"data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000")
+        self.assertContains(response, '<style amp-custom>')
+        self.assertContains(response, "\"data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000")
 
     def test_operator_not_found(self):
         """An operator with no services should should return a 404 response"""
