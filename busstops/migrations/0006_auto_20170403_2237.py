@@ -6,21 +6,6 @@ import autoslug.fields
 from django.db import migrations
 
 
-def update_operator_slugs(apps, _):
-    Operator = apps.get_model('busstops', 'Operator')
-    for operator in Operator.objects.all():
-        operator.slug = slugify(operator.name)
-        if operator.id == 'GLOB':
-            operator.slug += '-wales'
-        elif operator.id == 'HCOM':
-            operator.slug = 'hact'
-        elif operator.id in {'OXFC', 'ACPZ'}:
-            operator.slug = slugify(operator.name.split(' (', 1)[0])
-        elif operator.id == 'WMSN':
-            operator.slug = 'west-midlands-special-needs-ring-and-ride'
-        operator.save()
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -37,14 +22,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='operator',
             name='slug',
-            field=autoslug.fields.AutoSlugField(default='', editable=True, populate_from='name'),
-            preserve_default=False,
-        ),
-        migrations.RunPython(update_operator_slugs),
-        migrations.AlterField(
-            model_name='operator',
-            name='slug',
             field=autoslug.fields.AutoSlugField(unique=True, editable=True, populate_from='name'),
+            preserve_default=False,
         ),
         migrations.AddField(
             model_name='service',
