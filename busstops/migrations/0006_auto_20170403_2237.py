@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 import autoslug.fields
+from django.utils.text import slugify
 from django.db import migrations
 
 
@@ -22,9 +23,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='operator',
             name='slug',
-            field=autoslug.fields.AutoSlugField(unique=True, editable=True, populate_from='name'),
+            field=autoslug.fields.AutoSlugField(default='', editable=True, populate_from='name'),
             preserve_default=False,
         ),
+        migrations.RunPython(update_operator_slugs),
         migrations.AddField(
             model_name='service',
             name='slug',
