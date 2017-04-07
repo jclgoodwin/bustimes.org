@@ -22,7 +22,7 @@ class TimetableTest(TestCase):
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-1.xml', date(2016, 10, 16))
 
         self.assertEqual('Monday to Sunday', str(timetable.operating_profile))
-        self.assertEqual('until 21 October 2016', str(timetable.operating_period))
+        self.assertEqual('', str(timetable.operating_period))
 
         self.assertEqual('Norwich - Wymondham - Attleborough', str(timetable.groupings[0]))
         self.assertEqual(11, len(timetable.groupings[0].journeys))
@@ -272,10 +272,10 @@ class OperatingPeriodTest(TestCase):
         self.assertEqual(str(operating_period), 'from 30 December 2056 to 5 January 2057')
 
     def test_medium_range(self):
-        """An OperatingPeriod shorter than 40 days should be displayed"""
+        """An OperatingPeriod shorter than 7 days should be displayed"""
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
-                <StartDate>2015-02-01</StartDate>
+                <StartDate>2015-02-27</StartDate>
                 <EndDate>2015-03-01</EndDate>
             </OperatingPeriod>
         """)
@@ -284,7 +284,7 @@ class OperatingPeriodTest(TestCase):
 
     @freeze_time('2 February 2015')
     def test_long_range(self):
-        """An OperatingPeriod longer than 40 days should not be displayed"""
+        """An OperatingPeriod longer than 7 days should not be displayed"""
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
                 <StartDate>2015-02-01</StartDate>
@@ -298,7 +298,7 @@ class OperatingPeriodTest(TestCase):
         """An OperatingPeriod starting ending in the past"""
         element = ET.fromstring("""
             <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
-                <StartDate>2001-05-01</StartDate>
+                <StartDate>2002-05-31</StartDate>
                 <EndDate>2002-06-01</EndDate>
             </OperatingPeriod>
         """)

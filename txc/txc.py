@@ -773,7 +773,7 @@ class OperatingPeriod(DateRange):
             )
         # The end date is often bogus,
         # but show it if the period seems short enough to be relevant
-        if self.end is not None and (self.end - today).days < 40:
+        if self.end is not None and (self.end - self.start).days < 7:
             return self.end.strftime('until %-d %B %Y')
         return ''
 
