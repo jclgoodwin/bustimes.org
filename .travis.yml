@@ -19,14 +19,14 @@ before_script:
   - psql -U postgres -c 'create database bustimes'
   - ./manage.py migrate
   - gem install sass
-  - nvm install node --lts
+  - nvm install node
   - npm install
 script:
   - ./manage.py collectstatic --noinput
   - PYTHONWARNINGS=all coverage run manage.py test
   - flake8
   - sass-lint 'busstops/static/css/*' -v
-  - npm outdated; node -v; eslint 'busstops/static/js/*.js'
+  - eslint 'busstops/static/js/*.js'
 after_success:
   - coveralls
   - git status
