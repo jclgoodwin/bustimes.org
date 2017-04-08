@@ -23,3 +23,11 @@ class Command(ImportFromCSVCommand):
                 'region_id': row['RegionCode'],
             }
         )
+
+    def handle(self, *args, **options):
+        super(Command, self).handle(*args, **options)
+
+        # Move Cumbria to the North West.
+        # There is the legacy of the confusing 'North East and Cumbria' Traveline region,
+        # but actually Cumbrian bus services are in the North West now
+        AdminArea.objects.filter(name='Cumbria').update(region_id='NW')
