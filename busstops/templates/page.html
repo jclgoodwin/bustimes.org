@@ -79,7 +79,8 @@ ga('send', 'pageview');
     }).install();
 </script>
 {% if stopusages or stops or stoppoint %}
-<link rel="stylesheet" property="styleseet" href="{% static 'js/bower_components/leaflet/dist/leaflet.css' %}" />
+<link rel="stylesheet" property="styleseet" href="https://mapzen.com/js/mapzen.css">
+<script src="https://mapzen.com/js/mapzen.min.js"></script>
 {% javascript 'map' %}
 {% elif regions %}
 {% javascript 'frontpage' %}

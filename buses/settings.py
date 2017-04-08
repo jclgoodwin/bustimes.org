@@ -111,7 +111,6 @@ PIPELINE = {
         },
         'map': {
             'source_filenames': (
-                'js/bower_components/leaflet/dist/leaflet.js',
                 'js/map.js',
             ),
             'output_filename': 'js/map.min.js',

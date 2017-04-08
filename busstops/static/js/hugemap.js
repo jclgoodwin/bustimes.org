@@ -8,12 +8,13 @@
         L, reqwest, Cowboy
     */
 
-    var map = L.map('hugemap', {
+    L.Mapzen.apiKey = 'search-N08zR0s';
+
+    var map = L.Mapzen.map('hugemap', {
             minZoom: 6,
+            maxZoom: 20,
             maxBounds: [[60.85, -9.23], [49.84, 2.69]]
         }),
-        tileURL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        attribution = '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         pin = L.icon({
             iconUrl:    '/static/pin.svg',
             iconSize:   [16, 22],
@@ -37,10 +38,6 @@
     statusBar.addTo(map);
 
     map.addLayer(markers);
-
-    L.tileLayer(tileURL, {
-        attribution: attribution
-    }).addTo(map);
 
     function processStopsData(data) {
         var sidebar = document.getElementById('sidebar');

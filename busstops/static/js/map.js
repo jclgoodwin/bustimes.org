@@ -49,17 +49,9 @@
         }
 
         if (mainLocations.length) {
-            map = L.map('map', {
-                zoomControl: false,
-                dragging: false,
-                touchZoom: false,
-                scrollWheelZoom: false,
-                doubleClickZoom: false,
-                boxZoom: false
-            });
-            var tileURL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                attribution = '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-                pin = L.icon({
+            L.Mapzen.apiKey = 'search-N08zR0s';
+            map = L.Mapzen.map('map');
+            var pin = L.icon({
                     iconUrl:    '/static/pin.svg',
                     iconSize:   [16, 22],
                     iconAnchor: [8, 22],
@@ -79,10 +71,6 @@
                         };
                     }
                 };
-
-            L.tileLayer(tileURL, {
-                attribution: attribution,
-            }).addTo(map);
 
             if (mainLocations.length > labels.length) { // on a stop point detail page
                 i = mainLocations.length - 1;
