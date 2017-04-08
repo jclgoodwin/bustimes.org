@@ -155,7 +155,7 @@ class ImportNaptanTest(TestCase):
                 self.assertEqual(context_manager.output[0][:32], 'ERROR:busstops.management.comman')
 
         with vcr.use_cassette(os.path.join(DIR, 'fixtures', '5820AWN26361.yaml')):
-            self.assertContains(self.client.get('/stops/5820AWN26361'), 'This stop is no longer active')
+            self.assertContains(self.client.get('/stops/5820AWN26361'), 'Port Talbot Circular')
 
         with vcr.use_cassette(os.path.join(DIR, 'fixtures', '5820AWN26274.yaml')):
             legion_request = self.client.get('/stops/5820AWN26274')
