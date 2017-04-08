@@ -184,12 +184,32 @@ textarea {
     }
 }
 
-select {
-    background: #fff;
-    border-color: $brand-color;
-    font: inherit;
-    height: 2.5em;
-    vertical-align: top;
+.timetable-date {
+    display: inline-block;
+    position: relative;
+
+    &:after {
+        border: .25em solid white;
+        border-bottom: 0;
+        border-top: .5em solid #222;
+        content: '';
+        height: 0;
+        position: absolute;
+        right: .5em;
+        top: 1em;
+        z-index: -1;
+    }
+
+    select {
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        background: none;
+        border: 1px solid $brand-color;
+        font: inherit;
+        height: 2.5em;
+        padding: 0 1.5em 0 .5em;
+        vertical-align: top;
+    }
 }
 
 input[type='search']::-webkit-search-decoration {
