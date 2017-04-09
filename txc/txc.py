@@ -795,6 +795,8 @@ class Timetable(object):
 
         if self.service_code == '21-584-_-y08-1':
             journeys['VJ_21-584-_-y08-1-2-T0'].departure_time = datetime.time(9, 20)
+        elif self.service_code == '31-899-_-y10-1':
+            journeys['VJ_31-899-_-y10-1-28-T0'].operating_profile = journeys['VJ_31-899-_-y10-1-9-T0'].operating_profile
 
         # some journeys did not have a direct reference to a journeypattern,
         # but rather a reference to another journey with a reference to a journeypattern
