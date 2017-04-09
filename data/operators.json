@@ -43,5 +43,13 @@
     {
         "id": "SPOT",
         "url": "http://www.spottravel.co.uk/leeds-castle/"
+    },
+    {
+        "id": "THAN",
+        "name": "Thandi Coaches",
+        "address": "The Coach Station\n2 Abberley Street\nSmethwick\nWest Midlands\nB66 2Q",
+        "email": "contact@thandicoachesuk.com",
+        "url": "http://thandicoachesuk.com",
+        "phone": "0121 565 2002"
     }
 ]
