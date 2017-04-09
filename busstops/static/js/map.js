@@ -10,8 +10,11 @@
     */
     var map = document.getElementById('map');
 
-    if (map && map.clientWidth > 0) {
+    if (!map || !map.clientWidth) {
+        return;
+    }
 
+    function setUpMap() {
         var h1 = document.getElementsByTagName('h1')[0],
             items = document.getElementsByTagName('li'),
             i, // transient
@@ -95,7 +98,10 @@
                 setUpPopup(mainLocations[i], labels[i], items[i]);
             }
         }
-
     }
+
+    loadjs(['https://mapzen.com/js/mapzen.min.js', 'https://mapzen.com/js/mapzen.css'], {
+        success: setUpMap
+    });
 
 })();
