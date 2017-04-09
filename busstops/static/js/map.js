@@ -6,7 +6,7 @@
         browser: true
     */
     /*global
-        L
+        L, loadjs
     */
     var map = document.getElementById('map');
 
