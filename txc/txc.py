@@ -22,9 +22,9 @@ DURATION_REGEX = re.compile(
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}
 BANK_HOLIDAYS = {
     datetime.date(2017, 4, 14): ('GoodFriday',),
-    datetime.date(2017, 4, 17): ('EasterMonday',),
-    datetime.date(2017, 5, 1): ('MayDay',),
-    datetime.date(2017, 5, 29): ('SpringBank',),
+    datetime.date(2017, 4, 17): ('EasterMonday', 'HolidayMondays'),
+    datetime.date(2017, 5, 1): ('MayDay', 'HolidayMondays'),
+    datetime.date(2017, 5, 29): ('SpringBank', 'HolidayMondays'),
     datetime.date(2017, 12, 24): ('ChristmasEve',),
     datetime.date(2017, 12, 25): ('ChristmasDay',),
     datetime.date(2017, 12, 26): ('BoxingDay',),
@@ -711,7 +711,6 @@ class OperatingProfile(object):
                     return True
                 if bank_holiday in self.nonoperation_bank_holidays:
                     return False
-            return False
         elif not self.regular_days:
             return False
 
