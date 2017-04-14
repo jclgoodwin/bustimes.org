@@ -98,6 +98,14 @@ class TimetableTest(TestCase):
         self.assertEqual(deadruns.groupings[0].rows[-2].times[-8:], ['', '', '', '', '', '', '', ''])
         self.assertEqual(deadruns.groupings[0].rows[-1].times[-8:], ['', '', '', '', '', '', '', ''])
 
+        # Three journeys a day on weekdays
+        deadruns = txc.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml', date(2017, 4, 13))
+        self.assertEqual(3, len(deadruns.groupings[0].rows[0].times))
+
+        # Several journeys a day on bank holidays
+        deadruns = txc.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml', date(2017, 4, 14))
+        self.assertEqual(7, len(deadruns.groupings[0].rows[0].times))
+
     def test_timetable_servicedorg(self):
         """Test a timetable with a ServicedOrganisation"""
         timetable_during_holiday = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml',
