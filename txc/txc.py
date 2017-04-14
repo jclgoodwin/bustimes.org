@@ -711,7 +711,7 @@ class OperatingProfile(object):
                     return True
                 if bank_holiday in self.nonoperation_bank_holidays:
                     return False
-        elif not self.regular_days:
+        if not self.regular_days:
             return False
 
         if hasattr(self, 'servicedorganisation'):
