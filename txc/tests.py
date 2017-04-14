@@ -365,3 +365,59 @@ class VehicleJourneyTest(TestCase):
         self.assertFalse(journey.should_show(date(2017, 1, 11)))
         self.assertTrue(journey.should_show(date(2017, 1, 18)))
         self.assertFalse(journey.should_show(date(2017, 1, 25)))
+
+        operating_profile = txc.OperatingProfile(ET.fromstring("""
+            <OperatingProfile xmlns="http://www.transxchange.org.uk/">
+                <RegularDayType>
+                    <DaysOfWeek>
+                        <MondayToSunday />
+                      </DaysOfWeek>
+                    </RegularDayType>
+                    <SpecialDaysOperation>
+                    <DaysOfNonOperation>
+                        <DateRange>
+                            <StartDate>2017-04-17</StartDate>
+                            <EndDate>2017-04-17</EndDate>
+                            <Note>QE Line</Note>
+                        </DateRange>
+                    </DaysOfNonOperation>
+                </SpecialDaysOperation>
+            </OperatingProfile>
+        """), {})
+        self.assertTrue(operating_profile.should_show(date(2017, 4, 14)))  # Good Friday
+        self.assertFalse(operating_profile.should_show(date(2017, 4, 17)))
+
+        operating_profile = txc.OperatingProfile(ET.fromstring("""
+            <OperatingProfile xmlns="http://www.transxchange.org.uk/">
+                <RegularDayType>
+                    <HolidaysOnly />
+                </RegularDayType>
+                <BankHolidayOperation>
+                    <DaysOfOperation>
+                        <EasterMonday />
+                    </DaysOfOperation>
+                    <DaysOfNonOperation />
+                </BankHolidayOperation>
+            </OperatingProfile>
+        """), {})
+        self.assertFalse(operating_profile.should_show(date(2017, 4, 14)))  # Good Friday
+        self.assertTrue(operating_profile.should_show(date(2017, 4, 17)))  # Easter Monday
+
+        operating_profile = txc.OperatingProfile(ET.fromstring("""
+            <OperatingProfile xmlns="http://www.transxchange.org.uk/">
+                <RegularDayType>
+                    <HolidaysOnly />
+                </RegularDayType>
+                <BankHolidayOperation>
+                    <DaysOfOperation>
+                        <GoodFriday />
+                    </DaysOfOperation>
+                    <DaysOfNonOperation />
+                </BankHolidayOperation>
+            </OperatingProfile>
+        """), {})
+        self.assertFalse(operating_profile.should_show(date(2017, 4, 10)))
+        self.assertFalse(operating_profile.should_show(date(2017, 4, 13)))
+        self.assertTrue(operating_profile.should_show(date(2017, 4, 14)))  # Good Friday
+        self.assertFalse(operating_profile.should_show(date(2017, 4, 17)))  # Easter Monday
+        self.assertFalse(operating_profile.should_show(date(2017, 4, 18)))
