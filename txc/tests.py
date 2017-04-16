@@ -57,6 +57,10 @@ class TimetableTest(TestCase):
         with self.assertRaises(IndexError):
             str(timetable.groupings[1])
 
+        # Test operating profile days of non operation
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_20-12-_-y08-1.xml', date(2016, 12, 28))
+        self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
+
     def test_timetable_megabus(self):
         """Test a timetable from the National Coach Services Database"""
         megabus = txc.timetable_from_filename(FIXTURES_DIR, 'Megabus_Megabus14032016 163144_MEGA_M11A.xml',
