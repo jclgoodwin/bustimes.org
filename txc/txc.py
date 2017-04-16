@@ -93,7 +93,7 @@ class Stop(object):
         return '%s %s' % (self.locality, self.common_name)
 
     def is_at(self, text):
-        """Whether a given slugified tring roughly matches either
+        """Whether a given slugified string, roughly matches either
         this stop's locality's name, or this stop's name
         (e.g. 'kings-lynn' matches 'kings-lynn-bus-station' and vice versa).
         """
@@ -711,7 +711,7 @@ class OperatingProfile(object):
                     return True
                 if bank_holiday in self.nonoperation_bank_holidays:
                     return False
-        if not self.regular_days:
+        if not self.regular_days and not hasattr(self, 'operation_days'):
             return False
 
         if hasattr(self, 'servicedorganisation'):
@@ -731,6 +731,12 @@ class OperatingProfile(object):
             for daterange in self.nonoperation_days:
                 if daterange.contains(date):
                     return False
+
+        if hasattr(self, 'operation_days'):
+            for daterange in self.operation_days:
+                if daterange.contains(date):
+                    return True
+            return False
 
         return True
 

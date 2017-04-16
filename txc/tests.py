@@ -132,6 +132,11 @@ class TimetableTest(TestCase):
         self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
         self.assertEqual(0, len(timetable.groupings[1].rows[0].times))
 
+        # Has some journeys that operate on 1 May 2017
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'twm_6-14B-_-y11-1.xml', date(2017, 5, 1))
+        self.assertEqual(8, len(timetable.groupings[0].rows[0].times))
+        self.assertEqual(7, len(timetable.groupings[1].rows[0].times))
+
     def test_timetable_goole(self):
         # outside of operating period
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'SVRYEAGT00.xml', date(2007, 6, 27))
@@ -374,6 +379,9 @@ class VehicleJourneyTest(TestCase):
         self.assertTrue(journey.should_show(date(2017, 1, 18)))
         self.assertFalse(journey.should_show(date(2017, 1, 25)))
 
+
+class OperatingProfileTest(TestCase):
+    def test_bank_holidays(self):
         operating_profile = txc.OperatingProfile(ET.fromstring("""
             <OperatingProfile xmlns="http://www.transxchange.org.uk/">
                 <RegularDayType>
@@ -429,3 +437,49 @@ class VehicleJourneyTest(TestCase):
         self.assertTrue(operating_profile.should_show(date(2017, 4, 14)))  # Good Friday
         self.assertFalse(operating_profile.should_show(date(2017, 4, 17)))  # Easter Monday
         self.assertFalse(operating_profile.should_show(date(2017, 4, 18)))
+
+        operating_profile = txc.OperatingProfile(ET.fromstring("""
+            <OperatingProfile xmlns="http://www.transxchange.org.uk/">
+                <RegularDayType>
+                    <HolidaysOnly />
+                </RegularDayType>
+                <SpecialDaysOperation>
+                    <DaysOfOperation>
+                        <DateRange>
+                            <StartDate>2017-04-17</StartDate>
+                            <EndDate>2017-04-17</EndDate>
+                            <Note>EasterMonday</Note>
+                        </DateRange>
+                    </DaysOfOperation>
+                    <DaysOfNonOperation>
+                        <DateRange>
+                            <StartDate>2017-04-14</StartDate>
+                            <EndDate>2017-04-14</EndDate>
+                            <Note>GoodFriday</Note>
+                        </DateRange>
+                    </DaysOfNonOperation>
+                </SpecialDaysOperation>
+            </OperatingProfile>
+        """), {})
+        self.assertFalse(operating_profile.should_show(date(2017, 4, 10)))
+        self.assertFalse(operating_profile.should_show(date(2017, 4, 13)))
+        self.assertFalse(operating_profile.should_show(date(2017, 4, 14)))  # Good Friday
+        self.assertTrue(operating_profile.should_show(date(2017, 4, 17)))  # Easter Monday
+        self.assertFalse(operating_profile.should_show(date(2017, 4, 18)))
+
+    def test_days_of_week(self):
+        operating_profile = txc.OperatingProfile(ET.fromstring("""
+            <OperatingProfile xmlns="http://www.transxchange.org.uk/">
+                <RegularDayType>
+                  <DaysOfWeek>
+                    <Weekend />
+                  </DaysOfWeek>
+                </RegularDayType>
+              </OperatingProfile>
+        """), {})
+        self.assertEqual('Saturday to Sunday', str(operating_profile))
+        self.assertFalse(operating_profile.should_show(date(2017, 4, 10)))
+        self.assertFalse(operating_profile.should_show(date(2017, 4, 14)))
+        self.assertTrue(operating_profile.should_show(date(2017, 4, 15)))
+        self.assertTrue(operating_profile.should_show(date(2017, 4, 16)))
+        self.assertFalse(operating_profile.should_show(date(2017, 4, 17)))
