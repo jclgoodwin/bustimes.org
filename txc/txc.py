@@ -547,9 +547,11 @@ class VehicleJourney(object):
             return self.sequencenumber
         return cmp_to_key(self.cmp)(self)
 
-    def should_show(self, date):
-        if not (date and self.operating_profile):
+    def should_show(self, date, timetable=None):
+        if not date:
             return True
+        if not self.operating_profile:
+            return timetable and timetable.operating_profile.should_show(date)
         if self.code.startswith('VJ_11-X52-_-y08-1') and date < datetime.date(2017, 3, 27):  # Alton Towers
             return False
         if self.code.startswith('VJ_21-NS1-A-y08-1') and date.day > 7:  # 1st Wed of month
@@ -810,7 +812,7 @@ class Timetable(object):
                 journey.journeypattern = journeys[journey.journeyref].journeypattern
 
         # return list(journeys.values())
-        return [journey for journey in iter(journeys.values()) if journey.should_show(self.date)]
+        return [journey for journey in iter(journeys.values()) if journey.should_show(self.date, self)]
 
     def date_options(self):
         start_date = min(self.date, datetime.date.today())
