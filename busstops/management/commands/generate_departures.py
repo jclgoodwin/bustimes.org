@@ -33,7 +33,7 @@ def handle_timetable(service, timetable, day):
         stops = {row.part.stop.atco_code for row in grouping.rows}
         existent_stops = StopPoint.objects.filter(atco_code__in=stops).values_list('atco_code', flat=True)
         for vj in grouping.journeys:
-            if not vj.should_show(day):
+            if not vj.should_show(day, timetable):
                 continue
             date = day
             previous_time = None
