@@ -51,5 +51,16 @@
         "email": "contact@thandicoachesuk.com",
         "url": "http://thandicoachesuk.com",
         "phone": "0121 565 2002"
+    },
+    {
+        "id": "CRES",
+        "address": "70 Marks Tey Road\nFareham\nPO14 3UR",
+        "email": "",
+        "url": "",
+        "phone": ""
+    },
+    {
+        "id": "RBNC",
+        "name": "Roy Brown’s Coaches of Builth Wells"
     }
 ]
