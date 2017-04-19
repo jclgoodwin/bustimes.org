@@ -72,6 +72,10 @@ class Command(ImportFromCSVCommand):
             'region_id': cls.get_region_id(row['TLRegOwn']),
         }
 
+        if mode == 's' and defaults['region_id'] == 'Bus':
+            defaults['vehicle_mode'] = 'Bus'
+            defaults['region_id'] = 'S'
+
         Operator.objects.update_or_create(
             id=operator_id,
             defaults=defaults
