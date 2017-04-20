@@ -79,7 +79,7 @@ class Stop(object):
     locality = None
 
     def __init__(self, element):
-        self.atco_code = element.find('txc:StopPointRef', NS).text
+        self.atco_code = element.find('txc:StopPointRef', NS).text or ''
         self.common_name = element.find('txc:CommonName', NS)
         self.locality = element.find('txc:LocalityName', NS)
         if self.common_name is not None:
