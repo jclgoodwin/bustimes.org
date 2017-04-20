@@ -934,6 +934,13 @@ class Timetable(object):
 
             grouping.do_heads_and_feet()
 
+        if self.service_code == 'MGZO460':
+            for row in self.groupings[1].rows:
+                if row.part.stop.atco_code == '5230AWD72040' and previous_row.times[:2] == ['', '']:
+                    previous_row.times[0] = row.times[0]
+                    previous_row.times[1] = row.times[1]
+                previous_row = row
+
 
 def abbreviate(grouping, i, in_a_row, difference):
     """Given a Grouping, and a timedetlta, modify each row and..."""
