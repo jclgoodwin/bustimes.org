@@ -7,7 +7,7 @@ import dateutil.parser
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.utils.text import slugify
-from busstops.models import Operator, StopUsageUsage
+from busstops.models import Operator, StopUsageUsage, Service
 
 
 DESTINATION_REGEX = re.compile(r'.+\((.+)\)')
@@ -318,12 +318,11 @@ def blend(departures, live_rows):
     for live_row in live_rows:
         replaced = False
         service = live_row['service']
-        if type(service) != str:
+        if type(service) == Service:
             service = service.line_name
         for row in departures:
-            if row['service'] == service:
-                if not row.get('live'):
-                    row['live'] = live_row['live']
+            if row['service'] == service and (row['time'] and row['time'] == live_row['time'] or 'live' not in row):
+                row['live'] = live_row['live']
                 replaced = True
                 break
         if not replaced:
