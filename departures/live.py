@@ -317,9 +317,13 @@ def add_stagecoach_departures(stop, services_dict, departures):
 def blend(departures, live_rows):
     for live_row in live_rows:
         replaced = False
+        service = live_row['service']
+        if type(service) != str:
+            service = service.line_name
         for row in departures:
-            if row['service'] == live_row['service'] and 'live' not in row:
-                row['live'] = live_row['live']
+            if row['service'] == service:
+                if not row.get('live'):
+                    row['live'] = live_row['live']
                 replaced = True
                 break
         if not replaced:
