@@ -340,6 +340,24 @@ class LiveDeparturesTest(TestCase):
             'group': 'no',
         })
 
+    def test_blend(self):
+        departures = [{
+            'service': 'X98',
+            'time': datetime.datetime(2017, 4, 21, 20, 10),
+            'live': datetime.datetime(2017, 4, 21, 20, 2)
+        }]
+        live.blend(departures, [{
+            'service': Service(line_name='X98'),
+            'time': datetime.datetime(2017, 4, 21, 20, 10),
+            'live': datetime.datetime(2017, 4, 21, 20, 5)
+        }])
+
+        self.assertEqual(departures, [{
+            'service': 'X98',
+            'time': datetime.datetime(2017, 4, 21, 20, 10),
+            'live': datetime.datetime(2017, 4, 21, 20, 5)
+        }])
+
     def test_max_age(self):
         """Test the get_max_age() method
         """
