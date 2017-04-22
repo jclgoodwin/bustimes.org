@@ -341,19 +341,27 @@ class LiveDeparturesTest(TestCase):
         })
 
     def test_blend(self):
-        departures = [{
+        a = [{
             'service': 'X98',
             'time': datetime.datetime(2017, 4, 21, 20, 10),
             'live': datetime.datetime(2017, 4, 21, 20, 2)
         }]
-        live.blend(departures, [{
+        b = [{
             'service': Service(line_name='X98'),
+            'time': datetime.datetime(2017, 4, 21, 20, 10),
+            'live': datetime.datetime(2017, 4, 21, 20, 5)
+        }]
+
+        live.blend(a, b)
+        self.assertEqual(a, [{
+            'service': 'X98',
             'time': datetime.datetime(2017, 4, 21, 20, 10),
             'live': datetime.datetime(2017, 4, 21, 20, 5)
         }])
 
-        self.assertEqual(departures, [{
-            'service': 'X98',
+        live.blend(b, a)
+        self.assertEqual(b, [{
+            'service': Service(line_name='X98'),
             'time': datetime.datetime(2017, 4, 21, 20, 10),
             'live': datetime.datetime(2017, 4, 21, 20, 5)
         }])
