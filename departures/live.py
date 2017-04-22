@@ -323,6 +323,7 @@ def services_match(a, b):
 
 
 def blend(departures, live_rows):
+    added = False
     for live_row in live_rows:
         replaced = False
         for row in departures:
@@ -335,6 +336,9 @@ def blend(departures, live_rows):
                 break
         if not replaced:
             departures.append(live_row)
+            added = True
+    if added:
+        departures.sort(key=lambda d: d.get('time') or d['live'])
 
 
 def get_departures(stop, services, bot=False):
