@@ -114,9 +114,10 @@ class LiveDeparturesTest(TestCase):
                     <tr><td>8</td><td>Bow Church</td><td>18:44⚡</td></tr>
                     <tr><td>8</td><td>Bow Church</td><td>18:49⚡</td></tr>
                 </tbody></table>
-                <p class="credit">Data from
-                <a href=https://tfl.gov.uk/bus/stop/490014721F/wilmot-street>
-                Transport for London</a></p>
+                <p class="credit">⚡ denotes real-time times</p>
+                <p class="credit">
+                    <a href="https://tfl.gov.uk/bus/stop/490014721F/wilmot-street">Transport for London</a>
+                </p>
             </div>
         """, html=True)
 
@@ -414,6 +415,5 @@ class LiveDeparturesTest(TestCase):
                 <table><tbody>
                     <tr><td>9</td><td>Shilbottle</td><td>11:53</td></tr>
                 </tbody></table>
-                <p class="credit"></p>
             </div>
         """, html=True)

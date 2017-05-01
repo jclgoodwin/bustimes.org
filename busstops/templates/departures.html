@@ -33,10 +33,11 @@
         </table>
         {% endif %}
     {% endfor %}
-    <p class="credit">
-    {% if source %}
-        Data from <a href={{ source.url }}>{{ source.name }}</a>
+    {% if live %}
+        <p class="credit">⚡ denotes real-time times</p>
     {% endif %}
-    </p>
+    {% if source %}
+        <p class="credit"><a href={{ source.url }}>{{ source.name }}</a></p>
+    {% endif %}
 </div>
 {% endif %}

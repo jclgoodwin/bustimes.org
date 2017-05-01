@@ -323,7 +323,6 @@ def services_match(a, b):
 
 
 def blend(departures, live_rows):
-    added = False
     for live_row in live_rows:
         replaced = False
         for row in departures:
@@ -336,9 +335,6 @@ def blend(departures, live_rows):
                 break
         if not replaced:
             departures.append(live_row)
-            added = True
-    if added:
-        departures.sort(key=lambda d: d.get('time') or d['live'])
 
 
 def get_departures(stop, services, bot=False):
@@ -441,13 +437,7 @@ def get_departures(stop, services, bot=False):
             if live_rows:
                 blend(departures, live_rows)
 
-                return ({
-                    'departures': departures,
-                    'source': {
-                        'url': 'http://belfast.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % stop.pk,
-                        'name': 'vixConnect'
-                    }
-                }, 60)
+                return (departures, 60)
 
         if not bot and departures and stop.atco_code[:3] in {'290'}:
             live_rows = TransportApiDepartures(stop, services, now.date()).get_departures()
