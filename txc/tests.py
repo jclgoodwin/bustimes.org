@@ -139,7 +139,7 @@ class TimetableTest(TestCase):
         # Has some journeys that operate on 1 May 2017
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'twm_6-14B-_-y11-1.xml', date(2017, 5, 1))
         self.assertEqual(8, len(timetable.groupings[0].rows[0].times))
-        self.assertEqual(7, len(timetable.groupings[1].rows[0].times))
+        self.assertEqual(8, len(timetable.groupings[1].rows[0].times))
 
     def test_timetable_goole(self):
         # outside of operating period
