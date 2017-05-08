@@ -946,7 +946,7 @@ class Timetable(object):
 def abbreviate(grouping, i, in_a_row, difference):
     """Given a Grouping, and a timedetlta, modify each row and..."""
     seconds = difference.total_seconds()
-    if 3600 % seconds != 0 and seconds % 3600 != 0:  # not a factor or multiple of 1 hour
+    if not seconds or 3600 % seconds and seconds % 3600:  # not a factor or multiple of 1 hour
         return
     grouping.rows[0].times[i - in_a_row - 2] = Cell(in_a_row + 1, len(grouping.rows), difference)
     for j in range(i - in_a_row - 1, i - 1):
