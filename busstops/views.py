@@ -469,10 +469,10 @@ class ServiceDetailView(DetailView):
                 })
             else:
                 for operator in context['operators']:
-                    if operator.pk in FIRST_OPERATORS:
+                    if operator.pk in {'NATX', 'NXSH', 'NXAP', 'NXHH'}:
                         context['links'].append({
-                            'url': 'https://www.firstgroup.com/%s/tickets' % FIRST_OPERATORS[operator.pk],
-                            'text': 'Fares and tickets on the %s website' % operator.name
+                            'url': 'http://www.awin1.com/awclick.php?mid=2197&id=271445&clickref=j2gkl249fo001sq6005jd&p=http%3A%2F%2Fwww.nationalexpress.com',  # noqa
+                            'text': 'Buy tickets from National Express'
                         })
                     elif operator.url.startswith('http'):
                         context['links'].append({
