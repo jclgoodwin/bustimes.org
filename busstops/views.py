@@ -338,7 +338,8 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
                 cache.set(self.object.atco_code, departures, max_age)
 
         context.update(departures)
-        context['live'] = any(item.get('live') for item in departures['departures'])
+        if context['departures']:
+            context['live'] = any(item.get('live') for item in context['departures'])
 
         text = ', '.join(part for part in (
             'on ' + self.object.street if self.object.street else None,

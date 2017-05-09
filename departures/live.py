@@ -436,10 +436,8 @@ def get_departures(stop, services, bot=False):
             live_rows = AcisConnectDepartures('belfast', stop, services, now).get_departures()
             if live_rows:
                 blend(departures, live_rows)
-
-                return (departures, 60)
-
-        if not bot and departures and stop.atco_code[:3] in {'290'}:
+        # Norfolk
+        elif not bot and departures and stop.atco_code[:3] in {'290'}:
             live_rows = TransportApiDepartures(stop, services, now.date()).get_departures()
             if live_rows:
                 blend(departures, live_rows)
