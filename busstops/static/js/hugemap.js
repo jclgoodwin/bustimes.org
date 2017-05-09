@@ -90,12 +90,10 @@
         if (history.replaceState) {
             history.replaceState(null, null, window.location.pathname + '#' + latLngString);
         }
-        if (localStorage) {
-            try {
-                localStorage.setItem('location', latLngString);
-            } catch (ignore) {
-                // never mind
-            }
+        try {
+            localStorage.setItem('location', latLngString);
+        } catch (ignore) {
+            // localStorage disabled
         }
     }
 
@@ -128,8 +126,14 @@
     if (window.location.hash) {
         parts = window.location.hash.substr(1).split(',');
         shouldLocate = false;
-    } else if (localStorage && localStorage.getItem('location')) {
-        parts = localStorage.getItem('location').split(',');
+    } else {
+        try {
+            if (localStorage.getItem('location')) {
+                parts = localStorage.getItem('location').split(',');
+            }
+        } catch (ignore) {
+            // localStorage disabled
+        }
     }
     if (parts) {
         map.setView([parts[0], parts[1]], 14);
