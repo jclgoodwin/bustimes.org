@@ -56,7 +56,7 @@ class Departures(object):
 class TflDepartures(Departures):
     """Departures from the Transport for London API"""
     def get_request_url(self):
-        return 'http://api.tfl.gov.uk/StopPoint/%s/arrivals' % self.stop.pk
+        return 'https://api.tfl.gov.uk/StopPoint/%s/arrivals' % self.stop.pk
 
     def departures_from_response(self, res):
         rows = res.json()
