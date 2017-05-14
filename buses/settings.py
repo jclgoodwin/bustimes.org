@@ -159,6 +159,8 @@ TRANSPORTAPI_APP_KEY = os.environ.get('TRANSPORTAPI_APP_KEY')
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 TNDS_DIR = os.path.join(DATA_DIR, 'TNDS')
 
+VIGLINK_KEY = '63dc39b879576a255e9dcee17b6c1929'
+
 RAVEN_CONFIG = {
     'dsn': os.environ.get('SENTRY_DSN'),
     'release': raven.fetch_git_sha(BASE_DIR)

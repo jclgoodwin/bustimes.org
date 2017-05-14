@@ -15,7 +15,7 @@ from django.contrib.gis.db.models.functions import Distance
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from departures import live
-from .utils import format_gbp, timetable_from_service, get_files_from_zipfile
+from .utils import format_gbp, viglink, timetable_from_service, get_files_from_zipfile
 from .models import (Region, StopPoint, AdminArea, Locality, District,
                      Operator, Service, Note, Journey)
 from .forms import ContactForm
@@ -473,7 +473,8 @@ class ServiceDetailView(DetailView):
                 for operator in context['operators']:
                     if operator.pk in {'NATX', 'NXSH', 'NXAP', 'NXHH'}:
                         context['links'].append({
-                            'url': 'http://www.awin1.com/awclick.php?mid=2197&id=271445&clickref=j2gkl249fo001sq6005jd&p=http%3A%2F%2Fwww.nationalexpress.com',  # noqa
+                            'url': viglink('http://www.nationalexpress.com',
+                                           'https://bustimes.org.uk/services/' + self.object.pk),
                             'text': 'Buy tickets from National Express'
                         })
                     elif operator.url.startswith('http'):
