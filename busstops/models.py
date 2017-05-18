@@ -97,7 +97,7 @@ class Locality(models.Model):
     """
     id = models.CharField(max_length=48, primary_key=True)
     name = models.CharField(max_length=48)
-    slug = AutoSlugField(populate_from='name', editable=True)
+    slug = AutoSlugField(populate_from='name', editable=True, blank=True)
     # short_name?
     qualifier_name = models.CharField(max_length=48, blank=True)
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
@@ -369,7 +369,7 @@ class Service(models.Model):
     description = models.CharField(max_length=255, blank=True)
     outbound_description = models.CharField(max_length=255, blank=True)
     inbound_description = models.CharField(max_length=255, blank=True)
-    slug = AutoSlugField(populate_from='description', editable=True)
+    slug = AutoSlugField(populate_from='description', editable=True, blank=True)
     mode = models.CharField(max_length=11)
     operator = models.ManyToManyField(Operator, blank=True)
     net = models.CharField(max_length=3, blank=True)
