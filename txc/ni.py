@@ -111,8 +111,11 @@ def handle_journeys(journeys, today):
             atco_code = stopusage['Location']
             if atco_code in rows_map:
                 if atco_code in visited_stops:
-                    row = Row(atco_code, ['     '] * i)
-                    previous.append(row)
+                    if previous and previous.next and previous.next.atco_code == atco_code:
+                        row = previous.next
+                    else:
+                        row = Row(atco_code, ['     '] * i)
+                        previous.append(row)
                 else:
                     row = rows_map[atco_code]
             else:
