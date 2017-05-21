@@ -140,8 +140,6 @@ class Command(BaseCommand):
                 service.save()
 
         for operator in operators:
-            print(operator)
-            print(operator.region)
             operator.region = Region.objects.filter(adminarea__stoppoint__service__operator=operator).annotate(
                 Count('adminarea__stoppoint__service__operator')
             ).order_by('-adminarea__stoppoint__service__operator__count').first()
@@ -152,7 +150,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         regions = ('LE', 'CO', 'UL', 'MU')
         Service.objects.filter(region_id__in=regions).delete()
-        Operator.objects.filter(region_id__in=regions).delete()
         session = requests.Session()
 
         for collection in COLLECTIONS:
