@@ -6,7 +6,7 @@
 from django.contrib.gis.geos import Point
 from titlecase import titlecase
 from ..import_from_csv import ImportFromCSVCommand
-from ...models import StopPoint
+from ...models import Locality, StopPoint
 
 
 INDICATORS_TO_PROPER_CASE = {indicator.lower(): indicator for indicator in (
@@ -85,18 +85,30 @@ class Command(ImportFromCSVCommand):
 
     def handle_row(self, row):
         defaults = {
-            'locality_id': row['NptgLocalityCode'],
-            'latlong': Point(
+            'locality_centre': (row['LocalityCentre'] == '1'),
+            'active': (row.get('Status', 'act') == 'act'),
+            'admin_area_id': row.get('AdministrativeAreaCode') or row['AdministrativeAreaRef']
+        }
+
+        if row['Longitude']:
+            defaults['latlong'] = Point(
                 float(row['Longitude']),
                 float(row['Latitude']),
                 srid=4326  # World Geodetic System
-            ),
-            'locality_centre': (row['LocalityCentre'] == '1'),
-            'active': (row['Status'] == 'act'),
-            'admin_area_id': row['AdministrativeAreaCode']
-        }
+            )
+
+        if 'NptgLocalityCode' in row:
+            defaults['locality_id'] = row['NptgLocalityCode']
+        elif row['NptgLocalityRef']:
+            defaults['locality_id'] = row['NptgLocalityRef']
+            if not Locality.objects.filter(pk=defaults['locality_id']).exists():
+                Locality.objects.create(pk=defaults['locality_id'], admin_area_id=defaults['admin_area_id'])
 
         for django_field_name, naptan_field_name in self.field_names:
+            if naptan_field_name not in row:
+                naptan_field_name += '_lang_en'
+            if naptan_field_name not in row:
+                continue
             value = row[naptan_field_name].strip()
             if django_field_name in ('street', 'crossing', 'landmark', 'indicator', 'common_name'):
                 if value.lower() in ('-', '--', '---', '*', 'tba', 'unknown', 'n/a',
@@ -117,7 +129,16 @@ class Command(ImportFromCSVCommand):
         elif defaults['indicator'].startswith('220'):
             defaults['indicator'] = ''
 
-        StopPoint.objects.update_or_create(atco_code=row['ATCOCode'], defaults=defaults)
+        if defaults['stop_type'] == 'class_undefined':
+            defaults['stop_type'] = ''
+        if defaults['bus_stop_type'] == 'type_undefined':
+            defaults['bus_stop_type'] = ''
+
+        if 'CompassPoint' in row:
+            defaults['bearing'] = row['CompassPoint']
+
+        atco_code = row.get('ATCOCode') or row['AtcoCode']
+        StopPoint.objects.update_or_create(atco_code=atco_code, defaults=defaults)
 
     def __init__(self, *args, **kwargs):
         super(Command, self).__init__(*args, **kwargs)
