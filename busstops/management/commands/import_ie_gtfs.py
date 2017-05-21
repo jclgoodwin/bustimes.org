@@ -51,7 +51,7 @@ class Command(BaseCommand):
         with zipfile.ZipFile(archive_name) as archive:
             with archive.open('stops.txt') as csv_file:
                 for row in get_rows(csv_file):
-                    if not (len(row['stop_id']) > 16 or StopPoint.objects.filter(atco_code=row['stop_id']).exists()):
+                    if row['stop_id'][0] in '78' and not StopPoint.objects.filter(atco_code=row['stop_id']).exists():
                         StopPoint.objects.create(
                             atco_code=row['stop_id'],
                             latlong=Point(float(row['stop_lon']), float(row['stop_lat'])),
@@ -95,8 +95,9 @@ class Command(BaseCommand):
             else:
                 break
 
+            route_id = route['route_id'].split()[0]
             service, created = Service.objects.update_or_create(
-                service_code='{}-{}'.format(collection, '-'.join(route['route_id'].split('-')[:-1])),
+                service_code='{}-{}'.format(collection[:10], '-'.join(route_id.split('-')[:-1])),
                 defaults=defaults
             )
             # if not created:
@@ -135,7 +136,8 @@ class Command(BaseCommand):
             service.region = Region.objects.filter(adminarea__stoppoint__service=service).annotate(
                 Count('adminarea__stoppoint__service')
             ).order_by('-adminarea__stoppoint__service__count').first()
-            service.save()
+            if service.region_id:
+                service.save()
 
         for operator in operators:
             print(operator)
@@ -143,7 +145,8 @@ class Command(BaseCommand):
             operator.region = Region.objects.filter(adminarea__stoppoint__service__operator=operator).annotate(
                 Count('adminarea__stoppoint__service__operator')
             ).order_by('-adminarea__stoppoint__service__operator__count').first()
-            operator.save()
+            if operator.region_id:
+                operator.save()
 
     @transaction.atomic
     def handle(self, *args, **options):
