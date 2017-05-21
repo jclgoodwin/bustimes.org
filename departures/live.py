@@ -383,10 +383,10 @@ def get_departures(stop, services, bot=False):
     operators = Operator.objects.filter(service__stops=stop,
                                         service__current=True).distinct()
 
-    if stop.atco_code[0] == '8':
+    if stop.atco_code[0] == '8' and stop.atco_code[4:6] == 'DB':
         response = SESSION.get(
             'https://data.dublinked.ie/cgi-bin/rtpi/realtimebusinformation',
-            params={'stopid': stop.atco_code[-4:]}
+            params={'stopid': int(stop.atco_code[-6:])}
         )
         if response.ok:
             departures = [{
