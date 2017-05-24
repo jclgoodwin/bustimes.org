@@ -5,17 +5,14 @@ import hmac
 import os
 import zipfile
 try:
-    from urllib.parse import urlparse
+    from urllib.parse import urlparse, urlencode
 except ImportError:
     from urlparse import urlparse
+    from urllib import urlencode
 from datetime import date
-from requests import Session
 from django.conf import settings
 from django.core.cache import cache
 from txc import txc, ni
-
-
-SESSION = Session()
 
 
 def format_gbp(string):
@@ -26,18 +23,12 @@ def format_gbp(string):
 
 
 def viglink(url, ref=''):
-    cache_key = 'viglink:{}:{}'.format(url, ref)
-    viglink_url = cache.get(cache_key)
-    if viglink_url is not None:
-        return viglink_url
-    viglink_url = SESSION.get('http://api.viglink.com/api/click', params={
-        'key': settings.VIGLINK_KEY,
-        'format': 'txt',
-        'out': url,
-        'ref': ref,
-    }).text
-    cache.set(cache_key, viglink_url, None)
-    return viglink_url
+    return 'http://redirect.viglink.com/?' + urlencode(
+        (
+            ('key', settings.VIGLINK_KEY),
+            ('u', url)
+        )
+    )
 
 
 def sign_url(input_url=None, secret=None):

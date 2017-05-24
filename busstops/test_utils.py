@@ -1,7 +1,7 @@
 """Tests for utilities and date ranges"""
 from django.test import TestCase, override_settings
 from busstops.models import Region, Service
-from .utils import sign_url, get_pickle_filenames, get_files_from_zipfile
+from .utils import sign_url, get_pickle_filenames, get_files_from_zipfile, viglink
 
 
 FIXTURES_DIR = './busstops/management/tests/fixtures/'
@@ -41,6 +41,12 @@ class UtilsTest(TestCase):
             pk='swe_31-668-_-y10',
             region_id='SW',
             date='2016-05-24',
+        )
+
+    def test_viglink(self):
+        self.assertEqual(
+            viglink('http://www.nationalexpress.com'),
+            'http://redirect.viglink.com/?key=63dc39b879576a255e9dcee17b6c1929&u=http%3A%2F%2Fwww.nationalexpress.com'
         )
 
     def test_sign_url(self):
