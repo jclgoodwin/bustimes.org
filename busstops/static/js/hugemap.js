@@ -8,13 +8,12 @@
         L, reqwest, Cowboy
     */
 
-    L.Mapzen.apiKey = 'search-N08zR0s';
-
-    var map = L.Mapzen.map('hugemap', {
+    var map = L.map('hugemap', {
             minZoom: 6,
             maxZoom: 20,
             maxBounds: [[60.85, -9.23], [49.84, 2.69]]
         }),
+        tileURL = 'https://bustimes.org.uk/styles/osm-bright/rendered/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
         pin = L.icon({
             iconUrl:    '/static/pin.svg',
             iconSize:   [16, 22],
@@ -30,6 +29,10 @@
         }),
         lastReq,
         movedByAccident;
+
+    L.tileLayer(tileURL, {
+        attribution: '© <a href="https://openmaptiles.org">OpenMapTiles</a> | © <a href="https://www.openstreetmap.org">OpenStreetMap contributors</a>'
+    }).addTo(map);
 
     statusBar.onAdd = function () {
         var div = L.DomUtil.create('div', 'hugemap-status');

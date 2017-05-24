@@ -52,9 +52,9 @@
         }
 
         if (mainLocations.length) {
-            L.Mapzen.apiKey = 'search-N08zR0s';
-            map = L.Mapzen.map('map');
-            var pin = L.icon({
+            map = L.map('map');
+            var tileURL = 'https://bustimes.org.uk/styles/osm-bright/rendered/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
+                pin = L.icon({
                     iconUrl:    '/static/pin.svg',
                     iconSize:   [16, 22],
                     iconAnchor: [8, 22],
@@ -74,6 +74,10 @@
                         };
                     }
                 };
+
+            L.tileLayer(tileURL, {
+                attribution: '© <a href="https://openmaptiles.org">OpenMapTiles</a> | © <a href="https://www.openstreetmap.org">OpenStreetMap contributors</a>'
+            }).addTo(map);
 
             if (mainLocations.length > labels.length) { // on a stop point detail page
                 i = mainLocations.length - 1;
@@ -100,7 +104,7 @@
         }
     }
 
-    loadjs(['https://mapzen.com/js/mapzen.min.js', 'https://mapzen.com/js/mapzen.css'], {
+    loadjs(['/static/js/bower_components/leaflet/dist/leaflet.js', '/static/js/bower_components/leaflet/dist/leaflet.css'], {
         success: setUpMap
     });
 
