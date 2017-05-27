@@ -10,7 +10,7 @@
 
     var map = L.map('hugemap', {
             minZoom: 6,
-            maxZoom: 20,
+            maxZoom: 18,
             maxBounds: [[60.85, -9.23], [49.84, 2.69]]
         }),
         tileURL = 'https://bustimes.org.uk/styles/osm-bright/rendered/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
