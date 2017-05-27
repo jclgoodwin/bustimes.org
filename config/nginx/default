@@ -75,9 +75,8 @@ server {
         rewrite '^(.*)\.\w{12}(\.\w+)$' $1$2 last;
     }
 
-    location ~* ^/(favicon.ico$|manifest.json$|rockabox) {
+    location ~* ^/(favicon\.ico$|manifest.+\.json$|rockabox) {
         expires 1M;
-        add_header 'access-control-allow-origin' 'http://webcache.googleusercontent.com,http://localhost:8000';
     }
 
     location /serviceworker.js {

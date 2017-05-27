@@ -2,12 +2,12 @@ beautifulsoup4==4.6.0
 Django==1.11.1
 django-autoslug==1.9.3
 django-email-obfuscator==0.1.5
-git+https://github.com/django-haystack/django-haystack@master
-django-pipeline==1.6.12
+django-haystack===2.6.1
+django-pipeline==1.6.13
 lxml==3.7.3
 psycopg2==2.7.1
 python-dateutil==2.6.0
 pytz==2017.2
-raven==6.0.0
-requests==2.14.2
-titlecase==0.9.0
+raven==6.1.0
+requests==2.16.3
+titlecase==0.10.0
