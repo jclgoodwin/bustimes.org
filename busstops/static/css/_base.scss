@@ -649,7 +649,8 @@ input:not(:checked) + label {
     text-align: center;
 }
 
-.adsbygoogle {
+.adsbygoogle,
+.adnwMRectRoot {
     display: block;
     margin: 0 auto;
     max-width: 60em;
