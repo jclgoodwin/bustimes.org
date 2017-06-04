@@ -9,7 +9,7 @@ from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
 from django.core.management import call_command
 from ...models import Operator, Service, Region, StopPoint, Journey, StopUsageUsage
-from ..commands import import_services, generate_departures
+from ..commands import import_services
 
 
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -80,12 +80,12 @@ class ImportServicesTest(TestCase):
             cls.do_service('Megabus_Megabus14032016 163144_MEGA_M12', 'GB')
 
         with freeze_time('2000-01-01'):
-            generate_departures.handle_region(cls.gb)
+            call_command('generate_departures', 'GB')
         with freeze_time('2016-12-31'):
             call_command('generate_departures', 'GB')
         with freeze_time('2017-01-01'):
-            generate_departures.handle_region(cls.gb)
-            generate_departures.handle_region(cls.gb)
+            call_command('generate_departures', 'GB')
+            call_command('generate_departures', 'GB')
 
         cls.gb_m11a = Service.objects.get(pk='M11A_MEGA')
         cls.gb_m12 = Service.objects.get(pk='M12_MEGA')

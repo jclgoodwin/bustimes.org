@@ -1,5 +1,4 @@
 import os
-from multiprocessing import Pool
 from datetime import timedelta, datetime
 from pytz.exceptions import NonExistentTimeError
 from django.core.management.base import BaseCommand
@@ -132,5 +131,5 @@ class Command(BaseCommand):
         parser.add_argument('regions', nargs='+', type=str)
 
     def handle(self, regions, *args, **options):
-        pool = Pool(processes=4)
-        pool.map(handle_region, Region.objects.filter(id__in=regions))
+        for region in Region.objects.filter(id__in=regions):
+            handle_region(region)
