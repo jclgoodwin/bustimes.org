@@ -126,7 +126,7 @@ def timetable_from_service(service, day=None):
             return ni.get_timetable(path, day)
         return []
 
-    cache_key = '{}{}'.format(service.pk, day)
+    cache_key = '{}{}'.format(service.pk, day).replace(' ', '')
     timetables = cache.get(cache_key)
     if timetables is not None:
         return timetables
