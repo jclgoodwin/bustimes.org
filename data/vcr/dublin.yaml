@@ -1,0 +1,119 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.17.3]
+    method: GET
+    uri: https://data.dublinked.ie/cgi-bin/rtpi/realtimebusinformation?stopid=7602
+  response:
+    body: {string: "{\"errorcode\":\"0\",\"errormessage\":\"\",\"numberofresults\"\
+        :12,\"stopid\":\"7602\",\"timestamp\":\"05\\/06\\/2017 12:20:08\",\"results\"\
+        :[{\"arrivaldatetime\":\"05\\/06\\/2017 12:21:48\",\"duetime\":\"1\",\"departuredatetime\"\
+        :\"05\\/06\\/2017 12:21:48\",\"departureduetime\":\"1\",\"scheduledarrivaldatetime\"\
+        :\"05\\/06\\/2017 12:10:00\",\"scheduleddeparturedatetime\":\"05\\/06\\/2017\
+        \ 12:10:00\",\"destination\":\"Dublin Airport\",\"destinationlocalized\":\"\
+        Aerfort\",\"origin\":\"Brehon Field Rd\",\"originlocalized\":\"Brehon Field\
+        \ Rd\",\"direction\":\"Inbound\",\"operator\":\"bac\",\"additionalinformation\"\
+        :\"\",\"lowfloorstatus\":\"no\",\"route\":\"16\",\"sourcetimestamp\":\"05\\\
+        /06\\/2017 12:20:00\",\"monitored\":\"true\"},{\"arrivaldatetime\":\"05\\\
+        /06\\/2017 12:24:00\",\"duetime\":\"3\",\"departuredatetime\":\"05\\/06\\\
+        /2017 12:24:00\",\"departureduetime\":\"3\",\"scheduledarrivaldatetime\":\"\
+        05\\/06\\/2017 12:26:00\",\"scheduleddeparturedatetime\":\"05\\/06\\/2017\
+        \ 12:26:00\",\"destination\":\"Shanard Road\",\"destinationlocalized\":\"\
+        \ \",\"origin\":\"Park Avenue\",\"originlocalized\":\"Park Avenue\",\"direction\"\
+        :\"Inbound\",\"operator\":\"bac\",\"additionalinformation\":\"\",\"lowfloorstatus\"\
+        :\"no\",\"route\":\"1\",\"sourcetimestamp\":\"05\\/06\\/2017 12:20:00\",\"\
+        monitored\":\"true\"},{\"arrivaldatetime\":\"05\\/06\\/2017 12:29:54\",\"\
+        duetime\":\"9\",\"departuredatetime\":\"05\\/06\\/2017 12:29:54\",\"departureduetime\"\
+        :\"9\",\"scheduledarrivaldatetime\":\"05\\/06\\/2017 12:30:00\",\"scheduleddeparturedatetime\"\
+        :\"05\\/06\\/2017 12:30:00\",\"destination\":\"Swords Manor\",\"destinationlocalized\"\
+        :\"Main\xE9ar Shoird\",\"origin\":\"Abbey St\",\"originlocalized\":\"Sr. na\
+        \ Mainistreach\",\"direction\":\"Outbound\",\"operator\":\"bac\",\"additionalinformation\"\
+        :\"\",\"lowfloorstatus\":\"no\",\"route\":\"41C\",\"sourcetimestamp\":\"05\\\
+        /06\\/2017 12:20:00\",\"monitored\":\"true\"},{\"arrivaldatetime\":\"05\\\
+        /06\\/2017 12:33:45\",\"duetime\":\"13\",\"departuredatetime\":\"05\\/06\\\
+        /2017 12:33:45\",\"departureduetime\":\"13\",\"scheduledarrivaldatetime\"\
+        :\"05\\/06\\/2017 12:26:00\",\"scheduleddeparturedatetime\":\"05\\/06\\/2017\
+        \ 12:26:00\",\"destination\":\"Wadelai Pk\",\"destinationlocalized\":\"P\xE1\
+        irc Wadelai\",\"origin\":\"Blackthorn Road\",\"originlocalized\":\"Blackthorn\
+        \ Road\",\"direction\":\"Inbound\",\"operator\":\"bac\",\"additionalinformation\"\
+        :\"\",\"lowfloorstatus\":\"no\",\"route\":\"11\",\"sourcetimestamp\":\"05\\\
+        /06\\/2017 12:20:00\",\"monitored\":\"true\"},{\"arrivaldatetime\":\"05\\\
+        /06\\/2017 12:35:58\",\"duetime\":\"15\",\"departuredatetime\":\"05\\/06\\\
+        /2017 12:35:58\",\"departureduetime\":\"15\",\"scheduledarrivaldatetime\"\
+        :\"05\\/06\\/2017 12:43:00\",\"scheduleddeparturedatetime\":\"05\\/06\\/2017\
+        \ 12:43:00\",\"destination\":\"Dublin Airport\",\"destinationlocalized\":\"\
+        Aerfort\",\"origin\":\"Brehon Field Rd\",\"originlocalized\":\"Brehon Field\
+        \ Rd\",\"direction\":\"Inbound\",\"operator\":\"bac\",\"additionalinformation\"\
+        :\"\",\"lowfloorstatus\":\"no\",\"route\":\"16\",\"sourcetimestamp\":\"05\\\
+        /06\\/2017 12:18:22\",\"monitored\":\"true\"},{\"arrivaldatetime\":\"05\\\
+        /06\\/2017 12:41:06\",\"duetime\":\"20\",\"departuredatetime\":\"05\\/06\\\
+        /2017 12:41:06\",\"departureduetime\":\"20\",\"scheduledarrivaldatetime\"\
+        :\"05\\/06\\/2017 12:35:00\",\"scheduleddeparturedatetime\":\"05\\/06\\/2017\
+        \ 12:35:00\",\"destination\":\"Harristown\",\"destinationlocalized\":\"Baile\
+        \ Anra\xED\",\"origin\":\"Grange Castle\",\"originlocalized\":\"Caisle\xE1\
+        n na Gr\xE1ins\xED\",\"direction\":\"Inbound\",\"operator\":\"bac\",\"additionalinformation\"\
+        :\"\",\"lowfloorstatus\":\"no\",\"route\":\"13\",\"sourcetimestamp\":\"05\\\
+        /06\\/2017 12:11:46\",\"monitored\":\"true\"},{\"arrivaldatetime\":\"05\\\
+        /06\\/2017 12:48:04\",\"duetime\":\"27\",\"departuredatetime\":\"05\\/06\\\
+        /2017 12:48:04\",\"departureduetime\":\"27\",\"scheduledarrivaldatetime\"\
+        :\"05\\/06\\/2017 12:46:00\",\"scheduleddeparturedatetime\":\"05\\/06\\/2017\
+        \ 12:46:00\",\"destination\":\"Shanard Road\",\"destinationlocalized\":\"\
+        \ \",\"origin\":\"Park Avenue\",\"originlocalized\":\"Park Avenue\",\"direction\"\
+        :\"Inbound\",\"operator\":\"bac\",\"additionalinformation\":\"\",\"lowfloorstatus\"\
+        :\"no\",\"route\":\"1\",\"sourcetimestamp\":\"05\\/06\\/2017 12:18:22\",\"\
+        monitored\":\"true\"},{\"arrivaldatetime\":\"05\\/06\\/2017 13:00:59\",\"\
+        duetime\":\"40\",\"departuredatetime\":\"05\\/06\\/2017 13:00:59\",\"departureduetime\"\
+        :\"40\",\"scheduledarrivaldatetime\":\"05\\/06\\/2017 12:50:00\",\"scheduleddeparturedatetime\"\
+        :\"05\\/06\\/2017 12:50:00\",\"destination\":\"Swords Manor\",\"destinationlocalized\"\
+        :\"Main\xE9ar Shoird\",\"origin\":\"Abbey St\",\"originlocalized\":\"Sr. na\
+        \ Mainistreach\",\"direction\":\"Outbound\",\"operator\":\"bac\",\"additionalinformation\"\
+        :\"\",\"lowfloorstatus\":\"no\",\"route\":\"41\",\"sourcetimestamp\":\"05\\\
+        /06\\/2017 12:01:51\",\"monitored\":\"true\"},{\"arrivaldatetime\":\"05\\\
+        /06\\/2017 13:02:35\",\"duetime\":\"42\",\"departuredatetime\":\"05\\/06\\\
+        /2017 13:02:35\",\"departureduetime\":\"42\",\"scheduledarrivaldatetime\"\
+        :\"05\\/06\\/2017 13:03:00\",\"scheduleddeparturedatetime\":\"05\\/06\\/2017\
+        \ 13:03:00\",\"destination\":\"Wadelai Pk\",\"destinationlocalized\":\"P\xE1\
+        irc Wadelai\",\"origin\":\"Blackthorn Road\",\"originlocalized\":\"Blackthorn\
+        \ Road\",\"direction\":\"Inbound\",\"operator\":\"bac\",\"additionalinformation\"\
+        :\"\",\"lowfloorstatus\":\"no\",\"route\":\"11\",\"sourcetimestamp\":\"05\\\
+        /06\\/2017 12:03:30\",\"monitored\":\"true\"},{\"arrivaldatetime\":\"05\\\
+        /06\\/2017 13:02:36\",\"duetime\":\"42\",\"departuredatetime\":\"05\\/06\\\
+        /2017 13:02:36\",\"departureduetime\":\"42\",\"scheduledarrivaldatetime\"\
+        :\"05\\/06\\/2017 13:03:00\",\"scheduleddeparturedatetime\":\"05\\/06\\/2017\
+        \ 13:03:00\",\"destination\":\"Dublin Airport\",\"destinationlocalized\":\"\
+        Aerfort\",\"origin\":\"Brehon Field Rd\",\"originlocalized\":\"Brehon Field\
+        \ Rd\",\"direction\":\"Inbound\",\"operator\":\"bac\",\"additionalinformation\"\
+        :\"\",\"lowfloorstatus\":\"no\",\"route\":\"16\",\"sourcetimestamp\":\"05\\\
+        /06\\/2017 12:08:27\",\"monitored\":\"true\"},{\"arrivaldatetime\":\"05\\\
+        /06\\/2017 13:04:28\",\"duetime\":\"44\",\"departuredatetime\":\"05\\/06\\\
+        /2017 13:04:28\",\"departureduetime\":\"44\",\"scheduledarrivaldatetime\"\
+        :\"05\\/06\\/2017 13:05:00\",\"scheduleddeparturedatetime\":\"05\\/06\\/2017\
+        \ 13:05:00\",\"destination\":\"Harristown\",\"destinationlocalized\":\"Baile\
+        \ Anra\xED\",\"origin\":\"Grange Castle\",\"originlocalized\":\"Caisle\xE1\
+        n na Gr\xE1ins\xED\",\"direction\":\"Inbound\",\"operator\":\"bac\",\"additionalinformation\"\
+        :\"\",\"lowfloorstatus\":\"no\",\"route\":\"13\",\"sourcetimestamp\":\"05\\\
+        /06\\/2017 12:16:42\",\"monitored\":\"true\"},{\"arrivaldatetime\":\"05\\\
+        /06\\/2017 13:06:13\",\"duetime\":\"46\",\"departuredatetime\":\"05\\/06\\\
+        /2017 13:06:13\",\"departureduetime\":\"46\",\"scheduledarrivaldatetime\"\
+        :\"05\\/06\\/2017 13:06:00\",\"scheduleddeparturedatetime\":\"05\\/06\\/2017\
+        \ 13:06:00\",\"destination\":\"Shanard Road\",\"destinationlocalized\":\"\
+        \ \",\"origin\":\"Park Avenue\",\"originlocalized\":\"Park Avenue\",\"direction\"\
+        :\"Inbound\",\"operator\":\"bac\",\"additionalinformation\":\"\",\"lowfloorstatus\"\
+        :\"no\",\"route\":\"1\",\"sourcetimestamp\":\"05\\/06\\/2017 12:06:48\",\"\
+        monitored\":\"true\"}]}"}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: [private]
+      Connection: [keep-alive]
+      Content-Length: ['6330']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 05 Jun 2017 11:20:08 GMT']
+      Server: [nginx/1.4.6 (Ubuntu)]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+    status: {code: 200, message: OK}
+version: 1

@@ -383,15 +383,15 @@ def get_departures(stop, services, bot=False):
     operators = Operator.objects.filter(service__stops=stop,
                                         service__current=True).distinct()
 
-    if stop.atco_code[0] == '8' and stop.atco_code[4:6] == 'DB':
+    if stop.atco_code[0] == '8' and 'DB' in stop.atco_code:
         response = SESSION.get(
             'https://data.dublinked.ie/cgi-bin/rtpi/realtimebusinformation',
-            params={'stopid': int(stop.atco_code[-6:])}
+            params={'stopid': int(stop.atco_code.split('DB', 1)[-1])}
         )
         if response.ok:
             departures = [{
-                'time': dateutil.parser.parse(item['scheduleddeparturedatetime']),
-                'live': dateutil.parser.parse(item['departuredatetime']),
+                'time': dateutil.parser.parse(item['scheduleddeparturedatetime'], dayfirst=True),
+                'live': dateutil.parser.parse(item['departuredatetime'], dayfirst=True),
                 'destination': item['destination'],
                 'service': item['route']
             } for item in response.json()['results']]

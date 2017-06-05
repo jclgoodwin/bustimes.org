@@ -220,6 +220,19 @@ class LiveDeparturesTest(TestCase):
             'name': 'Your Next Bus'
         })
 
+    def test_dublin(self):
+        stop = StopPoint(atco_code='8220DB07602')
+        with vcr.use_cassette('data/vcr/dublin.yaml'):
+            departures, max_age = live.get_departures(stop, None)
+        self.assertEqual(max_age, 60)
+        self.assertEqual(len(departures['departures']), 12)
+        self.assertEqual(departures['departures'][4], {
+            'time': datetime.datetime(2017, 6, 5, 12, 43),
+            'live': datetime.datetime(2017, 6, 5, 12, 35, 58),
+            'destination': 'Dublin Airport',
+            'service': '16'
+        })
+
     @freeze_time('14 Mar 2017 20:00')
     def test_stagecoach(self):
         with vcr.use_cassette('data/vcr/stagecoach.yaml'):
