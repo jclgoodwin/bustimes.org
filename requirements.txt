@@ -1,10 +1,10 @@
 beautifulsoup4==4.6.0
-Django==1.11.1
+Django==1.11.2
 django-autoslug==1.9.3
 django-email-obfuscator==0.1.5
 django-haystack===2.6.1
 django-pipeline==1.6.13
-lxml==3.7.3
+lxml==3.8.0
 psycopg2==2.7.1
 python-dateutil==2.6.0
 pytz==2017.2
