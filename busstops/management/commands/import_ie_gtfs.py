@@ -156,6 +156,7 @@ class Command(BaseCommand):
             print(collection)
             path = 'google_transit_{}.zip'.format(collection)
             url = 'http://www.transportforireland.ie/transitData/' + path
+            path = 'data/' + path
             if os.path.exists(path):
                 response = session.get(url, headers={
                     'if-modified-since': time.ctime(os.path.getmtime(path) - 3600)
