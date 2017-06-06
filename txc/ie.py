@@ -1,15 +1,14 @@
 import zipfile
 import csv
-#import calendar
-from datetime import date
-from .ni import Grouping, Timetable, Part, Stop, Row, contains, should_show
+from datetime import datetime
+from .ni import Grouping, Timetable, Row
 
 
 def get_rows(csv_file):
     return csv.DictReader(line.decode('utf-8-sig') for line in csv_file)
 
 
-def handle_trips(trips):
+def handle_trips(trips, day):
     i = 0
     head = None
     rows_map = {}
@@ -18,11 +17,13 @@ def handle_trips(trips):
         previous = None
         visited_stops = set()
 
-        for stop in trip:
+        print(trip)
+
+        for stop in trip['stops']:
             stop_id = stop['stop_id']
             if stop_id in rows_map:
                 if stop_id in visited_stops:
-                    if previous and previous.next and previous.next.stop_id == stop_id:
+                    if previous and previous.next and previous.next.atco_code == stop_id:
                         row = previous.next
                     else:
                         row = Row(stop_id, ['     '] * i)
@@ -38,9 +39,9 @@ def handle_trips(trips):
                     if head:
                         head.prepend(row)
                     head = row
-            time = stop['departure_time'] or stopusage['arrival_time']
+            time = datetime.strptime(stop['departure_time'] or stop['arrival_time'], '%H:%M:%S').time()
             row.times.append(time)
-            row.part.timingstatus = None # 'PTP' if stopusage['TimingPoint'] == 'T1' else 'OTH'
+            row.part.timingstatus = None
             previous = row
             visited_stops.add(stop_id)
 
@@ -60,16 +61,11 @@ def handle_trips(trips):
     print(g.rows)
     t = Timetable()
     t.groupings = [g]
-    t.date = date.today()
+    t.date = day
     return [t]
 
-def get_data(path):
-    with open(path) as open_file:
-        data = json.load(open_file)
-    return (data['Outbound'], data['Inbound'])
 
-
-def get_timetable(service_code):
+def get_timetable(service_code, day):
     parts = service_code.split('-', 1)
     archive_name = parts[0]
     route_id = parts[1] + '-'
@@ -87,9 +83,10 @@ def get_timetable(service_code):
         with archive.open('trips.txt') as open_file:
             for row in get_rows(open_file):
                 if row['route_id'].startswith(route_id):
-                    trips[row['trip_id']] = []
+                    row['stops'] = []
+                    trips[row['trip_id']] = row
         with archive.open('stop_times.txt') as open_file:
             for row in get_rows(open_file):
                 if row['trip_id'] in trips:
-                    trips[row['trip_id']].append(row)
-        return handle_trips(trips.values())
+                    trips[row['trip_id']]['stops'].append(row)
+        return handle_trips(trips.values(), day)
