@@ -39,10 +39,6 @@ def write_zip_file(path, response):
 
 
 class Command(BaseCommand):
-    # @staticmethod
-    # def add_arguments(parser):
-    #     parser.add_argument('filenames', nargs='+', type=str)
-
     def handle_zipfile(self, archive_name, collection):
         routes = {}
         trips = {}
