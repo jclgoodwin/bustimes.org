@@ -12,12 +12,12 @@ def handle_trips(trips, day):
     i = 0
     head = None
     rows_map = {}
+    print(trips)
 
     for trip in trips:
+        print(trip)
         previous = None
         visited_stops = set()
-
-        print(trip)
 
         for stop in trip['stops']:
             stop_id = stop['stop_id']
@@ -39,7 +39,10 @@ def handle_trips(trips, day):
                     if head:
                         head.prepend(row)
                     head = row
-            time = datetime.strptime(stop['departure_time'] or stop['arrival_time'], '%H:%M:%S').time()
+            time = stop['departure_time'] or stop['arrival_time']
+            if int(time[:2]) > 23:
+                time = str(int(time[:2]) - 24) + time[2:]
+            time = datetime.strptime(time, '%H:%M:%S').time()
             row.times.append(time)
             row.part.timingstatus = None
             previous = row
@@ -54,15 +57,11 @@ def handle_trips(trips, day):
         i += 1
     p = head
     g = Grouping()
-    print(head)
+    print(p)
     while p:
         g.rows.append(p)
         p = p.next
-    print(g.rows)
-    t = Timetable()
-    t.groupings = [g]
-    t.date = day
-    return [t]
+    return g
 
 
 def get_timetable(service_code, day):
@@ -70,23 +69,30 @@ def get_timetable(service_code, day):
     archive_name = parts[0]
     route_id = parts[1] + '-'
     with zipfile.ZipFile('data/google_transit_' + archive_name + '.zip') as archive:
-        print(archive.namelist())
-        stops = {}
-        with archive.open('stops.txt') as open_file:
-            for row in get_rows(open_file):
-                stops[row['stop_id']] = row
-        with archive.open('routes.txt') as open_file:
-            for row in get_rows(open_file):
-                if row['route_id'].startswith(route_id):
-                    print(row)
+        # stops = {}
+        # with archive.open('stops.txt') as open_file:
+        #     for row in get_rows(open_file):
+        #         stops[row['stop_id']] = row
+        # with archive.open('routes.txt') as open_file:
+        #     for row in get_rows(open_file):
+        #          if row['route_id'].startswith(route_id):
+        #             print(row)
         trips = {}
         with archive.open('trips.txt') as open_file:
             for row in get_rows(open_file):
+                if row['direction_id'] not in trips:
+                    trips[row['direction_id']] = {}
                 if row['route_id'].startswith(route_id):
                     row['stops'] = []
-                    trips[row['trip_id']] = row
+                    trips[row['direction_id']][row['trip_id']] = row
         with archive.open('stop_times.txt') as open_file:
             for row in get_rows(open_file):
-                if row['trip_id'] in trips:
-                    trips[row['trip_id']]['stops'].append(row)
-        return handle_trips(trips.values(), day)
+                for dir in trips:
+                    if row['trip_id'] in trips[dir]:
+                        trips[dir][row['trip_id']]['stops'].append(row)
+                        break
+
+        t = Timetable()
+        t.groupings = [handle_trips(trips[dir].values(), day) for dir in trips]
+        t.date = day
+        return [t]
