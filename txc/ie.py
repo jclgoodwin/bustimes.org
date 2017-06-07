@@ -12,10 +12,8 @@ def handle_trips(trips, day):
     i = 0
     head = None
     rows_map = {}
-    print(trips)
 
-    for trip in trips:
-        print(trip)
+    for trip in sorted(trips, key=lambda t: t['stops'][0]['departure_time']):
         previous = None
         visited_stops = set()
 
@@ -57,7 +55,7 @@ def handle_trips(trips, day):
         i += 1
     p = head
     g = Grouping()
-    print(p)
+
     while p:
         g.rows.append(p)
         p = p.next
@@ -69,17 +67,42 @@ def get_timetable(service_code, day):
     archive_name = parts[0]
     route_id = parts[1] + '-'
     with zipfile.ZipFile('data/google_transit_' + archive_name + '.zip') as archive:
-        # stops = {}
-        # with archive.open('stops.txt') as open_file:
-        #     for row in get_rows(open_file):
-        #         stops[row['stop_id']] = row
-        # with archive.open('routes.txt') as open_file:
-        #     for row in get_rows(open_file):
-        #          if row['route_id'].startswith(route_id):
-        #             print(row)
+        stops = {}
+        with archive.open('stops.txt') as open_file:
+            for row in get_rows(open_file):
+                stops[row['stop_id']] = row
+
+        routes = {}
+        with archive.open('routes.txt') as open_file:
+            for row in get_rows(open_file):
+                if row['route_id'].startswith(route_id):
+                    routes[row['route_id']] = row
+
+        calendar = {}
+        with archive.open('calendar.txt') as open_file:
+            for row in get_rows(open_file):
+                row['exceptions'] = []
+                calendar[row['service_id']] = row
+        with archive.open('calendar_dates.txt') as open_file:
+            for row in get_rows(open_file):
+                calendar[row['service_id']]['exceptions'].append(row)
+
         trips = {}
         with archive.open('trips.txt') as open_file:
             for row in get_rows(open_file):
+                service = calendar[row['service_id']]
+                exception_type = None
+                for exception in service['exceptions']:
+                    if datetime.strptime(exception['date'], '%Y%m%d').date() == day:
+                        exception_type = exception['exception_type']
+                        break
+                if exception_type == '2':  # service has been removed for the specified date
+                    continue
+                elif exception_type is None:
+                    if day < datetime.strptime(service['start_date'], '%Y%m%d').date() or day > datetime.strptime(service['end_date'], '%Y%m%d').date():
+                        continue  # outside of dates
+                    if service[day.strftime('%A').lower()] == '0':
+                        continue
                 if row['direction_id'] not in trips:
                     trips[row['direction_id']] = {}
                 if row['route_id'].startswith(route_id):
@@ -95,4 +118,11 @@ def get_timetable(service_code, day):
         t = Timetable()
         t.groupings = [handle_trips(trips[dir].values(), day) for dir in trips]
         t.date = day
+        for grouping in t.groupings:
+            for row in grouping.rows:
+                row.part.stop.name = stops[row.part.stop.atco_code]['stop_name']
+                if not grouping.name:
+                    grouping.name = row.part.stop.name
+            if grouping.name:
+                grouping.name += ' - ' + row.part.stop.name
         return [t]

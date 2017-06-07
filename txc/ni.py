@@ -47,6 +47,8 @@ class Stop(object):
         self.atco_code = atco_code
 
     def __str__(self):
+        if hasattr(self, 'name'):
+            return self.name
         return self.atco_code
 
 
