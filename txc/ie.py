@@ -99,7 +99,10 @@ def get_timetable(service_code, day):
                 if exception_type == '2':  # service has been removed for the specified date
                     continue
                 elif exception_type is None:
-                    if day < datetime.strptime(service['start_date'], '%Y%m%d').date() or day > datetime.strptime(service['end_date'], '%Y%m%d').date():
+                    if (
+                            day < datetime.strptime(service['start_date'], '%Y%m%d').date() or
+                            day > datetime.strptime(service['end_date'], '%Y%m%d').date()
+                    ):
                         continue  # outside of dates
                     if service[day.strftime('%A').lower()] == '0':
                         continue
