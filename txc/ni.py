@@ -47,6 +47,8 @@ class Stop(object):
         self.atco_code = atco_code
 
     def __str__(self):
+        if hasattr(self, 'name'):
+            return self.name
         return self.atco_code
 
 
@@ -68,7 +70,7 @@ class Row(object):
         string = ''
         p = self
         while p:
-            string += '{} {}\n'.format(p.atco_code, p.times)
+            string += '{} {}\n'.format(p.atco_code, [str(time)[:5] for time in p.times])
             p = p.next
         return string
 

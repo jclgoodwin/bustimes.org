@@ -12,7 +12,7 @@ except ImportError:
 from datetime import date
 from django.conf import settings
 from django.core.cache import cache
-from txc import txc, ni
+from txc import txc, ni, ie
 
 
 def format_gbp(string):
@@ -125,6 +125,9 @@ def timetable_from_service(service, day=None):
         if os.path.exists(path):
             return ni.get_timetable(path, day)
         return []
+
+    if service.region_id in {'UL', 'LE', 'MU', 'CO'}:
+        return ie.get_timetable(service.service_code, day)
 
     cache_key = '{}{}'.format(service.pk, day).replace(' ', '')
     timetables = cache.get(cache_key)
