@@ -1,6 +1,8 @@
+import os
 import zipfile
 import csv
 from datetime import datetime
+from django.conf import settings
 from .ni import Grouping, Timetable, Row
 
 
@@ -64,9 +66,13 @@ def handle_trips(trips, day):
 
 def get_timetable(service_code, day):
     parts = service_code.split('-', 1)
-    archive_name = parts[0]
+    path = parts[0]
+    if path == 'dublincoac':
+        path += 'h'
     route_id = parts[1] + '-'
-    with zipfile.ZipFile('data/google_transit_' + archive_name + '.zip') as archive:
+    path = os.path.join(settings.DATA_DIR, 'google_transit_' + path + '.zip')
+
+    with zipfile.ZipFile(path) as archive:
         stops = {}
         with archive.open('stops.txt') as open_file:
             for row in get_rows(open_file):

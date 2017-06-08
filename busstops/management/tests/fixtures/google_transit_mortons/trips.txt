@@ -1,0 +1,3 @@
+﻿route_id,service_id,trip_id,shape_id,trip_headsign,direction_id
+"20-165-y11-1","Mo-Fr","1.Mo-Fr.20-165-y11-1.1.O","20-165-y11-1.1.O","Citywest Road","0"
+"20-165-y11-1","Mo-Fr","2.Mo-Fr.20-165-y11-1.2.I","20-165-y11-1.2.I","Ailesbury Road","1"

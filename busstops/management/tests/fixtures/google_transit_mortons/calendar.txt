@@ -1,0 +1,2 @@
+﻿service_id,monday,tuesday,wednesday,thursday,friday,saturday,sunday,start_date,end_date
+"Mo-Fr","1","1","1","1","1","0","0","20160101","20191031"

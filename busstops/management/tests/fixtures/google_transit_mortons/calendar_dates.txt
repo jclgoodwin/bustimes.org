@@ -1,0 +1,2 @@
+﻿service_id,date,exception_type
+"Mo-Fr","20171225","2"
