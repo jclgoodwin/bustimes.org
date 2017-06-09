@@ -23,6 +23,7 @@ class IrelandTest(TestCase):
     @override_settings(DATA_DIR=FIXTURES_DIR)
     def test_small_timetable(self):
         timetable = ie.get_timetable('mortons-20-165-y11', date(2017, 6, 7))[0]
+        timetable.groupings.sort(key=lambda g: g.rows[0].times[0])
         self.assertEqual(str(timetable.groupings[0]), 'Merrion, Merlyn Park - Citywest, Castle House')
         self.assertEqual(str(timetable.groupings[1]), 'Citywest, Castle House - Ballsbridge, Ailesbury Road')
         self.assertEqual(timetable.groupings[0].rows[0].times, [time(7, 45)])
