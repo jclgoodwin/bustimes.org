@@ -8,19 +8,15 @@ from . import ie
 FIXTURES_DIR = './busstops/management/tests/fixtures/'
 
 
+@override_settings(DATA_DIR=FIXTURES_DIR)
 class IrelandTest(TestCase):
-    """Tests some timetables generated directly from XML files"""
-
     def setUp(self):
+        """Make a GTFS feed (a zip file containing some text files)."""
         self.dir_path = os.path.join(FIXTURES_DIR, 'google_transit_mortons')
         with zipfile.ZipFile(self.dir_path + '.zip', 'a') as open_zipfile:
             for item in os.listdir(self.dir_path):
                 open_zipfile.write(os.path.join(self.dir_path, item), item)
 
-    def tearDown(self):
-        os.remove(self.dir_path + '.zip')
-
-    @override_settings(DATA_DIR=FIXTURES_DIR)
     def test_small_timetable(self):
         timetable = ie.get_timetable('mortons-20-165-y11', date(2017, 6, 7))[0]
         timetable.groupings.sort(key=lambda g: g.rows[0].times[0])
@@ -38,7 +34,14 @@ class IrelandTest(TestCase):
         for day in (date(2017, 6, 11), date(2017, 12, 25), date(2015, 12, 3)):
             timetable = ie.get_timetable('mortons-20-165-y11', day)[0]
             self.assertEqual(timetable.groupings, [])
+
+    def test_dublincoach(self):
+        """A truncated feed name like 'dublincoac' should be expanded."""
         with self.assertRaises(IOError) as context_manager:
             ie.get_timetable('dublincoac-', None)
         self.assertEqual(context_manager.exception.filename,
                          './busstops/management/tests/fixtures/google_transit_dublincoach.zip')
+
+    def tearDown(self):
+        """Delete the GTFS feed zip file."""
+        os.remove(self.dir_path + '.zip')

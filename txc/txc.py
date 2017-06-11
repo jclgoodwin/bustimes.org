@@ -55,14 +55,14 @@ def add_time(time, delta):
 
 def sanitize_description_part(part):
     """Given an oddly formatted part like 'Bus Station bay 5,Blyth',
-    returns a shorter, more normal version like 'Blyth'
+    return a shorter, more normal version like 'Blyth'.
     """
     sanitized_part = DESCRIPTION_REGEX.match(part.strip())
     return sanitized_part.group(1) if sanitized_part is not None else part
 
 
 def correct_description(description):
-    """Given an description, return a version with any typos pedantically corrected"""
+    """Given an description, return a version with any typos pedantically corrected."""
     for old, new in (
             ('Stitians', 'Stithians'),
             ('Kings Lynn', "King's Lynn"),
@@ -451,8 +451,8 @@ class VehicleJourney(object):
         if journeypatternref_element is not None:
             self.journeypattern = journeypatterns[journeypatternref_element.text]
         else:
-            # Journey has no direct reference to a JourneyPattern
-            # instead it as a reference to a similar journey with does
+            # Journey has no direct reference to a JourneyPattern.
+            # Instead, it has a reference to another journey...
             self.journeyref = element.find('txc:VehicleJourneyRef', NS).text
 
         # now free to stop if this journey won't be shown
