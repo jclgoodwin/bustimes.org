@@ -23,7 +23,7 @@ def handle_trips(trips, day):
             stop_id = stop['stop_id']
             if stop_id in rows_map:
                 if stop_id in visited_stops:
-                    if previous and previous.next and previous.next.atco_code == stop_id:
+                    if previous and previous.next and previous.next.atco_code == stop_id and len(previous.next.times) == i:
                         row = previous.next
                     else:
                         row = Row(stop_id, ['     '] * i)
