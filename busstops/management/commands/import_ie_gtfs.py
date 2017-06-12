@@ -7,6 +7,7 @@ from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import Count
+from txc.ie import COLLECTIONS
 from ...models import Operator, Service, StopPoint, StopUsage, Region
 
 
@@ -15,17 +16,6 @@ MODES = {
     '3': 'bus',
     '4': 'ferry'
 }
-COLLECTIONS = (
-    'luasbus', 'dublinbus', 'kenneallys', 'locallink', 'irishrail', 'ferries',
-    'manda', 'finnegans', 'citylink', 'nitelink', 'buseireann', 'mcgeehan',
-    'mkilbride', 'expressbus', 'edmoore', 'collins', 'luas', 'sro',
-    'dublincoach', 'burkes', 'mhealy', 'kearns', 'josfoley', 'buggy',
-    'jjkavanagh', 'citydirect', 'aircoach', 'matthews', 'wexfordbus',
-    'dualway', 'tralee', 'sbloom', 'mcginley', 'swordsexpress', 'suirway',
-    'sdoherty', 'pjmartley', 'mortons', 'mgray', 'mcgrath', 'mangan',
-    'lallycoach', 'halpenny', 'eurobus', 'donnellys', 'cmadigan', 'bkavanagh',
-    'ptkkenneally', 'farragher', 'fedateoranta'
-)
 
 
 def get_rows(csv_file):

@@ -6,6 +6,19 @@ from django.conf import settings
 from .ni import Grouping, Timetable, Row
 
 
+COLLECTIONS = (
+    'luasbus', 'dublinbus', 'kenneallys', 'locallink', 'irishrail', 'ferries',
+    'manda', 'finnegans', 'citylink', 'nitelink', 'buseireann', 'mcgeehan',
+    'mkilbride', 'expressbus', 'edmoore', 'collins', 'luas', 'sro',
+    'dublincoach', 'burkes', 'mhealy', 'kearns', 'josfoley', 'buggy',
+    'jjkavanagh', 'citydirect', 'aircoach', 'matthews', 'wexfordbus',
+    'dualway', 'tralee', 'sbloom', 'mcginley', 'swordsexpress', 'suirway',
+    'sdoherty', 'pjmartley', 'mortons', 'mgray', 'mcgrath', 'mangan',
+    'lallycoach', 'halpenny', 'eurobus', 'donnellys', 'cmadigan', 'bkavanagh',
+    'ptkkenneally', 'farragher', 'fedateoranta'
+)
+
+
 def get_rows(csv_file):
     return csv.DictReader(line.decode('utf-8-sig') for line in csv_file)
 
@@ -70,8 +83,10 @@ def handle_trips(trips, day):
 def get_timetable(service_code, day):
     parts = service_code.split('-', 1)
     path = parts[0]
-    if path == 'dublincoac':
-        path += 'h'
+    for collection in COLLECTIONS:
+        if collection.startswith(path):
+            path = collection
+            break
     route_id = parts[1] + '-'
     path = os.path.join(settings.DATA_DIR, 'google_transit_' + path + '.zip')
 
