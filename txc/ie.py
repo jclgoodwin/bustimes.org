@@ -23,7 +23,10 @@ def handle_trips(trips, day):
             stop_id = stop['stop_id']
             if stop_id in rows_map:
                 if stop_id in visited_stops:
-                    if previous and previous.next and previous.next.atco_code == stop_id and len(previous.next.times) == i:
+                    if (
+                        previous and previous.next and previous.next.atco_code == stop_id
+                        and len(previous.next.times) == i
+                    ):
                         row = previous.next
                     else:
                         row = Row(stop_id, ['     '] * i)
@@ -106,8 +109,8 @@ def get_timetable(service_code, day):
                     continue
                 elif exception_type is None:
                     if (
-                            day < datetime.strptime(service['start_date'], '%Y%m%d').date() or
-                            day > datetime.strptime(service['end_date'], '%Y%m%d').date()
+                        day < datetime.strptime(service['start_date'], '%Y%m%d').date() or
+                        day > datetime.strptime(service['end_date'], '%Y%m%d').date()
                     ):
                         continue  # outside of dates
                     if service[day.strftime('%A').lower()] == '0':
