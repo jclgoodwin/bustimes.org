@@ -7,6 +7,7 @@ data/*/
 data/*.ashx
 data/*.xml
 data/*.csv
+data/accessibility-data.zip
 data/google_transit_*.zip
 .sass-cache
 node_modules
