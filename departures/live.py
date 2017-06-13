@@ -239,6 +239,20 @@ class TimetableDepartures(Departures):
         return [self.get_row(suu) for suu in queryset]
 
 
+class LambdaDepartures(Departures):
+    def get_request_url(self):
+        return 'https://api.bustim.es/' + self.stop.atco_code
+
+    def departures_from_response(self, res):
+        json = res.json()
+        return [{
+            'time': dateutil.parser.parse(item['aimed_time']),
+            'live': item['expected_time'] and dateutil.parser.parse(item['expected_time']),
+            'service': self.get_service(item['service']),
+            'destination': item['destination_name']
+        } for item in json['departures']]
+
+
 def get_max_age(departures, now):
     """Given a list of departures and the current datetime, returns an
     appropriate max_age in seconds (for use in a cache-control header)
@@ -438,8 +452,10 @@ def get_departures(stop, services, bot=False):
             if live_rows:
                 blend(departures, live_rows)
         # Norfolk
-        elif not bot and departures and stop.atco_code[:3] in {'290'}:
-            live_rows = TransportApiDepartures(stop, services, now.date()).get_departures()
+        elif not bot and departures and stop.atco_code[:3] in {'380', '059', '290', '602', '390', '260', '228', '521',
+                                                               '389', '060', '050', '300', '029', '021', '020', '268',
+                                                               '269'}:
+            live_rows = LambdaDepartures(stop, services, now).get_departures()
             if live_rows:
                 blend(departures, live_rows)
 
