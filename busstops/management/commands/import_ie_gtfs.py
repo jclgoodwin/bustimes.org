@@ -29,7 +29,11 @@ def write_zip_file(path, response):
 
 
 class Command(BaseCommand):
+    @transaction.atomic
     def handle_zipfile(self, archive_name, collection):
+        collection = collection[:10]
+        Service.objects.filter(service_code__startswith=collection).update(current=False)
+
         routes = {}
         trips = {}
         agencies = {}
@@ -67,8 +71,9 @@ class Command(BaseCommand):
                 'region_id': 'LE',
                 'line_name': route['route_short_name'],
                 'description': route['route_long_name'],
-                'date': '2017-01-01',
-                'mode': MODES.get(route['route_type'], '')
+                'date': time.strftime('%Y-%m-%d'),
+                'mode': MODES.get(route['route_type'], ''),
+                'current': True
             }
             if route['trips']:
                 for trip in route['trips']:
@@ -83,7 +88,7 @@ class Command(BaseCommand):
 
             route_id = route['route_id'].split()[0]
             service, created = Service.objects.update_or_create(
-                service_code='{}-{}'.format(collection[:10], '-'.join(route_id.split('-')[:-1])),
+                service_code='{}-{}'.format(collection, '-'.join(route_id.split('-')[:-1])),
                 defaults=defaults
             )
             # if not created:
@@ -135,10 +140,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--force', action='store_true', help='Import data even if the GTFS feeds haven\'t changed')
 
-    @transaction.atomic
     def handle(self, *args, **options):
-        regions = ('LE', 'CO', 'UL', 'MU')
-        Service.objects.filter(region_id__in=regions).delete()
         session = requests.Session()
 
         for collection in COLLECTIONS:
