@@ -4,6 +4,7 @@ import os
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import Point
 from django.db import transaction
+from titlecase import titlecase
 from busstops.models import Operator, Service, StopPoint, StopUsage
 
 
@@ -54,9 +55,12 @@ class Command(BaseCommand):
         assert line[2:3] == 'N'
 
         operator = line[3:7].strip().upper()
-        route_number = line[7:11].strip()
+        route_number = line[7:11].strip().upper()
         # route_direction = line[11:12]
         route_description = line[12:].strip()
+        if route_description.isupper():
+            route_description = titlecase(route_description)
+
         service_code = route_number + '_' + operator
         cls.service_code = service_code
 
