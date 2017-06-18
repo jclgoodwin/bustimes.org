@@ -141,9 +141,6 @@ class Command(BaseCommand):
         Service.objects.filter(region_id__in=regions).delete()
         session = requests.Session()
 
-        print(options)
-        return
-
         for collection in COLLECTIONS:
             if options['verbosity'] > 1:
                 print(collection)

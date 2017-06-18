@@ -137,12 +137,11 @@ accessibility_old=$(ls -l accessibility-data.zip)
 wget -qN http://naptan.dft.gov.uk/Journeyweb/accessibility/accessibility-data.zip
 accessibility_new=$(ls -l accessibility-data.zip)
 if [[ $accessibility_old != $accessibility_new ]]; then
-    ../../manage.py import_accessibility accessibility-data.zip
-    unzip -oq accessibility-data.zip
+    ../manage.py import_accessibility
 fi
 
 
-cd ../..
+cd ..
 
 ./manage.py import_ie_gtfs
 
