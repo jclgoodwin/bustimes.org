@@ -67,7 +67,8 @@ class Command(BaseCommand):
                 'date': '2016-11-01',
                 'line_name': route_number,
                 'description': route_description,
-                'mode': 'bus'
+                'mode': 'bus',
+                'current': True
             }
             service = Service.objects.update_or_create(service_code=service_code, defaults=defaults)[0]
             if operator:
@@ -165,13 +166,13 @@ class Command(BaseCommand):
     def handle(cls, *args, **options):
         cls.set_up()
 
-        Service.objects.filter(region_id='NI').delete()
+        Service.objects.filter(region_id='NI').update(current=False)
 
-        cls.handle_file('MET20160901v1.cif')
-
-        for dirpath, _, filenames in os.walk('ULB'):
-            for filename in filenames:
-                cls.handle_file(os.path.join(dirpath, filename))
+        for dirpath in ('Metro', 'ULB'):
+            for dirpath, _, filenames in os.walk(dirpath):
+                for filename in filenames:
+                    path = os.path.join(dirpath, filename)
+                    cls.handle_file(path)
 
         cls.create_stop_usages()
 
