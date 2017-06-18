@@ -141,4 +141,9 @@ if [[ $accessibility_old != $accessibility_new ]]; then
     unzip -oq accessibility-data.zip
 fi
 
+
+cd ../..
+
+./manage.py import_ie_gtfs
+
 finish

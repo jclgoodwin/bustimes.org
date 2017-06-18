@@ -132,14 +132,21 @@ class Command(BaseCommand):
             if operator.region_id:
                 operator.save()
 
+    def add_arguments(self, parser):
+        parser.add_argument('--force', action='store_true', help='Import data even if the GTFS feeds haven\'t changed')
+
     @transaction.atomic
     def handle(self, *args, **options):
         regions = ('LE', 'CO', 'UL', 'MU')
         Service.objects.filter(region_id__in=regions).delete()
         session = requests.Session()
 
+        print(options)
+        return
+
         for collection in COLLECTIONS:
-            print(collection)
+            if options['verbosity'] > 1:
+                print(collection)
             path = 'google_transit_{}.zip'.format(collection)
             url = 'http://www.transportforireland.ie/transitData/' + path
             path = 'data/' + path
@@ -149,6 +156,8 @@ class Command(BaseCommand):
                 }, stream=True)
                 if response.status_code != 304:
                     write_zip_file(path, response)
+                elif not options['force']:
+                    continue
             else:
                 write_zip_file(path, session.get(url, stream=True))
             self.handle_zipfile(path, collection)
