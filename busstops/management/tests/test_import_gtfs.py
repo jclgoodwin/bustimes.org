@@ -1,8 +1,9 @@
+# coding=utf-8
 """Tests for importing Ouibus and FlixBus stops and services
 """
-# coding=utf-8
 from django.test import TestCase
 from ..commands import import_ouibus_gtfs
+
 
 class ImpportGTFSTest(TestCase):
     def test_stop_id(self):
