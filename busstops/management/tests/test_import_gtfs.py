@@ -1,11 +1,27 @@
 # coding=utf-8
 """Tests for importing Ouibus and FlixBus stops and services
 """
+import os
+import vcr
 from django.test import TestCase
-from ..commands import import_ouibus_gtfs
+from ..commands import import_ouibus_gtfs, import_ie_gtfs
 
 
 class ImpportGTFSTest(TestCase):
+    def test_download_if_modified(self):
+        path = 'download_if_modified.txt'
+        url = 'https://bustimes.org.uk/static/js/global.js'
+
+        self.assertFalse(os.path.exists(path))
+
+        with vcr.use_cassette('data/vcr/download_if_modified.yaml'):
+            self.assertTrue(import_ie_gtfs.download_if_modified(path, url))
+            self.assertFalse(import_ie_gtfs.download_if_modified(path, url))
+
+        self.assertTrue(os.path.exists(path))
+
+        os.remove(path)
+
     def test_stop_id(self):
         self.assertEqual(import_ouibus_gtfs.Command.get_stop_id('flixbus', {
             'stop_id': 'FLIXBUS:001'

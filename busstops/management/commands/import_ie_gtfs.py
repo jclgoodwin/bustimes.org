@@ -3,8 +3,10 @@ import time
 import zipfile
 import csv
 import requests
+from email.utils import parsedate
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
+from django.core.cache import cache
 from django.db import transaction
 from django.db.models import Count
 from txc.ie import COLLECTIONS
@@ -16,6 +18,7 @@ MODES = {
     '3': 'bus',
     '4': 'ferry'
 }
+SESSION = requests.Session()
 
 
 def get_rows(csv_file):
@@ -26,6 +29,22 @@ def write_zip_file(path, response):
     with open(path, 'wb') as zip_file:
         for chunk in response.iter_content(chunk_size=102400):
             zip_file.write(chunk)
+
+
+def download_if_modified(path, url):
+    if os.path.exists(path):
+        last_modified = time.localtime(os.path.getmtime(path))
+        headers = {
+            'if-modified-since': time.asctime(last_modified)
+        }
+        response = SESSION.get(url, headers=headers, stream=True)
+        if response.status_code == 304 or parsedate(response.headers['last-modified']) <= last_modified:
+            return False  # not modified
+    else:
+        response = SESSION.get(url, stream=True)
+    cache.set(url, response.headers['etag'])
+    write_zip_file(path, response)
+    return True
 
 
 class Command(BaseCommand):
@@ -141,22 +160,12 @@ class Command(BaseCommand):
         parser.add_argument('--force', action='store_true', help='Import data even if the GTFS feeds haven\'t changed')
 
     def handle(self, *args, **options):
-        session = requests.Session()
-
         for collection in COLLECTIONS:
             if options['verbosity'] > 1:
                 print(collection)
             path = 'google_transit_{}.zip'.format(collection)
             url = 'http://www.transportforireland.ie/transitData/' + path
             path = 'data/' + path
-            if os.path.exists(path):
-                response = session.get(url, headers={
-                    'if-modified-since': time.ctime(os.path.getmtime(path) - 3600)
-                }, stream=True)
-                if response.status_code != 304:
-                    write_zip_file(path, response)
-                elif not options['force']:
-                    continue
-            else:
-                write_zip_file(path, session.get(url, stream=True))
-            self.handle_zipfile(path, collection)
+            modified = download_if_modified(path, url)
+            if modified or options['force']:
+                self.handle_zipfile(path, collection)

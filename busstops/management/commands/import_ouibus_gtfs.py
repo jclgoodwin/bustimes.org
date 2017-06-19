@@ -4,7 +4,7 @@ from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from ...models import Operator, Service, StopPoint, StopUsage, Region
-from .import_ie_gtfs import get_rows, MODES
+from .import_ie_gtfs import get_rows, download_if_modified, MODES
 
 
 class Command(BaseCommand):
@@ -130,5 +130,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         Region.objects.update_or_create(id='FR', name='France')
-        self.handle_zipfile('gtfs.zip', 'ouibus')
-        self.handle_zipfile('flixbus-eu.zip', 'flixbus')
+
+        if download_if_modified('flixbus-eu.zip', 'http://data.ndovloket.nl/flixbus/flixbus-eu.zip'):
+            self.handle_zipfile('flixbus-eu.zip', 'flixbus')
+        if download_if_modified('ouibus.zip', 'https://api.idbus.com/gtfs.zip'):
+            self.handle_zipfile('ouibus.zip', 'ouibus')
