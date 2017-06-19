@@ -183,7 +183,7 @@ class UppercasePrimaryKeyMixin(object):
         then otherwise behaves like ordinary get_object
         """
         primary_key = self.kwargs.get('pk')
-        if primary_key is not None and not primary_key.isupper():
+        if primary_key is not None and '-' not in primary_key and not primary_key.isupper():
             self.kwargs['pk'] = primary_key.upper()
         return super(UppercasePrimaryKeyMixin, self).get_object(queryset)
 
