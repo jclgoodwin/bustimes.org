@@ -51,7 +51,7 @@ class Command(ImportFromCSVCommand):
         # and for operators with multiple different rows for the same NOC
         # (First Manchester)
         if (
-                operator_id in {'TVSR', 'HBSY', 'OWML', 'POTD', 'ANUM', 'BCOA', 'EAST', 'AW'}
+                operator_id in {'TVSR', 'HBSY', 'OWML', 'POTD', 'ANUM', 'BCOA', 'EAST', 'AW', 'ACAH'}
                 or operator_id == 'FMAN' and row['Duplicate'] != 'OK'
         ):
             return
