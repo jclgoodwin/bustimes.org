@@ -6,7 +6,6 @@ import requests
 from email.utils import parsedate
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
-from django.core.cache import cache
 from django.db import transaction
 from django.db.models import Count
 from txc.ie import COLLECTIONS
@@ -42,7 +41,6 @@ def download_if_modified(path, url):
             return False  # not modified
     else:
         response = SESSION.get(url, stream=True)
-    cache.set(url, response.headers['etag'])
     write_zip_file(path, response)
     return True
 
