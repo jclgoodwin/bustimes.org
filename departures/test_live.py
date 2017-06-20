@@ -223,7 +223,7 @@ class LiveDeparturesTest(TestCase):
     def test_dublin(self):
         stop = StopPoint(atco_code='8220DB07602')
         with vcr.use_cassette('data/vcr/dublin.yaml'):
-            departures, max_age = live.get_departures(stop, None)
+            departures, max_age = live.get_departures(stop, ())
         self.assertEqual(max_age, 60)
         self.assertEqual(len(departures['departures']), 12)
         self.assertEqual(departures['departures'][4], {

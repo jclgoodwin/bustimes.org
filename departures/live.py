@@ -397,9 +397,6 @@ def get_departures(stop, services, bot=False):
     operators = Operator.objects.filter(service__stops=stop,
                                         service__current=True).distinct()
 
-    departures = TimetableDepartures(stop, services, now)
-    services_dict = departures.services
-
     # Dublin
     if stop.atco_code[0] == '8' and 'DB' in stop.atco_code:
         response = SESSION.get(
@@ -407,6 +404,7 @@ def get_departures(stop, services, bot=False):
             params={'stopid': int(stop.atco_code.split('DB', 1)[-1])}
         )
         if response.ok:
+            services_dict = {service.line_name.lower(): service for service in services}
             departures = [{
                 'time': dateutil.parser.parse(item['scheduleddeparturedatetime'], dayfirst=True),
                 'live': dateutil.parser.parse(item['departuredatetime'], dayfirst=True),
@@ -417,6 +415,8 @@ def get_departures(stop, services, bot=False):
                 'departures': departures
             }, 60)
 
+    departures = TimetableDepartures(stop, services, now)
+    services_dict = departures.services
     departures = departures.get_departures()
 
     if not departures or (departures[0]['time'] - now) < datetime.timedelta(hours=1):

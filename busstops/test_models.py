@@ -123,7 +123,7 @@ class StopPointTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.cardiff_airport_locality = Locality(name='Cardiff Airport')
-        cls.cardiff_airport_stop = StopPoint(name='Airport', locality=cls.cardiff_airport_locality)
+        cls.cardiff_airport_stop = StopPoint(common_name='Airport', locality=cls.cardiff_airport_locality)
         cls.ballyblack_church = StopPoint.objects.create(atco_code='700000002498', locality_centre=False, active=True,
                                                          common_name='Ballyblack Church', town='Ballyblack')
 
