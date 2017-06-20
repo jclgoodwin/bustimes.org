@@ -382,10 +382,10 @@ class Service(models.Model):
     show_timetable = models.BooleanField(default=False)
     geometry = models.MultiLineStringField(null=True)
 
-    wheelchair = models.BooleanField(default=False)
+    wheelchair = models.NullBooleanField()
     low_floor = models.NullBooleanField()
-    assistance_service = models.BooleanField(default=False)
-    mobility_scooter = models.BooleanField(default=False)
+    assistance_service = models.NullBooleanField()
+    mobility_scooter = models.NullBooleanField()
 
     def __str__(self):
         if self.line_name or self.line_brand or self.description:
