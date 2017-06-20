@@ -1,5 +1,5 @@
 import os
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 from pytz.exceptions import NonExistentTimeError
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -92,12 +92,11 @@ def do_ni_service(service, groupings, day):
 @transaction.atomic
 def handle_region(region):
     print(region)
-    now = timezone.now()
-    today = now.date()
+    today = date.today()
     NEXT_WEEK = today + ONE_DAY * 7
     # delete journeys before today
     print('deleting journeys before', today)
-    print(Journey.objects.filter(service__region=region, datetime__date__lt=now).delete())
+    print(Journey.objects.filter(service__region=region, datetime__date__lt=today).delete())
     # get the date of the last generated journey
     last_journey = Journey.objects.filter(service__region=region).order_by('datetime').last()
     if last_journey:
