@@ -319,7 +319,7 @@ def add_stagecoach_departures(stop, services_dict, departures):
                 departures.append({
                     'time': aimed,
                     'live': expected,
-                    'service': services_dict.get(line, line),
+                    'service': services_dict.get(line.lower(), line),
                     'destination': monitor['destinationDisplay']
                 })
                 added = True
@@ -397,6 +397,10 @@ def get_departures(stop, services, bot=False):
     operators = Operator.objects.filter(service__stops=stop,
                                         service__current=True).distinct()
 
+    departures = TimetableDepartures(stop, services, now)
+    services_dict = departures.services
+
+    # Dublin
     if stop.atco_code[0] == '8' and 'DB' in stop.atco_code:
         response = SESSION.get(
             'https://data.dublinked.ie/cgi-bin/rtpi/realtimebusinformation',
@@ -407,14 +411,12 @@ def get_departures(stop, services, bot=False):
                 'time': dateutil.parser.parse(item['scheduleddeparturedatetime'], dayfirst=True),
                 'live': dateutil.parser.parse(item['departuredatetime'], dayfirst=True),
                 'destination': item['destination'],
-                'service': item['route']
+                'service': services_dict.get(item['route'].lower(), item['route'])
             } for item in response.json()['results']]
             return ({
                 'departures': departures
             }, 60)
 
-    departures = TimetableDepartures(stop, services, now)
-    services_dict = departures.services
     departures = departures.get_departures()
 
     if not departures or (departures[0]['time'] - now) < datetime.timedelta(hours=1):
