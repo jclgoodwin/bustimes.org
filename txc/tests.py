@@ -158,8 +158,8 @@ class TimetableTest(TestCase):
 
         with freeze_time('21 Feb 2016'):
             date_options = list(timetable.date_options())
-            self.assertEqual(date_options[0]['date'], date(2016, 2, 21))
-            self.assertEqual(date_options[-1]['date'], date(2017, 1, 27))
+            self.assertEqual(date_options[0], date(2016, 2, 21))
+            self.assertEqual(date_options[-1], date(2017, 1, 27))
 
     def test_timetable_cardiff_airport(self):
         """Should be able to distinguish between Cardiff and Cardiff Airport as start and end of a route"""

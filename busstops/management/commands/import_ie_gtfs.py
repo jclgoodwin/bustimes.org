@@ -19,6 +19,10 @@ MODES = {
 SESSION = requests.Session()
 
 
+def get_rows(csv_file):
+    return csv.DictReader(line.decode('utf-8-sig') for line in csv_file)
+
+
 def write_zip_file(path, response):
     with open(path, 'wb') as zip_file:
         for chunk in response.iter_content(chunk_size=102400):

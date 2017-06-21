@@ -145,7 +145,7 @@ TEMPLATES = [
 ]
 
 TIME_FORMAT = 'H:i'
-DATE_FORMAT = 'j F Y'
+DATE_FORMAT = 'l j F Y'
 TIME_ZONE = 'Europe/London'
 USE_TZ = True
 USE_I18N = False

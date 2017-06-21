@@ -100,7 +100,7 @@ Certain journeys are financially supported by Devon County Council</pre>
     <form class="timetable-date">
         <select onchange="this.form.submit()" name="date">
             {% for option in timetable.date_options %}
-                <option{% if option.date == timetable.date %} selected{% endif %} value="{{ option.date.isoformat }}">{{ option.day }} {{ option.date }}</option>
+                <option{% if option == timetable.date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
             {% endfor %}
         </select>
         <noscript><input type="submit" /></noscript>

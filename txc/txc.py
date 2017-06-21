@@ -820,16 +820,10 @@ class Timetable(object):
         while start_date <= end_date:
             weekday = start_date.weekday()
             if not hasattr(self, 'operating_profile') or weekday in self.operating_profile.regular_days:
-                yield {
-                    'date': start_date,
-                    'day': calendar.day_name[weekday]
-                }
+                yield start_date
             start_date += datetime.timedelta(days=1)
         if self.date >= start_date:
-            yield {
-                'date': self.date,
-                'day': calendar.day_name[self.date.weekday()]
-            }
+            yield self.date
 
     def __init__(self, open_file, date, description=''):
         iterator = ET.iterparse(open_file)

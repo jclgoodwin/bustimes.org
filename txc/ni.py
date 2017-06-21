@@ -1,5 +1,4 @@
 import json
-import calendar
 from datetime import date, datetime, timedelta
 
 
@@ -25,16 +24,10 @@ class Timetable(object):
         start_date = min(self.date, date.today())
         end_date = start_date + timedelta(weeks=2)
         while start_date <= end_date:
-            yield {
-                'date': start_date,
-                'day': calendar.day_name[start_date.weekday()]
-            }
+            yield start_date
             start_date += timedelta(days=1)
         if self.date >= start_date:
-            yield {
-                'date': self.date,
-                'day': calendar.day_name[self.date.weekday()]
-            }
+            yield self.date,
 
 
 class Part(object):
@@ -82,7 +75,7 @@ def contains(daterange, today):
 
 
 def should_show(journey, today):
-    if not journey[calendar.day_name[today.weekday()] + 's']:
+    if not journey[today.strftime('%As')]:
         return False
     if not contains(journey, today):
         if journey['Exceptions']:
