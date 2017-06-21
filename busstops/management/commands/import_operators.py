@@ -11,9 +11,9 @@ from ...models import Operator
 class Command(ImportFromCSVCommand):
     @staticmethod
     def get_region_id(region_id):
-        if region_id in ('ADMIN', 'Admin', 'Taxi', ''):
+        if region_id in {'ADMIN', 'Admin', 'Taxi', ''}:
             return 'GB'
-        elif region_id in ('SC', 'YO', 'WA', 'LO'):
+        elif region_id in {'SC', 'YO', 'WA', 'LO'}:
             return region_id[0]
 
         return region_id
@@ -46,10 +46,11 @@ class Command(ImportFromCSVCommand):
         """Given a CSV row (a list), returns an Operator object"""
 
         operator_id = row['NOCCODE'].replace('=', '')
-        # Avoid duplicates, for operators with multiple National Operator Codes
-        # (Travelsure, Yorkshire Tiger, Owens, and Horseless Carriage Services)
-        # and for operators with multiple different rows for the same NOC
-        # (First Manchester)
+        # Avoid duplicates, for:
+        #  - operators with multiple National Operator Codes
+        #    (Travelsure, Yorkshire Tiger, Owens, Horseless Carriage Services etc)
+        #  - operators with multiple different rows for the same NOC (First Manchester)
+        #  - GB operators with no services who clash with IE operator names (Eastons Coaches, Aircoach)
         if (
                 operator_id in {'TVSR', 'HBSY', 'OWML', 'POTD', 'ANUM', 'BCOA', 'EAST', 'AW', 'ACAH'}
                 or operator_id == 'FMAN' and row['Duplicate'] != 'OK'
@@ -71,10 +72,6 @@ class Command(ImportFromCSVCommand):
             'vehicle_mode': mode,
             'region_id': cls.get_region_id(row['TLRegOwn']),
         }
-
-        if mode == 's' and defaults['region_id'] == 'Bus':
-            defaults['vehicle_mode'] = 'Bus'
-            defaults['region_id'] = 'S'
 
         Operator.objects.update_or_create(
             id=operator_id,
