@@ -1,7 +1,7 @@
 import os
-import zipfile
 import csv
-from datetime import datetime
+import pygtfs
+import datetime
 from django.conf import settings
 from .ni import Grouping, Timetable, Row
 
@@ -28,12 +28,12 @@ def handle_trips(trips, day):
     head = None
     rows_map = {}
 
-    for trip in sorted(trips, key=lambda t: t['stops'][0]['departure_time']):
+    for trip in sorted(trips, key=lambda t: t.stop_times[0].departure_time):
         previous = None
         visited_stops = set()
 
-        for stop in trip['stops']:
-            stop_id = stop['stop_id']
+        for stop in sorted(trip.stop_times, key=lambda s: s.departure_time):
+            stop_id = stop.stop_id
             if stop_id in rows_map:
                 if stop_id in visited_stops:
                     if (
@@ -43,11 +43,13 @@ def handle_trips(trips, day):
                         row = previous.next
                     else:
                         row = Row(stop_id, ['     '] * i)
+                        row.part.stop.name = stop.stop.stop_name
                         previous.append(row)
                 else:
                     row = rows_map[stop_id]
             else:
                 row = Row(stop_id, ['     '] * i)
+                row.part.stop.name = stop.stop.stop_name
                 rows_map[stop_id] = row
                 if previous:
                     previous.append(row)
@@ -55,10 +57,11 @@ def handle_trips(trips, day):
                     if head:
                         head.prepend(row)
                     head = row
-            time = stop['departure_time'] or stop['arrival_time']
-            if int(time[:2]) > 23:
-                time = str(int(time[:2]) - 24) + time[2:]
-            time = datetime.strptime(time, '%H:%M:%S').time()
+            time = stop.departure_time or stop.arrival_time
+            seconds = time.total_seconds()
+            while seconds > 86400:
+                seconds -= 86400
+            time = datetime.time(int(seconds / 3600), int(seconds % 3600 / 60))
             row.times.append(time)
             row.part.timingstatus = None
             previous = row
@@ -88,68 +91,47 @@ def get_timetable(service_code, day):
             path = collection
             break
     route_id = parts[1] + '-'
-    path = os.path.join(settings.DATA_DIR, 'google_transit_' + path + '.zip')
 
-    with zipfile.ZipFile(path) as archive:
-        stops = {}
-        with archive.open('stops.txt') as open_file:
-            for row in get_rows(open_file):
-                stops[row['stop_id']] = row
+    path = os.path.join(settings.DATA_DIR, 'google_transit_' + collection + '.zip')
 
-        routes = {}
-        with archive.open('routes.txt') as open_file:
-            for row in get_rows(open_file):
-                if row['route_id'].startswith(route_id):
-                    routes[row['route_id']] = row
+    schedule = pygtfs.Schedule('gtfs.zip')
+    feed = None
+    for possible_feed in schedule.feeds:
+        if path.endswith(possible_feed.feed_name):
+            feed = possible_feed
+            break
+    if not feed:
+        pygtfs.overwrite_feed(schedule, path)  # this could take a while :(
+    for possible_feed in schedule.feeds:
+        if path.endswith(possible_feed.feed_name):
+            feed = possible_feed
+            break
 
-        calendar = {}
-        with archive.open('calendar.txt') as open_file:
-            for row in get_rows(open_file):
-                row['exceptions'] = []
-                calendar[row['service_id']] = row
-        with archive.open('calendar_dates.txt') as open_file:
-            for row in get_rows(open_file):
-                calendar[row['service_id']]['exceptions'].append(row)
-
-        trips = {}
-        with archive.open('trips.txt') as open_file:
-            for row in get_rows(open_file):
-                service = calendar[row['service_id']]
-                exception_type = None
-                for exception in service['exceptions']:
-                    if datetime.strptime(exception['date'], '%Y%m%d').date() == day:
-                        exception_type = exception['exception_type']
-                        break
-                if exception_type == '2':  # service has been removed for the specified date
+    trips = {}
+    routes = (route for route in feed.routes if route.id.startswith(route_id))
+    for route in routes:
+        for trip in route.trips:
+            service = trip.service
+            exception_type = None
+            for exception in feed.service_exceptions:
+                if exception.service_id == service.id and exception.date == day:
+                    exception_type = exception.exception_type
+                    break
+            if exception_type == 2:  # service has been removed for the specified date
+                continue
+            elif exception_type is None:
+                if day < service.start_date or day > service.end_date:
+                    continue  # outside of dates
+                if not getattr(service, day.strftime('%A').lower()):
                     continue
-                elif exception_type is None:
-                    if (
-                        day < datetime.strptime(service['start_date'], '%Y%m%d').date() or
-                        day > datetime.strptime(service['end_date'], '%Y%m%d').date()
-                    ):
-                        continue  # outside of dates
-                    if service[day.strftime('%A').lower()] == '0':
-                        continue
-                if row['direction_id'] not in trips:
-                    trips[row['direction_id']] = {}
-                if row['route_id'].startswith(route_id):
-                    row['stops'] = []
-                    trips[row['direction_id']][row['trip_id']] = row
-        with archive.open('stop_times.txt') as open_file:
-            for row in get_rows(open_file):
-                for dir in trips:
-                    if row['trip_id'] in trips[dir]:
-                        trips[dir][row['trip_id']]['stops'].append(row)
-                        break
+            if trip.direction_id in trips:
+                trips[trip.direction_id].append(trip)
+            else:
+                trips[trip.direction_id] = [trip]
 
-        t = Timetable()
-        t.groupings = [handle_trips(trips[dir].values(), day) for dir in trips]
-        t.date = day
-        for grouping in t.groupings:
-            for row in grouping.rows:
-                row.part.stop.name = stops[row.part.stop.atco_code]['stop_name']
-                if not grouping.name:
-                    grouping.name = row.part.stop.name
-            if grouping.name:
-                grouping.name += ' - ' + row.part.stop.name
-        return [t]
+    t = Timetable()
+    t.groupings = [handle_trips(trips[direction_id], day) for direction_id in trips]
+    t.date = day
+    for grouping in t.groupings:
+        grouping.name = grouping.rows[0].part.stop.name + ' - ' + grouping.rows[-1].part.stop.name
+    return [t]
