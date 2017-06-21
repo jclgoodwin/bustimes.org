@@ -139,6 +139,12 @@ class ViewsTests(TestCase):
         cls.nuventure = Operator.objects.create(
             pk='VENT', name='Nu-Venture', vehicle_mode='bus', region_id='N'
         )
+        cls.natx = Operator.objects.create(
+            pk='NXAP', name='National Express Airport', vehicle_mode='bus', region_id='N', url='nationalexpress.com'
+        )
+        cls.flixbus = Operator.objects.create(
+            pk='FLIXBUS', name='FlixBus', vehicle_mode='coach', region_id='N', url='http://www.flixbus.com'
+        )
         cls.service.operator.add(cls.chariots)
         cls.inactive_service.operator.add(cls.chariots)
 
@@ -273,8 +279,27 @@ class ViewsTests(TestCase):
     def test_service(self):
         response = self.client.get('/services/ea_21-45-A-y08')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Mind your head')
+        self.assertContains(response, 'Mind your head')  # Note
         self.assertEqual(self.note.get_absolute_url(), '/operators/ainsleys-chariots')
+
+    def test_service_natx(self):
+        self.service.operator.set([self.natx])
+
+        response = self.client.get('/services/ea_21-45-A-y08')
+        self.assertContains(response, 'Buy tickets from National Express')
+
+        response = self.client.get('/operators/NXAP')
+        self.assertContains(response, 'viglink')
+
+    def test_service_flixbus(self):
+        self.service.operator.set([self.flixbus])
+
+        response = self.client.get('/services/ea_21-45-A-y08')
+        self.assertContains(response, 'Buy tickets from FlixBus')
+        self.assertContains(response, 'viglink')
+
+        response = self.client.get('/operators/FLIXBUS')
+        self.assertContains(response, 'viglink')
 
     def test_service_redirect(self):
         response = self.client.get('/services/45B')
