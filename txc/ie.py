@@ -1,5 +1,4 @@
 import os
-import csv
 import pygtfs
 import datetime
 from django.conf import settings
