@@ -28,6 +28,8 @@ def handle_trips(trips, day):
     head = None
     rows_map = {}
 
+    midnight = datetime.datetime.combine(day, datetime.time())
+
     for trip in sorted(trips, key=lambda t: t.stop_times[0].departure_time):
         previous = None
         visited_stops = set()
@@ -57,11 +59,7 @@ def handle_trips(trips, day):
                     if head:
                         head.prepend(row)
                     head = row
-            time = stop.departure_time or stop.arrival_time
-            seconds = time.total_seconds()
-            while seconds > 86400:
-                seconds -= 86400
-            time = datetime.time(int(seconds / 3600), int(seconds % 3600 / 60))
+            time = (midnight + (stop.departure_time or stop.arrival_time)).time()
             row.times.append(time)
             row.part.timingstatus = None
             previous = row
