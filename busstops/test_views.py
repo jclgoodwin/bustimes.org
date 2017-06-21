@@ -134,7 +134,7 @@ class ViewsTests(TestCase):
             address='10 King Road\nIpswich',
             phone='0800 1111',
             email='ainsley@example.com',
-            url='isyourgirlfriendahorse.com'
+            url='http://isyourgirlfriendahorse.com'
         )
         cls.nuventure = Operator.objects.create(
             pk='VENT', name='Nu-Venture', vehicle_mode='bus', region_id='N'
@@ -279,6 +279,7 @@ class ViewsTests(TestCase):
     def test_service(self):
         response = self.client.get('/services/ea_21-45-A-y08')
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'http://isyourgirlfriendahorse.com')
         self.assertContains(response, 'Mind your head')  # Note
         self.assertEqual(self.note.get_absolute_url(), '/operators/ainsleys-chariots')
 

@@ -219,7 +219,7 @@ class ImportServicesTest(TestCase):
         self.assertEqual(service.inbound_description, 'Attleborough - Wymondham - Norwich')
         self.assertEqual(service.operator.first(), self.fecs)
         self.assertEqual(
-            service.get_traveline_url(),
+            service.get_traveline_link()[0],
             'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST' +
             '?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0'
         )
@@ -245,7 +245,7 @@ class ImportServicesTest(TestCase):
         self.assertTrue(service.show_timetable)
         self.assertEqual(service.operator.first(), self.megabus)
         self.assertEqual(
-            service.get_traveline_url(),
+            service.get_traveline_link()[0],
             'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST' +
             '?line=11M11&sup=A&net=nrc&project=y08&command=direct&outputFormat=0'
         )
@@ -318,7 +318,7 @@ class ImportServicesTest(TestCase):
         self.assertTrue(service.show_timetable)
         self.assertEqual(service.operator.first(), self.fabd)
         self.assertEqual(
-            service.get_traveline_url(),
+            service.get_traveline_link()[0],
             'http://www.travelinescotland.com/lts/#/timetables?' +
             'timetableId=ABBN017&direction=OUTBOUND&queryDate=&queryTime='
         )

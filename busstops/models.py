@@ -426,28 +426,30 @@ class Service(models.Model):
         if self.mode == 'bus' and len(self.line_name) <= 4:
             return 'https://tfl.gov.uk/bus/timetable/%s/' % self.line_name
 
-    def get_trapeze_url(self):
+    def get_trapeze_link(self):
         if self.region_id == 'Y':
             domain = 'yorkshiretravel.net'
+            name = 'Yorkshire Travel'
         else:
             domain = 'travelinescotland.com'
+            name = 'Traveline Scotland'
         query = (
             ('timetableId', self.service_code),
             ('direction', 'OUTBOUND'),
             ('queryDate', ''),
             ('queryTime', '')
         )
-        return 'http://www.{}/lts/#/timetables?{}'.format(domain, urlencode(query))
+        return 'http://www.{}/lts/#/timetables?{}'.format(domain, urlencode(query)), name
 
-    def get_traveline_url(self):
+    def get_traveline_link(self):
         if self.region_id in ('Y', 'S'):
-            return self.get_trapeze_url()
+            return self.get_trapeze_link()
 
         query = None
 
         if self.net != '':
             if self.net == 'tfl':
-                return self.get_tfl_url()
+                return self.get_tfl_url(), 'Transport for London'
 
             parts = self.service_code.split('-')
             query = [('line', parts[0].split('_')[-1].zfill(2) + parts[1].zfill(3)),
@@ -470,7 +472,9 @@ class Service(models.Model):
             query.extend([('command', 'direct'),
                           ('outputFormat', 0)])
             base_url = 'http://www.travelinesoutheast.org.uk/se'
-            return '%s/XSLT_TTB_REQUEST?%s' % (base_url, urlencode(query))
+            return '%s/XSLT_TTB_REQUEST?%s' % (base_url, urlencode(query)), 'Traveline'
+
+        return None, None
 
     def is_megabus(self):
         return (self.line_name in ('FALCON', 'Oxford Tube')

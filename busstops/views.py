@@ -488,16 +488,8 @@ class ServiceDetailView(DetailView):
         else:
             context['breadcrumb'] = (self.object.region,)
 
-        traveline_url = self.object.get_traveline_url()
+        traveline_url, traveline_text = self.object.get_traveline_link()
         if traveline_url:
-            if self.object.net == 'tfl':
-                traveline_text = 'Transport for London'
-            elif self.object.region_id == 'S':
-                traveline_text = 'Traveline Scotland'
-            elif self.object.region_id == 'Y':
-                traveline_text = 'Yorkshire Travel'
-            else:
-                traveline_text = 'Traveline'
             context['links'].append({
                 'url': traveline_url,
                 'text': 'Timetable on the %s website' % traveline_text

@@ -93,15 +93,15 @@ class ServiceTests(TestCase):
         self.london_service.mode = 'Underground'
         self.assertEqual(self.london_service.get_a_mode(), 'An Underground')
 
-    def test_get_traveline_url(self):
-        self.assertIsNone(self.london_service.get_traveline_url())
+    def test_get_traveline_link(self):
+        self.assertIsNone(self.london_service.get_traveline_link()[0])
 
         self.london_service.mode = 'bus'
-        self.assertEqual(self.london_service.get_traveline_url(),
-                         'https://tfl.gov.uk/bus/timetable/N41/')
+        self.assertEqual(self.london_service.get_traveline_link(),
+                         ('https://tfl.gov.uk/bus/timetable/N41/', 'Transport for London'))
 
         self.london_service.region_id = 'Y'
-        self.assertEqual('http://www.yorkshiretravel.net/', self.london_service.get_traveline_url()[:31])
+        self.assertEqual(self.london_service.get_traveline_link()[0][:35], 'http://www.yorkshiretravel.net/lts/')
 
     def test_get_operator_number(self):
         self.assertIsNone(self.london_service.get_operator_number('MGBD'))
