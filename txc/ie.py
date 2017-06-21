@@ -90,18 +90,18 @@ def get_timetable(service_code, day):
             break
     route_id = parts[1] + '-'
 
-    path = os.path.join(settings.DATA_DIR, 'google_transit_' + collection + '.zip')
+    path = 'google_transit_' + collection + '.zip'
 
-    schedule = pygtfs.Schedule('gtfs.zip')
+    schedule = pygtfs.Schedule(os.path.join(settings.DATA_DIR, 'gtfs.sqlite'))
     feed = None
     for possible_feed in schedule.feeds:
-        if path.endswith(possible_feed.feed_name):
+        if path == possible_feed.feed_name:
             feed = possible_feed
             break
     if not feed:
-        pygtfs.overwrite_feed(schedule, path)  # this could take a while :(
+        pygtfs.append_feed(schedule, os.path.join(settings.DATA_DIR, path))  # this could take a while :(
     for possible_feed in schedule.feeds:
-        if path.endswith(possible_feed.feed_name):
+        if path == possible_feed.feed_name:
             feed = possible_feed
             break
 
