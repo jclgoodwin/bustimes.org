@@ -1,5 +1,4 @@
 import os
-import csv
 import time
 import pygtfs
 import requests
@@ -8,7 +7,7 @@ from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import Count
-from txc.ie import COLLECTIONS, get_schedule, get_feed, get_timetable
+from txc.ie import COLLECTIONS, get_schedule, get_feed, get_timetables
 from ...models import Operator, Service, StopPoint, StopUsage, Region
 
 
@@ -18,10 +17,6 @@ MODES = {
     4: 'ferry'
 }
 SESSION = requests.Session()
-
-
-def get_rows(csv_file):
-    return csv.DictReader(line.decode('utf-8-sig') for line in csv_file)
 
 
 def write_zip_file(path, response):
@@ -51,13 +46,12 @@ class Command(BaseCommand):
         collection = collection[:10]
         Service.objects.filter(service_code__startswith=collection).delete()
 
-        # agencies = {}
         operators = set()
 
         schedule = get_schedule()
-        pygtfs.append_feed(schedule, archive_name)  # this could take a while :(
-
+        pygtfs.overwrite_feed(schedule, archive_name)  # this could take a while :(
         feed = get_feed(schedule, archive_name)
+
         for stop in feed.stops:
             if stop.id[0] in '78' and not StopPoint.objects.filter(atco_code=stop.id).exists():
                 StopPoint.objects.create(
@@ -76,7 +70,7 @@ class Command(BaseCommand):
 
         for route_id in routes:
             service_code = collection + '-' + route_id
-            timetable = get_timetable(service_code, None)[0]
+            timetable = get_timetables(service_code, None)[0]
 
             route = routes[route_id]
 
@@ -120,6 +114,7 @@ class Command(BaseCommand):
                         )
                     else:
                         print(stop_id)
+                direction = 'Inbound'
             StopUsage.objects.bulk_create(stops)
 
             service.region = Region.objects.filter(adminarea__stoppoint__service=service).annotate(

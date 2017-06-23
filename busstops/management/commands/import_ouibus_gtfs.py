@@ -1,16 +1,17 @@
 import time
-import zipfile
+import pygtfs
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from txc.ie import get_feed, get_schedule, get_timetable
 from ...models import Operator, Service, StopPoint, StopUsage, Region
-from .import_ie_gtfs import get_rows, download_if_modified, MODES
+from .import_ie_gtfs import download_if_modified, MODES
 
 
 class Command(BaseCommand):
     @staticmethod
-    def get_stop_id(collection, row):
-        stop_id = row['stop_id']
+    def get_stop_id(collection, stop):
+        stop_id = stop.id
         if stop_id.lower().startswith(collection.lower() + ':'):
             stop_id = stop_id.split(':')[1]
         return '{}-{}'.format(collection, stop_id)
@@ -36,102 +37,77 @@ class Command(BaseCommand):
     @classmethod
     @transaction.atomic
     def handle_zipfile(cls, archive_name, collection):
-        collection = collection[:10]
-        Service.objects.filter(service_code__startswith=collection).update(current=False)
+        Service.objects.filter(service_code__startswith=collection).delete()
 
-        routes = {}
-        trips = {}
-        agencies = {}
-        with zipfile.ZipFile(archive_name) as archive:
-            with archive.open('stops.txt') as csv_file:
-                for row in get_rows(csv_file):
-                    print(row)
-                    StopPoint.objects.update_or_create(atco_code=cls.get_stop_id(collection, row), defaults={
-                        'common_name': cls.get_stop_name(row),
-                        'naptan_code': row['stop_code'],
-                        'latlong': Point(float(row['stop_lon']), float(row['stop_lat'])),
-                        'locality_centre': False,
-                        'active': True
-                    })
-            with archive.open('agency.txt') as csv_file:
-                for row in get_rows(csv_file):
-                    agencies[row['agency_id']] = row
-            with archive.open('routes.txt') as csv_file:
-                for row in get_rows(csv_file):
-                    routes[row['route_id']] = row
-                    routes[row['route_id']]['trips'] = []
-            with archive.open('trips.txt') as csv_file:
-                for row in get_rows(csv_file):
-                    trips[row['trip_id']] = row
-                    trips[row['trip_id']]['stop_times'] = []
-                    routes[row['route_id']]['trips'].append(row)
-            with archive.open('stop_times.txt') as csv_file:
-                for row in get_rows(csv_file):
-                    trips[row['trip_id']]['stop_times'].append(row)
+        schedule = get_schedule()
+        pygtfs.overwrite_feed(schedule, archive_name)  # this could take a while :(
+        feed = get_feed(schedule, archive_name)
 
-        for route in routes.values():
+        for stop in feed.stops:
+            StopPoint.objects.update_or_create(atco_code=cls.get_stop_id(collection, stop), defaults={
+                'common_name': cls.get_stop_name(stop),
+                'naptan_code': stop.stop_code,
+                'latlong': Point(float(stop.stop_lon), float(stop.stop_lat)),
+                'locality_centre': False,
+                'active': True
+            })
+
+        for route in feed.routes:
+            service_id = cls.get_service_id(collection, route)
+            timetable = get_timetable(archive_name, str.__eq__, service_id, None)[0]
+
             defaults = {
                 'region_id': 'FR',
-                'line_name': route['route_short_name'],
-                'description': route['route_long_name'],
+                'line_name': route.route_short_name,
+                'description': route.route_long_name,
                 'date': time.strftime('%Y-%m-%d'),
-                'mode': MODES.get(route['route_type'], ''),
+                'mode': MODES[route.route_type],
                 'current': True
             }
-            if route['trips']:
-                for trip in route['trips']:
-                    if not defaults['description']:
-                        defaults['description'] = trip['trip_headsign'].strip()
-                    if trip['direction_id'] == '0' and not defaults.get('outbound_description'):
-                        defaults['outbound_description'] = trip['trip_headsign'].strip()
-                    elif trip['direction_id'] == '1' and not defaults.get('inbound_description'):
-                        defaults['inbound_description'] = trip['trip_headsign'].strip()
-            else:
-                break
 
             service, created = Service.objects.update_or_create(
-                service_code=cls.get_service_id(collection, route),
+                service_code=service_id,
                 defaults=defaults
             )
-            if route['agency_id']:
-                agency = agencies[route['agency_id']]
-                operator = Operator.objects.get_or_create(name=agency['agency_name'], defaults={
-                    'id': route['agency_id'],
-                    'region_id': 'FR',
-                    'vehicle_mode': defaults['mode'],
-                    'phone': agency['agency_phone'],
-                    'url': agency['agency_url'],
-                    'email': agency.get('agency_email', ''),
-                })[0]
-                service.operator.add(operator)
 
-            outbound_stops = {}
-            inbound_stops = {}
-            for trip in route['trips']:
-                if trip['direction_id'] == '0':
-                    stops = outbound_stops
-                    direction = 'Outbound'
-                else:
-                    stops = inbound_stops
-                    direction = 'Inbound'
-                for stop in trip['stop_times']:
-                    atco_code = cls.get_stop_id(collection, stop)
-                    if StopPoint.objects.filter(atco_code=atco_code).exists():
-                        stops[stop['stop_id']] = StopUsage(
-                            service=service,
-                            stop_id=atco_code,
-                            order=stop['stop_sequence'],
-                            direction=direction
+            operator = Operator.objects.get_or_create(name=route.agency.agency_name, defaults={
+                'id': route.agency_id,
+                'region_id': 'FR',
+                'vehicle_mode': defaults['mode'],
+                'phone': route.agency.agency_phone,
+                'url': route.agency.agency_url,
+                'email': route.agency.agency_email or '',
+            })[0]
+            service.operator.add(operator)
+
+            direction = 'Outbound'
+            stops = []
+            for grouping in timetable.groupings:
+                for i, row in enumerate(grouping.rows):
+                    stop_id = row.part.stop.atco_code
+                    if StopPoint.objects.filter(atco_code=stop_id).exists():
+                        stops.append(
+                            StopUsage(
+                                service=service,
+                                stop_id=stop_id,
+                                order=i,
+                                direction=direction
+                            )
                         )
                     else:
-                        print(stop['stop_id'])
-            StopUsage.objects.bulk_create(outbound_stops.values())
-            StopUsage.objects.bulk_create(inbound_stops.values())
+                        print(stop_id)
+                direction = 'Inbound'
+            StopUsage.objects.bulk_create(stops)
+
+    def add_arguments(self, parser):
+        parser.add_argument('--force', action='store_true', help='Import data even if the GTFS feeds haven\'t changed')
 
     def handle(self, *args, **options):
         Region.objects.update_or_create(id='FR', name='France')
 
-        if download_if_modified('flixbus-eu.zip', 'http://data.ndovloket.nl/flixbus/flixbus-eu.zip'):
+        force = options['force']
+
+        if download_if_modified('flixbus-eu.zip', 'http://data.ndovloket.nl/flixbus/flixbus-eu.zip') or force:
             self.handle_zipfile('flixbus-eu.zip', 'flixbus')
-        if download_if_modified('ouibus.zip', 'https://api.idbus.com/gtfs.zip'):
+        if download_if_modified('ouibus.zip', 'https://api.idbus.com/gtfs.zip') or force:
             self.handle_zipfile('ouibus.zip', 'ouibus')

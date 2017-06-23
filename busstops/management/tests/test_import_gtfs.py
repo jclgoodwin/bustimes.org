@@ -4,6 +4,7 @@
 import os
 import vcr
 from django.test import TestCase
+from pygtfs.gtfs_entities import Stop
 from ..commands import import_ouibus_gtfs, import_ie_gtfs
 
 
@@ -23,12 +24,10 @@ class ImpportGTFSTest(TestCase):
         os.remove(path)
 
     def test_stop_id(self):
-        self.assertEqual(import_ouibus_gtfs.Command.get_stop_id('flixbus', {
-            'stop_id': 'FLIXBUS:001'
-        }), 'flixbus-001')
-        self.assertEqual(import_ouibus_gtfs.Command.get_stop_id('ouibus', {
-            'stop_id': '001'
-        }), 'ouibus-001')
+        stop = Stop(id='FLIXBUS:001')
+        self.assertEqual(import_ouibus_gtfs.Command.get_stop_id('flixbus', stop), 'flixbus-001')
+        stop.id = '002'
+        self.assertEqual(import_ouibus_gtfs.Command.get_stop_id('ouibus', stop), 'ouibus-002')
 
     def test_stop_name(self):
         self.assertEqual(import_ouibus_gtfs.Command.get_stop_name({

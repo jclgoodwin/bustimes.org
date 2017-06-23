@@ -86,25 +86,15 @@ def get_feed(schedule, name):
             return feed
 
 
-def get_timetable(service_code, day):
-    parts = service_code.split('-', 1)
-    path = parts[0]
-    for collection in COLLECTIONS:
-        if collection.startswith(path):
-            path = collection
-            break
-    route_id = parts[1] + '-'
-
-    path = 'google_transit_' + collection + '.zip'
-
+def get_timetable(path, match, route_id, day):
     schedule = get_schedule()
     feed = get_feed(schedule, path)
+
     if not feed:
-        pygtfs.append_feed(schedule, os.path.join(settings.DATA_DIR, path))  # this could take a while :(
-    feed = get_feed(schedule, path)
+        return
 
     trips = {}
-    routes = (route for route in feed.routes if route.id.startswith(route_id))
+    routes = (route for route in feed.routes if match(route.id, route_id))
     for route in routes:
         for trip in route.trips:
             if day:
@@ -131,4 +121,18 @@ def get_timetable(service_code, day):
     t.date = day
     for grouping in t.groupings:
         grouping.name = grouping.rows[0].part.stop.name + ' - ' + grouping.rows[-1].part.stop.name
-    return [t]
+    return t
+
+
+def get_timetables(service_code, day):
+    parts = service_code.split('-', 1)
+    path = parts[0]
+    for collection in COLLECTIONS:
+        if collection.startswith(path):
+            path = collection
+            break
+    route_id = parts[1] + '-'
+
+    path = 'google_transit_' + collection + '.zip'
+
+    return [get_timetable(path, str.startswith, route_id, day)]
