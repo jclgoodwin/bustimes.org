@@ -58,7 +58,11 @@ class ImportServicesTest(TestCase):
                 indicator=indicator, latlong=Point(lng, lat, srid=4326)
             )
 
-        cls.do_service('ea_21-13B-B-y08-1', 'EA')
+        # simulate an East Anglia zipfile:
+        ea_zipfile_path = os.path.join(FIXTURES_DIR, 'EA.zip')
+        with zipfile.ZipFile(ea_zipfile_path, 'a') as ea_zipfile:
+            cls.write_file_to_zipfile(ea_zipfile, 'ea_21-13B-B-y08-1.xml')
+        call_command(cls.command, ea_zipfile_path)
 
         # simulate a Scotland zipfile:
         s_zipfile_path = os.path.join(FIXTURES_DIR, 'S.zip')
@@ -211,7 +215,7 @@ class ImportServicesTest(TestCase):
         with open(path) as xml_file:
             cls.command.do_service(xml_file, filename)
 
-    @freeze_time('1 October 2016')
+    @freeze_time('3 October 2016')
     def test_do_service_ea(self):
         service = self.ea_service
 
@@ -230,13 +234,12 @@ class ImportServicesTest(TestCase):
 
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data['breadcrumb'], (self.ea, self.fecs))
-        # self.assertContains(res, """
-        #     <tr class="OTH">
-        #         <th>Norwich Brunswick Road</th>
-        #         <td>19:48</td><td>19:48</td><td>22:56</td><td>22:56</td>
-        #         <td>08:57</td><td>09:57</td><td>10:57</td><td>17:57</td>
-        #     </tr>
-        # """, html=True)
+        self.assertContains(res, """
+            <tr class="OTH">
+                <th>Norwich Brunswick Road</th><td>19:48</td><td>22:56</td>
+            </tr>
+        """, html=True)
+        self.assertContains(res, '<option selected value="2016-10-03">Monday 3 October 2016</option>')
 
     @freeze_time('22 January 2017')
     def test_do_service_m11a(self):
@@ -367,5 +370,6 @@ class ImportServicesTest(TestCase):
         super(ImportServicesTest, cls).tearDownClass()
 
         # clean up
-        os.remove(os.path.join(FIXTURES_DIR, 'NCSD.zip'))
+        os.remove(os.path.join(FIXTURES_DIR, 'EA.zip'))
         os.remove(os.path.join(FIXTURES_DIR, 'S.zip'))
+        os.remove(os.path.join(FIXTURES_DIR, 'NCSD.zip'))
