@@ -73,6 +73,9 @@ class Command(BaseCommand):
             service_code = collection + '-' + route_id
             timetable = get_timetables(service_code, None)[0]
 
+            if not timetable.groupings:
+                continue
+
             route = routes[route_id]
 
             defaults = {
@@ -91,13 +94,14 @@ class Command(BaseCommand):
             if not created:
                 print(service)
 
-            operator = Operator.objects.get_or_create(name=route.agency.agency_name, defaults={
-                'id': route.agency_id,
-                'region_id': 'LE',
-                'vehicle_mode': defaults['mode']
-            })[0]
-            service.operator.add(operator)
-            operators.add(operator)
+            if route.agency:
+                operator = Operator.objects.get_or_create(name=route.agency.agency_name, defaults={
+                    'id': route.agency_id,
+                    'region_id': 'LE',
+                    'vehicle_mode': defaults['mode']
+                })[0]
+                service.operator.add(operator)
+                operators.add(operator)
 
             direction = 'Outbound'
             stops = []
