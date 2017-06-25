@@ -62,7 +62,7 @@ class IrelandTest(TestCase):
         self.assertEqual(len(timetable.groupings[0].rows), 18)
         self.assertEqual(len(timetable.groupings[1].rows), 14)
 
-        for day in (date(2017, 6, 11), date(2017, 12, 25), date(2015, 12, 3)):
+        for day in (date(2017, 6, 11), date(2017, 12, 25), date(2015, 12, 3), date(2020, 12, 3)):
             timetable = ie.get_timetables('mortons-20-165-y11', day)[0]
             self.assertEqual(timetable.groupings, [])
 

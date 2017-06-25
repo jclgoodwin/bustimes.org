@@ -99,10 +99,10 @@ def get_timetable(path, match, route_id, day):
                         break
                 if exception_type == 2:  # service has been removed for the specified date
                     continue
-                elif exception_type is None:
-                    if day < service.start_date or day > service.end_date:
-                        continue  # outside of dates
-                    if not getattr(service, day.strftime('%A').lower()):
+                if exception_type is None:
+                    if day < service.start_date or day > service.end_date:  # outside of dates
+                        continue
+                    if not getattr(service, day.strftime('%A').lower()):  # day of week
                         continue
             if trip.direction_id in trips:
                 trips[trip.direction_id].append(trip)
