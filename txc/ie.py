@@ -83,7 +83,11 @@ def get_timetable(path, match, route_id, day):
         return
 
     trips = {}
-    routes = (route for route in feed.routes if match(route.id, route_id))
+    routes = [route for route in feed.routes if match(route.id, route_id)]
+
+    if not routes:
+        return
+
     for route in routes:
         for trip in route.trips:
             if day:
@@ -124,6 +128,6 @@ def get_timetables(service_code, day):
 
     path = 'google_transit_' + collection + '.zip'
 
-    timetable = get_timetable(path, lambda a, b: a.startswith(b + '-'), route_id, day)
+    timetable = get_timetable(path, lambda a, b: a.startswith(b), route_id, day)
     if timetable:
         return [timetable]
