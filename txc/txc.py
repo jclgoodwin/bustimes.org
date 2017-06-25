@@ -802,6 +802,9 @@ class Timetable(object):
 
         if self.service_code == '21-584-_-y08-1':
             journeys['VJ_21-584-_-y08-1-2-T0'].departure_time = datetime.time(9, 20)
+        elif self.service_code == '2-6-D-y08-1':
+            journeys['VJ_2-6-D-y08-1-4-T0'].departure_time = datetime.time(10, 30)
+            journeys['VJ_2-6-D-y08-1-10-T2'].departure_time = datetime.time(10, 30)
         elif self.service_code == '31-899-_-y10-1':
             journeys['VJ_31-899-_-y10-1-28-T0'].operating_profile = journeys['VJ_31-899-_-y10-1-9-T0'].operating_profile
 
