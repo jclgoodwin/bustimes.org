@@ -34,7 +34,6 @@ class IrelandTest(TestCase):
 
         cls.dir_path = os.path.join(FIXTURES_DIR, 'google_transit_mortons')
         cls.feed_path = cls.dir_path + '.zip'
-        print(cls.feed_path)
         with zipfile.ZipFile(cls.feed_path, 'a') as open_zipfile:
             for item in os.listdir(cls.dir_path):
                 print(item)
@@ -66,6 +65,9 @@ class IrelandTest(TestCase):
         for day in (date(2017, 6, 11), date(2017, 12, 25), date(2015, 12, 3)):
             timetable = ie.get_timetables('mortons-20-165-y11', day)[0]
             self.assertEqual(timetable.groupings, [])
+
+    def test_no_timetable(self):
+        self.assertIsNone(ie.get_timetables('mortons-poo-poo-pants', date(2017, 6, 7)))
 
     @classmethod
     def tearDownClass(cls):
