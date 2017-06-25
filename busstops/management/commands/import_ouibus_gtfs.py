@@ -1,6 +1,6 @@
-import operator
 import time
 import pygtfs
+from operator import eq
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -55,7 +55,7 @@ class Command(BaseCommand):
 
         for route in feed.routes:
             service_id = cls.get_service_id(collection, route)
-            timetable = get_timetable(archive_name, operator.eq, service_id, None)[0]
+            timetable = get_timetable(archive_name, eq, service_id, None)[0]
 
             defaults = {
                 'region_id': 'FR',
