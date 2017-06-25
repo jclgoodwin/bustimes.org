@@ -1,3 +1,4 @@
+import operator
 import time
 import pygtfs
 from django.contrib.gis.geos import Point
@@ -54,7 +55,7 @@ class Command(BaseCommand):
 
         for route in feed.routes:
             service_id = cls.get_service_id(collection, route)
-            timetable = get_timetable(archive_name, str.__eq__, service_id, None)[0]
+            timetable = get_timetable(archive_name, operator.eq, service_id, None)[0]
 
             defaults = {
                 'region_id': 'FR',
