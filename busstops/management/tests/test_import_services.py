@@ -16,13 +16,13 @@ FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'fixtures')
 
 
+@override_settings(TNDS_DIR=FIXTURES_DIR)
 class ImportServicesTest(TestCase):
     "Tests for parts of the command that imports services from TNDS"
 
     command = import_services.Command()
 
     @classmethod
-    @override_settings(TNDS_DIR=FIXTURES_DIR)
     def setUpTestData(cls):
         cls.ea = Region.objects.create(pk='EA', name='East Anglia')
         cls.gb = Region.objects.create(pk='GB', name='Großbritannien')
@@ -59,7 +59,12 @@ class ImportServicesTest(TestCase):
             )
 
         cls.do_service('ea_21-13B-B-y08-1', 'EA')
-        cls.do_service('SVRABBN017', 'S')
+
+        # simulate a Scotland zipfile:
+        s_zipfile_path = os.path.join(FIXTURES_DIR, 'S.zip')
+        with zipfile.ZipFile(s_zipfile_path, 'a') as s_zipfile:
+            cls.write_file_to_zipfile(s_zipfile, 'SVRABBN017.xml')
+        call_command(cls.command, s_zipfile_path)
 
         cls.ea_service = Service.objects.get(pk='ea_21-13B-B-y08')
         cls.sc_service = Service.objects.get(pk='ABBN017')
@@ -67,8 +72,9 @@ class ImportServicesTest(TestCase):
         # simulate a National Coach Service Database zip file
         ncsd_zipfile_path = os.path.join(FIXTURES_DIR, 'NCSD.zip')
         with zipfile.ZipFile(ncsd_zipfile_path, 'a') as ncsd_zipfile:
-            cls.write_file_to_zipfile(ncsd_zipfile, 'Megabus_Megabus14032016 163144_MEGA_M11A.xml')
-            cls.write_file_to_zipfile(ncsd_zipfile, 'Megabus_Megabus14032016 163144_MEGA_M12.xml')
+            for line_name in ('M11A', 'M12'):
+                file_name = 'Megabus_Megabus14032016 163144_MEGA_' + line_name + '.xml'
+                cls.write_file_to_zipfile(ncsd_zipfile, os.path.join('NCSD_TXC', file_name))
             ncsd_zipfile.writestr(
                 'IncludedServices.csv',
                 'Operator,LineName,Dir,Description\nMEGA,M11A,O,Belgravia - Liverpool\nMEGA,M12,O,Shudehill - Victoria'
@@ -77,7 +83,7 @@ class ImportServicesTest(TestCase):
             call_command(cls.command, ncsd_zipfile_path)
 
             # test re-importing a previously imported service again
-            cls.do_service('Megabus_Megabus14032016 163144_MEGA_M12', 'GB')
+            cls.do_service('NCSD_TXC/Megabus_Megabus14032016 163144_MEGA_M12', 'GB')
 
         with freeze_time('2000-01-01'):
             call_command('generate_departures', 'GB')
@@ -92,8 +98,7 @@ class ImportServicesTest(TestCase):
 
     @staticmethod
     def write_file_to_zipfile(open_zipfile, filename):
-        open_zipfile.write(os.path.join(FIXTURES_DIR, filename),
-                           os.path.join('NCSD_TXC', filename))
+        open_zipfile.write(os.path.join(FIXTURES_DIR, filename), filename)
 
     def test_sanitize_description(self):
         testcases = (
@@ -207,7 +212,6 @@ class ImportServicesTest(TestCase):
             cls.command.do_service(xml_file, filename)
 
     @freeze_time('1 October 2016')
-    @override_settings(TNDS_DIR=FIXTURES_DIR)
     def test_do_service_ea(self):
         service = self.ea_service
 
@@ -234,7 +238,6 @@ class ImportServicesTest(TestCase):
         #     </tr>
         # """, html=True)
 
-    @override_settings(TNDS_DIR=FIXTURES_DIR)
     @freeze_time('22 January 2017')
     def test_do_service_m11a(self):
         res = self.client.get('/services/M11A_MEGA?date=ceci n\'est pas une date')
@@ -266,8 +269,7 @@ class ImportServicesTest(TestCase):
             html=True
         )
 
-    @override_settings(TNDS_DIR=FIXTURES_DIR,
-                       CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
+    @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     @freeze_time('1 Dec 2016')
     def test_do_service_m12(self):
         res = self.client.get('/services/M12_MEGA')
@@ -310,7 +312,6 @@ class ImportServicesTest(TestCase):
             res = self.client.get('/services/M12_MEGA?date=2017-01-02')
             self.assertEqual([], res.context_data['timetables'])
 
-    @override_settings(TNDS_DIR=FIXTURES_DIR)
     def test_do_service_scotland(self):
         service = self.sc_service
 
@@ -330,7 +331,7 @@ class ImportServicesTest(TestCase):
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data['breadcrumb'], (self.sc, self.fabd))
         self.assertTemplateUsed(res, 'busstops/service_detail.html')
-        # self.assertContains(res, '<td colspan="5" rowspan="62">then every 30 minutes until</td>', html=True)
+        self.assertContains(res, '<td colspan="5" rowspan="62">then every 30 minutes until</td>', html=True)
 
         # Test the fallback version without a timetable (just a list of stops)
         service.show_timetable = False
@@ -367,3 +368,4 @@ class ImportServicesTest(TestCase):
 
         # clean up
         os.remove(os.path.join(FIXTURES_DIR, 'NCSD.zip'))
+        os.remove(os.path.join(FIXTURES_DIR, 'S.zip'))
