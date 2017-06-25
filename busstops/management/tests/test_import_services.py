@@ -52,6 +52,7 @@ class ImportServicesTest(TestCase):
                 ('639004552', 'The Griffin', 'adj', -2.4989239373, 53.7425523688),
                 ('049004705400', 'Kingston District Centre', 'o/s', 0, 0),
                 ('4200F156472', 'Asda', 'opp', 0, 0),
+                ('2900A1820', 'Leys Lane', 'adj', 0, 0)
         ):
             StopPoint.objects.create(
                 atco_code=atco_code, locality_centre=False, active=True, common_name=common_name,
@@ -240,6 +241,14 @@ class ImportServicesTest(TestCase):
             </tr>
         """, html=True)
         self.assertContains(res, '<option selected value="2016-10-03">Monday 3 October 2016</option>')
+
+        # Test the fallback version without a timetable (just a list of stops)
+        service.show_timetable = False
+        service.save()
+        res = self.client.get(service.get_absolute_url())
+        self.assertContains(res, '<span itemprop="name">Leys Lane (adj)</span>')
+        self.assertContains(res, 'Norwich - Wymondham - Attleborough')
+        self.assertContains(res, 'Attleborough - Wymondham - Norwich')
 
     @freeze_time('22 January 2017')
     def test_do_service_m11a(self):
