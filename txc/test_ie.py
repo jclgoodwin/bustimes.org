@@ -1,26 +1,53 @@
 import os
 import zipfile
 from datetime import date, time
-from django.core.management import call_command
 from django.test import TestCase, override_settings
+from django.conf import settings
+from busstops.management.commands import import_ie_gtfs
+from busstops.models import Region, AdminArea, StopPoint
 from . import ie
 
 
-FIXTURES_DIR = './busstops/management/tests/fixtures/'
+FIXTURES_DIR = os.path.join(settings.BASE_DIR, 'busstops', 'management', 'tests', 'fixtures')
 
 
-@override_settings(DATA_DIR=FIXTURES_DIR)
+@override_settings(DATA_DIR=FIXTURES_DIR, IE_COLLECTIONS=['mortons'])
 class IrelandTest(TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         """Make a GTFS feed (a zip file containing some text files)."""
-        ie.collections = ['mortons']
 
-        call_command('import_ie_gtfs')
+        cls.leinster = Region.objects.create(
+            id='LE',
+            name='Leinster'
+        )
+        cls.dublin = AdminArea.objects.create(
+            id=822,
+            atco_code=822,
+            region_id='LE'
+        )
+        cls.south_ = AdminArea.objects.create(
+            id=823,
+            atco_code=823,
+            region_id='LE'
+        )
 
-        self.dir_path = os.path.join(FIXTURES_DIR, 'google_transit_mortons')
-        with zipfile.ZipFile(self.dir_path + '.zip', 'a') as open_zipfile:
-            for item in os.listdir(self.dir_path):
-                open_zipfile.write(os.path.join(self.dir_path, item), item)
+        cls.dir_path = os.path.join(FIXTURES_DIR, 'google_transit_mortons')
+        cls.feed_path = cls.dir_path + '.zip'
+        print(cls.feed_path)
+        with zipfile.ZipFile(cls.feed_path, 'a') as open_zipfile:
+            for item in os.listdir(cls.dir_path):
+                print(item)
+                open_zipfile.write(os.path.join(cls.dir_path, item), item)
+
+        command = import_ie_gtfs.Command()
+        command.handle_zipfile(cls.feed_path, 'mortons')
+
+    def test_stops(self):
+        stops = StopPoint.objects.all()
+        self.assertEqual(len(stops), 30)
+        self.assertEqual(stops[0].common_name, 'Terenure Library')
+        self.assertEqual(stops[0].admin_area_id, 822)
 
     def test_small_timetable(self):
         timetable = ie.get_timetables('mort-20-165-y11', date(2017, 6, 7))[0]
@@ -40,6 +67,10 @@ class IrelandTest(TestCase):
             timetable = ie.get_timetables('mortons-20-165-y11', day)[0]
             self.assertEqual(timetable.groupings, [])
 
-    def tearDown(self):
-        """Delete the GTFS feed zip file."""
-        os.remove(self.dir_path + '.zip')
+    @classmethod
+    def tearDownClass(cls):
+        """Delete the GTFS feed zip file and SQLite database."""
+        super(IrelandTest, cls).tearDownClass()
+
+        os.remove(cls.feed_path)
+        os.remove(os.path.join(FIXTURES_DIR, 'gtfs.sqlite'))

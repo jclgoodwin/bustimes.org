@@ -7,7 +7,8 @@ from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import Count
-from txc.ie import COLLECTIONS, get_schedule, get_feed, get_timetables
+from django.conf import settings
+from txc.ie import get_schedule, get_feed, get_timetables
 from ...models import Operator, Service, StopPoint, StopUsage, Region
 
 
@@ -65,7 +66,7 @@ class Command(BaseCommand):
 
         routes = {}
         for route in feed.routes:
-            route_id = '-'.join(route.id.split('-')[-1])
+            route_id = '-'.join(route.id.split('-')[:-1])
             routes[route_id] = route
 
         for route_id in routes:
@@ -134,12 +135,12 @@ class Command(BaseCommand):
         parser.add_argument('--force', action='store_true', help='Import data even if the GTFS feeds haven\'t changed')
 
     def handle(self, *args, **options):
-        for collection in COLLECTIONS:
+        for collection in settings.IE_COLLECTIONS:
             if options['verbosity'] > 1:
                 print(collection)
             path = 'google_transit_{}.zip'.format(collection)
             url = 'http://www.transportforireland.ie/transitData/' + path
-            path = 'data/' + path
+            path = os.path.join(settings.DATA_DIR, path)
             modified = download_if_modified(path, url)
             if modified or options['force']:
                 self.handle_zipfile(path, collection)

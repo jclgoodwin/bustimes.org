@@ -144,11 +144,25 @@ TEMPLATES = [
     }
 ]
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache'
+    } if DEBUG else {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211'
+    }
+}
+
 TIME_FORMAT = 'H:i'
 DATE_FORMAT = 'l j F Y'
 TIME_ZONE = 'Europe/London'
 USE_TZ = True
 USE_I18N = False
+
+RAVEN_CONFIG = {
+    'dsn': os.environ.get('SENTRY_DSN'),
+    'release': raven.fetch_git_sha(BASE_DIR)
+}
 
 STREETVIEW_KEY = os.environ.get('STREETVIEW_KEY')
 STREETVIEW_SECRET = os.environ.get('STREETVIEW_SECRET')
@@ -161,16 +175,14 @@ TNDS_DIR = os.path.join(DATA_DIR, 'TNDS')
 
 VIGLINK_KEY = '63dc39b879576a255e9dcee17b6c1929'
 
-RAVEN_CONFIG = {
-    'dsn': os.environ.get('SENTRY_DSN'),
-    'release': raven.fetch_git_sha(BASE_DIR)
-}
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache'
-    } if DEBUG else {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211'
-    }
-}
+IE_COLLECTIONS = (
+    'luasbus', 'dublinbus', 'kenneallys', 'locallink', 'irishrail', 'ferries',
+    'manda', 'finnegans', 'citylink', 'nitelink', 'buseireann', 'mcgeehan',
+    'mkilbride', 'expressbus', 'edmoore', 'collins', 'luas', 'sro',
+    'dublincoach', 'burkes', 'mhealy', 'kearns', 'josfoley', 'buggy',
+    'jjkavanagh', 'citydirect', 'aircoach', 'matthews', 'wexfordbus',
+    'dualway', 'tralee', 'sbloom', 'mcginley', 'swordsexpress', 'suirway',
+    'sdoherty', 'pjmartley', 'mortons', 'mgray', 'mcgrath', 'mangan',
+    'lallycoach', 'halpenny', 'eurobus', 'donnellys', 'cmadigan', 'bkavanagh',
+    'ptkkenneally', 'farragher', 'fedateoranta'
+)

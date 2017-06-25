@@ -5,24 +5,13 @@ from django.conf import settings
 from .ni import Grouping, Timetable, Row
 
 
-COLLECTIONS = (
-    'luasbus', 'dublinbus', 'kenneallys', 'locallink', 'irishrail', 'ferries',
-    'manda', 'finnegans', 'citylink', 'nitelink', 'buseireann', 'mcgeehan',
-    'mkilbride', 'expressbus', 'edmoore', 'collins', 'luas', 'sro',
-    'dublincoach', 'burkes', 'mhealy', 'kearns', 'josfoley', 'buggy',
-    'jjkavanagh', 'citydirect', 'aircoach', 'matthews', 'wexfordbus',
-    'dualway', 'tralee', 'sbloom', 'mcginley', 'swordsexpress', 'suirway',
-    'sdoherty', 'pjmartley', 'mortons', 'mgray', 'mcgrath', 'mangan',
-    'lallycoach', 'halpenny', 'eurobus', 'donnellys', 'cmadigan', 'bkavanagh',
-    'ptkkenneally', 'farragher', 'fedateoranta'
-)
-
-
 def handle_trips(trips, day):
     i = 0
     head = None
     rows_map = {}
 
+    if not day:
+        day = datetime.date.today()
     midnight = datetime.datetime.combine(day, datetime.time())
 
     for trip in sorted(trips, key=lambda t: t.stop_times[0].departure_time):
@@ -127,7 +116,7 @@ def get_timetable(path, match, route_id, day):
 def get_timetables(service_code, day):
     parts = service_code.split('-', 1)
     path = parts[0]
-    for collection in COLLECTIONS:
+    for collection in settings.IE_COLLECTIONS:
         if collection.startswith(path):
             path = collection
             break
@@ -135,4 +124,6 @@ def get_timetables(service_code, day):
 
     path = 'google_transit_' + collection + '.zip'
 
-    return [get_timetable(path, str.startswith, route_id, day)]
+    timetable = get_timetable(path, str.startswith, route_id, day)
+    if timetable:
+        return [timetable]
