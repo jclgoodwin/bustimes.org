@@ -124,6 +124,6 @@ def get_timetables(service_code, day):
 
     path = 'google_transit_' + collection + '.zip'
 
-    timetable = get_timetable(path, lambda a b: a.startswith(b + '-'), route_id, day)
+    timetable = get_timetable(path, lambda a, b: a.startswith(b + '-'), route_id, day)
     if timetable:
         return [timetable]
