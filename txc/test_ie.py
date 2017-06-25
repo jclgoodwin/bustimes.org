@@ -11,7 +11,7 @@ from . import ie
 FIXTURES_DIR = os.path.join(settings.BASE_DIR, 'busstops', 'management', 'tests', 'fixtures')
 
 
-@override_settings(DATA_DIR=FIXTURES_DIR, IE_COLLECTIONS=['mortons'])
+@override_settings(DATA_DIR=FIXTURES_DIR)
 class IrelandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -67,7 +67,8 @@ class IrelandTest(TestCase):
             self.assertEqual(timetable.groupings, [])
 
     def test_no_timetable(self):
-        self.assertIsNone(ie.get_timetables('mortons-poo-poo-pants', date(2017, 6, 7)))
+        self.assertIsNone(ie.get_timetables('mortons-poo-poo-pants', date(2017, 6, 7)))  # no matching routes
+        self.assertIsNone(ie.get_timetables('sdoherty-poo-poo-pants', date(2017, 6, 7)))  # no feed in database
 
     @classmethod
     def tearDownClass(cls):
