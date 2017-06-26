@@ -5,7 +5,6 @@ import os
 import zipfile
 import vcr
 from django.test import TestCase, override_settings
-from pygtfs.gtfs_entities import Stop
 from ...models import Region, StopPoint, Service
 from ..commands import import_ouibus_gtfs, import_ie_gtfs
 
