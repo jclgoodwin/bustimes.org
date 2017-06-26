@@ -12,8 +12,7 @@ from ...models import Operator, Service, Region, StopPoint, Journey, StopUsageUs
 from ..commands import import_services
 
 
-FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'fixtures')
+FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
 
 
 @override_settings(TNDS_DIR=FIXTURES_DIR)
@@ -209,9 +208,8 @@ class ImportServicesTest(TestCase):
     def do_service(cls, filename, region_id):
         filename = '%s.xml' % filename
         if region_id == 'GB':
-            cls.command.set_region('NCSD.zip')
-        else:
-            cls.command.set_region('%s.zip' % region_id)
+            region_id = 'NCSD'
+        cls.command.set_region('%s.zip' % region_id)
         path = os.path.join(FIXTURES_DIR, filename)
         with open(path) as xml_file:
             cls.command.do_service(xml_file, filename)
@@ -324,6 +322,7 @@ class ImportServicesTest(TestCase):
             res = self.client.get('/services/M12_MEGA?date=2017-01-02')
             self.assertEqual([], res.context_data['timetables'])
 
+    @freeze_time('25 June 2016')
     def test_do_service_scotland(self):
         service = self.sc_service
 
