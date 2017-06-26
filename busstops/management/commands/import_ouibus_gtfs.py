@@ -19,7 +19,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def get_stop_name(row):
-        stop_name = row['stop_name']
+        stop_name = row.stop_name
         parts = stop_name.split(', ')
         if len(parts) == 2:
             if parts[1].lower().startswith(parts[0].lower()):
@@ -30,7 +30,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def get_service_id(collection, row):
-        service_id = row['route_id']
+        service_id = row.route_id
         if service_id.lower().startswith(collection.lower() + ':'):
             service_id = service_id.split(':')[1]
         return '{}-{}'.format(collection, service_id)
@@ -55,7 +55,8 @@ class Command(BaseCommand):
 
         for route in feed.routes:
             service_id = cls.get_service_id(collection, route)
-            timetable = get_timetable(archive_name, eq, service_id, None)[0]
+
+            timetable = get_timetable(archive_name, eq, route.id, None)
 
             defaults = {
                 'region_id': 'FR',
@@ -86,6 +87,8 @@ class Command(BaseCommand):
             for grouping in timetable.groupings:
                 for i, row in enumerate(grouping.rows):
                     stop_id = row.part.stop.atco_code
+                    if stop_id.lower().startswith(collection + ':'):
+                        stop_id = collection + '-' + stop_id.split(':', 1)[1]
                     if StopPoint.objects.filter(atco_code=stop_id).exists():
                         stops.append(
                             StopUsage(

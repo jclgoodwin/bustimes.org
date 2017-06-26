@@ -1,0 +1,60 @@
+route_id,service_id,trip_id,trip_headsign,trip_short_name,direction_id,block_id,shape_id,wheelchair_accessible,bikes_allowed
+FLIXBUS:001,111,FLIXBUS:001:10:05:00:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,58,FLIXBUS:001:10:05:45:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,347,FLIXBUS:001:10:06:00:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,111,FLIXBUS:001:10:06:45:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,58,FLIXBUS:001:10:07:30:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,395,FLIXBUS:001:10:08:00:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,111,FLIXBUS:001:10:08:15:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,58,FLIXBUS:001:10:08:45:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,485,FLIXBUS:001:10:09:00:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,111,FLIXBUS:001:10:09:45:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,585,FLIXBUS:001:10:10:00:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,118,FLIXBUS:001:10:11:30:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,749,FLIXBUS:001:10:12:00:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,778,FLIXBUS:001:10:13:00:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,620,FLIXBUS:001:10:14:00:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,253,FLIXBUS:001:10:14:30:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,94,FLIXBUS:001:10:16:00:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,253,FLIXBUS:001:10:17:30:00Z,Freiburg (i.Br.),,,,586,2,1
+FLIXBUS:001,253,FLIXBUS:001:10:17:30:00Z-1,Freiburg (i.Br.),,,,1939,2,1
+FLIXBUS:001,1,FLIXBUS:001:8:05:00:00Z,Munich central bus station,,,,1,2,1
+FLIXBUS:001,1,FLIXBUS:001:8:05:00:00Z-1,Munich central bus station,,,,1,2,1
+FLIXBUS:001,253,FLIXBUS:001:8:06:30:00Z,München ZOB,,,,1,2,1
+FLIXBUS:001,253,FLIXBUS:001:8:06:30:00Z-1,München ZOB,,,,1,2,1
+FLIXBUS:001,620,FLIXBUS:001:8:07:00:00Z,Munich central bus station,,,,1,2,1
+FLIXBUS:001,620,FLIXBUS:001:8:07:00:00Z-1,Munich central bus station,,,,1,2,1
+FLIXBUS:001,118,FLIXBUS:001:8:08:00:00Z,München ZOB,,,,1,2,1
+FLIXBUS:001,118,FLIXBUS:001:8:08:00:00Z-1,München ZOB,,,,1,2,1
+FLIXBUS:001,746,FLIXBUS:001:8:08:30:00Z,Munich central bus station,,,,1,2,1
+FLIXBUS:001,746,FLIXBUS:001:8:08:30:00Z-1,Munich central bus station,,,,1,2,1
+FLIXBUS:001,749,FLIXBUS:001:8:09:00:00Z,Munich central bus station,,,,1,2,1
+FLIXBUS:001,749,FLIXBUS:001:8:09:00:00Z-1,Munich central bus station,,,,1,2,1
+FLIXBUS:001,118,FLIXBUS:001:8:09:45:00Z,München ZOB,,,,1,2,1
+FLIXBUS:001,118,FLIXBUS:001:8:09:45:00Z-1,München ZOB,,,,1,2,1
+FLIXBUS:001,395,FLIXBUS:001:8:11:00:00Z,Munich central bus station,,,,1,2,1
+FLIXBUS:001,395,FLIXBUS:001:8:11:00:00Z-1,Munich central bus station,,,,1,2,1
+FLIXBUS:001,111,FLIXBUS:001:8:11:30:00Z,München ZOB,,,,1,2,1
+FLIXBUS:001,111,FLIXBUS:001:8:11:30:00Z-1,München ZOB,,,,1,2,1
+FLIXBUS:001,58,FLIXBUS:001:8:11:45:00Z,Munich central bus station,,,,1,2,1
+FLIXBUS:001,58,FLIXBUS:001:8:11:45:00Z-1,Munich central bus station,,,,1,2,1
+FLIXBUS:001,485,FLIXBUS:001:8:12:30:00Z,München ZOB,,,,1,2,1
+FLIXBUS:001,485,FLIXBUS:001:8:12:30:00Z-1,München ZOB,,,,1,2,1
+FLIXBUS:001,632,FLIXBUS:001:8:13:00:00Z,Munich central bus station,,,,1,2,1
+FLIXBUS:001,632,FLIXBUS:001:8:13:00:00Z-1,Munich central bus station,,,,1,2,1
+FLIXBUS:001,58,FLIXBUS:001:8:13:30:00Z,Munich central bus station,,,,1,2,1
+FLIXBUS:001,58,FLIXBUS:001:8:13:30:00Z-1,Munich central bus station,,,,1,2,1
+FLIXBUS:001,111,FLIXBUS:001:8:14:30:00Z,München ZOB,,,,1,2,1
+FLIXBUS:001,111,FLIXBUS:001:8:14:30:00Z-1,München ZOB,,,,1,2,1
+FLIXBUS:001,58,FLIXBUS:001:8:14:45:00Z,Munich central bus station,,,,1,2,1
+FLIXBUS:001,58,FLIXBUS:001:8:14:45:00Z-1,Munich central bus station,,,,1,2,1
+FLIXBUS:001,347,FLIXBUS:001:8:15:00:00Z,Munich central bus station,,,,1,2,1
+FLIXBUS:001,347,FLIXBUS:001:8:15:00:00Z-1,Munich central bus station,,,,1,2,1
+FLIXBUS:001,111,FLIXBUS:001:8:15:45:00Z,Munich central bus station,,,,1,2,1
+FLIXBUS:001,111,FLIXBUS:001:8:15:45:00Z-1,Munich central bus station,,,,1,2,1
+FLIXBUS:001,58,FLIXBUS:001:8:16:00:00Z,Munich central bus station,,,,1,2,1
+FLIXBUS:001,58,FLIXBUS:001:8:16:00:00Z-1,Munich central bus station,,,,1,2,1
+FLIXBUS:001,118,FLIXBUS:001:8:17:15:00Z,Munich central bus station,,,,1062,2,1
+FLIXBUS:001,118,FLIXBUS:001:8:17:15:00Z-1,Munich central bus station,,,,1062,2,1
+FLIXBUS:001,118,FLIXBUS:001:8:17:15:00Z-2,Munich central bus station,,,,1062,2,1
+FLIXBUS:001,118,FLIXBUS:001:8:17:15:00Z-3,Munich central bus station,,,,1062,2,1

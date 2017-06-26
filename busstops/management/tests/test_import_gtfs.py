@@ -2,13 +2,32 @@
 """Tests for importing Ouibus and FlixBus stops and services
 """
 import os
+import zipfile
 import vcr
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from pygtfs.gtfs_entities import Stop
+from ...models import Region, StopPoint, Service
 from ..commands import import_ouibus_gtfs, import_ie_gtfs
 
 
+FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
+
+
+@override_settings(DATA_DIR=FIXTURES_DIR)
 class ImpportGTFSTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.france = Region.objects.create(id='FR', name='France')
+
+        cls.dir_path = os.path.join(FIXTURES_DIR, 'flixbus')
+        cls.feed_path = cls.dir_path + '.zip'
+        with zipfile.ZipFile(cls.feed_path, 'a') as open_zipfile:
+            for item in os.listdir(cls.dir_path):
+                open_zipfile.write(os.path.join(cls.dir_path, item), item)
+
+        command = import_ouibus_gtfs.Command()
+        command.handle_zipfile(cls.feed_path, 'flixbus')
+
     def test_download_if_modified(self):
         path = 'download_if_modified.txt'
         url = 'https://bustimes.org.uk/static/js/global.js'
@@ -23,24 +42,26 @@ class ImpportGTFSTest(TestCase):
 
         os.remove(path)
 
-    def test_stop_id(self):
-        stop = Stop(id='FLIXBUS:001')
-        self.assertEqual(import_ouibus_gtfs.Command.get_stop_id('flixbus', stop), 'flixbus-001')
-        stop.id = '002'
-        self.assertEqual(import_ouibus_gtfs.Command.get_stop_id('ouibus', stop), 'ouibus-002')
+    def test_stops(self):
+        stops = StopPoint.objects.all()
+        self.assertEqual('flixbus-10', stops[0].atco_code)
 
-    def test_stop_name(self):
-        self.assertEqual(import_ouibus_gtfs.Command.get_stop_name({
-            'stop_name': 'Rimini, Rimini-Marebello'
-        }), 'Rimini-Marebello')
-        self.assertEqual(import_ouibus_gtfs.Command.get_stop_name({
-            'stop_name': 'Bâle Aéroport'
-        }), 'Bâle Aéroport')
+        self.assertEqual('Turin, Torino (Lingotto)', stops[1].common_name)
+        self.assertEqual('Rust (Europa-Park), Rust (Europa park)', stops[3].common_name)
+        self.assertEqual('Luxembourg Kirchberg', stops[9].common_name)
 
-    def test_service_id(self):
-        self.assertEqual(import_ouibus_gtfs.Command.get_service_id('flixbus', {
-            'route_id': 'FLIXBUS:002'
-        }), 'flixbus-002')
-        self.assertEqual(import_ouibus_gtfs.Command.get_service_id('ouibus', {
-            'route_id': '140'
-        }), 'ouibus-140')
+    def test_services(self):
+        services = Service.objects.all()
+        self.assertEqual(services[0].service_code, 'flixbus-001')
+        self.assertEqual(services[0].line_name, 'FlixBus')
+
+        stops = services[0].stops.all()
+        self.assertEqual(7, len(stops))
+
+    @classmethod
+    def tearDownClass(cls):
+        """Delete the GTFS feed zip file and SQLite database."""
+        super(ImpportGTFSTest, cls).tearDownClass()
+
+        os.remove(cls.feed_path)
+        os.remove(os.path.join(FIXTURES_DIR, 'gtfs.sqlite'))

@@ -37,7 +37,6 @@ class IrelandTest(TestCase):
         cls.feed_path = cls.dir_path + '.zip'
         with zipfile.ZipFile(cls.feed_path, 'a') as open_zipfile:
             for item in os.listdir(cls.dir_path):
-                print(item)
                 open_zipfile.write(os.path.join(cls.dir_path, item), item)
 
         command = import_ie_gtfs.Command()
