@@ -24,9 +24,10 @@ class IrelandTest(TestCase):
         cls.dublin = AdminArea.objects.create(
             id=822,
             atco_code=822,
-            region_id='LE'
+            region_id='LE',
+            name='Dublin'
         )
-        cls.south_ = AdminArea.objects.create(
+        cls.south_dublin = AdminArea.objects.create(
             id=823,
             atco_code=823,
             region_id='LE'
@@ -69,6 +70,11 @@ class IrelandTest(TestCase):
     def test_no_timetable(self):
         self.assertIsNone(ie.get_timetables('mortons-poo-poo-pants', date(2017, 6, 7)))  # no matching routes
         self.assertIsNone(ie.get_timetables('sdoherty-poo-poo-pants', date(2017, 6, 7)))  # no feed in database
+
+    def test_admin_area(self):
+        res = self.client.get(self.dublin.get_absolute_url())
+        self.assertContains(res, 'Bus services in Dublin', html=True)
+        self.assertContains(res, 'Merrion, Merlyn Park - Citywest, Castle House')
 
     @classmethod
     def tearDownClass(cls):
