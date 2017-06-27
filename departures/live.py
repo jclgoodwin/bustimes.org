@@ -245,12 +245,13 @@ class LambdaDepartures(Departures):
 
     def departures_from_response(self, res):
         json = res.json()
-        return [{
-            'time': dateutil.parser.parse(item['aimed_time']),
-            'live': item['expected_time'] and dateutil.parser.parse(item['expected_time']),
-            'service': self.get_service(item['service']),
-            'destination': item['destination_name']
-        } for item in json['departures']]
+        if 'departures' in json:
+            return [{
+                'time': dateutil.parser.parse(item['aimed_time']),
+                'live': item['expected_time'] and dateutil.parser.parse(item['expected_time']),
+                'service': self.get_service(item['service']),
+                'destination': item['destination_name']
+            } for item in json['departures'] if item['aimed_time']]
 
 
 def get_max_age(departures, now):
@@ -454,9 +455,7 @@ def get_departures(stop, services, bot=False):
             if live_rows:
                 blend(departures, live_rows)
         # Norfolk
-        elif not bot and departures and stop.atco_code[:3] in {'380', '059', '290', '602', '390', '260', '228', '521',
-                                                               '389', '060', '050', '300', '029', '021', '020', '268',
-                                                               '269'}:
+        elif not bot and departures and stop.atco_code[:3] == '290':
             live_rows = LambdaDepartures(stop, services, now).get_departures()
             if live_rows:
                 blend(departures, live_rows)
