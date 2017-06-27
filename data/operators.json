@@ -70,5 +70,13 @@
     {
         "id": "DJWA",
         "name": "Torbay Mini Buses"
+    },
+    {
+        "id": "ANRW",
+        "name": "Andrew’s (Shetland)",
+        "address": "",
+        "email": "info@andrewsshetland.com",
+        "url": "http://www.andrewsshetland.com",
+        "phone": "01595 696363"
     }
 ]
