@@ -53,7 +53,7 @@
 
         if (mainLocations.length) {
             map = L.map('map');
-            var tileURL = 'https://bustimes.org.uk/styles/osm-bright/rendered/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
+            var tileURL = 'https://bustimes.org.uk/styles/osm-bright/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
                 pin = L.icon({
                     iconUrl:    '/static/pin.svg',
                     iconSize:   [16, 22],
