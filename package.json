@@ -3,7 +3,7 @@
     "yuglify": "^0.1.4"
   },
   "devDependencies": {
-    "eslint": "^3.19.0",
+    "eslint": "^4.1.1",
     "sass-lint": "^1.10.2"
   }
 }

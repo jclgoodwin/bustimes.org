@@ -116,6 +116,13 @@ PIPELINE = {
             ),
             'output_filename': 'js/map.min.js',
         },
+        'global': {
+            'source_filenames': (
+                'js/bower_components/postscribe/dist/postscribe.min.js',
+                'js/global.js',
+            ),
+            'output_filename': 'js/global.min.js',
+        },
     },
     'YUGLIFY_BINARY': './node_modules/.bin/yuglify',
     'CSS_COMPRESSOR': None,
