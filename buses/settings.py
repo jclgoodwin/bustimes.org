@@ -108,6 +108,9 @@ PIPELINE = {
                 'js/frontpage.js',
             ),
             'output_filename': 'js/frontpage.min.js',
+            'extra_context': {
+                'async': True
+            }
         },
         'map': {
             'source_filenames': (
@@ -115,6 +118,9 @@ PIPELINE = {
                 'js/map.js',
             ),
             'output_filename': 'js/map.min.js',
+            'extra_context': {
+                'async': True
+            }
         },
         'global': {
             'source_filenames': (
@@ -122,6 +128,9 @@ PIPELINE = {
                 'js/global.js',
             ),
             'output_filename': 'js/global.min.js',
+            'extra_context': {
+                'async': True
+            }
         },
     },
     'YUGLIFY_BINARY': './node_modules/.bin/yuglify',
