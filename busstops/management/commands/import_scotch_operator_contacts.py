@@ -20,7 +20,9 @@ class Command(ImportFromCSVCommand):
         if row['SC']:
             scotch = cls.scotch_operators.get(row['SC'])
             if scotch and len(row['NOCCODE']) == 4:
-                operator = Operator.objects.get(pk=row['NOCCODE'])
+                operator = Operator.objects.filter(pk=row['NOCCODE']).first()
+                if not operator:
+                    return
                 operator.name = scotch['name']
                 operator.address = scotch['address']
                 operator.url = scotch['url']
