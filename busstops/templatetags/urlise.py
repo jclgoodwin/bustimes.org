@@ -25,7 +25,10 @@ def urlise(value, autoescape=None):
         megabus = '"https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=links&amp;p={}"'.format(
             'https%3A%2F%2Fuk.megabus.com'
         )
-        markup = markup.replace('"http://megabus.com"', megabus, 1).replace('"http://uk.megabus.com"', megabus, 1)
+        markup = markup.replace('"http://megabus.com"', megabus, 1)
+        markup = markup.replace('"http://uk.megabus.com"', megabus, 1)
+        markup = markup.replace('"http://www.megabus.com"', megabus, 1)
+        markup = markup.replace('"http://megabusgold.com/"', megabus, 1)
     elif 'nationalexpress' in markup:
         national_express = '"{}"'.format(viglink('http://www.nationalexpress.com'))
         markup = markup.replace('"http://nationalexpress.com"', national_express, 1)
