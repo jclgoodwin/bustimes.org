@@ -464,8 +464,7 @@ class ServiceDetailView(DetailView):
             context['breadcrumb'] = (self.object.region, context['operators'][0])
             if self.object.is_megabus():
                 context['links'].append({
-                    'url': 'https://www.awin1.com/awclick.php?mid=2678&id=242611&clickref=links&clickref2='
-                    + self.object.pk,
+                    'url': self.object.get_megabus_url(),
                     'text': 'Buy tickets from megabus.com'
                 })
             else:

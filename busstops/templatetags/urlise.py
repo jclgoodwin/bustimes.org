@@ -22,7 +22,9 @@ def urlise(value, autoescape=None):
     markup = urlize(value, nofollow=True).replace('">https://', '">', 1).replace('">http://', '">', 1)
 
     if 'megabus' in markup:
-        megabus = '"https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=notes"'
+        megabus = '"https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=links&amp;p={}"'.format(
+            'https%3A%2F%2Fuk.megabus.com'
+        )
         markup = markup.replace('"http://megabus.com"', megabus, 1).replace('"http://uk.megabus.com"', megabus, 1)
     elif 'nationalexpress' in markup:
         national_express = '"{}"'.format(viglink('http://www.nationalexpress.com'))

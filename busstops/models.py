@@ -441,6 +441,16 @@ class Service(models.Model):
         )
         return 'http://www.{}/lts/#/timetables?{}'.format(domain, urlencode(query)), name
 
+    def get_megabus_url(self):
+        query = (
+            ('mid', 2678),
+            ('id', 242611),
+            ('clickref', 'links'),
+            ('clickref2', self.service_code),
+            ('p', 'https://uk.megabus.com'),
+        )
+        return 'https://www.awin1.com/awclick.php?' + urlencode(query)
+
     def get_traveline_link(self):
         if self.region_id in ('Y', 'S'):
             return self.get_trapeze_link()
