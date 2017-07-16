@@ -1,14 +1,14 @@
 language: python
 python:
   - "2.7"
-  # - "3.4"
-  # - "3.5"
   - "3.6"
 cache: pip
 services:
   - postgresql
 addons:
   postgresql: "9.4"
+rvm:
+  - 2.2
 env:
   - DB_USER=postgres DEBUG=True
 install:
