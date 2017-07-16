@@ -11,7 +11,7 @@ env:
   - DB_USER=postgres DEBUG=True
 before_install:
   - rvm install 2.2
-  - nvm intall node
+  - nvm install node
 install:
   - pip install -U pip wheel
   - pip install -r requirements.txt -r requirements-test.txt
