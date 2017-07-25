@@ -134,7 +134,6 @@ class ServiceTest(TestCase):
     """Test departures and timetables for Northern Ireland
     """
     @classmethod
-    @freeze_time('4 May 2017')
     def setUpTestData(cls):
         Region.objects.create(id='NI')
         # Create 95c_ULB stops:
@@ -156,7 +155,10 @@ class ServiceTest(TestCase):
         Service.objects.create(service_code='212_GLE', date='2016-01-01', region_id='NI', current=True)
         Service.objects.create(service_code='95_ULB', date='2016-01-01', region_id='NI', current=True)
         Service.objects.create(service_code='95c_ULB', date='2016-01-01', region_id='NI', current=True)
-        generate_departures.handle_region(Region(id='NI'))
+        with freeze_time('3 May 2017'):
+            generate_departures.handle_region(Region(id='NI'))
+        with freeze_time('4 May 2017'):
+            generate_departures.handle_region(Region(id='NI'))
 
     """Test the generate_departures command
     """
