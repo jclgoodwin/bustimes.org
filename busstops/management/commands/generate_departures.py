@@ -99,7 +99,7 @@ def handle_region(region):
     # get the date of the last generated journey
     last_journey = Journey.objects.filter(service__region=region).order_by('datetime').last()
     if last_journey:
-        today = last_journey.datetime.date() + ONE_DAY
+        today = last_journey.datetime.astimezone(timezone.get_current_timezone()).date() + ONE_DAY
         if today > NEXT_WEEK:
             return
 
