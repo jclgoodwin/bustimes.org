@@ -78,11 +78,10 @@ def do_ni_service(service, groupings, day):
                             StopUsageUsage(datetime=combine_date_time(day, departure),
                                            order=i, stop_id=su['Location'])
                         )
+                    previous_time = departure
                 else:
-                    departure = None
-                previous_time = departure
-            departure = stopusageusages[0].datetime
-            journey = Journey(service=service, datetime=departure, destination_id=destination)
+                    previous_time = None
+            journey = Journey(service=service, datetime=stopusageusages[0].datetime, destination_id=destination)
             journey.save()
             for suu in stopusageusages:
                 suu.journey = journey
@@ -114,14 +113,13 @@ def handle_region(region):
             while day <= NEXT_WEEK:
                 do_ni_service(service, groupings, day)
                 day += ONE_DAY
-            continue
-
-        for i, xml_file in enumerate(get_files_from_zipfile(service)):
-            timetable = txc.Timetable(xml_file, None)
-            day = today
-            while day <= NEXT_WEEK:
-                handle_timetable(service, timetable, day)
-                day += ONE_DAY
+        else:
+            for i, xml_file in enumerate(get_files_from_zipfile(service)):
+                timetable = txc.Timetable(xml_file, None)
+                day = today
+                while day <= NEXT_WEEK:
+                    handle_timetable(service, timetable, day)
+                    day += ONE_DAY
 
 
 class Command(BaseCommand):

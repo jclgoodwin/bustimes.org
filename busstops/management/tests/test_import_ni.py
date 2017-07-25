@@ -137,16 +137,24 @@ class ServiceTest(TestCase):
     @freeze_time('4 May 2017')
     def setUpTestData(cls):
         Region.objects.create(id='NI')
+        # Create 95c_ULB stops:
         StopPoint.objects.bulk_create(
-            (StopPoint(atco_code=atco_code, locality_centre=False, active=True) for atco_code in (
-                '700000012165', '700000012648', '700000012668', '700000012701', '700000012729', '700000012730',
-                '700000012731', '700000012732', '700000012733', '700000012734', '700000012735', '700000012736',
-                '700000012737', '700000012738', '700000012739', '700000012740', '700000012741', '700000012742',
-                '700000012743', '700000012744', '700000012745', '700000012746', '700000012747', '700000012748',
-                '700000012749', '700000012750', '700000012757', '700000012778', '700000012779', '700000012780',
-                '700000012781', '700000012782', '700000012783', '700000015377'
-            ))
+            StopPoint(atco_code='7000000' + suffix, locality_centre=False, active=True) for suffix in (
+                '12165', '12648', '12668', '12701', '12729', '12730', '12731', '12732', '12733', '12734', '12735',
+                '12736', '12737', '12738', '12739', '12740', '12741', '12742', '12743', '12744', '12745', '12746',
+                '12747', '12748', '12749', '12750', '12757', '12778', '12779', '12780', '12781', '12782', '12783',
+                '15377'
+            )
         )
+        # Create 212_GLE stops:
+        StopPoint.objects.bulk_create(
+            StopPoint(atco_code='7000000' + suffix, locality_centre=False, active=True) for suffix in (
+                '15363', '15678', '14232', '14230', '13311', '15229', '15679', '13331', '13214', '15739', '15746',
+                '13305', '15747', '14231', '15677', '00792'
+            )
+        )
+        Service.objects.create(service_code='212_GLE', date='2016-01-01', region_id='NI', current=True)
+        Service.objects.create(service_code='95_ULB', date='2016-01-01', region_id='NI', current=True)
         Service.objects.create(service_code='95c_ULB', date='2016-01-01', region_id='NI', current=True)
         generate_departures.handle_region(Region(id='NI'))
 
@@ -164,7 +172,31 @@ class ServiceTest(TestCase):
         self.assertContains(response, '<h3>Thursday</h3>', 2)
         self.assertNotContains(response, 'Saturday')
 
-        self.assertEqual(270, StopUsageUsage.objects.all().count())
+        for count, search in (
+            (270, {'journey__service': '95c_ULB'}),
+            (4365, {'journey__service': '212_GLE'}),
+            (160, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-04'}),
+            (442, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-05'}),
+            (454, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-06'}),
+            (544, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-07'}),
+            (901, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-08'}),
+            (412, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-09'}),
+            (412, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-10'}),
+            (412, {'journey__service': '212_GLE', 'datetime__date': '2017-05-10'}),
+            (412, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-11'}),
+            (412, {'journey__service': '212_GLE', 'datetime__date': '2017-05-11'}),
+            (252, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-12'}),
+            (253, {'journey__service': '212_GLE', 'datetime__date': '2017-05-12'}),
+            (192, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-13'}),
+            (192, {'journey__service': '212_GLE', 'datetime__date': '2017-05-13'}),
+            (184, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-14'}),
+            (185, {'journey__service': '212_GLE', 'datetime__date': '2017-05-14'}),
+            (0, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-15'}),
+            (0, {'journey__service': '212_GLE', 'datetime__date': '2017-05-15'}),
+            (0, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-16'}),
+            (0, {'journey__service': '212_GLE', 'datetime__date': '2017-05-16'}),
+        ):
+            self.assertEqual(count, StopUsageUsage.objects.filter(**search).count())
 
     @freeze_time('12 Mar 2017')
     def test_timetable(self):
