@@ -176,27 +176,21 @@ class ServiceTest(TestCase):
 
         for count, search in (
             (270, {'journey__service': '95c_ULB'}),
-            (4365, {'journey__service': '212_GLE'}),
-            (160, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-04'}),
+            (3134, {'journey__service': '212_GLE'}),
+            (412, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-04'}),
             (442, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-05'}),
-            (454, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-06'}),
-            (544, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-07'}),
-            (901, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-08'}),
+            (328, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-06'}),  # Sat
+            (304, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-07'}),  # Sun
+            (412, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-08'}),  # Mon
             (412, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-09'}),
             (412, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-10'}),
             (412, {'journey__service': '212_GLE', 'datetime__date': '2017-05-10'}),
             (412, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-11'}),
             (412, {'journey__service': '212_GLE', 'datetime__date': '2017-05-11'}),
-            (252, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-12'}),
-            (253, {'journey__service': '212_GLE', 'datetime__date': '2017-05-12'}),
-            (192, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-13'}),
-            (192, {'journey__service': '212_GLE', 'datetime__date': '2017-05-13'}),
-            (184, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-14'}),
-            (185, {'journey__service': '212_GLE', 'datetime__date': '2017-05-14'}),
-            (0, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-15'}),
-            (0, {'journey__service': '212_GLE', 'datetime__date': '2017-05-15'}),
-            (0, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-16'}),
-            (0, {'journey__service': '212_GLE', 'datetime__date': '2017-05-16'}),
+            (0, {'journey__service': '212_GLE', 'journey__datetime__date': '2017-05-12'}),
+            (2, {'journey__service': '212_GLE', 'datetime__date': '2017-05-12'}),
+            (0, {'journey__service': '212_GLE', 'journey__datetime__date__gte': '2017-05-13'}),
+            (0, {'journey__service': '212_GLE', 'datetime__date__gte': '2017-05-13'}),
         ):
             self.assertEqual(count, StopUsageUsage.objects.filter(**search).count())
 

@@ -57,13 +57,13 @@ def handle_timetable(service, timetable, day):
 
 
 def do_ni_service(service, groupings, day):
-    previous_time = None
     for grouping in groupings:
         for journey in grouping['Journeys']:
             if not ni.should_show(journey, day):
                 continue
-
             stopusageusages = []
+            previous_time = None
+            date = day
             for i, su in enumerate(journey['StopUsages']):
                 if su['Location'][0] != '7':
                     print(service, su)
@@ -73,14 +73,12 @@ def do_ni_service(service, groupings, day):
                     departure = datetime.strptime(su['Departure'], '%H:%M').time()
                     if su['Activity'] != 'S':
                         if previous_time and departure < previous_time:
-                            day += ONE_DAY
+                            date += ONE_DAY
                         stopusageusages.append(
-                            StopUsageUsage(datetime=combine_date_time(day, departure),
+                            StopUsageUsage(datetime=combine_date_time(date, departure),
                                            order=i, stop_id=su['Location'])
                         )
                     previous_time = departure
-                else:
-                    previous_time = None
             journey = Journey(service=service, datetime=stopusageusages[0].datetime, destination_id=destination)
             journey.save()
             for suu in stopusageusages:
