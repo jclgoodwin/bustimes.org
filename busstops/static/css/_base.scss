@@ -63,13 +63,13 @@ header {
         font-size: 1.5em;
     }
 
-    .site-name::after {
+    .site-name:after {
         content: url('/static/svg/bus.svg');
         display: inline-block;
         margin-left: .66667em;
     }
 
-    .ferry::after {
+    .ferry:after {
         content: url('/static/svg/boat.svg');
         margin-top: -1em;
     }
@@ -143,7 +143,7 @@ input[type='submit'] {
         border-bottom: 0;
         margin-top: .125em;
 
-        &::after {
+        &:after {
             content: '\2026';
         }
     }
@@ -268,7 +268,7 @@ table {
         padding: 0;
     }
 
-    a[href^='http']::after {
+    a[href^='http']:after {
         content: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='10' width='10'%3E%3Cpath d='M4.3 3.5H.5v6h6V5.7M4.5.5v1l1 1-3 3 2 2 3-3 1 1h1v-5z' fill='white' stroke='%2361c'/%3E%3C/svg%3E");
         margin-left: .25em;
         vertical-align: top;
@@ -296,14 +296,14 @@ table {
         padding: .75em 0;
     }
 
-    li::after {
+    li:after {
         color: $brand-color-darker;
         content: '\203A';
         float: left;
         padding: .75em .5em;
     }
 
-    li:last-child::after {
+    li:last-child:after {
         padding-right: 0;
         width: 0;
     }
