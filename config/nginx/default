@@ -10,6 +10,12 @@ upstream gunicorn {
     server 127.0.0.1:8080;
 }
 
+upstream tileserver {
+    keepalive 100;
+
+    server 192.168.198.159:80;
+}
+
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
@@ -60,6 +66,13 @@ server {
         proxy_pass http://varnish;
         proxy_max_temp_file_size 0;
         proxy_http_version 1.1;
+    }
+
+    location /styles/ {
+        proxy_set_header X-Real-IP       $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host            $host;
+        proxy_pass http://tileserver;
     }
 
     location /htmlcov/ {
