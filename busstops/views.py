@@ -10,6 +10,7 @@ from django.http import (HttpResponse, JsonResponse, Http404,
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import DetailView
+from django.conf import settings
 from django.contrib.gis.geos import Polygon
 from django.contrib.gis.db.models.functions import Distance
 from django.core.cache import cache
@@ -519,5 +520,10 @@ class ServiceDetailView(DetailView):
 
 def service_xml(_, pk):
     service = get_object_or_404(Service, service_code=pk)
-    bodies = (xml_file.read().decode() for xml_file in get_files_from_zipfile(service))
+    if service.region_id == 'NI':
+        path = os.path.join(settings.DATA_DIR, 'NI', service.pk + '.json')
+        with open(path) as open_file:
+            bodies = open_file.read()
+    else:
+        bodies = (xml_file.read().decode() for xml_file in get_files_from_zipfile(service))
     return HttpResponse(bodies, content_type='text/plain')
