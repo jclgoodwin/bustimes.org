@@ -5,10 +5,10 @@ django-email-obfuscator==0.1.5
 django-haystack==2.6.1
 django-pipeline==1.6.13
 lxml==3.8.0
-psycopg2==2.7.1
-pygtfs==0.1.3
+git+https://github.com/jclgoodwin/django-multi-gtfs@master
+psycopg2==2.7.3
 python-dateutil==2.6.1
 pytz==2017.2
 raven==6.1.0
-requests==2.18.1
+requests==2.18.2
 titlecase==0.11.0
