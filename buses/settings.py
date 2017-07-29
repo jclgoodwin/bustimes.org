@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'haystack',
     'busstops',
+    'multigtfs',
     'pipeline',
     'email_obfuscator',
     'raven.contrib.django.raven_compat'

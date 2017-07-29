@@ -1,4 +1,4 @@
-"""Tests for importing Ireland stops and services
+"""Tests for importing Ireland stops and gazetteer
 """
 import os
 import warnings

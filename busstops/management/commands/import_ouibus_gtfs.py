@@ -1,10 +1,8 @@
 import time
-import pygtfs
-from operator import eq
-from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from txc.ie import get_feed, get_schedule, get_timetable
+from multigtfs.models import Feed
+from txc.ie import get_timetable
 from ...models import Operator, Service, StopPoint, StopUsage, Region
 from .import_ie_gtfs import download_if_modified, MODES
 
@@ -12,14 +10,14 @@ from .import_ie_gtfs import download_if_modified, MODES
 class Command(BaseCommand):
     @staticmethod
     def get_stop_id(collection, stop):
-        stop_id = stop.id
+        stop_id = stop.stop_id
         if stop_id.lower().startswith(collection.lower() + ':'):
             stop_id = stop_id.split(':')[1]
         return '{}-{}'.format(collection, stop_id)
 
     @staticmethod
     def get_stop_name(row):
-        stop_name = row.stop_name
+        stop_name = row.name
         parts = stop_name.split(', ')
         if len(parts) == 2:
             if parts[1].lower().startswith(parts[0].lower()):
@@ -40,30 +38,31 @@ class Command(BaseCommand):
     def handle_zipfile(cls, archive_name, collection):
         Service.objects.filter(service_code__startswith=collection).delete()
 
-        schedule = get_schedule()
-        pygtfs.overwrite_feed(schedule, archive_name)  # this could take a while :(
-        feed = get_feed(schedule, archive_name)
+        Feed.objects.filter(name=collection).delete()
 
-        for stop in feed.stops:
+        feed = Feed.objects.create(name=collection)
+        feed.import_gtfs(archive_name)
+
+        for stop in feed.stop_set.all():
             StopPoint.objects.update_or_create(atco_code=cls.get_stop_id(collection, stop), defaults={
                 'common_name': cls.get_stop_name(stop),
-                'naptan_code': stop.stop_code,
-                'latlong': Point(float(stop.stop_lon), float(stop.stop_lat)),
+                'naptan_code': stop.code,
+                'latlong': stop.point,
                 'locality_centre': False,
                 'active': True
             })
 
-        for route in feed.routes:
+        for route in feed.route_set.all():
             service_id = cls.get_service_id(collection, route)
 
-            timetable = get_timetable(archive_name, eq, route.id, None)
+            timetable = get_timetable([route], None)
 
             defaults = {
                 'region_id': 'FR',
-                'line_name': route.route_short_name,
-                'description': route.route_long_name,
+                'line_name': route.short_name,
+                'description': route.long_name,
                 'date': time.strftime('%Y-%m-%d'),
-                'mode': MODES[route.route_type],
+                'mode': MODES[route.rtype],
                 'current': True
             }
 
@@ -72,13 +71,13 @@ class Command(BaseCommand):
                 defaults=defaults
             )
 
-            operator = Operator.objects.get_or_create(name=route.agency.agency_name, defaults={
+            operator = Operator.objects.get_or_create(name=route.agency.name, defaults={
                 'id': route.agency_id,
                 'region_id': 'FR',
                 'vehicle_mode': defaults['mode'],
-                'phone': route.agency.agency_phone,
-                'url': route.agency.agency_url,
-                'email': route.agency.agency_email or '',
+                'phone': route.agency.phone,
+                'url': route.agency.url,
+                # 'email': route.agency.email or '',
             })[0]
             service.operator.add(operator)
 

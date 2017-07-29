@@ -1,14 +1,13 @@
 import os
 import time
-import pygtfs
 import requests
 from email.utils import parsedate
-from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import Count
 from django.conf import settings
-from txc.ie import get_schedule, get_feed, get_timetables
+from multigtfs.models import Feed
+from txc.ie import get_timetables
 from ...models import Operator, Service, StopPoint, StopUsage, Region
 
 
@@ -49,24 +48,23 @@ class Command(BaseCommand):
 
         operators = set()
 
-        schedule = get_schedule()
-        pygtfs.overwrite_feed(schedule, archive_name)  # this could take a while :(
-        feed = get_feed(schedule, archive_name)
+        feed = Feed.objects.create(name=collection)
+        feed.import_gtfs(archive_name)
 
-        for stop in feed.stops:
-            if stop.id[0] in '78' and not StopPoint.objects.filter(atco_code=stop.id).exists():
+        for stop in feed.stop_set.all():
+            if stop.stop_id[0] in '78' and not StopPoint.objects.filter(atco_code=stop.stop_id).exists():
                 StopPoint.objects.create(
-                    atco_code=stop.id,
-                    latlong=Point(float(stop.stop_lon), float(stop.stop_lat)),
-                    common_name=stop.stop_name[:48],
+                    atco_code=stop.stop_id,
+                    latlong=stop.point,
+                    common_name=stop.name[:48],
                     locality_centre=False,
-                    admin_area_id=stop.id[:3],
+                    admin_area_id=stop.stop_id[:3],
                     active=True
                 )
 
         routes = {}
-        for route in feed.routes:
-            route_id = '-'.join(route.id.split('-')[:-1])
+        for route in feed.route_set.all():
+            route_id = '-'.join(route.route_id.split('-')[:-1])
             routes[route_id] = route
 
         for route_id in routes:
@@ -80,10 +78,10 @@ class Command(BaseCommand):
 
             defaults = {
                 'region_id': 'LE',
-                'line_name': route.route_short_name,
-                'description': route.route_long_name or timetable.groupings[0].name,
+                'line_name': route.short_name,
+                'description': route.long_name or timetable.groupings[0].name,
                 'date': time.strftime('%Y-%m-%d'),
-                'mode': MODES.get(route.route_type, ''),
+                'mode': MODES.get(route.rtype, ''),
                 'current': True
             }
             service, created = Service.objects.update_or_create(
@@ -95,8 +93,8 @@ class Command(BaseCommand):
                 print(service)
 
             if route.agency:
-                operator = Operator.objects.get_or_create(name=route.agency.agency_name, defaults={
-                    'id': route.agency_id,
+                operator = Operator.objects.get_or_create(name=route.agency.name, defaults={
+                    'id': route.agency.agency_id,
                     'region_id': 'LE',
                     'vehicle_mode': defaults['mode']
                 })[0]

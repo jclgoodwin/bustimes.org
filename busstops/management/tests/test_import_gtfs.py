@@ -26,6 +26,7 @@ class ImpportGTFSTest(TestCase):
 
         command = import_ouibus_gtfs.Command()
         command.handle_zipfile(cls.feed_path, 'flixbus')
+        os.remove(cls.feed_path)
 
     def test_download_if_modified(self):
         path = 'download_if_modified.txt'
@@ -42,7 +43,7 @@ class ImpportGTFSTest(TestCase):
         os.remove(path)
 
     def test_stops(self):
-        stops = StopPoint.objects.all()
+        stops = StopPoint.objects.order_by('atco_code')
         self.assertEqual('flixbus-10', stops[0].atco_code)
 
         self.assertEqual('Turin, Torino (Lingotto)', stops[1].common_name)
@@ -56,11 +57,3 @@ class ImpportGTFSTest(TestCase):
 
         stops = services[0].stops.all()
         self.assertEqual(7, len(stops))
-
-    @classmethod
-    def tearDownClass(cls):
-        """Delete the GTFS feed zip file and SQLite database."""
-        super(ImpportGTFSTest, cls).tearDownClass()
-
-        os.remove(cls.feed_path)
-        os.remove(os.path.join(FIXTURES_DIR, 'gtfs.sqlite'))

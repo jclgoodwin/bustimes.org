@@ -42,15 +42,18 @@ class IrelandTest(TestCase):
         command = import_ie_gtfs.Command()
         command.handle_zipfile(cls.feed_path, 'mortons')
 
+        os.remove(cls.feed_path)
+
     def test_stops(self):
         stops = StopPoint.objects.all()
         self.assertEqual(len(stops), 30)
-        self.assertEqual(stops[0].common_name, 'Terenure Library')
-        self.assertEqual(stops[0].admin_area_id, 822)
+        stop = StopPoint.objects.get(atco_code='822000153')
+        self.assertEqual(stop.common_name, 'Terenure Library')
+        self.assertEqual(stop.admin_area_id, 822)
 
     def test_small_timetable(self):
         timetable = ie.get_timetables('mort-20-165-y11', date(2017, 6, 7))[0]
-        timetable.groupings.sort(key=lambda g: g.rows[0].times[0])
+        timetable.groupings.sort(key=lambda g: str(g), reverse=True)
         self.assertEqual(str(timetable.groupings[0]), 'Merrion, Merlyn Park - Citywest, Castle House')
         self.assertEqual(str(timetable.groupings[1]), 'Citywest, Castle House - Ballsbridge, Ailesbury Road')
         self.assertEqual(timetable.groupings[0].rows[0].times, [time(7, 45)])
@@ -74,11 +77,4 @@ class IrelandTest(TestCase):
         res = self.client.get(self.dublin.get_absolute_url())
         self.assertContains(res, 'Bus services in Dublin', html=True)
         self.assertContains(res, 'Merrion, Merlyn Park - Citywest, Castle House')
-
-    @classmethod
-    def tearDownClass(cls):
-        """Delete the GTFS feed zip file and SQLite database."""
-        super(IrelandTest, cls).tearDownClass()
-
-        os.remove(cls.feed_path)
-        os.remove(os.path.join(FIXTURES_DIR, 'gtfs.sqlite'))
+        self.assertContains(res, '/services/mortons-20-165-y11')
