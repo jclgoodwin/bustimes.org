@@ -1,6 +1,6 @@
 language: python
 python:
-  - "2.7"
+  # - "2.7"
   - "3.6"
 cache: pip
 services:
@@ -23,7 +23,8 @@ before_script:
   - ./manage.py migrate
 script:
   - ./manage.py collectstatic --noinput
-  - PYTHONWARNINGS=all coverage run manage.py test
+  # - PYTHONWARNINGS=all coverage run manage.py test
+  - coverage run manage.py test
   - flake8
   - sass-lint 'busstops/static/css/*' -v
   - eslint 'busstops/static/js/*.js'
