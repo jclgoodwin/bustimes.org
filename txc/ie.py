@@ -12,6 +12,7 @@ def handle_trips(trips, day):
 
     if not day:
         day = datetime.date.today()
+    midnight = datetime.datetime.combine(day, datetime.time())
 
     for trip in trips:
         previous = None
@@ -42,8 +43,8 @@ def handle_trips(trips, day):
                     if head:
                         head.prepend(row)
                     head = row
-            time = (stop.departure_time or stop.arrival_time)
-            time = datetime.datetime.strptime(str(time), '%H:%M:%S').time()
+            time = datetime.timedelta(seconds=(stop.departure_time or stop.arrival_time).seconds)
+            time = (midnight + time).time()
             row.times.append(time)
             row.part.timingstatus = None
             previous = row
