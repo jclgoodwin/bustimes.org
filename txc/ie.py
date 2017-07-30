@@ -1,6 +1,5 @@
 import datetime
 from django.db.models import Min
-from django.conf import settings
 from multigtfs.models import Feed, Trip
 from .ni import Grouping, Timetable, Row
 
@@ -100,14 +99,14 @@ def get_timetable(routes, day):
 
 def get_timetables(service_code, day):
     parts = service_code.split('-', 1)
-    path = parts[0]
-    for collection in settings.IE_COLLECTIONS:
-        if collection.startswith(path):
-            path = collection
-            break
+    collection = parts[0]
     route_id = parts[1] + '-'
+    if len(collection) == 10:
+        feed = Feed.objects.filter(name__startswith=collection)
+    else:
+        feed = Feed.objects.filter(name=collection)
     try:
-        feed = Feed.objects.filter(name=collection).latest('created')
+        feed = feed.latest('created')
     except Feed.DoesNotExist:
         return
     timetable = get_timetable(feed.route_set.filter(route_id__startswith=route_id), day)
