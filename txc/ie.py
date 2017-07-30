@@ -1,5 +1,5 @@
 import datetime
-from django.db.models import Min
+from django.db.models import Min, Q
 from multigtfs.models import Feed, Trip
 from .ni import Grouping, Timetable, Row
 
@@ -73,17 +73,12 @@ def get_timetable(routes, day):
 
     trips = Trip.objects.filter(route__in=routes)
     trips = trips.annotate(departure_time=Min('stoptime__departure_time')).order_by('departure_time')
+    if day:
+        trips = trips.filter(Q(service__servicedate__date=day, service__servicedate__exception_type=1) |
+                             Q(service__start_date__lte=day, service__end_date__gte=day,
+                               **{'service__' + day.strftime('%A').lower(): True}))
+        trips = trips.exclude(service__servicedate__date=day, service__servicedate__exception_type=2)
     for trip in trips.select_related('service'):
-        if day:
-            service = trip.service
-            exception = service.servicedate_set.filter(date=day).first()
-            if exception and exception.exception_type == 2:  # service has been removed for the specified date
-                continue
-            if exception is None:
-                if day < service.start_date or day > service.end_date:  # outside of dates
-                    continue
-                if not getattr(service, day.strftime('%A').lower()):  # day of week
-                    continue
         if trip.direction in trips_dict:
             trips_dict[trip.direction].append(trip)
         else:
