@@ -52,7 +52,7 @@ class IrelandTest(TestCase):
         self.assertEqual(stop.admin_area_id, 822)
 
     def test_small_timetable(self):
-        timetable = ie.get_timetables('mort-20-165-y11', date(2017, 6, 7))[0]
+        timetable = ie.get_timetables('mortons-20-165-y11', date(2017, 6, 7))[0]
         timetable.groupings.sort(key=lambda g: str(g), reverse=True)
         self.assertEqual(str(timetable.groupings[0]), 'Merrion, Merlyn Park - Citywest, Castle House')
         self.assertEqual(str(timetable.groupings[1]), 'Citywest, Castle House - Ballsbridge, Ailesbury Road')
@@ -71,7 +71,7 @@ class IrelandTest(TestCase):
 
     def test_no_timetable(self):
         self.assertIsNone(ie.get_timetables('mortons-poo-poo-pants', date(2017, 6, 7)))  # no matching routes
-        self.assertIsNone(ie.get_timetables('sdoherty-poo-poo-pants', date(2017, 6, 7)))  # no feed in database
+        self.assertIsNone(ie.get_timetables('1234567890-poo-poo-pants', date(2017, 6, 7)))  # no feed in database
 
     def test_admin_area(self):
         res = self.client.get(self.dublin.get_absolute_url())
