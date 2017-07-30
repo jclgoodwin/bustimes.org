@@ -43,7 +43,7 @@ def download_if_modified(path, url):
 class Command(BaseCommand):
     @transaction.atomic
     def handle_zipfile(self, archive_name, collection):
-        if len(collection) > 10
+        if len(collection) > 10:
             collection = collection[:10]
             Service.objects.filter(service_code__startswith=collection).delete()
         else:
