@@ -107,7 +107,7 @@ def get_timetables(service_code, day):
             break
     route_id = parts[1] + '-'
     try:
-        feed = Feed.objects.get(name=collection)
+        feed = Feed.objects.filter(name=collection).latest('created')
     except Feed.DoesNotExist:
         return
     timetable = get_timetable(feed.route_set.filter(route_id__startswith=route_id), day)
