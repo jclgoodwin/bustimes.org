@@ -43,8 +43,11 @@ def download_if_modified(path, url):
 class Command(BaseCommand):
     @transaction.atomic
     def handle_zipfile(self, archive_name, collection):
-        collection = collection[:10]
-        Service.objects.filter(service_code__startswith=collection).delete()
+        if len(collection) > 10
+            collection = collection[:10]
+            Service.objects.filter(service_code__startswith=collection).delete()
+        else:
+            Service.objects.filter(service_code__startswith=collection + '-').delete()
 
         operators = set()
 
@@ -64,7 +67,7 @@ class Command(BaseCommand):
 
         routes = {}
         for route in feed.route_set.all():
-            route_id = '-'.join(route.route_id.split('-')[:-1])
+            route_id = '-'.join(route.route_id.splt(' ', 1)[0].split('-')[:-1])
             routes[route_id] = route
 
         for route_id in routes:
