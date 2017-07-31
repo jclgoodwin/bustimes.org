@@ -1,6 +1,6 @@
 import datetime
-from django.db.models import Min, Q
-from multigtfs.models import Feed, Trip
+from django.db.models import Min, Q, Prefetch
+from multigtfs.models import Feed, Trip, StopTime
 from .ni import Grouping, Timetable, Row
 
 
@@ -17,7 +17,7 @@ def handle_trips(trips, day):
         previous = None
         visited_stops = set()
 
-        for stop in trip.stoptime_set.order_by('departure_time').select_related('stop'):
+        for stop in trip.stoptime_set.all():
             stop_id = stop.stop.stop_id
             if stop_id in rows_map:
                 if stop_id in visited_stops:
@@ -72,13 +72,15 @@ def get_timetable(routes, day):
     trips_dict = {}
 
     trips = Trip.objects.filter(route__in=routes)
-    trips = trips.annotate(departure_time=Min('stoptime__departure_time')).order_by('departure_time')
+    trips = trips.annotate(departure_time=Min('stoptime__trip_id')).order_by('departure_time')
     if day:
         trips = trips.filter(Q(service__servicedate__date=day, service__servicedate__exception_type=1) |
                              Q(service__start_date__lte=day, service__end_date__gte=day,
                                **{'service__' + day.strftime('%A').lower(): True}))
         trips = trips.exclude(service__servicedate__date=day, service__servicedate__exception_type=2)
-    for trip in trips.select_related('service'):
+    prefetch = Prefetch('stoptime_set', queryset=StopTime.objects.select_related('stop').order_by('stop_sequence'))
+    trips = trips.prefetch_related(prefetch).select_related('service')
+    for trip in trips:
         if trip.direction in trips_dict:
             trips_dict[trip.direction].append(trip)
         else:
