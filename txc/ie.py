@@ -19,6 +19,8 @@ def handle_trips(trips, day):
 
         for stop in trip.stoptime_set.all():
             stop_id = stop.stop.stop_id
+            if stop_id[:8] == 'FLIXBUS:':
+                stop_id = 'flixbus-' + stop_id[8:]
             if stop_id in rows_map:
                 if stop_id in visited_stops:
                     if (
@@ -97,7 +99,8 @@ def get_timetable(routes, day):
 def get_timetables(service_code, day):
     parts = service_code.split('-', 1)
     collection = parts[0]
-    route_id = parts[1] + '-'
+    route_id = parts[1]
+
     if len(collection) == 10:
         feed = Feed.objects.filter(name__startswith=collection)
     else:
@@ -106,6 +109,13 @@ def get_timetables(service_code, day):
         feed = feed.latest('created')
     except Feed.DoesNotExist:
         return
-    timetable = get_timetable(feed.route_set.filter(route_id__startswith=route_id), day)
+
+    if collection in {'flixbus', 'ouibus'}:
+        routes = feed.route_set.filter(route_id=collection.upper() + ':' + route_id)
+    else:
+        route_id += '-'
+        routes = feed.route_set.filter(route_id__startswith=route_id)
+
+    timetable = get_timetable(routes, day)
     if timetable:
         return [timetable]

@@ -126,7 +126,7 @@ def timetable_from_service(service, day=None):
             return ni.get_timetable(path, day)
         return []
 
-    if service.region_id in {'UL', 'LE', 'MU', 'CO'}:
+    if service.region_id in {'UL', 'LE', 'MU', 'CO', 'FR'}:
         return ie.get_timetables(service.service_code, day)
 
     cache_key = '{}{}'.format(service.pk, day).replace(' ', '')
