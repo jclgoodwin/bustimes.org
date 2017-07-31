@@ -71,8 +71,8 @@ def get_timetable(routes, day):
 
     trips_dict = {}
 
-    trips = Trip.objects.filter(route__in=routes)
-    trips = trips.annotate(departure_time=Min('stoptime__trip_id')).order_by('departure_time')
+    trips = Trip.objects.filter(route__in=routes).defer('geometry')
+    trips = trips.annotate(departure_time=Min('stoptime__departure_time')).order_by('departure_time')
     if day:
         trips = trips.filter(Q(service__servicedate__date=day, service__servicedate__exception_type=1) |
                              Q(service__start_date__lte=day, service__end_date__gte=day,

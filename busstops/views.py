@@ -63,7 +63,7 @@ def not_found(request, exception):
             and request.resolver_match.url_name == 'service-detail'):
         service_code = request.resolver_match.kwargs.get('pk')
         service = Service.objects.filter(service_code=service_code).defer('geometry').first()
-        localities = Locality.objects.filter(stoppoint__service=service).distinct()
+        localities = Locality.objects.filter(stoppoint__service=service).defer('latlong').distinct()
         context = {
             'service': service,
             'localities': localities,
@@ -314,7 +314,8 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
     model = StopPoint
     queryset = model.objects.select_related('admin_area', 'admin_area__region',
                                             'locality', 'locality__parent',
-                                            'locality__district').defer('osm')
+                                            'locality__district')
+    queryset = queryset.defer('osm', 'locality__latlong', 'locality__parent__latlong')
 
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
@@ -445,7 +446,7 @@ class ServiceDetailView(DetailView):
                     date = None
             if not date:
                 next_usage = Journey.objects.filter(service=self.object)
-                next_usage = next_usage.filter(datetime__gte=timezone.now()).order_by('datetime').first()
+                next_usage = next_usage.filter(datetime__date__gte=timezone.now().date()).order_by('datetime').first()
                 if next_usage:
                     date = next_usage.datetime.date()
             context['timetables'] = timetable_from_service(self.object, date)
