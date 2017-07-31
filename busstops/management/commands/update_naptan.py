@@ -1,5 +1,4 @@
 from __future__ import print_function
-import sys
 import json
 import requests
 from django.core.management.base import BaseCommand
@@ -35,6 +34,15 @@ class Command(BaseCommand):
 
         return (changed_regions, changed_areas)
 
+    @staticmethod
+    def get_data(areas=None):
+        params = {
+            'format': 'csv'
+        }
+        if areas:
+            params['LA'] = '|'.join(areas)
+        return requests.get('http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx', params, stream=True)
+
     def handle(self, *args, **options):
         new_response = requests.get('http://naptan.app.dft.gov.uk/GridMethods/%s' % JSON_NAME)
         new_rows = [row for row in new_response.json()['rows'] if row['cell'][0]]
@@ -44,23 +52,17 @@ class Command(BaseCommand):
 
         if changed_areas:
             print(changed_regions, changed_areas)
-            response = requests.get(
-                'http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx',
-                {
-                    'format': 'csv',
-                    'LA': '|'.join(changed_areas)
-                },
-                stream=True
-            )
+
+            response = self.get_data(changed_areas)
+
+            if response.headers.get('Content-Type') != 'application/zip':
+                print(response)
+                print(response.url)
+                print(response.content)
+                print(response.headers)
+                response = self.get_data()
 
             with open('naptan.zip', 'wb') as zip_file:
-                if response.headers.get('Content-Type') != 'application/zip':
-                    print(response)
-                    print(response.url)
-                    print(response.content)
-                    print(response.headers)
-                    sys.exit(1)
-
                 for chunk in response.iter_content(chunk_size=102400):
                     zip_file.write(chunk)
 

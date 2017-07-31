@@ -88,13 +88,20 @@ if compgen -G "*csv.zip" > /dev/null; then
         unzip -oq "$file" Stops.csv StopAreas.csv StopsInArea.csv
         echo " $file"
         echo "  Stops"
-        tr -d '\000' < Stops.csv | ../../manage.py import_stops
+        tr -d '\000' < Stops.csv | ../../manage.py import_stops && rm Stops.csv
         echo "  Stop areas"
-        tr -d '\000' < StopAreas.csv | ../../manage.py import_stop_areas
+        tr -d '\000' < StopAreas.csv | ../../manage.py import_stop_areas && rm StopAreas.csv
         echo "  Stops in area"
-        tr -d '\000' < StopsInArea.csv | ../../manage.py import_stops_in_area || continue
+        tr -d '\000' < StopsInArea.csv | ../../manage.py import_stops_in_area || continue && rm StopsInArea.csv
         rm "$file"
     done
+elif [ -f Stops.csv ]; then
+    echo "  Stops"
+    tr -d '\000' < Stops.csv | ../../manage.py import_stops && rm Stops.csv
+    echo "  Stop areas"
+    tr -d '\000' < StopAreas.csv | ../../manage.py import_stop_areas && rm StopAreas.csv
+    echo "  Stops in area"
+    tr -d '\000' < StopsInArea.csv | ../../manage.py import_stops_in_area && rm StopsInArea.csv
 fi
 
 
@@ -121,13 +128,13 @@ date=$(date +%Y-%m-%d)
 
 cd TNDS
 for region in "${REGIONS[@]}"; do
-    region_old=$(ls -l $region.zip)
-    wget -qN --user="$USERNAME" --password="$PASSWORD" ftp://ftp.tnds.basemap.co.uk/$region.zip
-    region_new=$(ls -l $region.zip)
+    region_old=$(ls -l "$region.zip")
+    wget -qN --user="$USERNAME" --password="$PASSWORD" "ftp://ftp.tnds.basemap.co.uk/$region.zip"
+    region_new=$(ls -l "$region.zip")
     if [[ $region_old != $region_new ]]; then
-        s3cmd put $region.zip s3://bustimes-backup/$region-$date.zip
+        s3cmd put "$region.zip" "s3://bustimes-backup/$region-$date.zip"
         # updated_services=1
-        ../../manage.py import_services $region.zip
+        ../../manage.py import_services "$region.zip"
     fi
 done
 # [ $updated_services ] && ../../manage.py update_index --remove
