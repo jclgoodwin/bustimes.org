@@ -13,7 +13,7 @@
             maxZoom: 18,
             maxBounds: [[60.85, -9.23], [49.84, 2.69]]
         }),
-        tileURL = 'https://bustimes.org.uk/styles/osm-bright/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
+        tileURL = 'https://bustimes.org.uk/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
         pin = L.icon({
             iconUrl:    '/static/pin.svg',
             iconSize:   [16, 22],
