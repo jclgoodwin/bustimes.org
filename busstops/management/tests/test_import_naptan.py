@@ -61,8 +61,9 @@ class ImportNaptanTest(TestCase):
         cls.locality_2 = Locality.objects.create(id='N0078801', name='Port Talbot', admin_area_id=34)
 
         command = import_stops.Command()
-        command.input = os.path.join(DIR, 'fixtures/Stops.csv')
-        command.handle()
+        for filename in ('Stops.csv', 'StopPoints.csv'):
+            command.input = os.path.join(DIR, 'fixtures', filename)
+            command.handle()
 
         cls.stop_area = import_stop_areas.Command().handle_row({
             'GridType': 'U',
@@ -133,6 +134,10 @@ class ImportNaptanTest(TestCase):
         locality_request = self.client.get('/localities/N0078801')
         self.assertContains(locality_request, 'Services')
         self.assertContains(locality_request, '44 - Port Talbot Circular')
+
+        irish_stop = StopPoint.objects.get(atco_code='7000B6310001')
+        self.assertEqual(irish_stop.common_name, 'Belcoo')
+        self.assertEqual(irish_stop.street, 'N16')
 
     def test_stop_areas(self):
         """Given a row, does handle_row return a StopArea object with the correct field values?
