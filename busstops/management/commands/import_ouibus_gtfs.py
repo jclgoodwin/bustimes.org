@@ -2,7 +2,7 @@ import time
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from multigtfs.models import Feed
-from txc.ie import get_timetable
+from txc.ie import get_grouping_name_part, get_timetable
 from ...models import Operator, Service, StopPoint, StopUsage, Region
 from .import_ie_gtfs import download_if_modified, MODES
 
@@ -16,15 +16,8 @@ class Command(BaseCommand):
         return '{}-{}'.format(collection, stop_id)
 
     @staticmethod
-    def get_stop_name(row):
-        stop_name = row.name
-        parts = stop_name.split(', ')
-        if len(parts) == 2:
-            if parts[1].lower().startswith(parts[0].lower()):
-                return parts[1]
-            if parts[1].lower() in parts[0].lower():
-                return parts[0]
-        return stop_name[:48]
+    def get_stop_name(stop_name):
+        return get_grouping_name_part(stop_name)[:48]
 
     @staticmethod
     def get_service_id(collection, row):
@@ -45,7 +38,7 @@ class Command(BaseCommand):
 
         for stop in feed.stop_set.all():
             StopPoint.objects.update_or_create(atco_code=cls.get_stop_id(collection, stop), defaults={
-                'common_name': cls.get_stop_name(stop),
+                'common_name': cls.get_stop_name(stop.name),
                 'naptan_code': stop.code,
                 'latlong': stop.point,
                 'locality_centre': False,

@@ -47,7 +47,7 @@ class ImpportGTFSTest(TestCase):
         self.assertEqual('flixbus-10', stops[0].atco_code)
 
         self.assertEqual('Turin, Torino (Lingotto)', stops[1].common_name)
-        self.assertEqual('Rust (Europa-Park), Rust (Europa park)', stops[3].common_name)
+        self.assertEqual('Rust (Europa park)', stops[3].common_name)
         self.assertEqual('Luxembourg Kirchberg', stops[9].common_name)
 
     def test_services(self):
@@ -56,4 +56,4 @@ class ImpportGTFSTest(TestCase):
         self.assertEqual(services[0].line_name, 'FlixBus')
 
         stops = services[0].stops.all()
-        self.assertEqual(7, len(stops))
+        self.assertEqual(18, len(stops))

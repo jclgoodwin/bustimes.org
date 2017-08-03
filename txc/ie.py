@@ -1,7 +1,23 @@
 import datetime
 from django.db.models import Min, Q, Prefetch
+from django.utils.text import slugify
 from multigtfs.models import Feed, Trip, StopTime
 from .ni import Grouping, Timetable, Row
+
+
+def get_grouping_name_part(stop_name):
+    parts = stop_name.split(', ')
+    if len(parts) == 2:
+        if slugify(parts[1]).startswith(slugify(parts[0])):
+            return parts[1]
+        if slugify(parts[1]) in slugify(parts[0]):
+            return parts[0]
+    return stop_name
+
+
+def get_grouping_name(grouping):
+    return '{} - {}'.format(get_grouping_name_part(grouping.rows[0].part.stop.name),
+                            get_grouping_name_part(grouping.rows[-1].part.stop.name))
 
 
 def handle_trips(trips, day):
@@ -83,16 +99,19 @@ def get_timetable(routes, day):
     prefetch = Prefetch('stoptime_set', queryset=StopTime.objects.select_related('stop').order_by('stop_sequence'))
     trips = trips.prefetch_related(prefetch).select_related('service')
     for trip in trips:
-        if trip.direction in trips_dict:
-            trips_dict[trip.direction].append(trip)
+        direction = trip.direction
+        if direction == '':
+            direction = trip.shape_id
+        if direction in trips_dict:
+            trips_dict[direction].append(trip)
         else:
-            trips_dict[trip.direction] = [trip]
+            trips_dict[direction] = [trip]
 
     t = Timetable()
     t.groupings = [handle_trips(trips_dict[direction], day) for direction in trips_dict]
     t.date = day
     for grouping in t.groupings:
-        grouping.name = grouping.rows[0].part.stop.name + ' - ' + grouping.rows[-1].part.stop.name
+        grouping.name = get_grouping_name(grouping)
     return t
 
 
