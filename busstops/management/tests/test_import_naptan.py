@@ -42,6 +42,11 @@ class UpdateNaptanTest(TestCase):
         self.assertEqual(self.command.get_diff(new_rows, None), (['S'], ['639']))
         self.assertEqual(self.command.get_diff(new_rows, new_rows), ([], []))
 
+    def test_handle(self):
+        with vcr.use_cassette(os.path.join(DIR, 'fixtures', 'naptan.yml')):
+            with self.assertRaises(TypeError):
+                self.command.handle()
+
 
 class ImportNaptanTest(TestCase):
     """Test the import_stops, import_stop_areas, import_stops_in_area and
