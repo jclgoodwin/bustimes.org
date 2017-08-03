@@ -53,6 +53,12 @@ class Row(object):
     def prepend(self, row):
         row.next = self
 
+    def is_before(self, row):
+        return row is not None and self.next is not None and (
+            self.next.part.stop.atco_code == row.part.stop.atco_code
+            or self.next.is_before(row)
+        )
+
     def __init__(self, atco_code, times):
         self.next = None
         self.atco_code = atco_code

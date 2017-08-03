@@ -22,7 +22,7 @@ def handle_trips(trips, day):
             if stop_id[:8] == 'FLIXBUS:':
                 stop_id = 'flixbus-' + stop_id[8:]
             if stop_id in rows_map:
-                if stop_id in visited_stops:
+                if stop_id in visited_stops or rows_map[stop_id].is_before(previous):
                     if (
                         previous and previous.next and previous.next.atco_code == stop_id
                         and len(previous.next.times) == i
