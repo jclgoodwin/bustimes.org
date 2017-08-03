@@ -41,7 +41,7 @@ MIDDLEWARE = [
     'busstops.middleware.not_found_redirect_middleware',
 ]
 
-if DEBUG and 'runserver' in sys.argv and not bool(os.environ.get('TRAVIS')):
+if DEBUG and 'runserver' in sys.argv:
     INTERNAL_IPS = ['127.0.0.1']
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
@@ -63,8 +63,7 @@ HAYSTACK_IDENTIFIER_METHOD = 'buses.utils.get_identifier'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.environ.get('DB_NAME', 'bustimes'),
-        'PORT': os.environ.get('DB_PORT')
+        'NAME': 'bustimes',
     }
 }
 

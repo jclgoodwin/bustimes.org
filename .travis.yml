@@ -8,6 +8,8 @@ services:
   - postgresql
 addons:
   postgresql: "9.4"
+env:
+ - DEBUG=True
 before_install:
   - rvm install 2.2
   - nvm install node
