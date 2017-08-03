@@ -10,7 +10,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ['SECRET_KEY']
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'bustimes.org.uk\n127.0.0.1\nlocalhost').split()
 
-DEBUG = bool(os.environ.get('DEBUG', False))
+DEBUG = bool(os.environ.get('DEBUG', False)) or 'test' in sys.argv
 
 SERVER_EMAIL = 'contact@bustimes.org.uk'
 
@@ -172,10 +172,11 @@ TIME_ZONE = 'Europe/London'
 USE_TZ = True
 USE_I18N = False
 
-RAVEN_CONFIG = {
-    'dsn': os.environ.get('SENTRY_DSN'),
-    'release': raven.fetch_git_sha(BASE_DIR)
-}
+if not DEBUG:
+    RAVEN_CONFIG = {
+        'dsn': os.environ.get('SENTRY_DSN'),
+        'release': raven.fetch_git_sha(BASE_DIR)
+    }
 
 STREETVIEW_KEY = os.environ.get('STREETVIEW_KEY')
 STREETVIEW_SECRET = os.environ.get('STREETVIEW_SECRET')
