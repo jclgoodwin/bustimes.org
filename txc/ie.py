@@ -129,8 +129,10 @@ def get_timetables(service_code, day):
     except Feed.DoesNotExist:
         return
 
-    if collection in {'flixbus', 'ouibus'}:
+    if collection == 'flixbus':
         routes = feed.route_set.filter(route_id=collection.upper() + ':' + route_id)
+    elif collection == 'ouibus':
+        routes = feed.route_set.filter(route_id=route_id)
     else:
         route_id += '-'
         routes = feed.route_set.filter(route_id__startswith=route_id)
