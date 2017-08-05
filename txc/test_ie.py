@@ -1,9 +1,10 @@
 import os
 import zipfile
+import vcr
 from datetime import date, time
 from django.test import TestCase, override_settings
 from django.conf import settings
-from busstops.management.commands import import_ie_gtfs
+from django.core.management import call_command
 from busstops.models import Region, AdminArea, StopPoint
 from . import ie
 
@@ -11,7 +12,7 @@ from . import ie
 FIXTURES_DIR = os.path.join(settings.BASE_DIR, 'busstops', 'management', 'tests', 'fixtures')
 
 
-@override_settings(DATA_DIR=FIXTURES_DIR)
+@override_settings(DATA_DIR=FIXTURES_DIR, IE_COLLECTIONS=['mortons'])
 class IrelandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -39,8 +40,8 @@ class IrelandTest(TestCase):
             for item in os.listdir(cls.dir_path):
                 open_zipfile.write(os.path.join(cls.dir_path, item), item)
 
-        command = import_ie_gtfs.Command()
-        command.handle_zipfile(cls.feed_path, 'mortons')
+        with vcr.use_cassette(cls.dir_path + '.yaml'):
+            call_command('import_ie_gtfs', '--force')
 
         os.remove(cls.feed_path)
 
