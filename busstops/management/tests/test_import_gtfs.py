@@ -45,17 +45,20 @@ class ImpportGTFSTest(TestCase):
 
         os.remove(path)
 
-    def test_flixbus_stops(self):
-        self.assertEqual(11, StopPoint.objects.all().count())
+    def test_stops(self):
+        self.assertEqual(14, StopPoint.objects.all().count())
 
         for atco_code, name, desc in (
-            ('10', 'Munich central bus station', 'Arnulfstraße 21'),
-            ('10438', 'Turin, Torino (Lingotto)', 'Via Mario Pannunzio'),
-            ('15', 'Rust (Europa park)', 'Rheinweg'),
-            ('93', 'Luxembourg Kirchberg', '4 Rue Alphonse Weicker'),
-            ('11288', 'Plitvice Lakes (Plitvička Jezera)', 'D1 23')
+            ('flixbus-10', 'Munich central bus station', 'Arnulfstraße 21'),
+            ('flixbus-10438', 'Turin, Torino (Lingotto)', 'Via Mario Pannunzio'),
+            ('flixbus-15', 'Rust (Europa park)', 'Rheinweg'),
+            ('flixbus-93', 'Luxembourg Kirchberg', '4 Rue Alphonse Weicker'),
+            ('flixbus-11288', 'Plitvice Lakes (Plitvička Jezera)', 'D1 23'),
+            ('ouibus-1', 'Paris Bercy (centre ville)', ''),
+            ('ouibus-82', 'Parc Astérix', ''),
+            ('ouibus-11', 'Lille', ''),
         ):
-            stop = StopPoint.objects.get(atco_code='flixbus-' + atco_code)
+            stop = StopPoint.objects.get(atco_code=atco_code)
             self.assertEqual(stop.common_name, name)
             self.assertEqual(stop.crossing, desc)
 

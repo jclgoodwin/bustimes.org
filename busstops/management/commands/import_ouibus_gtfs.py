@@ -116,7 +116,7 @@ class Command(BaseCommand):
 
         for collection, url in (
             ('flixbus', 'http://data.ndovloket.nl/flixbus/flixbus-eu.zip'),
-            ('flixbus', 'https://api.idbus.com/gtfs.zip')
+            ('ouibus', 'https://api.idbus.com/gtfs.zip')
         ):
             path = os.path.join(settings.DATA_DIR, collection) + '.zip'
             if download_if_modified(path, url) or force:

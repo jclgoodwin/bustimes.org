@@ -1,0 +1,4 @@
+stop_id,stop_code,stop_name,stop_desc,stop_lat,stop_lon,stop_timezone,wheelchair_boarding,stop_url
+1,XPB,Paris Bercy (centre ville),"City centre Paris-Bercy Station 48 bis Boulevard de Bercy, 75012 Paris. In the SNCF train station, follow the signs ""Cars grandes lignes"" until you come to the OUIBUS boarding bays located near the ""Auto-Train"" service and the car-park.",48.838424,2.382411,Europe/Paris,1,http://www.ouibus.com/paris-bercy-station?utm_source=gtfs&utm_medium=link_station&utm_campaign=gtfs
+82,XAX,Parc Astérix,,49.136899,2.570402,Europe/Paris,1,http://www.ouibus.com/bus-stations?utm_source=gtfs&utm_medium=link_station&utm_campaign=gtfs
+11,XDB,Lille,"Lille Europe Station. Boulevard de Leeds, 59800 Lille. In the SNCF train station, follow the signs ""Cars grandes lignes"", going out through the Parc Matisse exit.",50.638756,3.076675,Europe/Paris,1,http://www.ouibus.com/gare-lille-europe?utm_source=gtfs&utm_medium=link_station&utm_campaign=gtfs
