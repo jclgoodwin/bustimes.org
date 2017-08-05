@@ -1,7 +1,8 @@
 import time
+from datetime import datetime
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from multigtfs.models import Feed
+from multigtfs.models import Feed, ServiceDate
 from txc.ie import get_grouping_name_part, get_timetable
 from ...models import Operator, Service, StopPoint, StopUsage, Region
 from .import_ie_gtfs import download_if_modified, MODES
@@ -9,8 +10,7 @@ from .import_ie_gtfs import download_if_modified, MODES
 
 class Command(BaseCommand):
     @staticmethod
-    def get_stop_id(collection, stop):
-        stop_id = stop.stop_id
+    def get_stop_id(collection, stop_id):
         if stop_id.lower().startswith(collection.lower() + ':'):
             stop_id = stop_id.split(':')[1]
         return '{}-{}'.format(collection, stop_id)
@@ -20,8 +20,7 @@ class Command(BaseCommand):
         return get_grouping_name_part(stop_name)[:48]
 
     @staticmethod
-    def get_service_id(collection, row):
-        service_id = row.route_id
+    def get_service_id(collection, service_id):
         if service_id.lower().startswith(collection.lower() + ':'):
             service_id = service_id.split(':')[1]
         return '{}-{}'.format(collection, service_id)
@@ -34,10 +33,11 @@ class Command(BaseCommand):
         Feed.objects.filter(name=collection).delete()
 
         feed = Feed.objects.create(name=collection)
+
         feed.import_gtfs(archive_name)
 
         for stop in feed.stop_set.all():
-            StopPoint.objects.update_or_create(atco_code=cls.get_stop_id(collection, stop), defaults={
+            StopPoint.objects.update_or_create(atco_code=cls.get_stop_id(collection, stop.stop_id), defaults={
                 'common_name': cls.get_stop_name(stop.name),
                 'naptan_code': stop.code,
                 'latlong': stop.point,
@@ -45,10 +45,16 @@ class Command(BaseCommand):
                 'active': True
             })
 
-        for route in feed.route_set.all():
-            service_id = cls.get_service_id(collection, route)
+        today = datetime.now().date()
 
-            timetable = get_timetable([route], None)
+        for route in feed.route_set.select_related('agency'):
+            start_date = ServiceDate.objects.filter(service__trip__route=route).order_by('-date').first()
+            if start_date and start_date.date < today:
+                continue
+
+            service_id = cls.get_service_id(collection, route.route_id)
+
+            timetable = get_timetable([route], collection=collection)
 
             defaults = {
                 'region_id': 'FR',
@@ -56,8 +62,11 @@ class Command(BaseCommand):
                 'description': route.long_name,
                 'date': time.strftime('%Y-%m-%d'),
                 'mode': MODES[route.rtype],
-                'current': True
+                'current': True,
+                'outbound_description': timetable.groupings[0].name,
             }
+            if len(timetable.groupings) > 1:
+                defaults['inbound_description'] = timetable.groupings[1]
 
             service, created = Service.objects.update_or_create(
                 service_code=service_id,
@@ -74,24 +83,21 @@ class Command(BaseCommand):
             })[0]
             service.operator.add(operator)
 
-            direction = 'Outbound'
             stops = []
+            direction = 'Outbound'
             for grouping in timetable.groupings:
                 for i, row in enumerate(grouping.rows):
-                    stop_id = row.part.stop.atco_code
-                    if stop_id.lower().startswith(collection + ':'):
-                        stop_id = collection + '-' + stop_id.split(':', 1)[1]
-                    if StopPoint.objects.filter(atco_code=stop_id).exists():
+                    if StopPoint.objects.filter(atco_code=row.part.stop.atco_code).exists():
                         stops.append(
                             StopUsage(
                                 service=service,
-                                stop_id=stop_id,
+                                stop_id=row.part.stop.atco_code,
                                 order=i,
                                 direction=direction
                             )
                         )
                     else:
-                        print(stop_id)
+                        print('stoppoint', row.part.stop.atco_code, 'no exist')
                 direction = 'Inbound'
             StopUsage.objects.bulk_create(stops)
 
