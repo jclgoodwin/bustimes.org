@@ -43,12 +43,18 @@ class ImpportGTFSTest(TestCase):
         os.remove(path)
 
     def test_stops(self):
-        stops = StopPoint.objects.order_by('atco_code')
-        self.assertEqual('flixbus-10', stops[0].atco_code)
+        self.assertEqual(11, StopPoint.objects.all().count())
 
-        self.assertEqual('Turin, Torino (Lingotto)', stops[1].common_name)
-        self.assertEqual('Rust (Europa park)', stops[3].common_name)
-        self.assertEqual('Luxembourg Kirchberg', stops[9].common_name)
+        for atco_code, name, desc in (
+            ('10', 'Munich central bus station', 'Arnulfstraße 21'),
+            ('10438', 'Turin, Torino (Lingotto)', 'Via Mario Pannunzio'),
+            ('15', 'Rust (Europa park)', 'Rheinweg'),
+            ('93', 'Luxembourg Kirchberg', '4 Rue Alphonse Weicker'),
+            ('11288', 'Plitvice Lakes (Plitvička Jezera)', 'D1 23')
+        ):
+            stop = StopPoint.objects.get(atco_code='flixbus-' + atco_code)
+            self.assertEqual(stop.common_name, name)
+            self.assertEqual(stop.crossing, desc)
 
     def test_services(self):
         services = Service.objects.all()

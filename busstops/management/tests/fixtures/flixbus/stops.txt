@@ -9,3 +9,4 @@ FLIXBUS:31,,"Titisee-Neustadt, Titisee Badeparadies","Am Badeparadies 1, 79822 T
 FLIXBUS:1414,,"Überlingen, Überlingen","Hizlerstraße, 88662 Überlingen, Germany",47.76928,9.16328,,,0,,Europe/Berlin,2,
 FLIXBUS:3218,,"Hagnau, Hagnau","Hauptstraße, 88709 Hagnau am Bodensee, Germany",47.67762,9.31430,,,0,,Europe/Berlin,2,
 FLIXBUS:3208,,"Immenstaad, Immenstaad","Hauptstraße, 88090 Immenstaad am Bodensee, Germany",47.66569,9.36702,,,0,,Europe/Berlin,2,
+FLIXBUS:11288,,"Plitvice Lakes (Plitvička Jezera), Plitvička Jezera","D1 23, 53231 Plitvička Jezera, Croatia",44.88186,15.62342,,,0,,Europe/Zagreb,2,

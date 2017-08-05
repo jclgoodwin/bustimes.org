@@ -37,13 +37,16 @@ class Command(BaseCommand):
         feed.import_gtfs(archive_name)
 
         for stop in feed.stop_set.all():
-            StopPoint.objects.update_or_create(atco_code=cls.get_stop_id(collection, stop.stop_id), defaults={
+            defaults = {
                 'common_name': cls.get_stop_name(stop.name),
                 'naptan_code': stop.code,
                 'latlong': stop.point,
                 'locality_centre': False,
-                'active': True
-            })
+                'active': True,
+            }
+            if collection == 'flixbus':
+                defaults['crossing'] = stop.desc.split(',')[0]
+            StopPoint.objects.update_or_create(atco_code=cls.get_stop_id(collection, stop.stop_id), defaults=defaults)
 
         today = datetime.now().date()
 
