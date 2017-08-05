@@ -1,7 +1,9 @@
+import os
 import time
 from datetime import datetime
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from django.conf import settings
 from multigtfs.models import Feed, ServiceDate
 from txc.ie import get_grouping_name_part, get_timetable
 from ...models import Operator, Service, StopPoint, StopUsage, Region
@@ -112,7 +114,10 @@ class Command(BaseCommand):
 
         force = options['force']
 
-        if download_if_modified('flixbus-eu.zip', 'http://data.ndovloket.nl/flixbus/flixbus-eu.zip') or force:
-            self.handle_zipfile('flixbus-eu.zip', 'flixbus')
-        if download_if_modified('ouibus.zip', 'https://api.idbus.com/gtfs.zip') or force:
-            self.handle_zipfile('ouibus.zip', 'ouibus')
+        for collection, url in (
+            ('flixbus', 'http://data.ndovloket.nl/flixbus/flixbus-eu.zip'),
+            ('flixbus', 'https://api.idbus.com/gtfs.zip')
+        ):
+            path = os.path.join(settings.DATA_DIR, collection) + '.zip'
+            if download_if_modified(path, url) or force:
+                self.handle_zipfile(path, collection)

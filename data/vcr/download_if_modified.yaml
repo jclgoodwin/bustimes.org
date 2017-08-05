@@ -5,28 +5,30 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.18.1]
-      if-modified-since: ['Mon Jun 19 18:20:57 2017']
+      User-Agent: [python-requests/2.18.3]
     method: GET
     uri: https://bustimes.org.uk/static/js/global.js
   response:
     body:
       string: !!binary |
-        H4sIAAAAAAAAA32PsW7CMBCG9zzFdcEBISdjlYqp6lbmzq59BFPHh84mGVDevb4I2i70FuvO+j79
-        f7M5peBjhk+mKSF3kPmCm6aq/AHqaEbfm0ysy9foLX4QfyHDagWBrMmeoj5SyvC024GSU5C1e27b
-        Vq3hWkGZBxLN2PuUkWvV3OzTYtenpLY3Vvhk6YwdqEYtunn9sryTj44mbZx7GzHmd3FFsQUyrggO
-        l2glYH3PIa5/SmlLMTOFgPyXEOpRg19Cn0vtPaZkeqyvytIwmOhUSZ3ZD6/GHjGpe3JRzj9d5uob
-        3Dz9aIQBAAA=
+        H4sIAAAAAAAAA3WOMQ+CMBCFf4sLVxJTGA2Gybjp7Ny0B1RLj9xVGAj/3TSaODHc8O69L/l8p6KZ
+        fW8SsRbk2Vt8EL+QiyKQNclT1ANJOrQt5EfIoTnVdQ3luoNqxt5LQlZQ/YrlWzwFjqtYmrCBCrby
+        vPjoaNHGueuMMd0yFjMYyDg4du9os4IqV79rqi3FxBQC8r7Sf6MnknRHEdOjWsHSOJrooIHEfrwY
+        O6Bksy3fB9XVCDkfAQAA
     headers:
+      CF-Cache-Status: [MISS]
+      CF-RAY: [389d07376e8f3494-LHR]
       Cache-Control: [max-age=2592000]
       Connection: [keep-alive]
       Content-Encoding: [gzip]
       Content-Type: [application/javascript]
-      Date: ['Mon, 19 Jun 2017 17:22:43 GMT']
-      ETag: [W/"58ea825b-184"]
-      Expires: ['Wed, 19 Jul 2017 17:22:43 GMT']
-      Last-Modified: ['Sun, 09 Apr 2017 18:50:03 GMT']
-      Server: [nginx]
+      Date: ['Sat, 05 Aug 2017 22:00:15 GMT']
+      ETag: [W/"5981d872-185"]
+      Expires: ['Mon, 04 Sep 2017 22:00:15 GMT']
+      Last-Modified: ['Wed, 02 Aug 2017 13:49:38 GMT']
+      Server: [cloudflare-nginx]
+      Set-Cookie: ['__cfduid=db4999898278285c0721b31c5190b34f61501970415; expires=Sun,
+          05-Aug-18 22:00:15 GMT; path=/; domain=.bustimes.org.uk; HttpOnly']
       Vary: [Accept-Encoding]
       access-control-allow-origin: ['http://webcache.googleusercontent.com,http://localhost:8000']
     status: {code: 200, message: OK}
@@ -36,29 +38,24 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.18.1]
-      if-modified-since: ['Mon Jun 19 18:20:57 2017']
-    method: GET
+      Cookie: [__cfduid=db4999898278285c0721b31c5190b34f61501970415]
+      User-Agent: [python-requests/2.18.3]
+      if-modified-since: ['Sat Aug  5 23:00:14 2017']
+    method: HEAD
     uri: https://bustimes.org.uk/static/js/global.js
   response:
-    body:
-      string: !!binary |
-        H4sIAAAAAAAAA32PsW7CMBCG9zzFdcEBISdjlYqp6lbmzq59BFPHh84mGVDevb4I2i70FuvO+j79
-        f7M5peBjhk+mKSF3kPmCm6aq/AHqaEbfm0ysy9foLX4QfyHDagWBrMmeoj5SyvC024GSU5C1e27b
-        Vq3hWkGZBxLN2PuUkWvV3OzTYtenpLY3Vvhk6YwdqEYtunn9sryTj44mbZx7GzHmd3FFsQUyrggO
-        l2glYH3PIa5/SmlLMTOFgPyXEOpRg19Cn0vtPaZkeqyvytIwmOhUSZ3ZD6/GHjGpe3JRzj9d5uob
-        3Dz9aIQBAAA=
+    body: {string: ''}
     headers:
+      CF-Cache-Status: [HIT]
+      CF-RAY: [389d07382efb3494-LHR]
       Cache-Control: [max-age=2592000]
       Connection: [keep-alive]
-      Content-Encoding: [gzip]
-      Content-Type: [application/javascript]
-      Date: ['Mon, 19 Jun 2017 17:22:43 GMT']
-      ETag: [W/"58ea825b-184"]
-      Expires: ['Wed, 19 Jul 2017 17:22:43 GMT']
-      Last-Modified: ['Sun, 09 Apr 2017 18:50:03 GMT']
-      Server: [nginx]
+      Date: ['Sat, 05 Aug 2017 22:00:15 GMT']
+      ETag: ['"5981d872-185"']
+      Expires: ['Mon, 04 Sep 2017 22:00:15 GMT']
+      Last-Modified: ['Wed, 02 Aug 2017 13:49:38 GMT']
+      Server: [cloudflare-nginx]
       Vary: [Accept-Encoding]
       access-control-allow-origin: ['http://webcache.googleusercontent.com,http://localhost:8000']
-    status: {code: 200, message: OK}
+    status: {code: 304, message: Not Modified}
 version: 1

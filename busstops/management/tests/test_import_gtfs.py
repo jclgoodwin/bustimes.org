@@ -5,8 +5,9 @@ import os
 import zipfile
 import vcr
 from django.test import TestCase, override_settings
-from ...models import Region, StopPoint, Service
-from ..commands import import_ouibus_gtfs, import_ie_gtfs
+from django.core.management import call_command
+from ...models import StopPoint, Service
+from ..commands import import_ie_gtfs
 
 
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
@@ -16,17 +17,19 @@ FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixture
 class ImpportGTFSTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.france = Region.objects.create(id='FR', name='France')
+        for collection in ('ouibus', 'flixbus'):
+            dir_path = os.path.join(FIXTURES_DIR, collection)
+            feed_path = dir_path + '.zip'
+            with zipfile.ZipFile(feed_path, 'a') as open_zipfile:
+                for item in os.listdir(dir_path):
+                    open_zipfile.write(os.path.join(dir_path, item), item)
 
-        cls.dir_path = os.path.join(FIXTURES_DIR, 'flixbus')
-        cls.feed_path = cls.dir_path + '.zip'
-        with zipfile.ZipFile(cls.feed_path, 'a') as open_zipfile:
-            for item in os.listdir(cls.dir_path):
-                open_zipfile.write(os.path.join(cls.dir_path, item), item)
+        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'ouibus_gtfs.yaml')):
+            call_command('import_ouibus_gtfs', '--force')
 
-        command = import_ouibus_gtfs.Command()
-        command.handle_zipfile(cls.feed_path, 'flixbus')
-        os.remove(cls.feed_path)
+        for collection in ('ouibus', 'flixbus'):
+            path = os.path.join(FIXTURES_DIR, collection) + '.zip'
+            os.remove(path)
 
     def test_download_if_modified(self):
         path = 'download_if_modified.txt'
@@ -42,7 +45,7 @@ class ImpportGTFSTest(TestCase):
 
         os.remove(path)
 
-    def test_stops(self):
+    def test_flixbus_stops(self):
         self.assertEqual(11, StopPoint.objects.all().count())
 
         for atco_code, name, desc in (
@@ -56,7 +59,7 @@ class ImpportGTFSTest(TestCase):
             self.assertEqual(stop.common_name, name)
             self.assertEqual(stop.crossing, desc)
 
-    def test_services(self):
+    def test_flixbus_services(self):
         services = Service.objects.all()
         self.assertEqual(services[0].service_code, 'flixbus-001')
         self.assertEqual(services[0].line_name, 'FlixBus')

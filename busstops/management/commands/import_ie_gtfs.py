@@ -31,11 +31,10 @@ def download_if_modified(path, url):
         headers = {
             'if-modified-since': time.asctime(last_modified)
         }
-        response = SESSION.get(url, headers=headers, stream=True)
+        response = SESSION.head(url, headers=headers, stream=True)
         if response.status_code == 304 or parsedate(response.headers['last-modified']) <= last_modified:
             return False  # not modified
-    else:
-        response = SESSION.get(url, stream=True)
+    response = SESSION.get(url, stream=True)
     write_zip_file(path, response)
     return True
 
