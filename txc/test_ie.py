@@ -76,5 +76,4 @@ class IrelandTest(TestCase):
     def test_admin_area(self):
         res = self.client.get(self.dublin.get_absolute_url())
         self.assertContains(res, 'Bus services in Dublin', html=True)
-        self.assertContains(res, 'Merrion, Merlyn Park - Citywest, Castle House')
         self.assertContains(res, '/services/mortons-20-165-y11')
