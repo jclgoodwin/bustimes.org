@@ -1,0 +1,4 @@
+﻿service_id,date,exception_type
+"Mo-Fr","20171225","2"
+"Mo-Fr#1","20171225","2"
+"Mo-Fr+Mo-Fr","20171225","2"

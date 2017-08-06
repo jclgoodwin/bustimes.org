@@ -91,9 +91,6 @@ class Command(BaseCommand):
                 defaults=defaults
             )
 
-            if not created:
-                print(service)
-
             if route.agency:
                 operator = Operator.objects.get_or_create(name=route.agency.name, defaults={
                     'id': route.agency.agency_id,

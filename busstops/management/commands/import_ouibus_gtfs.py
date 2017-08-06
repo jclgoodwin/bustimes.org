@@ -92,17 +92,14 @@ class Command(BaseCommand):
             direction = 'Outbound'
             for grouping in timetable.groupings:
                 for i, row in enumerate(grouping.rows):
-                    if StopPoint.objects.filter(atco_code=row.part.stop.atco_code).exists():
-                        stops.append(
-                            StopUsage(
-                                service=service,
-                                stop_id=row.part.stop.atco_code,
-                                order=i,
-                                direction=direction
-                            )
+                    stops.append(
+                        StopUsage(
+                            service=service,
+                            stop_id=row.part.stop.atco_code,
+                            order=i,
+                            direction=direction
                         )
-                    else:
-                        print('stoppoint', row.part.stop.atco_code, 'no exist')
+                    )
                 direction = 'Inbound'
             StopUsage.objects.bulk_create(stops)
 

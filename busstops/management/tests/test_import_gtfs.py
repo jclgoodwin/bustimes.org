@@ -62,10 +62,15 @@ class ImpportGTFSTest(TestCase):
             self.assertEqual(stop.common_name, name)
             self.assertEqual(stop.crossing, desc)
 
-    def test_flixbus_services(self):
+    def test_services(self):
         services = Service.objects.all()
         self.assertEqual(services[0].service_code, 'flixbus-001')
         self.assertEqual(services[0].line_name, 'FlixBus')
+        self.assertEqual(services[0].description, 'Freiburg - München')
+
+        self.assertEqual(services[1].service_code, 'ouibus-1')
+        self.assertEqual(services[1].line_name, 'Ouibus')
+        self.assertEqual(services[1].description, 'Paris Bercy (centre ville) - Lille')
 
         stops = services[0].stops.all()
         self.assertEqual(18, len(stops))
