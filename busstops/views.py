@@ -445,7 +445,7 @@ class ServiceDetailView(DetailView):
                 except ValueError:
                     date = None
             if not date:
-                today = timezone.now.date()
+                today = timezone.now().date()
                 date = ServiceDate.objects.filter(service=self.object, date__gte=today).order_by('date').first()
                 if date:
                     date = date.date
