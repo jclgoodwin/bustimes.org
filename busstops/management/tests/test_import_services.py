@@ -4,12 +4,13 @@ import os
 import xml.etree.cElementTree as ET
 import zipfile
 import warnings
+from datetime import date, time
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
 from django.core.management import call_command
 from ...models import Operator, Service, Region, StopPoint, Journey, StopUsageUsage
-from ..commands import import_services
+from ..commands import import_services, generate_departures
 
 
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
@@ -373,6 +374,16 @@ class ImportServicesTest(TestCase):
         stop_usage_usage = StopUsageUsage.objects.first()
         self.assertEqual('2017-01-01 02:20:00+00:00', str(stop_usage_usage.datetime))
         self.assertEqual('Kingston District Centre (o/s) 2017-01-01 02:20:00+00:00', str(stop_usage_usage))
+
+        self.assertEqual(0, Journey.objects.filter(service__region='S').count())
+        self.assertEqual(0, Journey.objects.filter(service__region='EA').count())
+
+    def test_combine_date_time(self):
+        combine_date_time = generate_departures.combine_date_time
+        self.assertEqual(str(combine_date_time(date(2017, 3, 26), time(0, 10))), '2017-03-26 00:10:00+00:00')
+        # Clocks go forward 1 hour at 1am. Not sure what buses *actually* do, but pretending
+        self.assertEqual(str(combine_date_time(date(2017, 3, 26), time(1, 10))), '2017-03-26 02:10:00+01:00')
+        self.assertEqual(str(combine_date_time(date(2017, 3, 27), time(0, 10))), '2017-03-27 00:10:00+01:00')
 
     @classmethod
     def tearDownClass(cls):
