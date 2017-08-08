@@ -18,7 +18,7 @@ from django.core.mail import EmailMessage
 from departures import live
 from .utils import format_gbp, viglink, timetable_from_service, get_files_from_zipfile
 from .models import (Region, StopPoint, AdminArea, Locality, District,
-                     Operator, Service, Note, Journey)
+                     Operator, Service, Note, Journey, ServiceDate)
 from .forms import ContactForm
 
 
@@ -444,6 +444,10 @@ class ServiceDetailView(DetailView):
                     date = datetime.strptime(date, '%Y-%m-%d').date()
                 except ValueError:
                     date = None
+            if not date:
+                date = ServiceDate.objects.filter(service=service, date__gte=timezone.now.date()).order_by('date').first()
+                if date:
+                    date = date.date
             if not date:
                 next_usage = Journey.objects.filter(service=self.object)
                 next_usage = next_usage.filter(datetime__date__gte=timezone.now().date()).order_by('datetime').first()

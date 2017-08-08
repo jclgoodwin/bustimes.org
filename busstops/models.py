@@ -492,6 +492,14 @@ class Service(models.Model):
                 or any(o.pk in ('MEGA', 'MBGD', 'SCMG') for o in self.operator.all()))
 
 
+class ServiceDate(models.Model):
+    service = models.ForeignKey('Service', models.CASCADE)
+    date = models.DateField()
+
+    class Meta():
+        unique_together = ('service', 'date')
+
+
 @python_2_unicode_compatible
 class Note(models.Model):
     """A note about an error in the timetable, the operator going bust, or something"""
