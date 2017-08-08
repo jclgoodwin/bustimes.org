@@ -21,14 +21,11 @@ class Command(ImportFromCSVCommand):
             scotch = cls.scotch_operators.get(row['SC'])
             if scotch and len(row['NOCCODE']) == 4:
                 operator = Operator.objects.filter(pk=row['NOCCODE']).first()
-                if not operator:
-                    return
-                operator.name = scotch['name']
-                operator.address = scotch['address']
-                operator.url = scotch['url']
-                operator.email = scotch['email']
-                operator.phone = scotch['phone']
-                operator.save()
+                if operator:
+                    for key in ('name', 'address', 'url', 'email', 'phone'):
+                        if scotch[key]:
+                            setattr(operator, key, scotch[key])
+                    operator.save()
 
     @staticmethod
     def process_rows(rows):

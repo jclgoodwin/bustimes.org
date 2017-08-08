@@ -7,3 +7,4 @@ NWOT,"Oakwood Travel",,"Catch22Bus Ltd",PC1067540,SW,Bus,"Catch22Bus Ltd,",NoGro
 TVSR,Travelsure,Travelsure,"Barrie Cuthbert Patterson",PB0002360,SW,Bus,"Barrie Cuthbert Patterson,",NoGroup_BusMode,,,,,,,,,,,,,,,,,,,,,,,"2013-08-30 00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,"2015-09-25 00:00:00","Licence ceased for Amy Armstrong"
 SQZY,SqueezyJet,SqueezyJet,SqueezyJet,,,Airline,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ACAH,AirCoach,AirCoach,"Aircoach Limited",PM1106814,SC,Coach,"Aircoach Limited,",NoGroup_CoachMode,,,,,,,,ACA,ACH,,,,,,,,,,,,,,"2013-11-05 00:00:00","John Prince","Assumed to be PM1106814, owner changed from EA and local code added, all for Scotland",OK,,
+BLUE,"Blue Bus","Blue Bus","Blue Bus Ltd",PM1032689,SC,Bus,"Blue Bus Ltd,",NoGroup_BusMode,,,,,,,,,BLU,,,,,,,,,,,,,,"2013-08-30 00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,

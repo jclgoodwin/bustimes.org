@@ -29,7 +29,7 @@ class ImportOperatorsTest(TestCase):
 
     def test_operator_count(self):
         """Is the airline operator correctly ignored"""
-        self.assertEqual(5, Operator.objects.count())
+        self.assertEqual(6, Operator.objects.count())
 
     def test_operator_id(self):
         """Is a strange NOC code (with an equals sign) correctly handled?"""
@@ -78,6 +78,14 @@ class ImportOperatorsTest(TestCase):
         self.assertFalse(len(Operator.objects.filter(id='TVSR')))
 
     def test_scotch_operator_contacts(self):
+        bluebus = Operator.objects.get(id='BLUE')
+        self.assertEqual(bluebus.url, '')
+
+        bluebus.url = 'http://www.bluebusscotland.co.uk'
+        bluebus.email = 'colin@jackson.com'
+        bluebus.phone = '0800 99 1066'
+        bluebus.save()
+
         command = import_scotch_operator_contacts.Command()
         command.input = os.path.join(DIR, 'fixtures/NOC_DB.csv')
         command.handle()
@@ -85,3 +93,9 @@ class ImportOperatorsTest(TestCase):
         first_aberdeen = Operator.objects.get(id='FABD')
         self.assertEqual(first_aberdeen.name, 'First Aberdeen')
         self.assertEqual(first_aberdeen.url, 'http://www.firstgroup.com/aberdeen')
+
+        bluebus = Operator.objects.get(id='BLUE')
+        # blank fields should not overwrite existing data
+        self.assertEqual(bluebus.url, 'http://www.bluebusscotland.co.uk')
+        self.assertEqual(bluebus.email, 'colin@jackson.com')
+        self.assertEqual(bluebus.phone, '01501 820598')
