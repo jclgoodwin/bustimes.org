@@ -13,9 +13,10 @@ class Command(BaseCommand):
 
             while days < 7 and tried_days < 100:
                 timetables = timetable_from_service(service, today)
-                if timetables:
-                    if any(any(grouping.rows and grouping.rows[0].times for grouping in t.groupings) for t in timetables):
+                for timetable in timetables:
+                    if any(grouping.rows and grouping.rows[0].times for grouping in timetable.groupings):
                         ServiceDate.objects.update_or_create(service=service, date=today)
                         days += 1
+                        break
                 today += timedelta(days=1)
                 tried_days += 1

@@ -445,12 +445,13 @@ class ServiceDetailView(DetailView):
                 except ValueError:
                     date = None
             if not date:
-                date = ServiceDate.objects.filter(service=service, date__gte=timezone.now.date()).order_by('date').first()
+                today = timezone.now.date()
+                date = ServiceDate.objects.filter(service=self.object, date__gte=today).order_by('date').first()
                 if date:
                     date = date.date
             if not date:
                 next_usage = Journey.objects.filter(service=self.object)
-                next_usage = next_usage.filter(datetime__date__gte=timezone.now().date()).order_by('datetime').first()
+                next_usage = next_usage.filter(datetime__date__gte=today).order_by('datetime').first()
                 if next_usage:
                     date = next_usage.datetime.date()
             context['timetables'] = timetable_from_service(self.object, date)
