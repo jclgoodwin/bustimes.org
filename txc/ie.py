@@ -106,7 +106,7 @@ def get_timetable(routes, day=None, collection=None):
             trips_dict[direction] = [trip]
 
     t = Timetable()
-    t.groupings = [handle_trips(trips_dict[direction], day) for direction in trips_dict]
+    t.groupings = [handle_trips(trips_dict[key], day) for key in trips_dict]
     t.date = day
     for grouping in t.groupings:
         grouping.name = get_grouping_name(grouping)

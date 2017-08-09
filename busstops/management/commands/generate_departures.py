@@ -22,12 +22,8 @@ def combine_date_time(date, time):
 
 
 def handle_timetable(service, timetable, day):
-    if hasattr(timetable, 'operating_profile') and day.weekday() not in timetable.operating_profile.regular_days:
-        return
     if not timetable.operating_period.contains(day):
         return
-    # if not hasattr(timetable, 'groupings'):
-        # return
     for grouping in timetable.groupings:
         stops = {row.part.stop.atco_code for row in grouping.rows}
         existent_stops = StopPoint.objects.filter(atco_code__in=stops).values_list('atco_code', flat=True)
