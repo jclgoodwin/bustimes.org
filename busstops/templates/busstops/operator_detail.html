@@ -6,7 +6,9 @@
 
 {% block content %}
 
-<h1>{{ object }}</h1>
+<div itemscope itemtype="http://schema.org/LocalBusiness">
+
+<h1 itemprop="name">{{ object }}</h1>
 
 <p>{{ object.get_a_mode }} operating company in <a href="{{ object.region.get_absolute_url }}">{{ object.region.the }}</a></p>
 
@@ -26,16 +28,18 @@
         {{ object.address|linebreaks }}
     {% endif %}
     {% if object.url %}
-        <p>{{ object.url|urlise }}</p>
+        <p itemprop="url">{{ object.url|urlise }}</p>
     {% endif %}
     {% if object.email %}
         {% load email_obfuscator %}
-        <p>{{ object.email|obfuscate_mailto }}</p>
+        <p itemprop="email">{{ object.email|obfuscate_mailto }}</p>
     {% endif %}
     {% if object.phone %}
-        <p>{{ object.phone }}</p>
+        <p itemprop="telephone">{{ object.phone }}</p>
     {% endif %}
     </div>
 {% endif %}
+
+</div>
 
 {% endblock %}
