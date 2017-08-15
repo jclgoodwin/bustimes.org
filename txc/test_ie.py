@@ -90,9 +90,12 @@ class IrelandTest(TestCase):
     def test_big_timetable(self):
         service = Service.objects.get(service_code='seamusdohe-21-963-1-y11')
         timetable = timetable_from_service(service, date(2017, 6, 7))[0]
-        self.assertEqual(timetable.groupings[0].rows[0].times, [time(9, 15), '     ', time(13, 0), '     ', '     '])
-        self.assertEqual(timetable.groupings[0].rows[1].times, [time(9, 16), '     ', time(13, 1), '     ', '     '])
-        self.assertEqual(timetable.groupings[0].rows[2].times, [time(9, 18), '     ', time(13, 3), '     ', '     '])
+        self.assertEqual(timetable.groupings[0].rows[0].times,
+                         ['     ', time(10, 15), '     ', time(14, 15), time(17, 45)])
+        self.assertEqual(timetable.groupings[0].rows[1].times,
+                         ['     ', time(10, 20), '     ', time(14, 20), time(17, 50)])
+        self.assertEqual(timetable.groupings[0].rows[2].times,
+                         ['     ', time(10, 22), '     ', time(14, 22), time(17, 52)])
 
     def test_admin_area(self):
         res = self.client.get(self.dublin.get_absolute_url())

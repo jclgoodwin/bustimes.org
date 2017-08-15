@@ -59,6 +59,14 @@ class Row(object):
             or self.next.is_before(row)
         )
 
+    def list(self):
+        stop_ids = []
+        row = self
+        while row:
+            stop_ids.append(row.atco_code)
+            row = row.next
+        return stop_ids
+
     def __init__(self, atco_code, times):
         self.next = None
         self.atco_code = atco_code

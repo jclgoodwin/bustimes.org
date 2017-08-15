@@ -1,4 +1,5 @@
 import datetime
+import difflib
 from django.db.models import Min, Q, Prefetch
 from django.utils.text import slugify
 from multigtfs.models import Feed, Trip, StopTime
@@ -23,47 +24,47 @@ def get_grouping_name(grouping):
 def handle_trips(trips, day):
     i = 0
     head = None
-    rows_map = {}
 
     if not day:
         day = datetime.date.today()
     midnight = datetime.datetime.combine(day, datetime.time())
 
+    previous_list = []
+
     for trip in trips:
         previous = None
-        visited_stops = set()
+
+        current_list = [stop.stop.stop_id for stop in trip.stoptime_set.all()]
+        diff = difflib.ndiff(previous_list, current_list)
 
         for stop in trip.stoptime_set.all():
             stop_id = stop.stop.stop_id
-            if stop_id in rows_map:
-                if stop_id in visited_stops or rows_map[stop_id].is_before(previous):
-                    if (
-                        previous and previous.next and previous.next.atco_code == stop_id
-                        and len(previous.next.times) == i
-                    ):
-                        row = previous.next
-                    else:
-                        row = Row(stop_id, ['     '] * i)
-                        row.part.stop.name = stop.stop.name
-                        previous.append(row)
-                else:
-                    row = rows_map[stop_id]
-            else:
+            instructions = next(diff)
+
+            while instructions[0] == '-':
+                instructions = next(diff)
+
+            if instructions == '+ ' + stop_id:
                 row = Row(stop_id, ['     '] * i)
                 row.part.stop.name = stop.stop.name
-                rows_map[stop_id] = row
                 if previous:
                     previous.append(row)
                 else:
                     if head:
                         head.prepend(row)
                     head = row
+            else:
+                row = previous or head
+                while row.part.stop.atco_code != stop_id:
+                    row = row.next
+
             time = datetime.timedelta(seconds=(stop.departure_time or stop.arrival_time).seconds)
             time = (midnight + time).time()
             row.times.append(time)
             row.part.timingstatus = None
             previous = row
-            visited_stops.add(stop_id)
+
+        previous_list = head.list()
 
         if i:
             p = head
