@@ -348,15 +348,12 @@ table {
     width: auto;
 
     path {
-        fill: #fff;
+        fill: $brand-color-darker;
+        stroke: #fff;
     }
 
     a {
         cursor: pointer;
-    }
-
-    a path {
-        fill: $brand-color-darker;
     }
 
     .highlight,
