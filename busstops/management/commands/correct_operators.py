@@ -1,5 +1,5 @@
 from __future__ import print_function
-import json
+import yaml
 import os
 from django.core.management.base import BaseCommand
 from ...models import Operator, Region
@@ -36,6 +36,7 @@ class Command(BaseCommand):
             ).distinct()
             self.maybe_print(self.maybe_move_operator(operator, regions))
 
-        with open(os.path.join(DIR, '../../../data/operators.json')) as open_file:
-            for record in json.load(open_file):
-                Operator.objects.filter(id=record['id']).update(**record)
+        with open(os.path.join(DIR, '../../../data/operators.yaml')) as open_file:
+            records = yaml.load(open_file)
+            for code in records:
+                Operator.objects.filter(id=code).update(**records[code])
