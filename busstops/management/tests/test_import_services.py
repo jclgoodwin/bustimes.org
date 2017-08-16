@@ -23,6 +23,7 @@ class ImportServicesTest(TestCase):
     command = import_services.Command()
 
     @classmethod
+    @freeze_time('2016-01-01')
     def setUpTestData(cls):
         cls.ea = Region.objects.create(pk='EA', name='East Anglia')
         cls.gb = Region.objects.create(pk='GB', name='Großbritannien')
@@ -223,6 +224,7 @@ class ImportServicesTest(TestCase):
         self.assertEqual(service.line_name, '13B')
         self.assertEqual(service.line_brand, 'Turquoise Line')
         self.assertTrue(service.show_timetable)
+        self.assertTrue(service.current)
         self.assertEqual(service.outbound_description, 'Norwich - Wymondham - Attleborough')
         self.assertEqual(service.inbound_description, 'Attleborough - Wymondham - Norwich')
         self.assertEqual(service.operator.first(), self.fecs)
@@ -248,6 +250,12 @@ class ImportServicesTest(TestCase):
         self.assertContains(res, '<span itemprop="name">Leys Lane (adj)</span>')
         self.assertContains(res, 'Norwich - Wymondham - Attleborough')
         self.assertContains(res, 'Attleborough - Wymondham - Norwich')
+
+        # Re-import the service, now that the operating period has passed
+        with freeze_time('2016-10-30'):
+            call_command(self.command, os.path.join(FIXTURES_DIR, 'EA.zip'))
+        service.refresh_from_db()
+        self.assertFalse(service.current)
 
     @freeze_time('22 January 2017')
     def test_do_service_m11a(self):

@@ -41,7 +41,7 @@ def handle_trips(trips, day):
             stop_id = stop.stop.stop_id
             instructions = next(diff)
 
-            while instructions[0] == '-':
+            while instructions[0] in '-?':
                 instructions = next(diff)
 
             if instructions == '+ ' + stop_id:

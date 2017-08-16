@@ -234,8 +234,8 @@ class TimetableDepartures(Departures):
         }
 
     def get_departures(self):
-        queryset = StopUsageUsage.objects.filter(datetime__gte=self.now, stop=self.stop).order_by('datetime')
-        queryset = queryset.select_related('journey__destination__locality', 'journey__service')
+        queryset = StopUsageUsage.objects.filter(datetime__gte=self.now, stop=self.stop, journey__service__current=True)
+        queryset = queryset.order_by('datetime').select_related('journey__destination__locality', 'journey__service')
         queryset = queryset.defer('journey__destination__latlong', 'journey__destination__locality__latlong',
                                   'journey__service__geometry')[:10]
         return [self.get_row(suu) for suu in queryset]

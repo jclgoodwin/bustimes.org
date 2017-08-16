@@ -13,6 +13,7 @@ import zipfile
 import csv
 import warnings
 import xml.etree.cElementTree as ET
+from datetime import date
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -237,6 +238,9 @@ class Command(BaseCommand):
         """
 
         timetable = Timetable(open_file, None)
+
+        if timetable.operating_period.end and timetable.operating_period.end < date.today():
+            return
 
         operators = timetable.operators
         if timetable.operator and len(operators) > 1:
