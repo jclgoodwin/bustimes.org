@@ -47,7 +47,7 @@ class Command(BaseCommand):
                 'active': True,
             }
             if collection == 'flixbus':
-                defaults['crossing'] = stop.desc.split(',')[0]
+                defaults['crossing'] = stop.desc.split(',')[0][:48]
             StopPoint.objects.update_or_create(atco_code=cls.get_stop_id(collection, stop.stop_id), defaults=defaults)
 
         today = datetime.now().date()
