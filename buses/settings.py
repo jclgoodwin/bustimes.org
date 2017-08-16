@@ -64,6 +64,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'bustimes',
+        'CONN_MAX_AGE': None
     }
 }
 
