@@ -6,6 +6,7 @@ import re
 import xml.etree.cElementTree as ET
 import calendar
 import datetime
+import difflib
 from functools import cmp_to_key
 from django.utils.text import slugify
 from titlecase import titlecase
@@ -142,9 +143,6 @@ class Rows(object):
     def next(self):
         return self.__next__()
 
-    def __contains__(self, key):
-        return key in self.rows
-
     def first(self):
         if self.head is not None:
             return self.head
@@ -156,27 +154,19 @@ class Rows(object):
         return list(sorted(self.rows.values(), key=lambda r: r.part.sequencenumber or float('inf')))
 
     def prepend(self, row):
-        if row.part.stop.atco_code not in self:
-            self[row.part.stop.atco_code] = row
-            row.next = self.head
-            self.head = row
-            if self.tail is None:
-                self.tail = row
-            row.parent = self
-        else:
-            row.part.row = self[row.part.stop.atco_code]
-
-    def append(self, row, qualifier=''):
-        if row.part.stop.atco_code + qualifier not in self:
-            self[row.part.stop.atco_code + qualifier] = row
-            row.parent = self
-            if self.head is None:
-                self.head = row
-            if self.tail is not None:
-                self.tail.next = row
+        row.next = self.head
+        self.head = row
+        if self.tail is None:
             self.tail = row
-        else:
-            row.part.row = self[row.part.stop.atco_code + qualifier]
+        row.parent = self
+
+    def append(self, row):
+        if self.head is None:
+            self.head = row
+        if self.tail is not None:
+            self.tail.next = row
+        self.tail = row
+        row.parent = self
 
 
 class Row(object):
@@ -355,28 +345,42 @@ class JourneyPattern(object):
                 if row.part.sequencenumber not in self.grouping.rows:
                     self.grouping.rows[row.part.sequencenumber] = row
         else:
-            visited_stops = []
-            new = self.grouping.rows.head is None
             previous = None
-            for i, row in enumerate(rows):
+
+            previous_list = []
+            row = self.grouping.rows.head
+            while row:
+                previous_list.append(row.part.stop.atco_code)
+                row = row.next
+
+            current_list = [row.part.stop.atco_code for row in rows]
+            diff = difflib.ndiff(previous_list, current_list)
+            for row in rows:
                 atco_code = row.part.stop.atco_code
-                if new:
-                    if atco_code in self.grouping.rows:
-                        self.grouping.rows.append(row, qualifier=str(i))
+
+                instructions = next(diff)
+
+                while instructions[0] in '-?':
+                    instructions = next(diff)
+
+                if instructions[0] == '+':
+                    assert instructions[2:] == atco_code
+                    if previous:
+                        previous.append(row)
                     else:
-                        self.grouping.rows.append(row)
-                elif atco_code in self.grouping.rows:
-                    if atco_code in visited_stops or self.grouping.rows[atco_code].is_before(previous):
-                        previous.append(row, qualifier=str(i))
-                    else:
-                        row.part.row = self.grouping.rows[atco_code]
-                        row = row.part.row
-                elif previous is None:
-                    self.grouping.rows.prepend(row)
+                        self.grouping.rows.prepend(row)
                 else:
-                    previous.append(row)
+                    if previous:
+                        p = previous
+                    else:
+                        p = self.grouping.rows.head
+                    while p.part.stop.atco_code != atco_code:
+                        p = p.next
+                    assert atco_code == p.part.stop.atco_code
+                    row.part.row = p
+                    row = p
+
                 previous = row
-                visited_stops.append(atco_code)
 
 
 class JourneyPatternSection(object):
