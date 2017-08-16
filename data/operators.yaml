@@ -8,48 +8,78 @@ AVMT:
 SEAD:
     url: http://www.seafordanddistrict.co.uk
 STAR:
-    address: 177 Cambridge Street\nAylesbury\nBuckinghamshire\nHP20 1BQ
+    address: |
+        177 Cambridge Street
+        Aylesbury
+        Buckinghamshire
+        HP20 1BQ
     url: http://startravelbuses.co.uk
     phone: 01296 422225
 YHCS:
     name: Pride of the Dales
 WWFD:
-    name: Wyre Forest Dial-a-Ride,
-    address: WFDC Depot\nGreen Street\nKidderminster\nDY10 1HA
+    name: Wyre Forest Dial-a-Ride
+    address: |
+        WFDC Depot
+        Green Street
+        Kidderminster
+        DY10 1HA
 BS4U:
-    name: Buses 4U,
-    address: East Surrey Rural Transport Partnership\nTandridge District Council Offices\n8 Station Road East\nOxted\nSurrey\nRH8 0BT
+    name: Buses 4U
+    address: |
+        East Surrey Rural Transport Partnership
+        Tandridge District Council Offices
+        8 Station Road East
+        Oxted
+        Surrey
+        RH8 0BT
     email: rtp@tandridge.gov.uk
     phone: 01883 732791
 GRCC:
-    address: 21 Dumont Avenue\nSt Osyth\nClacton on Sea\nCO16 8JP
-    email: goridebus@outlook.com,
-    url: 
+    address: |
+        21 Dumont Avenue
+        St Osyth
+        Clacton on Sea
+        CO16 8JP
+    email: goridebus@outlook.com
+    url: ""
 SPOT:
     url: http://www.spottravel.co.uk/leeds-castle/
 THAN:
-    name: Thandi Coaches,
-    address: The Coach Station\n2 Abberley Street\nSmethwick\nWest Midlands\nB66 2Q
+    name: Thandi Coaches
+    address: |
+        The Coach Station
+        2 Abberley Street
+        Smethwick
+        West Midlands
+        B66 2Q
     email: contact@thandicoachesuk.com
     url: http://thandicoachesuk.com
     phone: 0121 565 2002
 CRES:
-    address: 70 Marks Tey Road\nFareham\nPO14 3UR
-    email:
-    url:
-    phone: 
+    address: |
+        70 Marks Tey Road
+        Fareham
+        PO14 3UR
+    email: ""
+    url: ""
+    phone: ""
 RBNC:
     name: Roy Brown’s Coaches of Builth Wells
 DJWA:
     name: Torbay Mini Buses
 ANRW:
     name: Andrew’s (Shetland)
-    address: 
+    address: ""
     email: info@andrewsshetland.com
     url: http://www.andrewsshetland.com
     phone: 01595 696363
 SBDR:
-    address: 165a Castle Hill Road\nDunstable\nBedfordshire\nLU6 1QQ
+    address: |
+        165a Castle Hill Road
+        Dunstable
+        Bedfordshire
+        LU6 1QQ
     url: http://www.sbdar.co.uk
     phone: 01525 220044
 PCLT:
