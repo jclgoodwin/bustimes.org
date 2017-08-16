@@ -160,14 +160,6 @@ class Rows(object):
             self.tail = row
         row.parent = self
 
-    def append(self, row):
-        if self.head is None:
-            self.head = row
-        if self.tail is not None:
-            self.tail.next = row
-        self.tail = row
-        row.parent = self
-
 
 class Row(object):
     """A row in a grouping in a timetable.
@@ -185,22 +177,12 @@ class Row(object):
             return '[%s] -> %s' % (self.part.stop, self.next)
         return '[%s]' % self.part.stop
 
-    def append(self, row, qualifier=''):
+    def append(self, row):
         if self.parent.tail is self:
             self.parent.tail = row
         row.parent = self.parent
-        if row.part.stop.atco_code + qualifier not in self.parent:
-            self.parent[row.part.stop.atco_code + qualifier] = row
-            row.next = self.next
-            self.next = row
-        else:
-            row.part.row = self.parent[row.part.stop.atco_code + qualifier]
-
-    def is_before(self, row):
-        return row is not None and self.next is not None and (
-            self.next.part.stop.atco_code == row.part.stop.atco_code
-            or self.next.is_before(row)
-        )
+        row.next = self.next
+        self.next = row
 
 
 class Cell(object):
