@@ -560,6 +560,9 @@ class VehicleJourney(object):
             return False
         if self.code.startswith('VJ_21-NS2-A-y08-1') and (date.day < 15 or date.day > 21):  # 3rd Wed of month
             return False
+        if timetable and timetable.service_code == 'PKBO301':
+            if hasattr(self, 'departure_time') and self.departure_time > datetime.time(19, 0):
+                return False
         return self.operating_profile.should_show(date)
 
 

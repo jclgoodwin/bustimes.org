@@ -78,5 +78,15 @@
         "email": "info@andrewsshetland.com",
         "url": "http://www.andrewsshetland.com",
         "phone": "01595 696363"
+    },
+    {
+        "id": "SBDR",
+        "address": "165a Castle Hill Road\nDunstable\nBedfordshire\nLU6 1QQ",
+        "url": "http://www.sbdar.co.uk",
+        "phone": "01525 220044"
+    },
+    {
+        "id": "PCLT",
+        "url": "http://pcltravel.uk"
     }
 ]
