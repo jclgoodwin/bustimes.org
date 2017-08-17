@@ -345,6 +345,7 @@ class Journey(models.Model):
 
 @python_2_unicode_compatible
 class StopUsageUsage(models.Model):
+    id = models.BigAutoField(primary_key=True)
     journey = models.ForeignKey(Journey, models.CASCADE)
     stop = models.ForeignKey(StopPoint, models.CASCADE)
     datetime = models.DateTimeField()
