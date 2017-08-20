@@ -309,6 +309,9 @@ class Operator(ValidateOnSaveMixin, models.Model):
     def get_absolute_url(self):
         return reverse('operator-detail', args=(self.slug or self.id,))
 
+    def mode(self):
+        return self.vehicle_mode
+
     def get_a_mode(self):
         """Return the the name of the operator's vehicle mode,
         with the correct indefinite article
