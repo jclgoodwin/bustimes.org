@@ -69,6 +69,10 @@ def correct_description(description):
             ('Kings Lynn', "King's Lynn"),
             ('Baasingstoke', 'Basingstoke'),
             ('Tauton', 'Taunton'),
+            ('- ', ' - '),
+            (' -', ' - '),
+            ('  -', ' -'),
+            ('-  ', '- '),
     ):
         description = description.replace(old, new)
     return description

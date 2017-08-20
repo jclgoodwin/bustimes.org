@@ -9,6 +9,12 @@ from . import txc
 FIXTURES_DIR = './busstops/management/tests/fixtures/'
 
 
+class DescriptionTest(TestCase):
+    def test_correct_description(self):
+        self.assertEqual(txc.correct_description('Penryn College - Stitians'), 'Penryn College - Stithians')
+        self.assertEqual(txc.correct_description('Sutton Benger- Swindon'), 'Sutton Benger - Swindon')
+
+
 class TimetableTest(TestCase):
     """Tests some timetables generated directly from XML files"""
 
