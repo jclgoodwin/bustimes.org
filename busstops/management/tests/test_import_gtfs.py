@@ -70,7 +70,7 @@ class ImpportGTFSTest(TestCase):
             self.assertEqual(stop.crossing, desc)
 
     def test_services(self):
-        services = Service.objects.all()
+        services = Service.objects.order_by('service_code')
         self.assertEqual(services[0].service_code, 'flixbus-001')
         self.assertEqual(services[0].line_name, 'FlixBus')
         self.assertEqual(services[0].description, 'Freiburg - München')
