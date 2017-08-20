@@ -112,10 +112,10 @@ def get_timetable(routes, day=None, collection=None):
     for grouping in t.groupings:
         grouping.name = get_grouping_name(grouping)
         for row in grouping.rows:
-            if collection == 'ouibus':
-                row.part.stop.atco_code = 'ouibus-' + row.part.stop.atco_code
+            if collection in {'ouibus', 'metz', 'nancy'}:
+                row.part.stop.atco_code = collection + '-' + row.part.stop.atco_code
             elif collection == 'flixbus':
-                row.part.stop.atco_code = 'flixbus-' + row.part.stop.atco_code[8:]
+                row.part.stop.atco_code = collection + '-' + row.part.stop.atco_code[8:]
     return t
 
 
@@ -135,9 +135,9 @@ def get_timetables(service_code, day):
 
     if collection == 'flixbus':
         routes = feed.route_set.filter(route_id=collection.upper() + ':' + route_id)
-    elif collection == 'ouibus':
+    elif collection in {'ouibus', 'metz', 'nancy'}:
         routes = feed.route_set.filter(route_id=route_id)
-    else:
+    else:  # Ireland
         route_id += '-'
         routes = feed.route_set.filter(route_id__startswith=route_id)
 

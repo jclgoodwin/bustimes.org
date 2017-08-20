@@ -12,6 +12,7 @@ from ...models import Operator, Service, StopPoint, StopUsage, Region
 
 
 MODES = {
+    0: 'tram',
     2: 'rail',
     3: 'bus',
     4: 'ferry'
