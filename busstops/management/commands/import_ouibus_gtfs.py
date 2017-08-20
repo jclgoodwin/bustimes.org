@@ -61,11 +61,13 @@ class Command(BaseCommand):
         today = datetime.now().date()
 
         for route in feed.route_set.select_related('agency'):
-            end_date = GTFSService.objects.filter(trip__route=route, end_date__isnull=False).order_by('-end_date').first()
+            end_date = GTFSService.objects.filter(trip__route=route,
+                                                  end_date__isnull=False).order_by('-end_date').first()
             if end_date:
                 end_date = end_date.end_date
             else:
-                end_date = ServiceDate.objects.filter(service__trip__route=route, exception_type=1).order_by('-date').first()
+                end_date = ServiceDate.objects.filter(service__trip__route=route,
+                                                      exception_type=1).order_by('-date').first()
                 if end_date:
                     end_date = end_date.date
 
