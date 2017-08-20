@@ -2,6 +2,7 @@ from django.test import TestCase
 from ...models import StopPoint
 from ..commands import import_maneo_stops
 
+
 class ImportManeoTest(TestCase):
     @classmethod
     def setUpTestData(cls):
