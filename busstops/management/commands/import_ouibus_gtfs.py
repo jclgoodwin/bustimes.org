@@ -50,7 +50,7 @@ class Command(BaseCommand):
                 'latlong': stop.point,
                 'locality_centre': False,
                 'active': True,
-                'town': stop.town
+                'town': stop.extra_data.get('stop_town', '')
             }
             if collection == 'flixbus':
                 defaults['crossing'] = stop.desc.split(',')[0][:48]
