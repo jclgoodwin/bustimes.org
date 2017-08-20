@@ -135,12 +135,7 @@ class Command(BaseCommand):
 
         force = options['force']
 
-        for collection, url in (
-            ('flixbus', 'http://data.ndovloket.nl/flixbus/flixbus-eu.zip'),
-            ('ouibus', 'https://api.idbus.com/gtfs.zip'),
-            ('metz', 'https://si.metzmetropole.fr/fiches/opendata/gtfs_current.zip'),
-            ('nancy', 'http://opendata.grandnancy.eu/fileadmin/fichiers/opendata/Bus_horaires_lignes/gtfs_stan.zip'),
-        ):
+        for collection in settings.FRANCE_COLLECTIONS:
             path = os.path.join(settings.DATA_DIR, collection) + '.zip'
-            if download_if_modified(path, url) or force:
+            if download_if_modified(path, settings.FRANCE_COLLECTIONS[collection]) or force:
                 self.handle_zipfile(path, collection)

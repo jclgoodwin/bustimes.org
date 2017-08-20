@@ -6,6 +6,7 @@ import zipfile
 import vcr
 from django.test import TestCase, override_settings
 from django.core.management import call_command
+from django.conf import settings
 from ...models import StopPoint, Service
 from ..commands import import_ie_gtfs
 
@@ -13,11 +14,17 @@ from ..commands import import_ie_gtfs
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
 
 
-@override_settings(DATA_DIR=FIXTURES_DIR)
+@override_settings(
+    DATA_DIR=FIXTURES_DIR,
+    FRANCE_COLLECTIONS={
+        'flixbus': settings.FRANCE_COLLECTIONS['flixbus'],
+        'ouibus': settings.FRANCE_COLLECTIONS['ouibus'],
+    }
+)
 class ImpportGTFSTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        for collection in ('ouibus', 'flixbus'):
+        for collection in settings.FRANCE_COLLECTIONS:
             dir_path = os.path.join(FIXTURES_DIR, collection)
             feed_path = dir_path + '.zip'
             with zipfile.ZipFile(feed_path, 'a') as open_zipfile:
@@ -27,7 +34,7 @@ class ImpportGTFSTest(TestCase):
         with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'ouibus_gtfs.yaml')):
             call_command('import_ouibus_gtfs', '--force')
 
-        for collection in ('ouibus', 'flixbus'):
+        for collection in settings.FRANCE_COLLECTIONS:
             path = os.path.join(FIXTURES_DIR, collection) + '.zip'
             os.remove(path)
 

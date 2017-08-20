@@ -200,3 +200,9 @@ IE_COLLECTIONS = (
     'lallycoach', 'halpenny', 'eurobus', 'donnellys', 'cmadigan', 'bkavanagh',
     'ptkkenneally', 'farragher', 'fedateoranta'
 )
+FRANCE_COLLECTIONS = {
+    'ouibus': 'https://api.idbus.com/gtfs.zip',
+    'flixbus': 'http://data.ndovloket.nl/flixbus/flixbus-eu.zip',
+    'metz': 'https://si.metzmetropole.fr/fiches/opendata/gtfs_current.zip',
+    'nancy': 'http://opendata.grandnancy.eu/fileadmin/fichiers/opendata/Bus_horaires_lignes/gtfs_stan.zip',
+}
