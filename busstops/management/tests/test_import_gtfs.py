@@ -79,5 +79,5 @@ class ImpportGTFSTest(TestCase):
         self.assertEqual(services[1].line_name, 'Ouibus')
         self.assertEqual(services[1].description, 'Paris Bercy (centre ville) - Lille')
 
-        stops = services[0].stops.all()
-        self.assertEqual(18, len(stops))
+        stops = services[1].stops.all()
+        self.assertEqual(3, len(stops))
