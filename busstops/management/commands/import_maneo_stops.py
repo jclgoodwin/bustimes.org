@@ -9,8 +9,9 @@ except ImportError:
     from urllib import urlencode
 from bs4 import BeautifulSoup
 from titlecase import titlecase
+from django.utils.text import slugify
 from ..import_from_csv import ImportFromCSVCommand
-from ...models import StopPoint, Service, StopUsage
+from ...models import StopPoint, Operator, Service, StopUsage
 
 
 session = requests.Session()
@@ -46,17 +47,36 @@ class Command(ImportFromCSVCommand):
         res = session.get(url)
         soup = BeautifulSoup(res.text, 'lxml')
 
-        lines = {line.text.strip() for line in soup.find_all('span', {'class': 'ctp-line-code'})}
-
-        for line in lines:
-            if len(line) > 24:
+        line_elements = soup.find_all('div', {'class': 'line-info'})
+        lines = set()
+        for element in line_elements:
+            line = element.find('span', {'class': 'ctp-line-code'})
+            if line is None:
                 continue
+            line = line.text.strip()
+            if line in lines:
+                continue
+            lines.add(line)
+            if len(line) > 24:
+                print(line)
+                continue
+
+            operator_name = element.find('img')['alt'].split()[0]
+            operator = Operator.objects.update_or_create(
+                id=slugify(operator_name).upper(),
+                name=operator_name,
+                region_id='FR'
+            )[0]
+
             service = Service.objects.update_or_create(
                 service_code='maneo-' + line,
                 line_name=line,
                 region_id='FR',
                 date='2017-01-01'
             )[0]
+
+            service.operator.add(operator)
+
             StopUsage.objects.update_or_create(service=service, stop=stop, defaults={
                 'order': 0
             })
