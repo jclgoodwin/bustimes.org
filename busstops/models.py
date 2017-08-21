@@ -282,6 +282,11 @@ class StopPoint(models.Model):
                 return sign_url(url, settings.STREETVIEW_SECRET)
             return url
 
+    def get_region(self):
+        if self.admin_area_id:
+            return self.admin_area.region
+        return Region.objects.filter(service__stops=self).first()
+
     def get_absolute_url(self):
         return reverse('stoppoint-detail', args=(self.atco_code,))
 

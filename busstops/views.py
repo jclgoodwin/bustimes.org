@@ -367,7 +367,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         ).order_by('atco_code').defer('osm')
 
         context['breadcrumb'] = (crumb for crumb in (
-            self.object.admin_area and self.object.admin_area.region,
+            self.object.get_region(),
             self.object.admin_area,
             self.object.locality and self.object.locality.district,
             self.object.locality and self.object.locality.parent,
