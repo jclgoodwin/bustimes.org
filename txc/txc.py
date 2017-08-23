@@ -260,7 +260,7 @@ class Grouping(object):
                         self.column_feet[key].append(ColumnFoot(None, 1))
 
             if prev_journey:
-                if prev_journey.operating_profile != journey.operating_profile or prev_journey.notes != journey.notes:
+                if prev_journey.notes != journey.notes:
                     if in_a_row > 1:
                         abbreviate(self, i, in_a_row - 1, prev_difference)
                     in_a_row = 0
@@ -685,12 +685,6 @@ class OperatingProfile(object):
                 return '%s to %s' % (self.regular_days[0], self.regular_days[-1])
             return '%ss and %ss' % ('s, '.join(map(str, self.regular_days[:-1])), self.regular_days[-1])
         return ''
-
-    def __eq__(self, other):
-        return str(self) == str(other)
-
-    def __ne__(self, other):
-        return str(self) != str(other)
 
     def should_show(self, date):
         if self.regular_days:
