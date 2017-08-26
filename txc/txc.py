@@ -818,7 +818,7 @@ class Timetable(object):
         end_date = start_date + datetime.timedelta(weeks=2)
         while start_date <= end_date:
             weekday = start_date.weekday()
-            if not hasattr(self, 'operating_profile') or weekday in self.operating_profile.regular_days:
+            if not hasattr(self, 'operating_profile') or weekday in self.operating_profile.regular_days or start_date in BANK_HOLIDAYS:
                 yield start_date
             start_date += datetime.timedelta(days=1)
         if self.date >= start_date:
@@ -877,7 +877,7 @@ class Timetable(object):
                     if self.date:
                         regular_days = self.operating_profile.regular_days
                         if regular_days:
-                            while self.date.weekday() not in regular_days:
+                            while self.date.weekday() not in regular_days and self.date not in BANK_HOLIDAYS:
                                 self.date += datetime.timedelta(days=1)
 
                 self.operating_period = OperatingPeriod(element.find('txc:OperatingPeriod', NS))
