@@ -122,7 +122,7 @@ class TimetableTest(TestCase):
                                                                date(2016, 8, 31))
         self.assertEqual([], timetable_during_holiday.groupings[0].rows[0].times)
 
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml', date(2016, 9, 10))
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml', date(2016, 9, 12))
         self.assertEqual([time(8, 2)], timetable.groupings[0].rows[0].times)
 
     def test_timetable_welsh_servicedorg(self):
