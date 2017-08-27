@@ -2,13 +2,11 @@ env
 .DS_Store
 *.pyc
 config/gunicorn.py
-data/*/
-!data/vcr/
+data/TNDS/*.zip
+data/*.zip
 data/*.ashx
 data/*.xml
 data/*.csv
-data/accessibility-data.zip
-data/google_transit_*.zip
 .sass-cache
 node_modules
 **/bower_components
