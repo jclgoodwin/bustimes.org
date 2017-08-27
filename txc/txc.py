@@ -551,14 +551,6 @@ class VehicleJourney(object):
             return True
         if not self.operating_profile:
             return timetable and timetable.operating_profile.should_show(date)
-        if self.code.startswith('VJ_11-X52-_-y08-1') and date < datetime.date(2017, 3, 27):  # Alton Towers
-            return False
-        if self.code.startswith('VJ_21-NS1-A-y08-1') and date.day > 7:  # 1st Wed of month
-            return False
-        if self.code.startswith('VJ_21-WRO-X-y08-1') and (date.day < 8 or date.day > 14):  # 2nd Wed of month
-            return False
-        if self.code.startswith('VJ_21-NS2-A-y08-1') and (date.day < 15 or date.day > 21):  # 3rd Wed of month
-            return False
         if timetable and timetable.service_code == 'PKBO301':
             if hasattr(self, 'departure_time') and self.departure_time > datetime.time(19, 0):
                 return False
@@ -796,13 +788,8 @@ class Timetable(object):
             )
         }
 
-        if self.service_code == '21-584-_-y08-1':
+        if self.service_code == '21-584-_-y08-1':  # 584 - Diss - Pulham Market
             journeys['VJ_21-584-_-y08-1-2-T0'].departure_time = datetime.time(9, 20)
-        elif self.service_code == '2-6-D-y08-1':
-            journeys['VJ_2-6-D-y08-1-4-T0'].departure_time = datetime.time(10, 30)
-            journeys['VJ_2-6-D-y08-1-10-T2'].departure_time = datetime.time(10, 30)
-        elif self.service_code == '31-899-_-y10-1':
-            journeys['VJ_31-899-_-y10-1-28-T0'].operating_profile = journeys['VJ_31-899-_-y10-1-9-T0'].operating_profile
 
         # some journeys did not have a direct reference to a journeypattern,
         # but rather a reference to another journey with a reference to a journeypattern

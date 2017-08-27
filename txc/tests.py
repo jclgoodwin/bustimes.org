@@ -1,5 +1,6 @@
 """Tests for timetables and date ranges"""
 import xml.etree.cElementTree as ET
+from os.path import join
 from datetime import time, timedelta, date
 from freezegun import freeze_time
 from django.test import TestCase
@@ -331,63 +332,35 @@ class OperatingPeriodTest(TestCase):
 
 class VehicleJourneyTest(TestCase):
     def test_special_cases(self):
+        """301 - Perth - Broxden Park and Ride circular should not have journeys after 19:00, despite bad data
+        """
+        timetable = txc.Timetable(join(FIXTURES_DIR, 'PKBO301.xml'), None)
         journey = txc.VehicleJourney(ET.fromstring("""
             <VehicleJourney xmlns="http://www.transxchange.org.uk/">
-                <PrivateCode>em-11-X52-_-y08-1-2-T0</PrivateCode>
+                <OperatorRef>SPH</OperatorRef>
                 <OperatingProfile>
                     <RegularDayType>
                         <DaysOfWeek>
-                            <MondayToFriday />
+                            <Saturday />
                         </DaysOfWeek>
                     </RegularDayType>
-                    <BankHolidayOperation>
-                        <DaysOfNonOperation>
-                            <GoodFriday />
-                            <MayDay />
-                            <EasterMonday />
-                            <SpringBank />
-                        </DaysOfNonOperation>
-                    </BankHolidayOperation>
                 </OperatingProfile>
-                <VehicleJourneyCode>VJ_11-X52-_-y08-1-2-T0</VehicleJourneyCode>
-                <ServiceRef>11-X52-_-y08-1</ServiceRef>
-                <LineRef>11-X52-_-y08-1</LineRef>
-                <JourneyPatternRef>JP_11-X52-_-y08-1-2-H-2</JourneyPatternRef>
-                <DepartureTime>09:15:00</DepartureTime>
+                <VehicleJourneyCode>65004</VehicleJourneyCode>
+                <ServiceRef>PKBO301</ServiceRef>
+                <LineRef>0</LineRef>
+                <JourneyPatternRef>JPS_PKBO301-14</JourneyPatternRef>
+                <DepartureTime>20:00:00</DepartureTime>
             </VehicleJourney>
-        """), {'JP_11-X52-_-y08-1-2-H-2': None}, {}, None)
+        """), {'JPS_PKBO301-14': None}, {}, None)
 
-        self.assertFalse(journey.should_show(date(2017, 2, 20)))
-        self.assertTrue(journey.should_show(date(2017, 3, 28)))
+        # A journey at 20:00 (which is after 19:00) should not be shown
+        self.assertFalse(journey.should_show(date(2017, 8, 26), timetable))  # A Saturday
+        self.assertFalse(journey.should_show(date(2017, 8, 27), timetable))  # A Sunday
 
-        self.assertTrue(journey.should_show(date(2017, 4, 13)))
-        self.assertFalse(journey.should_show(date(2017, 4, 14)))  # Good Friday
-        self.assertFalse(journey.should_show(date(2017, 4, 15)))
-        self.assertFalse(journey.should_show(date(2017, 4, 16)))
-        self.assertFalse(journey.should_show(date(2017, 4, 17)))  # Easter Monday
-        self.assertTrue(journey.should_show(date(2017, 4, 18)))
-
-        # first Wednesday of the month
-        journey.code = 'VJ_21-NS1-A-y08-1-2-T0'
-        self.assertTrue(journey.should_show(date(2017, 1, 4)))
-        self.assertFalse(journey.should_show(date(2017, 1, 11)))
-        self.assertFalse(journey.should_show(date(2017, 1, 18)))
-        self.assertTrue(journey.should_show(date(2017, 2, 1)))
-        self.assertFalse(journey.should_show(date(2017, 3, 15)))
-
-        # second Wednesday of the month
-        journey.code = 'VJ_21-WRO-X-y08-1-2-T0'
-        self.assertFalse(journey.should_show(date(2017, 1, 4)))
-        self.assertTrue(journey.should_show(date(2017, 1, 11)))
-        self.assertFalse(journey.should_show(date(2017, 1, 18)))
-        self.assertFalse(journey.should_show(date(2017, 1, 25)))
-
-        # third Wednesday of the month
-        journey.code = 'VJ_21-NS2-A-y08-1-2-T0'
-        self.assertFalse(journey.should_show(date(2017, 1, 4)))
-        self.assertFalse(journey.should_show(date(2017, 1, 11)))
-        self.assertTrue(journey.should_show(date(2017, 1, 18)))
-        self.assertFalse(journey.should_show(date(2017, 1, 25)))
+        # A journey at 19:00 should be shown on the applicable day
+        journey.departure_time = time(19, 0)
+        self.assertTrue(journey.should_show(date(2017, 8, 26), timetable))  # A Saturday
+        self.assertFalse(journey.should_show(date(2017, 8, 27), timetable))  # A Sunday
 
 
 class OperatingProfileTest(TestCase):
