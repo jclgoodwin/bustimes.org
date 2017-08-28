@@ -137,12 +137,18 @@ class TimetableTest(TestCase):
 
     def test_timetable_servicedorg(self):
         """Test a timetable with a ServicedOrganisation"""
-        timetable_during_holiday = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml',
-                                                               date(2016, 8, 31))
-        self.assertEqual([], timetable_during_holiday.groupings[0].rows[0].times)
 
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'swe_31-668-_-y10-1.xml', date(2016, 9, 12))
-        self.assertEqual([time(8, 2)], timetable.groupings[0].rows[0].times)
+        # Doesn't stop at Budehaven School during holidays
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'swe_34-95-A-y10.xml', date(2017, 8, 30))
+        self.assertEqual(timetable.groupings[0].rows[-4].times, ['', '', '', '', '', ''])
+        self.assertEqual(timetable.groupings[0].rows[-5].times, ['', '', '', '', '', ''])
+        self.assertEqual(timetable.groupings[0].rows[-6].times, ['', '', '', '', '', ''])
+
+        # Does stop at Budehaven School twice a day on school days
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'swe_34-95-A-y10.xml', date(2017, 9, 13))
+        self.assertEqual(timetable.groupings[0].rows[-4].times, [time(8, 33, 10), '', '', '', time(15, 30, 10), ''])
+        self.assertEqual(timetable.groupings[0].rows[-5].times, [time(8, 33), '', '', '', time(15, 30), ''])
+        self.assertEqual(timetable.groupings[0].rows[-6].times, [time(8, 32, 18), '', '', '', time(15, 29, 18), ''])
 
     def test_timetable_welsh_servicedorg(self):
         """Test a timetable from Wales (with SequenceNumbers on Journeys),
