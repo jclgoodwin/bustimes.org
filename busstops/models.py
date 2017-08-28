@@ -389,7 +389,7 @@ class Service(models.Model):
     date = models.DateField()
     current = models.BooleanField(default=True, db_index=True)
     show_timetable = models.BooleanField(default=False)
-    geometry = models.MultiLineStringField(null=True)
+    geometry = models.MultiLineStringField(null=True, editable=False)
 
     wheelchair = models.NullBooleanField()
     low_floor = models.NullBooleanField()
@@ -420,9 +420,9 @@ class Service(models.Model):
 
     @staticmethod
     def get_operator_number(code):
-        if code in ('MEGA', 'MBGD'):
+        if code in {'MEGA', 'MBGD'}:
             return '11'
-        if code in ('NATX', 'NXSH', 'NXAP'):
+        if code in {'NATX', 'NXSH', 'NXAP'}:
             return '12'
         return {
             'BHAT': '41',

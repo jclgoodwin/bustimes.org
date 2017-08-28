@@ -8,7 +8,7 @@ import raven
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ['SECRET_KEY']
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'bustimes.org.uk\n127.0.0.1\nlocalhost').split()
+ALLOWED_HOSTS = ['bustimes.org.uk', 'bustim.es', 'bustimes.io', 'localhost']
 
 DEBUG = bool(os.environ.get('DEBUG', False)) or 'test' in sys.argv
 

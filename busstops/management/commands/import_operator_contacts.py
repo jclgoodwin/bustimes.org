@@ -78,4 +78,5 @@ class Command(BaseCommand):
                 except ValidationError as errors:
                     if 'email' in dict(errors):
                         operator.email = ''
-                    operator.save()
+                        operator.save()
+                    print(website)

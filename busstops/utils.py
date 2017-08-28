@@ -137,7 +137,7 @@ def timetable_from_service(service, day=None):
     timetables = [timetable for timetable in timetables if hasattr(timetable, 'groupings')]
     for timetable in timetables:
         for grouping in timetable.groupings:
-            if grouping.rows and len(grouping.rows[0].times) > 60:
+            if grouping.rows and len(grouping.rows[0].times) > 100:
                 service.show_timetable = False
                 service.save()
                 return
