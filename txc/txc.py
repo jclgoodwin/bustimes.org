@@ -679,15 +679,6 @@ class OperatingProfile(object):
         else:
             self.nonoperation_bank_holidays = []
 
-    def __str__(self):
-        if self.regular_days:
-            if len(self.regular_days) == 1:
-                return '%ss' % self.regular_days[0]
-            if len(self.regular_days) - 1 == self.regular_days[-1].day - self.regular_days[0].day:
-                return '%s to %s' % (self.regular_days[0], self.regular_days[-1])
-            return '%ss and %ss' % ('s, '.join(map(str, self.regular_days[:-1])), self.regular_days[-1])
-        return ''
-
     def should_show(self, date):
         if self.regular_days:
             if date.weekday() not in self.regular_days:

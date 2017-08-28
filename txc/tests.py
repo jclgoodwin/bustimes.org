@@ -28,7 +28,6 @@ class TimetableTest(TestCase):
         """Test a timetable from the East Anglia region"""
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-1.xml', date(2016, 10, 16))
 
-        self.assertEqual('Monday to Sunday', str(timetable.operating_profile))
         self.assertEqual('', str(timetable.operating_period))
 
         self.assertEqual('Norwich - Wymondham - Attleborough', str(timetable.groupings[0]))
@@ -46,7 +45,6 @@ class TimetableTest(TestCase):
         """Test a timetable with a single OperatingProfile (no per-VehicleJourney ones)"""
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_20-12-_-y08-1.xml', date(2016, 12, 2))
 
-        self.assertEqual('Monday to Friday', str(timetable.operating_profile))
         self.assertEqual('', str(timetable.operating_period))
 
         self.assertEqual('Outbound', str(timetable.groupings[0]))
@@ -126,6 +124,8 @@ class TimetableTest(TestCase):
         self.assertEqual(deadruns.groupings[0].rows[-3].times[-9:], [time(19, 5), '', '', '', '', '', '', '', ''])
         self.assertEqual(deadruns.groupings[0].rows[-2].times[-8:], ['', '', '', '', '', '', '', ''])
         self.assertEqual(deadruns.groupings[0].rows[-1].times[-8:], ['', '', '', '', '', '', '', ''])
+
+        self.assertEqual(str(deadruns.groupings[0].rows[-2]), '[Debenhams] -> [Arrival Stand]')
 
         # Three journeys a day on weekdays
         deadruns = txc.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml', date(2017, 4, 13))
@@ -484,7 +484,6 @@ class OperatingProfileTest(TestCase):
                 </RegularDayType>
               </OperatingProfile>
         """), {})
-        self.assertEqual('Saturday to Sunday', str(operating_profile))
         self.assertFalse(operating_profile.should_show(date(2017, 4, 10)))
         self.assertFalse(operating_profile.should_show(date(2017, 4, 14)))
         self.assertTrue(operating_profile.should_show(date(2017, 4, 15)))
