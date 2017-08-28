@@ -90,6 +90,20 @@ class TimetableTest(TestCase):
         self.assertEqual(timetable_ne.groupings[1].rows[0].times[:7],
                          [time(5, 20), time(6, 20), time(7, 15), time(8, 10), time(9, 10), time(10, 10), time(11, 10)])
 
+    def test_timetable_abbreviations_notes(self):
+        """Test a timetable with a note which should determine the bounds of an abbreviation"""
+        timetable = txc.Timetable(join(FIXTURES_DIR, 'set_5-28-A-y08.xml'), date(2017, 8, 29))
+        self.assertEqual(str(timetable.groupings[1].rows[0].times[17]), 'then every 20 minutes until')
+        self.assertEqual(timetable.groupings[1].rows[11].times[15], time(9, 8))
+        self.assertEqual(timetable.groupings[1].rows[11].times[16], time(9, 34))
+        self.assertEqual(timetable.groupings[1].rows[11].times[17], time(15, 34))
+        self.assertEqual(timetable.groupings[1].rows[11].times[18], time(15, 54))
+        self.assertEqual(timetable.groupings[1].column_feet['NSch'][0].span, 9)
+        self.assertEqual(timetable.groupings[1].column_feet['NSch'][1].span, 2)
+        self.assertEqual(timetable.groupings[1].column_feet['NSch'][2].span, 24)
+        self.assertEqual(timetable.groupings[1].column_feet['NSch'][3].span, 1)
+        self.assertEqual(timetable.groupings[1].column_feet['NSch'][4].span, 10)
+
     def test_timetable_scotland(self):
         """Test a Scotch timetable with no foot"""
         timetable_scotland = txc.timetable_from_filename(FIXTURES_DIR, 'SVRABBN017.xml', date(2017, 1, 28))
