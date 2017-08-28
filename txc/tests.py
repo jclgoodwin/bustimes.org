@@ -480,3 +480,17 @@ class OperatingProfileTest(TestCase):
         self.assertTrue(operating_profile.should_show(date(2017, 4, 15)))
         self.assertTrue(operating_profile.should_show(date(2017, 4, 16)))
         self.assertFalse(operating_profile.should_show(date(2017, 4, 17)))
+
+
+class StopTest(TestCase):
+    def test_is_at(self):
+        stop = txc.Stop(ET.fromstring("""
+            <AnnotatedStopPointRef xmlns="http://www.transxchange.org.uk/">
+                <StopPointRef>1800SB45781</StopPointRef>
+                <CommonName>Wythenshawe Hospital</CommonName>
+                <LocalityName>Newall Green</LocalityName>
+                <LocalityQualifier>Wythenshawe</LocalityQualifier>
+            </AnnotatedStopPointRef>
+        """))
+        self.assertEqual(stop.is_at('wythenshawe-hospital'), 2)
+        self.assertEqual(stop.is_at('wythenshawe'), 1)
