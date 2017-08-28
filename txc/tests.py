@@ -106,6 +106,9 @@ class TimetableTest(TestCase):
         self.assertEqual(timetable.groupings[1].column_feet['NSch'][3].span, 1)
         self.assertEqual(timetable.groupings[1].column_feet['NSch'][4].span, 10)
 
+        self.assertEqual(str(timetable.groupings[0]), 'Basildon - South Benfleet - Southend On Sea via Hadleigh')
+        self.assertEqual(str(timetable.groupings[1]), 'Southend On Sea - South Benfleet - Basildon via Hadleigh')
+
     def test_timetable_scotland(self):
         """Test a Scotch timetable with no foot"""
         timetable_scotland = txc.timetable_from_filename(FIXTURES_DIR, 'SVRABBN017.xml', date(2017, 1, 28))

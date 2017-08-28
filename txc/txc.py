@@ -220,9 +220,9 @@ class Grouping(object):
     """Probably either 'outbound' or 'inbound'.
     (Could perhaps be extended to group by weekends, bank holidays in the future).
     """
-    def __init__(self, direction, service_description_parts):
+    def __init__(self, direction, parent):
         self.direction = direction
-        self.service_description_parts = service_description_parts
+        self.parent = parent
         self.column_feet = {}
         self.journeypatterns = []
         self.journeys = []
@@ -297,17 +297,26 @@ class Grouping(object):
             row.times = [time for time in row.times if time is not None]
 
     def __str__(self):
-        if self.service_description_parts:
-            start = slugify(self.service_description_parts[0])
-            end = slugify(self.service_description_parts[-1])
+        if self.parent.description_parts:
+            parts = self.parent.description_parts
+            start = slugify(parts[0])
+            end = slugify(parts[-1])
 
             same_score = self.starts_at(start) + self.ends_at(end)
             reverse_score = self.starts_at(end) + self.ends_at(start)
+
             if same_score > reverse_score:
-                return ' - '.join(self.service_description_parts)
-            if same_score < reverse_score:
-                self.service_description_parts.reverse()
-                return ' - '.join(self.service_description_parts)
+                description = ' - '.join(parts)
+            elif same_score < reverse_score:
+                description = ' - '.join(reversed(parts))
+            else:
+                description = None
+
+            if description:
+                if self.parent.via:
+                    description += ' via ' + self.parent.via
+                return description
+
         return self.direction.capitalize()
 
 
@@ -865,14 +874,17 @@ class Timetable(object):
                         description = titlecase(description)
                     self.description = correct_description(description)
 
+                self.via = None
                 if self.description:
-                    description_parts = list(map(sanitize_description_part, self.description.split(' - ')))
+                    self.description_parts = list(map(sanitize_description_part, self.description.split(' - ')))
+                    if ' via ' in self.description_parts[-1]:
+                        self.description_parts[-1], self.via = self.description_parts[-1].split(' via ', 1)
                 else:
-                    description_parts = None
+                    self.description_parts = None
 
                 self.groupings = (
-                    Grouping('outbound', description_parts),
-                    Grouping('inbound', description_parts)
+                    Grouping('outbound', self),
+                    Grouping('inbound', self)
                 )
                 self.journeypatterns = {
                     pattern.get('id'): JourneyPattern(pattern, journeypatternsections, self.groupings)
