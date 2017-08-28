@@ -22,6 +22,7 @@ DURATION_REGEX = re.compile(
 )
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}
 BANK_HOLIDAYS = {
+    datetime.date(2016, 12, 26): ('BoxingDay',),
     datetime.date(2017, 4, 14): ('GoodFriday',),
     datetime.date(2017, 4, 17): ('EasterMonday', 'HolidayMondays'),
     datetime.date(2017, 5, 1): ('MayDay', 'HolidayMondays'),
