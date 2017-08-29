@@ -6,7 +6,7 @@ from django.db import transaction
 from django.conf import settings
 from titlecase import titlecase
 from multigtfs.models import Feed, ServiceDate, Service as GTFSService
-from txc.ie import get_grouping_name_part, get_timetable
+from timetables.gtfs import get_grouping_name_part, get_timetable
 from ...models import Operator, Service, StopPoint, StopUsage, Region
 from .import_ie_gtfs import download_if_modified, MODES
 

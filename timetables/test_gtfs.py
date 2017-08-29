@@ -7,14 +7,14 @@ from django.conf import settings
 from django.core.management import call_command
 from busstops.utils import timetable_from_service
 from busstops.models import Region, AdminArea, StopPoint, Service
-from . import ie
+from . import gtfs
 
 
 FIXTURES_DIR = os.path.join(settings.BASE_DIR, 'busstops', 'management', 'tests', 'fixtures')
 
 
 @override_settings(DATA_DIR=FIXTURES_DIR, IE_COLLECTIONS=['mortons', 'seamusdoherty'])
-class IrelandTest(TestCase):
+class GTFSTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         """Make a GTFS feed (a zip file containing some text files)."""
@@ -66,7 +66,7 @@ class IrelandTest(TestCase):
         self.assertEqual(stop.admin_area_id, 822)
 
     def test_small_timetable(self):
-        timetable = ie.get_timetables('mortons-20-165-y11', date(2017, 6, 7))[0]
+        timetable = gtfs.get_timetables('mortons-20-165-y11', date(2017, 6, 7))[0]
         timetable.groupings.sort(key=lambda g: str(g), reverse=True)
         self.assertEqual(str(timetable.groupings[0]), 'Merrion, Merlyn Park - Citywest, Castle House')
         self.assertEqual(str(timetable.groupings[1]), 'Citywest, Castle House - Ballsbridge, Ailesbury Road')
@@ -80,12 +80,12 @@ class IrelandTest(TestCase):
         self.assertEqual(len(timetable.groupings[1].rows), 14)
 
         for day in (date(2017, 6, 11), date(2017, 12, 25), date(2015, 12, 3), date(2020, 12, 3)):
-            timetable = ie.get_timetables('mortons-20-165-y11', day)[0]
+            timetable = gtfs.get_timetables('mortons-20-165-y11', day)[0]
             self.assertEqual(timetable.groupings, [])
 
     def test_no_timetable(self):
-        self.assertIsNone(ie.get_timetables('mortons-poo-poo-pants', date(2017, 6, 7)))  # no matching routes
-        self.assertIsNone(ie.get_timetables('12345678901-poo-poo-pants', date(2017, 6, 7)))  # no feed in database
+        self.assertIsNone(gtfs.get_timetables('mortons-poo-poo-pants', date(2017, 6, 7)))  # no matching routes
+        self.assertIsNone(gtfs.get_timetables('12345678901-poo-poo-pants', date(2017, 6, 7)))  # no feed in database
 
     def test_big_timetable(self):
         service = Service.objects.get(service_code='seamusdohe-21-963-1-y11')

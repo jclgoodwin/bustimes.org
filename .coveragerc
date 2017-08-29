@@ -5,7 +5,7 @@ source =
     buses
     busstops
     departures
-    txc
+    timetables
 omit =
     busstops/migrations/*
     buses/wsgi.py

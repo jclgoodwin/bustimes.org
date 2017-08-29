@@ -50,7 +50,7 @@ class Command(ImportFromCSVCommand):
         #  - operators with multiple National Operator Codes
         #    (Travelsure, Yorkshire Tiger, Owens, Horseless Carriage Services etc)
         #  - operators with multiple different rows for the same NOC (First Manchester)
-        #  - GB operators with no services who clash with IE operator names (Eastons Coaches, Aircoach)
+        #  - GB operators with no services who clash with Ireland operator names (Eastons Coaches, Aircoach)
         if (
                 operator_id in {'TVSR', 'HBSY', 'OWML', 'POTD', 'ANUM', 'BCOA', 'EAST', 'AW', 'ACAH'}
                 or operator_id == 'FMAN' and row['Duplicate'] != 'OK'

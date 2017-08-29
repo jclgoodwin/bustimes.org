@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.conf import settings
 from django.utils import timezone
-from txc import txc, ni
+from timetables import txc, northern_ireland
 from ...models import Region, Service, Journey, StopUsageUsage, StopPoint
 from ...utils import get_files_from_zipfile
 
@@ -55,7 +55,7 @@ def handle_timetable(service, timetable, day):
 def do_ni_service(service, groupings, day):
     for grouping in groupings:
         for journey in grouping['Journeys']:
-            if not ni.should_show(journey, day):
+            if not northern_ireland.should_show(journey, day):
                 continue
             stopusageusages = []
             previous_time = None
@@ -102,7 +102,7 @@ def handle_region(region):
             path = os.path.join(settings.DATA_DIR, 'NI', service.pk + '.json')
             if not os.path.exists(path):
                 continue
-            groupings = ni.get_data(path)
+            groupings = northern_ireland.get_data(path)
             day = today
             while day <= NEXT_WEEK:
                 do_ni_service(service, groupings, day)

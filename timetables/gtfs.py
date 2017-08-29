@@ -3,7 +3,7 @@ import difflib
 from django.db.models import Min, Q, Prefetch
 from django.utils.text import slugify
 from multigtfs.models import Feed, Trip, StopTime
-from .ni import Grouping, Timetable, Row
+from .northern_ireland import Grouping, Timetable, Row
 
 
 def get_grouping_name_part(stop_name):

@@ -17,7 +17,7 @@ from datetime import date
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from txc.txc import Timetable, sanitize_description_part
+from timetables.txc import Timetable, sanitize_description_part
 from ...models import Operator, StopPoint, Service, StopUsage
 
 

@@ -7,7 +7,7 @@ from django.db import transaction
 from django.db.models import Count
 from django.conf import settings
 from multigtfs.models import Feed
-from txc.ie import get_timetables
+from timetables.gtfs import get_timetables
 from ...models import Operator, Service, StopPoint, StopUsage, Region
 
 

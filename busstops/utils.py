@@ -12,7 +12,7 @@ except ImportError:
 from datetime import date
 from django.conf import settings
 from django.core.cache import cache
-from txc import txc, ni, ie
+from timetables import txc, northern_ireland, gtfs
 
 
 def format_gbp(string):
@@ -123,11 +123,11 @@ def timetable_from_service(service, day=None):
     if service.region_id == 'NI':
         path = os.path.join(settings.DATA_DIR, 'NI', service.pk + '.json')
         if os.path.exists(path):
-            return ni.get_timetable(path, day)
+            return northern_ireland.get_timetable(path, day)
         return []
 
     if service.region_id in {'UL', 'LE', 'MU', 'CO', 'FR'}:
-        return ie.get_timetables(service.service_code, day)
+        return gtfs.get_timetables(service.service_code, day)
 
     cache_key = '{}{}'.format(service.pk, day).replace(' ', '')
     timetables = cache.get(cache_key)
