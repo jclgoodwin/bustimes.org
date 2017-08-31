@@ -378,7 +378,7 @@ class Service(models.Model):
     description = models.CharField(max_length=255, blank=True)
     outbound_description = models.CharField(max_length=255, blank=True)
     inbound_description = models.CharField(max_length=255, blank=True)
-    slug = AutoSlugField(populate_from='description', editable=True, blank=True)
+    slug = AutoSlugField(populate_from='description', editable=True, blank=True, always_update=True)
     mode = models.CharField(max_length=11)
     operator = models.ManyToManyField(Operator, blank=True)
     net = models.CharField(max_length=3, blank=True)

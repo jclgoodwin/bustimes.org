@@ -114,4 +114,15 @@
     </ul>
 {% endif %}
 
+{% if related %}
+    <h2>See also</h2>
+    <ul>
+    {% for service in related %}
+       <li><a href="{{ service.get_absolute_url }}">{{ service }}</a></li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+
+
 {% endblock %}

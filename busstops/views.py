@@ -506,6 +506,8 @@ class ServiceDetailView(DetailView):
                 'text': 'Timetable on the %s website' % traveline_text
             })
 
+        context['related'] = Service.objects.filter(slug=self.object.slug, current=True).exclude(pk=self.object.pk)
+
         return context
 
     def render_to_response(self, context):
