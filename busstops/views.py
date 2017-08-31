@@ -506,7 +506,11 @@ class ServiceDetailView(DetailView):
                 'text': 'Timetable on the %s website' % traveline_text
             })
 
-        context['related'] = Service.objects.filter(slug=self.object.slug, current=True).exclude(pk=self.object.pk)
+        context['related'] = sorted(
+            Service.objects.filter(slug=self.object.slug,
+                                   current=True).exclude(pk=self.object.pk).defer('geometry'),
+            key=Service.get_order
+        )
 
         return context
 
