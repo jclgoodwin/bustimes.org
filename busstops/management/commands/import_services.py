@@ -338,6 +338,8 @@ class Command(BaseCommand):
                 service.stops.clear()
         StopUsage.objects.bulk_create(stop_usages)
 
+        self.service_codes.add(service_code)
+
     def set_region(self, archive_name):
         self.region_id = archive_name.split('/')[-1][:-4]
 
