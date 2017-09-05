@@ -334,7 +334,8 @@ class Command(BaseCommand):
             service.operator.add(*operators)
         else:
             service.operator.set(operators)
-            service.stops.clear()
+            if service_code not in self.service_codes:
+                service.stops.clear()
         StopUsage.objects.bulk_create(stop_usages)
 
     def set_region(self, archive_name):
@@ -346,6 +347,7 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle_region(self, archive_name):
         self.set_region(archive_name)
+        self.service_codes = set()
 
         Service.objects.filter(region_id=self.region_id).update(current=False)
 
