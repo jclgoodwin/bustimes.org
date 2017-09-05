@@ -76,7 +76,9 @@ class Command(BaseCommand):
                 try:
                     operator.save()
                 except ValidationError as errors:
-                    if 'email' in dict(errors):
+                    errors = dict(errors)
+                    if 'email' in errors:
                         operator.email = ''
-                        operator.save()
-                    print(website)
+                    if 'url' in errors:
+                        operator.url = ''
+                    operator.save()
