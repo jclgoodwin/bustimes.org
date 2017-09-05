@@ -31,6 +31,7 @@ def urlise(value, autoescape=None):
         national_express = '"{}"'.format(viglink('http://www.nationalexpress.com'))
         markup = markup.replace('"http://nationalexpress.com"', national_express, 1)
         markup = markup.replace('"http://www.nationalexpress.com"', national_express, 1)
+        markup = markup.replace('"nofollow"', '"nofollow noopener noreferrer"', 1)
     elif 'flixbus' in markup:
         original = '"{}"'.format(value)
         replacement = '"{}"'.format(viglink(value))

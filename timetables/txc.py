@@ -469,6 +469,9 @@ class VehicleJourney(object):
         operatingprofile_element = element.find('txc:OperatingProfile', NS)
         if operatingprofile_element is not None:
             self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
+            if self.code in {'VJ_18-X52-_-y08-1-1-T0', 'VJ_18-X52-_-y08-1-4-T0'}:
+                if self.operating_profile.nonoperation_days[0].start == datetime.date(2017, 10, 20):
+                    self.operating_profile.nonoperation_days[0].start = datetime.date(2017, 9, 1)
             if not self.should_show(date):
                 return
 
