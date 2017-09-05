@@ -1,4 +1,5 @@
 language: python
+sudo: false
 python:
 #  - "2.7"
   - "3.5"
@@ -7,7 +8,7 @@ cache: pip
 services:
   - postgresql
 addons:
-  postgresql: "9.4"
+  postgresql: "9.5"
 env:
  - DEBUG=True
 before_install:
