@@ -1,5 +1,6 @@
 language: python
 sudo: false
+group: edge
 python:
 #  - "2.7"
   - "3.5"
