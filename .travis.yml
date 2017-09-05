@@ -31,8 +31,9 @@ script:
   # - PYTHONWARNINGS=all coverage run manage.py test
   - coverage run manage.py test
   - flake8
-  - sass-lint 'busstops/static/css/*' -v
-  - eslint 'busstops/static/js/*.js'
+  - echo $PATH
+  - ./node_modules/.bin/sass-lint 'busstops/static/css/*' -v
+  - ./node_modules/.bin/eslint 'busstops/static/js/*.js'
 after_success:
   - coveralls
   - git status
