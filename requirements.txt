@@ -1,5 +1,5 @@
 beautifulsoup4==4.6.0
-Django==1.11.4
+Django==1.11.5
 django-autoslug==1.9.3
 django-email-obfuscator==0.1.5
 django-haystack==2.6.1

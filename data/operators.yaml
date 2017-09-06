@@ -90,3 +90,12 @@ MEGA:
     url: https://uk.megabus.com
 NSLA:
     url: http://www.gatwickairport.com/to-and-from/by-coach-or-bus/hotel-buses/
+DOCC:
+    address: |
+        Dorset Travel
+        County Hall
+        Colliton Park
+        Dorchester
+    url : https://www.dorsetforyou.gov.uk
+    email: dt@dorsetcc.gov.uk
+    phone: 01305 224537
