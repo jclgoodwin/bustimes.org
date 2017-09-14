@@ -29,7 +29,7 @@ class Command(ImportFromCSVCommand):
             'latlong': row['geometry']
         }
 
-        name = row['\ufeffAPPCOM']
+        name = row.get('\ufeffAPPCOM', row.get('APPCOM'))
         name_parts = name.split(' - ', 1)
         if len(name_parts) == 2:
             if name_parts[1].startswith('Desserte'):
