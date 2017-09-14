@@ -481,12 +481,7 @@ class ServiceDetailView(DetailView):
                 })
             else:
                 for operator in context['operators']:
-                    if operator.pk in {'NATX', 'NXSH', 'NXAP', 'NXHH'}:
-                        context['links'].append({
-                            'url': viglink('http://www.nationalexpress.com/home.aspx'),
-                            'text': 'Buy tickets from National Express'
-                        })
-                    elif operator.pk == 'FLIXBUS':
+                    if operator.pk == 'FLIXBUS':
                         context['links'].append({
                             'url': viglink('https://www.flixbus.co.uk/'),
                             'text': 'Buy tickets from FlixBus'

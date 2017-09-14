@@ -16,9 +16,6 @@ def urlise(value, autoescape=None):
     and replaces Megabus URLs with venal Affiliate Window ones
     """
 
-    if 'flixbus' in value:
-        value = 'https://www.flixbus.co.uk/'
-
     markup = urlize(value, nofollow=True).replace('">https://', '">', 1).replace('">http://', '">', 1)
 
     if 'megabus' in markup:
@@ -27,12 +24,7 @@ def urlise(value, autoescape=None):
         )
         markup = markup.replace('"http://megabus.com"', megabus, 1)
         markup = markup.replace('"https://uk.megabus.com"', megabus, 1)
-    elif 'nationalexpress' in markup:
-        national_express = '"{}"'.format(viglink('http://www.nationalexpress.com'))
-        markup = markup.replace('"http://nationalexpress.com"', national_express, 1)
-        markup = markup.replace('"http://www.nationalexpress.com"', national_express, 1)
-        markup = markup.replace('"nofollow"', '"nofollow noopener noreferrer"', 1)
-    elif 'flixbus' in markup:
+    elif 'flixbus' in value or 'ouibus' in value:
         original = '"{}"'.format(value)
         replacement = '"{}"'.format(viglink(value))
         markup = markup.replace(original, replacement, 1)
