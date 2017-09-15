@@ -847,7 +847,10 @@ class Timetable(object):
                 }
             elif tag == 'VehicleJourneys':
                 # time calculation begins here:
-                journeys = self.__get_journeys(element, servicedorgs)
+                try:
+                    journeys = self.__get_journeys(element, servicedorgs)
+                except (AttributeError, KeyError):
+                    return
                 element.clear()
             elif tag == 'Service':
                 mode_element = element.find('txc:Mode', NS)
