@@ -1,0 +1,4379 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TransXChange xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.transxchange.org.uk/ http://www.transxchange.org.uk/schema/2.1/TransXChange_general.xsd" CreationDateTime="2017-09-05T16:18:36" ModificationDateTime="2017-09-05T16:18:36" Modification="new" RevisionNumber="1" FileName="LAAO006 170904.xml" SchemaVersion="2.1" RegistrationDocument="false" xmlns="http://www.transxchange.org.uk/">
+  <StopPoints>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250010808</StopPointRef>
+      <CommonName>Cromwell Road</CommonName>
+      <LocalityName>Brookfield</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>25001157</StopPointRef>
+      <CommonName>Silverdale Drive</CommonName>
+      <LocalityName>Brookfield</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250011440</StopPointRef>
+      <CommonName>Holmrook Road</CommonName>
+      <LocalityName>Deepdale</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>25001160</StopPointRef>
+      <CommonName>Football Ground</CommonName>
+      <LocalityName>Deepdale</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250011679</StopPointRef>
+      <CommonName>Fulwood Row</CommonName>
+      <LocalityName>Brookfield</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>25001159</StopPointRef>
+      <CommonName>Holmrook Road</CommonName>
+      <LocalityName>Deepdale</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>25001194</StopPointRef>
+      <CommonName>Clock Garage</CommonName>
+      <LocalityName>Gamull Lane</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250014369</StopPointRef>
+      <CommonName>Meadow Street</CommonName>
+      <LocalityName>Deepdale</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250013914</StopPointRef>
+      <CommonName>Moor Park HS</CommonName>
+      <LocalityName>Deepdale</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>250015512</StopPointRef>
+      <CommonName>Oakworth Avenue</CommonName>
+      <LocalityName>Brookfield</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>25003155</StopPointRef>
+      <CommonName>Arrival Stand</CommonName>
+      <LocalityName>Preston City Centre</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500DCL3149</StopPointRef>
+      <CommonName>Fenton Road</CommonName>
+      <LocalityName>Fulwood</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500DCL3150</StopPointRef>
+      <CommonName>Clifton House</CommonName>
+      <LocalityName>Fulwood</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500DCL3151</StopPointRef>
+      <CommonName>Clifton House</CommonName>
+      <LocalityName>Fulwood</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500DCL3153</StopPointRef>
+      <CommonName>Silverdale Drive</CommonName>
+      <LocalityName>Brookfield</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500DCL3169</StopPointRef>
+      <CommonName>Edmund Street</CommonName>
+      <LocalityName>Deepdale</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500DCL3171</StopPointRef>
+      <CommonName>Infants School</CommonName>
+      <LocalityName>Deepdale</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500DCL3173</StopPointRef>
+      <CommonName>Sainsburys</CommonName>
+      <LocalityName>Deepdale</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500DCL3147</StopPointRef>
+      <CommonName>Barracks</CommonName>
+      <LocalityName>Fulwood</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500DCL347</StopPointRef>
+      <CommonName>Motorway Bridge</CommonName>
+      <LocalityName>Gamull Lane</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500GCS10033</StopPointRef>
+      <CommonName>Sainsburys</CommonName>
+      <LocalityName>Deepdale</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG1360</StopPointRef>
+      <CommonName>Meadow Street</CommonName>
+      <LocalityName>Deepdale</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG1284</StopPointRef>
+      <CommonName>Church Street</CommonName>
+      <LocalityName>Preston City Centre</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG1337</StopPointRef>
+      <CommonName>Fenton Road</CommonName>
+      <LocalityName>Fulwood</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG1342</StopPointRef>
+      <CommonName>Cromwell Road</CommonName>
+      <LocalityName>Brookfield</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG1344</StopPointRef>
+      <CommonName>Shops</CommonName>
+      <LocalityName>Brookfield</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG1362</StopPointRef>
+      <CommonName>Football Ground</CommonName>
+      <LocalityName>Deepdale</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG1358</StopPointRef>
+      <CommonName>Edmund Street</CommonName>
+      <LocalityName>Deepdale</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG1335</StopPointRef>
+      <CommonName>Barracks</CommonName>
+      <LocalityName>Fulwood</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG1292</StopPointRef>
+      <CommonName>Lancaster Road</CommonName>
+      <LocalityName>Preston City Centre</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG1392</StopPointRef>
+      <CommonName>Motorway Bridge</CommonName>
+      <LocalityName>Gamull Lane</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG1384</StopPointRef>
+      <CommonName>Industrial Park</CommonName>
+      <LocalityName>Red Scar</LocalityName>
+      <LocalityQualifier>Red Scar</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500IMG1385</StopPointRef>
+      <CommonName>Industrial Estate</CommonName>
+      <LocalityName>Red Scar</LocalityName>
+      <LocalityQualifier>Red Scar</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500JB94</StopPointRef>
+      <CommonName>Bus Station</CommonName>
+      <LocalityName>Preston City Centre</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LA00502</StopPointRef>
+      <CommonName>Rothwell Crescent</CommonName>
+      <LocalityName>Gamull Lane</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LA00503</StopPointRef>
+      <CommonName>Rothwell Crescent</CommonName>
+      <LocalityName>Gamull Lane</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LAA07323</StopPointRef>
+      <CommonName>Percy Street</CommonName>
+      <LocalityName>Preston City Centre</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>2500LAA15913</StopPointRef>
+      <CommonName>Shops</CommonName>
+      <LocalityName>Brookfield</LocalityName>
+      <LocalityQualifier>Preston</LocalityQualifier>
+    </AnnotatedStopPointRef>
+  </StopPoints>
+  <Operators>
+    <Operator id="O1">
+      <NationalOperatorCode>PBLT</NationalOperatorCode>
+      <OperatorCode>PBT</OperatorCode>
+      <OperatorShortName>Rotala Preston Bus</OperatorShortName>
+    </Operator>
+  </Operators>
+  <VehicleJourneys>
+    <VehicleJourney SequenceNumber="1">
+      <PrivateCode>006MFPB12:O:1</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ1</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP1</JourneyPatternRef>
+      <DepartureTime>05:16:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="2">
+      <PrivateCode>006MFPB12:O:2</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ2</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>05:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="3">
+      <PrivateCode>006MFPB12:O:3</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ3</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>05:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="4">
+      <PrivateCode>006MFPB12:O:4</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ4</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>06:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="5">
+      <PrivateCode>006MFPB12:O:5</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ5</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>06:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="6">
+      <PrivateCode>006MFPB12:O:6</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ6</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>06:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="7">
+      <PrivateCode>006MFPB12:O:7</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ7</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>07:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="8">
+      <PrivateCode>006MFPB12:O:8</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ8</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>07:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="9">
+      <PrivateCode>006MFPB12:O:9</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ9</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>07:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="10">
+      <PrivateCode>006MFPB12:O:10</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ93</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>07:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="11">
+      <PrivateCode>006MFPB12:O:11</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ94</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>07:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="12">
+      <PrivateCode>006MFPB12:O:12</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ95</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>07:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="13">
+      <PrivateCode>006MFPB12:O:13</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ96</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>08:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="14">
+      <PrivateCode>006MFPB12:O:14</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ97</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>08:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="15">
+      <PrivateCode>006MFPB12:O:15</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ98</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>08:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="16">
+      <PrivateCode>006MFPB12:O:16</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ99</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>08:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="17">
+      <PrivateCode>006MFPB12:O:17</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ100</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>08:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="18">
+      <PrivateCode>006MFPB12:O:18</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ101</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>08:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="19">
+      <PrivateCode>006MFPB12:O:19</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ102</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>09:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="20">
+      <PrivateCode>006MFPB12:O:20</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ103</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>09:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="21">
+      <PrivateCode>006MFPB12:O:21</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ104</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>09:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="22">
+      <PrivateCode>006MFPB12:O:22</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ105</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>09:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="23">
+      <PrivateCode>006MFPB12:O:23</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ106</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>09:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="24">
+      <PrivateCode>006MFPB12:O:24</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ107</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>09:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="25">
+      <PrivateCode>006MFPB12:O:25</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ108</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>10:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="26">
+      <PrivateCode>006MFPB12:O:26</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ109</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>10:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="27">
+      <PrivateCode>006MFPB12:O:27</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ110</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>10:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="28">
+      <PrivateCode>006MFPB12:O:28</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ111</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>10:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="29">
+      <PrivateCode>006MFPB12:O:29</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ112</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>10:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="30">
+      <PrivateCode>006MFPB12:O:30</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ113</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>10:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="31">
+      <PrivateCode>006MFPB12:O:31</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ114</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>11:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="32">
+      <PrivateCode>006MFPB12:O:32</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ115</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>11:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="33">
+      <PrivateCode>006MFPB12:O:33</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ116</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>11:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="34">
+      <PrivateCode>006MFPB12:O:34</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ117</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>11:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="35">
+      <PrivateCode>006MFPB12:O:35</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ118</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>11:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="36">
+      <PrivateCode>006MFPB12:O:36</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ119</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>11:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="37">
+      <PrivateCode>006MFPB12:O:37</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ120</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>12:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="38">
+      <PrivateCode>006MFPB12:O:38</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ121</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>12:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="39">
+      <PrivateCode>006MFPB12:O:39</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ122</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>12:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="40">
+      <PrivateCode>006MFPB12:O:40</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ123</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>12:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="41">
+      <PrivateCode>006MFPB12:O:41</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ124</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>12:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="42">
+      <PrivateCode>006MFPB12:O:42</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ125</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>12:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="43">
+      <PrivateCode>006MFPB12:O:43</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ126</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>13:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="44">
+      <PrivateCode>006MFPB12:O:44</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ127</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>13:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="45">
+      <PrivateCode>006MFPB12:O:45</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ128</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>13:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="46">
+      <PrivateCode>006MFPB12:O:46</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ129</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>13:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="47">
+      <PrivateCode>006MFPB12:O:47</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ130</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>13:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="48">
+      <PrivateCode>006MFPB12:O:48</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ131</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>13:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="49">
+      <PrivateCode>006MFPB12:O:49</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ132</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>14:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="50">
+      <PrivateCode>006MFPB12:O:50</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ133</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>14:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="51">
+      <PrivateCode>006MFPB12:O:51</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ134</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>14:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="52">
+      <PrivateCode>006MFPB12:O:52</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ142</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>14:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="53">
+      <PrivateCode>006MFPB12:O:53</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ143</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>14:42:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="54">
+      <PrivateCode>006MFPB12:O:54</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ144</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>14:54:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="55">
+      <PrivateCode>006MFPB12:O:55</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ145</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>15:06:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="56">
+      <PrivateCode>006MFPB12:O:56</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ146</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>15:18:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="57">
+      <PrivateCode>006MFPB12:O:57</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ147</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>15:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="58">
+      <PrivateCode>006MFPB12:O:58</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ148</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>15:42:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="59">
+      <PrivateCode>006MFPB12:O:59</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ149</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>15:54:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="60">
+      <PrivateCode>006MFPB12:O:60</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ150</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>16:06:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="61">
+      <PrivateCode>006MFPB12:O:61</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ151</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>16:18:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="62">
+      <PrivateCode>006MFPB12:O:62</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ152</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>16:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="63">
+      <PrivateCode>006MFPB12:O:63</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ153</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>16:42:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="64">
+      <PrivateCode>006MFPB12:O:64</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ154</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>16:54:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="65">
+      <PrivateCode>006MFPB12:O:65</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ155</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>17:06:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="66">
+      <PrivateCode>006MFPB12:O:66</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ156</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>17:18:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="67">
+      <PrivateCode>006MFPB12:O:67</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ157</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>17:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="68">
+      <PrivateCode>006MFPB12:O:68</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ135</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>17:42:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="69">
+      <PrivateCode>006MFPB12:O:69</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ10</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>18:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="70">
+      <PrivateCode>006MFPB12:O:70</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ11</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>18:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="71">
+      <PrivateCode>006MFPB12:O:71</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ12</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>18:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="72">
+      <PrivateCode>006MFPB12:O:72</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <MondayToFriday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ13</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>19:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="1">
+      <PrivateCode>006SAPB12:O:1</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ14</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>05:25:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="2">
+      <PrivateCode>006SAPB12:O:2</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ15</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>05:45:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="3">
+      <PrivateCode>006SAPB12:O:3</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ16</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>06:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="4">
+      <PrivateCode>006SAPB12:O:4</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ17</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>07:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="5">
+      <PrivateCode>006SAPB12:O:5</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ18</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>07:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="6">
+      <PrivateCode>006SAPB12:O:6</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ136</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>07:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="7">
+      <PrivateCode>006SAPB12:O:7</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ19</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>08:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="8">
+      <PrivateCode>006SAPB12:O:8</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ20</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>08:15:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="9">
+      <PrivateCode>006SAPB12:O:9</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ21</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>08:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="10">
+      <PrivateCode>006SAPB12:O:10</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ22</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>08:45:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="11">
+      <PrivateCode>006SAPB12:O:11</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ23</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>09:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="12">
+      <PrivateCode>006SAPB12:O:12</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ24</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>09:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="13">
+      <PrivateCode>006SAPB12:O:13</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ25</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>09:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="14">
+      <PrivateCode>006SAPB12:O:14</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ26</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>09:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="15">
+      <PrivateCode>006SAPB12:O:15</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ27</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>09:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="16">
+      <PrivateCode>006SAPB12:O:16</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ28</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>09:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="17">
+      <PrivateCode>006SAPB12:O:17</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ29</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>10:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="18">
+      <PrivateCode>006SAPB12:O:18</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ30</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>10:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="19">
+      <PrivateCode>006SAPB12:O:19</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ31</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>10:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="20">
+      <PrivateCode>006SAPB12:O:20</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ32</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>10:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="21">
+      <PrivateCode>006SAPB12:O:21</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ33</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>10:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="22">
+      <PrivateCode>006SAPB12:O:22</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ34</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>10:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="23">
+      <PrivateCode>006SAPB12:O:23</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ35</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>11:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="24">
+      <PrivateCode>006SAPB12:O:24</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ36</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>11:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="25">
+      <PrivateCode>006SAPB12:O:25</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ37</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>11:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="26">
+      <PrivateCode>006SAPB12:O:26</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ38</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>11:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="27">
+      <PrivateCode>006SAPB12:O:27</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ39</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>11:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="28">
+      <PrivateCode>006SAPB12:O:28</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ40</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>11:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="29">
+      <PrivateCode>006SAPB12:O:29</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ41</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>12:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="30">
+      <PrivateCode>006SAPB12:O:30</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ42</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>12:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="31">
+      <PrivateCode>006SAPB12:O:31</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ43</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>12:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="32">
+      <PrivateCode>006SAPB12:O:32</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ44</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>12:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="33">
+      <PrivateCode>006SAPB12:O:33</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ45</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>12:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="34">
+      <PrivateCode>006SAPB12:O:34</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ46</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>12:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="35">
+      <PrivateCode>006SAPB12:O:35</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ47</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>13:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="36">
+      <PrivateCode>006SAPB12:O:36</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ48</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>13:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="37">
+      <PrivateCode>006SAPB12:O:37</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ49</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>13:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="38">
+      <PrivateCode>006SAPB12:O:38</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ50</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>13:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="39">
+      <PrivateCode>006SAPB12:O:39</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ51</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>13:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="40">
+      <PrivateCode>006SAPB12:O:40</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ52</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>13:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="41">
+      <PrivateCode>006SAPB12:O:41</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ53</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>14:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="42">
+      <PrivateCode>006SAPB12:O:42</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ54</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>14:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="43">
+      <PrivateCode>006SAPB12:O:43</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ55</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>14:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="44">
+      <PrivateCode>006SAPB12:O:44</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ56</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>14:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="45">
+      <PrivateCode>006SAPB12:O:45</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ57</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>14:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="46">
+      <PrivateCode>006SAPB12:O:46</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ58</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>14:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="47">
+      <PrivateCode>006SAPB12:O:47</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ59</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>15:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="48">
+      <PrivateCode>006SAPB12:O:48</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ60</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>15:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="49">
+      <PrivateCode>006SAPB12:O:49</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ61</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>15:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="50">
+      <PrivateCode>006SAPB12:O:50</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ62</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>15:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="51">
+      <PrivateCode>006SAPB12:O:51</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ63</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>15:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="52">
+      <PrivateCode>006SAPB12:O:52</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ64</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>15:50:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="53">
+      <PrivateCode>006SAPB12:O:53</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ65</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>16:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="54">
+      <PrivateCode>006SAPB12:O:54</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ66</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>16:10:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="55">
+      <PrivateCode>006SAPB12:O:55</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ67</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>16:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="56">
+      <PrivateCode>006SAPB12:O:56</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ158</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>16:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="57">
+      <PrivateCode>006SAPB12:O:57</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ159</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>16:42:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="58">
+      <PrivateCode>006SAPB12:O:58</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ160</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>16:54:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="59">
+      <PrivateCode>006SAPB12:O:59</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ161</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>17:06:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="60">
+      <PrivateCode>006SAPB12:O:60</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ162</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP4</JourneyPatternRef>
+      <DepartureTime>17:18:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="61">
+      <PrivateCode>006SAPB12:O:61</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ137</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>17:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="62">
+      <PrivateCode>006SAPB12:O:62</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ138</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>18:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="63">
+      <PrivateCode>006SAPB12:O:63</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ139</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>18:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="64">
+      <PrivateCode>006SAPB12:O:64</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ140</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>18:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="65">
+      <PrivateCode>006SAPB12:O:65</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>LF</VehicleTypeCode>
+          <Description>Low Floor</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ141</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP3</JourneyPatternRef>
+      <DepartureTime>19:00:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="1">
+      <PrivateCode>006SUPB12:O:1</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ68</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>08:53:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL1">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="2">
+      <PrivateCode>006SUPB12:O:2</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ69</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>09:10:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL2">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="3">
+      <PrivateCode>006SUPB12:O:3</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ70</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>09:30:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL3">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="4">
+      <PrivateCode>006SUPB12:O:4</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ71</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>09:50:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL4">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="5">
+      <PrivateCode>006SUPB12:O:5</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ72</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>10:10:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL5">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="6">
+      <PrivateCode>006SUPB12:O:6</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ73</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>10:30:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL6">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="7">
+      <PrivateCode>006SUPB12:O:7</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ74</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>10:50:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL7">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="8">
+      <PrivateCode>006SUPB12:O:8</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ75</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>11:10:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL8">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="9">
+      <PrivateCode>006SUPB12:O:9</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ76</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>11:30:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL9">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="10">
+      <PrivateCode>006SUPB12:O:10</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ77</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>11:50:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL10">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="11">
+      <PrivateCode>006SUPB12:O:11</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ78</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>12:10:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL11">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="12">
+      <PrivateCode>006SUPB12:O:12</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ79</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>12:30:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL12">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="13">
+      <PrivateCode>006SUPB12:O:13</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ80</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>12:50:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL13">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="14">
+      <PrivateCode>006SUPB12:O:14</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ81</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>13:10:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL14">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="15">
+      <PrivateCode>006SUPB12:O:15</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ82</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>13:30:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL15">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="16">
+      <PrivateCode>006SUPB12:O:16</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ83</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>13:50:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL16">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="17">
+      <PrivateCode>006SUPB12:O:17</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ84</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>14:10:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL17">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="18">
+      <PrivateCode>006SUPB12:O:18</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ85</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>14:30:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL18">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="19">
+      <PrivateCode>006SUPB12:O:19</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ86</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>14:50:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL19">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="20">
+      <PrivateCode>006SUPB12:O:20</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ87</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>15:10:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL20">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="21">
+      <PrivateCode>006SUPB12:O:21</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ88</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>15:30:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL21">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="22">
+      <PrivateCode>006SUPB12:O:22</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ89</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>15:50:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL22">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="23">
+      <PrivateCode>006SUPB12:O:23</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ90</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>16:10:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL23">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="24">
+      <PrivateCode>006SUPB12:O:24</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ91</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>16:30:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL24">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+    <VehicleJourney SequenceNumber="25">
+      <PrivateCode>006SUPB12:O:25</PrivateCode>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <HolidayMondays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ92</VehicleJourneyCode>
+      <ServiceRef>NW_05_PBT_6_1</ServiceRef>
+      <LineRef>SL1</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>16:50:00</DepartureTime>
+      <VehicleJourneyTimingLink id="VJTL25">
+        <JourneyPatternTimingLinkRef>JPTL33</JourneyPatternTimingLinkRef>
+      </VehicleJourneyTimingLink>
+    </VehicleJourney>
+  </VehicleJourneys>
+</TransXChange>

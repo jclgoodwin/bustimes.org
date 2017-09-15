@@ -239,6 +239,9 @@ class Command(BaseCommand):
 
         timetable = Timetable(open_file, None)
 
+        if not hasattr(timetable, 'element'):
+            return
+
         if timetable.operating_period.end and timetable.operating_period.end < date.today():
             return
 

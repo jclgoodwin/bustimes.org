@@ -102,6 +102,8 @@ class ImportServicesTest(TestCase):
         cls.gb_m11a = Service.objects.get(pk='M11A_MEGA')
         cls.gb_m12 = Service.objects.get(pk='M12_MEGA')
 
+        cls.do_service('NW_05_PBT_6', 'GB')
+
     @staticmethod
     def write_file_to_zipfile(open_zipfile, filename):
         open_zipfile.write(os.path.join(FIXTURES_DIR, filename), filename)
@@ -372,8 +374,8 @@ class ImportServicesTest(TestCase):
         """, html=True)
 
     def test_departures(self):
-        self.assertEqual(16, Journey.objects.all().count())
-        self.assertEqual(24, StopUsageUsage.objects.all().count())
+        self.assertEqual(16, Journey.objects.filter(service='M12_MEGA').count())
+        self.assertEqual(24, StopUsageUsage.objects.filter(journey__service='M12_MEGA').count())
 
         # This should be the first journey (some earlier journeys should have been deleted)
         journey = Journey.objects.first()
