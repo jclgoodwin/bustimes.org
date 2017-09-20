@@ -4,11 +4,11 @@ django-autoslug==1.9.3
 django-email-obfuscator==0.1.5
 django-haystack==2.6.1
 django-pipeline==1.6.13
-lxml==3.8.0
+lxml==4.0.0
 multigtfs==1.1.1
 psycopg2==2.7.3.1
 python-dateutil==2.6.1
 pytz==2017.2
 raven==6.1.0
 requests==2.18.4
-titlecase==0.11.0
+titlecase==0.12.0
