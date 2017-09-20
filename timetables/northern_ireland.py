@@ -160,13 +160,10 @@ def get_data(path):
 def get_timetable(path, today):
     t = Timetable()
 
-    outbound, inbound = get_data(path)
-
-    t.groupings.append(handle_journeys(outbound['Journeys'], today))
-    t.groupings[-1].name = outbound['Description']
-
-    t.groupings.append(handle_journeys(inbound['Journeys'], today))
-    t.groupings[-1].name = inbound['Description']
+    for direction in get_data(path):
+        if direction['Journeys']:
+            t.groupings.append(handle_journeys(direction['Journeys'], today))
+            t.groupings[-1].name = direction['Description']
 
     t.date = today
     return [t]
