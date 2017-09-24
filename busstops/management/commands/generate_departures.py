@@ -52,34 +52,39 @@ def handle_timetable(service, timetable, day):
                 StopUsageUsage.objects.bulk_create(stopusageusages)
 
 
+def handle_ni_grouping(service, grouping, day):
+    for journey in grouping['Journeys']:
+        if not northern_ireland.should_show(journey, day):
+            continue
+        stopusageusages = []
+        previous_time = None
+        date = day
+        for i, su in enumerate(journey['StopUsages']):
+            if su['Location'][0] != '7':
+                print(service, su)
+                continue
+            destination = su['Location']
+            if su['Departure']:
+                departure = datetime.strptime(su['Departure'], '%H:%M').time()
+                if su['Activity'] != 'S':
+                    if previous_time and departure < previous_time:
+                        date += ONE_DAY
+                    stopusageusages.append(
+                        StopUsageUsage(datetime=combine_date_time(date, departure),
+                                       order=i, stop_id=su['Location'])
+                    )
+                previous_time = departure
+        journey = Journey(service=service, datetime=stopusageusages[0].datetime, destination_id=destination)
+        journey.save()
+        for suu in stopusageusages:
+            suu.journey = journey
+        StopUsageUsage.objects.bulk_create(stopusageusages)
+
+
 def do_ni_service(service, groupings, day):
     for grouping in groupings:
-        for journey in grouping['Journeys']:
-            if not northern_ireland.should_show(journey, day):
-                continue
-            stopusageusages = []
-            previous_time = None
-            date = day
-            for i, su in enumerate(journey['StopUsages']):
-                if su['Location'][0] != '7':
-                    print(service, su)
-                    continue
-                destination = su['Location']
-                if su['Departure']:
-                    departure = datetime.strptime(su['Departure'], '%H:%M').time()
-                    if su['Activity'] != 'S':
-                        if previous_time and departure < previous_time:
-                            date += ONE_DAY
-                        stopusageusages.append(
-                            StopUsageUsage(datetime=combine_date_time(date, departure),
-                                           order=i, stop_id=su['Location'])
-                        )
-                    previous_time = departure
-            journey = Journey(service=service, datetime=stopusageusages[0].datetime, destination_id=destination)
-            journey.save()
-            for suu in stopusageusages:
-                suu.journey = journey
-            StopUsageUsage.objects.bulk_create(stopusageusages)
+        if grouping['Journeys']:
+            handle_ni_grouping(service, grouping, day)
 
 
 @transaction.atomic
