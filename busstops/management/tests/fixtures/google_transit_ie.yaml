@@ -8,7 +8,7 @@ interactions:
       User-Agent: [python-requests/2.18.3]
       if-modified-since: ['Sun Aug  6 10:29:14 2017']
     method: HEAD
-    uri: http://www.transportforireland.ie/transitData/google_transit_mortons.zip
+    uri: https://www.transportforireland.ie/transitData/google_transit_mortons.zip
   response:
     body: {string: ''}
     headers:
@@ -36,7 +36,7 @@ interactions:
       User-Agent: [python-requests/2.18.3]
       if-modified-since: ['Sun Aug  6 10:29:14 2017']
     method: HEAD
-    uri: http://www.transportforireland.ie/transitData/google_transit_seamusdoherty.zip
+    uri: https://www.transportforireland.ie/transitData/google_transit_seamusdoherty.zip
   response:
     body: {string: ''}
     headers:
