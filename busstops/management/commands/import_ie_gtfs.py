@@ -143,7 +143,7 @@ class Command(BaseCommand):
             if options['verbosity'] > 1:
                 print(collection)
             path = 'google_transit_{}.zip'.format(collection)
-            url = 'http://www.transportforireland.ie/transitData/' + path
+            url = 'https://www.transportforireland.ie/transitData/' + path
             path = os.path.join(settings.DATA_DIR, path)
             modified = download_if_modified(path, url)
             if modified or options['force']:
