@@ -122,7 +122,6 @@ PIPELINE = {
         },
         'global': {
             'source_filenames': (
-                'js/bower_components/postscribe/dist/postscribe.min.js',
                 'js/global.js',
             ),
             'output_filename': 'js/global.min.js',
