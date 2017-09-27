@@ -325,10 +325,6 @@ class Command(BaseCommand):
 
             if self.region_id == 'NE':
                 description = self.sanitize_description(description)
-            elif self.region_id == 'NW':
-                standard_service = timetable.element.find('txc:Services/txc:Service/txc:StandardService', NS)
-                description = '{} - {}'.format(standard_service.find('txc:Origin', NS).text.split(', ')[0],
-                                               standard_service.find('txc:Destination', NS).text.split(', ')[0])
             defaults['description'] = description
 
         service, created = Service.objects.update_or_create(service_code=service_code, defaults=defaults)
