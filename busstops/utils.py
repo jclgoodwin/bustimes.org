@@ -135,6 +135,8 @@ def timetable_from_service(service, day=None):
         return timetables
     timetables = (txc.Timetable(xml_file, day, service.description) for xml_file in get_files_from_zipfile(service))
     timetables = [timetable for timetable in timetables if hasattr(timetable, 'groupings')]
+    if len(timetables) > 1:
+        timetables = [timetable for timetable in timetables if timetable.groupings[0].rows[0].times] or timetables[:1]
     for timetable in timetables:
         for grouping in timetable.groupings:
             if grouping.rows and len(grouping.rows[0].times) > 100:
