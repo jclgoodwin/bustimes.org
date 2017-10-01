@@ -1,7 +1,7 @@
 """Tests for importing NaPTAN data
 """
-
 import os
+import json
 import vcr
 from django.test import TestCase, override_settings
 from ...models import Region, AdminArea, StopPoint, Locality, Service, StopUsage
@@ -20,9 +20,6 @@ class UpdateNaptanTest(TestCase):
 
     def test_get_old_rows(self):
         self.assertIsNone(self.command.get_old_rows())
-
-        with override_settings(DATA_DIR=FIXTURES_DIR):
-            self.assertEqual(len(self.command.get_old_rows()), 147)
 
     def test_get_diff(self):
         new_rows = [{
@@ -46,22 +43,38 @@ class UpdateNaptanTest(TestCase):
         self.assertEqual(self.command.get_diff(new_rows, None), (['S'], ['639']))
         self.assertEqual(self.command.get_diff(new_rows, new_rows), ([], []))
 
+    @override_settings(DATA_DIR=FIXTURES_DIR)
     def test_handle(self):
+        json_path = os.path.join(FIXTURES_DIR, 'NaPTAN', 'NPTGLastSubs_Load.ashx')
+
         with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan.yml')):
             with self.assertRaises(TypeError):
                 # will error because no file exists yet
                 self.command.handle()
 
-            with override_settings(DATA_DIR=FIXTURES_DIR):
-                self.command.handle()
+            with open(os.path.join(json_path), 'w') as open_file:
+                json.dump({'rows': [{
+                    'id': 109,
+                    'cell': ['S', 'Shetland', '603', '10/09/2017', '918', '45', '0', '0', '378', '', '', '', '']
+                }]}, open_file)
+
+            self.command.handle()
 
         # verify that a pretend zipfile containing some text was downloaded and saved
         zipfile_path = os.path.join(FIXTURES_DIR, 'NaPTAN', 'naptan.zip')
         with open(zipfile_path) as open_file:
             self.assertEqual(open_file.read(), 'these pretzels are making me thirsty')
 
+        # simulate a problem with the region-specific NaPTAN download, so all regions are downloaded
+        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan-error.yml')):
+            with override_settings(DATA_DIR=FIXTURES_DIR):
+                self.command.handle()
+        with open(zipfile_path) as open_file:
+            self.assertEqual(open_file.read(), 'these pretzels are making me thirsty again')
+
         # clean up afterwards
         os.remove(zipfile_path)
+        os.remove(json_path)
 
 
 class ImportNaptanTest(TestCase):
