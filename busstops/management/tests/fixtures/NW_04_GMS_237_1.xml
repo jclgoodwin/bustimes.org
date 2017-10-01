@@ -1,0 +1,1756 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TransXChange xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.transxchange.org.uk/ http://www.transxchange.org.uk/schema/2.1/TransXChange_general.xsd" CreationDateTime="2017-02-28T13:58:28.5853032+00:00" ModificationDateTime="2017-02-28T13:58:28.5853032+00:00" Modification="new" RevisionNumber="1" FileName="TXC.xml" SchemaVersion="2.1" RegistrationDocument="false" xmlns="http://www.transxchange.org.uk/">
+  <StopPoints>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DDHS3412</StopPointRef>
+      <CommonName>The Junction</CommonName>
+      <LocalityName>Dinting Vale</LocalityName>
+      <LocalityQualifier>Glossop</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DDDV4249</StopPointRef>
+      <CommonName>Works</CommonName>
+      <LocalityName>Dinting Vale</LocalityName>
+      <LocalityQualifier>Glossop</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DDDV3414</StopPointRef>
+      <CommonName>Primary School</CommonName>
+      <LocalityName>Dinting Vale</LocalityName>
+      <LocalityQualifier>Glossop</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DDDV3835</StopPointRef>
+      <CommonName>Glossop Road</CommonName>
+      <LocalityName>Dinting Vale</LocalityName>
+      <LocalityQualifier>Glossop</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DDSL4373</StopPointRef>
+      <CommonName>Industrial Estate</CommonName>
+      <LocalityName>Dinting Vale</LocalityName>
+      <LocalityQualifier>Glossop</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DGHS0900</StopPointRef>
+      <CommonName>Henry Street</CommonName>
+      <LocalityName>Glossop</LocalityName>
+      <LocalityQualifier>Glossop</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DGHS3404</StopPointRef>
+      <CommonName>Arundel Street</CommonName>
+      <LocalityName>Glossop</LocalityName>
+      <LocalityQualifier>Glossop</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DGHS3406</StopPointRef>
+      <CommonName>St Marys Road</CommonName>
+      <LocalityName>Glossop</LocalityName>
+      <LocalityQualifier>Glossop</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DGHS3408</StopPointRef>
+      <CommonName>Sunlaws Street</CommonName>
+      <LocalityName>Glossop</LocalityName>
+      <LocalityQualifier>Glossop</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DGHS3410</StopPointRef>
+      <CommonName>Grapes Inn</CommonName>
+      <LocalityName>Glossop</LocalityName>
+      <LocalityQualifier>Glossop</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DHWG4276</StopPointRef>
+      <CommonName>Goddard Lane</CommonName>
+      <LocalityName>Hadfield</LocalityName>
+      <LocalityQualifier>Hadfield</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DHWI4282</StopPointRef>
+      <CommonName>Waterside Business Park</CommonName>
+      <LocalityName>Hadfield</LocalityName>
+      <LocalityQualifier>Hadfield</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DHNL4281</StopPointRef>
+      <CommonName>Glossopdale College</CommonName>
+      <LocalityName>Hadfield</LocalityName>
+      <LocalityQualifier>Hadfield</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DHNL4394</StopPointRef>
+      <CommonName>Castle Street</CommonName>
+      <LocalityName>Hadfield</LocalityName>
+      <LocalityQualifier>Hadfield</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DHSR3798</StopPointRef>
+      <CommonName>Masons Arms</CommonName>
+      <LocalityName>Hadfield</LocalityName>
+      <LocalityQualifier>Hadfield</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DHSR2159</StopPointRef>
+      <CommonName>Railway Station</CommonName>
+      <LocalityName>Hadfield</LocalityName>
+      <LocalityQualifier>Hadfield</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DHSR3322</StopPointRef>
+      <CommonName>Albert Street</CommonName>
+      <LocalityName>Hadfield</LocalityName>
+      <LocalityQualifier>Hadfield</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DHCS4391</StopPointRef>
+      <CommonName>St Andrews Church</CommonName>
+      <LocalityName>Hadfield</LocalityName>
+      <LocalityQualifier>Hadfield</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DHNL4230</StopPointRef>
+      <CommonName>Thorncliffe Road</CommonName>
+      <LocalityName>Hadfield</LocalityName>
+      <LocalityQualifier>Hadfield</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DHNL3786</StopPointRef>
+      <CommonName>The Sycamores</CommonName>
+      <LocalityName>Hadfield</LocalityName>
+      <LocalityQualifier>Hadfield</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DTMR4354</StopPointRef>
+      <CommonName>Arnfield Towers</CommonName>
+      <LocalityName>Tintwistle</LocalityName>
+      <LocalityQualifier>Tintwistle</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DTMR4357</StopPointRef>
+      <CommonName>Matthew Close</CommonName>
+      <LocalityName>Tintwistle</LocalityName>
+      <LocalityQualifier>Tintwistle</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1000DTMR4359</StopPointRef>
+      <CommonName>New Road</CommonName>
+      <LocalityName>Tintwistle</LocalityName>
+      <LocalityQualifier>Tintwistle</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB00081</StopPointRef>
+      <CommonName>Lever St/Warwick St</CommonName>
+      <LocalityName>Manchester City Centre</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB00831</StopPointRef>
+      <CommonName>Great Ancoats St/Adair St</CommonName>
+      <LocalityName>Ancoats</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB02641</StopPointRef>
+      <CommonName>Every St/Carruthers St</CommonName>
+      <LocalityName>Ancoats</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB01311</StopPointRef>
+      <CommonName>Piccadilly Gardens</CommonName>
+      <LocalityName>Piccadilly Gardens</LocalityName>
+      <LocalityQualifier>Manchester City Centre</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800ANBS0E1</StopPointRef>
+      <CommonName>Ashton Bus Station</CommonName>
+      <LocalityName>Ashton Under Lyne</LocalityName>
+      <LocalityQualifier>Ashton Under Lyne</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB15181</StopPointRef>
+      <CommonName>Every St/Tutbury St</CommonName>
+      <LocalityName>Ancoats</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB24371</StopPointRef>
+      <CommonName>Great Ancoats St/Jersey St</CommonName>
+      <LocalityName>Ancoats</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB17961</StopPointRef>
+      <CommonName>Velopark Tram Stop</CommonName>
+      <LocalityName>Sportcity</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB33211</StopPointRef>
+      <CommonName>Ashton New Rd/Aldi</CommonName>
+      <LocalityName>Clayton</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB32481</StopPointRef>
+      <CommonName>Holt Town Tram Stop</CommonName>
+      <LocalityName>Holt Town</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB32501</StopPointRef>
+      <CommonName>Ashton New Rd/Councillor St</CommonName>
+      <LocalityName>Beswick</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB32551</StopPointRef>
+      <CommonName>Ashton New Rd/Grey Mare Ln</CommonName>
+      <LocalityName>Sportcity</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB32951</StopPointRef>
+      <CommonName>Ashton New Rd/City Academy</CommonName>
+      <LocalityName>Clayton</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB33231</StopPointRef>
+      <CommonName>Ashton New Rd/Schofield St</CommonName>
+      <LocalityName>Clayton</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB33251</StopPointRef>
+      <CommonName>Ashton New Rd/Canberra St</CommonName>
+      <LocalityName>Clayton</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB33271</StopPointRef>
+      <CommonName>Clayton Hall Tram Stop</CommonName>
+      <LocalityName>Clayton</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB32541</StopPointRef>
+      <CommonName>Ashton New Rd/Etihad Stadium</CommonName>
+      <LocalityName>Sportcity</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB32381</StopPointRef>
+      <CommonName>Great Ancoats St/Old Mill St</CommonName>
+      <LocalityName>Ancoats</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EB33291</StopPointRef>
+      <CommonName>Ashton New Rd/North Rd</CommonName>
+      <LocalityName>Clayton</LocalityName>
+      <LocalityQualifier>Manchester</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH02111</StopPointRef>
+      <CommonName>Stalybridge Rd/Rushycroft</CommonName>
+      <LocalityName>Mottram</LocalityName>
+      <LocalityQualifier>Mottram</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH00801</StopPointRef>
+      <CommonName>Armentieres Square</CommonName>
+      <LocalityName>Stalybridge</LocalityName>
+      <LocalityQualifier>Stalybridge</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH09431</StopPointRef>
+      <CommonName>Acres Ln/Park St</CommonName>
+      <LocalityName>Stalybridge</LocalityName>
+      <LocalityQualifier>Stalybridge</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH21221</StopPointRef>
+      <CommonName>Beaufort Rd/Heys Rd</CommonName>
+      <LocalityName>Cockbrook</LocalityName>
+      <LocalityQualifier>Ashton Under Lyne</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH20571</StopPointRef>
+      <CommonName>Waterloo Rd/Market St</CommonName>
+      <LocalityName>Stalybridge</LocalityName>
+      <LocalityQualifier>Stalybridge</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH21471</StopPointRef>
+      <CommonName>Stamford St/Astley Rd</CommonName>
+      <LocalityName>Stamford Park</LocalityName>
+      <LocalityQualifier>Stalybridge</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH20591</StopPointRef>
+      <CommonName>Rassbottom St/Stalybridge Stn</CommonName>
+      <LocalityName>Stalybridge</LocalityName>
+      <LocalityQualifier>Stalybridge</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH20601</StopPointRef>
+      <CommonName>Rassbottom St/Thompson Cross</CommonName>
+      <LocalityName>Stalybridge</LocalityName>
+      <LocalityQualifier>Stalybridge</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH21241</StopPointRef>
+      <CommonName>Beaufort Rd/Tameside College</CommonName>
+      <LocalityName>Cockbrook</LocalityName>
+      <LocalityQualifier>Ashton Under Lyne</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH24151</StopPointRef>
+      <CommonName>Penny Meadow/Crickets Ln</CommonName>
+      <LocalityName>Ashton Under Lyne</LocalityName>
+      <LocalityQualifier>Ashton Under Lyne</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH35841</StopPointRef>
+      <CommonName>Katherine St/Cavendish St</CommonName>
+      <LocalityName>Ashton Under Lyne</LocalityName>
+      <LocalityQualifier>Ashton Under Lyne</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH35691</StopPointRef>
+      <CommonName>Audenshaw Metrolink Stop</CommonName>
+      <LocalityName>Audenshaw</LocalityName>
+      <LocalityQualifier>Audenshaw</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH35821</StopPointRef>
+      <CommonName>Katherine St/Welbeck St Nth</CommonName>
+      <LocalityName>Chester Square</LocalityName>
+      <LocalityQualifier>Ashton Under Lyne</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH35551</StopPointRef>
+      <CommonName>Manchester Rd/Buxton Ln</CommonName>
+      <LocalityName>Droylsden</LocalityName>
+      <LocalityQualifier>Droylsden</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH35571</StopPointRef>
+      <CommonName>Cemetery Road Tram Stop</CommonName>
+      <LocalityName>Droylsden</LocalityName>
+      <LocalityQualifier>Droylsden</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH35611</StopPointRef>
+      <CommonName>Manchester Rd/Tesco</CommonName>
+      <LocalityName>Droylsden</LocalityName>
+      <LocalityQualifier>Droylsden</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH35621</StopPointRef>
+      <CommonName>Droylsden Tram Stop</CommonName>
+      <LocalityName>Droylsden</LocalityName>
+      <LocalityQualifier>Droylsden</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH35531</StopPointRef>
+      <CommonName>Edge Lane Tram Stop</CommonName>
+      <LocalityName>Droylsden</LocalityName>
+      <LocalityQualifier>Droylsden</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH24201</StopPointRef>
+      <CommonName>Wellington Rd/Market Hall</CommonName>
+      <LocalityName>Ashton Under Lyne</LocalityName>
+      <LocalityQualifier>Ashton Under Lyne</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH21501</StopPointRef>
+      <CommonName>Stamford St/Stamford Park</CommonName>
+      <LocalityName>Stamford Park</LocalityName>
+      <LocalityQualifier>Stalybridge</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH35651</StopPointRef>
+      <CommonName>Ashton Rd/Williamson Ln</CommonName>
+      <LocalityName>Droylsden</LocalityName>
+      <LocalityQualifier>Droylsden</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH35661</StopPointRef>
+      <CommonName>Droylsden Rd/Kershaw Ln</CommonName>
+      <LocalityName>Fairfield</LocalityName>
+      <LocalityQualifier>Droylsden</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH37371</StopPointRef>
+      <CommonName>Roe Cross Rd/Old Rd</CommonName>
+      <LocalityName>Mottram</LocalityName>
+      <LocalityQualifier>Mottram</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH37341</StopPointRef>
+      <CommonName>Mottram Rd/Waggon &amp; Horses</CommonName>
+      <LocalityName>Bardsley Gate</LocalityName>
+      <LocalityQualifier>Stalybridge</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH37351</StopPointRef>
+      <CommonName>Roe Cross Rd/Roe Cross Hotel</CommonName>
+      <LocalityName>Mottram</LocalityName>
+      <LocalityQualifier>Mottram</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH37251</StopPointRef>
+      <CommonName>Mottram Rd/Early Bank</CommonName>
+      <LocalityName>Woodlands</LocalityName>
+      <LocalityQualifier>Stalybridge</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH37271</StopPointRef>
+      <CommonName>Mottram Rd/Woodlands Rd</CommonName>
+      <LocalityName>Woodlands</LocalityName>
+      <LocalityQualifier>Stalybridge</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH37221</StopPointRef>
+      <CommonName>Mottram Road/Cheetham Park</CommonName>
+      <LocalityName>Bower Fold</LocalityName>
+      <LocalityQualifier>Stalybridge</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH37181</StopPointRef>
+      <CommonName>Mottram Rd/Stocks Ln</CommonName>
+      <LocalityName>Stalybridge</LocalityName>
+      <LocalityQualifier>Stalybridge</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH37291</StopPointRef>
+      <CommonName>Mottram Rd/Woodend Ln</CommonName>
+      <LocalityName>Woodlands</LocalityName>
+      <LocalityQualifier>Stalybridge</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH37321</StopPointRef>
+      <CommonName>Mottram Rd/Dog &amp; Partridge</CommonName>
+      <LocalityName>Bardsley Gate</LocalityName>
+      <LocalityQualifier>Stalybridge</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH37241</StopPointRef>
+      <CommonName>Mottram Rd/Bower Fold</CommonName>
+      <LocalityName>Bower Fold</LocalityName>
+      <LocalityQualifier>Stalybridge</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH37201</StopPointRef>
+      <CommonName>Mottram Rd/Grey St</CommonName>
+      <LocalityName>Stalybridge</LocalityName>
+      <LocalityQualifier>Stalybridge</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH39121</StopPointRef>
+      <CommonName>Manchester Rd/Snipe Inn</CommonName>
+      <LocalityName>Ashton Moss</LocalityName>
+      <LocalityQualifier>Ashton Under Lyne</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH39141</StopPointRef>
+      <CommonName>Manchester Rd/Ashton Moss</CommonName>
+      <LocalityName>Ashton Moss</LocalityName>
+      <LocalityQualifier>Ashton Under Lyne</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH39161</StopPointRef>
+      <CommonName>Manchester Rd/Hawthorne Gr</CommonName>
+      <LocalityName>Ashton Moss</LocalityName>
+      <LocalityQualifier>Ashton Under Lyne</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH39181</StopPointRef>
+      <CommonName>Manchester Rd/William St</CommonName>
+      <LocalityName>Ashton Moss</LocalityName>
+      <LocalityQualifier>Ashton Under Lyne</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH39211</StopPointRef>
+      <CommonName>Manchester Rd/Chester Sq</CommonName>
+      <LocalityName>Chester Square</LocalityName>
+      <LocalityQualifier>Ashton Under Lyne</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH48831</StopPointRef>
+      <CommonName>Market St/King St</CommonName>
+      <LocalityName>Hollingworth</LocalityName>
+      <LocalityQualifier>Hollingworth</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH48851</StopPointRef>
+      <CommonName>Manchester Rd/Millbrook</CommonName>
+      <LocalityName>Hollingworth</LocalityName>
+      <LocalityQualifier>Hollingworth</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH48561</StopPointRef>
+      <CommonName>Mottram Moor/Carrhouse Ln</CommonName>
+      <LocalityName>Mottram</LocalityName>
+      <LocalityQualifier>Mottram</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH48591</StopPointRef>
+      <CommonName>Mottram Moor/Fern Cottages</CommonName>
+      <LocalityName>Mottram</LocalityName>
+      <LocalityQualifier>Mottram</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH48601</StopPointRef>
+      <CommonName>Mottram Moor/Junction Inn</CommonName>
+      <LocalityName>Mottram</LocalityName>
+      <LocalityQualifier>Mottram</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH48551</StopPointRef>
+      <CommonName>Mottram Moor/Gun Inn</CommonName>
+      <LocalityName>Hollingworth</LocalityName>
+      <LocalityQualifier>Hollingworth</LocalityQualifier>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>1800EH48811</StopPointRef>
+      <CommonName>Market St/Hollingworth Clinic</CommonName>
+      <LocalityName>Hollingworth</LocalityName>
+      <LocalityQualifier>Hollingworth</LocalityQualifier>
+    </AnnotatedStopPointRef>
+  </StopPoints>
+  <JourneyPatternSections>
+    <JourneyPatternSection id="JPSection-1">
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS1">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>1800EB01311</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB00081</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS2">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB00081</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB24371</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS3">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB24371</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB32381</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS4">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB32381</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB00831</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS5">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB00831</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB15181</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS6">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB15181</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB02641</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS7">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB02641</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB32481</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS8">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB32481</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB32501</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS9">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB32501</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB32541</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS10">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB32541</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB32551</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS11">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB32551</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB17961</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS12">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB17961</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB32951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS13">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB32951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB33291</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS14">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB33291</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB33271</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS15">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB33271</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB33251</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS16">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB33251</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB33231</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS17">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB33231</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB33211</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS18">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EB33211</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35531</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS19">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35531</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35551</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS20">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35551</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35571</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS21">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35571</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35611</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS22">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35611</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35621</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS23">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35621</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35651</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS24">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35651</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35661</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS25">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35661</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35691</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS26">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35691</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH39121</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS27">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH39121</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH39141</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS28">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH39141</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH39161</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS29">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH39161</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH39181</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS30">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH39181</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH39211</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS31">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH39211</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35821</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS32">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35821</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35841</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS33">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH35841</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800ANBS0E1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS34">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800ANBS0E1</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH24201</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS35">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH24201</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH24151</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS36">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH24151</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH21241</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS37">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH21241</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH21221</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS38">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH21221</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH21501</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS39">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH21501</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH21471</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS40">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH21471</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH20601</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS41">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH20601</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH20591</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS42">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH20591</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH20571</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS43">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH20571</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH00801</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS44">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH00801</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH09431</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS45">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH09431</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37181</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS46">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37181</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37201</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS47">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37201</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37221</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS48">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37221</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37241</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS49">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37241</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37251</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS50">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37251</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37271</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS51">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37271</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37291</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS52">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37291</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37321</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS53">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37321</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37341</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS54">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37341</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37351</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS55">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37351</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37371</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS56">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH37371</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH02111</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS57">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH02111</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH48601</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS58">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH48601</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH48591</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS59">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH48591</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH48561</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS60">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH48561</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH48551</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS61">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH48551</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH48811</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS62">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH48811</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH48831</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS63">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH48831</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH48851</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS64">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1800EH48851</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DTMR4354</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS65">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DTMR4354</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DTMR4357</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS66">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DTMR4357</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DTMR4359</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS67">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DTMR4359</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHWG4276</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS68">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHWG4276</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHWI4282</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS69">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHWI4282</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHSR3322</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS70">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHSR3322</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHSR3798</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS71">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHSR3798</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHSR2159</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS72">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHSR2159</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHCS4391</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS73">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHCS4391</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHNL4394</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS74">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHNL4394</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHNL4281</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS75">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHNL4281</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHNL4230</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS76">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHNL4230</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHNL3786</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS77">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DHNL3786</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DDSL4373</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS78">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DDSL4373</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DDDV4249</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS79">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DDDV4249</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DDDV3835</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS80">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DDDV3835</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DDDV3414</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS81">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DDDV3414</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DDHS3412</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS82">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DDHS3412</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DGHS3410</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS83">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DGHS3410</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DGHS3408</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS84">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DGHS3408</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DGHS3406</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS85">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DGHS3406</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DGHS3404</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RunTime>PT0M</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPSection-1-SEC1-POS86">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>1000DGHS3404</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>1000DGHS0900</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RunTime>PT1M</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+  </JourneyPatternSections>
+  <Operators>
+    <Operator id="OId_GMS">
+      <NationalOperatorCode>SCMN</NationalOperatorCode>
+      <OperatorCode>GMS</OperatorCode>
+      <OperatorShortName>GMS</OperatorShortName>
+    </Operator>
+  </Operators>
+  <Services>
+    <Service>
+      <ServiceCode>NW_04_GMS_237_1</ServiceCode>
+      <Lines>
+        <Line id="l_237_GMS">
+          <LineName>237</LineName>
+        </Line>
+      </Lines>
+      <OperatingPeriod>
+        <StartDate>2017-01-03</StartDate>
+        <EndDate>2099-12-31</EndDate>
+      </OperatingPeriod>
+      <RegisteredOperatorRef>OId_GMS</RegisteredOperatorRef>
+      <StopRequirements>
+        <NoNewStopsRequired />
+      </StopRequirements>
+      <Mode>bus</Mode>
+      <Description>Piccadilly Gardens, Manchester City Centre - Glossop</Description>
+      <StandardService>
+        <Origin>Piccadilly Gardens, Manchester City Centre</Origin>
+        <Destination>Glossop</Destination>
+        <JourneyPattern id="JP1">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPSection-1</JourneyPatternSectionRefs>
+        </JourneyPattern>
+      </StandardService>
+    </Service>
+  </Services>
+  <VehicleJourneys>
+    <VehicleJourney>
+      <PrivateCode>000001</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>BUS</VehicleTypeCode>
+          <Description>BUS</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation />
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>000001</VehicleJourneyCode>
+      <ServiceRef>NW_04_GMS_237_1</ServiceRef>
+      <LineRef>l_237_GMS</LineRef>
+      <JourneyPatternRef>JP1</JourneyPatternRef>
+      <Note>
+        <NoteCode>FS</NoteCode>
+        <NoteText>Night Service, runs Friday night/Saturday morning ONLY.Special fares may</NoteText>
+      </Note>
+      <Note>
+        <NoteCode>FA</NoteCode>
+        <NoteText>Low floor bus - access for pushchairs and wheelchairs</NoteText>
+      </Note>
+      <DepartureTime>02:30:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <PrivateCode>J1</PrivateCode>
+      <Operational>
+        <VehicleType>
+          <VehicleTypeCode>BUS</VehicleTypeCode>
+          <Description>BUS</Description>
+        </VehicleType>
+      </Operational>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Sunday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation />
+        <BankHolidayOperation>
+          <DaysOfNonOperation>
+            <AllBankHolidays />
+          </DaysOfNonOperation>
+        </BankHolidayOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>J1</VehicleJourneyCode>
+      <ServiceRef>NW_04_GMS_237_1</ServiceRef>
+      <LineRef>l_237_GMS</LineRef>
+      <VehicleJourneyRef>000001</VehicleJourneyRef>
+      <Note>
+        <NoteCode>Ss</NoteCode>
+        <NoteText>Night Service, runs Saturday night/Sunday morning ONLY;special fares may</NoteText>
+      </Note>
+      <Note>
+        <NoteCode>FA</NoteCode>
+        <NoteText>Low floor bus - access for pushchairs and wheelchairs</NoteText>
+      </Note>
+      <DepartureTime>02:30:00</DepartureTime>
+    </VehicleJourney>
+  </VehicleJourneys>
+</TransXChange>

@@ -28,6 +28,7 @@ class ImportServicesTest(TestCase):
         cls.ea = Region.objects.create(pk='EA', name='East Anglia')
         cls.gb = Region.objects.create(pk='GB', name='Großbritannien')
         cls.sc = Region.objects.create(pk='S', name='Scotland')
+        cls.nw = Region.objects.create(pk='NW', name='North West')
         cls.london = Region.objects.create(pk='L', name='London')
 
         cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
@@ -61,16 +62,13 @@ class ImportServicesTest(TestCase):
             )
 
         # simulate an East Anglia zipfile:
-        ea_zipfile_path = os.path.join(FIXTURES_DIR, 'EA.zip')
-        with zipfile.ZipFile(ea_zipfile_path, 'a') as ea_zipfile:
-            cls.write_file_to_zipfile(ea_zipfile, 'ea_21-13B-B-y08-1.xml')
-        call_command(cls.command, ea_zipfile_path)
+        cls.write_files_to_zipfile('EA.zip', ['ea_21-13B-B-y08-1.xml'])
 
         # simulate a Scotland zipfile:
-        s_zipfile_path = os.path.join(FIXTURES_DIR, 'S.zip')
-        with zipfile.ZipFile(s_zipfile_path, 'a') as s_zipfile:
-            cls.write_file_to_zipfile(s_zipfile, 'SVRABBN017.xml')
-        call_command(cls.command, s_zipfile_path)
+        cls.write_files_to_zipfile('S.zip', ['SVRABBN017.xml'])
+
+        # simulate a North West zipfile:
+        cls.write_files_to_zipfile('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml', 'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
 
         cls.ea_service = Service.objects.get(pk='ea_21-13B-B-y08')
         cls.sc_service = Service.objects.get(pk='ABBN017')
@@ -102,7 +100,13 @@ class ImportServicesTest(TestCase):
         cls.gb_m11a = Service.objects.get(pk='M11A_MEGA')
         cls.gb_m12 = Service.objects.get(pk='M12_MEGA')
 
-        cls.do_service('NW_05_PBT_6', 'GB')
+    @classmethod
+    def write_files_to_zipfile(cls, zipfile_name, filenames):
+        zipfile_path = os.path.join(FIXTURES_DIR, zipfile_name)
+        with zipfile.ZipFile(zipfile_path, 'a') as open_zipfile:
+            for filename in filenames:
+                cls.write_file_to_zipfile(open_zipfile, filename)
+        call_command(cls.command, zipfile_path)
 
     @staticmethod
     def write_file_to_zipfile(open_zipfile, filename):
@@ -217,6 +221,35 @@ class ImportServicesTest(TestCase):
         path = os.path.join(FIXTURES_DIR, filename)
         with open(path) as xml_file:
             cls.command.do_service(xml_file, filename)
+
+    def test_do_service_invalid(self):
+        """A file with some wrong references should be silently ignored"""
+        self.do_service('NW_05_PBT_6_1', 'NW')
+
+    @freeze_time('1 October 2017')
+    def test_service_nw(self):
+        # 2
+        service = Service.objects.get(service_code='NW_04_GMN_2')
+        self.assertEqual(service.description, 'intu Trafford Centre - Eccles - Swinton - Bolton')
+
+        res = self.client.get(service.get_absolute_url())
+        self.assertEqual(2, len(res.context_data['timetables']))
+
+        # Outside of one timetable's oprating period, only one timetable should be shown
+        res = self.client.get(service.get_absolute_url() + '?date=2017-09-01')
+        self.assertEqual(1, len(res.context_data['timetables']))
+
+        # Stagecoach Manhester 237
+        service = Service.objects.get(service_code='NW_04_GMS_237')
+        self.assertEqual(service.description, 'Glossop - Stalybridge - Ashton')
+
+        # On a Sunday, both timetables should be shown
+        res = self.client.get(service.get_absolute_url())
+        self.assertEqual(2, len(res.context_data['timetables']))
+
+        # On a Tuesday, only one timetable should be shown
+        res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
+        self.assertEqual(1, len(res.context_data['timetables']))
 
     @freeze_time('3 October 2016')
     def test_do_service_ea(self):
@@ -403,3 +436,4 @@ class ImportServicesTest(TestCase):
         os.remove(os.path.join(FIXTURES_DIR, 'EA.zip'))
         os.remove(os.path.join(FIXTURES_DIR, 'S.zip'))
         os.remove(os.path.join(FIXTURES_DIR, 'NCSD.zip'))
+        os.remove(os.path.join(FIXTURES_DIR, 'NW.zip'))
