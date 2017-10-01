@@ -68,7 +68,9 @@ class ImportServicesTest(TestCase):
         cls.write_files_to_zipfile('S.zip', ['SVRABBN017.xml'])
 
         # simulate a North West zipfile:
-        cls.write_files_to_zipfile('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml', 'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
+        with warnings.catch_warnings(record=True):
+            cls.write_files_to_zipfile('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml',
+                                                  'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
 
         cls.ea_service = Service.objects.get(pk='ea_21-13B-B-y08')
         cls.sc_service = Service.objects.get(pk='ABBN017')
@@ -87,7 +89,7 @@ class ImportServicesTest(TestCase):
             call_command(cls.command, ncsd_zipfile_path)
 
             # test re-importing a previously imported service again
-            cls.do_service('NCSD_TXC/Megabus_Megabus14032016 163144_MEGA_M12', 'GB')
+            call_command(cls.command, ncsd_zipfile_path)
 
         with freeze_time('2000-01-01'):
             call_command('generate_departures', 'GB')
@@ -409,6 +411,9 @@ class ImportServicesTest(TestCase):
     def test_departures(self):
         self.assertEqual(16, Journey.objects.filter(service='M12_MEGA').count())
         self.assertEqual(24, StopUsageUsage.objects.filter(journey__service='M12_MEGA').count())
+
+        # Megabus services have been imported twice, but there should only be one of each StopUsage
+        self.assertEqual(1, StopPoint.objects.filter(service='M12_MEGA').count())
 
         # This should be the first journey (some earlier journeys should have been deleted)
         journey = Journey.objects.first()
