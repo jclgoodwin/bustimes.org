@@ -45,7 +45,9 @@ class UpdateNaptanTest(TestCase):
 
     @override_settings(DATA_DIR=FIXTURES_DIR)
     def test_handle(self):
-        json_path = os.path.join(FIXTURES_DIR, 'NaPTAN', 'NPTGLastSubs_Load.ashx')
+        naptan_dir = os.path.join(FIXTURES_DIR, 'NaPTAN')
+        json_path = os.path.join(naptan_dir, 'NPTGLastSubs_Load.ashx')
+        os.mkdir(naptan_dir)
 
         with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan.yml')):
             with self.assertRaises(TypeError):
@@ -61,7 +63,7 @@ class UpdateNaptanTest(TestCase):
             self.command.handle()
 
         # verify that a pretend zipfile containing some text was downloaded and saved
-        zipfile_path = os.path.join(FIXTURES_DIR, 'NaPTAN', 'naptan.zip')
+        zipfile_path = os.path.join(naptan_dir, 'naptan.zip')
         with open(zipfile_path) as open_file:
             self.assertEqual(open_file.read(), 'these pretzels are making me thirsty')
 
@@ -75,6 +77,7 @@ class UpdateNaptanTest(TestCase):
         # clean up afterwards
         os.remove(zipfile_path)
         os.remove(json_path)
+        os.rmdir(naptan_dir)
 
 
 class ImportNaptanTest(TestCase):
