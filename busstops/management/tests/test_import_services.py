@@ -9,7 +9,7 @@ from freezegun import freeze_time
 from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
 from django.core.management import call_command
-from ...models import Operator, Service, Region, StopPoint, Journey, StopUsageUsage
+from ...models import Operator, Service, Region, StopPoint, Journey, StopUsageUsage, ServiceDate
 from ..commands import import_services, generate_departures
 
 
@@ -252,6 +252,14 @@ class ImportServicesTest(TestCase):
         # On a Tuesday, only one timetable should be shown
         res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
         self.assertEqual(1, len(res.context_data['timetables']))
+
+    @freeze_time('1 October 2017')
+    def test_service_dates(self):
+        self.assertEqual(0, ServiceDate.objects.count())
+        call_command('generate_service_dates')
+        self.assertEqual(28, ServiceDate.objects.count())
+        call_command('generate_service_dates')
+        self.assertEqual(28, ServiceDate.objects.count())
 
     @freeze_time('3 October 2016')
     def test_do_service_ea(self):
