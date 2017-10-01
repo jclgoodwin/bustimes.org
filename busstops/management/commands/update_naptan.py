@@ -1,6 +1,8 @@
 from __future__ import print_function
+import os
 import json
 import requests
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 
@@ -11,7 +13,7 @@ class Command(BaseCommand):
     @staticmethod
     def get_old_rows():
         try:
-            with open(JSON_NAME) as old_file:
+            with open(os.path.join(settings.DATA_DIR, 'NaPTAN', JSON_NAME)) as old_file:
                 old_json = json.load(old_file)
         except IOError:
             return
@@ -62,9 +64,9 @@ class Command(BaseCommand):
                 print(response.headers)
                 response = self.get_data()
 
-            with open('naptan.zip', 'wb') as zip_file:
+            with open(os.path.join(settings.DATA_DIR, 'NaPTAN', 'naptan.zip'), 'wb') as zip_file:
                 for chunk in response.iter_content(chunk_size=102400):
                     zip_file.write(chunk)
 
-            with open(JSON_NAME, 'w') as json_file:
+            with open(os.path.join(settings.DATA_DIR, 'NaPTAN', JSON_NAME), 'w') as json_file:
                 json_file.write(new_response.text)

@@ -3,13 +3,14 @@
 
 import os
 import vcr
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from ...models import Region, AdminArea, StopPoint, Locality, Service, StopUsage
 from ..commands import (update_naptan, import_stop_areas, import_stops, import_stops_in_area,
                         import_stop_area_hierarchy)
 
 
 DIR = os.path.dirname(os.path.abspath(__file__))
+FIXTURES_DIR = os.path.join(DIR, 'fixtures')
 
 
 class UpdateNaptanTest(TestCase):
@@ -19,6 +20,9 @@ class UpdateNaptanTest(TestCase):
 
     def test_get_old_rows(self):
         self.assertIsNone(self.command.get_old_rows())
+
+        with override_settings(DATA_DIR=FIXTURES_DIR):
+            self.assertEqual(len(self.command.get_old_rows()), 147)
 
     def test_get_diff(self):
         new_rows = [{
@@ -43,9 +47,21 @@ class UpdateNaptanTest(TestCase):
         self.assertEqual(self.command.get_diff(new_rows, new_rows), ([], []))
 
     def test_handle(self):
-        with vcr.use_cassette(os.path.join(DIR, 'fixtures', 'naptan.yml')):
+        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan.yml')):
             with self.assertRaises(TypeError):
+                # will error because no file exists yet
                 self.command.handle()
+
+            with override_settings(DATA_DIR=FIXTURES_DIR):
+                self.command.handle()
+
+        # verify that a pretend zipfile containing some text was downloaded and saved
+        zipfile_path = os.path.join(FIXTURES_DIR, 'NaPTAN', 'naptan.zip')
+        with open(zipfile_path) as open_file:
+            self.assertEqual(open_file.read(), 'these pretzels are making me thirsty')
+
+        # clean up afterwards
+        os.remove(zipfile_path)
 
 
 class ImportNaptanTest(TestCase):
@@ -62,7 +78,7 @@ class ImportNaptanTest(TestCase):
 
         command = import_stops.Command()
         for filename in ('Stops.csv', 'StopPoints.csv'):
-            command.input = os.path.join(DIR, 'fixtures', filename)
+            command.input = os.path.join(FIXTURES_DIR, filename)
             command.handle()
 
         cls.stop_area = import_stop_areas.Command().handle_row({
@@ -164,10 +180,10 @@ class ImportNaptanTest(TestCase):
                 self.assertEqual(1, len(context_manager.output))
                 self.assertEqual(context_manager.output[0][:32], 'ERROR:busstops.management.comman')
 
-        with vcr.use_cassette(os.path.join(DIR, 'fixtures', '5820AWN26361.yaml')):
+        with vcr.use_cassette(os.path.join(FIXTURES_DIR, '5820AWN26361.yaml')):
             self.assertContains(self.client.get('/stops/5820AWN26361'), 'Port Talbot Circular')
 
-        with vcr.use_cassette(os.path.join(DIR, 'fixtures', '5820AWN26274.yaml')):
+        with vcr.use_cassette(os.path.join(FIXTURES_DIR, '5820AWN26274.yaml')):
             legion_request = self.client.get('/stops/5820AWN26274')
             self.assertContains(legion_request, 'On Talbot Road, near Eagle Street, near Port Talbot ' +
                                 'British Legion')
