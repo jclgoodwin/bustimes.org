@@ -70,7 +70,8 @@ SPECIAL_OPERATOR_NAMES = {
     'Peter Hogg of Jedburgh': 'HOGG',
     'Fastline Travel': 'FLNE',
     'Operated by Newport Bus': 'NWPT',
-    'Eurocab Minicoaches': 'ERCB'
+    'Eurocab Minicoaches': 'ERCB',
+    'Polruan Ferry': 'CTSL',
 }
 # map OperatorCodes to operator IDs (ditto, where there is no TradingName):
 SPECIAL_OPERATOR_CODES = {
