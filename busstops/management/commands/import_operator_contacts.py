@@ -38,7 +38,7 @@ class Command(BaseCommand):
             noc_code = noc_codes.get(public_name.pubnmid.string)
 
             if not noc_code or len(noc_code) < 4:
-                continue  # pragma: no cover
+                continue
 
             try:
                 operator = Operator.objects.get(pk=noc_code.replace('=', ''))

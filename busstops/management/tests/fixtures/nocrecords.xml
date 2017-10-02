@@ -27,6 +27,15 @@
             <NOCCODE>LCHS</NOCCODE>
             <PubNmId>60</PubNmId>
         </NOCTableRecord>
+        <NOCTableRecord>
+            <!-- This has a short NOCCODE and should be ignored -->
+            <NOCCODE>=GR</NOCCODE>
+            <PubNmId>95938</PubNmId>
+        </NOCTableRecord>
+        <NOCTableRecord>
+            <NOCCODE>CSTL</NOCCODE>
+            <PubNmId>95074</PubNmId>
+        </NOCTableRecord>
     </NOCTable>
     <PublicName>
         <publicnamerecord>
@@ -81,5 +90,14 @@
             <!-- This has no corresponding NOCTableRecord and should be ignored happily -->
             <PubNmId>41</PubNmId>
         </PublicNameRecord>
+        <publicnamerecord>
+            <pubnmid>95074</pubnmid>
+            <operatorpublicname>Polruan Passenger Ferry, Bodinnick Vehicle Ferry</operatorpublicname>
+            <pubnmqual></pubnmqual>
+            <ttrteenq>enquiries@ctomsandson.co.uk</ttrteenq>
+            <fareenq>01726 870232</fareenq>
+            <complenq>Toms Yard, East Street, Polruan, Cornwall PL23 1BP</complenq>
+            <website>#http://www.ctomhttp://www.ctomsandson.co.uk/bodinnick-ferry/#</website>
+        </publicnamerecord>
     </PublicName>
 </travelinedata>

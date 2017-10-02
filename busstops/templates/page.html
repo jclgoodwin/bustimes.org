@@ -25,6 +25,7 @@
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}">
 {% block header %}
+<div class="banner-ad" id="ad"></div>
 <header>
     <div>
         <a href="/" class="site-name{% if object.mode == 'ferry' %} ferry{% endif %}">{% if object.mode == 'ferry' %}Ferry{% else %}Bus{% endif %} Times</a>
@@ -42,7 +43,7 @@
 {% block footer %}
 <footer>
     {% block ad %}
-        <div class="banner-ad" id="ad">
+        <div class="banner-ad">
             <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="auto"></ins>
         </div>
         <script>

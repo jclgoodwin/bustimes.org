@@ -18,11 +18,13 @@ class ImportOperatorContactTest(TestCase):
         cls.sanders = Operator.objects.create(pk='SNDR', name='Sanders', region=east_anglia)
         cls.first = Operator.objects.create(pk='FECS', name='First', region=east_anglia)
         cls.loaches = Operator.objects.create(pk='LCHS', name='Loaches Coaches', region=east_anglia)
+        cls.polruan = Operator.objects.create(pk='CSTL', name='Polruan', region=east_anglia)
 
         with warnings.catch_warnings(record=True) as cls.caught_warnings:
             cls.command.handle()
 
     def test_warnings(self):
+        self.assertEqual(2, len(self.caught_warnings))
         self.assertEqual('Operator matching query does not exist. POOP', str(self.caught_warnings[0].message))
 
     def test_format_address(self):
@@ -50,3 +52,9 @@ class ImportOperatorContactTest(TestCase):
         self.assertEqual(self.loaches.phone, '5678')
         self.assertEqual(self.loaches.email, '')
         self.assertEqual(self.loaches.url, 'http://www.arrivabus.co.uk')
+
+        self.polruan.refresh_from_db()
+        self.assertEqual(self.polruan.address, 'Toms Yard\nEast Street\nPolruan\nCornwall\nPL23 1BP')
+        self.assertEqual(self.polruan.phone, '01726 870232')
+        self.assertEqual(self.polruan.email, 'enquiries@ctomsandson.co.uk')
+        self.assertEqual(self.polruan.url, '')

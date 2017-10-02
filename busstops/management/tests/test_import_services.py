@@ -226,7 +226,7 @@ class ImportServicesTest(TestCase):
 
     def test_do_service_invalid(self):
         """A file with some wrong references should be silently ignored"""
-        self.do_service('NW_05_PBT_6_1', 'NW')
+        self.do_service('NW_05_PBT_6_1', 'GB')
 
     @freeze_time('1 October 2017')
     def test_service_nw(self):
