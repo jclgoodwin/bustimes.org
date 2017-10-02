@@ -81,7 +81,7 @@ def get_filenames(service, path=None, archive=None):
     if service.net:
         return [name for name in namelist if name.startswith('%s-' % service.pk)]
     if service.region_id == 'NW':
-        return [name for name in namelist if name == service.pk or name.startswith('%s_' % service.pk)]
+        return [name for name in namelist if name == service.pk + '.xml' or name.startswith('%s_' % service.pk)]
     if service.region_id == 'GB':
         parts = service.pk.split('_')
         return [name for name in namelist if name.endswith('_%s_%s%s' % (parts[1], parts[0], suffix))]
