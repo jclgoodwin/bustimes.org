@@ -253,18 +253,11 @@ class Command(BaseCommand):
 
         line_name, line_brand = self.get_line_name_and_brand(timetable.element.find('txc:Services/txc:Service', NS),
                                                              filename)
-        # net and service code:
 
+        # net and service code:
         net, service_code, line_ver = self.infer_from_filename(timetable.element.attrib['FileName'])
         if service_code is None:
             service_code = timetable.service_code
-            parts = service_code.split('_')
-            if len(parts) == 5 and parts[0] == 'NW':
-                service_code = '_'.join(parts[:4])
-
-        # stops:
-
-        stops = StopPoint.objects.in_bulk(timetable.stops.keys())
 
         defaults = dict(
             line_name=line_name,
@@ -276,6 +269,9 @@ class Command(BaseCommand):
             date=timetable.transxchange_date,
             current=True
         )
+
+        # stops:
+        stops = StopPoint.objects.in_bulk(timetable.stops.keys())
 
         try:
             stop_usages = []
@@ -326,7 +322,8 @@ class Command(BaseCommand):
 
             if self.region_id == 'NE':
                 description = self.sanitize_description(description)
-            defaults['description'] = description
+            if description != 'Origin - Destination':
+                defaults['description'] = description
 
         service, created = Service.objects.update_or_create(service_code=service_code, defaults=defaults)
 
