@@ -203,3 +203,6 @@ class ServiceTest(TestCase):
         self.assertEqual(response.context_data['timetables'][0].groupings[0].rows[0].times, ['07:35', '07:35'])
         self.assertEqual(response.context_data['timetables'][0].groupings[0].rows[-2].times, ['     ', '08:20'])
         self.assertEqual(response.context_data['timetables'][0].groupings[0].rows[-1].times, ['08:20', '     '])
+
+        response = self.client.get('/services/95c_ULB.xml')
+        self.assertContains(response, '"Post Office - Roslea - Buscentre - Enniskillen"')

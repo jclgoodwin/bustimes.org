@@ -1,9 +1,8 @@
 # coding=utf-8
 """Tests for live departures
 """
-import datetime
 import vcr
-from datetime import time
+from datetime import date, time, datetime
 from django.test import TestCase
 from django.shortcuts import render
 from freezegun import freeze_time
@@ -62,12 +61,20 @@ class LiveDeparturesTest(TestCase):
                                                         region_id='W', date='2017-01-01')
         cls.stagecoach_service.operator.add(stagecoach_operator)
         StopUsage.objects.create(stop=cls.stagecoach_stop, service=cls.stagecoach_service, order=1)
-        journey = Journey.objects.create(datetime='2017-03-14T20:23:00Z', service=cls.stagecoach_service,
-                                         destination=cls.cardiff_stop)
+
+        translink_metro_operator = Operator.objects.create(id='MET', name='Translink Metro', region_id='W')
+        cls.translink_metro_stop = StopPoint.objects.create(atco_code='700000001415', active=True,
+                                                            locality_centre=False)
+        translink_metro_service = Service.objects.create(service_code='2D_MET', line_name='2D', region_id='W',
+                                                         date='2017-01-01')
+        translink_metro_service.operator.add(translink_metro_operator)
+        StopUsage.objects.create(stop=cls.translink_metro_stop, service=translink_metro_service, order=0)
+
+        stagecoach_journey = Journey.objects.create(datetime='2017-03-14T20:23:00Z', service=cls.stagecoach_service,
+                                                    destination=cls.cardiff_stop)
         StopUsageUsage.objects.bulk_create([
-            StopUsageUsage(journey=journey, order=0, datetime='2017-03-14T20:23:00Z', stop=cls.stagecoach_stop),
-            StopUsageUsage(journey=journey, order=0, datetime='2017-03-14T21:23:00Z', stop=cls.stagecoach_stop),
-            StopUsageUsage(journey=journey, order=0, datetime='2017-03-28 18:53:00+01:00', stop=cls.stagecoach_stop),
+            StopUsageUsage(journey=stagecoach_journey, order=0, datetime=datetime, stop=cls.stagecoach_stop)
+            for datetime in ['2017-03-14T20:23:00Z', '2017-03-14T21:23:00Z', '2017-03-28 18:53:00+01:00']
         ])
 
     def test_abstract(self):
@@ -127,21 +134,21 @@ class LiveDeparturesTest(TestCase):
         """
         with vcr.use_cassette('data/vcr/cardiff.yaml'):
             departures = live.AcisConnectDepartures(
-                'cardiff', self.cardiff_stop, (), datetime.datetime.now()
+                'cardiff', self.cardiff_stop, (), datetime.now()
             ).get_departures()
 
         self.assertEqual(departures[0], {
             'destination': 'Churchill Way HL',
             'service': '9',
             'time': None,
-            'live': datetime.datetime(2017, 3, 12, 12, 15)
+            'live': datetime(2017, 3, 12, 12, 15)
         })
 
         self.assertEqual(departures[1], {
             'destination': 'Churchill Way HL',
             'service': '9',
             'time': None,
-            'live': datetime.datetime(2017, 3, 12, 12, 45)
+            'live': datetime(2017, 3, 12, 12, 45)
         })
 
         self.assertEqual('Pengam Green Tesco', departures[2]['destination'])
@@ -151,7 +158,7 @@ class LiveDeparturesTest(TestCase):
             'destination': 'Customhouse Str JL',
             'service': '95',
             'time': None,
-            'live': datetime.datetime(2017, 3, 12, 12, 49)
+            'live': datetime(2017, 3, 12, 12, 49)
         })
 
         with vcr.use_cassette('data/vcr/cardiff.yaml'):
@@ -172,12 +179,12 @@ class LiveDeparturesTest(TestCase):
             'destination': 'York Sport Village',
             'service': '66',
             'time': None,
-            'live': datetime.datetime(2017, 3, 12, 12, 1)
+            'live': datetime(2017, 3, 12, 12, 1)
         }, {
             'destination': 'Heslington East Int',
             'service': '44',
             'time': None,
-            'live': datetime.datetime(2017, 3, 12, 12, 9)
+            'live': datetime(2017, 3, 12, 12, 9)
         }, {
             'destination': 'York Sport Village',
             'service': '66',
@@ -194,7 +201,7 @@ class LiveDeparturesTest(TestCase):
     def test_acis_yorkshire(self):
         """Test the two possible (old, new) Yorkshire live departure sources against the same data
         """
-        now = datetime.datetime.now()
+        now = datetime.now()
 
         with vcr.use_cassette('data/vcr/acisconnect_yorkshire.yaml'):
             departures = live.AcisConnectDepartures(
@@ -227,11 +234,20 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(max_age, 60)
         self.assertEqual(len(departures['departures']), 12)
         self.assertEqual(departures['departures'][4], {
-            'time': datetime.datetime(2017, 6, 5, 12, 43),
-            'live': datetime.datetime(2017, 6, 5, 12, 35, 58),
+            'time': datetime(2017, 6, 5, 12, 43),
+            'live': datetime(2017, 6, 5, 12, 35, 58),
             'destination': 'Dublin Airport',
             'service': '16'
         })
+
+    @freeze_time('25 December 1904')
+    def test_translink_metro(self):
+        with vcr.use_cassette('data/vcr/translink_metro.yaml'):
+            res = self.client.get(self.translink_metro_stop.get_absolute_url())
+        self.assertEqual(res.context_data['departures'][0]['live'].date(), date(1904, 12, 25))
+        self.assertEqual(res.context_data['departures'][1]['live'].date(), date(1904, 12, 25))
+        self.assertEqual(res.context_data['departures'][2]['live'].date(), date(1904, 12, 25))
+        self.assertEqual(res.context_data['departures'][0]['live'].time(), time(0, 0))
 
     @freeze_time('14 Mar 2017 20:00')
     def test_stagecoach(self):
@@ -265,8 +281,7 @@ class LiveDeparturesTest(TestCase):
     def test_transportapi(self):
         """Test the get_row and other methods for Transport API departures
         """
-        departures = live.TransportApiDepartures(self.yorkshire_stop, (),
-                                                 datetime.date(2016, 6, 10))
+        departures = live.TransportApiDepartures(self.yorkshire_stop, (), date(2016, 6, 10))
         rows = departures.departures_from_response(DummyResponse({'departures': {'all': [{
             'direction': 'Gunton,Weston Road,',
             'expected_departure_time': None,
@@ -298,18 +313,29 @@ class LiveDeparturesTest(TestCase):
             'operator': 'SNDR',
             'line': '44A',
             'dir': 'inbound'
+        }, {
+            'direction': 'Railway Approach (Sheringham)',
+            'source': 'Traveline timetable (nextbuses disabled)',
+            'line_name': '44A',
+            'aimed_departure_time': '06:47',
+            'date': '2016-06-11',
+            'best_departure_estimate': '06:47',
+            'mode': 'bus',
+            'operator': 'SNDR',
+            'line': '44A',
+            'dir': 'inbound'
         }]}}))
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0], {
             'destination': 'Hellesdon',
             'service': '37',
-            'time': datetime.datetime(2016, 6, 10, 22, 17),
-            'live': datetime.datetime(2016, 6, 10, 22, 15)
+            'time': datetime(2016, 6, 10, 22, 17),
+            'live': datetime(2016, 6, 10, 22, 15)
         })
         self.assertEqual(rows[1], {
             'destination': 'Sheringham',
             'service': '44A',
-            'time': datetime.datetime(2016, 6, 10, 22, 47),
+            'time': datetime(2016, 6, 10, 22, 47),
             'live': None
         })
 
@@ -325,7 +351,7 @@ class LiveDeparturesTest(TestCase):
             'source': 'Scotland East'
         })
         self.assertEqual(east_scotland_row['destination'], 'Edinburgh')
-        self.assertEqual(east_scotland_row['live'].time(), datetime.time(3, 2))
+        self.assertEqual(east_scotland_row['live'].time(), time(3, 2))
 
         east_scotland_row_date = departures.get_row({
             'mode': 'bus',
@@ -341,8 +367,7 @@ class LiveDeparturesTest(TestCase):
             'source': 'Scotland East'
         })
         self.assertEqual(east_scotland_row_date['destination'], 'Stirling')
-        self.assertEqual(east_scotland_row_date['live'].time(),
-                         datetime.time(0, 32))
+        self.assertEqual(east_scotland_row_date['live'].time(), time(0, 32))
 
         self.assertEqual(
             departures.get_request_url(),
@@ -357,34 +382,34 @@ class LiveDeparturesTest(TestCase):
     def test_blend(self):
         a = [{
             'service': 'X98',
-            'time': datetime.datetime(2017, 4, 21, 20, 10),
-            'live': datetime.datetime(2017, 4, 21, 20, 2)
+            'time': datetime(2017, 4, 21, 20, 10),
+            'live': datetime(2017, 4, 21, 20, 2)
         }]
         b = [{
             'service': Service(line_name='X98'),
-            'time': datetime.datetime(2017, 4, 21, 20, 10),
-            'live': datetime.datetime(2017, 4, 21, 20, 5)
+            'time': datetime(2017, 4, 21, 20, 10),
+            'live': datetime(2017, 4, 21, 20, 5)
         }]
 
         live.blend(a, b)
         self.assertEqual(a, [{
             'service': 'X98',
-            'time': datetime.datetime(2017, 4, 21, 20, 10),
-            'live': datetime.datetime(2017, 4, 21, 20, 5)
+            'time': datetime(2017, 4, 21, 20, 10),
+            'live': datetime(2017, 4, 21, 20, 5)
         }])
 
         live.blend(b, a)
         self.assertEqual(b, [{
             'service': Service(line_name='X98'),
-            'time': datetime.datetime(2017, 4, 21, 20, 10),
-            'live': datetime.datetime(2017, 4, 21, 20, 5)
+            'time': datetime(2017, 4, 21, 20, 10),
+            'live': datetime(2017, 4, 21, 20, 5)
         }])
 
     def test_max_age(self):
         """Test the get_max_age() method
         """
         # Empty departures list should be cached until midnight
-        self.assertEqual(live.get_max_age((), datetime.datetime(2016, 6, 10, 22, 47)), 4380)
+        self.assertEqual(live.get_max_age((), datetime(2016, 6, 10, 22, 47)), 4380)
 
         # Error should be cached for 3600 seconds
         self.assertEqual(live.get_max_age(None, 'chutney'), 3600)
@@ -393,26 +418,26 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(live.get_max_age(({
             'destination': 'Sheringham',
             'service': '44A',
-            'time': datetime.datetime(2016, 6, 10, 22, 47)
-        },), datetime.datetime(2016, 6, 10, 22, 59)), 60)
+            'time': datetime(2016, 6, 10, 22, 47)
+        },), datetime(2016, 6, 10, 22, 59)), 60)
 
         # If the first departure is 43030 seconds in the future, cache for 43030 seconds
         self.assertEqual(live.get_max_age(({
             'destination': 'Sheringham',
             'service': '44A',
-            'time': datetime.datetime(2016, 6, 10, 22, 47)
-        },), datetime.datetime(2016, 6, 10, 10, 50, 50)), 43030)
+            'time': datetime(2016, 6, 10, 22, 47)
+        },), datetime(2016, 6, 10, 10, 50, 50)), 43030)
 
     def test_render(self):
         response = render(None, 'departures.html', {
             'departures': [
                 {
-                    'time': datetime.datetime(1994, 5, 4, 11, 53),
+                    'time': datetime(1994, 5, 4, 11, 53),
                     'service': 'X98',
                     'destination': 'Bratislava'
                 },
                 {
-                    'time': datetime.datetime(1994, 5, 7, 11, 53),
+                    'time': datetime(1994, 5, 7, 11, 53),
                     'service': '9',
                     'destination': 'Shilbottle'
                 }

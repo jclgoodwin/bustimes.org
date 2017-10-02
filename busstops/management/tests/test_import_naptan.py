@@ -13,6 +13,7 @@ DIR = os.path.dirname(os.path.abspath(__file__))
 FIXTURES_DIR = os.path.join(DIR, 'fixtures')
 
 
+@override_settings(DATA_DIR=FIXTURES_DIR)
 class UpdateNaptanTest(TestCase):
     """Test the update_naptan command
     """
@@ -43,7 +44,6 @@ class UpdateNaptanTest(TestCase):
         self.assertEqual(self.command.get_diff(new_rows, None), (['S'], ['639']))
         self.assertEqual(self.command.get_diff(new_rows, new_rows), ([], []))
 
-    @override_settings(DATA_DIR=FIXTURES_DIR)
     def test_handle(self):
         naptan_dir = os.path.join(FIXTURES_DIR, 'NaPTAN')
         json_path = os.path.join(naptan_dir, 'NPTGLastSubs_Load.ashx')
