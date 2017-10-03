@@ -147,4 +147,5 @@ class Command(BaseCommand):
             path = os.path.join(settings.DATA_DIR, path)
             modified = download_if_modified(path, url)
             if modified or options['force']:
+                print(collection)
                 self.handle_zipfile(path, collection)

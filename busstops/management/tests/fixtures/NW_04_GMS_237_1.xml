@@ -1670,7 +1670,7 @@
         <NoNewStopsRequired />
       </StopRequirements>
       <Mode>bus</Mode>
-      <Description>Piccadilly Gardens, Manchester City Centre - Glossop</Description>
+      <Description>Glossop - Stalybridge - Ashton</Description>
       <StandardService>
         <Origin>Piccadilly Gardens, Manchester City Centre</Origin>
         <Destination>Glossop</Destination>

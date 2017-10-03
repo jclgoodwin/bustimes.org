@@ -325,6 +325,24 @@ class Command(BaseCommand):
             if description != 'Origin - Destination':
                 defaults['description'] = description
 
+            parts = service_code.split('_')
+            if len(parts) == 5 and parts[0] == 'NW':
+                homogeneous_service_code = '_'.join(parts[:-1])
+
+                same_services = Service.objects.filter(description=description, current=True)
+                same_service = same_services.filter(service_code__startswith=homogeneous_service_code + '_')
+                same_service = same_service.exclude(service_code=service_code).first()
+                if same_service:
+                    service_code = homogeneous_service_code
+                    same_service.service_code = service_code
+                    same_service.save()
+                elif same_services.filter(service_code=homogeneous_service_code).exists():
+                    service_code = homogeneous_service_code
+
+                if service_code == homogeneous_service_code:
+                    for stop_usage in stop_usages:
+                        stop_usage.service_id = service_code
+
         service, created = Service.objects.update_or_create(service_code=service_code, defaults=defaults)
 
         if created:
