@@ -328,14 +328,14 @@ class JourneyPattern(object):
         self.sections = [
             sections[section_element.text]
             for section_element in element.findall('txc:JourneyPatternSectionRefs', NS)
+            if section_element.text in sections
         ]
 
-        origin = self.sections[0].timinglinks[0].origin
-
         rows = []
-        rows.append(Row(origin))
         for section in self.sections:
             for timinglink in section.timinglinks:
+                if not rows:
+                    rows.append(Row(timinglink.origin))
                 rows.append(Row(timinglink.destination))
 
         direction_element = element.find('txc:Direction', NS)
@@ -345,7 +345,10 @@ class JourneyPattern(object):
             self.grouping = groupings[1]
         self.grouping.journeypatterns.append(self)
 
-        if origin.sequencenumber is not None:
+        if not rows:
+            return
+
+        if rows[0].part.sequencenumber is not None:
             for row in rows:
                 if row.part.sequencenumber not in self.grouping.rows:
                     self.grouping.rows[row.part.sequencenumber] = row
@@ -391,6 +394,7 @@ class JourneyPattern(object):
 class JourneyPatternSection(object):
     """A collection of JourneyPatternStopUsages, in order."""
     def __init__(self, element, stops):
+        self.id = element.get('id')
         self.timinglinks = [
             JourneyPatternTimingLink(timinglink_element, stops)
             for timinglink_element in element
@@ -837,8 +841,9 @@ class Timetable(object):
                 self.operators = element
             elif tag == 'JourneyPatternSections':
                 journeypatternsections = {
-                    section.get('id'): JourneyPatternSection(section, self.stops)
-                    for section in element
+                    section.id: section for section in (
+                        JourneyPatternSection(section, self.stops) for section in element
+                    ) if section.timinglinks
                 }
                 element.clear()
             elif tag == 'ServicedOrganisations':
@@ -849,7 +854,8 @@ class Timetable(object):
                 # time calculation begins here:
                 try:
                     journeys = self.__get_journeys(element, servicedorgs)
-                except (AttributeError, KeyError):
+                except (AttributeError, KeyError) as e:
+                    print(e)
                     return
                 element.clear()
             elif tag == 'Service':
@@ -893,8 +899,10 @@ class Timetable(object):
                     Grouping('inbound', self)
                 )
                 self.journeypatterns = {
-                    pattern.get('id'): JourneyPattern(pattern, journeypatternsections, self.groupings)
-                    for pattern in element.findall('txc:StandardService/txc:JourneyPattern', NS)
+                    pattern.id: pattern for pattern in (
+                       JourneyPattern(pattern, journeypatternsections, self.groupings)
+                       for pattern in element.findall('txc:StandardService/txc:JourneyPattern', NS)
+                    ) if pattern.sections
                 }
 
         self.element = element
