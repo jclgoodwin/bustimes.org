@@ -462,7 +462,7 @@ class VehicleJourney(object):
 
         journeypatternref_element = element.find('txc:JourneyPatternRef', NS)
         if journeypatternref_element is not None:
-            self.journeypattern = journeypatterns[journeypatternref_element.text]
+            self.journeypattern = journeypatterns.get(journeypatternref_element.text)
         else:
             # Journey has no direct reference to a JourneyPattern.
             # Instead, it has a reference to another journey...
@@ -854,7 +854,7 @@ class Timetable(object):
                 # time calculation begins here:
                 try:
                     journeys = self.__get_journeys(element, servicedorgs)
-                except (AttributeError, KeyError) as e:
+                except AttributeError as e:
                     print(e)
                     return
                 element.clear()
