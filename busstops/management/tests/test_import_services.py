@@ -229,8 +229,11 @@ class ImportServicesTest(TestCase):
         """A file with some wrong references should be silently ignored"""
         self.do_service('NW_05_PBT_6_1', 'GB')
 
-        self.do_service('swe_33-9A-A-y10-2', 'SW')
-        self.assertFalse(Service.objects.filter(service_code='swe_33-9A-A-y10').exists())
+    @freeze_time('30 October 2017')
+    def test_do_service_with_empty_pattern(self):
+        """A file with a JourneyPattern with no JourneyPatternSections should be imported"""
+        self.do_service('swe_33-9A-A-y10-2', 'GB')
+        self.assertTrue(Service.objects.filter(service_code='swe_33-9A-A-y10').exists())
 
     @freeze_time('1 October 2017')
     def test_service_nw(self):

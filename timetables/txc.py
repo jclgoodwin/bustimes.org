@@ -806,7 +806,7 @@ class Timetable(object):
                 journey.journeypattern = journeys[journey.journeyref].journeypattern
 
         # return list(journeys.values())
-        return [journey for journey in iter(journeys.values()) if journey.should_show(self.date, self)]
+        return (j for j in iter(journeys.values()) if j.journeypattern and j.should_show(self.date, self))
 
     def date_options(self):
         start_date = min(self.date, datetime.date.today())
