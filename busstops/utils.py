@@ -9,7 +9,7 @@ try:
 except ImportError:
     from urlparse import urlparse
     from urllib import urlencode
-from datetime import date
+from datetime import date, datetime, time, timedelta
 from django.conf import settings
 from django.core.cache import cache
 from timetables import txc, northern_ireland, gtfs
@@ -151,5 +151,9 @@ def timetable_from_service(service, day=None):
         del timetable.stops
         del timetable.operators
         del timetable.element
-    cache.set(cache_key, timetables, None)
+    expiry = datetime.combine(
+        day + timedelta(days=1), time(0)
+    )
+    max_age = expiry - datetime.now()
+    cache.set(cache_key, timetables, max_age.seconds)
     return timetables
