@@ -366,7 +366,7 @@ class Command(BaseCommand):
         self.set_region(archive_name)
         self.service_codes = set()
 
-        Service.objects.filter(region_id=self.region_id).update(current=False)
+        Service.objects.filter(region=self.region_id).update(current=False)
 
         with zipfile.ZipFile(archive_name) as archive:
 
@@ -386,7 +386,10 @@ class Command(BaseCommand):
                     with archive.open(filename) as open_file:
                         self.do_service(open_file, filename)
 
-        Service.objects.filter(region_id=self.region_id, current=False).update(geometry=None)
+        Service.objects.filter(region=self.region_id, current=False).update(geometry=None)
+
+        StopPoint.objects.filter(admin_area__region=self.region_id).exclude(service__current=True).update(active=False)
+        StopPoint.objects.filter(admin_area__region=self.region_id, service__current=True).update(active=True)
 
     def handle(self, *args, **options):
         for archive_name in options['filenames']:
