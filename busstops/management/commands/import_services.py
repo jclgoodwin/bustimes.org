@@ -18,7 +18,8 @@ from django.contrib.gis.geos import LineString, MultiLineString
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from timetables.txc import Timetable, sanitize_description_part
-from ...models import Operator, StopPoint, Service, StopUsage
+from ...models import Operator, StopPoint, Service, StopUsage, Region, Journey
+from .generate_departures import handle_region
 
 
 # map names to operator IDs where there is no correspondence between the NOC DB and TNDS:
@@ -390,6 +391,9 @@ class Command(BaseCommand):
 
         StopPoint.objects.filter(admin_area__region=self.region_id).exclude(service__current=True).update(active=False)
         StopPoint.objects.filter(admin_area__region=self.region_id, service__current=True).update(active=True)
+
+        Journey.objects.filter(service__region=self.region_id).delete()
+        handle_region(Region.objects.get(id=self.region_id))
 
     def handle(self, *args, **options):
         for archive_name in options['filenames']:

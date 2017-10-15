@@ -428,8 +428,8 @@ class ImportServicesTest(TestCase):
         """, html=True)
 
     def test_departures(self):
-        self.assertEqual(16, Journey.objects.filter(service='M12_MEGA').count())
-        self.assertEqual(24, StopUsageUsage.objects.filter(journey__service='M12_MEGA').count())
+        self.assertEqual(6, Journey.objects.filter(service='M12_MEGA').count())
+        self.assertEqual(9, StopUsageUsage.objects.filter(journey__service='M12_MEGA').count())
 
         # Megabus services have been imported twice, but there should only be one of each StopUsage
         self.assertEqual(1, StopPoint.objects.filter(service='M12_MEGA').count())

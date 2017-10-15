@@ -91,7 +91,10 @@ def do_ni_service(service, groupings, day):
 def handle_region(region):
     print(region)
     today = date.today()
-    NEXT_WEEK = today + ONE_DAY * 7
+    if region.id == 'NI':
+        NEXT_WEEK = today + ONE_DAY * 7
+    else:  # not actually next week
+        NEXT_WEEK = today + ONE_DAY * 2
     # delete journeys before today
     print('deleting journeys before', today)
     print(Journey.objects.filter(service__region=region, datetime__date__lt=today).delete())
