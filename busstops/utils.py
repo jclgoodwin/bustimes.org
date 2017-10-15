@@ -155,5 +155,5 @@ def timetable_from_service(service, day=None):
         day + timedelta(days=1), time(0)
     )
     max_age = expiry - datetime.now()
-    cache.set(cache_key, timetables, max_age.seconds)
+    cache.set(cache_key, timetables, max_age.total_seconds())
     return timetables
