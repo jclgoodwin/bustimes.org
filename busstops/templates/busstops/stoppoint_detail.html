@@ -10,14 +10,6 @@
 <p>{{ text }}</p>
 {% endif %}
 
-<div class="map-wrapper">
-    <div id="map"></div>
-</div>
-
-<div class="image-wrapper">
-    <img alt="" width="480" height="360" src="{{ stoppoint.get_streetview_url }}" />
-</div>
-
 <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
     <meta itemprop="latitude" content="{{ stoppoint.latlong.y }}" />
     <meta itemprop="longitude" content="{{ stoppoint.latlong.x }}" />

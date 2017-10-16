@@ -231,7 +231,7 @@ class ViewsTests(TestCase):
         self.assertContains(response, 'North')
         self.assertContains(response, 'Norfolk')
         self.assertContains(response, 'Melton Constable, opp Bus Shelter')
-        self.assertContains(response, 'heading=270')
+        self.assertIn('heading=270', response.context_data['object'].get_streetview_url())
         self.assertContains(response, '/static/js/map.')
 
     def test_stop_json(self):
