@@ -60,9 +60,9 @@ def index(request):
 def not_found(request, exception):
     """Custom 404 handler view"""
     if (request.resolver_match
-            and request.resolver_match.url_name == 'service-detail'):
-        service_code = request.resolver_match.kwargs.get('pk')
-        service = Service.objects.filter(service_code=service_code).defer('geometry').first()
+            and request.resolver_match.url_name == 'service_detail'):
+        slug = request.resolver_match.kwargs.get('slug')
+        service = Service.objects.filter(Q(service_code=slug) | Q(slug=slug)).defer('geometry').first()
         localities = Locality.objects.filter(stoppoint__service=service).defer('latlong').distinct()
         context = {
             'service': service,
@@ -426,6 +426,13 @@ class ServiceDetailView(DetailView):
 
     model = Service
     queryset = model.objects.select_related('region').prefetch_related('operator')
+
+    def get_object(self, **kwargs):
+        try:
+            return super(ServiceDetailView, self).get_object(**kwargs)
+        except Http404:
+            self.kwargs['pk'] = self.kwargs['slug']
+            return super(ServiceDetailView, self).get_object(**kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)

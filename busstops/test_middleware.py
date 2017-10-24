@@ -23,7 +23,7 @@ class MiddlewareTests(TestCase):
 
     def test_not_found_redirect(self):
         response = self.client.get('/services/21-45-A-y08-9')
-        self.assertRedirects(response, '/services/ea_21-45-A-y08')
+        self.assertRedirects(response, '/services/45a')
 
     def test_x_real_ip(self):
         response = self.client.get('/')

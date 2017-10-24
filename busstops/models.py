@@ -50,7 +50,7 @@ class Region(models.Model):
             return self.name
 
     def get_absolute_url(self):
-        return reverse('region-detail', args=(self.id,))
+        return reverse('region_detail', args=(self.id,))
 
 
 @python_2_unicode_compatible
@@ -69,7 +69,7 @@ class AdminArea(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('adminarea-detail', args=(self.id,))
+        return reverse('adminarea_detail', args=(self.id,))
 
 
 @python_2_unicode_compatible
@@ -85,7 +85,7 @@ class District(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('district-detail', args=(self.id,))
+        return reverse('district_detail', args=(self.id,))
 
 
 @python_2_unicode_compatible
@@ -116,7 +116,7 @@ class Locality(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('locality-detail', args=(self.id,))
+        return reverse('locality_detail', args=(self.id,))
 
 
 @python_2_unicode_compatible
@@ -288,7 +288,7 @@ class StopPoint(models.Model):
         return Region.objects.filter(service__stops=self).first()
 
     def get_absolute_url(self):
-        return reverse('stoppoint-detail', args=(self.atco_code,))
+        return reverse('stoppoint_detail', args=(self.atco_code,))
 
 
 @python_2_unicode_compatible
@@ -297,7 +297,7 @@ class Operator(ValidateOnSaveMixin, models.Model):
 
     id = models.CharField(max_length=10, primary_key=True)  # e.g. 'YCST'
     name = models.CharField(max_length=100, db_index=True)
-    slug = AutoSlugField(populate_from='name', unique=True, editable=True)
+    slug = AutoSlugField(populate_from=str, unique=True, editable=True)
     vehicle_mode = models.CharField(max_length=48, blank=True)
     parent = models.CharField(max_length=48, blank=True)
     region = models.ForeignKey(Region, models.CASCADE)
@@ -309,10 +309,10 @@ class Operator(ValidateOnSaveMixin, models.Model):
     twitter = models.CharField(max_length=15, blank=True)
 
     def __str__(self):
-        return self.name
+        return str(self.name or self.id)
 
     def get_absolute_url(self):
-        return reverse('operator-detail', args=(self.slug or self.id,))
+        return reverse('operator_detail', args=(self.slug or self.id,))
 
     def mode(self):
         return self.vehicle_mode
@@ -412,7 +412,7 @@ class Service(models.Model):
         return 'A %s' % self.mode  # 'A bus service' or 'A service'
 
     def get_absolute_url(self):
-        return reverse('service-detail', args=(self.service_code,))
+        return reverse('service_detail', args=(self.slug,))
 
     def get_order(self):
         groups = SERVICE_ORDER_REGEX.match(self.line_name).groups()
