@@ -100,4 +100,4 @@ class GTFSTest(TestCase):
     def test_admin_area(self):
         res = self.client.get(self.dublin.get_absolute_url())
         self.assertContains(res, 'Bus services in Dublin', html=True)
-        self.assertContains(res, '/services/165-merrion-merlyn-park-citywest-castle-house')
+        self.assertContains(res, '/services/165')
