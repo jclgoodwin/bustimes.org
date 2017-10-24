@@ -1,6 +1,6 @@
 import os
 from datetime import timedelta, datetime, date
-from pytz.exceptions import NonExistentTimeError
+from pytz.exceptions import NonExistentTimeError, AmbiguousTimeError
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.conf import settings
@@ -19,6 +19,8 @@ def combine_date_time(date, time):
         return timezone.make_aware(combo)
     except NonExistentTimeError:
         return timezone.make_aware(combo + timedelta(hours=1))
+    except AmbiguousTimeError:
+        return timezone.make_aware(combo, is_dst=True)
 
 
 def handle_timetable(service, timetable, day):

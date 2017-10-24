@@ -2,6 +2,7 @@
 """
 import os
 import vcr
+from datetime import date, time
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
 from ...models import StopPoint, Region, AdminArea, Service, StopUsage, StopUsageUsage
@@ -193,6 +194,10 @@ class ServiceTest(TestCase):
             (0, {'journey__service': '212_GLE', 'datetime__date__gte': '2017-05-13'}),
         ):
             self.assertEqual(count, StopUsageUsage.objects.filter(**search).count())
+
+    def test_combine_date_time(self):
+        self.assertEqual(str(generate_departures.combine_date_time(date(2017, 10, 29), time(1, 20))),
+                         '2017-10-29 01:20:00+01:00')
 
     @freeze_time('12 Mar 2017')
     def test_timetable(self):

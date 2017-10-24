@@ -231,7 +231,7 @@ class StopPoint(models.Model):
     admin_area = models.ForeignKey('AdminArea', models.SET_NULL, null=True)
     active = models.BooleanField(db_index=True)
 
-    osm = JSONField(null=True)
+    osm = JSONField(null=True, blank=True)
 
     def __str__(self):
         if self.indicator:
