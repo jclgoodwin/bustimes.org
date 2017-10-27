@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import os
 import zipfile
 import vcr
+from freezegun import freeze_time
 from django.test import TestCase, override_settings
 from django.core.management import call_command
 from django.conf import settings
@@ -22,7 +23,8 @@ FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixture
         'ouibus': settings.FRANCE_COLLECTIONS['ouibus'],
     }
 )
-class ImpportGTFSTest(TestCase):
+@freeze_time('27 October 2017')
+class ImportGTFSTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         for collection in settings.FRANCE_COLLECTIONS:
