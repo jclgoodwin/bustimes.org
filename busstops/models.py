@@ -38,6 +38,9 @@ class Region(models.Model):
     id = models.CharField(max_length=2, primary_key=True)
     name = models.CharField(max_length=48)
 
+    class Meta():
+        ordering = ('name',)
+
     def __str__(self):
         return self.name
 
@@ -65,6 +68,9 @@ class AdminArea(models.Model):
     country = models.CharField(max_length=3, blank=True)
     region = models.ForeignKey(Region, models.CASCADE)
 
+    class Meta():
+        ordering = ('name',)
+
     def __str__(self):
         return self.name
 
@@ -80,6 +86,9 @@ class District(models.Model):
     id = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(max_length=48)
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
+
+    class Meta():
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -105,6 +114,9 @@ class Locality(models.Model):
     parent = models.ForeignKey('Locality', models.SET_NULL, null=True, editable=False)
     latlong = models.PointField(null=True)
     adjacent = models.ManyToManyField('Locality', related_name='neighbour', blank=True)
+
+    class Meta():
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -233,6 +245,9 @@ class StopPoint(models.Model):
 
     osm = JSONField(null=True, blank=True)
 
+    class Meta():
+        ordering = ('common_name', 'atco_code')
+
     def __str__(self):
         if self.indicator:
             return '%s (%s)' % (self.common_name, self.indicator)
@@ -340,12 +355,18 @@ class StopUsage(models.Model):
     timing_status = models.CharField(max_length=3,
                                      choices=TIMING_STATUS_CHOICES)
 
+    class Meta():
+        ordering = ('direction', 'order')
+
 
 @python_2_unicode_compatible
 class Journey(models.Model):
     service = models.ForeignKey('Service', models.CASCADE)
     datetime = models.DateTimeField()
     destination = models.ForeignKey(StopPoint, models.CASCADE)
+
+    class Meta():
+        ordering = ('datetime',)
 
     def __str__(self):
         return '{} {}'.format(self.service, self.datetime)
@@ -360,6 +381,7 @@ class StopUsageUsage(models.Model):
     order = models.PositiveIntegerField()
 
     class Meta():
+        ordering = ('datetime',)
         index_together = (
             ('journey', 'datetime'),
             ('stop', 'datetime')

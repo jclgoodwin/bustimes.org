@@ -18,7 +18,7 @@ from django.core.mail import EmailMessage
 from departures import live
 from .utils import format_gbp, viglink, timetable_from_service, get_files_from_zipfile
 from .models import (Region, StopPoint, AdminArea, Locality, District,
-                     Operator, Service, Note, Journey, ServiceDate)
+                     Operator, Service, Note)
 from .forms import ContactForm
 
 
@@ -52,7 +52,7 @@ FIRST_OPERATORS = {
 def index(request):
     """The home page with a list of regions"""
     context = {
-        'regions': Region.objects.filter(service__current=True).distinct().order_by('name')
+        'regions': Region.objects.filter(service__current=True).distinct()
     }
     return render(request, 'index.html', context)
 
@@ -197,10 +197,11 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(RegionDetailView, self).get_context_data(**kwargs)
 
-        context['areas'] = AdminArea.objects.filter(region=self.object).exclude(name='').order_by('name')
-        context['operators'] = Operator.objects.filter(
-            region=self.object, service__current=True
-        ).distinct().order_by('name')
+        context['areas'] = self.object.adminarea_set.exclude(name='')
+        if len(context['areas']) == 1:
+            context['districts'] = context['areas'][0].district_set.filter(locality__stoppoint__active=True).distinct()
+            del context['areas']
+        context['operators'] = self.object.operator_set.filter(service__current=True).distinct()
 
         return context
 
@@ -217,18 +218,14 @@ class AdminAreaDetailView(DetailView):
         context = super(AdminAreaDetailView, self).get_context_data(**kwargs)
 
         # Districts in this administrative area
-        context['districts'] = District.objects.filter(
-            admin_area=self.object,
-            locality__stoppoint__active=True
-        ).distinct().order_by('name')
+        context['districts'] = self.object.district_set.filter(locality__stoppoint__active=True).distinct()
 
         # Districtless localities in this administrative area
-        context['localities'] = Locality.objects.filter(
+        context['localities'] = self.object.locality_set.filter(
             Q(stoppoint__active=True) | Q(locality__stoppoint__active=True),
-            admin_area_id=self.object.id,
             district=None,
             parent=None
-        ).exclude(name='').defer('latlong').distinct().order_by('name')
+        ).exclude(name='').defer('latlong').distinct()
 
         if not (context['localities'] or context['districts']):
             context['services'] = sorted(Service.objects.filter(stops__admin_area=self.object,
@@ -254,10 +251,9 @@ class DistrictDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DistrictDetailView, self).get_context_data(**kwargs)
-        context['localities'] = Locality.objects.filter(
+        context['localities'] = self.object.locality_set.filter(
             Q(stoppoint__active=True) | Q(locality__stoppoint__active=True),
-            district=self.object
-        ).defer('latlong').distinct().order_by('name')
+        ).defer('latlong').distinct()
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
         return context
 
@@ -278,16 +274,12 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(LocalityDetailView, self).get_context_data(**kwargs)
 
-        context['localities'] = Locality.objects.filter(
+        context['localities'] = self.object.locality_set.filter(
             Q(stoppoint__active=True) |
             Q(locality__stoppoint__active=True),
-            parent=self.object,
-        ).defer('latlong').distinct().order_by('name')
+        ).defer('latlong').distinct()
 
-        context['stops'] = StopPoint.objects.filter(
-            locality=self.object,
-            active=True
-        ).defer('osm').order_by('common_name')
+        context['stops'] = self.object.stoppoint_set.filter(active=True).defer('osm')
 
         if not (context['localities'] or context['stops']):
             raise Http404()
@@ -320,9 +312,10 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(StopPointDetailView, self).get_context_data(**kwargs)
 
-        context['services'] = sorted(Service.objects.filter(
-            stops=self.object, current=True
-        ).defer('geometry').distinct(), key=Service.get_order)
+        context['services'] = sorted(
+            self.object.service_set.filter(current=True).defer('geometry').distinct(),
+            key=Service.get_order
+        )
 
         if not (self.object.active or context['services']):
             raise Http404()
@@ -364,7 +357,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
                     nearby = nearby.filter(town=self.object.town)
         context['nearby'] = nearby.filter(active=True).exclude(
             pk=self.object.pk
-        ).order_by('atco_code').defer('osm')
+        ).defer('osm')
 
         context['breadcrumb'] = (crumb for crumb in (
             self.object.get_region(),
@@ -411,8 +404,8 @@ class OperatorDetailView(UppercasePrimaryKeyMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(OperatorDetailView, self).get_context_data(**kwargs)
-        context['notes'] = Note.objects.filter(operators=self.object)
-        context['services'] = sorted(Service.objects.filter(operator=self.object, current=True).defer('geometry'),
+        context['notes'] = self.object.note_set.all()
+        context['services'] = sorted(self.object.service_set.filter(current=True).defer('geometry'),
                                      key=Service.get_order)
         if not context['services']:
             raise Http404()
@@ -453,12 +446,11 @@ class ServiceDetailView(DetailView):
                     date = None
             if not date:
                 today = timezone.now().date()
-                date = ServiceDate.objects.filter(service=self.object, date__gte=today).order_by('date').first()
+                date = self.object.servicedate_set.filter(date__gte=today).first()
                 if date:
                     date = date.date
             if not date:
-                next_usage = Journey.objects.filter(service=self.object)
-                next_usage = next_usage.filter(datetime__date__gte=today).order_by('datetime').first()
+                next_usage = self.object.journey_set.filter(datetime__date__gte=today).first()
                 if next_usage:
                     date = next_usage.datetime.date()
             context['timetables'] = timetable_from_service(self.object, date)
@@ -466,7 +458,7 @@ class ServiceDetailView(DetailView):
         if not context.get('timetables'):
             context['stopusages'] = self.object.stopusage_set.all().select_related(
                 'stop__locality'
-            ).defer('stop__osm', 'stop__locality__latlong').order_by('direction', 'order')
+            ).defer('stop__osm', 'stop__locality__latlong')
             context['has_minor_stops'] = any(s.timing_status == 'OTH' for s in context['stopusages'])
         else:
             stops_dict = {stop.pk: stop for stop in self.object.stops.all().select_related(
