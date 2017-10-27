@@ -173,9 +173,18 @@ class ViewsTests(TestCase):
         response = self.client.get('/regions/N')
         self.assertContains(response, 'North')
         self.assertContains(response, '<h1>North</h1>')
-        self.assertContains(response, '<a href="/areas/91">Norfolk</a>')
-        self.assertContains(response, 'Chariots')
-        self.assertNotContains(response, 'Nu-Venture')
+
+        self.assertContains(response, 'Chariots')  # An operator with a current service should be listed
+        self.assertNotContains(response, 'Nu-Venture')  # An operator with no current services should not be listed
+
+        self.assertNotContains(response, '<a href="/areas/91">Norfolk</a>')
+        self.assertNotContains(response, '<a href="/districts/91">North Norfolk</a>')
+
+        self.melton_constable.district = self.north_norfolk
+        self.melton_constable.save()
+        response = self.client.get('/regions/N')
+        self.assertNotContains(response, '<a href="/areas/91">Norfolk</a>')  # Only one area in this region - so...
+        self.assertContains(response, '<a href="/districts/91">North Norfolk</a>')  # ...list the districts in the area
 
     def test_lowercase_region(self):
         response = self.client.get('/regions/n')
