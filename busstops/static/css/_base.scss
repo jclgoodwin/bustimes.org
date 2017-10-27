@@ -638,7 +638,6 @@ input:not(:checked) + label {
 }
 
 .banner-ad {
-    display: none;
     min-height: 3.125em;
     overflow: hidden;
     padding: 1em .625em;
@@ -658,7 +657,6 @@ footer {
     .banner-ad {
         border-top: 1px solid $brand-color;
         clear: both;
-        display: block;
         margin: 0;
     }
 

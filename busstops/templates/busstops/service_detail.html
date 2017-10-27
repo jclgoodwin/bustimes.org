@@ -30,6 +30,14 @@
     </form>
 
     {% for grouping in timetable.groupings %}
+
+    {% if not forloop.first %}
+        <div class="banner-ad">
+            <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="horizontal"></ins>
+        </div>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    {% endif %}
+
     <h2>{{ grouping }} {{ timetable.operating_period }}</h2>
 
     <div class="timetable-wrapper-wrapper">
@@ -122,7 +130,5 @@
     {% endfor %}
     </ul>
 {% endif %}
-
-
 
 {% endblock %}
