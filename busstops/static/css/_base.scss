@@ -638,9 +638,9 @@ input:not(:checked) + label {
 }
 
 .banner-ad {
-    min-height: 3.125em;
+    min-height: 3.75em;
     overflow: hidden;
-    padding: 1em .625em;
+    padding: 1em 0;
     text-align: center;
 }
 
@@ -658,6 +658,7 @@ footer {
         border-top: 1px solid $brand-color;
         clear: both;
         margin: 0;
+        padding: 1em .625em;
     }
 
     ul {
