@@ -124,9 +124,7 @@ def get_timetable(routes, day=None, collection=None):
 
 
 def get_timetables(service_code, day):
-    parts = service_code.split('-', 1)
-    collection = parts[0]
-    route_id = parts[1]
+    collection, route_id = service_code.split('-', 1)
 
     if len(collection) == 10:
         feed = Feed.objects.filter(name__startswith=collection)
