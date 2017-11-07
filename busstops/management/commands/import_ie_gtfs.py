@@ -15,7 +15,8 @@ MODES = {
     0: 'tram',
     2: 'rail',
     3: 'bus',
-    4: 'ferry'
+    4: 'ferry',
+    200: 'coach',
 }
 SESSION = requests.Session()
 

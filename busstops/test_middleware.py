@@ -14,7 +14,7 @@ class MiddlewareTests(TestCase):
         )
 
     def test_found(self):
-        response = self.client.get('/services/ea_21-45-A-y08')
+        response = self.client.get('/services/45a')
         self.assertEqual(response.status_code, 200)
 
     def test_not_found(self):

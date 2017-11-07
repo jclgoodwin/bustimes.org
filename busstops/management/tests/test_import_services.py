@@ -245,7 +245,8 @@ class ImportServicesTest(TestCase):
         self.assertEqual(2, len(res.context_data['timetables']))
 
         # Outside of one timetable's oprating period, only one timetable should be shown
-        res = self.client.get(service.get_absolute_url() + '?date=2017-09-01')
+        with freeze_time('1 September 2017'):
+            res = self.client.get(service.get_absolute_url() + '?date=2017-09-01')
         self.assertEqual(1, len(res.context_data['timetables']))
 
         self.assertEqual(0, service.stopusage_set.all().count())
@@ -315,7 +316,7 @@ class ImportServicesTest(TestCase):
 
     @freeze_time('22 January 2017')
     def test_do_service_m11a(self):
-        res = self.client.get('/services/M11A_MEGA?date=ceci n\'est pas une date')
+        res = self.client.get('/services/m11a-belgravia-liverpool?date=ceci n\'est pas une date')
 
         service = res.context_data['object']
 
@@ -348,7 +349,7 @@ class ImportServicesTest(TestCase):
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     @freeze_time('1 Dec 2016')
     def test_do_service_m12(self):
-        res = self.client.get('/services/M12_MEGA')
+        res = self.client.get(self.gb_m12.get_absolute_url())
 
         # The date of the next StopUsageUsage should be used, even though today is 1 Dec 2016
         self.assertContains(res, '<option selected value="2017-01-01">Sunday 1 January 2017</option>')
@@ -377,15 +378,15 @@ class ImportServicesTest(TestCase):
         with override_settings(TNDS_DIR='this is not a directory'):
             # should not be cached (because dummy cache)
             with override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}}):
-                res = self.client.get('/services/M12_MEGA')
+                res = self.client.get(self.gb_m12.get_absolute_url())
                 self.assertEqual([], res.context_data['timetables'])
 
             # should be cached
-            res = self.client.get('/services/M12_MEGA')
+            res = self.client.get(self.gb_m12.get_absolute_url())
             self.assertEqual('2017-01-01', str(res.context_data['timetables'][0].date))
 
             # should not be cached (because different date)
-            res = self.client.get('/services/M12_MEGA?date=2017-01-02')
+            res = self.client.get(self.gb_m12.get_absolute_url() + '?date=2017-01-02')
             self.assertEqual([], res.context_data['timetables'])
 
     @freeze_time('25 June 2016')

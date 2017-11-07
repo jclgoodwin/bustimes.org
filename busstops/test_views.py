@@ -283,7 +283,7 @@ class ViewsTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_service(self):
-        response = self.client.get('/services/ea_21-45-A-y08')
+        response = self.client.get(self.service.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'http://isyourgirlfriendahorse.com')
         self.assertContains(response, 'Mind your head')  # Note
@@ -291,8 +291,10 @@ class ViewsTests(TestCase):
 
     def test_service_flixbus(self):
         self.service.operator.set([self.flixbus])
+        self.service.line_name = 'FlixBus'
+        self.service.save()
 
-        response = self.client.get('/services/ea_21-45-A-y08')
+        response = self.client.get(self.service.get_absolute_url())
         self.assertContains(response, 'Buy tickets from FlixBus')
         self.assertContains(response, 'viglink')
 
@@ -301,7 +303,7 @@ class ViewsTests(TestCase):
 
     def test_service_redirect(self):
         response = self.client.get('/services/45B')
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 301)
 
     def test_service_not_found(self):
         response = self.client.get('/services/45A')

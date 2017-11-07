@@ -201,7 +201,7 @@ class ServiceTest(TestCase):
 
     @freeze_time('12 Mar 2017')
     def test_timetable(self):
-        response = self.client.get('/services/95c_ULB')
+        response = self.client.get('/services/95c_ulb')
         self.assertContains(response, '<label for="show-all-stops-1-1">Show all stops</label>')
         self.assertContains(response, '<h2>Post Office - Roslea - Buscentre - Enniskillen </h2>')
         self.assertContains(response, '<h2>Enniskillen, Buscentre - Roslea, Post Office </h2>')

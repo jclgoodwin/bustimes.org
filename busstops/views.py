@@ -430,7 +430,7 @@ class ServiceDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)
 
-        if not self.object.current:
+        if not self.object.current or 'pk' in self.kwargs:
             return context
 
         context['operators'] = self.object.operator.all()
@@ -439,13 +439,15 @@ class ServiceDetailView(DetailView):
 
         if self.object.show_timetable or self.object.region_id in {'NI', 'UL', 'CO', 'LE', 'MU', 'FR'}:
             date = self.request.GET.get('date')
+            today = timezone.now().date()
             if date:
                 try:
                     date = datetime.strptime(date, '%Y-%m-%d').date()
+                    if date < today:
+                        date = None
                 except ValueError:
                     date = None
             if not date:
-                today = timezone.now().date()
                 date = self.object.servicedate_set.filter(date__gte=today).first()
                 if date:
                     date = date.date
@@ -478,14 +480,19 @@ class ServiceDetailView(DetailView):
                     'url': self.object.get_megabus_url(),
                     'text': 'Buy tickets from megabus.com'
                 })
+            elif self.object.line_name == 'FlixBus':
+                context['links'].append({
+                    'url': viglink('https://www.flixbus.co.uk'),
+                    'text': 'Buy tickets from FlixBus'
+                })
+            elif self.object.line_name == 'Ouibus':
+                context['links'].append({
+                    'url': viglink('https://www.ouibus.com'),
+                    'text': 'Buy tickets from Ouibus'
+                })
             else:
                 for operator in context['operators']:
-                    if operator.pk == 'FLIXBUS':
-                        context['links'].append({
-                            'url': viglink('https://www.flixbus.co.uk/'),
-                            'text': 'Buy tickets from FlixBus'
-                        })
-                    elif operator.url.startswith('http'):
+                    if operator.url.startswith('http'):
                         context['links'].append({
                             'url': operator.url,
                             'text': '%s website' % operator.name
@@ -500,7 +507,7 @@ class ServiceDetailView(DetailView):
                 'text': 'Timetable on the %s website' % traveline_text
             })
 
-        if self.object.description and self.object.line_name != 'FlixBus':
+        if self.object.description and self.object.line_name != 'FlixBus' and self.object.line_name != 'Ouibus':
             related = Service.objects.filter(current=True).exclude(pk=self.object.pk).defer('geometry')
             related = related.filter(Q(description=self.object.description) |
                                      Q(line_name=self.object.line_name, operator__in=context['operators']))
@@ -520,9 +527,12 @@ class ServiceDetailView(DetailView):
             ).defer('geometry').first()
 
             if alternative is not None:
-                return redirect(alternative)
+                return redirect(alternative, permanent=True)
 
             raise Http404()
+
+        if 'pk' in self.kwargs:
+            return redirect(self.object, permanent=True)
 
         response = super(ServiceDetailView, self).render_to_response(context)
         response['Link'] = '<https://bustimes.org.uk{}>; rel="canonical"'.format(self.object.get_absolute_url())

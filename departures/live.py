@@ -50,7 +50,12 @@ class Departures(object):
 
     def get_departures(self):
         """Returns a list of departures"""
-        return self.departures_from_response(self.get_response())
+        try:
+            response = self.get_response()
+        except requests.exceptions.ConnectionError:
+            return
+        if response.ok:
+            return self.departures_from_response(response)
 
 
 class TflDepartures(Departures):

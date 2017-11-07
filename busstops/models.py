@@ -323,6 +323,9 @@ class Operator(ValidateOnSaveMixin, models.Model):
     phone = models.CharField(max_length=128, blank=True)
     twitter = models.CharField(max_length=15, blank=True)
 
+    class Meta():
+        ordering = ('name',)
+
     def __str__(self):
         return str(self.name or self.id)
 
@@ -518,9 +521,10 @@ class Service(models.Model):
         return None, None
 
     def is_megabus(self):
-        return (self.line_name in ('FALCON', 'Oxford Tube')
-                or self.pk in ('bed_1-X5-Z-y08', 'YWAX062', 'HIAG010', 'FSAM009', 'FSAG009', 'EDAO900', 'EDAAIR0')
-                or any(o.pk in ('MEGA', 'MBGD', 'SCMG') for o in self.operator.all()))
+        return (self.line_name in {'FALCON', 'Oxford Tube'}
+                or self.pk in {'bed_1-X5-Z-y08', 'YWAX062', 'HIAG010', 'FSAM009', 'FSAG009', 'EDAO900', 'EDAAIR0',
+                               'YSBX010'}
+                or any(o.pk in {'MEGA', 'MBGD', 'SCMG'} for o in self.operator.all()))
 
 
 class ServiceDate(models.Model):
