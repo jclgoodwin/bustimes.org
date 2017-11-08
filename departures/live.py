@@ -280,27 +280,32 @@ def get_max_age(departures, now):
 
 
 def add_stagecoach_departures(stop, services_dict, departures):
-    response = SESSION.post('https://api.stagecoachbus.com/adc/stop-monitor',
-                            headers={
-                                'Origin': 'https://www.stagecoachbus.com',
-                                'Referer': 'https://www.stagecoachbus.com',
-                                'X-SC-apiKey': 'ukbusprodapi_9T61Jo3vsbql#!',
-                                'X-SC-securityMethod': 'API'
-                            },
-                            json={
-                                'StopMonitorRequest': {
-                                    'header': {
-                                        'retailOperation': '',
-                                        'channel': '',
-                                    },
-                                    'stopMonitorQueries': {
-                                        'stopMonitorQuery': [{
-                                            'stopPointLabel': stop.atco_code,
-                                            'servicesFilters': {}
-                                        }]
-                                    }
-                                }
-                            })
+    headers = {
+        'Origin': 'https://www.stagecoachbus.com',
+        'Referer': 'https://www.stagecoachbus.com',
+        'X-SC-apiKey': 'ukbusprodapi_9T61Jo3vsbql#!',
+        'X-SC-securityMethod': 'API'
+    }
+    json = {
+        'StopMonitorRequest': {
+            'header': {
+                'retailOperation': '',
+                'channel': '',
+            },
+            'stopMonitorQueries': {
+                'stopMonitorQuery': [{
+                    'stopPointLabel': stop.atco_code,
+                    'servicesFilters': {}
+                }]
+            }
+        }
+    }
+    try:
+        response = SESSION.post('https://api.stagecoachbus.com/adc/stop-monitor', headers=headers, json=json)
+    except requests.exceptions.ConnectionError:
+        return departures
+    if not response.ok:
+        return departures
     stop_monitors = response.json()['stopMonitors']
     if 'stopMonitor' in stop_monitors:
         added = False
@@ -407,10 +412,13 @@ def get_departures(stop, services, bot=False):
 
     # Dublin
     if stop.atco_code[0] == '8' and 'DB' in stop.atco_code:
-        response = SESSION.get(
-            'https://data.dublinked.ie/cgi-bin/rtpi/realtimebusinformation',
-            params={'stopid': int(stop.atco_code.split('DB', 1)[-1])}
-        )
+        try:
+            response = SESSION.get(
+                'https://data.dublinked.ie/cgi-bin/rtpi/realtimebusinformation',
+                params={'stopid': int(stop.atco_code.split('DB', 1)[-1])}
+            )
+        except requests.exceptions.ConnectionError:
+            pass
         if response.ok:
             services_dict = {service.line_name.lower(): service for service in services}
             departures = [{
