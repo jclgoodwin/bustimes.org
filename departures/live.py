@@ -7,6 +7,7 @@ import dateutil.parser
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.utils.text import slugify
+from django.utils.timezone import make_naive
 from busstops.models import Operator, Service
 
 
@@ -358,7 +359,11 @@ def blend(departures, live_rows):
                 services_match(row['service'], live_row['service'])
                 and (
                     row['time'] and row['time'] == live_row['time']
-                    or 'live' not in row and row['time'] <= live_row['time']
+                    or 'live' not in row and (
+                        live_row['time'] is None
+                        or type(live_row['time']) is str
+                        or make_naive(row['time']) >= live_row['time']
+                    )
                 )
             ):
                 row['live'] = live_row['live']
