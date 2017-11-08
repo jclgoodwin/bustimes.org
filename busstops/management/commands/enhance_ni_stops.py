@@ -34,7 +34,6 @@ class Command(BaseCommand):
                 'lat': stop.latlong.y
             }).json()
 
-            print(stop.pk)
             stop.osm = response
             stop.street = response['address'].get('road', '')
             stop.town = response['address'].get('town', '')
@@ -42,10 +41,6 @@ class Command(BaseCommand):
                 county = response['address']['county']
                 if county in areas:
                     stop.admin_area_id = areas[county]
-                else:
-                    print(response['address'])
-            else:
-                print(response['address'])
 
             landmark_keys = list(set(response['address'].keys()) - NON_LANDMARK_KEYS)
             if len(landmark_keys) > 0:
@@ -53,8 +48,6 @@ class Command(BaseCommand):
                     if len(response['address'][key]) <= 48:
                         stop.landmark = response['address'][key]
                         break
-                print(landmark_keys)
-                print(stop.landmark)
 
             stop.save()
             sleep(self.delay)

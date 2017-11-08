@@ -7,7 +7,6 @@ from ...utils import timetable_from_service
 class Command(BaseCommand):
     def handle(self, *args, **options):
         for service in Service.objects.filter(current=True, show_timetable=True, journey=None, servicedate=None):
-            print(service.pk)
             today = date.today()
             days = 0
             tried_days = 0

@@ -62,16 +62,18 @@ class ImportServicesTest(TestCase):
                 indicator=indicator, latlong=Point(lng, lat, srid=4326)
             )
 
-        # simulate an East Anglia zipfile:
-        cls.write_files_to_zipfile('EA.zip', ['ea_21-13B-B-y08-1.xml'])
+        with warnings.catch_warnings(record=True) as caught_warnings:
+            # simulate an East Anglia zipfile:
+            cls.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml'])
 
-        # simulate a Scotland zipfile:
-        cls.write_files_to_zipfile('S.zip', ['SVRABBN017.xml'])
+            # simulate a Scotland zipfile:
+            cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml'])
 
-        # simulate a North West zipfile:
-        with warnings.catch_warnings(record=True):
-            cls.write_files_to_zipfile('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml',
-                                                  'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
+            # simulate a North West zipfile:
+            cls.write_files_to_zipfile_and_import('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml',
+                                                             'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
+
+            assert len(caught_warnings) == 4
 
         cls.ea_service = Service.objects.get(pk='ea_21-13B-B-y08')
         cls.sc_service = Service.objects.get(pk='ABBN017')
@@ -86,11 +88,13 @@ class ImportServicesTest(TestCase):
                 'IncludedServices.csv',
                 'Operator,LineName,Dir,Description\nMEGA,M11A,O,Belgravia - Liverpool\nMEGA,M12,O,Shudehill - Victoria'
             )
-        with warnings.catch_warnings(record=True):
+        with warnings.catch_warnings(record=True) as caught_warnings:
             call_command(cls.command, ncsd_zipfile_path)
 
             # test re-importing a previously imported service again
             call_command(cls.command, ncsd_zipfile_path)
+
+            assert len(caught_warnings) == 2
 
         with freeze_time('2000-01-01'):
             call_command('generate_departures', 'GB')
@@ -104,7 +108,7 @@ class ImportServicesTest(TestCase):
         cls.gb_m12 = Service.objects.get(pk='M12_MEGA')
 
     @classmethod
-    def write_files_to_zipfile(cls, zipfile_name, filenames):
+    def write_files_to_zipfile_and_import(cls, zipfile_name, filenames):
         zipfile_path = os.path.join(FIXTURES_DIR, zipfile_name)
         with zipfile.ZipFile(zipfile_path, 'a') as open_zipfile:
             for filename in filenames:
@@ -232,7 +236,9 @@ class ImportServicesTest(TestCase):
     @freeze_time('30 October 2017')
     def test_do_service_with_empty_pattern(self):
         """A file with a JourneyPattern with no JourneyPatternSections should be imported"""
-        self.do_service('swe_33-9A-A-y10-2', 'GB')
+        with warnings.catch_warnings(record=True) as caught_warnings:
+            self.do_service('swe_33-9A-A-y10-2', 'GB')
+            self.assertEqual(len(caught_warnings), 2)
         self.assertTrue(Service.objects.filter(service_code='swe_33-9A-A-y10').exists())
 
     @freeze_time('1 October 2017')
@@ -268,10 +274,16 @@ class ImportServicesTest(TestCase):
     @freeze_time('1 October 2017')
     def test_service_dates(self):
         self.assertEqual(0, ServiceDate.objects.count())
+
+        # speed up
+        self.ea_service.current = False
+        self.ea_service.save()
+
         call_command('generate_service_dates')
-        # self.assertEqual(28, ServiceDate.objects.count())
+        self.assertEqual(42, ServiceDate.objects.count())
+
         call_command('generate_service_dates')
-        # self.assertEqual(28, ServiceDate.objects.count())
+        self.assertEqual(42, ServiceDate.objects.count())
 
     @freeze_time('3 October 2016')
     def test_do_service_ea(self):

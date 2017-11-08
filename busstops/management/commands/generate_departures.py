@@ -63,7 +63,6 @@ def handle_ni_grouping(service, grouping, day):
         date = day
         for i, su in enumerate(journey['StopUsages']):
             if su['Location'][0] != '7':
-                print(service, su)
                 continue
             destination = su['Location']
             if su['Departure']:
@@ -91,15 +90,13 @@ def do_ni_service(service, groupings, day):
 
 @transaction.atomic
 def handle_region(region):
-    print(region)
     today = date.today()
     if region.id == 'NI':
         NEXT_WEEK = today + ONE_DAY * 7
     else:  # not actually next week
         NEXT_WEEK = today + ONE_DAY * 2
     # delete journeys before today
-    print('deleting journeys before', today)
-    print(Journey.objects.filter(service__region=region, datetime__date__lt=today).delete())
+    Journey.objects.filter(service__region=region, datetime__date__lt=today).delete()
     # get the date of the last generated journey
     last_journey = Journey.objects.filter(service__region=region).order_by('datetime').last()
     if last_journey:

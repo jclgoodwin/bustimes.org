@@ -172,7 +172,7 @@ TIME_ZONE = 'Europe/London'
 USE_TZ = True
 USE_I18N = False
 
-if not DEBUG:
+if not DEBUG and 'test' not in sys.argv:
     RAVEN_CONFIG = {
         'dsn': os.environ.get('SENTRY_DSN'),
         'release': raven.fetch_git_sha(BASE_DIR)
