@@ -314,21 +314,22 @@ def add_stagecoach_departures(stop, services_dict, departures):
                 aimed, expected = [dateutil.parser.parse(time).astimezone(LOCAL_TIMEZONE)
                                    for time in (monitor['aimedDepartureTime'], monitor['expectedDepartureTime'])]
                 line = monitor['lineRef']
-                replaced = False
-                for departure in departures:
-                    if aimed == departure['time']:
-                        departure['live'] = expected
-                        replaced = True
-                        break
-                if replaced:
-                    continue
-                for departure in departures:
-                    if not departure.get('live') and line == departure['service'].line_name:
-                        departure['live'] = expected
-                        replaced = True
-                        break
-                if replaced:
-                    continue
+                if aimed >= departures[0]['time']:
+                    replaced = False
+                    for departure in departures:
+                        if aimed == departure['time']:
+                            departure['live'] = expected
+                            replaced = True
+                            break
+                    if replaced:
+                        continue
+                    for departure in departures:
+                        if not departure.get('live') and line == departure['service'].line_name:
+                            departure['live'] = expected
+                            replaced = True
+                            break
+                    if replaced:
+                        continue
                 departures.append({
                     'time': aimed,
                     'live': expected,
@@ -355,7 +356,10 @@ def blend(departures, live_rows):
         for row in departures:
             if (
                 services_match(row['service'], live_row['service'])
-                and (row['time'] and row['time'] == live_row['time'] or 'live' not in row)
+                and (
+                    row['time'] and row['time'] == live_row['time']
+                    or 'live' not in row and row['time'] <= live_row['time']
+                )
             ):
                 row['live'] = live_row['live']
                 replaced = True
