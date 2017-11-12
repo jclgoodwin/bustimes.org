@@ -1,6 +1,7 @@
 from django.conf.urls import include, url
 from django.conf import settings
 from django.contrib import staticfiles
+from django.contrib.sitemaps.views import sitemap
 from . import views
 
 urlpatterns = [
@@ -22,6 +23,11 @@ urlpatterns = [
     url(r'^operators/(?P<slug>[\w-]+)', views.OperatorDetailView.as_view(), name='operator_detail'),
     url(r'^services/(?P<pk>[^/]+)\.xml', views.service_xml),
     url(r'^services/(?P<slug>[\w-]+)', views.ServiceDetailView.as_view(), name='service_detail'),
+    url(r'^sitemap\.xml$', sitemap, {
+        'sitemaps': {
+             'services': views.ServiceSitemap
+        }
+    })
 ]
 
 

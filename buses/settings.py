@@ -22,6 +22,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
     'haystack',
     'busstops',
     'multigtfs',
@@ -206,3 +208,5 @@ FRANCE_COLLECTIONS = {
     'metz': 'https://si.metzmetropole.fr/fiches/opendata/gtfs_current.zip',
     'nancy': 'http://opendata.grandnancy.eu/fileadmin/fichiers/opendata/Bus_horaires_lignes/gtfs_stan.zip',
 }
+
+SITE_ID = 1

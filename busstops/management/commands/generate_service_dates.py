@@ -6,6 +6,7 @@ from ...utils import timetable_from_service
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
+        ServiceDate.objects.filter(date__lt=date.today()).delete()
         for service in Service.objects.filter(current=True, show_timetable=True, journey=None, servicedate=None):
             today = date.today()
             days = 0

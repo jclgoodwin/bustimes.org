@@ -13,6 +13,7 @@ from django.views.generic.detail import DetailView
 from django.conf import settings
 from django.contrib.gis.geos import Polygon
 from django.contrib.gis.db.models.functions import Distance
+from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from departures import live
@@ -548,3 +549,10 @@ def service_xml(_, pk):
     else:
         bodies = (xml_file.read().decode() for xml_file in get_files_from_zipfile(service))
     return HttpResponse(bodies, content_type='text/plain')
+
+
+class ServiceSitemap(Sitemap):
+    protocol = 'https'
+
+    def items(self):
+        return Service.objects.filter(current=True)
