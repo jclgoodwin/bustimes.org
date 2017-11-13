@@ -12,15 +12,21 @@
         ths;
 
     function fancify(div) {
-        var ths = div.getElementsByTagName('th'),
+        var table = div.getElementsByTagName('table')[0],
+            ths = table.getElementsByTagName('th'),
             firstCellWidth,
             i;
+
         for (i = ths.length - 1; i >= 0; i -= 1) {
             if (ths[i].offsetWidth) {
-                firstCellWidth = ths[i].offsetWidth + 'px';
+                firstCellWidth = ths[i].offsetWidth;
                 break;
             }
         }
+        if (table.clientWidth - firstCellWidth <= div.clientWidth) {
+            return;
+        }
+        firstCellWidth += 'px';
         for (i = ths.length - 1; i >= 0; i -= 1) {
             ths[i].style.width = firstCellWidth;
             ths[i].style.marginLeft = '-' + firstCellWidth;
@@ -29,19 +35,13 @@
         div.className += ' fancy';
     }
 
-    function maybeHighlight(tr) {
-        var as = tr.getElementsByTagName('a');
-        if (as.length && as[0].href === document.referrer) {
-            tr.className += ' referrer';
-        }
-    }
-
     for (i = divs.length - 1; i >= 0; i -= 1) {
         if (divs[i].className === 'timetable-wrapper') {
             fancify(divs[i]);
         }
     }
 
+    // correct date picker after using browser back button
     if (selects.length) {
         options = selects[0].getElementsByTagName('option');
         for (i = options.length - 1; i >= 0; i -= 1) {
@@ -51,6 +51,14 @@
                 }
                 break;
             }
+        }
+    }
+
+    // highlight the row of the referring stop
+    function maybeHighlight(tr) {
+        var as = tr.getElementsByTagName('a');
+        if (as.length && as[0].href === document.referrer) {
+            tr.className += ' referrer';
         }
     }
 

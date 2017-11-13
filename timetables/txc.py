@@ -235,6 +235,9 @@ class Grouping(object):
                 return True
         return False
 
+    def is_wide(self):
+        return len(self.rows[0].times) > 3
+
     def starts_at(self, locality_name):
         return self.rows[0].part.stop.is_at(locality_name)
 
