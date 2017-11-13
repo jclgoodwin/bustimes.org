@@ -223,6 +223,7 @@ class Grouping(object):
     def __init__(self, direction, parent):
         self.direction = direction
         self.parent = parent
+        self.description_parts = None
         self.column_feet = {}
         self.journeypatterns = []
         self.journeys = []
@@ -297,8 +298,9 @@ class Grouping(object):
             row.times = [time for time in row.times if time is not None]
 
     def __str__(self):
-        if self.parent.description_parts:
-            parts = self.parent.description_parts
+        parts = self.description_parts or self.parent.description_parts
+
+        if parts:
             start = slugify(parts[0])
             end = slugify(parts[-1])
 
@@ -338,11 +340,45 @@ class JourneyPattern(object):
                     rows.append(Row(timinglink.origin))
                 rows.append(Row(timinglink.destination))
 
+        route = element.find('txc:RouteRef', NS)
+        if route is not None:
+            route = route.text
+
         direction_element = element.find('txc:Direction', NS)
-        if direction_element is None or direction_element.text == 'outbound':
-            self.grouping = groupings[0]
+        # Holt - Fakenham or Fakenham - Holt
+        if route == 'R_21-X29-_-y08-1-H-4' or route == 'R_21-X29-_-y08-1-R-12':
+            groupings[self.id] = Grouping('', groupings['outbound'].parent)
+            self.grouping = groupings[self.id]
+            self.grouping.description_parts = ['Holt', 'Fakenham']
+        # King's Lynn - Fakenham
+        elif (
+            route == 'R_21-X29-_-y08-1-R-5' or route == 'R_21-X29-_-y08-1-R-6' or route == 'R_21-X29-_-y08-1-R-10'
+            or route == 'R_21-X29-_-y08-1-R-11'
+        ):
+            if 'kings-lynn-fakenham' not in groupings:
+                groupings['kings-lynn-fakenham'] = Grouping('outbound', groupings['outbound'].parent)
+                groupings['kings-lynn-fakenham'].description_parts = ["King's Lynn", 'Fakenham']
+            self.grouping = groupings['kings-lynn-fakenham']
+        # Fakenham = Kings Lynn
+        elif route == 'R_21-X29-_-y08-1-H-7' or route == 'R_21-X29-_-y08-1-H-8' or route == 'R_21-X29-_-y08-1-H-9':
+            if 'fakenham-kings-lynn' not in groupings:
+                groupings['fakenham-kings-lynn'] = Grouping('inbound', groupings['outbound'].parent)
+                groupings['fakenham-kings-lynn'].description_parts = ["King's Lynn", 'Fakenham']
+            self.grouping = groupings['fakenham-kings-lynn']
+        elif route == 'R_21-CH-_-y08-1-R-2' or route == 'R_21-CH-_-y08-1-R-3':
+            if 'wells-cromer' not in groupings:
+                groupings['wells-cromer'] = Grouping('outbound', groupings['outbound'].parent)
+                groupings['wells-cromer'].description_parts = ['Cromer', 'Sheringham', 'Wells-next-the-Sea']
+            self.grouping = groupings['wells-cromer']
+        elif route == 'R_21-CH-_-y08-1-H-4' or route == 'R_21-CH-_-y08-1-H-5':
+            if 'cromer-wells' not in groupings:
+                groupings['cromer-wells'] = Grouping('inbound', groupings['outbound'].parent)
+                groupings['cromer-wells'].description_parts = ['Cromer', 'Sheringham', 'Wells-next-the-Sea']
+            self.grouping = groupings['cromer-wells']
+        elif direction_element is None or direction_element.text == 'outbound':
+            self.grouping = groupings['outbound']
         else:
-            self.grouping = groupings[1]
+            self.grouping = groupings['inbound']
         self.grouping.journeypatterns.append(self)
 
         if not rows:
@@ -835,7 +871,7 @@ class Timetable(object):
                     for stop in element
                 }
                 element.clear()
-            elif tag.startswith('Route'):
+            elif tag == 'Routes' or tag == 'RouteSections':
                 element.clear()
             elif tag == 'Operators':
                 self.operators = element
@@ -894,16 +930,17 @@ class Timetable(object):
                 else:
                     self.description_parts = None
 
-                self.groupings = (
-                    Grouping('outbound', self),
-                    Grouping('inbound', self)
-                )
+                self.groupings = {
+                    'outbound': Grouping('outbound', self),
+                    'inbound': Grouping('inbound', self)
+                }
                 self.journeypatterns = {
                     pattern.id: pattern for pattern in (
                        JourneyPattern(pattern, journeypatternsections, self.groupings)
                        for pattern in element.findall('txc:StandardService/txc:JourneyPattern', NS)
                     ) if pattern.sections
                 }
+                self.groupings = list(self.groupings.values())
 
         self.element = element
 

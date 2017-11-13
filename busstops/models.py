@@ -275,12 +275,11 @@ class StopPoint(models.Model):
         if self.locality:
             locality_name = str(self.locality).replace(' Town Centre', '').replace(' City Centre', '')
             if self.common_name in locality_name:
-                return str(self.locality)  # Cardiff Airport
+                return locality_name.replace(self.common_name, str(self))  # Cardiff Airport
             if locality_name.replace('\'', '').replace('\u2019', '') not in self.common_name.replace('\'', ''):
                 if self.indicator in self.prepositions:
                     return '%s, %s %s' % (locality_name, self.indicator, self.common_name)
-                else:
-                    return '%s %s' % (locality_name, self)
+                return '%s %s' % (locality_name, self)
         elif self.town not in self.common_name:
             return '{} {}'.format(self.town, self)
         return str(self)

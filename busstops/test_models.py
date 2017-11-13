@@ -133,6 +133,8 @@ class StopPointTests(TestCase):
         self.assertEqual('Ballyblack Methodist Church', self.ballyblack_church.get_qualified_name())
 
         self.assertEqual('Cardiff Airport', self.cardiff_airport_stop.get_qualified_name())
+        self.cardiff_airport_stop.indicator = 'Stop M'
+        self.assertEqual('Cardiff Airport (Stop M)', self.cardiff_airport_stop.get_qualified_name())
 
     @override_settings(STREETVIEW_KEY='-234457789999=AaaaaAbBbcDde',
                        STREETVIEW_SECRET='EeefgHIiKKLlmNnOOPQQQqqrrRRrSUUuwXyyYzZz')
