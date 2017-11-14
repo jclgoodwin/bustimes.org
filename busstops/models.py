@@ -106,7 +106,7 @@ class Locality(models.Model):
     """
     id = models.CharField(max_length=48, primary_key=True)
     name = models.CharField(max_length=48)
-    slug = AutoSlugField(populate_from='name', editable=True, blank=True)
+    slug = AutoSlugField(always_update=True, populate_from='get_qualified_name', editable=True, unique=True)
     # short_name?
     qualifier_name = models.CharField(max_length=48, blank=True)
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
@@ -119,16 +119,16 @@ class Locality(models.Model):
         ordering = ('name',)
 
     def __str__(self):
-        return self.name
+        return self.name or self.id
 
     def get_qualified_name(self):
         """Return the name and qualifier (e.g. 'Reepham, Lincs')"""
         if self.qualifier_name:
             return "%s, %s" % (self.name, self.qualifier_name)
-        return self.name
+        return str(self)
 
     def get_absolute_url(self):
-        return reverse('locality_detail', args=(self.id,))
+        return reverse('locality_detail', args=(self.slug,))
 
 
 @python_2_unicode_compatible
@@ -273,7 +273,7 @@ class StopPoint(models.Model):
 
     def get_qualified_name(self):
         if self.locality:
-            locality_name = str(self.locality).replace(' Town Centre', '').replace(' City Centre', '')
+            locality_name = self.locality.name.replace(' Town Centre', '').replace(' City Centre', '')
             if self.common_name in locality_name:
                 return locality_name.replace(self.common_name, str(self))  # Cardiff Airport
             if locality_name.replace('\'', '').replace('\u2019', '') not in self.common_name.replace('\'', ''):

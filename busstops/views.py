@@ -226,7 +226,7 @@ class AdminAreaDetailView(DetailView):
             Q(stoppoint__active=True) | Q(locality__stoppoint__active=True),
             district=None,
             parent=None
-        ).exclude(name='').defer('latlong').distinct()
+        ).defer('latlong').distinct()
 
         if not (context['localities'] or context['districts']):
             context['services'] = sorted(Service.objects.filter(stops__admin_area=self.object,

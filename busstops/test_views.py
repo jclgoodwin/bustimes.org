@@ -210,7 +210,7 @@ class ViewsTests(TestCase):
     def test_admin_area(self):
         """Admin area containing just one child should redirect to that child"""
         response = self.client.get('/areas/91')
-        self.assertRedirects(response, '/localities/E0048689')
+        self.assertRedirects(response, '/localities/melton-constable')
 
     def test_district(self):
         """Admin area containing just one child should redirect to that child"""
@@ -314,7 +314,8 @@ class ViewsTests(TestCase):
             status_code=404
         )
         self.assertContains(response, 'Services operated by Ainsley', status_code=404)
-        self.assertContains(response, '<li><a href="/localities/E0048689">Melton Constable</a></li>', status_code=404)
+        self.assertContains(response, '<li><a href="/localities/melton-constable">Melton Constable</a></li>',
+                            status_code=404)
 
     def test_service_xml(self):
         response = self.client.get('/services/ea_21-45-A-y08.xml')
