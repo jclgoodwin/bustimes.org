@@ -89,6 +89,7 @@ class Command(BaseCommand):
                 'mode': MODES[route.rtype],
                 'current': True,
                 'outbound_description': timetable.groupings[0].name,
+                'show_timetable': True
             }
             if len(timetable.groupings) > 1:
                 defaults['inbound_description'] = timetable.groupings[1]
