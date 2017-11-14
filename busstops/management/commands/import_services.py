@@ -73,6 +73,7 @@ SPECIAL_OPERATOR_NAMES = {
     'Operated by Newport Bus': 'NWPT',
     'Eurocab Minicoaches': 'ERCB',
     'Polruan Ferry': 'CTSL',
+    'IMPACT COACHES': 'CM',  # Citymapper
 }
 # map OperatorCodes to operator IDs (ditto, where there is no TradingName):
 SPECIAL_OPERATOR_CODES = {
