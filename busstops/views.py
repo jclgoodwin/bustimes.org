@@ -438,7 +438,7 @@ class ServiceDetailView(DetailView):
         context['notes'] = Note.objects.filter(Q(operators__in=context['operators']) | Q(services=self.object))
         context['links'] = []
 
-        if self.object.show_timetable or self.object.region_id in {'NI', 'UL', 'CO', 'LE', 'MU', 'FR'}:
+        if self.object.show_timetable:
             date = self.request.GET.get('date')
             today = timezone.now().date()
             if date:

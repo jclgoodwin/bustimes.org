@@ -88,7 +88,8 @@ class Command(BaseCommand):
                 'description': route.long_name or timetable.groupings[0].name,
                 'date': time.strftime('%Y-%m-%d'),
                 'mode': MODES.get(route.rtype, ''),
-                'current': True
+                'current': True,
+                'show_timetable': True
             }
             service, created = Service.objects.update_or_create(
                 service_code=service_code,

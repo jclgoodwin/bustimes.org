@@ -153,9 +153,11 @@ class ServiceTest(TestCase):
                 '13305', '15747', '14231', '15677', '00792'
             )
         )
-        Service.objects.create(service_code='212_GLE', date='2016-01-01', region_id='NI', current=True)
-        Service.objects.create(service_code='95_ULB', date='2016-01-01', region_id='NI', current=True)
-        Service.objects.create(service_code='95c_ULB', date='2016-01-01', region_id='NI', current=True)
+        Service.objects.bulk_create([
+            Service(service_code='212_GLE', date='2016-01-01', region_id='NI', current=True),
+            Service(service_code='95_ULB', date='2016-01-01', region_id='NI', current=True),
+            Service(service_code='95c_ULB', date='2016-01-01', region_id='NI', current=True, show_timetable=True)
+        ])
         with freeze_time('3 May 2017'):
             generate_departures.handle_region(Region(id='NI'))
         with freeze_time('4 May 2017'):
