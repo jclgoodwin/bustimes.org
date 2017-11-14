@@ -13,19 +13,21 @@
 
     function fancify(div) {
         var table = div.getElementsByTagName('table')[0],
-            ths = table.getElementsByTagName('th'),
+            ths,
             firstCellWidth,
             i;
 
+        if (table.clientWidth <= div.clientWidth) {
+            return;
+        }
+        ths = table.getElementsByTagName('th');
         for (i = ths.length - 1; i >= 0; i -= 1) {
             if (ths[i].offsetWidth) {
                 firstCellWidth = ths[i].offsetWidth;
                 break;
             }
         }
-        if (table.clientWidth - firstCellWidth <= div.clientWidth) {
-            return;
-        }
+
         firstCellWidth += 'px';
         for (i = ths.length - 1; i >= 0; i -= 1) {
             ths[i].style.width = firstCellWidth;

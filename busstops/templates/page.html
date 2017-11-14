@@ -67,7 +67,7 @@ ga('create', 'UA-65987478-1', 'auto');
 ga('send', 'pageview');
 </script>
 {% load raven %}
-<script src="https://cdn.ravenjs.com/3.16.0/raven.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.ravenjs.com/3.19.1/raven.min.js" crossorigin="anonymous"></script>
 <script>
     Raven.config('{% sentry_public_dsn %}', {
         whitelistUrls: [/bustimes\.org\.uk\/.*\.js/]
