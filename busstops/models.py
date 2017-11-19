@@ -112,7 +112,7 @@ class Locality(models.Model):
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
     district = models.ForeignKey(District, models.SET_NULL, null=True, blank=True)
     parent = models.ForeignKey('Locality', models.SET_NULL, null=True, editable=False)
-    latlong = models.PointField(null=True)
+    latlong = models.PointField(null=True, blank=True)
     adjacent = models.ManyToManyField('Locality', related_name='neighbour', blank=True)
 
     class Meta():

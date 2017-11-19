@@ -49,6 +49,7 @@ class ServiceAdmin(admin.ModelAdmin):
 
 
 class LocalityAdmin(admin.ModelAdmin):
+    search_fields = ('id', 'name')
     raw_id_fields = ('adjacent',)
     list_filter = ('admin_area', 'admin_area__region')
 
