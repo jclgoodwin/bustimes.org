@@ -540,11 +540,11 @@ class ServiceDetailView(DetailView):
         return response
 
 
-def service_xml(_, slug):
+def service_xml(_, pk):
     try:
-        service = Service.objects.get(slug=slug)
+        service = Service.objects.get(slug=pk)
     except Service.DoesNotExist:
-        service = get_object_or_404(Service, pk=slug)
+        service = get_object_or_404(Service, pk=pk)
     if service.region_id == 'NI':
         path = os.path.join(settings.DATA_DIR, 'NI', service.pk + '.json')
         with open(path) as open_file:
