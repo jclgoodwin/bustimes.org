@@ -327,7 +327,7 @@ class Grouping(object):
 
 class JourneyPattern(object):
     """A collection of JourneyPatternSections, in order."""
-    def __init__(self, element, sections, groupings):
+    def __init__(self, element, sections, groupings, routes):
         self.id = element.attrib.get('id')
         # self.journeys = []
         self.sections = [
@@ -345,35 +345,32 @@ class JourneyPattern(object):
 
         route = element.find('txc:RouteRef', NS)
         if route is not None:
-            route = route.text
+            route = routes.get(route.text)
 
         direction_element = element.find('txc:Direction', NS)
         # Holt - Fakenham or Fakenham - Holt
-        if route == 'R_21-X29-_-y08-1-H-4' or route == 'R_21-X29-_-y08-1-R-12':
+        if route == 'Town Centre - Oak Street' or route == 'Oak Street - Town Centre':
             groupings[self.id] = Grouping('', groupings['outbound'].parent)
             self.grouping = groupings[self.id]
             self.grouping.description_parts = ['Holt', 'Fakenham']
         # King's Lynn - Fakenham
-        elif (
-            route == 'R_21-X29-_-y08-1-R-5' or route == 'R_21-X29-_-y08-1-R-6' or route == 'R_21-X29-_-y08-1-R-10'
-            or route == 'R_21-X29-_-y08-1-R-11'
-        ):
+        elif route == 'Transport Interchange - Oak Street':
             if 'kings-lynn-fakenham' not in groupings:
                 groupings['kings-lynn-fakenham'] = Grouping('outbound', groupings['outbound'].parent)
                 groupings['kings-lynn-fakenham'].description_parts = ["King's Lynn", 'Fakenham']
             self.grouping = groupings['kings-lynn-fakenham']
         # Fakenham = Kings Lynn
-        elif route == 'R_21-X29-_-y08-1-H-7' or route == 'R_21-X29-_-y08-1-H-8' or route == 'R_21-X29-_-y08-1-H-9':
+        elif route == 'Oak Street - Transport Interchange':
             if 'fakenham-kings-lynn' not in groupings:
                 groupings['fakenham-kings-lynn'] = Grouping('inbound', groupings['outbound'].parent)
                 groupings['fakenham-kings-lynn'].description_parts = ["King's Lynn", 'Fakenham']
             self.grouping = groupings['fakenham-kings-lynn']
-        elif route == 'R_21-CH-_-y08-1-R-2' or route == 'R_21-CH-_-y08-1-R-3':
+        elif route == 'The Buttlands - Cadogan Road' or route == 'The Buttlands - Railway Approach':
             if 'wells-cromer' not in groupings:
                 groupings['wells-cromer'] = Grouping('outbound', groupings['outbound'].parent)
                 groupings['wells-cromer'].description_parts = ['Cromer', 'Sheringham', 'Wells-next-the-Sea']
             self.grouping = groupings['wells-cromer']
-        elif route == 'R_21-CH-_-y08-1-H-4' or route == 'R_21-CH-_-y08-1-H-5':
+        elif route == 'Railway Approach - The Buttlands' or route == 'Cadogan Road - The Buttlands':
             if 'cromer-wells' not in groupings:
                 groupings['cromer-wells'] = Grouping('inbound', groupings['outbound'].parent)
                 groupings['cromer-wells'].description_parts = ['Cromer', 'Sheringham', 'Wells-next-the-Sea']
@@ -864,6 +861,7 @@ class Timetable(object):
 
         self.description = description
         self.date = date
+        routes = {}
 
         for _, element in iterator:
             tag = element.tag[33:]
@@ -874,7 +872,13 @@ class Timetable(object):
                     for stop in element
                 }
                 element.clear()
-            elif tag == 'Routes' or tag == 'RouteSections':
+            elif tag == 'Routes':
+                routes = {
+                    route.get('id'): route.find('txc:Description', NS).text
+                    for route in element
+                }
+                element.clear()
+            elif tag == 'RouteSections':
                 element.clear()
             elif tag == 'Operators':
                 self.operators = element
@@ -939,7 +943,7 @@ class Timetable(object):
                 }
                 self.journeypatterns = {
                     pattern.id: pattern for pattern in (
-                       JourneyPattern(pattern, journeypatternsections, self.groupings)
+                       JourneyPattern(pattern, journeypatternsections, self.groupings, routes)
                        for pattern in element.findall('txc:StandardService/txc:JourneyPattern', NS)
                     ) if pattern.sections
                 }

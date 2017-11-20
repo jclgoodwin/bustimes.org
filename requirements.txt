@@ -8,7 +8,7 @@ lxml==4.1.1
 multigtfs==1.1.1
 psycopg2==2.7.3.2
 python-dateutil==2.6.1
-pytz==2017.2
+pytz==2017.3
 raven==6.3.0
 requests==2.18.4
 titlecase==0.12.0
