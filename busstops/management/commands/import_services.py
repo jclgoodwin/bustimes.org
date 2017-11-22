@@ -9,6 +9,7 @@ Usage:
     ./manage.py import_services EA.zip [EM.zip etc]
 """
 
+import os
 import zipfile
 import csv
 import warnings
@@ -359,7 +360,7 @@ class Command(BaseCommand):
         self.service_codes.add(service_code)
 
     def set_region(self, archive_name):
-        self.region_id = archive_name.split('/')[-1][:-4]
+        self.region_id, _ = os.path.splitext(os.path.basename(archive_name))
 
         if self.region_id == 'NCSD':
             self.region_id = 'GB'

@@ -37,7 +37,7 @@ function import_csv {
     diff -h "previous/$csv" "$csv" | grep '^> ' | sed 's/^> //' | ../../manage.py "import_$cmd"
 }
 
-mkdir -p NPTG/previous NaPTAN TNDS
+mkdir -p NPTG/previous NaPTAN TNDS/tmp
 . ../env/bin/activate
 
 
@@ -126,20 +126,22 @@ fi
 
 date=$(date +%Y-%m-%d)
 
-cd TNDS
+cd TNDS/tmp
 for region in "${REGIONS[@]}"; do
     region_old=$(ls -l "$region.zip")
     wget -qN --user="$USERNAME" --password="$PASSWORD" "ftp://ftp.tnds.basemap.co.uk/$region.zip"
     region_new=$(ls -l "$region.zip")
     if [[ $region_old != $region_new ]]; then
         s3cmd put "$region.zip" "s3://bustimes-backup/$region-$date.zip"
-        # updated_services=1
-        ../../manage.py import_services "$region.zip"
+        updated_services=1
+        ../../../manage.py import_services "$region.zip"
+        cp "$region.zip" ..
     fi
 done
-# [ $updated_services ] && ../../manage.py update_index --remove
+cd ../..
+[ $updated_services ] && ../manage.py update_index
+[ $updated_services ] && ../manage.py update_search_indexes
 
-cd ..
 accessibility_old=$(ls -l accessibility-data.zip)
 wget -qN http://naptan.dft.gov.uk/Journeyweb/accessibility/accessibility-data.zip
 accessibility_new=$(ls -l accessibility-data.zip)

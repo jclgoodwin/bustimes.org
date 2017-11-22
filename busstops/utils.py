@@ -70,13 +70,10 @@ def get_filenames(service, path=None, archive=None):
     if service.region_id in ('S', 'Y'):
         return ['SVR%s%s' % (service.pk, suffix)]
 
-    try:
-        if archive is None:
-            namelist = os.listdir(path)
-        else:
-            namelist = archive.namelist()
-    except (IOError, OSError):
-        return []
+    if archive is None:
+        namelist = os.listdir(path)
+    else:
+        namelist = archive.namelist()
 
     if service.net:
         return [name for name in namelist if name.startswith('%s-' % service.pk)]
@@ -107,12 +104,9 @@ def get_files_from_zipfile(service):
 
     archive_path = os.path.join(settings.TNDS_DIR, archive_name + '.zip')
 
-    try:
-        with zipfile.ZipFile(archive_path) as archive:
-            filenames = get_filenames(service, archive=archive)
-            return [archive.open(filename) for filename in filenames]
-    except (zipfile.BadZipfile, IOError, KeyError):
-        return []
+    with zipfile.ZipFile(archive_path) as archive:
+        filenames = get_filenames(service, archive=archive)
+        return [archive.open(filename) for filename in filenames]
 
 
 def timetable_from_service(service, day=None):
