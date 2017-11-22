@@ -129,39 +129,17 @@ def timetable_from_service(service, day=None):
     if service.region_id in {'UL', 'LE', 'MU', 'CO', 'FR'} or service.service_code.startswith('citymapper'):
         return gtfs.get_timetables(service.service_code, day)
 
-    cache_key = '{}{}'.format(service.pk, day).replace(' ', '')
-    timetables = cache.get(cache_key)
-    if timetables is not None:
-        return timetables
-    timetables = []
-    for xml_file in get_files_from_zipfile(service):
-        with xml_file:
-            timetable = txc.Timetable(xml_file, day, service.description)
-        if hasattr(timetable, 'groupings'):
-            timetables.append(timetable)
-    if len(timetables) > 1:
-        timetables = [t for t in timetables if any(g.rows and g.rows[0].times for g in t.groupings)] or timetables[:1]
-
     timetables = cache.get(service.pk)
     if timetables is None:
-        timetables = [txc.Timetable(xml_file, day, service.description) for xml_file in get_files_from_zipfile(service)]
-        cache.set(service.pk, timetables, None)
-        for timetable in timetables:
-            # del timetable.journeypatterns
-            del timetable.stops
-            del timetable.operators
-            del timetable.element
-            if hasattr(timetable, 'groupings'):
-                for grouping in timetable.groupings:
-                    if grouping.rows and len(grouping.rows[0].times) > 60:
-                        service.show_timetable = False
-                        service.save()
-                        return
-    else:
-        for timetable in timetables:
-            timetable.set_date(day)
+        timetables = []
+        for xml_file in get_files_from_zipfile(service):
+            with xml_file:
+                timetables.append(txc.Timetable(xml_file, day, service.description))
+        cache.set(service.pk, timetables)
+
     timetables = [timetable for timetable in timetables if timetable.operating_period.contains(timetable.date)]
     for timetable in timetables:
+        timetable.set_date(day)
         for grouping in timetable.groupings:
             for journey in grouping.journeys:
                 if journey.should_show(timetable.date):

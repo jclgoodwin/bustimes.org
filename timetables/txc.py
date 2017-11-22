@@ -522,9 +522,7 @@ class VehicleJourney(object):
     """
     operating_profile = None
 
-    def __init__(self, element, journeypatterns, servicedorgs, date):
-        # ensure the journey has a code and pattern, even if it won't be shown
-        # (because it might be referenced by a shown journey)
+    def __init__(self, element, journeypatterns, servicedorgs):
 
         self.code = element.find('txc:VehicleJourneyCode', NS).text
 
@@ -536,16 +534,12 @@ class VehicleJourney(object):
             # Instead, it has a reference to another journey...
             self.journeyref = element.find('txc:VehicleJourneyRef', NS).text
 
-        # now free to stop if this journey won't be shown
-
         operatingprofile_element = element.find('txc:OperatingProfile', NS)
         if operatingprofile_element is not None:
             self.operating_profile = OperatingProfile(operatingprofile_element, servicedorgs)
             if self.code in {'VJ_18-X52-_-y08-1-1-T0', 'VJ_18-X52-_-y08-1-4-T0'}:
                 if self.operating_profile.nonoperation_days[0].start == datetime.date(2017, 10, 20):
                     self.operating_profile.nonoperation_days[0].start = datetime.date(2017, 9, 1)
-            if not self.should_show(date):
-                return
 
         self.departure_time = datetime.datetime.strptime(
             element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
@@ -856,7 +850,7 @@ class Timetable(object):
     def __get_journeys(self, journeys_element, servicedorgs):
         journeys = {
             journey.code: journey for journey in (
-                VehicleJourney(element, self.journeypatterns, servicedorgs, self.date)
+                VehicleJourney(element, self.journeypatterns, servicedorgs)
                 for element in journeys_element
             )
         }
