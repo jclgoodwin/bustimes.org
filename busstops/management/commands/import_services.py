@@ -286,7 +286,8 @@ class Command(BaseCommand):
                         )
                         for i, row in enumerate(grouping.rows) if row.part.stop.atco_code in stops
                     ]
-                    defaults[grouping.direction + '_description'] = str(grouping)
+                    if grouping.direction == 'outbound' or grouping.direction == 'inbound':
+                        defaults[grouping.direction + '_description'] = str(grouping)
 
             show_timetable = True
             line_strings = []
