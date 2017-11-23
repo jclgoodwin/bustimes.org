@@ -345,7 +345,8 @@ class JourneyPattern(object):
 
         route = element.find('txc:RouteRef', NS)
         if route is not None:
-            route = routes.get(route.text)
+            route_id = route.text
+            route = routes.get(route_id)
 
         direction_element = element.find('txc:Direction', NS)
         # Holt - Fakenham or Fakenham - Holt
@@ -375,6 +376,20 @@ class JourneyPattern(object):
                 groupings['cromer-wells'] = Grouping('inbound', groupings['outbound'].parent)
                 groupings['cromer-wells'].description_parts = ['Cromer', 'Sheringham', 'Wells-next-the-Sea']
             self.grouping = groupings['cromer-wells']
+        elif route is not None and route_id.startswith('R_21-X1-A-y08-'):
+            if route == 'Transport Interchange - Kings Arms':
+                route = 'Transport Interchange - Market Place'
+            elif route == 'Kings Arms - Transport Interchange':
+                route = 'Market Place - Transport Interchange'
+            elif (
+                route == 'Bus Station - James Paget Hospital' or route == 'Bus Station - Market Gates'
+                or route == 'Market Gates - Bus Station'
+            ):
+                route = 'Bus Station - Bus Station'
+            if route not in groupings:
+                groupings[route] = Grouping(route, groupings['outbound'].parent)
+                # groupings[route].description_parts = route
+            self.grouping = groupings[route]
         elif direction_element is None or direction_element.text == 'outbound':
             self.grouping = groupings['outbound']
         else:
