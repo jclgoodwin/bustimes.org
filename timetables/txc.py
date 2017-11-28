@@ -1011,6 +1011,8 @@ class Timetable(object):
 
             grouping.do_heads_and_feet()
 
+        self.groupings.sort(key=lambda g: g.direction, reverse=True)
+
         if self.service_code == 'MGZO460':
             previous_row = None
             for row in self.groupings[1].rows:
