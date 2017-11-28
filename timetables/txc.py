@@ -343,57 +343,7 @@ class JourneyPattern(object):
                     rows.append(Row(timinglink.origin))
                 rows.append(Row(timinglink.destination))
 
-        route = element.find('txc:RouteRef', NS)
-        if route is not None:
-            route_id = route.text
-            route = routes.get(route_id)
-
-        direction_element = element.find('txc:Direction', NS)
-        # Holt - Fakenham or Fakenham - Holt
-        if route == 'Town Centre - Oak Street' or route == 'Oak Street - Town Centre':
-            groupings[self.id] = Grouping('', groupings['outbound'].parent)
-            self.grouping = groupings[self.id]
-            self.grouping.description_parts = ['Holt', 'Fakenham']
-        # King's Lynn - Fakenham
-        elif route == 'Transport Interchange - Oak Street':
-            if 'kings-lynn-fakenham' not in groupings:
-                groupings['kings-lynn-fakenham'] = Grouping('outbound', groupings['outbound'].parent)
-                groupings['kings-lynn-fakenham'].description_parts = ["King's Lynn", 'Fakenham']
-            self.grouping = groupings['kings-lynn-fakenham']
-        # Fakenham = Kings Lynn
-        elif route == 'Oak Street - Transport Interchange':
-            if 'fakenham-kings-lynn' not in groupings:
-                groupings['fakenham-kings-lynn'] = Grouping('inbound', groupings['outbound'].parent)
-                groupings['fakenham-kings-lynn'].description_parts = ["King's Lynn", 'Fakenham']
-            self.grouping = groupings['fakenham-kings-lynn']
-        elif route == 'The Buttlands - Cadogan Road' or route == 'The Buttlands - Railway Approach':
-            if 'wells-cromer' not in groupings:
-                groupings['wells-cromer'] = Grouping('outbound', groupings['outbound'].parent)
-                groupings['wells-cromer'].description_parts = ['Cromer', 'Sheringham', 'Wells-next-the-Sea']
-            self.grouping = groupings['wells-cromer']
-        elif route == 'Railway Approach - The Buttlands' or route == 'Cadogan Road - The Buttlands':
-            if 'cromer-wells' not in groupings:
-                groupings['cromer-wells'] = Grouping('inbound', groupings['outbound'].parent)
-                groupings['cromer-wells'].description_parts = ['Cromer', 'Sheringham', 'Wells-next-the-Sea']
-            self.grouping = groupings['cromer-wells']
-        elif route is not None and route_id.startswith('R_21-X1-A-y08-'):
-            if route == 'Transport Interchange - Kings Arms':
-                route = 'Transport Interchange - Market Place'
-            elif route == 'Kings Arms - Transport Interchange':
-                route = 'Market Place - Transport Interchange'
-            elif (
-                route == 'Bus Station - James Paget Hospital' or route == 'Bus Station - Market Gates'
-                or route == 'Market Gates - Bus Station'
-            ):
-                route = 'Bus Station - Bus Station'
-            if route not in groupings:
-                groupings[route] = Grouping(route, groupings['outbound'].parent)
-                # groupings[route].description_parts = route
-            self.grouping = groupings[route]
-        elif direction_element is None or direction_element.text == 'outbound':
-            self.grouping = groupings['outbound']
-        else:
-            self.grouping = groupings['inbound']
+        self.grouping = self.get_grouping(element, groupings, routes)
         self.grouping.journeypatterns.append(self)
 
         if not rows:
@@ -440,6 +390,67 @@ class JourneyPattern(object):
                     row = p
 
                 previous = row
+
+    def get_grouping(self, element, groupings, routes):
+        route = element.find('txc:RouteRef', NS)
+        if route is not None:
+            route_id = route.text
+            route = routes.get(route_id)
+
+        direction_element = element.find('txc:Direction', NS)
+
+        if route is not None:
+            if route_id.startswith('R_21-X29-_-y08-'):
+                # Holt - Fakenham or Fakenham - Holt
+                if route == 'Town Centre - Oak Street' or route == 'Oak Street - Town Centre':
+                    groupings[self.id] = Grouping('', groupings['outbound'].parent)
+                    groupings[self.id].description_parts = ['Holt', 'Fakenham']
+                    return groupings[self.id]
+                # King's Lynn - Fakenham
+                if route == 'Transport Interchange - Oak Street':
+                    if 'kings-lynn-fakenham' not in groupings:
+                        groupings['kings-lynn-fakenham'] = Grouping('outbound', groupings['outbound'].parent)
+                        groupings['kings-lynn-fakenham'].description_parts = ["King's Lynn", 'Fakenham']
+                    return groupings['kings-lynn-fakenham']
+                # Fakenham = Kings Lynn
+                if route == 'Oak Street - Transport Interchange':
+                    if 'fakenham-kings-lynn' not in groupings:
+                        groupings['fakenham-kings-lynn'] = Grouping('inbound', groupings['outbound'].parent)
+                        groupings['fakenham-kings-lynn'].description_parts = ["King's Lynn", 'Fakenham']
+                    return groupings['fakenham-kings-lynn']
+                if route == 'The Buttlands - Cadogan Road' or route == 'The Buttlands - Railway Approach':
+                    if 'wells-cromer' not in groupings:
+                        groupings['wells-cromer'] = Grouping('outbound', groupings['outbound'].parent)
+                        groupings['wells-cromer'].description_parts = ['Cromer', 'Sheringham', 'Wells-next-the-Sea']
+                    return groupings['wells-cromer']
+                if route == 'Railway Approach - The Buttlands' or route == 'Cadogan Road - The Buttlands':
+                    if 'cromer-wells' not in groupings:
+                        groupings['cromer-wells'] = Grouping('inbound', groupings['outbound'].parent)
+                        groupings['cromer-wells'].description_parts = ['Cromer', 'Sheringham', 'Wells-next-the-Sea']
+                    return groupings['cromer-wells']
+            elif route_id.startswith('R_21-X1-A-y08-'):
+                if route == 'Transport Interchange - Kings Arms':
+                    route = 'Transport Interchange - Market Place'
+                elif route == 'Kings Arms - Transport Interchange':
+                    route = 'Market Place - Transport Interchange'
+                elif (
+                    route == 'Bus Station - James Paget Hospital' or route == 'Bus Station - Market Gates'
+                    or route == 'Market Gates - Bus Station'
+                ):
+                    route = 'Bus Station - Bus Station'
+                if route not in groupings:
+                    groupings[route] = Grouping(route, groupings['outbound'].parent)
+                    if route == 'Bus Station - Bus Station':
+                        groupings[route].description_parts = ['Lowestoft', 'Great Yarmouth', 'Norwich', 'Lowestoft']
+                    elif route == 'Market Place - Transport Interchange':
+                        groupings[route].description_parts = ['Dereham', 'Swaffham', 'King\'s Lynn']
+                    elif route == 'Bus Station - Market Place':
+                        groupings[route].description_parts = ['Norwich', 'Dereham']
+                return groupings[route]
+        if direction_element is None or direction_element.text == 'outbound':
+            return groupings['outbound']
+        else:
+            return groupings['inbound']
 
 
 class JourneyPatternSection(object):

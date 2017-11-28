@@ -126,7 +126,7 @@ def timetable_from_service(service, day=None):
             return northern_ireland.get_timetable(path, day)
         return []
 
-    if service.region_id in {'UL', 'LE', 'MU', 'CO', 'FR'}:
+    if service.region_id in {'UL', 'LE', 'MU', 'CO', 'FR'} or service.service_code.startswith('citymapper'):
         return gtfs.get_timetables(service.service_code, day)
 
     cache_key = '{}{}'.format(service.pk, day).replace(' ', '')

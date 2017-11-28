@@ -137,7 +137,7 @@ def get_timetables(service_code, day):
 
     if collection == 'flixbus':
         routes = feed.route_set.filter(route_id=collection.upper() + ':' + route_id)
-    elif collection in {'ouibus', 'metz', 'nancy'}:
+    elif collection in {'ouibus', 'metz', 'nancy', 'citymapper'}:
         routes = feed.route_set.filter(route_id=route_id)
     else:  # Ireland
         route_id += '-'
