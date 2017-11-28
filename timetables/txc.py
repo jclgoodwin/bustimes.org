@@ -116,12 +116,12 @@ class Stop(object):
         if name != 'none' and name in text or text in name:
             if name == text:
                 return 2
-            return True
+            return 1
         name = slugify(self.common_name)
         if text in name or name in text:
             if name == text:
                 return 2
-            return True
+            return 1
         return False
 
 
@@ -310,7 +310,7 @@ class Grouping(object):
             same_score = self.starts_at(start) + self.ends_at(end)
             reverse_score = self.starts_at(end) + self.ends_at(start)
 
-            if same_score > reverse_score:
+            if same_score > reverse_score or (reverse_score == 4 and same_score == 4):
                 description = ' - '.join(parts)
             elif same_score < reverse_score:
                 description = ' - '.join(reversed(parts))
@@ -439,13 +439,29 @@ class JourneyPattern(object):
                 ):
                     route = 'Bus Station - Bus Station'
                 if route not in groupings:
-                    groupings[route] = Grouping(route, groupings['outbound'].parent)
-                    if route == 'Bus Station - Bus Station':
-                        groupings[route].description_parts = ['Lowestoft', 'Great Yarmouth', 'Norwich', 'Lowestoft']
-                    elif route == 'Market Place - Transport Interchange':
+                    groupings[route] = Grouping('', groupings['outbound'].parent)
+                    if (
+                        route == 'Transport Interchange - Horse Fair Bus Station'
+                        or route == 'Horse Fair Bus Station - Transport Interchange'
+                    ):
+                        groupings[route].description_parts = ['Wisbech', 'King\'s Lynn']
+                    elif (
+                        route == 'Horse Fair Bus Station - Queensgate Bus Station'
+                        or route == 'Queensgate Bus Station - Horse Fair Bus Station'
+                    ):
+                        groupings[route].description_parts = ['Wisbech', 'Peterborough']
+                    elif (
+                        route == 'Market Place - Transport Interchange'
+                        or route == 'Transport Interchange - Market Place'
+                    ):
                         groupings[route].description_parts = ['Dereham', 'Swaffham', 'King\'s Lynn']
-                    elif route == 'Bus Station - Market Place':
+                    elif route == 'Bus Station - Market Place' or route == 'Market Place - Bus Station':
                         groupings[route].description_parts = ['Norwich', 'Dereham']
+                    elif route == 'Bus Station - Bus Station':
+                        groupings[route].description_parts = ['Lowestoft', 'Norwich', 'Great Yarmouth', 'Gorleston',
+                                                              'Gunton', 'Lowestoft']
+                    elif route == 'James Paget Hospital - Bus Station':
+                        groupings[route].description_parts = ['Gorleston', 'Great Yarmouth', 'Norwich']
                 return groupings[route]
         if direction_element is None or direction_element.text == 'outbound':
             return groupings['outbound']
