@@ -31,7 +31,8 @@ BANK_HOLIDAYS = {
     datetime.date(2017, 8, 28): ('LateSummerBankHolidayNotScotland', 'HolidayMondays'),
     datetime.date(2017, 12, 24): ('ChristmasEve',),
     datetime.date(2017, 12, 25): ('ChristmasDay', 'ChristmasDayHoliday'),
-    datetime.date(2017, 12, 26): ('BoxingDay',),
+    datetime.date(2017, 12, 26): ('BoxingDay', 'BoxingDayHoliday'),
+    datetime.date(2017, 12, 31): ('NewYearsEve',),
     datetime.date(2018, 1, 1): ('NewYearsDay', 'NewYearsDayHoliday'),
     datetime.date(2018, 3, 30): ('GoodFriday',),
     datetime.date(2018, 4, 2): ('EasterMonday', 'HolidayMondays'),
@@ -435,7 +436,7 @@ class JourneyPattern(object):
                     route = 'Market Place - Transport Interchange'
                 elif (
                     route == 'Bus Station - James Paget Hospital' or route == 'Bus Station - Market Gates'
-                    or route == 'Market Gates - Bus Station'
+                    or route == 'James Paget Hospital - Bus Station' or route == 'Market Gates - Bus Station'
                 ):
                     route = 'Bus Station - Bus Station'
                 if route not in groupings:
@@ -458,10 +459,7 @@ class JourneyPattern(object):
                     elif route == 'Bus Station - Market Place' or route == 'Market Place - Bus Station':
                         groupings[route].description_parts = ['Norwich', 'Dereham']
                     elif route == 'Bus Station - Bus Station':
-                        groupings[route].description_parts = ['Lowestoft', 'Norwich', 'Great Yarmouth', 'Gorleston',
-                                                              'Gunton', 'Lowestoft']
-                    elif route == 'James Paget Hospital - Bus Station':
-                        groupings[route].description_parts = ['Gorleston', 'Great Yarmouth', 'Norwich']
+                        groupings[route].description_parts = ['Lowestoft', 'Great Yarmouth', 'Lowestoft']
                 return groupings[route]
         if direction_element is None or direction_element.text == 'outbound':
             return groupings['outbound']
