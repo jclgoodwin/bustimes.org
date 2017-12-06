@@ -350,7 +350,7 @@ class JourneyPattern(object):
         if not rows:
             return
 
-        if rows[0].part.sequencenumber is not None:
+        if False and rows[0].part.sequencenumber is not None:
             for row in rows:
                 if row.part.sequencenumber not in self.grouping.rows:
                     self.grouping.rows[row.part.sequencenumber] = row
@@ -605,7 +605,7 @@ class VehicleJourney(object):
         row_length = len(self.journeypattern.grouping.rows.first().times)
 
         for stopusage, time in self.get_times():
-            if stopusage.sequencenumber is not None:
+            if False and stopusage.sequencenumber is not None:
                 self.journeypattern.grouping.rows[stopusage.sequencenumber].times.append(time)
             else:
                 stopusage.row.times.append(time)
@@ -997,7 +997,6 @@ class Timetable(object):
 
         for journey in journeys:
             journey.journeypattern.grouping.journeys.append(journey)
-            journey.journeypattern.has_journeys = True
 
         del journeys
 
