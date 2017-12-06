@@ -229,17 +229,16 @@ class Grouping(object):
         return False
 
     def is_wide(self):
-        return len(self.rows[0].times) > 3
+        return len(self.rows_list[0].times) > 3
 
     def starts_at(self, locality_name):
-        return self.rows[0].part.stop.is_at(locality_name)
+        return self.rows_list[0].part.stop.is_at(locality_name)
 
     def ends_at(self, locality_name):
-        return self.rows[-1].part.stop.is_at(locality_name)
+        return self.rows_list[-1].part.stop.is_at(locality_name)
 
     def do_heads_and_feet(self):
-        if type(self.rows) is not list:
-            self.rows = self.rows.values()
+        self.rows_list = self.rows.values()
 
         if not self.journeys:
             return
@@ -291,7 +290,7 @@ class Grouping(object):
 
         if in_a_row > 1:
             abbreviate(self, len(self.journeys), in_a_row - 1, prev_difference)
-        for row in self.rows:
+        for row in self.rows_list:
             row.times = [time for time in row.times if time is not None]
 
     def __str__(self):
@@ -589,20 +588,12 @@ class VehicleJourney(object):
                     time = add_time(time, stopusage.waittime)
 
     def add_times(self):
-        if type(self.journeypattern.grouping.rows) is list:
-            if self.journeypattern.grouping.rows:
-                row_length = len(self.journeypattern.grouping.rows[0].times)
-            else:
-                row_length = 0
-        else:
-            row_length = len(self.journeypattern.grouping.rows.first().times)
+        row_length = len(self.journeypattern.grouping.rows.first().times)
 
         for stopusage, time in self.get_times():
             stopusage.row.times.append(time)
 
         rows = self.journeypattern.grouping.rows
-        if type(rows) is not list:
-            rows = iter(rows.values())
         for row in rows:
             if len(row.times) == row_length:
                 row.times.append('')
@@ -1016,15 +1007,15 @@ class Timetable(object):
 
 
 def abbreviate(grouping, i, in_a_row, difference):
-    """Given a Grouping, and a timedetlta, modify each row and..."""
+    """Given a Grouping, and a timedelta, modify each row and..."""
     seconds = difference.total_seconds()
     if not seconds or 3600 % seconds and seconds % 3600:  # not a factor or multiple of 1 hour
         return
-    grouping.rows[0].times[i - in_a_row - 2] = Cell(in_a_row + 1, len(grouping.rows), difference)
+    grouping.rows_list[0].times[i - in_a_row - 2] = Cell(in_a_row + 1, len(grouping.rows_list), difference)
     for j in range(i - in_a_row - 1, i - 1):
-        grouping.rows[0].times[j] = None
+        grouping.rows_list[0].times[j] = None
     for j in range(i - in_a_row - 2, i - 1):
-        for row in grouping.rows[1:]:
+        for row in grouping.rows_list[1:]:
             row.times[j] = None
 
 

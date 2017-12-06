@@ -9,7 +9,7 @@ try:
 except ImportError:
     from urlparse import urlparse
     from urllib import urlencode
-from datetime import date, datetime, time, timedelta
+from datetime import date
 from django.conf import settings
 from django.core.cache import cache
 from timetables import txc, northern_ireland, gtfs

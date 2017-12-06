@@ -397,9 +397,9 @@ class ImportServicesTest(TestCase):
             res = self.client.get(self.gb_m12.get_absolute_url())
             self.assertEqual('2017-01-01', str(res.context_data['timetables'][0].date))
 
-            # should not be cached (because different date)
+            # should be cached (even though different date)
             res = self.client.get(self.gb_m12.get_absolute_url() + '?date=2017-01-02')
-            self.assertEqual([], res.context_data['timetables'])
+            self.assertEqual('2017-01-02', str(res.context_data['timetables'][0].date))
 
     @freeze_time('25 June 2016')
     def test_do_service_scotland(self):

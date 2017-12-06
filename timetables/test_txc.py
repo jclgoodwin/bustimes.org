@@ -378,7 +378,7 @@ class VehicleJourneyTest(TestCase):
                 <JourneyPatternRef>JPS_PKBO301-14</JourneyPatternRef>
                 <DepartureTime>20:00:00</DepartureTime>
             </VehicleJourney>
-        """), {'JPS_PKBO301-14': None}, {}, None)
+        """), {'JPS_PKBO301-14': None}, {})
 
         # A journey at 20:00 (which is after 19:00) should not be shown
         self.assertFalse(journey.should_show(date(2017, 8, 26), timetable))  # A Saturday

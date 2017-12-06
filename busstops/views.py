@@ -467,7 +467,8 @@ class ServiceDetailView(DetailView):
             stops_dict = {stop.pk: stop for stop in self.object.stops.all().select_related(
                 'locality').defer('osm', 'latlong', 'locality__latlong')}
             for table in context['timetables']:
-                table.groupings = [grouping for grouping in table.groupings if grouping.rows and grouping.rows[0].times]
+                table.groupings = [grouping for grouping in table.groupings
+                                   if grouping.rows_list and grouping.rows_list[0].times]
                 for grouping in table.groupings:
                     grouping.rows = [row for row in grouping.rows if any(row.times)]
                     for row in grouping.rows:
