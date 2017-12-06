@@ -130,6 +130,7 @@ def timetable_from_service(service, day=None):
         return gtfs.get_timetables(service.service_code, day)
 
     timetables = cache.get(service.pk)
+
     if timetables is None:
         timetables = []
         for xml_file in get_files_from_zipfile(service):
@@ -141,8 +142,12 @@ def timetable_from_service(service, day=None):
     for timetable in timetables:
         timetable.set_date(day)
         for grouping in timetable.groupings:
+            for row in grouping.rows:
+                row.times.clear()
+            grouping.column_feet.clear()
             for journey in grouping.journeys:
                 if journey.should_show(timetable.date):
                     journey.add_times()
-
             grouping.do_heads_and_feet()
+
+    return timetables

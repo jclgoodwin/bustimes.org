@@ -238,7 +238,8 @@ class Grouping(object):
         return self.rows[-1].part.stop.is_at(locality_name)
 
     def do_heads_and_feet(self):
-        self.rows = self.rows.values()
+        if type(self.rows) is not list:
+            self.rows = self.rows.values()
 
         if not self.journeys:
             return
@@ -247,7 +248,7 @@ class Grouping(object):
         in_a_row = 0
         prev_difference = None
         difference = None
-        for i, journey in enumerate(self.journeys):
+        for i, journey in enumerate(vj for vj in self.journeys if vj.should_show(self.parent.date, self.parent)):
             for key in journey.notes:
                 if key in self.column_feet:
                     if key in prev_journey.notes and prev_journey.notes[key] == journey.notes[key]:
@@ -588,12 +589,21 @@ class VehicleJourney(object):
                     time = add_time(time, stopusage.waittime)
 
     def add_times(self):
-        row_length = len(self.journeypattern.grouping.rows.first().times)
+        if type(self.journeypattern.grouping.rows) is list:
+            if self.journeypattern.grouping.rows:
+                row_length = len(self.journeypattern.grouping.rows[0].times)
+            else:
+                row_length = 0
+        else:
+            row_length = len(self.journeypattern.grouping.rows.first().times)
 
         for stopusage, time in self.get_times():
             stopusage.row.times.append(time)
 
-        for row in iter(self.journeypattern.grouping.rows.values()):
+        rows = self.journeypattern.grouping.rows
+        if type(rows) is not list:
+            rows = iter(rows.values())
+        for row in rows:
             if len(row.times) == row_length:
                 row.times.append('')
 
