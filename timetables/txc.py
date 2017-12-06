@@ -131,16 +131,9 @@ class Rows(object):
         self.head = None
         self.tail = None
         self.pointer = None
-        self.rows = {}
 
     def __iter__(self):
         return self
-
-    def __setitem__(self, key, value):
-        self.rows[key] = value
-
-    def __getitem__(self, key):
-        return self.rows[key]
 
     def __next__(self):
         if self.pointer is not None:
@@ -164,9 +157,7 @@ class Rows(object):
         return next(iter(self.rows.values()))
 
     def values(self):
-        if self.head is not None:
-            return [row for row in self]
-        return list(sorted(self.rows.values(), key=lambda r: r.part.sequencenumber or float('inf')))
+        return [row for row in self]
 
     def prepend(self, row):
         row.next = self.head
@@ -186,6 +177,7 @@ class Row(object):
         self.times = []
         self.next = None
         self.parent = None
+        # self.sequencenumbers = set()
 
     def __repr__(self):
         if self.next is not None:
@@ -350,47 +342,43 @@ class JourneyPattern(object):
         if not rows:
             return
 
-        if False and rows[0].part.sequencenumber is not None:
-            for row in rows:
-                if row.part.sequencenumber not in self.grouping.rows:
-                    self.grouping.rows[row.part.sequencenumber] = row
-        else:
-            previous = None
+        previous = None
 
-            previous_list = []
-            row = self.grouping.rows.head
-            while row:
-                previous_list.append(row.part.stop.atco_code)
-                row = row.next
+        previous_list = []
+        row = self.grouping.rows.head
+        while row:
+            previous_list.append(row.part.stop.atco_code)
+            row = row.next
 
-            current_list = [row.part.stop.atco_code for row in rows]
-            diff = difflib.ndiff(previous_list, current_list)
-            for row in rows:
-                atco_code = row.part.stop.atco_code
+        current_list = [row.part.stop.atco_code for row in rows]
+        diff = difflib.ndiff(previous_list, current_list)
+        for row in rows:
+            atco_code = row.part.stop.atco_code
 
+            instructions = next(diff)
+
+            while instructions[0] in '-?':
                 instructions = next(diff)
 
-                while instructions[0] in '-?':
-                    instructions = next(diff)
-
-                if instructions[0] == '+':
-                    assert instructions[2:] == atco_code
-                    if previous:
-                        previous.append(row)
-                    else:
-                        self.grouping.rows.prepend(row)
+            if instructions[0] == '+':
+                assert instructions[2:] == atco_code
+                if previous:
+                    previous.append(row)
                 else:
-                    if previous:
-                        p = previous
-                    else:
-                        p = self.grouping.rows.head
-                    while p.part.stop.atco_code != atco_code:
-                        p = p.next
-                    assert atco_code == p.part.stop.atco_code
-                    row.part.row = p
-                    row = p
+                    self.grouping.rows.prepend(row)
+            else:
+                if previous:
+                    p = previous
+                else:
+                    p = self.grouping.rows.head
+                while p.part.stop.atco_code != atco_code:
+                    p = p.next
+                assert atco_code == p.part.stop.atco_code
+                row.part.row = p
+                row = p
+            # row.sequencenumbers.add(row.part.sequencenumber)
 
-                previous = row
+            previous = row
 
     def get_grouping(self, element, groupings, routes):
         route = element.find('txc:RouteRef', NS)
@@ -605,10 +593,7 @@ class VehicleJourney(object):
         row_length = len(self.journeypattern.grouping.rows.first().times)
 
         for stopusage, time in self.get_times():
-            if False and stopusage.sequencenumber is not None:
-                self.journeypattern.grouping.rows[stopusage.sequencenumber].times.append(time)
-            else:
-                stopusage.row.times.append(time)
+            stopusage.row.times.append(time)
 
         for row in iter(self.journeypattern.grouping.rows.values()):
             if len(row.times) == row_length:

@@ -50,7 +50,7 @@ class TimetableTest(TestCase):
         self.assertEqual('Outbound', str(timetable.groupings[0]))
         self.assertEqual(21, len(timetable.groupings[0].rows))
 
-        self.assertEqual('[St Ives (Cambs) Bus Station]', str(timetable.groupings[0].rows[0]))
+        self.assertEqual('[St Ives (Cambs) Bus Station]', str(timetable.groupings[0].rows[0])[:29])
         self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
         self.assertEqual(3, timetable.groupings[0].rows[0].times[1].colspan)
         self.assertEqual(21, timetable.groupings[0].rows[0].times[1].rowspan)

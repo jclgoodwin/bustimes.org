@@ -133,8 +133,12 @@ def timetable_from_service(service, day=None):
     timetables = cache.get(cache_key)
     if timetables is not None:
         return timetables
-    timetables = (txc.Timetable(xml_file, day, service.description) for xml_file in get_files_from_zipfile(service))
-    timetables = [timetable for timetable in timetables if hasattr(timetable, 'groupings')]
+    timetables = []
+    for xml_file in get_files_from_zipfile(service):
+        with xml_file:
+            timetable = txc.Timetable(xml_file, day, service.description)
+        if hasattr(timetable, 'groupings'):
+            timetables.append(timetable)
     if len(timetables) > 1:
         timetables = [t for t in timetables if any(g.rows and g.rows[0].times for g in t.groupings)] or timetables[:1]
     for timetable in timetables:
