@@ -289,7 +289,7 @@ class Grouping(object):
             prev_journey = journey
 
         if in_a_row > 1:
-            abbreviate(self, len(self.journeys), in_a_row - 1, prev_difference)
+            abbreviate(self, i, in_a_row - 1, prev_difference)
         for row in self.rows_list:
             row.times = [time for time in row.times if time is not None]
 
