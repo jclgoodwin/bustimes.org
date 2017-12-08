@@ -141,6 +141,6 @@ def timetable_from_service(service, day=None):
     timetables = [timetable for timetable in timetables if timetable.operating_period.contains(timetable.date)]
     for timetable in timetables:
         timetable.set_date(day)
-        timetable.groupings = [g for g in timetable.groupings if g.rows]
+        timetable.groupings = [g for g in timetable.groupings if g.rows_list and g.rows_list[0].times]
 
-    return [t for t in timetables if t.groupings]
+    return [t for t in timetables if t.groupings] or timetables[:1]
