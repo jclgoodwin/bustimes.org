@@ -141,13 +141,6 @@ def timetable_from_service(service, day=None):
     timetables = [timetable for timetable in timetables if timetable.operating_period.contains(timetable.date)]
     for timetable in timetables:
         timetable.set_date(day)
-        for grouping in timetable.groupings:
-            for row in grouping.rows:
-                row.times.clear()
-            grouping.column_feet.clear()
-            for journey in grouping.journeys:
-                if journey.should_show(timetable.date):
-                    journey.add_times()
-            grouping.do_heads_and_feet()
+        timetable.groupings = [g for g in timetable.groupings if g.rows]
 
-    return timetables
+    return [t for t in timetables if t.groupings]

@@ -232,22 +232,24 @@ class Grouping(object):
         return len(self.rows_list[0].times) > 3
 
     def starts_at(self, locality_name):
-        return self.rows_list[0].part.stop.is_at(locality_name)
+        return self.rows_list and self.rows_list[0].part.stop.is_at(locality_name)
 
     def ends_at(self, locality_name):
-        return self.rows_list[-1].part.stop.is_at(locality_name)
+        return self.rows_list and self.rows_list[-1].part.stop.is_at(locality_name)
 
     def do_heads_and_feet(self):
         self.rows_list = self.rows.values()
 
-        if not self.journeys:
+        journeys = [vj for vj in self.journeys if vj.should_show(self.parent.date, self.parent)]
+        if not journeys:
             return
 
         prev_journey = None
         in_a_row = 0
         prev_difference = None
         difference = None
-        for i, journey in enumerate(vj for vj in self.journeys if vj.should_show(self.parent.date, self.parent)):
+
+        for i, journey in enumerate(journeys):
             for key in journey.notes:
                 if key in self.column_feet:
                     if key in prev_journey.notes and prev_journey.notes[key] == journey.notes[key]:
@@ -289,7 +291,7 @@ class Grouping(object):
             prev_journey = journey
 
         if in_a_row > 1:
-            abbreviate(self, i, in_a_row - 1, prev_difference)
+            abbreviate(self, len(journeys), in_a_row - 1, prev_difference)
         for row in self.rows_list:
             row.times = [time for time in row.times if time is not None]
 
@@ -865,7 +867,7 @@ class Timetable(object):
             if hasattr(journey, 'journeyref'):
                 journey.journeypattern = journeys[journey.journeyref].journeypattern
 
-        return journeys.values()
+        return (journey for journey in journeys.values() if journey.journeypattern)
 
     def date_options(self):
         start_date = min(self.date, datetime.date.today())
@@ -878,9 +880,23 @@ class Timetable(object):
 
     def set_date(self, date):
         if date and not isinstance(date, datetime.date):
-            self.date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
-        else:
-            self.date = date
+            date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+
+        if hasattr(self, 'date'):
+            if date == self.date:
+                return
+            for grouping in self.groupings:
+                for row in grouping.rows:
+                    row.times.clear()
+                grouping.column_feet.clear()
+
+        self.date = date
+
+        for grouping in self.groupings:
+            for journey in grouping.journeys:
+                if journey.should_show(self.date, self):
+                    journey.add_times()
+            grouping.do_heads_and_feet()
 
     def __init__(self, open_file, date, description=None):
         iterator = ET.iterparse(open_file)
@@ -890,7 +906,6 @@ class Timetable(object):
 
         self.description = description
         routes = {}
-        self.set_date(date)
 
         for _, element in iterator:
             tag = element.tag[33:]
@@ -990,12 +1005,9 @@ class Timetable(object):
         for grouping in self.groupings:
             grouping.journeys.sort(key=VehicleJourney.get_order)
 
-            for journey in grouping.journeys:
-                journey.add_times()
-
-            grouping.do_heads_and_feet()
-
         self.groupings.sort(key=lambda g: g.direction, reverse=True)
+
+        self.set_date(date)
 
         if self.service_code == 'MGZO460':
             previous_row = None

@@ -248,6 +248,7 @@ class ImportServicesTest(TestCase):
         self.assertEqual(service.description, 'intu Trafford Centre - Eccles - Swinton - Bolton')
 
         res = self.client.get(service.get_absolute_url())
+
         self.assertEqual(2, len(res.context_data['timetables']))
 
         # Outside of one timetable's oprating period, only one timetable should be shown
