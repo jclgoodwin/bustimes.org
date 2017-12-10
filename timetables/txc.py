@@ -597,7 +597,7 @@ class VehicleJourney(object):
 
         rows = self.journeypattern.grouping.rows
         for row in rows:
-            if len(row.times) == row_length:
+            while len(row.times) <= row_length:
                 row.times.append('')
 
     def cmp(self, x, y):

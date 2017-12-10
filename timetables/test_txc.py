@@ -114,6 +114,12 @@ class TimetableTest(TestCase):
         timetable_scotland = txc.timetable_from_filename(FIXTURES_DIR, 'SVRABBN017.xml', date(2017, 1, 28))
         self.assertEqual(timetable_scotland.groupings[0].column_feet, {})
 
+    def test_timetable_derby_alvaston_circular(self):
+        """Test a weird timetable where 'Wilmorton Ascot Drive' is visited twice consecutively on on one journey"""
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'em_11-1-J-y08-1.xml', date(2017, 12, 10))
+        self.assertEqual([], timetable.groupings[0].rows_list)
+        self.assertEqual(60, len(timetable.groupings[1].rows_list))
+
     def test_timetable_deadruns(self):
         """Test a timetable with some dead runs which should be respected"""
         deadruns = txc.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml', None)
