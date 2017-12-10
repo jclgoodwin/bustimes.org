@@ -120,6 +120,31 @@ class TimetableTest(TestCase):
         self.assertEqual([], timetable.groupings[0].rows_list)
         self.assertEqual(60, len(timetable.groupings[1].rows_list))
 
+    def test_timetable_x1_custom_groupings(self):
+        """The First Eastern Counties X1 timetable has some custom groupings"""
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-X1-A-y08-1.xml', date(2017, 12, 10))
+        self.assertEqual(13, len(timetable.groupings))
+
+    def test_timetable_x29_custom_groupings(self):
+        """The Stagecoach Norfolk X29 timetable has some custom groupings"""
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-X29-_-y08-1.xml', date(2017, 12, 10))
+
+        self.assertEqual(6, len(timetable.groupings))
+        self.assertEqual([], timetable.groupings[5].rows_list[0].times)
+
+        timetable.set_date('2017-12-11')
+        self.assertEqual(1, len(timetable.groupings[5].rows_list[0].times))
+
+    def test_timetable_coasthopper_custom_groupings(self):
+        """The Stagecoach Norfolk Coasthopper timetable has some custom groupings"""
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-CH-_-y08-1.xml', date(2017, 12, 10))
+
+        self.assertEqual(4, len(timetable.groupings))
+        self.assertEqual('Outbound', str(timetable.groupings[0]))
+        self.assertEqual('Wells-next-the-Sea - Sheringham - Cromer', str(timetable.groupings[1]))
+        self.assertEqual('Inbound', str(timetable.groupings[2]))
+        self.assertEqual('Cromer - Sheringham - Wells-next-the-Sea', str(timetable.groupings[3]))
+
     def test_timetable_deadruns(self):
         """Test a timetable with some dead runs which should be respected"""
         deadruns = txc.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml', None)
