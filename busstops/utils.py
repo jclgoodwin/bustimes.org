@@ -135,7 +135,12 @@ def timetable_from_service(service, day=None):
         timetables = []
         for xml_file in get_files_from_zipfile(service):
             with xml_file:
-                timetables.append(txc.Timetable(xml_file, day, service.description))
+                timetable = (txc.Timetable(xml_file, day, service.description))
+            del timetable.journeypatterns
+            del timetable.stops
+            del timetable.operators
+            del timetable.element
+            timetables.append(timetable)
         cache.set(service.pk, timetables)
 
     timetables = [timetable for timetable in timetables if timetable.operating_period.contains(timetable.date)]
