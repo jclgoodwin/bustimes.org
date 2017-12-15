@@ -435,7 +435,8 @@ class ServiceDetailView(DetailView):
             return context
 
         context['operators'] = self.object.operator.all()
-        context['notes'] = Note.objects.filter(Q(operators__in=context['operators']) | Q(services=self.object))
+        context['notes'] = Note.objects.filter(Q(operators__in=context['operators']) | Q(services=self.object)
+                                               | Q(services=None, operators=None))
         context['links'] = []
 
         if self.object.show_timetable:

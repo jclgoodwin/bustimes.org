@@ -547,6 +547,11 @@ class VehicleJourney(object):
             element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
         ).time()
 
+        if self.code == 'VJ_36-148-_-y10-1-2-T0' and self.departure_time == datetime.time(15, 2):
+            self.departure_time = datetime.time(7, 50)
+        elif self.code == 'VJ_36-148-_-y10-1-1-T0' and self.departure_time == datetime.time(7, 50):
+            self.departure_time = datetime.time(15, 10)
+
         self.operator = element.find('txc:OperatorRef', NS)
         if self.operator is not None:
             self.operator = self.operator.text

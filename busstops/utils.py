@@ -147,5 +147,10 @@ def timetable_from_service(service, day=None):
     for timetable in timetables:
         timetable.set_date(day)
         timetable.groupings = [g for g in timetable.groupings if g.rows_list and g.rows_list[0].times]
+        for grouping in timetable.groupings:
+            if len(grouping.rows_list[0].times) > 100:
+                service.show_timetable = False
+                service.save()
+                return
 
     return [t for t in timetables if t.groupings] or timetables[:1]
