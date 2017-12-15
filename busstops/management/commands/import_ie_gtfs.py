@@ -33,7 +33,7 @@ def download_if_modified(path, url):
         headers = {
             'if-modified-since': time.asctime(last_modified)
         }
-        response = SESSION.head(url, headers=headers, stream=True)
+        response = SESSION.head(url, headers=headers, timeout=5)
         if response.status_code == 304:
             return False  # not modified
         if 'last-modified' in response.headers and parsedate(response.headers['last-modified']) <= last_modified:
