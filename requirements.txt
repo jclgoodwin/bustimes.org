@@ -5,7 +5,7 @@ django-email-obfuscator==0.1.5
 django-haystack==2.6.1
 django-pipeline==1.6.13
 lxml==4.1.1
-multigtfs==1.1.1
+git+git://github.com/jwhitlock/django-multi-gtfs.git@django-2.0
 psycopg2==2.7.3.2
 python-dateutil==2.6.1
 pytz==2017.3
