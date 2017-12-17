@@ -412,14 +412,16 @@ class JourneyPattern(object):
             elif route_id.startswith('R_21-CH-_-y08-'):
                 if route == 'The Buttlands - Cadogan Road' or route == 'The Buttlands - Railway Approach':
                     if 'wells-cromer' not in groupings:
-                        groupings['wells-cromer'] = Grouping('outbound', groupings['outbound'].parent)
+                        groupings['wells-cromer'] = Grouping('a', groupings['outbound'].parent)
                         groupings['wells-cromer'].description_parts = ['Cromer', 'Sheringham', 'Wells-next-the-Sea']
                     return groupings['wells-cromer']
                 if route == 'Railway Approach - The Buttlands' or route == 'Cadogan Road - The Buttlands':
                     if 'cromer-wells' not in groupings:
-                        groupings['cromer-wells'] = Grouping('inbound', groupings['outbound'].parent)
+                        groupings['cromer-wells'] = Grouping('z', groupings['outbound'].parent)
                         groupings['cromer-wells'].description_parts = ['Cromer', 'Sheringham', 'Wells-next-the-Sea']
                     return groupings['cromer-wells']
+                groupings['outbound'].description_parts = ['Hunstanton', 'Wells-next-the-Sea']
+                groupings['inbound'].description_parts = groupings['outbound'].description_parts
             elif route_id.startswith('R_21-X1-A-y08-'):
                 if route == 'Transport Interchange - Kings Arms':
                     route = 'Transport Interchange - Market Place'

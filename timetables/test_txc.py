@@ -140,9 +140,9 @@ class TimetableTest(TestCase):
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-CH-_-y08-1.xml', date(2017, 12, 10))
 
         self.assertEqual(4, len(timetable.groupings))
-        self.assertEqual('Outbound', str(timetable.groupings[0]))
-        self.assertEqual('Wells-next-the-Sea - Sheringham - Cromer', str(timetable.groupings[1]))
-        self.assertEqual('Inbound', str(timetable.groupings[2]))
+        self.assertEqual('Cromer - Sheringham - Wells-next-the-Sea', str(timetable.groupings[0]))
+        self.assertEqual('Wells-next-the-Sea - Hunstanton', str(timetable.groupings[1]))
+        self.assertEqual('Hunstanton - Wells-next-the-Sea', str(timetable.groupings[2]))
         self.assertEqual('Cromer - Sheringham - Wells-next-the-Sea', str(timetable.groupings[3]))
 
     def test_timetable_deadruns(self):
