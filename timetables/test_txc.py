@@ -143,7 +143,7 @@ class TimetableTest(TestCase):
         self.assertEqual('Cromer - Sheringham - Wells-next-the-Sea', str(timetable.groupings[0]))
         self.assertEqual('Wells-next-the-Sea - Hunstanton', str(timetable.groupings[1]))
         self.assertEqual('Hunstanton - Wells-next-the-Sea', str(timetable.groupings[2]))
-        self.assertEqual('Cromer - Sheringham - Wells-next-the-Sea', str(timetable.groupings[3]))
+        self.assertEqual('Wells-next-the-Sea - Sheringham - Cromer', str(timetable.groupings[3]))
 
     def test_timetable_deadruns(self):
         """Test a timetable with some dead runs which should be respected"""
