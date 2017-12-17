@@ -430,9 +430,9 @@ class OperatingProfileTest(TestCase):
                 <RegularDayType>
                     <DaysOfWeek>
                         <MondayToSunday />
-                      </DaysOfWeek>
-                    </RegularDayType>
-                    <SpecialDaysOperation>
+                    </DaysOfWeek>
+                </RegularDayType>
+                <SpecialDaysOperation>
                     <DaysOfNonOperation>
                         <DateRange>
                             <StartDate>2017-04-17</StartDate>
@@ -514,11 +514,11 @@ class OperatingProfileTest(TestCase):
         operating_profile = txc.OperatingProfile(ET.fromstring("""
             <OperatingProfile xmlns="http://www.transxchange.org.uk/">
                 <RegularDayType>
-                  <DaysOfWeek>
-                    <Weekend />
-                  </DaysOfWeek>
+                    <DaysOfWeek>
+                        <Weekend />
+                    </DaysOfWeek>
                 </RegularDayType>
-              </OperatingProfile>
+            </OperatingProfile>
         """), {})
         self.assertFalse(operating_profile.should_show(date(2017, 4, 10)))
         self.assertFalse(operating_profile.should_show(date(2017, 4, 14)))

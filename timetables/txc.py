@@ -763,6 +763,16 @@ class OperatingProfile(object):
             self.nonoperation_bank_holidays = []
 
     def should_show(self, date):
+        if hasattr(self, 'nonoperation_days'):
+            for daterange in self.nonoperation_days:
+                if daterange.contains(date):
+                    return False
+
+        if hasattr(self, 'operation_days'):
+            for daterange in self.operation_days:
+                if daterange.contains(date):
+                    return True
+
         if self.regular_days:
             if date.weekday() not in self.regular_days:
                 return False
@@ -776,7 +786,8 @@ class OperatingProfile(object):
                     return True
                 if bank_holiday in self.nonoperation_bank_holidays:
                     return False
-        if not self.regular_days and not hasattr(self, 'operation_days'):
+
+        if not self.regular_days:
             return False
 
         if hasattr(self, 'servicedorganisation'):
@@ -791,17 +802,6 @@ class OperatingProfile(object):
                               org.operation_holidays and org.operation_holidays.holidays)
             if operation_days:
                 return any(daterange.contains(date) for daterange in operation_days)
-
-        if hasattr(self, 'nonoperation_days'):
-            for daterange in self.nonoperation_days:
-                if daterange.contains(date):
-                    return False
-
-        if hasattr(self, 'operation_days'):
-            for daterange in self.operation_days:
-                if daterange.contains(date):
-                    return True
-            return False
 
         return True
 
