@@ -2,6 +2,8 @@ from django.conf.urls import include, url
 from django.conf import settings
 from django.contrib import staticfiles
 from django.contrib.sitemaps.views import sitemap
+from haystack.views import SearchView
+from .forms import CustomSearchForm
 from . import views
 
 urlpatterns = [
@@ -28,7 +30,8 @@ urlpatterns = [
         'sitemaps': {
              'services': views.ServiceSitemap
         }
-    })
+    }),
+    url(r'^search', SearchView(form_class=CustomSearchForm)),
 ]
 
 

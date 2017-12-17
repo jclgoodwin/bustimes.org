@@ -33,7 +33,8 @@ class OperatorIndex(indexes.SearchIndex, indexes.Indexable):
 
 
 class ServiceIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.CharField(document=True, use_template=True)
+    text = indexes.CharField(document=True, use_template=True, boost=0.8)
+    name = indexes.CharField(use_template=True, boost=1.2)
 
     def get_model(self):
         return Service
