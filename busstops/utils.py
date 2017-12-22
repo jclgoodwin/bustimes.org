@@ -129,7 +129,8 @@ def timetable_from_service(service, day=None):
     if service.region_id in {'UL', 'LE', 'MU', 'CO', 'FR'} or service.service_code.startswith('citymapper'):
         return gtfs.get_timetables(service.service_code, day)
 
-    timetables = cache.get(service.pk)
+    cache_key = '{}:{}'.format(service.service_code, service.date)
+    timetables = cache.get(cache_key)
 
     if timetables is None:
         timetables = []
@@ -141,7 +142,7 @@ def timetable_from_service(service, day=None):
             del timetable.operators
             del timetable.element
             timetables.append(timetable)
-        cache.set(service.pk, timetables)
+        cache.set(cache_key, timetables)
 
     timetables = [timetable for timetable in timetables if timetable.operating_period.contains(timetable.date)]
     for timetable in timetables:
