@@ -56,7 +56,7 @@ def handle_timetable(service, timetable, day):
 
 def handle_ni_grouping(service, grouping, day):
     for journey in grouping['Journeys']:
-        if not northern_ireland.should_show(journey, day):
+        if not northern_ireland.should_show(journey, day) or not journey['StopUsages']:
             continue
         stopusageusages = []
         previous_time = None
