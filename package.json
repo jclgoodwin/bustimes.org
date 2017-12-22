@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "yuglify": "^0.1.4"
+    "yuglify": "^2.0.0"
   },
   "devDependencies": {
-    "eslint": "^4.1.1",
+    "eslint": "^4.13.1",
     "sass-lint": "^1.10.2"
   }
 }
