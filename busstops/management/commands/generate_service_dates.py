@@ -28,6 +28,8 @@ class Command(BaseCommand):
             tried_days = 0
 
             timetables = timetable_from_service(service, today)
+            if not (timetables and any(hasattr(timetable, 'set_date') for timetable in timetables)):
+                continue
             while days < 7 and tried_days < 100:
                 if self.timetables_have_times(timetables, today):
                     ServiceDate.objects.update_or_create(service=service, date=today)

@@ -4,6 +4,7 @@ import os
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import Point
 from django.db import transaction
+from chardet.universaldetector import UniversalDetector
 from titlecase import titlecase
 from busstops.models import Operator, Service, StopPoint, StopUsage
 
@@ -158,7 +159,16 @@ class Command(BaseCommand):
 
     @classmethod
     def handle_file(cls, path):
-        with io.open(path, encoding='cp1252') as open_file:
+        # detect encoding
+        with io.open(path, mode='rb') as raw_file:
+            with UniversalDetector() as detector:
+                for line in raw_file.readlines():
+                    detector.feed(line)
+                    if detector.done:
+                        break
+        encoding = detector.result["encoding"]
+
+        with io.open(path, encoding=encoding) as open_file:
             cls.handle_open_file(open_file)
 
     @classmethod
