@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.db.models import Count
 from busstops.models import (
-    Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note, Journey, StopUsageUsage
+    Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note, Journey, StopUsageUsage, Image
 )
 
 
@@ -82,3 +82,4 @@ admin.site.register(Service, ServiceAdmin)
 admin.site.register(Note, NoteAdmin)
 admin.site.register(Journey, JourneyAdmin)
 admin.site.register(StopUsageUsage, StopUsageUsageAdmin)
+admin.site.register(Image)

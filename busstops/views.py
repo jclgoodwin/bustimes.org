@@ -2,6 +2,7 @@
 """View definitions."""
 import os
 import json
+import PIL
 from datetime import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
@@ -19,8 +20,8 @@ from django.core.mail import EmailMessage
 from departures import live
 from .utils import format_gbp, viglink, timetable_from_service, get_files_from_zipfile
 from .models import (Region, StopPoint, AdminArea, Locality, District,
-                     Operator, Service, Note)
-from .forms import ContactForm
+                     Operator, Service, Note, Image)
+from .forms import ContactForm, ImageForm
 
 
 DIR = os.path.dirname(__file__)
@@ -428,6 +429,14 @@ class ServiceDetailView(DetailView):
             self.kwargs['pk'] = self.kwargs['slug']
             return super(ServiceDetailView, self).get_object(**kwargs)
 
+    def post(self, *args, **kwargs):
+        form = ImageForm(self.request.POST)
+        service = self.get_object()
+        if form.is_valid():
+            service.add_flickr_photo(form.cleaned_data['url'])
+
+        return redirect(service)
+
     def get_context_data(self, **kwargs):
         context = super(ServiceDetailView, self).get_context_data(**kwargs)
 
@@ -438,6 +447,8 @@ class ServiceDetailView(DetailView):
         context['notes'] = Note.objects.filter(Q(operators__in=context['operators']) | Q(services=self.object)
                                                | Q(services=None, operators=None))
         context['links'] = []
+
+        context['form'] = ImageForm()
 
         if self.object.show_timetable:
             date = self.request.GET.get('date')
@@ -562,3 +573,12 @@ class ServiceSitemap(Sitemap):
 
     def items(self):
         return Service.objects.filter(current=True)
+
+
+def image(request, id):
+    image = get_object_or_404(Image, id=id)
+    response = HttpResponse(content_type='image/jpeg')
+    pil_image = PIL.Image.open(image.image)
+    pil_image.thumbnail((600, 300), resample=PIL.Image.LANCZOS)
+    pil_image.save(response, 'JPEG', quality=100)
+    return response

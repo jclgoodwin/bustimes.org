@@ -11,6 +11,10 @@ class ContactForm(forms.Form):
                                widget=forms.HiddenInput)
 
 
+class ImageForm(forms.Form):
+    url = forms.URLField(label='Image URL')
+
+
 class CustomSearchForm(SearchForm):
     """https://django-haystack.readthedocs.io/en/master/boost.html#field-boost"""
     def search(self):

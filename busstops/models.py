@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 import re
+import requests
 try:
     from urllib.parse import urlencode
 except ImportError:
@@ -10,6 +11,7 @@ from autoslug import AutoSlugField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
+from django.core.files.base import ContentFile
 from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from .utils import sign_url
@@ -395,6 +397,15 @@ class StopUsageUsage(models.Model):
         return '{} {}'.format(self.stop, self.datetime)
 
 
+class Image(models.Model):
+    image = models.ImageField(height_field='height', width_field='width')
+    width = models.PositiveIntegerField()
+    height = models.PositiveIntegerField()
+    caption = models.CharField(max_length=255, blank=True)
+    source = models.CharField(max_length=255, blank=True)
+    source_url = models.URLField(blank=True)
+
+
 @python_2_unicode_compatible
 class Service(models.Model):
     """A bus service"""
@@ -421,6 +432,8 @@ class Service(models.Model):
     low_floor = models.NullBooleanField()
     assistance_service = models.NullBooleanField()
     mobility_scooter = models.NullBooleanField()
+
+    image = models.ManyToManyField(Image, blank=True)
 
     def __str__(self):
         if self.line_name or self.line_brand or self.description:
@@ -526,6 +539,40 @@ class Service(models.Model):
                 or self.pk in {'bed_1-X5-Z-y08', 'YWAX062', 'HIAG010', 'FSAM009', 'FSAG009', 'EDAO900', 'EDAAIR0',
                                'YSBX010', 'ABAX010', 'ABAO010'}
                 or any(o.pk in {'MEGA', 'MBGD', 'SCMG'} for o in self.operator.all()))
+
+    def add_flickr_photo(self, url):
+        photo_id = url.split('/photos/', 1)[1].split('/')[1]
+        image = Image()
+        session = requests.Session()
+        session.params = {
+            'format': 'json',
+            'api_key': 'c73bab2eb6d9be4a2e53d92d1452a645',
+            'photo_id': photo_id,
+            'nojsoncallback': 1
+        }
+        info = session.get('https://api.flickr.com/services/rest', params={
+            'method': 'flickr.photos.getInfo'
+        }).json()
+        image.source_url = info['photo']['urls']['url'][0]['_content']
+        image.source = info['photo']['owner']['realname'] or info['photo']['owner']['username']
+        image.caption = info['photo']['title']['_content']
+        sizes = session.get('https://api.flickr.com/services/rest', params={
+            'method': 'flickr.photos.getSizes'
+        }).json()
+        url = sizes['sizes']['size'][-1]['source']
+        original = session.get(url)
+        image.image.save(url.split('/')[-1], ContentFile(original.content))
+        image.save()
+        self.image.add(image)
+
+
+class ServiceCode(models.Model):
+    service = models.ForeignKey(Service, models.CASCADE)
+    scheme = models.CharField(max_length=255)
+    code = models.CharField(max_length=255)
+
+    class Meta():
+        unique_together = ('service', 'scheme', 'code')
 
 
 class ServiceDate(models.Model):

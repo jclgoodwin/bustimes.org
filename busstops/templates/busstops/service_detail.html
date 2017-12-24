@@ -19,6 +19,25 @@
     <p class="warning">{{ note|safe }}</p>
 {% endfor %}
 
+{% if user.is_staff %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type=submit value=Submit />
+    </form>
+{% endif %}
+
+{% if object.image.all %}
+    <div class="gallery">
+        {% for image in object.image.all %}
+            <div class="image">
+                <img src="/images/{{ image.id }}" alt="{{ image.caption }}" />
+                <a href="{{ image.source_url }}">{{ image.source }}</a>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 {% for timetable in timetables %}
     <form class="timetable-date">
         <select onchange="this.form.submit()" name="date">
