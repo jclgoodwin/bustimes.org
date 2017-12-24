@@ -587,7 +587,6 @@ input:not(:checked) + label {
 }
 
 .gallery {
-    height: 18.75em;
     margin: 1em -1em;
     overflow: auto;
     padding: 0 1em;
@@ -595,6 +594,7 @@ input:not(:checked) + label {
 
     .image {
         display: inline-block;
+        height: 18.75em;
         position: relative;
 
         a {
