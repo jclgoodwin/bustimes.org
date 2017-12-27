@@ -29,6 +29,7 @@ class ImportServicesTest(TestCase):
         cls.gb = Region.objects.create(pk='GB', name='Großbritannien')
         cls.sc = Region.objects.create(pk='S', name='Scotland')
         cls.nw = Region.objects.create(pk='NW', name='North West')
+        cls.w = Region.objects.create(pk='W', name='Wales')
         cls.london = Region.objects.create(pk='L', name='London')
 
         cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
@@ -453,6 +454,15 @@ class ImportServicesTest(TestCase):
 
         self.assertEqual(service_code.scheme, 'Traveline Cymru')
         self.assertEqual(service_code.code, '305MFMWA1')
+
+        service.region = self.w
+        service.save()
+
+        response = self.client.get(service.get_absolute_url())
+        self.assertEqual(response.context_data['links'], [{
+            'url': 'https://www.traveline.cymru/timetables/?routeNum=305&direction_id=0&timetable_key=305MFMWA1',
+            'text': 'Timetable on the Traveline Cymru website'
+        }])
 
     def test_departures(self):
         self.assertEqual(6, Journey.objects.filter(service='M12_MEGA').count())
