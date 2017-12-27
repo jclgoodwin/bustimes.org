@@ -63,17 +63,22 @@ class ImportServicesTest(TestCase):
             )
 
         with warnings.catch_warnings(record=True) as caught_warnings:
+
             # simulate an East Anglia zipfile:
             cls.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml'])
 
+            assert len(caught_warnings) == 1
+
             # simulate a Scotland zipfile:
-            cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml'])
+            cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml', 'CGAO305.xml'])
+
+            assert len(caught_warnings) == 2
 
             # simulate a North West zipfile:
             cls.write_files_to_zipfile_and_import('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml',
                                                              'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
 
-            assert len(caught_warnings) == 4
+            assert len(caught_warnings) == 5
 
         cls.ea_service = Service.objects.get(pk='ea_21-13B-B-y08')
         cls.sc_service = Service.objects.get(pk='ABBN017')
@@ -440,6 +445,14 @@ class ImportServicesTest(TestCase):
                 </a>
             </li>
         """, html=True)
+
+    @freeze_time('25 June 2016')
+    def test_do_service_wales(self):
+        service = Service.objects.get(service_code='CGAO305')
+        service_code = service.servicecode_set.first()
+
+        self.assertEqual(service_code.scheme, 'Traveline Cymru')
+        self.assertEqual(service_code.code, '305MFMWA1')
 
     def test_departures(self):
         self.assertEqual(6, Journey.objects.filter(service='M12_MEGA').count())

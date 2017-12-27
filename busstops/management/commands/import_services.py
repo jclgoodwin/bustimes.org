@@ -19,7 +19,7 @@ from django.contrib.gis.geos import LineString, MultiLineString
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from timetables.txc import Timetable, sanitize_description_part
-from ...models import Operator, StopPoint, Service, StopUsage, Region, Journey
+from ...models import Operator, StopPoint, Service, StopUsage, Region, Journey, ServiceCode
 from .generate_departures import handle_region
 
 
@@ -356,6 +356,15 @@ class Command(BaseCommand):
             if service_code not in self.service_codes:
                 service.stops.clear()
         StopUsage.objects.bulk_create(stop_usages)
+
+        if timetable.private_code:
+            private_code_args = {
+                'service': service,
+                'scheme': 'Traveline Cymru',
+                'code': timetable.private_code
+            }
+            if not ServiceCode.objects.filter(**private_code_args).exists():
+                ServiceCode.objects.create(**private_code_args)
 
         self.service_codes.add(service_code)
 

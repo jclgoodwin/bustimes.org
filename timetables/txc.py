@@ -529,7 +529,9 @@ class VehicleJourney(object):
     def __init__(self, element, journeypatterns, servicedorgs):
 
         self.code = element.find('txc:VehicleJourneyCode', NS).text
-        # self.private_code = element.find('txc:PrivateCode', NS).text
+        self.private_code = element.find('txc:PrivateCode', NS)
+        if self.private_code is not None:
+            self.private_code = self.private_code.text
 
         journeypatternref_element = element.find('txc:JourneyPatternRef', NS)
         if journeypatternref_element is not None:
@@ -1008,8 +1010,10 @@ class Timetable(object):
         for journey in journeys:
             journey.journeypattern.grouping.journeys.append(journey)
 
-        # if ':' in journey.private_code:
-            # print(journey.private_code)
+        if journey.private_code and ':' in journey.private_code:
+            self.private_code = journey.private_code.split(':', 1)[0]
+        else:
+            self.private_code = None
 
         del journeys
 
