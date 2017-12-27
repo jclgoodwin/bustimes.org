@@ -9,6 +9,12 @@ from ...models import Operator
 
 
 class Command(ImportFromCSVCommand):
+    removed_operator_ids = {
+        'TVSR', 'HBSY', 'OWML', 'POTD', 'ANUM', 'BCOA', 'EAST', 'AW', 'ACAH', 'PFCL',
+        'EABU',  # EasyBus - duplicate of ESYB
+        'ANGL',  # Anglian Bus - merged into Konectbus (KCTB)
+    }
+
     @staticmethod
     def get_region_id(region_id):
         if region_id in {'ADMIN', 'Admin', 'Taxi', ''}:
@@ -52,7 +58,7 @@ class Command(ImportFromCSVCommand):
         #  - operators with multiple different rows for the same NOC (First Manchester)
         #  - GB operators with no services who clash with Ireland operator names (Eastons Coaches, Aircoach)
         if (
-                operator_id in {'TVSR', 'HBSY', 'OWML', 'POTD', 'ANUM', 'BCOA', 'EAST', 'AW', 'ACAH', 'PFCL', 'EABU'}
+                operator_id in cls.removed_operator_ids
                 or operator_id == 'FMAN' and row['Duplicate'] != 'OK'
         ):
             return
@@ -77,3 +83,7 @@ class Command(ImportFromCSVCommand):
             id=operator_id,
             defaults=defaults
         )
+
+    def handle(self, *args, **options):
+        Operator.objects.filter(id__in=self.removed_operator_ids).delete()
+        return super(Command, self).handle(*args, **options)
