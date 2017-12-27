@@ -490,6 +490,7 @@ class Service(models.Model):
         return 'http://www.{}/lts/#/timetables?{}'.format(domain, urlencode(query)), name
 
     def get_megabus_url(self):
+        # Using a tuple of tuples, instead of a dict, because the order of dicts is nondeterministic
         query = (
             ('mid', 2678),
             ('id', 242611),
@@ -506,11 +507,11 @@ class Service(models.Model):
         if self.region_id == 'W':
             for service_code in self.servicecode_set.all():
                 if service_code.scheme == 'Traveline Cymru':
-                    query = {
-                        'routeNum': self.line_name,
-                        'direction_id': 0,
-                        'timetable_key': service_code.code
-                    }
+                    query = (
+                        ('routeNum', self.line_name),
+                        ('direction_id', 0),
+                        ('timetable_key', service_code.code)
+                    )
                     url = 'https://www.traveline.cymru/timetables/?' + urlencode(query)
                     return url, 'Traveline Cymru'
 
@@ -521,29 +522,24 @@ class Service(models.Model):
                 return self.get_tfl_url(), 'Transport for London'
 
             parts = self.service_code.split('-')
-            query = {
-                'line': parts[0].split('_')[-1].zfill(2) + parts[1].zfill(3),
-                'lineVer': self.line_ver or parts[4],
-                'net': self.net,
-                'project': parts[3]
-            }
+            query = [('line', parts[0].split('_')[-1].zfill(2) + parts[1].zfill(3)),
+                     ('lineVer', self.line_ver or parts[4]),
+                     ('net', self.net),
+                     ('project', parts[3])]
             if parts[2] != '_':
-                query['sup'] = parts[2]
+                query.append(('sup', parts[2]))
 
         elif self.region_id == 'GB':
             parts = self.service_code.split('_')
             operator_number = self.get_operator_number(parts[1])
             if operator_number is not None:
-                query = {
-                    'line': operator_number + parts[0][:3].zfill(3),
-                    'sup': parts[0][3:],
-                    'net': 'nrc',
-                    'project': 'y08'
-                }
+                query = [('line', operator_number + parts[0][:3].zfill(3)),
+                         ('sup', parts[0][3:]),
+                         ('net', 'nrc'),
+                         ('project', 'y08')]
 
         if query is not None:
-            query['command'] = 'direct'
-            query['outputFormat'] = 0
+            query += [('command', 'direct'), ('outputFormat', 0)]
             base_url = 'http://www.travelinesoutheast.org.uk/se'
             return '%s/XSLT_TTB_REQUEST?%s' % (base_url, urlencode(query)), 'Traveline'
 
