@@ -278,7 +278,7 @@ class ImportServicesTest(TestCase):
 
         self.assertEqual(1, service.stopusage_set.all().count())
 
-    @freeze_time('1 October 2017')
+    @freeze_time('30 December 2016')
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_service_dates(self):
         self.assertEqual(0, ServiceDate.objects.count())

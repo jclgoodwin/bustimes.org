@@ -144,7 +144,7 @@ def timetable_from_service(service, day=None):
             timetables.append(timetable)
         cache.set(cache_key, timetables)
 
-    timetables = [timetable for timetable in timetables if timetable.operating_period.contains(timetable.date)]
+    timetables = [timetable for timetable in timetables if timetable.operating_period.contains(day)]
     for timetable in timetables:
         timetable.set_date(day)
         timetable.groupings = [g for g in timetable.groupings if g.rows_list and g.rows_list[0].times]
