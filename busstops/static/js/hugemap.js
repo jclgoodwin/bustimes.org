@@ -12,7 +12,7 @@
             minZoom: 6,
             maxZoom: 18,
         }),
-        tileURL = 'https://bustimes.org.uk/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
+        tileURL = '/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
         pin = L.icon({
             iconUrl:    '/static/pin.svg',
             iconSize:   [16, 22],

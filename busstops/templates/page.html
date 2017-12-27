@@ -70,7 +70,7 @@ ga('send', 'pageview');
 <script src="https://cdn.ravenjs.com/3.21.0/raven.min.js" crossorigin="anonymous"></script>
 <script>
     Raven.config('{% sentry_public_dsn %}', {
-        whitelistUrls: [/bustimes\.org\.uk\/.*\.js/]
+        whitelistUrls: [/bustimes\.org\/static\/js\/.*\.js/]
     }).install();
 </script>
 {% if stopusages or stops or stoppoint %}
