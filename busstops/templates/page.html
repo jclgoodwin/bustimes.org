@@ -6,9 +6,9 @@
 <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1" />
 <meta name="theme-color" content="#fe9" />
 {% if object.get_absolute_url %}
-    <link rel="canonical" href="https://bustimes.org.uk{{ object.get_absolute_url }}" />
+    <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}" />
 {% endif %}
-<script type="application/ld+json">{"@context":"http://schema.org","@type":"WebSite","url":"https://bustimes.org.uk","name":"Bus Times","potentialAction":{"@type":"SearchAction","target":"https://bustimes.org.uk/search?q={q}","query-input":"required name=q"}}</script>
+<script type="application/ld+json">{"@context":"http://schema.org","@type":"WebSite","url":"https://bustimes.org","name":"Bus Times","potentialAction":{"@type":"SearchAction","target":"https://bustimes.org/search?q={q}","query-input":"required name=q"}}</script>
 {% load staticfiles %}
 <link rel="manifest" href="{% static 'manifest.json' %}" />
 <!--[if gte IE 9]><!-->
@@ -47,7 +47,6 @@
         </div>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <script async src="https://ads.ayads.co/ajs.php?zid=21256"></script>
     {% endblock %}
     <ul>
         <li><a href="/contact">Contact</a></li>

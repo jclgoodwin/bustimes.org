@@ -550,7 +550,7 @@ class ServiceDetailView(DetailView):
             return redirect(self.object, permanent=True)
 
         response = super(ServiceDetailView, self).render_to_response(context)
-        response['Link'] = '<https://bustimes.org.uk{}>; rel="canonical"'.format(self.object.get_absolute_url())
+        response['Link'] = '<https://bustimes.org{}>; rel="canonical"'.format(self.object.get_absolute_url())
         return response
 
 
