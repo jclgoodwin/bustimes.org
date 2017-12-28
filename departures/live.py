@@ -352,6 +352,7 @@ def services_match(a, b):
 
 
 def blend(departures, live_rows):
+    added = False
     for live_row in live_rows:
         replaced = False
         for row in departures:
@@ -362,7 +363,7 @@ def blend(departures, live_rows):
                     or 'live' not in row and (
                         live_row['time'] is None
                         or type(live_row['time']) is str
-                        or make_naive(row['time']) >= live_row['time']
+                        or make_naive(row['time']) <= live_row['time']
                     )
                 )
             ):
@@ -370,7 +371,10 @@ def blend(departures, live_rows):
                 replaced = True
                 break
         if not replaced:
+            added = True
             departures.append(live_row)
+    if added:
+        departures.sort(key=lambda d: make_naive(d['time']) if d['time'].tzinfo else d['time'])
 
 
 def get_departures(stop, services, bot=False):
