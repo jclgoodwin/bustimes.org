@@ -7,7 +7,6 @@ from django.conf import settings
 from django.utils import timezone
 from timetables import txc, northern_ireland
 from ...models import Region, Service, Journey, StopUsageUsage, StopPoint
-from ...utils import get_files_from_zipfile
 
 
 ONE_DAY = timedelta(days=1)
@@ -115,7 +114,7 @@ def handle_region(region):
                 do_ni_service(service, groupings, day)
                 day += ONE_DAY
         else:
-            for i, xml_file in enumerate(get_files_from_zipfile(service)):
+            for i, xml_file in enumerate(service.get_files_from_zipfile()):
                 timetable = txc.Timetable(xml_file, None)
                 day = today
                 while day <= NEXT_WEEK:

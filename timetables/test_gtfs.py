@@ -5,7 +5,6 @@ from datetime import date, time
 from django.test import TestCase, override_settings
 from django.conf import settings
 from django.core.management import call_command
-from busstops.utils import timetable_from_service
 from busstops.models import Region, AdminArea, StopPoint, Service
 from . import gtfs
 
@@ -89,7 +88,7 @@ class GTFSTest(TestCase):
 
     def test_big_timetable(self):
         service = Service.objects.get(service_code='seamusdohe-21-963-1-y11')
-        timetable = timetable_from_service(service, date(2017, 6, 7))[0]
+        timetable = service.get_timetables(date(2017, 6, 7))[0]
         self.assertEqual(timetable.groupings[0].rows[0].times,
                          ['     ', time(10, 15), '     ', time(14, 15), time(17, 45)])
         self.assertEqual(timetable.groupings[0].rows[1].times,

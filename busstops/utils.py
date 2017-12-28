@@ -2,17 +2,12 @@
 import base64
 import hashlib
 import hmac
-import os
-import zipfile
 try:
     from urllib.parse import urlparse, urlencode
 except ImportError:
     from urlparse import urlparse
     from urllib import urlencode
-from datetime import date
 from django.conf import settings
-from django.core.cache import cache
-from timetables import txc, northern_ireland, gtfs
 
 
 def format_gbp(string):
@@ -60,98 +55,3 @@ def sign_url(input_url=None, secret=None):
 
     # Return signed URL
     return original_url + '&signature=' + encoded_signature.decode('utf-8')
-
-
-def get_filenames(service, path=None, archive=None):
-    suffix = '' if archive is None else '.xml'
-
-    if service.region_id == 'NE':
-        return ['%s%s' % (service.pk, suffix)]
-    if service.region_id in ('S', 'Y'):
-        return ['SVR%s%s' % (service.pk, suffix)]
-
-    try:
-        if archive is None:
-            namelist = os.listdir(path)
-        else:
-            namelist = archive.namelist()
-    except (IOError, OSError):
-        return []
-
-    if service.net:
-        return [name for name in namelist if name.startswith('%s-' % service.pk)]
-    if service.region_id == 'NW':
-        return [name for name in namelist if name == service.pk + '.xml' or name.startswith('%s_' % service.pk)]
-    if service.region_id == 'GB':
-        parts = service.pk.split('_')
-        return [name for name in namelist if name.endswith('_%s_%s%s' % (parts[1], parts[0], suffix))]
-    return [name for name in namelist if name.endswith('_%s%s' % (service.pk, suffix))]  # Wales
-
-
-def get_pickle_filenames(service, path):
-    """Given a Service and a folder path, return a list of filenames."""
-    return get_filenames(service, path)
-
-
-def get_files_from_zipfile(service):
-    """Given a Service,
-    return an iterable of open files from the relevant zipfile.
-    """
-    service_code = service.service_code
-    if service.region_id == 'GB':
-        archive_name = 'NCSD'
-        parts = service_code.split('_')
-        service_code = '_%s_%s' % (parts[-1], parts[-2])
-    else:
-        archive_name = service.region_id
-
-    archive_path = os.path.join(settings.TNDS_DIR, archive_name + '.zip')
-
-    try:
-        with zipfile.ZipFile(archive_path) as archive:
-            filenames = get_filenames(service, archive=archive)
-            return [archive.open(filename) for filename in filenames]
-    except (zipfile.BadZipfile, IOError, KeyError):
-        return []
-
-
-def timetable_from_service(service, day=None):
-    """Given a Service, return a list of Timetables."""
-    if day is None:
-        day = date.today()
-
-    if service.region_id == 'NI':
-        path = os.path.join(settings.DATA_DIR, 'NI', service.pk + '.json')
-        if os.path.exists(path):
-            return northern_ireland.get_timetable(path, day)
-        return []
-
-    if service.region_id in {'UL', 'LE', 'MU', 'CO', 'FR'} or service.service_code.startswith('citymapper'):
-        return gtfs.get_timetables(service.service_code, day)
-
-    cache_key = '{}:{}'.format(service.service_code, service.date)
-    timetables = cache.get(cache_key)
-
-    if timetables is None:
-        timetables = []
-        for xml_file in get_files_from_zipfile(service):
-            with xml_file:
-                timetable = (txc.Timetable(xml_file, day, service.description))
-            del timetable.journeypatterns
-            del timetable.stops
-            del timetable.operators
-            del timetable.element
-            timetables.append(timetable)
-        cache.set(cache_key, timetables)
-
-    timetables = [timetable for timetable in timetables if timetable.operating_period.contains(day)]
-    for timetable in timetables:
-        timetable.set_date(day)
-        timetable.groupings = [g for g in timetable.groupings if g.rows_list and g.rows_list[0].times]
-        for grouping in timetable.groupings:
-            if len(grouping.rows_list[0].times) > 100:
-                service.show_timetable = False
-                service.save()
-                return
-
-    return [t for t in timetables if t.groupings] or timetables[:1]

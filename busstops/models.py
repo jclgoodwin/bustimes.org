@@ -3,17 +3,22 @@
 from __future__ import unicode_literals
 import re
 import requests
+import os
+import zipfile
 try:
     from urllib.parse import urlencode
 except ImportError:
     from urllib import urlencode
+from datetime import date
 from autoslug import AutoSlugField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
+from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
+from timetables import txc, northern_ireland, gtfs
 from .utils import sign_url
 
 
@@ -575,6 +580,90 @@ class Service(models.Model):
         image.image.save(url.split('/')[-1], ContentFile(original.content))
         image.save()
         self.image.add(image)
+
+    def get_filenames(self, archive):
+        suffix = '.xml'
+
+        if self.region_id == 'NE':
+            return ['%s%s' % (self.pk, suffix)]
+        if self.region_id in ('S', 'Y'):
+            return ['SVR%s%s' % (self.pk, suffix)]
+
+        try:
+            namelist = archive.namelist()
+        except (IOError, OSError):
+            return []
+
+        if self.net:
+            return [name for name in namelist if name.startswith('%s-' % self.pk)]
+        if self.region_id == 'NW':
+            return [name for name in namelist if name == self.pk + '.xml' or name.startswith('%s_' % self.pk)]
+        if self.region_id == 'GB':
+            parts = self.pk.split('_')
+            return [name for name in namelist if name.endswith('_%s_%s%s' % (parts[1], parts[0], suffix))]
+        return [name for name in namelist if name.endswith('_%s%s' % (self.pk, suffix))]  # Wales
+
+    def get_files_from_zipfile(self):
+        """Given a Service,
+        return an iterable of open files from the relevant zipfile.
+        """
+        service_code = self.service_code
+        if self.region_id == 'GB':
+            archive_name = 'NCSD'
+            parts = service_code.split('_')
+            service_code = '_%s_%s' % (parts[-1], parts[-2])
+        else:
+            archive_name = self.region_id
+
+        archive_path = os.path.join(settings.TNDS_DIR, archive_name + '.zip')
+
+        try:
+            with zipfile.ZipFile(archive_path) as archive:
+                filenames = self.get_filenames(archive)
+                return [archive.open(filename) for filename in filenames]
+        except (zipfile.BadZipfile, IOError, KeyError):
+            return []
+
+    def get_timetables(self, day=None):
+        """Given a Service, return a list of Timetables."""
+        if day is None:
+            day = date.today()
+
+        if self.region_id == 'NI':
+            path = os.path.join(settings.DATA_DIR, 'NI', self.pk + '.json')
+            if os.path.exists(path):
+                return northern_ireland.get_timetable(path, day)
+            return []
+
+        if self.region_id in {'UL', 'LE', 'MU', 'CO', 'FR'} or self.service_code.startswith('citymapper'):
+            return gtfs.get_timetables(self.service_code, day)
+
+        cache_key = '{}:{}'.format(self.service_code, self.date)
+        timetables = cache.get(cache_key)
+
+        if timetables is None:
+            timetables = []
+            for xml_file in self.get_files_from_zipfile():
+                with xml_file:
+                    timetable = (txc.Timetable(xml_file, day, self.description))
+                del timetable.journeypatterns
+                del timetable.stops
+                del timetable.operators
+                del timetable.element
+                timetables.append(timetable)
+            cache.set(cache_key, timetables)
+
+        timetables = [timetable for timetable in timetables if timetable.operating_period.contains(day)]
+        for timetable in timetables:
+            timetable.set_date(day)
+            timetable.groupings = [g for g in timetable.groupings if g.rows_list and g.rows_list[0].times]
+            for grouping in timetable.groupings:
+                if len(grouping.rows_list[0].times) > 100:
+                    self.show_timetable = False
+                    self.save()
+                    return
+
+        return [t for t in timetables if t.groupings] or timetables[:1]
 
 
 class ServiceCode(models.Model):

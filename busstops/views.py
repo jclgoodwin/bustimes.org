@@ -18,7 +18,7 @@ from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from departures import live
-from .utils import format_gbp, viglink, timetable_from_service, get_files_from_zipfile
+from .utils import format_gbp, viglink
 from .models import (Region, StopPoint, AdminArea, Locality, District,
                      Operator, Service, Note, Image)
 from .forms import ContactForm, ImageForm
@@ -468,7 +468,7 @@ class ServiceDetailView(DetailView):
                 next_usage = self.object.journey_set.filter(datetime__date__gte=today).first()
                 if next_usage:
                     date = next_usage.datetime.date()
-            context['timetables'] = timetable_from_service(self.object, date)
+            context['timetables'] = self.object.get_timetables(date)
 
         if not context.get('timetables') or not context['timetables'][0].groupings:
             context['stopusages'] = self.object.stopusage_set.all().select_related(
@@ -564,7 +564,7 @@ def service_xml(_, pk):
         with open(path) as open_file:
             bodies = open_file.read()
     else:
-        bodies = (xml_file.read().decode() for xml_file in get_files_from_zipfile(service))
+        bodies = (xml_file.read().decode() for xml_file in service.get_files_from_zipfile())
     return HttpResponse(bodies, content_type='text/plain')
 
 

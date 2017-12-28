@@ -1,7 +1,6 @@
 from datetime import date, timedelta
 from django.core.management.base import BaseCommand
 from ...models import Service, ServiceDate
-from ...utils import timetable_from_service
 
 
 class Command(BaseCommand):
@@ -20,7 +19,7 @@ class Command(BaseCommand):
             tried_days = 0
 
             while days < 7 and tried_days < 100:
-                timetables = timetable_from_service(service, today)
+                timetables = service.get_timetables(today)
                 if timetables:
                     for timetable in timetables:
                         if any(self.has_times(grouping) for grouping in timetable.groupings):
