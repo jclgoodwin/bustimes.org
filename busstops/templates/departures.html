@@ -3,15 +3,17 @@
     <h2>Next departures</h2>
     {% for item in departures %}
         {% ifchanged item.time.date %}
-            {% if item.time.date and not forloop.first %}
+            {% if not forloop.first %}
                 </tbody>
                 </table>
                 <h3>{{ item.time|date:"l" }}</h3>
             {% elif today < item.time.date %}
                 <h3>{{ item.time|date:"l" }}</h3>
             {% endif %}
-        <table>
-        <tbody>
+            {% if forloop.first or item.time.date %}
+                <table>
+                <tbody>
+            {% endif %}
         {% endifchanged %}
         <tr>
             <td>
