@@ -3,7 +3,7 @@
     <h2>Next departures</h2>
     {% for item in departures %}
         {% ifchanged item.time.date %}
-            {% if not forloop.first %}
+            {% if item.time.date and not forloop.first %}
                 </tbody>
                 </table>
                 <h3>{{ item.time|date:"l" }}</h3>
