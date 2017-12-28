@@ -180,11 +180,36 @@ class LiveSource(models.Model):
 
 
 @python_2_unicode_compatible
+class DataSource(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    url = models.URLField(blank=True)
+    datetime = models.DateTimeField()
+
+    def __str__(self):
+        return self.name
+
+
+@python_2_unicode_compatible
+class Place(models.Model):
+    source = models.ForeignKey(DataSource, models.CASCADE)
+    code = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    latlong = models.PointField(null=True, blank=True)
+    parent = models.ForeignKey('Place', models.SET_NULL, null=True, editable=False)
+
+    class Meta():
+        unique_together = ('source', 'code')
+
+    def __str__(self):
+        return self.name
+
+
+@python_2_unicode_compatible
 class StopPoint(models.Model):
     """The smallest type of geographical point.
     A point at which vehicles stop"""
     atco_code = models.CharField(max_length=16, primary_key=True)
-    naptan_code = models.CharField(max_length=16, db_index=True)
+    naptan_code = models.CharField(max_length=16, db_index=True, blank=True)
 
     common_name = models.CharField(max_length=48)
     landmark = models.CharField(max_length=48, blank=True)
@@ -201,6 +226,7 @@ class StopPoint(models.Model):
     locality_centre = models.BooleanField()
 
     live_sources = models.ManyToManyField(LiveSource, blank=True)
+    places = models.ManyToManyField(Place, blank=True)
 
     heading = models.PositiveIntegerField(null=True, blank=True)
 
@@ -235,7 +261,7 @@ class StopPoint(models.Model):
         ('TXR', 'Taxi rank (head of)'),
         ('STR', 'Shared taxi rank (head of)'),
     )
-    stop_type = models.CharField(max_length=3, choices=STOP_TYPE_CHOICES)
+    stop_type = models.CharField(max_length=3, choices=STOP_TYPE_CHOICES, blank=True)
 
     BUS_STOP_TYPE_CHOICES = (
         ('MKD', 'Marked (pole, shelter etc)'),
@@ -247,7 +273,7 @@ class StopPoint(models.Model):
 
     timing_status = models.CharField(max_length=3, choices=TIMING_STATUS_CHOICES, blank=True)
 
-    admin_area = models.ForeignKey('AdminArea', models.SET_NULL, null=True)
+    admin_area = models.ForeignKey('AdminArea', models.SET_NULL, null=True, blank=True)
     active = models.BooleanField(db_index=True)
 
     osm = JSONField(null=True, blank=True)
@@ -402,6 +428,7 @@ class StopUsageUsage(models.Model):
         return '{} {}'.format(self.stop, self.datetime)
 
 
+@python_2_unicode_compatible
 class Image(models.Model):
     image = models.ImageField(height_field='height', width_field='width')
     width = models.PositiveIntegerField()
@@ -409,6 +436,9 @@ class Image(models.Model):
     caption = models.CharField(max_length=255, blank=True)
     source = models.CharField(max_length=255, blank=True)
     source_url = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.caption
 
 
 @python_2_unicode_compatible
@@ -425,7 +455,7 @@ class Service(models.Model):
     operator = models.ManyToManyField(Operator, blank=True)
     net = models.CharField(max_length=3, blank=True)
     line_ver = models.PositiveIntegerField(null=True, blank=True)
-    region = models.ForeignKey(Region, models.CASCADE)
+    region = models.ForeignKey(Region, models.CASCADE, null=True)
     stops = models.ManyToManyField(StopPoint, editable=False,
                                    through=StopUsage)
     date = models.DateField()
