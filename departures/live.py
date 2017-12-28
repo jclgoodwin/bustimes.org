@@ -351,6 +351,14 @@ def services_match(a, b):
     return a == b
 
 
+def get_departure_order(departure):
+    if departure['time']:
+        if departure['time'].tzinfo:
+            return make_naive(departure['time'])
+        return departure['time']
+    return make_naive(departure['live'])
+
+
 def blend(departures, live_rows):
     added = False
     for live_row in live_rows:
@@ -374,7 +382,7 @@ def blend(departures, live_rows):
             added = True
             departures.append(live_row)
     if added:
-        departures.sort(key=lambda d: make_naive(d['time']) if d['time'].tzinfo else d['time'])
+        departures.sort(key=get_departure_order)
 
 
 def get_departures(stop, services, bot=False):
