@@ -351,6 +351,10 @@ def services_match(a, b):
     return a == b
 
 
+def can_sort(departure):
+    return type(departure['time']) is datetime or type(departure['live']) is datetime
+
+
 def get_departure_order(departure):
     if departure['time']:
         if departure['time'].tzinfo:
@@ -381,7 +385,7 @@ def blend(departures, live_rows):
         if not replaced:
             added = True
             departures.append(live_row)
-    if added:
+    if added and all(can_sort(departure) for departure in departures):
         departures.sort(key=get_departure_order)
 
 
