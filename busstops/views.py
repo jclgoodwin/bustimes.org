@@ -470,7 +470,7 @@ class ServiceDetailView(DetailView):
                     date = next_usage.datetime.date()
             context['timetables'] = timetable_from_service(self.object, date)
 
-        if not context.get('timetables'):
+        if not context.get('timetables') or not context['timetables'][0].groupings:
             context['stopusages'] = self.object.stopusage_set.all().select_related(
                 'stop__locality'
             ).defer('stop__osm', 'stop__locality__latlong')
