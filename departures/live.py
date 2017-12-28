@@ -352,7 +352,7 @@ def services_match(a, b):
 
 
 def can_sort(departure):
-    return type(departure['time']) is datetime or type(departure['live']) is datetime
+    return type(departure['time']) is datetime.datetime or type(departure.get('live')) is datetime.datetime
 
 
 def get_departure_order(departure):
