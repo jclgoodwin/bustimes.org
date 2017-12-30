@@ -5,6 +5,9 @@
 <title>{% block title %}{% if object %}{% firstof object.get_qualified_name object %} – {% endif %}Bus Times{% endblock %}</title>
 <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1" />
 <meta name="theme-color" content="#fe9" />
+<link rel="preconnect" href="https://cdn.ravenjs.com" />
+<link rel="preconnect" href="https://www.google-analytics.com" />
+<link rel="preconnect" href="https://pagead2.googlesyndication.com" />
 {% if object.get_absolute_url %}
     <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}" />
 {% endif %}
@@ -46,7 +49,7 @@
             <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="auto"></ins>
         </div>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     {% endblock %}
     <ul>
         <li><a href="/contact">Contact</a></li>
@@ -63,6 +66,7 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
 ga('create', 'UA-65987478-1', 'auto');
+ga('require', 'GTM-W66PKML');
 {% if object.region_id %}ga('set', 'dimension1', '{{ object.region_id }}');{% endif %}
 ga('send', 'pageview');
 </script>
