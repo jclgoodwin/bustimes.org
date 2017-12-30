@@ -69,8 +69,10 @@
                     var marker = L.marker(location, {icon: pinWhite}).addTo(map).bindPopup(label.innerHTML),
                         a = label.getElementsByTagName('a');
                     if (a.length) {
-                        a[0].onmouseover = function () {
-                            marker.openPopup();
+                        a[0].onmouseover = a[0].ontouchstart = function() {
+                            if (!marker.getPopup().isOpen()) {
+                                marker.openPopup();
+                            }
                         };
                     }
                 };

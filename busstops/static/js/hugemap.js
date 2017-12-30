@@ -58,9 +58,11 @@
 
                 marker.bindPopup(a.outerHTML);
 
-                a.onmouseover = function() {
-                    movedByAccident = true;
-                    marker.openPopup();
+                a.onmouseover = a.ontouchstart = function() {
+                    if (!marker.getPopup().isOpen()) {
+                        movedByAccident = true;
+                        marker.openPopup();
+                    }
                 };
 
                 li.appendChild(a);
