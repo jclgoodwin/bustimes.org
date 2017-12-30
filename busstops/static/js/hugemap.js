@@ -39,6 +39,13 @@
     };
     statusBar.addTo(map);
 
+    markers.on('clustermouseover', function(e) {
+        e.layer.spiderfy();
+    });
+    markers.on('mouseover', function(e) {
+        e.layer.openPopup();
+    });
+
     map.addLayer(markers);
 
     function processStopsData(data) {
@@ -60,6 +67,10 @@
 
                 a.onmouseover = a.ontouchstart = function() {
                     if (!marker.getPopup().isOpen()) {
+                        var parent = markers.getVisibleParent(marker);
+                        if (parent && parent.spiderfy) {
+                            parent.spiderfy();
+                        }
                         movedByAccident = true;
                         marker.openPopup();
                     }
