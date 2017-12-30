@@ -4,6 +4,7 @@ import datetime
 import requests
 import pytz
 import dateutil.parser
+import logging
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.utils.text import slugify
@@ -11,6 +12,7 @@ from django.utils.timezone import make_naive
 from busstops.models import Operator, Service
 
 
+logger = logging.getLogger(__name__)
 DESTINATION_REGEX = re.compile(r'.+\((.+)\)')
 LOCAL_TIMEZONE = pytz.timezone('Europe/London')
 SESSION = requests.Session()
@@ -35,7 +37,7 @@ class Departures(object):
         return None
 
     def get_response(self):
-        return SESSION.get(self.get_request_url(), params=self.get_request_params())
+        return SESSION.get(self.get_request_url(), params=self.get_request_params(), timeout=1)
 
     def get_service(self, line_name):
         """Given a line name string, returns the Service matching a line name
@@ -53,7 +55,8 @@ class Departures(object):
         """Returns a list of departures"""
         try:
             response = self.get_response()
-        except requests.exceptions.ConnectionError:
+        except requests.exceptions.ConnectionError as e:
+            logger.error(e, exc_info=True)
             return
         if response.ok:
             return self.departures_from_response(response)
@@ -302,8 +305,9 @@ def add_stagecoach_departures(stop, services_dict, departures):
         }
     }
     try:
-        response = SESSION.post('https://api.stagecoachbus.com/adc/stop-monitor', headers=headers, json=json)
-    except requests.exceptions.ConnectionError:
+        response = SESSION.post('https://api.stagecoachbus.com/adc/stop-monitor', headers=headers, json=json, timeout=1)
+    except requests.exceptions.ConnectionError as e:
+        logger.error(e, exc_info=True)
         return departures
     if not response.ok:
         return departures
@@ -440,9 +444,11 @@ def get_departures(stop, services, bot=False):
         try:
             response = SESSION.get(
                 'https://data.dublinked.ie/cgi-bin/rtpi/realtimebusinformation',
-                params={'stopid': int(stop.atco_code.split('DB', 1)[-1])}
+                params={'stopid': int(stop.atco_code.split('DB', 1)[-1])},
+                timeout=1
             )
-        except requests.exceptions.ConnectionError:
+        except requests.exceptions.ConnectionError as e:
+            logger.error(e, exc_info=True)
             pass
         if response.ok:
             services_dict = {service.line_name.lower(): service for service in services}
