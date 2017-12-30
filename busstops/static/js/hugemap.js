@@ -43,6 +43,7 @@
         e.layer.spiderfy();
     });
     markers.on('mouseover', function(e) {
+        movedByAccident = true;
         e.layer.openPopup();
     });
 
