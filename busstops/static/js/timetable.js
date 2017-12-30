@@ -3,6 +3,9 @@
 /*jslint
     browser: true
 */
+/*global
+    ga
+*/
 
 (function() {
     var divs = document.getElementsByTagName('div'),
@@ -68,6 +71,23 @@
         ths = document.getElementsByTagName('th');
         for (i = ths.length - 1; i >= 0; i -= 1) {
             maybeHighlight(ths[i].parentNode);
+        }
+    }
+
+    function handleMegabusLinkClick() {
+        ga('send', 'event', {
+            eventCategory: 'Outbound Link',
+            eventAction: 'click',
+            eventLabel: 'megabus',
+            transport: 'beacon'
+        });
+    }
+
+    var as = document.getElementsByTagName('a');
+    for (i = as.length - 1; i >= 0; i -= 1) {
+        if (as[i].href.indexOf('uk.megabus.com') > -1) {
+            as[i].onclick = handleMegabusLinkClick;
+            break;
         }
     }
 }());
