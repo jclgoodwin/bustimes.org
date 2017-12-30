@@ -55,7 +55,7 @@ class Departures(object):
         """Returns a list of departures"""
         try:
             response = self.get_response()
-        except requests.exceptions.ConnectionError as e:
+        except requests.exceptions.RequestException as e:
             logger.error(e, exc_info=True)
             return
         if response.ok:
@@ -306,7 +306,7 @@ def add_stagecoach_departures(stop, services_dict, departures):
     }
     try:
         response = SESSION.post('https://api.stagecoachbus.com/adc/stop-monitor', headers=headers, json=json, timeout=1)
-    except requests.exceptions.ConnectionError as e:
+    except requests.exceptions.RequestException as e:
         logger.error(e, exc_info=True)
         return departures
     if not response.ok:
@@ -447,7 +447,7 @@ def get_departures(stop, services, bot=False):
                 params={'stopid': int(stop.atco_code.split('DB', 1)[-1])},
                 timeout=1
             )
-        except requests.exceptions.ConnectionError as e:
+        except requests.exceptions.RequestException as e:
             logger.error(e, exc_info=True)
             pass
         if response.ok:
