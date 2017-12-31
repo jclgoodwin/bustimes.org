@@ -37,7 +37,7 @@ class Departures(object):
         return None
 
     def get_response(self):
-        return SESSION.get(self.get_request_url(), params=self.get_request_params(), timeout=1)
+        return SESSION.get(self.get_request_url(), params=self.get_request_params(), timeout=2)
 
     def get_service(self, line_name):
         """Given a line name string, returns the Service matching a line name
@@ -305,7 +305,8 @@ def add_stagecoach_departures(stop, services_dict, departures):
         }
     }
     try:
-        response = SESSION.post('https://api.stagecoachbus.com/adc/stop-monitor', headers=headers, json=json, timeout=1)
+        response = SESSION.post('https://api.stagecoachbus.com/adc/stop-monitor',
+                                headers=headers, json=json, timeout=2)
     except requests.exceptions.RequestException as e:
         logger.error(e, exc_info=True)
         return departures
@@ -445,7 +446,7 @@ def get_departures(stop, services, bot=False):
             response = SESSION.get(
                 'https://data.dublinked.ie/cgi-bin/rtpi/realtimebusinformation',
                 params={'stopid': int(stop.atco_code.split('DB', 1)[-1])},
-                timeout=1
+                timeout=2
             )
         except requests.exceptions.RequestException as e:
             logger.error(e, exc_info=True)
