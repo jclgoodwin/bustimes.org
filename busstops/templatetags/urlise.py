@@ -17,6 +17,7 @@ def urlise(value, autoescape=None):
     """
 
     markup = urlize(value, nofollow=True).replace('">https://', '">', 1).replace('">http://', '">', 1)
+    markup = markup.replace('/</a>', '</a>', 1)
 
     if 'megabus' in markup:
         megabus = '"https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=links&amp;p={}"'.format(
