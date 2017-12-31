@@ -33,7 +33,7 @@ BANK_HOLIDAYS = {
     datetime.date(2017, 12, 25): ('ChristmasDay', 'ChristmasDayHoliday'),
     datetime.date(2017, 12, 26): ('BoxingDay', 'BoxingDayHoliday'),
     datetime.date(2017, 12, 31): ('NewYearsEve',),
-    datetime.date(2018, 1, 1): ('NewYearsDay', 'NewYearsDayHoliday'),
+    datetime.date(2018, 1, 1): ('NewYearsDay', 'NewYearsDayHoliday', 'HolidayMondays'),
     datetime.date(2018, 3, 30): ('GoodFriday',),
     datetime.date(2018, 4, 2): ('EasterMonday', 'HolidayMondays'),
     datetime.date(2018, 5, 7): ('MayDay', 'HolidayMondays'),
