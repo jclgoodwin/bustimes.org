@@ -1,5 +1,6 @@
 import requests
 from datetime import date
+from django.db import IntegrityError
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
@@ -59,7 +60,8 @@ class Command(BaseCommand):
         }
         today = date.today()
 
-        Region.objects.update_or_create(id='SG', defaults={'name': 'Singapore'})[0]
+        Region.objects.update_or_create(id='SG', defaults={'name': 'Singapore'})
+
         for code, name in (
             ('SBST', 'SBS Transit'),
             ('TTS', 'Tower Transit Singapore'),
@@ -92,7 +94,6 @@ class Command(BaseCommand):
             })
             routes = res.json()['value']
             for route in routes:
-                print(route)
                 service_code = 'sg-{}-{}'.format(route['Operator'], route['ServiceNo']).lower()
                 service = Service.objects.update_or_create(service_code=service_code, defaults={
                     'slug': service_code,
@@ -103,14 +104,17 @@ class Command(BaseCommand):
                     'operator': [route['Operator']]
                 })[0]
 
-                StopUsage.objects.update_or_create(
-                    service=service,
-                    stop_id='sg-' + route['BusStopCode'],
-                    order=route['StopSequence'],
-                    defaults={
-                        'direction': route['Direction']
-                    }
-                )
+                try:
+                    StopUsage.objects.update_or_create(
+                        service=service,
+                        stop_id='sg-' + route['BusStopCode'],
+                        order=route['StopSequence'],
+                        defaults={
+                            'direction': route['Direction']
+                        }
+                    )
+                except IntegrityError:
+                    print(route)
 
             if len(routes) < 500:
                 break
