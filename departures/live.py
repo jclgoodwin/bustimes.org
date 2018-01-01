@@ -448,20 +448,48 @@ def get_departures(stop, services, bot=False):
                 params={'stopid': int(stop.atco_code.split('DB', 1)[-1])},
                 timeout=2
             )
+            if response.ok:
+                services_dict = {service.line_name.lower(): service for service in services}
+                departures = [{
+                    'time': dateutil.parser.parse(item['scheduleddeparturedatetime'], dayfirst=True),
+                    'live': dateutil.parser.parse(item['departuredatetime'], dayfirst=True),
+                    'destination': item['destination'],
+                    'service': services_dict.get(item['route'].lower(), item['route'])
+                } for item in response.json()['results']]
+                return ({
+                    'departures': departures
+                }, 60)
         except requests.exceptions.RequestException as e:
             logger.error(e, exc_info=True)
             pass
-        if response.ok:
-            services_dict = {service.line_name.lower(): service for service in services}
-            departures = [{
-                'time': dateutil.parser.parse(item['scheduleddeparturedatetime'], dayfirst=True),
-                'live': dateutil.parser.parse(item['departuredatetime'], dayfirst=True),
-                'destination': item['destination'],
-                'service': services_dict.get(item['route'].lower(), item['route'])
-            } for item in response.json()['results']]
-            return ({
-                'departures': departures
-            }, 60)
+
+    # Singapore
+    if stop.atco_code.startswith('sg-'):
+        response = SESSION.get('http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2', headers={
+            'AccountKey': settings.SINGAPORE_KEY
+        }, params={
+            'BusStopCode': stop.atco_code[3:]
+        })
+        departures = []
+        services_dict = {service.line_name: service for service in services}
+        for service_response in response.json()['Services']:
+            service = services_dict.get(service_response['ServiceNo'], service_response['ServiceNo'])
+            key = 'NextBus'
+            i = 1
+            while key in service_response:
+                item = service_response[key]
+                if not item['EstimatedArrival']:
+                    break
+                departures.append({
+                    'live': dateutil.parser.parse(item['EstimatedArrival']),
+                    'destination': item['DestinationCode'],
+                    'service': service
+                })
+                i += 1
+                key = 'NextBus{}'.format(i)
+        return ({
+            'departures': departures
+        }, 60)
 
     departures = TimetableDepartures(stop, services, now)
     services_dict = departures.services

@@ -232,6 +232,8 @@ STREETVIEW_SECRET = os.environ.get('STREETVIEW_SECRET')
 TRANSPORTAPI_APP_ID = os.environ.get('TRANSPORTAPI_APP_ID')
 TRANSPORTAPI_APP_KEY = os.environ.get('TRANSPORTAPI_APP_KEY')
 
+SINGAPORE_KEY = os.environ.get('SINGAPORE_KEY')
+
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 TNDS_DIR = os.path.join(DATA_DIR, 'TNDS')
 

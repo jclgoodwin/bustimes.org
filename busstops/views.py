@@ -53,10 +53,7 @@ FIRST_OPERATORS = {
 
 def index(request):
     """The home page with a list of regions"""
-    context = {
-        'regions': Region.objects.filter(service__current=True).distinct()
-    }
-    return render(request, 'index.html', context)
+    return render(request, 'index.html')
 
 
 def not_found(request, exception):
@@ -347,9 +344,12 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         context['modes'] = {service.mode for service in context['services'] if service.mode}
 
+        region = self.object.get_region()
+
+        nearby = None
         if self.object.stop_area_id is not None:
             nearby = StopPoint.objects.filter(stop_area=self.object.stop_area_id)
-        else:
+        elif self.object.locality or self.object.admin_area:
             nearby = StopPoint.objects.filter(common_name=self.object.common_name)
             if self.object.locality:
                 nearby = nearby.filter(locality=self.object.locality)
@@ -357,12 +357,13 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
                 nearby = nearby.filter(admin_area=self.object.admin_area)
                 if self.object.town:
                     nearby = nearby.filter(town=self.object.town)
-        context['nearby'] = nearby.filter(active=True).exclude(
-            pk=self.object.pk
-        ).defer('osm')
+        if nearby is not None:
+            context['nearby'] = nearby.filter(active=True).exclude(
+                pk=self.object.pk
+            ).defer('osm')
 
         context['breadcrumb'] = (crumb for crumb in (
-            self.object.get_region(),
+            region,
             self.object.admin_area,
             self.object.locality and self.object.locality.district,
             self.object.locality and self.object.locality.parent,

@@ -18,12 +18,30 @@
 
 <div id="regions">
 
-    <h2>Regions</h2>
+    <h2>UK</h2>
 
-    <ul id="regions-list">
-    {% for r in regions %}
-        <li><a href="{{ r.get_absolute_url }}">{{ r }}</a></li>
-    {% endfor %}
+    <ul>
+        <li><a href="/regions/EA">East Anglia</a></li>
+        <li><a href="/regions/EM">East Midlands</a></li>
+        <li><a href="/regions/GB">Great Britain</a></li>
+        <li><a href="/regions/L">London</a></li>
+        <li><a href="/regions/NE">North East</a></li>
+        <li><a href="/regions/NI">Northern Ireland</a></li>
+        <li><a href="/regions/NW">North West</a></li>
+        <li><a href="/regions/S">Scotland</a></li>
+        <li><a href="/regions/SE">South East</a></li>
+        <li><a href="/regions/SW">South West</a></li>
+        <li><a href="/regions/W">Wales</a></li>
+        <li><a href="/regions/WM">West Midlands</a></li>
+        <li><a href="/regions/Y">Yorkshire</a></li>
+    </ul>
+
+    <h2>Ireland</h2>
+    <ul>
+        <li><a href="/regions/CO">Connacht</a></li>
+        <li><a href="/regions/LE">Leinster</a></li>
+        <li><a href="/regions/MU">Munster</a></li>
+        <li><a href="/regions/UL">Ulster</a></li>
     </ul>
 
     {% include 'regions.svg' %}
