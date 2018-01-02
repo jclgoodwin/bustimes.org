@@ -79,7 +79,7 @@ class ViewsTests(TestCase):
             id=91, admin_area=cls.norfolk, name='North Norfolk'
         )
         cls.melton_constable = Locality.objects.create(
-            id='E0048689', admin_area=cls.norfolk, name='Melton Constable'
+            id='E0048689', admin_area=cls.norfolk, name='Melton Constable', latlong=Point(-0.14, 51.51)
         )
         cls.inactive_stop = StopPoint.objects.create(
             pk='2900M115',
@@ -206,6 +206,17 @@ class ViewsTests(TestCase):
             'suggestion': 'bordeaux'
         })
         self.assertContains(response, '<p>Did you mean <a href="/search?q=bordeaux">bordeaux</a>?</p>')
+
+    def test_postcode(self):
+        with vcr.use_cassette(os.path.join(DIR, '..', 'data', 'vcr', 'postcode.yaml')):
+            # postcode sufficiently near to fake locality
+            response = self.client.get('/search?q=w1a 1aa')
+            self.assertContains(response, 'Melton Constable')
+            self.assertNotContains(response, 'results found for')
+
+            # postcode looks valid but doesn't exist
+            response = self.client.get('/search?q=w1a 1aj')
+            self.assertContains(response, '0 results found for')
 
     def test_admin_area(self):
         """Admin area containing just one child should redirect to that child"""

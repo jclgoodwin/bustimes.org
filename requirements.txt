@@ -13,3 +13,4 @@ pytz==2017.3
 raven==6.4.0
 requests==2.18.4
 titlecase==0.12.0
+uk-postcode-utils==1.0

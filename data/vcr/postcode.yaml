@@ -1,0 +1,47 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: https://api.postcodes.io/postcodes/W1A1AA
+  response:
+    body: {string: '{"status":200,"result":{"postcode":"W1A 1AA","quality":1,"eastings":528887,"northings":181593,"country":"England","nhs_ha":"London","longitude":-0.143799179665179,"latitude":51.5185615894876,"european_electoral_region":"London","primary_care_trust":"Westminster","region":"London","lsoa":"Westminster
+        013D","msoa":"Westminster 013","incode":"1AA","outcode":"W1A","parliamentary_constituency":"Cities
+        of London and Westminster","admin_district":"Westminster","parish":"Westminster,
+        unparished area","admin_county":null,"admin_ward":"West End","ccg":"NHS Central
+        London (Westminster)","nuts":"Westminster","codes":{"admin_district":"E09000033","admin_county":"E99999999","admin_ward":"E05000649","parish":"E43000236","parliamentary_constituency":"E14000639","ccg":"E38000031","nuts":"UKI32"}}}'}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Connection: [keep-alive]
+      Content-Length: ['791']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 02 Jan 2018 21:38:02 GMT']
+      ETag: [W/"317-3ZAeSwrsUC7wMsAcDA6DyZu+3zg"]
+      Server: [nginx/1.13.5]
+      X-GNU: [Michael J Blanchard]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: https://api.postcodes.io/postcodes/W1A1AJ
+  response:
+    body: {string: '{"status":404,"error":"Postcode not found"}'}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Connection: [keep-alive]
+      Content-Length: ['43']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 02 Jan 2018 21:38:02 GMT']
+      ETag: [W/"2b-60dCBHUxbddknotWwisUCk6O8SA"]
+      Server: [nginx/1.13.5]
+    status: {code: 404, message: Not Found}
+version: 1

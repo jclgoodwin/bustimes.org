@@ -11,16 +11,29 @@
 <p>{{ form.q }} <input type="submit" value="Search" /></p>
 
 {% if query %}
-    <h2>{{ paginator.count }} result{{ paginator.count|pluralize }} found for ‘{{ query }}’</h2>
-    {% if page.object_list %}
-        <ul>
-        {% for result in page.object_list %}
-            <li><a href="{{ result.object.get_absolute_url }}">{% firstof result.object.get_qualified_name result.object %}</a></li>
-        {% endfor %}
-        </ul>
-    {% elif suggestion != query %}
-        <p>Did you mean <a href="/search?q={{ suggestion }}">{{ suggestion }}</a>?</p>
-    {% endif %}
+    {% with postcode=form.get_postcode %}
+        {% if postcode %}
+            <h2>Postcode {{ query }}</h2>
+            <ul>
+                {% for locality in postcode %}
+                    <li><a href="{{ postcode.get_absolute_url }}">{{ locality.get_qualified_name }}</a></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if not postcode or page.object_list %}
+            <h2>{{ paginator.count }} result{{ paginator.count|pluralize }} found for ‘{{ query }}’</h2>
+
+            {% if page.object_list %}
+                <ul>
+                    {% for result in page.object_list %}
+                        <li><a href="{{ result.object.get_absolute_url }}">{% firstof result.object.get_qualified_name result.object %}</a></li>
+                    {% endfor %}
+                </ul>
+            {% elif suggestion and suggestion != query %}
+                <p>Did you mean <a href="/search?q={{ suggestion }}">{{ suggestion }}</a>?</p>
+            {% endif %}
+        {% endif %}
+    {% endwith %}
 {% endif %}
 
 </form>
