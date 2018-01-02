@@ -197,6 +197,7 @@ class ViewsTests(TestCase):
         response = self.client.get('/search?q=melton')
         self.assertContains(response, '1 result found for')
         self.assertContains(response, 'Melton Constable')
+        self.assertContains(response, '/localities/melton-constable')
 
         # CustomSearchForm.is_valid
         response = self.client.get('/search')
@@ -217,6 +218,7 @@ class ViewsTests(TestCase):
             # postcode sufficiently near to fake locality
             response = self.client.get('/search?q=w1a 1aa')
             self.assertContains(response, 'Melton Constable')
+            self.assertContains(response, '/localities/melton-constable')
             self.assertNotContains(response, 'results found for')
 
             # postcode looks valid but doesn't exist

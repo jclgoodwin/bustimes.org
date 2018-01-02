@@ -16,7 +16,7 @@
             <h2>Postcode {{ query }}</h2>
             <ul>
                 {% for locality in postcode %}
-                    <li><a href="{{ postcode.get_absolute_url }}">{{ locality.get_qualified_name }}</a></li>
+                    <li><a href="{{ locality.get_absolute_url }}">{{ locality.get_qualified_name }}</a></li>
                 {% endfor %}
             </ul>
         {% endif %}
