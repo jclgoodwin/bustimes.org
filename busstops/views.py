@@ -53,7 +53,9 @@ FIRST_OPERATORS = {
 
 def index(request):
     """The home page with a list of regions"""
-    return render(request, 'index.html')
+    return render(request, 'index.html', {
+        'regions': True
+    })
 
 
 def not_found(request, exception):

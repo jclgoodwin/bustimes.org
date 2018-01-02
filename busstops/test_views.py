@@ -153,6 +153,7 @@ class ViewsTests(TestCase):
     def test_index(self):
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'Home')
 
     def test_offline(self):
         response = self.client.get('/offline')
