@@ -29,7 +29,8 @@ urlpatterns = [
     url(r'^images/(?P<id>\d+)', views.image),
     url(r'^sitemap\.xml$', sitemap, {
         'sitemaps': {
-             'services': views.ServiceSitemap
+             'operators': views.OperatorSitemap,
+             'services': views.ServiceSitemap,
         }
     }),
     url(r'^search', SearchView(form_class=CustomSearchForm)),

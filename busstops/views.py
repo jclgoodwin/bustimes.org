@@ -571,6 +571,13 @@ def service_xml(_, pk):
     return HttpResponse(bodies, content_type='text/plain')
 
 
+class OperatorSitemap(Sitemap):
+    protocol = 'https'
+
+    def items(self):
+        return Operator.objects.filter(service__current=True).distinct()
+
+
 class ServiceSitemap(Sitemap):
     protocol = 'https'
 

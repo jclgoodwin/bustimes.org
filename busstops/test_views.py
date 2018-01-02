@@ -360,3 +360,8 @@ class ViewsTests(TestCase):
             'modes': ['bus', 'coach', 'tram', 'cable car'],
             'noun': 'operators'
         }), 'Bus, coach, tram and cable car operators')
+
+    def test_sitemap(self):
+        response = self.client.get('/sitemap.xml')
+        self.assertContains(response, '<url><loc>https://example.com/operators/ainsleys-chariots</loc></url>')
+        self.assertContains(response, 'https://example.com/services/45a-holt-norwich')
