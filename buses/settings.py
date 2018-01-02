@@ -29,7 +29,8 @@ INSTALLED_APPS = [
     'multigtfs',
     'pipeline',
     'email_obfuscator',
-    'raven.contrib.django.raven_compat'
+    'raven.contrib.django.raven_compat',
+    'ddtrace.contrib.django',
 ]
 
 MIDDLEWARE = [
@@ -197,33 +198,15 @@ if not DEBUG and 'test' not in sys.argv:
         },
         'handlers': {
             'sentry': {
-                'level': 'ERROR',  # To capture more than ERROR, change to WARNING, INFO, etc.
-                'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
-                'tags': {'custom-tag': 'x'},
-            },
-            'console': {
-                'level': 'DEBUG',
-                'class': 'logging.StreamHandler',
-                'formatter': 'verbose'
-            }
-        },
-        'loggers': {
-            'django.db.backends': {
                 'level': 'ERROR',
-                'handlers': ['console'],
-                'propagate': False,
-            },
-            'raven': {
-                'level': 'DEBUG',
-                'handlers': ['console'],
-                'propagate': False,
-            },
-            'sentry.errors': {
-                'level': 'DEBUG',
-                'handlers': ['console'],
-                'propagate': False,
+                'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
             },
         },
+    }
+
+    DATADOG_TRACE = {
+        'DEFAULT_SERVICE': 'bustimes',
+        'TAGS': {'env': 'production'},
     }
 
 STREETVIEW_KEY = os.environ.get('STREETVIEW_KEY')

@@ -1,4 +1,6 @@
+ddtrace==0.10.0
 django-template-minifier==1.1.0
 elasticsearch>=2.0.0,<3.0.0
 gunicorn==19.7.1
 python-memcached==1.59
+setproctitle==1.1.10
