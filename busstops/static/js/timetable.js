@@ -74,20 +74,14 @@
         }
     }
 
-    function handleMegabusLinkClick() {
-        ga('send', 'event', {
-            eventCategory: 'Outbound Link',
-            eventAction: 'click',
-            eventLabel: 'megabus',
-            transport: 'beacon'
-        });
-    }
-
-    var as = document.getElementsByTagName('a');
-    for (i = as.length - 1; i >= 0; i -= 1) {
-        if (as[i].href.indexOf('uk.megabus.com') > -1) {
-            as[i].onclick = handleMegabusLinkClick;
-            break;
+    document.onclick = function(e) {
+        if (e.target.href && e.target.href.indexOf('clickref=links') > -1) {
+            ga('send', 'event', {
+                eventCategory: 'Outbound Link',
+                eventAction: 'click',
+                eventLabel: 'megabus',
+                transport: 'beacon'
+            });
         }
-    }
+    };
 }());

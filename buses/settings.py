@@ -135,6 +135,28 @@ PIPELINE = {
                 'async': True
             }
         },
+        'timetable': {
+            'source_filenames': (
+                'js/timetable.js',
+            ),
+            'output_filename': 'js/timetable.min.js',
+            'extra_context': {
+                'async': True
+            }
+        },
+        'hugemap': {
+            'source_filenames': (
+                'js/bower_components/leaflet.markercluster/dist/leaflet.markercluster.js',
+                'js/bower_components/reqwest/reqwest.min.js',
+                'js/bower_components/jquery-throttle-debounce/jquery.ba-throttle-debounce.min.js',
+                'js/hugemap.js',
+            ),
+            'output_filename': 'js/hugemap.min.js',
+            'extra_context': {
+                'async': True
+            }
+        },
+
     },
     'YUGLIFY_BINARY': './node_modules/.bin/yuglify',
     'CSS_COMPRESSOR': None,

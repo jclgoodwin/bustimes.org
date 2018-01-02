@@ -2,6 +2,8 @@
 
 {% load urlise %}
 
+{% block title %}{{ object }} – {% if operators %}{{ operators.0 }} – {% endif %}Bus Times{% endblock %}
+
 {% block head %}
     <link rel="shortlink" href="https://bustimes.org/services/{{ object.service_code }}" />
 {% endblock %}

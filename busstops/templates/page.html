@@ -48,7 +48,13 @@
         <div class="banner-ad">
             <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="auto"></ins>
         </div>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+            window.adsbygoogle.push({
+                google_ad_client: "ca-pub-4420219114164200",
+                enable_page_level_ads: true
+            });
+        </script>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     {% endblock %}
     <ul>
@@ -63,7 +69,7 @@
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
 ga('create', 'UA-65987478-1', 'auto');
 ga('require', 'GTM-W66PKML');
@@ -82,7 +88,7 @@ ga('send', 'pageview');
 {% elif regions %}
 {% javascript 'frontpage' %}
 {% elif timetables %}
-<script async src="{% static 'js/timetable.js' %}"></script>
+{% javascript 'timetable' %}
 {% endif %}
 {% javascript 'global' %}
 </body>

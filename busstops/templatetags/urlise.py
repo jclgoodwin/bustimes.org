@@ -20,7 +20,7 @@ def urlise(value, autoescape=None):
     markup = markup.replace('/</a>', '</a>', 1)
 
     if 'megabus' in markup:
-        megabus = '"https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=links&amp;p={}"'.format(
+        megabus = '"https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=urlise&amp;p={}"'.format(
             'https%3A%2F%2Fuk.megabus.com'
         )
         markup = markup.replace('"http://megabus.com"', megabus, 1)
