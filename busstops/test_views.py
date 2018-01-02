@@ -198,8 +198,13 @@ class ViewsTests(TestCase):
         self.assertContains(response, '1 result found for')
         self.assertContains(response, 'Melton Constable')
 
-        response = self.client.get('/search?q=mlton')
-        self.assertContains(response, '0 results found for')
+        # CustomSearchForm.is_valid
+        response = self.client.get('/search')
+        self.assertNotContains(response, 'found for')
+
+        # CustomSearchForm.cleaned_data.get
+        response = self.client.get('/search?q=')
+        self.assertNotContains(response, 'found for')
 
         response = render(None, 'search/search.html', {
             'query': True,
