@@ -30,7 +30,6 @@ INSTALLED_APPS = [
     'pipeline',
     'email_obfuscator',
     'raven.contrib.django.raven_compat',
-    'ddtrace.contrib.django',
 ]
 
 MIDDLEWARE = [
@@ -205,6 +204,8 @@ if not DEBUG and 'test' not in sys.argv:
         'dsn': os.environ.get('SENTRY_DSN'),
         'release': raven.fetch_git_sha(BASE_DIR)
     }
+
+    INSTALLED_APPS.append('ddtrace.contrib.django')
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': True,
