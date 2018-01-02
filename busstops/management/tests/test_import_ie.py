@@ -165,3 +165,8 @@ class ImportIrelandTest(TransactionTestCase):
 
         # Should run without an error:
         import_ie_naptan_csv.Command().handle_row({'NaPTANId': ''})
+
+    def test_transxchange(self):
+        self.assertEqual(Locality.objects.get(id='E0824005').name, '')
+        call_command('import_ie_transxchange', os.path.join(FIXTURES_DIR, 'ie_transxchange.xml'))
+        self.assertEqual(Locality.objects.get(id='E0824005').name, 'Balbriggan')

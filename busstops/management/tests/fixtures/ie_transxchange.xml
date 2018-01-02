@@ -1,0 +1,12 @@
+<TransXChange xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.transxchange.org.uk/" CreationDateTime="2015-01-21T14:04:01.2653165Z" ModificationDateTime="2015-01-21T14:04:01.2809415Z" Modification="new" FileName="TransX_2015-01-21T14-03-54_RL.xml" RevisionNumber="3" SchemaVersion="2.1" xml:lang="en" xsi:schemaLocation="http://www.transxchange.org.uk/ http://www.transxchange.org.uk/schema/2.1/TransXChange_general.xsd">
+  <NptgLocalities>
+    <AnnotatedNptgLocalityRef>
+      <NptgLocalityRef>E0824041</NptgLocalityRef>
+      <LocalityName>Dublin Airport</LocalityName>
+    </AnnotatedNptgLocalityRef>
+    <AnnotatedNptgLocalityRef>
+      <NptgLocalityRef>E0824005</NptgLocalityRef>
+      <LocalityName>Balbriggan</LocalityName>
+    </AnnotatedNptgLocalityRef>
+  </NptgLocalities>
+</TransXChange>
