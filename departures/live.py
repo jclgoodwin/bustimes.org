@@ -506,7 +506,6 @@ def get_departures(stop, services, bot=False):
                     ('west', 'travelwest'),
                     ('buck', 'buckinghamshire'),
                     ('camb', 'cambridgeshire'),
-                    ('aber', 'aberdeen'),
                     ('card', 'cardiff'),
                     ('swin', 'swindon'),
                     ('metr', 'metrobus')
