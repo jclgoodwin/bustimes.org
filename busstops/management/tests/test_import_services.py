@@ -358,7 +358,7 @@ class ImportServicesTest(TestCase):
             """
             <td colspan="7">
             Book at <a
-            href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=links&amp;p=https%3A%2F%2Fuk.megabus.com"
+            href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=urlise&amp;p=https%3A%2F%2Fuk.megabus.com"
             rel="nofollow">
             megabus.com</a> or 0900 1600900 (65p/min + network charges)
             </td>
