@@ -431,6 +431,10 @@ class ImportServicesTest(TestCase):
         self.assertTemplateUsed(res, 'busstops/service_detail.html')
         self.assertContains(res, '<td colspan="5" rowspan="62">then every 30 minutes until</td>', html=True)
 
+        # Within operating period, but with no journeys
+        res = self.client.get(service.get_absolute_url() + '?date=2026-04-18')
+        self.assertContains(res, 'Sorry, no journeys found for Saturday 18 April 2026')
+
         # Test the fallback version without a timetable (just a list of stops)
         service.show_timetable = False
         service.save()

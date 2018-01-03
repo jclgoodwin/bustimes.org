@@ -118,6 +118,14 @@ class ServiceTests(TestCase):
         self.assertEqual('20', self.london_service.get_operator_number('WAIR'))
         self.assertEqual('18', self.london_service.get_operator_number('TVSN'))
 
+    def test_get_filenames(self):
+        service = Service(service_code='foo', region_id='NE')
+        self.assertEqual([], service.get_filenames(None))
+
+    def test_get_timetables(self):
+        service = Service(service_code='foo', region_id='NI')
+        self.assertEqual([], service.get_timetables())
+
 
 class StopPointTests(TestCase):
     @classmethod
