@@ -234,10 +234,12 @@ class ViewsTests(TestCase):
         """Admin area containing just one child should redirect to that child"""
         response = self.client.get('/districts/91')
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "ga('set', 'dimension1', 'N');")
 
     def test_locality(self):
         response = self.client.get('/localities/E0048689')
         self.assertContains(response, '<h1>Melton Constable</h1>')
+        self.assertContains(response, "ga('set', 'dimension1', 'N');")
 
     def test_stops(self):
         response = self.client.get('/stops.json')

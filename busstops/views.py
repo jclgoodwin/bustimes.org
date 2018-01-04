@@ -299,12 +299,12 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             ).defer('geometry').distinct(), key=Service.get_order)
             context['modes'] = {service.mode for service in context['services'] if service.mode}
 
-        context['breadcrumb'] = (crumb for crumb in [
+        context['breadcrumb'] = [crumb for crumb in [
             self.object.admin_area.region,
             self.object.admin_area,
             self.object.district,
             self.object.parent
-        ] if crumb is not None)
+        ] if crumb is not None]
 
         return context
 
@@ -372,13 +372,13 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
                 pk=self.object.pk
             ).defer('osm')
 
-        context['breadcrumb'] = (crumb for crumb in (
+        context['breadcrumb'] = [crumb for crumb in (
             region,
             self.object.admin_area,
             self.object.locality and self.object.locality.district,
             self.object.locality and self.object.locality.parent,
             self.object.locality,
-        ) if crumb is not None)
+        ) if crumb is not None]
         return context
 
 
