@@ -120,7 +120,7 @@ class ServiceTests(TestCase):
 
     def test_get_filenames(self):
         service = Service(service_code='foo', region_id='NE')
-        self.assertEqual([], service.get_filenames(None))
+        self.assertEqual(['foo.xml'], service.get_filenames(None))
 
     def test_get_timetables(self):
         service = Service(service_code='foo', region_id='NI')
