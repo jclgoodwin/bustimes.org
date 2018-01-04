@@ -19,6 +19,12 @@
         <li><a href="{{ locality.get_absolute_url }}">{{ locality }}</a></li>
     {% endfor %}
     </ul>
+{% elif operator %}
+    <p>Sorry, it looks like no services are currently operated by <strong>{{ operator }}</strong>.</p>
+{% elif locality %}
+    <p>Sorry, it looks like no services currently stop at <strong>{{ locality }}</strong>.</p>
+{% elif stop %}
+    <p>Sorry, it looks like no services currently stop at <strong>{{ stop }}</strong>.</p>
 {% else %}
     <p>Sorry, this page doesn’t exist.</p>
 {% endif %}
