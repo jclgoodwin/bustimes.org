@@ -276,7 +276,7 @@ class ViewsTests(TestCase):
 
     def test_inactive_stop(self):
         response = self.client.get('/stops/2900M115')
-        self.assertEqual(response.status_code, 404)
+        self.assertContains(response, 'Sorry, it looks like no services currently stop at', status_code=404)
 
     def test_operator_found(self):
         """The normal and Accelerated Mobile pages versions should be mostly the same
