@@ -480,6 +480,8 @@ class ServiceDetailView(DetailView):
                 if next_usage:
                     date = next_usage.datetime.date()
             context['timetables'] = self.object.get_timetables(date)
+        else:
+            date = None
 
         if not context.get('timetables') or not context['timetables'][0].groupings:
             context['stopusages'] = self.object.stopusage_set.all().select_related(
@@ -526,7 +528,7 @@ class ServiceDetailView(DetailView):
         else:
             context['breadcrumb'] = (self.object.region,)
 
-        traveline_url, traveline_text = self.object.get_traveline_link()
+        traveline_url, traveline_text = self.object.get_traveline_link(date)
         if traveline_url:
             context['links'].append({
                 'url': traveline_url,

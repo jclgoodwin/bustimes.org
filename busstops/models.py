@@ -5,6 +5,7 @@ import re
 import requests
 import os
 import zipfile
+import time
 try:
     from urllib.parse import urlencode
 except ImportError:
@@ -509,18 +510,22 @@ class Service(models.Model):
         if self.mode == 'bus' and len(self.line_name) <= 4:
             return 'https://tfl.gov.uk/bus/timetable/%s/' % self.line_name
 
-    def get_trapeze_link(self):
+    def get_trapeze_link(self, date):
         if self.region_id == 'Y':
             domain = 'yorkshiretravel.net'
             name = 'Yorkshire Travel'
         else:
             domain = 'travelinescotland.com'
             name = 'Traveline Scotland'
+        if date:
+            date = int(time.mktime(date.timetuple()) * 1000)
+        else:
+            date = ''
         query = (
             ('timetableId', self.service_code),
             ('direction', 'OUTBOUND'),
-            ('queryDate', ''),
-            ('queryTime', '')
+            ('queryDate', date),
+            ('queryTime', date)
         )
         return 'http://www.{}/lts/#/timetables?{}'.format(domain, urlencode(query)), name
 
@@ -535,9 +540,9 @@ class Service(models.Model):
         )
         return 'https://www.awin1.com/awclick.php?' + urlencode(query)
 
-    def get_traveline_link(self):
+    def get_traveline_link(self, date=None):
         if self.region_id in ('Y', 'S'):
-            return self.get_trapeze_link()
+            return self.get_trapeze_link(date)
 
         if self.region_id == 'W':
             for service_code in self.servicecode_set.all():
