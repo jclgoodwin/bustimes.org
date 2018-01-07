@@ -22,11 +22,23 @@
     <h2>{% include 'modes.html' with modes=modes noun='services' %}</h2>
 
     <ul>
-    {% for service in services %}
-        <li>
-            <a href="{{ service.get_absolute_url }}">{{ service }}</a>
-        </li>
-    {% endfor %}
+        {% for service in services %}
+            <li>
+                <a href="{{ service.get_absolute_url }}">{{ service }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% if adjacent %}
+    <h2>Near {{ locality }}</h2>
+
+    <ul>
+        {% for locality in adjacent %}
+            <li>
+                <a href="{{ locality.get_absolute_url }}">{{ locality }}</a>
+            </li>
+        {% endfor %}
     </ul>
 {% endif %}
 

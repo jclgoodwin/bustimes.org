@@ -57,6 +57,8 @@ if [[ $nptg_old != $nptg_new ]]; then
     echo "  Importing localities"
     import_csv nptg.ashx\?format=csv localities Localities.csv
     echo "  Importing locality hierarchy"
+    import_csv nptg.ashx\?format=csv adjacent_localities AdjacentLocality.csv
+    echo "  Importing adjacent localities"
     import_csv nptg.ashx\?format=csv locality_hierarchy LocalityHierarchy.csv
     # ../../manage.py update_index busstops.Locality --remove
 fi

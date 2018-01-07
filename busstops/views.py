@@ -288,6 +288,14 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             Q(locality__stoppoint__active=True),
         ).defer('latlong').distinct()
 
+        context['adjacent'] = Locality.objects.filter(
+            Q(neighbour=self.object) |
+            Q(adjacent=self.object)
+        ).filter(
+            Q(stoppoint__active=True) |
+            Q(locality__stoppoint__active=True),
+        ).defer('latlong').distinct()
+
         context['stops'] = self.object.stoppoint_set.filter(active=True).defer('osm')
 
         if not (context['localities'] or context['stops']):
