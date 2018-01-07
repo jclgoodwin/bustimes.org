@@ -10,3 +10,10 @@ if (navigator.serviceWorker && location.host !== 'localhost:8000') {
         }
     });
 }
+
+if (window.adsbygoogle && document.documentElement.clientWidth >= 1280) {
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://sac.ayads.co/sublime/21256';
+    document.documentElement.appendChild(s);
+}
