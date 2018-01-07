@@ -3,7 +3,7 @@
 import os
 import json
 import PIL
-from datetime import datetime
+import ciso8601
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.http import (HttpResponse, JsonResponse, Http404,
@@ -466,10 +466,10 @@ class ServiceDetailView(DetailView):
             today = timezone.now().date()
             if date:
                 try:
-                    date = datetime.strptime(date, '%Y-%m-%d').date()
+                    date = ciso8601.parse_datetime(date).date()
                     if date < today:
                         date = None
-                except ValueError:
+                except AttributeError:
                     date = None
             if not date:
                 date = self.object.servicedate_set.filter(date__gte=today).first()

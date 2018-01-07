@@ -6,6 +6,7 @@ import re
 import xml.etree.cElementTree as ET
 import calendar
 import datetime
+import ciso8601
 import difflib
 from functools import cmp_to_key
 from django.utils.text import slugify
@@ -810,10 +811,10 @@ class OperatingProfile(object):
 
 class DateRange(object):
     def __init__(self, element):
-        self.start = datetime.datetime.strptime(element.find('txc:StartDate', NS).text, '%Y-%m-%d').date()
+        self.start = ciso8601.parse_datetime(element.find('txc:StartDate', NS).text).date()
         self.end = element.find('txc:EndDate', NS)
         if self.end is not None:
-            self.end = datetime.datetime.strptime(self.end.text, '%Y-%m-%d').date()
+            self.end = ciso8601.parse_datetime(self.end.text).date()
 
     def __str__(self):
         if self.start == self.end:
@@ -887,7 +888,7 @@ class Timetable(object):
 
     def set_date(self, date):
         if date and not isinstance(date, datetime.date):
-            date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+            date = ciso8601.parse_datetime(date).date()
 
         if hasattr(self, 'date'):
             if date == self.date:

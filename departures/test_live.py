@@ -348,6 +348,7 @@ class LiveDeparturesTest(TestCase):
             'live': None
         })
 
+        self.assertEqual(departures._get_time('27:02'), '03:02')
         east_scotland_row = departures.get_row({
             'mode': 'bus',
             'line': 'N55',

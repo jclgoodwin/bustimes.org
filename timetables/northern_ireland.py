@@ -1,5 +1,6 @@
 import json
-from datetime import date, datetime, timedelta
+import ciso8601
+from datetime import date, timedelta
 
 
 class Grouping(object):
@@ -77,8 +78,8 @@ class Row(object):
 
 
 def contains(daterange, today):
-    start = datetime.strptime(daterange['Start'], '%Y-%m-%d').date()
-    end = datetime.strptime(daterange['End'], '%Y-%m-%d').date()
+    start = ciso8601.parse_datetime(daterange['Start']).date()
+    end = ciso8601.parse_datetime(daterange['End']).date()
     return start <= today and end >= today
 
 

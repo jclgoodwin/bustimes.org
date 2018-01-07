@@ -1,5 +1,6 @@
 """Various ways of getting live departures from some web service"""
 import re
+import ciso8601
 import datetime
 import requests
 import pytz
@@ -77,7 +78,7 @@ class TflDepartures(Departures):
                 self.stop.heading = heading
                 self.stop.save()
         return sorted([{
-            'live': dateutil.parser.parse(item.get('expectedArrival')).astimezone(LOCAL_TIMEZONE),
+            'live': ciso8601.parse_datetime(item.get('expectedArrival')).astimezone(LOCAL_TIMEZONE),
             'service': self.get_service(item.get('lineName')),
             'destination': item.get('destinationName'),
         } for item in res.json()], key=lambda d: d['live'])
@@ -184,7 +185,7 @@ class TransportApiDepartures(Departures):
             hour = int(string[:2])
             while hour > 23:
                 hour -= 24
-                string = '%s%s' % (hour, string[2:])
+                string = '%02d%s' % (hour, string[2:])
         return string
 
     def get_row(self, item):
@@ -195,9 +196,10 @@ class TransportApiDepartures(Departures):
         if not time:
             return
         if item.get('date') is not None:
-            time = dateutil.parser.parse(item['date'] + ' ' + time)
+            print(item, time)
+            time = ciso8601.parse_datetime(item['date'] + ' ' + time)
             if live_time:
-                live_time = dateutil.parser.parse(item['date'] + ' ' + live_time)
+                live_time = ciso8601.parse_datetime(item['date'] + ' ' + live_time)
             if (item['source'].startswith('Traveline timetable') and
                     time.date() > self.today):
                 return
@@ -258,8 +260,8 @@ class LambdaDepartures(Departures):
         json = res.json()
         if 'departures' in json:
             return [{
-                'time': dateutil.parser.parse(item['aimed_time']),
-                'live': item['expected_time'] and dateutil.parser.parse(item['expected_time']),
+                'time': ciso8601.parse_datetime(item['aimed_time']),
+                'live': item['expected_time'] and ciso8601.parse_datetime(item['expected_time']),
                 'service': self.get_service(item['service']),
                 'destination': item['destination_name']
             } for item in json['departures'] if item['aimed_time']]
@@ -317,7 +319,7 @@ def add_stagecoach_departures(stop, services_dict, departures):
         added = False
         for monitor in stop_monitors['stopMonitor'][0]['monitoredCalls']['monitoredCall']:
             if 'expectedDepartureTime' in monitor:
-                aimed, expected = [dateutil.parser.parse(time).astimezone(LOCAL_TIMEZONE)
+                aimed, expected = [ciso8601.parse_datetime(time).astimezone(LOCAL_TIMEZONE)
                                    for time in (monitor['aimedDepartureTime'], monitor['expectedDepartureTime'])]
                 line = monitor['lineRef']
                 if aimed >= departures[0]['time']:
@@ -481,7 +483,7 @@ def get_departures(stop, services, bot=False):
                 if not item['EstimatedArrival']:
                     break
                 departures.append({
-                    'live': dateutil.parser.parse(item['EstimatedArrival']),
+                    'live': ciso8601.parse_datetime(item['EstimatedArrival']),
                     'destination': item['DestinationCode'],
                     'service': service
                 })
