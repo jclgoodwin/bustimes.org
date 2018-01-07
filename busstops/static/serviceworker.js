@@ -1,6 +1,6 @@
 'use strict';
 
-const version = '0001';
+const version = '0002';
 const pagesCacheName = version + 'pages';
 const staticCacheName = version + 'static';
 
@@ -78,7 +78,7 @@ self.addEventListener('fetch', event => {
     }
 
     // For HTML requests, try the network first, fall back to the cache, finally the offline page
-    if (request.headers.get('Accept').indexOf('text/html') !== -1) {
+    if (request.headers.get('Accept').includes('text/html')) {
         event.respondWith(
             fetch(request)
                 .then(response => {
@@ -100,7 +100,7 @@ self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(request).then(response => response || fetch(request).then(response => {
             // If the request is for a static file, stash a copy of this image in the static file cache
-            if (request.url.indexOf('/static/') !== -1 && request.url.indexOf('/static/htmlcov/') === -1) {
+            if (request.url.includes('/static/css/') || request.url.includes('/static/js/')) {
                 let copy = response.clone();
                 stashInCache(staticCacheName, request, copy);
             }

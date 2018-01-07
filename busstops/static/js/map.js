@@ -55,7 +55,7 @@
             map = L.map('map');
             var tileURL = '/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
                 pin = L.icon({
-                    iconUrl:    '/static/pin.svg',
+                    iconUrl:    '/static/svg/pin.svg',
                     iconSize:   [16, 22],
                     iconAnchor: [8, 22],
                 }),
