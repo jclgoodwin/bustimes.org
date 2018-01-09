@@ -28,7 +28,7 @@
 
     <div class="contact-details">
     {% if object.address %}
-        {{ object.address|linebreaks }}
+        <p itemprop="address">{{ object.address|linebreaksbr }}</p>
     {% endif %}
     {% if object.url %}
         <p itemprop="url">{{ object.url|urlise }}</p>
