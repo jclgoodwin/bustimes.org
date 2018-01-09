@@ -89,6 +89,10 @@ def offline(request):
     return render(request, 'offline.html')
 
 
+def apps(request):
+    return render(request, 'apps.html')
+
+
 def contact(request):
     """Contact page with form"""
     submitted = False

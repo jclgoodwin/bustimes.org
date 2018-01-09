@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^awin-transaction', views.awin_transaction),
     url(r'^cookies', views.cookies),
     url(r'^data', views.data),
+    url(r'^apps', views.apps),
     url(r'^map', views.hugemap),
     url(r'^stops\.json', views.stops),
     url(r'^regions/(?P<pk>\w+)', views.RegionDetailView.as_view(), name='region_detail'),
