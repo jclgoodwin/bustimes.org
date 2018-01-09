@@ -35,10 +35,21 @@ class Departures(object):
 
     def get_request_params(self):
         """Return a dictionary of HTTP GET parameters"""
-        return None
+        pass
+
+    def get_request_headers(self):
+        """Return a dictionary of HTTP GET parameters"""
+        pass
+
+    def get_request_kwargs(self):
+        return {
+            'params': self.get_request_params(),
+            'headers': self.get_request_headers(),
+            'timeout': 2
+        }
 
     def get_response(self):
-        return SESSION.get(self.get_request_url(), params=self.get_request_params(), timeout=2)
+        return SESSION.get(self.get_request_url(), **self.get_request_kwargs())
 
     def get_service(self, line_name):
         """Given a line name string, returns the Service matching a line name
@@ -61,6 +72,58 @@ class Departures(object):
             return
         if response.ok:
             return self.departures_from_response(response)
+
+
+class DublinDepartures(Departures):
+    def get_request_url(self):
+        return 'https://data.dublinked.ie/cgi-bin/rtpi/realtimebusinformation'
+
+    def get_request_params(self):
+        return {
+            'stopid': int(self.stop.atco_code.split('DB', 1)[-1])
+        }
+
+    def departures_from_response(self, response):
+        return [{
+            'time': dateutil.parser.parse(item['scheduleddeparturedatetime'], dayfirst=True),
+            'live': dateutil.parser.parse(item['departuredatetime'], dayfirst=True),
+            'destination': item['destination'],
+            'service': self.get_service(item['route'])
+        } for item in response.json()['results']]
+
+
+class SingaporeDepartures(Departures):
+    def get_request_url(self):
+        return 'http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2'
+
+    def get_request_params(self):
+        return {
+            'BusStopCode': self.stop.atco_code[3:]
+        }
+
+    def get_request_headers(self):
+        return {
+            'AccountKey': settings.SINGAPORE_KEY
+        }
+
+    def departures_from_response(self, response):
+        departures = []
+        for service_response in response.json()['Services']:
+            service = self.get_service(service_response['ServiceNo'])
+            key = 'NextBus'
+            i = 1
+            while key in service_response:
+                item = service_response[key]
+                if not item['EstimatedArrival']:
+                    break
+                departures.append({
+                    'live': ciso8601.parse_datetime(item['EstimatedArrival']),
+                    'destination': item['DestinationCode'],
+                    'service': service
+                })
+                i += 1
+                key = 'NextBus{}'.format(i)
+        return departures
 
 
 class TflDepartures(Departures):
@@ -443,53 +506,14 @@ def get_departures(stop, services, bot=False):
 
     # Dublin
     if stop.atco_code[0] == '8' and 'DB' in stop.atco_code:
-        try:
-            response = SESSION.get(
-                'https://data.dublinked.ie/cgi-bin/rtpi/realtimebusinformation',
-                params={'stopid': int(stop.atco_code.split('DB', 1)[-1])},
-                timeout=2
-            )
-            if response.ok:
-                services_dict = {service.line_name.lower(): service for service in services}
-                departures = [{
-                    'time': dateutil.parser.parse(item['scheduleddeparturedatetime'], dayfirst=True),
-                    'live': dateutil.parser.parse(item['departuredatetime'], dayfirst=True),
-                    'destination': item['destination'],
-                    'service': services_dict.get(item['route'].lower(), item['route'])
-                } for item in response.json()['results']]
-                return ({
-                    'departures': departures
-                }, 60)
-        except requests.exceptions.RequestException as e:
-            logger.error(e, exc_info=True)
-            pass
+        return ({
+            'departures': DublinDepartures(stop, services).get_departures()
+        }, 60)
 
     # Singapore
     if stop.atco_code.startswith('sg-'):
-        response = SESSION.get('http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2', headers={
-            'AccountKey': settings.SINGAPORE_KEY
-        }, params={
-            'BusStopCode': stop.atco_code[3:]
-        })
-        departures = []
-        services_dict = {service.line_name: service for service in services}
-        for service_response in response.json()['Services']:
-            service = services_dict.get(service_response['ServiceNo'], service_response['ServiceNo'])
-            key = 'NextBus'
-            i = 1
-            while key in service_response:
-                item = service_response[key]
-                if not item['EstimatedArrival']:
-                    break
-                departures.append({
-                    'live': ciso8601.parse_datetime(item['EstimatedArrival']),
-                    'destination': item['DestinationCode'],
-                    'service': service
-                })
-                i += 1
-                key = 'NextBus{}'.format(i)
         return ({
-            'departures': departures
+            'departures': SingaporeDepartures(stop, services).get_departures()
         }, 60)
 
     departures = TimetableDepartures(stop, services, now)
