@@ -125,3 +125,14 @@ ALSC:
     url: ""
 HOGG:
     url: http://roadhoggs.net/timetables.html
+JTMT:
+    url: ""
+JOHN:
+    url: http://www.johns-taxis.co.uk
+    address: |
+        81 Manod Road
+        Blaenau Ffestiniog
+        Gwynedd
+        LL41 4AF
+    phone: 01766 831 781
+    email: info@johns-taxis.co.uk
