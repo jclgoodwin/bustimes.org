@@ -2,7 +2,8 @@ from django import forms
 from django.contrib import admin
 from django.db.models import Count
 from busstops.models import (
-    Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note, Journey, StopUsageUsage, Image
+    Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note, Journey, StopUsageUsage,
+    Image, ServiceCode, OperatorCode, DataSource, LiveSource
 )
 
 
@@ -20,16 +21,21 @@ class StopPointAdmin(admin.ModelAdmin):
 
 
 class OperatorAdmin(admin.ModelAdmin):
-    list_display = ('name', 'id', 'vehicle_mode', 'parent', 'region', 'service_count')
+    list_display = ('name', 'operator_codes', 'id', 'vehicle_mode', 'parent', 'region', 'service_count')
     list_filter = ('region', 'vehicle_mode', 'parent')
     search_fields = ('id', 'name')
-    ordering = ('id',)
+    # ordering = ('id',)
 
     def get_queryset(self, _):
-        return Operator.objects.annotate(service_count=Count('service'))
+        return Operator.objects.annotate(service_count=Count('service')).prefetch_related('operatorcode_set')
 
-    def service_count(self, obj):
+    @staticmethod
+    def service_count(obj):
         return obj.service_count
+
+    @staticmethod
+    def operator_codes(obj):
+        return ', '.join(str(code) for code in obj.operatorcode_set.all())
 
     def formfield_for_dbfield(self, db_field, **kwargs):
         formfield = super(OperatorAdmin, self).formfield_for_dbfield(db_field, **kwargs)
@@ -83,3 +89,7 @@ admin.site.register(Note, NoteAdmin)
 admin.site.register(Journey, JourneyAdmin)
 admin.site.register(StopUsageUsage, StopUsageUsageAdmin)
 admin.site.register(Image)
+admin.site.register(OperatorCode)
+admin.site.register(ServiceCode)
+admin.site.register(DataSource)
+admin.site.register(LiveSource)

@@ -4,8 +4,9 @@ Usage:
     ./manage.py import_operators < NOC_db.csv
 """
 
+from django.utils import timezone
 from ..import_from_csv import ImportFromCSVCommand
-from ...models import Operator
+from ...models import Operator, OperatorCode, DataSource
 
 
 class Command(ImportFromCSVCommand):
@@ -47,8 +48,7 @@ class Command(ImportFromCSVCommand):
             return row['OperatorPublicName']
         return row['OpNm']
 
-    @classmethod
-    def handle_row(cls, row):
+    def handle_row(self, row):
         """Given a CSV row (a list), returns an Operator object"""
 
         operator_id = row['NOCCODE'].replace('=', '')
@@ -58,12 +58,12 @@ class Command(ImportFromCSVCommand):
         #  - operators with multiple different rows for the same NOC (First Manchester)
         #  - GB operators with no services who clash with Ireland operator names (Eastons Coaches, Aircoach)
         if (
-                operator_id in cls.removed_operator_ids
+                operator_id in self.removed_operator_ids
                 or operator_id == 'FMAN' and row['Duplicate'] != 'OK'
         ):
             return
 
-        name = cls.get_name(row).replace('\'', '\u2019')  # Fancy apostrophe
+        name = self.get_name(row).replace('\'', '\u2019')  # Fancy apostrophe
 
         mode = row['Mode'].lower()
         if mode == 'airline':
@@ -76,14 +76,20 @@ class Command(ImportFromCSVCommand):
         defaults = {
             'name': name.strip(),
             'vehicle_mode': mode,
-            'region_id': cls.get_region_id(row['TLRegOwn']),
+            'region_id': self.get_region_id(row['TLRegOwn']),
         }
 
-        Operator.objects.update_or_create(
+        operator = Operator.objects.update_or_create(
             id=operator_id,
             defaults=defaults
+        )[0]
+        OperatorCode.objects.update_or_create(
+            operator=operator, code=operator_id, source=self.noc
         )
 
     def handle(self, *args, **options):
         Operator.objects.filter(id__in=self.removed_operator_ids).delete()
+        self.noc = DataSource.objects.get_or_create(name='National Operator Codes', defaults={
+            'datetime': timezone.now()
+        })[0]
         return super(Command, self).handle(*args, **options)

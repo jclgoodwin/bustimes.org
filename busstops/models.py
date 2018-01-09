@@ -383,6 +383,18 @@ class Operator(ValidateOnSaveMixin, models.Model):
         return 'A ' + mode  # 'A hovercraft operating company'
 
 
+class OperatorCode(models.Model):
+    operator = models.ForeignKey(Operator, models.CASCADE)
+    source = models.ForeignKey(DataSource, models.CASCADE)
+    code = models.CharField(max_length=100, db_index=True)
+
+    class Meta(object):
+        unique_together = ('code', 'source')
+
+    def __str__(self):
+        return self.code
+
+
 class StopUsage(models.Model):
     """A link between a StopPoint and a Service,
     with an order placing it in a direction (e.g. the first outbound stop)"""

@@ -3,6 +3,7 @@ from django.contrib.gis.geos import Point
 from .models import (
     Region, AdminArea, District, Locality, LiveSource, Operator, Service, StopPoint
 )
+from .admin import OperatorAdmin
 
 
 class RegionTests(TestCase):
@@ -70,6 +71,12 @@ class OperatorTests(TestCase):
 
     def test_get_qualified_name(self):
         self.assertEqual(str(self.chariots), 'Ainsley\'s Chariots')
+
+    def test_admin(self):
+        admin = OperatorAdmin(Operator, None)
+        operators = admin.get_queryset(None)
+        self.assertEqual(len(operators), 1)
+        self.assertEqual(operators[0].service_count, 0)
 
 
 class ServiceTests(TestCase):

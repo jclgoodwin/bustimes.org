@@ -196,7 +196,6 @@ class TransportApiDepartures(Departures):
         if not time:
             return
         if item.get('date') is not None:
-            print(item, time)
             time = ciso8601.parse_datetime(item['date'] + ' ' + time)
             if live_time:
                 live_time = ciso8601.parse_datetime(item['date'] + ' ' + live_time)
