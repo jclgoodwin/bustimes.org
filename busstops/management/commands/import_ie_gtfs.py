@@ -7,8 +7,8 @@ from django.db import transaction
 from django.db.models import Count
 from django.conf import settings
 from multigtfs.models import Feed
-from timetables.gtfs import get_timetables
-from ...models import Operator, Service, StopPoint, StopUsage, Region
+from timetables.gtfs import get_timetable
+from ...models import Operator, Service, StopPoint, StopUsage, Region, ServiceCode
 
 
 MODES = {
@@ -46,14 +46,11 @@ def download_if_modified(path, url):
 class Command(BaseCommand):
     @transaction.atomic
     def handle_zipfile(self, archive_name, collection):
-        if len(collection) > 10:
-            collection = collection[:10]
-            Service.objects.filter(service_code__startswith=collection).delete()
-        else:
-            Service.objects.filter(service_code__startswith=collection + '-').delete()
+        Service.objects.filter(service_code__startswith=collection[:10] + '-').delete()
 
         operators = set()
 
+        feed = Feed.objects.filter(name=collection).delete()
         feed = Feed.objects.create(name=collection)
         feed.import_gtfs(archive_name)
 
@@ -68,19 +65,15 @@ class Command(BaseCommand):
                     active=True
                 )
 
-        routes = {}
         for route in feed.route_set.all():
-            route_id = '-'.join(route.route_id.split(' ', 1)[0].split('-')[:-1])
-            routes[route_id] = route
-
-        for route_id in routes:
+            route_id = route.short_name or route.route_id.split()[0]
             service_code = collection + '-' + route_id
-            timetable = get_timetables(service_code, None)[0]
+            assert len(service_code) <= 24
+
+            timetable = get_timetable((route,), None)
 
             if not timetable.groupings:
                 continue
-
-            route = routes[route_id]
 
             defaults = {
                 'region_id': 'LE',
@@ -95,6 +88,7 @@ class Command(BaseCommand):
                 service_code=service_code,
                 defaults=defaults
             )
+            ServiceCode.objects.create(service=service, scheme=collection + ' GTFS', code=route.route_id)
 
             if route.agency:
                 operator = Operator.objects.get_or_create(name=route.agency.name, defaults={

@@ -87,7 +87,7 @@ class GTFSTest(TestCase):
         self.assertIsNone(gtfs.get_timetables('12345678901-poo-poo-pants', date(2017, 6, 7)))  # no feed in database
 
     def test_big_timetable(self):
-        service = Service.objects.get(service_code='seamusdohe-21-963-1-y11')
+        service = Service.objects.get(service_code='seamusdoherty-963-1')
         timetable = service.get_timetables(date(2017, 6, 7))[0]
         self.assertEqual(timetable.groupings[0].rows[0].times,
                          ['     ', time(10, 15), '     ', time(14, 15), time(17, 45)])

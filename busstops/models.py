@@ -19,6 +19,7 @@ from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
+from multigtfs.models import Route
 from timetables import txc, northern_ireland, gtfs
 from .utils import sign_url
 
@@ -682,7 +683,11 @@ class Service(models.Model):
                 return northern_ireland.get_timetable(path, day)
             return []
 
-        if self.region_id in {'UL', 'LE', 'MU', 'CO', 'FR'} or self.service_code.startswith('citymapper'):
+        if self.region_id in {'UL', 'LE', 'MU', 'CO'}:
+            collection = self.service_code.split('-', 1)[0]
+            route_ids = self.servicecode_set.filter(scheme=collection + ' GTFS').values_list('code', flat=True)
+            return [gtfs.get_timetable(Route.objects.filter(feed__name=collection, route_id__in=route_ids), day)]
+        elif self.region_id == 'FR' or self.service_code.startswith('citymapper'):
             return gtfs.get_timetables(self.service_code, day)
 
         cache_key = '{}:{}'.format(self.service_code, self.date)

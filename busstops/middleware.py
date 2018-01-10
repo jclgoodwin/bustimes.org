@@ -31,6 +31,11 @@ def not_found_redirect_middleware(get_response):
                         service_code__icontains='_' + '-'.join(service_code_parts[:4]),
                         current=True
                     ).first()
+                    if suggestion is None:
+                        suggestion = Service.objects.filter(
+                            slug__startswith='-'.join(service_code_parts[:-1]),
+                            current=True
+                        ).first()
                 if suggestion is None:
                     suggestion = Service.objects.filter(
                         service_code__iexact=service_code,
