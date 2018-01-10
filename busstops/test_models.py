@@ -76,7 +76,8 @@ class OperatorTests(TestCase):
         admin = OperatorAdmin(Operator, None)
         operators = admin.get_queryset(None)
         self.assertEqual(len(operators), 1)
-        self.assertEqual(operators[0].service_count, 0)
+        self.assertEqual(admin.service_count(operators[0]), 0)
+        self.assertEqual(admin.operator_codes(operators[0]), '')
 
 
 class ServiceTests(TestCase):

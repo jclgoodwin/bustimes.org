@@ -15,6 +15,21 @@ class Command(ImportFromCSVCommand):
         'EABU',  # EasyBus - duplicate of ESYB
         'ANGL',  # Anglian Bus - merged into Konectbus (KCTB)
     }
+    code_sources = {
+        'NOCCODE': 'National Operator Codes',
+        'Licence': 'Licence',
+        'LO': 'L',
+        'SW': 'SW',
+        'WM': 'WM',
+        'WA': 'W',
+        'YO': 'Y',
+        'NW': 'NW',
+        'NE': 'NE',
+        'SC': 'S',
+        'SE': 'SE',
+        'EA': 'EA',
+        'EM': 'EM',
+    }
 
     @staticmethod
     def get_region_id(region_id):
@@ -83,13 +98,16 @@ class Command(ImportFromCSVCommand):
             id=operator_id,
             defaults=defaults
         )[0]
-        OperatorCode.objects.update_or_create(
-            operator=operator, code=operator_id, source=self.noc
-        )
+        for key in self.code_sources:
+            if row[key]:
+                OperatorCode.objects.update_or_create(
+                    operator=operator, code=row[key].replace('=', ''), source=self.code_sources[key]
+                )
 
     def handle(self, *args, **options):
         Operator.objects.filter(id__in=self.removed_operator_ids).delete()
-        self.noc = DataSource.objects.get_or_create(name='National Operator Codes', defaults={
-            'datetime': timezone.now()
-        })[0]
+        for key in self.code_sources:
+            self.code_sources[key] = DataSource.objects.get_or_create(name=self.code_sources[key], defaults={
+                'datetime': timezone.now()
+            })[0]
         return super(Command, self).handle(*args, **options)

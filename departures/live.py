@@ -38,7 +38,7 @@ class Departures(object):
         pass
 
     def get_request_headers(self):
-        """Return a dictionary of HTTP GET parameters"""
+        """Return a dictionary of HTTP headers"""
         pass
 
     def get_request_kwargs(self):
