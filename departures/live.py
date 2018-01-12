@@ -462,7 +462,10 @@ def get_departures(stop, services, bot=False):
     """Given a StopPoint object and an iterable of Service objects,
     returns a tuple containing a context dictionary and a max_age integer
     """
-    live_sources = stop.live_sources.values_list('name', flat=True)
+    if bot:
+        live_sources = ()
+    else:
+        live_sources = stop.live_sources.values_list('name', flat=True)
 
     # Transport for London
     if 'TfL' in live_sources:
@@ -501,26 +504,27 @@ def get_departures(stop, services, bot=False):
             }
         }, 60)
 
-    operators = Operator.objects.filter(service__stops=stop,
-                                        service__current=True).distinct()
+    if not bot:
+        # Dublin
+        if stop.atco_code[0] == '8' and 'DB' in stop.atco_code:
+            return ({
+                'departures': DublinDepartures(stop, services).get_departures()
+            }, 60)
 
-    # Dublin
-    if stop.atco_code[0] == '8' and 'DB' in stop.atco_code:
-        return ({
-            'departures': DublinDepartures(stop, services).get_departures()
-        }, 60)
-
-    # Singapore
-    if stop.atco_code.startswith('sg-'):
-        return ({
-            'departures': SingaporeDepartures(stop, services).get_departures()
-        }, 60)
+        # Singapore
+        if stop.atco_code.startswith('sg-'):
+            return ({
+                'departures': SingaporeDepartures(stop, services).get_departures()
+            }, 60)
 
     departures = TimetableDepartures(stop, services, now)
     services_dict = departures.services
     departures = departures.get_departures()
 
-    if not departures or (departures[0]['time'] - now) < datetime.timedelta(hours=1):
+    if not bot and (not departures or (departures[0]['time'] - now) < datetime.timedelta(hours=1)):
+        operators = Operator.objects.filter(service__stops=stop,
+                                            service__current=True).distinct()
+
         # Stagecoach
         if any(operator.name.startswith('Stagecoach') for operator in operators):
             if departures:
@@ -549,12 +553,12 @@ def get_departures(stop, services, bot=False):
                         }
                     }, 60)
         # Belfast
-        if operators and any(operator.id == 'MET' for operator in operators):
+        if any(operator.id == 'MET' for operator in operators):
             live_rows = AcisConnectDepartures('belfast', stop, services, now).get_departures()
             if live_rows:
                 blend(departures, live_rows)
         # Norfolk
-        elif not bot and departures and stop.atco_code[:3] == '290':
+        elif departures and stop.atco_code[:3] == '290':
             live_rows = LambdaDepartures(stop, services, now).get_departures()
             if live_rows:
                 blend(departures, live_rows)
