@@ -197,6 +197,7 @@ class Place(models.Model):
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     latlong = models.PointField(null=True, blank=True)
+    polygon = models.PolygonField(null=True, blank=True)
     parent = models.ForeignKey('Place', models.SET_NULL, null=True, editable=False)
 
     class Meta():
