@@ -100,9 +100,8 @@ class Command(ImportFromCSVCommand):
         )[0]
         for key in self.code_sources:
             if row[key]:
-                OperatorCode.objects.update_or_create(
-                    operator=operator, code=row[key].replace('=', ''), source=self.code_sources[key]
-                )
+                OperatorCode.objects.update_or_create(code=row[key].replace('=', ''), source=self.code_sources[key],
+                                                      defaults={'operator': operator})
 
     def handle(self, *args, **options):
         Operator.objects.filter(id__in=self.removed_operator_ids).delete()

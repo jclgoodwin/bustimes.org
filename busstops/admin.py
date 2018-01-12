@@ -77,6 +77,18 @@ class StopUsageUsageAdmin(admin.ModelAdmin):
     ordering = ('id',)
 
 
+class OperatorCodeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'operator', 'source', 'code')
+    list_filter = ('source',)
+    raw_id_fields = ('operator',)
+
+
+class ServiceCodeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'service', 'scheme', 'code')
+    list_filter = ('scheme',)
+    raw_id_fields = ('service',)
+
+
 admin.site.register(Region)
 admin.site.register(AdminArea, AdminAreaAdmin)
 admin.site.register(District)
@@ -89,7 +101,7 @@ admin.site.register(Note, NoteAdmin)
 admin.site.register(Journey, JourneyAdmin)
 admin.site.register(StopUsageUsage, StopUsageUsageAdmin)
 admin.site.register(Image)
-admin.site.register(OperatorCode)
-admin.site.register(ServiceCode)
+admin.site.register(OperatorCode, OperatorCodeAdmin)
+admin.site.register(ServiceCode, ServiceCodeAdmin)
 admin.site.register(DataSource)
 admin.site.register(LiveSource)

@@ -383,6 +383,9 @@ class Operator(ValidateOnSaveMixin, models.Model):
             return 'An ' + mode  # 'An airline operating company' or 'An  operating company'
         return 'A ' + mode  # 'A hovercraft operating company'
 
+    def get_licences(self):
+        return self.operatorcode_set.filter(source__name='Licence')
+
 
 class OperatorCode(models.Model):
     operator = models.ForeignKey(Operator, models.CASCADE)
@@ -725,6 +728,9 @@ class ServiceCode(models.Model):
 
     class Meta():
         unique_together = ('service', 'scheme', 'code')
+
+    def __str__(self):
+        return '{} {}'.format(self.scheme, self.code)
 
 
 class ServiceDate(models.Model):
