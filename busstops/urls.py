@@ -35,6 +35,7 @@ urlpatterns = [
         }
     }),
     url(r'^search', SearchView(form_class=CustomSearchForm)),
+    url(r'^journey', views.journey),
 ]
 
 

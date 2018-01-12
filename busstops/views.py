@@ -17,10 +17,11 @@ from django.contrib.gis.db.models.functions import Distance
 from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
+from haystack.query import SearchQuerySet
 from departures import live
 from .utils import format_gbp, viglink
 from .models import (Region, StopPoint, AdminArea, Locality, District,
-                     Operator, Service, Note, Image)
+                     Operator, Service, Note, Image, Journey)
 from .forms import ContactForm, ImageForm
 
 
@@ -614,3 +615,39 @@ def image(request, id):
     pil_image.thumbnail((600, 300), resample=PIL.Image.LANCZOS)
     pil_image.save(response, 'JPEG', quality=100)
     return response
+
+
+def journey(request):
+    origin = request.GET.get('from')
+    from_q = request.GET.get('from_q')
+    destination = request.GET.get('to')
+    to_q = request.GET.get('to_q')
+
+    if origin:
+        origin = get_object_or_404(Locality, slug=origin)
+        from_options = None
+    else:
+        from_options = SearchQuerySet().models(Locality).filter(content=from_q)
+
+    if destination:
+        destination = get_object_or_404(Locality, slug=destination)
+        to_options = None
+    else:
+        to_options = SearchQuerySet().models(Locality).filter(content=to_q)
+
+    if origin and destination:
+        journeys = Journey.objects.filter(
+            stopusageusage__stop__locality=origin
+        ).filter(stopusageusage__stop__locality=destination)
+    else:
+        journeys = None
+
+    return render(request, 'journey.html', {
+        'from': origin,
+        'from_q': from_q or origin or '',
+        'from_options': from_options.load_all(),
+        'to': destination,
+        'to_q': to_q or destination or '',
+        'to_options': to_options.load_all(),
+        'journeys': journeys
+    })

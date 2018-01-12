@@ -1,0 +1,35 @@
+{% extends 'page.html' %}
+
+{% block title %}{{ from.get_qualified_name }} to {{ to.get_qualified_name }} – Bus Times{% endblock %}
+
+{% block bodyclass %}narrow{% endblock %}
+
+{% block content %}
+
+{% if from and to %}
+    <h2><a href="{{ from.get_absolute_url }}">{{ from }}</a> to <a href="{{ to.get_absolute_url }}">{{ to }}</a></h2>
+{% endif %}
+
+<form method="GET" action="/journey">
+    <input name="from_q" value="{{ from_q }}" />
+    {% if from %}
+        <input name="from" value="{{ from.slug }}" type="hidden" />
+    {% else %}
+        {% for option in from_options %}
+            {{ option.object }}
+        {% endfor %}
+    {% endif %}
+    <input name="to_q" value="{{ to_q }}" />
+    {% if to %}
+        <input name="to" value="{{ to.slug }}" type="hidden" />
+    {% else %}
+        {% for option in to_options %}
+            {{ option.object }}
+        {% endfor %}
+    {% endif %}
+    <input type="submit" value="Search">
+</form>
+
+{{ journeys }}
+
+{% endblock %}
