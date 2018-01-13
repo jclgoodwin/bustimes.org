@@ -462,10 +462,7 @@ def get_departures(stop, services, bot=False):
     """Given a StopPoint object and an iterable of Service objects,
     returns a tuple containing a context dictionary and a max_age integer
     """
-    if bot:
-        live_sources = ()
-    else:
-        live_sources = stop.live_sources.values_list('name', flat=True)
+    live_sources = stop.live_sources.values_list('name', flat=True)
 
     # Transport for London
     if 'TfL' in live_sources:
@@ -504,18 +501,17 @@ def get_departures(stop, services, bot=False):
             }
         }, 60)
 
-    if not bot:
-        # Dublin
-        if stop.atco_code[0] == '8' and 'DB' in stop.atco_code:
-            return ({
-                'departures': DublinDepartures(stop, services).get_departures()
-            }, 60)
+    # Dublin
+    if stop.atco_code[0] == '8' and 'DB' in stop.atco_code:
+        return ({
+            'departures': DublinDepartures(stop, services).get_departures()
+        }, 60)
 
-        # Singapore
-        if stop.atco_code.startswith('sg-'):
-            return ({
-                'departures': SingaporeDepartures(stop, services).get_departures()
-            }, 60)
+    # Singapore
+    if stop.atco_code.startswith('sg-'):
+        return ({
+            'departures': SingaporeDepartures(stop, services).get_departures()
+        }, 60)
 
     departures = TimetableDepartures(stop, services, now)
     services_dict = departures.services
