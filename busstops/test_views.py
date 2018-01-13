@@ -237,8 +237,9 @@ class ViewsTests(TestCase):
         self.assertContains(response, "ga('set', 'dimension1', 'N');")
 
     def test_locality(self):
-        response = self.client.get('/localities/E0048689')
+        response = self.client.get('/localities/e0048689')
         self.assertContains(response, '<h1>Melton Constable</h1>')
+        self.assertContains(response, '/localities/E0048689')
         self.assertContains(response, "ga('set', 'dimension1', 'N');")
 
     def test_stops(self):
