@@ -180,7 +180,8 @@ class Command(BaseCommand):
     def handle(cls, *args, **options):
         cls.set_up()
 
-        Service.objects.filter(region_id='NI').delete()
+        Service.objects.filter(region_id='NI').update(current=False)
+        StopUsage.objects.filter(service__region_id='NI').delete()
 
         for dirpath in ('Metro', 'ULB'):
             for dirpath, _, filenames in os.walk(dirpath):
@@ -190,4 +191,4 @@ class Command(BaseCommand):
 
         cls.create_stop_usages()
 
-        Service.objects.filter(region_id='NI', stops__isnull=True).delete()
+        Service.objects.filter(region_id='NI', stops__isnull=True).update(current=False)

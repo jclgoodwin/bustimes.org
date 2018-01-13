@@ -46,7 +46,8 @@ def download_if_modified(path, url):
 class Command(BaseCommand):
     @transaction.atomic
     def handle_zipfile(self, archive_name, collection):
-        Service.objects.filter(service_code__startswith=collection[:10] + '-').delete()
+        Service.objects.filter(service_code__startswith=collection + '-').update(current=False)
+        StopUsage.objects.filter(service__service_code__startswith=collection + '-').delete()
 
         operators = set()
 
