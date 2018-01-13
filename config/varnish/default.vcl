@@ -30,13 +30,6 @@ sub vcl_recv {
         return (pass);
     }
 
-    if (req.http.User-Agent ~ "(?i)(ads|google|bing|msn|yandex|baidu|ro|career|seznam|)bot" ||
-        req.http.User-Agent ~ "(?i)(baidu|jike|symantec|)spider" ||
-        req.http.User-Agent ~ "(?i)(scanner|facebookexternalhit|crawler|admantx)"
-    ) {
-        set req.http.X-Bot = "bot";
-    }
-
     unset req.http.Cookie;
 }
 

@@ -458,7 +458,7 @@ def blend(departures, live_rows):
         departures.sort(key=get_departure_order)
 
 
-def get_departures(stop, services, bot=False):
+def get_departures(stop, services):
     """Given a StopPoint object and an iterable of Service objects,
     returns a tuple containing a context dictionary and a max_age integer
     """
@@ -517,7 +517,7 @@ def get_departures(stop, services, bot=False):
     services_dict = departures.services
     departures = departures.get_departures()
 
-    if not bot and (not departures or (departures[0]['time'] - now) < datetime.timedelta(hours=1)):
+    if not departures or (departures[0]['time'] - now) < datetime.timedelta(hours=1):
         operators = Operator.objects.filter(service__stops=stop,
                                             service__current=True).distinct()
 
