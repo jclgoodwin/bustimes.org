@@ -40,12 +40,6 @@ sub vcl_backend_response {
         if (beresp.status >= 200 && beresp.status < 400) {
             if (bereq.url ~ "^/stops/") {
                 set beresp.ttl = 30s;
-
-                if (beresp.http.Vary) {
-                    set beresp.http.Vary = beresp.http.Vary + ", X-Bot";
-                } else {
-                    set beresp.http.Vary = "X-Bot";
-                }
             } elif (bereq.url ~ "^/styles/") {
                 set beresp.ttl = 30d;
             } else {
