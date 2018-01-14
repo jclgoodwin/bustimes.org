@@ -4,7 +4,7 @@ import requests
 from time import sleep
 from datetime import date
 from bs4 import BeautifulSoup
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, LineString, MultiLineString
 from django.core.management.base import BaseCommand
 from ...models import Region, StopPoint, Service, StopUsage, Operator
 
@@ -52,6 +52,7 @@ class Command(BaseCommand):
             sleep(1)
 
     def import_route_stops(self, session, service):
+        StopUsage.objects.filter(service=service).delete()
         res = session.get('http://m.buses.gg/index.php?content=Timetables&show_route=' + service.line_name + '&short')
         soup = BeautifulSoup(res.text, 'lxml')
         for table in soup.find_all('table', class_='headers'):
@@ -79,12 +80,36 @@ class Command(BaseCommand):
                         print(tr)
                     StopPoint.objects.create(atco_code=atco_code, **defaults)
                 StopUsage.objects.update_or_create(
-                    order=i,
+                    {
+                        'order': i,
+                        'timing_status': 'OTH'
+                    },
                     direction=tr.td.get('class')[0].lower(),
                     stop_id=atco_code,
                     service=service
                 )
                 i += 1
+        # mark major stops as major
+        res = session.get('http://m.buses.gg/index.php?content=Timetables&show_route=' + service.line_name)
+        soup = BeautifulSoup(res.text, 'lxml')
+        stop_ids = set()
+        for table in soup.find_all('table', class_='headers'):
+            i = 0
+            for tr in table.find_all('tr'):
+                stop_code = BeautifulSoup(tr.th.previous_element.previous_element, 'lxml').text.strip()
+                stop_ids.add('gg-{}'.format(stop_code))
+        StopUsage.objects.filter(service=service, stop_id__in=stop_ids).update(timing_status='PTP')
+
+        # kml
+        res = session.get('http://buses.gg/kmls/' + service.line_name + '.kml')
+        kml = BeautifulSoup(res.text, 'lxml')
+        line_strings = []
+        for line_string in kml.find_all('coordinates'):
+            points = [point.split(',') for point in line_string.text.split()]
+            line_strings.append(LineString(*[Point(float(point[0]), float(point[1])) for point in points]))
+        service.geometry = MultiLineString(*line_strings)
+        service.save()
+
 
     def handle(self, *args, **options):
         session = requests.Session()
