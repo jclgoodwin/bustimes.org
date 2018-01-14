@@ -91,6 +91,5 @@ class Command(BaseCommand):
 
         region = Region.objects.update_or_create(id='GG', defaults={'name': 'Guernsey'})[0]
 
-        StopPoint.objects.all().delete()
         self.import_stops()
         self.import_routes(session, region)
