@@ -15,8 +15,8 @@ class AdminAreaAdmin(admin.ModelAdmin):
 class StopPointAdmin(admin.ModelAdmin):
     list_display = ('atco_code', 'naptan_code', 'locality', 'admin_area', '__str__')
     list_select_related = ('locality', 'admin_area')
-    list_filter = ('admin_area',)
-    search_fields = ('common_name',)
+    list_filter = ('service__region', 'admin_area')
+    search_fields = ('atco_code', 'common_name')
     ordering = ('atco_code',)
 
 
@@ -24,7 +24,6 @@ class OperatorAdmin(admin.ModelAdmin):
     list_display = ('name', 'operator_codes', 'id', 'vehicle_mode', 'parent', 'region', 'service_count')
     list_filter = ('region', 'vehicle_mode', 'parent')
     search_fields = ('id', 'name')
-    # ordering = ('id',)
 
     def get_queryset(self, _):
         return Operator.objects.annotate(service_count=Count('service')).prefetch_related('operatorcode_set')
