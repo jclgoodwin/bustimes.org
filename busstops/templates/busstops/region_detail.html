@@ -14,6 +14,12 @@
     {% include 'list.html' with list=districts %}
 {% endif %}
 
+{% if services %}
+    <h2>Bus services in {{ region.the }}</h2>
+
+    {% include 'services.html' with services=services %}
+{% endif %}
+
 {% if operators %}
     <h2>Transport operating companies in {{ region.the }}</h2>
 

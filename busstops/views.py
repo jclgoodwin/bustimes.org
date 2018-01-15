@@ -216,6 +216,8 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
             context['districts'] = context['areas'][0].district_set.filter(locality__stoppoint__active=True).distinct()
             del context['areas']
         context['operators'] = self.object.operator_set.filter(service__current=True).distinct()
+        if len(context['operators']) == 1:
+            context['services'] = context['operators'][0].service_set.filter(current=True)
 
         return context
 
