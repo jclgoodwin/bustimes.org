@@ -110,7 +110,6 @@ class Command(BaseCommand):
         service.geometry = MultiLineString(*line_strings)
         service.save()
 
-
     def handle(self, *args, **options):
         session = requests.Session()
 

@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 from django.utils.text import slugify
 from django.utils.timezone import make_naive
-from busstops.models import Operator, Service
+from busstops.models import Operator, Service, StopPoint
 
 
 logger = logging.getLogger(__name__)
@@ -123,6 +123,9 @@ class SingaporeDepartures(Departures):
                 })
                 i += 1
                 key = 'NextBus{}'.format(i)
+        destinations = StopPoint.objects.in_bulk(['sg-' + departure['destination'] for departure in departures])
+        for departure in departures:
+            departure['destination'] = destinations.get('sg-' + departure['destination'], '')
         return departures
 
 
