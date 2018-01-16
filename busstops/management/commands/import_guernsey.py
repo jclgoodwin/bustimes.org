@@ -4,17 +4,15 @@ import requests
 from time import sleep
 from datetime import date
 from bs4 import BeautifulSoup
+from django.conf import settings
 from django.contrib.gis.geos import Point, LineString, MultiLineString
 from django.core.management.base import BaseCommand
 from ...models import Region, StopPoint, Service, StopUsage, Operator
 
 
-DIR = os.path.dirname(__file__)
-
-
 class Command(BaseCommand):
     def import_stops(self):
-        with open(os.path.join(DIR, '../../../data/guernsey.json')) as open_file:
+        with open(os.path.join(settings.DATA_DIR, 'guernsey.json')) as open_file:
             records = json.load(open_file)
             for zoom_level in records:
                 for place in zoom_level['places']:
@@ -76,8 +74,6 @@ class Command(BaseCommand):
                     ).first()
                     if doppelganger:
                         defaults['latlong'] = doppelganger.latlong
-                    else:
-                        print(tr)
                     StopPoint.objects.create(atco_code=atco_code, **defaults)
                 StopUsage.objects.update_or_create(
                     {
@@ -111,9 +107,10 @@ class Command(BaseCommand):
         service.save()
 
     def handle(self, *args, **options):
-        session = requests.Session()
 
         region = Region.objects.update_or_create(id='GG', defaults={'name': 'Guernsey'})[0]
 
         self.import_stops()
+
+        session = requests.Session()
         self.import_routes(session, region)

@@ -1,0 +1,12 @@
+[
+    {
+        "zoom": [12, 18],
+        "places": [
+            {
+                "name": "Town Terminus\nBus stop code - 890000487",
+                "icon": ["stop", "flag-shadow"],
+                "posn": [49.4536581719, -2.53547245654]
+            }
+        ]
+    }
+]
