@@ -52,6 +52,9 @@ class GTFSTest(TestCase):
 
         with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'google_transit_ie') + '.yaml'):
             call_command('import_ie_gtfs', '--force', '-v2')
+        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'google_transit_ie') + '.yaml'):
+            # import a second time - test that it's OK if stuff already exists
+            call_command('import_ie_gtfs', '--force')
 
         for collection in settings.IE_COLLECTIONS:
             dir_path = os.path.join(FIXTURES_DIR, 'google_transit_' + collection)
