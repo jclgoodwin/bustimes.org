@@ -1,0 +1,12 @@
+[
+    {
+        "zoom": [15, 18],
+        "places": [
+            {
+                "name": "St Helier\nBus stop code - ",
+                "icon": ["stop", "flag-shadow"],
+                "posn": [49.183531, -2.110287]
+            }
+        ]
+    }
+]

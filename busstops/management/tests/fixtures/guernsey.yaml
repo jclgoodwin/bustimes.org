@@ -7,106 +7,65 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [python-requests/2.18.4]
     method: GET
-    uri: http://m.buses.gg/Timetables
+    uri: http://buses.gg/routes_and_times/timetables
   response:
-    body: {string: "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\"/>\n<meta
-        http-equiv=\"Content-Language\" content=\"en\"/>\n<title>Guernsey Buses</title>\n<meta
-        name=\"title\" content=\"Welcome to Guernsey Buses\"/>\n<meta name=\"description\"
-        content=\"Mobile website for Guernsey Buses\"/>\n<meta name=\"MSSmartTagsPreventParsing\"
-        content=\"true\"/>\n<meta name=\"Copyright\" content=\"(c) Guernsey Buses.
-        All rights reserved.\"/>\n<meta http-equiv=\"imagetoolbar\" content=\"no\"/>\n<meta
-        name=\"Rating\" content=\"General\"/>\n<meta http-equiv=\"X-UA-Compatible\"
-        content=\"chrome=1\"/>\n<link rel=\"home\" href=\"/\"/>\n<link rel=\"copyright\"
-        href=\"#copyright\"/>\n<!-- Icons -->\n<link rel=\"shortcut icon\" href=\"favicon.ico\"
-        />\n<link rel=\"apple-touch-icon\" sizes=\"129x129\" href=\"apple-touch-icon-129x129.png\"
-        />\n<link rel=\"apple-touch-icon\" sizes=\"114x114\" href=\"apple-touch-icon-114x114.png\"
-        />\n<link rel=\"apple-touch-icon\" sizes=\"72x72\" href=\"apple-touch-icon-72x72.png\"
-        />\n<link rel=\"apple-touch-icon\" href=\"apple-touch-icon.png\" />\n<!--
-        Device stuff -->\n<link rel=\"apple-touch-icon\" href=\"app-icon.png\"/>\n<meta
-        name=\"viewport\" content=\"width=device-width,initial-zoom=1\"/>\n<meta name=\"format-detection\"
-        content=\"telephone=no,address=no,email=no\" />\n<link rel=\"stylesheet\"
-        href=\"stylesheets/screen.css\"/>\n<script type=\"text/javascript\" src=\"http://buses.gg/js/auto.js\"></script>\n<script
-        type=\"text/javascript\" src=\"http://fast.fonts.com/jsapi/90d97285-1d5e-4a87-aec2-c5f4463d6715.js\"></script>\n
-        \  \n<style>\n .scroll {\n  display: block;\n  overflow: auto;\n  padding-bottom:
-        5px;\n}\n.headers {\n  border-right: 1px solid #dfc0a8;\n  float: left;\n
-        \ width: 25%;\n  min-width: 139px;\n}\n.timetables-styling-single .t-table
-        table {\n  border: 0 none;\n  border-collapse: collapse;\n  line-height: 1em;\n
-        \ margin: 0;\n  padding: 1px;\n}\n .StopHeader{\n  display: none;\n} \n.t-table
-        td, .t-table th{\n\theight:22px;\n} \n@media only screen and (max-width: 400px)
-        {\n\t.t-table td, .t-table th{\n\t\theight:46px;\n\t} \n}\n\n.pebble {\n\tbackground-color:
-        #dfc0a8;\n}\n.sky {\n\tbackground-color: #80d2ee;\n}\n\n.gold {\n\tbackground-color:
-        #fadf99 !important;\n}\n.dusk {\n\tbackground-color: #d2b1d0 !important;;\n}\n.active
-        {\n    background-image: url(\"http://guernseybuses.org/img/tt_alert.png\");\n
-        \   background-position:center;\n\tbackground-size:cover;\n    background-repeat:
-        no-repeat;\n    cursor: pointer;\n\t\n}\n\n.active-soon {\n  background-image:
-        url(\"http://guernseybuses.org/img/tt_alert_soon.png\");\n   background-position:center;\n\tbackground-size:cover;\n
-        \ background-repeat: no-repeat;\n  cursor: pointer;\n}\n</style>\n</head>\n<body
-        \ class=\"tpt-inner \" >\n<header id=\"top\" role=\"banner\">\n  <h1 id=\"logo\"><a
-        href=\"/\" title=\"Go to Guernsey Buses homepage\"><img src=\"m_img/gg_header_logo.png\"
-        alt=\"Guernsey Buses\" width=\"174\" height=\"75\" /></a></h1>\n  <a id=\"jump\"
-        href=\"#nav\"><img src=\"m_img/jump.png\" width=\"35\" height=\"35\" alt=\"show
-        navigation\"></a> </header>\n<div id=\"page\" role=\"main\">\n  <nav role=\"navigation\">\n
-        \   <ul id=\"nav\" tabindex=\"0\">\n<!--      <li><a href=\"planner.html\">Trip
-        planner</a></li>\n      <li><a href=\"live_times.html\">Live times</a></li>\n
-        \     <li><a href=\"timetables.html\">Timetables</a></li>\n      <li><a href=\"news.html\">News</a></li>\n
-        \     <li><a href=\"about.html\">About us</a></li>\n      <li><a href=\"contact.html\">Contact
-        us</a></li> -->\n      \n     <li><a href=\"/Trip planner\">Trip planner</a></li>
-        \    \n    <li><a href=\"/Stop by Stop\">Stop by Stop</a></li> \n      <li><a
-        href=\"/Timetables\">Timetables</a></li>\n    <!--  <li><a href=\"/Times to
-        my mobile\">Times to my mobile</a></li> -->\n          \t<!--<li><a href=\"/Live
-        service updates\">Live service updates</a></li> -->\n      <li><a href=\"/diversions\">Diversions</a></li>\n
-        \     <li><a href=\"/News\">News</a></li>\n      <li><a href=\"/About us\">About
-        us</a></li>\n      <li><a href=\"/Contact\">Contact us</a></li>\n    </ul>\n
-        \ </nav>\n  <div id=\"content\">\n            <header>\n          <h1></h1>\n
-        \         </header>\n  <div class=\"wrap\"> \r\n <ul id=\"timetables-ul\">\r\n
-        \                               <!--<li  class=\"group\"><a href=\"index.php?content=Timetables&show_route=11&short=TRUE\"
-        class=\"group\"> -->\r\n\t\t  <li id=\"tt1\"><a href=\"index.php?content=Timetables&show_route=11&short=TRUE\"
-        class=\"group\">\r\n          <div class=\"tt-key-wrapper\">\r\n            <div
-        class=\"tt-key\" style=\"background-color: #8E5243;\">11</div>\r\n          </div>\r\n
-        \         <div class=\"tt-text\">\r\n          Town Terminus  Stand C - L'Ancresse
-        Terminus  Eastbound          </div>\r\n          </li></a>\r\n          \r\n
-        \  </ul>\r\n      </div>\n    <div class=\"separator\">&nbsp;</div>\n  </div>\n</div>\n<!--
-        / #page -->\n<footer id=\"bottom\" role=\"contentinfo\">\n  <p id=\"footer-jump\"><a
-        href=\"#\" ><strong>Menu</strong></a></p>\n  <p> \n    <!-- ADDRESS & SUCH
-        --> \n    <small id=\"copyright\">&copy; 2015 Guernsey Buses. All rights reserved.</small></p>\n
-        \ <p><small><a href=\"#\" class=\"scrolltop\">Back to top</a></small></p>\n</footer>\n<script
-        type=\"text/javascript\" src=\"http://guernseybuses.org/js/jquery-1.11.2.min.js\"></script>
-        \n<script src=\"js/main.js\"></script> \n<script src=\"js/jquery-ui-1.8.23.custom.min.js\"></script>\n<script
-        type=\"text/javascript\">\n\tjQuery(function(){\n\t\t//\tjQuery('ul.sf-menu').superfish();\n\t\t\t\n\t\t\t\t$('tr').each(function()
+    body: {string: "<!doctype html>\n<html lang=\"en-GB\" prefix=\"og: http://ogp.me/ns#\"
+        class=\"no-js\">\n<head>\n<meta charset=\"UTF-8\">\n<title>Guernsey Buses
+        - Guernsey bus timetables</title>\r\n\t\t\t\t<meta name=\"title\" content=\"Guernsey
+        bus timetables\"><meta name=\"Description\" content=\"Full bus timetables
+        for all routes \" />\r\n\t\t\t\t<meta name=\"Keywords\" content=\"buses.gg,
+        Guernsey bus, Guernsey bus service, Guernsey bus route map, Guernsey buss
+        pass, Guernsey bus timetables, Guernsey bus routes, Guernsey bus fares Ormer
+        cards, Ormer cards Guernsey, Guernsey bus diversions, Guernsey bus twitter,
+        Guernsey bus service updates,  visit Guernsey, Guernsey tourist information,
+        Guernsey bus routes,  Island Coachways  \" /><style type=\"text/css\" media=\"all\">\n@import
+        url(\"/stylesheets/screen.css\");\n@import url(\"/stylesheets/superfish.css\");\n</style>\n\n<!--[if
+        lt IE 9]><link rel=\"stylesheet\" type=\"text/css\" href=\"stylesheets/ie.css\"
+        /><![endif]-->\n<link rel=\"stylesheet\" href=\"/core/control.css\">\n\n\n<script
+        type=\"text/javascript\" src=\"/js/jquery-1.11.2.min.js\"></script>\n<script
+        type=\"text/javascript\" src=\"/js/jquery-ui-1.11.4/jquery-ui.js\"></script>\n<script
+        type=\"text/javascript\" src=\"/js/auto.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/jquery.jscrollpane.min.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/jquery.betterTooltip.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/jquery.effects.core.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/jquery.scrollTo.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/pre-minification-gg.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/hoverIntent.js\"></script>\n<script type=\"text/javascript\" src=\"/js/superfish.js\"></script>\n<script
+        type=\"text/javascript\" src=\"/js/supersubs.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/jquery.cycle.all.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/modernizr.js\"></script>\n\n<meta name=\"google-translate-customization\"
+        content=\"7cc451bbdb1058c4-2ec6f1e19b03f448-g9db49a2678758db6-12\">\n<script
+        type=\"text/javascript\"   src=\"http://maps.googleapis.com/maps/api/js?sensor=false\"></script>\n<meta
+        name=\"pinterest\" content=\"nopin\" />\n<style>\n.pebble {\n\tbackground-color:
+        #dfc0a8 !important;\n}\n.sky {\n\tbackground-color: #80d2ee !important;\n}\n\n.gold
+        {\n\tbackground-color: #fadf99 !important;\n}\n.dusk {\n\tbackground-color:
+        #d2b1d0 !important;;\n}\n\t    #map img {  max-width: none; }\n</style>\n<script
+        type=\"text/javascript\">\n\n// initialise plugins\n\t\t\tjQuery(function(){\n\t\t//\tjQuery('ul.sf-menu').superfish();\n\t\t\t\n\t\t\t\t$('tr').each(function()
         {\n\t\t\t\t   $(this).children('td').each(function(i) {\t\t\t\t\t\n\t\t\t\t\t\t
-        \ $(this).addClass(\"tdn_\" + i);\n\t\t\t\t\t   });\n\t\t\t\t\t});\n\t\t\t\t\t\n\t\t\t\t\t\t\t\t$('.headers
+        \ $(this).addClass(\"tdn_\" + i);\n\t\t\t\t\t   });\n\t\t\t\t\t});\n\t\t\t\t\t\n\t\t\t\t\t$('.headers
         tr').each(function() {\t\t\t\t\t\t\n\t\t\t\t\tvar statclass = $(this).children('th').children('span').html();\n\t\t\t\t\tvar
         cleanclass = statclass.replace(/[\\|&;\\$%@'\"<>\\(\\)\\+.,]/g, \"\");\n\t\t\t\t\tcleanclass
         = cleanclass.replace(/ /g, '-');\n\t\t\t\t\tcleanclass = cleanclass.toLowerCase();
         \n\t\t\t\t\t//alert(cleanclass);\n\t\t\t\t\t\n\t\t\t\t\t$(this).children('td').each(function(i)
         {\n\t\t\t\t\t\t//alert('pox');\n\t\t\t\t\t\t\t  $(this).removeClass();\n\t\t\t\t\t\t\t
-        // $(this).css(\"background-color\", \"white\");\n\t\t\t\t\t\t\t  $(this).addClass(cleanclass);\n\t\t\t\t\t\t
-        \  });\n\t\t\t\t\t});\n\t\t\t\t\t$('.scroll tr').each(function() {\t\t\t\t\t\t\n\t\t\t\t\tvar
-        statclass = $(this).children('th').children('span').html();\n\t\t\t\t\tvar
+        \ $(this).css(\"background-color\", \"white\");\n\t\t\t\t\t\t\t  $(this).addClass(cleanclass);\n\t\t\t\t\t\t
+        \  });\n\t\t\t\t\t});\n\t\t\t\t\t\n\t\t\t\t\t$('.scroll tr').each(function()
+        {\t\t\t\t\t\t\n\t\t\t\t\tvar statclass = $(this).children('th').children('span').html();\n\t\t\t\t\tvar
         cleanclass = statclass.replace(/[\\|&;\\$%@'\"<>\\(\\)\\+.,]/g, \"\");\n\t\t\t\t\tcleanclass
         = cleanclass.replace(/ /g, '-');\n\t\t\t\t\tcleanclass = cleanclass.toLowerCase();
         \n\t\t\t\t\t//alert(cleanclass);\n\t\t\t\t\t\n\t\t\t\t\t\t\t//$(this).children('td').each(function(i)
         {\n\t\t\t\t\t\t\t\t//alert('pox');\n\t\t\t\t\t\t\t  $(this).removeClass();\n\t\t\t\t\t\t\t
         \ $(this).css(\"background-color\", \"white\");\n\t\t\t\t\t\t\t  $(this).addClass(cleanclass);\n\t\t\t\t\t\t//
-        \  });\n\t\t\t\t\t\n\t\t\t\t\t});\n\t\t\t\t\t\n\t\t\t\t//\tvar notes = ' <div
-        id=\"t-table-extras\"><h3>Notes</h3><ul class=\"t-table-notes\"></ul></div>';\n\t\t\t\t\t//var
-        friday = '<li><div class=\"key-colour sky\"> </div><p>Fridays only</p></li>'\t;\n\t\t\t\t\t//var
-        school = '<li><div class=\"key-colour dusk\"> </div><p>School days only</p></li>'\t;\n\t\t\t\t\t//var
-        sat = '<li><div class=\"key-colour festival\"> </div><p>Saturdays only</p></li>'\t;\n\t\t\t\t\t//var
-        app = {\n\t\t\t\t\t\t//sat:'<p class=\"festival\" style=\"padding: 4px; width:91px;\">Saturdays
-        only</p>',\n\t\t\t\t\t//\tschool:'<p class=\"dusk\" style=\"padding: 4px;
-        width:162px;\">School days only</p>',\t\t\t\t\t\t\n\t\t\t\t\t//\tnonschool:'<p
-        class=\"gold\" style=\"padding: 4px; width:162px;\">Non School days only</p>',\n\t\t\t\t\t//\tfriday:'<p
-        class=\"sky\" style=\"padding: 4px; width:91px;\">Fridays only</p>'\t\n\t\t\t\t\t//}\n\t\t\t\t\t\n\t\t\t\tvar
+        \  });\n\t\t\t\t\t});\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\tvar
         notes = ' <div id=\"t-table-extras\"><h3>Notes</h3><ul class=\"t-table-notes\"></ul></div>';\n\t\t\t\t\t//var
         friday = '<li><div class=\"key-colour sky\"> </div><p>Fridays only</p></li>'\t;\n\t\t\t\t\t//var
         school = '<li><div class=\"key-colour dusk\"> </div><p>School days only</p></li>'\t;\n\t\t\t\t\t//var
         sat = '<li><div class=\"key-colour festival\"> </div><p>Saturdays only</p></li>'\t;\n\t\t\t\t\tvar
-        app = {\n\t\t\t\t\t\tsat:'<p class=\"festival\" style=\"padding: 4px; width:91px;\">Saturdays
-        only</p>',\n\t\t\t\t\t\tschool:'<p class=\"dusk\" style=\"padding: 4px; width:162px;\">School
-        days only</p>',\t\t\t\t\t\t\n\t\t\t\t\t\tnonschool:'<p class=\"gold\" style=\"padding:
-        4px; width:162px;\">Non School days only</p>',\n\t\t\t\t\t\tfriday:'<p class=\"sky\"
-        style=\"padding: 4px; width:91px;\">Fridays only</p>'\t\n\t\t\t\t\t}\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\tfunction
+        app = {\n\t\t\t\t\t\tsat:'<li><div class=\"key-colour festival\"> </div><p>Saturdays
+        only</p></li>',\n\t\t\t\t\t\tschool:'<li><div class=\"key-colour dusk\"> </div><p>School
+        days only</p></li>',\t\t\t\t\t\t\n\t\t\t\t\t\tnonschool:'<li><div class=\"key-colour
+        gold\"> </div><p>Non School days only</p></li>',\n\t\t\t\t\t\tfriday:'<li><div
+        class=\"key-colour sky\"> </div><p>Fridays only</p></li>'\t\n\t\t\t\t\t}\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\tfunction
         add_notes(day, columns, add){\t\t\t\n\t\t\t        var tf = ['true','false'];\t\t\t\t\t\n\t\t\t\t\ttf.forEach(function(entry)
         {\n\t\t\t\t\t\t\t\tvar id= '#' +entry + '-' + day;\n\t\t\t\t\t\t\t\tfor (var
         key in columns) {\n\t\t\t\t\t\t\t\t\t\t\tvar value = columns[key];\n\t\t\t\t\t\t\t\t\t\t\t//var
@@ -127,7 +86,7 @@ interactions:
         fridayc = [];\n\t\t\t\t\tconsole.log(\"j6\");\n\t\t\t\t\t \n\t\t\t\t\t \n\t\t\t\t\t
         \n\t\t\t\t\t \n\t\t\t\t\t\tfor (var key in ff) {\n\t\t\t\t\t\tconsole.log(\"j6b\");\n\t\t\t\t\t\t
         \ var tid = ff[key];\n\t\t\t\t\t\t console.log(\"tid \"+tid);\n\t\t\t\t\t\t
-        \ $('td[data=\"' + tid + '\"]').addClass('sky');\n\t\t\t\t\t\t  console.log(\"j6c\");\n\t\t\t\t\t\t
+        \ $('td[data=\"' + tid + '\"').addClass('sky');\n\t\t\t\t\t\t  console.log(\"j6c\");\n\t\t\t\t\t\t
         \ var uguv = $('td[data=\"' + tid + '\"').closest(\"div\").attr(\"id\");\n\t\t\t\t\t\t
         \  console.log(\"j6d\");\n\t\t\t\t\t\t  if (typeof uguv !== 'undefined') {\n\t\t\t\t\t\t\tvar
         found = jQuery.inArray(uguv, fridayc);\n\t\t\t\t\t\t\tif (found >= 0) {\n\t\t\t\t\t\t\n\t\t\t\t\t\t\t}
@@ -135,40 +94,279 @@ interactions:
         \ fridayc.push(uguv);\n\t\t\t\t\t\t\t  //alert(uguv);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t
         \ } else {\n\t\t\t\t\t\t\tconsole.log(\"uguv was undefined\");  \n\t\t\t\t\t\t
         \ }\n\t\t\t\t\t\t\n\t\t\t\t\t\t}\n\n\n\n\n\n\n\t\t\t\t\t   console.log(\"j7\");\n\t\t\t\t\t
-        add_notesx(fridayc,'friday'); \n\t\t\t\t\t   console.log(\"j8\");\n\t\t\t\t\t
+        add_notesx(fridayc,'friday');\n\t\t\t\t\t   console.log(\"j8\");\n\t\t\t\t\t
         \ \n\t\t\t\t\t  var ns = ['VJ364@14:48:00','VJ61@14:58:00','VJ412@15:12:00','VJ67@08:10:00','VJ117@08:00:00','VJ216@08:10:00','VJ551@14:42:00','VJ238@15:05:00','VJ588@15:30:00','VJ276@14:40:00','VJ310@15:15:00','VJ634@15:40:00'];\n\t\t\t\t\t\n\t\t\t\t\t\tvar
         nsc = [];\n\t\t\t\t\t console.log(\"j9\");\n\t\t\t\t\t for (var key in ns)
         {\n\t\t\t\t\t\tvar tid = ns[key];\n\t\t\t\t\t\t//alert(tid);\n\t\t\t\t\t\t$('td[data=\"'
-        +  tid + '\"]').addClass( 'gold' );\n\t\t\t\t\t\tvar uguv=$('td[data=\"' +
+        +  tid + '\"').addClass( 'gold' );\n\t\t\t\t\t\tvar uguv=$('td[data=\"' +
         \ tid + '\"').closest( \"div\" ).attr(\"id\");\n\t\t\t\t\t\tconsole.log(uguv);\n\t\t\t\t\t\t
         if (typeof uguv !== 'undefined') {\n\t\t\t\t\t\t   var found = jQuery.inArray(uguv,
-        nsc);\n\n\t\t\t\t\t\t   if (found >= 0) {\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t}
+        nsc);\n\t\t\t\t\t\t   if (found >= 0) {\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t}
         else {\n\t\t\t\t\t\t\t\t// Element was not found, add it.\n\t\t\t\t\t\t\t\tnsc.push(uguv);\n\t\t\t\t\t\t\t\t//alert(uguv);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}
         \n\t\t\t\t\t  }\t\n\t\t\t\t\t   add_notesx(nsc,'nonschool');\n\t\t\t\t\t  \n\t\t\t\t\t
         \ \t  var st = ['VJ386@14:44:00','VJ64@08:24:00','VJ152@08:25:00','VJ201@08:35:00','VJ550@14:42:00','VJ614@15:35:00','VJ289@15:55:00','VJ290@14:40:00'];\n\t\t\t\t\t\n\t\t\t\t\tvar
         sc = [];\n\t\t\t\t\tconsole.log(\"j3\");\n\t\t\t\t\t for (var key in st) {\n\t\t\t\t\t\tvar
         tid = st[key];\n\t\t\t\t\t\tconsole.log(\"j1a\");\n\t\t\t\t\t\t\n\t\t\t\t\t\t$('td[data=\"'
-        +  tid + '\"]').addClass( 'dusk' );\n\t\t\t\t\t\t  var uguv=$('td[data=\"'
+        +  tid + '\"').addClass( 'dusk' );\n\t\t\t\t\t\t  var uguv=$('td[data=\"'
         +  tid + '\"').closest( \"div\" ).attr(\"id\");\n\t\t\t\t\t\t if (typeof uguv
         !== 'undefined') {\n\t\t\t\t\t\t   var found = jQuery.inArray(uguv, sc);\n\t\t\t\t\t\t
         \  if (found >= 0) {\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t} else {\n\t\t\t\t\t\t\t\t//
         Element was not found, add it.\n\t\t\t\t\t\t\t\tsc.push(uguv);\n\t\t\t\t\t\t\t\t//alert(uguv);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}
-        \n\t\t\t\t\t  }\t\n\t\t\t\t\t  \n\t\t\t\t\t add_notesx(sc,'school');\n\t\t\t\t\n\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t
-        \ var dr='<p><img src=\"http://buses.gg/img/tt_alert.png\"style=\"width: 16px;
-        height: 16px;float:left;margin-right:10px;\"/> Indicates a diversion. Times
-        and stops highlighted in red may be subject to change.</p> ';\n   var scd='<p><img
-        alt=\"\" src=\"http://buses.gg/img/tt_alert_soon.png\" style=\"width: 16px;
-        height: 16px;float:left;margin-right:10px;\"> Indicates a diversion that will
-        occur in the near future.</p>';\n\n\t\t\t\t\t\n\t\t});\n\t\t\t\t\t\n</script>\n</body>\n</html>"}
+        \n\t\t\t\t\t  }\t\n\t\t\t\t\t  \n\t\t\t\t\t add_notesx(sc,'school');\n\t\t\t\t\n\t\t\t\n\t\t\t});\n\n\n\n\n\t\t\t\n\t\t\t
+        \t  \n\t\t\t function load_maps(){\n\t\t\t\t \t\t\t\t   initialize();\n\t\t\t\t
+        //  setTimeout(function(){ $('#hide-map-to-start').css(\"display\", \"none\");
+        }, 4000); \n\t\t\t\t   $('#hide-map-to-start').css(\"display\", \"none\");\n\t\t\t\t
+        \t\t\t\t \n\t\t\t }\n\t\t\t \n\t\t\t </script>\n</head>\n<body   id=\"default-two-column\"
+        \ class=\"timetables-styling\"  onload=\"load_maps();\">\n<div id=\"page\"
+        class=\"\"> <a class=\"skip-link screen-reader-text\" href=\"#content\">Skip
+        to content</a>\n  <header id=\"masthead\" class=\"site-header clearfix\" role=\"banner\">\n
+        \   <div id=\"circle-holder\" class=\"clearfix\">\n      <div id=\"masthead-inner\">\n
+        \       <div id=\"brand\"><a href=\"index.html\"><img src=\"/img/mast_logox2.png\"
+        alt=\"buses gg logo\"/></a></div>\n        <div id=\"header-tools\">\n          <div
+        id=\"search-main\" class=\"aside\" role=\"search\">\n            <form  role=\"search\"
+        id=\"searchform\" action=\"/search_results\" method=\"post\">\n              <div>\n
+        \               <label class=\"screen-reader-text\" for=\"words\">Search for:</label>\n
+        \               <input id=\"s\" type=\"text\" tabindex=\"1\" size=\"32\" onBlur=\"if
+        (this.value == '') {this.value = 'Search';}\" onFocus=\"if (this.value ==
+        'Search') {this.value = '';}\" value=\"Search\" name=\"words\">\n                <input
+        id=\"searchsubmit\" type=\"submit\" tabindex=\"2\" value=\"Search\" name=\"searchsubmit\">\n
+        \             </div>\n            </form>\n          </div>\n          <!--
+        end SEARCH --> <div id=\"google_translate_element\"></div>\n        <script
+        type=\"text/javascript\">\nfunction googleTranslateElementInit() {\n  new
+        google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE},
+        'google_translate_element');\n}\n</script><script type=\"text/javascript\"
+        src=\"http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit\"></script>
+        \n      </div><!-- end TRANSLATE -->\n        <!-- end HEADER TOOLS -->\n
+        \       <nav role=\"navigation\">\n          <div id=\"main-nav\">\n          <ul
+        \  class=\"nav sf-menu\"  id=\"cc\"  ><li class=\"\"><a  class=\"home_link\"
+        href=\"http://buses.gg/\"   id=\"home_link\">Home</a></li><li class=\"current-page-ancestor\"><a
+        href=\"http://buses.gg/routes_and_times\"  id=\"routes_and_times_1059\" class=\"\">Routes
+        and Times</a><ul class=\"children\"><li ><a href=\"http://buses.gg/routes_and_times/app_for_mobile\"
+        >app for mobile</a></li><li ><a href=\"http://buses.gg/routes_and_times/stop_by_stop\"
+        >Stop-by-Stop</a></li><li ><a href=\"http://buses.gg/routes_and_times/stop_by_stop_geographic\"
+        >Stop-by-Stop Geographic</a></li><li ><a href=\"http://buses.gg/routes_and_times/journey_planner\"
+        >Journey Planner</a></li><li ><a href=\"http://buses.gg/routes_and_times/journey_planner_geographical\"
+        >Journey Planner Geographical</a></li><li ><a href=\"http://buses.gg/routes_and_times/timetables\"
+        >Timetables</a></li><li ><a href=\"http://buses.gg/routes_and_times/prices_and_tickets\"
+        >Prices and tickets</a></li><li ><a href=\"http://buses.gg/routes_and_times/live_service_updates\"
+        >Live service updates</a></li><li ><a href=\"http://buses.gg/routes_and_times/tennerfest\"
+        >Tennerfest 2017</a></li><li ><a href=\"http://buses.gg/routes_and_times/parish_link_p2\"
+        >Parish Link P2</a></li><li ><a href=\"http://buses.gg/routes_and_times/puffinpass\"
+        >puffinpass</a></li></ul ></li><li class=\"\"><a href=\"http://buses.gg/schools\"
+        \ id=\"schools_1065\" class=\"\">Schools</a><ul class=\"children\"><li ><a
+        href=\"http://buses.gg/schools/about_school_buses_2\" >About school buses</a></li><li
+        ><a href=\"http://buses.gg/schools/routes_and_times_2\" >Routes and times</a></li><li
+        ><a href=\"http://buses.gg/schools/the_amazing_journey\" >The Amazing Journey</a></li></ul
+        ></li><li class=\"\"><a href=\"http://buses.gg/diversions\"  id=\"diversions_1069\"
+        class=\"\">Diversions</a></li><li class=\"\"><a href=\"http://buses.gg/visiting_guernsey\"
+        \ id=\"visiting_guernsey_1074\" class=\"\">Visiting Guernsey</a><ul class=\"children\"><li
+        ><a href=\"http://buses.gg/visiting_guernsey/attractions_by_bus\" >Attractions
+        by bus</a></li><li ><a href=\"http://buses.gg/visiting_guernsey/arriving_in_guernsey\"
+        >Arriving in Guernsey</a></li><li ><a href=\"http://buses.gg/visiting_guernsey/souvenir_of_your_bus_adventure\"
+        >Souvenir of your bus adventure</a></li></ul ></li><li class=\"\"><a href=\"http://buses.gg/about\"
+        \ id=\"about_1077\" class=\"\">About</a><ul class=\"children\"><li ><a href=\"http://buses.gg/about/using_the_bus_service\"
+        >Using the bus service</a></li><li ><a href=\"http://buses.gg/about/contacting_us\"
+        >Contacting us</a></li><li ><a href=\"http://buses.gg/about/news\" >News</a></li><li
+        ><a href=\"http://buses.gg/about/lost_property\" >Lost property</a></li><li
+        ><a href=\"http://buses.gg/about/accessible_service\" >Accessible service</a></li><li
+        ><a href=\"http://buses.gg/about/Let_us_know\" >Let us know</a></li><li ><a
+        href=\"http://buses.gg/about/social_enterprise\" >Social enterprise</a></li><li
+        ><a href=\"http://buses.gg/about/train_as_a_bus_driver\" >Train as a bus driver</a></li><li
+        ><a href=\"http://buses.gg/about/advertise_with_us\" >Advertise with us</a></li><li
+        ><a href=\"http://www.hctgroup.org/jobs\" >Jobs</a></li></ul ></li><li class=\"\"><a
+        href=\"http://buses.gg/shop\"  id=\"shop_1108\" class=\"\">Shop</a><ul class=\"children\"><li
+        ><a href=\"http://buses.gg/shop/faq\" >FAQ</a></li></ul ></li></ul>          \n
+        \         </div>\n        </nav>\n      </div>\n      <!-- end MAIN NAV -->
+        \n    </div>\n  </header>\n  <!-- end HEADER start MAIN-->\n  <div class=\"color-strip\"></div>\n
+        \ <div id=\"main-wrapper\" class=\"clearfix\">\n    <main id=\"main\" class=\"clearfix\"
+        role=\"main\">\n                   <div id=\"content\" class=\"site-content\">
+        \n        <!--  hey there --> \n        <!-- this is where most of the differences
+        between templates begins (but not all!) --> \n        <!--  hey there -->\n
+        \               <div id=\"secondary\">\n          <aside id=\"widgets\">\n
+        \           <div id=\"trip-planner-widget\" class=\"widget-wrapper clearfix\">
+        \n              <!--<a href=\"/routes_times/journey_planner\" class=\"block-link
+        clearfix\"> --> \n              <a href=\"/routes_and_times/journey_planner\"
+        \ class=\"block-link clearfix\">\n              <div class=\"icon-wrap\">
+        <img class=\"widget-icon\" alt=\"Map icon\" src=\"/img/widget-icon-planner.png\">
+        </div>\n              <h2>Plan a trip</h2>\n              <p>Get maps and
+        destinations on our <strong class=\"highlight\">trip planner pages&nbsp;\xBB</strong></p>\n
+        \             <!--<p style=\"padding: 7px;\">Our Trip Planner is down for
+        repair, please click here for more information.</p> --> \n              </a>\n
+        \             <form action=\"/journey_planner_results\" method=\"get\">\r\n
+        \               <ul>\r\n                  <li>\r\n                    <label
+        for=\"leaving-from-field\">Leaving from</label>\r\n                    <input
+        name=\"leaving\" type=\"text\" id=\"leaving-from-field\" size=\"24\"  value=\"\"
+        />\r\n                  </li>\r\n                  <li>\r\n                    <label
+        for=\"going-to-field\">Going to</label>\r\n                    <input type=\"text\"
+        id=\"going-to-field\" name=\"going\" size=\"24\"  value=\"\"/>\r\n                  </li>\r\n
+        \                 <li>\r\n                    <fieldset>\r\n                      <legend>Leaving
+        on</legend>\r\n               <select name=\"leave[0]\">\r\n\t\t\t\t\t             <option
+        >1</option>\r\n                              <option >2</option>\r\n                              <option
+        >3</option>\r\n                              <option >4</option>\r\n                              <option
+        >5</option>\r\n                              <option >6</option>\r\n                              <option
+        >7</option>\r\n                              <option >8</option>\r\n                              <option
+        >9</option>\r\n                              <option >10</option>\r\n                              <option
+        >11</option>\r\n                              <option >12</option>\r\n                              <option
+        >13</option>\r\n                              <option >14</option>\r\n                              <option
+        >15</option>\r\n                              <option >16</option>\r\n                              <option
+        >17</option>\r\n                              <option selected>18</option>\r\n
+        \                             <option >19</option>\r\n                              <option
+        >20</option>\r\n                              <option >21</option>\r\n                              <option
+        >22</option>\r\n                              <option >23</option>\r\n                              <option
+        >24</option>\r\n                              <option >25</option>\r\n                              <option
+        >26</option>\r\n                              <option >27</option>\r\n                              <option
+        >28</option>\r\n                              <option >29</option>\r\n                              <option
+        >30</option>\r\n                              <option >31</option>\r\n                                     </select>\r\n
+        \                   \r\n                      :\r\n                 <select
+        name=\"leave[1]\">\r\n\t\t\t\t\t\t\t                     <option value=\"1\"
+        selected>January</option>\r\n                                              <option
+        value=\"2\" >February</option>\r\n                                              <option
+        value=\"3\" >March</option>\r\n                                              <option
+        value=\"4\" >April</option>\r\n                                              <option
+        value=\"5\" >May</option>\r\n                                              <option
+        value=\"6\" >June</option>\r\n                                              <option
+        value=\"7\" >July </option>\r\n                                              <option
+        value=\"8\" >August</option>\r\n                                              <option
+        value=\"9\" >September</option>\r\n                                              <option
+        value=\"10\" >October</option>\r\n                                              <option
+        value=\"11\" >November</option>\r\n                                              <option
+        value=\"12\" >December</option>\r\n                                             </select>\r\n
+        \                   </fieldset>\r\n                  </li>\r\n                  <li>\r\n
+        \                   <fieldset>\r\n                      <legend>Leaving at</legend>\r\n
+        \                    <select name=\"leave[2]\">\r\n\t\t <option value=\"0\"
+        > 0</option>\r\n      <option value=\"1\" > 1</option>\r\n      <option value=\"2\"
+        > 2</option>\r\n      <option value=\"3\" > 3</option>\r\n      <option value=\"4\"
+        > 4</option>\r\n      <option value=\"5\" > 5</option>\r\n      <option value=\"6\"
+        > 6</option>\r\n      <option value=\"7\" > 7</option>\r\n      <option value=\"8\"
+        > 8</option>\r\n      <option value=\"9\" > 9</option>\r\n      <option value=\"10\"
+        > 10</option>\r\n      <option value=\"11\" > 11</option>\r\n      <option
+        value=\"12\" > 12</option>\r\n      <option value=\"13\" > 13</option>\r\n
+        \     <option value=\"14\" > 14</option>\r\n      <option value=\"15\" > 15</option>\r\n
+        \     <option value=\"16\" > 16</option>\r\n      <option value=\"17\" > 17</option>\r\n
+        \     <option value=\"18\" > 18</option>\r\n      <option value=\"19\" > 19</option>\r\n
+        \     <option value=\"20\" > 20</option>\r\n      <option value=\"21\" selected>
+        21</option>\r\n      <option value=\"22\" > 22</option>\r\n      <option value=\"23\"
+        > 23</option>\r\n             </select>\r\n                  :\r\n                   <select
+        name=\"leave[3]\">\r\n\t\t\r\n                     <option  >00</option>\r\n
+        \                    <option  >15</option>\r\n                     <option
+        \ >30</option>\r\n                     <option  selected>45</option>\r\n    \r\n
+        \       </select>\r\n                      :\r\n                     \r\n
+        \                     hours\r\n                    </fieldset>\r\n                  </li>\r\n
+        \                 <li class=\"text-button\">\r\n                    <input
+        name=\"submit\" type=\"submit\" value=\"Ok, plan my trip\">\r\n                  </li>\r\n
+        \               </ul>\r\n              </form>            </div>\n            \n
+        \            <div class=\"widget-wrapper clearfix\"> <a href=\"/routes_and_times/stop_by_stop_geographic\"
+        class=\"block-link clearfix\"><div class=\"height-transitioner\"></div>\n
+        \         <div class=\"icon-wrap\"><img src=\"/img_crop/1/small_boxes/image/65/65/1:1\"
+        \  alt=\"\" class=\"widget-icon\"></div>\n\t\t  <h2>Where's my bus?</h2>\n
+        \         <p>See where your bus is and when its due&nbsp;&raquo;</p>\n          </a></div>
+        \ <div class=\"widget-wrapper clearfix\"> <a href=\"/routes_and_times/timetables\"
+        class=\"block-link clearfix\"><div class=\"height-transitioner\"></div>\n
+        \         <div class=\"icon-wrap\"><img src=\"/img_crop/2/small_boxes/image/65/65/1:1\"
+        \  alt=\"\" class=\"widget-icon\"></div>\n\t\t  <h2>Bus timetables</h2>\n
+        \         <p>Click here for full timetable information &nbsp;&raquo;</p>\n
+        \         </a></div>  <div class=\"widget-wrapper clearfix\"> <a href=\"/routes_and_times/live_service_updates\"
+        class=\"block-link clearfix\"><div class=\"height-transitioner\"></div>\n
+        \         <div class=\"icon-wrap\"><img src=\"/img_crop/3/small_boxes/image/65/65/1:1\"
+        \  alt=\"\" class=\"widget-icon\"></div>\n\t\t  <h2>Service updates</h2>\n
+        \         <p>Current info on any service disruptions and changes&nbsp;&raquo;</p>\n
+        \         </a></div>          \n              \n              \n            <p
+        id=\"feedback-button\"><a href=\"#\" class=\"text-button-normal\">Feedback?</a></p>\n
+        \         </aside>\n          \n          <!-- end WIDGETS --> \n        </div>\n
+        \       <!-- end SECONDARY -->\n       \n        <section id=\"primary\"   class=\"timetable-list-section\"
+        >\n                 <h1 id=\"page-title\">Timetables</h1>\n        <div class=\"entry-content
+        wysiwyg\">\n        \t  <h2 style=\"width: 255px; float: left; margin-top:
+        0;\">Timetable 2017</h2>\n  <a name=\"map\"></a><div class=\"small-g-map\">\n
+        \ <script>\n    function initialize() {  \n   var myOptions = {\n                 zoom:
+        11,\n                center: new google.maps.LatLng(49.460667, -2.587168),\n
+        \               mapTypeId: google.maps.MapTypeId.ROADMAP\n              }\n
+        \             map = new google.maps.Map(document.getElementById('map_canvas'),
+        myOptions);\n\t\t\t  //addlayer(0);\n\t}\n \t\t\t\t var layer = new Array();\n\t\t\t\t\n\tvar
+        myKmlOptions = {\n\t\t\t\t\t\tpreserveViewport: true\n\t\t\t\t\t}\n\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[11]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/11.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[12]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/12.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[21]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/21.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[22]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/22.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[31]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/31.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[32]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/32.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[41]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/41.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[42]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/42.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[51]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/51.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[52]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/52.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[61]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/61.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[71]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/71.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[81]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/81.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[91]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/91.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[92]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/92.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[93]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/93.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[94]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/94.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[95]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/95.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\tlayer[P2]
+        = new google.maps.KmlLayer('http://buses.gg/kmls/P2.kml',myKmlOptions);\n\t\t\t\t\t\t\t\t
+        \n\t\t\t\n\t\t\t\t\n\t\t\tfunction addlayer(lid){\n\t\t\t\tObject.keys(layer).forEach(function
+        (key) {\n\t\t\t\t  layer[key].setMap(null);\t\t\n\t\t\t\t});\n\t\t\t\tlayer[lid].setMap(map);\t\t\t\n\t\t\t}\n\t\t\t\n\t\t\tfunction
+        removelayer(lid){\t\t\t\t\n\t\t\t\tlayer[lid].setMap(null);\t\t\n\t\t\t}\n
+        \     \n    </script>       \n    <style>\n.pebble {\n\tbackground-color:
+        #dfc0a8;\n}\n.sky {\n\tbackground-color: #80d2ee !important;\n}\n\n.gold {\n\tbackground-color:
+        #fadf99 !important;\n}\n.dusk {\n\tbackground-color: #d2b1d0 !important;;\n}\n\t
+        \   #map_canvas img {  max-width: none; }\n</style>\n      <div id=\"hide-map-to-start\"
+        \ >\n            <div class=\"small-g-map\">\n              <div id=\"map_canvas\"
+        style=\"width: 375px; height: 300px; margin-bottom: 15px; border: 1px solid;\">\n
+        \           </div>\n          </div>   \n\n</div>\n</div>\n          <ul id=\"main-timetable-list\">\n\n
+        \                            <li  class=\"clearfix\"><a href=\"/routes_and_times/timetables/11/TRUE\"
+        class=\"clearfix\">\n                <div class=\"tt-key\" style=\"background-color:
+        #8E5243; \">11</div>\n                <div class=\"tt-text\">Town Terminus
+        - L'Ancresse</div>\n                </a>\n                <div class=\"tt-showmap\"
+        \ onclick=\"addlayer(11);\"><span>route&nbsp;map</span></div>\n              </li></ul>
+        \         </div>\n          <!-- end ENTRY CONTENT --> \n          \n        </section>\n
+        \       <!-- end PRIMARY -->\n               <!-- end CONTENT --> \n          </main>\n
+        \ </div>\n  <!-- end MAIN --> \n  <!-- hey --> \n  <!-- after this point the
+        templates are pretty similar. --> \n  <!-- hey -->\n  <div class=\"color-strip-footer\"></div>\n
+        \ <footer id=\"page-footer\" role=\"contentinfo\">\n    <div id=\"footer-circle-holder\"
+        class=\"clearfix\">\n      <div id=\"page-footer-inner\" class=\"clearfix\">\n
+        \       <nav id=\"footer-nav-main\" role=\"navigation\">\n          <ul class=\"nav
+        sf-menu\" id=\"cc-foot\">\n            <li class=\"nav-top-level\"><a href=\"#\">Home</a></li>\n
+        \           <li class=\"nav-top-level \"><a href=\"#\">Routes &amp; Times</a></li>\n
+        \           <li class=\"nav-top-level \" data=\"current-page-ancestor\"><a
+        href=\"#\">Schools</a></li>\n            <li class=\"nav-top-level\"><a href=\"#\">Visiting
+        Guernsey</a>\n            <li class=\"nav-top-level\"><a href=\"#\">About</a></li>\n
+        \         </ul>\n        </nav>\n        <nav id=\"footer-nav-secondary\"
+        role=\"navigation\">\n          <ul>\n            <li><a href=\"/contact_us\">Contact
+        us</a></li>\n            <li><a href=\"/accessibility\">Accessibility</a></li>\n
+        \           <li><a href=\"/privacy\">Privacy & cookies</a></li>\n            <li><a
+        href=\"/site_map\">Sitemap</a></li>\n            <li><a href=\"/terms_conditions\">Terms
+        & Conditions</a></li>\n          </ul>\n        </nav>\n        <div id=\"copyright\">copyright
+        2015 Hct Group. All rights reserved.</div>\n      </div>\n      <div id=\"site-credits\">created
+        by <a href=\"http://www.wave.coop\">wave</a> , powered by <a href=\"http://www.ecologicalhosting.com\">wind</a></div>\n
+        \   </div>\n  </footer>\n</div>\n<div id=\"feedback-wrapper\" class=\"no-display\">\n
+        \ <div id=\"feedback-box\" class=\"clearfix\"><a class=\"close-popup-feedback\"
+        href=\"#\">close</a>\n    <h2>Your feedback</h2>\n    <p>Please help us to
+        improve our service by letting us know what you think. If you'd like us to
+        get back to you about your comment, don't forget to leave your name and contact
+        details.</p>\n    <form id=\"feedback-form\" class=\"standardform\">\n      <input
+        type=\"hidden\" value=\"/about\" name=\"url\">\n      <fieldset>\n        <ul>\n
+        \         <li class=\"input-default\">\n            <label for=\"feedback_message\">Add
+        your feedback here</label>\n            <textarea id=\"feedback_message\"
+        rows=\"5\" cols=\"20\" name=\"feedback_message\"></textarea>\n          </li>\n
+        \       </ul>\n      </fieldset>\n      <fieldset>\n        <span class=\"text-button\">\n
+        \       <button id=\"fb-submit\" class=\"styled-button-1\" type=\"submit\">Submit
+        feedback</button>\n        </span>\n      </fieldset>\n    </form>\n  </div>\n</div>\n<!--
+        Go to www.addthis.com/dashboard to customize your tools --> \n<script type=\"text/javascript\"
+        src=\"//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-554b89a919228ce1\"
+        async=\"async\"></script><script>\n  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n
+        \ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\n
+        \ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n
+        \ })(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n\n
+        \ ga('create', 'UA-22191335-2', 'auto');\n  ga('send', 'pageview');\n\n</script>\n
+        </body>\n</html>\n"}
     headers:
       Cache-Control: ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0']
       Connection: [close]
       Content-Type: [text/html;  charset=UTF-8]
-      Date: ['Tue, 16 Jan 2018 21:06:31 GMT']
+      Date: ['Thu, 18 Jan 2018 21:25:07 GMT']
       Expires: ['Thu, 19 Nov 1981 08:52:00 GMT']
       Pragma: [no-cache]
       Server: [Apache/2.2.15 (CentOS)]
-      Set-Cookie: [PHPSESSID=hf2pkm9lldo7sq25e10e4ve3r3; path=/]
+      Set-Cookie: [PHPSESSID=vto5jb7jb00hmkn20vau7cklc1; path=/]
       X-Powered-By: [PHP/5.3.3]
     status: {code: 200, message: OK}
 - request:
@@ -177,68 +375,203 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Cookie: [PHPSESSID=hf2pkm9lldo7sq25e10e4ve3r3]
+      Cookie: [PHPSESSID=vto5jb7jb00hmkn20vau7cklc1]
       User-Agent: [python-requests/2.18.4]
     method: GET
-    uri: http://m.buses.gg/index.php?content=Timetables&show_route=11&short
+    uri: http://buses.gg/routes_and_times/timetables/11/FALSE
   response:
-    body: {string: "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\"/>\n<meta
-        http-equiv=\"Content-Language\" content=\"en\"/>\n<title>Guernsey Buses</title>\n<meta
-        name=\"title\" content=\"Welcome to Guernsey Buses\"/>\n<meta name=\"description\"
-        content=\"Mobile website for Guernsey Buses\"/>\n<meta name=\"MSSmartTagsPreventParsing\"
-        content=\"true\"/>\n<meta name=\"Copyright\" content=\"(c) Guernsey Buses.
-        All rights reserved.\"/>\n<meta http-equiv=\"imagetoolbar\" content=\"no\"/>\n<meta
-        name=\"Rating\" content=\"General\"/>\n<meta http-equiv=\"X-UA-Compatible\"
-        content=\"chrome=1\"/>\n<link rel=\"home\" href=\"/\"/>\n<link rel=\"copyright\"
-        href=\"#copyright\"/>\n<!-- Icons -->\n<link rel=\"shortcut icon\" href=\"favicon.ico\"
-        />\n<link rel=\"apple-touch-icon\" sizes=\"129x129\" href=\"apple-touch-icon-129x129.png\"
-        />\n<link rel=\"apple-touch-icon\" sizes=\"114x114\" href=\"apple-touch-icon-114x114.png\"
-        />\n<link rel=\"apple-touch-icon\" sizes=\"72x72\" href=\"apple-touch-icon-72x72.png\"
-        />\n<link rel=\"apple-touch-icon\" href=\"apple-touch-icon.png\" />\n<!--
-        Device stuff -->\n<link rel=\"apple-touch-icon\" href=\"app-icon.png\"/>\n<meta
-        name=\"viewport\" content=\"width=device-width,initial-zoom=1\"/>\n<meta name=\"format-detection\"
-        content=\"telephone=no,address=no,email=no\" />\n<link rel=\"stylesheet\"
-        href=\"stylesheets/screen.css\"/>\n<script type=\"text/javascript\" src=\"http://buses.gg/js/auto.js\"></script>\n<script
-        type=\"text/javascript\" src=\"http://fast.fonts.com/jsapi/90d97285-1d5e-4a87-aec2-c5f4463d6715.js\"></script>\n
-        \  \n<style>\n .scroll {\n  display: block;\n  overflow: auto;\n  padding-bottom:
-        5px;\n}\n.headers {\n  border-right: 1px solid #dfc0a8;\n  float: left;\n
-        \ width: 25%;\n  min-width: 139px;\n}\n.timetables-styling-single .t-table
-        table {\n  border: 0 none;\n  border-collapse: collapse;\n  line-height: 1em;\n
-        \ margin: 0;\n  padding: 1px;\n}\n .StopHeader{\n  display: none;\n} \n.t-table
-        td, .t-table th{\n\theight:22px;\n} \n@media only screen and (max-width: 400px)
-        {\n\t.t-table td, .t-table th{\n\t\theight:46px;\n\t} \n}\n\n.pebble {\n\tbackground-color:
-        #dfc0a8;\n}\n.sky {\n\tbackground-color: #80d2ee;\n}\n\n.gold {\n\tbackground-color:
-        #fadf99 !important;\n}\n.dusk {\n\tbackground-color: #d2b1d0 !important;;\n}\n.active
-        {\n    background-image: url(\"http://guernseybuses.org/img/tt_alert.png\");\n
-        \   background-position:center;\n\tbackground-size:cover;\n    background-repeat:
-        no-repeat;\n    cursor: pointer;\n\t\n}\n\n.active-soon {\n  background-image:
-        url(\"http://guernseybuses.org/img/tt_alert_soon.png\");\n   background-position:center;\n\tbackground-size:cover;\n
-        \ background-repeat: no-repeat;\n  cursor: pointer;\n}\n</style>\n</head>\n<body
-        \ class=\"tpt-inner \" >\n<header id=\"top\" role=\"banner\">\n  <h1 id=\"logo\"><a
-        href=\"/\" title=\"Go to Guernsey Buses homepage\"><img src=\"m_img/gg_header_logo.png\"
-        alt=\"Guernsey Buses\" width=\"174\" height=\"75\" /></a></h1>\n  <a id=\"jump\"
-        href=\"#nav\"><img src=\"m_img/jump.png\" width=\"35\" height=\"35\" alt=\"show
-        navigation\"></a> </header>\n<div id=\"page\" role=\"main\">\n  <nav role=\"navigation\">\n
-        \   <ul id=\"nav\" tabindex=\"0\">\n<!--      <li><a href=\"planner.html\">Trip
-        planner</a></li>\n      <li><a href=\"live_times.html\">Live times</a></li>\n
-        \     <li><a href=\"timetables.html\">Timetables</a></li>\n      <li><a href=\"news.html\">News</a></li>\n
-        \     <li><a href=\"about.html\">About us</a></li>\n      <li><a href=\"contact.html\">Contact
-        us</a></li> -->\n      \n     <li><a href=\"/Trip planner\">Trip planner</a></li>
-        \    \n    <li><a href=\"/Stop by Stop\">Stop by Stop</a></li> \n      <li><a
-        href=\"/Timetables\">Timetables</a></li>\n    <!--  <li><a href=\"/Times to
-        my mobile\">Times to my mobile</a></li> -->\n          \t<!--<li><a href=\"/Live
-        service updates\">Live service updates</a></li> -->\n      <li><a href=\"/diversions\">Diversions</a></li>\n
-        \     <li><a href=\"/News\">News</a></li>\n      <li><a href=\"/About us\">About
-        us</a></li>\n      <li><a href=\"/Contact\">Contact us</a></li>\n    </ul>\n
-        \ </nav>\n  <div id=\"content\">\n            <header>\n          <h1></h1>\n
-        \         </header>\n  <div class=\"wrap\">    <div id=\"timetable\">\r\n
-        \    \r\n        <div id=\"divinf\"></div>\r\n<div id=\"divinf2\"></div>\r\n
-        \   \r\n<h2 id=\"page-title\">Route 11 </h2>\r\n\r\n\t\t\t\t\t\t\t\t\t   <div
-        class=\"t-table\">   \r\n\t\t\t\t\t\t\t\t\t        <h2> Town Terminus - L'Ancresse
-        - Outbound - Monday-Friday</h2>\r\n<table class=\"headers\">\r\n            <tbody>\r\n
-        \           \r\n\t\t\t\t\t\t\t\t\t  <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000773</span></td>
-        -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>Town Terminus - Stand C</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td
-        class=\"Outbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
+    body: {string: "<!doctype html>\n<html lang=\"en-GB\" prefix=\"og: http://ogp.me/ns#\"
+        class=\"no-js\">\n<head>\n<meta charset=\"UTF-8\">\n<title>Guernsey Buses
+        - Guernsey bus timetables</title>\r\n\t\t\t\t<meta name=\"title\" content=\"Guernsey
+        bus timetables\"><meta name=\"Description\" content=\"Full bus timetables
+        for all routes \" />\r\n\t\t\t\t<meta name=\"Keywords\" content=\"buses.gg,
+        Guernsey bus, Guernsey bus service, Guernsey bus route map, Guernsey buss
+        pass, Guernsey bus timetables, Guernsey bus routes, Guernsey bus fares Ormer
+        cards, Ormer cards Guernsey, Guernsey bus diversions, Guernsey bus twitter,
+        Guernsey bus service updates,  visit Guernsey, Guernsey tourist information,
+        Guernsey bus routes,  Island Coachways  \" /><style type=\"text/css\" media=\"all\">\n@import
+        url(\"/stylesheets/screen.css\");\n@import url(\"/stylesheets/superfish.css\");\n</style>\n\n<!--[if
+        lt IE 9]><link rel=\"stylesheet\" type=\"text/css\" href=\"stylesheets/ie.css\"
+        /><![endif]-->\n<link rel=\"stylesheet\" href=\"/core/control.css\">\n\n\n<script
+        type=\"text/javascript\" src=\"/js/jquery-1.11.2.min.js\"></script>\n<script
+        type=\"text/javascript\" src=\"/js/jquery-ui-1.11.4/jquery-ui.js\"></script>\n<script
+        type=\"text/javascript\" src=\"/js/auto.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/jquery.jscrollpane.min.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/jquery.betterTooltip.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/jquery.effects.core.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/jquery.scrollTo.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/pre-minification-gg.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/hoverIntent.js\"></script>\n<script type=\"text/javascript\" src=\"/js/superfish.js\"></script>\n<script
+        type=\"text/javascript\" src=\"/js/supersubs.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/jquery.cycle.all.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/modernizr.js\"></script>\n\n<meta name=\"google-translate-customization\"
+        content=\"7cc451bbdb1058c4-2ec6f1e19b03f448-g9db49a2678758db6-12\">\n<script
+        type=\"text/javascript\"   src=\"http://maps.googleapis.com/maps/api/js?sensor=false\"></script>\n<meta
+        name=\"pinterest\" content=\"nopin\" />\n<style>\n.pebble {\n\tbackground-color:
+        #dfc0a8 !important;\n}\n.sky {\n\tbackground-color: #80d2ee !important;\n}\n\n.gold
+        {\n\tbackground-color: #fadf99 !important;\n}\n.dusk {\n\tbackground-color:
+        #d2b1d0 !important;;\n}\n\t    #map img {  max-width: none; }\n</style>\n<script
+        type=\"text/javascript\">\n\n// initialise plugins\n\t\t\tjQuery(function(){\n\t\t//\tjQuery('ul.sf-menu').superfish();\n\t\t\t\n\t\t\t\t$('tr').each(function()
+        {\n\t\t\t\t   $(this).children('td').each(function(i) {\t\t\t\t\t\n\t\t\t\t\t\t
+        \ $(this).addClass(\"tdn_\" + i);\n\t\t\t\t\t   });\n\t\t\t\t\t});\n\t\t\t\t\t\n\t\t\t\t\t$('.headers
+        tr').each(function() {\t\t\t\t\t\t\n\t\t\t\t\tvar statclass = $(this).children('th').children('span').html();\n\t\t\t\t\tvar
+        cleanclass = statclass.replace(/[\\|&;\\$%@'\"<>\\(\\)\\+.,]/g, \"\");\n\t\t\t\t\tcleanclass
+        = cleanclass.replace(/ /g, '-');\n\t\t\t\t\tcleanclass = cleanclass.toLowerCase();
+        \n\t\t\t\t\t//alert(cleanclass);\n\t\t\t\t\t\n\t\t\t\t\t$(this).children('td').each(function(i)
+        {\n\t\t\t\t\t\t//alert('pox');\n\t\t\t\t\t\t\t  $(this).removeClass();\n\t\t\t\t\t\t\t
+        \ $(this).css(\"background-color\", \"white\");\n\t\t\t\t\t\t\t  $(this).addClass(cleanclass);\n\t\t\t\t\t\t
+        \  });\n\t\t\t\t\t});\n\t\t\t\t\t\n\t\t\t\t\t$('.scroll tr').each(function()
+        {\t\t\t\t\t\t\n\t\t\t\t\tvar statclass = $(this).children('th').children('span').html();\n\t\t\t\t\tvar
+        cleanclass = statclass.replace(/[\\|&;\\$%@'\"<>\\(\\)\\+.,]/g, \"\");\n\t\t\t\t\tcleanclass
+        = cleanclass.replace(/ /g, '-');\n\t\t\t\t\tcleanclass = cleanclass.toLowerCase();
+        \n\t\t\t\t\t//alert(cleanclass);\n\t\t\t\t\t\n\t\t\t\t\t\t\t//$(this).children('td').each(function(i)
+        {\n\t\t\t\t\t\t\t\t//alert('pox');\n\t\t\t\t\t\t\t  $(this).removeClass();\n\t\t\t\t\t\t\t
+        \ $(this).css(\"background-color\", \"white\");\n\t\t\t\t\t\t\t  $(this).addClass(cleanclass);\n\t\t\t\t\t\t//
+        \  });\n\t\t\t\t\t});\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\tvar
+        notes = ' <div id=\"t-table-extras\"><h3>Notes</h3><ul class=\"t-table-notes\"></ul></div>';\n\t\t\t\t\t//var
+        friday = '<li><div class=\"key-colour sky\"> </div><p>Fridays only</p></li>'\t;\n\t\t\t\t\t//var
+        school = '<li><div class=\"key-colour dusk\"> </div><p>School days only</p></li>'\t;\n\t\t\t\t\t//var
+        sat = '<li><div class=\"key-colour festival\"> </div><p>Saturdays only</p></li>'\t;\n\t\t\t\t\tvar
+        app = {\n\t\t\t\t\t\tsat:'<li><div class=\"key-colour festival\"> </div><p>Saturdays
+        only</p></li>',\n\t\t\t\t\t\tschool:'<li><div class=\"key-colour dusk\"> </div><p>School
+        days only</p></li>',\t\t\t\t\t\t\n\t\t\t\t\t\tnonschool:'<li><div class=\"key-colour
+        gold\"> </div><p>Non School days only</p></li>',\n\t\t\t\t\t\tfriday:'<li><div
+        class=\"key-colour sky\"> </div><p>Fridays only</p></li>'\t\n\t\t\t\t\t}\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\tfunction
+        add_notes(day, columns, add){\t\t\t\n\t\t\t        var tf = ['true','false'];\t\t\t\t\t\n\t\t\t\t\ttf.forEach(function(entry)
+        {\n\t\t\t\t\t\t\t\tvar id= '#' +entry + '-' + day;\n\t\t\t\t\t\t\t\tfor (var
+        key in columns) {\n\t\t\t\t\t\t\t\t\t\t\tvar value = columns[key];\n\t\t\t\t\t\t\t\t\t\t\t//var
+        color = '#true-2-1-friday td.tdn_' + key;\n\t\t\t\t\t\t\t\t\t\t\tvar color
+        = id + ' td.tdn_' + key;\n\t\t\t\t\t\t\t\t\t\t\t$(color).addClass(value);\n\t\t\t\t\t\t\t\t}\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t$(id).after(notes);\t\n\t\t\t\t\t\t\t\t$(id).next('div').addClass(day);\n\t\t\t\t\t});\t\t\t\t\t\n\t\t\t\t\tvar
+        classx = '.' + day + ' .t-table-notes';\t\n\t\t\t\t\t for (var key in add)
+        {\n\t\t\t\t\t\tvar value = add[key];\n\t\t\t\t\t\t$(classx).append(app[value]);\n\t\t\t\t\t}\t\n\t\t\t}\n\t\t\t\n\t\t\tfunction
+        add_notesx(fridayc,note){\n\t\t\t\t  \t\t// alert(note);\n\t\t\t\t\t\t//var
+        id= '#true-15-0-friday';\n\t\t\t\t\t\t//alert (id);\n\t\t\t\t\t\t\tfor (var
+        key in fridayc) {\n\t\t\t\t\t\t\t\tvar id = '#' + fridayc[key];\n\t\t\t\t\t\t\t\t//alert(id);\n\t\t\t\t\t\t\t\tvar
+        classz= note + key;\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t$(id).next('div').addClass(classz);\n\t\t\t\t\t\t\t\tvar
+        classx = '.' + classz + ' .t-table-notes';\t\n\t\t\t\t\t\t\t\t$(classx).append(app[note]);\n\t\t\t\t\t\t\t\t//$(id).after(notes);\n\t\t\t\t\t\t\t}\n\t\t\t}\n\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\n\t\t\t
+        \   \t//var day='11-1-friday';\n\t\t\t\t\t//var columns= {  22:'sky',23:'sky'};\n\t\t\t\t\t//var
+        add = ['friday']\n\t\t\t\t\t//add_notes(day,columns, add);\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t//$('#false-P1-0-friday
+        .tdn_3').css('display','none');\n\t\t\t\t\t//$('#false-51-0-friday .tdn_5').css('display','none');\n\t\t\t\t\t//$('#true-P1-0-friday
+        .tdn_3').css('display','none');\n\t\t\t\t\t//$('#true-51-0-friday .tdn_5').css('display','none');\n\t\t\t\t\t\n\t\t\t\t\tvar
+        ff = ['VJ22@22:00:00','VJ23@23:00:00','VJ24@00:00:00','VJ371@22:19:00','VJ372@23:19:00','VJ373@00:19:00','VJ141@22:00:00','VJ142@23:00:00','VJ143@00:00:00','VJ491@22:21:00','VJ492@23:21:00','VJ493@00:21:00','VJ338@21:00:00','VJ339@22:00:00','VJ340@23:00:00','VJ341@00:00:00','VJ663@21:20:00','VJ664@22:20:00','VJ665@23:20:00','VJ666@00:20:00'];\n\t\t\t\t\t\n\t\t\t\t\tvar
+        fridayc = [];\n\t\t\t\t\tconsole.log(\"j6\");\n\t\t\t\t\t \n\t\t\t\t\t \n\t\t\t\t\t
+        \n\t\t\t\t\t \n\t\t\t\t\t\tfor (var key in ff) {\n\t\t\t\t\t\tconsole.log(\"j6b\");\n\t\t\t\t\t\t
+        \ var tid = ff[key];\n\t\t\t\t\t\t console.log(\"tid \"+tid);\n\t\t\t\t\t\t
+        \ $('td[data=\"' + tid + '\"').addClass('sky');\n\t\t\t\t\t\t  console.log(\"j6c\");\n\t\t\t\t\t\t
+        \ var uguv = $('td[data=\"' + tid + '\"').closest(\"div\").attr(\"id\");\n\t\t\t\t\t\t
+        \  console.log(\"j6d\");\n\t\t\t\t\t\t  if (typeof uguv !== 'undefined') {\n\t\t\t\t\t\t\tvar
+        found = jQuery.inArray(uguv, fridayc);\n\t\t\t\t\t\t\tif (found >= 0) {\n\t\t\t\t\t\t\n\t\t\t\t\t\t\t}
+        else {\n\t\t\t\t\t\t\t  // Element was not found, add it.\n\t\t\t\t\t\t\t
+        \ fridayc.push(uguv);\n\t\t\t\t\t\t\t  //alert(uguv);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t
+        \ } else {\n\t\t\t\t\t\t\tconsole.log(\"uguv was undefined\");  \n\t\t\t\t\t\t
+        \ }\n\t\t\t\t\t\t\n\t\t\t\t\t\t}\n\n\n\n\n\n\n\t\t\t\t\t   console.log(\"j7\");\n\t\t\t\t\t
+        add_notesx(fridayc,'friday');\n\t\t\t\t\t   console.log(\"j8\");\n\t\t\t\t\t
+        \ \n\t\t\t\t\t  var ns = ['VJ364@14:48:00','VJ61@14:58:00','VJ412@15:12:00','VJ67@08:10:00','VJ117@08:00:00','VJ216@08:10:00','VJ551@14:42:00','VJ238@15:05:00','VJ588@15:30:00','VJ276@14:40:00','VJ310@15:15:00','VJ634@15:40:00'];\n\t\t\t\t\t\n\t\t\t\t\t\tvar
+        nsc = [];\n\t\t\t\t\t console.log(\"j9\");\n\t\t\t\t\t for (var key in ns)
+        {\n\t\t\t\t\t\tvar tid = ns[key];\n\t\t\t\t\t\t//alert(tid);\n\t\t\t\t\t\t$('td[data=\"'
+        +  tid + '\"').addClass( 'gold' );\n\t\t\t\t\t\tvar uguv=$('td[data=\"' +
+        \ tid + '\"').closest( \"div\" ).attr(\"id\");\n\t\t\t\t\t\tconsole.log(uguv);\n\t\t\t\t\t\t
+        if (typeof uguv !== 'undefined') {\n\t\t\t\t\t\t   var found = jQuery.inArray(uguv,
+        nsc);\n\t\t\t\t\t\t   if (found >= 0) {\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t}
+        else {\n\t\t\t\t\t\t\t\t// Element was not found, add it.\n\t\t\t\t\t\t\t\tnsc.push(uguv);\n\t\t\t\t\t\t\t\t//alert(uguv);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}
+        \n\t\t\t\t\t  }\t\n\t\t\t\t\t   add_notesx(nsc,'nonschool');\n\t\t\t\t\t  \n\t\t\t\t\t
+        \ \t  var st = ['VJ386@14:44:00','VJ64@08:24:00','VJ152@08:25:00','VJ201@08:35:00','VJ550@14:42:00','VJ614@15:35:00','VJ289@15:55:00','VJ290@14:40:00'];\n\t\t\t\t\t\n\t\t\t\t\tvar
+        sc = [];\n\t\t\t\t\tconsole.log(\"j3\");\n\t\t\t\t\t for (var key in st) {\n\t\t\t\t\t\tvar
+        tid = st[key];\n\t\t\t\t\t\tconsole.log(\"j1a\");\n\t\t\t\t\t\t\n\t\t\t\t\t\t$('td[data=\"'
+        +  tid + '\"').addClass( 'dusk' );\n\t\t\t\t\t\t  var uguv=$('td[data=\"'
+        +  tid + '\"').closest( \"div\" ).attr(\"id\");\n\t\t\t\t\t\t if (typeof uguv
+        !== 'undefined') {\n\t\t\t\t\t\t   var found = jQuery.inArray(uguv, sc);\n\t\t\t\t\t\t
+        \  if (found >= 0) {\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t} else {\n\t\t\t\t\t\t\t\t//
+        Element was not found, add it.\n\t\t\t\t\t\t\t\tsc.push(uguv);\n\t\t\t\t\t\t\t\t//alert(uguv);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}
+        \n\t\t\t\t\t  }\t\n\t\t\t\t\t  \n\t\t\t\t\t add_notesx(sc,'school');\n\t\t\t\t\n\t\t\t\n\t\t\t});\n\n\n\n\n\t\t\t\n\t\t\t
+        \t  \n\t\t\t function load_maps(){\n\t\t\t\t \t\t\t\t\t initialize11();\n\t\t\t\t\t\t\t\t
+        \n\t\t\t }\n\t\t\t \n\t\t\t </script>\n</head>\n<body  id=\"timetable-single\"
+        class=\"timetables-styling-single\"  class=\"timetables-styling\"  onload=\"load_maps();\">\n<div
+        id=\"page\" class=\"\"> <a class=\"skip-link screen-reader-text\" href=\"#content\">Skip
+        to content</a>\n  <header id=\"masthead\" class=\"site-header clearfix\" role=\"banner\">\n
+        \   <div id=\"circle-holder\" class=\"clearfix\">\n      <div id=\"masthead-inner\">\n
+        \       <div id=\"brand\"><a href=\"index.html\"><img src=\"/img/mast_logox2.png\"
+        alt=\"buses gg logo\"/></a></div>\n        <div id=\"header-tools\">\n          <div
+        id=\"search-main\" class=\"aside\" role=\"search\">\n            <form  role=\"search\"
+        id=\"searchform\" action=\"/search_results\" method=\"post\">\n              <div>\n
+        \               <label class=\"screen-reader-text\" for=\"words\">Search for:</label>\n
+        \               <input id=\"s\" type=\"text\" tabindex=\"1\" size=\"32\" onBlur=\"if
+        (this.value == '') {this.value = 'Search';}\" onFocus=\"if (this.value ==
+        'Search') {this.value = '';}\" value=\"Search\" name=\"words\">\n                <input
+        id=\"searchsubmit\" type=\"submit\" tabindex=\"2\" value=\"Search\" name=\"searchsubmit\">\n
+        \             </div>\n            </form>\n          </div>\n          <!--
+        end SEARCH --> <div id=\"google_translate_element\"></div>\n        <script
+        type=\"text/javascript\">\nfunction googleTranslateElementInit() {\n  new
+        google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE},
+        'google_translate_element');\n}\n</script><script type=\"text/javascript\"
+        src=\"http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit\"></script>
+        \n      </div><!-- end TRANSLATE -->\n        <!-- end HEADER TOOLS -->\n
+        \       <nav role=\"navigation\">\n          <div id=\"main-nav\">\n          <ul
+        \  class=\"nav sf-menu\"  id=\"cc\"  ><li class=\"\"><a  class=\"home_link\"
+        href=\"http://buses.gg/\"   id=\"home_link\">Home</a></li><li class=\"current-page-ancestor\"><a
+        href=\"http://buses.gg/routes_and_times\"  id=\"routes_and_times_1059\" class=\"\">Routes
+        and Times</a><ul class=\"children\"><li ><a href=\"http://buses.gg/routes_and_times/app_for_mobile\"
+        >app for mobile</a></li><li ><a href=\"http://buses.gg/routes_and_times/stop_by_stop\"
+        >Stop-by-Stop</a></li><li ><a href=\"http://buses.gg/routes_and_times/stop_by_stop_geographic\"
+        >Stop-by-Stop Geographic</a></li><li ><a href=\"http://buses.gg/routes_and_times/journey_planner\"
+        >Journey Planner</a></li><li ><a href=\"http://buses.gg/routes_and_times/journey_planner_geographical\"
+        >Journey Planner Geographical</a></li><li ><a href=\"http://buses.gg/routes_and_times/timetables\"
+        >Timetables</a></li><li ><a href=\"http://buses.gg/routes_and_times/prices_and_tickets\"
+        >Prices and tickets</a></li><li ><a href=\"http://buses.gg/routes_and_times/live_service_updates\"
+        >Live service updates</a></li><li ><a href=\"http://buses.gg/routes_and_times/tennerfest\"
+        >Tennerfest 2017</a></li><li ><a href=\"http://buses.gg/routes_and_times/parish_link_p2\"
+        >Parish Link P2</a></li><li ><a href=\"http://buses.gg/routes_and_times/puffinpass\"
+        >puffinpass</a></li></ul ></li><li class=\"\"><a href=\"http://buses.gg/schools\"
+        \ id=\"schools_1065\" class=\"\">Schools</a><ul class=\"children\"><li ><a
+        href=\"http://buses.gg/schools/about_school_buses_2\" >About school buses</a></li><li
+        ><a href=\"http://buses.gg/schools/routes_and_times_2\" >Routes and times</a></li><li
+        ><a href=\"http://buses.gg/schools/the_amazing_journey\" >The Amazing Journey</a></li></ul
+        ></li><li class=\"\"><a href=\"http://buses.gg/diversions\"  id=\"diversions_1069\"
+        class=\"\">Diversions</a></li><li class=\"\"><a href=\"http://buses.gg/visiting_guernsey\"
+        \ id=\"visiting_guernsey_1074\" class=\"\">Visiting Guernsey</a><ul class=\"children\"><li
+        ><a href=\"http://buses.gg/visiting_guernsey/attractions_by_bus\" >Attractions
+        by bus</a></li><li ><a href=\"http://buses.gg/visiting_guernsey/arriving_in_guernsey\"
+        >Arriving in Guernsey</a></li><li ><a href=\"http://buses.gg/visiting_guernsey/souvenir_of_your_bus_adventure\"
+        >Souvenir of your bus adventure</a></li></ul ></li><li class=\"\"><a href=\"http://buses.gg/about\"
+        \ id=\"about_1077\" class=\"\">About</a><ul class=\"children\"><li ><a href=\"http://buses.gg/about/using_the_bus_service\"
+        >Using the bus service</a></li><li ><a href=\"http://buses.gg/about/contacting_us\"
+        >Contacting us</a></li><li ><a href=\"http://buses.gg/about/news\" >News</a></li><li
+        ><a href=\"http://buses.gg/about/lost_property\" >Lost property</a></li><li
+        ><a href=\"http://buses.gg/about/accessible_service\" >Accessible service</a></li><li
+        ><a href=\"http://buses.gg/about/Let_us_know\" >Let us know</a></li><li ><a
+        href=\"http://buses.gg/about/social_enterprise\" >Social enterprise</a></li><li
+        ><a href=\"http://buses.gg/about/train_as_a_bus_driver\" >Train as a bus driver</a></li><li
+        ><a href=\"http://buses.gg/about/advertise_with_us\" >Advertise with us</a></li><li
+        ><a href=\"http://www.hctgroup.org/jobs\" >Jobs</a></li></ul ></li><li class=\"\"><a
+        href=\"http://buses.gg/shop\"  id=\"shop_1108\" class=\"\">Shop</a><ul class=\"children\"><li
+        ><a href=\"http://buses.gg/shop/faq\" >FAQ</a></li></ul ></li></ul>          \n
+        \         </div>\n        </nav>\n      </div>\n      <!-- end MAIN NAV -->
+        \n    </div>\n  </header>\n  <!-- end HEADER start MAIN-->\n  <div class=\"color-strip\"></div>\n
+        \ <div id=\"main-wrapper\" class=\"clearfix\">\n    <main id=\"main\" class=\"clearfix\"
+        role=\"main\">\n                   <div id=\"content\" class=\"site-content\">
+        \n        <!--  hey there --> \n        <!-- this is where most of the differences
+        between templates begins (but not all!) --> \n        <!--  hey there -->\n
+        \               <h1 id=\"page-title\">Timetables</h1>\n        <div class=\"entry-content
+        wysiwyg\">\n        \t <div class=\"small-g-map\">\n            <script>\n
+        \     function initialize11() {\n        var myLatlng = new google.maps.LatLng(49.460667,
+        -2.587168);\n        var mapOptions = {\n          zoom: 11,\n          center:
+        myLatlng,\n          mapTypeId: google.maps.MapTypeId.ROADMAP\n        }\n\n
+        \       var map = new google.maps.Map(document.getElementById('map_canvas11'),
+        mapOptions);\n\t\t\n\t\t\tvar myKmlOptions = {\n\t\t\t\t\t\tpreserveViewport:
+        true\n\t\t\t\t\t}\n\n        var georssLayer = new google.maps.KmlLayer('http://buses.gg/kmls/11.kml',myKmlOptions);\n\t\t
+        \       georssLayer.setMap(map);\n\t\tgeorssLayer2.setMap(map);\n      }\n
+        \   </script> \n             \n   <div id=\"map_canvas11\" style=\"width:
+        375px; height: 300px; margin-bottom: 15px; \"></div>\n        </div>\n        <div
+        class=\"t-table-opt-links\">\n          <p>\n          <a href=\"/routes_and_times/timetables\"
+        class=\"text-button-normal\">Back to timetables</a>\n       <a href=\"/routes_and_times/timetables_print/11/FALSE\"
+        target=\"_blank\" class=\"text-button-normal\">Print this timetable</a>\n
+        \        <!-- <a href=\"/pdfs/11.pdf\" class=\"text-button-normal\" target=\"_blank\">Download
+        \ timetable</a>  --> </p>\n        </div>\n<h2>Timetable 2017</h2>\n<h1 id=\"page-title\">Route
+        11</h1>\n\t\t\t\t\t\t\t\t\t   <div class=\"t-table\">   \n                                        \n\t\t\t\t\t\t\t\t\t\t
+        <h2> Town Terminus - L'Ancresse - Outbound - Monday-Friday</h2>\r\n<table
+        class=\"headers\">\r\n            <tbody>\r\n            \r\n\t\t\t\t\t\t\t\t\t
+        \ <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000773</span></td> -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>Town
+        Terminus - Stand C</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"Outbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
         -->\r\n\t\t\t\t\t\t\t\t\t  </tr>\r\n\t\t\t\t\t\t\t\t\t \r\n\t\t\t\t\t\t\t\t\t
         \ <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000002</span></td> -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>North
         Esplanade - Northbound</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"Outbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
@@ -1353,12 +1686,11 @@ interactions:
         \                                   <td  data=\"VJ24@00:00:00\">00:19</td>\r\n
         \                                   <td class=\"end-row\">&nbsp;</td>\r\n
         \               </tr>\r\n                               \r\n          </tbody>\r\n
-        \           </table>\r\n          </div>\r\n\r\n                                             <div
-        id=\"t-table-extras\"><ul class=\"t-table-notes\"></ul></div>\r\n\t\t\t\t\t\t\t\t\t
-        \ </div>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   <div class=\"t-table\">
-        \  \r\n\t\t\t\t\t\t\t\t\t        <h2> Town Terminus - L'Ancresse - Inbound
-        - Monday-Friday</h2>\r\n<table class=\"headers\">\r\n            <tbody>\r\n
-        \           \r\n\t\t\t\t\t\t\t\t\t  <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000327</span></td>
+        \           </table>\r\n          </div>\r\n\r\n <div id=\"t-table-extras\"><ul
+        class=\"t-table-notes\"></ul></div> \t\t\t\t\t\t\t\t\t  </div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t
+        \  <div class=\"t-table\">   \n                                        \n\t\t\t\t\t\t\t\t\t\t
+        <h2> Town Terminus - L'Ancresse - Inbound - Monday-Friday</h2>\r\n<table class=\"headers\">\r\n
+        \           <tbody>\r\n            \r\n\t\t\t\t\t\t\t\t\t  <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000327</span></td>
         -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>L'Ancresse Terminus - Eastbound</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td
         class=\"Inbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
         -->\r\n\t\t\t\t\t\t\t\t\t  </tr>\r\n\t\t\t\t\t\t\t\t\t \r\n\t\t\t\t\t\t\t\t\t
@@ -2636,11 +2968,10 @@ interactions:
         \                                   <td  data=\"VJ373@00:19:00\">00:40</td>\r\n
         \                                   <td class=\"end-row\">&nbsp;</td>\r\n
         \               </tr>\r\n                               \r\n          </tbody>\r\n
-        \           </table>\r\n          </div>\r\n\r\n                                             <div
-        id=\"t-table-extras\"><ul class=\"t-table-notes\"></ul></div>\r\n\t\t\t\t\t\t\t\t\t
-        \ </div>\r\n\t\t\t\t\t\t\t\t\t  \r\n\r\n\r\n\r\n    \r\n    \r\n    \r\n    \r\n
-        \t\t\t\t\t\t\t\t\t   <div class=\"t-table\">   \r\n\t\t\t\t\t\t\t\t\t        <h2>
-        Town Terminus - L'Ancresse - Outbound - Saturday</h2>\r\n<table class=\"headers\">\r\n
+        \           </table>\r\n          </div>\r\n\r\n <div id=\"t-table-extras\"><ul
+        class=\"t-table-notes\"></ul></div> \t\t\t\t\t\t\t\t\t  </div>\n\t\t\t\t\t\t\t\t\t
+        \ \n  \n  \n     \n \t\t\t\t\t\t\t\t\t   <div class=\"t-table\">   \n                                        \n\t\t\t\t\t\t\t\t\t\t
+        <h2> Town Terminus - L'Ancresse - Outbound - Saturday</h2>\r\n<table class=\"headers\">\r\n
         \           <tbody>\r\n            \r\n\t\t\t\t\t\t\t\t\t  <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000773</span></td>
         -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>Town Terminus - Stand C</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td
         class=\"Outbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
@@ -3658,13 +3989,13 @@ interactions:
         \                                   <td  data=\"AVJ30@00:00:00\">00:19</td>\r\n
         \                                   <td class=\"end-row\">&nbsp;</td>\r\n
         \               </tr>\r\n                               \r\n          </tbody>\r\n
-        \           </table>\r\n          </div>\r\n\r\n                                             <div
-        id=\"t-table-extras\"><ul class=\"t-table-notes\"></ul></div>\r\n\t\t\t\t\t\t\t\t\t
-        \ </div>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   <div class=\"t-table\">
-        \  \r\n\t\t\t\t\t\t\t\t\t        <h2> Town Terminus - L'Ancresse - Inbound
-        - Saturday</h2>\r\n<table class=\"headers\">\r\n            <tbody>\r\n            \r\n\t\t\t\t\t\t\t\t\t
-        \ <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000327</span></td> -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>L'Ancresse
-        Terminus - Eastbound</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"Inbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
+        \           </table>\r\n          </div>\r\n\r\n <div id=\"t-table-extras\"><ul
+        class=\"t-table-notes\"></ul></div> \t\t\t\t\t\t\t\t\t  </div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t
+        \  <div class=\"t-table\">   \n                                        \n\t\t\t\t\t\t\t\t\t\t
+        <h2> Town Terminus - L'Ancresse - Inbound - Saturday</h2>\r\n<table class=\"headers\">\r\n
+        \           <tbody>\r\n            \r\n\t\t\t\t\t\t\t\t\t  <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000327</span></td>
+        -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>L'Ancresse Terminus - Eastbound</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td
+        class=\"Inbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
         -->\r\n\t\t\t\t\t\t\t\t\t  </tr>\r\n\t\t\t\t\t\t\t\t\t \r\n\t\t\t\t\t\t\t\t\t
         \ <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000349</span></td> -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>La
         Moye Road - Eastbound</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"Inbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
@@ -4800,11 +5131,10 @@ interactions:
         \                                   <td  data=\"AVJ330@00:20:00\">00:41</td>\r\n
         \                                   <td class=\"end-row\">&nbsp;</td>\r\n
         \               </tr>\r\n                               \r\n          </tbody>\r\n
-        \           </table>\r\n          </div>\r\n\r\n                                             <div
-        id=\"t-table-extras\"><ul class=\"t-table-notes\"></ul></div>\r\n\t\t\t\t\t\t\t\t\t
-        \ </div>\r\n\t\t\t\t\t\t\t\t\t  \r\n\r\n\r\n\r\n    \r\n    \r\n    \r\n    \r\n
-        \t\t\t\t\t\t\t\t\t   <div class=\"t-table\">   \r\n\t\t\t\t\t\t\t\t\t        <h2>
-        Town Terminus - L'Ancresse - Outbound - Sunday</h2>\r\n<table class=\"headers\">\r\n
+        \           </table>\r\n          </div>\r\n\r\n <div id=\"t-table-extras\"><ul
+        class=\"t-table-notes\"></ul></div> \t\t\t\t\t\t\t\t\t  </div>\n\t\t\t\t\t\t\t\t\t
+        \ \n  \n  \n     \n \t\t\t\t\t\t\t\t\t   <div class=\"t-table\">   \n                                        \n\t\t\t\t\t\t\t\t\t\t
+        <h2> Town Terminus - L'Ancresse - Outbound - Sunday</h2>\r\n<table class=\"headers\">\r\n
         \           <tbody>\r\n            \r\n\t\t\t\t\t\t\t\t\t  <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000773</span></td>
         -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>Town Terminus - Stand C</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td
         class=\"Outbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
@@ -5322,13 +5652,13 @@ interactions:
         \                                   <td  data=\"UVJ12@18:30:00\">18:48</td>\r\n
         \                                   <td class=\"end-row\">&nbsp;</td>\r\n
         \               </tr>\r\n                               \r\n          </tbody>\r\n
-        \           </table>\r\n          </div>\r\n\r\n                                             <div
-        id=\"t-table-extras\"><ul class=\"t-table-notes\"></ul></div>\r\n\t\t\t\t\t\t\t\t\t
-        \ </div>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   <div class=\"t-table\">
-        \  \r\n\t\t\t\t\t\t\t\t\t        <h2> Town Terminus - L'Ancresse - Inbound
-        - Sunday</h2>\r\n<table class=\"headers\">\r\n            <tbody>\r\n            \r\n\t\t\t\t\t\t\t\t\t
-        \ <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000327</span></td> -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>L'Ancresse
-        Terminus - Eastbound</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"Inbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
+        \           </table>\r\n          </div>\r\n\r\n <div id=\"t-table-extras\"><ul
+        class=\"t-table-notes\"></ul></div> \t\t\t\t\t\t\t\t\t  </div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t
+        \  <div class=\"t-table\">   \n                                        \n\t\t\t\t\t\t\t\t\t\t
+        <h2> Town Terminus - L'Ancresse - Inbound - Sunday</h2>\r\n<table class=\"headers\">\r\n
+        \           <tbody>\r\n            \r\n\t\t\t\t\t\t\t\t\t  <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000327</span></td>
+        -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>L'Ancresse Terminus - Eastbound</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td
+        class=\"Inbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
         -->\r\n\t\t\t\t\t\t\t\t\t  </tr>\r\n\t\t\t\t\t\t\t\t\t \r\n\t\t\t\t\t\t\t\t\t
         \ <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000349</span></td> -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>La
         Moye Road - Eastbound</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"Inbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
@@ -5904,51 +6234,134 @@ interactions:
         \                                   <td  data=\"UVJ140@18:50:00\">19:10</td>\r\n
         \                                   <td class=\"end-row\">&nbsp;</td>\r\n
         \               </tr>\r\n                               \r\n          </tbody>\r\n
-        \           </table>\r\n          </div>\r\n\r\n                                             <div
-        id=\"t-table-extras\"><ul class=\"t-table-notes\"></ul></div>\r\n\t\t\t\t\t\t\t\t\t
-        \ </div>\r\n\t\t\t\t\t\t\t\t\t  \r\n\r\n\r\n\r\n    \r\n    \r\n    \r\n    \r\n
-        \   </div>\n    <div class=\"separator\">&nbsp;</div>\n  </div>\n</div>\n<!--
-        / #page -->\n<footer id=\"bottom\" role=\"contentinfo\">\n  <p id=\"footer-jump\"><a
-        href=\"#\" ><strong>Menu</strong></a></p>\n  <p> \n    <!-- ADDRESS & SUCH
-        --> \n    <small id=\"copyright\">&copy; 2015 Guernsey Buses. All rights reserved.</small></p>\n
-        \ <p><small><a href=\"#\" class=\"scrolltop\">Back to top</a></small></p>\n</footer>\n<script
-        type=\"text/javascript\" src=\"http://guernseybuses.org/js/jquery-1.11.2.min.js\"></script>
-        \n<script src=\"js/main.js\"></script> \n<script src=\"js/jquery-ui-1.8.23.custom.min.js\"></script>\n<script
-        type=\"text/javascript\">\n\tjQuery(function(){\n\t\t//\tjQuery('ul.sf-menu').superfish();\n\t\t\t\n\t\t\t\t$('tr').each(function()
+        \           </table>\r\n          </div>\r\n\r\n <div id=\"t-table-extras\"><ul
+        class=\"t-table-notes\"></ul></div> \t\t\t\t\t\t\t\t\t  </div>\n\t\t\t\t\t\t\t\t\t
+        \ \n  \n  \n     \n      <div class=\"t-table-opt-links\">\n          <p><a
+        href=\"/routes_times/timetables\" class=\"text-button-normal\">Back to timetables</a>\n
+        \         <!-- | <a href=\"test.html\">Download routemap</a>--> \n          <!--
+        <a href=\"/pdfs/11.pdf\" class=\"text-button-normal\">Download this timetable</a>
+        -->\n           <a href=\"/pdfs/11.pdf\" class=\"text-button-normal\">Download
+        this timetable</a>\n           </p>\n        </div>\n \n   \n          </ul>\n
+        \         \t\t\t\t\n          </div>\n          <!-- end ENTRY CONTENT -->
+        \n          \n        </section>\n        <!-- end PRIMARY -->\n               <!--
+        end CONTENT --> \n          </main>\n  </div>\n  <!-- end MAIN --> \n  <!--
+        hey --> \n  <!-- after this point the templates are pretty similar. --> \n
+        \ <!-- hey -->\n  <div class=\"color-strip-footer\"></div>\n  <footer id=\"page-footer\"
+        role=\"contentinfo\">\n    <div id=\"footer-circle-holder\" class=\"clearfix\">\n
+        \     <div id=\"page-footer-inner\" class=\"clearfix\">\n        <nav id=\"footer-nav-main\"
+        role=\"navigation\">\n          <ul class=\"nav sf-menu\" id=\"cc-foot\">\n
+        \           <li class=\"nav-top-level\"><a href=\"#\">Home</a></li>\n            <li
+        class=\"nav-top-level \"><a href=\"#\">Routes &amp; Times</a></li>\n            <li
+        class=\"nav-top-level \" data=\"current-page-ancestor\"><a href=\"#\">Schools</a></li>\n
+        \           <li class=\"nav-top-level\"><a href=\"#\">Visiting Guernsey</a>\n
+        \           <li class=\"nav-top-level\"><a href=\"#\">About</a></li>\n          </ul>\n
+        \       </nav>\n        <nav id=\"footer-nav-secondary\" role=\"navigation\">\n
+        \         <ul>\n            <li><a href=\"/contact_us\">Contact us</a></li>\n
+        \           <li><a href=\"/accessibility\">Accessibility</a></li>\n            <li><a
+        href=\"/privacy\">Privacy & cookies</a></li>\n            <li><a href=\"/site_map\">Sitemap</a></li>\n
+        \           <li><a href=\"/terms_conditions\">Terms & Conditions</a></li>\n
+        \         </ul>\n        </nav>\n        <div id=\"copyright\">copyright 2015
+        Hct Group. All rights reserved.</div>\n      </div>\n      <div id=\"site-credits\">created
+        by <a href=\"http://www.wave.coop\">wave</a> , powered by <a href=\"http://www.ecologicalhosting.com\">wind</a></div>\n
+        \   </div>\n  </footer>\n</div>\n<div id=\"feedback-wrapper\" class=\"no-display\">\n
+        \ <div id=\"feedback-box\" class=\"clearfix\"><a class=\"close-popup-feedback\"
+        href=\"#\">close</a>\n    <h2>Your feedback</h2>\n    <p>Please help us to
+        improve our service by letting us know what you think. If you'd like us to
+        get back to you about your comment, don't forget to leave your name and contact
+        details.</p>\n    <form id=\"feedback-form\" class=\"standardform\">\n      <input
+        type=\"hidden\" value=\"/about\" name=\"url\">\n      <fieldset>\n        <ul>\n
+        \         <li class=\"input-default\">\n            <label for=\"feedback_message\">Add
+        your feedback here</label>\n            <textarea id=\"feedback_message\"
+        rows=\"5\" cols=\"20\" name=\"feedback_message\"></textarea>\n          </li>\n
+        \       </ul>\n      </fieldset>\n      <fieldset>\n        <span class=\"text-button\">\n
+        \       <button id=\"fb-submit\" class=\"styled-button-1\" type=\"submit\">Submit
+        feedback</button>\n        </span>\n      </fieldset>\n    </form>\n  </div>\n</div>\n<!--
+        Go to www.addthis.com/dashboard to customize your tools --> \n<script type=\"text/javascript\"
+        src=\"//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-554b89a919228ce1\"
+        async=\"async\"></script><script>\n  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n
+        \ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\n
+        \ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n
+        \ })(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n\n
+        \ ga('create', 'UA-22191335-2', 'auto');\n  ga('send', 'pageview');\n\n</script>\n
+        </body>\n</html>\n"}
+    headers:
+      Cache-Control: ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0']
+      Connection: [close]
+      Content-Type: [text/html;  charset=UTF-8]
+      Date: ['Thu, 18 Jan 2018 21:25:08 GMT']
+      Expires: ['Thu, 19 Nov 1981 08:52:00 GMT']
+      Pragma: [no-cache]
+      Server: [Apache/2.2.15 (CentOS)]
+      X-Powered-By: [PHP/5.3.3]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Cookie: [PHPSESSID=vto5jb7jb00hmkn20vau7cklc1]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: http://buses.gg/routes_and_times/timetables/11/TRUE
+  response:
+    body: {string: "<!doctype html>\n<html lang=\"en-GB\" prefix=\"og: http://ogp.me/ns#\"
+        class=\"no-js\">\n<head>\n<meta charset=\"UTF-8\">\n<title>Guernsey Buses
+        - Guernsey bus timetables</title>\r\n\t\t\t\t<meta name=\"title\" content=\"Guernsey
+        bus timetables\"><meta name=\"Description\" content=\"Full bus timetables
+        for all routes \" />\r\n\t\t\t\t<meta name=\"Keywords\" content=\"buses.gg,
+        Guernsey bus, Guernsey bus service, Guernsey bus route map, Guernsey buss
+        pass, Guernsey bus timetables, Guernsey bus routes, Guernsey bus fares Ormer
+        cards, Ormer cards Guernsey, Guernsey bus diversions, Guernsey bus twitter,
+        Guernsey bus service updates,  visit Guernsey, Guernsey tourist information,
+        Guernsey bus routes,  Island Coachways  \" /><style type=\"text/css\" media=\"all\">\n@import
+        url(\"/stylesheets/screen.css\");\n@import url(\"/stylesheets/superfish.css\");\n</style>\n\n<!--[if
+        lt IE 9]><link rel=\"stylesheet\" type=\"text/css\" href=\"stylesheets/ie.css\"
+        /><![endif]-->\n<link rel=\"stylesheet\" href=\"/core/control.css\">\n\n\n<script
+        type=\"text/javascript\" src=\"/js/jquery-1.11.2.min.js\"></script>\n<script
+        type=\"text/javascript\" src=\"/js/jquery-ui-1.11.4/jquery-ui.js\"></script>\n<script
+        type=\"text/javascript\" src=\"/js/auto.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/jquery.jscrollpane.min.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/jquery.betterTooltip.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/jquery.effects.core.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/jquery.scrollTo.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/pre-minification-gg.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/hoverIntent.js\"></script>\n<script type=\"text/javascript\" src=\"/js/superfish.js\"></script>\n<script
+        type=\"text/javascript\" src=\"/js/supersubs.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/jquery.cycle.all.js\"></script>\n<script type=\"text/javascript\"
+        src=\"/js/modernizr.js\"></script>\n\n<meta name=\"google-translate-customization\"
+        content=\"7cc451bbdb1058c4-2ec6f1e19b03f448-g9db49a2678758db6-12\">\n<script
+        type=\"text/javascript\"   src=\"http://maps.googleapis.com/maps/api/js?sensor=false\"></script>\n<meta
+        name=\"pinterest\" content=\"nopin\" />\n<style>\n.pebble {\n\tbackground-color:
+        #dfc0a8 !important;\n}\n.sky {\n\tbackground-color: #80d2ee !important;\n}\n\n.gold
+        {\n\tbackground-color: #fadf99 !important;\n}\n.dusk {\n\tbackground-color:
+        #d2b1d0 !important;;\n}\n\t    #map img {  max-width: none; }\n</style>\n<script
+        type=\"text/javascript\">\n\n// initialise plugins\n\t\t\tjQuery(function(){\n\t\t//\tjQuery('ul.sf-menu').superfish();\n\t\t\t\n\t\t\t\t$('tr').each(function()
         {\n\t\t\t\t   $(this).children('td').each(function(i) {\t\t\t\t\t\n\t\t\t\t\t\t
-        \ $(this).addClass(\"tdn_\" + i);\n\t\t\t\t\t   });\n\t\t\t\t\t});\n\t\t\t\t\t\n\t\t\t\t\t\t\t\t$('.headers
+        \ $(this).addClass(\"tdn_\" + i);\n\t\t\t\t\t   });\n\t\t\t\t\t});\n\t\t\t\t\t\n\t\t\t\t\t$('.headers
         tr').each(function() {\t\t\t\t\t\t\n\t\t\t\t\tvar statclass = $(this).children('th').children('span').html();\n\t\t\t\t\tvar
         cleanclass = statclass.replace(/[\\|&;\\$%@'\"<>\\(\\)\\+.,]/g, \"\");\n\t\t\t\t\tcleanclass
         = cleanclass.replace(/ /g, '-');\n\t\t\t\t\tcleanclass = cleanclass.toLowerCase();
         \n\t\t\t\t\t//alert(cleanclass);\n\t\t\t\t\t\n\t\t\t\t\t$(this).children('td').each(function(i)
         {\n\t\t\t\t\t\t//alert('pox');\n\t\t\t\t\t\t\t  $(this).removeClass();\n\t\t\t\t\t\t\t
-        // $(this).css(\"background-color\", \"white\");\n\t\t\t\t\t\t\t  $(this).addClass(cleanclass);\n\t\t\t\t\t\t
-        \  });\n\t\t\t\t\t});\n\t\t\t\t\t$('.scroll tr').each(function() {\t\t\t\t\t\t\n\t\t\t\t\tvar
-        statclass = $(this).children('th').children('span').html();\n\t\t\t\t\tvar
+        \ $(this).css(\"background-color\", \"white\");\n\t\t\t\t\t\t\t  $(this).addClass(cleanclass);\n\t\t\t\t\t\t
+        \  });\n\t\t\t\t\t});\n\t\t\t\t\t\n\t\t\t\t\t$('.scroll tr').each(function()
+        {\t\t\t\t\t\t\n\t\t\t\t\tvar statclass = $(this).children('th').children('span').html();\n\t\t\t\t\tvar
         cleanclass = statclass.replace(/[\\|&;\\$%@'\"<>\\(\\)\\+.,]/g, \"\");\n\t\t\t\t\tcleanclass
         = cleanclass.replace(/ /g, '-');\n\t\t\t\t\tcleanclass = cleanclass.toLowerCase();
         \n\t\t\t\t\t//alert(cleanclass);\n\t\t\t\t\t\n\t\t\t\t\t\t\t//$(this).children('td').each(function(i)
         {\n\t\t\t\t\t\t\t\t//alert('pox');\n\t\t\t\t\t\t\t  $(this).removeClass();\n\t\t\t\t\t\t\t
         \ $(this).css(\"background-color\", \"white\");\n\t\t\t\t\t\t\t  $(this).addClass(cleanclass);\n\t\t\t\t\t\t//
-        \  });\n\t\t\t\t\t\n\t\t\t\t\t});\n\t\t\t\t\t\n\t\t\t\t//\tvar notes = ' <div
-        id=\"t-table-extras\"><h3>Notes</h3><ul class=\"t-table-notes\"></ul></div>';\n\t\t\t\t\t//var
-        friday = '<li><div class=\"key-colour sky\"> </div><p>Fridays only</p></li>'\t;\n\t\t\t\t\t//var
-        school = '<li><div class=\"key-colour dusk\"> </div><p>School days only</p></li>'\t;\n\t\t\t\t\t//var
-        sat = '<li><div class=\"key-colour festival\"> </div><p>Saturdays only</p></li>'\t;\n\t\t\t\t\t//var
-        app = {\n\t\t\t\t\t\t//sat:'<p class=\"festival\" style=\"padding: 4px; width:91px;\">Saturdays
-        only</p>',\n\t\t\t\t\t//\tschool:'<p class=\"dusk\" style=\"padding: 4px;
-        width:162px;\">School days only</p>',\t\t\t\t\t\t\n\t\t\t\t\t//\tnonschool:'<p
-        class=\"gold\" style=\"padding: 4px; width:162px;\">Non School days only</p>',\n\t\t\t\t\t//\tfriday:'<p
-        class=\"sky\" style=\"padding: 4px; width:91px;\">Fridays only</p>'\t\n\t\t\t\t\t//}\n\t\t\t\t\t\n\t\t\t\tvar
+        \  });\n\t\t\t\t\t});\n\t\t\t\t\t\n\t\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\n\t\t\t\t\n\n\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\tvar
         notes = ' <div id=\"t-table-extras\"><h3>Notes</h3><ul class=\"t-table-notes\"></ul></div>';\n\t\t\t\t\t//var
         friday = '<li><div class=\"key-colour sky\"> </div><p>Fridays only</p></li>'\t;\n\t\t\t\t\t//var
         school = '<li><div class=\"key-colour dusk\"> </div><p>School days only</p></li>'\t;\n\t\t\t\t\t//var
         sat = '<li><div class=\"key-colour festival\"> </div><p>Saturdays only</p></li>'\t;\n\t\t\t\t\tvar
-        app = {\n\t\t\t\t\t\tsat:'<p class=\"festival\" style=\"padding: 4px; width:91px;\">Saturdays
-        only</p>',\n\t\t\t\t\t\tschool:'<p class=\"dusk\" style=\"padding: 4px; width:162px;\">School
-        days only</p>',\t\t\t\t\t\t\n\t\t\t\t\t\tnonschool:'<p class=\"gold\" style=\"padding:
-        4px; width:162px;\">Non School days only</p>',\n\t\t\t\t\t\tfriday:'<p class=\"sky\"
-        style=\"padding: 4px; width:91px;\">Fridays only</p>'\t\n\t\t\t\t\t}\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\tfunction
+        app = {\n\t\t\t\t\t\tsat:'<li><div class=\"key-colour festival\"> </div><p>Saturdays
+        only</p></li>',\n\t\t\t\t\t\tschool:'<li><div class=\"key-colour dusk\"> </div><p>School
+        days only</p></li>',\t\t\t\t\t\t\n\t\t\t\t\t\tnonschool:'<li><div class=\"key-colour
+        gold\"> </div><p>Non School days only</p></li>',\n\t\t\t\t\t\tfriday:'<li><div
+        class=\"key-colour sky\"> </div><p>Fridays only</p></li>'\t\n\t\t\t\t\t}\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\tfunction
         add_notes(day, columns, add){\t\t\t\n\t\t\t        var tf = ['true','false'];\t\t\t\t\t\n\t\t\t\t\ttf.forEach(function(entry)
         {\n\t\t\t\t\t\t\t\tvar id= '#' +entry + '-' + day;\n\t\t\t\t\t\t\t\tfor (var
         key in columns) {\n\t\t\t\t\t\t\t\t\t\t\tvar value = columns[key];\n\t\t\t\t\t\t\t\t\t\t\t//var
@@ -5969,7 +6382,7 @@ interactions:
         fridayc = [];\n\t\t\t\t\tconsole.log(\"j6\");\n\t\t\t\t\t \n\t\t\t\t\t \n\t\t\t\t\t
         \n\t\t\t\t\t \n\t\t\t\t\t\tfor (var key in ff) {\n\t\t\t\t\t\tconsole.log(\"j6b\");\n\t\t\t\t\t\t
         \ var tid = ff[key];\n\t\t\t\t\t\t console.log(\"tid \"+tid);\n\t\t\t\t\t\t
-        \ $('td[data=\"' + tid + '\"]').addClass('sky');\n\t\t\t\t\t\t  console.log(\"j6c\");\n\t\t\t\t\t\t
+        \ $('td[data=\"' + tid + '\"').addClass('sky');\n\t\t\t\t\t\t  console.log(\"j6c\");\n\t\t\t\t\t\t
         \ var uguv = $('td[data=\"' + tid + '\"').closest(\"div\").attr(\"id\");\n\t\t\t\t\t\t
         \  console.log(\"j6d\");\n\t\t\t\t\t\t  if (typeof uguv !== 'undefined') {\n\t\t\t\t\t\t\tvar
         found = jQuery.inArray(uguv, fridayc);\n\t\t\t\t\t\t\tif (found >= 0) {\n\t\t\t\t\t\t\n\t\t\t\t\t\t\t}
@@ -5977,109 +6390,113 @@ interactions:
         \ fridayc.push(uguv);\n\t\t\t\t\t\t\t  //alert(uguv);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t
         \ } else {\n\t\t\t\t\t\t\tconsole.log(\"uguv was undefined\");  \n\t\t\t\t\t\t
         \ }\n\t\t\t\t\t\t\n\t\t\t\t\t\t}\n\n\n\n\n\n\n\t\t\t\t\t   console.log(\"j7\");\n\t\t\t\t\t
-        add_notesx(fridayc,'friday'); \n\t\t\t\t\t   console.log(\"j8\");\n\t\t\t\t\t
+        add_notesx(fridayc,'friday');\n\t\t\t\t\t   console.log(\"j8\");\n\t\t\t\t\t
         \ \n\t\t\t\t\t  var ns = ['VJ364@14:48:00','VJ61@14:58:00','VJ412@15:12:00','VJ67@08:10:00','VJ117@08:00:00','VJ216@08:10:00','VJ551@14:42:00','VJ238@15:05:00','VJ588@15:30:00','VJ276@14:40:00','VJ310@15:15:00','VJ634@15:40:00'];\n\t\t\t\t\t\n\t\t\t\t\t\tvar
         nsc = [];\n\t\t\t\t\t console.log(\"j9\");\n\t\t\t\t\t for (var key in ns)
         {\n\t\t\t\t\t\tvar tid = ns[key];\n\t\t\t\t\t\t//alert(tid);\n\t\t\t\t\t\t$('td[data=\"'
-        +  tid + '\"]').addClass( 'gold' );\n\t\t\t\t\t\tvar uguv=$('td[data=\"' +
+        +  tid + '\"').addClass( 'gold' );\n\t\t\t\t\t\tvar uguv=$('td[data=\"' +
         \ tid + '\"').closest( \"div\" ).attr(\"id\");\n\t\t\t\t\t\tconsole.log(uguv);\n\t\t\t\t\t\t
         if (typeof uguv !== 'undefined') {\n\t\t\t\t\t\t   var found = jQuery.inArray(uguv,
-        nsc);\n\n\t\t\t\t\t\t   if (found >= 0) {\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t}
+        nsc);\n\t\t\t\t\t\t   if (found >= 0) {\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t}
         else {\n\t\t\t\t\t\t\t\t// Element was not found, add it.\n\t\t\t\t\t\t\t\tnsc.push(uguv);\n\t\t\t\t\t\t\t\t//alert(uguv);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}
         \n\t\t\t\t\t  }\t\n\t\t\t\t\t   add_notesx(nsc,'nonschool');\n\t\t\t\t\t  \n\t\t\t\t\t
         \ \t  var st = ['VJ386@14:44:00','VJ64@08:24:00','VJ152@08:25:00','VJ201@08:35:00','VJ550@14:42:00','VJ614@15:35:00','VJ289@15:55:00','VJ290@14:40:00'];\n\t\t\t\t\t\n\t\t\t\t\tvar
         sc = [];\n\t\t\t\t\tconsole.log(\"j3\");\n\t\t\t\t\t for (var key in st) {\n\t\t\t\t\t\tvar
         tid = st[key];\n\t\t\t\t\t\tconsole.log(\"j1a\");\n\t\t\t\t\t\t\n\t\t\t\t\t\t$('td[data=\"'
-        +  tid + '\"]').addClass( 'dusk' );\n\t\t\t\t\t\t  var uguv=$('td[data=\"'
+        +  tid + '\"').addClass( 'dusk' );\n\t\t\t\t\t\t  var uguv=$('td[data=\"'
         +  tid + '\"').closest( \"div\" ).attr(\"id\");\n\t\t\t\t\t\t if (typeof uguv
         !== 'undefined') {\n\t\t\t\t\t\t   var found = jQuery.inArray(uguv, sc);\n\t\t\t\t\t\t
         \  if (found >= 0) {\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t} else {\n\t\t\t\t\t\t\t\t//
         Element was not found, add it.\n\t\t\t\t\t\t\t\tsc.push(uguv);\n\t\t\t\t\t\t\t\t//alert(uguv);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}
-        \n\t\t\t\t\t  }\t\n\t\t\t\t\t  \n\t\t\t\t\t add_notesx(sc,'school');\n\t\t\t\t\n\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t
-        \ var dr='<p><img src=\"http://buses.gg/img/tt_alert.png\"style=\"width: 16px;
-        height: 16px;float:left;margin-right:10px;\"/> Indicates a diversion. Times
-        and stops highlighted in red may be subject to change.</p> ';\n   var scd='<p><img
-        alt=\"\" src=\"http://buses.gg/img/tt_alert_soon.png\" style=\"width: 16px;
-        height: 16px;float:left;margin-right:10px;\"> Indicates a diversion that will
-        occur in the near future.</p>';\n\n\t\t\t\t\t\n\t\t});\n\t\t\t\t\t\n</script>\n</body>\n</html>"}
-    headers:
-      Cache-Control: ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0']
-      Connection: [close]
-      Content-Type: [text/html;  charset=UTF-8]
-      Date: ['Tue, 16 Jan 2018 21:06:31 GMT']
-      Expires: ['Thu, 19 Nov 1981 08:52:00 GMT']
-      Pragma: [no-cache]
-      Server: [Apache/2.2.15 (CentOS)]
-      X-Powered-By: [PHP/5.3.3]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Cookie: [PHPSESSID=hf2pkm9lldo7sq25e10e4ve3r3]
-      User-Agent: [python-requests/2.18.4]
-    method: GET
-    uri: http://m.buses.gg/index.php?content=Timetables&show_route=11
-  response:
-    body: {string: "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\"/>\n<meta
-        http-equiv=\"Content-Language\" content=\"en\"/>\n<title>Guernsey Buses</title>\n<meta
-        name=\"title\" content=\"Welcome to Guernsey Buses\"/>\n<meta name=\"description\"
-        content=\"Mobile website for Guernsey Buses\"/>\n<meta name=\"MSSmartTagsPreventParsing\"
-        content=\"true\"/>\n<meta name=\"Copyright\" content=\"(c) Guernsey Buses.
-        All rights reserved.\"/>\n<meta http-equiv=\"imagetoolbar\" content=\"no\"/>\n<meta
-        name=\"Rating\" content=\"General\"/>\n<meta http-equiv=\"X-UA-Compatible\"
-        content=\"chrome=1\"/>\n<link rel=\"home\" href=\"/\"/>\n<link rel=\"copyright\"
-        href=\"#copyright\"/>\n<!-- Icons -->\n<link rel=\"shortcut icon\" href=\"favicon.ico\"
-        />\n<link rel=\"apple-touch-icon\" sizes=\"129x129\" href=\"apple-touch-icon-129x129.png\"
-        />\n<link rel=\"apple-touch-icon\" sizes=\"114x114\" href=\"apple-touch-icon-114x114.png\"
-        />\n<link rel=\"apple-touch-icon\" sizes=\"72x72\" href=\"apple-touch-icon-72x72.png\"
-        />\n<link rel=\"apple-touch-icon\" href=\"apple-touch-icon.png\" />\n<!--
-        Device stuff -->\n<link rel=\"apple-touch-icon\" href=\"app-icon.png\"/>\n<meta
-        name=\"viewport\" content=\"width=device-width,initial-zoom=1\"/>\n<meta name=\"format-detection\"
-        content=\"telephone=no,address=no,email=no\" />\n<link rel=\"stylesheet\"
-        href=\"stylesheets/screen.css\"/>\n<script type=\"text/javascript\" src=\"http://buses.gg/js/auto.js\"></script>\n<script
-        type=\"text/javascript\" src=\"http://fast.fonts.com/jsapi/90d97285-1d5e-4a87-aec2-c5f4463d6715.js\"></script>\n
-        \  \n<style>\n .scroll {\n  display: block;\n  overflow: auto;\n  padding-bottom:
-        5px;\n}\n.headers {\n  border-right: 1px solid #dfc0a8;\n  float: left;\n
-        \ width: 25%;\n  min-width: 139px;\n}\n.timetables-styling-single .t-table
-        table {\n  border: 0 none;\n  border-collapse: collapse;\n  line-height: 1em;\n
-        \ margin: 0;\n  padding: 1px;\n}\n .StopHeader{\n  display: none;\n} \n.t-table
-        td, .t-table th{\n\theight:22px;\n} \n@media only screen and (max-width: 400px)
-        {\n\t.t-table td, .t-table th{\n\t\theight:46px;\n\t} \n}\n\n.pebble {\n\tbackground-color:
-        #dfc0a8;\n}\n.sky {\n\tbackground-color: #80d2ee;\n}\n\n.gold {\n\tbackground-color:
-        #fadf99 !important;\n}\n.dusk {\n\tbackground-color: #d2b1d0 !important;;\n}\n.active
-        {\n    background-image: url(\"http://guernseybuses.org/img/tt_alert.png\");\n
-        \   background-position:center;\n\tbackground-size:cover;\n    background-repeat:
-        no-repeat;\n    cursor: pointer;\n\t\n}\n\n.active-soon {\n  background-image:
-        url(\"http://guernseybuses.org/img/tt_alert_soon.png\");\n   background-position:center;\n\tbackground-size:cover;\n
-        \ background-repeat: no-repeat;\n  cursor: pointer;\n}\n</style>\n</head>\n<body
-        \ class=\"tpt-inner \" >\n<header id=\"top\" role=\"banner\">\n  <h1 id=\"logo\"><a
-        href=\"/\" title=\"Go to Guernsey Buses homepage\"><img src=\"m_img/gg_header_logo.png\"
-        alt=\"Guernsey Buses\" width=\"174\" height=\"75\" /></a></h1>\n  <a id=\"jump\"
-        href=\"#nav\"><img src=\"m_img/jump.png\" width=\"35\" height=\"35\" alt=\"show
-        navigation\"></a> </header>\n<div id=\"page\" role=\"main\">\n  <nav role=\"navigation\">\n
-        \   <ul id=\"nav\" tabindex=\"0\">\n<!--      <li><a href=\"planner.html\">Trip
-        planner</a></li>\n      <li><a href=\"live_times.html\">Live times</a></li>\n
-        \     <li><a href=\"timetables.html\">Timetables</a></li>\n      <li><a href=\"news.html\">News</a></li>\n
-        \     <li><a href=\"about.html\">About us</a></li>\n      <li><a href=\"contact.html\">Contact
-        us</a></li> -->\n      \n     <li><a href=\"/Trip planner\">Trip planner</a></li>
-        \    \n    <li><a href=\"/Stop by Stop\">Stop by Stop</a></li> \n      <li><a
-        href=\"/Timetables\">Timetables</a></li>\n    <!--  <li><a href=\"/Times to
-        my mobile\">Times to my mobile</a></li> -->\n          \t<!--<li><a href=\"/Live
-        service updates\">Live service updates</a></li> -->\n      <li><a href=\"/diversions\">Diversions</a></li>\n
-        \     <li><a href=\"/News\">News</a></li>\n      <li><a href=\"/About us\">About
-        us</a></li>\n      <li><a href=\"/Contact\">Contact us</a></li>\n    </ul>\n
-        \ </nav>\n  <div id=\"content\">\n            <header>\n          <h1></h1>\n
-        \         </header>\n  <div class=\"wrap\">    <div id=\"timetable\">\r\n
-        \    \r\n        <div id=\"divinf\"></div>\r\n<div id=\"divinf2\"></div>\r\n
-        \   \r\n<h2 id=\"page-title\">Route 11 </h2>\r\n\r\n\t\t\t\t\t\t\t\t\t   <div
-        class=\"t-table\">   \r\n\t\t\t\t\t\t\t\t\t        <h2> Town Terminus - L'Ancresse
-        - Outbound - Monday-Friday</h2>\r\n<table class=\"headers\">\r\n            <tbody>\r\n
-        \           \r\n\t\t\t\t\t\t\t\t\t  <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000773</span></td>
-        -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>Town Terminus - Stand C</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td
-        class=\"Outbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
+        \n\t\t\t\t\t  }\t\n\t\t\t\t\t  \n\t\t\t\t\t add_notesx(sc,'school');\n\t\t\t\t\n\t\t\t\n\t\t\t});\n\n\n\n\n\t\t\t\n\t\t\t
+        \t  \n\t\t\t function load_maps(){\n\t\t\t\t \t\t\t\t\t initialize11();\n\t\t\t\t\t\t\t\t
+        \n\t\t\t }\n\t\t\t \n\t\t\t </script>\n</head>\n<body  id=\"timetable-single\"
+        class=\"timetables-styling-single\"  class=\"timetables-styling\"  onload=\"load_maps();\">\n<div
+        id=\"page\" class=\"\"> <a class=\"skip-link screen-reader-text\" href=\"#content\">Skip
+        to content</a>\n  <header id=\"masthead\" class=\"site-header clearfix\" role=\"banner\">\n
+        \   <div id=\"circle-holder\" class=\"clearfix\">\n      <div id=\"masthead-inner\">\n
+        \       <div id=\"brand\"><a href=\"index.html\"><img src=\"/img/mast_logox2.png\"
+        alt=\"buses gg logo\"/></a></div>\n        <div id=\"header-tools\">\n          <div
+        id=\"search-main\" class=\"aside\" role=\"search\">\n            <form  role=\"search\"
+        id=\"searchform\" action=\"/search_results\" method=\"post\">\n              <div>\n
+        \               <label class=\"screen-reader-text\" for=\"words\">Search for:</label>\n
+        \               <input id=\"s\" type=\"text\" tabindex=\"1\" size=\"32\" onBlur=\"if
+        (this.value == '') {this.value = 'Search';}\" onFocus=\"if (this.value ==
+        'Search') {this.value = '';}\" value=\"Search\" name=\"words\">\n                <input
+        id=\"searchsubmit\" type=\"submit\" tabindex=\"2\" value=\"Search\" name=\"searchsubmit\">\n
+        \             </div>\n            </form>\n          </div>\n          <!--
+        end SEARCH --> <div id=\"google_translate_element\"></div>\n        <script
+        type=\"text/javascript\">\nfunction googleTranslateElementInit() {\n  new
+        google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE},
+        'google_translate_element');\n}\n</script><script type=\"text/javascript\"
+        src=\"http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit\"></script>
+        \n      </div><!-- end TRANSLATE -->\n        <!-- end HEADER TOOLS -->\n
+        \       <nav role=\"navigation\">\n          <div id=\"main-nav\">\n          <ul
+        \  class=\"nav sf-menu\"  id=\"cc\"  ><li class=\"\"><a  class=\"home_link\"
+        href=\"http://buses.gg/\"   id=\"home_link\">Home</a></li><li class=\"current-page-ancestor\"><a
+        href=\"http://buses.gg/routes_and_times\"  id=\"routes_and_times_1059\" class=\"\">Routes
+        and Times</a><ul class=\"children\"><li ><a href=\"http://buses.gg/routes_and_times/app_for_mobile\"
+        >app for mobile</a></li><li ><a href=\"http://buses.gg/routes_and_times/stop_by_stop\"
+        >Stop-by-Stop</a></li><li ><a href=\"http://buses.gg/routes_and_times/stop_by_stop_geographic\"
+        >Stop-by-Stop Geographic</a></li><li ><a href=\"http://buses.gg/routes_and_times/journey_planner\"
+        >Journey Planner</a></li><li ><a href=\"http://buses.gg/routes_and_times/journey_planner_geographical\"
+        >Journey Planner Geographical</a></li><li ><a href=\"http://buses.gg/routes_and_times/timetables\"
+        >Timetables</a></li><li ><a href=\"http://buses.gg/routes_and_times/prices_and_tickets\"
+        >Prices and tickets</a></li><li ><a href=\"http://buses.gg/routes_and_times/live_service_updates\"
+        >Live service updates</a></li><li ><a href=\"http://buses.gg/routes_and_times/tennerfest\"
+        >Tennerfest 2017</a></li><li ><a href=\"http://buses.gg/routes_and_times/parish_link_p2\"
+        >Parish Link P2</a></li><li ><a href=\"http://buses.gg/routes_and_times/puffinpass\"
+        >puffinpass</a></li></ul ></li><li class=\"\"><a href=\"http://buses.gg/schools\"
+        \ id=\"schools_1065\" class=\"\">Schools</a><ul class=\"children\"><li ><a
+        href=\"http://buses.gg/schools/about_school_buses_2\" >About school buses</a></li><li
+        ><a href=\"http://buses.gg/schools/routes_and_times_2\" >Routes and times</a></li><li
+        ><a href=\"http://buses.gg/schools/the_amazing_journey\" >The Amazing Journey</a></li></ul
+        ></li><li class=\"\"><a href=\"http://buses.gg/diversions\"  id=\"diversions_1069\"
+        class=\"\">Diversions</a></li><li class=\"\"><a href=\"http://buses.gg/visiting_guernsey\"
+        \ id=\"visiting_guernsey_1074\" class=\"\">Visiting Guernsey</a><ul class=\"children\"><li
+        ><a href=\"http://buses.gg/visiting_guernsey/attractions_by_bus\" >Attractions
+        by bus</a></li><li ><a href=\"http://buses.gg/visiting_guernsey/arriving_in_guernsey\"
+        >Arriving in Guernsey</a></li><li ><a href=\"http://buses.gg/visiting_guernsey/souvenir_of_your_bus_adventure\"
+        >Souvenir of your bus adventure</a></li></ul ></li><li class=\"\"><a href=\"http://buses.gg/about\"
+        \ id=\"about_1077\" class=\"\">About</a><ul class=\"children\"><li ><a href=\"http://buses.gg/about/using_the_bus_service\"
+        >Using the bus service</a></li><li ><a href=\"http://buses.gg/about/contacting_us\"
+        >Contacting us</a></li><li ><a href=\"http://buses.gg/about/news\" >News</a></li><li
+        ><a href=\"http://buses.gg/about/lost_property\" >Lost property</a></li><li
+        ><a href=\"http://buses.gg/about/accessible_service\" >Accessible service</a></li><li
+        ><a href=\"http://buses.gg/about/Let_us_know\" >Let us know</a></li><li ><a
+        href=\"http://buses.gg/about/social_enterprise\" >Social enterprise</a></li><li
+        ><a href=\"http://buses.gg/about/train_as_a_bus_driver\" >Train as a bus driver</a></li><li
+        ><a href=\"http://buses.gg/about/advertise_with_us\" >Advertise with us</a></li><li
+        ><a href=\"http://www.hctgroup.org/jobs\" >Jobs</a></li></ul ></li><li class=\"\"><a
+        href=\"http://buses.gg/shop\"  id=\"shop_1108\" class=\"\">Shop</a><ul class=\"children\"><li
+        ><a href=\"http://buses.gg/shop/faq\" >FAQ</a></li></ul ></li></ul>          \n
+        \         </div>\n        </nav>\n      </div>\n      <!-- end MAIN NAV -->
+        \n    </div>\n  </header>\n  <!-- end HEADER start MAIN-->\n  <div class=\"color-strip\"></div>\n
+        \ <div id=\"main-wrapper\" class=\"clearfix\">\n    <main id=\"main\" class=\"clearfix\"
+        role=\"main\">\n                   <div id=\"content\" class=\"site-content\">
+        \n        <!--  hey there --> \n        <!-- this is where most of the differences
+        between templates begins (but not all!) --> \n        <!--  hey there -->\n
+        \               <h1 id=\"page-title\">Timetables</h1>\n        <div class=\"entry-content
+        wysiwyg\">\n        \t <div class=\"small-g-map\">\n            <script>\n
+        \     function initialize11() {\n        var myLatlng = new google.maps.LatLng(49.460667,
+        -2.587168);\n        var mapOptions = {\n          zoom: 11,\n          center:
+        myLatlng,\n          mapTypeId: google.maps.MapTypeId.ROADMAP\n        }\n\n
+        \       var map = new google.maps.Map(document.getElementById('map_canvas11'),
+        mapOptions);\n\t\t\n\t\t\tvar myKmlOptions = {\n\t\t\t\t\t\tpreserveViewport:
+        true\n\t\t\t\t\t}\n\n        var georssLayer = new google.maps.KmlLayer('http://buses.gg/kmls/11.kml',myKmlOptions);\n\t\t
+        \       georssLayer.setMap(map);\n\t\tgeorssLayer2.setMap(map);\n      }\n
+        \   </script> \n             \n   <div id=\"map_canvas11\" style=\"width:
+        375px; height: 300px; margin-bottom: 15px; \"></div>\n        </div>\n        <div
+        class=\"t-table-opt-links\">\n          <p>\n          <a href=\"/routes_and_times/timetables\"
+        class=\"text-button-normal\">Back to timetables</a>\n       <a href=\"/routes_and_times/timetables_print/11/TRUE\"
+        target=\"_blank\" class=\"text-button-normal\">Print this timetable</a>\n
+        \        <!-- <a href=\"/pdfs/11.pdf\" class=\"text-button-normal\" target=\"_blank\">Download
+        \ timetable</a>  --> </p>\n        </div>\n<h2>Timetable 2017</h2>\n<h1 id=\"page-title\">Route
+        11</h1>\n\t\t\t\t\t\t\t\t\t   <div class=\"t-table\">   \n                                        \n\t\t\t\t\t\t\t\t\t\t
+        <h2> Town Terminus - L'Ancresse - Outbound - Monday-Friday</h2>\r\n<table
+        class=\"headers\">\r\n            <tbody>\r\n            \r\n\t\t\t\t\t\t\t\t\t
+        \ <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000773</span></td> -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>Town
+        Terminus - Stand C</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"Outbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
         -->\r\n\t\t\t\t\t\t\t\t\t  </tr>\r\n\t\t\t\t\t\t\t\t\t \r\n\t\t\t\t\t\t\t\t\t
         \ <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000005</span></td> -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>St.
         George's Esplanade - Northbound</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"Outbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
@@ -6436,12 +6853,14 @@ interactions:
         \                                   <td  data=\"VJ24@00:00:00\">00:19</td>\r\n
         \                                   <td class=\"end-row\">&nbsp;</td>\r\n
         \               </tr>\r\n                               \r\n          </tbody>\r\n
-        \           </table>\r\n          </div>\r\n\r\n                                             <div
-        id=\"t-table-extras\"><ul class=\"t-table-notes\"></ul></div>\r\n\t\t\t\t\t\t\t\t\t
-        \ </div>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   <div class=\"t-table\">
-        \  \r\n\t\t\t\t\t\t\t\t\t        <h2> Town Terminus - L'Ancresse - Inbound
-        - Monday-Friday</h2>\r\n<table class=\"headers\">\r\n            <tbody>\r\n
-        \           \r\n\t\t\t\t\t\t\t\t\t  <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000327</span></td>
+        \           </table>\r\n          </div>\r\n\r\n <div id=\"t-table-extras\"><ul
+        class=\"t-table-notes\"></ul></div> \t\t\t\t\t\t\t\t\t\t <p>This table shows
+        the main points of the route. For the full set of stops and route variations
+        view the \n                                         <a href=\"/routes_and_times/timetables/11/FALSE\">full
+        timetable</a>.</p>\n\t\t\t\t\t\t\t\t\t\t \t\t\t\t\t\t\t\t\t  </div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t
+        \  <div class=\"t-table\">   \n                                        \n\t\t\t\t\t\t\t\t\t\t
+        <h2> Town Terminus - L'Ancresse - Inbound - Monday-Friday</h2>\r\n<table class=\"headers\">\r\n
+        \           <tbody>\r\n            \r\n\t\t\t\t\t\t\t\t\t  <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000327</span></td>
         -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>L'Ancresse Terminus - Eastbound</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td
         class=\"Inbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
         -->\r\n\t\t\t\t\t\t\t\t\t  </tr>\r\n\t\t\t\t\t\t\t\t\t \r\n\t\t\t\t\t\t\t\t\t
@@ -6762,11 +7181,13 @@ interactions:
         \                                   <td  data=\"VJ373@00:19:00\">00:40</td>\r\n
         \                                   <td class=\"end-row\">&nbsp;</td>\r\n
         \               </tr>\r\n                               \r\n          </tbody>\r\n
-        \           </table>\r\n          </div>\r\n\r\n                                             <div
-        id=\"t-table-extras\"><ul class=\"t-table-notes\"></ul></div>\r\n\t\t\t\t\t\t\t\t\t
-        \ </div>\r\n\t\t\t\t\t\t\t\t\t  \r\n\r\n\r\n\r\n    \r\n    \r\n    \r\n    \r\n
-        \t\t\t\t\t\t\t\t\t   <div class=\"t-table\">   \r\n\t\t\t\t\t\t\t\t\t        <h2>
-        Town Terminus - L'Ancresse - Outbound - Saturday</h2>\r\n<table class=\"headers\">\r\n
+        \           </table>\r\n          </div>\r\n\r\n <div id=\"t-table-extras\"><ul
+        class=\"t-table-notes\"></ul></div> \t\t\t\t\t\t\t\t\t\t <p>This table shows
+        the main points of the route. For the full set of stops and route variations
+        view the \n                                         <a href=\"/routes_and_times/timetables/11/FALSE\">full
+        timetable</a>.</p>\n\t\t\t\t\t\t\t\t\t\t \t\t\t\t\t\t\t\t\t  </div>\n\t\t\t\t\t\t\t\t\t
+        \ \n  \n  \n     \n \t\t\t\t\t\t\t\t\t   <div class=\"t-table\">   \n                                        \n\t\t\t\t\t\t\t\t\t\t
+        <h2> Town Terminus - L'Ancresse - Outbound - Saturday</h2>\r\n<table class=\"headers\">\r\n
         \           <tbody>\r\n            \r\n\t\t\t\t\t\t\t\t\t  <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000773</span></td>
         -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>Town Terminus - Stand C</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td
         class=\"Outbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
@@ -7094,13 +7515,16 @@ interactions:
         \                                   <td  data=\"AVJ30@00:00:00\">00:19</td>\r\n
         \                                   <td class=\"end-row\">&nbsp;</td>\r\n
         \               </tr>\r\n                               \r\n          </tbody>\r\n
-        \           </table>\r\n          </div>\r\n\r\n                                             <div
-        id=\"t-table-extras\"><ul class=\"t-table-notes\"></ul></div>\r\n\t\t\t\t\t\t\t\t\t
-        \ </div>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   <div class=\"t-table\">
-        \  \r\n\t\t\t\t\t\t\t\t\t        <h2> Town Terminus - L'Ancresse - Inbound
-        - Saturday</h2>\r\n<table class=\"headers\">\r\n            <tbody>\r\n            \r\n\t\t\t\t\t\t\t\t\t
-        \ <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000327</span></td> -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>L'Ancresse
-        Terminus - Eastbound</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"Inbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
+        \           </table>\r\n          </div>\r\n\r\n <div id=\"t-table-extras\"><ul
+        class=\"t-table-notes\"></ul></div> \t\t\t\t\t\t\t\t\t\t <p>This table shows
+        the main points of the route. For the full set of stops and route variations
+        view the \n                                         <a href=\"/routes_and_times/timetables/11/FALSE\">full
+        timetable</a>.</p>\n\t\t\t\t\t\t\t\t\t\t \t\t\t\t\t\t\t\t\t  </div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t
+        \  <div class=\"t-table\">   \n                                        \n\t\t\t\t\t\t\t\t\t\t
+        <h2> Town Terminus - L'Ancresse - Inbound - Saturday</h2>\r\n<table class=\"headers\">\r\n
+        \           <tbody>\r\n            \r\n\t\t\t\t\t\t\t\t\t  <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000327</span></td>
+        -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>L'Ancresse Terminus - Eastbound</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td
+        class=\"Inbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
         -->\r\n\t\t\t\t\t\t\t\t\t  </tr>\r\n\t\t\t\t\t\t\t\t\t \r\n\t\t\t\t\t\t\t\t\t
         \ <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000355</span></td> -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>Bordeaux
         Harbour - Southbound</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"Inbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
@@ -7384,11 +7808,13 @@ interactions:
         \                                   <td  data=\"AVJ330@00:20:00\">00:41</td>\r\n
         \                                   <td class=\"end-row\">&nbsp;</td>\r\n
         \               </tr>\r\n                               \r\n          </tbody>\r\n
-        \           </table>\r\n          </div>\r\n\r\n                                             <div
-        id=\"t-table-extras\"><ul class=\"t-table-notes\"></ul></div>\r\n\t\t\t\t\t\t\t\t\t
-        \ </div>\r\n\t\t\t\t\t\t\t\t\t  \r\n\r\n\r\n\r\n    \r\n    \r\n    \r\n    \r\n
-        \t\t\t\t\t\t\t\t\t   <div class=\"t-table\">   \r\n\t\t\t\t\t\t\t\t\t        <h2>
-        Town Terminus - L'Ancresse - Outbound - Sunday</h2>\r\n<table class=\"headers\">\r\n
+        \           </table>\r\n          </div>\r\n\r\n <div id=\"t-table-extras\"><ul
+        class=\"t-table-notes\"></ul></div> \t\t\t\t\t\t\t\t\t\t <p>This table shows
+        the main points of the route. For the full set of stops and route variations
+        view the \n                                         <a href=\"/routes_and_times/timetables/11/FALSE\">full
+        timetable</a>.</p>\n\t\t\t\t\t\t\t\t\t\t \t\t\t\t\t\t\t\t\t  </div>\n\t\t\t\t\t\t\t\t\t
+        \ \n  \n  \n     \n \t\t\t\t\t\t\t\t\t   <div class=\"t-table\">   \n                                        \n\t\t\t\t\t\t\t\t\t\t
+        <h2> Town Terminus - L'Ancresse - Outbound - Sunday</h2>\r\n<table class=\"headers\">\r\n
         \           <tbody>\r\n            \r\n\t\t\t\t\t\t\t\t\t  <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000773</span></td>
         -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>Town Terminus - Stand C</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td
         class=\"Outbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
@@ -7556,13 +7982,16 @@ interactions:
         \                                   <td  data=\"UVJ12@18:30:00\">18:48</td>\r\n
         \                                   <td class=\"end-row\">&nbsp;</td>\r\n
         \               </tr>\r\n                               \r\n          </tbody>\r\n
-        \           </table>\r\n          </div>\r\n\r\n                                             <div
-        id=\"t-table-extras\"><ul class=\"t-table-notes\"></ul></div>\r\n\t\t\t\t\t\t\t\t\t
-        \ </div>\r\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   <div class=\"t-table\">
-        \  \r\n\t\t\t\t\t\t\t\t\t        <h2> Town Terminus - L'Ancresse - Inbound
-        - Sunday</h2>\r\n<table class=\"headers\">\r\n            <tbody>\r\n            \r\n\t\t\t\t\t\t\t\t\t
-        \ <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000327</span></td> -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>L'Ancresse
-        Terminus - Eastbound</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"Inbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
+        \           </table>\r\n          </div>\r\n\r\n <div id=\"t-table-extras\"><ul
+        class=\"t-table-notes\"></ul></div> \t\t\t\t\t\t\t\t\t\t <p>This table shows
+        the main points of the route. For the full set of stops and route variations
+        view the \n                                         <a href=\"/routes_and_times/timetables/11/FALSE\">full
+        timetable</a>.</p>\n\t\t\t\t\t\t\t\t\t\t \t\t\t\t\t\t\t\t\t  </div>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t
+        \  <div class=\"t-table\">   \n                                        \n\t\t\t\t\t\t\t\t\t\t
+        <h2> Town Terminus - L'Ancresse - Inbound - Sunday</h2>\r\n<table class=\"headers\">\r\n
+        \           <tbody>\r\n            \r\n\t\t\t\t\t\t\t\t\t  <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000327</span></td>
+        -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>L'Ancresse Terminus - Eastbound</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td
+        class=\"Inbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
         -->\r\n\t\t\t\t\t\t\t\t\t  </tr>\r\n\t\t\t\t\t\t\t\t\t \r\n\t\t\t\t\t\t\t\t\t
         \ <tr>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>890000355</span></td> -->\r\n\t\t\t\t\t\t\t\t\t\t<th><span>Bordeaux
         Harbour - Southbound</span></th>\r\n\t\t\t\t\t\t\t\t\t\t<td class=\"Inbound\">&nbsp;&nbsp;&nbsp;&nbsp;</td>\r\n\t\t\t\t\t\t\t\t\t\t<!--<td><span>Dep</span></td>
@@ -7706,109 +8135,64 @@ interactions:
         \                                   <td  data=\"UVJ140@18:50:00\">19:10</td>\r\n
         \                                   <td class=\"end-row\">&nbsp;</td>\r\n
         \               </tr>\r\n                               \r\n          </tbody>\r\n
-        \           </table>\r\n          </div>\r\n\r\n                                             <div
-        id=\"t-table-extras\"><ul class=\"t-table-notes\"></ul></div>\r\n\t\t\t\t\t\t\t\t\t
-        \ </div>\r\n\t\t\t\t\t\t\t\t\t  \r\n\r\n\r\n\r\n    \r\n    \r\n    \r\n    \r\n
-        \   </div>\n    <div class=\"separator\">&nbsp;</div>\n  </div>\n</div>\n<!--
-        / #page -->\n<footer id=\"bottom\" role=\"contentinfo\">\n  <p id=\"footer-jump\"><a
-        href=\"#\" ><strong>Menu</strong></a></p>\n  <p> \n    <!-- ADDRESS & SUCH
-        --> \n    <small id=\"copyright\">&copy; 2015 Guernsey Buses. All rights reserved.</small></p>\n
-        \ <p><small><a href=\"#\" class=\"scrolltop\">Back to top</a></small></p>\n</footer>\n<script
-        type=\"text/javascript\" src=\"http://guernseybuses.org/js/jquery-1.11.2.min.js\"></script>
-        \n<script src=\"js/main.js\"></script> \n<script src=\"js/jquery-ui-1.8.23.custom.min.js\"></script>\n<script
-        type=\"text/javascript\">\n\tjQuery(function(){\n\t\t//\tjQuery('ul.sf-menu').superfish();\n\t\t\t\n\t\t\t\t$('tr').each(function()
-        {\n\t\t\t\t   $(this).children('td').each(function(i) {\t\t\t\t\t\n\t\t\t\t\t\t
-        \ $(this).addClass(\"tdn_\" + i);\n\t\t\t\t\t   });\n\t\t\t\t\t});\n\t\t\t\t\t\n\t\t\t\t\t\t\t\t$('.headers
-        tr').each(function() {\t\t\t\t\t\t\n\t\t\t\t\tvar statclass = $(this).children('th').children('span').html();\n\t\t\t\t\tvar
-        cleanclass = statclass.replace(/[\\|&;\\$%@'\"<>\\(\\)\\+.,]/g, \"\");\n\t\t\t\t\tcleanclass
-        = cleanclass.replace(/ /g, '-');\n\t\t\t\t\tcleanclass = cleanclass.toLowerCase();
-        \n\t\t\t\t\t//alert(cleanclass);\n\t\t\t\t\t\n\t\t\t\t\t$(this).children('td').each(function(i)
-        {\n\t\t\t\t\t\t//alert('pox');\n\t\t\t\t\t\t\t  $(this).removeClass();\n\t\t\t\t\t\t\t
-        // $(this).css(\"background-color\", \"white\");\n\t\t\t\t\t\t\t  $(this).addClass(cleanclass);\n\t\t\t\t\t\t
-        \  });\n\t\t\t\t\t});\n\t\t\t\t\t$('.scroll tr').each(function() {\t\t\t\t\t\t\n\t\t\t\t\tvar
-        statclass = $(this).children('th').children('span').html();\n\t\t\t\t\tvar
-        cleanclass = statclass.replace(/[\\|&;\\$%@'\"<>\\(\\)\\+.,]/g, \"\");\n\t\t\t\t\tcleanclass
-        = cleanclass.replace(/ /g, '-');\n\t\t\t\t\tcleanclass = cleanclass.toLowerCase();
-        \n\t\t\t\t\t//alert(cleanclass);\n\t\t\t\t\t\n\t\t\t\t\t\t\t//$(this).children('td').each(function(i)
-        {\n\t\t\t\t\t\t\t\t//alert('pox');\n\t\t\t\t\t\t\t  $(this).removeClass();\n\t\t\t\t\t\t\t
-        \ $(this).css(\"background-color\", \"white\");\n\t\t\t\t\t\t\t  $(this).addClass(cleanclass);\n\t\t\t\t\t\t//
-        \  });\n\t\t\t\t\t\n\t\t\t\t\t});\n\t\t\t\t\t\n\t\t\t\t//\tvar notes = ' <div
-        id=\"t-table-extras\"><h3>Notes</h3><ul class=\"t-table-notes\"></ul></div>';\n\t\t\t\t\t//var
-        friday = '<li><div class=\"key-colour sky\"> </div><p>Fridays only</p></li>'\t;\n\t\t\t\t\t//var
-        school = '<li><div class=\"key-colour dusk\"> </div><p>School days only</p></li>'\t;\n\t\t\t\t\t//var
-        sat = '<li><div class=\"key-colour festival\"> </div><p>Saturdays only</p></li>'\t;\n\t\t\t\t\t//var
-        app = {\n\t\t\t\t\t\t//sat:'<p class=\"festival\" style=\"padding: 4px; width:91px;\">Saturdays
-        only</p>',\n\t\t\t\t\t//\tschool:'<p class=\"dusk\" style=\"padding: 4px;
-        width:162px;\">School days only</p>',\t\t\t\t\t\t\n\t\t\t\t\t//\tnonschool:'<p
-        class=\"gold\" style=\"padding: 4px; width:162px;\">Non School days only</p>',\n\t\t\t\t\t//\tfriday:'<p
-        class=\"sky\" style=\"padding: 4px; width:91px;\">Fridays only</p>'\t\n\t\t\t\t\t//}\n\t\t\t\t\t\n\t\t\t\tvar
-        notes = ' <div id=\"t-table-extras\"><h3>Notes</h3><ul class=\"t-table-notes\"></ul></div>';\n\t\t\t\t\t//var
-        friday = '<li><div class=\"key-colour sky\"> </div><p>Fridays only</p></li>'\t;\n\t\t\t\t\t//var
-        school = '<li><div class=\"key-colour dusk\"> </div><p>School days only</p></li>'\t;\n\t\t\t\t\t//var
-        sat = '<li><div class=\"key-colour festival\"> </div><p>Saturdays only</p></li>'\t;\n\t\t\t\t\tvar
-        app = {\n\t\t\t\t\t\tsat:'<p class=\"festival\" style=\"padding: 4px; width:91px;\">Saturdays
-        only</p>',\n\t\t\t\t\t\tschool:'<p class=\"dusk\" style=\"padding: 4px; width:162px;\">School
-        days only</p>',\t\t\t\t\t\t\n\t\t\t\t\t\tnonschool:'<p class=\"gold\" style=\"padding:
-        4px; width:162px;\">Non School days only</p>',\n\t\t\t\t\t\tfriday:'<p class=\"sky\"
-        style=\"padding: 4px; width:91px;\">Fridays only</p>'\t\n\t\t\t\t\t}\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\tfunction
-        add_notes(day, columns, add){\t\t\t\n\t\t\t        var tf = ['true','false'];\t\t\t\t\t\n\t\t\t\t\ttf.forEach(function(entry)
-        {\n\t\t\t\t\t\t\t\tvar id= '#' +entry + '-' + day;\n\t\t\t\t\t\t\t\tfor (var
-        key in columns) {\n\t\t\t\t\t\t\t\t\t\t\tvar value = columns[key];\n\t\t\t\t\t\t\t\t\t\t\t//var
-        color = '#true-2-1-friday td.tdn_' + key;\n\t\t\t\t\t\t\t\t\t\t\tvar color
-        = id + ' td.tdn_' + key;\n\t\t\t\t\t\t\t\t\t\t\t$(color).addClass(value);\n\t\t\t\t\t\t\t\t}\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t$(id).after(notes);\t\n\t\t\t\t\t\t\t\t$(id).next('div').addClass(day);\n\t\t\t\t\t});\t\t\t\t\t\n\t\t\t\t\tvar
-        classx = '.' + day + ' .t-table-notes';\t\n\t\t\t\t\t for (var key in add)
-        {\n\t\t\t\t\t\tvar value = add[key];\n\t\t\t\t\t\t$(classx).append(app[value]);\n\t\t\t\t\t}\t\n\t\t\t}\n\t\t\t\n\t\t\tfunction
-        add_notesx(fridayc,note){\n\t\t\t\t  \t\t// alert(note);\n\t\t\t\t\t\t//var
-        id= '#true-15-0-friday';\n\t\t\t\t\t\t//alert (id);\n\t\t\t\t\t\t\tfor (var
-        key in fridayc) {\n\t\t\t\t\t\t\t\tvar id = '#' + fridayc[key];\n\t\t\t\t\t\t\t\t//alert(id);\n\t\t\t\t\t\t\t\tvar
-        classz= note + key;\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t$(id).next('div').addClass(classz);\n\t\t\t\t\t\t\t\tvar
-        classx = '.' + classz + ' .t-table-notes';\t\n\t\t\t\t\t\t\t\t$(classx).append(app[note]);\n\t\t\t\t\t\t\t\t//$(id).after(notes);\n\t\t\t\t\t\t\t}\n\t\t\t}\n\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t\n\t\t\t
-        \   \t//var day='11-1-friday';\n\t\t\t\t\t//var columns= {  22:'sky',23:'sky'};\n\t\t\t\t\t//var
-        add = ['friday']\n\t\t\t\t\t//add_notes(day,columns, add);\t\t\t\n\t\t\t\t\t\n\t\t\t\t\t//$('#false-P1-0-friday
-        .tdn_3').css('display','none');\n\t\t\t\t\t//$('#false-51-0-friday .tdn_5').css('display','none');\n\t\t\t\t\t//$('#true-P1-0-friday
-        .tdn_3').css('display','none');\n\t\t\t\t\t//$('#true-51-0-friday .tdn_5').css('display','none');\n\t\t\t\t\t\n\t\t\t\t\tvar
-        ff = ['VJ22@22:00:00','VJ23@23:00:00','VJ24@00:00:00','VJ371@22:19:00','VJ372@23:19:00','VJ373@00:19:00','VJ141@22:00:00','VJ142@23:00:00','VJ143@00:00:00','VJ491@22:21:00','VJ492@23:21:00','VJ493@00:21:00','VJ338@21:00:00','VJ339@22:00:00','VJ340@23:00:00','VJ341@00:00:00','VJ663@21:20:00','VJ664@22:20:00','VJ665@23:20:00','VJ666@00:20:00'];\n\t\t\t\t\t\n\t\t\t\t\tvar
-        fridayc = [];\n\t\t\t\t\tconsole.log(\"j6\");\n\t\t\t\t\t \n\t\t\t\t\t \n\t\t\t\t\t
-        \n\t\t\t\t\t \n\t\t\t\t\t\tfor (var key in ff) {\n\t\t\t\t\t\tconsole.log(\"j6b\");\n\t\t\t\t\t\t
-        \ var tid = ff[key];\n\t\t\t\t\t\t console.log(\"tid \"+tid);\n\t\t\t\t\t\t
-        \ $('td[data=\"' + tid + '\"]').addClass('sky');\n\t\t\t\t\t\t  console.log(\"j6c\");\n\t\t\t\t\t\t
-        \ var uguv = $('td[data=\"' + tid + '\"').closest(\"div\").attr(\"id\");\n\t\t\t\t\t\t
-        \  console.log(\"j6d\");\n\t\t\t\t\t\t  if (typeof uguv !== 'undefined') {\n\t\t\t\t\t\t\tvar
-        found = jQuery.inArray(uguv, fridayc);\n\t\t\t\t\t\t\tif (found >= 0) {\n\t\t\t\t\t\t\n\t\t\t\t\t\t\t}
-        else {\n\t\t\t\t\t\t\t  // Element was not found, add it.\n\t\t\t\t\t\t\t
-        \ fridayc.push(uguv);\n\t\t\t\t\t\t\t  //alert(uguv);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t
-        \ } else {\n\t\t\t\t\t\t\tconsole.log(\"uguv was undefined\");  \n\t\t\t\t\t\t
-        \ }\n\t\t\t\t\t\t\n\t\t\t\t\t\t}\n\n\n\n\n\n\n\t\t\t\t\t   console.log(\"j7\");\n\t\t\t\t\t
-        add_notesx(fridayc,'friday'); \n\t\t\t\t\t   console.log(\"j8\");\n\t\t\t\t\t
-        \ \n\t\t\t\t\t  var ns = ['VJ364@14:48:00','VJ61@14:58:00','VJ412@15:12:00','VJ67@08:10:00','VJ117@08:00:00','VJ216@08:10:00','VJ551@14:42:00','VJ238@15:05:00','VJ588@15:30:00','VJ276@14:40:00','VJ310@15:15:00','VJ634@15:40:00'];\n\t\t\t\t\t\n\t\t\t\t\t\tvar
-        nsc = [];\n\t\t\t\t\t console.log(\"j9\");\n\t\t\t\t\t for (var key in ns)
-        {\n\t\t\t\t\t\tvar tid = ns[key];\n\t\t\t\t\t\t//alert(tid);\n\t\t\t\t\t\t$('td[data=\"'
-        +  tid + '\"]').addClass( 'gold' );\n\t\t\t\t\t\tvar uguv=$('td[data=\"' +
-        \ tid + '\"').closest( \"div\" ).attr(\"id\");\n\t\t\t\t\t\tconsole.log(uguv);\n\t\t\t\t\t\t
-        if (typeof uguv !== 'undefined') {\n\t\t\t\t\t\t   var found = jQuery.inArray(uguv,
-        nsc);\n\n\t\t\t\t\t\t   if (found >= 0) {\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t}
-        else {\n\t\t\t\t\t\t\t\t// Element was not found, add it.\n\t\t\t\t\t\t\t\tnsc.push(uguv);\n\t\t\t\t\t\t\t\t//alert(uguv);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}
-        \n\t\t\t\t\t  }\t\n\t\t\t\t\t   add_notesx(nsc,'nonschool');\n\t\t\t\t\t  \n\t\t\t\t\t
-        \ \t  var st = ['VJ386@14:44:00','VJ64@08:24:00','VJ152@08:25:00','VJ201@08:35:00','VJ550@14:42:00','VJ614@15:35:00','VJ289@15:55:00','VJ290@14:40:00'];\n\t\t\t\t\t\n\t\t\t\t\tvar
-        sc = [];\n\t\t\t\t\tconsole.log(\"j3\");\n\t\t\t\t\t for (var key in st) {\n\t\t\t\t\t\tvar
-        tid = st[key];\n\t\t\t\t\t\tconsole.log(\"j1a\");\n\t\t\t\t\t\t\n\t\t\t\t\t\t$('td[data=\"'
-        +  tid + '\"]').addClass( 'dusk' );\n\t\t\t\t\t\t  var uguv=$('td[data=\"'
-        +  tid + '\"').closest( \"div\" ).attr(\"id\");\n\t\t\t\t\t\t if (typeof uguv
-        !== 'undefined') {\n\t\t\t\t\t\t   var found = jQuery.inArray(uguv, sc);\n\t\t\t\t\t\t
-        \  if (found >= 0) {\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t} else {\n\t\t\t\t\t\t\t\t//
-        Element was not found, add it.\n\t\t\t\t\t\t\t\tsc.push(uguv);\n\t\t\t\t\t\t\t\t//alert(uguv);\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}
-        \n\t\t\t\t\t  }\t\n\t\t\t\t\t  \n\t\t\t\t\t add_notesx(sc,'school');\n\t\t\t\t\n\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t
-        \ var dr='<p><img src=\"http://buses.gg/img/tt_alert.png\"style=\"width: 16px;
-        height: 16px;float:left;margin-right:10px;\"/> Indicates a diversion. Times
-        and stops highlighted in red may be subject to change.</p> ';\n   var scd='<p><img
-        alt=\"\" src=\"http://buses.gg/img/tt_alert_soon.png\" style=\"width: 16px;
-        height: 16px;float:left;margin-right:10px;\"> Indicates a diversion that will
-        occur in the near future.</p>';\n\n\t\t\t\t\t\n\t\t});\n\t\t\t\t\t\n</script>\n</body>\n</html>"}
+        \           </table>\r\n          </div>\r\n\r\n <div id=\"t-table-extras\"><ul
+        class=\"t-table-notes\"></ul></div> \t\t\t\t\t\t\t\t\t\t <p>This table shows
+        the main points of the route. For the full set of stops and route variations
+        view the \n                                         <a href=\"/routes_and_times/timetables/11/FALSE\">full
+        timetable</a>.</p>\n\t\t\t\t\t\t\t\t\t\t \t\t\t\t\t\t\t\t\t  </div>\n\t\t\t\t\t\t\t\t\t
+        \ \n  \n  \n     \n      <div class=\"t-table-opt-links\">\n          <p><a
+        href=\"/routes_times/timetables\" class=\"text-button-normal\">Back to timetables</a>\n
+        \         <!-- | <a href=\"test.html\">Download routemap</a>--> \n          <!--
+        <a href=\"/pdfs/11.pdf\" class=\"text-button-normal\">Download this timetable</a>
+        -->\n           <a href=\"/pdfs/11.pdf\" class=\"text-button-normal\">Download
+        this timetable</a>\n           </p>\n        </div>\n \n   \n          </ul>\n
+        \         \t\t\t\t\n          </div>\n          <!-- end ENTRY CONTENT -->
+        \n          \n        </section>\n        <!-- end PRIMARY -->\n               <!--
+        end CONTENT --> \n          </main>\n  </div>\n  <!-- end MAIN --> \n  <!--
+        hey --> \n  <!-- after this point the templates are pretty similar. --> \n
+        \ <!-- hey -->\n  <div class=\"color-strip-footer\"></div>\n  <footer id=\"page-footer\"
+        role=\"contentinfo\">\n    <div id=\"footer-circle-holder\" class=\"clearfix\">\n
+        \     <div id=\"page-footer-inner\" class=\"clearfix\">\n        <nav id=\"footer-nav-main\"
+        role=\"navigation\">\n          <ul class=\"nav sf-menu\" id=\"cc-foot\">\n
+        \           <li class=\"nav-top-level\"><a href=\"#\">Home</a></li>\n            <li
+        class=\"nav-top-level \"><a href=\"#\">Routes &amp; Times</a></li>\n            <li
+        class=\"nav-top-level \" data=\"current-page-ancestor\"><a href=\"#\">Schools</a></li>\n
+        \           <li class=\"nav-top-level\"><a href=\"#\">Visiting Guernsey</a>\n
+        \           <li class=\"nav-top-level\"><a href=\"#\">About</a></li>\n          </ul>\n
+        \       </nav>\n        <nav id=\"footer-nav-secondary\" role=\"navigation\">\n
+        \         <ul>\n            <li><a href=\"/contact_us\">Contact us</a></li>\n
+        \           <li><a href=\"/accessibility\">Accessibility</a></li>\n            <li><a
+        href=\"/privacy\">Privacy & cookies</a></li>\n            <li><a href=\"/site_map\">Sitemap</a></li>\n
+        \           <li><a href=\"/terms_conditions\">Terms & Conditions</a></li>\n
+        \         </ul>\n        </nav>\n        <div id=\"copyright\">copyright 2015
+        Hct Group. All rights reserved.</div>\n      </div>\n      <div id=\"site-credits\">created
+        by <a href=\"http://www.wave.coop\">wave</a> , powered by <a href=\"http://www.ecologicalhosting.com\">wind</a></div>\n
+        \   </div>\n  </footer>\n</div>\n<div id=\"feedback-wrapper\" class=\"no-display\">\n
+        \ <div id=\"feedback-box\" class=\"clearfix\"><a class=\"close-popup-feedback\"
+        href=\"#\">close</a>\n    <h2>Your feedback</h2>\n    <p>Please help us to
+        improve our service by letting us know what you think. If you'd like us to
+        get back to you about your comment, don't forget to leave your name and contact
+        details.</p>\n    <form id=\"feedback-form\" class=\"standardform\">\n      <input
+        type=\"hidden\" value=\"/about\" name=\"url\">\n      <fieldset>\n        <ul>\n
+        \         <li class=\"input-default\">\n            <label for=\"feedback_message\">Add
+        your feedback here</label>\n            <textarea id=\"feedback_message\"
+        rows=\"5\" cols=\"20\" name=\"feedback_message\"></textarea>\n          </li>\n
+        \       </ul>\n      </fieldset>\n      <fieldset>\n        <span class=\"text-button\">\n
+        \       <button id=\"fb-submit\" class=\"styled-button-1\" type=\"submit\">Submit
+        feedback</button>\n        </span>\n      </fieldset>\n    </form>\n  </div>\n</div>\n<!--
+        Go to www.addthis.com/dashboard to customize your tools --> \n<script type=\"text/javascript\"
+        src=\"//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-554b89a919228ce1\"
+        async=\"async\"></script><script>\n  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n
+        \ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\n
+        \ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n
+        \ })(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n\n
+        \ ga('create', 'UA-22191335-2', 'auto');\n  ga('send', 'pageview');\n\n</script>\n
+        </body>\n</html>\n"}
     headers:
       Cache-Control: ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0']
       Connection: [close]
       Content-Type: [text/html;  charset=UTF-8]
-      Date: ['Tue, 16 Jan 2018 21:06:33 GMT']
+      Date: ['Thu, 18 Jan 2018 21:25:10 GMT']
       Expires: ['Thu, 19 Nov 1981 08:52:00 GMT']
       Pragma: [no-cache]
       Server: [Apache/2.2.15 (CentOS)]
@@ -7820,6 +8204,7 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
+      Cookie: [PHPSESSID=vto5jb7jb00hmkn20vau7cklc1]
       User-Agent: [python-requests/2.18.4]
     method: GET
     uri: http://buses.gg/kmls/11.kml
@@ -8036,7 +8421,7 @@ interactions:
       Connection: [close]
       Content-Length: ['29965']
       Content-Type: [application/vnd.google-earth.kml+xml]
-      Date: ['Tue, 16 Jan 2018 21:06:33 GMT']
+      Date: ['Thu, 18 Jan 2018 21:52:49 GMT']
       ETag: ['"26029a-750d-524ba04b45f40"']
       Last-Modified: ['Tue, 17 Nov 2015 10:30:45 GMT']
       Server: [Apache/2.2.15 (CentOS)]
