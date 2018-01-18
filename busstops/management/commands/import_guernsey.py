@@ -21,16 +21,17 @@ def import_stops(region):
             _, stop_code = stop_code.split(' - ')
             if not stop_code:
                 continue
+            stop_code = int(stop_code)
             defaults = {
                 'common_name': name,
-                'naptan_code': int(stop_code),
+                'naptan_code': stop_code,
                 'latlong': Point(*place['posn'][::-1]),
                 'locality_centre': False,
                 'active': True,
             }
             if ', ' in name:
                 defaults['common_name'], defaults['indicator'] = name.split(', ')
-            StopPoint.objects.update_or_create(defaults, atco_code='{}-{}'.format(region.id.lower(), int(stop_code)))
+            StopPoint.objects.update_or_create(defaults, atco_code='{}-{}'.format(region.id.lower(), stop_code))
 
 
 def import_routes(region, operator, url, session):
@@ -38,7 +39,7 @@ def import_routes(region, operator, url, session):
     res = session.get(url)
     soup = BeautifulSoup(res.text, 'lxml')
     for li in soup.find(id='main-timetable-list').find_all('li'):
-        line_name = li.find(class_='tt-key').text.strip()
+        line_name = li.find(class_='tt-key').text.strip().upper()
         service = Service.objects.update_or_create(service_code='{}-{}'.format(region.id.lower(), line_name), defaults={
             'date': today,
             'line_name': line_name,
@@ -60,7 +61,7 @@ def import_route_stops(region, service, url, session):
     for table in soup.find_all('table', class_='headers'):
         i = 0
         for tr in table.find_all('tr'):
-            stop_code = BeautifulSoup(tr.th.previous_element.previous_element, 'lxml').text.strip()
+            stop_code = int(BeautifulSoup(tr.th.previous_element.previous_element, 'lxml').text.strip())
             atco_code = '{}-{}'.format(region.id.lower(), stop_code)
             if not StopPoint.objects.filter(atco_code=atco_code).exists():
                 defaults = {
@@ -96,7 +97,7 @@ def import_route_stops(region, service, url, session):
     for table in soup.find_all('table', class_='headers'):
         i = 0
         for tr in table.find_all('tr'):
-            stop_code = BeautifulSoup(tr.th.previous_element.previous_element, 'lxml').text.strip()
+            stop_code = int(BeautifulSoup(tr.th.previous_element.previous_element, 'lxml').text.strip())
             stop_ids.add('{}-{}'.format(region.id.lower(), stop_code))
     StopUsage.objects.filter(service=service, stop_id__in=stop_ids).update(timing_status='PTP')
 
