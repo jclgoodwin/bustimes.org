@@ -1,5 +1,6 @@
 import os
 import vcr
+from mock import patch
 from django.test import TestCase, override_settings
 from django.core.management import call_command
 from ...models import StopPoint, Service
@@ -10,7 +11,8 @@ FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixture
 
 class ImportGuernseyTest(TestCase):
     @classmethod
-    def setUpTestData(cls):
+    @patch('time.sleep', return_value=None)
+    def setUpTestData(cls, _):
         with override_settings(DATA_DIR=FIXTURES_DIR):
             with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'guernsey.yaml')):
                 call_command('import_guernsey')
@@ -24,6 +26,10 @@ class ImportGuernseyTest(TestCase):
         self.assertEqual(town_terminus_c.latlong, town_terminus.latlong)
         self.assertEqual(town_terminus_c.service_set.count(), 1)
         self.assertEqual(town_terminus.service_set.count(), 1)
+
+        bordeaux_harbour = StopPoint.objects.get(pk='gg-890000355')
+        self.assertEqual(str(bordeaux_harbour.latlong), 'SRID=4326;POINT (-2.50857613778 49.4904331747)')
+        self.assertEqual(bordeaux_harbour.indicator, 'Southbound')
 
     def test_import_guernsey_services(self):
         service = Service.objects.get()
