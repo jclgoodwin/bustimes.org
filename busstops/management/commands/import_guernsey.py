@@ -39,7 +39,7 @@ def import_routes(region, operator, url, session):
     soup = BeautifulSoup(res.text, 'lxml')
     for li in soup.find(id='main-timetable-list').find_all('li'):
         line_name = li.find(class_='tt-key').text.strip()
-        service = Service.objects.update_or_create(service_code='{}-{}'.format(region.id, line_name), defaults={
+        service = Service.objects.update_or_create(service_code='{}-{}'.format(region.id.lower(), line_name), defaults={
             'date': today,
             'line_name': line_name,
             'description': li.find(class_='tt-text').text.strip(),

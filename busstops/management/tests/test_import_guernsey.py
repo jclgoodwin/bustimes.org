@@ -32,7 +32,7 @@ class ImportGuernseyTest(TestCase):
         self.assertEqual(bordeaux_harbour.indicator, 'Southbound')
 
     def test_import_guernsey_services(self):
-        service = Service.objects.get()
+        service = Service.objects.get(pk='gg-11')
         self.assertEqual(service.line_name, '11')
 
         response = self.client.get(service.get_absolute_url())
