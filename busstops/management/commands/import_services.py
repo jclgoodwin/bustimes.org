@@ -359,13 +359,9 @@ class Command(BaseCommand):
         StopUsage.objects.bulk_create(stop_usages)
 
         if timetable.private_code:
-            private_code_args = {
-                'service': service,
-                'scheme': 'Traveline Cymru',
+            ServiceCode.objects.update_or_create({
                 'code': timetable.private_code
-            }
-            if not ServiceCode.objects.filter(**private_code_args).exists():
-                ServiceCode.objects.create(**private_code_args)
+            }, service=service, scheme='Traveline Cymru')
 
         self.service_codes.add(service_code)
 
