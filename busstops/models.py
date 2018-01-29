@@ -574,13 +574,24 @@ class Service(models.Model):
 
         query = None
 
-        if self.net != '':
+        if self.net:
             if self.net == 'tfl':
                 return self.get_tfl_url(), 'Transport for London'
 
             parts = self.service_code.split('-')
-            query = [('line', parts[0].split('_')[-1].zfill(2) + parts[1].zfill(3)),
-                     ('lineVer', self.line_ver or parts[4]),
+            line = parts[0].split('_')[-1].zfill(2) + parts[1].zfill(3)
+            line_ver = self.line_ver or parts[4]
+
+            if self.net == 'cen' or self.net == 'twm':
+                sup = parts[2]
+                if sup == '_':
+                    sup = '%20'
+                url = 'https://www.networkwestmidlands.com/plan-your-journey/timetables/#/route/'
+                url += '{}_{}_{}_H_{}-{}'.format(self.net, line, sup, parts[3], line_ver)
+                return url, 'Network West Midlands'
+
+            query = [('line', line),
+                     ('lineVer', line_ver),
                      ('net', self.net),
                      ('project', parts[3])]
             if parts[2] != '_':
