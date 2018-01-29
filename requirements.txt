@@ -4,14 +4,14 @@ Django==1.11.7
 django-autoslug==1.9.3
 django-email-obfuscator==0.1.5
 django-haystack==2.6.1
-django-pipeline==1.6.13
+django-pipeline==1.6.14
 lxml==4.1.1
 git+git://github.com/jwhitlock/django-multi-gtfs.git@django-2.0
 Pillow==5.0.0
 psycopg2==2.7.3.2
 python-dateutil==2.6.1
 pytz==2017.3
-raven==6.4.0
+raven==6.5.0
 requests==2.18.4
 titlecase==0.12.0
 uk-postcode-utils==1.0

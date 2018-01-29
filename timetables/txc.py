@@ -81,6 +81,7 @@ def correct_description(description):
             ('Kings Lynn', "King's Lynn"),
             ('Baasingstoke', 'Basingstoke'),
             ('Tauton', 'Taunton'),
+            ('Charlton Horethore', 'Charlton Horethorne'),
             ('- ', ' - '),
             (' -', ' - '),
             ('  -', ' -'),
@@ -554,6 +555,8 @@ class VehicleJourney(object):
             self.departure_time = datetime.time(7, 50)
         elif self.code == 'VJ_36-148-_-y10-1-1-T0' and self.departure_time == datetime.time(7, 50):
             self.departure_time = datetime.time(15, 10)
+        elif self.code == 'VJ_43-40-_-y10-1-19-T0' and self.departure_time == datetime.time(8, 0):
+            self.departure_time = datetime.time(7, 55)
 
         self.operator = element.find('txc:OperatorRef', NS)
         if self.operator is not None:
