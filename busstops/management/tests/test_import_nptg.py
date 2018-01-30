@@ -3,9 +3,8 @@ from __future__ import unicode_literals
 import os
 from django.test import TestCase
 from .. import import_from_csv
-from ..commands import (
-    import_regions, import_areas, import_districts, import_localities, import_locality_hierarchy
-)
+from ..commands import (import_regions, import_areas, import_districts, import_localities, import_locality_hierarchy,
+                        import_adjacent_localities)
 from ...models import Region, AdminArea, District, Locality, StopPoint
 
 
@@ -30,6 +29,7 @@ class ImportNPTGTest(TestCase):
         cls.do_import(import_districts.Command(), 'Districts')
         cls.do_import(import_localities.Command(), 'Localities')
         cls.do_import(import_locality_hierarchy.Command(), 'LocalityHierarchy')
+        cls.do_import(import_adjacent_localities.Command(), 'AdjacentLocality')
 
         cls.east_anglia = Region.objects.get(id='EA')
         cls.east_midlands = Region.objects.get(id='EM')
@@ -88,7 +88,11 @@ class ImportNPTGTest(TestCase):
         stop.active = True
         stop.save()
 
-        self.assertContains(self.client.get(self.cambridge.get_absolute_url()), 'Addenbrooke')
+        res = self.client.get(self.cambridge.get_absolute_url())
+        self.assertContains(res, 'Near Cambridge')
+        self.assertContains(res, 'Places in Cambridge')
+        self.assertContains(res, 'Addenbrooke')
+
         self.assertContains(self.client.get(self.addenbrookes.get_absolute_url()), 'Captain Birdseye Road')
 
     def test_super(self):
