@@ -377,6 +377,7 @@ class Command(BaseCommand):
         self.service_codes = set()
 
         Service.objects.filter(region=self.region_id).update(current=False)
+        ServiceCode.objects.filter(service__region=self.region_id).delete()
 
         with zipfile.ZipFile(archive_name) as archive:
 
