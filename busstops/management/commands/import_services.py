@@ -146,36 +146,47 @@ class Command(BaseCommand):
         parts = [sanitize_description_part(part) for part in name.split(' - ')]
         return ' - '.join(parts)
 
+    @staticmethod
+    def get_operator_code(operator_element, element_name):
+        element = operator_element.find('txc:{}'.format(element_name), NS)
+        if element is not None:
+            return element.text
+
     @classmethod
     def get_operator_name(cls, operator_element):
         "Given an Operator element, returns the operator name or None"
 
         for element_name in ('TradingName', 'OperatorNameOnLicence', 'OperatorShortName'):
-            element = operator_element.find('txc:%s' % element_name, NS)
-            if element is not None and element.text is not None:
-                return element.text.replace('&amp;', '&')
+            name = cls.get_operator_code(operator_element, element_name)
+            if name:
+                return name.replace('&amp;', '&')
 
-    @classmethod
-    def get_operator_code(cls, operator_element):
-        "Given an Operator element, returns the operator code or None"
+    @staticmethod
+    def get_operator_by(scheme, code):
+        if code:
+            return Operator.objects.filter(operatorcode__code=code, operatorcode__source__name=scheme).first()
 
-        for element_name in ('National', ''):
-            element = operator_element.find('txc:%sOperatorCode' % element_name, NS)
-            if element is not None:
-                return element.text
-
-    @classmethod
-    def get_operator(cls, operator_element):
+    def get_operator(self, operator_element):
         "Given an Operator element, returns an operator code for an operator that exists."
 
         # Get by national operator code
-        operator_code = cls.get_operator_code(operator_element)
-        if len(operator_code) == 4:
-            if Operator.objects.filter(id=operator_code).exists():
-                return operator_code
+        operator_code = self.get_operator_code(operator_element, 'NationalOperatorCode')
+        if operator_code:
+            operator = self.get_operator_by('National Operator Codes', operator_code)
+            if operator:
+                return operator
+
+        # Get by regional operator code
+        operator_code = self.get_operator_code(operator_element, 'OperatorCode')
+        if operator_code:
+            operator = self.get_operator_by(self.region_id, operator_code)
+            if not operator:
+                operator = self.get_operator_by('National Operator Codes', operator_code)
+            if operator:
+                return operator
 
         # Get by name
-        operator_name = cls.get_operator_name(operator_element)
+        operator_name = self.get_operator_name(operator_element)
 
         if operator_name in ('Replacement Service', 'UNKWN'):
             return None

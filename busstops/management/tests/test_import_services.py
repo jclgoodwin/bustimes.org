@@ -9,7 +9,8 @@ from freezegun import freeze_time
 from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
 from django.core.management import call_command
-from ...models import Operator, Service, Region, StopPoint, Journey, StopUsageUsage, ServiceDate
+from ...models import (Operator, DataSource, OperatorCode, Service, Region, StopPoint, Journey, StopUsageUsage,
+                       ServiceDate)
 from ..commands import import_services, generate_departures
 
 
@@ -47,6 +48,13 @@ class ImportServicesTest(TestCase):
                                                      name='Bakers Dolphin')
         cls.bakers_porpoise = Operator.objects.create(pk='DOLP', region_id='S',
                                                       name='Bakers Porpoise')
+        nocs = DataSource.objects.create(name='National Operator Codes', datetime='2018-02-01 00:00+00:00')
+        east_anglia = DataSource.objects.create(name='EA', datetime='2018-02-01 00:00+00:00')
+        london = DataSource.objects.create(name='L', datetime='2018-02-01 00:00+00:00')
+        OperatorCode.objects.create(operator=cls.fecs, source=east_anglia, code='FECS')
+        OperatorCode.objects.create(operator=cls.megabus, source=nocs, code='MEGA')
+        OperatorCode.objects.create(operator=cls.fabd, source=nocs, code='FABD')
+        OperatorCode.objects.create(operator=cls.bakers_dolphin, source=london, code='BE')
 
         for atco_code, common_name, indicator, lat, lng in (
                 ('639004572', 'Bulls Head', 'adj', -2.5042125060, 53.7423055225),
