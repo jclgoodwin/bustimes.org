@@ -217,7 +217,8 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
             del context['areas']
         context['operators'] = self.object.operator_set.filter(service__current=True).distinct()
         if len(context['operators']) == 1:
-            context['services'] = context['operators'][0].service_set.filter(current=True)
+            context['services'] = sorted(context['operators'][0].service_set.filter(current=True).defer('geometry'),
+                                         key=Service.get_order)
 
         return context
 

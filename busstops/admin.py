@@ -80,12 +80,14 @@ class StopUsageUsageAdmin(admin.ModelAdmin):
 class OperatorCodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'operator', 'source', 'code')
     list_filter = ('source',)
+    search_fields = ('code',)
     raw_id_fields = ('operator',)
 
 
 class ServiceCodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'service', 'scheme', 'code')
     list_filter = ('scheme',)
+    search_fields = ('code',)
     raw_id_fields = ('service',)
 
 
