@@ -1,6 +1,6 @@
 beautifulsoup4==4.6.0
-ciso8601==1.0.6
-Django==1.11.7
+ciso8601==1.0.7
+Django==1.11.*
 django-autoslug==1.9.3
 django-email-obfuscator==0.1.5
 django-haystack==2.6.1
