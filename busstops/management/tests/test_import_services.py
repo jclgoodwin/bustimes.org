@@ -36,25 +36,12 @@ class ImportServicesTest(TestCase):
         cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
         cls.megabus = Operator.objects.create(pk='MEGA', region_id='GB', name='Megabus')
         cls.fabd = Operator.objects.create(pk='FABD', region_id='S', name='First Aberdeen')
-        cls.blue_triangle_element = ET.fromstring("""
-            <txc:Operator xmlns:txc='http://www.transxchange.org.uk/' id='OId_BE'>
-                <txc:OperatorCode>BE</txc:OperatorCode>
-                <txc:OperatorShortName>BLUE TRIANGLE BUSES LIM</txc:OperatorShortName>
-                <txc:OperatorNameOnLicence>BLUE TRIANGLE BUSES LIMITED</txc:OperatorNameOnLicence>
-                <txc:TradingName>BLUE TRIANGLE BUSES LIMITED</txc:TradingName>
-            </txc:Operator>
-        """)
-        cls.bakers_dolphin = Operator.objects.create(pk='BAKE', region_id='S',
-                                                     name='Bakers Dolphin')
-        cls.bakers_porpoise = Operator.objects.create(pk='DOLP', region_id='S',
-                                                      name='Bakers Porpoise')
+
         nocs = DataSource.objects.create(name='National Operator Codes', datetime='2018-02-01 00:00+00:00')
         east_anglia = DataSource.objects.create(name='EA', datetime='2018-02-01 00:00+00:00')
-        london = DataSource.objects.create(name='L', datetime='2018-02-01 00:00+00:00')
         OperatorCode.objects.create(operator=cls.fecs, source=east_anglia, code='FECS')
         OperatorCode.objects.create(operator=cls.megabus, source=nocs, code='MEGA')
         OperatorCode.objects.create(operator=cls.fabd, source=nocs, code='FABD')
-        OperatorCode.objects.create(operator=cls.bakers_dolphin, source=london, code='BE')
 
         for atco_code, common_name, indicator, lat, lng in (
                 ('639004572', 'Bulls Head', 'adj', -2.5042125060, 53.7423055225),
@@ -172,7 +159,15 @@ class ImportServicesTest(TestCase):
             self.assertEqual(self.command.infer_from_filename(filename), parts)
 
     def test_get_operator_name(self):
-        self.assertEqual(self.command.get_operator_name(self.blue_triangle_element), 'BLUE TRIANGLE BUSES LIMITED')
+        blue_triangle_element = ET.fromstring("""
+            <txc:Operator xmlns:txc='http://www.transxchange.org.uk/' id='OId_BE'>
+                <txc:OperatorCode>BE</txc:OperatorCode>
+                <txc:OperatorShortName>BLUE TRIANGLE BUSES LIM</txc:OperatorShortName>
+                <txc:OperatorNameOnLicence>BLUE TRIANGLE BUSES LIMITED</txc:OperatorNameOnLicence>
+                <txc:TradingName>BLUE TRIANGLE BUSES LIMITED</txc:TradingName>
+            </txc:Operator>
+        """)
+        self.assertEqual(self.command.get_operator_name(blue_triangle_element), 'BLUE TRIANGLE BUSES LIMITED')
 
     def test_get_operator(self):
         element = ET.fromstring("""
@@ -185,18 +180,6 @@ class ImportServicesTest(TestCase):
         """)
         self.assertIsNone(self.command.get_operator(element))
 
-        # test SPECIAL_OPERATOR_TRADINGNAMES
-        self.assertEqual('BTRI', self.command.get_operator(self.blue_triangle_element))
-
-        self.assertEqual('RJWS', self.command.get_operator(ET.fromstring("""
-            <txc:Operator id="OId_RJW" xmlns:txc="http://www.transxchange.org.uk/">
-                <txc:OperatorCode>RJW</txc:OperatorCode>
-                <txc:OperatorShortName>R. J's of Wem</txc:OperatorShortName>
-                <txc:OperatorNameOnLicence>R. J's of Wem</txc:OperatorNameOnLicence>
-                <txc:TradingName>R. J's of Wem</txc:TradingName>
-            </txc:Operator>
-        """)))
-
         with warnings.catch_warnings(record=True) as caught_warnings:
             self.assertIsNone(self.command.get_operator(ET.fromstring("""
                 <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_RRS">
@@ -205,19 +188,6 @@ class ImportServicesTest(TestCase):
                 </txc:Operator>
             """)))
             self.assertTrue('No operator found for element' in str(caught_warnings[0].message))
-
-        self.assertEqual(self.bakers_dolphin.id, self.command.get_operator(ET.fromstring("""
-            <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_RRS">
-                <txc:OperatorCode>BEAN</txc:OperatorCode>
-                <txc:TradingName>Bakers D</txc:TradingName>
-            </txc:Operator>
-        """)))
-
-        self.assertEqual('YTIG', self.command.get_operator(ET.fromstring("""
-            <txc:Operator xmlns:txc="http://www.transxchange.org.uk/">
-                <txc:OperatorCode>HBSY</txc:OperatorCode>
-            </txc:Operator>
-        """)))
 
     def test_get_line_name_and_brand(self):
         with warnings.catch_warnings(record=True) as caught_warnings:

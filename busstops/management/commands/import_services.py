@@ -23,88 +23,6 @@ from ...models import Operator, StopPoint, Service, StopUsage, Region, Journey, 
 from .generate_departures import handle_region
 
 
-# map names to operator IDs where there is no correspondence between the NOC DB and TNDS:
-SPECIAL_OPERATOR_NAMES = {
-    'Arriva Northumbria': 'ANEA',
-    'Southwold Town Council': 'SWTC',
-    'H.C.Chambers & Son': 'CHMB',
-    'Bungay and Beccles Area CT': 'BBCT',
-    'Stowmarket Minibus & Coach Hire': 'MBCH',
-    'Harwich Harbour Ferry': 'HHFS',
-    'Halesworth Area Community Transport': 'HACT',
-    'Dartmouth Steam Railway And River Boat Company': 'DRMR',
-    'Borderbus': 'BDRB',
-    'ARRIVA LONDON NORTH LIMITED': 'ALNO',
-    'ARRIVA LONDON SOUTH LIMITED': 'ALSO',
-    'ARRIVA THE SHIRES LIMITED': 'ASES',
-    'ARRIVA KENT THAMESIDE LIMITED': 'AMTM',
-    'METROBUS LIMITED': 'METR',
-    'EAST LONDON BUS & COACH COMPANY LIMITED': 'ELBG',
-    'SOUTH EAST LONDON & KENT BUS COMPANY LTD': 'SELK',
-    'TRAMTRACK CROYDON LTD': 'TRAM',
-    'Westminster Passenger Service Association': 'WPSA',
-    'First Cornwall': 'FCWL',
-    'IoW Floating Bridge': 'IOWC',
-    'Ladies Only Travel': 'YLOT',
-    'LONDON SOVEREIGN LIMITED': 'LSOV',
-    'ABELLIO LONDON LIMITED': 'ABLO',
-    'ABELLIO LONDON (WEST) LIMITED': 'ABLO',
-    'TOWER TRANSIT LIMITED': 'TOTR',
-    'UNO BUSES LIMITED': 'UNOE',
-    'C T PLUS LIMITED': 'NCTP',
-    'Gloucestershire': 'SCGL',
-    'BLUE TRIANGLE BUSES LIMITED': 'BTRI',
-    'METROLINE WEST LIMITED': 'MTLN',
-    'LONDON CENTRAL BUS COMPANY LIMITED': 'LONC',
-    'SULLIVAN BUS & COACH LIMITED': 'SULV',
-    'Notts & Derby': 'NDTR',
-    'LIVERPOOL CITY SIGHTS': 'CISI',
-    'WDC': 'WDCB',  # Western Dales Community Bus
-    'Rothbury Securities Ltd': 'ROTH',
-    'KL': 'KELC',  # Keswick Launch Company
-    'Carters Heritage Buses': 'CTCS',
-    'King Harry Ferry Co': 'KHFC',
-    'Fal River Ferries': 'KHFC',
-    'KPMG THAMES CLIPPERS': 'NTHC',
-    'Stagecoach on Teesside': 'SCNW',
-    'R. J\'s of Wem': 'RJWS',
-    'Owen\'s Travelmaster': 'OWNC',
-    'Peter Hogg of Jedburgh': 'HOGG',
-    'Fastline Travel': 'FLNE',
-    'Operated by Newport Bus': 'NWPT',
-    'Eurocab Minicoaches': 'ERCB',
-    'Polruan Ferry': 'CTSL',
-    'IMPACT COACHES': 'CM',  # Citymapper
-}
-# map OperatorCodes to operator IDs (ditto, where there is no TradingName):
-SPECIAL_OPERATOR_CODES = {
-    'HIB': 'HIMB',  # Holy Island Minibus
-    '1866': 'BPTR',  # Burnley & Pendle
-    '2152': 'RSTY',  # R S Tyrer & Sons
-    '2916': 'SPCT',  # South Pennine Community Transport
-    'RB1': 'RBRO',  # Richards Bros
-    'ACY': 'ACYM',  # Arriva Cymru/Wales
-    'AM0': 'AMID',  # Arriva Midlands
-    'RMB': 'RMBL',  # Routemaster Buses Ltd
-    'JO1': 'JTMT',  # John's Travel (Merthyr Tydfil)
-    'CO': 'CFSV',  # Coniston Launch/Ferry
-    'CL': 'CFSV',  # Coniston Launch/Ferry
-    'SGI': 'SGIL',  # Steel Group Investments Limited
-    'EYM': 'EYMS',  # East Yorkshire Motor Services
-    'WINF': 'WMLC',  # Windermere Lake Cruises/Ferry
-    'DPC': 'DPCE',  # (Don) Prentice (Coaches)
-    'PCV': 'PCVN',  # (Peter) Canavan (Travel)
-    'RGJ': 'RGJS',  # R G Jamieson & Son
-    'DAM': 'DAMC',  # D A & A J MacLean
-    'ADD': 'ADDI',  # Addison News/of Callendar
-    'HBSY': 'YTIG',  # Huddersfield Bus Company/Yorkshire Tiger
-    'ALI': 'AMDD',   # Alasdair MacDonald
-    'EWE': 'EWEN',   # Ewens Coach Hire
-    '712CS': 'CSVC',  # Coach Services
-    'TFLR': 'XR',  # TfL Rail/Crossrail
-    'ANUM': 'ANEA',
-    'ANGL': 'KCTB',  # Anglian Bus/Konectbus
-}
 # see https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml-with-namespaces
 NS = {'txc': 'http://www.transxchange.org.uk/'}
 
@@ -190,18 +108,6 @@ class Command(BaseCommand):
 
         if operator_name in ('Replacement Service', 'UNKWN'):
             return None
-
-        if operator_name in SPECIAL_OPERATOR_NAMES:
-            return SPECIAL_OPERATOR_NAMES[operator_name]
-
-        if operator_code in SPECIAL_OPERATOR_CODES:
-            return SPECIAL_OPERATOR_CODES[operator_code]
-
-        if operator_name:
-            possible_operators = (Operator.objects.filter(name=operator_name)
-                                  or Operator.objects.filter(name__istartswith=operator_name))
-            if len(possible_operators) == 1:
-                return possible_operators[0].id
 
         warnings.warn('No operator found for element %s' %
                       ET.tostring(operator_element).decode('utf-8'))
