@@ -137,14 +137,14 @@ class JerseyDepartures(Departures):
         departures = []
         for item in response.json():
             time = ciso8601.parse_datetime(item['ETA'])
-            item = {
+            row = {
                 'time': time,
                 'destination': item['Destination'],
                 'service': self.get_service(item['ServiceNumber'])
             }
             if item['IsTracked']:
-                item['live'] = time
-            departures.append(item)
+                row['live'] = time
+            departures.append(row)
         return departures
 
 
