@@ -520,7 +520,11 @@ def get_departures(stop, services):
     services_dict = departures.services
     departures = departures.get_departures()
 
-    if not departures or (departures[0]['time'] - now) < datetime.timedelta(hours=1):
+    one_hour = datetime.timedelta(hours=1)
+    one_hour_ago = stop.stopusageusage_set.filter(datetime__lte=now - one_hour, journey__service__current=True)
+
+    if not departures or (departures[0]['time'] - now) < one_hour or one_hour_ago.exists():
+
         operators = Operator.objects.filter(service__stops=stop,
                                             service__current=True).distinct()
 
