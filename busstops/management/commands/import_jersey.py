@@ -29,4 +29,4 @@ class Command(BaseCommand):
 
         import_routes(region, operator, 'https://libertybus.je/routes_times/timetables', session)
 
-        # self.import_routes(session)
+        self.import_routes(session)

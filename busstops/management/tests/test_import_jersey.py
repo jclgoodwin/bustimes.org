@@ -28,3 +28,4 @@ class ImportJerseyTest(TestCase):
         self.assertEqual(service.stops.filter(stopusage__timing_status='OTH').count(), 64)
         self.assertEqual(service.stops.filter(stopusage__direction='outbound').count(), 44)
         self.assertEqual(service.stops.filter(stopusage__direction='inbound').count(), 40)
+        self.assertTrue(service.geometry)
