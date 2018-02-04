@@ -1,0 +1,835 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: http://www.bus-man.com/BusMap/BusStopMarkers?NthEstLng=-3.8999999999999773&SthWstLng=-5.2000000000000455&SthWstLat=53.9&NthEstLat=54.54
+  response:
+    body: {string: '[{"StopPointID":1,"StopPointRef":891085000503,"CommonName":"Airport
+        entrance","Longitude":-4.634823,"Latitude":54.086762,"IDCode":"L1"},{"StopPointID":2,"StopPointRef":891085000502,"CommonName":"Airport
+        Roundabout - northbound","Longitude":-4.63249,"Latitude":54.08896,"IDCode":"L2"},{"StopPointID":3,"StopPointRef":891085000501,"CommonName":"Airport
+        Roundabout - southbound","Longitude":-4.63249,"Latitude":54.08896,"IDCode":"L3"},{"StopPointID":4,"StopPointRef":891085000504,"CommonName":"Airport
+        shelter","Longitude":-4.634823,"Latitude":54.086762,"IDCode":"L4"},{"StopPointID":5,"StopPointRef":891085020159,"CommonName":"Alexander
+        Drive, Wychwood House","Longitude":-4.495471,"Latitude":54.157385,"IDCode":"L5"},{"StopPointID":6,"StopPointRef":891085010302,"CommonName":"Anagh
+        Coar entrance shelter","Longitude":-4.515707,"Latitude":54.149807,"IDCode":"L6"},{"StopPointID":7,"StopPointRef":891085010301,"CommonName":"Anagh
+        Coar, entrance","Longitude":-4.515557,"Latitude":54.149813,"IDCode":"L7"},{"StopPointID":8,"StopPointRef":891085000619,"CommonName":"Arbory
+        Road, CRHS","Longitude":-4.660987,"Latitude":54.075483,"IDCode":"L8"},{"StopPointID":9,"StopPointRef":891085000714,"CommonName":"Arbory
+        School","Longitude":-4.684482,"Latitude":54.099067,"IDCode":"L9"},{"StopPointID":10,"StopPointRef":891085013901,"CommonName":"Avondale
+        Road, Mount View Road","Longitude":-4.456985,"Latitude":54.175396,"IDCode":"L10"},{"StopPointID":11,"StopPointRef":891085013902,"CommonName":"Avondale
+        Road, Precinct","Longitude":-4.457157,"Latitude":54.175556,"IDCode":"L11"},{"StopPointID":12,"StopPointRef":891085000710,"CommonName":"Ballabeg
+        Hall","Longitude":-4.680537,"Latitude":54.100647,"IDCode":"L12"},{"StopPointID":13,"StopPointRef":891085000709,"CommonName":"Ballabeg
+        Hall, shelter","Longitude":-4.680236,"Latitude":54.100586,"IDCode":"L13"},{"StopPointID":14,"StopPointRef":891085000704,"CommonName":"Ballabeg
+        Railway Station","Longitude":-4.675278,"Latitude":54.092111,"IDCode":"L14"},{"StopPointID":15,"StopPointRef":891085000703,"CommonName":"Ballabeg
+        Station","Longitude":-4.675129,"Latitude":54.092619,"IDCode":"L15"},{"StopPointID":16,"StopPointRef":891085000705,"CommonName":"Ballabeg,
+        3 Roads","Longitude":-4.676815,"Latitude":54.097687,"IDCode":"L16"},{"StopPointID":17,"StopPointRef":891085000706,"CommonName":"Ballabeg,
+        3 Roads, junction","Longitude":-4.675745,"Latitude":54.096878,"IDCode":"L17"},{"StopPointID":18,"StopPointRef":891085000708,"CommonName":"Ballabeg,
+        Friary Park entrance","Longitude":-4.677921,"Latitude":54.099044,"IDCode":"L18"},{"StopPointID":19,"StopPointRef":891085000707,"CommonName":"Ballabeg,
+        Friary Park Farm","Longitude":-4.678242,"Latitude":54.099372,"IDCode":"L19"},{"StopPointID":20,"StopPointRef":891085000712,"CommonName":"Ballabeg,
+        Vicarage Close","Longitude":-4.683516,"Latitude":54.09937,"IDCode":"L20"},{"StopPointID":21,"StopPointRef":891085000711,"CommonName":"Ballabeg,
+        Vicarage Close shelter","Longitude":-4.683095,"Latitude":54.099443,"IDCode":"L21"},{"StopPointID":22,"StopPointRef":891085011904,"CommonName":"Ballafesson
+        Farm","Longitude":-4.741656,"Latitude":54.092103,"IDCode":"L22"},{"StopPointID":23,"StopPointRef":891085011905,"CommonName":"Ballafesson
+        Road","Longitude":-4.743028,"Latitude":54.09175,"IDCode":"L23"},{"StopPointID":24,"StopPointRef":891085011908,"CommonName":"Ballafesson
+        Road, Barrack Road","Longitude":-4.744738,"Latitude":54.090363,"IDCode":"L24"},{"StopPointID":25,"StopPointRef":891085011907,"CommonName":"Ballafesson
+        Road, Barracks Road junction","Longitude":-4.744624,"Latitude":54.09039,"IDCode":"L25"},{"StopPointID":26,"StopPointRef":891085011906,"CommonName":"Ballafesson
+        Road, Qualtroughs Lane","Longitude":-4.743361,"Latitude":54.09152,"IDCode":"L26"},{"StopPointID":27,"StopPointRef":891085011903,"CommonName":"Ballafesson,
+        shelter","Longitude":-4.741509,"Latitude":54.092029,"IDCode":"L27"},{"StopPointID":28,"StopPointRef":891085011901,"CommonName":"Ballagawne","Longitude":-4.733525,"Latitude":54.090355,"IDCode":"L28"},{"StopPointID":29,"StopPointRef":891085011902,"CommonName":"Ballagawne,
+        shelter","Longitude":-4.733961,"Latitude":54.090386,"IDCode":"L29"},{"StopPointID":30,"StopPointRef":891085000701,"CommonName":"Ballakaighen","Longitude":-4.674523,"Latitude":54.083731,"IDCode":"L30"},{"StopPointID":31,"StopPointRef":891085000702,"CommonName":"Ballakaighen
+        Farm","Longitude":-4.674382,"Latitude":54.083515,"IDCode":"L31"},{"StopPointID":32,"StopPointRef":891085000406,"CommonName":"Ballasalla,
+        Douglas Road northbound","Longitude":-4.628346,"Latitude":54.098278,"IDCode":"L32"},{"StopPointID":33,"StopPointRef":891085000405,"CommonName":"Ballasalla,
+        Douglas Road southbound","Longitude":-4.629247,"Latitude":54.097915,"IDCode":"L33"},{"StopPointID":34,"StopPointRef":891085000401,"CommonName":"Ballasalla,
+        Glashen Close","Longitude":-4.62008,"Latitude":54.101104,"IDCode":"L34"},{"StopPointID":35,"StopPointRef":891085000402,"CommonName":"Ballasalla,
+        Glashen Close entrance","Longitude":-4.620932,"Latitude":54.100867,"IDCode":"L35"},{"StopPointID":36,"StopPointRef":891085000410,"CommonName":"Ballasalla,
+        Meadow Court","Longitude":-4.629872,"Latitude":54.09449,"IDCode":"L36"},{"StopPointID":37,"StopPointRef":891085000403,"CommonName":"Ballasalla,
+        opposite Whitestone Garage","Longitude":-4.624757,"Latitude":54.09948,"IDCode":"L37"},{"StopPointID":38,"StopPointRef":891085000408,"CommonName":"Ballasalla,
+        Railway Station","Longitude":-4.629683,"Latitude":54.095943,"IDCode":"L38"},{"StopPointID":39,"StopPointRef":891085000409,"CommonName":"Ballasalla,
+        Sycamores","Longitude":-4.630023,"Latitude":54.09419,"IDCode":"L39"},{"StopPointID":40,"StopPointRef":891085000407,"CommonName":"Ballasalla,
+        The Paddocks","Longitude":-4.629893,"Latitude":54.096702,"IDCode":"L40"},{"StopPointID":41,"StopPointRef":891085000404,"CommonName":"Ballasalla,
+        Whitesone Garage entrance","Longitude":-4.624777,"Latitude":54.099492,"IDCode":"L41"},{"StopPointID":42,"StopPointRef":891085013912,"CommonName":"Birch
+        Hill Crescent","Longitude":-4.4693,"Latitude":54.1833,"IDCode":"L42"},{"StopPointID":43,"StopPointRef":891085013911,"CommonName":"Birch
+        Hill Crescent, Highfield Close","Longitude":-4.47155,"Latitude":54.182333,"IDCode":"L43"},{"StopPointID":44,"StopPointRef":891085013913,"CommonName":"Birch
+        Hill Crescent, shop","Longitude":-4.464706,"Latitude":54.181412,"IDCode":"L44"},{"StopPointID":45,"StopPointRef":891085013914,"CommonName":"Birchill
+        Crescent, Kaighen\u0027s Lane","Longitude":-4.463316,"Latitude":54.1793,"IDCode":"L45"},{"StopPointID":46,"StopPointRef":891085000601,"CommonName":"Brookfield
+        Avenue","Longitude":-4.640377,"Latitude":54.08237,"IDCode":"L46"},{"StopPointID":47,"StopPointRef":891085000602,"CommonName":"Brookfield
+        Avenue, entrance","Longitude":-4.64053,"Latitude":54.082314,"IDCode":"L47"},{"StopPointID":48,"StopPointRef":891085000111,"CommonName":"Brown
+        Bobby","Longitude":-4.490741,"Latitude":54.150554,"IDCode":"L48"},{"StopPointID":49,"StopPointRef":891085040104,"CommonName":"Castle
+        Rushen High School","Longitude":-4.661307,"Latitude":54.075178,"IDCode":"L49"},{"StopPointID":50,"StopPointRef":891085000610,"CommonName":"Castletown
+        Railway Station entrance","Longitude":-4.649068,"Latitude":54.077873,"IDCode":"L50"},{"StopPointID":51,"StopPointRef":891085010306,"CommonName":"Castletown
+        Road, Four Roads","Longitude":-4.523062,"Latitude":54.14553,"IDCode":"L51"},{"StopPointID":52,"StopPointRef":891085010305,"CommonName":"Castletown
+        Road, Four Roads shelter","Longitude":-4.522023,"Latitude":54.145797,"IDCode":"L52"},{"StopPointID":53,"StopPointRef":891085000615,"CommonName":"Castletown
+        Square","Longitude":-4.653047,"Latitude":54.07302,"IDCode":"L53"},{"StopPointID":54,"StopPointRef":891085000616,"CommonName":"Castletown
+        Square, Co-Op","Longitude":-4.65328,"Latitude":54.072992,"IDCode":"L54"},{"StopPointID":55,"StopPointRef":891085000620,"CommonName":"Castletown,
+        Arbory Road","Longitude":-4.659452,"Latitude":54.075003,"IDCode":"L55"},{"StopPointID":56,"StopPointRef":891085000622,"CommonName":"Castletown,
+        Ballalough layby","Longitude":-4.663282,"Latitude":54.077807,"IDCode":"L56"},{"StopPointID":57,"StopPointRef":891085000623,"CommonName":"Castletown,
+        Ballalough shelter","Longitude":-4.664138,"Latitude":54.078083,"IDCode":"L57"},{"StopPointID":58,"StopPointRef":891085000613,"CommonName":"Castletown,
+        Brewery Wharf","Longitude":-4.652263,"Latitude":54.07535,"IDCode":"L58"},{"StopPointID":59,"StopPointRef":891085000617,"CommonName":"Castletown,
+        Farrants Way","Longitude":-4.658077,"Latitude":54.073861,"IDCode":"L59"},{"StopPointID":60,"StopPointRef":891085000618,"CommonName":"Castletown,
+        Farrants Way Shoprite","Longitude":-4.656667,"Latitude":54.073803,"IDCode":"L60"},{"StopPointID":61,"StopPointRef":891085000614,"CommonName":"Castletown,
+        opposite Brewery Wharf","Longitude":-4.652318,"Latitude":54.075459,"IDCode":"L61"},{"StopPointID":62,"StopPointRef":891085000609,"CommonName":"Castletown,
+        opposite Railway Station","Longitude":-4.64935,"Latitude":54.077719,"IDCode":"L62"},{"StopPointID":63,"StopPointRef":891085000621,"CommonName":"Castletown,
+        Royal Life","Longitude":-4.662869,"Latitude":54.076682,"IDCode":"L63"},{"StopPointID":64,"StopPointRef":891085000607,"CommonName":"Castletown,
+        Victoria Road","Longitude":-4.646054,"Latitude":54.078051,"IDCode":"L64"},{"StopPointID":65,"StopPointRef":891085000608,"CommonName":"Castletown,
+        Victoria Road garage","Longitude":-4.646077,"Latitude":54.078162,"IDCode":"L65"},{"StopPointID":66,"StopPointRef":891085000612,"CommonName":"Castletown,
+        Victoria Road riverside","Longitude":-4.651058,"Latitude":54.07682,"IDCode":"L66"},{"StopPointID":67,"StopPointRef":891085000611,"CommonName":"Castletown,
+        Victoria Road School","Longitude":-4.650867,"Latitude":54.076935,"IDCode":"L67"},{"StopPointID":68,"StopPointRef":891085020116,"CommonName":"Central
+        Prom, Empress Drive","Longitude":-4.473813,"Latitude":54.16061,"IDCode":"L68"},{"StopPointID":69,"StopPointRef":891085020117,"CommonName":"Central
+        Prom, Esplanade","Longitude":-4.475888,"Latitude":54.158406,"IDCode":"L69"},{"StopPointID":70,"StopPointRef":891085000119,"CommonName":"Central
+        Prom, Esplanade Lane","Longitude":-4.476105,"Latitude":54.158374,"IDCode":"L70"},{"StopPointID":71,"StopPointRef":891085000120,"CommonName":"Central
+        Prom, Mona Drive","Longitude":-4.474425,"Latitude":54.160255,"IDCode":"L71"},{"StopPointID":72,"StopPointRef":891085000121,"CommonName":"Central
+        Prom, Palace Hotel","Longitude":-4.4709,"Latitude":54.16275,"IDCode":"L72"},{"StopPointID":73,"StopPointRef":891085020115,"CommonName":"Central
+        Prom, Palace Terrace","Longitude":-4.470481,"Latitude":54.16282,"IDCode":"L73"},{"StopPointID":74,"StopPointRef":891085020106,"CommonName":"Circular
+        Road, Capital House","Longitude":-4.483635,"Latitude":54.150753,"IDCode":"L74"},{"StopPointID":75,"StopPointRef":891085020162,"CommonName":"Circular
+        Road, Hillside Avenue","Longitude":-4.48657,"Latitude":54.149447,"IDCode":"L75"},{"StopPointID":76,"StopPointRef":891085010704,"CommonName":"Colby
+        Bridge, layby","Longitude":-4.705131,"Latitude":54.096212,"IDCode":"L76"},{"StopPointID":77,"StopPointRef":891085010708,"CommonName":"Colby
+        Level northbound","Longitude":-4.716847,"Latitude":54.093632,"IDCode":"L77"},{"StopPointID":78,"StopPointRef":891085010707,"CommonName":"Colby
+        Level southbound","Longitude":-4.716593,"Latitude":54.093637,"IDCode":"L78"},{"StopPointID":79,"StopPointRef":891085010706,"CommonName":"Colby,
+        Belle Abbey Road","Longitude":-4.710575,"Latitude":54.095572,"IDCode":"L79"},{"StopPointID":80,"StopPointRef":891085010712,"CommonName":"Colby,
+        Carrick Bay View","Longitude":-4.725097,"Latitude":54.091878,"IDCode":"L80"},{"StopPointID":81,"StopPointRef":891085010709,"CommonName":"Colby,
+        Croit-e-Caley junction","Longitude":-4.721372,"Latitude":54.092317,"IDCode":"L81"},{"StopPointID":82,"StopPointRef":891085010710,"CommonName":"Colby,
+        Croit-e-Caley shelter","Longitude":-4.720952,"Latitude":54.092472,"IDCode":"L82"},{"StopPointID":83,"StopPointRef":891085010702,"CommonName":"Colby,
+        Cronk--y-Thatcher","Longitude":-4.698101,"Latitude":54.096341,"IDCode":"L83"},{"StopPointID":84,"StopPointRef":891085010701,"CommonName":"Colby,
+        Keyhole, farm entrance","Longitude":-4.696576,"Latitude":54.096541,"IDCode":"L84"},{"StopPointID":85,"StopPointRef":891085010703,"CommonName":"Colby,
+        Methodist Church","Longitude":-4.705327,"Latitude":54.096137,"IDCode":"L85"},{"StopPointID":86,"StopPointRef":891085010705,"CommonName":"Colby,
+        opposite Belle Abbey Chapel","Longitude":-4.710446,"Latitude":54.095581,"IDCode":"L86"},{"StopPointID":87,"StopPointRef":891085010711,"CommonName":"Colby,
+        opposite Carrick Bay View","Longitude":-4.725616,"Latitude":54.091694,"IDCode":"L87"},{"StopPointID":88,"StopPointRef":891085000124,"CommonName":"Derby
+        Castle MER Station","Longitude":-4.46089,"Latitude":54.16696,"IDCode":"L88"},{"StopPointID":89,"StopPointRef":891085020112,"CommonName":"Derby
+        Castle, MER","Longitude":-4.460833,"Latitude":54.166944,"IDCode":"L89"},{"StopPointID":90,"StopPointRef":891085000108,"CommonName":"Douglas,
+        Loch Prom, Stop F","Longitude":-4.477185,"Latitude":54.149881,"IDCode":"L90"},{"StopPointID":91,"StopPointRef":891085000102,"CommonName":"Douglas,
+        Lord Street","Longitude":-4.478056,"Latitude":54.148333,"IDCode":"L91"},{"StopPointID":92,"StopPointRef":891085020108,"CommonName":"Douglas,
+        Victoria Street","Longitude":-4.478192,"Latitude":54.14928,"IDCode":"L92"},{"StopPointID":93,"StopPointRef":891085010401,"CommonName":"Fairy
+        Bridge","Longitude":-4.595155,"Latitude":54.114515,"IDCode":"L93"},{"StopPointID":94,"StopPointRef":891085010402,"CommonName":"Fairy
+        Bridge, Ballagloney farm entrance","Longitude":-4.594886,"Latitude":54.114742,"IDCode":"L94"},{"StopPointID":95,"StopPointRef":891085010406,"CommonName":"Fairy
+        Bridge, Ballastrang entrance","Longitude":-4.597288,"Latitude":54.11325,"IDCode":"L95"},{"StopPointID":96,"StopPointRef":891085003214,"CommonName":"Falkland
+        Drive No 24","Longitude":-4.451123,"Latitude":54.168924,"IDCode":"L96"},{"StopPointID":97,"StopPointRef":891085003213,"CommonName":"Falkland
+        Drive No 9","Longitude":-4.451056,"Latitude":54.168809,"IDCode":"L97"},{"StopPointID":98,"StopPointRef":891085000205,"CommonName":"Groves
+        Road, NSC","Longitude":-4.505206,"Latitude":54.152091,"IDCode":"L98"},{"StopPointID":99,"StopPointRef":891085000208,"CommonName":"Groves
+        Road, Saddle Mews","Longitude":-4.507254,"Latitude":54.152838,"IDCode":"L99"},{"StopPointID":100,"StopPointRef":891085000207,"CommonName":"Groves
+        Road, Springfield Avenue","Longitude":-4.50801,"Latitude":54.153122,"IDCode":"L100"},{"StopPointID":101,"StopPointRef":891085010303,"CommonName":"Hampton
+        Farm Estate, layby","Longitude":-4.517972,"Latitude":54.148192,"IDCode":"L101"},{"StopPointID":102,"StopPointRef":891085000118,"CommonName":"Harris
+        Prom, Gaiety Theatre","Longitude":-4.478376,"Latitude":54.155031,"IDCode":"L102"},{"StopPointID":103,"StopPointRef":891085020119,"CommonName":"Harris
+        Promenade","Longitude":-4.478012,"Latitude":54.154378,"IDCode":"L103"},{"StopPointID":104,"StopPointRef":891085013910,"CommonName":"Highfield
+        Crescent, Seafield Crescent","Longitude":-4.47018,"Latitude":54.181064,"IDCode":"L104"},{"StopPointID":105,"StopPointRef":891085013909,"CommonName":"Highfield
+        Crescent, Willow Close","Longitude":-4.467469,"Latitude":54.179243,"IDCode":"L105"},{"StopPointID":106,"StopPointRef":891085013903,"CommonName":"Hillberry
+        Road, Ballachurry","Longitude":-4.460445,"Latitude":54.176517,"IDCode":"L106"},{"StopPointID":107,"StopPointRef":891085013904,"CommonName":"Hillberry
+        Road, Birch Hill Avenue","Longitude":-4.460527,"Latitude":54.176597,"IDCode":"L107"},{"StopPointID":108,"StopPointRef":891085013905,"CommonName":"Hillberry
+        Road, Lhon Dhoo Close","Longitude":-4.46475,"Latitude":54.17825,"IDCode":"L108"},{"StopPointID":109,"StopPointRef":891085000112,"CommonName":"Hills
+        Meadow","Longitude":-4.493898,"Latitude":54.150049,"IDCode":"L109"},{"StopPointID":110,"StopPointRef":891085000305,"CommonName":"Hop
+        Garden entrance","Longitude":-4.55694,"Latitude":54.137342,"IDCode":"L110"},{"StopPointID":111,"StopPointRef":891085000304,"CommonName":"Hop
+        Garden shelter","Longitude":-4.556173,"Latitude":54.137643,"IDCode":"L111"},{"StopPointID":112,"StopPointRef":891085000301,"CommonName":"Horse
+        Home, southbound","Longitude":-4.539609,"Latitude":54.141232,"IDCode":"L112"},{"StopPointID":113,"StopPointRef":891085000302,"CommonName":"Horses
+        Home, northbound","Longitude":-4.541798,"Latitude":54.14126,"IDCode":"L113"},{"StopPointID":114,"StopPointRef":891085000605,"CommonName":"Janets
+        Corner, entrance","Longitude":-4.643792,"Latitude":54.079263,"IDCode":"L114"},{"StopPointID":115,"StopPointRef":891085000606,"CommonName":"Janets
+        Corner, garage","Longitude":-4.644097,"Latitude":54.07904,"IDCode":"L115"},{"StopPointID":116,"StopPointRef":891085000603,"CommonName":"King
+        Williams College, entrance","Longitude":-4.642297,"Latitude":54.080615,"IDCode":"L116"},{"StopPointID":117,"StopPointRef":891085000604,"CommonName":"King
+        Williams College, shelter","Longitude":-4.641842,"Latitude":54.081111,"IDCode":"L117"},{"StopPointID":118,"StopPointRef":891085020164,"CommonName":"Loch
+        Prom, bottleneck car park","Longitude":-4.475384,"Latitude":54.149202,"IDCode":"L118"},{"StopPointID":119,"StopPointRef":891085000117,"CommonName":"Loch
+        Prom, Granville Street","Longitude":-4.478327,"Latitude":54.152825,"IDCode":"L119"},{"StopPointID":120,"StopPointRef":891085000116,"CommonName":"Loch
+        Prom, Howard Street","Longitude":-4.478091,"Latitude":54.15145,"IDCode":"L120"},{"StopPointID":121,"StopPointRef":891085020120,"CommonName":"Loch
+        Promenade, inward","Longitude":-4.47774,"Latitude":54.151137,"IDCode":"L121"},{"StopPointID":122,"StopPointRef":891085000110,"CommonName":"Lord
+        Street, Clinch\u0027s House","Longitude":-4.484005,"Latitude":54.14803,"IDCode":"L122"},{"StopPointID":123,"StopPointRef":891085000109,"CommonName":"Lord
+        Street, Hanover House","Longitude":-4.482067,"Latitude":54.148242,"IDCode":"L123"},{"StopPointID":124,"StopPointRef":891085000306,"CommonName":"Mount
+        Murray Hotel","Longitude":-4.562342,"Latitude":54.135067,"IDCode":"L124"},{"StopPointID":125,"StopPointRef":891085000307,"CommonName":"Mount
+        Murray, Knock Froy lane","Longitude":-4.561874,"Latitude":54.135183,"IDCode":"L125"},{"StopPointID":126,"StopPointRef":891085000209,"CommonName":"New
+        Castletown Road","Longitude":-4.511229,"Latitude":54.151969,"IDCode":"L126"},{"StopPointID":127,"StopPointRef":891085000309,"CommonName":"Newtown
+        Chapel","Longitude":-4.566175,"Latitude":54.130804,"IDCode":"L127"},{"StopPointID":128,"StopPointRef":891085000308,"CommonName":"Newtown
+        Estate, shelter","Longitude":-4.566118,"Latitude":54.131148,"IDCode":"L128"},{"StopPointID":129,"StopPointRef":891085000206,"CommonName":"NSC
+        layby","Longitude":-4.504761,"Latitude":54.152059,"IDCode":"L129"},{"StopPointID":130,"StopPointRef":891085003216,"CommonName":"Onchan,
+        Royal Drive","Longitude":-4.452329,"Latitude":54.169445,"IDCode":"L130"},{"StopPointID":131,"StopPointRef":891085010304,"CommonName":"Opposite
+        Hampton Farm Estate","Longitude":-4.51838,"Latitude":54.147952,"IDCode":"L131"},{"StopPointID":132,"StopPointRef":891085010403,"CommonName":"Orrisdale
+        Road","Longitude":-4.60686,"Latitude":54.107113,"IDCode":"L132"},{"StopPointID":133,"StopPointRef":891085010404,"CommonName":"Orrisdale
+        Road junction","Longitude":-4.606695,"Latitude":54.1072,"IDCode":"L133"},{"StopPointID":134,"StopPointRef":891085010407,"CommonName":"Orrisdale
+        Road, Ballacreggan","Longitude":-4.61447,"Latitude":54.104173,"IDCode":"L134"},{"StopPointID":135,"StopPointRef":891085010408,"CommonName":"Orrisdale
+        Road, Tac Towers","Longitude":-4.612425,"Latitude":54.104905,"IDCode":"L135"},{"StopPointID":136,"StopPointRef":891085020104,"CommonName":"Peel
+        Road, Brown Bobby","Longitude":-4.49123,"Latitude":54.14985,"IDCode":"L136"},{"StopPointID":137,"StopPointRef":891085020103,"CommonName":"Peel
+        Road, Pulrose Bridge","Longitude":-4.496388,"Latitude":54.150635,"IDCode":"L137"},{"StopPointID":138,"StopPointRef":891085000803,"CommonName":"Port
+        Erin, Ballamaddrell","Longitude":-4.749361,"Latitude":54.085025,"IDCode":"L138"},{"StopPointID":139,"StopPointRef":891085000806,"CommonName":"Port
+        Erin, Bay View Road","Longitude":-4.751043,"Latitude":54.08755,"IDCode":"L139"},{"StopPointID":140,"StopPointRef":891085000812,"CommonName":"Port
+        Erin, Bay View Road, Harrison Street","Longitude":-4.754801,"Latitude":54.087593,"IDCode":"L140"},{"StopPointID":141,"StopPointRef":891085000805,"CommonName":"Port
+        Erin, Bridson Street","Longitude":-4.755904,"Latitude":54.086285,"IDCode":"L141"},{"StopPointID":142,"StopPointRef":891085000810,"CommonName":"Port
+        Erin, Four Roads","Longitude":-4.74418,"Latitude":54.083505,"IDCode":"L142"},{"StopPointID":143,"StopPointRef":891085000802,"CommonName":"Port
+        Erin, Marashen Crescent","Longitude":-4.75003,"Latitude":54.08684,"IDCode":"L143"},{"StopPointID":144,"StopPointRef":891085000813,"CommonName":"Port
+        Erin, opposite Ponyfields","Longitude":-4.747761,"Latitude":54.088574,"IDCode":"L144"},{"StopPointID":145,"StopPointRef":891085000801,"CommonName":"Port
+        Erin, Ponyfields entrance","Longitude":-4.747728,"Latitude":54.088574,"IDCode":"L145"},{"StopPointID":146,"StopPointRef":891085000811,"CommonName":"Port
+        Erin, Rheyrt y Chrink","Longitude":-4.746208,"Latitude":54.084511,"IDCode":"L146"},{"StopPointID":147,"StopPointRef":891085000804,"CommonName":"Port
+        Erin, Station Road shelter","Longitude":-4.753669,"Latitude":54.085172,"IDCode":"L147"},{"StopPointID":148,"StopPointRef":891085003227,"CommonName":"Port
+        Jack shelter, southbound","Longitude":-4.452019,"Latitude":54.167356,"IDCode":"L148"},{"StopPointID":149,"StopPointRef":891085003226,"CommonName":"Port
+        Jack, southbound","Longitude":-4.45165,"Latitude":54.167616,"IDCode":"L149"},{"StopPointID":150,"StopPointRef":891085000909,"CommonName":"Port
+        St Mary Harbour","Longitude":-4.7375,"Latitude":54.071667,"IDCode":"L150"},{"StopPointID":151,"StopPointRef":891085000902,"CommonName":"Port
+        St Mary Railway Station","Longitude":-4.742775,"Latitude":54.080878,"IDCode":"L151"},{"StopPointID":152,"StopPointRef":891085000204,"CommonName":"Power
+        Station shelter","Longitude":-4.502808,"Latitude":54.1503331,"IDCode":"L152"},{"StopPointID":153,"StopPointRef":891085000203,"CommonName":"Power
+        Station, southbound","Longitude":-4.502913,"Latitude":54.150232,"IDCode":"L153"},{"StopPointID":154,"StopPointRef":891085020107,"CommonName":"Prospect
+        Hill, Finch Rd","Longitude":-4.481041,"Latitude":54.150386,"IDCode":"L154"},{"StopPointID":155,"StopPointRef":891085000906,"CommonName":"PSM
+        Carrick","Longitude":-4.737725,"Latitude":54.07547,"IDCode":"L155"},{"StopPointID":156,"StopPointRef":891085000910,"CommonName":"PSM
+        High Street","Longitude":-4.738624,"Latitude":54.073793,"IDCode":"L156"},{"StopPointID":157,"StopPointRef":891085000904,"CommonName":"PSM
+        School layby","Longitude":-4.74015,"Latitude":54.078129,"IDCode":"L157"},{"StopPointID":158,"StopPointRef":891085000169,"CommonName":"Pulrose
+        Bridge","Longitude":-4.500564,"Latitude":54.150246,"IDCode":"L158"},{"StopPointID":159,"StopPointRef":891085020168,"CommonName":"Pulrose
+        Bridge shelter","Longitude":-4.499739,"Latitude":54.150584,"IDCode":"L159"},{"StopPointID":160,"StopPointRef":891085020113,"CommonName":"Queens
+        Prom, Crescent Hotel","Longitude":-4.465165,"Latitude":54.165978,"IDCode":"L160"},{"StopPointID":161,"StopPointRef":891085020114,"CommonName":"Queens
+        Prom, Little Switzerland","Longitude":-4.468205,"Latitude":54.164168,"IDCode":"L161"},{"StopPointID":162,"StopPointRef":891085000122,"CommonName":"Queens
+        Prom, Picadilly Court","Longitude":-4.467596,"Latitude":54.164695,"IDCode":"L162"},{"StopPointID":163,"StopPointRef":891085000123,"CommonName":"Queens
+        Prom, Regency Hotel","Longitude":-4.465181,"Latitude":54.166082,"IDCode":"L163"},{"StopPointID":164,"StopPointRef":891085000303,"CommonName":"Richmond
+        Hill, Rosehill Farm","Longitude":-4.547451,"Latitude":54.139927,"IDCode":"L164"},{"StopPointID":165,"StopPointRef":891085003219,"CommonName":"Royal
+        Avenue  No 143","Longitude":-4.453846,"Latitude":54.172646,"IDCode":"L165"},{"StopPointID":166,"StopPointRef":891085003215,"CommonName":"Royal
+        Avenue Glen, entrance","Longitude":-4.45291,"Latitude":54.169314,"IDCode":"L166"},{"StopPointID":167,"StopPointRef":891085003217,"CommonName":"Royal
+        Avenue, Alberta Drive","Longitude":-4.453288,"Latitude":54.170715,"IDCode":"L167"},{"StopPointID":168,"StopPointRef":891085003221,"CommonName":"Royal
+        Avenue, Auburn Road","Longitude":-4.454217,"Latitude":54.174089,"IDCode":"L168"},{"StopPointID":169,"StopPointRef":891085003218,"CommonName":"Royal
+        Avenue, Central Drive shelter","Longitude":-4.453272,"Latitude":54.170791,"IDCode":"L169"},{"StopPointID":170,"StopPointRef":891085003220,"CommonName":"Royal
+        Court shelter","Longitude":-4.453953,"Latitude":54.173242,"IDCode":"L170"},{"StopPointID":171,"StopPointRef":891085000313,"CommonName":"Santon
+        School","Longitude":-4.579486,"Latitude":54.121119,"IDCode":"L171"},{"StopPointID":172,"StopPointRef":891085000314,"CommonName":"Santon
+        Station northbound","Longitude":-4.588593,"Latitude":54.117877,"IDCode":"L172"},{"StopPointID":173,"StopPointRef":891085000315,"CommonName":"Santon
+        Station southbound","Longitude":-4.585797,"Latitude":54.11896,"IDCode":"L173"},{"StopPointID":174,"StopPointRef":891085000311,"CommonName":"Santon,
+        Brown Cow Hill","Longitude":-4.573645,"Latitude":54.123787,"IDCode":"L174"},{"StopPointID":175,"StopPointRef":891085000310,"CommonName":"Santon,
+        Brown Cow Hill layby","Longitude":-4.573837,"Latitude":54.123793,"IDCode":"L175"},{"StopPointID":176,"StopPointRef":891085000312,"CommonName":"Santon,
+        School layby","Longitude":-4.579353,"Latitude":54.121185,"IDCode":"L176"},{"StopPointID":177,"StopPointRef":891085000210,"CommonName":"Spring
+        Valley, Harcroft Meadows","Longitude":-4.510071,"Latitude":54.152781,"IDCode":"L177"},{"StopPointID":178,"StopPointRef":891085020118,"CommonName":"Villa
+        Marina shelter","Longitude":-4.477379,"Latitude":54.156606,"IDCode":"L178"},{"StopPointID":179,"StopPointRef":891085003110,"CommonName":"Willaston,
+        school shelter","Longitude":-4.481546,"Latitude":54.170915,"IDCode":"L179"},{"StopPointID":180,"StopPointRef":891085013107,"CommonName":"Cronkbourne
+        Village No 12","Longitude":-4.49664,"Latitude":54.168996,"IDCode":"L82"},{"StopPointID":181,"StopPointRef":891085013108,"CommonName":"Cronkbourne
+        Village, shelter","Longitude":-4.497228,"Latitude":54.168922,"IDCode":"L83"},{"StopPointID":182,"StopPointRef":891085013403,"CommonName":"Hailwood
+        Avenue, Campion Way shelter","Longitude":-4.475922,"Latitude":54.17906,"IDCode":"L97"},{"StopPointID":183,"StopPointRef":891085013401,"CommonName":"Hailwood
+        Avenue, Cat with no Tail","Longitude":-4.478266,"Latitude":54.178966,"IDCode":"L98"},{"StopPointID":184,"StopPointRef":891085013404,"CommonName":"Hailwood
+        Avenue, Duck Pond shelter","Longitude":-4.474379,"Latitude":54.177561,"IDCode":"L99"},{"StopPointID":185,"StopPointRef":891085013405,"CommonName":"Hailwood
+        Avenue, No 10","Longitude":-4.472733,"Latitude":54.1775,"IDCode":"L100"},{"StopPointID":186,"StopPointRef":891085013407,"CommonName":"Hailwood
+        Avenue, opposite Campion Way","Longitude":-4.476076,"Latitude":54.179111,"IDCode":"L101"},{"StopPointID":187,"StopPointRef":891085013402,"CommonName":"Hailwood
+        Avenue, school layby","Longitude":-4.47846,"Latitude":54.1787,"IDCode":"L102"},{"StopPointID":188,"StopPointRef":891085013907,"CommonName":"Heywood
+        Park shelter","Longitude":-4.469055,"Latitude":54.179272,"IDCode":"L106"},{"StopPointID":189,"StopPointRef":891085013906,"CommonName":"Hilberry
+        Road, Birch Hill Crescent","Longitude":-4.463937,"Latitude":54.178196,"IDCode":"L107"},{"StopPointID":190,"StopPointRef":891085013908,"CommonName":"Hillberry
+        Road, Highfield Crescent","Longitude":-4.467083,"Latitude":54.178717,"IDCode":"L110"},{"StopPointID":191,"StopPointRef":891085001803,"CommonName":"Hospital,
+        helicopter pad, towards Douglas","Longitude":-4.507696,"Latitude":54.171446,"IDCode":"L117"},{"StopPointID":192,"StopPointRef":891085001801,"CommonName":"Nobles
+        Hospital","Longitude":-4.506116,"Latitude":54.172416,"IDCode":"L133"},{"StopPointID":193,"StopPointRef":891085000807,"CommonName":"Port
+        Erin, Castletown Road","Longitude":-4.749067,"Latitude":54.085077,"IDCode":"L147"},{"StopPointID":194,"StopPointRef":891085000809,"CommonName":"Port
+        Erin, Four Roads, Holmcroft","Longitude":-4.744081,"Latitude":54.08347,"IDCode":"L149"},{"StopPointID":195,"StopPointRef":891085000808,"CommonName":"Port
+        Erin, Southlands","Longitude":-4.746208,"Latitude":54.084511,"IDCode":"L154"},{"StopPointID":196,"StopPointRef":891085000901,"CommonName":"Port
+        St Mary Station","Longitude":-4.742948,"Latitude":54.081212,"IDCode":"L160"},{"StopPointID":197,"StopPointRef":891085000905,"CommonName":"PSM
+        Carrick Apartments","Longitude":-4.737664,"Latitude":54.075458,"IDCode":"L165"},{"StopPointID":198,"StopPointRef":891085000907,"CommonName":"PSM
+        Park Road","Longitude":-4.739439,"Latitude":54.072868,"IDCode":"L167"},{"StopPointID":199,"StopPointRef":891085000903,"CommonName":"PSM
+        Promenade","Longitude":-4.739972,"Latitude":54.078157,"IDCode":"L168"},{"StopPointID":200,"StopPointRef":891085000908,"CommonName":"PSM
+        Queens Road","Longitude":-4.738661,"Latitude":54.071667,"IDCode":"L169"},{"StopPointID":201,"StopPointRef":891085003121,"CommonName":"Watterson
+        Lane, Ballanard Court","Longitude":-4.487983,"Latitude":54.171295,"IDCode":"L192"},{"StopPointID":202,"StopPointRef":891085003122,"CommonName":"Watterson
+        Lane, Cemetery","Longitude":-4.484167,"Latitude":54.174167,"IDCode":"L193"},{"StopPointID":203,"StopPointRef":891085003125,"CommonName":"Watterson
+        Lane, Cronk y Berry junction","Longitude":-4.480263,"Latitude":54.176743,"IDCode":"L194"},{"StopPointID":204,"StopPointRef":891085003124,"CommonName":"Watterson
+        Lane, Cronk-y-Berry","Longitude":-4.48068,"Latitude":54.176443,"IDCode":"L195"},{"StopPointID":205,"StopPointRef":891085003123,"CommonName":"Watterson
+        Lane, Fenella Avenue","Longitude":-4.483429,"Latitude":54.174655,"IDCode":"L196"},{"StopPointID":206,"StopPointRef":891085013406,"CommonName":"Watterson
+        Lane, Foxglove Close","Longitude":-4.478033,"Latitude":54.181133,"IDCode":"L197"},{"StopPointID":207,"StopPointRef":891085010311,"CommonName":"Anagh
+        Coar, 1st stop","Longitude":-4.515806,"Latitude":54.150895,"IDCode":"L2"},{"StopPointID":208,"StopPointRef":891085010312,"CommonName":"Anagh
+        Coar, Darragh Passage","Longitude":-4.5185,"Latitude":54.151083,"IDCode":"L3"},{"StopPointID":209,"StopPointRef":891085001106,"CommonName":"Cooil
+        Road, B \u0026 Q","Longitude":-4.530628,"Latitude":54.150711,"IDCode":"L71"},{"StopPointID":210,"StopPointRef":891085001102,"CommonName":"Cooil
+        Road, Close Fletcher","Longitude":-4.523292,"Latitude":54.147355,"IDCode":"L72"},{"StopPointID":211,"StopPointRef":891085001104,"CommonName":"Cooil
+        Road, roundabout","Longitude":-4.535876,"Latitude":54.152846,"IDCode":"L73"},{"StopPointID":212,"StopPointRef":891085012103,"CommonName":"Stevenson
+        Way, Farm Hill Stores","Longitude":-4.5269,"Latitude":54.155199,"IDCode":"L142"},{"StopPointID":213,"StopPointRef":891085012104,"CommonName":"Stevenson
+        Way, roundabout","Longitude":-4.526395,"Latitude":54.156796,"IDCode":"L143"},{"StopPointID":214,"StopPointRef":891085012101,"CommonName":"Stevenson
+        Way, Springfield Grange","Longitude":-4.521644,"Latitude":54.151599,"IDCode":"L144"},{"StopPointID":215,"StopPointRef":891085013703,"CommonName":"Ballachrink  Drive/Snaefell
+        Crescent","Longitude":-4.450638,"Latitude":54.179983,"IDCode":"L8"},{"StopPointID":216,"StopPointRef":891085013701,"CommonName":"Ballachrink
+        Drive, 1st stop","Longitude":-4.450651,"Latitude":54.177219,"IDCode":"L9"},{"StopPointID":217,"StopPointRef":891085013702,"CommonName":"Ballachrink
+        Drive, shop","Longitude":-4.450111,"Latitude":54.178454,"IDCode":"L10"},{"StopPointID":218,"StopPointRef":891085013705,"CommonName":"Ballachrink,
+        Onchan School shelter","Longitude":-4.453458,"Latitude":54.17756,"IDCode":"L11"},{"StopPointID":219,"StopPointRef":891085013704,"CommonName":"Ballachrink,
+        School Road","Longitude":-4.452958,"Latitude":54.179117,"IDCode":"L12"},{"StopPointID":220,"StopPointRef":891085011804,"CommonName":"Gansey,
+        old garage","Longitude":-4.726503,"Latitude":54.084372,"IDCode":"L58"},{"StopPointID":221,"StopPointRef":891085011803,"CommonName":"Gansey,
+        opposite old garage","Longitude":-4.726983,"Latitude":54.084104,"IDCode":"L59"},{"StopPointID":222,"StopPointRef":891085013812,"CommonName":"Groudle
+        Road, Windermere Drive junction","Longitude":-4.444903,"Latitude":54.174732,"IDCode":"L60"},{"StopPointID":223,"StopPointRef":891085013810,"CommonName":"Groudle
+        Road. Fairway Close","Longitude":-4.448694,"Latitude":54.174388,"IDCode":"L61"},{"StopPointID":224,"StopPointRef":891085013806,"CommonName":"Harbour
+        Road, No 27","Longitude":-4.448521,"Latitude":54.171636,"IDCode":"L66"},{"StopPointID":225,"StopPointRef":891085003208,"CommonName":"Onchan,
+        IOM Bank","Longitude":-4.45535,"Latitude":54.174224,"IDCode":"L90"},{"StopPointID":226,"StopPointRef":891085003207,"CommonName":"Onchan,
+        Manx Arms","Longitude":-4.455582,"Latitude":54.17421,"IDCode":"L91"},{"StopPointID":227,"StopPointRef":891085003209,"CommonName":"Onchan,
+        Whitebridge Road","Longitude":-4.451015,"Latitude":54.17669,"IDCode":"L92"},{"StopPointID":228,"StopPointRef":891085011801,"CommonName":"Opposite
+        Shore Hotel","Longitude":-4.720573,"Latitude":54.084996,"IDCode":"L94"},{"StopPointID":229,"StopPointRef":891085000816,"CommonName":"Port
+        Erin, Four Roads, Medical Centre","Longitude":-4.742809,"Latitude":54.083929,"IDCode":"L107"},{"StopPointID":230,"StopPointRef":891085000913,"CommonName":"PSM
+        Beach Road","Longitude":-4.738512,"Latitude":54.07971,"IDCode":"L117"},{"StopPointID":231,"StopPointRef":891085011802,"CommonName":"Shore
+        Hotel","Longitude":-4.720931,"Latitude":54.085041,"IDCode":"L142"},{"StopPointID":232,"StopPointRef":891085003223,"CommonName":"Summerhill
+        Road","Longitude":-4.460467,"Latitude":54.169864,"IDCode":"L144"},{"StopPointID":233,"StopPointRef":891085003225,"CommonName":"Summerhill
+        Road, Coutts","Longitude":-4.458333,"Latitude":54.171944,"IDCode":"L145"},{"StopPointID":234,"StopPointRef":891085003224,"CommonName":"Summerhill
+        Road, Hague Drive","Longitude":-4.458166,"Latitude":54.172066,"IDCode":"L146"},{"StopPointID":235,"StopPointRef":891085003222,"CommonName":"Summerhill
+        Road, Ridgeway Road","Longitude":-4.46055,"Latitude":54.169766,"IDCode":"L147"},{"StopPointID":236,"StopPointRef":891085013804,"CommonName":"Sunningdale
+        Drive, Eskdale junction","Longitude":-4.448889,"Latitude":54.170833,"IDCode":"L148"},{"StopPointID":237,"StopPointRef":891085013815,"CommonName":"Windermere
+        Drive, No 20","Longitude":-4.44607,"Latitude":54.176441,"IDCode":"L150"},{"StopPointID":238,"StopPointRef":891085013814,"CommonName":"Windermere
+        Drive, No 55","Longitude":-4.444462,"Latitude":54.175894,"IDCode":"L151"},{"StopPointID":239,"StopPointRef":891085013818,"CommonName":"Windermere
+        Drive, No 9","Longitude":-4.447391,"Latitude":54.177465,"IDCode":"L152"},{"StopPointID":240,"StopPointRef":891085003503,"CommonName":"Abbey
+        Cottage, entrance","Longitude":-4.387933,"Latitude":54.22895,"IDCode":"L1"},{"StopPointID":241,"StopPointRef":891085000133,"CommonName":"Albany
+        Lane junction","Longitude":-4.486601,"Latitude":54.157826,"IDCode":"L2"},{"StopPointID":242,"StopPointRef":891085003418,"CommonName":"Ard
+        Reayrt","Longitude":-4.40263,"Latitude":54.231983,"IDCode":"L3"},{"StopPointID":243,"StopPointRef":891085003415,"CommonName":"Ard
+        Reayrt, junction","Longitude":-4.402134,"Latitude":54.231683,"IDCode":"L4"},{"StopPointID":244,"StopPointRef":891085003312,"CommonName":"Baldrine
+        layby","Longitude":-4.414023,"Latitude":54.200281,"IDCode":"L6"},{"StopPointID":245,"StopPointRef":891085003311,"CommonName":"Baldrine,
+        Methodist Hall","Longitude":-4.412483,"Latitude":54.20165,"IDCode":"L7"},{"StopPointID":246,"StopPointRef":891085003313,"CommonName":"Baldrine,
+        The Crescent","Longitude":-4.41032,"Latitude":54.205069,"IDCode":"L8"},{"StopPointID":247,"StopPointRef":891085003317,"CommonName":"Ballabeg
+        Farm","Longitude":-4.406792,"Latitude":54.212704,"IDCode":"L9"},{"StopPointID":248,"StopPointRef":891085003318,"CommonName":"Ballabeg,
+        MER crossing shelter","Longitude":-4.406824,"Latitude":54.21186,"IDCode":"L10"},{"StopPointID":249,"StopPointRef":891085003320,"CommonName":"Ballacannell","Longitude":-4.404266,"Latitude":54.215983,"IDCode":"L11"},{"StopPointID":250,"StopPointRef":891085003319,"CommonName":"Ballacannell,
+        Church Road","Longitude":-4.404368,"Latitude":54.215969,"IDCode":"L12"},{"StopPointID":251,"StopPointRef":891085013708,"CommonName":"Ballachrink  Drive
+        northbound/Snaefell Crescent","Longitude":-4.45065,"Latitude":54.18003,"IDCode":"L13"},{"StopPointID":252,"StopPointRef":891085013706,"CommonName":"Ballachrink
+        Drive northbound, 1st stop","Longitude":-4.450651,"Latitude":54.177219,"IDCode":"L14"},{"StopPointID":253,"StopPointRef":891085013707,"CommonName":"Ballachrink
+        Drive northbound, shop","Longitude":-4.450111,"Latitude":54.178454,"IDCode":"L15"},{"StopPointID":254,"StopPointRef":891085013710,"CommonName":"Ballachrink
+        northbound, Onchan School shelter","Longitude":-4.453458,"Latitude":54.17756,"IDCode":"L16"},{"StopPointID":255,"StopPointRef":891085013709,"CommonName":"Ballachrink
+        northbound, School Road","Longitude":-4.452958,"Latitude":54.179117,"IDCode":"L17"},{"StopPointID":256,"StopPointRef":891085003315,"CommonName":"Ballagawne
+        Road junction","Longitude":-4.406891,"Latitude":54.207371,"IDCode":"L18"},{"StopPointID":257,"StopPointRef":891085003316,"CommonName":"Ballagawne,  Old
+        Smithy","Longitude":-4.40689,"Latitude":54.207131,"IDCode":"L19"},{"StopPointID":258,"StopPointRef":891085003309,"CommonName":"Ballamenagh
+        Road","Longitude":-4.417441,"Latitude":54.197532,"IDCode":"L20"},{"StopPointID":259,"StopPointRef":891085003310,"CommonName":"Ballamenagh
+        Road junction","Longitude":-4.417439,"Latitude":54.197529,"IDCode":"L21"},{"StopPointID":260,"StopPointRef":891085003115,"CommonName":"Ballanard
+        Road, Norwood Drive","Longitude":-4.485147,"Latitude":54.166502,"IDCode":"L22"},{"StopPointID":261,"StopPointRef":891085000126,"CommonName":"Ballaquayle
+        Road, Dukes Road","Longitude":-4.482305,"Latitude":54.161366,"IDCode":"L23"},{"StopPointID":262,"StopPointRef":891085000125,"CommonName":"Ballaquayle
+        Road, Rose Garden","Longitude":-4.479799,"Latitude":54.158595,"IDCode":"L24"},{"StopPointID":263,"StopPointRef":891085020123,"CommonName":"Ballaquayle
+        Road, St Ninians layby","Longitude":-4.483492,"Latitude":54.164503,"IDCode":"L25"},{"StopPointID":264,"StopPointRef":891085000127,"CommonName":"Ballaquayle
+        Road, St Ninians School","Longitude":-4.483654,"Latitude":54.164571,"IDCode":"L26"},{"StopPointID":265,"StopPointRef":891085020121,"CommonName":"Ballaquayle
+        Road, Stanley Terrace","Longitude":-4.47991,"Latitude":54.158781,"IDCode":"L27"},{"StopPointID":266,"StopPointRef":891085003811,"CommonName":"Ballure
+        Road, Ballure Grove","Longitude":-4.374362,"Latitude":54.316053,"IDCode":"L28"},{"StopPointID":267,"StopPointRef":891085003812,"CommonName":"Ballure
+        Road, Beach Apartments","Longitude":-4.374561,"Latitude":54.316524,"IDCode":"L29"},{"StopPointID":268,"StopPointRef":891085003827,"CommonName":"Bowring
+        Road, Derby Road junction","Longitude":-4.387779,"Latitude":54.32344,"IDCode":"L30"},{"StopPointID":269,"StopPointRef":891085003825,"CommonName":"Bowring
+        Road, Hospital shelter","Longitude":-4.39159,"Latitude":54.328791,"IDCode":"L31"},{"StopPointID":270,"StopPointRef":891085003823,"CommonName":"Bowring
+        Road, No 26","Longitude":-4.389555,"Latitude":54.32612,"IDCode":"L32"},{"StopPointID":271,"StopPointRef":891085003822,"CommonName":"Bowring
+        Road, Riverside","Longitude":-4.38822,"Latitude":54.324556,"IDCode":"L33"},{"StopPointID":272,"StopPointRef":891085003820,"CommonName":"Bowring
+        Road, Station Road junction","Longitude":-4.38785,"Latitude":54.323539,"IDCode":"L34"},{"StopPointID":273,"StopPointRef":891085003821,"CommonName":"Bowring
+        Road, Stone Bridge","Longitude":-4.388182,"Latitude":54.324596,"IDCode":"L35"},{"StopPointID":274,"StopPointRef":891085003831,"CommonName":"Bride
+        Road, Ormly entrance","Longitude":-4.391506,"Latitude":54.33505,"IDCode":"L36"},{"StopPointID":275,"StopPointRef":891085003895,"CommonName":"Bride
+        Road, Vollan Crescent","Longitude":-4.388243,"Latitude":54.336523,"IDCode":"L37"},{"StopPointID":276,"StopPointRef":891085003848,"CommonName":"Brookfield
+        Avenue,  Raymotors","Longitude":-4.386742,"Latitude":54.321225,"IDCode":"L38"},{"StopPointID":277,"StopPointRef":891085003856,"CommonName":"Brookfield
+        Avenue, Brookfield","Longitude":-4.387248,"Latitude":54.320782,"IDCode":"L39"},{"StopPointID":278,"StopPointRef":891085003855,"CommonName":"Brookfield
+        Avenue, Golf Club","Longitude":-4.388043,"Latitude":54.31898,"IDCode":"L40"},{"StopPointID":279,"StopPointRef":891085003849,"CommonName":"Brookfield
+        Avenue, No 19","Longitude":-4.387701,"Latitude":54.319852,"IDCode":"L41"},{"StopPointID":280,"StopPointRef":891085020129,"CommonName":"Bucks
+        Road, Christian Road junction","Longitude":-4.483886,"Latitude":54.152591,"IDCode":"L42"},{"StopPointID":281,"StopPointRef":891085000130,"CommonName":"Bucks
+        Road, Tynwald Street","Longitude":-4.4834,"Latitude":54.151904,"IDCode":"L43"},{"StopPointID":282,"StopPointRef":891085003607,"CommonName":"Bulgham
+        shelter","Longitude":-4.373369,"Latitude":54.242163,"IDCode":"L44"},{"StopPointID":284,"StopPointRef":891085003851,"CommonName":"Claughbane
+        Avenue, No 19","Longitude":-4.389222,"Latitude":54.315286,"IDCode":"L46"},{"StopPointID":285,"StopPointRef":891085003854,"CommonName":"Claughbane
+        Drive, Ballastowell","Longitude":-4.388173,"Latitude":54.317995,"IDCode":"L47"},{"StopPointID":286,"StopPointRef":891085003850,"CommonName":"Claughbane
+        Drive, No 12","Longitude":-4.388414,"Latitude":54.316866,"IDCode":"L48"},{"StopPointID":287,"StopPointRef":891085003870,"CommonName":"Clifton
+        Drive, Croftbank","Longitude":-4.398255,"Latitude":54.333168,"IDCode":"L49"},{"StopPointID":288,"StopPointRef":891085003869,"CommonName":"Clifton
+        Drive, entrance","Longitude":-4.395768,"Latitude":54.333577,"IDCode":"L50"},{"StopPointID":289,"StopPointRef":891085003872,"CommonName":"Clifton
+        Drive, Kings Reach","Longitude":-4.400542,"Latitude":54.330104,"IDCode":"L51"},{"StopPointID":290,"StopPointRef":891085003871,"CommonName":"Clifton
+        Drive, shelter","Longitude":-4.400155,"Latitude":54.331602,"IDCode":"L52"},{"StopPointID":291,"StopPointRef":891085003708,"CommonName":"Corony","Longitude":-4.375839,"Latitude":54.279774,"IDCode":"L53"},{"StopPointID":292,"StopPointRef":891085003707,"CommonName":"Corony
+        shelter","Longitude":-4.376087,"Latitude":54.279776,"IDCode":"L54"},{"StopPointID":293,"StopPointRef":891085003714,"CommonName":"Corony,
+        Cardle Vooar","Longitude":-4.373373,"Latitude":54.281809,"IDCode":"L55"},{"StopPointID":294,"StopPointRef":891085003713,"CommonName":"Corony,
+        Cardle Vooar entrance","Longitude":-4.373507,"Latitude":54.281831,"IDCode":"L56"},{"StopPointID":295,"StopPointRef":891085003602,"CommonName":"Dhoon
+        Glen, cafe","Longitude":-4.377166,"Latitude":54.24975,"IDCode":"L57"},{"StopPointID":296,"StopPointRef":891085003601,"CommonName":"Dhoon
+        Glen, car park","Longitude":-4.377383,"Latitude":54.249862,"IDCode":"L58"},{"StopPointID":297,"StopPointRef":891085003603,"CommonName":"Dhoon
+        Quarry","Longitude":-4.371969,"Latitude":54.258287,"IDCode":"L59"},{"StopPointID":298,"StopPointRef":891085003706,"CommonName":"Dhoon
+        School","Longitude":-4.376516,"Latitude":54.273933,"IDCode":"L60"},{"StopPointID":299,"StopPointRef":891085003705,"CommonName":"Dhoon
+        School layby","Longitude":-4.376546,"Latitude":54.274068,"IDCode":"L61"},{"StopPointID":300,"StopPointRef":891085003604,"CommonName":"Dhoon,
+        Browns crossing","Longitude":-4.371956,"Latitude":54.259345,"IDCode":"L62"},{"StopPointID":301,"StopPointRef":891085000101,"CommonName":"Douglas,
+        Banks Circus","Longitude":-4.485792,"Latitude":54.14761,"IDCode":"L63"},{"StopPointID":302,"StopPointRef":891085003853,"CommonName":"Fairway
+        Drive, No 11","Longitude":-4.39021,"Latitude":54.317079,"IDCode":"L67"},{"StopPointID":303,"StopPointRef":891085003852,"CommonName":"Fairway
+        Drive, No 29","Longitude":-4.391757,"Latitude":54.315993,"IDCode":"L68"},{"StopPointID":304,"StopPointRef":891085003404,"CommonName":"Fairy
+        Cottage","Longitude":-4.399595,"Latitude":54.221176,"IDCode":"L69"},{"StopPointID":305,"StopPointRef":891085003403,"CommonName":"Fairy
+        Cottage shelter","Longitude":-4.400081,"Latitude":54.221027,"IDCode":"L70"},{"StopPointID":306,"StopPointRef":891085003402,"CommonName":"Fairy
+        Cottage, Pinfold Hill","Longitude":-4.400981,"Latitude":54.218565,"IDCode":"L71"},{"StopPointID":307,"StopPointRef":891085003401,"CommonName":"Fairy
+        Cottage, Pinfold Hill, Thornton","Longitude":-4.40081,"Latitude":54.218709,"IDCode":"L72"},{"StopPointID":308,"StopPointRef":891085003314,"CommonName":"Garwick
+        Stores","Longitude":-4.410241,"Latitude":54.204666,"IDCode":"L73"},{"StopPointID":309,"StopPointRef":891085003703,"CommonName":"Glen
+        Mona, Ballagorry Drive","Longitude":-4.376991,"Latitude":54.271526,"IDCode":"L74"},{"StopPointID":310,"StopPointRef":891085003711,"CommonName":"Glen
+        Mona, Ballasholague Farm","Longitude":-4.377862,"Latitude":54.267075,"IDCode":"L75"},{"StopPointID":311,"StopPointRef":891085003702,"CommonName":"Glen
+        Mona, Church Hall","Longitude":-4.376933,"Latitude":54.271433,"IDCode":"L76"},{"StopPointID":312,"StopPointRef":891085003712,"CommonName":"Glen
+        Mona, opposite Ballasholague Farm","Longitude":-4.377727,"Latitude":54.267015,"IDCode":"L77"},{"StopPointID":313,"StopPointRef":891085020157,"CommonName":"Glencrutchery
+        Road, Glenside","Longitude":-4.470865,"Latitude":54.17072,"IDCode":"L78"},{"StopPointID":314,"StopPointRef":891085020154,"CommonName":"Glencrutchery
+        Road, Grandstand","Longitude":-4.476623,"Latitude":54.168474,"IDCode":"L79"},{"StopPointID":315,"StopPointRef":891085000161,"CommonName":"Glencrutchery
+        Road, Greenfield Road junction","Longitude":-4.476693,"Latitude":54.16857,"IDCode":"L80"},{"StopPointID":316,"StopPointRef":891085020155,"CommonName":"Glencrutchery
+        Road, Ian Cannel Court shelter","Longitude":-4.474455,"Latitude":54.169332,"IDCode":"L81"},{"StopPointID":317,"StopPointRef":891085000162,"CommonName":"Glencrutchery
+        Road, Ian Cannell Court","Longitude":-4.474904,"Latitude":54.169207,"IDCode":"L82"},{"StopPointID":318,"StopPointRef":891085000160,"CommonName":"Glencrutchery
+        Road, Mountain View","Longitude":-4.481005,"Latitude":54.166605,"IDCode":"L83"},{"StopPointID":319,"StopPointRef":891085020153,"CommonName":"Glencrutchery
+        Road, Nobles Park","Longitude":-4.480732,"Latitude":54.166624,"IDCode":"L84"},{"StopPointID":320,"StopPointRef":891085000163,"CommonName":"Glencrutchery
+        Road, Second Avenue","Longitude":-4.472549,"Latitude":54.170116,"IDCode":"L85"},{"StopPointID":321,"StopPointRef":891085020156,"CommonName":"Glencrutchery
+        Road, St Georges","Longitude":-4.472865,"Latitude":54.169893,"IDCode":"L86"},{"StopPointID":322,"StopPointRef":891085000164,"CommonName":"Glencrutchery
+        Road, Third Avenue","Longitude":-4.471259,"Latitude":54.170605,"IDCode":"L87"},{"StopPointID":323,"StopPointRef":891085003201,"CommonName":"Governors
+        Road, Blackberry Lane","Longitude":-4.464593,"Latitude":54.172211,"IDCode":"L88"},{"StopPointID":324,"StopPointRef":891085003202,"CommonName":"Governors
+        Road, Blackberry Lane junction","Longitude":-4.46462,"Latitude":54.172183,"IDCode":"L89"},{"StopPointID":325,"StopPointRef":891085003204,"CommonName":"Governors
+        Road, opposite Wybourne Drive","Longitude":-4.461175,"Latitude":54.172748,"IDCode":"L90"},{"StopPointID":326,"StopPointRef":891085003205,"CommonName":"Governors
+        Road, Queens Road","Longitude":-4.459017,"Latitude":54.173134,"IDCode":"L91"},{"StopPointID":327,"StopPointRef":891085003206,"CommonName":"Governors
+        Road, Queens Road, layby","Longitude":-4.458587,"Latitude":54.173193,"IDCode":"L92"},{"StopPointID":328,"StopPointRef":891085003203,"CommonName":"Governors
+        Road, Wybourne Drive junction","Longitude":-4.460953,"Latitude":54.172757,"IDCode":"L93"},{"StopPointID":329,"StopPointRef":891085003710,"CommonName":"Hibernia","Longitude":-4.368797,"Latitude":54.292262,"IDCode":"L99"},{"StopPointID":330,"StopPointRef":891085003709,"CommonName":"Hibernia
+        shelter","Longitude":-4.367944,"Latitude":54.293312,"IDCode":"L100"},{"StopPointID":331,"StopPointRef":891085003411,"CommonName":"Laxey
+        Glen","Longitude":-4.406533,"Latitude":54.231283,"IDCode":"L103"},{"StopPointID":332,"StopPointRef":891085003416,"CommonName":"Laxey,
+        Captains Hill junction","Longitude":-4.405383,"Latitude":54.233888,"IDCode":"L104"},{"StopPointID":333,"StopPointRef":891085003412,"CommonName":"Laxey,
+        Commissioners Office","Longitude":-4.404683,"Latitude":54.230266,"IDCode":"L105"},{"StopPointID":334,"StopPointRef":891085003413,"CommonName":"Laxey,
+        MER shelter","Longitude":-4.4061,"Latitude":54.233272,"IDCode":"L106"},{"StopPointID":335,"StopPointRef":891085003414,"CommonName":"Laxey,
+        MER Station","Longitude":-4.405843,"Latitude":54.232689,"IDCode":"L107"},{"StopPointID":336,"StopPointRef":891085003409,"CommonName":"Laxey,
+        New Inn","Longitude":-4.403262,"Latitude":54.228886,"IDCode":"L108"},{"StopPointID":337,"StopPointRef":891085003410,"CommonName":"Laxey,
+        Queens Hotel","Longitude":-4.403444,"Latitude":54.229166,"IDCode":"L109"},{"StopPointID":338,"StopPointRef":891085003858,"CommonName":"Lezayre
+        Estate, Close Auldyn","Longitude":-4.396667,"Latitude":54.322778,"IDCode":"L110"},{"StopPointID":339,"StopPointRef":891085003857,"CommonName":"Lezayre
+        Estate, Pairk Ollay","Longitude":-4.393889,"Latitude":54.322778,"IDCode":"L111"},{"StopPointID":340,"StopPointRef":891085003859,"CommonName":"Lezayre
+        Estate, school shelter","Longitude":-4.398076,"Latitude":54.322072,"IDCode":"L112"},{"StopPointID":341,"StopPointRef":891085003307,"CommonName":"Liverpool
+        Arms Hotel","Longitude":-4.425393,"Latitude":54.193754,"IDCode":"L113"},{"StopPointID":342,"StopPointRef":891085003308,"CommonName":"Liverpool
+        Arms, shelter","Longitude":-4.424107,"Latitude":54.194026,"IDCode":"L114"},{"StopPointID":343,"StopPointRef":891085003883,"CommonName":"Market
+        Square, Royal","Longitude":-4.379504,"Latitude":54.321705,"IDCode":"L119"},{"StopPointID":344,"StopPointRef":891085003903,"CommonName":"Maughold,
+        Ballacartmel Cottages","Longitude":-4.3662,"Latitude":54.311216,"IDCode":"L120"},{"StopPointID":345,"StopPointRef":891085003912,"CommonName":"Maughold,
+        Dreemskerry Road junction","Longitude":-4.357921,"Latitude":54.306759,"IDCode":"L121"},{"StopPointID":346,"StopPointRef":891085003906,"CommonName":"Maughold,
+        Folieu, Lewaigue junction","Longitude":-4.364263,"Latitude":54.310014,"IDCode":"L122"},{"StopPointID":347,"StopPointRef":891085003901,"CommonName":"Maughold,
+        Rest and be Thankful","Longitude":-4.364182,"Latitude":54.300422,"IDCode":"L123"},{"StopPointID":348,"StopPointRef":891085003902,"CommonName":"Maughold,
+        Rest and be Thankful, Primrose Lodge","Longitude":-4.363841,"Latitude":54.298593,"IDCode":"L124"},{"StopPointID":349,"StopPointRef":891085003501,"CommonName":"Minorca","Longitude":-4.397011,"Latitude":54.230621,"IDCode":"L125"},{"StopPointID":350,"StopPointRef":891085013508,"CommonName":"Minorca
+        Hill, Laxey School","Longitude":-4.395143,"Latitude":54.229277,"IDCode":"L126"},{"StopPointID":351,"StopPointRef":891085003502,"CommonName":"Minorca
+        shelter","Longitude":-4.396473,"Latitude":54.230697,"IDCode":"L127"},{"StopPointID":352,"StopPointRef":891085003880,"CommonName":"Mooragh
+        Prom, Premier Road","Longitude":-4.382365,"Latitude":54.327774,"IDCode":"L128"},{"StopPointID":353,"StopPointRef":891085003860,"CommonName":"North
+        Shore Road, Mooragh Park shelter","Longitude":-4.383975,"Latitude":54.325981,"IDCode":"L129"},{"StopPointID":354,"StopPointRef":891085003210,"CommonName":"Onchan
+        Methodist Church","Longitude":-4.452978,"Latitude":54.175592,"IDCode":"L130"},{"StopPointID":355,"StopPointRef":891085003504,"CommonName":"Opposite
+        Abbey Cottage","Longitude":-4.387683,"Latitude":54.228733,"IDCode":"L134"},{"StopPointID":356,"StopPointRef":891085003868,"CommonName":"Ormly
+        Grove, No 2","Longitude":-4.390804,"Latitude":54.334978,"IDCode":"L135"},{"StopPointID":357,"StopPointRef":891085003867,"CommonName":"Ormly
+        Road, No 56","Longitude":-4.39061,"Latitude":54.333793,"IDCode":"L136"},{"StopPointID":358,"StopPointRef":891085003866,"CommonName":"Ormly
+        Road, No 69","Longitude":-4.392088,"Latitude":54.333067,"IDCode":"L137"},{"StopPointID":359,"StopPointRef":891085003864,"CommonName":"Ornly
+        Estate, Ormly Avenue","Longitude":-4.389591,"Latitude":54.333889,"IDCode":"L138"},{"StopPointID":360,"StopPointRef":891085000129,"CommonName":"Prospect
+        Hill, shelter","Longitude":-4.481073,"Latitude":54.150265,"IDCode":"L140"},{"StopPointID":361,"StopPointRef":891085020128,"CommonName":"Prospect
+        Terrace","Longitude":-4.484722,"Latitude":54.155,"IDCode":"L141"},{"StopPointID":362,"StopPointRef":891085003889,"CommonName":"Queens
+        Drive East","Longitude":-4.376111,"Latitude":54.318333,"IDCode":"L142"},{"StopPointID":363,"StopPointRef":891085003893,"CommonName":"Queens
+        Pier Road, west side","Longitude":-4.380796,"Latitude":54.318407,"IDCode":"L143"},{"StopPointID":364,"StopPointRef":891085003885,"CommonName":"Queens
+        Promenade, opposite Dale Street","Longitude":-4.377578,"Latitude":54.321573,"IDCode":"L144"},{"StopPointID":365,"StopPointRef":891085003887,"CommonName":"Queens
+        Promenade, opposite Marine Gardens","Longitude":-4.376526,"Latitude":54.320147,"IDCode":"L145"},{"StopPointID":366,"StopPointRef":891085003800,"CommonName":"Ramsey
+        Bus Station","Longitude":-4.38513,"Latitude":54.320343,"IDCode":"L146"},{"StopPointID":367,"StopPointRef":891085040105,"CommonName":"Ramsey
+        Grammar School","Longitude":-4.392185,"Latitude":54.320693,"IDCode":"L147"},{"StopPointID":368,"StopPointRef":891085003861,"CommonName":"Ramsey
+        Swimming Pool","Longitude":-4.38171,"Latitude":54.324246,"IDCode":"L148"},{"StopPointID":369,"StopPointRef":891085003810,"CommonName":"Ramsey,
+        Ballure","Longitude":-4.373452,"Latitude":54.313919,"IDCode":"L149"},{"StopPointID":370,"StopPointRef":891085003809,"CommonName":"Ramsey,
+        Ballure/Merrieweathers","Longitude":-4.373578,"Latitude":54.314219,"IDCode":"L150"},{"StopPointID":371,"StopPointRef":891085003877,"CommonName":"Ramsey,
+        Derby Road, opposite West Street","Longitude":-4.386096,"Latitude":54.323154,"IDCode":"L151"},{"StopPointID":372,"StopPointRef":891085003874,"CommonName":"Ramsey,
+        Riverbank Road","Longitude":-4.400136,"Latitude":54.328145,"IDCode":"L152"},{"StopPointID":373,"StopPointRef":891085003813,"CommonName":"Ramsey,
+        Stanley Mount West","Longitude":-4.376019,"Latitude":54.318035,"IDCode":"L153"},{"StopPointID":374,"StopPointRef":891085003873,"CommonName":"Ramsey,
+        Westlands Avenue","Longitude":-4.401379,"Latitude":54.328777,"IDCode":"L154"},{"StopPointID":375,"StopPointRef":891085003875,"CommonName":"Ramsey,
+        Whitebridge Avenue","Longitude":-4.397771,"Latitude":54.328431,"IDCode":"L155"},{"StopPointID":376,"StopPointRef":891085003865,"CommonName":"Rheast
+        Mooar Lane","Longitude":-4.389903,"Latitude":54.333019,"IDCode":"L156"},{"StopPointID":377,"StopPointRef":891085003876,"CommonName":"Richmond
+        Road, Richmond Grove","Longitude":-4.395455,"Latitude":54.329551,"IDCode":"L157"},{"StopPointID":378,"StopPointRef":891085000128,"CommonName":"Ridgeway
+        Street, Town Hall","Longitude":-4.480577,"Latitude":54.148702,"IDCode":"L158"},{"StopPointID":379,"StopPointRef":891085000131,"CommonName":"Rosemount
+        Church","Longitude":-4.484788,"Latitude":54.154296,"IDCode":"L159"},{"StopPointID":380,"StopPointRef":891085003407,"CommonName":"South
+        Cape, Ravenscliffe","Longitude":-4.397114,"Latitude":54.22598,"IDCode":"L160"},{"StopPointID":381,"StopPointRef":891085003408,"CommonName":"South
+        Cape, Ravenscliffe shelter","Longitude":-4.39709,"Latitude":54.226001,"IDCode":"L161"},{"StopPointID":382,"StopPointRef":891085003405,"CommonName":"South
+        Cape, Trevellian","Longitude":-4.395689,"Latitude":54.224646,"IDCode":"L162"},{"StopPointID":383,"StopPointRef":891085003406,"CommonName":"South
+        Cape, Whitebeam","Longitude":-4.395646,"Latitude":54.224646,"IDCode":"L163"},{"StopPointID":384,"StopPointRef":891085003819,"CommonName":"Station
+        Road,  Ramsey Bakery","Longitude":-4.388591,"Latitude":54.323217,"IDCode":"L164"},{"StopPointID":385,"StopPointRef":891085003818,"CommonName":"Station
+        Road, Ramsey Shoprite","Longitude":-4.388271,"Latitude":54.323192,"IDCode":"L165"},{"StopPointID":386,"StopPointRef":891085003815,"CommonName":"Waterloo
+        Road No 56","Longitude":-4.378056,"Latitude":54.319167,"IDCode":"L167"},{"StopPointID":387,"StopPointRef":891085003816,"CommonName":"Waterloo
+        Road, Britannia","Longitude":-4.380908,"Latitude":54.320645,"IDCode":"L168"},{"StopPointID":388,"StopPointRef":891085003814,"CommonName":"Waterloo
+        Road, Cummal Mooar","Longitude":-4.377309,"Latitude":54.318739,"IDCode":"L169"},{"StopPointID":389,"StopPointRef":891085003817,"CommonName":"Waterloo
+        Road, MER Station","Longitude":-4.381851,"Latitude":54.320832,"IDCode":"L170"},{"StopPointID":390,"StopPointRef":891085003879,"CommonName":"West
+        Quay,  opposite Farmers Combine","Longitude":-4.383568,"Latitude":54.322749,"IDCode":"L172"},{"StopPointID":391,"StopPointRef":891085003881,"CommonName":"West
+        Quay, Swing Bridge","Longitude":-4.381926,"Latitude":54.32225,"IDCode":"L173"},{"StopPointID":392,"StopPointRef":891085003302,"CommonName":"Whitebridge
+        Hill, picnic area","Longitude":-4.440793,"Latitude":54.185095,"IDCode":"L174"},{"StopPointID":393,"StopPointRef":891085003305,"CommonName":"Whitebridge
+        Straight","Longitude":-4.430572,"Latitude":54.191548,"IDCode":"L175"},{"StopPointID":394,"StopPointRef":891085003301,"CommonName":"Whitebridge,
+        Ballakilmartin","Longitude":-4.44265,"Latitude":54.183566,"IDCode":"L176"},{"StopPointID":395,"StopPointRef":891085003303,"CommonName":"Whitebridge,
+        Begoade Road","Longitude":-4.438836,"Latitude":54.186894,"IDCode":"L177"},{"StopPointID":396,"StopPointRef":891085003304,"CommonName":"Whitebridge,
+        Bibaloe Road","Longitude":-4.438916,"Latitude":54.186733,"IDCode":"L178"},{"StopPointID":397,"StopPointRef":891085003306,"CommonName":"Whitebridge,
+        Laser Blast","Longitude":-4.43225,"Latitude":54.19045,"IDCode":"L179"},{"StopPointID":398,"StopPointRef":891085003114,"CommonName":"Willaston,
+        Barrule Road shelter","Longitude":-4.485759,"Latitude":54.168495,"IDCode":"L180"},{"StopPointID":399,"StopPointRef":891085003108,"CommonName":"Willaston,
+        Snaefell Road No 60","Longitude":-4.481073,"Latitude":54.173825,"IDCode":"L182"},{"StopPointID":400,"StopPointRef":891085003109,"CommonName":"Willaston,
+        Snaefell Road shelter","Longitude":-4.482397,"Latitude":54.172625,"IDCode":"L183"},{"StopPointID":401,"StopPointRef":891085003107,"CommonName":"Willaston,
+        Snaefell Road/Greeba Road","Longitude":-4.480556,"Latitude":54.175,"IDCode":"L184"},{"StopPointID":402,"StopPointRef":891085003111,"CommonName":"Willaston,
+        Tynwald Road","Longitude":-4.481278,"Latitude":54.169692,"IDCode":"L185"},{"StopPointID":403,"StopPointRef":891085003113,"CommonName":"Willaston,
+        Tynwald Road/Baldwin Road","Longitude":-4.484548,"Latitude":54.168066,"IDCode":"L186"},{"StopPointID":404,"StopPointRef":891085003112,"CommonName":"Willaston,
+        Tynwald Road/Sulby Road","Longitude":-4.48208,"Latitude":54.169051,"IDCode":"L187"},{"StopPointID":405,"StopPointRef":891085000135,"CommonName":"Woodboure
+        Road, St Mary\u0027s","Longitude":-4.483617,"Latitude":54.162533,"IDCode":"L188"},{"StopPointID":406,"StopPointRef":891085020125,"CommonName":"Woodbourne
+        Road, Avondale shelter","Longitude":-4.484892,"Latitude":54.160929,"IDCode":"L189"},{"StopPointID":407,"StopPointRef":891085020126,"CommonName":"Woodbourne
+        Road, Hilary Road shelter","Longitude":-4.486216,"Latitude":54.15743,"IDCode":"L190"},{"StopPointID":408,"StopPointRef":891085000134,"CommonName":"Woodbourne
+        Road, opposite Childrens Centre","Longitude":-4.485223,"Latitude":54.160659,"IDCode":"L191"},{"StopPointID":409,"StopPointRef":891085020127,"CommonName":"Woodbourne
+        Road, opposite Woodbourne Square","Longitude":-4.485431,"Latitude":54.156172,"IDCode":"L192"},{"StopPointID":410,"StopPointRef":891085020124,"CommonName":"Woodbourne
+        Road, RC School","Longitude":-4.483326,"Latitude":54.16282,"IDCode":"L193"},{"StopPointID":411,"StopPointRef":891085000132,"CommonName":"Woodbourne
+        Square","Longitude":-4.485907,"Latitude":54.156774,"IDCode":"L194"},{"StopPointID":412,"StopPointRef":891085000156,"CommonName":"Victoria
+        Crescent, shelter","Longitude":-4.476044,"Latitude":54.162984,"IDCode":"L122"},{"StopPointID":413,"StopPointRef":891085020149,"CommonName":"Victoria
+        Road, Centre House","Longitude":-4.470996,"Latitude":54.166442,"IDCode":"L123"},{"StopPointID":414,"StopPointRef":891085020152,"CommonName":"Victoria
+        Road, Elysse Court","Longitude":-4.478935,"Latitude":54.158572,"IDCode":"L124"},{"StopPointID":415,"StopPointRef":891085020150,"CommonName":"Victoria
+        Road, Glen Entrance","Longitude":-4.468838,"Latitude":54.170595,"IDCode":"L125"},{"StopPointID":416,"StopPointRef":891085000166,"CommonName":"Victoria
+        Road, Glenside","Longitude":-4.468924,"Latitude":54.170634,"IDCode":"L126"},{"StopPointID":417,"StopPointRef":891085020147,"CommonName":"Victoria
+        Road, Mona Drive junction","Longitude":-4.475216,"Latitude":54.163333,"IDCode":"L127"},{"StopPointID":418,"StopPointRef":891085020148,"CommonName":"Victoria
+        Road, Palace Road junction","Longitude":-4.473255,"Latitude":54.164783,"IDCode":"L128"},{"StopPointID":419,"StopPointRef":891085000158,"CommonName":"Victoria
+        Road, Poplar Road","Longitude":-4.47342,"Latitude":54.164714,"IDCode":"L129"},{"StopPointID":420,"StopPointRef":891085000152,"CommonName":"Victoria
+        Road, Princes Road","Longitude":-4.477481,"Latitude":54.160359,"IDCode":"L130"},{"StopPointID":421,"StopPointRef":891085000159,"CommonName":"Victoria
+        Road, Shoprite","Longitude":-4.470742,"Latitude":54.1667,"IDCode":"L131"},{"StopPointID":422,"StopPointRef":891085000151,"CommonName":"Victoria
+        Road, Stanley Place","Longitude":-4.479016,"Latitude":54.158666,"IDCode":"L132"},{"StopPointID":423,"StopPointRef":891085020151,"CommonName":"Victoria
+        Road, Woodville Terrace","Longitude":-4.477842,"Latitude":54.159518,"IDCode":"L133"},{"StopPointID":424,"StopPointRef":891085000153,"CommonName":"York
+        Road, No 1","Longitude":-4.482506,"Latitude":54.160532,"IDCode":"L149"},{"StopPointID":425,"StopPointRef":891085020145,"CommonName":"York
+        Road, Waverley Court","Longitude":-4.482288,"Latitude":54.160147,"IDCode":"L150"},{"StopPointID":426,"StopPointRef":891085003605,"CommonName":"Ballaragh
+        Village, northbound","Longitude":-4.377883,"Latitude":54.252257,"IDCode":"L8"},{"StopPointID":427,"StopPointRef":891085003606,"CommonName":"Ballaragh
+        Village, southbound","Longitude":-4.378006,"Latitude":54.242127,"IDCode":"L9"},{"StopPointID":428,"StopPointRef":891085013502,"CommonName":"Laxey,
+        Minorca Crescent","Longitude":-4.393908,"Latitude":54.227874,"IDCode":"L36"},{"StopPointID":429,"StopPointRef":891085013505,"CommonName":"Old
+        Laxey, opposite Glen Road Terrace","Longitude":-4.399108,"Latitude":54.228274,"IDCode":"L43"},{"StopPointID":430,"StopPointRef":891085003118,"CommonName":"Ballanard
+        Road, No 59","Longitude":-4.4885,"Latitude":54.169831,"IDCode":"L17"},{"StopPointID":431,"StopPointRef":891085003101,"CommonName":"Ballanard
+        Road, Port-e-Chee","Longitude":-4.485857,"Latitude":54.167191,"IDCode":"L18"},{"StopPointID":432,"StopPointRef":891085002301,"CommonName":"Ballacraine,
+        Curragh Road","Longitude":-4.629337,"Latitude":54.20229,"IDCode":"L2"},{"StopPointID":433,"StopPointRef":891085002402,"CommonName":"Ballawyllin","Longitude":-4.672457,"Latitude":54.210506,"IDCode":"L3"},{"StopPointID":434,"StopPointRef":891085002401,"CommonName":"Ballawyllin
+        entrance","Longitude":-4.672917,"Latitude":54.210573,"IDCode":"L4"},{"StopPointID":435,"StopPointRef":891085001302,"CommonName":"Braaid,
+        concrete shelter","Longitude":-4.57409,"Latitude":54.154564,"IDCode":"L5"},{"StopPointID":436,"StopPointRef":891085001301,"CommonName":"Braaid,
+        timber shelter","Longitude":-4.574097,"Latitude":54.154509,"IDCode":"L6"},{"StopPointID":437,"StopPointRef":891085001201,"CommonName":"Cooil
+        Cross Roads","Longitude":-4.53951,"Latitude":54.154086,"IDCode":"L8"},{"StopPointID":438,"StopPointRef":891085001202,"CommonName":"Cooil
+        Cross Roads, shelter","Longitude":-4.539502,"Latitude":54.15413,"IDCode":"L9"},{"StopPointID":439,"StopPointRef":891085001101,"CommonName":"Cooil
+        Road, Cooil Drive","Longitude":-4.524444,"Latitude":54.147778,"IDCode":"L12"},{"StopPointID":440,"StopPointRef":891085001103,"CommonName":"Cooil
+        Road, Robinsons","Longitude":-4.532723,"Latitude":54.151568,"IDCode":"L13"},{"StopPointID":441,"StopPointRef":891085002304,"CommonName":"Curragh
+        Road, Ballacraine","Longitude":-4.629398,"Latitude":54.202283,"IDCode":"L15"},{"StopPointID":442,"StopPointRef":891085007301,"CommonName":"Dalby","Longitude":-4.72622,"Latitude":54.173205,"IDCode":"L16"},{"StopPointID":443,"StopPointRef":891085007302,"CommonName":"Dalby,
+        Niarbyl Road junction","Longitude":-4.729397,"Latitude":54.168845,"IDCode":"L17"},{"StopPointID":444,"StopPointRef":891085002404,"CommonName":"Douglas
+        Road, Q.E. II School","Longitude":-4.685205,"Latitude":54.216682,"IDCode":"L18"},{"StopPointID":446,"StopPointRef":891085001403,"CommonName":"Dreemlang","Longitude":-4.606544,"Latitude":54.167423,"IDCode":"L22"},{"StopPointID":447,"StopPointRef":891085001404,"CommonName":"Dreemlang,
+        Gorselands","Longitude":-4.606627,"Latitude":54.167523,"IDCode":"L23"},{"StopPointID":448,"StopPointRef":891085001402,"CommonName":"Eairy
+        Dam","Longitude":-4.610037,"Latitude":54.167303,"IDCode":"L24"},{"StopPointID":449,"StopPointRef":891085001401,"CommonName":"Eairy
+        Dam shelter","Longitude":-4.609713,"Latitude":54.167335,"IDCode":"L25"},{"StopPointID":450,"StopPointRef":891085002319,"CommonName":"Foxdale
+        Road, Ballahig Farm entrance","Longitude":-4.638246,"Latitude":54.191045,"IDCode":"L26"},{"StopPointID":451,"StopPointRef":891085002320,"CommonName":"Foxdale
+        Road, opposite Ballahig Farm entrance","Longitude":-4.63826,"Latitude":54.191194,"IDCode":"L27"},{"StopPointID":452,"StopPointRef":891085002321,"CommonName":"Foxdale
+        Road, opposite Pine View","Longitude":-4.637015,"Latitude":54.19369,"IDCode":"L28"},{"StopPointID":453,"StopPointRef":891085001406,"CommonName":"Garth
+        crossroads, eastbound","Longitude":-4.588085,"Latitude":54.16041,"IDCode":"L29"},{"StopPointID":454,"StopPointRef":891085001405,"CommonName":"Garth
+        crossroads, westbound","Longitude":-4.5882,"Latitude":54.16026,"IDCode":"L30"},{"StopPointID":455,"StopPointRef":891085007203,"CommonName":"Glen
+        Maye","Longitude":-4.704101,"Latitude":54.184689,"IDCode":"L31"},{"StopPointID":456,"StopPointRef":891085007204,"CommonName":"Glen
+        Maye shelter","Longitude":-4.704202,"Latitude":54.18482,"IDCode":"L32"},{"StopPointID":457,"StopPointRef":891085007206,"CommonName":"Glen
+        Maye, Ballachrink Farm","Longitude":-4.707447,"Latitude":54.181942,"IDCode":"L33"},{"StopPointID":458,"StopPointRef":891085007205,"CommonName":"Glen
+        Maye, Shilley Marrey","Longitude":-4.708962,"Latitude":54.181568,"IDCode":"L34"},{"StopPointID":459,"StopPointRef":891085002007,"CommonName":"Glen
+        Vine, Marown TV","Longitude":-4.555796,"Latitude":54.177963,"IDCode":"L35"},{"StopPointID":460,"StopPointRef":891085002008,"CommonName":"Glen
+        Vine, Marown TV shelter","Longitude":-4.555739,"Latitude":54.177965,"IDCode":"L36"},{"StopPointID":461,"StopPointRef":891085007201,"CommonName":"Gordon","Longitude":-4.701157,"Latitude":54.193292,"IDCode":"L37"},{"StopPointID":462,"StopPointRef":891085007202,"CommonName":"Gordon
+        House","Longitude":-4.701234,"Latitude":54.193278,"IDCode":"L38"},{"StopPointID":463,"StopPointRef":891085001502,"CommonName":"Higher
+        Foxdale School","Longitude":-4.635081,"Latitude":54.169349,"IDCode":"L42"},{"StopPointID":464,"StopPointRef":891085001506,"CommonName":"Higher
+        Foxdale, Ard Jerkyl, car park exit","Longitude":-4.617123,"Latitude":54.169748,"IDCode":"L43"},{"StopPointID":465,"StopPointRef":891085001505,"CommonName":"Higher
+        Foxdale, Ard Jerkyl, opposite car park","Longitude":-4.616985,"Latitude":54.169667,"IDCode":"L44"},{"StopPointID":466,"StopPointRef":891085001507,"CommonName":"Higher
+        Foxdale, opposite Springfield Rise","Longitude":-4.631571,"Latitude":54.169101,"IDCode":"L45"},{"StopPointID":467,"StopPointRef":891085001508,"CommonName":"Higher
+        Foxdale, Springfield Rise","Longitude":-4.630981,"Latitude":54.169202,"IDCode":"L46"},{"StopPointID":468,"StopPointRef":891085002306,"CommonName":"Hope
+        Shelter, Curragh Road","Longitude":-4.636035,"Latitude":54.19549,"IDCode":"L48"},{"StopPointID":469,"StopPointRef":891085001105,"CommonName":"IOM
+        Business Park, Canada Life","Longitude":-4.535556,"Latitude":54.153889,"IDCode":"L49"},{"StopPointID":470,"StopPointRef":891085001110,"CommonName":"IOM
+        Business Park, Manx Telecom","Longitude":-4.533958,"Latitude":54.154251,"IDCode":"L50"},{"StopPointID":471,"StopPointRef":891085011502,"CommonName":"Lower
+        Foxdale, Ballamoar Cottage","Longitude":-4.642332,"Latitude":54.177281,"IDCode":"L53"},{"StopPointID":472,"StopPointRef":891085011501,"CommonName":"Lower
+        Foxdale, Ballamoar Farm Lane","Longitude":-4.642393,"Latitude":54.177694,"IDCode":"L54"},{"StopPointID":473,"StopPointRef":891085011504,"CommonName":"Lower
+        Foxdale, Hamilton close shelter","Longitude":-4.64147,"Latitude":54.181207,"IDCode":"L55"},{"StopPointID":474,"StopPointRef":891085011503,"CommonName":"Lower
+        Foxdale, Old Mill","Longitude":-4.641516,"Latitude":54.181244,"IDCode":"L56"},{"StopPointID":475,"StopPointRef":891085007401,"CommonName":"Niarbyl","Longitude":-4.738962,"Latitude":54.16437,"IDCode":"L58"},{"StopPointID":476,"StopPointRef":891085007104,"CommonName":"Patrick","Longitude":-4.694036,"Latitude":54.205345,"IDCode":"L59"},{"StopPointID":477,"StopPointRef":891085007103,"CommonName":"Patrick,
+        Patrick Road junction","Longitude":-4.6941,"Latitude":54.205328,"IDCode":"L60"},{"StopPointID":478,"StopPointRef":891085002403,"CommonName":"Peel
+        Football Club","Longitude":-4.685914,"Latitude":54.217275,"IDCode":"L61"},{"StopPointID":479,"StopPointRef":891085002412,"CommonName":"Peel
+        Town Hall","Longitude":-4.690813,"Latitude":54.222412,"IDCode":"L62"},{"StopPointID":480,"StopPointRef":891085002414,"CommonName":"Peel
+        Town Hall, eastbound","Longitude":-4.690813,"Latitude":54.222412,"IDCode":"L63"},{"StopPointID":481,"StopPointRef":891085002410,"CommonName":"Peel,
+        Albany Road garage","Longitude":-4.689604,"Latitude":54.221785,"IDCode":"L64"},{"StopPointID":482,"StopPointRef":891085002427,"CommonName":"Peel,
+        Albany Road, Tynwald Road junction","Longitude":-4.69053,"Latitude":54.220645,"IDCode":"L65"},{"StopPointID":483,"StopPointRef":891085002436,"CommonName":"Peel,
+        Glenfaba Road","Longitude":-4.69712,"Latitude":54.217745,"IDCode":"L66"},{"StopPointID":484,"StopPointRef":891085002435,"CommonName":"Peel,
+        Glenfaba Road, Close Cronk","Longitude":-4.697098,"Latitude":54.217787,"IDCode":"L67"},{"StopPointID":485,"StopPointRef":891085002405,"CommonName":"Peel,
+        Tynwald Close","Longitude":-4.689117,"Latitude":54.219152,"IDCode":"L68"},{"StopPointID":486,"StopPointRef":891085002406,"CommonName":"Peel,
+        Tynwald Close shelter","Longitude":-4.688951,"Latitude":54.2191,"IDCode":"L69"},{"StopPointID":487,"StopPointRef":891085002408,"CommonName":"Peel,
+        Tynwald Road shelter","Longitude":-4.690549,"Latitude":54.219978,"IDCode":"L70"},{"StopPointID":488,"StopPointRef":891085002438,"CommonName":"Peel,
+        West View playground","Longitude":-4.694809,"Latitude":54.220688,"IDCode":"L71"},{"StopPointID":489,"StopPointRef":891085040103,"CommonName":"Queen
+        Elizabeth II High School","Longitude":-4.68495,"Latitude":54.216926,"IDCode":"L74"},{"StopPointID":490,"StopPointRef":891085007101,"CommonName":"Raggart,
+        glen entrance","Longitude":-4.694915,"Latitude":54.211389,"IDCode":"L75"},{"StopPointID":491,"StopPointRef":891085007102,"CommonName":"Raggart,
+        layby","Longitude":-4.696313,"Latitude":54.211841,"IDCode":"L76"},{"StopPointID":492,"StopPointRef":891085001109,"CommonName":"Spring
+        Valley Industrial Estate, B \u0026 Q","Longitude":-4.529039,"Latitude":54.151089,"IDCode":"L77"},{"StopPointID":493,"StopPointRef":891085001108,"CommonName":"Spring
+        Valley Industrial Estate, Unit 7","Longitude":-4.52636,"Latitude":54.15079,"IDCode":"L78"},{"StopPointID":494,"StopPointRef":891085002302,"CommonName":"St
+        Johns, Ballacraine Farm","Longitude":-4.627826,"Latitude":54.202223,"IDCode":"L79"},{"StopPointID":495,"StopPointRef":891085002311,"CommonName":"St
+        Johns, Ballacraine, opposite old smithy","Longitude":-4.631111,"Latitude":54.203056,"IDCode":"L80"},{"StopPointID":496,"StopPointRef":891085002313,"CommonName":"St
+        Johns, Balladoyne entrance","Longitude":-4.636799,"Latitude":54.203276,"IDCode":"L81"},{"StopPointID":497,"StopPointRef":891085002315,"CommonName":"St
+        Johns, Bunscoill layby","Longitude":-4.641437,"Latitude":54.203122,"IDCode":"L82"},{"StopPointID":498,"StopPointRef":891085002310,"CommonName":"St
+        Johns, Football Club entrance","Longitude":-4.641044,"Latitude":54.199324,"IDCode":"L83"},{"StopPointID":499,"StopPointRef":891085002308,"CommonName":"St
+        Johns, Forestry Board shelter","Longitude":-4.636972,"Latitude":54.195695,"IDCode":"L84"},{"StopPointID":500,"StopPointRef":891085002312,"CommonName":"St
+        Johns, Station Road shelter.","Longitude":-4.642133,"Latitude":54.20146,"IDCode":"L85"},{"StopPointID":501,"StopPointRef":891085002317,"CommonName":"St
+        Johns, Tynwald Inn car park","Longitude":-4.643889,"Latitude":54.203333,"IDCode":"L86"},{"StopPointID":502,"StopPointRef":891085002316,"CommonName":"St
+        Johns, Tynwald Inn shelter","Longitude":-4.643375,"Latitude":54.203352,"IDCode":"L87"},{"StopPointID":503,"StopPointRef":891085002303,"CommonName":"The
+        Hope","Longitude":-4.635926,"Latitude":54.195579,"IDCode":"L88"},{"StopPointID":504,"StopPointRef":891085013001,"CommonName":"White
+        Hoe","Longitude":-4.504102,"Latitude":54.14312,"IDCode":"L89"},{"StopPointID":505,"StopPointRef":891085013002,"CommonName":"White
+        Hoe, industrial estate","Longitude":-4.503682,"Latitude":54.143497,"IDCode":"L90"},{"StopPointID":506,"StopPointRef":891085011407,"CommonName":"Ballamodha,
+        Phildraw Road","Longitude":-4.640769,"Latitude":54.122882,"IDCode":"L5"},{"StopPointID":507,"StopPointRef":891085011406,"CommonName":"Ballamodha,
+        Pottery","Longitude":-4.639603,"Latitude":54.127788,"IDCode":"L6"},{"StopPointID":508,"StopPointRef":891085011405,"CommonName":"Ballamodha,
+        St Marks Junction","Longitude":-4.638777,"Latitude":54.131162,"IDCode":"L7"},{"StopPointID":509,"StopPointRef":891085011408,"CommonName":"Ballamodha,
+        water trough","Longitude":-4.64086,"Latitude":54.122605,"IDCode":"L8"},{"StopPointID":510,"StopPointRef":891085000411,"CommonName":"Ballasalla,
+        Abbey Church","Longitude":-4.63218,"Latitude":54.09828,"IDCode":"L9"},{"StopPointID":511,"StopPointRef":891085000412,"CommonName":"Ballasalla,
+        Abbey Church entrance","Longitude":-4.632108,"Latitude":54.098393,"IDCode":"L10"},{"StopPointID":512,"StopPointRef":891085000413,"CommonName":"Ballasalla,
+        Cross Four Ways","Longitude":-4.645819,"Latitude":54.095422,"IDCode":"L11"},{"StopPointID":513,"StopPointRef":891085000627,"CommonName":"Castletown,
+        By Pass","Longitude":-4.660688,"Latitude":54.079252,"IDCode":"L25"},{"StopPointID":514,"StopPointRef":891085000414,"CommonName":"Cross
+        Four Ways, Ballasalla","Longitude":-4.646576,"Latitude":54.095326,"IDCode":"L39"},{"StopPointID":515,"StopPointRef":891085001501,"CommonName":"Higher
+        Foxdale industrial estate","Longitude":-4.635221,"Latitude":54.169292,"IDCode":"L48"},{"StopPointID":516,"StopPointRef":891085000625,"CommonName":"School
+        Hill","Longitude":-4.657077,"Latitude":54.078561,"IDCode":"L62"},{"StopPointID":517,"StopPointRef":891085000416,"CommonName":"Silverdale
+        Glen","Longitude":-4.642054,"Latitude":54.105191,"IDCode":"L63"},{"StopPointID":518,"StopPointRef":891085000415,"CommonName":"Silverdale
+        Glen, entrance","Longitude":-4.642019,"Latitude":54.105061,"IDCode":"L64"},{"StopPointID":519,"StopPointRef":891085011301,"CommonName":"St
+        Marks","Longitude":-4.609023,"Latitude":54.135012,"IDCode":"L67"},{"StopPointID":520,"StopPointRef":891085002430,"CommonName":"Ballawattleworth,
+        Highwayman","Longitude":-4.678258,"Latitude":54.22043,"IDCode":"L1"},{"StopPointID":521,"StopPointRef":891085002428,"CommonName":"Ballawattleworth,
+        Rowan Avenue","Longitude":-4.678503,"Latitude":54.223545,"IDCode":"L2"},{"StopPointID":522,"StopPointRef":891085040125,"CommonName":"Peel
+        Swimming Pool","Longitude":-4.683918,"Latitude":54.221348,"IDCode":"L14"},{"StopPointID":523,"StopPointRef":891085002701,"CommonName":"Ballacobb","Longitude":-4.549752,"Latitude":54.30793,"IDCode":"L1"},{"StopPointID":524,"StopPointRef":891085002702,"CommonName":"Ballacobb
+        shelter","Longitude":-4.548663,"Latitude":54.308125,"IDCode":"L2"},{"StopPointID":525,"StopPointRef":891085002318,"CommonName":"Ballacraine,
+        old smithy","Longitude":-4.631995,"Latitude":54.203189,"IDCode":"L3"},{"StopPointID":526,"StopPointRef":891085002505,"CommonName":"Ballaquine","Longitude":-4.618034,"Latitude":54.262813,"IDCode":"L4"},{"StopPointID":527,"StopPointRef":891085002506,"CommonName":"Ballaquine
+        Farm","Longitude":-4.617916,"Latitude":54.262833,"IDCode":"L5"},{"StopPointID":528,"StopPointRef":891085002703,"CommonName":"Ballaugh,
+        opposite Raven","Longitude":-4.5406,"Latitude":54.310004,"IDCode":"L6"},{"StopPointID":529,"StopPointRef":891085002704,"CommonName":"Ballaugh,
+        Raven","Longitude":-4.54085,"Latitude":54.309883,"IDCode":"L7"},{"StopPointID":530,"StopPointRef":891085002429,"CommonName":"Ballawattleworth,
+        Oak Road","Longitude":-4.676322,"Latitude":54.222692,"IDCode":"L9"},{"StopPointID":531,"StopPointRef":891085012701,"CommonName":"Bishopscourt
+        straight, northbound","Longitude":-4.57124,"Latitude":54.298926,"IDCode":"L12"},{"StopPointID":532,"StopPointRef":891085012702,"CommonName":"Bishopscourt
+        straight, southbound","Longitude":-4.571018,"Latitude":54.298764,"IDCode":"L13"},{"StopPointID":533,"StopPointRef":891085012703,"CommonName":"Bishopscourt,
+        Orrisdale Road junction","Longitude":-4.565556,"Latitude":54.3025,"IDCode":"L14"},{"StopPointID":534,"StopPointRef":891085012704,"CommonName":"Bishopscourt,
+        Orrisdale Road shelter","Longitude":-4.565583,"Latitude":54.302466,"IDCode":"L15"},{"StopPointID":535,"StopPointRef":891085001702,"CommonName":"Braddan
+        Bridge, Douglas Road layby","Longitude":-4.504223,"Latitude":54.160418,"IDCode":"L16"},{"StopPointID":536,"StopPointRef":891085001703,"CommonName":"Braddan
+        School","Longitude":-4.506158,"Latitude":54.164596,"IDCode":"L17"},{"StopPointID":537,"StopPointRef":891085001704,"CommonName":"Braddan
+        School, layby","Longitude":-4.506452,"Latitude":54.165163,"IDCode":"L18"},{"StopPointID":538,"StopPointRef":891085002106,"CommonName":"Crosby
+        Hotel","Longitude":-4.568179,"Latitude":54.184778,"IDCode":"L22"},{"StopPointID":539,"StopPointRef":891085002103,"CommonName":"Crosby
+        layby","Longitude":-4.565203,"Latitude":54.183427,"IDCode":"L23"},{"StopPointID":540,"StopPointRef":891085002104,"CommonName":"Crosby
+        Shelter","Longitude":-4.566152,"Latitude":54.18393,"IDCode":"L24"},{"StopPointID":541,"StopPointRef":891085002108,"CommonName":"Crosby,  Ballavitchell
+        Road","Longitude":-4.572001,"Latitude":54.186297,"IDCode":"L25"},{"StopPointID":542,"StopPointRef":891085002107,"CommonName":"Crosby,
+        Ballavitchell, farm","Longitude":-4.571892,"Latitude":54.186228,"IDCode":"L26"},{"StopPointID":543,"StopPointRef":891085002101,"CommonName":"Crosby,
+        Cedar Lodge","Longitude":-4.562873,"Latitude":54.182395,"IDCode":"L27"},{"StopPointID":544,"StopPointRef":891085002102,"CommonName":"Crosby,
+        Woodlea Villas","Longitude":-4.563138,"Latitude":54.182555,"IDCode":"L28"},{"StopPointID":545,"StopPointRef":891085003005,"CommonName":"Garey
+        Road","Longitude":-4.43511,"Latitude":54.318647,"IDCode":"L33"},{"StopPointID":546,"StopPointRef":891085003006,"CommonName":"Garey
+        Road, Abbey","Longitude":-4.434688,"Latitude":54.318556,"IDCode":"L34"},{"StopPointID":547,"StopPointRef":891085002905,"CommonName":"Ginger
+        Hall","Longitude":-4.471847,"Latitude":54.321781,"IDCode":"L35"},{"StopPointID":548,"StopPointRef":891085002906,"CommonName":"Ginger
+        Hall, Car Park","Longitude":-4.4715,"Latitude":54.32155,"IDCode":"L36"},{"StopPointID":549,"StopPointRef":891085003003,"CommonName":"Glen
+        Duff","Longitude":-4.446204,"Latitude":54.320056,"IDCode":"L37"},{"StopPointID":550,"StopPointRef":891085003004,"CommonName":"Glen
+        Duff, Highway Depot","Longitude":-4.444282,"Latitude":54.31935,"IDCode":"L38"},{"StopPointID":551,"StopPointRef":891085004801,"CommonName":"Glen
+        Mooar, Ballacarnane Mooar","Longitude":-4.609497,"Latitude":54.269086,"IDCode":"L39"},{"StopPointID":552,"StopPointRef":891085004802,"CommonName":"Glen
+        Mooar, Ballacarnane Mooar entrance","Longitude":-4.60934,"Latitude":54.269045,"IDCode":"L40"},{"StopPointID":553,"StopPointRef":891085004804,"CommonName":"Glen
+        Mooar, Ballaleigh Road junction","Longitude":-4.600751,"Latitude":54.27306,"IDCode":"L41"},{"StopPointID":554,"StopPointRef":891085002003,"CommonName":"Glen
+        Vine, Ballagarey","Longitude":-4.550609,"Latitude":54.174537,"IDCode":"L42"},{"StopPointID":555,"StopPointRef":891085002004,"CommonName":"Glen
+        Vine, Ballagarey shelter","Longitude":-4.550518,"Latitude":54.174521,"IDCode":"L43"},{"StopPointID":556,"StopPointRef":891085002006,"CommonName":"Glen
+        Vine, Douglas Road","Longitude":-4.55293,"Latitude":54.176062,"IDCode":"L44"},{"StopPointID":557,"StopPointRef":891085002005,"CommonName":"Glen
+        Vine, Glen Darragh Road junction","Longitude":-4.553904,"Latitude":54.176699,"IDCode":"L45"},{"StopPointID":558,"StopPointRef":891085002002,"CommonName":"Glen
+        Vine, Glen Lough","Longitude":-4.546129,"Latitude":54.173268,"IDCode":"L46"},{"StopPointID":559,"StopPointRef":891085002001,"CommonName":"Glen
+        Vine, Glen Lough entrance","Longitude":-4.524452,"Latitude":54.172468,"IDCode":"L47"},{"StopPointID":560,"StopPointRef":891085002602,"CommonName":"Glen
+        Wyllin","Longitude":-4.590295,"Latitude":54.279177,"IDCode":"L50"},{"StopPointID":561,"StopPointRef":891085002601,"CommonName":"Glen
+        Wyllin campsite","Longitude":-4.590192,"Latitude":54.279272,"IDCode":"L51"},{"StopPointID":562,"StopPointRef":891085002207,"CommonName":"Greeba
+        Bridge shelter","Longitude":-4.607987,"Latitude":54.196956,"IDCode":"L52"},{"StopPointID":563,"StopPointRef":891085002205,"CommonName":"Greeba
+        Bridge, Douglas Road","Longitude":-4.60439,"Latitude":54.196066,"IDCode":"L53"},{"StopPointID":564,"StopPointRef":891085002206,"CommonName":"Greeba
+        Bridge, Glen Dhoo","Longitude":-4.602919,"Latitude":54.195396,"IDCode":"L54"},{"StopPointID":565,"StopPointRef":891085002204,"CommonName":"Greeba
+        Castle","Longitude":-4.593866,"Latitude":54.193416,"IDCode":"L55"},{"StopPointID":566,"StopPointRef":891085002203,"CommonName":"Greeba,
+        Appledene","Longitude":-4.593889,"Latitude":54.193333,"IDCode":"L56"},{"StopPointID":567,"StopPointRef":891085002202,"CommonName":"Greeba,
+        Highlander","Longitude":-4.581889,"Latitude":54.190309,"IDCode":"L57"},{"StopPointID":568,"StopPointRef":891085002201,"CommonName":"Greeba,
+        Highlander shelter","Longitude":-4.582145,"Latitude":54.190377,"IDCode":"L58"},{"StopPointID":569,"StopPointRef":891085002210,"CommonName":"Greeba,
+        Kerrowgarrow Road","Longitude":-4.615437,"Latitude":54.197646,"IDCode":"L59"},{"StopPointID":570,"StopPointRef":891085002209,"CommonName":"Greeba,
+        Kerrowgarrow Road junction","Longitude":-4.615544,"Latitude":54.197678,"IDCode":"L60"},{"StopPointID":571,"StopPointRef":891085002208,"CommonName":"Greeba,
+        opposite Hawthorn Inn","Longitude":-4.609677,"Latitude":54.197129,"IDCode":"L61"},{"StopPointID":572,"StopPointRef":891085001808,"CommonName":"Hospital,
+        helicopter pad westbound","Longitude":-4.507696,"Latitude":54.171446,"IDCode":"L63"},{"StopPointID":573,"StopPointRef":891085003002,"CommonName":"Kerrowmoar","Longitude":-4.459167,"Latitude":54.321389,"IDCode":"L65"},{"StopPointID":574,"StopPointRef":891085002604,"CommonName":"Kirk
+        Michael School","Longitude":-4.587901,"Latitude":54.281768,"IDCode":"L66"},{"StopPointID":575,"StopPointRef":891085002606,"CommonName":"KM,
+        Methodist Church, shelter","Longitude":-4.587176,"Latitude":54.283693,"IDCode":"L67"},{"StopPointID":576,"StopPointRef":891085002603,"CommonName":"KM,
+        Michael Motors, shelter","Longitude":-4.587959,"Latitude":54.283631,"IDCode":"L68"},{"StopPointID":577,"StopPointRef":891085002605,"CommonName":"KM,
+        opposite Saddlery","Longitude":-4.583213,"Latitude":54.286759,"IDCode":"L69"},{"StopPointID":578,"StopPointRef":891085002609,"CommonName":"KM,
+        Pennybridge stables","Longitude":-4.579913,"Latitude":54.289901,"IDCode":"L70"},{"StopPointID":579,"StopPointRef":891085002608,"CommonName":"KM,
+        Saddlery","Longitude":-4.583198,"Latitude":54.28678,"IDCode":"L71"},{"StopPointID":580,"StopPointRef":891085002610,"CommonName":"KM,
+        shelter opposite filling station","Longitude":-4.579737,"Latitude":54.289925,"IDCode":"L72"},{"StopPointID":581,"StopPointRef":891085002501,"CommonName":"Knocksharry
+        Farm","Longitude":-4.647246,"Latitude":54.238674,"IDCode":"L73"},{"StopPointID":582,"StopPointRef":891085002502,"CommonName":"Knocksharry,
+        switchback junction","Longitude":-4.646483,"Latitude":54.238916,"IDCode":"L74"},{"StopPointID":583,"StopPointRef":891085003007,"CommonName":"Lezayre","Longitude":-4.425133,"Latitude":54.319189,"IDCode":"L75"},{"StopPointID":584,"StopPointRef":891085003803,"CommonName":"Lezayre
+        Road, Bunscoill Rhumsaa Infants","Longitude":-4.39819,"Latitude":54.320911,"IDCode":"L76"},{"StopPointID":585,"StopPointRef":891085003891,"CommonName":"Lezayre
+        Road, Faaie Wyllin","Longitude":-4.401036,"Latitude":54.321222,"IDCode":"L77"},{"StopPointID":586,"StopPointRef":891085003801,"CommonName":"Lezayre
+        Road, Glen Auldyn","Longitude":-4.405,"Latitude":54.321111,"IDCode":"L78"},{"StopPointID":587,"StopPointRef":891085003802,"CommonName":"Lezayre
+        Road, Glen Auldyn junction","Longitude":-4.404653,"Latitude":54.321307,"IDCode":"L79"},{"StopPointID":588,"StopPointRef":891085003805,"CommonName":"Lezayre
+        Road, Kerrow Glass","Longitude":-4.395548,"Latitude":54.320734,"IDCode":"L80"},{"StopPointID":589,"StopPointRef":891085003892,"CommonName":"Lezayre
+        Road, Milntown Entrance","Longitude":-4.401272,"Latitude":54.321155,"IDCode":"L81"},{"StopPointID":590,"StopPointRef":891085003804,"CommonName":"Lezayre
+        Road, opposite Bunscoill Rhumsaa Infants","Longitude":-4.39797,"Latitude":54.320866,"IDCode":"L82"},{"StopPointID":591,"StopPointRef":891085003008,"CommonName":"Lezayre,
+        War Memorial","Longitude":-4.423696,"Latitude":54.31913,"IDCode":"L83"},{"StopPointID":592,"StopPointRef":891085002503,"CommonName":"Lynague","Longitude":-4.639614,"Latitude":54.247754,"IDCode":"L87"},{"StopPointID":593,"StopPointRef":891085002504,"CommonName":"Lynague,
+        junction","Longitude":-4.638532,"Latitude":54.248649,"IDCode":"L88"},{"StopPointID":594,"StopPointRef":891085001810,"CommonName":"Nobles
+        Hospital, shelter","Longitude":-4.506116,"Latitude":54.172416,"IDCode":"L90"},{"StopPointID":595,"StopPointRef":891085000113,"CommonName":"Peel
+        Road, Eurocars","Longitude":-4.49898,"Latitude":54.151503,"IDCode":"L93"},{"StopPointID":596,"StopPointRef":891085020102,"CommonName":"Peel
+        Road, Mile End Court","Longitude":-4.499722,"Latitude":54.152493,"IDCode":"L94"},{"StopPointID":597,"StopPointRef":891085002422,"CommonName":"Peel,
+        Ballaquane Road junction","Longitude":-4.682779,"Latitude":54.224905,"IDCode":"L100"},{"StopPointID":598,"StopPointRef":891085002424,"CommonName":"Peel,
+        Belle Vue junction","Longitude":-4.678912,"Latitude":54.226017,"IDCode":"L101"},{"StopPointID":599,"StopPointRef":891085002432,"CommonName":"Peel,
+        Derby Road No 44","Longitude":-4.686853,"Latitude":54.221605,"IDCode":"L102"},{"StopPointID":600,"StopPointRef":891085002433,"CommonName":"Peel,
+        Derby Road, opposite campsite","Longitude":-4.682763,"Latitude":54.22086,"IDCode":"L103"},{"StopPointID":601,"StopPointRef":891085002416,"CommonName":"Peel,
+        Empire Garage","Longitude":-4.688859,"Latitude":54.223405,"IDCode":"L104"},{"StopPointID":602,"StopPointRef":891085002426,"CommonName":"Peel,
+        Mourne View shelter","Longitude":-4.677229,"Latitude":54.226527,"IDCode":"L105"},{"StopPointID":603,"StopPointRef":891085002421,"CommonName":"Peel,
+        opposite Ballaquane Road","Longitude":-4.682922,"Latitude":54.224881,"IDCode":"L106"},{"StopPointID":604,"StopPointRef":891085002423,"CommonName":"Peel,
+        opposite Belle Vue","Longitude":-4.678961,"Latitude":54.225965,"IDCode":"L107"},{"StopPointID":605,"StopPointRef":891085002418,"CommonName":"Peel,
+        Peveril Road, Mount Morrison junction","Longitude":-4.68545,"Latitude":54.224222,"IDCode":"L108"},{"StopPointID":606,"StopPointRef":891085002419,"CommonName":"Peel,
+        Peveril Road, opposite Mount Morrison","Longitude":-4.685055,"Latitude":54.224297,"IDCode":"L109"},{"StopPointID":607,"StopPointRef":891085002425,"CommonName":"Peel,
+        Reayrt Aalin","Longitude":-4.676497,"Latitude":54.226797,"IDCode":"L110"},{"StopPointID":608,"StopPointRef":891085002434,"CommonName":"Peel,
+        Reayrt Aalin, towards Douglas","Longitude":-4.676497,"Latitude":54.226797,"IDCode":"L111"},{"StopPointID":609,"StopPointRef":891085020101,"CommonName":"Quarter
+        Bridge","Longitude":-4.501106,"Latitude":54.155051,"IDCode":"L116"},{"StopPointID":610,"StopPointRef":891085000114,"CommonName":"Quarter
+        Bridge shelter","Longitude":-4.501209,"Latitude":54.154794,"IDCode":"L117"},{"StopPointID":611,"StopPointRef":891085003806,"CommonName":"Ramsey
+        Grammar School layby","Longitude":-4.392512,"Latitude":54.320772,"IDCode":"L121"},{"StopPointID":612,"StopPointRef":891085003807,"CommonName":"Ramsey,
+        Bircham Avenue","Longitude":-4.389744,"Latitude":54.322054,"IDCode":"L122"},{"StopPointID":613,"StopPointRef":891085003808,"CommonName":"Ramsey,
+        Bircham Avenue outbound","Longitude":-4.389694,"Latitude":54.322034,"IDCode":"L123"},{"StopPointID":614,"StopPointRef":891085012705,"CommonName":"Rhen
+        Cullen layby","Longitude":-4.576999,"Latitude":54.293608,"IDCode":"L124"},{"StopPointID":615,"StopPointRef":891085012706,"CommonName":"Rhen
+        Cullen marshalls post","Longitude":-4.576909,"Latitude":54.293424,"IDCode":"L125"},{"StopPointID":616,"StopPointRef":891085002314,"CommonName":"St
+        Johns, Tynwald Close shelter","Longitude":-4.637479,"Latitude":54.203286,"IDCode":"L130"},{"StopPointID":617,"StopPointRef":891085001804,"CommonName":"Strang
+        crossroads, post box","Longitude":-4.511485,"Latitude":54.172659,"IDCode":"L135"},{"StopPointID":618,"StopPointRef":891085001807,"CommonName":"Strang
+        crossroads, telephone box","Longitude":-4.511667,"Latitude":54.172778,"IDCode":"L136"},{"StopPointID":619,"StopPointRef":891085001802,"CommonName":"Strang
+        Road, Ballanawin","Longitude":-4.516747,"Latitude":54.17141,"IDCode":"L137"},{"StopPointID":620,"StopPointRef":891085001809,"CommonName":"Strang
+        Road, Ballanawin entrance","Longitude":-4.515341,"Latitude":54.171636,"IDCode":"L138"},{"StopPointID":621,"StopPointRef":891085001805,"CommonName":"Strang,
+        Cronk Grianagh","Longitude":-4.510093,"Latitude":54.170996,"IDCode":"L139"},{"StopPointID":622,"StopPointRef":891085002901,"CommonName":"Sulby
+        Glen Hotel","Longitude":-4.492286,"Latitude":54.319371,"IDCode":"L140"},{"StopPointID":623,"StopPointRef":891085002904,"CommonName":"Sulby
+        village","Longitude":-4.480153,"Latitude":54.322226,"IDCode":"L141"},{"StopPointID":624,"StopPointRef":891085002903,"CommonName":"Sulby
+        Village shelter","Longitude":-4.480406,"Latitude":54.322184,"IDCode":"L142"},{"StopPointID":625,"StopPointRef":891085002902,"CommonName":"Sulby,
+        Caleys Store","Longitude":-4.492173,"Latitude":54.319362,"IDCode":"L143"},{"StopPointID":626,"StopPointRef":891085001901,"CommonName":"Union
+        Mills, Kaneens Garage","Longitude":-4.523795,"Latitude":54.169792,"IDCode":"L144"},{"StopPointID":627,"StopPointRef":891085001902,"CommonName":"Union
+        Mills, Post Office","Longitude":-4.52335,"Latitude":54.1698,"IDCode":"L145"},{"StopPointID":628,"StopPointRef":891085001906,"CommonName":"Union
+        Mills, Strang Road, Camlork Place","Longitude":-4.517977,"Latitude":54.17124,"IDCode":"L146"},{"StopPointID":629,"StopPointRef":891085001903,"CommonName":"Union
+        Mills, Trollaby Lane","Longitude":-4.527467,"Latitude":54.170405,"IDCode":"L147"},{"StopPointID":630,"StopPointRef":891085001904,"CommonName":"Union
+        Mills, Trollaby Lane junction","Longitude":-4.528367,"Latitude":54.170567,"IDCode":"L148"},{"StopPointID":631,"StopPointRef":891085002508,"CommonName":"White
+        Strand, Lhergydhoo Farm entrance","Longitude":-4.659658,"Latitude":54.232804,"IDCode":"L149"},{"StopPointID":632,"StopPointRef":891085002801,"CommonName":"Wildlife
+        Park, northbound","Longitude":-4.512377,"Latitude":54.316116,"IDCode":"L150"},{"StopPointID":633,"StopPointRef":891085002802,"CommonName":"Wildlife
+        Park, southbound","Longitude":-4.512377,"Latitude":54.316116,"IDCode":"L151"},{"StopPointID":634,"StopPointRef":891085001706,"CommonName":"Braddan
+        Bridge, BCS House","Longitude":-4.507333,"Latitude":54.162383,"IDCode":"L12"},{"StopPointID":635,"StopPointRef":891085001701,"CommonName":"Braddan
+        Bridge, Old Church layby","Longitude":-4.506473,"Latitude":54.161406,"IDCode":"L14"},{"StopPointID":636,"StopPointRef":891085000148,"CommonName":"Circular
+        Road, No 17","Longitude":-4.483787,"Latitude":54.150549,"IDCode":"L18"},{"StopPointID":637,"StopPointRef":891085000167,"CommonName":"Circular
+        Road, St Georges Street","Longitude":-4.485976,"Latitude":54.149487,"IDCode":"L19"},{"StopPointID":638,"StopPointRef":891085002444,"CommonName":"Peel,
+        Derby Road, campsite","Longitude":-4.682963,"Latitude":54.220914,"IDCode":"L79"},{"StopPointID":639,"StopPointRef":891085002431,"CommonName":"Peel,
+        Derby Road, Shoprite","Longitude":-4.68678,"Latitude":54.221598,"IDCode":"L81"},{"StopPointID":640,"StopPointRef":891085001905,"CommonName":"Union
+        Mills, Ashlar Drive","Longitude":-4.517667,"Latitude":54.167328,"IDCode":"L105"},{"StopPointID":641,"StopPointRef":891085001907,"CommonName":"Union
+        Mills, Railway Hotel","Longitude":-4.522007,"Latitude":54.168787,"IDCode":"L108"},{"StopPointID":642,"StopPointRef":891085001908,"CommonName":"Union
+        Mills, Snugborough shelter","Longitude":-4.519283,"Latitude":54.168116,"IDCode":"L109"},{"StopPointID":643,"StopPointRef":891085012601,"CommonName":"Barregarrow
+        Chapel","Longitude":-4.581407,"Latitude":54.260699,"IDCode":"L8"},{"StopPointID":644,"StopPointRef":891085012602,"CommonName":"Barregarrow,
+        crossroads","Longitude":-4.58169,"Latitude":54.26031,"IDCode":"L9"},{"StopPointID":645,"StopPointRef":891085012505,"CommonName":"Cronk-y-Voddy
+        crossroads","Longitude":-4.607657,"Latitude":54.240468,"IDCode":"L20"},{"StopPointID":646,"StopPointRef":891085012506,"CommonName":"Cronk-y-Voddy
+        shelter","Longitude":-4.607371,"Latitude":54.240667,"IDCode":"L21"},{"StopPointID":647,"StopPointRef":891085012504,"CommonName":"Glen
+        Helen car park","Longitude":-4.61697,"Latitude":54.225829,"IDCode":"L39"},{"StopPointID":648,"StopPointRef":891085012503,"CommonName":"Glen
+        Helen, Creg Wyllies Hill","Longitude":-4.61697,"Latitude":54.225829,"IDCode":"L40"},{"StopPointID":649,"StopPointRef":891085012501,"CommonName":"Laurel
+        Bank layby","Longitude":-4.6329,"Latitude":54.218433,"IDCode":"L70"},{"StopPointID":650,"StopPointRef":891085012502,"CommonName":"Laurel
+        Bank, forestry yard","Longitude":-4.63275,"Latitude":54.2158,"IDCode":"L71"},{"StopPointID":651,"StopPointRef":891085002442,"CommonName":"Poortown
+        Road, Highwayman","Longitude":-4.678956,"Latitude":54.220164,"IDCode":"L102"},{"StopPointID":652,"StopPointRef":891085002441,"CommonName":"Poortown
+        Road. opposite Highwayman","Longitude":-4.678924,"Latitude":54.220059,"IDCode":"L103"},{"StopPointID":653,"StopPointRef":891085012603,"CommonName":"Westwood","Longitude":-4.579516,"Latitude":54.27545,"IDCode":"L137"},{"StopPointID":654,"StopPointRef":891085012604,"CommonName":"Westwood,
+        bridge","Longitude":-4.580392,"Latitude":54.275988,"IDCode":"L138"},{"StopPointID":655,"StopPointRef":891085003824,"CommonName":"Bowring
+        Road, Westfield Grove","Longitude":-4.389601,"Latitude":54.326139,"IDCode":"L10"},{"StopPointID":656,"StopPointRef":891085004210,"CommonName":"Jurby
+        East Road, Bretney shelter","Longitude":-4.516769,"Latitude":54.363524,"IDCode":"L35"},{"StopPointID":657,"StopPointRef":891085004208,"CommonName":"Jurby
+        East Road, Commissioners Hall","Longitude":-4.523058,"Latitude":54.36278,"IDCode":"L36"},{"StopPointID":658,"StopPointRef":891085004212,"CommonName":"Jurby
+        East Road, Summer Hill junction shelter","Longitude":-4.500917,"Latitude":54.363842,"IDCode":"L37"},{"StopPointID":659,"StopPointRef":891085004206,"CommonName":"Jurby
+        Junk","Longitude":-4.523913,"Latitude":54.360787,"IDCode":"L38"},{"StopPointID":660,"StopPointRef":891085003828,"CommonName":"Jurby
+        Road, Ash Grove","Longitude":-4.393249,"Latitude":54.328263,"IDCode":"L39"},{"StopPointID":661,"StopPointRef":891085004601,"CommonName":"Jurby
+        Road, Garey Road junction","Longitude":-4.420353,"Latitude":54.330102,"IDCode":"L40"},{"StopPointID":662,"StopPointRef":891085003830,"CommonName":"Jurby
+        Road, Kings Reach","Longitude":-4.401296,"Latitude":54.329551,"IDCode":"L41"},{"StopPointID":663,"StopPointRef":891085004202,"CommonName":"Jurby
+        Threshold, shelter","Longitude":-4.515369,"Latitude":54.357745,"IDCode":"L42"},{"StopPointID":664,"StopPointRef":891085004204,"CommonName":"Jurby,
+        parade ground","Longitude":-4.521389,"Latitude":54.359722,"IDCode":"L43"},{"StopPointID":665,"StopPointRef":891085004302,"CommonName":"Sandygate,
+        shelter","Longitude":-4.503583,"Latitude":54.346625,"IDCode":"L67"},{"StopPointID":666,"StopPointRef":891085014606,"CommonName":"St
+        Judes, crossroads","Longitude":-4.469869,"Latitude":54.340653,"IDCode":"L71"},{"StopPointID":667,"StopPointRef":891085014601,"CommonName":"St
+        Judes, Old School","Longitude":-4.460945,"Latitude":54.339517,"IDCode":"L72"},{"StopPointID":668,"StopPointRef":891085014605,"CommonName":"St
+        Judes, opposite Close-y-kee","Longitude":-4.465954,"Latitude":54.340126,"IDCode":"L73"},{"StopPointID":669,"StopPointRef":891085014603,"CommonName":"St
+        Judes, telephone box","Longitude":-4.470794,"Latitude":54.340609,"IDCode":"L74"},{"StopPointID":670,"StopPointRef":891085002411,"CommonName":"House
+        of Manannan","Longitude":-4.697342,"Latitude":54.222123,"IDCode":"L44"},{"StopPointID":671,"StopPointRef":891085002415,"CommonName":"Peel
+        Promenade, Stanley Road","Longitude":-4.692391,"Latitude":54.223997,"IDCode":"L49"},{"StopPointID":672,"StopPointRef":891085002417,"CommonName":"Peel
+        Promenade, Walpole Road","Longitude":-4.689737,"Latitude":54.224498,"IDCode":"L50"},{"StopPointID":673,"StopPointRef":891085002413,"CommonName":"Peel
+        Promenade, Yacht Club","Longitude":-4.696396,"Latitude":54.224382,"IDCode":"L51"},{"StopPointID":674,"StopPointRef":891085002409,"CommonName":"Peel,
+        Heathfield Drive","Longitude":-4.694839,"Latitude":54.221076,"IDCode":"L61"},{"StopPointID":675,"StopPointRef":891085002407,"CommonName":"Peel,
+        Queens Drive","Longitude":-4.69159,"Latitude":54.219967,"IDCode":"L65"},{"StopPointID":676,"StopPointRef":891085002305,"CommonName":"St
+        Johns, DEFA offices","Longitude":-4.637715,"Latitude":54.196699,"IDCode":"L74"},{"StopPointID":677,"StopPointRef":891085002307,"CommonName":"St
+        Johns, opposite football club","Longitude":-4.641253,"Latitude":54.199343,"IDCode":"L77"},{"StopPointID":678,"StopPointRef":891085002309,"CommonName":"St
+        Johns, Station Road, opposite school","Longitude":-4.642164,"Latitude":54.201362,"IDCode":"L79"},{"StopPointID":679,"StopPointRef":891085040124,"CommonName":"St
+        Johns Primary School","Longitude":-4.640953,"Latitude":54.2018,"IDCode":"L112"},{"StopPointID":680,"StopPointRef":891085001605,"CommonName":"Ballaughton
+        Manor Hill","Longitude":-4.513215,"Latitude":54.157233,"IDCode":"L1"},{"StopPointID":681,"StopPointRef":891085001602,"CommonName":"Ballaughton
+        Manor Hill, Ballaughton Lane","Longitude":-4.508416,"Latitude":54.1564,"IDCode":"L2"},{"StopPointID":682,"StopPointRef":891085001604,"CommonName":"Ballaughton
+        Manor Hill, Cooil Farvane","Longitude":-4.51299,"Latitude":54.157057,"IDCode":"L3"},{"StopPointID":683,"StopPointRef":891085001603,"CommonName":"Ballaughton
+        Manor Hill, Copse Hill","Longitude":-4.508331,"Latitude":54.156471,"IDCode":"L4"},{"StopPointID":684,"StopPointRef":891085001812,"CommonName":"Hospital,
+        Newlands shelter","Longitude":-4.508567,"Latitude":54.173916,"IDCode":"L15"},{"StopPointID":685,"StopPointRef":891085001811,"CommonName":"Hospital,
+        Reart Noa","Longitude":-4.508367,"Latitude":54.175706,"IDCode":"L16"},{"StopPointID":686,"StopPointRef":891085001607,"CommonName":"Meadow
+        Crescent","Longitude":-4.515066,"Latitude":54.158083,"IDCode":"L20"},{"StopPointID":687,"StopPointRef":891085001606,"CommonName":"Meadow
+        Crescent, No 6","Longitude":-4.515211,"Latitude":54.157962,"IDCode":"L21"},{"StopPointID":688,"StopPointRef":891085001601,"CommonName":"Saddle
+        Road","Longitude":-4.507307,"Latitude":54.156116,"IDCode":"L30"},{"StopPointID":689,"StopPointRef":891085001711,"CommonName":"Saddle
+        Road, Braddan Church","Longitude":-4.507518,"Latitude":54.161312,"IDCode":"L31"},{"StopPointID":690,"StopPointRef":891085001712,"CommonName":"Saddle
+        Road, Braddan Old Church","Longitude":-4.507652,"Latitude":54.161213,"IDCode":"L32"},{"StopPointID":691,"StopPointRef":891085001608,"CommonName":"Vicarage
+        Road, Kirby","Longitude":-4.512587,"Latitude":54.159511,"IDCode":"L36"},{"StopPointID":692,"StopPointRef":891085001609,"CommonName":"Vicarage
+        Road, Vicarage Park","Longitude":-4.513023,"Latitude":54.1382,"IDCode":"L37"},{"StopPointID":693,"StopPointRef":891085000624,"CommonName":"School
+        Hill, shelter","Longitude":-4.656419,"Latitude":54.078528,"IDCode":"L177"},{"StopPointID":694,"StopPointRef":891085003102,"CommonName":"Willaston,
+        1st stop","Longitude":-4.485889,"Latitude":54.16847,"IDCode":"L178"},{"StopPointID":695,"StopPointRef":891085003105,"CommonName":"Willaston,
+        Keppel Road No 47","Longitude":-4.483971,"Latitude":54.173262,"IDCode":"L179"},{"StopPointID":696,"StopPointRef":891085003106,"CommonName":"Willaston,
+        Keppel Road No 95","Longitude":-4.481301,"Latitude":54.175252,"IDCode":"L180"},{"StopPointID":697,"StopPointRef":891085003104,"CommonName":"Willaston,
+        Keppel Road/Mannin Road","Longitude":-4.485321,"Latitude":54.172019,"IDCode":"L181"},{"StopPointID":698,"StopPointRef":891085003103,"CommonName":"Willaston,
+        shops","Longitude":-4.485321,"Latitude":54.170751,"IDCode":"L182"},{"StopPointID":699,"StopPointRef":891085013205,"CommonName":"Groudle
+        MER shelter","Longitude":-4.430785,"Latitude":54.178031,"IDCode":"L29"},{"StopPointID":700,"StopPointRef":891085013203,"CommonName":"Groudle
+        Village shelter","Longitude":-4.426431,"Latitude":54.1777391,"IDCode":"L30"},{"StopPointID":701,"StopPointRef":891085013204,"CommonName":"Groudle
+        Village, entrance","Longitude":-4.426585,"Latitude":54.177518,"IDCode":"L31"},{"StopPointID":702,"StopPointRef":891085013206,"CommonName":"Groudle,
+        Glen entrance","Longitude":-4.430441,"Latitude":54.17808,"IDCode":"L32"},{"StopPointID":703,"StopPointRef":891085013304,"CommonName":"King
+        Edward Road, Harbour Road","Longitude":-4.44688,"Latitude":54.169671,"IDCode":"L35"},{"StopPointID":704,"StopPointRef":891085013201,"CommonName":"King
+        Edward Road, Howstrake","Longitude":-4.434166,"Latitude":54.169983,"IDCode":"L36"},{"StopPointID":705,"StopPointRef":891085013202,"CommonName":"King
+        Edward Road, Howstrake MER shelter","Longitude":-4.434217,"Latitude":54.169993,"IDCode":"L37"},{"StopPointID":706,"StopPointRef":891085013307,"CommonName":"King
+        Edward Road, Lag Birragh","Longitude":-4.434201,"Latitude":54.169991,"IDCode":"L38"},{"StopPointID":707,"StopPointRef":891085013306,"CommonName":"King
+        Edward Road, Majestic Apartments","Longitude":-4.442566,"Latitude":54.170916,"IDCode":"L39"},{"StopPointID":708,"StopPointRef":891085013308,"CommonName":"King
+        Edward Road, Majestic Drive","Longitude":-4.439598,"Latitude":54.170752,"IDCode":"L40"},{"StopPointID":709,"StopPointRef":891085013301,"CommonName":"King
+        Edward Road, Onchan Head","Longitude":-4.448511,"Latitude":54.168222,"IDCode":"L41"},{"StopPointID":710,"StopPointRef":891085013305,"CommonName":"King
+        Edward Road, opp Majestic Apts","Longitude":-4.442265,"Latitude":54.170951,"IDCode":"L42"},{"StopPointID":711,"StopPointRef":891085013302,"CommonName":"King
+        Edward Road, Seacliffe Road","Longitude":-4.450915,"Latitude":54.16643,"IDCode":"L43"},{"StopPointID":712,"StopPointRef":891085013303,"CommonName":"King
+        Edward Road, Watermargin","Longitude":-4.444876,"Latitude":54.170705,"IDCode":"L44"},{"StopPointID":713,"StopPointRef":891085003322,"CommonName":"Liverpool
+        Arms, Groudle Road junction","Longitude":-4.425255,"Latitude":54.193747,"IDCode":"L52"},{"StopPointID":714,"StopPointRef":891085013501,"CommonName":"Minorca
+        Hill, Old Chapel","Longitude":-4.395033,"Latitude":54.229023,"IDCode":"L59"},{"StopPointID":715,"StopPointRef":891085013503,"CommonName":"Old
+        Laxey, Glen Road Terrace","Longitude":-4.394457,"Latitude":54.227042,"IDCode":"L60"},{"StopPointID":716,"StopPointRef":891085003212,"CommonName":"Port
+        Jack shelter, northbound","Longitude":-4.452019,"Latitude":54.167356,"IDCode":"L64"},{"StopPointID":717,"StopPointRef":891085003909,"CommonName":"Maughold
+        Village","Longitude":-4.318464,"Latitude":54.298834,"IDCode":"L17"},{"StopPointID":718,"StopPointRef":891085003908,"CommonName":"Maughold,
+        Ballajora junction","Longitude":-4.338374,"Latitude":54.287654,"IDCode":"L19"},{"StopPointID":719,"StopPointRef":891085003907,"CommonName":"Maughold,
+        Dreemskerry","Longitude":-4.341839,"Latitude":54.292629,"IDCode":"L20"},{"StopPointID":720,"StopPointRef":891085003904,"CommonName":"Maughold,
+        Dreemskerry Road, Venture Centre","Longitude":-4.354912,"Latitude":54.301477,"IDCode":"L22"},{"StopPointID":721,"StopPointRef":891085003910,"CommonName":"Port-e-Vullen,
+        junction","Longitude":-4.349196,"Latitude":54.308295,"IDCode":"L26"},{"StopPointID":722,"StopPointRef":891085003833,"CommonName":"Andreas
+        Road, opposite Grove Museum","Longitude":-4.393918,"Latitude":54.332904,"IDCode":"L1"},{"StopPointID":723,"StopPointRef":891085004105,"CommonName":"Andreas,
+        Crellin Grove","Longitude":-4.44051,"Latitude":54.370709,"IDCode":"L2"},{"StopPointID":724,"StopPointRef":891085004103,"CommonName":"Andreas,
+        hairdressers","Longitude":-4.443893,"Latitude":54.367689,"IDCode":"L3"},{"StopPointID":725,"StopPointRef":891085003826,"CommonName":"Bowring
+        Road, Hospital","Longitude":-4.391566,"Latitude":54.328688,"IDCode":"L4"},{"StopPointID":726,"StopPointRef":891085004008,"CommonName":"Bride
+        Hill, shelter","Longitude":-4.389777,"Latitude":54.380573,"IDCode":"L11"},{"StopPointID":727,"StopPointRef":891085003837,"CommonName":"Bride
+        Road, Grand Island","Longitude":-4.38671,"Latitude":54.337354,"IDCode":"L12"},{"StopPointID":728,"StopPointRef":891085004006,"CommonName":"Bride,
+        Cemetery entrance","Longitude":-4.3899,"Latitude":54.382761,"IDCode":"L14"},{"StopPointID":729,"StopPointRef":891085004502,"CommonName":"Dogmills","Longitude":-4.383962,"Latitude":54.354311,"IDCode":"L15"},{"StopPointID":730,"StopPointRef":891085004213,"CommonName":"IOM
+        Prison","Longitude":-4.529345,"Latitude":54.357027,"IDCode":"L16"},{"StopPointID":731,"StopPointRef":891085003863,"CommonName":"Mooragh
+        Promenade, Vollan Cresent","Longitude":-4.383997,"Latitude":54.335674,"IDCode":"L27"},{"StopPointID":732,"StopPointRef":891085004107,"CommonName":"Smeale,
+        Old Chapel","Longitude":-4.446559,"Latitude":54.387122,"IDCode":"L32"},{"StopPointID":733,"StopPointRef":891085004004,"CommonName":"Bride,
+        Ayre View entrance","Longitude":-4.391824,"Latitude":54.380835,"IDCode":"L13"},{"StopPointID":734,"StopPointRef":891085004203,"CommonName":"Jurby
+        industrial estate, motor museum","Longitude":-4.5217,"Latitude":54.3589,"IDCode":"L18"},{"StopPointID":735,"StopPointRef":891085003834,"CommonName":"Andreas
+        Road, Grove Museum","Longitude":-4.393696,"Latitude":54.331957,"IDCode":"L1"},{"StopPointID":736,"StopPointRef":891085004104,"CommonName":"Andreas
+        School shelter","Longitude":-4.443828,"Latitude":54.367701,"IDCode":"L2"},{"StopPointID":737,"StopPointRef":891085004106,"CommonName":"Andreas,
+        Crellin Grove shelter","Longitude":-4.440449,"Latitude":54.370737,"IDCode":"L3"},{"StopPointID":738,"StopPointRef":891085003838,"CommonName":"Bride
+        Road, opposite Grand Island","Longitude":-4.387147,"Latitude":54.337054,"IDCode":"L11"},{"StopPointID":739,"StopPointRef":891085003832,"CommonName":"Bride
+        Road, opposite Ormly entrance","Longitude":-4.391596,"Latitude":54.335066,"IDCode":"L12"},{"StopPointID":740,"StopPointRef":891085004005,"CommonName":"Bride,
+        Rectory","Longitude":-4.390012,"Latitude":54.382907,"IDCode":"L13"},{"StopPointID":741,"StopPointRef":891085004501,"CommonName":"Dogmills
+        junction","Longitude":-4.384022,"Latitude":54.354452,"IDCode":"L14"},{"StopPointID":742,"StopPointRef":891085004602,"CommonName":"Jurby
+        Road, Garey Road","Longitude":-4.4204040000000004,"Latitude":54.330113,"IDCode":"L20"},{"StopPointID":743,"StopPointRef":891085003829,"CommonName":"Jurby
+        Road, Kings Reach shelter","Longitude":-4.399724,"Latitude":54.329334,"IDCode":"L21"},{"StopPointID":744,"StopPointRef":891085004108,"CommonName":"Smeale,
+        junction","Longitude":-4.450123,"Latitude":54.38642,"IDCode":"L26"},{"StopPointID":745,"StopPointRef":891085014604,"CommonName":"St
+        Judes Church","Longitude":-4.463347,"Latitude":54.339855,"IDCode":"L27"},{"StopPointID":746,"StopPointRef":891085014602,"CommonName":"St
+        Judes, Old Parsonage","Longitude":-4.46911,"Latitude":54.340538,"IDCode":"L29"},{"StopPointID":747,"StopPointRef":891085004003,"CommonName":"Bride,
+        Ayre View","Longitude":-4.391533,"Latitude":54.380797,"IDCode":"L13"},{"StopPointID":748,"StopPointRef":891085004701,"CommonName":"Ballaugh
+        Cronk","Longitude":-4.552719,"Latitude":54.332312,"IDCode":"L1"},{"StopPointID":749,"StopPointRef":891085004702,"CommonName":"Jurby
+        West, crossroads","Longitude":-4.53485,"Latitude":54.353833,"IDCode":"L19"},{"StopPointID":750,"StopPointRef":891085003842,"CommonName":"Lheaney
+        Road, Karville","Longitude":-4.382448,"Latitude":54.316803,"IDCode":"L21"},{"StopPointID":751,"StopPointRef":891085003841,"CommonName":"May
+        Hill, The Oaks","Longitude":-4.38273,"Latitude":54.318501,"IDCode":"L22"},{"StopPointID":752,"StopPointRef":891085003844,"CommonName":"Ramsey,
+        Queens Drive West","Longitude":-4.37727,"Latitude":54.317989,"IDCode":"L25"},{"StopPointID":753,"StopPointRef":891085003843,"CommonName":"Ramsey,
+        Queens Drive, Eskdale","Longitude":-4.37987,"Latitude":54.317,"IDCode":"L26"},{"StopPointID":754,"StopPointRef":891085004112,"CommonName":"Andreas
+        Church, entrance","Longitude":-4.437772,"Latitude":54.36508,"IDCode":"L1"},{"StopPointID":755,"StopPointRef":891085003835,"CommonName":"Andreas
+        Road, Grest Home","Longitude":-4.395394,"Latitude":54.336638,"IDCode":"L2"},{"StopPointID":756,"StopPointRef":891085003836,"CommonName":"Andreas
+        Road, opposite Grest Home","Longitude":-4.395521,"Latitude":54.336717,"IDCode":"L4"},{"StopPointID":757,"StopPointRef":891085004403,"CommonName":"Aust,
+        Cronk Anst","Longitude":-4.411667,"Latitude":54.345278,"IDCode":"L10"},{"StopPointID":758,"StopPointRef":891085004404,"CommonName":"Aust,
+        Yarrow Lea","Longitude":-4.411476,"Latitude":54.345266,"IDCode":"L11"},{"StopPointID":759,"StopPointRef":891085004401,"CommonName":"Regaby
+        Crossroads","Longitude":-4.41474,"Latitude":54.349258,"IDCode":"L28"},{"StopPointID":760,"StopPointRef":891085004402,"CommonName":"Regaby
+        Crossroads, MEA substation","Longitude":-4.414797,"Latitude":54.349109,"IDCode":"L29"},{"StopPointID":761,"StopPointRef":891085004111,"CommonName":"Andreas
+        Church","Longitude":-4.43767,"Latitude":54.364962,"IDCode":"L1"},{"StopPointID":762,"StopPointRef":891085010202,"CommonName":"Alder
+        Road, layby","Longitude":-4.506066,"Latitude":54.14945,"IDCode":"L1"},{"StopPointID":763,"StopPointRef":891085010314,"CommonName":"Anagh
+        Coar, Hibbin Avenue","Longitude":-4.52188,"Latitude":54.149344,"IDCode":"L4"},{"StopPointID":764,"StopPointRef":891085010313,"CommonName":"Anagh
+        Coar, Hibbin Way","Longitude":-4.520728,"Latitude":54.150668,"IDCode":"L5"},{"StopPointID":765,"StopPointRef":891085010317,"CommonName":"Anagh
+        Coar, last stop","Longitude":-4.516843,"Latitude":54.149328,"IDCode":"L6"},{"StopPointID":766,"StopPointRef":891085010316,"CommonName":"Anagh
+        Coar, The Link","Longitude":-4.51859,"Latitude":54.148185,"IDCode":"L7"},{"StopPointID":767,"StopPointRef":891085010315,"CommonName":"Anagh
+        Coar, Tramman Park","Longitude":-4.521156,"Latitude":54.147972,"IDCode":"L8"},{"StopPointID":768,"StopPointRef":891085010207,"CommonName":"Hazel
+        Crescent, Hazel Court","Longitude":-4.50967,"Latitude":54.14842,"IDCode":"L16"},{"StopPointID":769,"StopPointRef":891085010203,"CommonName":"Heather
+        Crescent No 1","Longitude":-4.508423,"Latitude":54.148376,"IDCode":"L17"},{"StopPointID":770,"StopPointRef":891085010204,"CommonName":"Heather
+        Crescent No 49","Longitude":-4.510051,"Latitude":54.147618,"IDCode":"L18"},{"StopPointID":771,"StopPointRef":891085010201,"CommonName":"Pulrose
+        Golf Club","Longitude":-4.503312,"Latitude":54.1497,"IDCode":"L30"},{"StopPointID":772,"StopPointRef":891085010208,"CommonName":"Springfield
+        Road shelter","Longitude":-4.509066,"Latitude":54.150145,"IDCode":"L32"},{"StopPointID":773,"StopPointRef":891085000211,"CommonName":"Springfield
+        Road, Springfield Avenue","Longitude":-4.51005,"Latitude":54.151116,"IDCode":"L33"},{"StopPointID":774,"StopPointRef":891085012102,"CommonName":"Stevenson
+        Way, Hill Top Rise","Longitude":-4.523116,"Latitude":54.152883,"IDCode":"L35"},{"StopPointID":775,"StopPointRef":891085012107,"CommonName":"Stevenson
+        Way, Hill Top View shelter","Longitude":-4.523012,"Latitude":54.153004,"IDCode":"L36"},{"StopPointID":776,"StopPointRef":891085012106,"CommonName":"Stevenson
+        Way, Manor Drive","Longitude":-4.525812,"Latitude":54.154339,"IDCode":"L37"},{"StopPointID":777,"StopPointRef":891085012105,"CommonName":"Stevenson
+        Way, Manor Road","Longitude":-4.526387,"Latitude":54.156764,"IDCode":"L38"},{"StopPointID":778,"StopPointRef":891085001610,"CommonName":"Vicarage
+        Road, Heather View","Longitude":-4.517666,"Latitude":54.158666,"IDCode":"L40"},{"StopPointID":779,"StopPointRef":891085001611,"CommonName":"Vicarage
+        Road, Willowbrook Gardens","Longitude":-4.520412,"Latitude":54.158307,"IDCode":"L41"},{"StopPointID":780,"StopPointRef":891085001112,"CommonName":"IOM
+        Business Par, Haldane Fisher","Longitude":-4.530968,"Latitude":54.15142,"IDCode":"L21"},{"StopPointID":781,"StopPointRef":891085001111,"CommonName":"IOM
+        Business Park, Red Cross","Longitude":-4.531993,"Latitude":54.153257,"IDCode":"L23"},{"StopPointID":782,"StopPointRef":891085001114,"CommonName":"Vicarage
+        Road, opposite Rose Hill Mews","Longitude":-4.528726,"Latitude":54.156828,"IDCode":"L45"},{"StopPointID":783,"StopPointRef":891085001113,"CommonName":"Vicarage
+        Road, Rose Hill Mews","Longitude":-4.529013,"Latitude":54.15666,"IDCode":"L46"},{"StopPointID":784,"StopPointRef":891085040102,"CommonName":"Bemahague
+        School","Longitude":-4.467168,"Latitude":54.177849,"IDCode":"L6"},{"StopPointID":785,"StopPointRef":891085000149,"CommonName":"Albany
+        Road, Brunswick Nurseries","Longitude":-4.488812,"Latitude":54.158629,"IDCode":"L1"},{"StopPointID":786,"StopPointRef":891085000143,"CommonName":"Ballabrooie
+        Drive","Longitude":-4.498366,"Latitude":54.153827,"IDCode":"L2"},{"StopPointID":787,"StopPointRef":891085000142,"CommonName":"Ballabrooie
+        Way","Longitude":-4.496137,"Latitude":54.155084,"IDCode":"L3"},{"StopPointID":788,"StopPointRef":891085020131,"CommonName":"Bray
+        Hill, Hildesley Road","Longitude":-4.487448,"Latitude":54.16327,"IDCode":"L9"},{"StopPointID":789,"StopPointRef":891085020130,"CommonName":"Bray
+        Hill, School","Longitude":-4.405041,"Latitude":54.164584,"IDCode":"L10"},{"StopPointID":790,"StopPointRef":891085020132,"CommonName":"Bray
+        Hill, Stoney Road","Longitude":-4.489599,"Latitude":54.161842,"IDCode":"L11"},{"StopPointID":791,"StopPointRef":891085000145,"CommonName":"Devonshire
+        Road, Hillcrest","Longitude":-4.493175,"Latitude":54.156874,"IDCode":"L15"},{"StopPointID":792,"StopPointRef":891085000144,"CommonName":"Devonshire
+        Road, No 18","Longitude":-4.496143,"Latitude":54.155854,"IDCode":"L16"},{"StopPointID":793,"StopPointRef":891085000138,"CommonName":"Mount
+        Bradda","Longitude":-4.488032,"Latitude":54.155205,"IDCode":"L20"},{"StopPointID":794,"StopPointRef":891085020141,"CommonName":"Mount
+        Bradda, No 11","Longitude":-4.48793,"Latitude":54.155158,"IDCode":"L21"},{"StopPointID":795,"StopPointRef":891085020133,"CommonName":"Selbourne
+        Drive","Longitude":-4.492496,"Latitude":54.158681,"IDCode":"L30"},{"StopPointID":796,"StopPointRef":891085000139,"CommonName":"Selbourne
+        Road, All Saints Church","Longitude":-4.489347,"Latitude":54.156124,"IDCode":"L31"},{"StopPointID":797,"StopPointRef":891085020140,"CommonName":"Selbourne
+        Road, shelter","Longitude":-4.489167,"Latitude":54.156111,"IDCode":"L32"},{"StopPointID":798,"StopPointRef":891085000147,"CommonName":"Somerset
+        Road, St Ninians School","Longitude":-4.484054,"Latitude":54.163912,"IDCode":"L33"},{"StopPointID":799,"StopPointRef":891085000146,"CommonName":"Somerset
+        Square","Longitude":-4.486543,"Latitude":54.161055,"IDCode":"L34"},{"StopPointID":800,"StopPointRef":891085000141,"CommonName":"Westminster
+        Drive","Longitude":-4.492239,"Latitude":54.155266,"IDCode":"L35"},{"StopPointID":801,"StopPointRef":891085000140,"CommonName":"Westminster
+        Terrace","Longitude":-4.492239,"Latitude":54.155773,"IDCode":"L36"},{"StopPointID":802,"StopPointRef":891085020143,"CommonName":"Westmoreland
+        Road, apartments","Longitude":-4.486885,"Latitude":54.151,"IDCode":"L37"},{"StopPointID":803,"StopPointRef":891085000137,"CommonName":"Westmoreland
+        Road, health centre","Longitude":-4.489528,"Latitude":54.151799,"IDCode":"L38"},{"StopPointID":804,"StopPointRef":891085020167,"CommonName":"Westmoreland
+        Road, Kensington Road","Longitude":-4.488617,"Latitude":54.15337,"IDCode":"L39"},{"StopPointID":805,"StopPointRef":891085000168,"CommonName":"Westmoreland
+        Road, No 48","Longitude":-4.488617,"Latitude":54.153246,"IDCode":"L40"},{"StopPointID":806,"StopPointRef":891085020142,"CommonName":"Westmoreland
+        Road, Nurses Home","Longitude":-4.48918,"Latitude":54.151656,"IDCode":"L41"},{"StopPointID":807,"StopPointRef":891085000136,"CommonName":"Westmorland
+        Road, No 19","Longitude":-4.487137,"Latitude":54.151003,"IDCode":"L42"},{"StopPointID":808,"StopPointRef":891085040123,"CommonName":"Fairfield
+        School","Longitude":-4.484437,"Latitude":54.151865,"IDCode":"L13"},{"StopPointID":809,"StopPointRef":891085020136,"CommonName":"Ballabrooie
+        Drive, shelter","Longitude":-4.499557,"Latitude":54.155023,"IDCode":"L1"},{"StopPointID":810,"StopPointRef":891085020137,"CommonName":"Ballabrooie
+        Way, No 36","Longitude":-4.4962,"Latitude":54.155128,"IDCode":"L2"},{"StopPointID":811,"StopPointRef":891085040122,"CommonName":"Ballacloan
+        School","Longitude":-4.487332,"Latitude":54.152108,"IDCode":"L3"},{"StopPointID":812,"StopPointRef":891085020135,"CommonName":"Devonshire
+        Road, Carnanf","Longitude":-4.496131,"Latitude":54.155817,"IDCode":"L6"},{"StopPointID":813,"StopPointRef":891085040121,"CommonName":"Somerset
+        Road, St Marys School","Longitude":-4.48471,"Latitude":54.163075,"IDCode":"L20"},{"StopPointID":814,"StopPointRef":891085020165,"CommonName":"Stoney
+        Road, Scl Jubilee juniors","Longitude":-4.48754,"Latitude":54.16175,"IDCode":"L21"},{"StopPointID":815,"StopPointRef":891085020138,"CommonName":"Westminster
+        Drive, junction","Longitude":-4.493984,"Latitude":54.15525,"IDCode":"L22"},{"StopPointID":816,"StopPointRef":891085020139,"CommonName":"Westminster
+        Terrace, nursery","Longitude":-4.492349,"Latitude":54.155818,"IDCode":"L23"},{"StopPointID":817,"StopPointRef":891085020166,"CommonName":"Alexander
+        Drive, Hillcrest","Longitude":-4.495306,"Latitude":54.15733,"IDCode":"L1"},{"StopPointID":818,"StopPointRef":891085013102,"CommonName":"Tromode
+        Park Estate, Ballanard Road junction","Longitude":-4.488394,"Latitude":54.168811,"IDCode":"L34"},{"StopPointID":819,"StopPointRef":891085013106,"CommonName":"Tromode
+        Park Estate, Cronk-ny-Greiney No 55","Longitude":-4.493133,"Latitude":54.167483,"IDCode":"L35"},{"StopPointID":820,"StopPointRef":891085013104,"CommonName":"Tromode
+        Park Estate, Slieu Dhoo No 124","Longitude":-4.490764,"Latitude":54.167115,"IDCode":"L36"},{"StopPointID":821,"StopPointRef":891085013110,"CommonName":"Tromode
+        Road, Cronkbourne","Longitude":-4.495205,"Latitude":54.168688,"IDCode":"L37"},{"StopPointID":822,"StopPointRef":891085000814,"CommonName":"Bradda
+        West","Longitude":-4.76347,"Latitude":54.092801,"IDCode":"L1"},{"StopPointID":823,"StopPointRef":891085001004,"CommonName":"Cregneash,
+        Car Park entrance","Longitude":-4.765913,"Latitude":54.070839,"IDCode":"L2"},{"StopPointID":824,"StopPointRef":891085001003,"CommonName":"Cregneash,
+        phone box","Longitude":-4.768133,"Latitude":54.069736,"IDCode":"L3"},{"StopPointID":825,"StopPointRef":891085001006,"CommonName":"Cregneash,
+        village","Longitude":-4.768419,"Latitude":54.069823,"IDCode":"L4"},{"StopPointID":826,"StopPointRef":891085001001,"CommonName":"Howe","Longitude":-4.75369,"Latitude":54.074785,"IDCode":"L5"},{"StopPointID":827,"StopPointRef":891085001002,"CommonName":"Howe
+        Chapel","Longitude":-4.756136,"Latitude":54.0746,"IDCode":"L6"},{"StopPointID":828,"StopPointRef":891085000911,"CommonName":"PSM
+        Plantation Road","Longitude":-4.74114,"Latitude":54.078425,"IDCode":"L24"},{"StopPointID":829,"StopPointRef":891085001005,"CommonName":"Sound","Longitude":-4.792398,"Latitude":54.063667,"IDCode":"L28"},{"StopPointID":830,"StopPointRef":891085012901,"CommonName":"Ballacreggan","Longitude":-4.519672,"Latitude":54.134949,"IDCode":"L1"},{"StopPointID":831,"StopPointRef":891085012902,"CommonName":"Ballacreggan
+        junction","Longitude":-4.519615,"Latitude":54.135003,"IDCode":"L2"},{"StopPointID":832,"StopPointRef":891085012906,"CommonName":"Keristal,
+        Marine Drive junction","Longitude":-4.523146,"Latitude":54.128047,"IDCode":"L6"},{"StopPointID":833,"StopPointRef":891085012904,"CommonName":"Old
+        Castletown Road, shelter","Longitude":-4.538823,"Latitude":54.130159,"IDCode":"L8"},{"StopPointID":834,"StopPointRef":891085012905,"CommonName":"Port
+        Soderick, car park","Longitude":-4.534,"Latitude":54.12465,"IDCode":"L9"},{"StopPointID":835,"StopPointRef":891085012903,"CommonName":"Quines
+        Hill","Longitude":-4.530695,"Latitude":54.132277,"IDCode":"L10"}]'}
+    headers:
+      Cache-Control: [private]
+      Content-Length: ['122275']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Sun, 04 Feb 2018 16:54:32 GMT']
+      Server: [Microsoft-IIS/8.5]
+      X-AspNet-Version: [4.0.30319]
+      X-AspNetMvc-Version: ['5.2']
+      X-Powered-By: [ASP.NET]
+      X-Powered-By-Plesk: [PleskWin]
+    status: {code: 200, message: OK}
+version: 1
