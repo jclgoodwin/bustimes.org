@@ -7,21 +7,22 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [python-requests/2.18.4]
     method: GET
-    uri: http://sojbuslivetimespublic.azurewebsites.net/api/Values/v1/BusStop/2863
+    uri: http://sojbuslivetimespublic.azurewebsites.net/api/Values/v1/BusStop/2734
   response:
     body:
       string: !!binary |
         H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
         VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/Ir73iz96
-        3VarF+vFJK8/erR38Om90Uev8/qymObmw492Pxp99DRv2mKZtUW1pE9et+m387Kgb0cfnb45pk/2
-        dnYPtnf2tnf23+wePNrZf3T/4fjg4NPdg0/3PtnZebSzQy3Pmjd1Nn2bzz561Nbr/JeMfnY637v3
-        c9j5/Vt1/v3/B8LLcXN4AQAA
+        3VarF+vFJK8/erT34N7+6KPXeX1ZTHPz4Ue7n340+uhp3rTFMmuLakkfvW7Tb+dlQV+PPjp9c0yf
+        7O3sHmzv7G3v7L/ZPXi0u/doZ4e+O2ve1Nn0bT776NF5Vjb5LxndqkN68z372320+3C8+/Degwf3
+        7n2ys9Prva3Xt+28P9rnefpFVmdFQ9/Eet+71+vvPUZ7j94M+7tptHv732x/38nrJr9Of6qq6Kto
+        h/e/OfLSi2HvN4323t431vkevfhz1nmEsW7qff+HKkYPH+3cSoy+//8AcJ66ZDYEAAA=
     headers:
       Cache-Control: [no-cache]
       Content-Encoding: [gzip]
-      Content-Length: ['246']
+      Content-Length: ['335']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Sun, 04 Feb 2018 17:58:59 GMT']
+      Date: ['Sun, 04 Feb 2018 18:10:18 GMT']
       Expires: ['-1']
       Pragma: [no-cache]
       Request-Context: ['appId=cid-v1:6d79247b-019e-48da-a1a8-6f9a30b589c5']

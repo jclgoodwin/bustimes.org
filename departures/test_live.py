@@ -88,7 +88,7 @@ class LiveDeparturesTest(TestCase):
         StopPoint.objects.create(atco_code='sg-55509', common_name='Yio Chu Kang Interchange', active=True,
                                  locality_centre=False)
 
-        cls.jersey_stop = StopPoint.objects.create(atco_code='je-2863', active=True, locality_centre=False)
+        cls.jersey_stop = StopPoint.objects.create(atco_code='je-2734', active=True, locality_centre=False)
 
     def test_abstract(self):
         departures = live.Departures(None, ())
@@ -496,6 +496,6 @@ class LiveDeparturesTest(TestCase):
     def test_jersey(self):
         with vcr.use_cassette('data/vcr/jersey_live.yaml'):
             response = self.client.get(self.jersey_stop.get_absolute_url())
-        self.assertEqual(len(response.context_data['departures']), 3)
-        self.assertEqual(response.context_data['departures'][0]['service'], '1')
+        self.assertEqual(len(response.context_data['departures']), 9)
+        self.assertEqual(response.context_data['departures'][0]['service'], '16')
         self.assertEqual(str(response.context_data['departures'][0]['destination']), 'St Helier')

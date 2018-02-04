@@ -136,8 +136,12 @@ class JerseyDepartures(Departures):
     def departures_from_response(self, response):
         departures = []
         for item in response.json():
+            if item['IsTracked']:
+                time_key = 'live'
+            else:
+                time_key = 'time'
             departures.append({
-                'live': ciso8601.parse_datetime(item['ETA']),
+                time_key: ciso8601.parse_datetime(item['ETA']),
                 'destination': item['Destination'],
                 'service': self.get_service(item['ServiceNumber'])
             })
