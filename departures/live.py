@@ -129,6 +129,21 @@ class SingaporeDepartures(Departures):
         return departures
 
 
+class JerseyDepartures(Departures):
+    def get_request_url(self):
+        return 'http://sojbuslivetimespublic.azurewebsites.net/api/Values/v1/BusStop/' + self.stop.atco_code[3:]
+
+    def departures_from_response(self, response):
+        departures = []
+        for item in response.json():
+            departures.append({
+                'live': ciso8601.parse_datetime(item['ETA']),
+                'destination': item['Destination'],
+                'service': self.get_service(item['ServiceNumber'])
+            })
+        return departures
+
+
 class TflDepartures(Departures):
     """Departures from the Transport for London API"""
     def get_request_url(self):
@@ -511,9 +526,15 @@ def get_departures(stop, services):
         }, 60)
 
     # Singapore
-    if stop.atco_code.startswith('sg-'):
+    if stop.atco_code[:3] == 'sg-':
         return ({
             'departures': SingaporeDepartures(stop, services).get_departures()
+        }, 60)
+
+    # Jersey
+    if stop.atco_code[:3] == 'je-':
+        return ({
+            'departures': JerseyDepartures(stop, services, now).get_departures()
         }, 60)
 
     departures = TimetableDepartures(stop, services, now)

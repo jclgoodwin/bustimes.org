@@ -1,0 +1,34 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: http://sojbuslivetimespublic.azurewebsites.net/api/Values/v1/BusStop/2863
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/Ir73iz96
+        3VarF+vFJK8/erR38Om90Uev8/qymObmw492Pxp99DRv2mKZtUW1pE9et+m387Kgb0cfnb45pk/2
+        dnYPtnf2tnf23+wePNrZf3T/4fjg4NPdg0/3PtnZebSzQy3Pmjd1Nn2bzz561Nbr/JeMfnY637v3
+        c9j5/Vt1/v3/B8LLcXN4AQAA
+    headers:
+      Cache-Control: [no-cache]
+      Content-Encoding: [gzip]
+      Content-Length: ['246']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Sun, 04 Feb 2018 17:58:59 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Request-Context: ['appId=cid-v1:6d79247b-019e-48da-a1a8-6f9a30b589c5']
+      Server: [Microsoft-IIS/10.0]
+      Set-Cookie: [ARRAffinity=3e3529dbf8d7264d8ae3dee60cc72789108ef7415bdbd147525f62ad382e98ff;Path=/;HttpOnly;Domain=sojbuslivetimespublic.azurewebsites.net]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+    status: {code: 200, message: OK}
+version: 1
