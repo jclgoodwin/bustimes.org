@@ -652,10 +652,7 @@ class Service(models.Model):
         if self.region_id in ('S', 'Y'):
             return ['SVR%s%s' % (self.pk, suffix)]
 
-        try:
-            namelist = archive.namelist()
-        except (IOError, OSError):
-            return []
+        namelist = archive.namelist()
 
         if self.net:
             return [name for name in namelist if name.startswith('%s-' % self.pk)]
