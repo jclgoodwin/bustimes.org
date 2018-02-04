@@ -12,11 +12,13 @@ Usage:
 import os
 import zipfile
 import csv
+import yaml
 import warnings
 import xml.etree.cElementTree as ET
 from datetime import date
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.core.management.base import BaseCommand
+from django.conf import settings
 from django.db import transaction
 from timetables.txc import Timetable, sanitize_description_part
 from ...models import Operator, StopPoint, Service, StopUsage, Region, Journey, ServiceCode
@@ -321,6 +323,11 @@ class Command(BaseCommand):
 
         Journey.objects.filter(service__region=self.region_id).delete()
         handle_region(Region.objects.get(id=self.region_id))
+
+        with open(os.path.join(settings.DATA_DIR, 'services.yaml')) as open_file:
+            records = yaml.load(open_file)
+            for service_code in records:
+                Service.objects.filter(service_code=service_code).update(**records[service_code])
 
     def handle(self, *args, **options):
         for archive_name in options['filenames']:

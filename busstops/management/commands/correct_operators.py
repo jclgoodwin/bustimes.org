@@ -2,6 +2,7 @@ from __future__ import print_function
 import yaml
 import os
 from django.core.management.base import BaseCommand
+from django.conf import settings
 from ...models import Operator, Region
 
 
@@ -36,7 +37,7 @@ class Command(BaseCommand):
             ).distinct()
             self.maybe_print(self.maybe_move_operator(operator, regions))
 
-        with open(os.path.join(DIR, '../../../data/operators.yaml')) as open_file:
+        with open(os.path.join(settings.DATA_DIR, 'operators.yaml')) as open_file:
             records = yaml.load(open_file)
             for code in records:
                 Operator.objects.filter(id=code).update(**records[code])
