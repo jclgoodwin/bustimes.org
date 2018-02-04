@@ -17,6 +17,14 @@ from ..commands import import_services, generate_departures
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
 
 
+def clean_up():
+    # clean up
+    for filename in ('EA.zip', 'S.zip', 'NCSD.zip', 'NW.zip'):
+        path = os.path.join(FIXTURES_DIR, filename)
+        if os.path.exists(path):
+            os.remove(path)
+
+
 @override_settings(TNDS_DIR=FIXTURES_DIR)
 class ImportServicesTest(TestCase):
     "Tests for parts of the command that imports services from TNDS"
@@ -26,6 +34,8 @@ class ImportServicesTest(TestCase):
     @classmethod
     @freeze_time('2016-01-01')
     def setUpTestData(cls):
+        clean_up()
+
         cls.ea = Region.objects.create(pk='EA', name='East Anglia')
         cls.gb = Region.objects.create(pk='GB', name='Großbritannien')
         cls.sc = Region.objects.create(pk='S', name='Scotland')
@@ -476,8 +486,4 @@ class ImportServicesTest(TestCase):
     def tearDownClass(cls):
         super(ImportServicesTest, cls).tearDownClass()
 
-        # clean up
-        os.remove(os.path.join(FIXTURES_DIR, 'EA.zip'))
-        os.remove(os.path.join(FIXTURES_DIR, 'S.zip'))
-        os.remove(os.path.join(FIXTURES_DIR, 'NCSD.zip'))
-        os.remove(os.path.join(FIXTURES_DIR, 'NW.zip'))
+        clean_up()
