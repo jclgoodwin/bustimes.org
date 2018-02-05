@@ -123,10 +123,7 @@ class ImportLiveStopsTest(TestCase):
                 str(caught_warnings[0].message),
                 "StopPoint matching query does not exist. {'Naptan_Atco': '87'}"
             )
-            self.assertEqual(
-                str(caught_warnings[1].message),
-                "get() returned more than one StopPoint -- it returned 2! {'Naptan_Atco': '7'}"
-            )
+            self.assertTrue('get() returned more than one StopPoint' in str(caught_warnings[1].message))
 
         with vcr.use_cassette('data/vcr/tfl.yaml'):
             tfl_command.handle_row({

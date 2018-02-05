@@ -224,6 +224,11 @@ class Grouping(object):
         self.journeys = []
         self.rows = Rows()
 
+    def get_order(self):
+        if len(self.journeys):
+             return self.journeys[0].departure_time
+        return datetime.time()
+
     def has_minor_stops(self):
         for row in self.rows:
             if row.part.timingstatus == 'OTH':
@@ -1022,6 +1027,8 @@ class Timetable(object):
             grouping.journeys.sort(key=VehicleJourney.get_order)
 
         self.groupings.sort(key=lambda g: g.direction, reverse=True)
+        if len(self.groupings) == 2 and all(len(g.journeys) == 1 for g in self.groupings):
+            self.groupings.sort(key=Grouping.get_order)
 
         self.set_date(date)
 
