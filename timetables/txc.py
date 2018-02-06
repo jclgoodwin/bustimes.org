@@ -200,15 +200,23 @@ class Cell(object):
     """
     def __init__(self, colspan, rowspan, duration):
         self.colspan = colspan
-        self.rowspan = rowspan
+        self.rowspan = self.min_height = rowspan
         self.duration = duration
 
     def __str__(self):
         if self.duration.seconds == 3600:
+            if self.min_height < 3:
+                return 'then\u00A0hourly until'
             return 'then hourly until'
         if self.duration.seconds % 3600 == 0:
-            return 'then every %d hours until' % (self.duration.seconds / 3600)
-        return 'then every %d minutes until' % (self.duration.seconds / 60)
+            duration = '{} hours'.format(int(self.duration.seconds / 3600))
+        else:
+            duration = '{} minutes'.format(int(self.duration.seconds / 60))
+        if self.min_height < 3:
+            return 'then\u00A0every {}\u00A0until'.format(duration.replace(' ', '\u00A0'))
+        if self.min_height < 4:
+            return 'then every\u00A0{} until'.format(duration.replace(' ', '\u00A0'))
+        return 'then every {} until'.format(duration)
 
 
 class Grouping(object):
@@ -226,7 +234,7 @@ class Grouping(object):
 
     def get_order(self):
         if len(self.journeys):
-             return self.journeys[0].departure_time
+            return self.journeys[0].departure_time
         return datetime.time()
 
     def has_minor_stops(self):
@@ -1046,7 +1054,9 @@ def abbreviate(grouping, i, in_a_row, difference):
     seconds = difference.total_seconds()
     if not seconds or 3600 % seconds and seconds % 3600:  # not a factor or multiple of 1 hour
         return
-    grouping.rows_list[0].times[i - in_a_row - 2] = Cell(in_a_row + 1, len(grouping.rows_list), difference)
+    cell = Cell(in_a_row + 1, len(grouping.rows_list), difference)
+    cell.min_height = len([row for row in grouping.rows_list if row.part.timingstatus != 'OTH'])
+    grouping.rows_list[0].times[i - in_a_row - 2] = cell
     for j in range(i - in_a_row - 1, i - 1):
         grouping.rows_list[0].times[j] = None
     for j in range(i - in_a_row - 2, i - 1):

@@ -239,9 +239,9 @@ class TimetableTest(TestCase):
 
 class CellTest(TestCase):
     def test_cell(self):
-        self.assertEqual(str(txc.Cell(1, 1, timedelta(minutes=20))), 'then every 20 minutes until')
-        self.assertEqual(str(txc.Cell(1, 1, timedelta(minutes=60))), 'then hourly until')
-        self.assertEqual(str(txc.Cell(1, 1, timedelta(minutes=120))), 'then every 2 hours until')
+        self.assertEqual(str(txc.Cell(1, 1, timedelta(minutes=20))), 'then\u00A0every 20\u00A0minutes\u00A0until')
+        self.assertEqual(str(txc.Cell(1, 1, timedelta(minutes=60))), 'then\u00A0hourly until')
+        self.assertEqual(str(txc.Cell(1, 1, timedelta(minutes=120))), 'then\u00A0every 2\u00A0hours\u00A0until')
 
 
 class DateRangeTest(TestCase):
