@@ -10,11 +10,6 @@ from ...models import Operator, OperatorCode, DataSource
 
 
 class Command(ImportFromCSVCommand):
-    removed_operator_ids = {
-        'TVSR', 'HBSY', 'OWML', 'POTD', 'ANUM', 'BCOA', 'EAST', 'AW', 'ACAH', 'PFCL',
-        'EABU',  # EasyBus - duplicate of ESYB
-        'ANGL',  # Anglian Bus - merged into Konectbus (KCTB)
-    }
     code_sources = {
         'NOCCODE': 'National Operator Codes',
         'Licence': 'Licence',
@@ -67,18 +62,12 @@ class Command(ImportFromCSVCommand):
         """Given a CSV row (a list), returns an Operator object"""
 
         operator_id = row['NOCCODE'].replace('=', '')
-        # Avoid duplicates, for:
-        #  - operators with multiple National Operator Codes
-        #    (Travelsure, Yorkshire Tiger, Owens, Horseless Carriage Services etc)
-        #  - operators with multiple different rows for the same NOC (First Manchester)
-        #  - GB operators with no services who clash with Ireland operator names (Eastons Coaches, Aircoach)
-        if (
-                operator_id in self.removed_operator_ids
-                or operator_id == 'FMAN' and row['Duplicate'] != 'OK'
-        ):
-            return
+        operator_name = self.get_name(row).replace('\'', '\u2019').strip()  # Fancy apostrophe
+        region_id = self.get_region_id(row['TLRegOwn'])
 
-        name = self.get_name(row).replace('\'', '\u2019')  # Fancy apostrophe
+        duplicate = Operator.objects.filter(name=operator_name, region_id=region_id).exclude(id=operator_id).first()
+        if duplicate:
+            operator_id = duplicate.id
 
         mode = row['Mode'].lower()
         if mode == 'airline':
@@ -89,9 +78,9 @@ class Command(ImportFromCSVCommand):
             mode = 'demand responsive transport'
 
         defaults = {
-            'name': name.strip(),
+            'name': operator_name,
             'vehicle_mode': mode,
-            'region_id': self.get_region_id(row['TLRegOwn']),
+            'region_id': region_id
         }
 
         operator = Operator.objects.update_or_create(
@@ -104,7 +93,7 @@ class Command(ImportFromCSVCommand):
                                                       defaults={'operator': operator})
 
     def handle(self, *args, **options):
-        Operator.objects.filter(id__in=self.removed_operator_ids).delete()
+        # Operator.objects.filter(id__in=self.removed_operator_ids).delete()
         for key in self.code_sources:
             self.code_sources[key] = DataSource.objects.get_or_create(name=self.code_sources[key], defaults={
                 'datetime': timezone.now()
