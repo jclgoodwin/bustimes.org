@@ -37,11 +37,12 @@ class Command(BaseCommand):
         for public_name in soup.publicname.find_all('publicnamerecord'):
             noc_code = noc_codes.get(public_name.pubnmid.string)
 
-            if not noc_code or len(noc_code) < 4:
+            if not noc_code or len(noc_code) != 4:
                 continue
 
             try:
-                operator = Operator.objects.get(pk=noc_code.replace('=', ''))
+                operator = Operator.objects.get(operatorcode__code=noc_code.replace('=', ''),
+                                                operatorcode__source__name='National Operator Codes')
             except Operator.DoesNotExist as e:
                 warnings.warn('{} {}'.format(e, noc_code))
                 continue
