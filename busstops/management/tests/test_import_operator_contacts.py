@@ -1,7 +1,7 @@
 import os
 import warnings
 from django.test import TestCase
-from ...models import Region, Operator
+from ...models import Region, Operator, DataSource, OperatorCode
 from ..commands import import_operator_contacts
 
 
@@ -15,10 +15,18 @@ class ImportOperatorContactTest(TestCase):
         cls.command.input = os.path.join(DIR, 'fixtures', 'nocrecords.xml')
 
         east_anglia = Region.objects.create(id='EA', name='East Anglia')
-        cls.sanders = Operator.objects.create(pk='SNDR', name='Sanders', region=east_anglia)
-        cls.first = Operator.objects.create(pk='FECS', name='First', region=east_anglia)
-        cls.loaches = Operator.objects.create(pk='LCHS', name='Loaches Coaches', region=east_anglia)
-        cls.polruan = Operator.objects.create(pk='CSTL', name='Polruan', region=east_anglia)
+
+        cls.sanders = Operator.objects.create(pk='CACK', name='Sanders', region=east_anglia)
+        cls.first = Operator.objects.create(pk='CRAP', name='First', region=east_anglia)
+        cls.loaches = Operator.objects.create(pk='SHIT', name='Loaches Coaches', region=east_anglia)
+        cls.polruan = Operator.objects.create(pk='POOP', name='Polruan', region=east_anglia)
+
+        source = DataSource.objects.create(name='National Operator Codes', datetime='2017-01-01 00:00+00:00')
+
+        OperatorCode.objects.create(operator=cls.sanders, code='SNDR', source=source)
+        OperatorCode.objects.create(operator=cls.first, code='FECS', source=source)
+        OperatorCode.objects.create(operator=cls.loaches, code='LCHS', source=source)
+        OperatorCode.objects.create(operator=cls.polruan, code='CSTL', source=source)
 
         with warnings.catch_warnings(record=True) as cls.caught_warnings:
             cls.command.handle()

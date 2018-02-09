@@ -28,8 +28,7 @@ class ImportOperatorsTest(TestCase):
         cls.catch22bus = Operator.objects.get(id='NWOT')
 
     def test_operator_count(self):
-        """Is the airline operator correctly ignored"""
-        self.assertEqual(6, Operator.objects.count())
+        self.assertEqual(8, Operator.objects.count())
 
     def test_operator_id(self):
         """Is a strange NOC code (with an equals sign) correctly handled?"""

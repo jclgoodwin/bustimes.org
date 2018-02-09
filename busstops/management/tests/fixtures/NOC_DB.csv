@@ -4,6 +4,7 @@ FABD,First,"First in Aberdeen","First Aberdeen Ltd",PM0000631,SC,Bus,"First Scot
 ACER,"Ace Travel",,"Ace Travel",,SW,DRT,"Ace Travel,",NoGroup_DRTMode,,,ACE,,,,,,,,,,,,,,,,,,,,"2015-06-04 00:00:00","John Prince","Added for Andy Hole",OK,,
 WRCT,"Weardale Community Transport",,"Weardale Community Transport Ltd",CB000253,SC,"CT Operator","Weardale Community Transport Ltd,","NoGroup_CT OperatorMode",,,,,,,WCT,WCT,,,,,,,,,,,,,,,"2016-09-27 00:00:00","Amy Brown","Added NW code",OK,,
 NWOT,"Oakwood Travel",,"Catch22Bus Ltd",PC1067540,SW,Bus,"Catch22Bus Ltd,",NoGroup_BusMode,,,,,,,OAK,,,,,,,,,,,,,,,,"2016-09-09 00:00:00","Amy Brown","Replaced Trapeze code with new local code",OK,,
+TSCL,Travelsure,Travelsure,"Barrie Cuthbert Patterson",PB0002360,SW,Bus,"Barrie Cuthbert Patterson,",NoGroup_BusMode,,,,,,,,,,,,,,,,,,,,,,,"2013-08-30 00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,"2015-09-25 00:00:00","Licence ceased for Amy Armstrong"
 TVSR,Travelsure,Travelsure,"Barrie Cuthbert Patterson",PB0002360,SW,Bus,"Barrie Cuthbert Patterson,",NoGroup_BusMode,,,,,,,,,,,,,,,,,,,,,,,"2013-08-30 00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,"2015-09-25 00:00:00","Licence ceased for Amy Armstrong"
 SQZY,SqueezyJet,SqueezyJet,SqueezyJet,,,Airline,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ACAH,AirCoach,AirCoach,"Aircoach Limited",PM1106814,SC,Coach,"Aircoach Limited,",NoGroup_CoachMode,,,,,,,,ACA,ACH,,,,,,,,,,,,,,"2013-11-05 00:00:00","John Prince","Assumed to be PM1106814, owner changed from EA and local code added, all for Scotland",OK,,
