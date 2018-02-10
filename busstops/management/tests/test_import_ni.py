@@ -5,6 +5,7 @@ import vcr
 from datetime import date, time
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
+from django.core.management import call_command
 from ...models import StopPoint, Region, AdminArea, Service, StopUsage, StopUsageUsage
 from ..commands import import_ni_stops, enhance_ni_stops, import_ni_services, generate_departures
 from .test_import_nptg import ImportNPTGTest
@@ -58,10 +59,12 @@ class ImportNIServicesTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.norn_iron = Region.objects.create(id='NI', name='Northern Ireland')
-        cls.command.set_up()
-        cls.stop_1 = StopPoint.objects.create(atco_code='700000015364', locality_centre=False, active=True)
-        cls.stop_2 = StopPoint.objects.create(atco_code='700000000916', locality_centre=False, active=True)
-        cls.stop_3 = StopPoint.objects.create(atco_code='700000001567', locality_centre=False, active=True)
+        with override_settings(DATA_DIR=os.path.join(DIR, 'fixtures')):
+            call_command('import_ni_services')
+        StopPoint.objects.create(atco_code='700000015364', locality_centre=False, active=True)
+        StopPoint.objects.create(atco_code='700000001750', locality_centre=False, active=True)
+        StopPoint.objects.create(atco_code='700000000916', locality_centre=False, active=True)
+        StopPoint.objects.create(atco_code='700000001567', locality_centre=False, active=True)
 
     def test_file_header(self):
         line = 'ATCO-CIF0500Metro                           OMNITIMES       20160802144451\n'
@@ -81,25 +84,16 @@ class ImportNIServicesTest(TestCase):
             'unique_journey_identifier': '0510  ',
             'direction': 'O\n',
         })
-        self.assertIsNone(self.command.direction)
-        self.command.handle_line(line)
-        self.assertEqual(self.command.direction, 'O')
 
-    def test_route_description(self):
-        self.assertEqual(len(Service.objects.filter(service_code='1A_MET')), 0)
-        self.assertIsNone(self.command.service_code)
-        self.assertEqual(self.command.services, {})
-
-        line = 'QDNMET 1A  OCity Centre - Carnmoney - Fairview Road - Glenville                 \n'
-        self.command.handle_line(line)
-
+    def test_service(self):
         service = Service.objects.get(service_code='1A_MET')
         self.assertEqual(service.line_name, '1A')
         self.assertEqual(service.description, 'City Centre - Carnmoney - Fairview Road - Glenville')
-        self.assertEqual(self.command.service_code, '1A_MET')
-        self.assertEqual(self.command.services, {'1A_MET': {'I': {}, 'O': {}}})
 
-        service.save()
+        stops = service.stopusage_set.all()
+        self.assertEqual(4, len(stops))
+        for stop in stops:
+            self.assertEqual(stop.direction, 'Outbound')
 
     def test_stop(self):
         self.command.handle_open_file(('QO7000000153640545UQST1  \n',
@@ -107,7 +101,8 @@ class ImportNIServicesTest(TestCase):
                                        'QI70000000091605480548B   T0  \n',
                                        'QT7000000015670609   T1  \n'))
 
-        self.assertEqual(self.command.deferred_stop_codes, ['700000001750'])
+        self.assertEqual(self.command.deferred_stop_codes,
+                         ['700000015364', '700000001750', '700000000916', '700000001567'])
 
         self.command.handle_open_file(['QLN700000001750Royal Avenue (Castle Court)\n',
                                        'QBN700000001750333746  374496\n'])

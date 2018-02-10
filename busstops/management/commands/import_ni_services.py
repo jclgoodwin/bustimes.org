@@ -3,6 +3,7 @@ import io
 import os
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import Point
+from django.conf import settings
 from django.db import transaction
 from chardet.universaldetector import UniversalDetector
 from titlecase import titlecase
@@ -161,15 +162,16 @@ class Command(BaseCommand):
     def handle_file(cls, path):
         # detect encoding
         with io.open(path, mode='rb') as raw_file:
-            with UniversalDetector() as detector:
-                for line in raw_file.readlines():
-                    detector.feed(line)
-                    if detector.done:
-                        break
+            detector = UniversalDetector()
+            for line in raw_file.readlines():
+                detector.feed(line)
+                if detector.done:
+                    break
+        detector.close()
         encoding = detector.result["encoding"]
-
-        with io.open(path, encoding=encoding) as open_file:
-            cls.handle_open_file(open_file)
+        if encoding:
+            with io.open(path, encoding=encoding) as open_file:
+                cls.handle_open_file(open_file)
 
     @classmethod
     def create_stop_usages(cls):
@@ -183,8 +185,8 @@ class Command(BaseCommand):
         Service.objects.filter(region_id='NI').update(current=False)
         StopUsage.objects.filter(service__region_id='NI').delete()
 
-        for dirpath in ('Metro', 'ULB'):
-            for dirpath, _, filenames in os.walk(dirpath):
+        for dirpath in ('metro_data', 'Metro', 'ULB'):
+            for dirpath, _, filenames in os.walk(os.path.join(settings.DATA_DIR, dirpath)):
                 for filename in filenames:
                     path = os.path.join(dirpath, filename)
                     cls.handle_file(path)

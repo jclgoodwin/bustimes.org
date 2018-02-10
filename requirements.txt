@@ -10,7 +10,6 @@ git+git://github.com/jwhitlock/django-multi-gtfs.git@django-2.0
 Pillow==5.0.0
 psycopg2==2.7.4
 python-dateutil==2.6.1
-pytz==2017.3
 raven==6.5.0
 requests==2.18.4
 titlecase==0.12.0
