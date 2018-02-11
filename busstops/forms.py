@@ -6,7 +6,8 @@ from django.contrib.gis.geos import Point, Polygon
 from haystack.forms import SearchForm
 from haystack.query import SQ, AutoQuery
 from ukpostcodeutils import validation
-from busstops.models import Locality
+from antispam.honeypot.forms import HoneypotField
+from .models import Locality
 
 
 session = requests.Session()
@@ -16,6 +17,7 @@ class ContactForm(forms.Form):
     name = forms.CharField(label='Name')
     email = forms.EmailField(label='Email address')
     message = forms.CharField(label='Message', widget=forms.Textarea)
+    spam_honeypot_field = HoneypotField()
     referrer = forms.CharField(label='Referrer', required=False,
                                widget=forms.HiddenInput)
 

@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'busstops',
     'multigtfs',
     'pipeline',
+    'antispam',
     'email_obfuscator',
     'raven.contrib.django.raven_compat',
 ]
