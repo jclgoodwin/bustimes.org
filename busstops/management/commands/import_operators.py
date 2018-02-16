@@ -25,6 +25,7 @@ class Command(ImportFromCSVCommand):
         'EA': 'EA',
         'EM': 'EM',
     }
+    removed_operator_ids = {'EAST', 'AW'}  # Eastons Coaches and Arriva Trains Wales clash with some Irish operators
 
     @staticmethod
     def get_region_id(region_id):
@@ -62,6 +63,8 @@ class Command(ImportFromCSVCommand):
         """Given a CSV row (a list), returns an Operator object"""
 
         operator_id = row['NOCCODE'].replace('=', '')
+        if operator_id in self.removed_operator_ids:
+            return
         operator_name = self.get_name(row).replace('\'', '\u2019').strip()  # Fancy apostrophe
         region_id = self.get_region_id(row['TLRegOwn'])
 
