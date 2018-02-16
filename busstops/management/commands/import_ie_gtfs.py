@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import Count
 from django.conf import settings
-from multigtfs.models import Feed, StopTime
+from multigtfs.models import Feed, StopTime, Stop
 from timetables.gtfs import get_timetable
 from ...models import Operator, Service, StopPoint, StopUsage, Region, ServiceCode
 
@@ -57,7 +57,7 @@ class Command(BaseCommand):
         feed.import_gtfs(archive_name)
 
         if collection == 'sro':
-            roscommon_mart_road = feed.stop_set.get(stop_id='850000013')
+            roscommon_mart_road = Stop.objects.get(stop_id='850000013')
             stop_times = StopTime.objects.filter(stop__feed=feed, trip__route__agency__name='Brendan Boyle')
             stop_times.filter(stop__stop_id='850000014').update(stop=roscommon_mart_road)
             stop_times.filter(stop__stop_id='850000015').update(stop=roscommon_mart_road)
