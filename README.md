@@ -1,6 +1,6 @@
 # Bus Times
 
-[![Build Status](https://travis-ci.org/jclgoodwin/bustimes.org.uk.svg?branch=master)](https://travis-ci.org/jclgoodwin/bustimes.org.uk)
+[![Build Status](https://travis-ci.org/jclgoodwin/bustimes.org.svg?branch=master)](https://travis-ci.org/jclgoodwin/bustimes.org)
 [![Coverage Status](https://coveralls.io/repos/github/jclgoodwin/bustimes.org.uk/badge.svg?branch=master)](https://coveralls.io/github/jclgoodwin/bustimes.org.uk?branch=master)
 
 ## What's this?
