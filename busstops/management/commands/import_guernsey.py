@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.gis.geos import Point, LineString, MultiLineString
 from django.core.management.base import BaseCommand
+from django.db import transaction
 from ...models import Region, StopPoint, Service, StopUsage, Operator
 
 
@@ -47,6 +48,7 @@ def import_routes(region, operator, url, session):
             'region': region,
             'mode': 'bus',
             'operator': [operator],
+            'current': True
         })[0]
         import_route_stops(region, service, url, session)
         if region.id == 'GG':
@@ -114,12 +116,15 @@ def import_kml(service, session):
 
 
 class Command(BaseCommand):
+    @transaction.atomic
     def handle(self, *args, **options):
-
         region = Region.objects.update_or_create(id='GG', defaults={'name': 'Guernsey'})[0]
         operator = Operator.objects.update_or_create(id='guernsey', name='Guernsey Buses', region=region)[0]
 
         session = requests.Session()
 
         import_stops(region)
+
+        Service.objects.filter(region=region).update(current=False)
+
         import_routes(region, operator, 'http://buses.gg/routes_and_times/timetables', session)
