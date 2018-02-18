@@ -108,7 +108,7 @@ def import_kml(service, session):
     res = session.get('http://buses.gg/kmls/' + service.line_name + '.kml')
     kml = BeautifulSoup(res.text, 'lxml')
     line_strings = []
-    for line_string in kml.find_all('LineString'):
+    for line_string in kml.find_all('linestring'):
         points = [point.split(',') for point in line_string.find('coordinates').text.split()]
         line_strings.append(LineString(*[Point(float(point[0]), float(point[1])) for point in points]))
     service.geometry = MultiLineString(*line_strings)

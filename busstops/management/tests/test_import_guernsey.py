@@ -34,6 +34,7 @@ class ImportGuernseyTest(TestCase):
     def test_import_guernsey_services(self):
         service = Service.objects.get(pk='gg-11')
         self.assertEqual(service.line_name, '11')
+        self.assertTrue(service.geometry)
 
         response = self.client.get(service.get_absolute_url())
         self.assertContains(response, 'Guernsey Buses')
