@@ -40,8 +40,9 @@ def import_routes(region, operator, url, session):
     res = session.get(url)
     soup = BeautifulSoup(res.text, 'lxml')
     for li in soup.find(id='main-timetable-list').find_all('li'):
-        line_name = li.find(class_='tt-key').text.strip().upper()
-        service = Service.objects.update_or_create(service_code='{}-{}'.format(region.id.lower(), line_name), defaults={
+        line_name = li.find(class_='tt-key').text.strip()
+        slug = li.find('a')['href'].split('/')[-2]
+        service = Service.objects.update_or_create(service_code='{}-{}'.format(region.id.lower(), line_name.upper()), defaults={
             'date': today,
             'line_name': line_name,
             'description': li.find(class_='tt-text').text.strip(),
@@ -50,15 +51,15 @@ def import_routes(region, operator, url, session):
             'operator': [operator],
             'current': True
         })[0]
-        import_route_stops(region, service, url, session)
+        import_route_stops(region, service, slug, url, session)
         if region.id == 'GG':
             import_kml(service, session)
         sleep(1)
 
 
-def import_route_stops(region, service, url, session):
+def import_route_stops(region, service, slug, url, session):
     StopUsage.objects.filter(service=service).delete()
-    res = session.get('{}/{}/FALSE'.format(url, service.line_name))
+    res = session.get('{}/{}/FALSE'.format(url, slug))
     soup = BeautifulSoup(res.text, 'lxml')
     for table in soup.find_all('table', class_='headers'):
         i = 0
@@ -93,7 +94,7 @@ def import_route_stops(region, service, url, session):
             )
             i += 1
     # mark major stops as major
-    res = session.get('{}/{}/TRUE'.format(url, service.line_name))
+    res = session.get('{}/{}/TRUE'.format(url, slug))
     soup = BeautifulSoup(res.text, 'lxml')
     stop_ids = set()
     for table in soup.find_all('table', class_='headers'):
