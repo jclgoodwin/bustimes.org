@@ -10,6 +10,16 @@ backend bustimesio {
     .port = "8082";
 }
 
+backend supermarket {
+    .host = "127.0.0.1";
+    .port = "8000";
+}
+
+backend basiltherat {
+    .host = "127.0.0.1";
+    .port = "8083";
+}
+
 backend tileserver {
     .host = "127.0.0.1";
     .port = "8080";
@@ -18,6 +28,10 @@ backend tileserver {
 sub vcl_recv {
     if (req.http.host == "bustimes.io") {
         set req.backend_hint = bustimesio;
+    } elif (req.http.host == "www.supermarketmarket.co.uk") {
+        set req.backend_hint = supermarket;
+    } elif (req.http.host == "hygieneratings.co.uk") {
+        set req.backend_hint = basiltherat;
     } elif (req.url ~ "^/styles/") {
         set req.backend_hint = tileserver;
     }
