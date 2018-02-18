@@ -74,7 +74,8 @@ class Command(BaseCommand):
                 'line_name': route_number,
                 'description': route_description,
                 'mode': 'bus',
-                'show_timetable': True
+                'show_timetable': True,
+                'current': True
             }
             service = Service.objects.update_or_create(service_code=service_code, defaults=defaults)[0]
             if operator:
