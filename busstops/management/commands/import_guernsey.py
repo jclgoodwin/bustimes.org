@@ -42,8 +42,8 @@ def import_routes(region, operator, url, session):
     for li in soup.find(id='main-timetable-list').find_all('li'):
         line_name = li.find(class_='tt-key').text.strip()
         slug = li.find('a')['href'].split('/')[-2]
-        service_code = '{}-{}'.format(region.id.lower(), line_name.upper()
-        service = Service.objects.update_or_create(service_code=service_code), defaults={
+        service_code = '{}-{}'.format(region.id.lower(), line_name.upper())
+        service = Service.objects.update_or_create(service_code=service_code, defaults={
             'date': today,
             'line_name': line_name,
             'description': li.find(class_='tt-text').text.strip(),
