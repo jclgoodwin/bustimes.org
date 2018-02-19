@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^map$', views.hugemap),
     url(r'^stops\.json$', views.stops),
     url(r'^regions/(?P<pk>\w+)', views.RegionDetailView.as_view(), name='region_detail'),
+    url(r'^places/(?P<pk>\d+)', views.PlaceDetailView.as_view(), name='place_detail'),
     url(r'^(admin-)?areas/(?P<pk>\d+)', views.AdminAreaDetailView.as_view(), name='adminarea_detail'),
     url(r'^districts/(?P<pk>\d+)', views.DistrictDetailView.as_view(), name='district_detail'),
     url(r'^localities/(?P<pk>[ENen][Ss]?[0-9]+)', views.LocalityDetailView.as_view()),

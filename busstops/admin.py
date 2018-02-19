@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.db.models import Count
 from busstops.models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note, Journey, StopUsageUsage,
-    Image, ServiceCode, OperatorCode, DataSource, LiveSource
+    Image, ServiceCode, OperatorCode, DataSource, LiveSource, Place
 )
 
 
@@ -91,6 +91,10 @@ class ServiceCodeAdmin(admin.ModelAdmin):
     raw_id_fields = ('service',)
 
 
+class PlaceAdmin(admin.ModelAdmin):
+    list_filter = ('source',)
+
+
 admin.site.register(Region)
 admin.site.register(AdminArea, AdminAreaAdmin)
 admin.site.register(District)
@@ -107,3 +111,4 @@ admin.site.register(OperatorCode, OperatorCodeAdmin)
 admin.site.register(ServiceCode, ServiceCodeAdmin)
 admin.site.register(DataSource)
 admin.site.register(LiveSource)
+admin.site.register(Place, PlaceAdmin)

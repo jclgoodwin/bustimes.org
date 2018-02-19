@@ -21,7 +21,7 @@ from haystack.query import SearchQuerySet
 from departures import live
 from .utils import format_gbp, viglink
 from .models import (Region, StopPoint, AdminArea, Locality, District,
-                     Operator, Service, Note, Image, Journey)
+                     Operator, Service, Note, Image, Journey, Place)
 from .forms import ContactForm, ImageForm
 
 
@@ -219,6 +219,22 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
         if len(context['operators']) == 1:
             context['services'] = sorted(context['operators'][0].service_set.filter(current=True).defer('geometry'),
                                          key=Service.get_order)
+
+        return context
+
+
+class PlaceDetailView(DetailView):
+    model = Place
+
+    def get_context_data(self, **kwargs):
+        context = super(PlaceDetailView, self).get_context_data(**kwargs)
+
+        if 'Singapore' in self.object.source.name:
+            context['places'] = Place.objects.filter(polygon__coveredby=self.object.polygon).exclude(id=self.object.id)
+            breadcrumb = list(Place.objects.filter(polygon__covers=self.object.polygon).exclude(id=self.object.id))
+            context['breadcrumb'] = [Region.objects.get(id='SG')] + breadcrumb
+            if not context['places']:
+                context['stops'] = StopPoint.objects.filter(latlong__coveredby=self.object.polygon)
 
         return context
 

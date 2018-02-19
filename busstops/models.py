@@ -206,6 +206,9 @@ class Place(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('place_detail', args=(self.pk,))
+
 
 @python_2_unicode_compatible
 class StopPoint(models.Model):
