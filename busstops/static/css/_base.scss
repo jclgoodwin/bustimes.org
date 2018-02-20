@@ -384,6 +384,19 @@ table {
     display: none;
 }
 
+#map {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    &.stop-map {
+        position: relative;
+        height: 20em;
+    }
+}
+
 table {
     border-collapse: collapse;
 }
