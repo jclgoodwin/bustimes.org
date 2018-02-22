@@ -163,9 +163,9 @@ class ImportNaptanTest(TestCase):
         self.assertEqual(parkway_station.crossing, '')  # '---' should be removed
         self.assertEqual(parkway_station.indicator, '')
 
-        locality_request = self.client.get('/localities/N0078801')
-        self.assertContains(locality_request, 'Services')
-        self.assertContains(locality_request, '44 - Port Talbot Circular')
+        res = self.client.get('/localities/N0078801')
+        self.assertContains(res, 'Services')
+        self.assertContains(res, '44 - Port Talbot Circular')
 
         irish_stop = StopPoint.objects.get(atco_code='7000B6310001')
         self.assertEqual(irish_stop.common_name, 'Belcoo')
@@ -200,16 +200,15 @@ class ImportNaptanTest(TestCase):
             self.assertContains(self.client.get('/stops/5820AWN26361'), 'Port Talbot Circular')
 
         with vcr.use_cassette(os.path.join(FIXTURES_DIR, '5820AWN26274.yaml')):
-            legion_request = self.client.get('/stops/5820AWN26274')
-            self.assertContains(legion_request, 'On Talbot Road, near Eagle Street, near Port Talbot ' +
-                                'British Legion')
-        self.assertContains(legion_request, 'Services')
-        self.assertContains(legion_request, '44 - Port Talbot Circular')
-        self.assertContains(legion_request, """
+            res = self.client.get('/stops/5820AWN26274')
+        self.assertContains(res, 'On Talbot Road, near Eagle Street, near Port Talbot British Legion')
+        self.assertContains(res, 'Services')
+        self.assertContains(res, '44 - Port Talbot Circular')
+        self.assertContains(res, """
             <div class="aside box">
                 <h2>Nearby stops</h2>
                 <ul>
-                    <li itemscope itemtype="https://schema.org/BusStop">
+                    <li itemscope itemtype="https://schema.org/BusStop" data-indicator="NE-bound" data-heading="45">
                         <a href="/stops/5820AWN26438">
                             <span itemprop="name">Ty&#39;n y Twr Club (NE-bound)</span>
                             <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">

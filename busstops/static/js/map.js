@@ -14,8 +14,12 @@
         return;
     }
 
-    function getIcon(indicator, bearing) {
-        var indicatorParts = indicator.split(' ');
+    function getIcon(indicator, bearing, active) {
+        var className = 'leaflet-div-icon',
+            indicatorParts = indicator.split(' ');
+        if (active) {
+            className += ' active';
+        }
         if (indicatorParts.length === 2 && (indicatorParts[0] == 'Stop' || indicatorParts[0] === 'Stand')) {
             indicator = indicatorParts[1];
         } else {
@@ -30,7 +34,8 @@
         return L.divIcon({
             iconSize: [20, 20],
             html: html,
-            popupAnchor: [0, -5]
+            popupAnchor: [0, -5],
+            className: className
         });
     }
 
@@ -88,6 +93,9 @@
                                 marker.openPopup();
                             }
                         };
+                        marker.on('mouseover', function() {
+                            marker.openPopup()
+                        });
                     }
                 };
 
@@ -97,7 +105,7 @@
 
             if (mainLocations.length > labels.length) { // on a stop point detail page
                 i = mainLocations.length - 1;
-                L.marker(mainLocations[i], {icon: getIcon(mapContainer.dataset.indicator, mapContainer.dataset.heading)}).addTo(map);
+                L.marker(mainLocations[i], {icon: getIcon(mapContainer.dataset.indicator, mapContainer.dataset.heading, true)}).addTo(map);
                 map.setView(mainLocations[i], 17);
             } else {
                 var polyline;

@@ -415,6 +415,19 @@ table {
         top: -7.5px;
         transform-origin: 5px 17.5px;
     }
+
+    &.active {
+        background: #fff;
+    }
+}
+
+body .leaflet-container {
+    font-family: inherit;
+    font-size: .875em;
+
+    a {
+        color: $link-color;
+    }
 }
 
 table {
