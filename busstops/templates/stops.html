@@ -1,6 +1,6 @@
 <ul>
 {% for stop in stops %}
-    <li itemscope itemtype="https://schema.org/BusStop">
+    <li itemscope itemtype="https://schema.org/BusStop" data-indicator="{{ stop.indicator }}"{% if stop.get_heading is not None %} data-heading="{{ stop.get_heading }}"{% endif %}>
         <a href="{{ stop.get_absolute_url }}">
             <span itemprop="name">{{ stop }}</span>
             {% if stop.latlong %}

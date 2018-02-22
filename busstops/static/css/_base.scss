@@ -397,6 +397,26 @@ table {
     }
 }
 
+.leaflet-marker-icon.leaflet-div-icon {
+    background: $brand-color;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.2);
+    color: #222;
+    font-size: 10px;
+    line-height: 20px;
+    text-align: center;
+
+    .arrow {
+        border: 5px solid transparent;
+        border-bottom-color: #333;
+        border-top: 0;
+        left: 5px;
+        position: absolute;
+        top: -7.5px;
+        transform-origin: 5px 17.5px;
+    }
+}
+
 table {
     border-collapse: collapse;
 }

@@ -8,10 +8,30 @@
     /*global
         L, loadjs
     */
-    var map = document.getElementById('map');
+    var mapContainer = document.getElementById('map');
 
-    if (!map || !map.clientWidth) {
+    if (!mapContainer || !mapContainer.clientWidth) {
         return;
+    }
+
+    function getIcon(indicator, bearing) {
+        var indicatorParts = indicator.split(' ');
+        if (indicatorParts.length === 2 && (indicatorParts[0] == 'Stop' || indicatorParts[0] === 'Stand')) {
+            indicator = indicatorParts[1];
+        } else {
+            indicator = indicator.slice(0, 3);
+        }
+        if (isNaN(bearing)) {
+            var html = '';
+        } else {
+            html = '<div class="arrow" style="transform: rotate(' + bearing + 'deg)"></div>';
+        }
+        html += indicator;
+        return L.divIcon({
+            iconSize: [20, 20],
+            html: html,
+            popupAnchor: [0, -5]
+        });
     }
 
     function setUpMap() {
@@ -52,23 +72,15 @@
         }
 
         if (mainLocations.length) {
-            map = L.map('map', {
-                tap: false
-            });
-            var tileURL = 'https://bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
-                pin = L.icon({
-                    iconUrl:    '/static/svg/pin.svg',
-                    iconSize:   [16, 22],
-                    iconAnchor: [8, 22],
+            var map = L.map('map', {
+                    tap: false
                 }),
-                pinWhite = L.icon({
-                    iconUrl:    '/static/pin-white.svg',
-                    iconSize:   [16, 22],
-                    iconAnchor: [8, 22],
-                    popupAnchor: [0, -22],
-                }),
+                tileURL = 'https://bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
                 setUpPopup = function (location, label) {
-                    var marker = L.marker(location, {icon: pinWhite}).addTo(map).bindPopup(label.innerHTML),
+                    var marker = L.marker(location, {
+                            icon: getIcon(label.dataset.indicator, label.dataset.heading),
+                            riseOnHover: true
+                        }).addTo(map).bindPopup(label.innerHTML),
                         a = label.getElementsByTagName('a');
                     if (a.length) {
                         a[0].onmouseover = a[0].ontouchstart = function() {
@@ -85,7 +97,7 @@
 
             if (mainLocations.length > labels.length) { // on a stop point detail page
                 i = mainLocations.length - 1;
-                L.marker(mainLocations[i], {icon: pin}).addTo(map);
+                L.marker(mainLocations[i], {icon: getIcon(mapContainer.dataset.indicator, mapContainer.dataset.heading)}).addTo(map);
                 map.setView(mainLocations[i], 17);
             } else {
                 var polyline;

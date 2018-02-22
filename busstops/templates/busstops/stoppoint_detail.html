@@ -15,7 +15,7 @@
     <meta itemprop="longitude" content="{{ stoppoint.latlong.x }}" />
 </span>
 
-<div class="stop-map" id="map"></div>
+<div class="stop-map" id="map" data-indicator="{{ stoppoint.indicator }}"{% if stoppoint.get_heading is not None %} data-heading="{{ stoppoint.get_heading }}"{% endif %}></div>
 
 <div class="asides">
 

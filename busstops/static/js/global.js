@@ -1,6 +1,6 @@
 /*jslint browser: true*/
 
-if (navigator.serviceWorker) {
+if (navigator.serviceWorker && location.host !== 'localhost:8000') {
     navigator.serviceWorker.register('/serviceworker.js', {
         scope: '/'
     });
