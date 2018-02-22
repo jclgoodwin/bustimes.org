@@ -15,25 +15,26 @@
     }
 
     function getIcon(indicator, bearing, active) {
-        var className = 'leaflet-div-icon',
-            indicatorParts = indicator.split(' ');
+        var className = 'leaflet-div-icon';
         if (active) {
             className += ' active';
         }
-        if (indicatorParts.length === 2 && (indicatorParts[0] == 'Stop' || indicatorParts[0] === 'Stand')) {
-            indicator = indicatorParts[1];
+        if (indicator) {
+            var indicatorParts = indicator.split(' ');
+            if (indicatorParts.length === 2 && (indicatorParts[0] == 'Stop' || indicatorParts[0] === 'Stand')) {
+                indicator = indicatorParts[1];
+            } else {
+                indicator = indicator.slice(0, 3);
+            }
         } else {
-            indicator = indicator.slice(0, 3);
+            indicator = '';
         }
-        if (isNaN(bearing)) {
-            var html = '';
-        } else {
-            html = '<div class="arrow" style="transform: rotate(' + bearing + 'deg)"></div>';
+        if (!isNaN(bearing)) {
+            indicator = '<div class="arrow" style="transform: rotate(' + bearing + 'deg)"></div>' + indicator;
         }
-        html += indicator;
         return L.divIcon({
             iconSize: [20, 20],
-            html: html,
+            html: indicator,
             popupAnchor: [0, -5],
             className: className
         });
