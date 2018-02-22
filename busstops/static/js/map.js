@@ -94,7 +94,7 @@
                             }
                         };
                         marker.on('mouseover', function() {
-                            marker.openPopup()
+                            marker.openPopup();
                         });
                     }
                 };
