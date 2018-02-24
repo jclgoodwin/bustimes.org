@@ -29,7 +29,8 @@ class ImportGuernseyTest(TestCase):
 
         bordeaux_harbour = StopPoint.objects.get(pk='gg-890000355')
         self.assertEqual(str(bordeaux_harbour.latlong), 'SRID=4326;POINT (-2.50857613778 49.4904331747)')
-        self.assertEqual(bordeaux_harbour.indicator, 'Southbound')
+        self.assertEqual(bordeaux_harbour.indicator, 'S-bound')
+        self.assertEqual(bordeaux_harbour.bearing, 'S')
 
     def test_import_guernsey_services(self):
         service = Service.objects.get(pk='gg-11')
@@ -41,7 +42,7 @@ class ImportGuernseyTest(TestCase):
         self.assertContains(response, """
             <li class="OTH" itemscope itemtype="https://schema.org/BusStop">
                 <a href="/stops/gg-890000560">
-                    <span itemprop="name">Glategny Esplanade (Northbound)</span>
+                    <span itemprop="name">Glategny Esplanade (N-bound)</span>
                 </a>
             </li>
         """, html=True)

@@ -32,6 +32,9 @@ def import_stops(region):
             }
             if ', ' in name:
                 defaults['common_name'], defaults['indicator'] = name.split(', ')
+                if defaults['indicator'].endswith('bound'):
+                    defaults['bearing'] = defaults['indicator'][0]
+                    defaults['indicator'] = defaults['bearing'] + '-bound'
             StopPoint.objects.update_or_create(defaults, atco_code='{}-{}'.format(region.id.lower(), stop_code))
 
 
@@ -76,6 +79,13 @@ def import_route_stops(region, service, slug, url, session):
                 defaults['common_name'] = tr.th.text.strip()
                 if ' - ' in defaults['common_name']:
                     defaults['common_name'], defaults['indicator'] = defaults['common_name'].split(' - ')
+                    if defaults['indicator'].endswith('bound'):
+                        defaults['bearing'] = defaults['indicator'][0]
+                        defaults['indicator'] = defaults['bearing'] + '-bound'
+                elif defaults['common_name'][-2:] in {' N', ' E', ' S', ' W'}:
+                    defaults['bearing'] = defaults['common_name'][-1]
+                    defaults['indicator'] = defaults['bearing'] + '-bound'
+
                 doppelganger = StopPoint.objects.filter(
                     atco_code__startswith=region.id.lower() + '-',
                     common_name__iexact=defaults['common_name'],
