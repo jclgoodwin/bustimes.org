@@ -23,6 +23,7 @@ class ImportGuernseyTest(TestCase):
         town_terminus_c = StopPoint.objects.get(pk='gg-890000773')
         town_terminus = StopPoint.objects.get(pk='gg-890000487')
 
+        self.assertEqual(town_terminus_c.indicator, 'Stand C')
         self.assertEqual(town_terminus_c.latlong, town_terminus.latlong)
         self.assertEqual(town_terminus_c.service_set.count(), 1)
         self.assertEqual(town_terminus.service_set.count(), 1)

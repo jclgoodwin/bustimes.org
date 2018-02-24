@@ -21,6 +21,7 @@ class ImportJerseyTest(TestCase):
         self.assertEqual(82, StopPoint.objects.all().count())
 
         stop = StopPoint.objects.get(atco_code='je-2684')
+        self.assertEqual(str(stop), 'Clos du Rivage (S-bound)')
         self.assertEqual(stop.indicator, 'S-bound')
         self.assertEqual(stop.bearing, 'S')
 
