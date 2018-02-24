@@ -2,7 +2,7 @@ import requests
 from django.contrib.gis.geos import Point, LineString, MultiLineString
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from ...models import Region, Service, Operator
+from ...models import Region, Service, Operator, StopPoint
 from .import_guernsey import import_stops, import_routes
 
 
@@ -35,3 +35,5 @@ class Command(BaseCommand):
         import_routes(region, operator, 'https://libertybus.je/routes_times/timetables', session)
 
         self.import_routes(session)
+
+        StopPoint.objects.filter(atco_code__startswith='gg-').exclude(service__current=True).delete()

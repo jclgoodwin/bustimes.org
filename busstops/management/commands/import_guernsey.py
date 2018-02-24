@@ -35,6 +35,9 @@ def import_stops(region):
                 if defaults['indicator'].endswith('bound'):
                     defaults['bearing'] = defaults['indicator'][0]
                     defaults['indicator'] = defaults['bearing'] + '-bound'
+            elif region.name == 'Jersey' and defaults['common_name'].lower().startswith('stand '):
+                defaults['indicator'] = 'Stand ' + defaults['common_name'][-1]
+                defaults['common_name'] = 'Liberation Station'
             elif defaults['common_name'][-2:] in {' N', ' E', ' S', ' W'}:
                 defaults['bearing'] = defaults['common_name'][-1]
                 defaults['indicator'] = defaults['bearing'] + '-bound'
@@ -144,3 +147,5 @@ class Command(BaseCommand):
         Service.objects.filter(region=region).update(current=False)
 
         import_routes(region, operator, 'http://buses.gg/routes_and_times/timetables', session)
+
+        StopPoint.objects.filter(atco_code__startswith='gg-').exclude(service__current=True).delete()
