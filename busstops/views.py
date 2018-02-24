@@ -387,14 +387,17 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         nearby = None
         if self.object.stop_area_id is not None:
             nearby = StopPoint.objects.filter(stop_area=self.object.stop_area_id)
-        elif self.object.locality or self.object.admin_area or self.object.atco_code[:3] in {'je-', 'gg-'}:
-            nearby = StopPoint.objects.filter(common_name__iexact=self.object.common_name)
+        elif self.object.locality or self.object.admin_area:
+            nearby = StopPoint.objects.filter(common_name=self.object.common_name)
             if self.object.locality:
                 nearby = nearby.filter(locality=self.object.locality)
-            elif self.object.admin_area:
+            else:
                 nearby = nearby.filter(admin_area=self.object.admin_area)
                 if self.object.town:
                     nearby = nearby.filter(town=self.object.town)
+        elif self.object.atco_code[:3] in {'je-', 'gg-'}:
+            nearby = StopPoint.objects.filter(common_name__iexact=self.object.common_name,
+                                              atco_code__startswith=self.object.atco_code[:3])
         if nearby is not None:
             context['nearby'] = nearby.filter(active=True).exclude(
                 pk=self.object.pk

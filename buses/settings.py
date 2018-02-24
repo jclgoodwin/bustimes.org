@@ -8,7 +8,7 @@ import raven
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ['SECRET_KEY']
-ALLOWED_HOSTS = ['bustimes.org', 'localhost', 'reblochon.local']
+ALLOWED_HOSTS = ['bustimes.org', 'localhost', 'reblochon.local', '192.168.1.66']
 
 DEBUG = bool(os.environ.get('DEBUG', False)) or 'test' in sys.argv
 
