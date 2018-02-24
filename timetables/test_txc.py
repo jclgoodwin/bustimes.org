@@ -120,11 +120,6 @@ class TimetableTest(TestCase):
         self.assertEqual([], timetable.groupings[0].rows_list)
         self.assertEqual(60, len(timetable.groupings[1].rows_list))
 
-    def test_timetable_x1_custom_groupings(self):
-        """The First Eastern Counties X1 timetable has some custom groupings"""
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-X1-A-y08-1.xml', date(2017, 12, 10))
-        self.assertEqual(13, len(timetable.groupings))
-
     def test_timetable_x29_custom_groupings(self):
         """The Stagecoach Norfolk X29 timetable has some custom groupings"""
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-X29-_-y08-1.xml', date(2017, 12, 10))

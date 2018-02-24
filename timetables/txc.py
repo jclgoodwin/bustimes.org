@@ -437,41 +437,6 @@ class JourneyPattern(object):
                     return groupings['cromer-wells']
                 groupings['outbound'].description_parts = ['Hunstanton', 'Wells-next-the-Sea']
                 groupings['inbound'].description_parts = groupings['outbound'].description_parts
-            elif route_id.startswith('R_21-X1-A-y08-'):
-                if route == 'Transport Interchange - Kings Arms':
-                    route = 'Transport Interchange - Market Place'
-                elif route == 'Kings Arms - Transport Interchange':
-                    route = 'Market Place - Transport Interchange'
-                elif (
-                    (route == 'Bus Station - Bus Station' or route == 'Bus Station - Market Gates'
-                        or route == 'Market Gates - Bus Station')
-                    and direction_element.text == 'outbound'
-                ):
-                    route = 'James Paget Hospital - Bus Station'
-                elif route == 'Bus Station - Bus Station' or route == 'Bus Station - Market Gates':
-                    route = 'Bus Station - James Paget Hospital'
-                if route not in groupings:
-                    groupings[route] = Grouping('', groupings['outbound'].parent)
-                    if (
-                        route == 'Transport Interchange - Horse Fair Bus Station'
-                        or route == 'Horse Fair Bus Station - Transport Interchange'
-                    ):
-                        groupings[route].description_parts = ['Wisbech', 'King\'s Lynn']
-                    elif (
-                        route == 'Horse Fair Bus Station - Queensgate Bus Station'
-                        or route == 'Queensgate Bus Station - Horse Fair Bus Station'
-                    ):
-                        groupings[route].description_parts = ['Wisbech', 'Peterborough']
-                    elif (
-                        route == 'Market Place - Transport Interchange'
-                        or route == 'Transport Interchange - Market Place'
-                    ):
-                        groupings[route].description_parts = ['Dereham', 'Swaffham', 'King\'s Lynn']
-                    elif route == 'Bus Station - Market Place' or route == 'Market Place - Bus Station':
-                        groupings[route].description_parts = ['Norwich', 'Dereham']
-                    elif route == 'James Paget Hospital - Bus Station' or route == 'Bus Station - James Paget Hospital':
-                        groupings[route].description_parts = ['Lowestoft', 'Great Yarmouth', 'Norwich']
-                return groupings[route]
         if direction_element is None or direction_element.text == 'outbound':
             return groupings['outbound']
         else:
