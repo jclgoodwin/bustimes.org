@@ -36,4 +36,4 @@ class Command(BaseCommand):
 
         self.import_routes(session)
 
-        StopPoint.objects.filter(atco_code__startswith='gg-').exclude(service__current=True).delete()
+        StopPoint.objects.filter(atco_code__startswith='je-').exclude(service__current=True).delete()
