@@ -29,8 +29,8 @@
         } else {
             indicator = '';
         }
-        if (!isNaN(bearing)) {
-            indicator = '<div class="arrow" style="transform: rotate(' + bearing + 'deg)"></div>' + indicator;
+        if (bearing !== null) {
+            indicator = '<div class="arrow" style="-ms-transform: rotate(' + bearing + 'deg);-webkit-transform: rotate(' + bearing + 'deg);-moz-transform: rotate(' + bearing + 'deg);-o-transform: rotate(' + bearing + 'deg);transform: rotate(' + bearing + 'deg)"></div>' + indicator;
         }
         return L.divIcon({
             iconSize: [20, 20],
@@ -84,7 +84,7 @@
                 tileURL = 'https://bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
                 setUpPopup = function (location, label) {
                     var marker = L.marker(location, {
-                            icon: getIcon(label.dataset.indicator, label.dataset.heading),
+                            icon: getIcon(label.getAttribute('data-indicator'), label.getAttribute('data-heading')),
                             riseOnHover: true
                         }).addTo(map).bindPopup(label.innerHTML),
                         a = label.getElementsByTagName('a');
@@ -106,7 +106,7 @@
 
             if (mainLocations.length > labels.length) { // on a stop point detail page
                 i = mainLocations.length - 1;
-                L.marker(mainLocations[i], {icon: getIcon(mapContainer.dataset.indicator, mapContainer.dataset.heading, true)}).addTo(map);
+                L.marker(mainLocations[i], {icon: getIcon(mapContainer.getAttribute('data-indicator'), mapContainer.getAttribute('data-heading'), true)}).addTo(map);
                 map.setView(mainLocations[i], 17);
             } else {
                 var polyline;
