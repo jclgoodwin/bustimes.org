@@ -38,7 +38,7 @@ function clearOldCaches() {
     return caches.keys().then(keys => {
         return Promise.all(keys.filter(key => {
             return key.indexOf(version) !== 0;
-        }).map(caches.delete));
+        }).map((cache) => caches.delete(cache)));
     });
 }
 
