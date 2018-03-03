@@ -90,7 +90,7 @@ STATICFILES_FINDERS = (
 )
 PIPELINE = {
     'COMPILERS': [
-        'pipeline.compilers.sass.SASSCompiler',
+        'busstops.compilers.AutoprefixerSASSCompiler',
     ],
     'STYLESHEETS': {
         'main': {
@@ -158,10 +158,11 @@ PIPELINE = {
         },
 
     },
-    'YUGLIFY_BINARY': './node_modules/.bin/yuglify',
+    'YUGLIFY_BINARY': os.path.join(BASE_DIR, 'node_modules', '.bin', 'yuglify'),
     'CSS_COMPRESSOR': None,
-    'SASS_ARGUMENTS': '--style compressed --trace',
+    'SASS_ARGUMENTS': '--style=compressed --sourcemap=false',
 }
+PIPELINE_AUTOPREFIXER_BINARY = os.path.join(BASE_DIR, 'node_modules', '.bin', 'postcss')
 
 TEMPLATE_MINIFER_STRIP_FUNCTION = 'buses.utils.minify'
 TEMPLATES = [
