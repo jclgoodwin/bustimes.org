@@ -18,5 +18,10 @@ if (window.adsbygoogle) {
         s.async = true;
         s.src = 'https://sac.ayads.co/sublime/21256';
         document.documentElement.appendChild(s);
+    } else {
+        window.adsbygoogle.push({
+            google_ad_client: 'ca-pub-4420219114164200',
+            enable_page_level_ads: true
+        });
     }
 }
