@@ -13,7 +13,7 @@ if (navigator.serviceWorker && location.host !== 'localhost:8000') {
 
 if (window.adsbygoogle) {
     var clientWidth = document.documentElement.clientWidth;
-    if (clientWidth >= 1280 || (clientWidth < 768 && window.location.href.indexOf('/services/') === -1)) {
+    if (clientWidth >= 1080 || (clientWidth < 768 && window.location.href.indexOf('/services/') === -1)) {
         var s = document.createElement('script');
         s.async = true;
         s.src = 'https://sac.ayads.co/sublime/21256';

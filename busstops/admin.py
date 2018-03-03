@@ -15,7 +15,7 @@ class AdminAreaAdmin(admin.ModelAdmin):
 class StopPointAdmin(admin.ModelAdmin):
     list_display = ('atco_code', 'naptan_code', 'locality', 'admin_area', '__str__')
     list_select_related = ('locality', 'admin_area')
-    list_filter = ('service__region', 'admin_area')
+    list_filter = ('stop_type', 'service__region', 'admin_area')
     search_fields = ('atco_code', 'common_name')
     ordering = ('atco_code',)
 
