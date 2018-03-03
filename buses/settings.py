@@ -160,7 +160,7 @@ PIPELINE = {
     },
     'YUGLIFY_BINARY': os.path.join(BASE_DIR, 'node_modules', '.bin', 'yuglify'),
     'CSS_COMPRESSOR': None,
-    'SASS_ARGUMENTS': '--style=compressed --sourcemap=false',
+    'SASS_ARGUMENTS': '--style compressed --sourcemap=none',
 }
 PIPELINE_AUTOPREFIXER_BINARY = os.path.join(BASE_DIR, 'node_modules', '.bin', 'postcss')
 
