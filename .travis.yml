@@ -24,10 +24,10 @@ install:
 before_script:
   - psql -U postgres -c 'create extension postgis'
   - psql -U postgres -c 'create database bustimes'
-  - pipenv run ./manage.py migrate
+  - ./manage.py migrate
 script:
-  - pipenv run ./manage.py collectstatic --noinput
-  - PYTHONWARNINGS=all pipenv run coverage run manage.py test
+  - ./manage.py collectstatic --noinput
+  -  coverage run manage.py test
   - flake8
   - ./node_modules/.bin/sass-lint 'busstops/static/css/*' -v
   - ./node_modules/.bin/eslint 'busstops/static/js/*.js'
