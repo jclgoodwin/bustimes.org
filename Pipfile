@@ -29,16 +29,16 @@ requests = "*"
 titlecase = "*"
 uk-postcode-utils = "*"
 python-dateutil = "*"
-freezegun = "*"
-vcrpy = "*"
 "psycopg2-binary" = "*"
-mock = "*"
-"flake8" = "*"
-coveralls = "*"
-coverage = "*"
-django-coverage-plugin = "*"
 
 
 [dev-packages]
 
 django-debug-toolbar = "*"
+"flake8" = "*"
+freezegun = "*"
+vcrpy = "*"
+mock = "*"
+coveralls = "*"
+coverage = "*"
+django-coverage-plugin = "*"
