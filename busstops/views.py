@@ -554,7 +554,12 @@ class ServiceDetailView(DetailView):
                     if operator.url.startswith('http'):
                         context['links'].append({
                             'url': operator.url,
-                            'text': '%s website' % operator.name
+                            'text': '{} website'.format(operator.name)
+                        })
+                    if operator.twitter:
+                        context['links'].append({
+                            'url': 'https://twitter.com/{}'.format(operator.twitter),
+                            'text': '@{} on Twitter'.format(operator.twitter)
                         })
         else:
             context['breadcrumb'] = (self.object.region,)

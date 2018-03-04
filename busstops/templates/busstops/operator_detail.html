@@ -44,6 +44,9 @@
     {% if object.phone %}
         <p itemprop="telephone">{{ object.phone }}</p>
     {% endif %}
+    {% if object.twitter %}
+        <p><a href="https://twitter.com/{{ object.twitter }}">@{{ object.twitter }} on Twitter</a></p>
+    {% endif %}
     </div>
 {% endif %}
 
