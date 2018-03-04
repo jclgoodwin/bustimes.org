@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib import admin
-from django.db.models import Count
+from django.db.models import Count, Q
 from busstops.models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note, Journey, StopUsageUsage,
     Image, ServiceCode, OperatorCode, DataSource, LiveSource, Place
@@ -21,12 +21,12 @@ class StopPointAdmin(admin.ModelAdmin):
 
 
 class OperatorAdmin(admin.ModelAdmin):
-    list_display = ('name', 'operator_codes', 'id', 'vehicle_mode', 'parent', 'region', 'service_count')
+    list_display = ('name', 'operator_codes', 'id', 'vehicle_mode', 'parent', 'region', 'service_count', 'twitter')
     list_filter = ('region', 'vehicle_mode', 'parent')
     search_fields = ('id', 'name')
 
     def get_queryset(self, _):
-        return Operator.objects.annotate(service_count=Count('service')).prefetch_related('operatorcode_set')
+        return Operator.objects.annotate(service_count=Count('service', filter=Q(current=True))).prefetch_related('operatorcode_set')
 
     @staticmethod
     def service_count(obj):

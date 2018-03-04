@@ -1,0 +1,11 @@
+{% extends 'page.html' %}
+
+{% block content %}
+
+<h1>{{ object }}</h1>
+
+{% include 'list.html' with list=places %}
+
+{% include 'list.html' with list=stops %}
+
+{% endblock %}
