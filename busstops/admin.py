@@ -26,7 +26,8 @@ class OperatorAdmin(admin.ModelAdmin):
     search_fields = ('id', 'name')
 
     def get_queryset(self, _):
-        return Operator.objects.annotate(service_count=Count('service', filter=Q(current=True))).prefetch_related('operatorcode_set')
+        service_count = Count('service', filter=Q(current=True))
+        return Operator.objects.annotate(service_count=service_count).prefetch_related('operatorcode_set')
 
     @staticmethod
     def service_count(obj):
