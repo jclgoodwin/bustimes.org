@@ -26,8 +26,8 @@ before_script:
   - psql -U postgres -c 'create database bustimes'
   - ./manage.py migrate
 script:
-  - ./manage.py collectstatic --noinput
-  -  coverage run manage.py test
+  - coverage run manage.py collectstatic --noinput
+  - coverage run --append manage.py test
   - flake8
   - ./node_modules/.bin/sass-lint 'busstops/static/css/*' -v
   - ./node_modules/.bin/eslint 'busstops/static/js/*.js'
