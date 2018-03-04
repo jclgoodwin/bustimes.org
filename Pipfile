@@ -37,8 +37,3 @@ mock = "*"
 coveralls = "*"
 coverage = "*"
 django-coverage-plugin = "*"
-
-
-[dev-packages]
-
-django-debug-toolbar = "*"
