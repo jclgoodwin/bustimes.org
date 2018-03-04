@@ -24,7 +24,6 @@ python-memcached = "*"
 setproctitle = "*"
 raven = "*"
 multigtfs = {git = "git://github.com/tulsawebdevs/django-multi-gtfs.git", ref = "master"}
-"psycopg2" = "*"
 pillow = "*"
 requests = "*"
 titlecase = "*"
