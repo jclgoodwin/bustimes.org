@@ -17,6 +17,7 @@ before_install:
   - rvm install 2.2
   - nvm install node
 install:
+  - pip install -U pipenv wheel
   - pipenv install
   - gem install sass
   - npm install

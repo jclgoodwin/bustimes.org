@@ -5,7 +5,7 @@
 
 ## What's this?
 
-It's [a thing about buses](https://bustimes.org.uk/).
+It's [a thing about buses](https://bustimes.org/).
 
 ## Importing data
 
