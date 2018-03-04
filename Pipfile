@@ -18,7 +18,7 @@ django-pipeline = "*"
 lxml = "*"
 ddtrace = "*"
 django-template-minifier = "*"
-elasticsearch = "*"
+elasticsearch = ">=2.0.0,<3.0.0"
 gunicorn = "*"
 python-memcached = "*"
 setproctitle = "*"
@@ -35,6 +35,9 @@ vcrpy = "*"
 "psycopg2-binary" = "*"
 mock = "*"
 "flake8" = "*"
+coveralls = "*"
+coverage = "*"
+django-coverage-plugin = "*"
 
 
 [dev-packages]
