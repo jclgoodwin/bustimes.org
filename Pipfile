@@ -1,0 +1,41 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+name = "pypi"
+verify_ssl = true
+
+
+[packages]
+
+"beautifulsoup4" = "*"
+"ciso8601" = "*"
+django = "==1.11.*"
+django-autoslug = "*"
+django-antispam = "*"
+django-email-obfuscator = "*"
+django-haystack = "*"
+django-pipeline = "*"
+lxml = "*"
+ddtrace = "*"
+django-template-minifier = "*"
+elasticsearch = "*"
+gunicorn = "*"
+python-memcached = "*"
+setproctitle = "*"
+raven = "*"
+multigtfs = {git = "git://github.com/tulsawebdevs/django-multi-gtfs.git", ref = "master"}
+"psycopg2" = "*"
+pillow = "*"
+requests = "*"
+titlecase = "*"
+uk-postcode-utils = "*"
+python-dateutil = "*"
+freezegun = "*"
+vcrpy = "*"
+"psycopg2-binary" = "*"
+mock = "*"
+"flake8" = "*"
+
+
+[dev-packages]
+

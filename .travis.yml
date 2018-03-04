@@ -19,13 +19,14 @@ before_install:
   - rvm install 2.2
   - nvm install node
 install:
-  - pip install -U pip wheel
-  - pip install -r requirements.txt -r requirements-test.txt
+  - pip install -U pipenv wheel
+  - pipenv install
   - gem install sass
   - npm install
 before_script:
   - psql -U postgres -c 'create extension postgis'
   - psql -U postgres -c 'create database bustimes'
+  - pipenv shell
   - ./manage.py migrate
 script:
   - ./manage.py collectstatic --noinput
