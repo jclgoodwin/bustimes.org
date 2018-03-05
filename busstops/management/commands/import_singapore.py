@@ -83,9 +83,9 @@ class Command(BaseCommand):
                 break
             skip += len(stops)
 
-        res = self.session.get('http://datamall2.mytransport.sg/ltaodataservice/BusServices')
-        for service in res.json()['value']:
-            print(service)
+        # res = self.session.get('http://datamall2.mytransport.sg/ltaodataservice/BusServices')
+        # for service in res.json()['value']:
+        #     print(service)
 
         skip = 0
         while True:

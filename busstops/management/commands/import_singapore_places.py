@@ -2,16 +2,16 @@ import os
 import json
 from titlecase import titlecase
 from bs4 import BeautifulSoup
-from datetime import datetime
 from django.conf import settings
 from django.contrib.gis.geos import Polygon
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 from ...models import DataSource, Place
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        defaults = {'datetime': datetime.now()}
+        defaults = {'datetime': timezone.now()}
         regions = DataSource.objects.get_or_create(name='Singapore regions', defaults=defaults)[0]
         # constituencies = DataSource.objects.get_or_create(name='Singapore constituencies', defaults=defaults)[0]
         subzones = DataSource.objects.get_or_create(name='Singapore subzones', defaults=defaults)[0]
