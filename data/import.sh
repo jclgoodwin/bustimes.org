@@ -38,8 +38,6 @@ function import_csv {
 }
 
 mkdir -p NPTG/previous NaPTAN TNDS/tmp
-. ../env/bin/activate
-
 
 cd NPTG
 nptg_old=$(shasum nptg.ashx\?format=csv)
