@@ -1,9 +1,11 @@
 import os
 import vcr
 from django.test import TestCase
-from ...models import Region, Operator
-with vcr.use_cassette('data/vcr/scotch_operators.yaml'):
-    from ..commands import import_operators, import_scotch_operator_contacts
+from django.conf import settings
+from django.core.management import call_command
+from ...models import Region, Operator, Service
+with vcr.use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'scotch_operators.yaml')):
+    from ..commands import import_operators, import_scotch_operator_contacts, import_operator_twitter
 
 
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -13,7 +15,7 @@ class ImportOperatorsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         command = import_operators.Command()
-        command.input = os.path.join(DIR, 'fixtures/NOC_DB.csv')
+        command.input = os.path.join(DIR, 'fixtures', 'NOC_DB.csv')
 
         cls.great_britain = Region.objects.create(id='GB', name='Great Britain')
         cls.scotland = Region.objects.create(id='S', name='Scotland')
@@ -26,6 +28,8 @@ class ImportOperatorsTest(TestCase):
         cls.ace_travel = Operator.objects.get(id='ACER')
         cls.weardale = Operator.objects.get(id='WRCT')
         cls.catch22bus = Operator.objects.get(id='NWOT')
+
+        Service.objects.create(operator=['BLUE', 'NWOT'], current=True, region=cls.scotland, date='1940-02-03')
 
     def test_operator_count(self):
         self.assertEqual(8, Operator.objects.count())
@@ -98,3 +102,18 @@ class ImportOperatorsTest(TestCase):
         self.assertEqual(bluebus.url, 'http://www.bluebusscotland.co.uk')
         self.assertEqual(bluebus.email, 'colin@jackson.com')
         self.assertEqual(bluebus.phone, '01501 820598')
+
+    def test_operator_twitter(self):
+        bluebus = Operator.objects.get(id='BLUE')
+        bluebus.url = 'http://sanderscoaches.com'
+        bluebus.save()
+
+        self.assertEqual(bluebus.twitter, '')
+
+        with vcr.use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'operator_twitter.yaml')):
+            call_command('import_operator_twitter')
+
+        bluebus.refresh_from_db()
+        self.assertEqual(bluebus.twitter, 'sanderscoaches')
+
+        self.assertIsNone(import_operator_twitter.Command.get_from_link('/search'))

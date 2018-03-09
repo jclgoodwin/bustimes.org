@@ -30,6 +30,7 @@ titlecase = "*"
 uk-postcode-utils = "*"
 python-dateutil = "*"
 "psycopg2-binary" = "*"
+requests-html = "*"
 
 
 [dev-packages]
