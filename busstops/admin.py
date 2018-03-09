@@ -64,6 +64,12 @@ class LocalityAdmin(admin.ModelAdmin):
 class NoteAdmin(admin.ModelAdmin):
     raw_id_fields = ('operators', 'services')
 
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        formfield = super(NoteAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+        if db_field.name == 'text':
+            formfield.widget = forms.Textarea(attrs=formfield.widget.attrs)
+        return formfield
+
 
 class JourneyAdmin(admin.ModelAdmin):
     list_display = ('id', 'service', 'datetime')
