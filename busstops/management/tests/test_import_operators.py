@@ -5,8 +5,8 @@ from django.conf import settings
 from django.core.management import call_command
 from ...models import Region, Operator, Service
 with vcr.use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'scotch_operators.yaml')):
-    from ..commands import import_operators, import_scotch_operator_contacts, import_operator_twitter
-
+    from ..commands import import_scotch_operator_contacts
+from ..commands import import_operators
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -110,7 +110,8 @@ class ImportOperatorsTest(TestCase):
 
         self.assertEqual(bluebus.twitter, '')
 
-        with vcr.use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'operator_twitter.yaml')):
+        with vcr.use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'operator_twitter.yaml'), record_mode='append'):
+            from ..commands import import_operator_twitter
             call_command('import_operator_twitter')
 
         bluebus.refresh_from_db()
