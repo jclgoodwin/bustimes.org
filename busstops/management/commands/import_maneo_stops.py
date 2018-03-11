@@ -4,10 +4,7 @@
     ./manage.py import_maneo_stops < Manéo\ Points\ d\'arrêt\ des\ lignes\ régulières.csv
 """
 import requests
-try:
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
+from urllib.parse import urlencode
 from bs4 import BeautifulSoup
 from titlecase import titlecase
 from django.utils.text import slugify

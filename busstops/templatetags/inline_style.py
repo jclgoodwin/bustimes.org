@@ -1,8 +1,6 @@
 """https://github.com/jazzband/django-pipeline/issues/295"""
 
-from __future__ import unicode_literals
 import codecs
-
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.utils.safestring import mark_safe
 from django import template

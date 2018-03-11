@@ -2,11 +2,7 @@
 import base64
 import hashlib
 import hmac
-try:
-    from urllib.parse import urlparse, urlencode
-except ImportError:
-    from urlparse import urlparse
-    from urllib import urlencode
+from urllib.parse import urlparse, urlencode
 from django.conf import settings
 
 

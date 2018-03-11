@@ -1,7 +1,6 @@
 # coding=utf-8
 """Tests for importing Ouibus and FlixBus stops and services
 """
-from __future__ import unicode_literals
 import os
 import zipfile
 import vcr

@@ -1,15 +1,11 @@
 "Model definitions"
 
-from __future__ import unicode_literals
 import re
 import requests
 import os
 import zipfile
 import time
-try:
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
+from urllib.parse import urlencode
 from datetime import date
 from autoslug import AutoSlugField
 from django.conf import settings
