@@ -9,8 +9,8 @@ verify_ssl = true
 
 "beautifulsoup4" = "*"
 "ciso8601" = "*"
-django = "==1.11.*"
-django-autoslug = "*"
+django = "*"
+django-autoslug-iplweb = "==1.9.4.dev0"
 django-antispam = "*"
 django-email-obfuscator = "*"
 django-haystack = "*"
