@@ -59,9 +59,9 @@ def import_routes(region, operator, url, session):
             'description': li.find(class_='tt-text').text.strip(),
             'region': region,
             'mode': 'bus',
-            'operator': [operator],
             'current': True
         })[0]
+        service.operator.set([operator])
         import_route_stops(region, service, slug, url, session)
         if region.id == 'GG':
             import_kml(service, session)

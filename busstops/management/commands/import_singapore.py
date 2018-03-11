@@ -101,8 +101,8 @@ class Command(BaseCommand):
                     'region_id': 'SG',
                     'mode': 'bus',
                     'line_name': route['ServiceNo'],
-                    'operator': [route['Operator']]
                 })[0]
+                service.operator.set([route['Operator']])
 
                 try:
                     StopUsage.objects.update_or_create(

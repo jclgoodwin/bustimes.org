@@ -29,7 +29,8 @@ class ImportOperatorsTest(TestCase):
         cls.weardale = Operator.objects.get(id='WRCT')
         cls.catch22bus = Operator.objects.get(id='NWOT')
 
-        Service.objects.create(operator=['BLUE', 'NWOT'], current=True, region=cls.scotland, date='1940-02-03')
+        service = Service.objects.create(current=True, region=cls.scotland, date='1940-02-03')
+        service.operator.set(['BLUE', 'NWOT'])
 
     def test_operator_count(self):
         self.assertEqual(8, Operator.objects.count())
