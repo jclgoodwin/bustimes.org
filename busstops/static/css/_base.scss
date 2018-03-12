@@ -465,7 +465,8 @@ td {
 input:not(:checked) + label {
     + .timetable-wrapper,
     + .route {
-        .OTH {
+        .OTH,
+        .TIP {
             display: none;
         }
 
@@ -540,8 +541,11 @@ input:not(:checked) + label {
         border: 0;
     }
 
-    .OTH th a {
-        padding-left: 1em;
+    .OTH,
+    .TIP {
+        th a {
+            padding-left: 1em;
+        }
     }
 }
 
@@ -561,8 +565,13 @@ input:not(:checked) + label {
     }
 }
 
-.route .OTH a {
-    padding-left: 1em;
+.route {
+    .OTH,
+    .TIP {
+        a {
+            padding-left: 1em;
+        }
+    }
 }
 
 .asides {
@@ -721,7 +730,7 @@ input:not(:checked) + label {
 .adsbygoogle {
     display: block;
     margin: 0 auto;
-    max-width: 60em;
+    max-width: 60.5em;
 }
 
 footer {
