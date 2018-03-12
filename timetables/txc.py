@@ -181,6 +181,9 @@ class Row(object):
         self.parent = None
         # self.sequencenumbers = set()
 
+    def is_minor(self):
+        return self.part.timingstatus == 'OTH' or self.part.timingstatus == 'TIP'
+
     def __repr__(self):
         if self.next is not None:
             return '[%s] -> %s' % (self.part.stop, self.next)
@@ -239,7 +242,7 @@ class Grouping(object):
 
     def has_minor_stops(self):
         for row in self.rows:
-            if row.part.timingstatus == 'OTH':
+            if row.is_minor():
                 return True
         return False
 
@@ -1020,7 +1023,7 @@ def abbreviate(grouping, i, in_a_row, difference):
     if not seconds or 3600 % seconds and seconds % 3600:  # not a factor or multiple of 1 hour
         return
     cell = Cell(in_a_row + 1, len(grouping.rows_list), difference)
-    cell.min_height = len([row for row in grouping.rows_list if row.part.timingstatus != 'OTH'])
+    cell.min_height = len([row for row in grouping.rows_list if not row.is_minor()])
     grouping.rows_list[0].times[i - in_a_row - 2] = cell
     for j in range(i - in_a_row - 1, i - 1):
         grouping.rows_list[0].times[j] = None
