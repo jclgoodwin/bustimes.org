@@ -179,7 +179,7 @@ class Row(object):
         self.times = []
         self.next = None
         self.parent = None
-        # self.sequencenumbers = set()
+        self.sequencenumbers = set()
 
     def is_minor(self):
         return self.part.timingstatus == 'OTH' or self.part.timingstatus == 'TIP'
@@ -195,6 +195,11 @@ class Row(object):
         row.parent = self.parent
         row.next = self.next
         self.next = row
+
+    def get_order(self):
+        for number in self.sequencenumbers:
+            print(number)
+            return int(number)
 
 
 class Cell(object):
@@ -257,6 +262,7 @@ class Grouping(object):
 
     def do_heads_and_feet(self):
         self.rows_list = self.rows.values()
+        self.rows_list.sort(key=Row.get_order)
 
         journeys = [vj for vj in self.journeys if vj.should_show(self.parent.date, self.parent)]
         if not journeys:
@@ -349,6 +355,7 @@ class JourneyPattern(object):
             if section_element.text in sections
         ]
 
+        # the rows traversed by this journey pattern
         rows = []
         for section in self.sections:
             for timinglink in section.timinglinks:
@@ -362,8 +369,7 @@ class JourneyPattern(object):
         if not rows:
             return
 
-        previous = None
-
+        # the rows currently in (an amalgamation from any previously handled journey patterns)
         previous_list = []
         row = self.grouping.rows.head
         while row:
@@ -372,33 +378,32 @@ class JourneyPattern(object):
 
         current_list = [row.part.stop.atco_code for row in rows]
         diff = difflib.ndiff(previous_list, current_list)
+
+        existing_row = self.grouping.rows.head
+
         for row in rows:
-            atco_code = row.part.stop.atco_code
+            instruction = next(diff)
 
-            instructions = next(diff)
+            while instruction[0] in '-?':
+                if instruction[0] == '-':
+                    existing_row = existing_row.next
+                instruction = next(diff)
 
-            while instructions[0] in '-?':
-                instructions = next(diff)
-
-            if instructions[0] == '+':
-                assert instructions[2:] == atco_code
-                if previous:
-                    previous.append(row)
-                else:
+            if instruction[0] == '+':
+                if existing_row is None:
                     self.grouping.rows.prepend(row)
-            else:
-                if previous:
-                    p = previous
                 else:
-                    p = self.grouping.rows.head
-                while p.part.stop.atco_code != atco_code:
-                    p = p.next
-                assert atco_code == p.part.stop.atco_code
-                row.part.row = p
-                row = p
-            # row.sequencenumbers.add(row.part.sequencenumber)
+                    existing_row.append(row)
+                existing_row = row
+            else:
+                if existing_row.next.part.stop.atco_code == row.part.stop.atco_code:
+                    existing_row = existing_row.next
+                row.part.row = existing_row
 
-            previous = row
+            if existing_row.part.stop.atco_code == row.part.stop.atco_code:
+                existing_row.sequencenumbers.add(row.part.sequencenumber)
+            else:
+                print('oh dear', existing_row.part.stop.atco_code, row.part.stop.atco_code)
 
     def get_grouping(self, element, groupings, routes):
         route = element.find('txc:RouteRef', NS)
