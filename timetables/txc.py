@@ -198,8 +198,9 @@ class Row(object):
 
     def get_order(self):
         for number in self.sequencenumbers:
-            print(number)
-            return int(number)
+            if number:
+                return number
+        return 0
 
 
 class Cell(object):
