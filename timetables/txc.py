@@ -337,7 +337,7 @@ class JourneyPattern(object):
                     if i < len(self.grouping.rows):
                         existing_row = self.grouping.rows[i]
                     else:
-                        existing_row
+                        existing_row = None
                 instruction = next(diff)
 
             if instruction[0] == '+':
