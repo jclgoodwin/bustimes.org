@@ -324,39 +324,33 @@ class JourneyPattern(object):
         current_list = [row.part.stop.atco_code for row in rows]
         diff = difflib.ndiff(previous_list, current_list)
 
-        i = -1
+        i = 0
         for row in rows:
-            if self.grouping.rows:
-                i += 1
-                print(i, len(self.grouping.rows), self.grouping.rows)
-                if i >= len(self.grouping.rows):
-                    i -= 1
-                #    import pdb; pdb.set_trace()
+            if i < len(self.grouping.rows):
                 existing_row = self.grouping.rows[i]
+            else:
+                existing_row = None
             instruction = next(diff)
-            print(instruction)
             while instruction[0] in '-?':
                 if instruction[0] == '-':
                     i += 1
-                    existing_row = self.grouping.rows[i]
+                    if i < len(self.grouping.rows):
+                        existing_row = self.grouping.rows[i]
+                    else:
+                        existing_row
                 instruction = next(diff)
-                print(instruction)
 
             if instruction[0] == '+':
-                if not self.grouping.rows:
+                if not existing_row:
                     self.grouping.rows.append(row)
                 else:
-                    self.grouping.rows = self.grouping.rows[:i+1] + [row] + self.grouping.rows[i+1:]
-                    print(self.grouping.rows)
+                    self.grouping.rows = self.grouping.rows[:i] + [row] + self.grouping.rows[i:]
                 existing_row = row
             else:
                 row.part.row = existing_row
 
             existing_row.sequencenumbers.add(row.part.sequencenumber)
-            #print(i)
-            #print(row, existing_row)
-            #print(existing_row)
-            #assert existing_row.part.stop.atco_code == row.part.stop.atco_code
+            i += 1
 
     def get_grouping(self, element, groupings, routes):
         route = element.find('txc:RouteRef', NS)

@@ -6,9 +6,7 @@ from ...models import Service, ServiceDate
 class Command(BaseCommand):
     @staticmethod
     def has_times(grouping):
-        if hasattr(grouping, 'rows_list'):
-            return grouping.rows_list and grouping.rows_list[0].times
-        if grouping.rows and type(grouping.rows) is list:
+        if grouping.rows:
             return grouping.rows[0].times
 
     def handle(self, *args, **options):
