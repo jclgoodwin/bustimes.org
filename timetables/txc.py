@@ -128,47 +128,6 @@ class Stop(object):
         return False
 
 
-class Rows(object):
-    def __init__(self):
-        self.head = None
-        self.tail = None
-        self.pointer = None
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self.pointer is not None:
-            self.pointer = self.pointer.next
-        else:
-            self.pointer = self.head
-
-        if self.pointer is not None:
-            return self.pointer
-
-        self.pointer = None
-
-        raise StopIteration
-
-    def next(self):
-        return self.__next__()
-
-    def first(self):
-        if self.head is not None:
-            return self.head
-        return next(iter(self.rows.values()))
-
-    def values(self):
-        return [row for row in self]
-
-    def prepend(self, row):
-        row.next = self.head
-        self.head = row
-        if self.tail is None:
-            self.tail = row
-        row.parent = self
-
-
 class Row(object):
     """A row in a grouping in a timetable.
     Each row is associated with a Stop, and a list of times.
@@ -177,24 +136,13 @@ class Row(object):
         self.part = part
         part.row = self
         self.times = []
-        self.next = None
-        self.parent = None
         self.sequencenumbers = set()
 
     def is_minor(self):
         return self.part.timingstatus == 'OTH' or self.part.timingstatus == 'TIP'
 
     def __repr__(self):
-        if self.next is not None:
-            return '[%s] -> %s' % (self.part.stop, self.next)
-        return '[%s]' % self.part.stop
-
-    def append(self, row):
-        if self.parent.tail is self:
-            self.parent.tail = row
-        row.parent = self.parent
-        row.next = self.next
-        self.next = row
+        return str(self.part.stop)
 
     def get_order(self):
         for number in self.sequencenumbers:
@@ -239,7 +187,7 @@ class Grouping(object):
         self.column_feet = {}
         self.journeypatterns = []
         self.journeys = []
-        self.rows = Rows()
+        self.rows = []
 
     def get_order(self):
         if len(self.journeys):
@@ -253,17 +201,16 @@ class Grouping(object):
         return False
 
     def is_wide(self):
-        return len(self.rows_list[0].times) > 3
+        return len(self.rows[0].times) > 3
 
     def starts_at(self, locality_name):
-        return self.rows_list and self.rows_list[0].part.stop.is_at(locality_name)
+        return self.rows and self.rows[0].part.stop.is_at(locality_name)
 
     def ends_at(self, locality_name):
-        return self.rows_list and self.rows_list[-1].part.stop.is_at(locality_name)
+        return self.rows and self.rows[-1].part.stop.is_at(locality_name)
 
     def do_heads_and_feet(self):
-        self.rows_list = self.rows.values()
-        self.rows_list.sort(key=Row.get_order)
+        self.rows.sort(key=Row.get_order)
 
         journeys = [vj for vj in self.journeys if vj.should_show(self.parent.date, self.parent)]
         if not journeys:
@@ -317,7 +264,7 @@ class Grouping(object):
 
         if in_a_row > 1:
             abbreviate(self, len(journeys), in_a_row - 1, prev_difference)
-        for row in self.rows_list:
+        for row in self.rows:
             row.times = [time for time in row.times if time is not None]
 
     def __str__(self):
@@ -370,41 +317,46 @@ class JourneyPattern(object):
         if not rows:
             return
 
-        # the rows currently in (an amalgamation from any previously handled journey patterns)
-        previous_list = []
-        row = self.grouping.rows.head
-        while row:
-            previous_list.append(row.part.stop.atco_code)
-            row = row.next
+        # this grouping's current rows (an amalgamation from any previously handled journey patterns)
+        previous_list = [row.part.stop.atco_code for row in self.grouping.rows]
 
+        # this journey pattern again
         current_list = [row.part.stop.atco_code for row in rows]
         diff = difflib.ndiff(previous_list, current_list)
 
-        existing_row = self.grouping.rows.head
-
+        i = -1
         for row in rows:
+            if self.grouping.rows:
+                i += 1
+                print(i, len(self.grouping.rows), self.grouping.rows)
+                if i >= len(self.grouping.rows):
+                    i -= 1
+                #    import pdb; pdb.set_trace()
+                existing_row = self.grouping.rows[i]
             instruction = next(diff)
-
+            print(instruction)
             while instruction[0] in '-?':
                 if instruction[0] == '-':
-                    existing_row = existing_row.next
+                    i += 1
+                    existing_row = self.grouping.rows[i]
                 instruction = next(diff)
+                print(instruction)
 
             if instruction[0] == '+':
-                if existing_row is None:
-                    self.grouping.rows.prepend(row)
+                if not self.grouping.rows:
+                    self.grouping.rows.append(row)
                 else:
-                    existing_row.append(row)
+                    self.grouping.rows = self.grouping.rows[:i+1] + [row] + self.grouping.rows[i+1:]
+                    print(self.grouping.rows)
                 existing_row = row
             else:
-                if existing_row.next.part.stop.atco_code == row.part.stop.atco_code:
-                    existing_row = existing_row.next
                 row.part.row = existing_row
 
-            if existing_row.part.stop.atco_code == row.part.stop.atco_code:
-                existing_row.sequencenumbers.add(row.part.sequencenumber)
-            else:
-                print('oh dear', existing_row.part.stop.atco_code, row.part.stop.atco_code)
+            existing_row.sequencenumbers.add(row.part.sequencenumber)
+            #print(i)
+            #print(row, existing_row)
+            #print(existing_row)
+            #assert existing_row.part.stop.atco_code == row.part.stop.atco_code
 
     def get_grouping(self, element, groupings, routes):
         route = element.find('txc:RouteRef', NS)
@@ -588,7 +540,7 @@ class VehicleJourney(object):
                     time = add_time(time, stopusage.waittime)
 
     def add_times(self):
-        row_length = len(self.journeypattern.grouping.rows.first().times)
+        row_length = len(self.journeypattern.grouping.rows[0].times)
 
         for stopusage, time in self.get_times():
             stopusage.row.times.append(time)
@@ -1028,13 +980,13 @@ def abbreviate(grouping, i, in_a_row, difference):
     seconds = difference.total_seconds()
     if not seconds or 3600 % seconds and seconds % 3600:  # not a factor or multiple of 1 hour
         return
-    cell = Cell(in_a_row + 1, len(grouping.rows_list), difference)
-    cell.min_height = len([row for row in grouping.rows_list if not row.is_minor()])
-    grouping.rows_list[0].times[i - in_a_row - 2] = cell
+    cell = Cell(in_a_row + 1, len(grouping.rows), difference)
+    cell.min_height = len([row for row in grouping.rows if not row.is_minor()])
+    grouping.rows[0].times[i - in_a_row - 2] = cell
     for j in range(i - in_a_row - 1, i - 1):
-        grouping.rows_list[0].times[j] = None
+        grouping.rows[0].times[j] = None
     for j in range(i - in_a_row - 2, i - 1):
-        for row in grouping.rows_list[1:]:
+        for row in grouping.rows[1:]:
             row.times[j] = None
 
 

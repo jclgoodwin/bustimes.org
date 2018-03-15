@@ -84,12 +84,12 @@ class TimetableTest(TestCase):
         timetable_ne = txc.timetable_from_filename(FIXTURES_DIR, 'NE_03_SCC_X6_1.xml', date(2016, 12, 15))
         self.assertEqual('Kendal - Barrow-in-Furness', str(timetable_ne.groupings[0]))
         self.assertEqual(
-            timetable_ne.groupings[0].rows_list[0].times[:3], [time(7, 0), time(8, 0), time(9, 0)]
+            timetable_ne.groupings[0].rows[0].times[:3], [time(7, 0), time(8, 0), time(9, 0)]
         )
         # Test abbreviations (check the colspan and rowspan attributes of Cells)
-        self.assertEqual(timetable_ne.groupings[0].rows_list[0].times[3].colspan, 6)
-        self.assertEqual(timetable_ne.groupings[0].rows_list[0].times[3].rowspan, 105)
-        self.assertEqual(timetable_ne.groupings[1].rows_list[0].times[:7],
+        self.assertEqual(timetable_ne.groupings[0].rows[0].times[3].colspan, 6)
+        self.assertEqual(timetable_ne.groupings[0].rows[0].times[3].rowspan, 105)
+        self.assertEqual(timetable_ne.groupings[1].rows[0].times[:7],
                          [time(5, 20), time(6, 20), time(7, 15), time(8, 10), time(9, 10), time(10, 10), time(11, 10)])
 
     def test_timetable_abbreviations_notes(self):
