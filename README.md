@@ -7,6 +7,13 @@
 
 It's [a thing about buses](https://bustimes.org/).
 
+## Installing
+
+Python 3.6 is required.
+
+    pipenv --python 3.6
+    pipenv install --dev
+
 ## Importing data
 
 [`import.sh`](data/import.sh) will download data from various [sources](https://bustimes.org.uk/data) and run the necessary Django [management commands](busstops/management/commands) to import it.

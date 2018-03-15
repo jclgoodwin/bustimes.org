@@ -66,7 +66,7 @@ HAYSTACK_IDENTIFIER_METHOD = 'buses.utils.get_identifier'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'bustimes',
+        'NAME': os.environ.get('DB_NAME', 'bustimes'),
         'CONN_MAX_AGE': None
     }
 }
