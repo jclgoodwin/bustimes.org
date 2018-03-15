@@ -340,6 +340,8 @@ class JourneyPattern(object):
                         existing_row = None
                 instruction = next(diff)
 
+            assert instruction[2:] == row.part.stop.atco_code
+
             if instruction[0] == '+':
                 if not existing_row:
                     self.grouping.rows.append(row)
@@ -347,6 +349,7 @@ class JourneyPattern(object):
                     self.grouping.rows = self.grouping.rows[:i] + [row] + self.grouping.rows[i:]
                 existing_row = row
             else:
+                assert instruction[2:] == existing_row.part.stop.atco_code
                 row.part.row = existing_row
 
             existing_row.sequencenumbers.add(row.part.sequencenumber)
