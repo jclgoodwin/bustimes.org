@@ -11,9 +11,8 @@ FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixture
 class ImportSingaporeTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        with override_settings(SINAPORE_KEY='1ZxMEhvVQoux7V2Aaea6eA=='):
-            with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'singapore.yaml')):
-                call_command('import_singapore')
+        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'singapore.yaml')):
+            call_command('import_singapore')
 
         call_command('import_singapore_places')
 
