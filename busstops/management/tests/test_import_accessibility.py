@@ -11,8 +11,11 @@ FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixture
 class ImportAccessibilityTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        Region.objects.create(id='S')
-        cls.service = Service.objects.create(service_code='HIAO915', date='2017-05-05', region_id='S')
+        for region_id, service_code in (
+            ('S', 'HIAO915'), ('EA', 'ea_21-10-_-y08'), ('NW', 'NW_06_2288_672_1')
+        ):
+            Region.objects.create(id=region_id)
+            Service.objects.create(service_code=service_code, date='2017-05-05', region_id=region_id)
 
         # create zip file
         zipfile_path = os.path.join(FIXTURES_DIR, 'accessibility-data.zip')
@@ -28,15 +31,33 @@ class ImportAccessibilityTest(TestCase):
         os.remove(zipfile_path)
 
     def test_scotch_service(self):
-        self.assertIsNone(self.service.wheelchair)
-        self.assertIsNone(self.service.low_floor)
-        self.assertIsNone(self.service.assistance_service)
+        "Och aye the noo"
+        service = Service.objects.get(region_id='S')
 
-        self.service.refresh_from_db()
+        self.assertTrue(service.wheelchair)
+        self.assertFalse(service.low_floor)
+        self.assertFalse(service.assistance_service)
 
-        self.assertTrue(self.service.wheelchair)
-        self.assertFalse(self.service.low_floor)
-        self.assertFalse(self.service.assistance_service)
-
-        response = self.client.get(self.service.get_absolute_url())
+        response = self.client.get(service.get_absolute_url())
         self.assertContains(response, 'Not operated by low-floor buses')
+        self.assertContains(response, 'Wheelchair-accessible')
+        self.assertNotContains(response, 'An assistance service')
+
+    def test_norfolk_service(self):
+        "Huge roof on my home"
+        service = Service.objects.get(region_id='EA')
+
+        response = self.client.get(service.get_absolute_url())
+
+        self.assertContains(response, 'Operated by low-floor buses')
+        self.assertContains(response, 'Wheelchair-accessible')
+        self.assertContains(response, 'An assistance service')
+
+    def test_north_west_service(self):
+        service = Service.objects.get(region_id='NW')
+
+        response = self.client.get(service.get_absolute_url())
+
+        self.assertNotContains(response, 'Operated by low-floor buses')
+        self.assertNotContains(response, 'Wheelchair-accessible')
+        self.assertNotContains(response, 'An assistance service')

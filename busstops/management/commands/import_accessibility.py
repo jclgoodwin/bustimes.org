@@ -11,7 +11,7 @@ def get_service(row):
     for region in 'EA', 'EM', 'WM', 'SE', 'SW':
         col = 'TNDS-' + region
         if row[col]:
-            return Service.objects.filter(region=region, service_code__endswith=''.join(row[col].split('-')[:-1]))
+            return Service.objects.filter(region=region, service_code__endswith='-'.join(row[col].split('-')[:-1]))
     for region in 'S', 'Y', 'NE', 'W':
         col = 'TNDS-' + region
         if row[col]:
