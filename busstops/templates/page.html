@@ -45,9 +45,11 @@
 {% block footer %}
 <footer>
     {% block ad %}
-        <div class="banner-ad">
-            <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="auto"></ins>
-        </div>
+        <!--[if gte IE 9]><!-->
+            <div class="banner-ad">
+                <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="auto"></ins>
+            </div>
+        <!--<![endif]-->
         <script>
             (adsbygoogle = window.adsbygoogle || []).push({});
         </script>
@@ -75,7 +77,7 @@ ga('require', 'GTM-W66PKML');
 ga('send', 'pageview');
 </script>
 {% load raven %}
-<script src="https://cdn.ravenjs.com/3.22.3/raven.min.js" integrity="sha384-DJutQ5bhs5fBggGhfU7vElOenhYOgZIgtPkocTHf2Fum0Jz4tgezRCa+mzjiF/5g" crossorigin="anonymous"></script>
+<script src="https://cdn.ravenjs.com/3.23.3/raven.min.js" integrity="sha384-8mm76zPXahA8q9uADI1TnUihuTmoDaVXa1G2uYDHY/tntU+vaCIdt9j+J17LDM6H" crossorigin="anonymous"></script>
 <script>
     Raven.config('{% sentry_public_dsn %}', {
         whitelistUrls: [/bustimes\.org\/static\/js\/.*\.js/]
