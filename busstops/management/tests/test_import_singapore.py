@@ -1,6 +1,6 @@
 import os
 import vcr
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.core.management import call_command
 from ...models import StopPoint, Service, Place
 
