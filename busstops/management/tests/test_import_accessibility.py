@@ -18,7 +18,7 @@ class ImportAccessibilityTest(TestCase):
             Service.objects.create(service_code=service_code, date='2017-05-05', region_id=region_id)
 
         # create zip file
-        zipfile_path = os.path.join(FIXTURES_DIR, 'accessibility-data.zip')
+            zipfile_path = os.path.join(FIXTURES_DIR, 'accessibility-data.zip')
         filename = 'IF145_ModeAccessibility_v2_20170522_1802.csv'
         with zipfile.ZipFile(zipfile_path, 'a') as open_zipfile:
             open_zipfile.write(os.path.join(FIXTURES_DIR, filename), filename)
@@ -58,6 +58,6 @@ class ImportAccessibilityTest(TestCase):
 
         response = self.client.get(service.get_absolute_url())
 
-        self.assertNotContains(response, 'Operated by low-floor buses')
-        self.assertNotContains(response, 'Wheelchair-accessible')
+        self.assertContains(response, 'Operated by low-floor buses')
+        self.assertContains(response, 'Wheelchair-accessible')
         self.assertNotContains(response, 'An assistance service')

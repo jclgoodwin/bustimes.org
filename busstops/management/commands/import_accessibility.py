@@ -17,7 +17,7 @@ def get_service(row):
         if row[col]:
             return Service.objects.filter(region=region, service_code=row[col])
     if row['TNDS-NW']:
-        return Service.objects.filter(region=region, service_code__endswith=''.join(row['TNDS-NW'].split('_')[:-1]))
+        return Service.objects.filter(region='NW', service_code__startswith='_'.join(row['TNDS-NW'].split('_')[:-1]))
 
 
 def handle_file(open_file):
