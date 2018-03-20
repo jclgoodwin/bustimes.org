@@ -2,6 +2,20 @@
 
 {% block title %}Map – Bus Times{% endblock %}
 
+{% block head %}
+<style>
+.wide main {
+    bottom: 0;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 3.5em;
+    width: 100%;
+}
+</style>
+{% endblock %}
+
 {% block header %}
 <header><a href="/" class="site-name">Bus Times</a></header>
 {% endblock %}
@@ -12,17 +26,6 @@
 
 <div id="hugemap"></div>
 <div id="sidebar"></div>
-
-<style>
-.wide main {
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    top: 3.5em;
-    bottom: 0;
-    width: 100%;
-}
-</style>
 
 {% load staticfiles %}
 {% load pipeline %}
