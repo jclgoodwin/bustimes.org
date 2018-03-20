@@ -58,6 +58,6 @@ class ImportAccessibilityTest(TestCase):
 
         response = self.client.get(service.get_absolute_url())
 
-        self.assertContains(response, 'Operated by low-floor buses')
+        self.assertNotContains(response, 'low-floor buses')
         self.assertContains(response, 'Wheelchair-accessible')
         self.assertNotContains(response, 'An assistance service')
