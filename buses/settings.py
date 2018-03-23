@@ -247,6 +247,9 @@ TNDS_DIR = os.path.join(DATA_DIR, 'TNDS')
 
 VIGLINK_KEY = '63dc39b879576a255e9dcee17b6c1929'
 
+AKISMET_API_KEY = os.environ.get('AKISMET_API_KEY')
+AKISMET_SITE_URL = 'https://bustimes.org'
+
 IE_COLLECTIONS = (
     'luasbus', 'dublinbus', 'kenneallys', 'locallink', 'irishrail', 'ferries',
     'manda', 'finnegans', 'citylink', 'nitelink', 'buseireann', 'mcgeehan',

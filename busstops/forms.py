@@ -3,10 +3,12 @@ from django import forms
 from django.db.models import Q
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point, Polygon
+from django.core.exceptions import ValidationError
 from haystack.forms import SearchForm
 from haystack.query import SQ, AutoQuery
 from ukpostcodeutils import validation
 from antispam.honeypot.forms import HoneypotField
+from antispam import akismet
 from .models import Locality
 
 
@@ -20,6 +22,24 @@ class ContactForm(forms.Form):
     spam_honeypot_field = HoneypotField()
     referrer = forms.CharField(label='Referrer', required=False,
                                widget=forms.HiddenInput)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        if self.request and akismet.check(
+            request=akismet.Request.from_django_request(self.request),
+            comment=akismet.Comment(
+                content=self.cleaned_data['message'],
+                type='comment',
+                author=akismet.Author(
+                    name=self.cleaned_data['name'],
+                    email=self.cleaned_data['email']
+                )
+            )
+        ):
+            raise ValidationError('Spam detected', code='spam-protection')
 
 
 class ImageForm(forms.Form):

@@ -98,7 +98,7 @@ def contact(request):
     """Contact page with form"""
     submitted = False
     if request.method == 'POST':
-        form = ContactForm(request.POST)
+        form = ContactForm(request.POST, request=request)
         if form.is_valid():
             subject = form.cleaned_data['message'][:50].splitlines()[0]
             body = '\n\n'.join((
