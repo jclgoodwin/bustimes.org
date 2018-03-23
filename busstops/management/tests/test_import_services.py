@@ -482,6 +482,6 @@ class ImportServicesTest(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super(ImportServicesTest, cls).tearDownClass()
+        super().tearDownClass()
 
         clean_up()

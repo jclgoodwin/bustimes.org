@@ -200,7 +200,7 @@ class UppercasePrimaryKeyMixin(object):
         primary_key = self.kwargs.get('pk')
         if primary_key is not None and '-' not in primary_key and not primary_key.isupper():
             self.kwargs['pk'] = primary_key.upper()
-        return super(UppercasePrimaryKeyMixin, self).get_object(queryset)
+        return super().get_object(queryset)
 
 
 class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
@@ -209,7 +209,7 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
     model = Region
 
     def get_context_data(self, **kwargs):
-        context = super(RegionDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         context['areas'] = self.object.adminarea_set.exclude(name='')
         if len(context['areas']) == 1:
@@ -227,7 +227,7 @@ class PlaceDetailView(DetailView):
     model = Place
 
     def get_context_data(self, **kwargs):
-        context = super(PlaceDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         if 'Singapore' in self.object.source.name:
             context['places'] = Place.objects.filter(polygon__coveredby=self.object.polygon).exclude(id=self.object.id)
@@ -248,7 +248,7 @@ class AdminAreaDetailView(DetailView):
     queryset = model.objects.select_related('region')
 
     def get_context_data(self, **kwargs):
-        context = super(AdminAreaDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         # Districts in this administrative area
         context['districts'] = self.object.district_set.filter(locality__stoppoint__active=True).distinct()
@@ -273,7 +273,7 @@ class AdminAreaDetailView(DetailView):
             if not context['localities']:
                 return redirect(context['districts'][0])
             return redirect(context['localities'][0])
-        return super(AdminAreaDetailView, self).render_to_response(context)
+        return super().render_to_response(context)
 
 
 class DistrictDetailView(DetailView):
@@ -283,7 +283,7 @@ class DistrictDetailView(DetailView):
     queryset = model.objects.select_related('admin_area', 'admin_area__region')
 
     def get_context_data(self, **kwargs):
-        context = super(DistrictDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['localities'] = self.object.locality_set.filter(
             Q(stoppoint__active=True) | Q(locality__stoppoint__active=True),
         ).defer('latlong').distinct()
@@ -293,7 +293,7 @@ class DistrictDetailView(DetailView):
     def render_to_response(self, context):
         if len(context['localities']) == 1:
             return redirect(context['localities'][0])
-        return super(DistrictDetailView, self).render_to_response(context)
+        return super().render_to_response(context)
 
 
 class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
@@ -305,7 +305,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
     )
 
     def get_context_data(self, **kwargs):
-        context = super(LocalityDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         context['localities'] = self.object.locality_set.filter(
             Q(stoppoint__active=True) |
@@ -351,7 +351,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
     queryset = queryset.defer('osm', 'locality__latlong', 'locality__parent__latlong')
 
     def get_context_data(self, **kwargs):
-        context = super(StopPointDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         context['services'] = sorted(
             self.object.service_set.filter(current=True).defer('geometry').distinct(),
@@ -447,7 +447,7 @@ class OperatorDetailView(UppercasePrimaryKeyMixin, DetailView):
     queryset = model.objects.select_related('region')
 
     def get_context_data(self, **kwargs):
-        context = super(OperatorDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['notes'] = self.object.note_set.all()
         context['services'] = sorted(self.object.service_set.filter(current=True).defer('geometry'),
                                      key=Service.get_order)
@@ -466,10 +466,10 @@ class ServiceDetailView(DetailView):
 
     def get_object(self, **kwargs):
         try:
-            return super(ServiceDetailView, self).get_object(**kwargs)
+            return super().get_object(**kwargs)
         except Http404:
             self.kwargs['pk'] = self.kwargs['slug']
-            return super(ServiceDetailView, self).get_object(**kwargs)
+            return super().get_object(**kwargs)
 
     def post(self, *args, **kwargs):
         form = ImageForm(self.request.POST)
@@ -480,7 +480,7 @@ class ServiceDetailView(DetailView):
         return redirect(service)
 
     def get_context_data(self, **kwargs):
-        context = super(ServiceDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         if not self.object.current or 'pk' in self.kwargs:
             return context
@@ -598,7 +598,7 @@ class ServiceDetailView(DetailView):
         if 'pk' in self.kwargs:
             return redirect(self.object, permanent=True)
 
-        response = super(ServiceDetailView, self).render_to_response(context)
+        response = super().render_to_response(context)
         response['Link'] = '<https://bustimes.org{}>; rel="canonical"'.format(self.object.get_absolute_url())
         return response
 

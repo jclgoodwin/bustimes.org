@@ -25,7 +25,7 @@ class Command(ImportFromCSVCommand):
         )
 
     def handle(self, *args, **options):
-        super(Command, self).handle(*args, **options)
+        super().handle(*args, **options)
 
         # Move Cumbria to the North West.
         # Necessary because of the confusing 'North East and Cumbria' Traveline

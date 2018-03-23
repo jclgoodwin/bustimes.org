@@ -38,7 +38,7 @@ class OperatorAdmin(admin.ModelAdmin):
         return ', '.join(str(code) for code in obj.operatorcode_set.all())
 
     def formfield_for_dbfield(self, db_field, **kwargs):
-        formfield = super(OperatorAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+        formfield = super().formfield_for_dbfield(db_field, **kwargs)
         if db_field.name == 'address':
             formfield.widget = forms.Textarea(attrs=formfield.widget.attrs)
         return formfield
@@ -65,7 +65,7 @@ class NoteAdmin(admin.ModelAdmin):
     raw_id_fields = ('operators', 'services')
 
     def formfield_for_dbfield(self, db_field, **kwargs):
-        formfield = super(NoteAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+        formfield = super().formfield_for_dbfield(db_field, **kwargs)
         if db_field.name == 'text':
             formfield.widget = forms.Textarea(attrs=formfield.widget.attrs)
         return formfield

@@ -101,4 +101,4 @@ class Command(ImportFromCSVCommand):
             self.code_sources[key] = DataSource.objects.get_or_create(name=self.code_sources[key], defaults={
                 'datetime': timezone.now()
             })[0]
-        return super(Command, self).handle(*args, **options)
+        return super().handle(*args, **options)

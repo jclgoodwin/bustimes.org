@@ -23,7 +23,7 @@ class StylesheetNode(pipeline.StylesheetNode):
 
 class AMPStylesheetNode(StylesheetNode):
     def render_individual_css(self, package, paths, **kwargs):
-        html = super(AMPStylesheetNode, self).render_individual_css(package, paths, **kwargs)
+        html = super().render_individual_css(package, paths, **kwargs)
         return mark_safe(html.replace('<style', '<style amp-custom'))
 
 

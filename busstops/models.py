@@ -34,7 +34,7 @@ class ValidateOnSaveMixin(object):
     def save(self, force_insert=False, force_update=False, **kwargs):
         if not (force_insert or force_update):
             self.full_clean()
-        super(ValidateOnSaveMixin, self).save(force_insert, force_update, **kwargs)
+        super().save(force_insert, force_update, **kwargs)
 
 
 @python_2_unicode_compatible

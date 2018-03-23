@@ -141,7 +141,7 @@ class Command(ImportFromCSVCommand):
         StopPoint.objects.update_or_create(atco_code=atco_code, defaults=defaults)
 
     def __init__(self, *args, **kwargs):
-        super(Command, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         django_field_names = (
             'naptan_code',

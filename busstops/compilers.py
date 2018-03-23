@@ -5,7 +5,7 @@ from pipeline.compilers import sass
 
 class AutoprefixerMixin(object):
     def compile_file(self, infile, outfile, **kwargs):
-        super(AutoprefixerMixin, self).compile_file(infile, outfile, **kwargs)
+        super().compile_file(infile, outfile, **kwargs)
         command = (
             settings.PIPELINE_AUTOPREFIXER_BINARY,
             outfile,

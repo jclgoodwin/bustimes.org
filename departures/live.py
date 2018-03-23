@@ -180,7 +180,7 @@ class AcisDepartures(Departures):
 
     def __init__(self, prefix, stop, services, now):
         self.prefix = prefix
-        super(AcisDepartures, self).__init__(stop, services, now)
+        super().__init__(stop, services, now)
 
 
 class AcisLiveDepartures(AcisDepartures):
@@ -252,7 +252,7 @@ class TransportApiDepartures(Departures):
     """Departures from Transport API"""
     def __init__(self, stop, services, today):
         self.today = today
-        super(TransportApiDepartures, self).__init__(stop, services)
+        super().__init__(stop, services)
 
     @staticmethod
     def _get_destination(item):
