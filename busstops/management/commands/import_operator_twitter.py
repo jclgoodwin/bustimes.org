@@ -26,10 +26,10 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         session = HTMLSession()
 
-        for operator in Operator.objects.filter(service__current=True).exclude(url='').distinct():
+        for operator in Operator.objects.filter(service__current=True, twitter='').exclude(url='').distinct():
             try:
                 r = session.get(operator.url, timeout=10)
-            except RequestException as e:
+            except RequestException:
                 operator.url = ''
                 operator.save()
                 continue
