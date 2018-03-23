@@ -77,7 +77,7 @@ ga('require', 'GTM-W66PKML');
 ga('send', 'pageview');
 </script>
 {% load raven %}
-<script src="https://cdn.ravenjs.com/3.23.3/raven.min.js" integrity="sha384-8mm76zPXahA8q9uADI1TnUihuTmoDaVXa1G2uYDHY/tntU+vaCIdt9j+J17LDM6H" crossorigin="anonymous"></script>
+<script src="https://cdn.ravenjs.com/3.23.3/raven.min.js" crossorigin="anonymous"></script>
 <script>
     Raven.config('{% sentry_public_dsn %}', {
         whitelistUrls: [/bustimes\.org\/static\/js\/.*\.js/]
