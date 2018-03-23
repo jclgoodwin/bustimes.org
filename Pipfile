@@ -11,7 +11,6 @@ verify_ssl = true
 "ciso8601" = "*"
 django = "*"
 django-autoslug-iplweb = "==1.9.4.dev0"
-django-antispam = {git = "git://github.com/mixkorshun/django-antispam.git", ref = "master"}
 django-email-obfuscator = "*"
 django-haystack = "*"
 django-pipeline = "*"
@@ -31,6 +30,7 @@ uk-postcode-utils = "*"
 python-dateutil = "*"
 "psycopg2-binary" = "*"
 requests-html = "*"
+django-antispam = {git = "https://github.com/mixkorshun/django-antispam"}
 
 
 [dev-packages]

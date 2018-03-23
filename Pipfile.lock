@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "fc6d8657cb615ac7e7ecaa058bafbb93be89d57f37d77660c6aa73f76c9b1c3a"
+            "sha256": "eab01a95c659cf7cbe02b649c9157a42b5243740c2ce5c6b111804751c9c94cd"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -77,8 +77,7 @@
             "version": "==2.0.3"
         },
         "django-antispam": {
-            "git": "git://github.com/mixkorshun/django-antispam.git",
-            "ref": "master"
+            "git": "https://github.com/mixkorshun/django-antispam"
         },
         "django-autoslug-iplweb": {
             "hashes": [
@@ -532,7 +531,7 @@
                 "sha256:6bd0f6ad48ec2aa117d3d141940d484deccda84d4fcd884f5c3d93c23ecd8c79",
                 "sha256:8ad8c4783bf61ded74527bffb48ed9b54166685e4230386a9ed9b1279e2df5b1"
             ],
-            "markers": "python_version == '2.7'",
+            "markers": "python_version < '3.4'",
             "version": "==1.1.6"
         },
         "flake8": {
@@ -630,7 +629,7 @@
                 "sha256:d32550b75a818b289bd4c1f96b60c89957811da205afcceab75bc8b4857ea5b3",
                 "sha256:db3e43032d23787d3e9aec8c7ef1e0d2c3c589d5f303477661ebda2ca6d4bfba"
             ],
-            "markers": "python_version in '2.6 2.7 3.2 3.3'",
+            "markers": "python_version == '3.3'",
             "version": "==2.3.0"
         },
         "pbr": {
