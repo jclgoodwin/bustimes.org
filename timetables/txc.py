@@ -528,7 +528,7 @@ class VehicleJourney(object):
                 if deadrun:
                     if self.start_deadrun == timinglink.id:
                         deadrun = False  # end of dead run
-                else:
+                elif not (self.code.startswith('VJ_45-16A-_-y10-2') and stopusage.timingstatus == 'OTH'):
                     yield(stopusage, time)
 
                 if self.end_deadrun == timinglink.id:
