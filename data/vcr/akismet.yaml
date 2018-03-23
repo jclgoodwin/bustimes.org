@@ -1,0 +1,23 @@
+interactions:
+- request:
+    body: is_test=False&comment_type=comment&referrer=&comment_content=Dear+John%2C%0D%0A%0D%0AHow+are+you%3F%0D%0A%0D%0AAll+the+best%2C%0D%0ARufus&comment_author_email=rufus%40example.com&comment_author=Rufus+Herring&user_agent=&user_ip=127.0.0.1&charset=utf-8&blog=https%3A%2F%2Fbustimes.org&comment_date_gmt=2018-03-23T10%3A46%3A16.504572
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['331']
+      Content-Type: [application/x-www-form-urlencoded]
+      User-Agent: [Unknown Application/0.0.0 | Python-Akismet/0.3.0]
+    method: POST
+    uri: https://none.rest.akismet.com/1.1/comment-check
+  response:
+    body: {string: 'false'}
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['5']
+      Content-Type: [text/plain; charset=utf-8]
+      Date: ['Fri, 23 Mar 2018 10:46:16 GMT']
+      Server: [nginx]
+      X-akismet-guid: [6acfc2eec316a47757b3956e90b25781]
+    status: {code: 200, message: OK}
+version: 1
