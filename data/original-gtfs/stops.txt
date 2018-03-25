@@ -1,0 +1,26 @@
+stop_id,stop_name,stop_lat,stop_lon
+2900F011,Fakenham Oak Street,0,0
+2900S113,Sculthorpe A148 Bus Shelter,0,0
+2900R185,East Rudham Green,0,0
+2900H100,Harpley A148 Bus Shelter,0,0
+2900H284,Hillington opp Ffolkes Arms,0,0
+2900K13120,QE Hospital Grounds,0,0
+2900K1350,Gaywood opp Tesco,0,0
+2900K13139,King’s Lynn Bus Station,0,0
+
+2900F0121,Fakenham Toll Bar,0,0
+2900F011,Fakenham Oak Street,0,0
+2900F0149,Fakenham Warren Avenue,0,0
+2900K065,Pensthorpe Nature Reserve,0,0
+2900G153,Guist Malthouse Lane,0,0
+2900B297,Bintree A1067 Foulsham Turn,0,0
+2900F162,Foxley War Memorial,0,0
+2900B137,Bawdeswell Blackhorse Meadow,0,0
+2900W371,Lenwade St Faiths Close,0,0
+2900T0415,Taverham Fakenham Rd Lloyd Rd,0,0
+2900D111,Drayton The Cock,0,0
+2900H1526,Drayton High Road Asda,0,0
+2900N12224,Mile Cross Drayton Rd Roundabout,0,0
+2900N12235,Anglia Square,0,0
+2900N12117,City Centre Castle Meadow,0,0
+2900N12104,City Centre St Stephens Street,0,0

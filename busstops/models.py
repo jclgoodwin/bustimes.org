@@ -700,6 +700,14 @@ class Service(models.Model):
             return [gtfs.get_timetable(Route.objects.filter(feed__name=collection, route_id__in=route_ids), day)]
         elif self.region_id == 'FR' or self.service_code.startswith('citymapper'):
             return gtfs.get_timetables(self.service_code, day)
+        elif self.service_code == 'fecs-x29' or self.service_code == 'lynx-49':
+            if self.service_code == 'fecs-x29':
+                start_date = date(2018, 4, 3)
+            else:
+                start_date = date(2018, 4, 28)
+            if day < start_date:
+                day = start_date
+            return gtfs.get_timetables(self.service_code, day)
 
         cache_key = '{}:{}'.format(self.service_code, self.date)
         timetables = cache.get(cache_key)
