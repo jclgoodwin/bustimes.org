@@ -1,16 +1,12 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 name = "pypi"
 verify_ssl = true
 
-
 [packages]
-
 "beautifulsoup4" = "*"
 "ciso8601" = "*"
 django = "*"
-django-autoslug-iplweb = "==1.9.4.dev0"
 django-email-obfuscator = "*"
 django-haystack = "*"
 django-pipeline = "*"
@@ -22,7 +18,7 @@ gunicorn = "*"
 python-memcached = "*"
 setproctitle = "*"
 raven = "*"
-multigtfs = {git = "git://github.com/tulsawebdevs/django-multi-gtfs.git", ref = "master"}
+multigtfs = {git = "git://github.com/tulsawebdevs/django-multi-gtfs.git"}
 pillow = "*"
 requests = "*"
 titlecase = "*"
@@ -31,10 +27,9 @@ python-dateutil = "*"
 "psycopg2-binary" = "*"
 requests-html = "*"
 django-antispam = {git = "https://github.com/mixkorshun/django-antispam"}
-
+autoslug = {git = "https://github.com/marfyl/django-autoslug"}
 
 [dev-packages]
-
 django-debug-toolbar = "*"
 "flake8" = "*"
 freezegun = "*"
