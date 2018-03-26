@@ -6,6 +6,14 @@ lynx-49,mon-sat,lynx-49-4,0
 lynx-49,mon-sat,lynx-49-5,0
 lynx-49,sat,lynx-49-6,0
 lynx-49,mon-sat,lynx-49-7,0
+lynx-49,mon-fri,lynx-49-8,1
+lynx-49,mon-fri,lynx-49-9,1
+lynx-49,sat,lynx-49-10,1
+lynx-49,mon-sat,lynx-49-11,1
+lynx-49,mon-sat,lynx-49-12,1
+lynx-49,mon-sat,lynx-49-13,1
+lynx-49,mon-sat,lynx-49-14,1
+lynx-49,mon-sat,lynx-49-15,1
 fecs-x29,sun-from-3-april,fecs-x29-sun-1,0
 fecs-x29,sun-from-3-april,fecs-x29-sun-2,0
 fecs-x29,sun-from-3-april,fecs-x29-sun-3,0

@@ -28,7 +28,7 @@ class Timetable(object):
             yield start_date
             start_date += timedelta(days=1)
         if self.date >= start_date:
-            yield self.date,
+            yield self.date
 
 
 class Part(object):

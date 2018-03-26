@@ -7,9 +7,14 @@ stop_id,stop_name,stop_lat,stop_lon
 2900K13120,QE Hospital Grounds,0,0
 2900K1350,Gaywood opp Tesco,0,0
 2900K13139,King’s Lynn Bus Station,0,0
-
+2900K13142,King’s Lynn Bus Station Stop F,0,0
+2900K1315,Gaywood Tesco,0,0
+2900H282,Hillington Ffolkes Arms,0,0
+2900H093,Harpley A148 opp Bus Shelter,0,0
+2900R188,East Rudham opp Green,0,0
+2900S114,Sculthorpe A148 Bus Shelter,0,0
+2900H288,Hillington Wheatfields,52.7983771776,0.55160810257
 2900F0121,Fakenham Toll Bar,0,0
-2900F011,Fakenham Oak Street,0,0
 2900F0149,Fakenham Warren Avenue,0,0
 2900K065,Pensthorpe Nature Reserve,0,0
 2900G153,Guist Malthouse Lane,0,0
