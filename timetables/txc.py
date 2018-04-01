@@ -575,6 +575,9 @@ class VehicleJourney(object):
     def should_show(self, date, timetable=None):
         if not date:
             return True
+        if self.code.startswith('VJ_21-X29-_-y08-1') and 'Norwich' in str(self.journeypattern.grouping):
+            if date >= datetime.date(2018, 4, 3):
+                return False
         if not self.operating_profile:
             return timetable and timetable.operating_profile.should_show(date)
         if timetable and timetable.service_code == 'PKBO301':

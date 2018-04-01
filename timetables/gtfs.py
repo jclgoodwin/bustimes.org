@@ -126,7 +126,7 @@ def get_timetable(routes, day=None, collection=None):
 def get_timetables(service_code, day):
     collection, route_id = service_code.split('-', 1)
 
-    if service_code == 'lynx-49' or service_code == 'fecs-x29':
+    if service_code == 'lynx-49' or service_code == 'ea_21-X29-H-y08':
         feed = Feed.objects.filter(name__startswith='Lynx ')
     elif len(collection) == 10:
         feed = Feed.objects.filter(name__startswith=collection)
@@ -137,7 +137,7 @@ def get_timetables(service_code, day):
     except Feed.DoesNotExist:
         return
 
-    if service_code == 'lynx-49' or service_code == 'fecs-x29':
+    if service_code == 'lynx-49' or service_code == 'ea_21-X29-H-y08':
         routes = feed.route_set.filter(route_id=service_code)
     elif collection == 'flixbus':
         routes = feed.route_set.filter(route_id=collection.upper() + ':' + route_id)
