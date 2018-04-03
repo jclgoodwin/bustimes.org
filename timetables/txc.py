@@ -79,7 +79,10 @@ def correct_description(description):
     for old, new in (
             ('Stitians', 'Stithians'),
             ('Kings Lynn', "King's Lynn"),
+            ('Wells - Next - The - Sea', 'Wells-next-the-Sea'),
+            ('Wells next the Sea', 'Wells-next-the-Sea'),
             ('Baasingstoke', 'Basingstoke'),
+            ('Liskerard', 'Liskeard'),
             ('Tauton', 'Taunton'),
             ('Charlton Horethore', 'Charlton Horethorne'),
             ('- ', ' - '),
