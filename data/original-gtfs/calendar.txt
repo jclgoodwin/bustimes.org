@@ -1,8 +1,0 @@
-service_id,monday,tuesday,wednesday,thursday,friday,saturday,sunday,start_date,end_date
-mon-fri,1,1,1,1,1,0,0,20180428,20180531
-sat,0,0,0,0,0,1,0,20180428,20180531
-mon-sat,1,1,1,1,1,1,0,20180428,20180531
-mon-fri-from-3-april,1,1,1,1,1,0,0,20180403,20180531
-mon-sat-from-3-april,1,1,1,1,1,1,0,20180403,20180531
-sat-from-3-april,0,0,0,0,0,1,0,20180403,20180531
-sun-from-3-april,0,0,0,0,0,0,1,20180403,20180531

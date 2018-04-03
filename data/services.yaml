@@ -1,5 +1,7 @@
 ea_21-X29-_-y08:
-    description: Norwich - Fakenham - King's Lynn or Holt
+    description: Fakenham - King's Lynn
+ea_21-X29-A-y08:
+    description: Fakenham - Norwich
 ea_21-9-E-y08:
     description: Holt - Briston - Melton Constable - Fakenham
 ea_21-X40-_-y08:
@@ -16,5 +18,7 @@ ea_21-XL-_-y08:
     description: Peterborough - Wisbech - King's Lynn - Swaffham - Dereham - Norwich
 ea_21-X11-A-y08:
     description: Norwich - Great Yarmouth - Gorleston - Belton
+ea_21-4-I-y08:
+    description: Wells-next-the-Sea - Sheringham - Cromer
 # ea_21-X1-A-y08:
 #     description: Norwich - Great Yarmouth - Gorleston - Lowestoft

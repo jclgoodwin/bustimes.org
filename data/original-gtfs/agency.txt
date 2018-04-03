@@ -1,3 +1,0 @@
-agency_id,agency_name,agency_url,agency_timezone
-LYNX,Lynx,http://www.lynxbus.co.uk/,Europe/London
-FECS,First Eastern Counties,https://www.firstgroup.com/norfolk-suffolk,Europe/London
