@@ -89,12 +89,15 @@ class Command(BaseCommand):
     def get_operator(self, operator_element):
         "Given an Operator element, returns an operator code for an operator that exists."
 
-        # Get by national operator code
-        operator_code = self.get_operator_code(operator_element, 'NationalOperatorCode')
-        if operator_code:
-            operator = self.get_operator_by('National Operator Codes', operator_code)
-            if operator:
-                return operator
+        for tag_name, scheme in (
+            ('NationalOperatorCode', 'National Operator Codes'),
+            ('LicenceNumber', 'Licence'),
+        ):
+            operator_code = self.get_operator_code(operator_element, tag_name)
+            if operator_code:
+                operator = self.get_operator_by(scheme, operator_code)
+                if operator:
+                    return operator
 
         # Get by regional operator code
         operator_code = self.get_operator_code(operator_element, 'OperatorCode')
