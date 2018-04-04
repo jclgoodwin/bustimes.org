@@ -89,8 +89,8 @@ class ImportIrelandTest(TransactionTestCase):
         self.assertEqual(stop.indicator, 'in')
         self.assertEqual(stop.bearing, '')
         self.assertEqual(stop.timing_status, 'OTH')
-        self.assertEqual(stop.latlong.x, -5.93626793184173)
-        self.assertEqual(stop.latlong.y, 54.5950542848164)
+        self.assertAlmostEqual(stop.latlong.x, -5.93626793184173)
+        self.assertAlmostEqual(stop.latlong.y, 54.5950542848164)
 
         stop = stops.get(atco_code='8460TR000124')
         self.assertEqual(stop.common_name, "Supermac's")
@@ -100,8 +100,8 @@ class ImportIrelandTest(TransactionTestCase):
         self.assertEqual(stop.bearing, '')
         self.assertEqual(stop.timing_status, '')
         self.assertEqual(stop.stop_type, 'TXR')
-        self.assertEqual(stop.latlong.x, -9.05469898181141)
-        self.assertEqual(stop.latlong.y, 53.2719763661735)
+        self.assertAlmostEqual(stop.latlong.x, -9.05469898181141)
+        self.assertAlmostEqual(stop.latlong.y, 53.2719763661735)
         self.assertEqual(stop.admin_area_id, 846)
         self.assertEqual(stop.locality_id, 'E0846001')
 
@@ -124,8 +124,8 @@ class ImportIrelandTest(TransactionTestCase):
         self.assertEqual(stop.street, 'Bridge Street')
         self.assertEqual(stop.indicator, 'opp')
         self.assertEqual(stop.stop_type, 'BCT')  # Modified (not sure it should be)
-        self.assertEqual(stop.latlong.x, -9.054698981718873)
-        self.assertEqual(stop.latlong.y, 53.27197636346384)
+        self.assertAlmostEqual(stop.latlong.x, -9.054698981718873)
+        self.assertAlmostEqual(stop.latlong.y, 53.27197636346384)
         self.assertEqual(stop.admin_area_id, 846)
         self.assertEqual(stop.locality_id, 'E0846001')
 
