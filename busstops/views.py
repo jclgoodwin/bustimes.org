@@ -228,16 +228,19 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
 
 class PlaceDetailView(DetailView):
     model = Place
+    queryset = model.objects.select_related('source')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        context['places'] = self.model.objects.filter(polygon__coveredby=self.object.polygon).exclude(id=self.object.id)
+
         if 'Singapore' in self.object.source.name:
-            context['places'] = Place.objects.filter(polygon__coveredby=self.object.polygon).exclude(id=self.object.id)
-            breadcrumb = list(Place.objects.filter(polygon__covers=self.object.polygon).exclude(id=self.object.id))
+            breadcrumb = list(self.model.objects.filter(polygon__covers=self.object.polygon).exclude(id=self.object.id))
             context['breadcrumb'] = [Region.objects.get(id='SG')] + breadcrumb
-            if not context['places']:
-                context['stops'] = StopPoint.objects.filter(latlong__coveredby=self.object.polygon)
+
+        if not context['places']:
+            context['stops'] = StopPoint.objects.filter(latlong__coveredby=self.object.polygon)
 
         return context
 

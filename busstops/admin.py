@@ -100,6 +100,7 @@ class ServiceCodeAdmin(admin.ModelAdmin):
 
 class PlaceAdmin(admin.ModelAdmin):
     list_filter = ('source',)
+    search_fields = ('name',)
 
 
 admin.site.register(Region)

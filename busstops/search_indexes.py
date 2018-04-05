@@ -1,6 +1,6 @@
 from haystack import indexes
 from django.db.models import Q
-from busstops.models import Locality, Operator, Service
+from busstops.models import Locality, Place, Operator, Service
 
 
 class LocalityIndex(indexes.SearchIndex, indexes.Indexable):
@@ -17,6 +17,19 @@ class LocalityIndex(indexes.SearchIndex, indexes.Indexable):
 
     def read_queryset(self, using=None):
         return self.get_model().objects.all().defer('latlong')
+
+
+class PlaceIndex(indexes.SearchIndex, indexes.Indexable):
+    text = indexes.CharField(document=True, model_attr='name')
+
+    def get_model(self):
+        return Place
+
+    def index_queryset(self, using=None):
+        return self.get_model().objects.all().defer('latlong', 'polygon')
+
+    def read_queryset(self, using=None):
+        return self.get_model().objects.all().defer('latlong', 'polygon')
 
 
 class OperatorIndex(indexes.SearchIndex, indexes.Indexable):
