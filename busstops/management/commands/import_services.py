@@ -249,7 +249,7 @@ class Command(BaseCommand):
 
             if self.region_id == 'NE':
                 description = self.sanitize_description(description)
-            if description != 'Origin - Destination':
+            if description and description != 'Origin - Destination':
                 defaults['description'] = description
 
             parts = service_code.split('_')

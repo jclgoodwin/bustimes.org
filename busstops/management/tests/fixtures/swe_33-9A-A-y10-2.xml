@@ -30102,7 +30102,6 @@
         <NoNewStopsRequired />
       </StopRequirements>
       <Mode>bus</Mode>
-      <Description>Exeter City Centre - Sidmouth - Sidford - Seaton</Description>
       <StandardService>
         <Origin>Sidwell Street</Origin>
         <Destination>Marine Place</Destination>

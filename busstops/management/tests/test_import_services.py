@@ -231,7 +231,7 @@ class ImportServicesTest(TestCase):
         """A file with a JourneyPattern with no JourneyPatternSections should be imported"""
         with warnings.catch_warnings(record=True) as caught_warnings:
             self.do_service('swe_33-9A-A-y10-2', 'GB')
-            self.assertEqual(len(caught_warnings), 2)
+            self.assertEqual(len(caught_warnings), 3)
         self.assertTrue(Service.objects.filter(service_code='swe_33-9A-A-y10').exists())
 
     @freeze_time('1 October 2017')

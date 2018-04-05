@@ -490,7 +490,7 @@ class Service(models.Model):
     def __str__(self):
         if self.line_name or self.line_brand or self.description:
             parts = (self.line_name, self.line_brand, self.description)
-            return ' - '.join(part for part in parts if part != '')
+            return ' - '.join(part for part in parts if part)
         return self.service_code
 
     def has_long_line_name(self):
