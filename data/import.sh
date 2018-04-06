@@ -63,6 +63,30 @@ fi
 
 
 cd ..
+
+# Translink Metro
+metro_old=$(shasum metro.zip)
+wget -QN https://www.opendatani.gov.uk/dataset/6d9677cf-8d03-4851-985c-16f73f7dd5fb/resource/f2c58049-7ca9-4576-b3bd-1b3d8a8674e0/download/metro.zip
+metro_new=$(shasum metro.zip)
+if [[ "$metro_old" != "$metro_new" ]]; then
+    unzip metro.zip
+    echo "Translink Metro"
+fi
+
+# Ulsterbus
+ulb_old=$(shasum ulb.zip)
+wget -QN https://www.opendatani.gov.uk/dataset/c1acee5b-a400-46bd-a795-9bf7637ff879/resource/291cbb54-7bb3-4df7-8599-0c8f49a20be6/download/ulb.zip
+ulb_new=$(shasum ulb.zip)
+if [[ "$ulb_old" != "$ulb_new" ]]; then
+    unzip ulb.zip
+    echo "Ulsterbus"
+fi
+
+if [[ "$metro_old" != "$metro_new" || "$ulb_old" != "$ulb_new"]]; then
+    ../manage.py import_ni_services
+fi
+
+
 ie_nptg_old=$(shasum nptgfinal.xml)
 #wget -qN https://data.dublinked.ie/dataset/14ea12be-9d95-4119-8a9b-1e83cb777fa0/resource/3b7d9d7e-5f0d-4462-b123-2466f1641909/download/nptgfinal.xml
 ie_nptg_new=$(shasum nptgfinal.xml)
