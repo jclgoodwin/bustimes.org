@@ -284,7 +284,7 @@ class ViewsTests(TestCase):
         """The normal and Accelerated Mobile pages versions should be mostly the same
         (but slightly different)
         """
-        for url in ('/operators/AINS', '/operators/ainsleys-chariots', '/operators/AINS?amp'):
+        for url in ('/operators/ains', '/operators/ainsleys-chariots', '/operators/AINS?amp'):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, 'An airline operating company in')

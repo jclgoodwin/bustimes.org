@@ -15,6 +15,7 @@ from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.functional import cached_property
 from multigtfs.models import Route
 from timetables import txc, northern_ireland, gtfs
 from .utils import sign_url
@@ -383,6 +384,7 @@ class Operator(ValidateOnSaveMixin, models.Model):
             return 'An ' + mode  # 'An airline operating company' or 'An  operating company'
         return 'A ' + mode  # 'A hovercraft operating company'
 
+    @cached_property
     def get_licences(self):
         return self.operatorcode_set.filter(source__name='Licence')
 

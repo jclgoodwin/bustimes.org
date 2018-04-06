@@ -452,6 +452,15 @@ class OperatorDetailView(DetailView):
     model = Operator
     queryset = model.objects.select_related('region')
 
+    def get_object(self, **kwargs):
+        try:
+            return super().get_object(**kwargs)
+        except Http404 as e:
+            if self.kwargs['slug'] and not self.kwargs['slug'].isupper():
+                self.kwargs['pk'] = self.kwargs['slug'].upper()
+                return super().get_object(**kwargs)
+            raise e
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['services'] = sorted(self.object.service_set.filter(current=True).defer('geometry'),
