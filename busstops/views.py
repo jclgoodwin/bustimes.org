@@ -470,10 +470,9 @@ class OperatorDetailView(DetailView):
                 service__current=True
             ).first()
             if alternative:
-               return redirect(alternative)
+                return redirect(alternative)
             raise Http404()
         return super().render_to_response(context)
-
 
 
 class ServiceDetailView(DetailView):
