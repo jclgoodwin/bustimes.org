@@ -69,6 +69,7 @@ metro_old=$(shasum metro.zip)
 wget -qN https://www.opendatani.gov.uk/dataset/6d9677cf-8d03-4851-985c-16f73f7dd5fb/resource/f2c58049-7ca9-4576-b3bd-1b3d8a8674e0/download/metro.zip
 metro_new=$(shasum metro.zip)
 if [[ "$metro_old" != "$metro_new" ]]; then
+    rm -r Metro
     unzip metro.zip
     echo "Translink Metro"
 fi
@@ -78,11 +79,12 @@ ulb_old=$(shasum ulb.zip)
 wget -qN https://www.opendatani.gov.uk/dataset/c1acee5b-a400-46bd-a795-9bf7637ff879/resource/291cbb54-7bb3-4df7-8599-0c8f49a20be6/download/ulb.zip
 ulb_new=$(shasum ulb.zip)
 if [[ "$ulb_old" != "$ulb_new" ]]; then
+    rm -r ULB
     unzip ulb.zip
     echo "Ulsterbus"
 fi
 
-if [[ "$metro_old" != "$metro_new" || "$ulb_old" != "$ulb_new"]]; then
+if [ "$metro_old" != "$metro_new" ] || [ "$ulb_old" != "$ulb_new" ]; then
     ../manage.py import_ni_services
 fi
 
