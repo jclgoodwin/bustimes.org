@@ -446,7 +446,7 @@ def stop_json(_, pk):
     }, safe=False)
 
 
-class OperatorDetailView(UppercasePrimaryKeyMixin, DetailView):
+class OperatorDetailView(DetailView):
     "An operator and the services it operates"
 
     model = Operator
@@ -454,14 +454,26 @@ class OperatorDetailView(UppercasePrimaryKeyMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['notes'] = self.object.note_set.all()
         context['services'] = sorted(self.object.service_set.filter(current=True).defer('geometry'),
                                      key=Service.get_order)
-        if not context['services']:
-            raise Http404()
-        context['modes'] = {service.mode for service in context['services'] if service.mode}
-        context['breadcrumb'] = [self.object.region]
+        if context['services']:
+            context['notes'] = self.object.note_set.all()
+            context['modes'] = {service.mode for service in context['services'] if service.mode}
+            context['breadcrumb'] = [self.object.region]
         return context
+
+    def render_to_response(self, context):
+        if not context['services']:
+            alternative = self.model.objects.filter(
+                operatorcode__code=self.object.id,
+                operatorcode__source__name='National Operator Codes',
+                service__current=True
+            ).first()
+            if alternative:
+               return redirect(alternative)
+            raise Http404()
+        return super().render_to_response(context)
+
 
 
 class ServiceDetailView(DetailView):

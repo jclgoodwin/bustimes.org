@@ -444,6 +444,11 @@ class JourneyPatternTimingLink(object):
         self.origin.parent = self.destination.parent = self
         self.runtime = parse_duration(element.find('txc:RunTime', NS).text)
         self.id = element.get('id')
+        if self.id and self.id.startswith('JPL_8-229-B-y11-1-'):
+            if self.origin.stop.atco_code == '4200F063300':
+                self.origin.stop.atco_code = '4200F147412'
+            if self.destination.stop.atco_code == '4200F063300':
+                self.destination.stop.atco_code = '4200F147412'
 
 
 def get_deadruns(journey_element):
@@ -825,7 +830,7 @@ class Timetable(object):
 
     def date_options(self):
         start_date = min(self.date, datetime.date.today())
-        end_date = start_date + datetime.timedelta(weeks=2)
+        end_date = start_date + datetime.timedelta(weeks=4)
         while start_date <= end_date:
             yield start_date
             start_date += datetime.timedelta(days=1)
