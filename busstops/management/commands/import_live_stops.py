@@ -96,4 +96,4 @@ class Command(BaseCommand):
                     )
             print(stop_ids)
             stoppoints = StopPoint.objects.filter(pk__in=stop_ids)
-            live_source.stoppoint_set.add(*stoppoints)
+            live_source.stoppoint_set.set(*stoppoints)

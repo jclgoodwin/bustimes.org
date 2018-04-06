@@ -45,7 +45,7 @@ class Departures(object):
         return {
             'params': self.get_request_params(),
             'headers': self.get_request_headers(),
-            'timeout': 2
+            'timeout': 5
         }
 
     def get_response(self):
@@ -437,8 +437,12 @@ def add_stagecoach_departures(stop, services_dict, departures):
 def services_match(a, b):
     if type(a) == Service:
         a = a.line_name
+    elif a == 'CH':
+        a = 'Coasthopper'
     if type(b) == Service:
         b = b.line_name
+    elif b == 'CH':
+        b = 'Coasthopper'
     return a == b
 
 
@@ -564,7 +568,7 @@ def get_departures(stop, services):
                     ('buck', 'buckinghamshire'),
                     ('camb', 'cambridgeshire'),
                     ('card', 'cardiff'),
-                    ('swin', 'swindon'),
+                    # ('swin', 'swindon'),
                     ('metr', 'metrobus')
             ):
                 if live_source_name in live_sources:
