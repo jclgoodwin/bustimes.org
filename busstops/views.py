@@ -73,13 +73,9 @@ def not_found(request, exception):
                 'localities': localities,
             }
         else:
-            for model in (Operator, StopPoint, Locality):
-                model_name = model.__name__.lower()
-                if model_name in view_name:
-                    context = {
-                        model_name: model.objects.filter(**request.resolver_match.kwargs).first()
-                    }
-                    break
+            context = {
+                'exception': exception
+            }
     response = render(request, '404.html', context)
     response.status_code = 404
     return response
@@ -329,7 +325,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         context['stops'] = self.object.stoppoint_set.filter(active=True).defer('osm')
 
         if not (context['localities'] or context['stops']):
-            raise Http404()
+            raise Http404('Sorry, it looks like no services currently stop at {}'.format(self.object))
         elif context['stops']:
             context['services'] = sorted(Service.objects.filter(
                 stops__locality=self.object,
@@ -365,7 +361,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         )
 
         if not (self.object.active or context['services']):
-            raise Http404()
+            raise Http404('Sorry, it looks like no services currently stop at {}'.format(self.object))
 
         departures = cache.get(self.object.atco_code)
         if not departures:
@@ -456,7 +452,7 @@ class OperatorDetailView(DetailView):
         try:
             return super().get_object(**kwargs)
         except Http404 as e:
-            if self.kwargs['slug'] and not self.kwargs['slug'].isupper():
+            if 'slug' in self.kwargs:
                 self.kwargs['pk'] = self.kwargs['slug'].upper()
                 return super().get_object(**kwargs)
             raise e
@@ -480,7 +476,7 @@ class OperatorDetailView(DetailView):
             ).first()
             if alternative:
                 return redirect(alternative)
-            raise Http404()
+            raise Http404('Sorry, it looks like no services are currently operated by {}'.format(self.object))
         return super().render_to_response(context)
 
 
