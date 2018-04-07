@@ -115,18 +115,22 @@ class ImportOperatorsTest(TestCase):
 
         # is a Twitter username correctly imported?
         with vcr.use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'operator_twitter.yaml')):
-            from ..commands.import_operator_twitter import Command
+            from ..commands import import_operator_twitter
             call_command('import_operator_twitter')
+
+        Command = import_operator_twitter.Command
 
         bluebus.refresh_from_db()
         self.assertEqual(bluebus.twitter, 'sanderscoaches')
 
         # if there's an error connecting to the website, operator.url = ''
-        bluebus.twitter = '' # ensure website will be crawled again
+        bluebus.twitter = ''  # ensure website will be crawled again
         bluebus.save()
 
-        with patch('requests.get', side_effect=RequestException):
+        with patch.object(import_operator_twitter.HTMLSession, 'get') as get:
+            get.side_effect = RequestException
             Command().handle()
+
         bluebus.refresh_from_db()
         self.assertEqual(bluebus.url, '')
 
