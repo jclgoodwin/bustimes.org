@@ -23,7 +23,7 @@ class Command(BaseCommand):
                 path = path[1:]
             return path
 
-    def handle(self, *args, **kwargs):
+    def handle(cls, *args, **kwargs):
         session = HTMLSession()
 
         for operator in Operator.objects.filter(service__current=True, twitter='').exclude(url='').distinct():
@@ -34,7 +34,7 @@ class Command(BaseCommand):
                 operator.save()
                 continue
             for link in r.html.links:
-                twitter = self.get_from_link(link)
+                twitter = cls.get_from_link(link)
                 if twitter:
                     operator.twitter = twitter
                     operator.save()
