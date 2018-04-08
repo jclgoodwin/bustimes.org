@@ -1,2 +1,0 @@
-agency_id,agency_name,agency_url,agency_timezone,agency_lang,agency_phone,agency_fare_url,agency_email
-FLIXBUS,FlixBus,https://www.flixbus.com/?wt_mc=earned.earned.earned.maps.ndovloket.ndovloket.ndovloket.ad,UTC,en,+4930300137300,https://shop.flixbus.com/?wt_mc=earned.earned.earned.maps.ndovloket.ndovloket.ndovloket.ad,service@flixbus.com

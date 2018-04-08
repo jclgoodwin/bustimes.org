@@ -2,7 +2,7 @@ import datetime
 import difflib
 from django.db.models import Min, Q, Prefetch
 from django.utils.text import slugify
-from multigtfs.models import Feed, Trip, StopTime
+from multigtfs.models import Trip, StopTime
 from .northern_ireland import Grouping, Timetable, Row
 
 
@@ -115,35 +115,4 @@ def get_timetable(routes, day=None, collection=None):
     t.date = day
     for grouping in t.groupings:
         grouping.name = get_grouping_name(grouping)
-        for row in grouping.rows:
-            if collection in {'ouibus', 'metz', 'nancy'}:
-                row.part.stop.atco_code = collection + '-' + row.part.stop.atco_code
-            elif collection == 'flixbus':
-                row.part.stop.atco_code = collection + '-' + row.part.stop.atco_code[8:]
     return t
-
-
-def get_timetables(service_code, day):
-    collection, route_id = service_code.split('-', 1)
-
-    if len(collection) == 10:
-        feed = Feed.objects.filter(name__startswith=collection)
-    else:
-        feed = Feed.objects.filter(name=collection)
-    try:
-        feed = feed.latest('created')
-    except Feed.DoesNotExist:
-        return
-
-    if collection == 'flixbus':
-        routes = feed.route_set.filter(route_id=collection.upper() + ':' + route_id)
-    elif collection in {'ouibus', 'metz', 'nancy', 'citymapper'}:
-        routes = feed.route_set.filter(route_id=route_id)
-    else:  # Ireland
-        route_id += '-'
-        routes = feed.route_set.filter(route_id__startswith=route_id)
-
-    timetable = get_timetable(routes, day=day, collection=collection)
-
-    if timetable:
-        return [timetable]
