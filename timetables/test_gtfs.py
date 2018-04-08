@@ -70,8 +70,8 @@ class GTFSTest(TestCase):
         service = Service.objects.get(service_code='mortons-165')
         timetable = service.get_timetables(date(2017, 6, 7))[0]
         timetable.groupings.sort(key=lambda g: str(g), reverse=True)
-        self.assertEqual(str(timetable.groupings[0]), 'Merrion, Merlyn Park - Citywest, Castle House')
-        self.assertEqual(str(timetable.groupings[1]), 'Citywest, Castle House - Ballsbridge, Ailesbury Road')
+        self.assertEqual(str(timetable.groupings[0]), 'Merrion - Citywest')
+        self.assertEqual(str(timetable.groupings[1]), 'Citywest - Ballsbridge')
         self.assertEqual(timetable.groupings[0].rows[0].times, [time(7, 45)])
         self.assertEqual(timetable.groupings[0].rows[4].times, [time(7, 52)])
         self.assertEqual(timetable.groupings[0].rows[6].times, [time(8, 1)])

@@ -8,11 +8,12 @@ from .northern_ireland import Grouping, Timetable, Row
 
 def get_grouping_name_part(stop_name):
     parts = stop_name.split(', ')
-    if len(parts) == 2:
+    if len(parts) > 1:
         if slugify(parts[1]).startswith(slugify(parts[0])):
             return parts[1]
         if slugify(parts[1]) in slugify(parts[0]):
             return parts[0]
+        return parts[0]
     return stop_name
 
 
