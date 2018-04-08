@@ -76,7 +76,7 @@ class Command(BaseCommand):
         for route in feed.route_set.all():
             if route.short_name:
                 route_id = route.short_name
-            elif len(route.long_name <= 4):
+            elif len(route.long_name) <= 4:
                 route_id = route.long_name
             else:
                 route_id = route.route_id.split()[0]
