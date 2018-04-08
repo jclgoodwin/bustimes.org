@@ -135,14 +135,10 @@ class ViewsTests(TestCase):
             address='10 King Road\nIpswich',
             phone='0800 1111',
             email='ainsley@example.com',
-            url='http://isyourgirlfriendahorse.com'
+            url='http://www.ouibus.com',
+            twitter='dril'
         )
-        cls.nuventure = Operator.objects.create(
-            pk='VENT', name='Nu-Venture', vehicle_mode='bus', region_id='N'
-        )
-        cls.flixbus = Operator.objects.create(
-            pk='FLIXBUS', name='FlixBus', vehicle_mode='coach', region_id='N', url='http://www.flixbus.com'
-        )
+        cls.nuventure = Operator.objects.create(pk='VENT', name='Nu-Venture', vehicle_mode='bus', region_id='N')
         cls.service.operator.add(cls.chariots)
         cls.inactive_service.operator.add(cls.chariots)
 
@@ -293,7 +289,8 @@ class ViewsTests(TestCase):
             self.assertContains(response, '&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#97;&#105;' +
                                 '&#110;&#115;&#108;&#101;&#121;&#64;&#101;&#120;&#97;&#109;' +
                                 '&#112;&#108;&#101;&#46;&#99;&#111;&#109;')
-            self.assertContains(response, 'http://isyourgirlfriendahorse.com')
+            self.assertContains(response, 'viglink')
+            self.assertContains(response, '@dril on Twitter')
             self.assertContains(response, 'Mind your head')  # Note
 
         self.assertContains(response, '<style amp-custom>')
@@ -320,21 +317,10 @@ class ViewsTests(TestCase):
     def test_service(self):
         response = self.client.get(self.service.get_absolute_url())
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'http://isyourgirlfriendahorse.com')
+        self.assertContains(response, 'ouibus')
+        self.assertContains(response, '@dril on Twitter')
         self.assertContains(response, 'Mind your head')  # Note
         self.assertEqual(self.note.get_absolute_url(), '/operators/ainsleys-chariots')
-
-    def test_service_flixbus(self):
-        self.service.operator.set([self.flixbus])
-        self.service.line_name = 'FlixBus'
-        self.service.save()
-
-        response = self.client.get(self.service.get_absolute_url())
-        self.assertContains(response, 'Buy tickets from FlixBus')
-        self.assertContains(response, 'viglink')
-
-        response = self.client.get('/operators/FLIXBUS')
-        self.assertContains(response, 'viglink')
 
     def test_service_redirect(self):
         response = self.client.get('/services/45B')

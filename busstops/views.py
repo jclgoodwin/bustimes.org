@@ -561,16 +561,6 @@ class ServiceDetailView(DetailView):
                     'url': self.object.get_megabus_url(),
                     'text': 'Buy tickets from megabus.com'
                 })
-            elif self.object.line_name == 'FlixBus':
-                context['links'].append({
-                    'url': viglink('https://www.flixbus.co.uk'),
-                    'text': 'Buy tickets from FlixBus'
-                })
-            elif self.object.line_name == 'Ouibus':
-                context['links'].append({
-                    'url': viglink('https://www.ouibus.com'),
-                    'text': 'Buy tickets from Ouibus'
-                })
             else:
                 for operator in context['operators']:
                     if operator.url.startswith('http'):
