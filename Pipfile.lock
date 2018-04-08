@@ -423,14 +423,6 @@
         }
     },
     "develop": {
-        "appnope": {
-            "hashes": [
-                "sha256:5b26757dc6f79a3b7dc9fab95359328d5747fcb2409d331ea66d0272b90ab2a0",
-                "sha256:8b995ffe925347a2138d7ac0fe77155e4311a0ea6d6da4f5128fe4b3cbe5ed71"
-            ],
-            "markers": "sys_platform == 'darwin'",
-            "version": "==0.1.0"
-        },
         "backcall": {
             "hashes": [
                 "sha256:38ecd85be2c1e78f77fd91700c76e14667dc21e2713b63876c0eb901196e01e4",
@@ -451,14 +443,6 @@
                 "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"
             ],
             "version": "==3.0.4"
-        },
-        "colorama": {
-            "hashes": [
-                "sha256:463f8483208e921368c9f306094eb6f725c6ca42b0f97e313cb5d5512459feda",
-                "sha256:48eb22f4f8461b1df5734a074b57042430fb06e1d61bd1e11b078c0fe6d7a1f1"
-            ],
-            "markers": "sys_platform == 'win32'",
-            "version": "==0.3.9"
         },
         "configparser": {
             "hashes": [
@@ -560,7 +544,7 @@
                 "sha256:6bd0f6ad48ec2aa117d3d141940d484deccda84d4fcd884f5c3d93c23ecd8c79",
                 "sha256:8ad8c4783bf61ded74527bffb48ed9b54166685e4230386a9ed9b1279e2df5b1"
             ],
-            "markers": "python_version == '3.3'",
+            "markers": "python_version < '3.4'",
             "version": "==1.1.6"
         },
         "flake8": {
@@ -588,11 +572,11 @@
         },
         "ipython": {
             "hashes": [
-                "sha256:938da96f2f5f50d82add1947958b7432e9f330cef7703210bffd1a783d7720ab",
-                "sha256:c785ab502b1a63624baeb89fedb873a118d4da6c9a796ae06e4f4aaef74e9ea0"
+                "sha256:85882f97d75122ff8cdfe129215a408085a26039527110c8d4a2b8a5e45b7639",
+                "sha256:a6ac981381b3f5f604b37a293369963485200e3639fb0404fa76092383c10c41"
             ],
             "index": "pypi",
-            "version": "==6.3.0"
+            "version": "==6.3.1"
         },
         "ipython-genutils": {
             "hashes": [
@@ -662,7 +646,7 @@
                 "sha256:d32550b75a818b289bd4c1f96b60c89957811da205afcceab75bc8b4857ea5b3",
                 "sha256:db3e43032d23787d3e9aec8c7ef1e0d2c3c589d5f303477661ebda2ca6d4bfba"
             ],
-            "markers": "python_version == '3.3'",
+            "markers": "python_version in '2.6 2.7 3.2 3.3'",
             "version": "==2.3.0"
         },
         "pbr": {
@@ -799,15 +783,6 @@
             ],
             "version": "==4.3.2"
         },
-        "typing": {
-            "hashes": [
-                "sha256:3a887b021a77b292e151afb75323dea88a7bc1b3dfa92176cff8e44c8b68bddf",
-                "sha256:b2c689d54e1144bbcfd191b0832980a21c2dbcf7b5ff7a66248a60c90e951eb8",
-                "sha256:d400a9344254803a2368533e4533a4200d21eb7b6b729c173bc38201a74db3f2"
-            ],
-            "markers": "python_version <= '3.4'",
-            "version": "==3.6.4"
-        },
         "urllib3": {
             "hashes": [
                 "sha256:06330f386d6e4b195fbfc736b297f58c5a892e4440e54d294d7004e3a9bbea1b",
@@ -829,13 +804,6 @@
                 "sha256:f4ebe71925af7b40a864553f761ed559b43544f8f71746c2d756c7fe788ade7c"
             ],
             "version": "==0.1.7"
-        },
-        "win-unicode-console": {
-            "hashes": [
-                "sha256:d4142d4d56d46f449d6f00536a73625a871cba040f0bc1a2e305a04578f07d1e"
-            ],
-            "markers": "sys_platform == 'win32' and python_version < '3.6'",
-            "version": "==0.5"
         },
         "wrapt": {
             "hashes": [
