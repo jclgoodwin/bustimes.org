@@ -106,7 +106,7 @@ def import_route_stops(region, service, slug, url, session):
                     'order': i,
                     'timing_status': 'OTH'
                 },
-                direction=tr.td.get('class')[0].lower(),
+                direction=tr.th.find_next('td').get('class')[0].lower(),
                 stop_id=atco_code,
                 service=service
             )
