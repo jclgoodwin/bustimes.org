@@ -19,7 +19,7 @@ from django.core.cache import cache
 from django.core.mail import EmailMessage
 from haystack.query import SearchQuerySet
 from departures import live
-from .utils import format_gbp, viglink
+from .utils import format_gbp
 from .models import (Region, StopPoint, AdminArea, Locality, District,
                      Operator, Service, Note, Image, Journey, Place)
 from .forms import ContactForm, ImageForm
