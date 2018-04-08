@@ -259,7 +259,7 @@ IE_COLLECTIONS = (
     'dualway', 'tralee', 'sbloom', 'mcginley', 'swordsexpress', 'suirway',
     'sdoherty', 'pjmartley', 'mortons', 'mgray', 'mcgrath', 'mangan',
     'lallycoach', 'halpenny', 'eurobus', 'donnellys', 'cmadigan', 'bkavanagh',
-    'ptkkenneally', 'farragher', 'fedateoranta'
+    'ptkkenneally', 'farragher', 'fedateoranta', 'ashbourneconnect'
 )
 
 SITE_ID = 1

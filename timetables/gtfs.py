@@ -1,20 +1,12 @@
 import datetime
 import difflib
 from django.db.models import Min, Q, Prefetch
-from django.utils.text import slugify
 from multigtfs.models import Trip, StopTime
 from .northern_ireland import Grouping, Timetable, Row
 
 
 def get_grouping_name_part(stop_name):
-    parts = stop_name.split(', ')
-    if len(parts) > 1:
-        if slugify(parts[1]).startswith(slugify(parts[0])):
-            return parts[1]
-        if slugify(parts[1]) in slugify(parts[0]):
-            return parts[0]
-        return parts[0]
-    return stop_name
+    return stop_name.split(', ')[0]
 
 
 def get_grouping_name(grouping):
