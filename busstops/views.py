@@ -565,7 +565,7 @@ class ServiceDetailView(DetailView):
                 for operator in context['operators']:
                     if operator.url.startswith('http'):
                         context['links'].append({
-                            'url': operator.url,
+                            'url': operator.get_url(),
                             'text': '{} website'.format(operator.name)
                         })
                     if operator.twitter:

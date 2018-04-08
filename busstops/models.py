@@ -366,6 +366,15 @@ class Operator(ValidateOnSaveMixin, models.Model):
     def __str__(self):
         return str(self.name or self.id)
 
+    def get_url(self):
+        if self.name == 'National Express Hotel Hoppa':
+            return 'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&a=3022528&g=24233768'
+        if self.name == 'National Express Airport':
+            return 'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&a=3022528&g=24233764'
+        if self.name == 'National Express' or self.name == 'National Express Shuttle':
+            return 'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&a=3022528&g=21039402'
+        return self.url
+
     def get_absolute_url(self):
         return reverse('operator_detail', args=(self.slug or self.id,))
 
@@ -547,6 +556,12 @@ class Service(models.Model):
         )
         return 'http://www.{}/lts/#/timetables?{}'.format(domain, urlencode(query)), name
 
+    def is_megabus(self):
+        return (self.line_name in {'FALCON', 'Oxford Tube'}
+                or self.pk in {'bed_1-X5-Z-y08', 'YWAX062', 'HIAG010', 'FSAM009', 'FSAG009', 'EDAO900', 'EDAAIR0',
+                               'YSBX010', 'ABAX010', 'ABAO010'}
+                or any(o.pk in {'MEGA', 'MBGD', 'SCMG'} for o in self.operator.all()))
+
     def get_megabus_url(self):
         # Using a tuple of tuples, instead of a dict, because the order of dicts is nondeterministic
         query = (
@@ -613,12 +628,6 @@ class Service(models.Model):
             return '%s/XSLT_TTB_REQUEST?%s' % (base_url, urlencode(query)), 'Traveline'
 
         return None, None
-
-    def is_megabus(self):
-        return (self.line_name in {'FALCON', 'Oxford Tube'}
-                or self.pk in {'bed_1-X5-Z-y08', 'YWAX062', 'HIAG010', 'FSAM009', 'FSAG009', 'EDAO900', 'EDAAIR0',
-                               'YSBX010', 'ABAX010', 'ABAO010'}
-                or any(o.pk in {'MEGA', 'MBGD', 'SCMG'} for o in self.operator.all()))
 
     def add_flickr_photo(self, url):
         photo_id = url.split('/photos/', 1)[1].split('/')[1]
