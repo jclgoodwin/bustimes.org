@@ -81,7 +81,10 @@ class Command(BaseCommand):
             else:
                 route_id = route.route_id.split()[0]
 
-            service_code = collection + '-' + route_id
+            if collection == 'eurobus':
+                service_code = 'dublincoach' + '-' + route_id
+            else:
+                service_code = collection + '-' + route_id
             assert len(service_code) <= 24
 
             timetable = get_timetable((route,), None)

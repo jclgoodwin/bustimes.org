@@ -706,9 +706,8 @@ class Service(models.Model):
             return []
 
         if self.region_id in {'UL', 'LE', 'MU', 'CO'}:
-            collection = self.service_code.split('-', 1)[0]
-            route_ids = self.servicecode_set.filter(scheme=collection + ' GTFS').values_list('code', flat=True)
-            return [gtfs.get_timetable(Route.objects.filter(feed__name=collection, route_id__in=route_ids), day)]
+            service_codes = self.servicecode_set.filter(scheme__endswith=' GTFS')
+            return [gtfs.get_timetable(service_code.get_routes(), day) for service_code in service_codes]
 
         cache_key = '{}:{}'.format(self.service_code, self.date)
         timetables = cache.get(cache_key)
@@ -748,6 +747,9 @@ class ServiceCode(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.scheme, self.code)
+
+    def get_routes(self):
+        return Route.objects.filter(feed__name=self.scheme.split()[0], route_id=self.code)
 
 
 class ServiceDate(models.Model):
