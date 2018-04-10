@@ -129,7 +129,7 @@ def contact(request):
 @csrf_exempt
 def awin_transaction(request):
     json_string = request.POST.get('AwinTransactionPush') or request.body
-    if not json_string
+    if not json_string:
         return HttpResponseBadRequest()
     data = json.loads(json_string)
     message = '\n'.join('%s: %s' % pair for pair in data.items())
