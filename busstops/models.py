@@ -707,32 +707,32 @@ class Service(models.Model):
 
         if self.region_id in {'UL', 'LE', 'MU', 'CO'}:
             service_codes = self.servicecode_set.filter(scheme__endswith=' GTFS')
-            return [gtfs.get_timetable(service_code.get_routes(), day) for service_code in service_codes]
+            timetables = [gtfs.get_timetable(service_code.get_routes(), day) for service_code in service_codes]
+        else:
+            cache_key = '{}:{}'.format(self.service_code, self.date)
+            timetables = cache.get(cache_key)
 
-        cache_key = '{}:{}'.format(self.service_code, self.date)
-        timetables = cache.get(cache_key)
+            if timetables is None:
+                timetables = []
+                for xml_file in self.get_files_from_zipfile():
+                    with xml_file:
+                        timetable = (txc.Timetable(xml_file, day, self.description))
+                    del timetable.journeypatterns
+                    del timetable.stops
+                    del timetable.operators
+                    del timetable.element
+                    timetables.append(timetable)
+                cache.set(cache_key, timetables)
 
-        if timetables is None:
-            timetables = []
-            for xml_file in self.get_files_from_zipfile():
-                with xml_file:
-                    timetable = (txc.Timetable(xml_file, day, self.description))
-                del timetable.journeypatterns
-                del timetable.stops
-                del timetable.operators
-                del timetable.element
-                timetables.append(timetable)
-            cache.set(cache_key, timetables)
-
-        timetables = [timetable for timetable in timetables if timetable.operating_period.contains(day)]
-        for timetable in timetables:
-            timetable.set_date(day)
-            timetable.groupings = [g for g in timetable.groupings if g.rows and g.rows[0].times]
-            for grouping in timetable.groupings:
-                if len(grouping.rows[0].times) > 100:
-                    self.show_timetable = False
-                    self.save()
-                    return
+            timetables = [timetable for timetable in timetables if timetable.operating_period.contains(day)]
+            for timetable in timetables:
+                timetable.set_date(day)
+                timetable.groupings = [g for g in timetable.groupings if g.rows and g.rows[0].times]
+                for grouping in timetable.groupings:
+                    if len(grouping.rows[0].times) > 100:
+                        self.show_timetable = False
+                        self.save()
+                        return
 
         return [t for t in timetables if t.groupings] or timetables[:1]
 
