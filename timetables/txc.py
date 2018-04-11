@@ -150,9 +150,7 @@ class Row(object):
 
     def get_order(self):
         for number in self.sequencenumbers:
-            if number:
-                return number
-        return 0
+            return number
 
 
 class Cell(object):
@@ -214,7 +212,8 @@ class Grouping(object):
         return self.rows and self.rows[-1].part.stop.is_at(locality_name)
 
     def do_heads_and_feet(self):
-        self.rows.sort(key=Row.get_order)
+        if all(len(row.sequencenumbers) == 1 for row in self.rows):
+            self.rows.sort(key=Row.get_order)
 
         journeys = [vj for vj in self.journeys if vj.should_show(self.parent.date, self.parent)]
         if not journeys:
@@ -356,7 +355,8 @@ class JourneyPattern(object):
                 assert instruction[2:] == existing_row.part.stop.atco_code
                 row.part.row = existing_row
 
-            existing_row.sequencenumbers.add(row.part.sequencenumber)
+            if row.part.sequencenumber:
+                existing_row.sequencenumbers.add(row.part.sequencenumber)
             i += 1
 
     def get_grouping(self, element, groupings, routes):
