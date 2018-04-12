@@ -587,6 +587,8 @@ class VehicleJourney(object):
         if self.code.startswith('VJ_21-X29-_-y08-1') and not self.journeypattern.grouping.description_parts:
             # don't show Stagecoach X29 Norwich - Fakenham journeys
             return False
+        if self.code.startswith('VJ_34-A1-_-y10-1') and self.departure_time == datetime.time(14, 39):
+            return False
         if not self.operating_profile:
             return timetable and timetable.operating_profile.should_show(date)
         if timetable and timetable.service_code == 'PKBO301':
