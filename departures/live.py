@@ -9,7 +9,7 @@ import logging
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.utils.text import slugify
-from django.utils.timezone import make_naive
+from django.utils.timezone import is_naive, make_naive
 from busstops.models import Operator, Service, StopPoint
 
 
@@ -452,9 +452,9 @@ def can_sort(departure):
 
 def get_departure_order(departure):
     if departure['time']:
-        if departure['time'].tzinfo:
-            return make_naive(departure['time'])
-        return departure['time']
+        if is_naive(departure['time']):
+            return departure['time']
+        return make_naive(departure['time'])
     return make_naive(departure['live'])
 
 
@@ -470,7 +470,7 @@ def blend(departures, live_rows):
                     or 'live' not in row and (
                         live_row['time'] is None
                         or type(live_row['time']) is str
-                        or make_naive(row['time']) <= live_row['time']
+                        or (make_naive(row['time']) if is_naive(live_row['time']) else row['time']) <= live_row['time']
                     )
                 )
             ):
@@ -484,7 +484,7 @@ def blend(departures, live_rows):
         departures.sort(key=get_departure_order)
 
 
-def get_departures(stop, services):
+def get_departures(stop, services, bot=False):
     """Given a StopPoint object and an iterable of Service objects,
     returns a tuple containing a context dictionary and a max_age integer
     """
@@ -552,7 +552,7 @@ def get_departures(stop, services):
     one_hour = datetime.timedelta(hours=1)
     one_hour_ago = stop.stopusageusage_set.filter(datetime__lte=now - one_hour, journey__service__current=True)
 
-    if not departures or (departures[0]['time'] - now) < one_hour or one_hour_ago.exists():
+    if not bot and (not departures or (departures[0]['time'] - now) < one_hour or one_hour_ago.exists()):
 
         operators = Operator.objects.filter(service__stops=stop,
                                             service__current=True).distinct()
@@ -590,12 +590,17 @@ def get_departures(stop, services):
             if live_rows:
                 blend(departures, live_rows)
         # Norfolk
-        elif departures and stop.atco_code[:3] == '290':
+        elif departures and stop.atco_code[:3] in {'290', '390'}:
             live_rows = LambdaDepartures(stop, services, now).get_departures()
             if live_rows:
                 blend(departures, live_rows)
 
+    if bot:
+        max_age = 0
+    else:
+        max_age = 60
+
     return ({
         'departures': departures,
         'today': now.date(),
-    },  60)
+    },  max_age)
