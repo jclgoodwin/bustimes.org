@@ -16,6 +16,7 @@ from django.core.files.base import ContentFile
 from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
+from django.utils.text import slugify
 from multigtfs.models import Route
 from timetables import txc, northern_ireland, gtfs
 from .utils import sign_url
@@ -307,13 +308,16 @@ class StopPoint(models.Model):
 
     prepositions = {'opp', 'adj', 'at', 'o/s', 'nr', 'before', 'after', 'by', 'on', 'in', 'opposite', 'outside'}
 
+    def indicator_in_prepositions(self):
+        return self.indicator in self.prepositions
+
     def get_qualified_name(self):
         if self.locality:
             locality_name = self.locality.name.replace(' Town Centre', '').replace(' City Centre', '')
             if self.common_name in locality_name:
                 return locality_name.replace(self.common_name, str(self))  # Cardiff Airport
-            if locality_name.replace('\'', '').replace('\u2019', '') not in self.common_name.replace('\'', ''):
-                if self.indicator in self.prepositions:
+            if slugify(locality_name) not in slugify(self.common_name):
+                if self.indicator_in_prepositions():
                     return '%s, %s %s' % (locality_name, self.indicator, self.common_name)
                 return '%s %s' % (locality_name, self)
         elif self.town not in self.common_name:

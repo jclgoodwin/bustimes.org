@@ -2,7 +2,12 @@
 {% for stop in stops %}
     <li itemscope itemtype="https://schema.org/BusStop" data-indicator="{{ stop.indicator }}"{% if stop.get_heading is not None %} data-heading="{{ stop.get_heading }}"{% endif %}>
         <a href="{{ stop.get_absolute_url }}">
-            <span itemprop="name">{{ stop }}</span>
+            <span itemprop="name">
+                {% if not stop.indicator_in_prepositions and object.common_name == stop.common_name %}
+                    {{ stop.indicator }}
+                {% else %}
+                    {{ stop }}
+                {% endif %}</span>
             {% if stop.latlong %}
             <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
                 <meta itemprop="latitude" content="{{ stop.latlong.y }}" />
