@@ -48,7 +48,7 @@
                 <table class="timetable">
                     <tbody>
                         {% for row in grouping.rows %}
-                            <tr{% if not forloop.first and not forloop.last %} class="{{ row.part.timingstatus }}"{% endif %}>
+                            <tr{% if not row.first and not row.last %} class="{{ row.part.timingstatus }}"{% endif %}>
                                 <th>
                             {% if row.part.stop.stop %}
                                 <a href="{{ row.part.stop.stop.get_absolute_url }}">{{ row.part.stop.stop.get_qualified_name }}</a>

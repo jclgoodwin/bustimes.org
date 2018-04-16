@@ -328,6 +328,7 @@ class JourneyPattern(object):
         diff = difflib.ndiff(previous_list, current_list)
 
         i = 0
+        first = True
         for row in rows:
             if i < len(self.grouping.rows):
                 existing_row = self.grouping.rows[i]
@@ -355,9 +356,14 @@ class JourneyPattern(object):
                 assert instruction[2:] == existing_row.part.stop.atco_code
                 row.part.row = existing_row
 
+            if first:
+                existing_row.first = True  # row is the first row of this pattern
+                first = False
             if row.part.sequencenumber:
                 existing_row.sequencenumbers.add(row.part.sequencenumber)
             i += 1
+
+        existing_row.last = True # row is the last row of this pattern
 
     def get_grouping(self, element, groupings, routes):
         route = element.find('txc:RouteRef', NS)
