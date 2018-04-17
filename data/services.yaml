@@ -8,6 +8,8 @@ ea_21-X40-_-y08:
     description: Norwich - Cromer - Sheringham
 ea_21-X44-_-y08:
     description: Norwich - Aylsham - Cromer - Sheringham
+ea_21-44A-_-y08:
+    description: Norwich - Aylsham - Cromer - Sheringham
 ea_21-X55-_-y08:
     description: Norwich - Sprowston - North Walsham
 ea_21-45-A-y08:
@@ -20,5 +22,17 @@ ea_21-X11-A-y08:
     description: Norwich - Great Yarmouth - Gorleston - Belton
 ea_21-4-I-y08:
     description: Wells-next-the-Sea - Sheringham - Cromer
-# ea_21-X1-A-y08:
-#     description: Norwich - Great Yarmouth - Gorleston - Lowestoft
+swe_47-58-_-y10:
+    current: False
+swe_47-58A-_-y10:
+    current: False
+swe_47-58B-_-y10:
+    current: False
+swe_47-58C-_-y10:
+    current: False
+ea_21-5-B-y08:
+    description: North Walsham - Cromer - Sheringham - Holt
+ea_21-43-_-y08:
+    description: Norwich - Reepham - Aylsham
+ea_21-43A-_-y08:
+    description: Norwich - Aylsham
