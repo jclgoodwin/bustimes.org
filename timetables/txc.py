@@ -363,7 +363,7 @@ class JourneyPattern(object):
                 existing_row.sequencenumbers.add(row.part.sequencenumber)
             i += 1
 
-        existing_row.last = True # row is the last row of this pattern
+        existing_row.last = True  # row is the last row of this pattern
 
     def get_grouping(self, element, groupings, routes):
         route = element.find('txc:RouteRef', NS)
