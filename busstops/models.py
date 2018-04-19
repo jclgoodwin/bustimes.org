@@ -759,9 +759,49 @@ class ServiceCode(models.Model):
 class ServiceDate(models.Model):
     service = models.ForeignKey('Service', models.CASCADE)
     date = models.DateField()
+    end = models.DateTimeField(null=True)
 
     class Meta():
         unique_together = ('service', 'date')
+
+
+class Variation(models.Model):
+    registration_number = models.CharField(max_length=20)
+    variation_number = models.PositiveIntegerField()
+    service_number = models.CharField(max_length=20)
+    traffic_area = models.CharField(max_length=1)
+    licence_number = models.CharField(max_length=20)
+    discs = models.PositiveIntegerField()
+    authorised_discs = models.PositiveIntegerField()
+    granted_date = models.DateField()
+    expiry_date = models.DateField()
+    description = models.CharField(max_length=255)
+    operator = models.ForeignKey(OperatorCode, models.SET_NULL, null=True)
+    start_point = models.CharField(max_length=255)
+    finish_point = models.CharField(max_length=255)
+    via = models.CharField(blank=True, max_length=255)
+    effective_date = models.DateField()
+    date_received = models.DateField(null=True)
+    end_date = models.DateField(null=True)
+    service_type_other_details = models.CharField(max_length=255)
+    licence_status = models.CharField(max_length=255)
+    registration_status = models.CharField(max_length=255)
+    publication_text = models.TextField()
+    service_type_description = models.CharField(max_length=255)
+    short_notice = models.CharField(max_length=255)
+    subsidies_description = models.CharField(max_length=255)
+    subsidies_details = models.CharField(max_length=255)
+    authoritiy_description = models.CharField(max_length=255)
+    traffic_area_office_covered_by_area = models.CharField(max_length=100)
+
+
+class Contact(models.Model):
+    from_name = models.CharField(max_length=255)
+    from_email = models.EmailField()
+    message = models.TextField()
+    spam_score = models.PositiveIntegerField()
+    ip_address = models.GenericIPAddressField()
+    referrer = models.URLField(blank=True)
 
 
 @python_2_unicode_compatible
