@@ -1,0 +1,35 @@
+{% extends 'page.html' %}
+
+{% block content %}
+
+<h1>{{ object }}</h1>
+
+<table>
+    <th></th>
+    <th></th>
+    <th>#</th>
+    <th>From</th>
+    <th>To</th>
+    <th>Via</th>
+    <th>End date</th>
+    <th>Received</th>
+    <th>Effective date</th>
+    <th>Status</th>
+    {% for variation in object_list %}
+        <tr>
+            <td>{{ variation.service_number }}</td>
+            <td><a href="{{ variation.get_absolute_url }}">{{ variation.registration_number }}</a></td>
+            <td>{{ variation.variation_number }}</td>
+            <td>{{ variation.start_point }}</td>
+            <td>{{ variation.finish_point }}</td>
+            <td>{{ variation.via }}</td>
+            <td>{% firstof variation.end_date '' %}</td>
+            <td>{% firstof variation.date_received '' %}</td>
+            <td>{% firstof variation.effective_date '' %}</td>
+            <td>{{ variation.registration_status }}</td>
+            <td>{{ variation.publication_text|linebreaksbr }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

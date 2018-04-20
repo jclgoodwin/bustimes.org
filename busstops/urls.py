@@ -28,6 +28,8 @@ urlpatterns = [
     url(r'^operators/(?P<slug>[\w-]+)', views.OperatorDetailView.as_view(), name='operator_detail'),
     url(r'^services/(?P<pk>[^/]+)\.xml', views.service_xml),
     url(r'^services/(?P<slug>[\w-]+)', views.ServiceDetailView.as_view(), name='service_detail'),
+    url(r'^licences/(?P<licence_number>.+)', views.RegistrationView.as_view()),
+    url(r'^registrations/(?P<registration_number>.+)', views.RegistrationView.as_view(), name='registration_list'),
     url(r'^images/(?P<id>\d+)', views.image),
     url(r'^sitemap\.xml$', sitemap, {
         'sitemaps': {

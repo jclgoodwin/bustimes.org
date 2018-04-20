@@ -765,34 +765,47 @@ class ServiceDate(models.Model):
         unique_together = ('service', 'date')
 
 
-class Variation(models.Model):
-    registration_number = models.CharField(max_length=20)
-    variation_number = models.PositiveIntegerField()
-    service_number = models.CharField(max_length=20)
+class Registration(models.Model):
+    registration_number = models.CharField(max_length=20, db_index=True)
+    service_number = models.CharField(max_length=100)
     traffic_area = models.CharField(max_length=1)
     licence_number = models.CharField(max_length=20)
     discs = models.PositiveIntegerField()
     authorised_discs = models.PositiveIntegerField()
-    granted_date = models.DateField()
-    expiry_date = models.DateField()
     description = models.CharField(max_length=255)
     operator = models.ForeignKey(OperatorCode, models.SET_NULL, null=True)
     start_point = models.CharField(max_length=255)
     finish_point = models.CharField(max_length=255)
     via = models.CharField(blank=True, max_length=255)
-    effective_date = models.DateField()
+    subsidies_description = models.CharField(max_length=255)
+    subsidies_details = models.CharField(max_length=255)
+    licence_status = models.CharField(max_length=255)
+    traffic_area_office_covered_by_area = models.CharField(max_length=100)
+
+
+class Variation(models.Model):
+    registration = models.ForeignKey(Registration, models.CASCADE)
+    variation_number = models.PositiveIntegerField()
+    granted_date = models.DateField()
+    expiry_date = models.DateField()
+    effective_date = models.DateField(null=True)
     date_received = models.DateField(null=True)
     end_date = models.DateField(null=True)
-    service_type_other_details = models.CharField(max_length=255)
-    licence_status = models.CharField(max_length=255)
+    service_type_other_details = models.TextField()
     registration_status = models.CharField(max_length=255)
     publication_text = models.TextField()
     service_type_description = models.CharField(max_length=255)
     short_notice = models.CharField(max_length=255)
-    subsidies_description = models.CharField(max_length=255)
-    subsidies_details = models.CharField(max_length=255)
     authoritiy_description = models.CharField(max_length=255)
-    traffic_area_office_covered_by_area = models.CharField(max_length=100)
+
+    def __str__(self):
+        string = '{} - {} - {}'.format(self.service_number, self.start_point, self.finish_point)
+        if self.via:
+            string = '{} via {}'.format(string, self.via)
+        return string
+
+    def get_absolute_url(self):
+        return reverse('registration_list', args=(self.registration_number,))
 
 
 class Contact(models.Model):

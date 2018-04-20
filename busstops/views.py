@@ -11,6 +11,7 @@ from django.http import (HttpResponse, JsonResponse, Http404,
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 from django.conf import settings
 from django.contrib.gis.geos import Polygon
 from django.contrib.gis.db.models.functions import Distance
@@ -21,7 +22,7 @@ from haystack.query import SearchQuerySet
 from departures import live
 from .utils import format_gbp
 from .models import (Region, StopPoint, AdminArea, Locality, District,
-                     Operator, Service, Note, Image, Journey, Place)
+                     Operator, Service, Note, Image, Journey, Place, Variation)
 from .forms import ContactForm, ImageForm
 
 
@@ -617,6 +618,13 @@ class ServiceDetailView(DetailView):
         response = super().render_to_response(context)
         response['Link'] = '<https://bustimes.org{}>; rel="canonical"'.format(self.object.get_absolute_url())
         return response
+
+
+class RegistrationView(ListView):
+    model = Variation
+
+    def get_queryset(self):
+        return self.model.objects.filter(**self.kwargs).order_by('variation_number')
 
 
 def service_xml(_, pk):
