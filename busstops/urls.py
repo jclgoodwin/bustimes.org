@@ -30,7 +30,8 @@ urlpatterns = [
     url(r'^services/(?P<pk>[^/]+)\.xml', views.service_xml),
     url(r'^services/(?P<slug>[\w-]+)', views.ServiceDetailView.as_view(), name='service_detail'),
     path('licences/<licence_number>', views.RegistrationView.as_view()),
-    path('registrations/<path:registration__registration_number>', views.VariationView.as_view(), name='variation_list'),
+    path('registrations/<path:registration__registration_number>', views.VariationView.as_view(),
+         name='variation_list'),
     url(r'^images/(?P<id>\d+)', views.image),
     url(r'^sitemap\.xml$', sitemap, {
         'sitemaps': {
