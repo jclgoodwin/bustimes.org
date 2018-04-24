@@ -1,0 +1,24 @@
+{% extends 'page.html' %}
+
+{% block content %}
+
+<h1>{{ object }}</h1>
+
+<table>
+    <th></th>
+    <th></th>
+    <th>From</th>
+    <th>To</th>
+    <th>Via</th>
+    {% for registration in object_list %}
+        <tr>
+            <td><a href="{{ registration.get_absolute_url }}">{{ registration.registration_number }}</a></td>
+            <td>{{ registration.service_number }}</td>
+            <td>{{ registration.start_point }}</td>
+            <td>{{ registration.finish_point }}</td>
+            <td>{{ registration.via }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

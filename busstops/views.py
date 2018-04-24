@@ -22,7 +22,7 @@ from haystack.query import SearchQuerySet
 from departures import live
 from .utils import format_gbp
 from .models import (Region, StopPoint, AdminArea, Locality, District,
-                     Operator, Service, Note, Image, Journey, Place, Variation)
+                     Operator, Service, Note, Image, Journey, Place, Registration, Variation)
 from .forms import ContactForm, ImageForm
 
 
@@ -621,10 +621,19 @@ class ServiceDetailView(DetailView):
 
 
 class RegistrationView(ListView):
-    model = Variation
+    model = Registration
 
     def get_queryset(self):
-        return self.model.objects.filter(**self.kwargs).order_by('variation_number')
+        return self.model.objects.filter(**self.kwargs)
+
+    def render_to_response(self, context):
+        if not context['object_list']:
+            raise Http404()
+        return super().render_to_response(context)
+
+
+class VariationView(RegistrationView):
+    model = Variation
 
 
 def service_xml(_, pk):

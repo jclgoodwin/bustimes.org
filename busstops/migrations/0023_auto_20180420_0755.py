@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
                 ('publication_text', models.TextField()),
                 ('service_type_description', models.CharField(max_length=255)),
                 ('short_notice', models.CharField(max_length=255)),
-                ('authoritiy_description', models.CharField(max_length=255)),
+                ('authority_description', models.CharField(max_length=255)),
                 ('registration', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='busstops.Registration')),
             ],
         ),

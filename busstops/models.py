@@ -782,6 +782,15 @@ class Registration(models.Model):
     licence_status = models.CharField(max_length=255)
     traffic_area_office_covered_by_area = models.CharField(max_length=100)
 
+    def __str__(self):
+        string = '{} - {} - {}'.format(self.service_number, self.start_point, self.finish_point)
+        if self.via:
+            string = '{} via {}'.format(string, self.via)
+        return string
+
+    def get_absolute_url(self):
+        return reverse('variation_list', args=(self.registration_number,))
+
 
 class Variation(models.Model):
     registration = models.ForeignKey(Registration, models.CASCADE)
@@ -796,16 +805,13 @@ class Variation(models.Model):
     publication_text = models.TextField()
     service_type_description = models.CharField(max_length=255)
     short_notice = models.CharField(max_length=255)
-    authoritiy_description = models.CharField(max_length=255)
+    authority_description = models.CharField(max_length=255)
 
     def __str__(self):
-        string = '{} - {} - {}'.format(self.service_number, self.start_point, self.finish_point)
-        if self.via:
-            string = '{} via {}'.format(string, self.via)
-        return string
+        return str(self.registration)
 
     def get_absolute_url(self):
-        return reverse('registration_list', args=(self.registration_number,))
+        return reverse('variation_list', args=(self.registration.registration_number,))
 
 
 class Contact(models.Model):

@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.db.models import Count, Q
 from busstops.models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note, Journey, StopUsageUsage,
-    Image, ServiceCode, OperatorCode, DataSource, LiveSource, Place, Contact, Variation
+    Image, ServiceCode, OperatorCode, DataSource, LiveSource, Place, Contact, Registration, Variation
 )
 
 
@@ -120,5 +120,6 @@ admin.site.register(ServiceCode, ServiceCodeAdmin)
 admin.site.register(DataSource)
 admin.site.register(LiveSource)
 admin.site.register(Place, PlaceAdmin)
+admin.site.register(Registration)
 admin.site.register(Variation)
 admin.site.register(Contact)

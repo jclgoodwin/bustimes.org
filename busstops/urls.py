@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.conf.urls import include, url, static
+from django.urls import path
 from django.contrib import staticfiles
 from django.contrib.sitemaps.views import sitemap
 from haystack.views import SearchView
@@ -7,17 +8,17 @@ from .forms import CustomSearchForm
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.index),
-    url(r'^offline$', views.offline),
-    url(r'^contact$', views.contact),
-    url(r'^awin-transaction$', views.awin_transaction),
-    url(r'^cookies$', views.cookies),
-    url(r'^data$', views.data),
-    url(r'^apps$', views.apps),
-    url(r'^map$', views.hugemap),
-    url(r'^stops\.json$', views.stops),
-    url(r'^regions/(?P<pk>\w+)', views.RegionDetailView.as_view(), name='region_detail'),
-    url(r'^places/(?P<pk>\d+)', views.PlaceDetailView.as_view(), name='place_detail'),
+    path('', views.index),
+    path('offline', views.offline),
+    path('contact', views.contact),
+    path('awin-transaction', views.awin_transaction),
+    path('cookies', views.cookies),
+    path('data', views.data),
+    path('apps', views.apps),
+    path('map', views.hugemap),
+    path('stops.json', views.stops),
+    path('regions/<pk>', views.RegionDetailView.as_view(), name='region_detail'),
+    path('places/<int:pk>', views.PlaceDetailView.as_view(), name='place_detail'),
     url(r'^(admin-)?areas/(?P<pk>\d+)', views.AdminAreaDetailView.as_view(), name='adminarea_detail'),
     url(r'^districts/(?P<pk>\d+)', views.DistrictDetailView.as_view(), name='district_detail'),
     url(r'^localities/(?P<pk>[ENen][Ss]?[0-9]+)', views.LocalityDetailView.as_view()),
@@ -28,8 +29,8 @@ urlpatterns = [
     url(r'^operators/(?P<slug>[\w-]+)', views.OperatorDetailView.as_view(), name='operator_detail'),
     url(r'^services/(?P<pk>[^/]+)\.xml', views.service_xml),
     url(r'^services/(?P<slug>[\w-]+)', views.ServiceDetailView.as_view(), name='service_detail'),
-    url(r'^licences/(?P<licence_number>.+)', views.RegistrationView.as_view()),
-    url(r'^registrations/(?P<registration_number>.+)', views.RegistrationView.as_view(), name='registration_list'),
+    path('licences/<licence_number>', views.RegistrationView.as_view()),
+    path('registrations/<path:registration__registration_number>', views.VariationView.as_view(), name='variation_list'),
     url(r'^images/(?P<id>\d+)', views.image),
     url(r'^sitemap\.xml$', sitemap, {
         'sitemaps': {
