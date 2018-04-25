@@ -102,10 +102,7 @@ def contact(request):
                 form.cleaned_data['message'],
                 form.cleaned_data['referrer'],
                 str(request.META.get('HTTP_USER_AGENT')),
-                str(request.META.get('REMOTE_ADDR')),
-                str(form.cleaned_data),
-                str(request.POST),
-                str(request.META),
+                str(request.META.get('REMOTE_ADDR'))
             ))
             message = EmailMessage(
                 subject,

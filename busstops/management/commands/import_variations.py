@@ -1,6 +1,4 @@
-# import requests
 # from titlecase import titlecase
-# from django.core.exceptions import MultipleObjectsReturned
 from datetime import datetime
 from ..import_from_csv import ImportFromCSVCommand
 from ...models import Registration, Variation
@@ -13,6 +11,10 @@ def parse_date(date_string):
 
 class Command(ImportFromCSVCommand):
     def handle_row(self, row):
+        if len(row['Reg_No']) > 20 and row['Reg_No'].count('/'):
+            parts = row['Reg_No'].split('/')
+            if parts[0] == parts[1]:
+                row['Reg_No'] = '/'.join(parts[1:])
         registration, _ = Registration.objects.update_or_create(
             {
                 'discs': row['Discs in Possession'] or 0,
