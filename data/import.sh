@@ -176,6 +176,17 @@ if [[ $accessibility_old != $accessibility_new ]]; then
 fi
 
 
+for region in F B C M K G D H; do
+    old=$(shasum "Bus_Variation_$region.csv")
+    wget -qN "http://www.vosa.gov.uk/vosa/apps/olbs/Bus_Variation_$region.csv"
+    new=$(shasum "Bus_Variation_$region.csv")
+    if [[ $old != $new ]]; then
+        echo $region
+        ../manage.py import_variations < "Bus_Variation_$region.csv"
+    fi
+done
+
+
 cd ..
 
 ./manage.py import_ie_gtfs
