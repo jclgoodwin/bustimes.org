@@ -6,30 +6,40 @@
 
 {% block content %}
 
-{% if from and to %}
-    <h2><a href="{{ from.get_absolute_url }}">{{ from }}</a> to <a href="{{ to.get_absolute_url }}">{{ to }}</a></h2>
-{% endif %}
+<h1>
+    {% if from and to %}
+        {{ from }} to {{ to     }}
+    {% else %}
+        Plan a journey
+    {% endif %}
+</h1>
 
 <form method="GET" action="/journey">
-    <input name="from_q" value="{{ from_q }}" />
+    <label>From <input name="from_q" value="{{ from_q }}" /></label>
     {% if from %}
         <input name="from" value="{{ from.slug }}" type="hidden" />
-    {% else %}
-        {% for option in from_options %}
-            {{ option.object }}
-        {% endfor %}
+    {% elif from_options %}
+        <ul>
+            {% for option in from_options %}
+                <li><a href="/journey?from={{ option.object.slug }}&amp;to{% if to %}={{ to.slug }}{% else %}_q={{ to_q }}{% endif %}">{{ option.object.get_qualified_name }}</a></li>
+            {% endfor %}
+        </ul>
     {% endif %}
-    <input name="to_q" value="{{ to_q }}" />
+    <label>to <input name="to_q" value="{{ to_q }}" /></label>
     {% if to %}
         <input name="to" value="{{ to.slug }}" type="hidden" />
-    {% else %}
-        {% for option in to_options %}
-            {{ option.object }}
-        {% endfor %}
+    {% elif to_options %}
+        <ul>
+            {% for option in to_options %}
+                <li><a href="/journey?from{% if from %}={{ from.slug }}{% else %}_q={{ from_q }}{% endif %}&amp;to={{ option.slug }}">{{ option.object.get_qualified_name }}</a></li>
+            {% endfor %}
+        </ul>
     {% endif %}
     <input type="submit" value="Search">
 </form>
 
-{{ journeys }}
+{% for journey in journeys %}
+    {{ journey }}
+{% endfor %}
 
 {% endblock %}

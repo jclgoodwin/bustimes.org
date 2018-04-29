@@ -33,8 +33,8 @@
     {% for variation in object_list %}
         <tr>
             <td>{{ variation.variation_number }}</td>
-            <td>{% firstof variation.date_received '' %}</td>
-            <td>{% firstof variation.effective_date '' %}</td>
+            <td>{% firstof variation.date_received|date:"j M y" '' %}</td>
+            <td>{% firstof variation.effective_date|date:"j M y" '' %}</td>
             <td>{{ variation.registration_status }}</td>
             <td>{{ variation.service_type_other_details }}</td>
             <td>{{ variation.publication_text|linebreaksbr }}</td>

@@ -709,16 +709,16 @@ def journey(request):
     destination = request.GET.get('to')
     to_q = request.GET.get('to_q')
 
+    from_options = None
     if origin:
         origin = get_object_or_404(Locality, slug=origin)
-        from_options = None
-    else:
+    elif from_q:
         from_options = SearchQuerySet().models(Locality).filter(content=from_q)
 
+    to_options = None
     if destination:
         destination = get_object_or_404(Locality, slug=destination)
-        to_options = None
-    else:
+    elif to_q:
         to_options = SearchQuerySet().models(Locality).filter(content=to_q)
 
     if origin and destination:
@@ -731,9 +731,9 @@ def journey(request):
     return render(request, 'journey.html', {
         'from': origin,
         'from_q': from_q or origin or '',
-        'from_options': from_options.load_all(),
+        'from_options': from_options and from_options.load_all(),
         'to': destination,
         'to_q': to_q or destination or '',
-        'to_options': to_options.load_all(),
+        'to_options': to_options and to_options.load_all(),
         'journeys': journeys
     })

@@ -24,7 +24,7 @@
                 <td>{{ registration.start_point }}</td>
                 <td>{{ registration.finish_point }}</td>
                 <td>{{ registration.via }}</td>
-                <td>{{ registration.date }}</td>
+                <td>{{ registration.date|date:"j M y" }}</td>
             </tr>
         {% endfor %}
     </table>
@@ -48,7 +48,7 @@
                 <td>{{ registration.start_point }}</td>
                 <td>{{ registration.finish_point }}</td>
                 <td>{{ registration.via }}</td>
-                <td>{{ registration.date }}</td>
+                <td>{{ registration.date|date:"j M y" }}</td>
             </tr>
         {% endfor %}
     </table>
