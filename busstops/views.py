@@ -630,7 +630,8 @@ class RegistrationView(ListView):
             date=Max('variation__effective_date')
         ).order_by('-date')
 
-        context['cancelled'] = object_list.filter(registration_status='Cancelled')
+        cancelled_statuses = ('Admin Cancelled', 'Cancellation', 'Cancelled', 'Expired', 'Refused', 'Withdrawn')
+        context['cancelled'] = object_list.filter(registration_status__in=cancelled_statuses)
         context['object_list'] = object_list.exclude(pk__in=context['cancelled'])
 
         if not (context['object_list'] or context['cancelled']):
