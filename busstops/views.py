@@ -709,17 +709,29 @@ def journey(request):
     destination = request.GET.get('to')
     to_q = request.GET.get('to_q')
 
-    from_options = None
     if origin:
         origin = get_object_or_404(Locality, slug=origin)
-    elif from_q:
-        from_options = SearchQuerySet().models(Locality).filter(content=from_q)
+    if from_q:
+        from_options = SearchQuerySet().models(Locality).filter(content=from_q).load_all()
+        if from_options.count() == 1:
+            origin = from_options[0].object
+            from_options = None
+        elif origin not in from_options:
+            origin = None
+    else:
+        from_options = None
 
-    to_options = None
     if destination:
         destination = get_object_or_404(Locality, slug=destination)
-    elif to_q:
-        to_options = SearchQuerySet().models(Locality).filter(content=to_q)
+    if to_q:
+        to_options = SearchQuerySet().models(Locality).filter(content=to_q).load_all()
+        if to_options.count() == 1:
+            destination = to_options[0].object
+            to_options = None
+        elif destination not in to_options:
+            destination = None
+    else:
+        to_options = None
 
     if origin and destination:
         journeys = Journey.objects.filter(
@@ -731,9 +743,9 @@ def journey(request):
     return render(request, 'journey.html', {
         'from': origin,
         'from_q': from_q or origin or '',
-        'from_options': from_options and from_options.load_all(),
+        'from_options': from_options,
         'to': destination,
         'to_q': to_q or destination or '',
-        'to_options': to_options and to_options.load_all(),
+        'to_options': to_options,
         'journeys': journeys
     })

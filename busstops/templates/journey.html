@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}{{ from.get_qualified_name }} to {{ to.get_qualified_name }} – Bus Times{% endblock %}
+{% block title %}{% if from and to %}{{ from.get_qualified_name }} to {{ to.get_qualified_name }}{% else %}Plan a journey{% endif %} – Bus Times{% endblock %}
 
 {% block bodyclass %}narrow{% endblock %}
 
@@ -8,7 +8,7 @@
 
 <h1>
     {% if from and to %}
-        {{ from }} to {{ to     }}
+        {{ from }} to {{ to }}
     {% else %}
         Plan a journey
     {% endif %}
@@ -31,15 +31,19 @@
     {% elif to_options %}
         <ul>
             {% for option in to_options %}
-                <li><a href="/journey?from{% if from %}={{ from.slug }}{% else %}_q={{ from_q }}{% endif %}&amp;to={{ option.slug }}">{{ option.object.get_qualified_name }}</a></li>
+                <li><a href="/journey?from{% if from %}={{ from.slug }}{% else %}_q={{ from_q }}{% endif %}&amp;to={{ option.object.slug }}">{{ option.object.get_qualified_name }}</a></li>
             {% endfor %}
         </ul>
     {% endif %}
     <input type="submit" value="Search">
 </form>
 
-{% for journey in journeys %}
-    {{ journey }}
-{% endfor %}
+{% if journeys %}
+    <ul>
+        {% for journey in journeys %}
+            <li>{{ journey }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
 
 {% endblock %}
