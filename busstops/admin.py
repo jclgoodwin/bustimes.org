@@ -103,6 +103,10 @@ class PlaceAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+class VariationAdmin(admin.ModelAdmin):
+    list_filter = ('registration_status',)
+
+
 admin.site.register(Region)
 admin.site.register(AdminArea, AdminAreaAdmin)
 admin.site.register(District)
@@ -121,5 +125,5 @@ admin.site.register(DataSource)
 admin.site.register(LiveSource)
 admin.site.register(Place, PlaceAdmin)
 admin.site.register(Registration)
-admin.site.register(Variation)
+admin.site.register(Variation, VariationAdmin)
 admin.site.register(Contact)

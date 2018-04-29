@@ -2,20 +2,39 @@
 
 {% block content %}
 
-<h1>{{ object }}</h1>
+<h1>{{ object_list.0.registration }}</h1>
 
 <table>
-    <th>#</th>
-    <th>Received</th>
-    <th>Effective date</th>
-    <th>Status</th>
-    <th></th>
+    <tr>
+        <th scope="row">From</th>
+        <td>{{ object_list.0.registration.start_point }}</td>
+    </tr>
+    <tr>
+        <th scope="row">To</th>
+        <td>{{ object_list.0.registration.finish_point }}</td>
+    </tr>
+    <tr>
+        <th scope="row">Via</th>
+        <td>{{ object_list.0.registration.via }}</td>
+    </tr>
+</table>
+
+<h2>History</h2>
+
+<table>
+    <th scope="col">#</th>
+    <th scope="col">Received</th>
+    <th scope="col">Effective date</th>
+    <th scope="col">Status</th>
+    <th scope="col">Details</th>
+    <th scope="col">Publication text</th>
     {% for variation in object_list %}
         <tr>
             <td>{{ variation.variation_number }}</td>
             <td>{% firstof variation.date_received '' %}</td>
             <td>{% firstof variation.effective_date '' %}</td>
             <td>{{ variation.registration_status }}</td>
+            <td>{{ variation.service_type_other_details }}</td>
             <td>{{ variation.publication_text|linebreaksbr }}</td>
         </tr>
     {% endfor %}

@@ -1,7 +1,7 @@
-# from titlecase import titlecase
+from titlecase import titlecase
 from datetime import datetime
 from ..import_from_csv import ImportFromCSVCommand
-from ...models import Registration, Variation
+from ...models import Registration, Variation, OperatorCode
 
 
 def parse_date(date_string):
@@ -15,6 +15,11 @@ class Command(ImportFromCSVCommand):
             parts = row['Reg_No'].split('/')
             if parts[0] == parts[1]:
                 row['Reg_No'] = '/'.join(parts[1:])
+
+        for key in ('start_point', 'finish_point', 'via'):
+            if row[key].isupper() or row[key].islower():
+                row[key] = titlecase(row[key])
+
         registration, _ = Registration.objects.update_or_create(
             {
                 'discs': row['Discs in Possession'] or 0,
@@ -24,20 +29,21 @@ class Command(ImportFromCSVCommand):
                 'finish_point': row['finish_point'],
                 'via': row['via'],
                 'licence_status': row['Licence Status'],
+                'registration_status': row['Registration Status'],
                 'subsidies_description': row['Subsidies_Description'],
                 'subsidies_details': row['Subsidies_Details'],
                 'traffic_area_office_covered_by_area': row['TAO Covered BY Area'],
+                'operator': OperatorCode.objects.filter(code=row['Lic_No']).first(),
+                'service_number': row['Service Number'],
+                'traffic_area': row['Current Traffic Area'],
             },
             registration_number=row['Reg_No'],
-            service_number=row['Service Number'],
-            traffic_area=row['Current Traffic Area'],
             licence_number=row['Lic_No'],
         )
         Variation.objects.update_or_create(
             {
                 'granted_date': parse_date(row['Granted_Date']),
                 'expiry_date': parse_date(row['Exp_Date']),
-                # 'operator': row['Op_ID'],
                 'effective_date': parse_date(row['effective_date']),
                 'date_received': parse_date(row['received_date']),
                 'end_date': parse_date(row['end_date']),
@@ -46,8 +52,8 @@ class Command(ImportFromCSVCommand):
                 'publication_text': row['Pub_Text'],
                 'service_type_description': row['Service_Type_Description'],
                 'short_notice': row['Short Notice'],
+                'authority_description': row['Auth_Description'],
             },
             registration=registration,
             variation_number=row['Variation Number'],
-            authority_description=row['Auth_Description'],
         )

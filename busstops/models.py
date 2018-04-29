@@ -413,6 +413,9 @@ class OperatorCode(models.Model):
     def __str__(self):
         return self.code
 
+    def get_absolute_url(self):
+        return reverse('registration_list', args=(self.code,))
+
 
 class StopUsage(models.Model):
     """A link between a StopPoint and a Service,
@@ -766,10 +769,10 @@ class ServiceDate(models.Model):
 
 
 class Registration(models.Model):
-    registration_number = models.CharField(max_length=20, db_index=True)
+    registration_number = models.CharField(max_length=20, unique=True)
     service_number = models.CharField(max_length=100)
     traffic_area = models.CharField(max_length=1)
-    licence_number = models.CharField(max_length=20)
+    licence_number = models.CharField(max_length=20, db_index=True)
     discs = models.PositiveIntegerField()
     authorised_discs = models.PositiveIntegerField()
     description = models.CharField(max_length=255)
@@ -780,6 +783,7 @@ class Registration(models.Model):
     subsidies_description = models.CharField(max_length=255)
     subsidies_details = models.CharField(max_length=255)
     licence_status = models.CharField(max_length=255)
+    registration_status = models.CharField(max_length=255, db_index=True)
     traffic_area_office_covered_by_area = models.CharField(max_length=100)
 
     def __str__(self):
@@ -809,6 +813,7 @@ class Variation(models.Model):
 
     class Meta():
         ordering = ('-variation_number',)
+        unique_together = ('registration', 'variation_number')
 
     def __str__(self):
         return str(self.registration)

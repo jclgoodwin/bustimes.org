@@ -1,24 +1,57 @@
 {% extends 'page.html' %}
 
+{% block title %}{{ operator }} – {{ operator.operator }} – Bus Times{% endblock %}
+
 {% block content %}
 
-<h1>{{ object }}</h1>
+<h1>{{ operator }}</h1>
 
-<table>
-    <th></th>
-    <th></th>
-    <th>From</th>
-    <th>To</th>
-    <th>Via</th>
-    {% for registration in object_list %}
+{% if object_list %}
+    <h2>Current and future bus service registrations</h2>
+
+    <table>
         <tr>
-            <td><a href="{{ registration.get_absolute_url }}">{{ registration.registration_number }}</a></td>
-            <td>{{ registration.service_number }}</td>
-            <td>{{ registration.start_point }}</td>
-            <td>{{ registration.finish_point }}</td>
-            <td>{{ registration.via }}</td>
+            <th colspan="2"></th>
+            <th scope="col">From</th>
+            <th scope="col">To</th>
+            <th scope="col">Via</th>
+            <th scope="col">Last changed</th>
         </tr>
-    {% endfor %}
-</table>
+        {% for registration in object_list %}
+            <tr>
+                <td><a href="{{ registration.get_absolute_url }}">{{ registration.registration_number }}</a></td>
+                <td>{{ registration.service_number }}</td>
+                <td>{{ registration.start_point }}</td>
+                <td>{{ registration.finish_point }}</td>
+                <td>{{ registration.via }}</td>
+                <td>{{ registration.date }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+<h2>Cancelled bus service registrations</h2>
+
+{% if cancelled %}
+    <table>
+        <tr>
+            <th colspan="2"></th>
+            <th scope="col">From</th>
+            <th scope="col">To</th>
+            <th scope="col">Via</th>
+            <th scope="col">Cancelled</th>
+        </tr>
+        {% for registration in cancelled %}
+            <tr>
+                <td><a href="{{ registration.get_absolute_url }}">{{ registration.registration_number }}</a></td>
+                <td>{{ registration.service_number }}</td>
+                <td>{{ registration.start_point }}</td>
+                <td>{{ registration.finish_point }}</td>
+                <td>{{ registration.via }}</td>
+                <td>{{ registration.date }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
 
 {% endblock %}

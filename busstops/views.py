@@ -5,7 +5,7 @@ import json
 import PIL
 import ciso8601
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Q
+from django.db.models import Q, Max
 from django.http import (HttpResponse, JsonResponse, Http404,
                          HttpResponseBadRequest)
 from django.utils import timezone
@@ -21,8 +21,8 @@ from django.core.mail import EmailMessage
 from haystack.query import SearchQuerySet
 from departures import live
 from .utils import format_gbp
-from .models import (Region, StopPoint, AdminArea, Locality, District,
-                     Operator, Service, Note, Image, Journey, Place, Registration, Variation)
+from .models import (Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Image, Journey, Place,
+                     Registration, Variation)
 from .forms import ContactForm, ImageForm
 
 
@@ -623,14 +623,46 @@ class RegistrationView(ListView):
     def get_queryset(self):
         return self.model.objects.filter(**self.kwargs)
 
-    def render_to_response(self, context):
-        if not context['object_list']:
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        object_list = self.object_list.annotate(
+            date=Max('variation__effective_date')
+        ).order_by('-date')
+
+        context['cancelled'] = object_list.filter(variation__registration_status='Cancelled')
+        context['object_list'] = object_list.exclude(pk__in=context['cancelled'])
+
+        if not (context['object_list'] or context['cancelled']):
             raise Http404()
-        return super().render_to_response(context)
+
+        context['operator'] = self.object_list.select_related('operator__operator__region').first().operator
+        if context['operator']:
+            context['breadcrumb'] = [context['operator'].operator.region, context['operator'].operator]
+
+        return context
 
 
-class VariationView(RegistrationView):
+class VariationView(ListView):
     model = Variation
+
+    def get_queryset(self):
+        return self.model.objects.filter(**self.kwargs).select_related('registration__operator__operator__region')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        if not self.object_list:
+            raise Http404()
+
+        if self.object_list[0].registration.operator:
+            context['breadcrumb'] = [
+                self.object_list[0].registration.operator.operator.region,
+                self.object_list[0].registration.operator.operator,
+                self.object_list[0].registration.operator
+            ]
+
+        return context
 
 
 def service_xml(_, pk):

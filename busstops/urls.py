@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'^operators/(?P<slug>[\w-]+)', views.OperatorDetailView.as_view(), name='operator_detail'),
     url(r'^services/(?P<pk>[^/]+)\.xml', views.service_xml),
     url(r'^services/(?P<slug>[\w-]+)', views.ServiceDetailView.as_view(), name='service_detail'),
-    path('licences/<licence_number>', views.RegistrationView.as_view()),
+    path('licences/<licence_number>', views.RegistrationView.as_view(), name='registration_list'),
     path('registrations/<path:registration__registration_number>', views.VariationView.as_view(),
          name='variation_list'),
     url(r'^images/(?P<id>\d+)', views.image),
