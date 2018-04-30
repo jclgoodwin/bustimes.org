@@ -98,12 +98,7 @@ def contact(request):
         form = ContactForm(request.POST, request=request)
         if form.is_valid():
             subject = form.cleaned_data['message'][:50].splitlines()[0]
-            body = '\n\n'.join((
-                form.cleaned_data['message'],
-                form.cleaned_data['referrer'],
-                str(request.META.get('HTTP_USER_AGENT')),
-                str(request.META.get('REMOTE_ADDR'))
-            ))
+            body = '{}\n\n{}'.format(form.cleaned_data['message'], form.cleaned_data['referrer'])
             message = EmailMessage(
                 subject,
                 body,
