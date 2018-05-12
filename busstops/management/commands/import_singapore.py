@@ -113,8 +113,8 @@ class Command(BaseCommand):
                             'direction': route['Direction']
                         }
                     )
-                except IntegrityError:
-                    print(route)
+                except IntegrityError as e:
+                    print(e, route)
 
             if len(routes) < 500:
                 break
