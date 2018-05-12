@@ -563,12 +563,10 @@ def get_departures(stop, services, bot=False):
                 departures = add_stagecoach_departures(stop, services_dict, departures)
         else:
             for live_source_name, prefix in (
-                    ('ayr', 'ayrshire'),
                     ('west', 'travelwest'),
                     ('buck', 'buckinghamshire'),
                     ('camb', 'cambridgeshire'),
                     ('card', 'cardiff'),
-                    # ('swin', 'swindon'),
                     ('metr', 'metrobus')
             ):
                 if live_source_name in live_sources:
