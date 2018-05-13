@@ -111,18 +111,6 @@ class ServiceTests(TestCase):
         self.london_service.region_id = 'Y'
         self.assertEqual(self.london_service.get_traveline_link()[0][:35], 'http://www.yorkshiretravel.net/lts/')
 
-        service = Service(service_code='cen_33-66-P-y11', net='twm', line_ver='4')
-        self.assertEqual(
-            service.get_traveline_link(),
-            ('https://www.networkwestmidlands.com/plan-your-journey/timetables/#/route/twm_33066_P_H_y11-4',
-             'Network West Midlands')
-        )
-        service.service_code = 'cen_18-301-_-y11'
-        self.assertEqual(
-            service.get_traveline_link()[0],
-            'https://www.networkwestmidlands.com/plan-your-journey/timetables/#/route/twm_18301_%20_H_y11-4'
-        )
-
     def test_get_operator_number(self):
         self.assertIsNone(self.london_service.get_operator_number('MGBD'))
 

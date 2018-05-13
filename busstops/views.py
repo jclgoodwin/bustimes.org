@@ -560,9 +560,14 @@ class ServiceDetailView(DetailView):
                 })
             else:
                 for operator in context['operators']:
-                    if operator.url.startswith('http'):
+                    if operator.is_national_express():
                         context['links'].append({
-                            'url': operator.get_url(),
+                            'url': operator.get_national_express_url(),
+                            'text': 'Buy tickets on the {} website'.format(operator.name)
+                        })
+                    elif operator.url.startswith('http'):
+                        context['links'].append({
+                            'url': operator.url,
                             'text': '{} website'.format(operator.name)
                         })
                     if operator.twitter:

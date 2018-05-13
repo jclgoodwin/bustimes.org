@@ -322,6 +322,22 @@ class ViewsTests(TestCase):
         self.assertContains(response, 'Mind your head')  # Note
         self.assertEqual(self.note.get_absolute_url(), '/operators/ainsleys-chariots')
 
+    def test_national_express_service(self):
+        self.chariots.name = 'National Express Hotel Hoppa'
+        self.chariots.save()
+
+        response = self.client.get(self.service.get_absolute_url())
+        self.assertEqual(response.context_data['links'][0], {
+            'text': 'Buy tickets on the National Express Hotel Hoppa website',
+            'url': 'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&a=3022528&g=24233768'
+        })
+
+        self.chariots.name = 'National Express Airport'
+        self.assertEqual(self.chariots.get_national_express_url()[-10:], 'g=24233764')
+
+        self.chariots.name = 'National Express Shuttle'
+        self.assertEqual(self.chariots.get_national_express_url()[-10:], 'g=21039402')
+
     def test_service_redirect(self):
         response = self.client.get('/services/45B')
         self.assertEqual(response.status_code, 301)

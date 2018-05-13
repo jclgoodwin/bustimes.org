@@ -370,14 +370,21 @@ class Operator(ValidateOnSaveMixin, models.Model):
     def __str__(self):
         return str(self.name or self.id)
 
-    def get_url(self):
-        if self.name == 'National Express Hotel Hoppa':
-            return 'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&a=3022528&g=24233768'
-        if self.name == 'National Express Airport':
-            return 'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&a=3022528&g=24233764'
-        if self.name == 'National Express' or self.name == 'National Express Shuttle':
-            return 'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&a=3022528&g=21039402'
-        return self.url
+    national_expresses = {
+        'National Express Hotel Hoppa': '24233768',
+        'National Express Airport': '24233764',
+        'National Express': '21039402',
+    }
+    national_expresses['National Express Shuttle'] = national_expresses['National Express']
+
+    def is_national_express(self):
+        return self.name in self.national_expresses
+
+    def get_national_express_url(self):
+        return (
+            'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&a=3022528&g='
+            + self.national_expresses[self.name]
+        )
 
     def get_absolute_url(self):
         return reverse('operator_detail', args=(self.slug or self.id,))
@@ -604,14 +611,6 @@ class Service(models.Model):
             parts = self.service_code.split('-')
             line = parts[0].split('_')[-1].zfill(2) + parts[1].zfill(3)
             line_ver = self.line_ver or parts[4]
-
-            if self.net == 'cen' or self.net == 'twm':
-                sup = parts[2]
-                if sup == '_':
-                    sup = '%20'
-                url = 'https://www.networkwestmidlands.com/plan-your-journey/timetables/#/route/'
-                url += '{}_{}_{}_H_{}-{}'.format(self.net, line, sup, parts[3], line_ver)
-                return url, 'Network West Midlands'
 
             query = [('line', line),
                      ('lineVer', line_ver),
