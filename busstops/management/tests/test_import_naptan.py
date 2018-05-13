@@ -3,6 +3,7 @@
 import os
 import json
 import vcr
+from warnings import catch_warnings
 from django.test import TestCase, override_settings
 from ...models import Region, AdminArea, StopPoint, Locality, Service, StopUsage
 from ..commands import (update_naptan, import_stop_areas, import_stops, import_stops_in_area,
@@ -187,14 +188,12 @@ class ImportNaptanTest(TestCase):
         legion = StopPoint.objects.get(pk='5820AWN26274')
         self.assertEqual(self.stop_area, legion.stop_area)
 
-        if hasattr(self, 'assertLogs'):
-            with self.assertLogs() as context_manager:
-                import_stops_in_area.Command().handle_row({
-                    'StopAreaCode': 'poo',
-                    'AtcoCode': 'poo'
-                })
-                self.assertEqual(1, len(context_manager.output))
-                self.assertEqual(context_manager.output[0][:32], 'ERROR:busstops.management.comman')
+        with catch_warnings(record=True) as caught_warnings:
+            import_stops_in_area.Command().handle_row({
+                'StopAreaCode': 'poo',
+                'AtcoCode': 'poo'
+            })
+            self.assertEqual(1, len(caught_warnings))
 
         with vcr.use_cassette(os.path.join(FIXTURES_DIR, '5820AWN26361.yaml')):
             self.assertContains(self.client.get('/stops/5820AWN26361'), 'Port Talbot Circular')
