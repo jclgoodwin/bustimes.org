@@ -148,16 +148,19 @@ class ViewsTests(TestCase):
         cls.note.operators.set((cls.chariots,))
 
     def test_index(self):
+        """Home page works and doesn't contain a breadcrumb"""
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'Home')
 
     def test_offline(self):
+        """Offline page (for service workers) exists"""
         response = self.client.get('/offline')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Sorry, you don’t seem to be connected to the Internet.')
 
     def test_not_found(self):
+        """Not found responses have a 404 status code"""
         response = self.client.get('/fff')
         self.assertEqual(response.status_code, 404)
 
@@ -297,7 +300,7 @@ class ViewsTests(TestCase):
         self.assertContains(response, "\"data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000")
 
     def test_operator_not_found(self):
-        """An operator with no services should should return a 404 response"""
+        """An operator with no services, or that doesn't exist, should should return a 404 response"""
         with self.assertNumQueries(3):
             response = self.client.get('/operators/VENT')
             self.assertContains(response, 'Sorry, it looks like no services are currently operated by', status_code=404)
@@ -324,6 +327,7 @@ class ViewsTests(TestCase):
 
     def test_national_express_service(self):
         self.chariots.name = 'National Express Hotel Hoppa'
+        self.chariots.url = 'http://nationalexpress.com'
         self.chariots.save()
 
         response = self.client.get(self.service.get_absolute_url())
@@ -338,11 +342,19 @@ class ViewsTests(TestCase):
         self.chariots.name = 'National Express Shuttle'
         self.assertEqual(self.chariots.get_national_express_url()[-10:], 'g=21039402')
 
+        response = self.client.get(self.chariots.get_absolute_url())
+        self.assertContains(
+            response,
+            'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&amp;a=3022528&amp;g=21039402'
+        )
+
     def test_service_redirect(self):
+        """An inactive service should redirect to a current service with the same description"""
         response = self.client.get('/services/45B')
         self.assertEqual(response.status_code, 301)
 
     def test_service_not_found(self):
+        """An inactive service with no replacement should show a clever 404 page"""
         response = self.client.get('/services/45A')
         self.assertEqual(response.status_code, 404)
         self.assertContains(
@@ -355,11 +367,13 @@ class ViewsTests(TestCase):
                             status_code=404)
 
     def test_service_xml(self):
+        """I can view the TransXChange XML for a service"""
         response = self.client.get('/services/ea_21-45-A-y08.xml')
         self.assertEqual(response['Content-Type'], 'text/plain')
         self.assertEqual(response.status_code, 200)
 
     def test_modes(self):
+        """A list of transport modes is turned into English"""
         self.assertContains(render(None, 'modes.html', {
             'modes': ['bus'],
             'noun': 'services'
@@ -381,11 +395,13 @@ class ViewsTests(TestCase):
         }), 'Bus, coach, tram and cable car operators')
 
     def test_sitemap(self):
+        """XML sitemap contains active services and operators"""
         response = self.client.get('/sitemap.xml')
         self.assertContains(response, '<url><loc>https://example.com/operators/ainsleys-chariots</loc></url>')
         self.assertContains(response, 'https://example.com/services/45a-holt-norwich')
 
     def test_journey(self):
+        """Journey planner"""
         with self.assertNumQueries(0):
             response = self.client.get('/journey')
 

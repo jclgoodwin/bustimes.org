@@ -25,7 +25,7 @@ def urlise(value, autoescape=None):
         markup = markup.replace('"https://uk.megabus.com"', megabus, 1)
     elif 'nationalexpress' in markup:
         replacement = '"{}"'.format(
-            'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&amp;a=3022528&amp;21039402'
+            'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&amp;a=3022528&amp;g=21039402'
         )
         markup = markup.replace('"http://nationalexpress.com"', replacement, 1)
         markup = markup.replace('"http://www.nationalexpress.com"', replacement, 1)

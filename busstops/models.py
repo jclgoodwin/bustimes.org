@@ -512,6 +512,9 @@ class Service(models.Model):
 
     image = models.ManyToManyField(Image, blank=True)
 
+    class Meta():
+        ordering = ('service_code',)
+
     def __str__(self):
         if self.line_name or self.line_brand or self.description:
             parts = (self.line_name, self.line_brand, self.description)
