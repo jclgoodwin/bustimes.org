@@ -219,22 +219,13 @@ class AcisConnectDepartures(AcisDepartures):
             'stopRef': self.stop.naptan_code if self.prefix == 'yorkshire' else self.stop.pk
         }
 
-    def get_yorkshire_row(self, row):
-        time, live = self.get_time(row[2].text)
-        return {
-            'time': time,
-            'live': live,
-            'service': self.get_service(row[0].text),
-            'destination': row[1].text
-        }
-
     def get_row(self, row):
-        time, live = self.get_time(row[4].text)
+        time, live = self.get_time(row[-2].text)
         return {
             'time': time,
             'live': live,
             'service': self.get_service(row[0].text),
-            'destination': row[2].text
+            'destination': row[1].text if len(row) == 4 else row[2].text
         }
 
     def departures_from_response(self, res):
@@ -243,8 +234,6 @@ class AcisConnectDepartures(AcisDepartures):
         if table is None:
             return
         rows = (row.findAll('td') for row in table.findAll('tr')[1:])
-        if self.prefix == 'yorkshire':
-            return [self.get_yorkshire_row(row) for row in rows]
         return [self.get_row(row) for row in rows]
 
 
