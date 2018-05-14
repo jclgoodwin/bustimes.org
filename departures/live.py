@@ -329,15 +329,21 @@ class LambdaDepartures(Departures):
     def get_request_url(self):
         return 'https://api.bustim.es/' + self.stop.atco_code
 
+    def get_row(self, item):
+        row = {
+            'time': ciso8601.parse_datetime(item['aimed_time']).astimezone(LOCAL_TIMEZONE),
+            'live': item['expected_time'],
+            'service': self.get_service(item['service']),
+            'destination': item['destination_name']
+        }
+        if row['live']:
+            row['live'] = ciso8601.parse_datetime(row['live']).astimezone(LOCAL_TIMEZONE)
+        return row
+
     def departures_from_response(self, res):
         json = res.json()
         if 'departures' in json:
-            return [{
-                'time': ciso8601.parse_datetime(item['aimed_time']),
-                'live': item['expected_time'] and ciso8601.parse_datetime(item['expected_time']),
-                'service': self.get_service(item['service']),
-                'destination': item['destination_name']
-            } for item in json['departures'] if item['aimed_time']]
+            return [self.get_row(item) for item in json['departures'] if item['aimed_time']]
 
 
 def get_max_age(departures, now):
@@ -577,7 +583,7 @@ def get_departures(stop, services, bot=False):
             if live_rows:
                 blend(departures, live_rows)
         # Norfolk
-        elif departures and stop.atco_code[:3] in {'290', '390'}:
+        elif departures and stop.atco_code[:3] in {'290', '390', '180', '059', '050', '049', '039'}:
             live_rows = LambdaDepartures(stop, services, now).get_departures()
             if live_rows:
                 blend(departures, live_rows)

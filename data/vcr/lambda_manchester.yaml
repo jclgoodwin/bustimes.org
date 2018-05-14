@@ -1,0 +1,40 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: https://api.bustim.es/1800SB04611
+  response:
+    body: {string: '{"timestamp": "2018-05-14T18:36:50Z", "producer": "Trapeze_First_Manchester",
+        "departures": [{"service": "42", "destination_name": "Manchester Piccadilly",
+        "destination_code": "1800SB04611", "aimed_time": null, "expected_time": null},
+        {"service": "42", "destination_name": "East Didsbury", "destination_code":
+        "1800SB14291", "aimed_time": "2018-05-14T18:47:00Z", "expected_time": "2018-05-14T18:47:00Z"},
+        {"service": "42", "destination_name": "Manchester Piccadilly", "destination_code":
+        "1800SB04611", "aimed_time": null, "expected_time": null}, {"service": "42",
+        "destination_name": "East Didsbury", "destination_code": "1800SB14291", "aimed_time":
+        "2018-05-14T19:06:00Z", "expected_time": "2018-05-14T19:06:00Z"}, {"service":
+        "42", "destination_name": "Manchester Piccadilly", "destination_code": "1800SB04611",
+        "aimed_time": null, "expected_time": null}, {"service": "42", "destination_name":
+        "East Didsbury", "destination_code": "1800SB14291", "aimed_time": "2018-05-14T19:26:00Z",
+        "expected_time": "2018-05-14T19:26:00Z"}, {"service": "42", "destination_name":
+        "Manchester Piccadilly", "destination_code": "1800SB04611", "aimed_time":
+        null, "expected_time": null}]}'}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Connection: [keep-alive]
+      Content-Length: ['1171']
+      Content-Type: [application/json]
+      Date: ['Mon, 14 May 2018 18:37:23 GMT']
+      Via: [1.1 1a483cde6df004748f3e5c80dc46df26.cloudfront.net (CloudFront)]
+      X-Amz-Cf-Id: [EL9UKBf9Z0wiQnhYoyi6dcpAXK5xIvKe1otlrggtBkhtczo5YWU55A==]
+      X-Amzn-Trace-Id: [Root=1-5af9d763-f4b99f191c2082055c868714]
+      X-Cache: [Miss from cloudfront]
+      x-amz-apigw-id: [G46XmHDlLPEFtzA=]
+      x-amzn-RequestId: [d7e613ad-57a5-11e8-a92b-b7afe52daa2c]
+    status: {code: 200, message: OK}
+version: 1

@@ -10,6 +10,7 @@ from busstops.models import (
 class AdminAreaAdmin(admin.ModelAdmin):
     list_display = ('name', 'id', 'atco_code', 'region_id')
     list_filter = ('region_id',)
+    search_fields = ('atco_code',)
 
 
 class StopPointAdmin(admin.ModelAdmin):

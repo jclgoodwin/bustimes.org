@@ -470,6 +470,11 @@ class LiveDeparturesTest(TestCase):
             </div>
         """, html=True)
 
+    def test_lambda(self):
+        with vcr.use_cassette('data/vcr/lambda_manchester.yaml'):
+            departures = live.LambdaDepartures(StopPoint(atco_code='1800SB04611'), ()).get_departures()
+        self.assertEqual(str(departures[0]['time']), '2018-05-14 19:47:00+01:00')
+
     def test_blended_lambda(self):
         with freeze_time('4 Jan 2018 10:02'):
             with vcr.use_cassette('data/vcr/lambda_norfolk.yaml'):
@@ -478,7 +483,7 @@ class LiveDeparturesTest(TestCase):
             response, '<tr><td><a href=/services/9>9</a></td><td>Victoria Bar</td><td>10:03⚡</td></tr>',
             html=True
         )
-        self.assertEqual(response.context_data['departures'][0]['live'], datetime(2018, 1, 4, 10, 3, 21))
+        self.assertEqual(str(response.context_data['departures'][0]['live']), '2018-01-04 10:03:21+00:00')
 
         with freeze_time('4 Jan 2018 10:02:01'):
             with vcr.use_cassette('data/vcr/lambda_norfolk.yaml'):
