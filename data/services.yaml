@@ -1,9 +1,3 @@
-ea_21-X29-_-y08:
-    current: false
-    description: Fakenham - King's Lynn
-ea_21-X29-B-y08:
-    current: false
-    description: Fakenham - King's Lynn
 ea_21-X29-A-y08:
     description: Fakenham - Norwich
 ea_21-9-E-y08:
@@ -24,34 +18,14 @@ ea_21-XL-_-y08:
     description: Peterborough - Wisbech - King's Lynn - Swaffham - Dereham - Norwich
 ea_21-X11-A-y08:
     description: Norwich - Great Yarmouth - Gorleston - Belton
-swe_47-58-_-y10:
-    current: False
-swe_47-58A-_-y10:
-    current: False
-swe_47-58B-_-y10:
-    current: False
-swe_47-58C-_-y10:
-    current: False
 ea_21-43-_-y08:
     description: Norwich - Reepham - Aylsham
 ea_21-43A-_-y08:
     description: Norwich - Aylsham
-suf_48-TM1-_-y08:
-    current: False
-suf_48-TM2-_-y08:
-    current: False
 ea_21-4-I-y08:
-    line_brand: Coasthopper
     description: Wells-next-the-Sea - Sheringham - Cromer
 ea_21-5-B-y08:
-    line_brand: Coasthopper
     description: North Walsham - Cromer - Sheringham - Holt
-ea_21-CH-A-y08:
-    current: false
-    description: Wells-next-the-Sea - Sheringham - Cromer
-ea_21-CH-_-y08:
-    current: false
-    description: Wells-next-the-Sea - Sheringham - Cromer
 ea_21-D-A-y08:
     current: false
 ea_21-E-A-y08:
@@ -60,3 +34,19 @@ ea_21-H-A-y08:
     current: false
 ea_21-R-A-y08:
     current: false
+swe_47-58-_-y10:
+    current: False
+swe_47-58A-_-y10:
+    current: False
+swe_47-58B-_-y10:
+    current: False
+swe_47-58C-_-y10:
+    current: False
+suf_48-TM1-_-y08:
+    current: False
+suf_48-TM2-_-y08:
+    current: False
+FSAW032:
+    description: Castlebay - Barra
+FSBW033:
+    description: Castlebay - Vatersay

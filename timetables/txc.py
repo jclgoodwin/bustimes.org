@@ -563,6 +563,7 @@ class VehicleJourney(object):
                 row.times.append('')
 
     def cmp(self, x, y):
+        """Compare two journeys"""
         x_time = x.departure_time
         y_time = y.departure_time
         if (
