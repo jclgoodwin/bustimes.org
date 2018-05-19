@@ -237,8 +237,14 @@ if not DEBUG and 'test' not in sys.argv:
 STREETVIEW_KEY = os.environ.get('STREETVIEW_KEY')
 STREETVIEW_SECRET = os.environ.get('STREETVIEW_SECRET')
 
-TRANSPORTAPI_APP_ID = os.environ.get('TRANSPORTAPI_APP_ID')
-TRANSPORTAPI_APP_KEY = os.environ.get('TRANSPORTAPI_APP_KEY')
+TRANSPORTAPI = {
+   'app_id': os.environ.get('TRANSPORTAPI_APP_ID'),
+   'app_key': os.environ.get('TRANSPORTAPI_APP_KEY')
+}
+TFL = {
+    'app_id': os.environ.get('TFL_APP_ID'),
+    'app_key': os.environ.get('TFL_APP_KEY')
+}
 
 SINGAPORE_KEY = os.environ.get('SINGAPORE_KEY')
 

@@ -321,8 +321,10 @@ class Command(BaseCommand):
 
         Service.objects.filter(region=self.region_id, current=False).update(geometry=None)
 
-        StopPoint.objects.filter(admin_area__region=self.region_id).exclude(service__current=True).update(active=False)
-        StopPoint.objects.filter(admin_area__region=self.region_id, service__current=True).update(active=True)
+        if self.region_id != 'GB':
+            stops = StopPoint.objects.filter(admin_area__region=self.region_id)
+            stops.exclude(service__current=True).update(active=False)
+            stops.filter(service__current=True).update(active=True)
 
         Journey.objects.filter(service__region=self.region_id).delete()
         handle_region(Region.objects.get(id=self.region_id))

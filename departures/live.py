@@ -150,6 +150,10 @@ class JerseyDepartures(Departures):
 
 class TflDepartures(Departures):
     """Departures from the Transport for London API"""
+    @staticmethod
+    def get_request_params():
+        return settings.TFL
+
     def get_request_url(self):
         return 'https://api.tfl.gov.uk/StopPoint/%s/arrivals' % self.stop.pk
 
@@ -296,15 +300,31 @@ class TransportApiDepartures(Departures):
 
     def get_request_params(self):
         return {
-            'app_id': settings.TRANSPORTAPI_APP_ID,
-            'app_key': settings.TRANSPORTAPI_APP_KEY,
-            'group': 'no',
+            **settings.TRANSPORTAPI,
+            'group': 'no'
         }
 
     def departures_from_response(self, res):
         departures = res.json().get('departures')
         if departures and 'all' in departures:
             return [row for row in map(self.get_row, departures['all']) if row]
+
+
+class UKTrainDepartures(Departures):
+    def get_request_url(self):
+        return 'http://transportapi.com/v3/uk/train/station/tiploc:%s/live.json' % self.stop.atco_code[4:]
+
+    def get_request_params(self):
+        return settings.TRANSPORTAPI
+
+    def departures_from_response(self, res):
+        res = res.json()
+        return [{
+            'time': ciso8601.parse_datetime(res['date'] + ' ' + item['aimed_departure_time']),
+            'live': ciso8601.parse_datetime(res['date'] + ' ' + item['expected_departure_time']),
+            'service': item['operator_name'],
+            'destination': item['destination_name']
+        } for item in res['departures']['all']]
 
 
 class TimetableDepartures(Departures):
@@ -483,6 +503,13 @@ def get_departures(stop, services, bot=False):
     """Given a StopPoint object and an iterable of Service objects,
     returns a tuple containing a context dictionary and a max_age integer
     """
+
+    if stop.atco_code[:3] == '910':
+        departures = UKTrainDepartures(stop, services)
+        return ({
+            'departures': departures
+        }, 30)
+
     live_sources = stop.live_sources.values_list('name', flat=True)
 
     # Transport for London
