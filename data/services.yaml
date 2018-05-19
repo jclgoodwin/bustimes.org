@@ -50,3 +50,11 @@ FSAW032:
     description: Castlebay - Barra
 FSBW033:
     description: Castlebay - Vatersay
+twm_5-176-A-y11:
+    line_name: 716
+em_18-X52-_-y08: # deduplicate X52 Alton Towers
+    current: False
+YNAO042S:
+    description: York - Naburn - Cawood - Selby
+YNAO042:
+    description: Cawood - Selby

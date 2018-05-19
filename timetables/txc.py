@@ -86,6 +86,8 @@ def correct_description(description):
             ('Tauton', 'Taunton'),
             ('City Centre,st Stephens Street', 'Norwich'),
             ('Charlton Horethore', 'Charlton Horethorne'),
+            ('Camleford', 'Camelford'),
+            ('Tinagel', 'Tintagel'),
             ('- ', ' - '),
             (' -', ' - '),
             ('  -', ' -'),
@@ -418,12 +420,21 @@ class JourneyPatternTimingLink(object):
         self.origin.parent = self.destination.parent = self
         self.runtime = parse_duration(element.find('txc:RunTime', NS).text)
         self.id = element.get('id')
-        if self.id and self.id.startswith('JPL_8-229-B-y11-1-'):
-            if self.origin.stop.atco_code == '4200F063300':
-                self.origin.stop.atco_code = '4200F147412'
-            if self.destination.stop.atco_code == '4200F063300':
-                self.destination.stop.atco_code = '4200F147412'
+        if self.id:
+            if self.id.startswith('JPL_8-229-B-y11-1-'):
+                self.replace_atco_code('4200F063300', '4200F147412', stops)
+            elif self.id.startswith('JPL_18-X52-_-y08-1-2-R'):
+                self.replace_atco_code('3390S9', '3390S10', stops)
+            elif self.id.startswith('JPL_4-X52-_-y11-1-'):
+                self.replace_atco_code('3390BB01', '3390S10', stops)
 
+    def replace_atco_code(self, code, replacement, stops):
+        if self.origin.stop.atco_code == code:
+            self.origin.stop.atco_code = replacement
+            stops[replacement] = stops[code]
+        if self.destination.stop.atco_code == code:
+            self.destination.stop.atco_code = replacement
+            stops[replacement] = stops[code]
 
 def get_deadruns(journey_element):
     """Given a VehicleJourney element, return a tuple."""
@@ -469,6 +480,11 @@ class VehicleJourney(object):
         self.departure_time = datetime.datetime.strptime(
             element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
         ).time()
+
+        service_ref = element.find('txc:ServiceRef', NS)
+        if service_ref is not None and service_ref.text == 'HIBO809':
+            if self.departure_time == datetime.time(9, 5) or self.departure_time == datetime.time(10, 10):
+                self.departure_time = datetime.time(10, 0)
 
         if self.code == 'VJ_36-148-_-y10-1-2-T0' and self.departure_time == datetime.time(15, 2):
             self.departure_time = datetime.time(7, 50)
@@ -559,11 +575,14 @@ class VehicleJourney(object):
     def should_show(self, date, timetable=None):
         if not date:
             return True
-        if self.code.startswith('VJ_21-X29-_-y08-1') and not self.journeypattern.grouping.description_parts:
-            # don't show Stagecoach X29 Norwich - Fakenham journeys
-            return False
         if self.code.startswith('VJ_34-A1-_-y10-1') and self.departure_time == datetime.time(14, 39):
             return False
+        if self.code.startswith('VJ_39-20-_-y10-2-') and date < datetime.date(2018, 5, 27):
+            # 20 - Weston-super-Mare - Burnham-on-Sea
+            if hasattr(self.operating_profile, 'nonoperation_days'):
+                for daterange in self.operating_profile.nonoperation_days:
+                    if daterange.start == datetime.date(2018, 9, 3) and daterange.end == datetime.date(2500, 1, 1):
+                        return False
         if not self.operating_profile:
             return timetable and timetable.operating_profile.should_show(date)
         if timetable and timetable.service_code == 'PKBO301':
