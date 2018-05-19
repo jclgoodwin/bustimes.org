@@ -436,6 +436,7 @@ class JourneyPatternTimingLink(object):
             self.destination.stop.atco_code = replacement
             stops[replacement] = stops[code]
 
+
 def get_deadruns(journey_element):
     """Given a VehicleJourney element, return a tuple."""
     start_element = journey_element.find('txc:StartDeadRun', NS)
