@@ -120,26 +120,6 @@ class TimetableTest(TestCase):
         self.assertEqual([], timetable.groupings[0].rows)
         self.assertEqual(60, len(timetable.groupings[1].rows))
 
-    def test_timetable_x29_custom_groupings(self):
-        """The Stagecoach Norfolk X29 timetable has some custom groupings"""
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-X29-_-y08-1.xml', date(2017, 12, 10))
-
-        self.assertEqual(6, len(timetable.groupings))
-        self.assertEqual([], timetable.groupings[5].rows[0].times)
-
-        timetable.set_date('2017-12-11')
-        self.assertEqual(1, len(timetable.groupings[5].rows[0].times))
-
-    def test_timetable_coasthopper_custom_groupings(self):
-        """The Stagecoach Norfolk Coasthopper timetable has some custom groupings"""
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-CH-_-y08-1.xml', date(2017, 12, 10))
-
-        self.assertEqual(4, len(timetable.groupings))
-        self.assertEqual('Cromer - Sheringham - Wells-next-the-Sea', str(timetable.groupings[0]))
-        self.assertEqual('Wells-next-the-Sea - Hunstanton', str(timetable.groupings[1]))
-        self.assertEqual('Hunstanton - Wells-next-the-Sea', str(timetable.groupings[2]))
-        self.assertEqual('Wells-next-the-Sea - Sheringham - Cromer', str(timetable.groupings[3]))
-
     def test_timetable_deadruns(self):
         """Test a timetable with some dead runs which should be respected"""
         deadruns = txc.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml', None)

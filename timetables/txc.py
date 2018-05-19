@@ -373,38 +373,6 @@ class JourneyPattern(object):
 
         direction_element = element.find('txc:Direction', NS)
 
-        if route is not None:
-            if route_id.startswith('R_21-X29-_-y08-'):
-                # Holt - Fakenham or Fakenham - Holt
-                if route == 'Town Centre - Oak Street' or route == 'Oak Street - Town Centre':
-                    groupings[self.id] = Grouping('', groupings['outbound'].parent)
-                    groupings[self.id].description_parts = ['Holt', 'Fakenham']
-                    return groupings[self.id]
-                # King's Lynn - Fakenham
-                if route == 'Transport Interchange - Oak Street':
-                    if 'kings-lynn-fakenham' not in groupings:
-                        groupings['kings-lynn-fakenham'] = Grouping('outbound', groupings['outbound'].parent)
-                        groupings['kings-lynn-fakenham'].description_parts = ["King's Lynn", 'Fakenham']
-                    return groupings['kings-lynn-fakenham']
-                # Fakenham = Kings Lynn
-                if route == 'Oak Street - Transport Interchange':
-                    if 'fakenham-kings-lynn' not in groupings:
-                        groupings['fakenham-kings-lynn'] = Grouping('inbound', groupings['outbound'].parent)
-                        groupings['fakenham-kings-lynn'].description_parts = ["King's Lynn", 'Fakenham']
-                    return groupings['fakenham-kings-lynn']
-            elif route_id.startswith('R_21-CH-_-y08-'):
-                if route == 'The Buttlands - Cadogan Road' or route == 'The Buttlands - Railway Approach':
-                    if 'wells-cromer' not in groupings:
-                        groupings['wells-cromer'] = Grouping('a', groupings['outbound'].parent)
-                        groupings['wells-cromer'].description_parts = ['Cromer', 'Sheringham', 'Wells-next-the-Sea']
-                    return groupings['wells-cromer']
-                if route == 'Railway Approach - The Buttlands' or route == 'Cadogan Road - The Buttlands':
-                    if 'cromer-wells' not in groupings:
-                        groupings['cromer-wells'] = Grouping('z', groupings['outbound'].parent)
-                        groupings['cromer-wells'].description_parts = ['Cromer', 'Sheringham', 'Wells-next-the-Sea']
-                    return groupings['cromer-wells']
-                groupings['outbound'].description_parts = ['Hunstanton', 'Wells-next-the-Sea']
-                groupings['inbound'].description_parts = groupings['outbound'].description_parts
         if direction_element is None or direction_element.text == 'outbound':
             return groupings['outbound']
         else:
