@@ -612,9 +612,7 @@ class ServiceDetailView(DetailView):
         if 'pk' in self.kwargs:
             return redirect(self.object, permanent=True)
 
-        response = super().render_to_response(context)
-        response['Link'] = '<https://bustimes.org{}>; rel="canonical"'.format(self.object.get_absolute_url())
-        return response
+        return super().render_to_response(context)
 
 
 class RegistrationView(ListView):
