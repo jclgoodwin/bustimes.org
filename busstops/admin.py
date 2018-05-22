@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.db.models import Count, Q
 from busstops.models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note, Journey, StopUsageUsage,
-    Image, ServiceCode, OperatorCode, DataSource, LiveSource, Place, Contact, Registration, Variation
+    Image, ServiceCode, OperatorCode, DataSource, LiveSource, Place, Registration, Variation, Vehicle, VehicleLocation
 )
 
 
@@ -108,6 +108,17 @@ class VariationAdmin(admin.ModelAdmin):
     list_filter = ('registration_status',)
 
 
+class VehicleAdmin(admin.ModelAdmin):
+    list_display = ('id', 'code', 'operator')
+    search_fields = ('code',)
+    raw_id_fields = ('operator',)
+
+
+class VehicleLocationAdmin(admin.ModelAdmin):
+    list_display = ('vehicle',)
+    raw_id_fields = ('vehicle', 'service')
+
+
 admin.site.register(Region)
 admin.site.register(AdminArea, AdminAreaAdmin)
 admin.site.register(District)
@@ -127,4 +138,5 @@ admin.site.register(LiveSource)
 admin.site.register(Place, PlaceAdmin)
 admin.site.register(Registration)
 admin.site.register(Variation, VariationAdmin)
-admin.site.register(Contact)
+admin.site.register(Vehicle, VehicleAdmin)
+admin.site.register(VehicleLocation, VehicleLocationAdmin)

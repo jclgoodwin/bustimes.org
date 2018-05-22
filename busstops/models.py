@@ -845,3 +845,27 @@ class Note(models.Model):
 
     def get_absolute_url(self):
         return (self.operators.first() or self.services.first()).get_absolute_url()
+
+
+class Vehicle(models.Model):
+    code = models.CharField(max_length=255)
+    source = models.ForeignKey(DataSource, models.CASCADE)
+    operator = models.ForeignKey(Operator, models.SET_NULL, null=True, blank=True)
+
+    class Meta():
+        unique_together = ('code', 'source')
+
+    def __str__(self):
+        return self.code
+
+
+class VehicleLocation(models.Model):
+    data = JSONField(null=True, blank=True)
+    datetime = models.DateTimeField()
+    latlong = models.PointField()
+    service = models.ForeignKey(Service, models.SET_NULL, null=True, blank=True)
+    source = models.ForeignKey(DataSource, models.CASCADE)
+    vehicle = models.ForeignKey(Vehicle, models.SET_NULL, null=True, blank=True)
+
+    class Meta():
+        ordering = ('datetime',)
