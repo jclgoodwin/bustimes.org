@@ -4,7 +4,7 @@ from busstops.models import Locality, Place, Operator, Service
 
 
 class LocalityIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.CharField(document=True, model_attr='name')
+    text = indexes.CharField(document=True, model_attr='name', boost=1.2)
     name = indexes.CharField(model_attr='qualifier_name', boost=0.8)
 
     def get_model(self):

@@ -27,6 +27,13 @@
 {% endblock %}
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}">
+{% block cookies %}
+    <p id="cookie-message">
+        Privacy is a fundamental human right.
+        This site uses cookies.
+        Read&nbsp;<a href="/cookies">my&nbsp;cookie&nbsp;policy</a>.
+    </p>
+{% endblock %}
 {% block header %}
 <header>
     <div>
