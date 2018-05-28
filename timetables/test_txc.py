@@ -487,6 +487,24 @@ class OperatingProfileTest(TestCase):
         self.assertTrue(operating_profile.should_show(date(2017, 4, 17)))  # Easter Monday
         self.assertFalse(operating_profile.should_show(date(2017, 4, 18)))
 
+        operating_profile = txc.OperatingProfile(ET.fromstring("""
+            <OperatingProfile xmlns="http://www.transxchange.org.uk/">
+                <RegularDayType>
+                    <DaysOfWeek>
+                        <Sunday />
+                    </DaysOfWeek>
+                </RegularDayType>
+                <BankHolidayOperation>
+                    <DaysOfOperation>
+                        <LateSummerBankHolidayNotScotland />
+                        <SpringBank />
+                    </DaysOfOperation>
+                </BankHolidayOperation>
+            </OperatingProfile>
+        """), {})
+        self.assertTrue(operating_profile.should_show(date(2018, 5, 28)))
+        self.assertFalse(operating_profile.should_show(date(2018, 5, 29)))  # SpringBank (Monday)
+
     def test_days_of_week(self):
         operating_profile = txc.OperatingProfile(ET.fromstring("""
             <OperatingProfile xmlns="http://www.transxchange.org.uk/">
