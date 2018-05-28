@@ -23,13 +23,13 @@ class Command(BaseCommand):
             response = self.session.get(source.url, timeout=5)
         except requests.exceptions.RequestException as e:
             logger.error(e, exc_info=True)
-            sleep(120) # wait for two minutes
+            sleep(120)  # wait for two minutes
             return
 
         for item in response.json():
             vehicle, _ = Vehicle.objects.update_or_create(
-               source=source,
-               code=item['Label'].split(': ')[0]
+                source=source,
+                code=item['Label'].split(': ')[0]
             )
             location = VehicleLocation(
                 datetime=now,
@@ -46,4 +46,4 @@ class Command(BaseCommand):
         self.session = requests.Session()
 
         while True:
-           self.update()
+            self.update()
