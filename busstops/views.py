@@ -585,7 +585,7 @@ class ServiceDetailView(DetailView):
                 'text': 'Timetable on the %s website' % traveline_text
             })
 
-        if self.object.description and self.object.line_name != 'FlixBus' and self.object.line_name != 'Ouibus':
+        if self.object.description and self.object.line_name:
             related = Service.objects.filter(current=True).exclude(pk=self.object.pk).defer('geometry')
             related = related.filter(Q(description=self.object.description) |
                                      Q(line_name=self.object.line_name, operator__in=context['operators']))

@@ -819,7 +819,9 @@ class Timetable(object):
         }
 
         if self.service_code == '21-584-_-y08-1':  # 584 - Diss - Pulham Market
-            journeys['VJ_21-584-_-y08-1-2-T0'].departure_time = datetime.time(9, 20)
+            for key in journeys:
+                if journeys[key].departure_time == datetime.time(9, 50):
+                    journeys[key].departure_time = datetime.time(9, 20)
 
         # some journeys did not have a direct reference to a journeypattern,
         # but rather a reference to another journey with a reference to a journeypattern
@@ -975,14 +977,6 @@ class Timetable(object):
             self.groupings.sort(key=Grouping.get_order)
 
         self.set_date(date)
-
-        if self.service_code == 'MGZO460':
-            previous_row = None
-            for row in self.groupings[1].rows:
-                if row.part.stop.atco_code == '5230AWD72040' and previous_row.times[:2] == ['', '']:
-                    previous_row.times[0] = row.times[0]
-                    previous_row.times[1] = row.times[1]
-                previous_row = row
 
 
 def abbreviate(grouping, i, in_a_row, difference):
