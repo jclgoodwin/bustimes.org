@@ -393,6 +393,15 @@ class LiveDeparturesTest(TestCase):
             'group': 'no',
         })
 
+    def test_uk_train(self):
+        stop = StopPoint(atco_code='9100FLKSTNC')
+        with vcr.use_cassette('data/vcr/uk_train.yaml'):
+            departures, max_age = live.get_departures(stop, ())
+            departures = departures['departures'].get_departures()
+        self.assertEqual(30, max_age)
+        self.assertEqual(departures[0]['live'], 'Cancelled')
+        self.assertEqual(departures[2]['live'], 'Cancelled')
+
     def test_blend(self):
         a = [{
             'service': 'X98',

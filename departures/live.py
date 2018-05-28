@@ -317,11 +317,18 @@ class UKTrainDepartures(Departures):
     def get_request_params(self):
         return settings.TRANSPORTAPI
 
+    @staticmethod
+    def get_time(res, item, key):
+        if item[key]:
+            return ciso8601.parse_datetime(res['date'] + ' ' + item[key])
+        if item['status'] == 'CANCELLED':
+            return 'Cancelled'
+
     def departures_from_response(self, res):
         res = res.json()
         return [{
-            'time': ciso8601.parse_datetime(res['date'] + ' ' + item['aimed_departure_time']),
-            'live': ciso8601.parse_datetime(res['date'] + ' ' + item['expected_departure_time']),
+            'time': self.get_time(res, item, 'aimed_departure_time'),
+            'live': self.get_time(res, item, 'expected_departure_time'),
             'service': item['operator_name'],
             'destination': item['destination_name']
         } for item in res['departures']['all']]
@@ -452,12 +459,8 @@ def add_stagecoach_departures(stop, services_dict, departures):
 def services_match(a, b):
     if type(a) == Service:
         a = a.line_name
-    elif a == 'CH':
-        a = 'Coasthopper'
     if type(b) == Service:
         b = b.line_name
-    elif b == 'CH':
-        b = 'Coasthopper'
     return a == b
 
 

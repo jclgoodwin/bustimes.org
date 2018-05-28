@@ -1,0 +1,56 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: http://transportapi.com/v3/uk/train/station/tiploc:FLKSTNC/live.json
+  response:
+    body: {string: '{"date":"2018-05-28","time_of_day":"17:54","request_time":"2018-05-28T17:54:42+01:00","station_name":"Folkestone
+        Central","station_code":"tiploc:FLKSTNC","departures":{"all":[{"mode":"train","service":"24605004","train_uid":"W43747","platform":null,"operator":"SE","operator_name":"Southeastern","aimed_departure_time":"17:58","aimed_arrival_time":"17:57","aimed_pass_time":null,"origin_name":"Ashford
+        International","destination_name":"Ramsgate","source":"Network Rail","category":"OO","service_timetable":{"id":"http://transportapi.com/v3/uk/train/service/train_uid:W43747/2018-05-28/timetable.json?app_id=7f071c25&app_key=dfc613243505a7f32156c1adfb6d7be5&live=true"},"status":"CANCELLED","expected_arrival_time":null,"expected_departure_time":null,"best_arrival_estimate_mins":null,"best_departure_estimate_mins":null},{"mode":"train","service":"24648004","train_uid":"W42086","platform":null,"operator":"SE","operator_name":"Southeastern","aimed_departure_time":"18:00","aimed_arrival_time":"17:59","aimed_pass_time":null,"origin_name":"London
+        St Pancras International","destination_name":"London St Pancras International","source":"Network
+        Rail","category":"XX","service_timetable":{"id":"http://transportapi.com/v3/uk/train/service/train_uid:W42086/2018-05-28/timetable.json?app_id=7f071c25&app_key=dfc613243505a7f32156c1adfb6d7be5&live=true"},"status":"CANCELLED","expected_arrival_time":null,"expected_departure_time":null,"best_arrival_estimate_mins":null,"best_departure_estimate_mins":null},{"mode":"train","service":"24647000","train_uid":"W42310","platform":null,"operator":"SE","operator_name":"Southeastern","aimed_departure_time":"18:03","aimed_arrival_time":"18:02","aimed_pass_time":null,"origin_name":"London
+        St Pancras International","destination_name":"Dover Priory","source":"Network
+        Rail","category":"XX","service_timetable":{"id":"http://transportapi.com/v3/uk/train/service/train_uid:W42310/2018-05-28/timetable.json?app_id=7f071c25&app_key=dfc613243505a7f32156c1adfb6d7be5&live=true"},"status":"CANCELLED","expected_arrival_time":null,"expected_departure_time":null,"best_arrival_estimate_mins":null,"best_departure_estimate_mins":null},{"mode":"train","service":"24605004","train_uid":"W44089","platform":null,"operator":"SE","operator_name":"Southeastern","aimed_departure_time":"18:09","aimed_arrival_time":"18:08","aimed_pass_time":null,"origin_name":"Dover
+        Priory","destination_name":"London Charing Cross","source":"Network Rail","category":"OO","service_timetable":{"id":"http://transportapi.com/v3/uk/train/service/train_uid:W44089/2018-05-28/timetable.json?app_id=7f071c25&app_key=dfc613243505a7f32156c1adfb6d7be5&live=true"},"status":"CANCELLED","expected_arrival_time":null,"expected_departure_time":null,"best_arrival_estimate_mins":null,"best_departure_estimate_mins":null},{"mode":"train","service":"24605004","train_uid":"W43749","platform":null,"operator":"SE","operator_name":"Southeastern","aimed_departure_time":"18:25","aimed_arrival_time":"18:24","aimed_pass_time":null,"origin_name":"Ashford
+        International","destination_name":"Dover Priory","source":"Network Rail","category":"OO","service_timetable":{"id":"http://transportapi.com/v3/uk/train/service/train_uid:W43749/2018-05-28/timetable.json?app_id=7f071c25&app_key=dfc613243505a7f32156c1adfb6d7be5&live=true"},"status":"CANCELLED","expected_arrival_time":null,"expected_departure_time":null,"best_arrival_estimate_mins":null,"best_departure_estimate_mins":null},{"mode":"train","service":"24647000","train_uid":"W42311","platform":null,"operator":"SE","operator_name":"Southeastern","aimed_departure_time":"18:35","aimed_arrival_time":"18:32","aimed_pass_time":null,"origin_name":"London
+        St Pancras International","destination_name":"Ramsgate","source":"Network
+        Rail","category":"XX","service_timetable":{"id":"http://transportapi.com/v3/uk/train/service/train_uid:W42311/2018-05-28/timetable.json?app_id=7f071c25&app_key=dfc613243505a7f32156c1adfb6d7be5&live=true"},"status":"CANCELLED","expected_arrival_time":null,"expected_departure_time":null,"best_arrival_estimate_mins":null,"best_departure_estimate_mins":null},{"mode":"train","service":"24605004","train_uid":"W44091","platform":null,"operator":"SE","operator_name":"Southeastern","aimed_departure_time":"18:36","aimed_arrival_time":"18:35","aimed_pass_time":null,"origin_name":"Ramsgate","destination_name":"London
+        Charing Cross","source":"Network Rail","category":"OO","service_timetable":{"id":"http://transportapi.com/v3/uk/train/service/train_uid:W44091/2018-05-28/timetable.json?app_id=7f071c25&app_key=dfc613243505a7f32156c1adfb6d7be5&live=true"},"status":"CANCELLED","expected_arrival_time":null,"expected_departure_time":null,"best_arrival_estimate_mins":null,"best_departure_estimate_mins":null},{"mode":"train","service":"24647005","train_uid":"W42317","platform":null,"operator":"SE","operator_name":"Southeastern","aimed_departure_time":"19:00","aimed_arrival_time":"18:59","aimed_pass_time":null,"origin_name":"Dover
+        Priory","destination_name":"London St Pancras International","source":"Network
+        Rail","category":"XX","service_timetable":{"id":"http://transportapi.com/v3/uk/train/service/train_uid:W42317/2018-05-28/timetable.json?app_id=7f071c25&app_key=dfc613243505a7f32156c1adfb6d7be5&live=true"},"status":"CANCELLED","expected_arrival_time":null,"expected_departure_time":null,"best_arrival_estimate_mins":null,"best_departure_estimate_mins":null},{"mode":"train","service":"24647000","train_uid":"W42313","platform":null,"operator":"SE","operator_name":"Southeastern","aimed_departure_time":"19:03","aimed_arrival_time":"19:02","aimed_pass_time":null,"origin_name":"London
+        St Pancras International","destination_name":"Dover Priory","source":"Network
+        Rail","category":"XX","service_timetable":{"id":"http://transportapi.com/v3/uk/train/service/train_uid:W42313/2018-05-28/timetable.json?app_id=7f071c25&app_key=dfc613243505a7f32156c1adfb6d7be5&live=true"},"status":"CANCELLED","expected_arrival_time":null,"expected_departure_time":null,"best_arrival_estimate_mins":null,"best_departure_estimate_mins":null},{"mode":"train","service":"24605004","train_uid":"W44092","platform":null,"operator":"SE","operator_name":"Southeastern","aimed_departure_time":"19:09","aimed_arrival_time":"19:08","aimed_pass_time":null,"origin_name":"Ramsgate","destination_name":"London
+        Charing Cross","source":"Network Rail","category":"OO","service_timetable":{"id":"http://transportapi.com/v3/uk/train/service/train_uid:W44092/2018-05-28/timetable.json?app_id=7f071c25&app_key=dfc613243505a7f32156c1adfb6d7be5&live=true"},"status":"CANCELLED","expected_arrival_time":null,"expected_departure_time":null,"best_arrival_estimate_mins":null,"best_departure_estimate_mins":null},{"mode":"train","service":"24605000","train_uid":"W43771","platform":null,"operator":"SE","operator_name":"Southeastern","aimed_departure_time":"19:12","aimed_arrival_time":"19:11","aimed_pass_time":null,"origin_name":"London
+        Cannon Street","destination_name":"Ramsgate","source":"Network Rail","category":"OO","service_timetable":{"id":"http://transportapi.com/v3/uk/train/service/train_uid:W43771/2018-05-28/timetable.json?app_id=7f071c25&app_key=dfc613243505a7f32156c1adfb6d7be5&live=true"},"status":"CANCELLED","expected_arrival_time":null,"expected_departure_time":null,"best_arrival_estimate_mins":null,"best_departure_estimate_mins":null},{"mode":"train","service":"24647004","train_uid":"J11218","platform":null,"operator":"SE","operator_name":"Southeastern","aimed_departure_time":"19:30","aimed_arrival_time":"19:30","aimed_pass_time":null,"origin_name":"London
+        St Pancras International","destination_name":"London St Pancras International","source":"Network
+        Rail","category":"XX","service_timetable":{"id":"http://transportapi.com/v3/uk/train/service/train_uid:J11218/2018-05-28/timetable.json?app_id=7f071c25&app_key=dfc613243505a7f32156c1adfb6d7be5&live=true"},"status":"ON
+        TIME","expected_arrival_time":"19:30","expected_departure_time":"19:30","best_arrival_estimate_mins":95,"best_departure_estimate_mins":95},{"mode":"train","service":"24647004","train_uid":"W42314","platform":null,"operator":"SE","operator_name":"Southeastern","aimed_departure_time":"19:34","aimed_arrival_time":"19:33","aimed_pass_time":null,"origin_name":"London
+        St Pancras International","destination_name":"Sandwich","source":"Network
+        Rail","category":"XX","service_timetable":{"id":"http://transportapi.com/v3/uk/train/service/train_uid:W42314/2018-05-28/timetable.json?app_id=7f071c25&app_key=dfc613243505a7f32156c1adfb6d7be5&live=true"},"status":"CANCELLED","expected_arrival_time":null,"expected_departure_time":null,"best_arrival_estimate_mins":null,"best_departure_estimate_mins":null},{"mode":"train","service":"24605000","train_uid":"W43752","platform":null,"operator":"SE","operator_name":"Southeastern","aimed_departure_time":"19:43","aimed_arrival_time":"19:42","aimed_pass_time":null,"origin_name":"London
+        Charing Cross","destination_name":"Ramsgate","source":"Network Rail","category":"OO","service_timetable":{"id":"http://transportapi.com/v3/uk/train/service/train_uid:W43752/2018-05-28/timetable.json?app_id=7f071c25&app_key=dfc613243505a7f32156c1adfb6d7be5&live=true"},"status":"CANCELLED","expected_arrival_time":null,"expected_departure_time":null,"best_arrival_estimate_mins":null,"best_departure_estimate_mins":null}]}}'}
+    headers:
+      Access-Control-Allow-Origin: ['*']
+      Cache-Control: [private]
+      Connection: [keep-alive]
+      Content-Disposition: [inline]
+      Content-Length: ['9366']
+      Content-Transfer-Encoding: [binary]
+      Content-Type: [application/json]
+      Date: ['Mon, 28 May 2018 16:54:42 GMT']
+      ETag: [W/"ddddfd3064a53e1806bb3be5727e6006"]
+      Server: [Apache]
+      Status: [200 OK]
+      X-Frame-Options: [ALLOWALL]
+      X-Powered-By: [Phusion Passenger 5.1.2]
+      X-Request-Id: [30ea2385-379f-4d46-a8a4-295a700a9d2c]
+      X-Runtime: ['0.630892']
+      X-Server-ID: [7505617a28e15763f7ab7b9da583f12a]
+      X-UA-Compatible: [chrome=1]
+      X-XSS-Protection: [1; mode=block]
+    status: {code: 200, message: OK}
+version: 1
