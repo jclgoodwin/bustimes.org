@@ -19,6 +19,18 @@ def sndr(_, __, queryset):
     return queryset.update(operator='SNDR')
 
 
+def simo(_, __, queryset):
+    return queryset.update(operator='SIMO')
+
+
+def fecs(_, __, queryset):
+    return queryset.update(operator='FECS')
+
+
+def brdb(_, __, queryset):
+    return queryset.update(operator='BRDB')
+
+
 class AdminAreaAdmin(admin.ModelAdmin):
     list_display = ('name', 'id', 'atco_code', 'region_id')
     list_filter = ('region_id',)
@@ -124,7 +136,7 @@ class VehicleAdmin(admin.ModelAdmin):
     list_display = ('id', 'code', 'operator')
     search_fields = ('code',)
     raw_id_fields = ('operator',)
-    actions = (lynx, sndr)
+    actions = (lynx, sndr, fecs, brdb, simo)
 
 
 class VehicleLocationAdmin(admin.ModelAdmin):

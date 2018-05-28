@@ -6,7 +6,7 @@ import os
 import zipfile
 import time
 from urllib.parse import urlencode
-from datetime import date
+from datetime import date, timedelta
 from autoslug import AutoSlugField
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -890,17 +890,14 @@ class Vehicle(models.Model):
 
     def get_journeys(self):
         locations = []
-        previous_label = None
+        previous_time = previous_label = None
         for location in self.vehiclelocation_set.all():
-            label = location.data['Label'].split()
-            if len(label) > 1:
-                label = label[1]
-            else:
-                label = None
-            if label != previous_label:
+            label = location.get_label()
+            if locations and (label != previous_label or location.datetime - previous_time > timedelta(minutes=2)):
                 yield locations
                 locations = []
             locations.append(location)
+            previous_time = location.datetime
             previous_label = label
         if locations:
             yield locations
@@ -916,3 +913,9 @@ class VehicleLocation(models.Model):
 
     class Meta():
         ordering = ('datetime',)
+
+    def get_label(self):
+        if self.data and 'Label' in self.data:
+            label = self.data['Label'].split()
+            if len(label) > 1:
+                return label[1]
