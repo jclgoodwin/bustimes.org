@@ -727,9 +727,6 @@ class OperatingProfile(object):
                 if daterange.contains(date):
                     return True
 
-        if self.regular_days:
-            if date.weekday() not in self.regular_days:
-                return False
         if date in BANK_HOLIDAYS:
             if 'AllBankHolidays' in self.operation_bank_holidays:
                 return True
@@ -740,6 +737,10 @@ class OperatingProfile(object):
                     return True
                 if bank_holiday in self.nonoperation_bank_holidays:
                     return False
+
+        if self.regular_days:
+            if date.weekday() not in self.regular_days:
+                return False
 
         if not self.regular_days:
             return False
