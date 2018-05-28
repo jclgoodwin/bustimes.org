@@ -1,0 +1,33 @@
+{% extends 'page.html' %}
+
+{% block content %}
+
+<h1>{{ object }}</h1>
+
+<div id="cartograph" style="height: 700px"></div>
+
+{% load staticfiles %}
+<link rel="stylesheet" href="{% static 'js/bower_components/leaflet/dist/leaflet.css' %}" />
+<script src="{% static 'js/bower_components/leaflet/dist/leaflet.js' %}"></script>
+<script>
+(function() {
+    var map = L.map('cartograph'),
+        tileURL = 'https://bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
+        bounds = L.latLngBounds();
+ 
+    L.tileLayer(tileURL).addTo(map);
+
+    {% for journey in object.get_journeys %}
+        bounds.extend(L.polyline([
+            {% for location in journey %}
+                 {% ifchanged location.latlong %}
+                     [{{ location.latlong.y }},{{ location.latlong.x }}],
+                {% endifchanged %}
+            {% endfor %}
+        ]).addTo(map).getBounds());
+    {% endfor %}
+    map.fitBounds(bounds);
+})();
+</script>
+
+{% endblock %}

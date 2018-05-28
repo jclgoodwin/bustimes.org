@@ -32,15 +32,16 @@ urlpatterns = [
     path('licences/<licence_number>', views.RegistrationView.as_view(), name='registration_list'),
     path('registrations/<path:registration__registration_number>', views.VariationView.as_view(),
          name='variation_list'),
-    url(r'^images/(?P<id>\d+)', views.image),
-    url(r'^sitemap\.xml$', sitemap, {
+    path('vehicles/<int:pk>', views.VehicleDetailView.as_view(), name='vehicle_detail'),
+    path('images/<int:id>', views.image),
+    path('sitemap.xml', sitemap, {
         'sitemaps': {
              'operators': views.OperatorSitemap,
              'services': views.ServiceSitemap,
         }
     }),
-    url(r'^search', SearchView(form_class=CustomSearchForm)),
-    url(r'^journey', views.journey),
+    path('search', SearchView(form_class=CustomSearchForm)),
+    path('journey', views.journey),
 ]
 
 

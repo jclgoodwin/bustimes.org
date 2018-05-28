@@ -7,6 +7,18 @@ from busstops.models import (
 )
 
 
+def set_operator(queryset, operator):
+    return queryset.update(operator=operator)
+
+
+def lynx(_, __, queryset):
+    return queryset.update(operator='LYNX')
+
+
+def sndr(_, __, queryset):
+    return queryset.update(operator='SNDR')
+
+
 class AdminAreaAdmin(admin.ModelAdmin):
     list_display = ('name', 'id', 'atco_code', 'region_id')
     list_filter = ('region_id',)
@@ -112,6 +124,7 @@ class VehicleAdmin(admin.ModelAdmin):
     list_display = ('id', 'code', 'operator')
     search_fields = ('code',)
     raw_id_fields = ('operator',)
+    actions = (lynx, sndr)
 
 
 class VehicleLocationAdmin(admin.ModelAdmin):

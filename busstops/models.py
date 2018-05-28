@@ -856,7 +856,30 @@ class Vehicle(models.Model):
         unique_together = ('code', 'source')
 
     def __str__(self):
-        return self.code
+        code = self.code
+        if '_' in code:
+            return code.replace('_', ' ')
+        return self.code.replace('-', ' ')
+
+    def get_absolute_url(self):
+        return reverse('vehicle_detail', args=(self.id,))
+
+    def get_journeys(self):
+        locations = []
+        previous_label = None
+        for location in self.vehiclelocation_set.all():
+            label = location.data['Label'].split()
+            if len(label) > 1:
+                label = label[1]
+            else:
+                label = None
+            if label != previous_label:
+                yield locations
+                locations = []
+            locations.append(location)
+            previous_label = label
+        if locations:
+            yield locations
 
 
 class VehicleLocation(models.Model):

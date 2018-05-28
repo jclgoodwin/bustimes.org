@@ -22,7 +22,7 @@ from haystack.query import SearchQuerySet
 from departures import live
 from .utils import format_gbp
 from .models import (Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Image, Journey, Place,
-                     Registration, Variation)
+                     Registration, Variation, Vehicle)
 from .forms import ContactForm, ImageForm
 
 
@@ -747,3 +747,7 @@ def journey(request):
         'to_options': to_options,
         'journeys': journeys
     })
+
+
+class VehicleDetailView(DetailView):
+    model = Vehicle
