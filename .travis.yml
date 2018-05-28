@@ -3,7 +3,10 @@ sudo: false
 group: edge
 python:
   - "3.6"
-cache: pip
+cache:
+  pip: true
+  directories:
+    - node_modules
 addons:
   postgresql: "9.5"
   apt:
