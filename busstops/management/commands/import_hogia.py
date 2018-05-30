@@ -31,6 +31,8 @@ class Command(BaseCommand):
                 source=source,
                 code=item['Label'].split(': ')[0]
             )
+            if item['Speed'] != item['Speed']:
+                item['Speed'] = None
             location = VehicleLocation(
                 datetime=now,
                 vehicle=vehicle,
