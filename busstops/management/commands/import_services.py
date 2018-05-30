@@ -173,8 +173,8 @@ class Command(BaseCommand):
             return
 
         operators = timetable.operators
-        if timetable.operator and len(operators) > 1:
-            operators = [operator for operator in operators if operator.get('id') == timetable.operator]
+        # if timetable.operator and len(operators) > 1:
+        #     operators = [operator for operator in operators if operator.get('id') == timetable.operator]
         operators = [operator for operator in map(self.get_operator, operators) if operator]
 
         line_name, line_brand = self.get_line_name_and_brand(timetable.element.find('txc:Services/txc:Service', NS),

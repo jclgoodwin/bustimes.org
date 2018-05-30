@@ -427,10 +427,10 @@ class JourneyPatternTimingLink(object):
                 self.replace_atco_code('3390S9', '3390S10', stops)
             elif self.id.startswith('JPL_4-X52-_-y11-1-'):
                 self.replace_atco_code('3390BB01', '3390S10', stops)
-            elif self.id.startswith('JPTL') and self.origin.sequencenumber in {1, 66}:
-                # x1-ruthin-chester-via-mold
-                self.replace_atco_code('0610CH19065', '0610CH2395', stops)
-
+            elif self.id.startswith('JPTL'):
+                if self.origin.sequencenumber == 1 or self.origin.sequencenumber == 66:
+                    # x1-ruthin-chester-via-mold
+                    self.replace_atco_code('0610CH19065', '0610CH2395', stops)
 
     def replace_atco_code(self, code, replacement, stops):
         if self.origin.stop.atco_code == code:
@@ -535,7 +535,11 @@ class VehicleJourney(object):
                 if deadrun:
                     if self.start_deadrun == timinglink.id:
                         deadrun = False  # end of dead run
-                elif not (self.code.startswith('VJ_45-16A-_-y10-2') and stopusage.timingstatus == 'OTH'):
+                elif not (
+                    self.code.startswith('VJ_45-16A-_-y10-2') and stopusage.timingstatus == 'OTH'
+                    or self.private_code.startswith('014MFMHA') and time == datetime.time(6, 40)
+                        and stopusage.sequencenumber == 12
+                ):
                     yield(stopusage, time)
 
                 if self.end_deadrun == timinglink.id:
