@@ -427,6 +427,10 @@ class JourneyPatternTimingLink(object):
                 self.replace_atco_code('3390S9', '3390S10', stops)
             elif self.id.startswith('JPL_4-X52-_-y11-1-'):
                 self.replace_atco_code('3390BB01', '3390S10', stops)
+            elif self.id.startswith('JPTL') and self.origin.sequencenumber in {1, 66}:
+                # x1-ruthin-chester-via-mold
+                self.replace_atco_code('0610CH19065', '0610CH2395', stops)
+
 
     def replace_atco_code(self, code, replacement, stops):
         if self.origin.stop.atco_code == code:
