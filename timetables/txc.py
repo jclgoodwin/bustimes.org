@@ -537,7 +537,7 @@ class VehicleJourney(object):
                         deadrun = False  # end of dead run
                 elif not (
                     self.code.startswith('VJ_45-16A-_-y10-2') and stopusage.timingstatus == 'OTH'
-                    or self.private_code.startswith('014MFMHA') and time == datetime.time(6, 40)
+                    or self.private_code and self.private_code.startswith('014MFMHA') and time == datetime.time(6, 40)
                         and stopusage.sequencenumber == 12
                 ):
                     yield(stopusage, time)
