@@ -738,7 +738,7 @@ class Service(models.Model):
                 return northern_ireland.get_timetable(path, day)
             return []
 
-        if self.region_id in {'UL', 'LE', 'MU', 'CO'}:
+        if self.region_id in {'UL', 'LE', 'MU', 'CO', 'HI'}:
             service_codes = self.servicecode_set.filter(scheme__endswith=' GTFS')
             timetables = [gtfs.get_timetable(service_code.get_routes(), day) for service_code in service_codes]
         else:
