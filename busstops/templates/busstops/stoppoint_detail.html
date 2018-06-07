@@ -10,6 +10,10 @@
 <p>{{ text }}</p>
 {% endif %}
 
+{% if stoppoint.bearing %}
+<p>Buses travel {{ stoppoint.get_bearing_display }} from here</p>
+{% endif %}
+
 <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
     <meta itemprop="latitude" content="{{ stoppoint.latlong.y }}" />
     <meta itemprop="longitude" content="{{ stoppoint.latlong.x }}" />

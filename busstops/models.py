@@ -236,13 +236,13 @@ class StopPoint(models.Model):
 
     BEARING_CHOICES = (
         ('N', 'north'),
-        ('NE', 'north east'),
+        ('NE', 'north-east'),
         ('E', 'east'),
-        ('SE', 'south east'),
+        ('SE', 'south-east'),
         ('S', 'south'),
-        ('SW', 'south west'),
+        ('SW', 'south-west'),
         ('W', 'west'),
-        ('NW', 'north west')
+        ('NW', 'north-west')
     )
     bearing = models.CharField(max_length=2, choices=BEARING_CHOICES, blank=True)
 
