@@ -1,0 +1,20 @@
+2900B482:
+    common_name: green
+    landmark: village sign
+    street: Dereham Road
+    crossing: The Street
+    bearing: SW
+    latlong: POINT(1.0241 52.8685)
+2900B484:
+    common_name: green
+    landmark: village sign
+    street: Dereham Road
+    crossing: The Street
+    bearing: NE
+    latlong: POINT(1.0239 52.8685)
+'021016052':
+    common_name: ZSL Whipsnade Zoo
+    landmark: ZSL Whipsnade Zoo
+'021016053':
+    common_name: ZSL Whipsnade Zoo
+    landmark: ZSL Whipsnade Zoo

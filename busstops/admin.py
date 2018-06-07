@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib import admin
+from django.contrib.gis.forms import OSMWidget
 from django.db.models import Count, Q
+from django.contrib.gis.db.models import PointField
 from busstops.models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note, Journey, StopUsageUsage,
     Image, ServiceCode, OperatorCode, DataSource, LiveSource, Place, Registration, Variation, Vehicle, VehicleLocation
@@ -41,8 +43,12 @@ class StopPointAdmin(admin.ModelAdmin):
     list_display = ('atco_code', 'naptan_code', 'locality', 'admin_area', '__str__')
     list_select_related = ('locality', 'admin_area')
     list_filter = ('stop_type', 'service__region', 'admin_area')
-    search_fields = ('atco_code', 'common_name')
+    raw_id_fields = ('places',)
+    search_fields = ('atco_code', 'common_name', 'locality__name')
     ordering = ('atco_code',)
+    formfield_overrides = {
+        PointField: {'widget': OSMWidget}
+    }
 
 
 class OperatorAdmin(admin.ModelAdmin):
