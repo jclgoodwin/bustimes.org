@@ -45,7 +45,7 @@ class Departures(object):
         return {
             'params': self.get_request_params(),
             'headers': self.get_request_headers(),
-            'timeout': 5
+            'timeout': 10
         }
 
     def get_response(self):
@@ -67,6 +67,8 @@ class Departures(object):
         """Returns a list of departures"""
         try:
             response = self.get_response()
+        except requests.exceptions.ReadTimeout:
+            return
         except requests.exceptions.RequestException as e:
             logger.error(e, exc_info=True)
             return
@@ -614,8 +616,13 @@ def get_departures(stop, services, bot=False):
             live_rows = AcisConnectDepartures('belfast', stop, services, now).get_departures()
             if live_rows:
                 blend(departures, live_rows)
-        # Norfolk
-        elif departures and stop.atco_code[:3] in {'290', '390', '180', '059', '050', '049', '039'}:
+        elif departures and stop.atco_code[:3] in {
+            '639', '630', '649', '607', '018', '020', '129', '038', '149', '010', '040', '050', '571', '021', '110',
+            '120', '640', '618', '611', '612', '140', '150', '609', '160', '180', '190', '670', '250', '269', '260',
+            '270', '029', '049', '290', '300', '617', '228', '616', '227', '019', '340', '648', '059', '128', '199',
+            '039', '614', '037', '198', '619', '158', '017', '615', '390', '400', '159', '119', '030', '608', '440',
+            '460', '036', '035', '200'
+        } and not all(operator.name.startswith('Stagecoach') for operator in operators):
             live_rows = LambdaDepartures(stop, services, now).get_departures()
             if live_rows:
                 blend(departures, live_rows)
