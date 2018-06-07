@@ -913,6 +913,7 @@ class VehicleLocation(models.Model):
 
     class Meta():
         ordering = ('datetime',)
+        index_together = ('source', 'datetime')
 
     def get_label(self):
         if self.data and 'Label' in self.data:

@@ -5,7 +5,7 @@ import json
 import PIL
 import ciso8601
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Q, Max
+from django.db.models import F, Max, Q
 from django.http import (HttpResponse, JsonResponse, Http404,
                          HttpResponseBadRequest)
 from django.utils import timezone
@@ -22,7 +22,7 @@ from haystack.query import SearchQuerySet
 from departures import live
 from .utils import format_gbp
 from .models import (Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Image, Journey, Place,
-                     Registration, Variation, Vehicle)
+                     Registration, Variation, Vehicle, VehicleLocation)
 from .forms import ContactForm, ImageForm
 
 
@@ -150,15 +150,19 @@ def hugemap(request):
     return render(request, 'map.html')
 
 
+def get_bounding_box(request):
+    return Polygon.from_bbox(
+        [request.GET[key] for key in ('xmin', 'ymin', 'xmax', 'ymax')]
+    )
+
+
 def stops(request):
     """JSON endpoint accessed by the JavaScript map,
     listing the active StopPoints within a rectangle,
     in standard GeoJSON format
     """
     try:
-        bounding_box = Polygon.from_bbox(
-            [request.GET[key] for key in ('xmin', 'ymin', 'xmax', 'ymax')]
-        )
+        bounding_box = get_bounding_box(request)
     except KeyError:
         return HttpResponseBadRequest()
 
@@ -181,6 +185,36 @@ def stops(request):
                 'url': stop.get_absolute_url(),
             }
         } for stop in results]
+    })
+
+
+def vehicles(request):
+    return render(request, 'vehicles.html')
+
+
+def vehicles_json(request):
+    vehicle_locations = VehicleLocation.objects.filter(datetime=F('source__datetime'))
+    vehicle_locations = vehicle_locations.exclude(operator='FECS').order_by()
+
+    try:
+        bounding_box = get_bounding_box(request)
+        vehicle_locations = vehicle_locations.filter(latlong__within=bounding_box)
+    except KeyError:
+        pass
+
+    return JsonResponse({
+        'type': 'FeatureCollection',
+        'features': [{
+            'type': 'Feature',
+            'geometry': {
+                'type': 'Point',
+                'coordinates': tuple(location.latlong),
+            },
+            'properties': {
+                'vehicle': str(location.vehicle),
+                'operator': str(location.vehicle.operator),
+            }
+        } for location in vehicle_locations]
     })
 
 

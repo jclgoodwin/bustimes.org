@@ -140,13 +140,20 @@ class VariationAdmin(admin.ModelAdmin):
 
 class VehicleAdmin(admin.ModelAdmin):
     list_display = ('id', 'code', 'operator')
+    list_filter = (
+        ('operator', admin.RelatedOnlyFieldListFilter),
+    )
     search_fields = ('code',)
     raw_id_fields = ('operator',)
     actions = (lynx, sndr, fecs, brdb, simo)
 
 
 class VehicleLocationAdmin(admin.ModelAdmin):
-    list_display = ('vehicle',)
+    list_display = ('vehicle', 'service', 'datetime')
+    list_filter = (
+        ('service__operator', admin.RelatedOnlyFieldListFilter),
+        ('service', admin.RelatedOnlyFieldListFilter),
+    )
     raw_id_fields = ('vehicle', 'service')
 
 

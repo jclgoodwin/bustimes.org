@@ -32,6 +32,8 @@ urlpatterns = [
     path('licences/<licence_number>', views.RegistrationView.as_view(), name='registration_list'),
     path('registrations/<path:registration__registration_number>', views.VariationView.as_view(),
          name='variation_list'),
+    path('vehicles', views.vehicles),
+    path('vehicles.json', views.vehicles_json),
     path('vehicles/<int:pk>', views.VehicleDetailView.as_view(), name='vehicle_detail'),
     path('images/<int:id>', views.image),
     path('sitemap.xml', sitemap, {
