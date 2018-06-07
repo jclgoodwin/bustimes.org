@@ -553,7 +553,7 @@ class ServiceDetailView(DetailView):
                     date = ciso8601.parse_datetime(date).date()
                     if date < today:
                         date = None
-                except AttributeError:
+                except ValueError:
                     date = None
             if not date:
                 date = self.object.servicedate_set.filter(date__gte=today).first()
