@@ -57,6 +57,7 @@ class LiveDeparturesTest(TestCase):
         stagecoach_operator = Operator.objects.create(id='SCOX',
                                                       name='Stagecoach Oxenholme',
                                                       region_id='W')
+        non_stagecoach_operator = Operator.objects.create(id='AINS', name="Ainsley's Chariots", region_id='W')
         cls.stagecoach_service = Service.objects.create(service_code='15', line_name='15',
                                                         region_id='W', date='2017-01-01')
         cls.stagecoach_service.operator.add(stagecoach_operator)
@@ -78,7 +79,10 @@ class LiveDeparturesTest(TestCase):
         ])
 
         cls.norfolk_stop = StopPoint.objects.create(atco_code='2900M115', active=True, locality_centre=False)
-        Service.objects.create(service_code='9', line_name='9', region_id='W', date='2018-01-04')
+        norfolk_service = Service.objects.create(service_code='9', line_name='9', region_id='W', date='2018-01-04',
+                                                 current=True)
+        norfolk_service.operator.add(non_stagecoach_operator)
+        StopUsage.objects.create(stop=cls.norfolk_stop, service=norfolk_service, order=1)
         norfolk_journey = Journey.objects.create(datetime='2018-01-04T10:00:00+00:00', service_id='9',
                                                  destination=cls.yorkshire_stop)
         StopUsageUsage.objects.create(journey=norfolk_journey, order=0, datetime='2018-01-04T10:02:00+00:00',

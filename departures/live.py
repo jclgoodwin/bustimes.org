@@ -365,7 +365,7 @@ class LambdaDepartures(Departures):
             'service': self.get_service(item['service']),
             'destination': item['destination_name']
         }
-        if self.stop.atco_code[:3] == '290' and type(row['service']) is Service and item['line']:
+        if self.stop.atco_code[:3] == '290' and type(row['service']) is Service and item.get('line'):
             ServiceCode.objects.update_or_create(service=row['service'], scheme='NCC Hogia', code=item['line'])
         if row['live']:
             row['live'] = ciso8601.parse_datetime(row['live']).astimezone(LOCAL_TIMEZONE)
