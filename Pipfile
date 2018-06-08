@@ -19,7 +19,6 @@ python-memcached = "*"
 setproctitle = "*"
 raven = "*"
 multigtfs = {git = "git://github.com/tulsawebdevs/django-multi-gtfs.git", editable=true}
-pillow = "*"
 requests = "*"
 titlecase = "*"
 uk-postcode-utils = "*"

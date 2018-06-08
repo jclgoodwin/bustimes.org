@@ -1,7 +1,7 @@
 from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
 from .models import (
-    Region, AdminArea, District, Locality, LiveSource, Operator, Service, StopPoint
+    Region, AdminArea, District, Locality, Operator, Service, StopPoint
 )
 from .admin import OperatorAdmin
 
@@ -25,19 +25,6 @@ class RegionTests(TestCase):
 
     def test_get_absolute_url(self):
         self.assertEqual(self.midlands.get_absolute_url(), '/regions/NM')
-
-
-class LiveSourceTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.yorkshire = LiveSource.objects.get_or_create(name='Y')[0]
-        cls.london = LiveSource.objects.get_or_create(name='TfL')[0]
-        cls.dummy = LiveSource.objects.get_or_create(name='foo')[0]
-
-    def test_string(self):
-        self.assertEqual(str(self.yorkshire), 'Yorkshire')
-        self.assertEqual(str(self.london), 'Transport for London')
-        self.assertEqual(str(self.dummy), 'foo')
 
 
 class LocalityTests(TestCase):

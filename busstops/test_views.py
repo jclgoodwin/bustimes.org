@@ -271,7 +271,6 @@ class ViewsTests(TestCase):
         self.assertEqual(data['admin_area'], 91)
         self.assertEqual(data['atco_code'], '2900M114')
         self.assertEqual(data['latlong'], [52.8566019427, 1.0331935468])
-        self.assertEqual(data['live_sources'], [])
         self.assertIsNone(data['heading'])
         self.assertIsNone(data['stop_area'])
 

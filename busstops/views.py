@@ -2,7 +2,6 @@
 """View definitions."""
 import os
 import json
-import PIL
 import ciso8601
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import F, Max, Q
@@ -21,9 +20,9 @@ from django.core.mail import EmailMessage
 from haystack.query import SearchQuerySet
 from departures import live
 from .utils import format_gbp
-from .models import (Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Image, Journey, Place,
+from .models import (Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Journey, Place,
                      Registration, Variation, Vehicle, VehicleLocation)
-from .forms import ContactForm, ImageForm
+from .forms import ContactForm
 
 
 DIR = os.path.dirname(__file__)
@@ -462,7 +461,6 @@ def stop_json(_, pk):
         'suburb': stop.suburb,
         'town': stop.town,
         'locality_centre': stop.locality_centre,
-        'live_sources': tuple(stop.live_sources.values_list('name', flat=True)),
         'heading': stop.heading,
         'bearing': stop.bearing,
         'stop_type': stop.stop_type,
@@ -524,14 +522,6 @@ class ServiceDetailView(DetailView):
             self.kwargs['pk'] = self.kwargs['slug']
             return super().get_object(**kwargs)
 
-    def post(self, *args, **kwargs):
-        form = ImageForm(self.request.POST)
-        service = self.get_object()
-        if form.is_valid():
-            service.add_flickr_photo(form.cleaned_data['url'])
-
-        return redirect(service)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -542,8 +532,6 @@ class ServiceDetailView(DetailView):
         context['notes'] = Note.objects.filter(Q(operators__in=context['operators']) | Q(services=self.object)
                                                | Q(services=None, operators=None))
         context['links'] = []
-
-        context['form'] = ImageForm()
 
         if self.object.show_timetable:
             date = self.request.GET.get('date')
@@ -724,15 +712,6 @@ class ServiceSitemap(Sitemap):
 
     def items(self):
         return Service.objects.filter(current=True)
-
-
-def image(request, id):
-    image = get_object_or_404(Image, id=id)
-    response = HttpResponse(content_type='image/jpeg')
-    pil_image = PIL.Image.open(image.image)
-    pil_image.thumbnail((600, 300), resample=PIL.Image.LANCZOS)
-    pil_image.save(response, 'JPEG', quality=100)
-    return response
 
 
 def journey(request):

@@ -634,19 +634,6 @@ input:not(:checked) + label {
     margin: 0;
 }
 
-.image-wrapper {
-    margin-bottom: 1em;
-    padding-top: 75%;
-    position: relative;
-
-    img {
-        height: auto;
-        position: absolute;
-        top: 0;
-        width: 100%;
-    }
-}
-
 .gallery {
     margin: 1em -1em;
     overflow: auto;

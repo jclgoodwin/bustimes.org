@@ -8,7 +8,6 @@ import dateutil.parser
 import logging
 from bs4 import BeautifulSoup
 from django.conf import settings
-from django.utils.text import slugify
 from django.utils.timezone import is_naive, make_naive
 from busstops.models import Operator, Service, StopPoint, ServiceCode
 
@@ -511,50 +510,24 @@ def get_departures(stop, services, bot=False):
     returns a tuple containing a context dictionary and a max_age integer
     """
 
+    # 🚂
     if stop.atco_code[:3] == '910':
         departures = UKTrainDepartures(stop, services)
         return ({
-            'departures': departures
+            'departures': departures,
+            'source': 'Network Rail'
         }, 30)
 
-    live_sources = stop.live_sources.values_list('name', flat=True)
-
     # Transport for London
-    if 'TfL' in live_sources:
+    if stop.atco_code[:3] == '490':
         departures = TflDepartures(stop, services)
         return ({
             'departures': departures,
             'today': datetime.date.today(),
-            'source': {
-                # use departures.stop instead of local stop,
-                # in case it was updated in departures_from_response
-                'url': 'https://tfl.gov.uk/bus/stop/%s/%s' % (departures.stop.atco_code,
-                                                              slugify(departures.stop.common_name)),
-                'name': 'Transport for London'
-            }
+            'source': 'TfL'
         }, 60)
 
     now = datetime.datetime.now(LOCAL_TIMEZONE)
-
-    # Yorkshire
-    if 'Y' in live_sources:
-        return ({
-            'departures': AcisConnectDepartures('yorkshire', stop, services, now),
-            'source': {
-                'url': 'http://yorkshire.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % stop.naptan_code,
-                'name': 'Your Next Bus'
-            }
-        }, 60)
-
-    # Kent
-    if 'Kent' in live_sources:
-        return ({
-            'departures': AcisLiveDepartures('kent', stop, services, now),
-            'source': {
-                'url': 'http://%s.acislive.com/pip/stop_simulator.asp?NaPTAN=%s' % ('kent', stop.naptan_code),
-                'name': 'ACIS Live'
-            }
-        }, 60)
 
     # Dublin
     if stop.atco_code[0] == '8' and 'DB' in stop.atco_code:
@@ -590,27 +563,7 @@ def get_departures(stop, services, bot=False):
         if any(operator.name.startswith('Stagecoach') for operator in operators):
             if departures:
                 departures = add_stagecoach_departures(stop, services_dict, departures)
-        else:
-            for live_source_name, prefix in (
-                    ('west', 'travelwest'),
-                    ('buck', 'buckinghamshire'),
-                    ('camb', 'cambridgeshire'),
-                    ('card', 'cardiff'),
-                    ('metr', 'metrobus')
-            ):
-                if live_source_name in live_sources:
-                    live_rows = AcisConnectDepartures(prefix, stop, services, now).get_departures()
-                    if live_rows:
-                        blend(departures, live_rows)
 
-                    return ({
-                        'departures': departures,
-                        'today': now.date(),
-                        'source': {
-                            'url': 'http://%s.acisconnect.com/Text/WebDisplay.aspx?stopRef=%s' % (prefix, stop.pk),
-                            'name': 'vixConnect'
-                        }
-                    }, 60)
         # Belfast
         if any(operator.id == 'MET' for operator in operators):
             live_rows = AcisConnectDepartures('belfast', stop, services, now).get_departures()

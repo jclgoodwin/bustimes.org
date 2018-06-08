@@ -1,9 +1,5 @@
-# import warnings
 import requests
-# from titlecase import titlecase
-# from django.core.exceptions import MultipleObjectsReturned
 from django.management.commands import BaseCommand
-# from ...models import LiveSource
 
 
 class Command(BaseCommand):

@@ -42,10 +42,6 @@ class ContactForm(forms.Form):
             raise ValidationError('Spam detected', code='spam-protection')
 
 
-class ImageForm(forms.Form):
-    url = forms.URLField(label='Image URL')
-
-
 class CustomSearchForm(SearchForm):
     """https://django-haystack.readthedocs.io/en/master/boost.html#field-boost"""
     def get_postcode(self):

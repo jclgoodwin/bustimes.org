@@ -5,7 +5,7 @@ from django.db.models import Count, Q
 from django.contrib.gis.db.models import PointField
 from busstops.models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note, Journey, StopUsageUsage,
-    Image, ServiceCode, OperatorCode, DataSource, LiveSource, Place, Registration, Variation, Vehicle, VehicleLocation
+    ServiceCode, OperatorCode, DataSource, Place, Registration, Variation, Vehicle, VehicleLocation
 )
 
 
@@ -168,11 +168,9 @@ admin.site.register(Service, ServiceAdmin)
 admin.site.register(Note, NoteAdmin)
 admin.site.register(Journey, JourneyAdmin)
 admin.site.register(StopUsageUsage, StopUsageUsageAdmin)
-admin.site.register(Image)
 admin.site.register(OperatorCode, OperatorCodeAdmin)
 admin.site.register(ServiceCode, ServiceCodeAdmin)
 admin.site.register(DataSource)
-admin.site.register(LiveSource)
 admin.site.register(Place, PlaceAdmin)
 admin.site.register(Registration)
 admin.site.register(Variation, VariationAdmin)

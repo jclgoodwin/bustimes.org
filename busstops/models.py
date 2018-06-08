@@ -1,7 +1,6 @@
 "Model definitions"
 
 import re
-import requests
 import os
 import zipfile
 import time
@@ -12,7 +11,6 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
-from django.core.files.base import ContentFile
 from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
@@ -167,19 +165,6 @@ class StopArea(models.Model):
 
 
 @python_2_unicode_compatible
-class LiveSource(models.Model):
-    """A source of live departure information for a stop point"""
-    name = models.CharField(max_length=4, primary_key=True)
-
-    def __str__(self):
-        if self.name == 'Y':
-            return 'Yorkshire'
-        if self.name == 'TfL':
-            return 'Transport for London'
-        return self.name
-
-
-@python_2_unicode_compatible
 class DataSource(models.Model):
     name = models.CharField(max_length=255, unique=True)
     url = models.URLField(blank=True)
@@ -229,7 +214,6 @@ class StopPoint(models.Model):
     town = models.CharField(max_length=48, blank=True)
     locality_centre = models.BooleanField()
 
-    live_sources = models.ManyToManyField(LiveSource, blank=True)
     places = models.ManyToManyField(Place, blank=True)
 
     heading = models.PositiveIntegerField(null=True, blank=True)
@@ -471,19 +455,6 @@ class StopUsageUsage(models.Model):
 
 
 @python_2_unicode_compatible
-class Image(models.Model):
-    image = models.ImageField(height_field='height', width_field='width')
-    width = models.PositiveIntegerField()
-    height = models.PositiveIntegerField()
-    caption = models.CharField(max_length=255, blank=True)
-    source = models.CharField(max_length=255, blank=True)
-    source_url = models.URLField(blank=True)
-
-    def __str__(self):
-        return self.caption
-
-
-@python_2_unicode_compatible
 class Service(models.Model):
     """A bus service"""
     service_code = models.CharField(max_length=24, primary_key=True)
@@ -509,8 +480,6 @@ class Service(models.Model):
     low_floor = models.NullBooleanField()
     assistance_service = models.NullBooleanField()
     mobility_scooter = models.NullBooleanField()
-
-    image = models.ManyToManyField(Image, blank=True)
 
     class Meta():
         ordering = ('service_code',)
@@ -661,31 +630,6 @@ class Service(models.Model):
             return '%s/XSLT_TTB_REQUEST?%s' % (base_url, urlencode(query)), 'Traveline'
 
         return None, None
-
-    def add_flickr_photo(self, url):
-        photo_id = url.split('/photos/', 1)[1].split('/')[1]
-        image = Image()
-        session = requests.Session()
-        session.params = {
-            'format': 'json',
-            'api_key': 'c73bab2eb6d9be4a2e53d92d1452a645',
-            'photo_id': photo_id,
-            'nojsoncallback': 1
-        }
-        info = session.get('https://api.flickr.com/services/rest', params={
-            'method': 'flickr.photos.getInfo'
-        }).json()
-        image.source_url = info['photo']['urls']['url'][0]['_content']
-        image.source = info['photo']['owner']['realname'] or info['photo']['owner']['username']
-        image.caption = info['photo']['title']['_content']
-        sizes = session.get('https://api.flickr.com/services/rest', params={
-            'method': 'flickr.photos.getSizes'
-        }).json()
-        url = sizes['sizes']['size'][-1]['source']
-        original = session.get(url)
-        image.image.save(url.split('/')[-1], ContentFile(original.content))
-        image.save()
-        self.image.add(image)
 
     def get_filenames(self, archive):
         suffix = '.xml'

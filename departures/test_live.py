@@ -6,7 +6,7 @@ from datetime import date, time, datetime
 from django.test import TestCase
 from django.shortcuts import render
 from freezegun import freeze_time
-from busstops.models import LiveSource, StopPoint, Service, Region, Operator, StopUsage, Journey, StopUsageUsage
+from busstops.models import StopPoint, Service, Region, Operator, StopUsage, Journey, StopUsageUsage
 from . import live
 
 
@@ -29,19 +29,14 @@ class LiveDeparturesTest(TestCase):
             locality_centre=False,
             active=True
         )
-        LiveSource.objects.create(name='TfL')
-        cls.london_stop.live_sources.add('TfL')
 
-        cls.cardiff = LiveSource.objects.create(pk='card')
         cls.cardiff_stop = StopPoint.objects.create(
             pk='5710WDB48471',
             common_name='Wood Street',
             locality_centre=False,
             active=True
         )
-        cls.cardiff_stop.live_sources.add('card')
 
-        cls.yorkshire = LiveSource.objects.create(pk='Y')
         cls.yorkshire_stop = StopPoint.objects.create(
             pk='3290YYA00215',
             naptan_code='32900215',
@@ -49,7 +44,6 @@ class LiveDeparturesTest(TestCase):
             locality_centre=False,
             active=True
         )
-        cls.yorkshire_stop.live_sources.add('Y')
 
         cls.region = Region.objects.create(id='W', name='Wales')
         cls.stagecoach_stop = StopPoint.objects.create(atco_code='64801092', active=True,
@@ -114,14 +108,11 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(26, row['live'].date().day)
 
         departures = live.get_departures(self.london_stop, ())[0]
-        self.assertEqual(departures['source'], {
-            'url': 'https://tfl.gov.uk/bus/stop/490014721F/wilmot-street',
-            'name': 'Transport for London'
-        })
+        self.assertEqual(departures['source'], 'TfL')
 
         with vcr.use_cassette('data/vcr/tfl_arrivals.yaml'):
             response = self.client.get('/stops/' + self.london_stop.pk)
-        # self.assertEqual(response['cache-control'], 'max-age=60')
+
         self.assertContains(response, """
             <div class="aside box">
                 <h2>Next departures</h2>
@@ -139,9 +130,7 @@ class LiveDeparturesTest(TestCase):
                     <tr><td>8</td><td>Bow Church</td><td>18:49⚡</td></tr>
                 </tbody></table>
                 <p class="credit">⚡ denotes real-time times</p>
-                <p class="credit">
-                    <a href="https://tfl.gov.uk/bus/stop/490014721F/wilmot-street">Transport for London</a>
-                </p>
+                <p class="credit">TfL</p>
             </div>
         """, html=True)
 
@@ -176,17 +165,6 @@ class LiveDeparturesTest(TestCase):
             'service': '95',
             'time': None,
             'live': datetime(2017, 3, 12, 12, 49)
-        })
-
-        with vcr.use_cassette('data/vcr/cardiff.yaml'):
-            departures = live.get_departures(self.cardiff_stop, ())[0]
-        self.assertTrue('live' in departures['departures'][0])
-        self.assertTrue('time' in departures['departures'][0])
-        self.assertIsNone(departures['departures'][2]['live'])
-        self.assertTrue('time' in departures['departures'][2])
-        self.assertEqual(departures['source'], {
-            'url': 'http://cardiff.acisconnect.com/Text/WebDisplay.aspx?stopRef=5710WDB48471',
-            'name': 'vixConnect'
         })
 
     def _test_acis_yorkshire(self, departures):
@@ -237,12 +215,6 @@ class LiveDeparturesTest(TestCase):
                 now
             ).get_departures()
         self._test_acis_yorkshire(departures)
-
-        departures = live.get_departures(self.yorkshire_stop, ())[0]
-        self.assertEqual(departures['source'], {
-            'url': 'http://yorkshire.acisconnect.com/Text/WebDisplay.aspx?stopRef=32900215',
-            'name': 'Your Next Bus'
-        })
 
     def test_dublin(self):
         stop = StopPoint(atco_code='8220DB07602')
