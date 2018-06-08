@@ -155,6 +155,9 @@ class VehicleLocationAdmin(admin.ModelAdmin):
         ('service', admin.RelatedOnlyFieldListFilter),
     )
     raw_id_fields = ('vehicle', 'service')
+    formfield_overrides = {
+        PointField: {'widget': OSMWidget}
+    }
 
 
 admin.site.register(Region)

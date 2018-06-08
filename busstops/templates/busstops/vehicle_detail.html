@@ -6,9 +6,8 @@
 
 <div id="cartograph" style="height: 700px"></div>
 
-{% load staticfiles %}
-<link rel="stylesheet" href="{% static 'js/bower_components/leaflet/dist/leaflet.css' %}" />
-<script src="{% static 'js/bower_components/leaflet/dist/leaflet.js' %}"></script>
+<link rel="stylesheet" href="/static/js/bower_components/leaflet/dist/leaflet.css" />
+<script src="/static/js/bower_components/leaflet/dist/leaflet.js"></script>
 <script>
 (function() {
     var map = L.map('cartograph'),
@@ -19,6 +18,13 @@
     L.tileLayer(tileURL).addTo(map);
 
     {% for journey in object.get_journeys %}
+        {% for location in journey %}
+            {% ifchanged location.latlong %}
+                L.marker(
+                    [{{ location.latlong.y }},{{ location.latlong.x }}]
+                ).addTo(map).bindPopup("<p>{{ location.data }}</p>{% if location.service %}<p><a href='{{ location.service.get_absolute.url }}'>{{ location.service }}</a></p>{% endif %}<p>{{ location.datetime }}</p>");
+            {% endifchanged %}
+        {% endfor %}
         polyline = L.polyline([
             {% for location in journey %}
                  {% ifchanged location.latlong %}
@@ -27,7 +33,7 @@
             {% endfor %}
         ]);
         polyline.addTo(map);
-        polyline.bindPopup("<p>{{ journey.0.data.Label }}</p><p>{{ journey.0.datetime }}</p>");
+        polyline.bindPopup("{% if journey.0.service %}<p><a href='{{ journey.0.service.get_absolute_url }}'>{{ journey.0.service }}</a></p>{% endif %}<p>{{ journey.0.datetime }}</p>");
         bounds.extend(polyline.getBounds());
     {% endfor %}
     map.fitBounds(bounds);
