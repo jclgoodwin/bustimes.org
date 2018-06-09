@@ -4,7 +4,7 @@ import os
 import json
 import ciso8601
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import F, Max, Q
+from django.db.models import Max, Q
 from django.http import (HttpResponse, JsonResponse, Http404,
                          HttpResponseBadRequest)
 from django.utils import timezone
@@ -192,14 +192,7 @@ def vehicles(request):
 
 
 def vehicles_json(request):
-    vehicle_locations = VehicleLocation.objects.filter(datetime=F('source__datetime'))
-    vehicle_locations = vehicle_locations.exclude(operator='FECS').order_by()
-
-    try:
-        bounding_box = get_bounding_box(request)
-        vehicle_locations = vehicle_locations.filter(latlong__within=bounding_box)
-    except KeyError:
-        pass
+    vehicle_locations = VehicleLocation.objects.filter(current=True).select_related('service', 'vehicle__operator')
 
     return JsonResponse({
         'type': 'FeatureCollection',
@@ -212,6 +205,13 @@ def vehicles_json(request):
             'properties': {
                 'vehicle': str(location.vehicle),
                 'operator': str(location.vehicle.operator),
+                'service': location.service and {
+                    'line_name': location.service.line_name,
+                    'description': location.service.description,
+                    'url': location.service.get_absolute_url(),
+                },
+                'direction': location.data['Direction'],
+                'datetime': str(location.datetime)
             }
         } for location in vehicle_locations]
     })

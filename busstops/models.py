@@ -815,10 +815,16 @@ class Note(models.Model):
         return (self.operators.first() or self.services.first()).get_absolute_url()
 
 
+class VehicleType(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    double_decker = models.NullBooleanField()
+
+
 class Vehicle(models.Model):
     code = models.CharField(max_length=255)
     source = models.ForeignKey(DataSource, models.CASCADE)
     operator = models.ForeignKey(Operator, models.SET_NULL, null=True, blank=True)
+    vehicle_type = models.ForeignKey(VehicleType, models.SET_NULL, null=True, blank=True)
 
     class Meta():
         unique_together = ('code', 'source')
@@ -854,10 +860,11 @@ class VehicleLocation(models.Model):
     service = models.ForeignKey(Service, models.SET_NULL, null=True, blank=True)
     source = models.ForeignKey(DataSource, models.CASCADE)
     vehicle = models.ForeignKey(Vehicle, models.SET_NULL, null=True, blank=True)
+    current = models.BooleanField(default=False, db_index=True)
 
     class Meta():
         ordering = ('datetime',)
-        index_together = ('source', 'datetime')
+        index_together = ('vehicle', 'datetime')
 
     def get_label(self):
         if self.data and 'Label' in self.data:

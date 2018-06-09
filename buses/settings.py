@@ -156,6 +156,16 @@ PIPELINE = {
                 'async': True
             }
         },
+        'vehicles': {
+            'source_filenames': (
+                'js/bower_components/reqwest/reqwest.min.js',
+                'js/vehicles.js',
+            ),
+            'output_filename': 'js/vehicles.min.js',
+            'extra_context': {
+                'async': True
+            }
+        },
 
     },
     'YUGLIFY_BINARY': os.path.join(BASE_DIR, 'node_modules', '.bin', 'yuglify'),
