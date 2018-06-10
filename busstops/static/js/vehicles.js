@@ -59,7 +59,7 @@
                 }
 
                 var dateTime = new Date(data.properties.datetime);
-                popup += data.properties.vehicle + '<br>Updated at ' + dateTime.getHours() + ':' + dateTime.getMinutes();
+                popup += data.properties.vehicle + '<br>Updated at ' + dateTime.toTimeString().slice(0, 5);
 
                 marker.bindPopup(popup);
 
