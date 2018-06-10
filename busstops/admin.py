@@ -143,10 +143,11 @@ class VehicleTypeAdmin(admin.ModelAdmin):
 
 
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ('id', 'code', 'operator', 'vehicle_type')
+    list_display = ('id', 'code', 'reg', 'operator', 'vehicle_type')
     list_filter = (
         ('operator', admin.RelatedOnlyFieldListFilter),
     )
+    list_select_related = ('operator', 'vehicle_type')
     search_fields = ('code',)
     raw_id_fields = ('operator',)
     actions = (lynx, sndr, fecs, brdb, simo)
@@ -155,9 +156,11 @@ class VehicleAdmin(admin.ModelAdmin):
 class VehicleLocationAdmin(admin.ModelAdmin):
     list_display = ('vehicle', 'service', 'datetime')
     list_filter = (
+        'current',
         ('service__operator', admin.RelatedOnlyFieldListFilter),
         ('service', admin.RelatedOnlyFieldListFilter),
     )
+    list_select_related = ('vehicle', 'service')
     raw_id_fields = ('vehicle', 'service')
     formfield_overrides = {
         PointField: {'widget': OSMWidget}

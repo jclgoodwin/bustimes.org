@@ -38,3 +38,24 @@ class CorrectOperatorsTest(TestCase):
 
         response = self.client.get('/vehicles.json')
         self.assertEqual(len(response.json()['features']), 4)
+
+    def test_vehicle_reg(self):
+        vehicle = Vehicle()
+
+        vehicle.code = '_7_-_YJ58_CEY'
+        self.assertEqual(vehicle.reg(), 'YJ58CEY')
+
+        vehicle.code = '3990_ME'
+        self.assertEqual(vehicle.reg(), '3990ME')
+
+        vehicle.code = '50_-_UWW_2X'
+        self.assertEqual(vehicle.reg(), 'UWW2X')
+
+        vehicle.code = '407_YJ59_AYY'
+        self.assertEqual(vehicle.reg(), 'YJ59AYY')
+
+        vehicle.code = '116-YN53_CFZ'
+        self.assertEqual(vehicle.reg(), 'YN53CFZ')
+
+        vehicle.code = '33824'
+        self.assertIsNone(vehicle.reg())

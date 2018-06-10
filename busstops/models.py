@@ -838,15 +838,20 @@ class Vehicle(models.Model):
             return code.replace('_', ' ')
         return self.code.replace('-', ' ')
 
+    def reg(self):
+        reg = str(self).split('-')[-1]
+        if not reg.isdigit():
+            return ''.join(reg.split()[-2:])
+
     def get_absolute_url(self):
         return reverse('vehicle_detail', args=(self.id,))
 
     def get_journeys(self):
         locations = []
         previous_time = previous_label = None
-        for location in self.vehiclelocation_set.filter(datetime__date='2018-06-08'):
+        for location in self.vehiclelocation_set.all():
             label = location.get_label()
-            if locations and (label != previous_label or location.datetime - previous_time > timedelta(minutes=2)):
+            if locations and (label != previous_label):
                 yield locations
                 locations = []
             locations.append(location)
@@ -866,8 +871,7 @@ class VehicleLocation(models.Model):
     current = models.BooleanField(default=False, db_index=True)
 
     class Meta():
-        ordering = ('datetime',)
-        index_together = ('vehicle', 'datetime')
+        ordering = ('id',)
 
     def get_label(self):
         if self.data and 'Label' in self.data:
