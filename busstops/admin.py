@@ -5,7 +5,7 @@ from django.db.models import Count, Q
 from django.contrib.gis.db.models import PointField
 from busstops.models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note, Journey, StopUsageUsage,
-    ServiceCode, OperatorCode, DataSource, Place, Registration, Variation, Vehicle, VehicleLocation
+    ServiceCode, OperatorCode, DataSource, Place, Registration, Variation, Vehicle, VehicleLocation, VehicleType
 )
 
 
@@ -138,8 +138,12 @@ class VariationAdmin(admin.ModelAdmin):
     list_filter = ('registration_status',)
 
 
+class VehicleTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'double_decker')
+
+
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ('id', 'code', 'operator')
+    list_display = ('id', 'code', 'operator', 'vehicle_type')
     list_filter = (
         ('operator', admin.RelatedOnlyFieldListFilter),
     )
@@ -177,5 +181,6 @@ admin.site.register(DataSource)
 admin.site.register(Place, PlaceAdmin)
 admin.site.register(Registration)
 admin.site.register(Variation, VariationAdmin)
+admin.site.register(VehicleType, VehicleTypeAdmin)
 admin.site.register(Vehicle, VehicleAdmin)
 admin.site.register(VehicleLocation, VehicleLocationAdmin)

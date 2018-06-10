@@ -22,7 +22,7 @@
             {% ifchanged location.latlong %}
                 L.marker(
                     [{{ location.latlong.y }},{{ location.latlong.x }}]
-                ).addTo(map).bindPopup("<p>{{ location.data }}</p>{% if location.service %}<p><a href='{{ location.service.get_absolute.url }}'>{{ location.service }}</a></p>{% endif %}<p>{{ location.datetime }}</p>");
+                ).addTo(map).bindPopup("<p>{{ location.data }}</p>{% if location.service %}<p><a href='{{ location.service.get_absolute_url }}'>{{ location.service }}</a></p>{% endif %}<p>{{ location.datetime }}</p>");
             {% endifchanged %}
         {% endfor %}
         polyline = L.polyline([

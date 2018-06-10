@@ -819,6 +819,9 @@ class VehicleType(models.Model):
     name = models.CharField(max_length=255, unique=True)
     double_decker = models.NullBooleanField()
 
+    def __str__(self):
+        return self.name
+
 
 class Vehicle(models.Model):
     code = models.CharField(max_length=255)
@@ -841,7 +844,7 @@ class Vehicle(models.Model):
     def get_journeys(self):
         locations = []
         previous_time = previous_label = None
-        for location in self.vehiclelocation_set.all():
+        for location in self.vehiclelocation_set.filter(datetime__date='2018-06-08'):
             label = location.get_label()
             if locations and (label != previous_label or location.datetime - previous_time > timedelta(minutes=2)):
                 yield locations

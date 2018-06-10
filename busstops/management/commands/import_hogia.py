@@ -27,7 +27,7 @@ class Command(BaseCommand):
             return
 
         source = DataSource.objects.update_or_create({'url': url, 'datetime': now}, name='NCC Hogia')[0]
-        source.vehiclelocation_set.update(current=False)
+        print(source.vehiclelocation_set.filter(current=True).update(current=False))
 
         for item in response.json():
             vehicle = item['Label']
