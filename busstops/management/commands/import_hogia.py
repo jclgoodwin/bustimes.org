@@ -70,4 +70,3 @@ class Command(BaseCommand):
             except OperationalError as e:
                 print(e)
                 logger.error(e, exc_info=True)
-                return

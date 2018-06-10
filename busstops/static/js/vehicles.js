@@ -57,7 +57,9 @@
                 if (data.properties.service) {
                     popup += '<a href="' + data.properties.service.url + '">' + data.properties.service.line_name + ' - ' + data.properties.service.description + '</a><br>';
                 }
-                popup += data.properties.vehicle + '<br>' + data.properties.datetime;
+
+                var dateTime = new Date(data.properties.datetime);
+                popup += data.properties.vehicle + '<br>Updated at ' + dateTime.getHours() + ':' + dateTime.getMinutes();
 
                 marker.bindPopup(popup);
 
