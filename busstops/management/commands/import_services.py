@@ -298,7 +298,7 @@ class Command(BaseCommand):
         self.set_region(archive_name)
         self.service_codes = set()
 
-        Service.objects.filter(region=self.region_id).update(current=False)
+        Service.objects.filter(region=self.region_id, current=True).update(current=False)
         ServiceCode.objects.filter(service__region=self.region_id).delete()
 
         with zipfile.ZipFile(archive_name) as archive:
@@ -323,8 +323,8 @@ class Command(BaseCommand):
 
         if self.region_id != 'GB':
             stops = StopPoint.objects.filter(admin_area__region=self.region_id)
-            stops.exclude(service__current=True).update(active=False)
-            stops.filter(service__current=True).update(active=True)
+            stops.filter(active=True).exclude(service__current=True).update(active=False)
+            stops.filter(active=False, service__current=True).update(active=True)
 
         Journey.objects.filter(service__region=self.region_id).delete()
         handle_region(Region.objects.get(id=self.region_id))
