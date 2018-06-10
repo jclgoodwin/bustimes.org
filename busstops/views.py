@@ -211,7 +211,7 @@ def vehicles_json(request):
                     'url': location.service.get_absolute_url(),
                 },
                 'direction': location.data['Direction'],
-                'datetime': str(location.datetime)
+                'datetime': location.datetime
             }
         } for location in vehicle_locations]
     })

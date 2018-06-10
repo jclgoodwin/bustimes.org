@@ -32,3 +32,9 @@ class CorrectOperatorsTest(TestCase):
             for location in journey:
                 self.assertAlmostEqual(location.latlong.x, 1.592503)
                 self.assertAlmostEqual(location.latlong.y, 52.69956)
+
+        response = self.client.get('/vehicles')
+        self.assertContains(response, 'vehicles.min.js')
+
+        response = self.client.get('/vehicles.json')
+        self.assertEqual(len(response.json()['features']), 4)
