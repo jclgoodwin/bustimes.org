@@ -364,10 +364,10 @@ class LambdaDepartures(Departures):
             'service': self.get_service(item['service']),
             'destination': item['destination_name']
         }
-        if self.stop.atco_code[:3] == '290' and type(row['service']) is Service and item.get('line'):
-            ServiceCode.objects.update_or_create(service=row['service'], scheme='NCC Hogia', code=item['line'])
         if row['live']:
             row['live'] = ciso8601.parse_datetime(row['live']).astimezone(LOCAL_TIMEZONE)
+        if self.stop.atco_code[:3] == '290':
+            row['line'] = item.get('line')
         return row
 
     def departures_from_response(self, res):
@@ -579,6 +579,11 @@ def get_departures(stop, services, bot=False):
             live_rows = LambdaDepartures(stop, services, now).get_departures()
             if live_rows:
                 blend(departures, live_rows)
+                if stop.atco_code[:3] == '290':
+                    for row in departures:
+                        if type(row['service']) is Service and row.get('line'):
+                            ServiceCode.objects.update_or_create(service=row['service'], scheme='NCC Hogia',
+                                                                 code=row['line'])
 
     if bot:
         max_age = 0
