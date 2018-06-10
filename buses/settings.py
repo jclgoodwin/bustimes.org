@@ -207,6 +207,7 @@ CACHES = {
 
 TIME_FORMAT = 'H:i'
 DATE_FORMAT = 'l j F Y'
+DATETIME_FORMAT = 'j F Y H:i'
 TIME_ZONE = 'Europe/London'
 USE_TZ = True
 USE_I18N = False

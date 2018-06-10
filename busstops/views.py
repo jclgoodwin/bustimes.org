@@ -764,3 +764,8 @@ def journey(request):
 
 class VehicleDetailView(DetailView):
     model = Vehicle
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['breadcrumb'] = [self.object.operator]
+        return context
