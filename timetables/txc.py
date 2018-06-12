@@ -314,7 +314,10 @@ class JourneyPattern(object):
             for timinglink in section.timinglinks:
                 if not rows:
                     rows.append(Row(timinglink.origin))
-                rows.append(Row(timinglink.destination))
+                if timinglink.origin.wait_time:
+                    rows.append(Row(timinglink.origin))
+                if timinglink.destination.wait_time:
+                    rows.append(Row(timinglink.destination))
 
         self.grouping = self.get_grouping(element, groupings, routes)
         self.grouping.journeypatterns.append(self)
@@ -405,9 +408,9 @@ class JourneyPatternStopUsage(object):
             self.stop = Stop(element)
         self.timingstatus = element.find('txc:TimingStatus', NS).text
 
-        waittime_element = element.find('txc:WaitTime', NS)
-        if waittime_element is not None:
-            self.waittime = parse_duration(waittime_element.text)
+        self.wait_time = element.find('txc:WaitTime', NS)
+        if self.wait_time is not None:
+            self.wait_time = parse_duration(self.wait_time.text)
 
         self.row = None
         self.parent = None
@@ -526,9 +529,12 @@ class VehicleJourney(object):
 
         for section in self.journeypattern.sections:
             for timinglink in section.timinglinks:
+
+                if timinglink.origin.wait_time:
+                    time = add_time(time, timinglink.origin.wait_time)
+                    yield(timinglink.origin, time)
+
                 stopusage = timinglink.destination
-                if hasattr(timinglink.origin, 'waittime'):
-                    time = add_time(time, timinglink.origin.waittime)
 
                 time = add_time(time, timinglink.runtime)
 
@@ -544,8 +550,10 @@ class VehicleJourney(object):
 
                 if self.end_deadrun == timinglink.id:
                     deadrun = True  # start of dead run
-                if hasattr(stopusage, 'waittime'):
-                    time = add_time(time, stopusage.waittime)
+
+                if stopusage.wait_time:
+                    time = add_time(time, stopusage.wait_time)
+                    yield(stopusage, time)
 
     def add_times(self):
         row_length = len(self.journeypattern.grouping.rows[0].times)
