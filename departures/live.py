@@ -54,7 +54,8 @@ class Departures(object):
         """Given a line name string, returns the Service matching a line name
         (case-insensitively), or a line name string
         """
-        return self.services.get(line_name.lower(), line_name)
+        if line_name:
+            return self.services.get(line_name.lower(), line_name)
 
     def departures_from_response(self, res):
         """Given a Response object from the requests module,
