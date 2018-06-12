@@ -9,6 +9,7 @@ from django.http import (HttpResponse, JsonResponse, Http404,
                          HttpResponseBadRequest)
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import last_modified
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.conf import settings
@@ -191,6 +192,11 @@ def vehicles(request):
     return render(request, 'vehicles.html')
 
 
+def vehicles_last_modified(request):
+    return VehicleLocation.objects.filter(current=True).last().datetime
+
+
+@last_modified(vehicles_last_modified)
 def vehicles_json(request):
     vehicle_locations = VehicleLocation.objects.filter(current=True).select_related('service', 'vehicle__operator')
 
@@ -203,13 +209,18 @@ def vehicles_json(request):
                 'coordinates': tuple(location.latlong),
             },
             'properties': {
-                'vehicle': str(location.vehicle),
+                'vehicle': {
+                    'url': location.vehicle.get_absolute_url(),
+                    'name': str(location.vehicle)
+                },
                 'operator': str(location.vehicle.operator),
                 'service': location.service and {
                     'line_name': location.service.line_name,
                     'description': location.service.description,
                     'url': location.service.get_absolute_url(),
                 },
+                'journey': location.get_label(),
+                'delta': location.get_delta(),
                 'direction': location.data['Direction'],
                 'datetime': location.datetime
             }

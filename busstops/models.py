@@ -4,7 +4,7 @@ import re
 import os
 import zipfile
 import time
-from urllib.parse import urlencode
+from urllib.parse import urlencode, unquote
 from datetime import date
 from autoslug import AutoSlugField
 from django.conf import settings
@@ -851,7 +851,7 @@ class Vehicle(models.Model):
         previous_label = None
         for location in self.vehiclelocation_set.select_related('service'):
             label = location.get_label()
-            if locations and (label != previous_label):
+            if locations and (label != previous_label or label is None):
                 yield locations
                 locations = []
             locations.append(location)
@@ -877,3 +877,9 @@ class VehicleLocation(models.Model):
             label = self.data['Label'].split()
             if len(label) > 1:
                 return label[1]
+
+    def get_delta(self):
+        if self.data and 'Label' in self.data:
+            label = self.data['Label'].split()
+            if len(label) == 3:
+                return int(unquote(label[2]))

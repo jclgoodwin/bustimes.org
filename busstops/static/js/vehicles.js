@@ -9,7 +9,7 @@
     */
 
     var map = L.map('hugemap', {
-            minZoom: 6, 
+            minZoom: 6,
             maxZoom: 18,
         }),
         tileURL = 'https://bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
@@ -59,7 +59,8 @@
                 }
 
                 var dateTime = new Date(data.properties.datetime);
-                popup += data.properties.vehicle + '<br>Updated at ' + dateTime.toTimeString().slice(0, 5);
+                popup += '<a href="' + data.properties.vehicle.url + '">' + data.properties.vehicle.name + '</a>';
+                popup += '<br>Updated at ' + dateTime.toTimeString().slice(0, 5);
 
                 marker.bindPopup(popup);
 
