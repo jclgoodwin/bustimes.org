@@ -9,30 +9,6 @@ from busstops.models import (
 )
 
 
-def set_operator(queryset, operator):
-    return queryset.update(operator=operator)
-
-
-def lynx(_, __, queryset):
-    return queryset.update(operator='LYNX')
-
-
-def sndr(_, __, queryset):
-    return queryset.update(operator='SNDR')
-
-
-def simo(_, __, queryset):
-    return queryset.update(operator='SIMO')
-
-
-def fecs(_, __, queryset):
-    return queryset.update(operator='FECS')
-
-
-def brdb(_, __, queryset):
-    return queryset.update(operator='BRDB')
-
-
 class AdminAreaAdmin(admin.ModelAdmin):
     list_display = ('name', 'id', 'atco_code', 'region_id')
     list_filter = ('region_id',)
@@ -110,6 +86,7 @@ class JourneyAdmin(admin.ModelAdmin):
 
 
 class StopUsageUsageAdmin(admin.ModelAdmin):
+    show_full_result_count = False
     list_display = ('id', 'datetime')
     raw_id_fields = ('journey', 'stop')
     ordering = ('id',)
@@ -148,12 +125,13 @@ class VehicleAdmin(admin.ModelAdmin):
         ('operator', admin.RelatedOnlyFieldListFilter),
     )
     list_select_related = ('operator', 'vehicle_type')
+    list_editable = ('operator', 'vehicle_type')
     search_fields = ('code',)
     raw_id_fields = ('operator',)
-    actions = (lynx, sndr, fecs, brdb, simo)
 
 
 class VehicleLocationAdmin(admin.ModelAdmin):
+    show_full_result_count = False
     list_display = ('vehicle', 'service', 'datetime')
     list_filter = (
         'current',
