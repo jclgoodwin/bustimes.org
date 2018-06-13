@@ -368,14 +368,14 @@ class ImportServicesTest(TestCase):
             'Belgravia Victoria Coach Station', '049004705400', 'Rugby ASDA', 'Fosse Park ASDA',
             'Loughborough Holywell Way', 'Nottingham Broad Marsh Bus Station', 'Meadowhall Interchange',
             'Leeds City Centre York Street', 'Bradford City Centre Hall Ings',
-            'Huddersfield Town Centre Market Street', 'Leeds City Centre Bus Stn', 'Shudehill Interchange',
-            'Middlesbrough Bus Station Express Lounge', 'Sunderland Interchange',
+            'Huddersfield Town Centre Market Street', 'Leeds City Centre Bus Stn', 'Leeds City Centre Bus Stn',
+            'Shudehill Interchange', 'Middlesbrough Bus Station Express Lounge', 'Sunderland Interchange',
             'Newcastle upon Tyne John Dobson Street',
         ])
         self.assertEqual(inbound_stops, [
             'Huddersfield Town Centre Market Street', 'Bradford City Centre Interchange',
             'Newcastle upon Tyne John Dobson Street', 'Sunderland Interchange',
-            'Middlesbrough Bus Station Express Lounge',  'Leeds City Centre Bus Stn',
+            'Middlesbrough Bus Station Express Lounge',  'Leeds City Centre Bus Stn', 'Leeds City Centre Bus Stn',
             'Shudehill Interchange', 'Leeds City Centre York Street', 'Meadowhall Interchange',
             'Nottingham Broad Marsh Bus Station', 'Loughborough Holywell Way', 'Fosse Park ASDA',
             'Rugby ASDA', '049004705400', 'Victoria Coach Station Arrivals'
@@ -415,7 +415,7 @@ class ImportServicesTest(TestCase):
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data['breadcrumb'], (self.sc, self.fabd))
         self.assertTemplateUsed(res, 'busstops/service_detail.html')
-        self.assertContains(res, '<td colspan="5" rowspan="62">then every 30 minutes until</td>', html=True)
+        self.assertContains(res, '<td colspan="5" rowspan="63">then every 30 minutes until</td>', html=True)
 
         # Within operating period, but with no journeys
         res = self.client.get(service.get_absolute_url() + '?date=2026-04-18')
