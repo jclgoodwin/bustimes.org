@@ -533,16 +533,18 @@ class VehicleJourney(object):
 
                 if timinglink.origin.wait_time:
                     time = add_time(time, timinglink.origin.wait_time)
-                    yield(timinglink.origin, time)
+                    yield(stopusage, time)
+
+                if deadrun:
+                    if self.start_deadrun == timinglink.id:
+                        deadrun = False  # end of dead run
+                        yield(stopusage, time)
 
                 stopusage = timinglink.destination
 
                 time = add_time(time, timinglink.runtime)
 
-                if deadrun:
-                    if self.start_deadrun == timinglink.id:
-                        deadrun = False  # end of dead run
-                elif not (
+                if not deadrun and not (
                     self.code.startswith('VJ_45-16A-_-y10-2') and stopusage.timingstatus == 'OTH'
                     or self.private_code and self.private_code.startswith('014MFMHA') and time == datetime.time(6, 40)
                         and stopusage.sequencenumber == 12
