@@ -316,6 +316,7 @@ class JourneyPattern(object):
                     rows.append(Row(timinglink.origin))
                 if timinglink.origin.wait_time:
                     rows.append(Row(timinglink.origin))
+                rows.append(Row(timinglink.destination))
                 if timinglink.destination.wait_time:
                     rows.append(Row(timinglink.destination))
 
