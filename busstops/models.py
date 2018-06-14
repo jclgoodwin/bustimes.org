@@ -346,7 +346,7 @@ class Operator(ValidateOnSaveMixin, models.Model):
     url = models.URLField(blank=True)
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=128, blank=True)
-    twitter = models.CharField(max_length=15, blank=True)
+    twitter = models.CharField(max_length=255, blank=True)
 
     class Meta():
         ordering = ('name',)
@@ -848,14 +848,16 @@ class Vehicle(models.Model):
 
     def get_journeys(self):
         locations = []
-        previous_label = None
+        previous_label = previous_time = None
         for location in self.vehiclelocation_set.select_related('service'):
             label = location.get_label()
-            if locations and (label != previous_label or label is None):
-                yield locations
-                locations = []
+            if locations:
+                if label != previous_label or not label and (location.datetime - previous_time).total_seconds() > 600:
+                    yield locations
+                    locations = []
             locations.append(location)
             previous_label = label
+            previous_time = location.datetime
         if locations:
             yield locations
 

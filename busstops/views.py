@@ -193,12 +193,23 @@ def vehicles(request):
 
 
 def vehicles_last_modified(request):
-    return VehicleLocation.objects.filter(current=True).last().datetime
+    locations = VehicleLocation.objects.filter(current=True)
+    if 'service' in request.GET:
+        locations = locations.filter(service_id=request.GET['service'])
+
+    location = locations.last()
+
+    if location:
+        return location.datetime
 
 
 @last_modified(vehicles_last_modified)
 def vehicles_json(request):
-    vehicle_locations = VehicleLocation.objects.filter(current=True).select_related('service', 'vehicle__operator')
+    locations = VehicleLocation.objects.filter(current=True)
+    if 'service' in request.GET:
+        locations = locations.filter(service_id=request.GET['service'])
+
+    locations = locations.select_related('service', 'vehicle__operator')
 
     return JsonResponse({
         'type': 'FeatureCollection',
@@ -213,7 +224,7 @@ def vehicles_json(request):
                     'url': location.vehicle.get_absolute_url(),
                     'name': str(location.vehicle)
                 },
-                'operator': str(location.vehicle.operator),
+                'operator': location.vehicle.operator and str(location.vehicle.operator),
                 'service': location.service and {
                     'line_name': location.service.line_name,
                     'description': location.service.description,
@@ -224,7 +235,7 @@ def vehicles_json(request):
                 'direction': location.data['Direction'],
                 'datetime': location.datetime
             }
-        } for location in vehicle_locations]
+        } for location in locations]
     })
 
 

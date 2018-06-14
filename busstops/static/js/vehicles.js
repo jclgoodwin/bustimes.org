@@ -60,6 +60,25 @@
 
                 var dateTime = new Date(data.properties.datetime);
                 popup += '<a href="' + data.properties.vehicle.url + '">' + data.properties.vehicle.name + '</a>';
+                if (data.properties.delta === 0) {
+                    popup += '<br>On time';
+                } else if (data.properties.delta) {
+                    popup += '<br>About ';
+                    if (data.properties.delta > 0) {
+                        popup += data.properties.delta;
+                    } else {
+                        popup += data.properties.delta * -1;
+                    }
+                    popup += ' minute';
+                    if (data.properties.delta !== 1 && data.properties.delta !== -1) {
+                        popup += 's';
+                    }
+                    if (data.properties.delta > 0) {
+                       popup += ' early';
+                    } else {
+                       popup += ' late';
+                    }
+                }
                 popup += '<br>Updated at ' + dateTime.toTimeString().slice(0, 5);
 
                 marker.bindPopup(popup);

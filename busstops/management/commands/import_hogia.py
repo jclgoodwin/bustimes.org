@@ -1,6 +1,7 @@
-from time import sleep
 import requests
 import logging
+from time import sleep
+from datetime import timedelta
 from django.db import OperationalError, transaction
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
@@ -27,7 +28,7 @@ class Command(BaseCommand):
             return
 
         source = DataSource.objects.update_or_create({'url': url, 'datetime': now}, name='NCC Hogia')[0]
-        print(source.vehiclelocation_set.filter(current=True).update(current=False))
+        print(source.vehiclelocation_set.filter(current=True).update(current=False), end='\t', flush=True)
 
         for item in response.json():
             vehicle = item['Label']
@@ -45,6 +46,8 @@ class Command(BaseCommand):
                 item['Speed'] = None
             latest = vehicle.vehiclelocation_set.last()
             if latest and latest.data == item:
+                if service is None and now - latest.datetime > timedelta(minutes=10):
+                    continue
                 latest.current = True
                 latest.save()
             else:

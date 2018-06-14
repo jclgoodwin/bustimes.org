@@ -46,7 +46,7 @@ class OperatorAdmin(admin.ModelAdmin):
 
     def formfield_for_dbfield(self, db_field, **kwargs):
         formfield = super().formfield_for_dbfield(db_field, **kwargs)
-        if db_field.name == 'address':
+        if db_field.name == 'address' or db_field.name == 'twitter':
             formfield.widget = forms.Textarea(attrs=formfield.widget.attrs)
         return formfield
 
