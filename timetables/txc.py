@@ -564,7 +564,6 @@ class VehicleJourney(object):
 
         for stopusage, time in self.get_times():
             stopusage.row.times.append(time)
-            previous_row = stopusage.row
 
         rows = self.journeypattern.grouping.rows
 
@@ -573,13 +572,24 @@ class VehicleJourney(object):
 
             if previous_row:
                 if len(row.times) > initial_width + 1:
-                    if row.part.stop.atco_code == previous_row.part.stop.atco_code and previous_row.times[-1] == '':
+                    if row.part.stop.atco_code == previous_row.part.stop.atco_code:
+                        assert previous_row.times[-1] == ''
                         previous_row.times[-1] = row.times[-2]
                         row.times = row.times[:-2] + row.times[-1:]
 
                 if len(previous_row.times) > initial_width + 1:
                     if len(row.times) == initial_width:
                         row.times.append(previous_row.times.pop())
+                    else:
+                        index = rows.index(previous_row) - 1
+                        while index >= 0:
+                            previous_previous_row = rows[index]
+                            if previous_previous_row.part.stop.atco_code == previous_row.part.stop.atco_code:
+                                assert previous_previous_row.times[-1] == ''
+                                previous_previous_row.times[-1] = previous_row.times[-2]
+                                previous_row.times = previous_row.times[:-2] + previous_row.times[-1:]
+                                break
+                            index -= 1
 
                 assert len(previous_row.times) == initial_width + 1
 
