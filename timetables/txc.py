@@ -559,15 +559,34 @@ class VehicleJourney(object):
                     yield(stopusage, time)
 
     def add_times(self):
-        row_length = len(self.journeypattern.grouping.rows[0].times)
+        # width before adding this journey column
+        initial_width = len(self.journeypattern.grouping.rows[0].times)
 
         for stopusage, time in self.get_times():
             stopusage.row.times.append(time)
+            previous_row = stopusage.row
 
         rows = self.journeypattern.grouping.rows
+
+        previous_row = None
         for row in rows:
-            while len(row.times) <= row_length:
+
+            if previous_row:
+                if len(row.times) > initial_width + 1:
+                    if row.part.stop.atco_code == previous_row.part.stop.atco_code and previous_row.times[-1] == '':
+                        previous_row.times[-1] = row.times[-2]
+                        row.times = row.times[:-2] + row.times[-1:]
+
+                if len(previous_row.times) > initial_width + 1:
+                    if len(row.times) == initial_width:
+                        row.times.append(previous_row.times.pop())
+
+                assert len(previous_row.times) == initial_width + 1
+
+            if len(row.times) == initial_width:
                 row.times.append('')
+
+            previous_row = row
 
     def cmp(self, x, y):
         """Compare two journeys"""
