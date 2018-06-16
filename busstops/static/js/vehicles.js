@@ -74,9 +74,9 @@
                         popup += 's';
                     }
                     if (data.properties.delta > 0) {
-                       popup += ' early';
+                        popup += ' early';
                     } else {
-                       popup += ' late';
+                        popup += ' late';
                     }
                 }
                 popup += '<br>Updated at ' + dateTime.toTimeString().slice(0, 5);
