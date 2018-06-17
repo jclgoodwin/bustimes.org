@@ -492,18 +492,9 @@ class VehicleJourney(object):
 
         service_ref = element.find('txc:ServiceRef', NS)
         if service_ref is not None:
-            if service_ref.text == 'HIBO809':
-                if self.departure_time == datetime.time(9, 5) or self.departure_time == datetime.time(10, 10):
-                    self.departure_time = datetime.time(10, 0)
-            elif service_ref.text == '21-X29-A-y08-1' and self.departure_time == datetime.time(9, 10):
+            # X29 - Fakenham - Norwich
+            if service_ref.text == '21-X29-A-y08-1' and self.departure_time == datetime.time(9, 10):
                 self.departure_time = datetime.time(9, 18)
-
-        if self.code == 'VJ_36-148-_-y10-1-2-T0' and self.departure_time == datetime.time(15, 2):
-            self.departure_time = datetime.time(7, 50)
-        elif self.code == 'VJ_36-148-_-y10-1-1-T0' and self.departure_time == datetime.time(7, 50):
-            self.departure_time = datetime.time(15, 10)
-        elif self.code == 'VJ_43-40-_-y10-1-19-T0' and self.departure_time == datetime.time(8, 0):
-            self.departure_time = datetime.time(7, 55)
 
         self.operator = element.find('txc:OperatorRef', NS)
         if self.operator is not None:
