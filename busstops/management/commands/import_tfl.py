@@ -1,8 +1,17 @@
 import requests
-from django.management.commands import BaseCommand
+from django.core.management.base import BaseCommand
+from ...models import Service, ServiceCode
 
 
 class Command(BaseCommand):
-    def handle(self):
+    def handle(self, *args, **kwargs):
         session = requests.Session()
-        print(session.get('https://api.tfl.gov.uk/Line/Mode/bus/Route').json())
+        for route in session.get('https://api.tfl.gov.uk/Line/Mode/bus/Route').json():
+            try:
+                service = Service.objects.get(line_name=route['name'], region='L', current=True,
+                                              stops=route['routeSections'][0]['originator'])
+                ServiceCode.objects.update_or_create(scheme='TfL', service=service, code=route['name'])
+            except Service.MultipleObjectsReturned:
+                print(route)
+            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                pass

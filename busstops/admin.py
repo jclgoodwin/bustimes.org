@@ -123,6 +123,8 @@ class VehicleAdmin(admin.ModelAdmin):
     list_display = ('id', 'code', 'reg', 'operator', 'vehicle_type')
     list_filter = (
         ('operator', admin.RelatedOnlyFieldListFilter),
+        ('source', admin.RelatedOnlyFieldListFilter),
+        ('vehicle_type', admin.RelatedOnlyFieldListFilter),
     )
     list_select_related = ('operator', 'vehicle_type')
     list_editable = ('operator', 'vehicle_type')
@@ -137,6 +139,7 @@ class VehicleLocationAdmin(admin.ModelAdmin):
         'current',
         ('service__operator', admin.RelatedOnlyFieldListFilter),
         ('service', admin.RelatedOnlyFieldListFilter),
+        ('source', admin.RelatedOnlyFieldListFilter),
     )
     list_select_related = ('vehicle', 'service')
     raw_id_fields = ('vehicle', 'service')

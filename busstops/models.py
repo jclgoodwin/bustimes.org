@@ -360,6 +360,7 @@ class Operator(ValidateOnSaveMixin, models.Model):
         'National Express': '21039402',
     }
     national_expresses['National Express Shuttle'] = national_expresses['National Express']
+    national_expresses['Woking RailAir'] = national_expresses['National Express Airport']
 
     def is_national_express(self):
         return self.name in self.national_expresses
@@ -520,8 +521,7 @@ class Service(models.Model):
         }.get(code)
 
     def get_tfl_url(self):
-        if self.mode == 'bus' and len(self.line_name) <= 4:
-            return 'https://tfl.gov.uk/bus/timetable/%s/' % self.line_name
+        return 'https://tfl.gov.uk/bus/timetable/%s/' % self.line_name
 
     def get_trapeze_link(self, date):
         if self.region_id == 'Y':
@@ -577,8 +577,10 @@ class Service(models.Model):
         query = None
 
         if self.net:
-            if self.net == 'tfl':
+            if self.servicecode_set.filter(scheme='TfL').exists():
                 return self.get_tfl_url(), 'Transport for London'
+            elif self.net == 'tfl':
+                return None, None
 
             parts = self.service_code.split('-')
             line = parts[0].split('_')[-1].zfill(2) + parts[1].zfill(3)
@@ -794,6 +796,9 @@ class Note(models.Model):
 class VehicleType(models.Model):
     name = models.CharField(max_length=255, unique=True)
     double_decker = models.NullBooleanField()
+
+    class Meta():
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
