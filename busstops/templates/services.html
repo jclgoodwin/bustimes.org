@@ -2,7 +2,7 @@
 {% for s in services %}
     <li>
         <a href="{{ s.get_absolute_url }}">
-            <span class="name{% if not s.has_long_line_name and not s.line_brand %} is-short{% endif %}"{% if s.get_color %} style="color:white;background:{{ s.get_color }};padding:0 .25em"{% endif %}>
+            <span class="name{% if not s.has_long_line_name and not s.line_brand %} is-short{% endif %}">
                 {{ s.line_name }}{% if s.line_brand %} - {{ s.line_brand }}{% endif %}
             </span>
             <span class="description">{{ s.description }}</span>

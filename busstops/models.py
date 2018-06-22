@@ -506,30 +506,6 @@ class Service(models.Model):
         groups = SERVICE_ORDER_REGEX.match(self.line_name).groups()
         return (groups[0], int(groups[1]) if groups[1] else 0, groups[2])
 
-    def get_color(self):
-        if self.line_name == 'Bakerloo':
-            return '#894E24'
-        if self.line_name == 'Central':
-            return '#DC241F'
-        if self.line_name == 'Circle':
-            return '#FFCE00'
-        if self.line_name == 'District':
-            return '#007229'
-        if self.line_name == 'Hammersmith & City':
-            return '#D799AF'
-        if self.line_name == 'Jubilee':
-            return '#6A7278'
-        if self.line_name == 'Metropolitan':
-            return '#751056'
-        if self.line_name == 'Northern':
-            return '#111'
-        if self.line_name == 'Piccadilly':
-            return '#0019A8'
-        if self.line_name == 'Victoria':
-            return '#00A0E2'
-        if self.line_name == 'Waterloo & City':
-            return '#76D0BD'
-
     @staticmethod
     def get_operator_number(code):
         if code in {'MEGA', 'MBGD'}:
