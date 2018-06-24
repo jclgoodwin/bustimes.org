@@ -423,7 +423,7 @@ class StopUsage(models.Model):
         ordering = ('direction', 'order')
 
     def is_minor(self):
-        return self.part.timing_status == 'OTH' or self.part.timing_status == 'TIP'
+        return self.timing_status == 'OTH' or self.timing_status == 'TIP'
 
 
 @python_2_unicode_compatible
