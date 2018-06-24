@@ -1,7 +1,7 @@
 from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
 from .models import (
-    Region, AdminArea, District, Locality, Operator, Service, StopPoint
+    Region, AdminArea, District, Locality, Operator, Service, StopPoint, ServiceCode
 )
 from .admin import OperatorAdmin
 
@@ -92,6 +92,8 @@ class ServiceTests(TestCase):
         self.assertIsNone(self.london_service.get_traveline_link()[0])
 
         self.london_service.mode = 'bus'
+        self.assertEqual(self.london_service.get_traveline_link(), None, None)
+        ServiceCode.objects.create(service=self.london_service, code='N41', scheme='TfL')
         self.assertEqual(self.london_service.get_traveline_link(),
                          ('https://tfl.gov.uk/bus/timetable/N41/', 'Transport for London'))
 

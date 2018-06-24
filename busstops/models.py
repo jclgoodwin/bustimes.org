@@ -422,6 +422,9 @@ class StopUsage(models.Model):
     class Meta():
         ordering = ('direction', 'order')
 
+    def is_minor(self):
+        return self.part.timing_status == 'OTH' or self.part.timing_status == 'TIP'
+
 
 @python_2_unicode_compatible
 class Journey(models.Model):
