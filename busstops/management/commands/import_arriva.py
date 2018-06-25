@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
         url = 'http://app.arrivabus.co.uk/journeyplanner/query/eny'
         source = DataSource.objects.update_or_create({'url': url, 'datetime': now}, name='Arriva')[0]
-        print(source.vehiclelocation_set.filter(current=True, source=source).update(current=False)
+        print(source.vehiclelocation_set.filter(current=True, source=source).update(current=False),
               end='\t', flush=True)
 
         for minx, maxx in (
