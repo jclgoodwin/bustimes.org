@@ -30,7 +30,11 @@
     statusBar.addTo(map);
 
     function getIcon(service, direction) {
-        var html = '<div class="arrow" style="-ms-transform: rotate(' + direction + 'deg);-webkit-transform: rotate(' + direction + 'deg);-moz-transform: rotate(' + direction + 'deg);-o-transform: rotate(' + direction + 'deg);transform: rotate(' + direction + 'deg)"></div>';
+        if (direction !== null) {
+            var html = '<div class="arrow" style="-ms-transform: rotate(' + direction + 'deg);-webkit-transform: rotate(' + direction + 'deg);-moz-transform: rotate(' + direction + 'deg);-o-transform: rotate(' + direction + 'deg);transform: rotate(' + direction + 'deg)"></div>';
+        } else {
+            html = '';
+        }
         if (service) {
             html += service.line_name;
         }
@@ -59,7 +63,9 @@
                 }
 
                 var dateTime = new Date(data.properties.datetime);
-                popup += '<a href="' + data.properties.vehicle.url + '">' + data.properties.vehicle.name + '</a>';
+                if (data.properties.vehicle) {
+                    popup += '<a href="' + data.properties.vehicle.url + '">' + data.properties.vehicle.name + '</a>';
+                }
                 if (data.properties.delta === 0) {
                     popup += '<br>On time';
                 } else if (data.properties.delta) {

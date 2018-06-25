@@ -1,13 +1,18 @@
 import vcr
+import requests
 from mock import patch
 from django.test import TestCase
-from ...models import Vehicle
+from ...models import Vehicle, VehicleLocation
 with patch('time.sleep', return_value=None):
     from ..commands import import_hogia
 
 
 def error():
     raise Exception()
+
+
+def timeout(*args, **kwargs):
+    raise requests.exceptions.Timeout()
 
 
 class CorrectOperatorsTest(TestCase):
@@ -39,6 +44,13 @@ class CorrectOperatorsTest(TestCase):
         response = self.client.get('/vehicles.json')
         self.assertEqual(len(response.json()['features']), 4)
 
+        self.assertEqual(VehicleLocation.objects.filter(current=True).count(), 4)
+
+        # if request times out, no locations should be 'current'
+        with patch('requests.Session.get', side_effect=timeout):
+            command.update()
+        self.assertEqual(VehicleLocation.objects.filter(current=True).count(), 0)
+
     def test_vehicle_reg(self):
         vehicle = Vehicle()
 
@@ -56,6 +68,9 @@ class CorrectOperatorsTest(TestCase):
 
         vehicle.code = '116-YN53_CFZ'
         self.assertEqual(vehicle.reg(), 'YN53CFZ')
+
+        vehicle.code = 'MX_53_JVF'
+        self.assertEqual(vehicle.reg(), 'MX53JVF')
 
         vehicle.code = '33824'
         self.assertIsNone(vehicle.reg())

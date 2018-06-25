@@ -50,7 +50,7 @@
             labels = []; // label elements
 
         for (i = items.length - 1; i >= 0; i -= 1) {
-            if (items[i].getAttribute('itemtype') === 'https://schema.org/BusStop' && items[i].className != 'OTH') {
+            if (items[i].getAttribute('itemtype') === 'https://schema.org/BusStop' && items[i].className != 'OTH' && items[i].className != 'TIP') {
                 metaElements = items[i].getElementsByTagName('meta');
                 if (metaElements.length) {
                     latLng = [

@@ -367,39 +367,6 @@ class OperatingPeriodTest(TestCase):
         self.assertEqual(str(operating_period), 'until 1 June 2002')
 
 
-class VehicleJourneyTest(TestCase):
-    def test_special_cases(self):
-        """301 - Perth - Broxden Park and Ride circular should not have journeys after 19:00, despite bad data
-        """
-        timetable = txc.Timetable(join(FIXTURES_DIR, 'PKBO301.xml'), None)
-        journey = txc.VehicleJourney(ET.fromstring("""
-            <VehicleJourney xmlns="http://www.transxchange.org.uk/">
-                <OperatorRef>SPH</OperatorRef>
-                <OperatingProfile>
-                    <RegularDayType>
-                        <DaysOfWeek>
-                            <Saturday />
-                        </DaysOfWeek>
-                    </RegularDayType>
-                </OperatingProfile>
-                <VehicleJourneyCode>65004</VehicleJourneyCode>
-                <ServiceRef>PKBO301</ServiceRef>
-                <LineRef>0</LineRef>
-                <JourneyPatternRef>JPS_PKBO301-14</JourneyPatternRef>
-                <DepartureTime>20:00:00</DepartureTime>
-            </VehicleJourney>
-        """), {'JPS_PKBO301-14': None}, {})
-
-        # A journey at 20:00 (which is after 19:00) should not be shown
-        self.assertFalse(journey.should_show(date(2017, 8, 26), timetable))  # A Saturday
-        self.assertFalse(journey.should_show(date(2017, 8, 27), timetable))  # A Sunday
-
-        # A journey at 19:00 should be shown on the applicable day
-        journey.departure_time = time(19, 0)
-        self.assertTrue(journey.should_show(date(2017, 8, 26), timetable))  # A Saturday
-        self.assertFalse(journey.should_show(date(2017, 8, 27), timetable))  # A Sunday
-
-
 class OperatingProfileTest(TestCase):
     def test_bank_holidays(self):
         operating_profile = txc.OperatingProfile(ET.fromstring("""

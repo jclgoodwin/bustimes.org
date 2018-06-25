@@ -618,19 +618,8 @@ class VehicleJourney(object):
     def should_show(self, date, timetable=None):
         if not date:
             return True
-        if self.code.startswith('VJ_34-A1-_-y10-1') and self.departure_time == datetime.time(14, 39):
-            return False
-        if self.code.startswith('VJ_39-20-_-y10-2-') and date < datetime.date(2018, 5, 27):
-            # 20 - Weston-super-Mare - Burnham-on-Sea
-            if hasattr(self.operating_profile, 'nonoperation_days'):
-                for daterange in self.operating_profile.nonoperation_days:
-                    if daterange.start == datetime.date(2018, 9, 3) and daterange.end == datetime.date(2500, 1, 1):
-                        return False
         if not self.operating_profile:
             return timetable and timetable.operating_profile.should_show(date)
-        if timetable and timetable.service_code == 'PKBO301':
-            if hasattr(self, 'departure_time') and self.departure_time > datetime.time(19, 0):
-                return False
         return self.operating_profile.should_show(date)
 
 

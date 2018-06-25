@@ -15,20 +15,18 @@ logger = logging.getLogger(__name__)
 class Command(BaseCommand):
     @transaction.atomic
     def update(self):
+        url = 'http://ncc.hogiacloud.com/map/VehicleMapService/Vehicles'
         now = timezone.now()
 
-        url = 'http://ncc.hogiacloud.com/map/VehicleMapService/Vehicles'
+        source, created = DataSource.objects.get_or_create({'url': url, 'datetime': now}, name='NCC Hogia')
+
+        print(source.vehiclelocation_set.filter(current=True).update(current=False), end='\t', flush=True)
 
         try:
             response = self.session.get(url, timeout=5)
         except requests.exceptions.RequestException as e:
             print(e)
-            logger.error(e, exc_info=True)
-            sleep(120)  # wait for two minutes
-            return
-
-        source = DataSource.objects.update_or_create({'url': url, 'datetime': now}, name='NCC Hogia')[0]
-        print(source.vehiclelocation_set.filter(current=True).update(current=False), end='\t', flush=True)
+            return 120  # wait for two minutes
 
         for item in response.json():
             vehicle = item['Label']
@@ -61,7 +59,7 @@ class Command(BaseCommand):
                     current=True
                 )
                 location.save()
-        sleep(10)
+        return 10
 
     def handle(self, *args, **options):
 
@@ -69,7 +67,8 @@ class Command(BaseCommand):
 
         while True:
             try:
-                self.update()
+                wait = self.update()
             except OperationalError as e:
                 print(e)
                 logger.error(e, exc_info=True)
+            sleep(wait)

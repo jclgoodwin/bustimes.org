@@ -825,7 +825,10 @@ class Vehicle(models.Model):
     def reg(self):
         reg = str(self).split('-')[-1]
         if not reg.isdigit():
-            return ''.join(reg.split()[-2:])
+            reg = reg.split()
+            if reg[0].isdigit():
+                reg = reg[-2:]
+            return ''.join(reg)
 
     def get_absolute_url(self):
         return reverse('vehicle_detail', args=(self.id,))
@@ -857,6 +860,14 @@ class VehicleLocation(models.Model):
 
     class Meta():
         ordering = ('id',)
+
+    def get_direction(self):
+        if 'Direction' in self.data:
+            return self.data['Direction']
+        if 'bearing' in self.data:
+            return self.data['bearing']
+        if 'direction' in self.data and self.data['direction']:
+            return int(self.data['direction']) * -11.25 + 90
 
     def get_label(self):
         if self.data and 'Label' in self.data:

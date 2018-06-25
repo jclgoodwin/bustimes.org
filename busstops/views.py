@@ -220,11 +220,11 @@ def vehicles_json(request):
                 'coordinates': tuple(location.latlong),
             },
             'properties': {
-                'vehicle': {
+                'vehicle': location.vehicle and {
                     'url': location.vehicle.get_absolute_url(),
                     'name': str(location.vehicle)
                 },
-                'operator': location.vehicle.operator and str(location.vehicle.operator),
+                'operator': location.vehicle and location.vehicle.operator and str(location.vehicle.operator),
                 'service': location.service and {
                     'line_name': location.service.line_name,
                     'description': location.service.description,
@@ -232,7 +232,7 @@ def vehicles_json(request):
                 },
                 'journey': location.get_label(),
                 'delta': location.get_delta(),
-                'direction': location.data['Direction'],
+                'direction': location.get_direction(),
                 'datetime': location.datetime
             }
         } for location in locations]

@@ -354,19 +354,23 @@ class TimetableDepartures(Departures):
         return [self.get_row(suu) for suu in queryset]
 
 
+def parse_datetime(string):
+    return ciso8601.parse_datetime(string).astimezone(LOCAL_TIMEZONE)
+
+
 class LambdaDepartures(Departures):
     def get_request_url(self):
         return 'https://api.bustim.es/' + self.stop.atco_code
 
     def get_row(self, item):
         row = {
-            'time': ciso8601.parse_datetime(item['aimed_time']).astimezone(LOCAL_TIMEZONE),
+            'time': parse_datetime(item['aimed_time']),
             'live': item['expected_time'],
             'service': self.get_service(item['service']),
             'destination': item['destination_name']
         }
         if row['live']:
-            row['live'] = ciso8601.parse_datetime(row['live']).astimezone(LOCAL_TIMEZONE)
+            row['live'] = parse_datetime(row['live'])
         if self.stop.atco_code[:3] == '290':
             row['line'] = item.get('line')
         return row
