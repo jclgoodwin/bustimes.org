@@ -26,8 +26,9 @@
 {% endfor %}
 
 {% if object.get_buses_online %}
-    <p><strong id="buses-online-count">{{ object.get_buses_online }} bus{{ object.get_buses_online|pluralize:"es" }} online</strong>. Live map might be incomplete, out of date or wrong. Click on a bus to see when it last reported its location</p>
-    <div class="service-map" id="map" data-service="{{ object.service_code }}"></div>
+    <p><strong id="buses-online-count">{{ object.get_buses_online }} bus{{ object.get_buses_online|pluralize:"es" }} online.</strong>
+    This live map might be incomplete or out of date. Click on a bus to see when it last updated</p>
+    <p><div class="service-map" id="map" data-service="{{ object.service_code }}"></div></p>
 {% endif %}
 
 {% for timetable in timetables %}

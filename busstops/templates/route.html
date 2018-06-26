@@ -1,4 +1,6 @@
-<div class="map-wrapper"><div id="map"></div></div>
+{% if not object.get_buses_online %}
+    <div class="map-wrapper"><div id="map"></div></div>
+{% endif %}
 
 {% for stopusage in stopusages %}
     {% ifchanged stopusage.direction %}

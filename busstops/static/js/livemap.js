@@ -9,8 +9,7 @@
     */
 
     var map = L.map('map', {
-            minZoom: 6,
-            maxZoom: 15,
+            minZoom: 9,
         }),
         tileURL = 'https://bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
         statusBar = L.control({
@@ -89,7 +88,13 @@
             }
         });
         layer.addTo(map);
-        map.fitBounds(layer.getBounds());
+        var bounds = layer.getBounds();
+        if (bounds.isValid() && (!map._loaded || !map.getBounds().contains(bounds))) {
+            map.fitBounds(bounds, {
+                padding: [20, 20],
+                maxZoom: 12
+            });
+        }
         statusBar.getContainer().innerHTML = '';
     }
 
@@ -107,7 +112,6 @@
             }, 10000);
         });
     }
-    map.setView([52.6, 1.1], 10);
 
     load(map, statusBar);
 })();

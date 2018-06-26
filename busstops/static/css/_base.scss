@@ -741,34 +741,34 @@ input:not(:checked) + label {
 #hugemap {
     height: 50%;
 
-    .leaflet-control.hugemap-status {
-        background: #fff;
-        background: rgba(255, 255, 255, .8);
-        margin: 0;
-        padding: 0 5px;
-    }
-
     .marker-cluster {
         // background-clip: padding-box;
         background: $brand-color;
         border-radius: 20px;
         box-shadow: 0 1px 5px rgba(0, 0, 0, .65);
-    }
 
-    .marker-cluster div {
-        background: #fff;
-        border-radius: 15px;
-        font-size: 12px;
-        height: 30px;
-        margin-left: 5px;
-        margin-top: 5px;
-        text-align: center;
-        width: 30px;
-    }
+        div {
+            background: #fff;
+            border-radius: 15px;
+            font-size: 12px;
+            height: 30px;
+            margin-left: 5px;
+            margin-top: 5px;
+            text-align: center;
+            width: 30px;
+        }
 
-    .marker-cluster span {
-        line-height: 30px;
+        span {
+            line-height: 30px;
+        }
     }
+}
+
+.leaflet-container .leaflet-control.hugemap-status {
+    background: #fff;
+    background: rgba(255, 255, 255, .8);
+    margin: 0;
+    padding: 0 5px;
 }
 
 .warning {
