@@ -99,9 +99,6 @@ ga('send', 'pageview');
 {% elif stopusages or stops or stoppoint %}
     {% javascript 'map' %}
 {% endif %}
-{% if regions %}
-    {% javascript 'frontpage' %}
-{% endif %}
 {% if timetables %}
     {% javascript 'timetable' %}
 {% elif regions %}
