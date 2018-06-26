@@ -237,7 +237,7 @@ class ImportServicesTest(TestCase):
     @freeze_time('1 October 2017')
     def test_service_nw(self):
         # 2
-        service = Service.objects.get(service_code='NW_04_GMN_2')
+        service = Service.objects.get(service_code='NW_04_GMN_2_1')
         self.assertEqual(service.description, 'intu Trafford Centre - Eccles - Swinton - Bolton')
 
         res = self.client.get(service.get_absolute_url())
@@ -252,7 +252,7 @@ class ImportServicesTest(TestCase):
         self.assertEqual(0, service.stopusage_set.all().count())
 
         # Stagecoach Manhester 237
-        service = Service.objects.get(service_code='NW_04_GMS_237')
+        service = Service.objects.get(service_code='NW_04_GMS_237_1')
         self.assertEqual(service.description, 'Glossop - Stalybridge - Ashton')
 
         # On a Sunday, both timetables should be shown
@@ -275,10 +275,10 @@ class ImportServicesTest(TestCase):
         self.ea_service.save()
 
         call_command('generate_service_dates')
-        self.assertEqual(42, ServiceDate.objects.count())
+        self.assertEqual(28, ServiceDate.objects.count())
 
         call_command('generate_service_dates')
-        self.assertEqual(42, ServiceDate.objects.count())
+        self.assertEqual(28, ServiceDate.objects.count())
 
     @freeze_time('3 October 2016')
     def test_do_service_ea(self):
