@@ -781,7 +781,7 @@ input:not(:checked) + label {
 }
 
 .banner-ad {
-    min-height: 3.75em;
+    min-height: 4.75em;
     overflow: hidden;
     padding: 1em 0;
     text-align: center;
@@ -791,6 +791,17 @@ input:not(:checked) + label {
     display: block;
     margin: 0 auto;
     max-width: 60.5em;
+    text-decoration: none;
+    margin-top: 1em;
+
+    &:before {
+        content: "Advertisement";
+        display: block;
+        font-size: .75em;
+        margin-top: -1.33em;
+        position: relative;
+        text-align: left;
+    }
 }
 
 footer {
