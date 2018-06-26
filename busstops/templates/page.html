@@ -15,13 +15,16 @@
 {% load staticfiles %}
 <link rel="manifest" href="{% static 'manifest.webmanifest' %}" />
 <!--[if gte IE 9]><!-->
-{% load pipeline %}
-{% load inline_style %}
-{% inline_stylesheet 'main' %}
+    {% load pipeline %}
+    {% load inline_style %}
+    {% inline_stylesheet 'main' %}
+    {% if object.get_buses_online %}
+        <link rel="stylesheet" href="{% static "js/bower_components/leaflet/dist/leaflet.css" %}" />
+    {% endif %}
 <!--<![endif]-->
 <!--[if lt IE 9]>
-{% stylesheet 'ie' %}
-<script src="{% static "js/bower_components/html5shiv/dist/html5shiv-printshiv.min.js" %}"></script>
+    {% stylesheet 'ie' %}
+    <script src="{% static "js/bower_components/html5shiv/dist/html5shiv-printshiv.min.js" %}"></script>
 <![endif]-->
 {% block head %}
 {% endblock %}
@@ -54,15 +57,11 @@
     {% block ad %}
         <!--[if gte IE 9]><!-->
             <div class="banner-ad">
-                <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="link" data-full-width-responsive="true"></ins>
             </div>
             <script>
                 (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds = 1;
                 (adsbygoogle = window.adsbygoogle || []).push({});
-                (adsbygoogle = window.adsbygoogle || []).push({
-                    google_ad_client: "ca-pub-4420219114164200",
-                    enable_page_level_ads: true
-                });
             </script>
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
         <!--<![endif]-->
@@ -95,12 +94,14 @@ ga('send', 'pageview');
         whitelistUrls: [/bustimes\.org\/static\/js\/.*\.js/]
     }).install();
 </script>
-{% if stopusages or stops or stoppoint %}
-{% javascript 'map' %}
+{% if service.get_buses_online %}
+    {% javascript 'livemap' %}
+{% elif stopusages or stops or stoppoint %}
+    {% javascript 'map' %}
 {% elif regions %}
-{% javascript 'frontpage' %}
+    {% javascript 'frontpage' %}
 {% elif timetables %}
-{% javascript 'timetable' %}
+    {% javascript 'timetable' %}
 {% endif %}
 {% javascript 'global' %}
 </body>

@@ -259,14 +259,11 @@ class Command(BaseCommand):
                 same_services = Service.objects.filter(description=description, current=True)
                 same_service = same_services.filter(service_code__startswith=homogeneous_service_code + '_')
                 same_service = same_service.exclude(service_code=service_code).first()
-                if same_service:
-                    service_code = homogeneous_service_code
-                    same_service.service_code = service_code
-                    same_service.save()
-                elif same_services.filter(service_code=homogeneous_service_code).exists():
-                    service_code = homogeneous_service_code
 
-                if service_code == homogeneous_service_code:
+                if same_service:
+                    ServiceCode.objects.update_or_create(service=same_service, code=service_code, scheme='NW TNDS')
+                    service_code = same_service.service_code
+
                     for stop_usage in stop_usages:
                         stop_usage.service_id = service_code
 

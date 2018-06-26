@@ -25,6 +25,11 @@
     <p class="warning">{{ note|safe }}</p>
 {% endfor %}
 
+{% if object.get_buses_online %}
+    <p><strong id="buses-online-count">{{ object.get_buses_online }} bus{{ object.get_buses_online|pluralize:"es" }} online</strong>. Live map might be incomplete, out of date or wrong. Click on a bus to see when it last reported its location</p>
+    <div class="service-map" id="map" data-service="{{ object.service_code }}"></div>
+{% endif %}
+
 {% for timetable in timetables %}
     <form class="timetable-date">
         <select onchange="this.form.submit()" name="date">
@@ -89,7 +94,7 @@
         {% if forloop.first and not forloop.last %}
             <!--[if gte IE 9]><!-->
                 <div class="banner-ad">
-                    <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+                    <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="link" data-full-width-responsive="true"></ins>
                 </div>
                 <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
             <!--<![endif]-->

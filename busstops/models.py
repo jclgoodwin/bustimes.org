@@ -510,6 +510,10 @@ class Service(models.Model):
         groups = SERVICE_ORDER_REGEX.match(self.line_name).groups()
         return (groups[0], int(groups[1]) if groups[1] else 0, groups[2])
 
+    @cached_property
+    def get_buses_online(self):
+        return self.vehiclelocation_set.filter(current=True).count()
+
     @staticmethod
     def get_operator_number(code):
         if code in {'MEGA', 'MBGD'}:
@@ -567,15 +571,14 @@ class Service(models.Model):
             return self.get_trapeze_link(date)
 
         if self.region_id == 'W':
-            for service_code in self.servicecode_set.all():
-                if service_code.scheme == 'Traveline Cymru':
-                    query = (
-                        ('routeNum', self.line_name),
-                        ('direction_id', 0),
-                        ('timetable_key', service_code.code)
-                    )
-                    url = 'https://www.traveline.cymru/timetables/?' + urlencode(query)
-                    return url, 'Traveline Cymru'
+            for service_code in self.servicecode_set.filter(scheme='Traveline Cymru'):
+                query = (
+                    ('routeNum', self.line_name),
+                    ('direction_id', 0),
+                    ('timetable_key', service_code.code)
+                )
+                url = 'https://www.traveline.cymru/timetables/?' + urlencode(query)
+                return url, 'Traveline Cymru'
 
         query = None
 
@@ -619,13 +622,15 @@ class Service(models.Model):
             return ['%s%s' % (self.pk, suffix)]
         if self.region_id in ('S', 'Y'):
             return ['SVR%s%s' % (self.pk, suffix)]
+        if self.region_id == 'NW':
+            codes = [code.code for code in self.servicecode_set.filter(scheme='NW TNDS')]
+            codes.append(self.service_code)
+            return [code + '.xml' for code in codes]
 
         namelist = archive.namelist()
 
         if self.net:
             return [name for name in namelist if name.startswith('%s-' % self.pk)]
-        if self.region_id == 'NW':
-            return [name for name in namelist if name == self.pk + '.xml' or name.startswith('%s_' % self.pk)]
         if self.region_id == 'GB':
             parts = self.pk.split('_')
             return [name for name in namelist if name.endswith('_%s_%s%s' % (parts[1], parts[0], suffix))]

@@ -40,7 +40,7 @@ sub vcl_recv {
         return (pass);
     }
 
-    if (req.http.User-Agent ~ "(?i)grapeshotcrawler") {
+    if (req.http.User-Agent ~ "(?i)grapeshotcrawler|bingbot|mj12bot|slurp|ahrefsbot|dotbot|semrushbot|yandexbot") {
         set req.http.X-Bot = "bot";
     }
 
@@ -55,11 +55,19 @@ sub vcl_backend_response {
             if (bereq.url ~ "^/stops/") {
                 set beresp.ttl = 30s;
 
-                if (beresp.http.Vary) {
-                    set beresp.http.Vary = beresp.http.Vary + ", X-Bot";
+                if (bereq.url ~ "/departures") {
+                    if (beresp.http.Vary) {
+                       set beresp.http.Vary = beresp.http.Vary + ", X-Bot";
+                    } else {
+                        set beresp.http.Vary = "X-Bot";
+                    }
                 } else {
-                    set beresp.http.Vary = "X-Bot";
+                    set beresp.do_esi = true;
                 }
+            } elif (bereq.url ~ "^/v") {
+                set beresp.ttl = 5s;
+            } elif (bereq.url ~ "^/services/") {
+                set beresp.ttl = 5m;
             } elif (bereq.url ~ "^/styles/") {
                 set beresp.ttl = 30d;
             } else {
@@ -67,5 +75,11 @@ sub vcl_backend_response {
             }
         }
 
+    }
+}
+
+sub vcl_deliver {
+    if (req.url ~ "/stops/" && resp.status >= 200 && resp.status < 400) {
+        set resp.http.X-Accel-Buffering = "no";
     }
 }

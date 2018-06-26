@@ -32,15 +32,32 @@ class Command(BaseCommand):
         source = DataSource.objects.update_or_create({'url': url, 'datetime': now}, name='Reading')[0]
         print(source.vehiclelocation_set.filter(current=True).update(current=False), end='\t', flush=True)
 
+        reading = Operator.objects.get(name='Reading Buses')
+        thames = Operator.objects.get(name='Thames Valley Buses')
+        kennections = Operator.objects.get(name='Kennections')
+
         for item in response.json():
+
+            service = item['service'].lower()
+            if service.startswith('tv'):
+                operator = thames
+                service = service[2:]
+            elif service.startswith('k'):
+                if service != 'k102':
+                    operator = kennections
+                service = service[1:]
+            else:
+                operator = reading
+
             vehicle = item['vehicle']
             vehicle, created = Vehicle.objects.update_or_create(
+                {'operator': operator},
                 source=source,
-                code=vehicle,
-                operator=Operator.objects.get(name='Reading Buses')
+                code=vehicle
             )
+
             try:
-                service = vehicle.operator.service_set.get(current=True, line_name__iexact=item['service'])
+                service = operator.service_set.get(current=True, line_name__iexact=service)
             except Service.DoesNotExist:
                 print(item)
                 service = None
