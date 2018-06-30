@@ -9,7 +9,8 @@
     */
 
     var map = L.map('map', {
-            minZoom: 9,
+            minZoom: 7,
+            tap: false
         }),
         tileURL = 'https://bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
         statusBar = L.control({

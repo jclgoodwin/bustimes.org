@@ -501,6 +501,9 @@ def blend(departures, live_rows):
                 )
             ):
                 row['live'] = live_row['live']
+                if live_row.get('line') and type(row['service']) is Service and live_row['line'] != row['service'].line_name:
+                    ServiceCode.objects.update_or_create({'code': live_row['line']},
+                                                         service=row['service'], scheme='NCC Hogia')
                 replaced = True
                 break
         if not replaced:
@@ -584,11 +587,6 @@ def get_departures(stop, services, bot=False):
             live_rows = LambdaDepartures(stop, services, now).get_departures()
             if live_rows:
                 blend(departures, live_rows)
-                if stop.atco_code[:3] == '290':
-                    for row in departures:
-                        if type(row['service']) is Service and row.get('line'):
-                            ServiceCode.objects.update_or_create(service=row['service'], scheme='NCC Hogia',
-                                                                 code=row['line'])
 
     if bot:
         max_age = 0

@@ -33,7 +33,6 @@ class Command(BaseCommand):
             if ': ' in vehicle:
                 vehicle, service = vehicle.split(': ', 1)
                 service = service.split('/', 1)[0]
-                service = Service.objects.filter(servicecode__scheme=source.name, servicecode__code=service).first()
             else:
                 service = None
             vehicle = Vehicle.objects.update_or_create(
@@ -49,6 +48,12 @@ class Command(BaseCommand):
                 latest.current = True
                 latest.save()
             else:
+                if service:
+                    try:
+                        service = Service.objects.get(servicecode__scheme=source.name, servicecode__code=service)
+                    except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+                        print(e, service)
+                        service = None
                 location = VehicleLocation(
                     datetime=now,
                     vehicle=vehicle,

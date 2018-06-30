@@ -37,7 +37,6 @@ class Command(BaseCommand):
         kennections = Operator.objects.get(name='Kennections')
 
         for item in response.json():
-
             service = item['service'].lower()
             if service.startswith('tv'):
                 operator = thames
@@ -56,11 +55,6 @@ class Command(BaseCommand):
                 code=vehicle
             )
 
-            try:
-                service = operator.service_set.get(current=True, line_name__iexact=service)
-            except Service.DoesNotExist:
-                print(item)
-                service = None
             if created:
                 latest = None
             else:
@@ -69,6 +63,11 @@ class Command(BaseCommand):
                 latest.current = True
                 latest.save()
             else:
+                try:
+                    service = operator.service_set.get(current=True, line_name__iexact=service)
+                except Service.DoesNotExist:
+                    print(operator, service)
+                    service = None
                 location = VehicleLocation(
                     datetime=ciso8601.parse_datetime(item['observed']).astimezone(LOCAL_TIMEZONE),
                     vehicle=vehicle,
@@ -87,7 +86,7 @@ class Command(BaseCommand):
         while True:
             try:
                 self.update()
-            except OperationalError as e:
+            except (TypeError, OperationalError) as e:
                 print(e)
                 logger.error(e, exc_info=True)
             sleep(40)
