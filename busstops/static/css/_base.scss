@@ -781,10 +781,16 @@ input:not(:checked) + label {
 }
 
 .banner-ad {
-    min-height: 3.75em;
+    min-height: 5.25em;
     overflow: hidden;
     padding: 1em 0;
-    text-align: center;
+}
+
+.ad-label {
+    font-size: .75em;
+    height: 2em;
+    margin: 0 auto;
+    max-width: 80.66667em;
 }
 
 .adsbygoogle {
@@ -801,6 +807,7 @@ footer {
         border-top: 1px solid $brand-color;
         clear: both;
         margin: 0;
+        padding: 1em .625em;
     }
 
     ul {
