@@ -501,9 +501,10 @@ def blend(departures, live_rows):
                 )
             ):
                 row['live'] = live_row['live']
-                if live_row.get('line') and type(row['service']) is Service and live_row['line'] != row['service'].line_name:
-                    ServiceCode.objects.update_or_create({'code': live_row['line']},
-                                                         service=row['service'], scheme='NCC Hogia')
+                if live_row.get('line') and type(row['service']) is Service:
+                    if live_row['line'] != row['service'].line_name:
+                        ServiceCode.objects.update_or_create({'code': live_row['line']},
+                                                             service=row['service'], scheme='NCC Hogia')
                 replaced = True
                 break
         if not replaced:

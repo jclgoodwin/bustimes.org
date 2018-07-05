@@ -616,29 +616,27 @@ class Service(models.Model):
         return None, None
 
     def get_filenames(self, archive):
-        suffix = '.xml'
-
         if self.region_id == 'NE':
-            return ['%s%s' % (self.pk, suffix)]
+            return ['{}.xml'.format(self.pk)]
         if self.region_id in ('S', 'Y'):
-            return ['SVR%s%s' % (self.pk, suffix)]
+            return ['SVR{}.xml'.format(self.pk)]
 
         namelist = archive.namelist()
 
         if self.region_id == 'NW':
-            codes = [code.code for code in self.servicecode_set.filter(scheme='NW TNDS')]
-            codes.append(self.service_code)
-            for name in namelist:
-                for code in codes:
-                    if name == code + '.xml' or name.startswith(code + '_'):
-                        yield name
+            codes = [code.code for code in self.servicecode_set.filter(scheme='NW TNDS')] + [self.pk]
+            return [name for name in namelist
+                    if any(name == code + '.xml' or name.startswith(code + '_') for code in codes)]
 
         if self.net:
-            return [name for name in namelist if name.startswith(self.pk + '-')]
+            return [name for name in namelist if name.startswith('{}-'.format(self.pk))]
+
         if self.region_id == 'GB':
             parts = self.pk.split('_')
-            return [name for name in namelist if name.endswith('_%s_%s%s' % (parts[1], parts[0], suffix))]
-        return [name for name in namelist if name.endswith('_%s%s' % (self.pk, suffix))]  # Wales
+            suffix = '_{}_{}.xml'.format(parts[1], parts[0])
+        else:
+            suffix = '_{}.xml'.format(self.pk)  # Wales
+        return [name for name in namelist if name.endswith(suffix)]
 
     def get_files_from_zipfile(self):
         """Given a Service,
