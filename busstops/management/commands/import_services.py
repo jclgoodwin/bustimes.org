@@ -294,7 +294,7 @@ class Command(BaseCommand):
         self.set_region(archive_name)
         self.service_codes = set()
 
-        with transaction.atomic:
+        with transaction.atomic():
             Service.objects.filter(region=self.region_id, current=True).update(current=False)
 
             with zipfile.ZipFile(archive_name) as archive:
@@ -325,7 +325,7 @@ class Command(BaseCommand):
             stops.filter(active=True).exclude(service__current=True).update(active=False)
             stops.filter(active=False, service__current=True).update(active=True)
 
-        with transaction.atomic:
+        with transaction.atomic():
             Journey.objects.filter(service__region=self.region_id).delete()
             handle_region(Region.objects.get(id=self.region_id))
 
