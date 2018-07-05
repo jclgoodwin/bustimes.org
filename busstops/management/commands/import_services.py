@@ -253,7 +253,9 @@ class Command(BaseCommand):
                 defaults['description'] = description
 
             parts = service_code.split('_')
-            if len(parts) == 5 and parts[0] == 'NW':
+            if parts[0] == 'NW':
+                assert len(parts) == 5
+
                 homogeneous_service_code = '_'.join(parts[:-1])
 
                 same_services = Service.objects.filter(description=description, current=True)

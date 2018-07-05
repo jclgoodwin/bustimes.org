@@ -622,15 +622,19 @@ class Service(models.Model):
             return ['%s%s' % (self.pk, suffix)]
         if self.region_id in ('S', 'Y'):
             return ['SVR%s%s' % (self.pk, suffix)]
-        if self.region_id == 'NW':
-            codes = [code.code for code in self.servicecode_set.filter(scheme='NW TNDS')]
-            codes.append(self.service_code)
-            return [code + '.xml' for code in codes]
 
         namelist = archive.namelist()
 
+        if self.region_id == 'NW':
+            codes = [code.code for code in self.servicecode_set.filter(scheme='NW TNDS')]
+            codes.append(self.service_code)
+            for name in namelist:
+                for code in codes:
+                    if name == code + '.xml' or name.startswith(code + '_'):
+                        yield name
+
         if self.net:
-            return [name for name in namelist if name.startswith('%s-' % self.pk)]
+            return [name for name in namelist if name.startswith(self.pk + '-')]
         if self.region_id == 'GB':
             parts = self.pk.split('_')
             return [name for name in namelist if name.endswith('_%s_%s%s' % (parts[1], parts[0], suffix))]
