@@ -23,7 +23,7 @@ class Command(BaseCommand):
         print(source.vehiclelocation_set.filter(current=True).update(current=False), end='\t', flush=True)
 
         try:
-            response = self.session.get(url, timeout=5)
+            response = self.session.get(url, timeout=30)
         except requests.exceptions.RequestException as e:
             print(e)
             return 120  # wait for two minutes

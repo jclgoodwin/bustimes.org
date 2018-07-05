@@ -86,7 +86,7 @@ class Command(BaseCommand):
         while True:
             try:
                 self.update()
-            except (TypeError, OperationalError) as e:
+            except (TypeError, OperationalError, ValueError) as e:
                 print(e)
                 logger.error(e, exc_info=True)
             sleep(40)
