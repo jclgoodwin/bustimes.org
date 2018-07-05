@@ -290,45 +290,46 @@ class Command(BaseCommand):
         if self.region_id == 'NCSD':
             self.region_id = 'GB'
 
-    @transaction.atomic
     def handle_region(self, archive_name):
         self.set_region(archive_name)
         self.service_codes = set()
 
-        Service.objects.filter(region=self.region_id, current=True).update(current=False)
+        with transaction.atomic:
+            Service.objects.filter(region=self.region_id, current=True).update(current=False)
 
-        with zipfile.ZipFile(archive_name) as archive:
+            with zipfile.ZipFile(archive_name) as archive:
+                # the NCSD has service descriptions in a separate file:
+                if 'IncludedServices.csv' in archive.namelist():
+                    with archive.open('IncludedServices.csv') as csv_file:
+                        reader = csv.DictReader(line.decode('utf-8') for line in csv_file)
+                        # e.g. {'NATX323': 'Cardiff - Liverpool'}
+                        self.service_descriptions = {
+                            row['Operator'] + row['LineName'] + row['Dir']: row['Description'] for row in reader
+                        }
+                else:
+                    self.service_descriptions = None
 
-            # the NCSD has service descriptions in a separate file:
-            if 'IncludedServices.csv' in archive.namelist():
-                with archive.open('IncludedServices.csv') as csv_file:
-                    reader = csv.DictReader(line.decode('utf-8') for line in csv_file)
-                    # e.g. {'NATX323': 'Cardiff - Liverpool'}
-                    self.service_descriptions = {
-                        row['Operator'] + row['LineName'] + row['Dir']: row['Description'] for row in reader
-                    }
-            else:
-                self.service_descriptions = None
+                for i, filename in enumerate(archive.namelist()):
+                    if filename.endswith('.xml'):
+                        with archive.open(filename) as open_file:
+                            self.do_service(open_file, filename)
 
-            for i, filename in enumerate(archive.namelist()):
-                if filename.endswith('.xml'):
-                    with archive.open(filename) as open_file:
-                        self.do_service(open_file, filename)
-
-        Service.objects.filter(region=self.region_id, current=False).update(geometry=None)
+            # correct services
+            with open(os.path.join(settings.DATA_DIR, 'services.yaml')) as open_file:
+                records = yaml.load(open_file)
+                for service_code in records:
+                    Service.objects.filter(service_code=service_code).update(**records[service_code])
 
         if self.region_id != 'GB':
             stops = StopPoint.objects.filter(admin_area__region=self.region_id)
             stops.filter(active=True).exclude(service__current=True).update(active=False)
             stops.filter(active=False, service__current=True).update(active=True)
 
-        Journey.objects.filter(service__region=self.region_id).delete()
-        handle_region(Region.objects.get(id=self.region_id))
+        with transaction.atomic:
+            Journey.objects.filter(service__region=self.region_id).delete()
+            handle_region(Region.objects.get(id=self.region_id))
 
-        with open(os.path.join(settings.DATA_DIR, 'services.yaml')) as open_file:
-            records = yaml.load(open_file)
-            for service_code in records:
-                Service.objects.filter(service_code=service_code).update(**records[service_code])
+        Service.objects.filter(region=self.region_id, current=False, geometry__isnull=False).update(geometry=None)
 
     def handle(self, *args, **options):
         for archive_name in options['filenames']:
