@@ -222,12 +222,12 @@ def vehicles_json(request):
             'properties': {
                 'vehicle': location.vehicle and {
                     'url': location.vehicle.get_absolute_url(),
-                    'name': str(location.vehicle)
+                    'name': str(location.vehicle),
+                    'type': location.vehicle.vehicle_type and str(location.vehicle.vehicle_type),
                 },
                 'operator': location.vehicle and location.vehicle.operator and str(location.vehicle.operator),
                 'service': location.service and {
                     'line_name': location.service.line_name,
-                    'description': location.service.description,
                     'url': location.service.get_absolute_url(),
                 },
                 'journey': location.get_label(),

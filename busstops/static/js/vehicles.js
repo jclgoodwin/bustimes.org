@@ -56,16 +56,23 @@
 
                 var popup = '';
                 if (data.properties.operator) {
-                    popup += data.properties.operator + '<br>';
+                    popup += data.properties.operator + ' ';
                 }
                 if (data.properties.service) {
-                    popup += '<a href="' + data.properties.service.url + '">' + data.properties.service.line_name + ' - ' + data.properties.service.description + '</a><br>';
+                    popup += '<a href="' + data.properties.service.url + '">' + data.properties.service.line_name + '</a>';
+                }
+                if (popup) {
+                    popup += '<br>';
                 }
 
                 var dateTime = new Date(data.properties.datetime);
                 if (data.properties.vehicle) {
                     popup += '<a href="' + data.properties.vehicle.url + '">' + data.properties.vehicle.name + '</a>';
+                    if (data.properties.vehicle.type) {
+                        popup += '<br>' + data.properties.vehicle.type;
+                    }
                 }
+
                 if (data.properties.delta === 0) {
                     popup += '<br>On time';
                 } else if (data.properties.delta) {
