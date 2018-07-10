@@ -35,9 +35,11 @@ class Command(BaseCommand):
         reading = Operator.objects.get(name='Reading Buses')
         thames = Operator.objects.get(name='Thames Valley Buses')
         kennections = Operator.objects.get(name='Kennections')
+        green_line = Operator.objects.get(id='GLRB')
 
         for item in response.json():
             service = item['service'].lower()
+            operator = reading
             if service.startswith('tv'):
                 operator = thames
                 service = service[2:]
@@ -45,8 +47,8 @@ class Command(BaseCommand):
                 if service != 'k102':
                     operator = kennections
                 service = service[1:]
-            else:
-                operator = reading
+            elif service == '702' or service == '703':
+                operator = green_line
 
             vehicle = item['vehicle']
             vehicle, created = Vehicle.objects.update_or_create(
@@ -64,7 +66,10 @@ class Command(BaseCommand):
                 latest.save()
             else:
                 try:
-                    service = operator.service_set.get(current=True, line_name__iexact=service)
+                    if service:
+                        service = operator.service_set.get(current=True, line_name__iexact=service)
+                    else:
+                        service = None
                 except Service.DoesNotExist:
                     print(operator, service)
                     service = None
