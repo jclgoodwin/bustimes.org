@@ -103,7 +103,7 @@ def handle_region(region):
         if today > NEXT_WEEK:
             return
 
-    for service in Service.objects.filter(region=region, current=True):
+    for service in Service.objects.filter(region=region, current=True, timetable_wrong=False):
         if region.id == 'NI':
             path = os.path.join(settings.DATA_DIR, 'NI', service.pk + '.json')
             if not os.path.exists(path):

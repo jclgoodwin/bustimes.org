@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         ServiceDate.objects.filter(date__lt=date.today()).delete()
-        for service in Service.objects.filter(current=True, show_timetable=True, journey=None):
+        for service in Service.objects.filter(current=True, show_timetable=True, timetable_wrong=False, journey=None):
             today = date.today()
             days = 0
             tried_days = 0

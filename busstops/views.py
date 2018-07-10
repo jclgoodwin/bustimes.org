@@ -555,7 +555,7 @@ class ServiceDetailView(DetailView):
                                                | Q(services=None, operators=None))
         context['links'] = []
 
-        if self.object.show_timetable:
+        if self.object.show_timetable and not self.object.timetable_wrong:
             date = self.request.GET.get('date')
             today = timezone.now().date()
             if date:

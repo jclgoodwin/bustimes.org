@@ -35,17 +35,17 @@ ea_21-H-A-y08:
 ea_21-R-A-y08:
     current: false
 swe_47-58-_-y10:
-    current: False
+    current: false
 swe_47-58A-_-y10:
-    current: False
+    current: false
 swe_47-58B-_-y10:
-    current: False
+    current: false
 swe_47-58C-_-y10:
-    current: False
+    current: false
 suf_48-TM1-_-y08:
-    current: False
+    current: false
 suf_48-TM2-_-y08:
-    current: False
+    current: false
 FSAW032:
     description: Castlebay - Barra
 FSBW033:
@@ -53,10 +53,62 @@ FSBW033:
 twm_5-176-A-y11:
     line_name: 716
 em_18-X52-_-y08: # deduplicate X52 Alton Towers
-    current: False
+    current: false
 YNAO042S:
     description: York - Naburn - Cawood - Selby
 YNAO042:
     description: Cawood - Selby
 sro-288:
-    current: False
+    current: false
+HIAN041:
+    timetable_wrong: true
+HIAN044:
+    timetable_wrong: true
+HIAN046:
+    timetable_wrong: true
+HIAN047:
+    timetable_wrong: true
+HIAO411:
+    timetable_wrong: true
+HIAO500:
+    timetable_wrong: true
+HIAO501:
+    timetable_wrong: true
+HIAO501:
+    timetable_wrong: true
+HIAO502:
+    timetable_wrong: true
+HIAO503:
+    timetable_wrong: true
+HIAO506:
+    timetable_wrong: true
+HIAO507:
+    timetable_wrong: true
+HIAO510:
+    timetable_wrong: true
+HIAO512:
+    timetable_wrong: true
+HIAO513:
+    timetable_wrong: true
+HIAO515:
+    timetable_wrong: true
+HIAO517:
+    timetable_wrong: true
+HIAO517:
+    timetable_wrong: true
+HIAO518:
+    timetable_wrong: true
+HIAO522:
+    timetable_wrong: true
+HIAO522:
+    timetable_wrong: true
+HIAO950:
+    timetable_wrong: true
+HIAO951:
+    timetable_wrong: true
+HIBO408:
+    timetable_wrong: true
+HICO522:
+    timetable_wrong: true
+bed_5-19-_-y08:
+    timetable_wrong: true

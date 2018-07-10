@@ -478,6 +478,7 @@ class Service(models.Model):
     date = models.DateField()
     current = models.BooleanField(default=True, db_index=True)
     show_timetable = models.BooleanField(default=False)
+    timetable_wrong = models.BooleanField(default=False)
     geometry = models.MultiLineStringField(null=True, editable=False)
 
     wheelchair = models.NullBooleanField()
@@ -863,18 +864,23 @@ class VehicleLocation(models.Model):
     service = models.ForeignKey(Service, models.SET_NULL, null=True, blank=True)
     source = models.ForeignKey(DataSource, models.CASCADE)
     vehicle = models.ForeignKey(Vehicle, models.SET_NULL, null=True, blank=True)
+    heading = models.PositiveIntegerField(null=True, blank=True)
+    early = models.IntegerField(null=True, blank=True)
     current = models.BooleanField(default=False, db_index=True)
 
     class Meta():
         ordering = ('id',)
 
     def get_direction(self):
+        if 'geo' in self.data:
+            return self.data['geo']['bearing']
         if 'Direction' in self.data:
             return self.data['Direction']
         if 'bearing' in self.data:
             return self.data['bearing']
         if 'direction' in self.data and self.data['direction']:
             return int(self.data['direction']) * -11.25 + 90
+        return self.data.get('heading')
 
     def get_label(self):
         if self.data and 'Label' in self.data:
