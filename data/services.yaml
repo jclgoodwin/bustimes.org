@@ -74,7 +74,7 @@ HIAO500:
     timetable_wrong: true
 HIAO501:
     timetable_wrong: true
-HIAO501:
+HIAO501A:
     timetable_wrong: true
 HIAO502:
     timetable_wrong: true
@@ -86,7 +86,7 @@ HIAO507:
     timetable_wrong: true
 HIAO510:
     timetable_wrong: true
-HIAO512:
+HIAO512B:
     timetable_wrong: true
 HIAO513:
     timetable_wrong: true
@@ -94,13 +94,13 @@ HIAO515:
     timetable_wrong: true
 HIAO517:
     timetable_wrong: true
-HIAO517:
+HIAO517A:
     timetable_wrong: true
 HIAO518:
     timetable_wrong: true
-HIAO522:
+HIAO522A:
     timetable_wrong: true
-HIAO522:
+HIAO522B:
     timetable_wrong: true
 HIAO950:
     timetable_wrong: true
