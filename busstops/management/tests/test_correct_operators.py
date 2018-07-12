@@ -45,6 +45,6 @@ class CorrectOperatorsTest(TestCase):
         self.north.services = 6
 
         self.assertEqual(
-            "consider moving Tellings Golden Miller from East to [('W': 10), ('N': 6)]",
+            "consider moving Tellings Golden Miller from East to [('W', 10), ('N', 6)]",
             self.command.maybe_move_operator(self.tellings, [self.west, self.north])
         )
