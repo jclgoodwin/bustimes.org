@@ -18,12 +18,15 @@ class ImportJerseyTest(TestCase):
                 call_command('import_jersey')
 
     def test_import_jersey_stops(self):
-        self.assertEqual(82, StopPoint.objects.all().count())
+        self.assertEqual(764, StopPoint.objects.all().count())
 
         stop = StopPoint.objects.get(atco_code='je-2684')
         self.assertEqual(str(stop), 'Clos du Rivage (S-bound)')
         self.assertEqual(stop.indicator, 'S-bound')
         self.assertEqual(stop.bearing, 'S')
+
+        stop = StopPoint.objects.get(atco_code='je-4546')
+        self.assertAlmostEqual(stop.latlong.x, -2.16813)
 
     def test_import_jersey_services(self):
         service = Service.objects.get(pk='je-1')

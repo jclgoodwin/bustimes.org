@@ -34,6 +34,15 @@ class Command(BaseCommand):
 
         import_routes(region, operator, 'https://libertybus.je/routes_times/timetables', session)
 
+        # add geometries to routes, using a Jersey-specific API
         self.import_routes(session)
 
-        StopPoint.objects.filter(atco_code__startswith='je-').exclude(service__current=True).delete()
+        # add any missing latlongs, using a Jersey-specific API
+        url = 'http://sojbuslivetimespublic.azurewebsites.net/api/Values/v1/0/49.183613/-2.110628/1000000000/1000000000'
+        for stop in session.get(url).json()['stops']:
+            defaults = {'latlong': Point(stop['Longitude'], stop['Latitude']), 'locality_centre': False, 'active': True}
+            parts = stop['StopName'].split(' Stand ')
+            defaults['common_name'] = parts[0]
+            if len(parts) > 1:
+                defaults['indicator'] = 'Stand ' + parts[1]
+            StopPoint.objects.update_or_create(defaults, atco_code='je-{}'.format(stop['StopNumber']))

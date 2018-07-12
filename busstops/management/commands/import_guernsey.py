@@ -11,6 +11,27 @@ from django.db import transaction
 from ...models import Region, StopPoint, Service, StopUsage, Operator
 
 
+def get_stop_defaults(name, region):
+    defaults = {
+        'common_name': name
+    }
+    for separator in (', ', ' - '):
+        if separator in name:
+            defaults['common_name'], defaults['indicator'] = name.split(separator)
+            break
+    if 'indicator' in defaults and defaults['indicator'].endswith('bound'):
+        defaults['bearing'] = defaults['indicator'][0]
+        defaults['indicator'] = defaults['bearing'] + '-bound'
+    elif region.name == 'Jersey' and defaults['common_name'].lower().startswith('stand '):
+        defaults['indicator'] = 'Stand ' + defaults['common_name'][-1]
+        defaults['common_name'] = 'Liberation Station'
+    elif defaults['common_name'][-2:] in {' N', ' E', ' S', ' W'}:
+        defaults['bearing'] = defaults['common_name'][-1]
+        defaults['indicator'] = defaults['bearing'] + '-bound'
+        defaults['common_name'] = defaults['common_name'][:-2]
+    return defaults
+
+
 def import_stops(region):
     with open(os.path.join(settings.DATA_DIR, '{}.json'.format(region.name.lower()))) as open_file:
         records = json.load(open_file)
@@ -24,24 +45,12 @@ def import_stops(region):
                 continue
             stop_code = int(stop_code)
             defaults = {
-                'common_name': name,
                 'naptan_code': stop_code,
                 'latlong': Point(*place['posn'][::-1]),
                 'locality_centre': False,
                 'active': True,
             }
-            if ', ' in name:
-                defaults['common_name'], defaults['indicator'] = name.split(', ')
-                if defaults['indicator'].endswith('bound'):
-                    defaults['bearing'] = defaults['indicator'][0]
-                    defaults['indicator'] = defaults['bearing'] + '-bound'
-            elif region.name == 'Jersey' and defaults['common_name'].lower().startswith('stand '):
-                defaults['indicator'] = 'Stand ' + defaults['common_name'][-1]
-                defaults['common_name'] = 'Liberation Station'
-            elif defaults['common_name'][-2:] in {' N', ' E', ' S', ' W'}:
-                defaults['bearing'] = defaults['common_name'][-1]
-                defaults['indicator'] = defaults['bearing'] + '-bound'
-                defaults['common_name'] = defaults['common_name'][:-2]
+            defaults.update(get_stop_defaults(name, region))
             StopPoint.objects.update_or_create(defaults, atco_code='{}-{}'.format(region.id.lower(), stop_code))
 
 
@@ -83,16 +92,7 @@ def import_route_stops(region, service, slug, url, session):
                     'locality_centre': False,
                     'active': True,
                 }
-                defaults['common_name'] = tr.th.text.strip()
-                if ' - ' in defaults['common_name']:
-                    defaults['common_name'], defaults['indicator'] = defaults['common_name'].split(' - ')
-                    if defaults['indicator'].endswith('bound'):
-                        defaults['bearing'] = defaults['indicator'][0]
-                        defaults['indicator'] = defaults['bearing'] + '-bound'
-                elif defaults['common_name'][-2:] in {' N', ' E', ' S', ' W'}:
-                    defaults['bearing'] = defaults['common_name'][-1]
-                    defaults['indicator'] = defaults['bearing'] + '-bound'
-                    defaults['common_name'] = defaults['common_name'][:-2]
+                defaults.update(get_stop_defaults(tr.th.text.strip(), region))
                 doppelganger = StopPoint.objects.filter(
                     atco_code__startswith=region.id.lower() + '-',
                     common_name__iexact=defaults['common_name'],
