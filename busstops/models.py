@@ -4,7 +4,7 @@ import re
 import os
 import zipfile
 import time
-from urllib.parse import urlencode, unquote
+from urllib.parse import urlencode
 from datetime import date
 from autoslug import AutoSlugField
 from django.conf import settings
@@ -871,25 +871,11 @@ class VehicleLocation(models.Model):
     class Meta():
         ordering = ('id',)
 
-    def get_direction(self):
-        if 'geo' in self.data:
-            return self.data['geo']['bearing']
-        if 'Direction' in self.data:
-            return self.data['Direction']
-        if 'bearing' in self.data:
-            return self.data['bearing']
-        if 'direction' in self.data and self.data['direction']:
-            return int(self.data['direction']) * -11.25 + 90
-        return self.data.get('heading')
-
     def get_label(self):
-        if self.data and 'Label' in self.data:
-            label = self.data['Label'].split()
-            if len(label) > 1:
-                return label[1]
-
-    def get_delta(self):
-        if self.data and 'Label' in self.data:
-            label = self.data['Label'].split()
-            if len(label) == 3:
-                return int(unquote(label[2]))
+        if self.data:
+            if 'Label' in self.data:
+                label = self.data['Label'].split()
+                if len(label) > 1:
+                    return label[1]
+            else:
+                return self.data.get('service') or self.data.get('service_name')

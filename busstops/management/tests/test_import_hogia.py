@@ -16,7 +16,6 @@ def timeout(*args, **kwargs):
 
 
 class CorrectOperatorsTest(TestCase):
-    @vcr.use_cassette('data/hogia.yaml')
     def test_handle(self):
         command = import_hogia.Command()
 
@@ -26,7 +25,8 @@ class CorrectOperatorsTest(TestCase):
                 command.handle()
 
         # now actually test update
-        command.update()
+        with vcr.use_cassette('data/hogia.yaml'):
+            command.update()
 
         vehicle = Vehicle.objects.get(code='315_YN03_UVT')
         response = self.client.get(vehicle.get_absolute_url())
@@ -44,6 +44,13 @@ class CorrectOperatorsTest(TestCase):
         response = self.client.get('/vehicles.json')
         self.assertEqual(len(response.json()['features']), 4)
 
+        self.assertEqual(VehicleLocation.objects.count(), 4)
+        self.assertEqual(VehicleLocation.objects.filter(current=True).count(), 4)
+
+        # if run again with no changes, shouldn't create any new VehicleLocations
+        with vcr.use_cassette('data/hogia.yaml'):
+            command.update()
+        self.assertEqual(VehicleLocation.objects.count(), 4)
         self.assertEqual(VehicleLocation.objects.filter(current=True).count(), 4)
 
         # if request times out, no locations should be 'current'

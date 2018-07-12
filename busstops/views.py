@@ -231,8 +231,8 @@ def vehicles_json(request):
                     'url': location.service.get_absolute_url(),
                 },
                 'journey': location.get_label(),
-                'delta': location.get_delta(),
-                'direction': location.get_direction(),
+                'delta': location.early,
+                'direction': location.heading,
                 'datetime': location.datetime
             }
         } for location in locations]
