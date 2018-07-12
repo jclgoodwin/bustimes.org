@@ -41,8 +41,10 @@ class CorrectOperatorsTest(TestCase):
 
     def test_maybe(self):
         self.assertEqual(self.tellings.region_id, 'E')
+        self.west.services = 10
+        self.north.services = 6
 
         self.assertEqual(
-            'consider moving Tellings Golden Miller from East to [<Region: West>, <Region: North>]',
+            "consider moving Tellings Golden Miller from East to [('W': 10), ('N': 6)]",
             self.command.maybe_move_operator(self.tellings, [self.west, self.north])
         )
