@@ -1,5 +1,6 @@
 import requests
 import logging
+from urllib.parse import unquote
 from time import sleep
 from datetime import timedelta
 from django.db import OperationalError, transaction
@@ -29,16 +30,21 @@ class Command(BaseCommand):
             return 120  # wait for two minutes
 
         for item in response.json():
-            vehicle = item['Label']
-            if ': ' in vehicle:
-                vehicle, service = vehicle.split(': ', 1)
+            label = item['Label']
+            if ': ' in label:
+                vehicle, service = label.split(': ', 1)
                 service = service.split('/', 1)[0]
             else:
                 service = None
             vehicle = Vehicle.objects.update_or_create(
                 source=source,
-                code=item['Label'].split(': ')[0]
+                code=label.split(': ')[0]
             )[0]
+            label = label.split()
+            if len(label) == 3:
+                early = int(unquote(label[2]))
+            else:
+                early = None
             if item['Speed'] != item['Speed']:
                 item['Speed'] = None
             latest = vehicle.vehiclelocation_set.last()
@@ -61,7 +67,9 @@ class Command(BaseCommand):
                     service=service,
                     latlong=Point(item['Longitude'], item['Latitude']),
                     data=item,
-                    current=True
+                    current=True,
+                    early=early,
+                    heading=item['Direction']
                 )
                 location.save()
         return 10

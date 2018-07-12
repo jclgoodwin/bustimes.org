@@ -60,7 +60,8 @@ class Command(BaseCommand):
                     source=source,
                     data=item,
                     latlong=latlong,
-                    current=True
+                    current=True,
+                    heading=int(item['direction']) * -11.25 + 90
                 )
                 location.save()
 

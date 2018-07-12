@@ -41,8 +41,10 @@ class CorrectOperatorsTest(TestCase):
         response = self.client.get('/vehicles')
         self.assertContains(response, 'vehicles.min.js')
 
-        response = self.client.get('/vehicles.json')
-        self.assertEqual(len(response.json()['features']), 4)
+        json = self.client.get('/vehicles.json').json()
+        self.assertEqual(len(json['features']), 4)
+        self.assertEqual(json['features'][0]['properties']['delta'], -5)
+        self.assertEqual(json['features'][0]['properties']['direction'], 114)
 
         self.assertEqual(VehicleLocation.objects.count(), 4)
         self.assertEqual(VehicleLocation.objects.filter(current=True).count(), 4)

@@ -59,7 +59,8 @@ class Command(BaseCommand):
                     service=service,
                     latlong=Point(item['longitude'], item['latitude']),
                     data=item,
-                    current=True
+                    current=True,
+                    heading=item['heading']
                 )
                 location.save()
         return 30

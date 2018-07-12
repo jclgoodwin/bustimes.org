@@ -80,7 +80,8 @@ class Command(BaseCommand):
                     service=service,
                     latlong=Point(float(item['longitude']), float(item['latitude'])),
                     data=item,
-                    current=True
+                    current=True,
+                    heading=item['bearing'] or None
                 )
                 location.save()
 
