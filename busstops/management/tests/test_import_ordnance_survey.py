@@ -28,7 +28,7 @@ class ImportOrdnanceSurveyTest(TestCase):
         os.remove(zipfile_path)
 
     def test_place(self):
-        place = Place.objects.get()
+        place = Place.objects.get(name='East Whitwell')
         self.assertEqual(str(place), 'East Whitwell')
         self.assertAlmostEqual(place.latlong.x, -1.5989521030895975)
         self.assertAlmostEqual(place.latlong.y, 53.47550914454518)
@@ -36,3 +36,7 @@ class ImportOrdnanceSurveyTest(TestCase):
 
         res = self.client.get(place.get_absolute_url())
         self.assertContains(res, 'East Whitwell')
+
+    def test_welsh_place(self):
+        place = Place.objects.get(name='Beguildy')
+        self.assertEqual(str(place), 'Beguildy')
