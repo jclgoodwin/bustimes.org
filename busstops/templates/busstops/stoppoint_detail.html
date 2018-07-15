@@ -14,12 +14,14 @@
 <p>Buses travel {{ stoppoint.get_bearing_display }} from here</p>
 {% endif %}
 
-<span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
-    <meta itemprop="latitude" content="{{ stoppoint.latlong.y }}" />
-    <meta itemprop="longitude" content="{{ stoppoint.latlong.x }}" />
-</span>
+{% if stoppoint.latlong %}
+    <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
+        <meta itemprop="latitude" content="{{ stoppoint.latlong.y }}" />
+        <meta itemprop="longitude" content="{{ stoppoint.latlong.x }}" />
+    </span>
 
-<div class="stop-map" id="map" data-indicator="{{ stoppoint.indicator }}"{% if stoppoint.get_heading is not None %} data-heading="{{ stoppoint.get_heading }}"{% endif %}></div>
+    <div class="stop-map" id="map" data-indicator="{{ stoppoint.indicator }}"{% if stoppoint.get_heading is not None %} data-heading="{{ stoppoint.get_heading }}"{% endif %}></div>
+{% endif %}
 
 <div class="asides">
 
