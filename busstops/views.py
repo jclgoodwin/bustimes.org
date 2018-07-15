@@ -615,10 +615,11 @@ class ServiceDetailView(DetailView):
                             'text': '{} website'.format(operator.name)
                         })
                     if operator.twitter:
-                        context['links'].append({
-                            'url': 'https://twitter.com/{}'.format(operator.twitter),
-                            'text': '@{} on Twitter'.format(operator.twitter)
-                        })
+                        for handle in operator.twitter.split():
+                            context['links'].append({
+                                'url': 'https://twitter.com/{}'.format(handle),
+                                'text': '@{} on Twitter'.format(handle)
+                            })
         else:
             context['breadcrumb'] = (self.object.region,)
 

@@ -137,7 +137,7 @@ class ViewsTests(TestCase):
             phone='0800 1111',
             email='ainsley@example.com',
             url='http://www.ouibus.com',
-            twitter='dril'
+            twitter='dril\ncoldwarsteve'
         )
         cls.nuventure = Operator.objects.create(pk='VENT', name='Nu-Venture', vehicle_mode='bus', region_id='N')
         cls.service.operator.add(cls.chariots)
@@ -322,6 +322,7 @@ class ViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'ouibus')
         self.assertContains(response, '@dril on Twitter')
+        self.assertContains(response, 'twitter.com/dril"')
         self.assertContains(response, 'Mind your head')  # Note
         self.assertEqual(self.note.get_absolute_url(), '/operators/ainsleys-chariots')
 

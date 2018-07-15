@@ -45,7 +45,9 @@
         <p itemprop="telephone">{{ object.phone }}</p>
     {% endif %}
     {% if object.twitter %}
-        <p><a href="https://twitter.com/{{ object.twitter }}">@{{ object.twitter }} on Twitter</a></p>
+        {% for handle in object.twitter.split %}
+            <p><a href="https://twitter.com/{{ handle }}">@{{ handle }} on Twitter</a></p>
+        {% endfor %}
     {% endif %}
     </div>
 {% endif %}
