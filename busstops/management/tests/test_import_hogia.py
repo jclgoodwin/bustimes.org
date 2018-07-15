@@ -2,7 +2,7 @@ import vcr
 import requests
 from mock import patch
 from django.test import TestCase
-from ...models import Vehicle, VehicleLocation
+from ...models import Vehicle, VehicleLocation, VehicleType
 with patch('time.sleep', return_value=None):
     from ..commands import import_hogia
 
@@ -15,7 +15,7 @@ def timeout(*args, **kwargs):
     raise requests.exceptions.Timeout()
 
 
-class CorrectOperatorsTest(TestCase):
+class HogiaImportTest(TestCase):
     def test_handle(self):
         command = import_hogia.Command()
 
@@ -29,9 +29,16 @@ class CorrectOperatorsTest(TestCase):
             command.update()
 
         vehicle = Vehicle.objects.get(code='315_YN03_UVT')
+
+        self.assertEqual(str(vehicle.source), 'NCC Hogia')
+
+        vehicle.vehicle_type = VehicleType.objects.create(name='Bristol VR')
+        vehicle.save()
+
         response = self.client.get(vehicle.get_absolute_url())
 
         self.assertContains(response, '<h1>315 YN03 UVT</h1>')
+        self.assertContains(response, '<p>Bristol VR</p>')
 
         for journey in vehicle.get_journeys():
             for location in journey:
