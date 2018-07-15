@@ -3,7 +3,6 @@ from ...models import DataSource, Service, Vehicle, Operator, Region
 from ..commands.import_edinburgh import Command
 
 
-
 class EdinburghImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):

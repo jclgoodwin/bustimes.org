@@ -1,8 +1,6 @@
 from django.test import TestCase
-from django.db.utils import IntegrityError
 from ...models import DataSource, Service, Vehicle, Operator, Region
 from ..commands.import_reading import Command
-
 
 
 class ReadingImportTest(TestCase):
