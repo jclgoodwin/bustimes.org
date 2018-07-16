@@ -66,7 +66,7 @@
                                 {% if cell.colspan %}
                                     <td colspan="{{ cell.colspan }}" rowspan="{{ cell.rowspan }}">{{ cell }}</td>
                                 {% else %}
-                                    <td>{{ cell }}</td>
+                                    <td>{{ cell }}{% if not cell.last and cell.stopusage.activity == 'setDown' %}<abbr title="sets down only">s</abbr>{% endif %}</td>
                                 {% endif %}
                             {% endfor %}
                             </tr>
@@ -107,8 +107,11 @@
         <p>Sorry, no journeys found for {{ timetable.date }}</p>
 
         {% include 'route.html' %}
-
     {% endfor %}
+
+    {% if timetable.has_set_down_only %}
+        <p><strong>s</strong> – sets down only</p>
+    {% endif %}
 
 {% empty %}
     {% include 'route.html' %}

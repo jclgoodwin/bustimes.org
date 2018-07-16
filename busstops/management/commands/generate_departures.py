@@ -35,7 +35,9 @@ def handle_timetable(service, timetable, day):
             previous_time = None
             stopusageusages = []
             journey = Journey(service=service, datetime=combine_date_time(date, vj.departure_time))
-            for i, (su, time) in enumerate(vj.get_times()):
+            for i, cell in enumerate(vj.get_times()):
+                su = cell.stopusage
+                time = cell.departure_time
                 if previous_time and previous_time > time:
                     date += ONE_DAY
                 if su.stop.atco_code in existent_stops:

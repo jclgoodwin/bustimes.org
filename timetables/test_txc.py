@@ -227,11 +227,11 @@ class TimetableTest(TestCase):
         self.assertEqual(str(timetable.groupings[1]), 'Cardiff   - Cardiff Airport')
 
 
-class CellTest(TestCase):
-    def test_cell(self):
-        self.assertEqual(str(txc.Cell(1, 1, timedelta(minutes=20))), 'then\u00A0every 20\u00A0minutes\u00A0until')
-        self.assertEqual(str(txc.Cell(1, 1, timedelta(minutes=60))), 'then\u00A0hourly until')
-        self.assertEqual(str(txc.Cell(1, 1, timedelta(minutes=120))), 'then\u00A0every 2\u00A0hours\u00A0until')
+class RepetitionTest(TestCase):
+    def test_repetition(self):
+        self.assertEqual(str(txc.Repetition(1, 1, timedelta(minutes=20))), 'then\u00A0every 20\u00A0minutes\u00A0until')
+        self.assertEqual(str(txc.Repetition(1, 1, timedelta(minutes=60))), 'then\u00A0hourly until')
+        self.assertEqual(str(txc.Repetition(1, 1, timedelta(minutes=120))), 'then\u00A0every 2\u00A0hours\u00A0until')
 
 
 class DateRangeTest(TestCase):

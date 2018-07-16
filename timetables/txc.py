@@ -156,6 +156,23 @@ class Row(object):
 
 
 class Cell(object):
+    last = False
+
+    def __init__(self, stopusage, arrival_time, departure_time):
+        self.stopusage = stopusage
+        self.arrival_time = arrival_time
+        self.departure_time = departure_time
+
+    def __str__(self):
+        return self.arrival_time.strftime('%H:%M')
+
+    def __eq__(self, other):
+        if type(other) == datetime.time:
+            return self.arrival_time == other or self.departure_time == other
+        return self.arrival_time == other.arrival_time and self.departure_time == other.departure_time
+
+
+class Repetition(object):
     """Represents a special cell in a timetable, spanning multiple rows and columns,
     with some text like 'then every 5 minutes until'.
     """
@@ -522,19 +539,19 @@ class VehicleJourney(object):
         time = self.departure_time
         deadrun = self.start_deadrun is not None
         if not deadrun:
-            yield(stopusage, time)
+            yield Cell(stopusage, time, time)
 
         for section in self.journeypattern.sections:
             for timinglink in section.timinglinks:
 
                 if timinglink.origin.wait_time:
                     time = add_time(time, timinglink.origin.wait_time)
-                    yield(stopusage, time)
+                    yield Cell(stopusage, time, time)
 
                 if deadrun:
                     if self.start_deadrun == timinglink.id:
                         deadrun = False  # end of dead run
-                        yield(stopusage, time)
+                        yield Cell(stopusage, time, time)
 
                 stopusage = timinglink.destination
 
@@ -545,21 +562,22 @@ class VehicleJourney(object):
                     or self.private_code and self.private_code.startswith('014MFMHA') and time == datetime.time(6, 40)
                         and stopusage.sequencenumber == 12
                 ):
-                    yield(stopusage, time)
+                    yield Cell(stopusage, time, time)
 
                 if self.end_deadrun == timinglink.id:
                     deadrun = True  # start of dead run
 
                 if stopusage.wait_time:
                     time = add_time(time, stopusage.wait_time)
-                    yield(stopusage, time)
+                    yield Cell(stopusage, time, time)
 
     def add_times(self):
         # width before adding this journey column
         initial_width = len(self.journeypattern.grouping.rows[0].times)
 
-        for stopusage, time in self.get_times():
-            stopusage.row.times.append(time)
+        for cell in self.get_times():
+            cell.stopusage.row.times.append(cell)
+        cell.last = True
 
         rows = self.journeypattern.grouping.rows
 
@@ -602,12 +620,13 @@ class VehicleJourney(object):
             x.journeypattern.sections[0].timinglinks[0].origin.stop.atco_code
             != y.journeypattern.sections[0].timinglinks[0].origin.stop.atco_code
         ):
-            times = {part.stop.atco_code: time for part, time in x.get_times()}
-            for part, time in y.get_times():
-                if part.stop.atco_code in times:
-                    if time >= y.departure_time and times[part.stop.atco_code] >= x.departure_time:
-                        x_time = times[part.stop.atco_code]
-                        y_time = time
+            times = {cell.stopusage.stop.atco_code: cell.arrival_time for cell in x.get_times()}
+            for cell in y.get_times():
+                if cell.stopusage.stop.atco_code in times:
+                    if cell.arrival_time >= y.departure_time:
+                        if times[cell.stopusage.stop.atco_code] >= x.departure_time:
+                            x_time = times[cell.stopusage.stop.atco_code]
+                            y_time = cell.arrival_time
                     break
         if x_time > y_time:
             return 1
@@ -893,6 +912,13 @@ class Timetable(object):
                     journey.add_times()
             grouping.do_heads_and_feet()
 
+    def has_set_down_only(self):
+        for grouping in self.groupings:
+            for row in grouping.rows[:-1]:
+                for cell in row.times:
+                    if type(cell) is Cell and not cell.last and cell.stopusage.activity == 'setDown':
+                        return True
+
     def __init__(self, open_file, date, description=None):
         iterator = ET.iterparse(open_file)
 
@@ -1017,9 +1043,9 @@ def abbreviate(grouping, i, in_a_row, difference):
     seconds = difference.total_seconds()
     if not seconds or 3600 % seconds and seconds % 3600:  # not a factor or multiple of 1 hour
         return
-    cell = Cell(in_a_row + 1, len(grouping.rows), difference)
-    cell.min_height = len([row for row in grouping.rows if not row.is_minor()])
-    grouping.rows[0].times[i - in_a_row - 2] = cell
+    repetition = Repetition(in_a_row + 1, len(grouping.rows), difference)
+    repetition.min_height = len([row for row in grouping.rows if not row.is_minor()])
+    grouping.rows[0].times[i - in_a_row - 2] = repetition
     for j in range(i - in_a_row - 1, i - 1):
         grouping.rows[0].times[j] = None
     for j in range(i - in_a_row - 2, i - 1):

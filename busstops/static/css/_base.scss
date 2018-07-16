@@ -45,6 +45,12 @@ a:active {
     color: #000;
 }
 
+abbr {
+    cursor: help;
+    font-weight: bold;
+    text-decoration: none;
+}
+
 label {
     cursor: pointer;
 }
