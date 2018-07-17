@@ -30,15 +30,15 @@ class TimetableTest(TestCase):
 
         self.assertEqual('', str(timetable.operating_period))
 
-        self.assertEqual('Norwich - Wymondham - Attleborough', str(timetable.groupings[0]))
-        # self.assertEqual(11, len(timetable.groupings[0].journeys))
-
-        self.assertEqual('Attleborough - Wymondham - Norwich', str(timetable.groupings[1]))
+        self.assertEqual('Attleborough - Wymondham - Norwich', str(timetable.groupings[0]))
         # self.assertEqual(10, len(timetable.groupings[1].journeys))
 
-        self.assertTrue(timetable.groupings[1].has_minor_stops())
-        self.assertEqual(87, len(timetable.groupings[1].rows))
-        self.assertEqual('Leys Lane', timetable.groupings[1].rows[0].part.stop.common_name)
+        self.assertTrue(timetable.groupings[0].has_minor_stops())
+        self.assertEqual(87, len(timetable.groupings[0].rows))
+        self.assertEqual('Leys Lane', timetable.groupings[0].rows[0].part.stop.common_name)
+
+        self.assertEqual('Norwich - Wymondham - Attleborough', str(timetable.groupings[1]))
+        # self.assertEqual(11, len(timetable.groupings[0].journeys))
 
     @freeze_time('1 April 2017')
     def test_timetable_ea_2(self):
@@ -76,38 +76,38 @@ class TimetableTest(TestCase):
                                               date(2016, 12, 2))
         self.assertFalse(megabus.groupings[0].has_minor_stops())
         self.assertFalse(megabus.groupings[1].has_minor_stops())
-        self.assertEqual(megabus.groupings[0].rows[0].times,
+        self.assertEqual(megabus.groupings[1].rows[0].times,
                          [time(13, 0), time(15, 0), time(16, 0), time(16, 30), time(18, 0), time(20, 0), time(23, 45)])
 
     def test_timetable_ne(self):
         """Test timetable with some abbreviations"""
         timetable_ne = txc.timetable_from_filename(FIXTURES_DIR, 'NE_03_SCC_X6_1.xml', date(2016, 12, 15))
-        self.assertEqual('Kendal - Barrow-in-Furness', str(timetable_ne.groupings[0]))
+        self.assertEqual('Kendal - Barrow-in-Furness', str(timetable_ne.groupings[1]))
         self.assertEqual(
-            timetable_ne.groupings[0].rows[0].times[:3], [time(7, 0), time(8, 0), time(9, 0)]
+            timetable_ne.groupings[1].rows[0].times[:3], [time(7, 0), time(8, 0), time(9, 0)]
         )
         # Test abbreviations (check the colspan and rowspan attributes of Cells)
-        self.assertEqual(timetable_ne.groupings[0].rows[0].times[3].colspan, 6)
-        self.assertEqual(timetable_ne.groupings[0].rows[0].times[3].rowspan, 104)
-        self.assertEqual(timetable_ne.groupings[1].rows[0].times[:7],
+        self.assertEqual(timetable_ne.groupings[1].rows[0].times[3].colspan, 6)
+        self.assertEqual(timetable_ne.groupings[1].rows[0].times[3].rowspan, 104)
+        self.assertEqual(timetable_ne.groupings[0].rows[0].times[:7],
                          [time(5, 20), time(6, 20), time(7, 15), time(8, 10), time(9, 10), time(10, 10), time(11, 10)])
 
     def test_timetable_abbreviations_notes(self):
         """Test a timetable with a note which should determine the bounds of an abbreviation"""
         timetable = txc.Timetable(join(FIXTURES_DIR, 'set_5-28-A-y08.xml'), date(2017, 8, 29))
-        self.assertEqual(str(timetable.groupings[1].rows[0].times[17]), 'then every 20 minutes until')
-        self.assertEqual(timetable.groupings[1].rows[11].times[15], time(9, 8))
-        self.assertEqual(timetable.groupings[1].rows[11].times[16], time(9, 34))
-        self.assertEqual(timetable.groupings[1].rows[11].times[17], time(15, 34))
-        self.assertEqual(timetable.groupings[1].rows[11].times[18], time(15, 54))
-        self.assertEqual(timetable.groupings[1].column_feet['NSch'][0].span, 9)
-        self.assertEqual(timetable.groupings[1].column_feet['NSch'][1].span, 2)
-        self.assertEqual(timetable.groupings[1].column_feet['NSch'][2].span, 24)
-        self.assertEqual(timetable.groupings[1].column_feet['NSch'][3].span, 1)
-        self.assertEqual(timetable.groupings[1].column_feet['NSch'][4].span, 10)
+        self.assertEqual(str(timetable.groupings[0].rows[0].times[17]), 'then every 20 minutes until')
+        self.assertEqual(timetable.groupings[0].rows[11].times[15], time(9, 8))
+        self.assertEqual(timetable.groupings[0].rows[11].times[16], time(9, 34))
+        self.assertEqual(timetable.groupings[0].rows[11].times[17], time(15, 34))
+        self.assertEqual(timetable.groupings[0].rows[11].times[18], time(15, 54))
+        self.assertEqual(timetable.groupings[0].column_feet['NSch'][0].span, 9)
+        self.assertEqual(timetable.groupings[0].column_feet['NSch'][1].span, 2)
+        self.assertEqual(timetable.groupings[0].column_feet['NSch'][2].span, 24)
+        self.assertEqual(timetable.groupings[0].column_feet['NSch'][3].span, 1)
+        self.assertEqual(timetable.groupings[0].column_feet['NSch'][4].span, 10)
 
-        self.assertEqual(str(timetable.groupings[0]), 'Basildon - South Benfleet - Southend On Sea via Hadleigh')
-        self.assertEqual(str(timetable.groupings[1]), 'Southend On Sea - South Benfleet - Basildon via Hadleigh')
+        self.assertEqual(str(timetable.groupings[0]), 'Southend On Sea - South Benfleet - Basildon via Hadleigh')
+        self.assertEqual(str(timetable.groupings[1]), 'Basildon - South Benfleet - Southend On Sea via Hadleigh')
 
     def test_timetable_scotland(self):
         """Test a Scotch timetable with no foot"""
@@ -150,13 +150,13 @@ class TimetableTest(TestCase):
 
         # Doesn't stop at Budehaven School during holidays
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'swe_34-95-A-y10.xml', date(2017, 8, 30))
-        self.assertEqual(timetable.groupings[0].rows[-4].times, ['', '', '', '', '', ''])
-        self.assertEqual(timetable.groupings[0].rows[-5].times, ['', '', '', '', '', ''])
-        self.assertEqual(timetable.groupings[0].rows[-6].times, ['', '', '', '', '', ''])
+        self.assertEqual(timetable.groupings[1].rows[-4].times, ['', '', '', '', '', ''])
+        self.assertEqual(timetable.groupings[1].rows[-5].times, ['', '', '', '', '', ''])
+        self.assertEqual(timetable.groupings[1].rows[-6].times, ['', '', '', '', '', ''])
 
         # Does stop at Budehaven School twice a day on school days
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'swe_34-95-A-y10.xml', date(2017, 9, 13))
-        rows = timetable.groupings[0].rows
+        rows = timetable.groupings[1].rows
         self.assertEqual(rows[-4].times, [time(8, 33, 10), '', '', '', time(15, 30, 10), ''])
         self.assertEqual(rows[-5].times, [time(8, 33), '', '', '', time(15, 30), ''])
         self.assertEqual(rows[-6].times, [time(8, 32, 18), '', '', '', time(15, 29, 18), ''])
@@ -223,8 +223,8 @@ class TimetableTest(TestCase):
     def test_timetable_cardiff_airport(self):
         """Should be able to distinguish between Cardiff and Cardiff Airport as start and end of a route"""
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'TCAT009.xml', None)
-        self.assertEqual(str(timetable.groupings[0]), 'Cardiff Airport - Cardiff  ')
-        self.assertEqual(str(timetable.groupings[1]), 'Cardiff   - Cardiff Airport')
+        self.assertEqual(str(timetable.groupings[0]), 'Cardiff   - Cardiff Airport')
+        self.assertEqual(str(timetable.groupings[1]), 'Cardiff Airport - Cardiff  ')
 
 
 class RepetitionTest(TestCase):

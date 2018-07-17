@@ -1032,7 +1032,7 @@ class Timetable(object):
             grouping.journeys.sort(key=VehicleJourney.get_order)
 
         self.groupings.sort(key=lambda g: g.direction, reverse=True)
-        if len(self.groupings) == 2 and all(len(g.journeys) == 1 for g in self.groupings):
+        if all(len(g.journeys) for g in self.groupings):
             self.groupings.sort(key=Grouping.get_order)
 
         self.set_date(date)
