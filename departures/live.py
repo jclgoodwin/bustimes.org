@@ -187,12 +187,12 @@ class WestMidlandsDepartures(Departures):
         return 'http://api.tfwm.org.uk/stoppoint/%s/arrivals' % self.stop.pk
 
     def departures_from_response(self, res):
-        return [{
+        return sorted([{
             'time': ciso8601.parse_datetime(item['ScheduledArrival']),
             'live': ciso8601.parse_datetime(item['ExpectedArrival']),
             'service': self.get_service(item['LineName']),
             'destination': item['DestinationName'],
-        } for item in res.json()['Predictions']['Prediction']]
+        } for item in res.json()['Predictions']['Prediction']], key=lambda d: d['live'])
 
 
 class AcisDepartures(Departures):
@@ -510,15 +510,8 @@ def blend(departures, live_rows):
         replaced = False
         for row in departures:
             if (
-                services_match(row['service'], live_row['service'])
-                and (
-                    row['time'] and row['time'] == live_row['time']
-                    or 'live' not in row and (
-                        live_row['time'] is None
-                        or type(live_row['time']) is str
-                        or (make_naive(row['time']) if is_naive(live_row['time']) else row['time']) <= live_row['time']
-                    )
-                )
+                services_match(row['service'], live_row['service']) and
+                row['time'] and row['time'] == live_row['time']
             ):
                 row['live'] = live_row['live']
                 if live_row.get('line') and type(row['service']) is Service:
@@ -528,8 +521,8 @@ def blend(departures, live_rows):
                 replaced = True
                 break
         if not replaced:
-            added = True
             departures.append(live_row)
+            added = True
     if added and all(can_sort(departure) for departure in departures):
         departures.sort(key=get_departure_order)
 
@@ -603,16 +596,16 @@ def get_departures(stop, services, bot=False):
                 live_rows = WestMidlandsDepartures(stop, services).get_departures()
                 if live_rows:
                     blend(departures, live_rows)
-        elif stop.atco_code[:3] in {
-            '639', '630', '649', '607', '018', '020', '129', '038', '149', '010', '040', '050', '571', '021',
-            '110', '120', '640', '618', '611', '612', '140', '150', '609', '160', '180', '190', '670', '250',
-            '269', '260', '270', '029', '049', '290', '300', '617', '228', '616', '227', '019', '340', '648',
-            '059', '128', '199', '039', '614', '037', '198', '619', '158', '017', '615', '390', '400', '159',
-            '119', '030', '608', '440', '460', '036', '035', '200'
-        } and not all(operator.name.startswith('Stagecoach') for operator in operators):
-            live_rows = LambdaDepartures(stop, services, now).get_departures()
-            if live_rows:
-                blend(departures, live_rows)
+            elif stop.atco_code[:3] in {
+                '639', '630', '649', '607', '018', '020', '129', '038', '149', '010', '040', '050', '571', '021',
+                '110', '120', '640', '618', '611', '612', '140', '150', '609', '160', '180', '190', '670', '250',
+                '269', '260', '270', '029', '049', '290', '300', '617', '228', '616', '227', '019', '340', '648',
+                '059', '128', '199', '039', '614', '037', '198', '619', '158', '017', '615', '390', '400', '159',
+                '119', '030', '608', '440', '460', '036', '035', '200'
+            } and not all(operator.name.startswith('Stagecoach') for operator in operators):
+                live_rows = LambdaDepartures(stop, services, now).get_departures()
+                if live_rows:
+                    blend(departures, live_rows)
 
     if bot:
         max_age = 0
