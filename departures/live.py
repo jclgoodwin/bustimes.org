@@ -169,10 +169,30 @@ class TflDepartures(Departures):
                 self.stop.heading = heading
                 self.stop.save()
         return sorted([{
-            'live': ciso8601.parse_datetime(item.get('expectedArrival')).astimezone(LOCAL_TIMEZONE),
+            'live': parse_datetime(item.get('expectedArrival')),
             'service': self.get_service(item.get('lineName')),
             'destination': item.get('destinationName'),
-        } for item in res.json()], key=lambda d: d['live'])
+        } for item in rows], key=lambda d: d['live'])
+
+
+class WestMidlandsDepartures(Departures):
+    @staticmethod
+    def get_request_params():
+        return {
+            **settings.TFWM,
+            'formatter': 'json'
+        }
+
+    def get_request_url(self):
+        return 'http://api.tfwm.org.uk/stoppoint/%s/arrivals' % self.stop.pk
+
+    def departures_from_response(self, res):
+        return [{
+            'time': ciso8601.parse_datetime(item['ScheduledArrival']),
+            'live': ciso8601.parse_datetime(item['ExpectedArrival']),
+            'service': self.get_service(item['LineName']),
+            'destination': item['DestinationName'],
+        } for item in res.json()['Predictions']['Prediction']]
 
 
 class AcisDepartures(Departures):
@@ -433,7 +453,7 @@ def add_stagecoach_departures(stop, services_dict, departures):
         added = False
         for monitor in stop_monitors['stopMonitor'][0]['monitoredCalls']['monitoredCall']:
             if 'expectedDepartureTime' in monitor:
-                aimed, expected = [ciso8601.parse_datetime(time).astimezone(LOCAL_TIMEZONE)
+                aimed, expected = [parse_datetime(time)
                                    for time in (monitor['aimedDepartureTime'], monitor['expectedDepartureTime'])]
                 line = monitor['lineRef']
                 if aimed >= departures[0]['time']:
@@ -536,8 +556,6 @@ def get_departures(stop, services, bot=False):
             'source': 'TfL'
         }, 60)
 
-    now = datetime.datetime.now(LOCAL_TIMEZONE)
-
     # Dublin
     if stop.atco_code[0] == '8' and 'DB' in stop.atco_code:
         return ({
@@ -553,8 +571,10 @@ def get_departures(stop, services, bot=False):
     # Jersey
     if stop.atco_code[:3] == 'je-':
         return ({
-            'departures': JerseyDepartures(stop, services, now).get_departures()
+            'departures': JerseyDepartures(stop, services).get_departures()
         }, 60)
+
+    now = datetime.datetime.now(LOCAL_TIMEZONE)
 
     departures = TimetableDepartures(stop, services, now)
     services_dict = departures.services
@@ -578,12 +598,17 @@ def get_departures(stop, services, bot=False):
             live_rows = AcisConnectDepartures('belfast', stop, services, now).get_departures()
             if live_rows:
                 blend(departures, live_rows)
-        elif departures and stop.atco_code[:3] in {
-            '639', '630', '649', '607', '018', '020', '129', '038', '149', '010', '040', '050', '571', '021', '110',
-            '120', '640', '618', '611', '612', '140', '150', '609', '160', '180', '190', '670', '250', '269', '260',
-            '270', '029', '049', '290', '300', '617', '228', '616', '227', '019', '340', '648', '059', '128', '199',
-            '039', '614', '037', '198', '619', '158', '017', '615', '390', '400', '159', '119', '030', '608', '440',
-            '460', '036', '035', '200'
+        elif departures:
+            if stop.atco_code[:3] == '430':
+                live_rows = WestMidlandsDepartures(stop, services).get_departures()
+                if live_rows:
+                    blend(departures, live_rows)
+        elif stop.atco_code[:3] in {
+            '639', '630', '649', '607', '018', '020', '129', '038', '149', '010', '040', '050', '571', '021',
+            '110', '120', '640', '618', '611', '612', '140', '150', '609', '160', '180', '190', '670', '250',
+            '269', '260', '270', '029', '049', '290', '300', '617', '228', '616', '227', '019', '340', '648',
+            '059', '128', '199', '039', '614', '037', '198', '619', '158', '017', '615', '390', '400', '159',
+            '119', '030', '608', '440', '460', '036', '035', '200'
         } and not all(operator.name.startswith('Stagecoach') for operator in operators):
             live_rows = LambdaDepartures(stop, services, now).get_departures()
             if live_rows:

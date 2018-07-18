@@ -267,6 +267,11 @@ TFL = {
     'app_id': os.environ.get('TFL_APP_ID'),
     'app_key': os.environ.get('TFL_APP_KEY')
 }
+TFWM = {
+    'app_id': os.environ.get('TFWM_APP_ID'),
+    'app_key': os.environ.get('TFWM_APP_KEY')
+
+}
 
 SINGAPORE_KEY = os.environ.get('SINGAPORE_KEY')
 
