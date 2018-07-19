@@ -732,6 +732,8 @@ class OperatingProfile(object):
                     self.regular_days += [DayOfWeek(i) for i in day_range]
                 elif day == 'Weekend':
                     self.regular_days += [DayOfWeek(5), DayOfWeek(6)]
+                elif day[:3] == 'Not':
+                    print(day)
                 else:
                     self.regular_days.append(DayOfWeek(day))
 
