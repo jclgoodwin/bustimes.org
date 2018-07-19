@@ -97,7 +97,7 @@ ga('send', 'pageview');
 </script>
 {% if service.get_buses_online %}
     {% javascript 'livemap' %}
-{% elif stopusages or stops or stoppoint %}
+{% elif stopusages or stops or stoppoint and stoppoint.latlong %}
     {% javascript 'map' %}
 {% endif %}
 {% if timetables %}
