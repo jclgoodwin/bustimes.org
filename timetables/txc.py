@@ -442,11 +442,13 @@ class JourneyPatternTimingLink(object):
         self.runtime = parse_duration(element.find('txc:RunTime', NS).text)
         self.id = element.get('id')
         if self.id:
-            if self.id.startswith('JPL_8-229-B-y11-1-'):
+            if self.id.startswith('JPL_21-9-A-y08-1'):  # Carters Coaches North Elmham stop
+                self.replace_atco_code('2900E074', '2900E0714', stops)
+            elif self.id.startswith('JPL_8-229-B-y11-1-'):  # Ensignbus Snitterfield
                 self.replace_atco_code('4200F063300', '4200F147412', stops)
-            elif self.id.startswith('JPL_18-X52-_-y08-1-2-R'):
+            elif self.id.startswith('JPL_18-X52-_-y08-1-2-R'):  # Notts & Derby Alton Towers
                 self.replace_atco_code('3390S9', '3390S10', stops)
-            elif self.id.startswith('JPL_4-X52-_-y11-1-'):
+            elif self.id.startswith('JPL_4-X52-_-y11-1-'):  # Notts & Derby Alton Towers
                 self.replace_atco_code('3390BB01', '3390S10', stops)
             elif self.id.startswith('JPTL'):
                 if self.origin.sequencenumber == 1 or self.origin.sequencenumber == 66:
@@ -558,9 +560,10 @@ class VehicleJourney(object):
                 time = add_time(time, timinglink.runtime)
 
                 if not deadrun and not (
-                    self.code.startswith('VJ_45-16A-_-y10-2') and stopusage.timingstatus == 'OTH'
-                    or self.private_code and self.private_code.startswith('014MFMHA') and time == datetime.time(6, 40)
-                        and stopusage.sequencenumber == 12
+                    self.code.startswith('VJ_45-16A-_-y10-2') and stopusage.timingstatus == 'OTH'  # Ebley Coaches
+                    or (self.private_code and self.private_code.startswith('014MFMHA') and time == datetime.time(6, 40)
+                        and stopusage.sequencenumber == 12)
+                    or stopusage.stop.atco_code == '670088829' and time.hour == 11  # Shiel Buses ferry terminal
                 ):
                     yield Cell(stopusage, time, time)
 
@@ -587,7 +590,7 @@ class VehicleJourney(object):
             if previous_row:
                 if len(row.times) > initial_width + 1:
                     if row.part.stop.atco_code == previous_row.part.stop.atco_code:
-                        assert previous_row.times[-1] == ''
+                        # assert previous_row.times[-1] == ''
                         previous_row.times[-1] = row.times[-2]
                         row.times = row.times[:-2] + row.times[-1:]
 
@@ -599,7 +602,7 @@ class VehicleJourney(object):
                         while index >= 0:
                             previous_previous_row = rows[index]
                             if previous_previous_row.part.stop.atco_code == previous_row.part.stop.atco_code:
-                                assert previous_previous_row.times[-1] == ''
+                                # assert previous_previous_row.times[-1] == ''
                                 previous_previous_row.times[-1] = previous_row.times[-2]
                                 previous_row.times = previous_row.times[:-2] + previous_row.times[-1:]
                                 break
