@@ -206,6 +206,13 @@ def vehicles_last_modified(request):
 @last_modified(vehicles_last_modified)
 def vehicles_json(request):
     locations = VehicleLocation.objects.filter(current=True)
+
+    try:
+        bounding_box = get_bounding_box(request)
+        locations = locations.filter(latlong__within=bounding_box)
+    except KeyError:
+        pass
+
     if 'service' in request.GET:
         locations = locations.filter(service_id=request.GET['service'])
 
@@ -236,6 +243,30 @@ def vehicles_json(request):
                 'datetime': location.datetime
             }
         } for location in locations]
+    })
+
+
+def service_vehicles_history(request, slug):
+    service = get_object_or_404(Service, slug=slug)
+    features = [{
+        'type': 'Feature',
+        'geometry': {
+            'type': 'Point',
+            'coordinates': tuple(location.latlong)
+        },
+        'properties': {
+            'vehicle': location.vehicle and {
+                'url': location.vehicle.get_absolute_url(),
+                'name': str(location.vehicle),
+                'type': location.vehicle.vehicle_type and str(location.vehicle.vehicle_type),
+            },
+            'datetime': location.datetime
+        }
+    } for location in VehicleLocation.objects.filter(service=service)]
+
+    return JsonResponse({
+        'type': 'FeatureCollection',
+        'features': features
     })
 
 
@@ -529,6 +560,14 @@ class OperatorDetailView(DetailView):
                 return redirect(alternative)
             raise Http404('Sorry, it looks like no services are currently operated by {}'.format(self.object))
         return super().render_to_response(context)
+
+
+def operator_vehicles(request, slug):
+    operator = get_object_or_404(Operator, slug=slug)
+    return render(request, 'operator_vehicles.html', {
+        'object': operator,
+        'vehicles': operator.vehicle_set.all().order_by('code')
+    })
 
 
 class ServiceDetailView(DetailView):

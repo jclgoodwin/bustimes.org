@@ -8,43 +8,13 @@
     <p>{{ object.vehicle_type }}</p>
 {% endif %}
 
-<div id="cartograph" style="height: 700px"></div>
-
-<link rel="stylesheet" href="/static/js/bower_components/leaflet/dist/leaflet.css" />
-<script src="/static/js/bower_components/leaflet/dist/leaflet.js"></script>
-<script>
-(function() {
-    function getRandomColor() {
-        var letters = '0123456789';
-        var color = '#';
-        for (var i = 0; i < 3; i++) {
-            color += letters[Math.floor(Math.random() * 10)];
-        }
-        return color;
-    }
-
-    var map = L.map('cartograph'),
-        tileURL = 'https://bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
-        bounds = L.latLngBounds(),
-        polyline;
- 
-    L.tileLayer(tileURL).addTo(map);
-
-    {% for journey in vehicle.get_journeys %}
-        polyline = L.polyline([
-            {% for location in journey %}
-                 [{{ location.latlong.y }},{{ location.latlong.x }}],
-            {% endfor %}
-        ], {
-            color: getRandomColor(),
-            weight: 5
-        });
-        polyline.addTo(map);
-        polyline.bindPopup("<p>{% if journey.0.service %}<a href='{{ journey.0.service.get_absolute_url }}'>{{ journey.0.service }}</a>{% else %}{{ journey.0.data.Label }}{% endif %}</p><p>{{ journey.0.datetime }}</p>");
-        bounds.extend(polyline.getBounds());
-    {% endfor %}
-    map.fitBounds(bounds);
-})();
-</script>
+<table>
+{% for journey in vehicle.get_journeys %}
+    <tr>
+        <td>{% ifchanged journey.0.datetime.date %}{{ journey.0.datetime }}{% else %}{{ journey.0.datetime.time }}{% endifchanged %}</td>
+        <td>{% if journey.0.service %}<a href="{{ journey.0.service.get_absolute_url }}">{{ journey.0.service }}</a>{% endif %}</td>
+    </tr>
+{% endfor %}
+</table>
 
 {% endblock %}

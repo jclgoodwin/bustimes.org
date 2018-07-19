@@ -1,0 +1,26 @@
+{% extends 'page.html' %}
+
+{% block title %}Vehicles – {{ object }} – Bus Times{% endblock %}
+
+{% block content %}
+
+<h1>{{ object }}</h1>
+
+{% if vehicles %}
+    <table>
+        <tr>
+            <th scope="col">Vehicle</th>
+            <th scope="col">Type</th>
+            <th scope="col">Double decker?</th>
+        </tr>
+        {% for vehicle in vehicles %}
+            <tr>
+                <td>{{ vehicle }}</td>
+                <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
+                <td>{% if vehicle.vehicle_type.double_decker %}Yes{% endif %}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+{% endblock %}

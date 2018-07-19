@@ -109,12 +109,16 @@
         if (lastReq) {
             lastReq.abort();
         }
-        lastReq = reqwest('/vehicles.json', function(data) {
-            processData(data);
-            setTimeout(function() {
-                load(map, statusBar);
-            }, 10000);
-        });
+        var bounds = map.getBounds();
+        lastReq = reqwest(
+            '/vehicles.json?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest(),
+            function(data) {
+                processData(data);
+                setTimeout(function() {
+                    load(map, statusBar);
+                }, 10000);
+            }
+        );
     }
 
     map.setView([52.6, 1.1], 10);
