@@ -192,7 +192,7 @@ class WestMidlandsDepartures(Departures):
             'live': ciso8601.parse_datetime(item['ExpectedArrival']),
             'service': self.get_service(item['LineName']),
             'destination': item['DestinationName'],
-        } for item in res.json()['Predictions']['Prediction']], key=lambda d: d['live'])
+        } for item in res.json()['Predictions']['Prediction'] if item['ExpectedArrival']], key=lambda d: d['live'])
 
 
 class AcisDepartures(Departures):
@@ -460,9 +460,10 @@ def add_stagecoach_departures(stop, services_dict, departures):
                     replaced = False
                     for departure in departures:
                         if aimed == departure['time']:
-                            departure['live'] = expected
-                            replaced = True
-                            break
+                            if type(departure['service']) is Service and line == departure['service'].line_name:
+                                departure['live'] = expected
+                                replaced = True
+                                break
                     if replaced:
                         continue
                     for departure in departures:
@@ -504,7 +505,7 @@ def get_departure_order(departure):
     return make_naive(departure['live'])
 
 
-def blend(departures, live_rows):
+def blend(departures, live_rows, stop=None):
     added = False
     for live_row in live_rows:
         replaced = False
