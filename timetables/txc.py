@@ -509,6 +509,8 @@ class VehicleJourney(object):
             element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
         ).time()
 
+        self.start_deadrun, self.end_deadrun = get_deadruns(element)
+
         service_ref = element.find('txc:ServiceRef', NS)
         if service_ref is not None:
             # X29 - Fakenham - Norwich
@@ -519,6 +521,20 @@ class VehicleJourney(object):
                     self.departure_time = datetime.time(6, 38)
                 elif self.departure_time.minute == 32:  # Sunday, Norwich to Fakenham
                     self.departure_time = self.departure_time.replace(minute=35)
+            elif service_ref.text == '21-45A-_-y08-1':  # 45A - Norwich - Holt
+                self.start_deadrun = 'JPL_21-45A-_-y08-1-1-H-1-8'
+                del self.operating_profile.nonoperation_days
+            elif service_ref.text == '21-45-A-y08-1':  # 45 Holt - Norwich
+                if self.departure_time == datetime.time(6, 45):
+                    self.end_deadrun = 'JPL_21-45-A-y08-1-1-R-1-45'
+                    del self.operating_profile.nonoperation_days
+            elif service_ref.text == '21-43-_-y08-1':  # 43 - Reepham - Norwich
+                if self.private_code == 'ea-21-43-_-y08-1-14-T0':  # afternoon Reepham - Norwich
+                    self.start_deadrun = 'JPL_21-43-_-y08-1-11-R-9-4'
+                    del self.operating_profile.nonoperation_days
+                elif self.private_code == 'ea-21-43-_-y08-1-1-T0':  # morning Holt - Norwich
+                    self.end_deadrun = 'JPL_21-43-_-y08-1-1-R-1-37'
+                    del self.operating_profile.nonoperation_days
 
         self.operator = element.find('txc:OperatorRef', NS)
         if self.operator is not None:
@@ -526,8 +542,6 @@ class VehicleJourney(object):
 
         sequencenumber = element.get('SequenceNumber')
         self.sequencenumber = sequencenumber and int(sequencenumber)
-
-        self.start_deadrun, self.end_deadrun = get_deadruns(element)
 
         note_elements = element.findall('txc:Note', NS)
         if note_elements is not None:
