@@ -195,6 +195,25 @@ class WestMidlandsDepartures(Departures):
         } for item in res.json()['Predictions']['Prediction'] if item['ExpectedArrival']], key=lambda d: d['live'])
 
 
+class PolarBearDepartures(Departures):
+    def get_request_url(self):
+        return 'https://{}.arcticapi.com/network/stops/{}/visits'.format(self.prefix, self.stop.pk)
+
+    def departures_from_response(self, res):
+        res = res.json()
+        if '_embedded' in res:
+            return [{
+                'time': ciso8601.parse_datetime(item['aimedDepartureTime']),
+                'live': ciso8601.parse_datetime(item['expectedDepartureTime']),
+                'service': self.get_service(item['_links']['transmodel:line']['name']),
+                'destination': item['destinationName'],
+            } for item in res['_embedded']['timetable:visit'] if 'expectedDepartureTime' in item]
+
+    def __init__(self, prefix, stop, services):
+        self.prefix = prefix
+        super().__init__(stop, services)
+
+
 class AcisDepartures(Departures):
     """Departures from a website ending in .acisconnect.com or .acislive.com"""
     def get_time(self, text):
@@ -583,9 +602,11 @@ def get_departures(stop, services, bot=False):
                                             service__current=True).distinct()
 
         # Stagecoach
-        if any(operator.name.startswith('Stagecoach') for operator in operators):
-            if departures:
+        if departures:
+            if any(operator.name.startswith('Stagecoach') for operator in operators):
                 departures = add_stagecoach_departures(stop, services_dict, departures)
+
+        live_rows = None
 
         # Belfast
         if any(operator.id == 'MET' for operator in operators):
@@ -598,15 +619,21 @@ def get_departures(stop, services, bot=False):
                 if live_rows:
                     blend(departures, live_rows)
             elif stop.atco_code[:3] in {
-                '639', '630', '649', '607', '018', '020', '129', '038', '149', '010', '040', '050', '571', '021',
+                '639', '630', '649', '607', '018', '020', '129', '038', '149', '010', '040', '050', '021',
                 '110', '120', '640', '618', '611', '612', '140', '150', '609', '160', '180', '190', '670', '250',
                 '269', '260', '270', '029', '049', '290', '300', '617', '228', '616', '227', '019', '340', '648',
                 '059', '128', '199', '039', '614', '037', '198', '619', '158', '017', '615', '390', '400', '159',
                 '119', '030', '608', '440', '460', '036', '035', '200'
             } and not all(operator.name.startswith('Stagecoach') for operator in operators):
-                live_rows = LambdaDepartures(stop, services, now).get_departures()
+                live_rows = LambdaDepartures(stop, services).get_departures()
                 if live_rows:
                     blend(departures, live_rows)
+
+            if not live_rows:
+                if any(operator.name in {'Coastliner', 'The Blackburn Bus Company', 'Rosso'} for operator in operators):
+                    live_rows = PolarBearDepartures('transdevblazefield', stop, services).get_departures()
+                    if live_rows:
+                        blend(departures, live_rows)
 
     if bot:
         max_age = 0
