@@ -26,33 +26,6 @@ from .models import (Region, StopPoint, AdminArea, Locality, District, Operator,
 from .forms import ContactForm
 
 
-DIR = os.path.dirname(__file__)
-FIRST_OPERATORS = {
-    'FABD': 'aberdeen',
-    'FTVA': 'berkshire-thames-valley',
-    'FBRA': 'bradford',
-    'FBRI': 'bristol-bath-and-west',
-    'FCWL': 'cornwall',
-    'FESX': 'essex',
-    'FGLA': 'greater-glasgow',
-    'FMAN': 'greater-manchester',
-    'FHAL': 'halifax-calder-valley-huddersfield',
-    'FLDS': 'leeds',
-    'FLEI': 'leicester',
-    'FECS': 'norfolk-suffolk',
-    'FHAM': 'portsmouth-fareham-gosport',
-    'FPOT': 'potteries',
-    'FBOS': 'somerset',
-    'FCYM': 'south-west-wales',
-    'FSCE': 'south-east-and-central-scotland',
-    'FSYO': 'south-yorkshire',
-    'FSOT': 'southampton',
-    'FDOR': 'wessex-dorset-south-somerset',
-    'FSMR': 'worcestershire',
-    'FYOR': 'york'
-}
-
-
 def index(request):
     """The home page with a list of regions"""
     return render(request, 'index.html', {

@@ -9,7 +9,32 @@ from bs4 import BeautifulSoup
 from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand
 from ...models import Operator
-from ...views import FIRST_OPERATORS
+
+
+FIRST_OPERATORS = {
+    'FABD': 'aberdeen',
+    'FTVA': 'berkshire-thames-valley',
+    'FBRA': 'bradford',
+    'FBRI': 'bristol-bath-and-west',
+    'FCWL': 'cornwall',
+    'FESX': 'essex',
+    'FGLA': 'greater-glasgow',
+    'FMAN': 'greater-manchester',
+    'FHAL': 'halifax-calder-valley-huddersfield',
+    'FLDS': 'leeds',
+    'FLEI': 'leicester',
+    'FECS': 'norfolk-suffolk',
+    'FHAM': 'portsmouth-fareham-gosport',
+    'FPOT': 'potteries',
+    'FBOS': 'somerset',
+    'FCYM': 'south-west-wales',
+    'FSCE': 'south-east-and-central-scotland',
+    'FSYO': 'south-yorkshire',
+    'FSOT': 'southampton',
+    'FDOR': 'wessex-dorset-south-somerset',
+    'FSMR': 'worcestershire',
+    'FYOR': 'york'
+}
 
 
 class Command(BaseCommand):
