@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'^operators/(?P<pk>[A-Z]+)$', views.OperatorDetailView.as_view()),
     path('operators/<slug>', views.OperatorDetailView.as_view(), name='operator_detail'),
     path('operators/<slug>/vehicles', views.operator_vehicles),
-    path('services/<slug>/vehicles.json', views.service_vehicles_history),
+    path('services/<slug>/vehicles', views.service_vehicles_history),
     path('services/<pk>.xml', views.service_xml),
     path('services/<slug>', views.ServiceDetailView.as_view(), name='service_detail'),
     path('licences/<licence_number>', views.RegistrationView.as_view(), name='registration_list'),

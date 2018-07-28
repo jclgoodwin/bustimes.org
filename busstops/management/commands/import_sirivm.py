@@ -58,10 +58,10 @@ class Command(ImportLiveVehiclesCommand):
             if operator_options:
                 operator = Operator.objects.get(id=operator_options[0])
             else:
-                print(operator_ref)
+                print(ET.tostring(item).decode())
         except (Operator.MultipleObjectsReturned, Operator.DoesNotExist) as e:
-            print(operator, e)
-        vehicle, created = Vehicle.objects.update_or_create(
+            print('!!!!!!')
+        vehicle, created = Vehicle.objects.get_or_create(
             {'operator': operator},
             source=self.source,
             code=mvj.find('siri:VehicleRef', NS).text
@@ -75,10 +75,10 @@ class Command(ImportLiveVehiclesCommand):
                 services = Service.objects.filter(operator__in=operator_options, line_name=service, current=True)
                 if services.count() > 1:
                     latlong = get_latlong(mvj)
-                    services = services.filter(geometry__bbcontains=latlong)
+                    services = services.filter(geometry__bboverlaps=latlong.buffer(0.1))
                 service = services.get()
             except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-                print(operator_options, service, e)
+                print(e, operator, service)
                 service = None
             if service and vehicle.operator != service.operator.first():
                 vehicle.operator = service.operator.first()

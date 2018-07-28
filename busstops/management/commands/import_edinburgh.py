@@ -19,12 +19,13 @@ class Command(ImportLiveVehiclesCommand):
             service = Service.objects.get(operator__in=self.operators, line_name=item['service_name'], current=True)
         except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
             service = None
-            print(e, item['service_name'])
+            if item['service_name'] not in {'ET1', 'MA1', '3BBT'}:
+                print(e, item['service_name'])
 
         return vehicle, created, service
 
     def create_vehicle_location(self, item, vehicle, service):
-        if service and not vehicle.operator:
+        if service and vehicle.operator != service.operator.first():
             vehicle.operator = service.operator.first()
             vehicle.save()
 

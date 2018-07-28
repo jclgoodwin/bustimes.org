@@ -10,12 +10,16 @@
     <table>
         <tr>
             <th scope="col">Vehicle</th>
+            <th scope="col">Fleet number</th>
+            <th scope="col">Reg</th>
             <th scope="col">Type</th>
             <th scope="col">Double decker?</th>
         </tr>
         {% for vehicle in vehicles %}
             <tr>
-                <td>{{ vehicle }}</td>
+                <td><a href="{{ vehicle.get_absolute_url }}">{{ vehicle }}</a></td>
+                <td>{% if vehicle.fleet_number %}{{ vehicle.fleet_number }}{% endif %}</td>
+                <td>{% if vehicle.reg %}{{ vehicle.reg }}{% endif %}</td>
                 <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
                 <td>{% if vehicle.vehicle_type.double_decker %}Yes{% endif %}</td>
             </tr>

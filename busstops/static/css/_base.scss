@@ -473,6 +473,14 @@ table {
     }
 }
 
+.leaflet-marker-icon.just-arrow {
+    .arrow {
+        border: 8px solid transparent;
+        border-bottom-color: #333;
+        border-top: 0;
+    }
+}
+
 .leaflet-marker-icon.leaflet-div-icon {
     background: $brand-color;
     border-radius: 10px;

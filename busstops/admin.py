@@ -116,20 +116,23 @@ class VariationAdmin(admin.ModelAdmin):
 
 
 class VehicleTypeAdmin(admin.ModelAdmin):
+    search_fields = ('name',)
     list_display = ('name', 'double_decker')
 
 
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ('id', 'code', 'reg', 'operator', 'vehicle_type')
+    list_display = ('id', 'code', 'fleet_number', 'reg', 'operator', 'vehicle_type')
     list_filter = (
         ('operator', admin.RelatedOnlyFieldListFilter),
         ('source', admin.RelatedOnlyFieldListFilter),
         ('vehicle_type', admin.RelatedOnlyFieldListFilter),
     )
     list_select_related = ('operator', 'vehicle_type')
-    list_editable = ('operator', 'vehicle_type')
+    list_editable = ('fleet_number', 'reg', 'operator', 'vehicle_type')
     search_fields = ('code',)
     raw_id_fields = ('operator',)
+    autocomplete_fields = ('vehicle_type',)
+    ordering = ('fleet_number',)
 
 
 class VehicleLocationAdmin(admin.ModelAdmin):

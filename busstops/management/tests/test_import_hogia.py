@@ -40,15 +40,12 @@ class HogiaImportTest(TestCase):
         self.assertContains(response, '<h1>315 YN03 UVT</h1>')
         self.assertContains(response, '<p>Bristol VR</p>')
 
-        for journey in vehicle.get_journeys():
-            for location in journey:
-                self.assertAlmostEqual(location.latlong.x, 1.592503)
-                self.assertAlmostEqual(location.latlong.y, 52.69956)
-
-        response = self.client.get('/vehicles')
+        with self.assertNumQueries(0):
+            response = self.client.get('/vehicles')
         self.assertContains(response, 'vehicles.min.js')
 
-        json = self.client.get('/vehicles.json').json()
+        with self.assertNumQueries(2):
+            json = self.client.get('/vehicles.json').json()
         self.assertEqual(len(json['features']), 4)
         self.assertEqual(json['features'][0]['properties']['delta'], -5)
         self.assertEqual(json['features'][0]['properties']['direction'], 114)
@@ -71,25 +68,25 @@ class HogiaImportTest(TestCase):
         vehicle = Vehicle()
 
         vehicle.code = '_7_-_YJ58_CEY'
-        self.assertEqual(vehicle.reg(), 'YJ58CEY')
+        self.assertEqual(vehicle.get_reg(), 'YJ58CEY')
 
         vehicle.code = '3990_ME'
-        self.assertEqual(vehicle.reg(), '3990ME')
+        self.assertEqual(vehicle.get_reg(), '3990ME')
 
         vehicle.code = '50_-_UWW_2X'
-        self.assertEqual(vehicle.reg(), 'UWW2X')
+        self.assertEqual(vehicle.get_reg(), 'UWW2X')
 
         vehicle.code = '407_YJ59_AYY'
-        self.assertEqual(vehicle.reg(), 'YJ59AYY')
+        self.assertEqual(vehicle.get_reg(), 'YJ59AYY')
 
         vehicle.code = '116-YN53_CFZ'
-        self.assertEqual(vehicle.reg(), 'YN53CFZ')
+        self.assertEqual(vehicle.get_reg(), 'YN53CFZ')
 
         vehicle.code = 'MX_53_JVF'
-        self.assertEqual(vehicle.reg(), 'MX53JVF')
+        self.assertEqual(vehicle.get_reg(), 'MX53JVF')
 
         vehicle.code = '33824'
-        self.assertIsNone(vehicle.reg())
+        self.assertIsNone(vehicle.get_reg())
 
         vehicle.code = 'SQ-SQ-2278'
-        self.assertIsNone(vehicle.reg())
+        self.assertIsNone(vehicle.get_reg())

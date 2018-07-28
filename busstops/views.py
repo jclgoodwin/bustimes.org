@@ -197,15 +197,16 @@ def vehicles_last_modified(request):
     if 'service' in request.GET:
         locations = locations.filter(service_id=request.GET['service'])
 
-    location = locations.last()
-
-    if location:
-        return location.datetime
+    try:
+        location = locations.values('datetime').latest('datetime')
+        return location['datetime']
+    except VehicleLocation.DoesNotExist:
+        return
 
 
 @last_modified(vehicles_last_modified)
 def vehicles_json(request):
-    locations = VehicleLocation.objects.filter(current=True)
+    locations = VehicleLocation.objects.filter(current=True).order_by()
 
     try:
         bounding_box = get_bounding_box(request)
@@ -216,7 +217,7 @@ def vehicles_json(request):
     if 'service' in request.GET:
         locations = locations.filter(service_id=request.GET['service'])
 
-    locations = locations.select_related('service', 'vehicle__operator')
+    locations = locations.select_related('service', 'vehicle__operator', 'vehicle__vehicle_type')
 
     return JsonResponse({
         'type': 'FeatureCollection',
@@ -248,25 +249,21 @@ def vehicles_json(request):
 
 def service_vehicles_history(request, slug):
     service = get_object_or_404(Service, slug=slug)
-    features = [{
-        'type': 'Feature',
-        'geometry': {
-            'type': 'Point',
-            'coordinates': tuple(location.latlong)
-        },
-        'properties': {
-            'vehicle': location.vehicle and {
-                'url': location.vehicle.get_absolute_url(),
-                'name': str(location.vehicle),
-                'type': location.vehicle.vehicle_type and str(location.vehicle.vehicle_type),
-            },
-            'datetime': location.datetime
-        }
-    } for location in VehicleLocation.objects.filter(service=service)]
-
-    return JsonResponse({
-        'type': 'FeatureCollection',
-        'features': features
+    date = request.GET.get('date')
+    if date:
+        try:
+            date = ciso8601.parse_datetime(date).date()
+        except ValueError:
+            date = None
+    if not date:
+        try:
+            date = service.vehiclelocation_set.values_list('datetime', flat=True).latest('datetime').date()
+        except VehicleLocation.DoesNotExist:
+            date = timezone.now().date()
+    return render(request, 'busstops/vehicle_detail.html', {
+        'date': date,
+        'object': service,
+        'locations': service.vehiclelocation_set.filter(datetime__date=date).select_related('vehicle')
     })
 
 
@@ -566,7 +563,7 @@ def operator_vehicles(request, slug):
     operator = get_object_or_404(Operator, slug=slug)
     return render(request, 'operator_vehicles.html', {
         'object': operator,
-        'vehicles': operator.vehicle_set.all().order_by('code')
+        'vehicles': operator.vehicle_set.order_by('fleet_number')
     })
 
 
@@ -830,4 +827,17 @@ class VehicleDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['breadcrumb'] = [self.object.operator]
+        date = self.request.GET.get('date')
+        if date:
+            try:
+                date = ciso8601.parse_datetime(date).date()
+            except ValueError:
+                date = None
+        if not date:
+            try:
+                date = self.object.vehiclelocation_set.values_list('datetime', flat=True).latest('datetime').date()
+            except VehicleLocation.DoesNotExist:
+                date = timezone.now().date()
+        context['date'] = date
+        context['locations'] = self.object.vehiclelocation_set.filter(datetime__date=date).select_related('service')
         return context

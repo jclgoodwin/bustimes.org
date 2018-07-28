@@ -8,13 +8,81 @@
     <p>{{ object.vehicle_type }}</p>
 {% endif %}
 
-<table>
-{% for journey in vehicle.get_journeys %}
-    <tr>
-        <td>{% ifchanged journey.0.datetime.date %}{{ journey.0.datetime }}{% else %}{{ journey.0.datetime.time }}{% endifchanged %}</td>
-        <td>{% if journey.0.service %}<a href="{{ journey.0.service.get_absolute_url }}">{{ journey.0.service }}</a>{% endif %}</td>
-    </tr>
+<form>
+<input type="date" name="date" value={{ date.isoformat }}>
+<input type="submit">
+</form>
+
+{% if locations %}
+<div id="cartograph" style="height:100vh"></div>
+
+<link rel="stylesheet" href="/static/js/bower_components/leaflet/dist/leaflet.css" />
+<script src="/static/js/bower_components/leaflet/dist/leaflet.js"></script>
+<script>
+(function() {
+    function getRandomColor() {
+        var letters = '0123456789';
+        var color = '#';
+        for (var i = 0; i < 3; i++) {
+            color += letters[Math.floor(Math.random() * 10)];
+        }
+        return color;
+    }
+
+    function getMarker(latlng, direction) {
+        var html = '';
+        if (direction !== null) {
+            html = '<div class="arrow" style="-ms-transform: rotate(' + direction + 'deg);-webkit-transform: rotate(' + direction + 'deg);-moz-transform: rotate(' + direction + 'deg);-o-transform: rotate(' + direction + 'deg);transform: rotate(' + direction + 'deg)"></div>';
+        }
+        return L.marker(latlng, {
+            icon: L.divIcon({
+                iconSize: [16, 8],
+                html: html,
+                className: 'just-arrow'
+            })
+        });
+    }
+
+    var map = L.map('cartograph'),
+        tileURL = 'https://bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
+        latlng,
+        service,
+	bounds = L.latLngBounds();
+
+    L.tileLayer(tileURL).addTo(map);
+
+    {% for location in locations %}
+        {% if object.region %}
+            {% ifchanged location.vehicle %}
+                service = '<a href="{{ location.vehicle.get_absolute_url }}">{{ location.vehicle }}</a><br>';
+            {% endifchanged %}
+        {% else %}
+            {% ifchanged location.service %}
+                service = '{% if location.service %}<a href="{{ location.service.get_absolute_url }}">{{ location.service.line_name }}</a><br>{% endif %}';
+            {% endifchanged %}
+        {% endif %}
+        latlng = [{{ location.latlong.y }},{{ location.latlong.x }}];
+        bounds.extend(latlng);
+        getMarker(latlng, {% if location.heading is not None %}{{ location.heading }}{% else %}null{% endif %}).bindPopup(service + "{{ location.datetime }}").addTo(map);
+    {% endfor %}
+    map.fitBounds(bounds);
+    map.setMaxBounds(bounds.pad(.5));
+})();
+</script>
+{% else %}
+    <p>Sorry, nothing found for {{ date }}</p>
+{% endif %}
+
+    {% for location in locations %}
+        {% if object.region %}
+            {% ifchanged location.vehicle %}
+                <p>{{ location.datetime }} - <a href="{{ location.vehicle.get_absolute_url }}">{{ location.vehicle }}</a></p>
+            {% endifchanged %}
+        {% else %}
+            {% ifchanged location.service %}
+                <p>{{ location.datetime }}{% if location.service %} - <a href="{{ location.service.get_absolute_url }}">{{ location.service.line_name }}</a>{% endif %}</p>
+            {% endifchanged %}
+        {% endif %}
 {% endfor %}
-</table>
 
 {% endblock %}

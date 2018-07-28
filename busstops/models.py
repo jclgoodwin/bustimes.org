@@ -795,7 +795,7 @@ class Note(models.Model):
     """A note about an error in the timetable, the operator going bust, or something"""
     operators = models.ManyToManyField(Operator, blank=True)
     services = models.ManyToManyField(Service, blank=True)
-    text = models.CharField(max_length=255)
+    text = models.TextField()
 
     def __str__(self):
         return self.text
@@ -817,11 +817,14 @@ class VehicleType(models.Model):
 
 class Vehicle(models.Model):
     code = models.CharField(max_length=255)
+    fleet_number = models.PositiveIntegerField(null=True, blank=True)
+    reg = models.CharField(max_length=24, blank=True)
     source = models.ForeignKey(DataSource, models.CASCADE)
     operator = models.ForeignKey(Operator, models.SET_NULL, null=True, blank=True)
     vehicle_type = models.ForeignKey(VehicleType, models.SET_NULL, null=True, blank=True)
 
     class Meta():
+        ordering = ('code',)
         unique_together = ('code', 'source')
 
     def __str__(self):
@@ -830,7 +833,7 @@ class Vehicle(models.Model):
             return code.replace('_', ' ')
         return self.code.replace('-', ' ')
 
-    def reg(self):
+    def get_reg(self):
         reg = self.code.split('-')[-1].replace('_', ' ')
         if not reg.isdigit():
             reg = reg.split()
@@ -840,21 +843,6 @@ class Vehicle(models.Model):
 
     def get_absolute_url(self):
         return reverse('vehicle_detail', args=(self.id,))
-
-    def get_journeys(self):
-        locations = []
-        previous_label = previous_time = None
-        for location in self.vehiclelocation_set.select_related('service'):
-            label = location.get_label()
-            if locations:
-                if label != previous_label or not label and (location.datetime - previous_time).total_seconds() > 600:
-                    yield locations
-                    locations = []
-            locations.append(location)
-            previous_label = label
-            previous_time = location.datetime
-        if locations:
-            yield locations
 
 
 class VehicleLocation(models.Model):
@@ -870,6 +858,13 @@ class VehicleLocation(models.Model):
 
     class Meta():
         ordering = ('id',)
+        index_together = (
+            ('service', 'datetime'),
+            ('service', 'current'),
+            ('source', 'current'),
+            ('vehicle', 'datetime'),
+            ('vehicle', 'current'),
+        )
 
     def get_label(self):
         if self.data:
