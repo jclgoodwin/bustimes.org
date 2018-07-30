@@ -26,18 +26,18 @@ BANK_HOLIDAYS = {
     datetime.date(2016, 12, 26): ('BoxingDay',),
     datetime.date(2017, 4, 14): ('GoodFriday',),
     datetime.date(2017, 4, 17): ('EasterMonday', 'HolidayMondays'),
-    datetime.date(2017, 5, 1): ('MayDay', 'HolidayMondays'),
+    # datetime.date(2017, 5, 1): ('MayDay', 'HolidayMondays'),
     datetime.date(2017, 5, 29): ('SpringBank', 'HolidayMondays'),
-    datetime.date(2017, 8, 7): ('AugustBankHolidayScotland',),
-    datetime.date(2017, 8, 28): ('LateSummerBankHolidayNotScotland', 'HolidayMondays'),
-    datetime.date(2017, 12, 24): ('ChristmasEve',),
-    datetime.date(2017, 12, 25): ('ChristmasDay', 'ChristmasDayHoliday'),
-    datetime.date(2017, 12, 26): ('BoxingDay', 'BoxingDayHoliday'),
-    datetime.date(2017, 12, 31): ('NewYearsEve',),
-    datetime.date(2018, 1, 1): ('NewYearsDay', 'NewYearsDayHoliday', 'HolidayMondays'),
-    datetime.date(2018, 3, 30): ('GoodFriday',),
-    datetime.date(2018, 4, 2): ('EasterMonday', 'HolidayMondays'),
-    datetime.date(2018, 5, 7): ('MayDay', 'HolidayMondays'),
+    # datetime.date(2017, 8, 7): ('AugustBankHolidayScotland',),
+    # datetime.date(2017, 8, 28): ('LateSummerBankHolidayNotScotland', 'HolidayMondays'),
+    # datetime.date(2017, 12, 24): ('ChristmasEve',),
+    # datetime.date(2017, 12, 25): ('ChristmasDay', 'ChristmasDayHoliday'),
+    # datetime.date(2017, 12, 26): ('BoxingDay', 'BoxingDayHoliday'),
+    # datetime.date(2017, 12, 31): ('NewYearsEve',),
+    # datetime.date(2018, 1, 1): ('NewYearsDay', 'NewYearsDayHoliday', 'HolidayMondays'),
+    # datetime.date(2018, 3, 30): ('GoodFriday',),
+    # datetime.date(2018, 4, 2): ('EasterMonday', 'HolidayMondays'),
+    # datetime.date(2018, 5, 7): ('MayDay', 'HolidayMondays'),
     datetime.date(2018, 5, 28): ('SpringBank', 'HolidayMondays'),
     datetime.date(2018, 8, 6): ('AugustBankHolidayScotland',),
     datetime.date(2017, 8, 27): ('LateSummerBankHolidayNotScotland',),
@@ -799,10 +799,11 @@ class OperatingProfile(object):
                     return True
 
         if date in BANK_HOLIDAYS:
-            if 'AllBankHolidays' in self.operation_bank_holidays:
-                return True
-            if 'AllBankHolidays' in self.nonoperation_bank_holidays:
-                return False
+            if not any('Scotland' in bank_holiday for bank_holiday in BANK_HOLIDAYS[date]):
+                if 'AllBankHolidays' in self.operation_bank_holidays:
+                    return True
+                if 'AllBankHolidays' in self.nonoperation_bank_holidays:
+                    return False
             for bank_holiday in BANK_HOLIDAYS[date]:
                 if bank_holiday in self.operation_bank_holidays:
                     return True
