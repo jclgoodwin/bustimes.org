@@ -82,7 +82,7 @@ class DublinDepartures(Departures):
 
     def get_request_params(self):
         return {
-            'stopid': int(self.stop.atco_code.split('DB', 1)[-1])
+            'stopid': int(self.stop.atco_code.split('B', 1)[-1])
         }
 
     def departures_from_response(self, response):
@@ -570,7 +570,7 @@ def get_departures(stop, services, bot=False):
         }, 60)
 
     # Dublin
-    if stop.atco_code[0] == '8' and 'DB' in stop.atco_code:
+    if stop.atco_code[0] == '8' and 'B' in stop.atco_code:
         return ({
             'departures': DublinDepartures(stop, services).get_departures()
         }, 60)

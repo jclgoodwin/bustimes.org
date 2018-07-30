@@ -14,6 +14,13 @@ def get_grouping_name(grouping):
                             get_grouping_name_part(grouping.rows[-1].part.stop.name))
 
 
+def get_stop_id(stop_id):
+    if '_merged_' in stop_id:
+        parts = stop_id.split('_')
+        return parts[parts.index('merged') - 1]
+    return stop_id
+
+
 def handle_trips(trips, day):
     i = 0
     head = None
@@ -27,11 +34,11 @@ def handle_trips(trips, day):
     for trip in trips:
         previous = None
 
-        current_list = [stop.stop.stop_id for stop in trip.stoptime_set.all()]
+        current_list = [get_stop_id(stop.stop.stop_id) for stop in trip.stoptime_set.all()]
         diff = difflib.ndiff(previous_list, current_list)
 
         for stop in trip.stoptime_set.all():
-            stop_id = stop.stop.stop_id
+            stop_id = get_stop_id(stop.stop.stop_id)
             instructions = next(diff)
 
             while instructions[0] in '-?':

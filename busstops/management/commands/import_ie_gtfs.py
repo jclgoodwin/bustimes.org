@@ -7,7 +7,7 @@ from django.db import transaction
 from django.db.models import Count
 from django.conf import settings
 from multigtfs.models import Feed, StopTime, Stop
-from timetables.gtfs import get_timetable
+from timetables.gtfs import get_stop_id, get_timetable
 from ...models import Operator, Service, StopPoint, StopUsage, Region, ServiceCode
 
 
@@ -63,20 +63,24 @@ class Command(BaseCommand):
             stop_times.filter(stop__stop_id='850000015').update(stop=roscommon_mart_road)
 
         for stop in feed.stop_set.all():
-            if stop.stop_id[0] in '78' and not StopPoint.objects.filter(atco_code=stop.stop_id).exists():
-                StopPoint.objects.create(
-                    atco_code=stop.stop_id,
-                    latlong=stop.point,
-                    common_name=stop.name[:48],
-                    locality_centre=False,
-                    admin_area_id=stop.stop_id[:3],
-                    active=True
-                )
+            stop_id = get_stop_id(stop.stop_id)
+            if stop_id[0] in '78' and len(stop_id) <= 16:
+                if not StopPoint.objects.filter(atco_code=stop_id).exists():
+                    StopPoint.objects.create(
+                        atco_code=stop_id,
+                        latlong=stop.point,
+                        common_name=stop.name[:48],
+                        locality_centre=False,
+                        admin_area_id=stop_id[:3],
+                        active=True
+                    )
+            else:
+                print(stop_id)
 
         for route in feed.route_set.all():
-            if route.short_name:
+            if route.short_name and len(route.short_name) <= 8:
                 route_id = route.short_name
-            elif len(route.long_name) <= 4:
+            elif route.long_name and len(route.long_name) <= 4:
                 route_id = route.long_name
             else:
                 route_id = route.route_id.split()[0]
