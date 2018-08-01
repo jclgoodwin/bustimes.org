@@ -114,7 +114,7 @@ class Command(ImportFromCSVCommand):
                 if value.lower() in ('-', '--', '---', '*', 'tba', 'unknown', 'n/a',
                                      'data unavailable'):
                     value = ''
-                elif value.isupper() and value != 'YMCA':
+                elif django_field_name != 'indicator' and value.isupper() and value != 'YMCA':
                     value = titlecase(value)
             defaults[django_field_name] = value.replace('`', '\'')  # replace backticks
 
