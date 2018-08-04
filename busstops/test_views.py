@@ -288,7 +288,7 @@ class ViewsTests(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertContains(response, 'An airline operating company in')
             self.assertContains(response, 'Contact Ainsley&#39;s Chariots')
-            self.assertContains(response, '10 King Road<br />Ipswich')
+            self.assertContains(response, '10 King Road<br />Ipswich', html=True)
             self.assertContains(response, '&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#97;&#105;' +
                                 '&#110;&#115;&#108;&#101;&#121;&#64;&#101;&#120;&#97;&#109;' +
                                 '&#112;&#108;&#101;&#46;&#99;&#111;&#109;')
