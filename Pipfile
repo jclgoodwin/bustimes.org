@@ -18,7 +18,7 @@ gunicorn = "*"
 python-memcached = "*"
 setproctitle = "*"
 raven = "*"
-multigtfs = {git = "git://github.com/tulsawebdevs/django-multi-gtfs.git", editable=true}
+multigtfs = {git = "https://github.com/tulsawebdevs/django-multi-gtfs", editable=true}
 requests = "*"
 titlecase = "*"
 uk-postcode-utils = "*"
@@ -36,5 +36,5 @@ vcrpy = "*"
 mock = "*"
 coveralls = "*"
 coverage = "*"
-django-coverage-plugin = "*"
+django-coverage-plugin = {git = "https://github.com/jambonsw/django_coverage_plugin", ref="fix_issue_51_change_token_type_for_django_21", editable=true}
 ipython = "*"
