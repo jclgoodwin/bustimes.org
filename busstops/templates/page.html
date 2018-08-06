@@ -12,7 +12,7 @@
     <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}" />
 {% endif %}
 <script type="application/ld+json">{"@context":"http://schema.org","@type":"WebSite","url":"https://bustimes.org","name":"Bus Times","potentialAction":{"@type":"SearchAction","target":"https://bustimes.org/search?q={q}","query-input":"required name=q"}}</script>
-{% load staticfiles %}
+{% load static %}
 <link rel="manifest" href="{% static 'manifest.webmanifest' %}" />
 <!--[if gte IE 9]><!-->
     {% load pipeline %}
