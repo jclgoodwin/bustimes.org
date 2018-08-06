@@ -4,6 +4,7 @@ import os
 import json
 import vcr
 from warnings import catch_warnings
+from django.core.management import call_command
 from django.test import TestCase, override_settings
 from ...models import Region, AdminArea, StopPoint, Locality, Service, StopUsage
 from ..commands import (update_naptan, import_stop_areas, import_stops, import_stops_in_area,
@@ -90,8 +91,12 @@ class ImportNaptanTest(TestCase):
     def setUpTestData(cls):
         cls.region = Region.objects.create(id='GB', name='Great Britain')
         cls.admin_area = AdminArea.objects.create(id=34, atco_code=2, region_id='GB')
+        cls.admin_area_2 = AdminArea.objects.create(id=91, atco_code=290, region_id='GB')
         cls.locality_1 = Locality.objects.create(id='E0054410', name='Baglan', admin_area_id=34)
         cls.locality_2 = Locality.objects.create(id='N0078801', name='Port Talbot', admin_area_id=34)
+
+        # for two stops in Briningham corrected by the correct_stops
+        cls.locality_3 = Locality.objects.create(id='E0048637', name='Briningham', admin_area_id=34)
 
         command = import_stops.Command()
         for filename in ('Stops.csv', 'StopPoints.csv'):
@@ -229,3 +234,13 @@ class ImportNaptanTest(TestCase):
 
         self.assertEqual(self.stop_area.parent, self.stop_area_parent)
         self.assertIsNone(self.stop_area_parent.parent)
+
+    def test_correct_stops(self):
+        """Test that correct_stops correctly moves a stop in Briningham from the church to the village green"""
+        stop = StopPoint.objects.get(atco_code='2900B484')
+        self.assertEqual('Briningham, opp church', stop.get_qualified_name())
+
+        call_command('correct_stops')
+
+        stop.refresh_from_db()
+        self.assertEqual('Briningham, opp green', stop.get_qualified_name())
