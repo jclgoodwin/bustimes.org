@@ -11,7 +11,5 @@ class Command(BaseCommand):
                 service = Service.objects.get(line_name=route['name'], region='L', current=True,
                                               stops=route['routeSections'][0]['originator'])
                 ServiceCode.objects.update_or_create(scheme='TfL', service=service, code=route['name'])
-            except Service.MultipleObjectsReturned:
-                print(route)
-            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-                pass
+            except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
+                print(route['name'], e)

@@ -1,0 +1,60 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.19.1]
+    method: GET
+    uri: https://api.tfl.gov.uk/Line/Mode/bus/Route
+  response:
+    body: {string: '[{"$type":"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities","id":"rv1","name":"RV1","modeName":"bus","disruptions":[],"created":"2018-07-31T12:11:08.477Z","modified":"2018-07-31T12:11:08.477Z","lineStatuses":[],"routeSections":[{"$type":"Tfl.Api.Presentation.Entities.MatchedRoute,
+        Tfl.Api.Presentation.Entities","name":"Tower Gateway Station - Covent Garden
+        / Catherine Street","direction":"inbound","originationName":"Tower Gateway
+        Station","destinationName":"Covent Garden / Catherine Street","originator":"490002076RV","destination":"490015764C","serviceType":"Regular","validTo":"2018-12-23T00:00:00Z","validFrom":"2018-07-28T00:00:00Z"},{"$type":"Tfl.Api.Presentation.Entities.MatchedRoute,
+        Tfl.Api.Presentation.Entities","name":"Covent Garden / Catherine Street -
+        Tower Gateway Station","direction":"outbound","originationName":"Covent Garden
+        / Catherine Street","destinationName":"Tower Gateway Station","originator":"490015764C","destination":"490002076RV","serviceType":"Regular","validTo":"2018-12-23T00:00:00Z","validFrom":"2018-07-28T00:00:00Z"}],"serviceTypes":[{"$type":"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities","name":"Regular","uri":"/Line/Route?ids=RV1&serviceTypes=Regular"}],"crowding":{"$type":"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities"}},{"$type":"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities","id":"s1","name":"S1","modeName":"bus","disruptions":[],"created":"2018-07-31T12:11:08.47Z","modified":"2018-07-31T12:11:08.47Z","lineStatuses":[],"routeSections":[{"$type":"Tfl.Api.Presentation.Entities.MatchedRoute,
+        Tfl.Api.Presentation.Entities","name":"Banstead / Marks & Spencer - Victoria
+        Road / Lavender Fields","direction":"outbound","originationName":"Banstead
+        / Marks & Spencer","destinationName":"Victoria Road / Lavender Fields","originator":"40004409047A","destination":"490020189N","serviceType":"Regular","validTo":"2018-12-23T00:00:00Z","validFrom":"2018-07-28T00:00:00Z"},{"$type":"Tfl.Api.Presentation.Entities.MatchedRoute,
+        Tfl.Api.Presentation.Entities","name":"Victoria Road / Lavender Fields - Banstead
+        / Marks & Spencer","direction":"inbound","originationName":"Victoria Road
+        / Lavender Fields","destinationName":"Banstead / Marks & Spencer","originator":"490020189N","destination":"40004409047B","serviceType":"Regular","validTo":"2018-12-23T00:00:00Z","validFrom":"2018-07-28T00:00:00Z"}],"serviceTypes":[{"$type":"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities","name":"Regular","uri":"/Line/Route?ids=S1&serviceTypes=Regular"}],"crowding":{"$type":"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities"}}]'}
+    headers:
+      Accept-Ranges: [bytes]
+      Access-Control-Allow-Headers: [Content-Type]
+      Access-Control-Allow-Methods: ['GET,POST,PUT,DELETE,OPTIONS']
+      Access-Control-Allow-Origin: ['*']
+      Age: ['12286']
+      Api-Entity-Payload: ['Line, RouteSection']
+      CF-RAY: [446337e2fafd0ccb-LHR]
+      Cache-Control: ['public, must-revalidate, max-age=43200, s-maxage=86400']
+      Connection: [keep-alive]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 06 Aug 2018 17:28:09 GMT']
+      Expect-CT: ['max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"']
+      Server: [cloudflare]
+      Set-Cookie: ['__cfduid=d5d06faad26a1d436611756a6e00203f21533576489; expires=Tue,
+          06-Aug-19 17:28:09 GMT; path=/; domain=.tfl.gov.uk; HttpOnly']
+      Via: [1.1 varnish]
+      X-AspNet-Version: [4.0.30319]
+      X-Backend: [api]
+      X-Banning: ['']
+      X-Cache: [HIT]
+      X-Cache-Hits: ['19']
+      X-Cacheable: [Yes. Cacheable]
+      X-Proxy-Connection: [unset]
+      X-TTL: ['86400.000']
+      X-TTL-RULE: ['0']
+      X-Varnish: [699709670 695024273]
+      content-length: ['789667']
+    status: {code: 200, message: OK}
+version: 1
