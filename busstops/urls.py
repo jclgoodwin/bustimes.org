@@ -20,7 +20,7 @@ urlpatterns = [
     path('regions/<pk>', views.RegionDetailView.as_view(), name='region_detail'),
     path('places/<int:pk>', views.PlaceDetailView.as_view(), name='place_detail'),
     url(r'^(admin-)?areas/(?P<pk>\d+)', views.AdminAreaDetailView.as_view(), name='adminarea_detail'),
-    path('districts/<pk>', views.DistrictDetailView.as_view(), name='district_detail'),
+    path('districts/<int:pk>', views.DistrictDetailView.as_view(), name='district_detail'),
     url(r'^localities/(?P<pk>[ENen][Ss]?[0-9]+)', views.LocalityDetailView.as_view()),
     path('localities/<slug>', views.LocalityDetailView.as_view(), name='locality_detail'),
     path('stops/<pk>.json', views.stop_json),
