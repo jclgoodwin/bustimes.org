@@ -31,6 +31,8 @@ def calculate_bearing(a, b):
 
 
 class ImportLiveVehiclesCommand(BaseCommand):
+    session = requests.Session()
+
     def get_items(self):
         return self.session.get(self.url, timeout=5).json()
 
@@ -74,8 +76,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
         return 40
 
     def handle(self, *args, **options):
-
-        self.session = requests.Session()
 
         while True:
             try:
