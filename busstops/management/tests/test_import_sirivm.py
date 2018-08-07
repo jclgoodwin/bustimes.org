@@ -19,3 +19,7 @@ class SiriVMImportTest(TestCase):
         self.assertEqual('FE 69532', str(vehicle))
         self.assertTrue(created)
         self.assertIsNone(service)
+
+        location = command.create_vehicle_location(item, vehicle, service)
+        self.assertEqual('2018-08-06 21:44:32+01:00', str(location.datetime))
+        self.assertIsNone(location.heading)
