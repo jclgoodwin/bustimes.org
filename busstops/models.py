@@ -699,8 +699,7 @@ class Service(models.Model):
                         self.show_timetable = False
                         self.save()
                         return
-
-        return [t for t in timetables if t.groupings] or timetables[:1]
+        return [t for t in timetables if t and t.groupings] or timetables[:1]
 
 
 class ServiceCode(models.Model):
