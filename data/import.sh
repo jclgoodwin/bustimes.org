@@ -32,9 +32,14 @@ function import_csv {
     # name of a CSV file contained in the zip archive:
     csv=$3
 
-    tail -n +2 "$csv" > "previous/$csv" || touch "previous/$csv"
+    tail -n +2 "$csv" > "previous/$csv"
+    first=$? # 1 if previous command failed ($csv doesn't exist yet), 0 otherwise
     unzip -oq "$zip" "$csv"
-    diff -h "previous/$csv" "$csv" | grep '^> ' | sed 's/^> //' | ../../manage.py "import_$cmd"
+    if [ $first ]; then
+        ../../manage.py "import_$cmd" < "$csv"
+    else
+        diff -h "previous/$csv" "$csv" | grep '^> ' | sed 's/^> //' | ../../manage.py "import_$cmd"
+    fi
 }
 
 mkdir -p NPTG/previous NaPTAN TNDS/tmp
@@ -115,6 +120,7 @@ if compgen -G "*csv.zip" > /dev/null; then
         echo " $file"
         echo "  Stops"
         tr -d '\000' < Stops.csv | ../../manage.py import_stops && rm Stops.csv
+        ../../manage.py correct_stops
         echo "  Stop areas"
         tr -d '\000' < StopAreas.csv | ../../manage.py import_stop_areas && rm StopAreas.csv
         echo "  Stops in area"
