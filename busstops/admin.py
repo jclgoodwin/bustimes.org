@@ -133,7 +133,7 @@ class VehicleAdmin(admin.ModelAdmin):
     search_fields = ('code',)
     raw_id_fields = ('operator',)
     autocomplete_fields = ('vehicle_type',)
-    ordering = ('fleet_number',)
+    ordering = ('-id',)
 
 
 class VehicleLocationAdmin(admin.ModelAdmin):

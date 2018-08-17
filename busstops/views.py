@@ -236,7 +236,7 @@ def service_vehicles_history(request, slug):
     return render(request, 'busstops/vehicle_detail.html', {
         'date': date,
         'object': service,
-        'locations': service.vehiclelocation_set.filter(datetime__date=date).select_related('vehicle')
+        'locations': service.vehiclelocation_set.filter(datetime__date=date).select_related('vehicle').order_by('vehicle', 'id')
     })
 
 
