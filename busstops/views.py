@@ -233,10 +233,11 @@ def service_vehicles_history(request, slug):
             date = service.vehiclelocation_set.values_list('datetime', flat=True).latest('datetime').date()
         except VehicleLocation.DoesNotExist:
             date = timezone.now().date()
+    locations = service.vehiclelocation_set.filter(datetime__date=date).select_related('vehicle')
     return render(request, 'busstops/vehicle_detail.html', {
         'date': date,
         'object': service,
-        'locations': service.vehiclelocation_set.filter(datetime__date=date).select_related('vehicle').order_by('vehicle', 'id')
+        'locations': locations.order_by('vehicle', 'id')
     })
 
 
