@@ -17,6 +17,11 @@ def get_latlong(mvj):
     return Point(float(long), float(lat))
 
 
+def items_from_response(response):
+    items = ET.fromstring(response.text)
+    return items.findall('siri:ServiceDelivery/siri:VehicleMonitoringDelivery/siri:VehicleActivity', NS)
+
+
 class Command(ImportLiveVehiclesCommand):
     source_name = 'sirivm'
     url = 'sslink/SSLinkHTTP'
@@ -43,10 +48,20 @@ class Command(ImportLiveVehiclesCommand):
             """
             response = self.session.post('http://{}.jmwrti.co.uk:8080/RTI-SIRI-Server/SIRIHandler'.format(subdomain),
                                          data=data)
-            items = ET.fromstring(response.text)
-            items = items.findall('siri:ServiceDelivery/siri:VehicleMonitoringDelivery/siri:VehicleActivity', NS)
-            for item in items:
+            for item in items_from_response(response):
                 yield item
+
+        data = """
+            <Siri xmlns="http://www.siri.org.uk/siri">
+                <ServiceRequest>
+                    <RequestorRef>torbaydevon_siri_traveline</RequestorRef>
+                    <VehicleMonitoringRequest/>
+                </ServiceRequest>
+            </Siri>
+        """
+        response = self.session.post('http://data.icarus.cloudamber.com/VehicleMonitoringRequest.ashx', data=data)
+        for item in items_from_response(response):
+            yield item
 
     def get_vehicle_and_service(self, item):
         mvj = item.find('siri:MonitoredVehicleJourney', NS)
@@ -58,9 +73,9 @@ class Command(ImportLiveVehiclesCommand):
             if operator_options:
                 operator = Operator.objects.get(id=operator_options[0])
             else:
-                print(ET.tostring(item).decode())
+                operator = Operator.objects.get(id=operator_ref)
         except (Operator.MultipleObjectsReturned, Operator.DoesNotExist) as e:
-            print('!!!!!!')
+            print(operator_ref)
         vehicle, created = Vehicle.objects.get_or_create(
             {'operator': operator},
             source=self.source,
@@ -70,21 +85,26 @@ class Command(ImportLiveVehiclesCommand):
         service = mvj.find('siri:LineRef', NS).text
         if service == 'QC':
             service = 'QuayConnect'
-        if operator_options:
-            try:
-                services = Service.objects.filter(operator__in=operator_options, line_name=service, current=True)
-                if services.count() > 1:
-                    latlong = get_latlong(mvj)
-                    services = services.filter(geometry__bboverlaps=latlong.buffer(0.1))
-                service = services.get()
-            except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-                print(e, operator, service)
-                service = None
+        elif service == 'FLCN':
+            service = 'FALCON'
+        try:
+            services = Service.objects.filter(line_name=service, current=True)
+            if operator_options:
+                services = services.filter(operator__in=operator_options)
+            elif operator:
+                services = services.filter(operator=operator)
+            else:
+                return vehicle, created, None
+            if services.count() > 1:
+                latlong = get_latlong(mvj)
+                services = services.filter(geometry__bboverlaps=latlong.buffer(0.1))
+            service = services.get()
+        except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
+            print(e, operator, service)
+            service = None
             if service and vehicle.operator != service.operator.first():
                 vehicle.operator = service.operator.first()
                 vehicle.save()
-        else:
-            service = None
 
         return vehicle, created, service
 
