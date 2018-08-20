@@ -804,7 +804,8 @@ class VehicleDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['breadcrumb'] = [self.object.operator.region, self.object.operator]
+        if self.object.operator:
+            context['breadcrumb'] = [self.object.operator.region, self.object.operator]
         date = self.request.GET.get('date')
         if date:
             try:
