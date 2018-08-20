@@ -118,7 +118,7 @@ class Command(ImportLiveVehiclesCommand):
         if heading is not None:
             heading = int(heading.text)
             if heading == -1:
-               heading = None
+                heading = None
         return VehicleLocation(
             datetime=ciso8601.parse_datetime(datetime),
             latlong=latlong,
