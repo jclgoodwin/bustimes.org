@@ -8,4 +8,5 @@ source =
     timetables
 omit =
     busstops/migrations/*
+    busstops/static/*
     buses/wsgi.py
