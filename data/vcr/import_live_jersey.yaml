@@ -1,0 +1,29 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.19.1]
+    method: GET
+    uri: https://sojbuslivetimespublic.azurewebsites.net/api/Values/GetMin?secondsAgo=360
+  response:
+    body: {string: '{"minimumInfoUpdates":[{"bus":"bus-12A-2130-330","line":"12A","cat":"Public
+        Bus","lat":49.1928980,"lon":-2.1661010,"bearing":43,"direction":"inbound","time":"23:59:00","age":69},{"bus":"bus-15-2035-609","line":"15","cat":"Public
+        Bus","lat":49.2005550,"lon":-2.1963600,"bearing":204,"direction":"inbound","time":"00:00:04","age":5}],"stops":[]}'}
+    headers:
+      Cache-Control: [no-cache]
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Mon, 21 Aug 2018 00:38:48 GMT']
+      Expires: ['-1']
+      Pragma: [no-cache]
+      Request-Context: ['appId=cid-v1:6d79247b-019e-48da-a1a8-6f9a30b589c5']
+      Server: [Microsoft-IIS/10.0]
+      Set-Cookie: [ARRAffinity=b90327019296386bedc5e2d5b86838e79f64c37441db2b297fe5a1597151171a;Path=/;HttpOnly;Domain=sojbuslivetimespublic.azurewebsites.net]
+      Vary: [Accept-Encoding]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      content-length: ['1722']
+    status: {code: 200, message: OK}
+version: 1
