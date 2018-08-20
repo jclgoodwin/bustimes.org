@@ -2,12 +2,11 @@ import pytz
 import ciso8601
 import xml.etree.cElementTree as ET
 from django.contrib.gis.geos import Point
-from ..import_live_vehicles import ImportLiveVehiclesCommand
+from ..import_live_vehicles import NS, ImportLiveVehiclesCommand
 from ...models import Vehicle, VehicleLocation, Operator, Service
 
 
 LOCAL_TIMEZONE = pytz.timezone('Europe/London')
-NS = {'siri': 'http://www.siri.org.uk/siri'}
 
 
 def get_latlong(mvj):

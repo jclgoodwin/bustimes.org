@@ -36,6 +36,30 @@ class ImportLiveVehiclesCommand(BaseCommand):
     def get_items(self):
         return self.session.get(self.url, timeout=5).json()
 
+    def handle_item(self, item, now):
+        vehicle, vehicle_created, service = self.get_vehicle_and_service(item)
+        if vehicle_created:
+            latest = None
+        else:
+            latest = vehicle.vehiclelocation_set.last()
+        if latest and (type(item) is dict and latest.data == item):
+            location = latest
+        else:
+            location = self.create_vehicle_location(item, vehicle, service)
+            if type(item) is dict:
+                location.data = item
+            elif latest and location.datetime == latest.datetime:
+                location = latest
+            location.vehicle = vehicle
+            location.service = service
+            location.source = self.source
+            if not location.heading and latest and latest.service == service:
+                location.heading = calculate_bearing(latest.latlong, location.latlong)
+            if not location.datetime:
+                location.datetime = now
+        location.current = True
+        location.save()
+
     @transaction.atomic
     def update(self):
         now = timezone.now()
@@ -47,28 +71,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         try:
             for item in self.get_items():
-                vehicle, vehicle_created, service = self.get_vehicle_and_service(item)
-                if vehicle_created:
-                    latest = None
-                else:
-                    latest = vehicle.vehiclelocation_set.last()
-                if latest and (type(item) is dict and latest.data == item):
-                    location = latest
-                else:
-                    location = self.create_vehicle_location(item, vehicle, service)
-                    if type(item) is dict:
-                        location.data = item
-                    elif latest and location.datetime == latest.datetime:
-                        location = latest
-                    location.vehicle = vehicle
-                    location.service = service
-                    location.source = self.source
-                    if not location.heading and latest and latest.service == service:
-                        location.heading = calculate_bearing(latest.latlong, location.latlong)
-                    if not location.datetime:
-                        location.datetime = now
-                location.current = True
-                location.save()
+                self.handle_item(item, now)
         except (requests.exceptions.RequestException, TypeError, ValueError) as e:
             print(e)
             return 120
