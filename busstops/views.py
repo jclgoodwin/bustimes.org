@@ -234,7 +234,9 @@ def service_vehicles_history(request, slug):
         except VehicleLocation.DoesNotExist:
             date = timezone.now().date()
     locations = service.vehiclelocation_set.filter(datetime__date=date).select_related('vehicle')
+    operator = service.operator.select_related('region').first()
     return render(request, 'busstops/vehicle_detail.html', {
+        'breadcrumb': [operator.region, operator, service],
         'date': date,
         'object': service,
         'locations': locations.order_by('vehicle', 'id')
@@ -536,8 +538,9 @@ class OperatorDetailView(DetailView):
 def operator_vehicles(request, slug):
     operator = get_object_or_404(Operator, slug=slug)
     return render(request, 'operator_vehicles.html', {
+        'breadcrumb': [operator.region, operator],
         'object': operator,
-        'vehicles': operator.vehicle_set.order_by('fleet_number')
+        'vehicles': operator.vehicle_set.order_by('fleet_number').select_related('vehicle_type')
     })
 
 
@@ -797,10 +800,11 @@ def journey(request):
 
 class VehicleDetailView(DetailView):
     model = Vehicle
+    queryset = model.objects.select_related('operator', 'operator__region')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['breadcrumb'] = [self.object.operator]
+        context['breadcrumb'] = [self.object.operator.region, self.object.operator]
         date = self.request.GET.get('date')
         if date:
             try:

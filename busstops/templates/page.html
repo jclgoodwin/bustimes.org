@@ -95,15 +95,8 @@ ga('send', 'pageview');
         whitelistUrls: [/bustimes\.org\/static\/js\/.*\.js/]
     }).install();
 </script>
-{% if service.get_buses_online %}
-    {% javascript 'livemap' %}
-{% elif stopusages or stops or stoppoint and stoppoint.latlong %}
+{% if stops or stoppoint and stoppoint.latlong %}
     {% javascript 'map' %}
-{% endif %}
-{% if timetables %}
-    {% javascript 'timetable' %}
-{% elif regions %}
-    {% javascript 'frontpage' %}
 {% endif %}
 
 {% javascript 'global' %}

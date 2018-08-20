@@ -19,6 +19,10 @@
     <p>PSV license number: {% for licence in operator.get_licences %}<a href="{{ licence.get_absolute_url }}">{{ licence }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
 {% endif %}
 
+{% if operator.vehicle_set.exists %}
+    <p>For anoraks: <a href="{{ object.get_absolute_url }}/vehicles">an incomplete {{ object }} fleet list</a></p>
+{% endif %}
+
 {% for note in notes %}
     <p class="warning">{{ note|safe }}</p>
 {% endfor %}
