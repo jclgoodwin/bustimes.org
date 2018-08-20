@@ -81,6 +81,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             try:
                 wait = self.update()
             except OperationalError as e:
+                wait = 0
                 print(e)
                 logger.error(e, exc_info=True)
             sleep(wait)

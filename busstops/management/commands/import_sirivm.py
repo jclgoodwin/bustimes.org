@@ -87,6 +87,8 @@ class Command(ImportLiveVehiclesCommand):
             service = 'QuayConnect'
         elif service == 'FLCN':
             service = 'FALCON'
+        elif service and service[:3] == 'BOB':
+            service = service[:3] + ' ' + service[3] + ' ' + service[4:]
         try:
             services = Service.objects.filter(line_name=service, current=True)
             if operator_options:
@@ -114,7 +116,9 @@ class Command(ImportLiveVehiclesCommand):
         latlong = get_latlong(mvj)
         heading = mvj.find('siri:Bearing', NS)
         if heading is not None:
-            heading = heading.text
+            heading = int(heading.text)
+            if heading == -1:
+               heading = None
         return VehicleLocation(
             datetime=ciso8601.parse_datetime(datetime),
             latlong=latlong,
