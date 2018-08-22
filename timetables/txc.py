@@ -40,7 +40,7 @@ BANK_HOLIDAYS = {
     # datetime.date(2018, 5, 7): ('MayDay', 'HolidayMondays'),
     datetime.date(2018, 5, 28): ('SpringBank', 'HolidayMondays'),
     datetime.date(2018, 8, 6): ('AugustBankHolidayScotland',),
-    datetime.date(2017, 8, 27): ('LateSummerBankHolidayNotScotland',),
+    datetime.date(2018, 8, 27): ('LateSummerBankHolidayNotScotland',),
 }
 
 
