@@ -32,46 +32,63 @@ def calculate_bearing(a, b):
 
 class ImportLiveVehiclesCommand(BaseCommand):
     session = requests.Session()
+    current_location_ids = set()
 
     def get_items(self):
         return self.session.get(self.url, timeout=5).json()
 
+    @transaction.atomic
     def handle_item(self, item, now):
         vehicle, vehicle_created, service = self.get_vehicle_and_service(item)
         if vehicle_created:
             latest = None
         else:
-            latest = vehicle.vehiclelocation_set.last()
+            latest = vehicle.vehiclelocation_set.filter(current=True).last()
         if latest and (type(item) is dict and latest.data == item):
-            location = latest
-        else:
-            location = self.create_vehicle_location(item, vehicle, service)
-            if type(item) is dict:
-                location.data = item
-            elif latest and location.datetime == latest.datetime:
-                location = latest
-            location.vehicle = vehicle
-            location.service = service
-            location.source = self.source
-            if not location.heading and latest and latest.service == service:
-                location.heading = calculate_bearing(latest.latlong, location.latlong)
-            if not location.datetime:
-                location.datetime = now
+            self.current_location_ids.add(latest.id)
+            return
+        location = self.create_vehicle_location(item, vehicle, service)
+        if type(item) is dict:
+            location.data = item
+        elif latest and location.datetime == latest.datetime:
+            self.current_location_ids.add(latest.id)
+            return
+        location.vehicle = vehicle
+        location.service = service
+        location.source = self.source
+        if not location.heading and latest and latest.service == service:
+            location.heading = calculate_bearing(latest.latlong, location.latlong)
+        if not location.datetime:
+            location.datetime = now
+        # save new location
         location.current = True
         location.save()
+        self.current_location_ids.add(location.id)
+        if latest:
+            # mark old location as not current
+            latest.current = False
+            latest.save()
+            self.current_location_ids.remove(latest.id)
 
-    @transaction.atomic
     def update(self):
         now = timezone.now()
-        self.source, source_created = DataSource.objects.get_or_create({'url': self.url, 'datetime': now},
-                                                                       name=self.source_name)
+        self.source, source_created = DataSource.objects.get_or_create(
+            {'url': self.url, 'datetime': now},
+            name=self.source_name
+        )
 
         if not source_created:
-            print(self.source.vehiclelocation_set.filter(current=True).update(current=False), end='\t', flush=True)
+            self.current_location_ids = set(
+                self.source.vehiclelocation_set.filter(current=True).values_list('id', flat=True)
+            )
 
         try:
+            self.old_location_ids = self.current_location_ids.copy()
             for item in self.get_items():
                 self.handle_item(item, now)
+            # mark any vehicles that have gone offline as not current
+            self.old_location_ids = self.old_location_ids.difference(self.current_location_ids)
+            self.source.vehiclelocation_set.filter(current=True, id__in=self.old_location_ids).update(current=False)
         except (requests.exceptions.RequestException, TypeError, ValueError) as e:
             print(e)
             return 120
