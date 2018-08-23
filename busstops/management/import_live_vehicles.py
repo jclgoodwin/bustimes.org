@@ -9,7 +9,6 @@ from ..models import DataSource
 
 
 logger = logging.getLogger(__name__)
-NS = {'siri': 'http://www.siri.org.uk/siri'}
 
 
 def calculate_bearing(a, b):
