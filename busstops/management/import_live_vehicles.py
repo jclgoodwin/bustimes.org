@@ -90,7 +90,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             self.source.vehiclelocation_set.filter(current=True, id__in=self.old_location_ids).update(current=False)
         except (requests.exceptions.RequestException, TypeError, ValueError) as e:
             print(e)
-            self.source.vehiclelocation_set.filter(current=True, id__in=self.old_location_ids).update(current=False)
+            self.source.vehiclelocation_set.filter(current=True).update(current=False)
             return 120
 
         return 40
