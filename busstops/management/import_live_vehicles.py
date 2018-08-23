@@ -67,7 +67,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
             # mark old location as not current
             latest.current = False
             latest.save()
-            self.current_location_ids.remove(latest.id)
 
     def update(self):
         now = timezone.now()
@@ -76,18 +75,15 @@ class ImportLiveVehiclesCommand(BaseCommand):
             name=self.source_name
         )
 
-        if not source_created:
-            self.current_location_ids = set(
-                self.source.vehiclelocation_set.filter(current=True).values_list('id', flat=True)
-            )
+        self.current_location_ids = set()
 
         try:
-            self.old_location_ids = self.current_location_ids.copy()
             for item in self.get_items():
                 self.handle_item(item, now)
             # mark any vehicles that have gone offline as not current
-            self.old_location_ids = self.old_location_ids.difference(self.current_location_ids)
-            self.source.vehiclelocation_set.filter(current=True, id__in=self.old_location_ids).update(current=False)
+            old_locations = self.source.vehiclelocation_set.filter(current=True)
+            old_locations = old_locations.exclude(id__in=self.current_location_ids)
+            print(old_locations.update(current=False))
         except (requests.exceptions.RequestException, TypeError, ValueError) as e:
             print(e)
             self.source.vehiclelocation_set.filter(current=True).update(current=False)
