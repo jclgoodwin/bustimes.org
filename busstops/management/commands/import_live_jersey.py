@@ -15,8 +15,12 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_vehicle_and_service(self, item):
         code = item['bus'].split('-')[-1]
+        if code.isdigit():
+            fleet_number = code
+        else:
+            fleet_number = None
         vehicle, created = Vehicle.objects.get_or_create(
-            {'operator_id': self.operator, 'fleet_number': code},
+            {'operator_id': self.operator, 'fleet_number': fleet_number},
             source=self.source,
             code=code
         )

@@ -32,6 +32,8 @@ class SiriVMImportTest(TestCase):
         self.assertEqual(43, location.heading)
 
         # test a time after midnight (today)
+        vehicle, created, service = command.get_vehicle_and_service(items[1])
+
         location = command.create_vehicle_location(items[1], vehicle, service)
         self.assertEqual('2018-08-21 00:00:04+00:00', str(location.datetime))
         self.assertEqual(204, location.heading)

@@ -10,7 +10,7 @@ interactions:
     uri: https://sojbuslivetimespublic.azurewebsites.net/api/Values/GetMin?secondsAgo=360
   response:
     body: {string: '{"minimumInfoUpdates":[{"bus":"bus-12A-2130-330","line":"12A","cat":"Public
-        Bus","lat":49.1928980,"lon":-2.1661010,"bearing":43,"direction":"inbound","time":"23:59:00","age":69},{"bus":"bus-15-2035-609","line":"15","cat":"Public
+        Bus","lat":49.1928980,"lon":-2.1661010,"bearing":43,"direction":"inbound","time":"23:59:00","age":69},{"bus":"bus-15-2035-Handheld_2","line":"15","cat":"Public
         Bus","lat":49.2005550,"lon":-2.1963600,"bearing":204,"direction":"inbound","time":"00:00:04","age":5}],"stops":[]}'}
     headers:
       Cache-Control: [no-cache]
