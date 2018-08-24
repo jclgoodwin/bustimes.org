@@ -35,9 +35,6 @@
         } else {
             html = '';
         }
-        if (service) {
-            html += service.line_name;
-        }
         return L.divIcon({
             iconSize: [20, 20],
             html: html,
