@@ -75,7 +75,7 @@ class Command(ImportLiveVehiclesCommand):
         service = mvj.find('siri:LineRef', NS).text
 
         try:
-            if operator and not (operator in {'TV', 'RB'} or operator == 'TV' and not service):
+            if operator_ref and not (operator_ref in {'TV', 'RB'} or operator_ref == 'TV' and not service):
                 operator_options = self.operators.get(operator_ref)
                 if operator_options:
                     operator = Operator.objects.get(id=operator_options[0])
