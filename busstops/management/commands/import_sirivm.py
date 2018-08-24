@@ -89,10 +89,17 @@ class Command(ImportLiveVehiclesCommand):
             code=mvj.find('siri:VehicleRef', NS).text
         )
 
+        # TODO: use ServiceCodes for this
         if service == 'QC':
             service = 'QuayConnect'
         elif service == 'FLCN':
             service = 'FALCON'
+        elif service == 'P&R' and operator_ref == 'AKE':
+            service = 'Colchester Park & Ride'
+        elif service == '700' and operator_ref == 'FE':
+            service = 'Sandon Park & Ride'
+        elif service == '701' and operator_ref == 'FE':
+            service = 'Chelmsford Park & Ride'
         elif service and service[:3] == 'BOB':
             service = service[:3] + ' ' + service[3] + ' ' + service[4:]
         try:

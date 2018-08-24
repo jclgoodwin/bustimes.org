@@ -83,7 +83,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             # mark any vehicles that have gone offline as not current
             old_locations = self.source.vehiclelocation_set.filter(current=True)
             old_locations = old_locations.exclude(id__in=self.current_location_ids)
-            print(old_locations.update(current=False))
+            print(old_locations.update(current=False), end='\t', flush=True)
         except (requests.exceptions.RequestException, TypeError, ValueError) as e:
             print(e)
             self.source.vehiclelocation_set.filter(current=True).update(current=False)
