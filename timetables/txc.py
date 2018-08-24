@@ -41,6 +41,8 @@ BANK_HOLIDAYS = {
     datetime.date(2018, 5, 28): ('SpringBank', 'HolidayMondays'),
     datetime.date(2018, 8, 6): ('AugustBankHolidayScotland',),
     datetime.date(2018, 8, 27): ('LateSummerBankHolidayNotScotland',),
+    datetime.date(2018, 12, 25): ('ChristmasDay', 'ChristmasDayHoliday'),
+    datetime.date(2018, 12, 26): ('BoxingDay', 'BoxingDayHoliday',),
 }
 
 
@@ -487,7 +489,6 @@ class VehicleJourney(object):
     operating_profile = None
 
     def __init__(self, element, journeypatterns, servicedorgs):
-
         self.code = element.find('txc:VehicleJourneyCode', NS).text
         self.private_code = element.find('txc:PrivateCode', NS)
         if self.private_code is not None:
@@ -521,20 +522,6 @@ class VehicleJourney(object):
                     self.departure_time = datetime.time(6, 38)
                 elif self.departure_time.minute == 32:  # Sunday, Norwich to Fakenham
                     self.departure_time = self.departure_time.replace(minute=35)
-            elif service_ref.text == '21-45A-_-y08-1':  # 45A - Norwich - Holt
-                self.start_deadrun = 'JPL_21-45A-_-y08-1-1-H-1-8'
-                del self.operating_profile.nonoperation_days
-            elif service_ref.text == '21-45-A-y08-1':  # 45 Holt - Norwich
-                if self.departure_time == datetime.time(6, 45):
-                    self.end_deadrun = 'JPL_21-45-A-y08-1-1-R-1-45'
-                    del self.operating_profile.nonoperation_days
-            elif service_ref.text == '21-43-_-y08-1':  # 43 - Reepham - Norwich
-                if self.private_code == 'ea-21-43-_-y08-1-14-T0':  # afternoon Reepham - Norwich
-                    self.start_deadrun = 'JPL_21-43-_-y08-1-11-R-9-4'
-                    del self.operating_profile.nonoperation_days
-                elif self.private_code == 'ea-21-43-_-y08-1-1-T0':  # morning Holt - Norwich
-                    self.end_deadrun = 'JPL_21-43-_-y08-1-1-R-1-37'
-                    del self.operating_profile.nonoperation_days
 
         self.operator = element.find('txc:OperatorRef', NS)
         if self.operator is not None:
@@ -894,6 +881,18 @@ class Timetable(object):
             for key in journeys:
                 if journeys[key].departure_time == datetime.time(9, 50):
                     journeys[key].departure_time = datetime.time(9, 20)
+        elif self.service_code == '21-9-E-y08-1':  # 9 - Holt - Fakenham
+            journeys['VJ_21-9-E-y08-1-40-UN'].departure_time = datetime.time(15, 45)
+            journeys['VJ_21-9-E-y08-1-40-UN'].operating_profile = journeys['VJ_21-9-E-y08-1-11-T0'].operating_profile
+
+            journeys['VJ_21-9-E-y08-1-87-UU'].departure_time = datetime.time(7, 0)
+            journeys['VJ_21-9-E-y08-1-87-UU'].operating_profile = journeys['VJ_21-9-E-y08-1-11-T0'].operating_profile
+
+            journeys['VJ_21-9-E-y08-1-46-UO'].departure_time = datetime.time(7, 50)
+            journeys['VJ_21-9-E-y08-1-46-UO'].operating_profile = journeys['VJ_21-9-E-y08-1-11-T0'].operating_profile
+            journeys['VJ_21-9-E-y08-1-46-UO'].notes = {
+                'poo': 'Doesn’t serve Smiths Lane or Cramner Court, arrives at Oak Street at 08:25'
+            }
 
         # some journeys did not have a direct reference to a journeypattern,
         # but rather a reference to another journey with a reference to a journeypattern
