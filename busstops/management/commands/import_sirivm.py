@@ -39,6 +39,7 @@ class Command(ImportLiveVehiclesCommand):
         'FH': ('FHAM',),
         'RL': ('RLNE',),
         'FT': ('FTVA',),
+        'FD': ('FDOR',),
     }
 
     def get_items(self):
@@ -69,22 +70,25 @@ class Command(ImportLiveVehiclesCommand):
         mvj = item.find('siri:MonitoredVehicleJourney', NS)
         operator_ref = mvj.find('siri:OperatorRef', NS).text
         operator = None
+        operator_options = None
+
+        service = mvj.find('siri:LineRef', NS).text
 
         try:
-            operator_options = self.operators.get(operator_ref)
-            if operator_options:
-                operator = Operator.objects.get(id=operator_options[0])
-            else:
-                operator = Operator.objects.get(id=operator_ref)
+            if operator and not (operator in {'TV', 'RB'} or operator == 'TV' and not service):
+                operator_options = self.operators.get(operator_ref)
+                if operator_options:
+                    operator = Operator.objects.get(id=operator_options[0])
+                else:
+                    operator = Operator.objects.get(id=operator_ref)
         except (Operator.MultipleObjectsReturned, Operator.DoesNotExist) as e:
-            print(operator_ref)
+            print(e, operator, service)
         vehicle, created = Vehicle.objects.get_or_create(
             {'operator': operator},
             source=self.source,
             code=mvj.find('siri:VehicleRef', NS).text
         )
 
-        service = mvj.find('siri:LineRef', NS).text
         if service == 'QC':
             service = 'QuayConnect'
         elif service == 'FLCN':
