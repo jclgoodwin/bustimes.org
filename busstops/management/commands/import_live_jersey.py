@@ -10,8 +10,7 @@ class Command(ImportLiveVehiclesCommand):
     url = 'https://sojbuslivetimespublic.azurewebsites.net/api/Values/GetMin?secondsAgo=360'
 
     def get_items(self):
-        response = self.session.get(self.url)
-        return response.json()['minimumInfoUpdates']
+        return super().get_items()['minimumInfoUpdates']
 
     def get_vehicle_and_service(self, item):
         code = item['bus'].split('-')[-1]

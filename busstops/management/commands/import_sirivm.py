@@ -50,7 +50,7 @@ class Command(ImportLiveVehiclesCommand):
                 </Siri>
             """
             response = self.session.post('http://{}.jmwrti.co.uk:8080/RTI-SIRI-Server/SIRIHandler'.format(subdomain),
-                                         data=data)
+                                         data=data, timeout=5)
             for item in items_from_response(response):
                 yield item
 
@@ -62,7 +62,8 @@ class Command(ImportLiveVehiclesCommand):
                 </ServiceRequest>
             </Siri>
         """
-        response = self.session.post('http://data.icarus.cloudamber.com/VehicleMonitoringRequest.ashx', data=data)
+        response = self.session.post('http://data.icarus.cloudamber.com/VehicleMonitoringRequest.ashx',
+                                     data=data, timeout=5)
         for item in items_from_response(response):
             yield item
 
