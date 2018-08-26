@@ -43,7 +43,7 @@
 
     {% for grouping in timetable.groupings %}
 
-        <h2>{{ grouping }} {{ timetable.operating_period }}</h2>
+        {% if forloop.first != forloop.last %}<h2>{{ grouping }} {{ timetable.operating_period }}</h2>{% endif %}
 
         <div class="timetable-wrapper-wrapper">
             {% if grouping.has_minor_stops %}
