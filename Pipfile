@@ -27,6 +27,8 @@ python-dateutil = "*"
 requests-html = "*"
 django-antispam = {git = "https://github.com/mixkorshun/django-antispam", editable=true}
 autoslug = {git = "https://github.com/marfyl/django-autoslug", editable=true}
+websockets = "*"
+isodate = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
