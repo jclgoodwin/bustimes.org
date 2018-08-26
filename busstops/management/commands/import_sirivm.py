@@ -1,6 +1,7 @@
 import ciso8601
 import xml.etree.cElementTree as ET
 from django.contrib.gis.geos import Point
+from isodate import parse_duration
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import Vehicle, VehicleLocation, Operator, Service
 
@@ -35,7 +36,7 @@ class Command(ImportLiveVehiclesCommand):
         'SE': ('SESX',),
         'FE': ('FESX',),
         'AKE': ('ARHE',),
-        'SQ': ('BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TDTR', 'TOUR'),
+        'SQ': ('BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TDTR', 'TOUR', 'WDBC'),
         'FH': ('FHAM',),
         'RL': ('RLNE',),
         'FT': ('FTVA',),
@@ -83,7 +84,8 @@ class Command(ImportLiveVehiclesCommand):
                 else:
                     operator = Operator.objects.get(id=operator_ref)
         except (Operator.MultipleObjectsReturned, Operator.DoesNotExist) as e:
-            print(e, operator, service)
+            print(e, operator_ref, service)
+
         vehicle, created = Vehicle.objects.get_or_create(
             {'operator': operator},
             source=self.source,
@@ -103,24 +105,27 @@ class Command(ImportLiveVehiclesCommand):
             service = 'Chelmsford Park & Ride'
         elif service and service[:3] == 'BOB':
             service = service[:3] + ' ' + service[3] + ' ' + service[4:]
+
+        services = Service.objects.filter(line_name=service, current=True)
+        if operator_options:
+            services = services.filter(operator__in=operator_options)
+        elif operator:
+            services = services.filter(operator=operator)
+        else:
+            return vehicle, created, None
+
+        if services.count() > 1:
+            latlong = get_latlong(mvj)
+            services = services.filter(geometry__bboverlaps=latlong.buffer(0.1))
+
         try:
-            services = Service.objects.filter(line_name=service, current=True)
-            if operator_options:
-                services = services.filter(operator__in=operator_options)
-            elif operator:
-                services = services.filter(operator=operator)
-            else:
-                return vehicle, created, None
-            if services.count() > 1:
-                latlong = get_latlong(mvj)
-                services = services.filter(geometry__bboverlaps=latlong.buffer(0.1))
             service = services.get()
-        except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-            print(e, operator, service)
-            service = None
             if service and vehicle.operator != service.operator.first():
                 vehicle.operator = service.operator.first()
                 vehicle.save()
+        except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
+            print(e, operator_ref, service, get_latlong(mvj))
+            service = None
 
         return vehicle, created, service
 
@@ -133,9 +138,15 @@ class Command(ImportLiveVehiclesCommand):
             heading = int(heading.text)
             if heading == -1:
                 heading = None
+        delay = mvj.find('siri:Delay', NS)
+        if (delay is not None) and delay.text:
+            delay = parse_duration(delay.text)
+            early = -delay.total_seconds()  # "Early times are shown as negative values."
+        else:
+            early = None
         return VehicleLocation(
             datetime=ciso8601.parse_datetime(datetime),
             latlong=latlong,
-            heading=heading
-            # early=item.find('siri:MonitoredVehicleJourney/siri:Delay', NS)
+            heading=heading,
+            early=early
         )
