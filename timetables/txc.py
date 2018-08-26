@@ -774,7 +774,7 @@ class OperatingProfile(object):
         else:
             self.nonoperation_bank_holidays = []
 
-    def should_show(self, date, region_id):
+    def should_show(self, date, region_id=None):
         if hasattr(self, 'nonoperation_days'):
             for daterange in self.nonoperation_days:
                 if daterange.contains(date):
