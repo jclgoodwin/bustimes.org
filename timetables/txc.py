@@ -647,8 +647,8 @@ class VehicleJourney(object):
         if not date:
             return True
         if not self.operating_profile:
-            return timetable and timetable.operating_profile.should_show(date)
-        return self.operating_profile.should_show(date)
+            return timetable and timetable.operating_profile.should_show(date, timetable and timetable.region_id)
+        return self.operating_profile.should_show(date, timetable and timetable.region_id)
 
 
 class ServicedOrganisation(object):
@@ -774,7 +774,7 @@ class OperatingProfile(object):
         else:
             self.nonoperation_bank_holidays = []
 
-    def should_show(self, date):
+    def should_show(self, date, region_id):
         if hasattr(self, 'nonoperation_days'):
             for daterange in self.nonoperation_days:
                 if daterange.contains(date):
@@ -786,7 +786,10 @@ class OperatingProfile(object):
                     return True
 
         if date in BANK_HOLIDAYS:
-            if not any('Scotland' in bank_holiday for bank_holiday in BANK_HOLIDAYS[date]):
+            if not (
+                region_id == 'S' and any('yNotScotland' in bank_holiday for bank_holiday in BANK_HOLIDAYS[date])
+                or region_id != 'S' and any('yScotland' in bank_holiday for bank_holiday in BANK_HOLIDAYS[date])
+            ):
                 if 'AllBankHolidays' in self.operation_bank_holidays:
                     return True
                 if 'AllBankHolidays' in self.nonoperation_bank_holidays:
@@ -869,6 +872,8 @@ class ColumnFoot(object):
 
 
 class Timetable(object):
+    region_id = None
+
     def __get_journeys(self, journeys_element, servicedorgs):
         journeys = {
             journey.code: journey for journey in (
@@ -917,7 +922,7 @@ class Timetable(object):
         if self.date >= start_date:
             yield self.date
 
-    def set_date(self, date):
+    def set_date(self, date, region_id=None):
         if date and not isinstance(date, datetime.date):
             date = ciso8601.parse_datetime(date).date()
 
@@ -930,6 +935,8 @@ class Timetable(object):
                 grouping.column_feet.clear()
 
         self.date = date
+
+        self.region_id = region_id
 
         for grouping in self.groupings:
             for journey in grouping.journeys:

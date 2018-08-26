@@ -692,7 +692,7 @@ class Service(models.Model):
 
             timetables = [timetable for timetable in timetables if timetable.operating_period.contains(day)]
             for timetable in timetables:
-                timetable.set_date(day)
+                timetable.set_date(day, self.region_id)
                 timetable.groupings = [g for g in timetable.groupings if g.rows and g.rows[0].times]
                 for grouping in timetable.groupings:
                     if len(grouping.rows[0].times) > 100:
