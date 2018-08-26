@@ -290,23 +290,39 @@ class StopPoint(models.Model):
         }
         return headings.get(self.bearing)
 
-    prepositions = {'opp', 'adj', 'at', 'o/s', 'nr', 'before', 'after', 'by', 'on', 'in', 'opposite', 'outside'}
+    prepositions = {
+        'opp': 'opposite',
+        'adj': 'adjacent to',
+        'at': 'at',
+        'o/s': 'outside',
+        'nr': 'near',
+        'before': 'before',
+        'after': 'after',
+        'by': 'by',
+        'on': 'on',
+        'in': 'in',
+        'opposite': 'opposite',
+        'outside': 'outside',
+    }
 
-    def indicator_in_prepositions(self):
-        return self.indicator in self.prepositions
-
-    def get_qualified_name(self):
+    def get_qualified_name(self, expand_indicator=False):
         if self.locality:
             locality_name = self.locality.name.replace(' Town Centre', '').replace(' City Centre', '')
             if self.common_name in locality_name:
                 return locality_name.replace(self.common_name, str(self))  # Cardiff Airport
             if slugify(locality_name) not in slugify(self.common_name):
-                if self.indicator_in_prepositions():
-                    return '%s, %s %s' % (locality_name, self.indicator, self.common_name)
+                if self.indicator in self.prepositions:
+                    indicator = self.indicator
+                    if expand_indicator:
+                        indicator = self.prepositions[indicator]
+                    return '%s, %s %s' % (locality_name, indicator, self.common_name)
                 return '%s %s' % (locality_name, self)
         elif self.town not in self.common_name:
             return '{} {}'.format(self.town, self)
         return str(self)
+
+    def get_long_name(self):
+        return self.get_qualified_name(expand_indicator=True)
 
     def get_streetview_url(self):
         if self.latlong:
