@@ -1,5 +1,3 @@
-ea_21-X29-A-y08:
-    description: Fakenham - Norwich
 ea_21-9-E-y08:
     description: Holt - Briston - Melton Constable - Fakenham
 ea_21-X40-_-y08:
@@ -122,4 +120,3 @@ em_12-40-A-y08:
     description: Leicester Outer Circle
     inbound_description: Clockwise
     outbound_description: Anticlockwise
-    inbound_description: Clockwise

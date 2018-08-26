@@ -313,6 +313,9 @@ class Grouping(object):
                     description += ' via ' + self.parent.via
                 return description
 
+        if self.parent.service:
+            return getattr(self.parent.service, self.direction + '_description')
+
         return self.direction.capitalize()
 
 
@@ -646,9 +649,10 @@ class VehicleJourney(object):
     def should_show(self, date, timetable=None):
         if not date:
             return True
+        region_id = timetable and timetable.service and timetable.service.region_id
         if not self.operating_profile:
-            return timetable and timetable.operating_profile.should_show(date, timetable and timetable.region_id)
-        return self.operating_profile.should_show(date, timetable and timetable.region_id)
+            return timetable and timetable.operating_profile.should_show(date, region_id)
+        return self.operating_profile.should_show(date, region_id)
 
 
 class ServicedOrganisation(object):
@@ -872,7 +876,9 @@ class ColumnFoot(object):
 
 
 class Timetable(object):
-    region_id = None
+    service = None
+    description = None
+    description_parts = None
 
     def __get_journeys(self, journeys_element, servicedorgs):
         journeys = {
@@ -922,7 +928,7 @@ class Timetable(object):
         if self.date >= start_date:
             yield self.date
 
-    def set_date(self, date, region_id=None):
+    def set_date(self, date):
         if date and not isinstance(date, datetime.date):
             date = ciso8601.parse_datetime(date).date()
 
@@ -936,13 +942,21 @@ class Timetable(object):
 
         self.date = date
 
-        self.region_id = region_id
-
         for grouping in self.groupings:
             for journey in grouping.journeys:
                 if journey.should_show(self.date, self):
                     journey.add_times()
             grouping.do_heads_and_feet()
+
+    def set_description(self, description):
+        if description.isupper():
+            description = titlecase(description)
+        self.description = correct_description(description)
+
+        self.via = None
+        self.description_parts = list(map(sanitize_description_part, self.description.split(' - ')))
+        if ' via ' in self.description_parts[-1]:
+            self.description_parts[-1], self.via = self.description_parts[-1].split(' via ', 1)
 
     def has_set_down_only(self):
         for grouping in self.groupings:
@@ -951,13 +965,12 @@ class Timetable(object):
                     if type(cell) is Cell and not cell.last and cell.stopusage.activity == 'setDown':
                         return True
 
-    def __init__(self, open_file, date, description=None):
+    def __init__(self, open_file, date):
         iterator = ET.iterparse(open_file)
 
         element = None
         servicedorgs = None
 
-        self.description = description
         routes = {}
 
         for _, element in iterator:
@@ -1019,18 +1032,7 @@ class Timetable(object):
 
                 description_element = element.find('txc:Description', NS)
                 if description_element is not None:
-                    description = description_element.text
-                    if description.isupper():
-                        description = titlecase(description)
-                    self.description = correct_description(description)
-
-                self.via = None
-                if self.description:
-                    self.description_parts = list(map(sanitize_description_part, self.description.split(' - ')))
-                    if ' via ' in self.description_parts[-1]:
-                        self.description_parts[-1], self.via = self.description_parts[-1].split(' via ', 1)
-                else:
-                    self.description_parts = None
+                    self.set_description(description_element.text)
 
                 self.groupings = {
                     'outbound': Grouping('outbound', self),
