@@ -184,6 +184,7 @@ class Repetition(object):
         self.duration = duration
 
     def __str__(self):
+        # cleverly add non-breaking spaces if there aren't many rows
         if self.duration.seconds == 3600:
             if self.min_height < 3:
                 return 'then\u00A0hourly until'
@@ -289,6 +290,8 @@ class Grouping(object):
         if in_a_row > 1:
             abbreviate(self, len(journeys), in_a_row - 1, prev_difference)
         for row in self.rows:
+            # remove 'None' cells created during the abbreviation process
+            # (actual empty cells will contain an empty string '')
             row.times = [time for time in row.times if time is not None]
 
     def __str__(self):

@@ -7,7 +7,7 @@ from ...models import Vehicle, VehicleLocation, Service
 class Command(ImportLiveVehiclesCommand):
     source_name = 'jersey'
     operator = 'libertybus'
-    url = 'https://sojbuslivetimespublic.azurewebsites.net/api/Values/GetMin?secondsAgo=360'
+    url = 'http://sojbuslivetimespublic.azurewebsites.net/api/Values/GetMin?secondsAgo=360'
 
     def get_items(self):
         return super().get_items()['minimumInfoUpdates']
