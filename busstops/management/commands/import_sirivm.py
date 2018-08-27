@@ -124,7 +124,7 @@ class Command(ImportLiveVehiclesCommand):
                 vehicle.operator = service.operator.first()
                 vehicle.save()
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-            print(e, operator_ref, service, get_latlong(mvj))
+            print(e, operator_ref, service, services, get_latlong(mvj))
             service = None
 
         return vehicle, created, service

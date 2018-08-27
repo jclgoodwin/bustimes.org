@@ -39,6 +39,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
     @transaction.atomic
     def handle_item(self, item, now):
         vehicle, vehicle_created, service = self.get_vehicle_and_service(item)
+        if service and service.vehiclelocation_set.filter(current=True).exclude(source=self.source).exists():
+            return
         if vehicle_created:
             latest = None
         else:
