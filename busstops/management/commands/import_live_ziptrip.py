@@ -28,6 +28,18 @@ class Command(ImportLiveVehiclesCommand):
             operator_id = 'SESX'
         elif operator_id == 'CB':
             operator_id = ('CBUS', 'CACB')
+        elif operator_id == 'IOM':
+            operator_id = 'IMHR'
+            if item['routeName'] == 'IMR':
+                item['routeName'] = 'Isle of Man Steam Railway'
+            elif item['routeName'] == 'HT':
+                item['routeName'] = 'Douglas Bay Horse Tram'
+            elif item['routeName'] == 'MER':
+                item['routeName'] = 'Manx Electric Railway'
+            elif item['routeName'] == 'SMR':
+                item['routeName'] = 'Snaefell Mountain Railway'
+            else:
+                operator_id = 'bus-vannin'
 
         if operator_id in self.operators:
             operator = self.operators[operator_id]
@@ -67,7 +79,7 @@ class Command(ImportLiveVehiclesCommand):
                 if not vehicle.operator:
                     vehicle.operator = service.operator.first()
                     vehicle.save()
-            elif operator_id != 'Rtl' and operator_id != 'IOM':
+            elif operator_id != 'Rtl':
                 print(item)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             print(e, operator_id, item['routeName'])
