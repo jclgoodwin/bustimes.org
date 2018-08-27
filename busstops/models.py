@@ -842,7 +842,10 @@ class Vehicle(models.Model):
 
     class Meta():
         ordering = ('code',)
-        unique_together = ('code', 'source')
+        unique_together = (
+            ('code', 'source'),
+            ('code', 'operator')
+        )
 
     def __str__(self):
         code = self.code
