@@ -21,7 +21,8 @@
         }
         if (indicator) {
             var indicatorParts = indicator.split(' ');
-            if (indicatorParts.length === 2 && (indicatorParts[0] == 'Stop' || indicatorParts[0] === 'Bay' || indicatorParts[0] === 'Stand' || indicatorParts[0] === 'Stance')) {
+            var firstPart = indicatorParts[0].toLowerCase();
+            if (indicatorParts.length === 2 && (firstPart === 'stop' || firstPart === 'bay' || firstPart === 'stand' || firstPart === 'stance')) {
                 indicator = indicatorParts[1];
             } else {
                 indicator = indicator.slice(0, 3);
