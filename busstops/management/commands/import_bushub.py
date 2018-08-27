@@ -10,7 +10,7 @@ LOCAL_TIMEZONE = pytz.timezone('Europe/London')
 
 class Command(ImportLiveVehiclesCommand):
     source_name = 'BusHub'
-    url = 'https://portal.diamondbuses.com/api/buses/nearby?latitude&longitude'
+    url = 'http://portal.diamondbuses.com/api/buses/nearby?latitude&longitude'
 
     def get_vehicle_and_service(self, item):
         operator = Operator.objects.get(id=item['OperatorRef'])

@@ -1,5 +1,6 @@
 import ciso8601
 from django.contrib.gis.geos import Point
+from django.db.utils import IntegrityError
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import Operator, Vehicle, VehicleLocation, Service
 
@@ -43,11 +44,18 @@ class Command(ImportLiveVehiclesCommand):
             fleet_number = vehicle
         else:
             fleet_number = None
-        vehicle, created = Vehicle.objects.update_or_create(
-            {'fleet_number': fleet_number, 'operator': operator},
-            source=self.source,
-            code=vehicle
-        )
+        defaults = {
+             'fleet_number': fleet_number
+        }
+        if operator:
+            defaults['source'] = self.source
+            try:
+                vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
+            except IntegrityError:
+                defaults['operator'] = operator
+                vehicle, created = Vehicle.objects.get_or_create(defaults, source=self.source, code=vehicle)
+        else:
+            vehicle, created = Vehicle.objects.get_or_create(defaults, source=self.source, code=vehicle)
 
         service = None
         services = Service.objects.filter(line_name__iexact=item['routeName'], current=True)
@@ -56,6 +64,9 @@ class Command(ImportLiveVehiclesCommand):
                 service = services.get(operator=operator)
             elif type(operator_id) is tuple:
                 service = services.get(operator__in=operator_id)
+                if not vehicle.operator:
+                    vehicle.operator = service.operator.first()
+                    vehicle.save()
             elif operator_id != 'Rtl' and operator_id != 'IOM':
                 print(item)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
