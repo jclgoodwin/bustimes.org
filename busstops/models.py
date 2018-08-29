@@ -841,11 +841,7 @@ class Vehicle(models.Model):
     vehicle_type = models.ForeignKey(VehicleType, models.SET_NULL, null=True, blank=True)
 
     class Meta():
-        ordering = ('code',)
-        unique_together = (
-            ('code', 'source'),
-            ('code', 'operator')
-        )
+        unique_together = ('code', 'operator')
 
     def __str__(self):
         code = self.code
