@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "bf946093c52d0c8a5263fc45a4177007cffa2e71819ee6d1c21e3c1af5ac18fe"
+            "sha256": "17616eb1e83ba4ee5f7b463e992c96ac9974081533279cfe06b68ab8ec826262"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -206,9 +206,12 @@
             "version": "==0.5.6"
         },
         "multigtfs": {
-            "editable": true,
-            "git": "https://github.com/tulsawebdevs/django-multi-gtfs",
-            "ref": "ca19ee690f78f57f4e2cabc69cf713c87167319f"
+            "hashes": [
+                "sha256:2fbef1cf4c0a2cc30d81a554e7f8e26376e7e343dadf5f321aebdd46bcb20626",
+                "sha256:b3a45e88d605134b581dd5aa8db4b518e511ea92919fb513ca7343e70a8e7704"
+            ],
+            "index": "pypi",
+            "version": "==1.1.2"
         },
         "parse": {
             "hashes": [
