@@ -13,6 +13,7 @@ class Command(ImportLiveVehiclesCommand):
         return super().get_items()['minimumInfoUpdates']
 
     def get_vehicle_and_service(self, item):
+        del item['age']
         code = item['bus'].split('-')[-1]
         if code.isdigit():
             fleet_number = code
