@@ -89,7 +89,7 @@ class Command(ImportLiveVehiclesCommand):
     def create_vehicle_location(self, item, vehicle, service):
         bearing = item.get('bearing')
         while bearing and bearing < 0:
-            bearing += 180
+            bearing += 360
         position = item['position']
         return VehicleLocation(
             datetime=ciso8601.parse_datetime(item['reported']),
