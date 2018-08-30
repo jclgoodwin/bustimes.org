@@ -12,13 +12,13 @@
             minZoom: 6,
             maxZoom: 18,
         }),
-        // tileURL = 'https://bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
-        tileURL = 'https://maps.tilehosting.com/styles/basic/{z}/{x}/{y}.png?key=RXrAQ6RZ239ClCzC8uZj',
+        tileURL = 'https://maps.tilehosting.com/styles/basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png?key=RXrAQ6RZ239ClCzC8uZj',
         statusBar = L.control({
             position: 'topright'
         }),
         layer,
-        lastReq;
+        lastReq,
+        timeout;
 
     L.tileLayer(tileURL, {
         attribution: '© <a href="https://openmaptiles.org">OpenMapTiles</a> | © <a href="https://www.openstreetmap.org">OpenStreetMap contributors</a>'
@@ -114,14 +114,31 @@
             '/vehicles.json?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest(),
             function(data) {
                 processData(data);
-                setTimeout(function() {
+                timeout = setTimeout(function() {
                     load(map, statusBar);
                 }, 10000);
             }
         );
     }
 
-    map.setView([52.6, 1.1], 10);
+    function handleMoveEnd(event) {
+        var latLng = event.target.getCenter(),
+            string = map.getZoom() + '/' + latLng.lat + '/' + latLng.lng;
+
+        localStorage.setItem('vehicleMap', string);
+
+        clearTimeout(timeout);
+        load(map, statusBar);
+    }
+
+    map.on('moveend', Cowboy.debounce(500, handleMoveEnd));
+
+    if (localStorage.vehicleMap) {
+        var parts = localStorage.vehicleMap.split('/');
+        map.setView([parts[1], parts[2]], parts[0]);
+    } else {
+        map.setView([52.6, 1.1], 10);
+    }
 
     load(map, statusBar);
 })();

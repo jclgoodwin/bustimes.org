@@ -159,6 +159,7 @@ PIPELINE = {
         'vehicles': {
             'source_filenames': (
                 'js/bower_components/reqwest/reqwest.min.js',
+                'js/bower_components/jquery-throttle-debounce/jquery.ba-throttle-debounce.min.js',
                 'js/vehicles.js',
             ),
             'output_filename': 'js/vehicles.min.js',
