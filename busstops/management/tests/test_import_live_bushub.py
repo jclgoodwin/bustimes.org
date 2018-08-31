@@ -57,4 +57,3 @@ class BusHubTest(TestCase):
 
         self.assertEquals(143, location.heading)
         self.assertEquals('DIAM', location.vehicle.operator_id)
-
