@@ -39,3 +39,8 @@ class SiriVMImportTest(TestCase):
         command.handle_item(item, None)
         self.assertEqual(2, command.source.vehiclelocation_set.count())
         self.assertEqual(0, command.source.vehiclelocation_set.last().heading)
+
+        # test an item with an invalid delay ('-PT2M.492S')
+        item = next(items)
+        location = command.create_vehicle_location(item, vehicle, service)
+        self.assertIsNone(location.early)

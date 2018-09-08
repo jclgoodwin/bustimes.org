@@ -140,8 +140,11 @@ class Command(ImportLiveVehiclesCommand):
                 heading = None
         delay = mvj.find('siri:Delay', NS)
         if (delay is not None) and delay.text:
-            delay = parse_duration(delay.text)
-            early = -delay.total_seconds()  # "Early times are shown as negative values."
+            try:
+                delay = parse_duration(delay.text)
+                early = -delay.total_seconds()  # "Early times are shown as negative values."
+            except ValueError:
+                early = None
         else:
             early = None
         return VehicleLocation(
