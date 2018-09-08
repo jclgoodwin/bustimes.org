@@ -35,7 +35,8 @@ class Command(ImportLiveVehiclesCommand):
         if service:
             try:
                 service = vehicle.operator.service_set.get(current=True, line_name__iexact=service)
-            except Service.DoesNotExist:
+            except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+                print(e, service)
                 service = None
         else:
             service = None
