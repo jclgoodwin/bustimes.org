@@ -143,3 +143,12 @@ HCMN:
     phone: 075060 72309
 BBSR: # Banga Buses
     phone: 07472634061
+JSBT:
+    address: |
+        13 Hillside Road
+        Coundon
+        Bishop Auckland
+        DL14 8LS
+    url: ""
+    email: ""
+    phone: ""
