@@ -899,13 +899,13 @@ class Timetable(object):
             journeys['VJ_21-9-E-y08-1-40-UN'].departure_time = datetime.time(15, 45)
             journeys['VJ_21-9-E-y08-1-40-UN'].operating_profile = journeys['VJ_21-9-E-y08-1-11-T0'].operating_profile
 
-            journeys['VJ_21-9-E-y08-1-87-UU'].departure_time = datetime.time(7, 0)
-            journeys['VJ_21-9-E-y08-1-87-UU'].operating_profile = journeys['VJ_21-9-E-y08-1-11-T0'].operating_profile
+            journeys['VJ_21-9-E-y08-1-49-UO'].departure_time = datetime.time(7, 0)
+            journeys['VJ_21-9-E-y08-1-49-UO'].operating_profile = journeys['VJ_21-9-E-y08-1-11-T0'].operating_profile
 
-            journeys['VJ_21-9-E-y08-1-46-UO'].departure_time = datetime.time(7, 50)
+            journeys['VJ_21-9-E-y08-1-46-UO'].departure_time = datetime.time(7, 45)
             journeys['VJ_21-9-E-y08-1-46-UO'].operating_profile = journeys['VJ_21-9-E-y08-1-11-T0'].operating_profile
             journeys['VJ_21-9-E-y08-1-46-UO'].notes = {
-                'poo': 'Doesn’t serve Smiths Lane or Cramner Court, arrives at Oak Street at 08:25'
+                'poo': 'Doesn’t serve Morrisons, Smiths Lane or Cramner Court, arrives at Oak Street at 08:25'
             }
         elif self.service_code == '21-45-A-y08-1':  # 45 - Holt - Norwich
             journeys['VJ_21-45-A-y08-1-16-UN'].departure_time = datetime.time(6, 45)
