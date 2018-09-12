@@ -285,7 +285,7 @@ AKISMET_API_KEY = os.environ.get('AKISMET_API_KEY')
 AKISMET_SITE_URL = 'https://bustimes.org'
 
 IE_COLLECTIONS = (
-    'luasbus', 'dublinbus', 'kenneallys', 'locallink', 'irishrail', 'ferries',
+    'goahead', 'luasbus', 'dublinbus', 'kenneallys', 'locallink', 'irishrail', 'ferries',
     'manda', 'finnegans', 'citylink', 'nitelink', 'buseireann', 'mcgeehan',
     'mkilbride', 'expressbus', 'edmoore', 'collins', 'luas', 'sro',
     'dublincoach', 'burkes', 'mhealy', 'kearns', 'josfoley', 'buggy',
