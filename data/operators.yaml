@@ -152,3 +152,11 @@ JSBT:
     url: ""
     email: ""
     phone: ""
+FRMN:
+    name: FromeBus
+    url: http:///www.fromebus.co.uk
+    email: ""
+    address: |
+        Georges Ground
+        Frome
+        BA11 4RP
