@@ -892,27 +892,51 @@ class Timetable(object):
         }
 
         if self.service_code == '21-584-_-y08-1':  # 584 - Diss - Pulham Market
-            for key in journeys:
-                if journeys[key].departure_time == datetime.time(9, 50):
-                    journeys[key].departure_time = datetime.time(9, 20)
+            for journey in journeys.values():
+                if journey.departure_time == datetime.time(9, 50):
+                    journey.departure_time = datetime.time(9, 20)
         elif self.service_code == '21-9-E-y08-1':  # 9 - Holt - Fakenham
-            journeys['VJ_21-9-E-y08-1-40-UN'].departure_time = datetime.time(15, 45)
-            journeys['VJ_21-9-E-y08-1-40-UN'].operating_profile = journeys['VJ_21-9-E-y08-1-11-T0'].operating_profile
-
-            journeys['VJ_21-9-E-y08-1-49-UO'].departure_time = datetime.time(7, 0)
-            journeys['VJ_21-9-E-y08-1-49-UO'].operating_profile = journeys['VJ_21-9-E-y08-1-11-T0'].operating_profile
-
-            journeys['VJ_21-9-E-y08-1-46-UO'].departure_time = datetime.time(7, 45)
-            journeys['VJ_21-9-E-y08-1-46-UO'].operating_profile = journeys['VJ_21-9-E-y08-1-11-T0'].operating_profile
-            journeys['VJ_21-9-E-y08-1-46-UO'].notes = {
-                'poo': 'Doesn’t serve Morrisons, Smiths Lane or Cramner Court, arrives at Oak Street at 08:25'
+            for journey in journeys.values():
+                # some Saturday journeys are duplicated in the data
+                # with operating profiles like "every Monday except [list of every Monday in date range]"
+                # we can use this total bollocks to replace missing Monday to Friday journeys
+                if journey.operating_profile.regular_days == [0]: # Mondays
+                    if journey.departure_time == datetime.time(9, 15):
+                        holt_to_fakenham = journey
+                    elif journey.departure_time == datetime.time(11, 40):
+                        holt_to_fakenham_2 = journey
+                    elif journey.departure_time == datetime.time(10):
+                        fakenham_to_holt = journey
+                elif journey.departure_time == datetime.time(7, 10):
+                    monday_to_friday = journey.operating_profile
+            holt_to_fakenham.operating_profile = monday_to_friday
+            holt_to_fakenham_2.operating_profile = monday_to_friday
+            fakenham_to_holt.operating_profile = monday_to_friday
+            holt_to_fakenham.departure_time = datetime.time(7)
+            holt_to_fakenham_2.departure_time = datetime.time(7, 45)
+            holt_to_fakenham_2.notes = {
+                'poo': 'Fakenham Oak Street at 08:25'
             }
+            holt_to_fakenham_2.end_deadrun = 'JPL_21-9-E-y08-1-1-H-1-17'
+            fakenham_to_holt.departure_time = datetime.time(15, 45)
         elif self.service_code == '21-45-A-y08-1':  # 45 - Holt - Norwich
-            journeys['VJ_21-45-A-y08-1-16-UN'].departure_time = datetime.time(6, 45)
-            journeys['VJ_21-45-A-y08-1-16-UN'].operating_profile = journeys['VJ_21-45-A-y08-1-1-T0'].operating_profile
+            for journey in journeys.values():
+                if journey.departure_time == datetime.time(7, 10):
+                    if journey.operating_profile.regular_days == [0]:
+                        holt_to_norwich = journey
+                elif journey.departure_time == datetime.time(10, 50):
+                    monday_to_friday = journey.operating_profile
+            holt_to_norwich.operating_profile = monday_to_friday
+            holt_to_norwich.departure_time = datetime.time(6, 45)
         elif self.service_code == '21-43-_-y08-1':  # 43 - Reepham - Norwich
-            journeys['VJ_21-43-_-y08-1-34-UN'].departure_time = datetime.time(15, 45)
-            journeys['VJ_21-43-_-y08-1-34-UN'].operating_profile = journeys['VJ_21-43-_-y08-1-11-T0'].operating_profile
+            for journey in journeys.values():
+                if journey.departure_time == datetime.time(11, 30):
+                    if journey.operating_profile.regular_days == [0]:
+                        reepham_to_norwich = journey
+                elif journey.departure_time == datetime.time(9, 15):
+                    monday_to_friday = journey.operating_profile
+            reepham_to_norwich.operating_profile = monday_to_friday
+            reepham_to_norwich.departure_time = datetime.time(15, 45)
 
         # some journeys did not have a direct reference to a journeypattern,
         # but rather a reference to another journey with a reference to a journeypattern
