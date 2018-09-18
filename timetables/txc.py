@@ -900,7 +900,7 @@ class Timetable(object):
                 # some Saturday journeys are duplicated in the data
                 # with operating profiles like "every Monday except [list of every Monday in date range]"
                 # we can use this total bollocks to replace missing Monday to Friday journeys
-                if journey.operating_profile.regular_days == [0]: # Mondays
+                if journey.operating_profile.regular_days == [0]:  # Mondays
                     if journey.departure_time == datetime.time(9, 15):
                         holt_to_fakenham = journey
                     elif journey.departure_time == datetime.time(11, 40):
