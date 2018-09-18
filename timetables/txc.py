@@ -926,6 +926,13 @@ class Timetable(object):
                     monday_to_friday = journey.operating_profile
             reepham_to_norwich.operating_profile = monday_to_friday
             reepham_to_norwich.departure_time = datetime.time(15, 45)
+        elif self.service_code == '9-365-_-y11-1':
+            # 365 - Great Malvern - Welland - Upton
+            for key in list(journeys.keys()):
+                # shit to avoid "dictionary size changed during iteration"
+                journey = journeys[key]
+                if journey.departure_time == datetime.time(7, 18) or journey.departure_time == datetime.time(17, 18):
+                    del journeys[key]
 
         # some journeys did not have a direct reference to a journeypattern,
         # but rather a reference to another journey with a reference to a journeypattern
