@@ -518,17 +518,6 @@ class VehicleJourney(object):
 
         self.start_deadrun, self.end_deadrun = get_deadruns(element)
 
-        service_ref = element.find('txc:ServiceRef', NS)
-        if service_ref is not None:
-            # X29 - Fakenham - Norwich
-            if service_ref.text == '21-X29-A-y08-1':
-                if self.departure_time in (datetime.time(9, 9), datetime.time(9, 10)):
-                    self.departure_time = datetime.time(9, 18)
-                elif self.departure_time == datetime.time(6, 16):
-                    self.departure_time = datetime.time(6, 38)
-                elif self.departure_time.minute == 32:  # Sunday, Norwich to Fakenham
-                    self.departure_time = self.departure_time.replace(minute=35)
-
         self.operator = element.find('txc:OperatorRef', NS)
         if self.operator is not None:
             self.operator = self.operator.text
