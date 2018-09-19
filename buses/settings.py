@@ -12,7 +12,7 @@ ALLOWED_HOSTS = ['bustimes.org', 'localhost', 'reblochon.local', '192.168.1.66']
 
 DEBUG = bool(os.environ.get('DEBUG', False)) or 'test' in sys.argv
 
-SERVER_EMAIL = 'contact@bustimes.org.uk'
+SERVER_EMAIL = 'contact@bustimes.org'
 
 INSTALLED_APPS = [
     'django.contrib.admin',

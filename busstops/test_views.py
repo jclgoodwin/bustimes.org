@@ -33,9 +33,9 @@ class ContactTests(TestCase):
             })
         self.assertContains(response, '<h1>Thank you</h1>', html=True)
         self.assertEqual('Dear John,', mail.outbox[0].subject)
-        self.assertEqual('"Rufus Herring" <robot@bustimes.org.uk>', mail.outbox[0].from_email)
+        self.assertEqual('"Rufus Herring" <robot@bustimes.org>', mail.outbox[0].from_email)
         self.assertEqual(['rufus@example.com'], mail.outbox[0].reply_to)
-        self.assertEqual(['contact@bustimes.org.uk'], mail.outbox[0].to)
+        self.assertEqual(['contact@bustimes.org'], mail.outbox[0].to)
 
     def test_awin_post(self):
         self.assertEquals(400, self.client.get('/awin-transaction').status_code)
@@ -65,7 +65,7 @@ class ContactTests(TestCase):
             })
         })
         self.assertEqual('💷 67p on a £33.70 transaction', mail.outbox[0].subject)
-        self.assertEqual('🚌⏰🤖 <robot@bustimes.org.uk>', mail.outbox[0].from_email)
+        self.assertEqual('🚌⏰🤖 <robot@bustimes.org>', mail.outbox[0].from_email)
 
 
 class ViewsTests(TestCase):

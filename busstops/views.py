@@ -75,8 +75,8 @@ def contact(request):
             message = EmailMessage(
                 subject,
                 body,
-                '"%s" <%s>' % (form.cleaned_data['name'], 'robot@bustimes.org.uk'),
-                ('contact@bustimes.org.uk',),
+                '"%s" <%s>' % (form.cleaned_data['name'], 'robot@bustimes.org'),
+                ('contact@bustimes.org',),
                 reply_to=(form.cleaned_data['email'],),
             )
             message.send()
@@ -102,8 +102,8 @@ def awin_transaction(request):
     EmailMessage(
         '💷 {} on a {} transaction'.format(format_gbp(data['commission']), format_gbp(data['transactionAmount'])),
         message,
-        '%s <%s>' % ('🚌⏰🤖', 'robot@bustimes.org.uk'),
-        ('contact@bustimes.org.uk',)
+        '%s <%s>' % ('🚌⏰🤖', 'robot@bustimes.org'),
+        ('contact@bustimes.org',)
     ).send()
     return HttpResponse()
 
