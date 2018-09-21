@@ -35,7 +35,8 @@ class Command(ImportLiveVehiclesCommand):
         return vehicle, created, service
 
     def create_vehicle_location(self, item, vehicle, service):
-        when = datetime.strptime(item['RecordedAtTime'], '%d/%m/%Y %H:%M:%S').replace(tzinfo=LOCAL_TIMEZONE)
+        when = datetime.strptime(item['RecordedAtTime'], '%d/%m/%Y %H:%M:%S')
+        when = LOCAL_TIMEZONE.localize(when)
         bearing = item['Bearing']
         if bearing == '-1':
             bearing = None

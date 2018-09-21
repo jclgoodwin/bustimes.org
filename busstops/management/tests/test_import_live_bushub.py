@@ -54,6 +54,6 @@ class BusHubTest(TestCase):
         command.handle_item(item, self.source.datetime)
 
         location = VehicleLocation.objects.get()
-
+        self.assertEquals('2018-08-31 21:49:33+00:00', str(location.datetime))
         self.assertEquals(143, location.heading)
         self.assertEquals('DIAM', location.vehicle.operator_id)
