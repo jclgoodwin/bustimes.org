@@ -160,3 +160,8 @@ FRMN:
         Georges Ground
         Frome
         BA11 4RP
+FALC:
+    name: Falcon Buses
+    url: https://www.falconbuses.co.uk
+    email: ""
+    
