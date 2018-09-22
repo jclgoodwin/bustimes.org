@@ -154,7 +154,7 @@ JSBT:
     phone: ""
 FRMN:
     name: FromeBus
-    url: http:///www.fromebus.co.uk
+    url: http://www.fromebus.co.uk
     email: ""
     address: |
         Georges Ground
