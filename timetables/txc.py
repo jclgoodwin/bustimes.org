@@ -149,6 +149,9 @@ class Row(object):
     def is_minor(self):
         return self.part.timingstatus == 'OTH' or self.part.timingstatus == 'TIP'
 
+    def has_waittimes(self):
+        return any(type(cell) is Cell and cell.arrival_time != cell.departure_time for cell in self.times)
+
     def __repr__(self):
         return str(self.part.stop)
 
@@ -234,9 +237,6 @@ class Grouping(object):
         return self.rows and self.rows[-1].part.stop.is_at(locality_name)
 
     def do_heads_and_feet(self):
-        if all(len(row.sequencenumbers) == 1 for row in self.rows):
-            self.rows.sort(key=Row.get_order)
-
         journeys = [vj for vj in self.journeys if vj.should_show(self.parent.date, self.parent)]
         if not journeys:
             return
@@ -561,14 +561,15 @@ class VehicleJourney(object):
                         and stopusage.sequencenumber == 12)
                     or stopusage.stop.atco_code == '670088829' and time.hour == 11  # Shiel Buses ferry terminal
                 ):
-                    yield Cell(stopusage, time, time)
+                    if stopusage.wait_time:
+                        next_time = add_time(time, stopusage.wait_time)
+                        yield Cell(stopusage, time, next_time)
+                        time = next_time
+                    else:
+                        yield Cell(stopusage, time, time)
 
                 if self.end_deadrun == timinglink.id:
                     deadrun = True  # start of dead run
-
-                if stopusage.wait_time:
-                    time = add_time(time, stopusage.wait_time)
-                    yield Cell(stopusage, time, time)
 
     def add_times(self):
         # width before adding this journey column
@@ -586,7 +587,7 @@ class VehicleJourney(object):
             if previous_row:
                 if len(row.times) > initial_width + 1:
                     if row.part.stop.atco_code == previous_row.part.stop.atco_code:
-                        # assert previous_row.times[-1] == ''
+                        assert previous_row.times[-1] == ''
                         previous_row.times[-1] = row.times[-2]
                         row.times = row.times[:-2] + row.times[-1:]
 
@@ -598,7 +599,7 @@ class VehicleJourney(object):
                         while index >= 0:
                             previous_previous_row = rows[index]
                             if previous_previous_row.part.stop.atco_code == previous_row.part.stop.atco_code:
-                                # assert previous_previous_row.times[-1] == ''
+                                assert previous_previous_row.times[-1] == ''
                                 previous_previous_row.times[-1] = previous_row.times[-2]
                                 previous_row.times = previous_row.times[:-2] + previous_row.times[-1:]
                                 break

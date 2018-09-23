@@ -70,6 +70,20 @@
                                 {% endif %}
                             {% endfor %}
                             </tr>
+                            {% if row.has_waittimes %}
+                                <tr>
+                                    <th>
+                                        {% if row.part.stop.stop %}
+                                            <a href="{{ row.part.stop.stop.get_absolute_url }}">{{ row.part.stop.stop.get_qualified_name }}</a>
+                                        {% else %}
+                                            {{ row.part.stop }}
+                                        {% endif %}
+                                    </th>
+                                    {% for cell in row.times %}
+                                        <td>{{ cell.departure_time }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endif %}
                         {% endfor %}
                     </tbody>
                     {% if grouping.column_feet %}

@@ -211,6 +211,19 @@ class TimetableTest(TestCase):
         self.assertEqual(str(timetable.groupings[0]), 'Cardiff   - Cardiff Airport')
         self.assertEqual(str(timetable.groupings[1]), 'Cardiff Airport - Cardiff  ')
 
+    def test_timetable_plymouth(self):
+        timetable = txc.timetable_from_filename(FIXTURES_DIR, '20-plymouth-city-centre-plympton.xml', date(2018, 9, 24))
+        self.assertEqual(str(timetable.groupings[1].rows[0]), "Plympton Mudge Way")
+        self.assertEqual(str(timetable.groupings[1].rows[1]), "Plympton St Mary's Bridge")
+        self.assertEqual(str(timetable.groupings[1].rows[2]), "Underwood (Plymouth) Old Priory Junior School")
+        self.assertEqual(str(timetable.groupings[1].rows[3]), "Plympton Priory Junior School")
+        self.assertEqual(str(timetable.groupings[1].rows[4]), "Plympton St Mary's Church")
+        self.assertEqual(str(timetable.groupings[1].rows[6]), "Plympton St Mary's Church")
+        self.assertFalse(timetable.groupings[1].rows[4].has_waittimes())
+        self.assertFalse(timetable.groupings[1].rows[5].has_waittimes())
+        self.assertTrue(timetable.groupings[1].rows[6].has_waittimes())
+        self.assertFalse(timetable.groupings[1].rows[7].has_waittimes())
+
 
 class RepetitionTest(TestCase):
     def test_repetition(self):
