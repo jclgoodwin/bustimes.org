@@ -120,3 +120,5 @@ em_12-40-A-y08:
     description: Leicester Outer Circle
     inbound_description: Clockwise
     outbound_description: Anticlockwise
+HIDO001:
+    current: false
