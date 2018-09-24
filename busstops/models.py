@@ -839,6 +839,9 @@ class Vehicle(models.Model):
     source = models.ForeignKey(DataSource, models.CASCADE)
     operator = models.ForeignKey(Operator, models.SET_NULL, null=True, blank=True)
     vehicle_type = models.ForeignKey(VehicleType, models.SET_NULL, null=True, blank=True)
+    notes = models.CharField(max_length=255, blank=True)
+    latest_location = models.ForeignKey('VehicleLocation', models.SET_NULL, null=True, blank=True,
+                                        related_name='latest_vehicle')
 
     class Meta():
         unique_together = ('code', 'operator')
@@ -890,3 +893,10 @@ class VehicleLocation(models.Model):
                     return label[1]
             else:
                 return self.data.get('service') or self.data.get('service_name')
+
+
+class SIRISource(models.Model):
+    name = models.CharField(max_length=255)
+    url = models.URLField()
+    requestor_ref = models.CharField(max_length=255, blank=True)
+    admin_areas = models.ManyToManyField(AdminArea, blank=True)
