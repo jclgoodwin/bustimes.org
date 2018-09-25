@@ -50,7 +50,7 @@ class Command(ImportLiveVehiclesCommand):
                 operator = None
             self.operators[operator_id] = operator
         else:
-            operator = None
+            operator = Operator.objects.get(id=operator_id[0])
 
         if vehicle.isdigit():
             fleet_number = vehicle
@@ -72,13 +72,10 @@ class Command(ImportLiveVehiclesCommand):
         service = None
         services = Service.objects.filter(line_name__iexact=item['routeName'], current=True)
         try:
-            if operator:
-                service = services.get(operator=operator)
-            elif type(operator_id) is tuple:
+            if type(operator_id) is tuple:
                 service = services.get(operator__in=operator_id)
-                if not vehicle.operator:
-                    vehicle.operator = service.operator.first()
-                    vehicle.save()
+            elif operator:
+                service = services.get(operator=operator)
             elif operator_id != 'Rtl':
                 print(item)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
