@@ -887,37 +887,28 @@ class Timetable(object):
                     journey.departure_time = datetime.time(9, 20)
         elif self.service_code == '21-9-E-y08-1':  # 9 - Holt - Fakenham
             for journey in journeys.values():
-                # some Saturday journeys are duplicated in the data
-                # with operating profiles like "every Monday except [list of every Monday in date range]"
-                # we can use this total bollocks to replace missing Monday to Friday journeys
-                if journey.operating_profile.regular_days == [0]:  # Mondays
-                    if journey.departure_time == datetime.time(9, 15):
-                        holt_to_fakenham = journey
-                    elif journey.departure_time == datetime.time(11, 40):
-                        holt_to_fakenham_2 = journey
-                    elif journey.departure_time == datetime.time(10):
-                        fakenham_to_holt = journey
-                elif journey.departure_time == datetime.time(7, 10):
-                    monday_to_friday = journey.operating_profile
-            holt_to_fakenham.operating_profile = monday_to_friday
-            holt_to_fakenham_2.operating_profile = monday_to_friday
-            fakenham_to_holt.operating_profile = monday_to_friday
-            holt_to_fakenham.departure_time = datetime.time(7)
-            holt_to_fakenham_2.departure_time = datetime.time(7, 45)
-            holt_to_fakenham_2.notes = {
-                'poo': 'Fakenham Oak Street at 08:25'
-            }
-            holt_to_fakenham_2.end_deadrun = 'JPL_21-9-E-y08-1-1-H-1-17'
-            fakenham_to_holt.departure_time = datetime.time(15, 45)
+                if journey.departure_time in {datetime.time(7, 0), datetime.time(7, 45), datetime.time(15, 38)}:
+                    # remove "only after 14 october" restriction
+                    journey.operating_profile.nonoperation_days = [
+                        daterange for daterange in journey.operating_profile.nonoperation_days
+                        if daterange.end != datetime.date(2018, 10, 14)
+                    ]
+        elif self.service_code == '21-45A-_-y08-1':  # 45A Holt - Norwich
+            for journey in journeys.values():
+                if journey.departure_time == datetime.time(16, 8):
+                    # remove "only after 14 october" restriction
+                    journey.operating_profile.nonoperation_days = [
+                        daterange for daterange in journey.operating_profile.nonoperation_days
+                        if daterange.end != datetime.date(2018, 10, 14)
+                    ]
         elif self.service_code == '21-45-A-y08-1':  # 45 - Holt - Norwich
             for journey in journeys.values():
-                if journey.departure_time == datetime.time(7, 10):
-                    if journey.operating_profile.regular_days == [0]:
-                        holt_to_norwich = journey
-                elif journey.departure_time == datetime.time(10, 50):
-                    monday_to_friday = journey.operating_profile
-            holt_to_norwich.operating_profile = monday_to_friday
-            holt_to_norwich.departure_time = datetime.time(6, 45)
+                if journey.departure_time == datetime.time(6, 45):
+                    # remove "only after 14 october" restriction
+                    journey.operating_profile.nonoperation_days = [
+                        daterange for daterange in journey.operating_profile.nonoperation_days
+                        if daterange.end != datetime.date(2018, 10, 14)
+                    ]
         elif self.service_code == '21-43-_-y08-1':  # 43 - Reepham - Norwich
             for journey in journeys.values():
                 if journey.departure_time == datetime.time(11, 30):
