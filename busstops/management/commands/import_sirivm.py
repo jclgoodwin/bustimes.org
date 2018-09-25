@@ -91,7 +91,7 @@ class Command(ImportLiveVehiclesCommand):
             vehicle_code = vehicle_code[len(operator_ref) + 1:]
 
         vehicle, created = Vehicle.objects.get_or_create(
-            {'operator': operator},
+            operator=operator,
             source=self.source,
             code=vehicle_code
         )
