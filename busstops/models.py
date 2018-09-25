@@ -841,7 +841,7 @@ class Vehicle(models.Model):
     vehicle_type = models.ForeignKey(VehicleType, models.SET_NULL, null=True, blank=True)
     notes = models.CharField(max_length=255, blank=True)
     latest_location = models.ForeignKey('VehicleLocation', models.SET_NULL, null=True, blank=True,
-                                        related_name='latest_vehicle')
+                                        related_name='latest_vehicle', editable=False)
 
     class Meta():
         unique_together = ('code', 'operator')
