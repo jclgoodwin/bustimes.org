@@ -86,10 +86,14 @@ class Command(ImportLiveVehiclesCommand):
         except (Operator.MultipleObjectsReturned, Operator.DoesNotExist) as e:
             print(e, operator_ref, service)
 
+        vehicle_code = mvj.find('siri:VehicleRef', NS).text
+        if operator_ref and vehicle_code.startswith(operator_ref + '-'):
+            vehicle_code = vehicle_code[len(operator_ref) + 1:]
+
         vehicle, created = Vehicle.objects.get_or_create(
             {'operator': operator},
             source=self.source,
-            code=mvj.find('siri:VehicleRef', NS).text
+            code=vehicle_code
         )
 
         # TODO: use ServiceCodes for this
@@ -120,9 +124,6 @@ class Command(ImportLiveVehiclesCommand):
 
         try:
             service = services.get()
-            if service and vehicle.operator != service.operator.first():
-                vehicle.operator = service.operator.first()
-                vehicle.save()
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             print(e, operator_ref, service, services, get_latlong(mvj))
             service = None

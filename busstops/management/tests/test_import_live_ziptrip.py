@@ -39,6 +39,7 @@ class ZipTripTest(TestCase):
         location = VehicleLocation.objects.get()
 
         self.assertEquals(336, location.heading)
+        self.assertNotEquals(self.vehicle, location.vehicle)
         self.assertEquals('LYNX', location.vehicle.operator_id)
 
         item['vehicleCode'] = 'LAS_203'
@@ -48,3 +49,5 @@ class ZipTripTest(TestCase):
         self.assertEquals('GAHL', location.vehicle.operator_id)
         self.assertNotEquals(self.vehicle, location.vehicle)
         self.assertEquals(self.service, location.service)
+
+        self.assertEquals(3, Vehicle.objects.count())
