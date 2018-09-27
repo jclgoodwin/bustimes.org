@@ -540,6 +540,7 @@ def operator_vehicles(request, slug):
     return render(request, 'operator_vehicles.html', {
         'breadcrumb': [operator.region, operator],
         'object': operator,
+        'today': timezone.now().date(),
         'vehicles': operator.vehicle_set.order_by('fleet_number').select_related('vehicle_type',
                                                                                  'latest_location__service')
     })
