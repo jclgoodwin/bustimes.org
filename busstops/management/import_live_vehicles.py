@@ -66,6 +66,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
         # save new location
         location.current = True
         location.save()
+        vehicle.latest_location = location
+        vehicle.save()
         self.current_location_ids.add(location.id)
         if latest:
             # mark old location as not current
