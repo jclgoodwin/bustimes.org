@@ -9,11 +9,11 @@
 {% if vehicles %}
     <table>
         <tr>
-            <th scope="col">Vehicle</th>
-            <th scope="col">Fleet number</th>
+            <th scope="col"></th>
+            <th scope="col">№</th>
             <th scope="col">Reg</th>
             <th scope="col">Type</th>
-            <th scope="col">Double decker?</th>
+            <th scope="col">Last seen</th>
         </tr>
         {% for vehicle in vehicles %}
             <tr>
@@ -21,7 +21,20 @@
                 <td>{% if vehicle.fleet_number %}{{ vehicle.fleet_number }}{% endif %}</td>
                 <td>{% if vehicle.reg %}{{ vehicle.reg }}{% endif %}</td>
                 <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
-                <td>{% if vehicle.vehicle_type.double_decker %}Yes{% endif %}</td>
+                <td>
+                    {% if vehicle.latest_location %}
+                        {% if vehicle.latest_location.service %}
+                            <a href="{{ vehicle.latest_location.service.get_absolute_url }}">
+                                {{ vehicle.latest_location.service.line_name }}
+                            </a><br>
+                        {% endif %}
+                        {% if vehicle.latest_location.date == now %}
+                            {{ vehicle.latest_location.datetime.time }}
+                        {% else %}
+                            {{ vehicle.latest_location.datetime }}
+                        {% endif %}
+                    {% endif %}
+                </td>
             </tr>
         {% endfor %}
     </table>
