@@ -29,7 +29,7 @@
                             </a><br>
                         {% endif %}
                         {% if vehicle.latest_location.datetime.date == today %}
-                            {{ vehicle.latest_location.datetime.time }}
+                            {{ vehicle.latest_location.datetime | time }}
                         {% else %}
                             {{ vehicle.latest_location.datetime }}
                         {% endif %}
