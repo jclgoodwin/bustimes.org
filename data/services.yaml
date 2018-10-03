@@ -121,3 +121,7 @@ em_12-40-A-y08:
     outbound_description: Anticlockwise
 HIDO001:
     current: false
+BOBO131:
+    current: false
+NE_310_PM6161_131:
+    description: Jedburgh - Newcastle upon Tyne
