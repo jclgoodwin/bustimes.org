@@ -38,5 +38,5 @@ vcrpy = "*"
 mock = "*"
 coveralls = "*"
 coverage = "*"
-django-coverage-plugin = {git = "https://github.com/jambonsw/django_coverage_plugin", ref="fix_issue_51_change_token_type_for_django_21", editable=true}
+django-coverage-plugin = "*"
 ipython = "*"
