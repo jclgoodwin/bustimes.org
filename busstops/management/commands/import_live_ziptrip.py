@@ -8,7 +8,7 @@ from ...models import Operator, Vehicle, VehicleLocation, Service
 class Command(ImportLiveVehiclesCommand):
     operators = {}
     source_name = 'ZipTrip'
-    url = 'https://ziptrip-vps.api.urbanthings.cloud/api/0.2/vehiclepositions?maxLat=60&maxLng=10&minLng=-50&minLat=40'
+    url = 'http://ziptrip-vps.api.urbanthings.cloud/api/0.2/vehiclepositions?maxLat=60&maxLng=10&minLng=-50&minLat=40'
 
     def get_items(self):
         return super().get_items()['items']

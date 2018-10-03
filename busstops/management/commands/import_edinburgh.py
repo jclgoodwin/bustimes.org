@@ -4,7 +4,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
-    url = 'https://tfeapp.com/live/vehicles.php'
+    url = 'http://tfeapp.com/live/vehicles.php'
     source_name = 'TfE'
     operators = ('LOTH', 'EDTR', 'ECBU', 'NELB')
 

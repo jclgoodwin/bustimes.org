@@ -76,7 +76,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     def update(self):
         now = timezone.now()
-        self.source, source_created = DataSource.objects.get_or_create(
+        self.source, source_created = DataSource.objects.update_or_create(
             {'url': self.url, 'datetime': now},
             name=self.source_name
         )
