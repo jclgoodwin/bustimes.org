@@ -70,20 +70,20 @@ class ImportServicesTest(TestCase):
         with warnings.catch_warnings(record=True) as caught_warnings:
 
             # simulate an East Anglia zipfile:
-            cls.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml'])
+            cls.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml', 'ea_21-4-I-y08-1.xml'])
 
-            assert len(caught_warnings) == 1
+            assert len(caught_warnings) == 2
 
             # simulate a Scotland zipfile:
             cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml', 'CGAO305.xml'])
 
-            assert len(caught_warnings) == 2
+            assert len(caught_warnings) == 3
 
             # simulate a North West zipfile:
             cls.write_files_to_zipfile_and_import('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml',
                                                              'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
 
-            assert len(caught_warnings) == 5
+            assert len(caught_warnings) == 6
 
         cls.ea_service = Service.objects.get(pk='ea_21-13B-B-y08')
         cls.sc_service = Service.objects.get(pk='ABBN017')
@@ -320,6 +320,17 @@ class ImportServicesTest(TestCase):
             call_command(self.command, os.path.join(FIXTURES_DIR, 'EA.zip'))
         service.refresh_from_db()
         self.assertFalse(service.current)
+
+    def test_service_coasthopper_4(self):
+        service = Service.objects.get(service_code='ea_21-4-I-y08')
+
+        with freeze_time('2018-10-06'):
+            res = self.client.get(service.get_absolute_url())
+        self.assertContains(res, '<td>19:22</td>')
+
+        with freeze_time('2018-10-14'):
+            res = self.client.get(service.get_absolute_url())
+        self.assertContains(res, 'Sorry, no journeys found for Sunday 14 October 2018')
 
     @freeze_time('22 January 2017')
     def test_do_service_m11a(self):

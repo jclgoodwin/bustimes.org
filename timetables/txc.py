@@ -642,7 +642,12 @@ class VehicleJourney(object):
     def should_show(self, date, timetable=None):
         if not date:
             return True
-        region_id = timetable and timetable.service and timetable.service.region_id
+        if timetable and timetable.service:
+            if timetable.service.service_code == 'ea_21-4-I-y08' and date >= datetime.date(2018, 10, 14):
+                return False
+            region_id = timetable.service.region_id
+        else:
+            region_id = None
         if not self.operating_profile:
             return timetable and timetable.operating_profile.should_show(date, region_id)
         return self.operating_profile.should_show(date, region_id)
