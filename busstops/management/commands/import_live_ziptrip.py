@@ -67,7 +67,8 @@ class Command(ImportLiveVehiclesCommand):
                 defaults['operator'] = operator
                 vehicle, created = Vehicle.objects.get_or_create(defaults, source=self.source, code=vehicle)
         else:
-            vehicle, created = Vehicle.objects.get_or_create(defaults, source=self.source, code=vehicle)
+            vehicle = None
+            created = False
 
         service = None
         services = Service.objects.filter(line_name__iexact=item['routeName'], current=True)
