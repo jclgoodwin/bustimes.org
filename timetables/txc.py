@@ -985,7 +985,7 @@ class Timetable(object):
                     if type(cell) is Cell and not cell.last and cell.stopusage.activity == 'setDown':
                         return True
 
-    def __init__(self, open_file, date):
+    def __init__(self, open_file, date=None, service=None):
         iterator = ET.iterparse(open_file)
 
         element = None
@@ -1089,6 +1089,7 @@ class Timetable(object):
         if all(len(g.journeys) for g in self.groupings):
             self.groupings.sort(key=Grouping.get_order)
 
+        self.service = service
         self.set_date(date)
 
 

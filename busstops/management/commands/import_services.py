@@ -164,7 +164,7 @@ class Command(BaseCommand):
         (for the NCSD), does stuff
         """
 
-        timetable = Timetable(open_file, None)
+        timetable = Timetable(open_file)
 
         if not hasattr(timetable, 'element'):
             return

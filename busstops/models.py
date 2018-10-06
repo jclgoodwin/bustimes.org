@@ -698,7 +698,8 @@ class Service(models.Model):
                 timetables = []
                 for xml_file in self.get_files_from_zipfile():
                     with xml_file:
-                        timetable = (txc.Timetable(xml_file, day))
+                        timetable = txc.Timetable(xml_file, day, self)
+                    del timetable.service
                     del timetable.journeypatterns
                     del timetable.stops
                     del timetable.operators
