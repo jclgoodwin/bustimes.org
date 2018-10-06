@@ -127,3 +127,7 @@ NE_310_PM6161_131:
     description: Jedburgh - Newcastle upon Tyne
 ea_21-98-_-y08:
     description: Foulsham - Fakenham
+ea_21-CH1-_-y08:
+    line_brand: Coasthopper
+ea_21-CH2-_-y08:
+    line_brand: Coasthopper
