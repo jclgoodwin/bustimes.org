@@ -85,6 +85,9 @@ class HogiaImportTest(TestCase):
         vehicle.code = 'MX_53_JVF'
         self.assertEqual(vehicle.get_reg(), 'MX53JVF')
 
+        vehicle.code = 'Handheld'
+        self.assertIsNone(vehicle.get_reg())
+
         vehicle.code = '33824'
         self.assertIsNone(vehicle.get_reg())
 

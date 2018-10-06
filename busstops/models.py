@@ -855,7 +855,7 @@ class Vehicle(models.Model):
 
     def get_reg(self):
         reg = self.code.split('-')[-1].replace('_', ' ')
-        if not reg.isdigit():
+        if not reg.isdigit() and reg.isupper():
             reg = reg.split()
             if reg[0].isdigit():
                 reg = reg[-2:]
