@@ -15,9 +15,9 @@ class Command(ImportLiveVehiclesCommand):
     def get_vehicle_and_service(self, item):
         operator = Operator.objects.get(id=item['OperatorRef'])
         try:
-            service = operator.service_set.get(current=True, line_name=item['LineRef'])
+            service = operator.service_set.get(current=True, line_name=item['PublishedLineName'])
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-            print(e, operator, item['LineRef'])
+            print(e, operator, item['PublishedLineName'], item['DestinationRef'])
             service = None
 
         code = item['VehicleRef']
