@@ -2,7 +2,7 @@ import math
 import requests
 import logging
 from time import sleep
-from django.db import OperationalError, transaction
+from django.db import OperationalError, IntegrityError, transaction
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from ..models import DataSource
@@ -90,8 +90,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
             old_locations = self.source.vehiclelocation_set.filter(current=True)
             old_locations = old_locations.exclude(id__in=self.current_location_ids)
             print(old_locations.update(current=False), end='\t', flush=True)
-        except (requests.exceptions.RequestException, TypeError, ValueError) as e:
+        except (requests.exceptions.RequestException, IntegrityError, TypeError, ValueError) as e:
             print(e)
+            logger.error(e, exc_info=True)
             self.source.vehiclelocation_set.filter(current=True).update(current=False)
             return 120
 
