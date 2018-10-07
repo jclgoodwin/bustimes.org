@@ -33,3 +33,7 @@ class SiriVMImportTest(TestCase):
 
         response = self.client.get('/operators/guernsey/vehicles')
         self.assertContains(response, '362 - 46893')
+
+        # B-1GV
+        item['name'] = '1965-35428'
+        command.handle_item(item, self.source.datetime)

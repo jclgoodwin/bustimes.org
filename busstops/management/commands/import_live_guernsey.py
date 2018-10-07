@@ -16,7 +16,8 @@ class Command(ImportLiveVehiclesCommand):
         defaults = {
             'operator_id': self.operator,
         }
-        defaults['fleet_number'], defaults['reg'] = code.split('_-_')
+        if '_-_' in code:
+            defaults['fleet_number'], defaults['reg'] = code.split('_-_')
         vehicle, created = Vehicle.objects.get_or_create(
             defaults,
             source=self.source,
