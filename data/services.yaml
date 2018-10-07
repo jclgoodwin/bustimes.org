@@ -1,3 +1,4 @@
+# Sanders
 ea_21-9-E-y08:
     description: Holt - Briston - Melton Constable - Fakenham
 ea_21-X40-_-y08:
@@ -29,14 +30,13 @@ ea_21-17-A-y08:
     description: Cromer - Gresham - Sheringham - West Runton
 ea_21-18-_-y08:
     description: North Walsham - Aylsham - Cromer
-ea_21-D-A-y08:
-    current: false
-ea_21-E-A-y08:
-    current: false
-ea_21-H-A-y08:
-    current: false
-ea_21-R-A-y08:
-    current: false
+ea_21-98-_-y08:
+    description: Foulsham - Fakenham
+ea_21-CH1-_-y08:
+    line_brand: Coasthopper
+ea_21-CH2-_-y08:
+    line_brand: Coasthopper
+# FromeBus
 swe_47-58-_-y10:
     current: false
 swe_47-58A-_-y10:
@@ -45,6 +45,7 @@ swe_47-58B-_-y10:
     current: false
 swe_47-58C-_-y10:
     current: false
+# Remove Whincop Coaches school services
 suf_48-TM1-_-y08:
     current: false
 suf_48-TM2-_-y08:
@@ -63,6 +64,7 @@ sro-288:
     current: false
 expressbus-787:
     current: false
+# Shiel Buses
 HIAN041:
     timetable_wrong: true
 HIAN044:
@@ -125,9 +127,8 @@ BOBO131:
     current: false
 NE_310_PM6161_131:
     description: Jedburgh - Newcastle upon Tyne
-ea_21-98-_-y08:
-    description: Foulsham - Fakenham
-ea_21-CH1-_-y08:
-    line_brand: Coasthopper
-ea_21-CH2-_-y08:
-    line_brand: Coasthopper
+# Hadrian's Wall Country Bus - back in Easter 2019
+NE_310_PB3954_AD12:
+    current: false
+NE_310_PB3954_X122:
+    current: false
