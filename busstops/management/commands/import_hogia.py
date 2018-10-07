@@ -18,12 +18,6 @@ class Command(ImportLiveVehiclesCommand):
         label = item['Label']
         if ': ' in label:
             vehicle, service = label.split(': ', 1)
-            service = service.split('/', 1)[0]
-            try:
-                service = Service.objects.get(servicecode__scheme=self.source_name, servicecode__code=service)
-            except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-                print(e, service)
-                service = None
         else:
             service = None
 
@@ -31,6 +25,16 @@ class Command(ImportLiveVehiclesCommand):
             source=self.source,
             code=label.split(': ')[0]
         )
+
+        if service:
+            service = service.split('/', 1)[0]
+            try:
+                service = Service.objects.get(servicecode__scheme=self.source_name, servicecode__code=service)
+            except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+                print(e, vehicle.operator, service)
+                service = None
+        else:
+            service = None
 
         return vehicle, vehicle_created, service
 
