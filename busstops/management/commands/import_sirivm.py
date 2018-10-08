@@ -142,5 +142,4 @@ class Command(ImportLiveVehiclesCommand):
             datetime=ciso8601.parse_datetime(datetime),
             latlong=latlong,
             heading=heading,
-            early=early
         )
