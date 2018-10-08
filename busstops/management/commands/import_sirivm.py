@@ -1,7 +1,6 @@
 import ciso8601
 import xml.etree.cElementTree as ET
 from django.contrib.gis.geos import Point
-from isodate import parse_duration
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import Vehicle, VehicleLocation, Operator, Service
 
