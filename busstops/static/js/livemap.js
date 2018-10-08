@@ -25,7 +25,7 @@
     }).addTo(map);
 
     if (window.geometry) {
-        var polyline = L.geoJson(window.geometry, {
+        polyline = L.geoJson(window.geometry, {
             style: {
                 weight: 2
             }
@@ -56,9 +56,9 @@
 
     function processData(data) {
         if (data.features.length === 0) {
-            busesOnlineCount.innerHTML = 'No buses online.'
+            busesOnlineCount.innerHTML = 'No buses online.';
         } else if (data.features.length === 1) {
-            busesOnlineCount.innerHTML = '1 bus online.'
+            busesOnlineCount.innerHTML = '1 bus online.';
         } else {
             busesOnlineCount.innerHTML = data.features.length + ' buses online.';
         }
