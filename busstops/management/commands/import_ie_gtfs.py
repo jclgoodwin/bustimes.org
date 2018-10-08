@@ -112,11 +112,13 @@ class Command(BaseCommand):
             ServiceCode.objects.create(service=service, scheme=collection + ' GTFS', code=route.route_id)
 
             if route.agency:
-                operator = Operator.objects.get_or_create(name=route.agency.name, defaults={
-                    'id': route.agency.agency_id,
+                operator, created = Operator.objects.get_or_create({
+                    'name': route.agency.name,
                     'region_id': 'LE',
                     'vehicle_mode': defaults['mode']
-                })[0]
+                }, id=route.agency.id, region__in=['CO', 'UL', 'MU', 'LE', 'NI'])
+                if not created and operator.name != route.agency.name:
+                    print(operator.name, route.agency.name)
                 service.operator.add(operator)
                 operators.add(operator)
 
