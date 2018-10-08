@@ -31,7 +31,6 @@ class SiriVMImportTest(TestCase):
         location = command.create_vehicle_location(item, vehicle, service)
         self.assertEqual('2018-08-06 21:44:32+01:00', str(location.datetime))
         self.assertIsNone(location.heading)
-        self.assertEqual(-471, location.early)
 
         locations = command.source.vehiclelocation_set
 
