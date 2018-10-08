@@ -1,7 +1,3 @@
-{% if not object.get_buses_online %}
-    <div class="map-wrapper"><div id="map"></div></div>
-{% endif %}
-
 {% for stopusage in stopusages %}
     {% ifchanged stopusage.direction %}
         {% if not forloop.first %}</ul>{% endif %}
@@ -19,23 +15,9 @@
         <ul class="route">
     {% endifchanged %}
     {% ifchanged stopusage.stop %}
-        <li class="{{ stopusage.timing_status }}" itemscope itemtype="https://schema.org/BusStop">
-            <a href="{{ stopusage.stop.get_absolute_url }}">
-                <span itemprop="name">{{ stopusage.stop.get_qualified_name }}</span>
-                {% if stopusage.stop.latlong %}
-                    <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
-                        <meta itemprop="latitude" content="{{ stopusage.stop.latlong.y }}" />
-                        <meta itemprop="longitude" content="{{ stopusage.stop.latlong.x }}" />
-                    </span>
-                {% endif %}
-            </a>
-        </li>
+        <li class="{{ stopusage.timing_status }}"><a href="{{ stopusage.stop.get_absolute_url }}">{{ stopusage.stop.get_qualified_name }}</a></li>
     {% endifchanged %}
     {% if forloop.last %}
         </ul>
     {% endif %}
 {% endfor %}
-
-{% if object.geometry %}
-    <script>window.geometry = {{ object.geometry.merged.json|safe }};</script>
-{% endif %}

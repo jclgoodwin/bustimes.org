@@ -9,10 +9,11 @@
     */
 
     var map = L.map('map', {
-            minZoom: 7,
             tap: false
         }),
         tileURL = 'https://bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
+        polyline,
+        busesOnlineCount = document.getElementById('buses-online-count'),
         statusBar = L.control({
             position: 'topright'
         }),
@@ -22,6 +23,16 @@
     L.tileLayer(tileURL, {
         attribution: '© <a href="https://openmaptiles.org">OpenMapTiles</a> | © <a href="https://www.openstreetmap.org">OpenStreetMap contributors</a>'
     }).addTo(map);
+
+    if (window.geometry) {
+        var polyline = L.geoJson(window.geometry, {
+            style: {
+                weight: 2
+            }
+        });
+        polyline.addTo(map);
+        map.fitBounds(polyline.getBounds());
+    }
 
     statusBar.onAdd = function () {
         var div = L.DomUtil.create('div', 'hugemap-status');
@@ -44,6 +55,14 @@
     }
 
     function processData(data) {
+        if (data.features.length === 0) {
+            busesOnlineCount.innerHTML = 'No buses online.'
+        } else if (data.features.length === 1) {
+            busesOnlineCount.innerHTML = '1 bus online.'
+        } else {
+            busesOnlineCount.innerHTML = data.features.length + ' buses online.';
+        }
+
         layer && layer.clearLayers();
         layer = L.geoJson(data, {
             pointToLayer: function (data, latlng) {
@@ -91,7 +110,7 @@
         });
         layer.addTo(map);
         var bounds = layer.getBounds();
-        if (bounds.isValid() && (!map._loaded || !map.getBounds().contains(bounds))) {
+        if (bounds.isValid() && (!map._loaded || !map.getBounds().overlaps(bounds))) {
             map.fitBounds(bounds, {
                 padding: [20, 20],
                 maxZoom: 12
@@ -115,5 +134,7 @@
         });
     }
 
-    load(map, statusBar);
+    if (busesOnlineCount) {
+        load(map, statusBar);
+    }
 })();

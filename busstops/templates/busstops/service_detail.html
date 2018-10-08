@@ -28,6 +28,9 @@
 {% if object.get_buses_online %}
     <p><strong id="buses-online-count">{{ object.get_buses_online }} bus{{ object.get_buses_online|pluralize:"es" }} online.</strong>
     This live map might be incomplete or out of date. Click on a bus to see when it last updated</p>
+{% endif %}
+
+{% if object.geometry or object.get_buses_online %}
     <p><div class="service-map" id="map" data-service="{{ object.service_code }}"></div></p>
 {% endif %}
 
@@ -148,10 +151,12 @@
 
 {% load pipeline %}
 
-{% if object.get_buses_online %}
+{% if object.geometry or object.get_buses_online %}
+    {% if object.geometry %}
+        <script>window.geometry = {{ object.geometry.merged.json|safe }};</script>
+    {% endif %}
+
     {% javascript 'livemap' %}
-{% elif stopusages %}
-    {% javascript 'map' %}
 {% endif %}
 
 {% if timetables %}
