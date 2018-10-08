@@ -116,7 +116,7 @@ class Command(BaseCommand):
                     'name': route.agency.name,
                     'region_id': 'LE',
                     'vehicle_mode': defaults['mode']
-                }, id=route.agency.id, region__in=['CO', 'UL', 'MU', 'LE', 'NI'])
+                }, id=route.agency.agency_id, region__in=['CO', 'UL', 'MU', 'LE', 'NI'])
                 if not created and operator.name != route.agency.name:
                     print(operator.name, route.agency.name)
                 service.operator.add(operator)

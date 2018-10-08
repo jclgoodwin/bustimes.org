@@ -5,7 +5,7 @@ from datetime import date, time
 from django.test import TestCase, override_settings
 from django.conf import settings
 from django.core.management import call_command
-from busstops.models import Region, AdminArea, StopPoint, Service
+from busstops.models import Region, AdminArea, StopPoint, Service, Operator
 
 
 FIXTURES_DIR = os.path.join(settings.BASE_DIR, 'busstops', 'management', 'tests', 'fixtures')
@@ -42,6 +42,9 @@ class GTFSTest(TestCase):
             region_id='UL'
         )
 
+        # Create an existing operator (with a slightly different name) to test that it is re-used
+        Operator.objects.create(id=132, name='Seumas Doherty', region=cls.leinster)
+
         for collection in settings.IE_COLLECTIONS:
             dir_path = os.path.join(FIXTURES_DIR, 'google_transit_' + collection)
             feed_path = dir_path + '.zip'
@@ -65,6 +68,9 @@ class GTFSTest(TestCase):
         stop = StopPoint.objects.get(atco_code='822000153')
         self.assertEqual(stop.common_name, 'Terenure Library')
         self.assertEqual(stop.admin_area_id, 822)
+
+    def test_operator(self):
+        self.assertEqual(Operator.objects.count(), 2)
 
     def test_small_timetable(self):
         service = Service.objects.get(service_code='mortons-165')
