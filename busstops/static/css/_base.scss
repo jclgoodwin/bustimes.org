@@ -55,6 +55,11 @@ label {
     cursor: pointer;
 }
 
+summary {
+    font-weight: bold;
+    margin: 1em 0;
+}
+
 header {
     background: $brand-color;
     overflow: hidden;

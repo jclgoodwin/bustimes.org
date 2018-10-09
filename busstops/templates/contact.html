@@ -14,32 +14,48 @@
 
 {% else %}
 
-    <h1>Contact bustimes.org</h1>
+    <h1>Contact</h1>
 
-    <p>I’m <strong>not</strong> a bus operating company –
-    I just make this independent, unofficial website (bustimes.org).</p>
+    <p>What would you like to contact me about?</p>
 
-    <p>So I <strong>can’t</strong> help you with:</p>
+    <details>
+        <summary>Lost property</summary>
 
-    <ul class="bulleted">
-        <li>lost property</li>
-        <li>complaints about a bus</li>
-        <li>ticket prices</li>
-        <li>urgent enquiries</li>
-    </ul>
+        <p>I don’t operate any bus services – just this independent, unofficial website – so I can’t help you find items you’ve left on a bus. Sorry.</p>
 
-    <p>Sorry.</p>
+        <p>You can find links to most bus operating companies’ websites, and contact details, elsewhere on this website.</p>
+    </details>
 
-    {% load email_obfuscator %}
+    <details>
+        <summary>Complaint about a bus service</summary>
 
-    <p>But to contact me <strong>about this website</strong>,
-    you can email {{ 'contact@bustimes.org'|obfuscate_mailto }} or use this form:</p>
+        <p>I don’t operate any bus services – just this independent, unofficial website. Sorry.</p>
 
-    <form action="/contact" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Send" />
-    </form>
+        <p>You can find links to most bus operating companies’ websites, and contact details, elsewhere on this website.</p>
+    </details>
+
+    <details>
+        <summary>Enquiry about fares</summary>
+
+        <p>I don’t have any information about ticket prices – sorry.</p>
+
+        <p>However, a few bus operating companies do offer this information on their websites. You can find links to their websites elsewhere on this website.</p>
+    </details>
+
+    <details>
+        <summary>This website, bustimes.org</summary>
+
+        {% load email_obfuscator %}
+
+        <p>To contact me about this website,
+        you can email {{ 'contact@bustimes.org'|obfuscate_mailto }} or use this form:</p>
+
+        <form action="/contact" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Send" />
+        </form>
+    </details>
 
 {% endif %}
 
