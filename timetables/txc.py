@@ -900,30 +900,6 @@ class Timetable(object):
             for journey in journeys.values():
                 if journey.departure_time == datetime.time(9, 50):
                     journey.departure_time = datetime.time(9, 20)
-        elif self.service_code == '21-9-E-y08-1':  # 9 - Holt - Fakenham
-            for journey in journeys.values():
-                if journey.departure_time in {datetime.time(7, 0), datetime.time(7, 45), datetime.time(15, 38)}:
-                    # remove "only after 14 october" restriction
-                    journey.operating_profile.nonoperation_days = [
-                        daterange for daterange in journey.operating_profile.nonoperation_days
-                        if daterange.end != datetime.date(2018, 10, 14)
-                    ]
-        elif self.service_code == '21-45A-_-y08-1':  # 45A Holt - Norwich
-            for journey in journeys.values():
-                if journey.departure_time == datetime.time(16, 8):
-                    # remove "only after 14 october" restriction
-                    journey.operating_profile.nonoperation_days = [
-                        daterange for daterange in journey.operating_profile.nonoperation_days
-                        if daterange.end != datetime.date(2018, 10, 14)
-                    ]
-        elif self.service_code == '21-45-A-y08-1':  # 45 - Holt - Norwich
-            for journey in journeys.values():
-                if journey.departure_time == datetime.time(6, 45):
-                    # remove "only after 14 october" restriction
-                    journey.operating_profile.nonoperation_days = [
-                        daterange for daterange in journey.operating_profile.nonoperation_days
-                        if daterange.end != datetime.date(2018, 10, 14)
-                    ]
         elif self.service_code == '21-43-_-y08-1':  # 43 - Reepham - Norwich
             for journey in journeys.values():
                 if journey.departure_time == datetime.time(11, 30):
