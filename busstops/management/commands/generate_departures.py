@@ -117,7 +117,7 @@ def handle_region(region):
                 day += ONE_DAY
         else:
             for i, xml_file in enumerate(service.get_files_from_zipfile()):
-                timetable = txc.Timetable(xml_file)
+                timetable = txc.Timetable(xml_file, None, service)
                 day = today
                 while day <= NEXT_WEEK:
                     handle_timetable(service, timetable, day)
