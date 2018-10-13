@@ -34,7 +34,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
     current_location_ids = set()
 
     def get_items(self):
-        return self.session.get(self.url, timeout=5).json()
+        response = self.session.get(self.url, timeout=5)
+        if response.ok:
+            return response.json()
+        return ()
 
     @transaction.atomic
     def handle_item(self, item, now):
