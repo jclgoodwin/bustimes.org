@@ -105,7 +105,11 @@ class Stop(object):
     locality = None
 
     def __init__(self, element):
-        self.atco_code = element.find('txc:StopPointRef', NS).text or ''
+        self.atco_code = element.find('txc:StopPointRef', NS)
+        if self.atco_code is None:
+            self.atco_code = element.find('txc:AtcoCode', NS)
+        if self.atco_code is not None:
+            self.atco_code = self.atco_code.text or ''
         self.common_name = element.find('txc:CommonName', NS)
         self.locality = element.find('txc:LocalityName', NS)
         if self.common_name is not None:
@@ -996,10 +1000,8 @@ class Timetable(object):
             tag = element.tag[33:]
 
             if tag == 'StopPoints':
-                self.stops = {
-                    stop.find('txc:StopPointRef', NS).text: Stop(stop)
-                    for stop in element
-                }
+                stops = (Stop(stop) for stop in element)
+                self.stops = {stop.atco_code: stop for stop in stops}
                 element.clear()
             elif tag == 'Routes':
                 routes = {
