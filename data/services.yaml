@@ -22,10 +22,9 @@ ea_21-43-_-y08:
 ea_21-43A-_-y08:
     description: Norwich - Aylsham
     current: true
-ea_21-4-I-y08:
-    description: Wells-next-the-Sea - Sheringham - Cromer
 ea_21-5-B-y08:
     description: North Walsham - Cromer - Sheringham - Holt
+    line_brand:
 ea_21-17-A-y08:
     description: Cromer - Gresham - Sheringham - West Runton
 ea_21-18-_-y08:
