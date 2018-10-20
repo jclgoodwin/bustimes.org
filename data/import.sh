@@ -71,7 +71,7 @@ cd ..
 
 # Translink Metro
 metro_old=$(shasum metro.zip)
-wget -qN https://www.opendatani.gov.uk/dataset/6d9677cf-8d03-4851-985c-16f73f7dd5fb/resource/f2c58049-7ca9-4576-b3bd-1b3d8a8674e0/download/metro.zip
+wget -qN https://www.opendatani.gov.uk/dataset/6d9677cf-8d03-4851-985c-16f73f7dd5fb/resource/f2c58049-7ca9-4576-b3bd-1b3d8a8674e0/download/metro--glider.zip
 metro_new=$(shasum metro.zip)
 if [[ "$metro_old" != "$metro_new" ]]; then
     rm -r Metro
