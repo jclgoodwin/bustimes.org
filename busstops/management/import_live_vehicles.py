@@ -44,15 +44,16 @@ class ImportLiveVehiclesCommand(BaseCommand):
         vehicle, vehicle_created, service = self.get_vehicle_and_service(item)
         if not vehicle:
             return
-        if vehicle.vehiclelocation_set.filter(current=True).exclude(source=self.source).exists():
-            return
         if vehicle_created:
             latest = None
         else:
-            latest = vehicle.vehiclelocation_set.filter(current=True).last()
-        if latest and (type(item) is dict and latest.data == item):
-            self.current_location_ids.add(latest.id)
-            return
+            latest = vehicle.latest_location
+            if latest and latest.current:
+                if latest.source != self.source:
+                    return  # defer to other source
+                if (type(item) is dict and latest.data == item):
+                    self.current_location_ids.add(latest.id)
+                    return  # no change
         location = self.create_vehicle_location(item, vehicle, service)
         if type(item) is dict:
             location.data = item
