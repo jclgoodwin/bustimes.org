@@ -1,6 +1,8 @@
 import math
 import requests
 import logging
+import sys
+from setproctitle import setproctitle
 from time import sleep
 from django.db import OperationalError, IntegrityError, transaction
 from django.core.management.base import BaseCommand
@@ -103,7 +105,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         return 40
 
     def handle(self, *args, **options):
-
+        setproctitle(sys.argv[1])
         while True:
             try:
                 wait = self.update()
