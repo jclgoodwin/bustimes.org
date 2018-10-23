@@ -22,6 +22,7 @@ class Command(BaseCommand):
     def set_up():
         for id, name in (
                 ('MET', 'Translink Metro'),
+                ('GDR', 'Glider'),
                 ('ULB', 'Ulsterbus'),
                 ('GLE', 'Goldline Express'),
                 ('UTS', 'Ulsterbus Town Services'),
@@ -186,7 +187,7 @@ class Command(BaseCommand):
         Service.objects.filter(region_id='NI').update(current=False)
         StopUsage.objects.filter(service__region_id='NI').delete()
 
-        for dirpath in ('metro_data', 'Metro', 'ULB'):
+        for dirpath in ('Metro', 'ULB'):
             for dirpath, _, filenames in os.walk(os.path.join(settings.DATA_DIR, dirpath)):
                 for filename in filenames:
                     path = os.path.join(dirpath, filename)

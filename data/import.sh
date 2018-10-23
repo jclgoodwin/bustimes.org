@@ -70,12 +70,13 @@ fi
 cd ..
 
 # Translink Metro
-metro_old=$(shasum metro.zip)
+metro_old=$(shasum metro--glider.zip)
 wget -qN https://www.opendatani.gov.uk/dataset/6d9677cf-8d03-4851-985c-16f73f7dd5fb/resource/f2c58049-7ca9-4576-b3bd-1b3d8a8674e0/download/metro--glider.zip
-metro_new=$(shasum metro.zip)
+metro_new=$(shasum metro--glider.zip)
 if [[ "$metro_old" != "$metro_new" ]]; then
     rm -r Metro
-    unzip metro.zip
+    mkdir Metro
+    unzip metro--glider.zip -d Metro
     echo "Translink Metro"
 fi
 
