@@ -89,6 +89,7 @@ def correct_description(description):
             ('City Centre,st Stephens Street', 'Norwich'),
             ('Charlton Horethore', 'Charlton Horethorne'),
             ('Camleford', 'Camelford'),
+            ('Greenstead Green', 'Greensted Green'),
             ('Tinagel', 'Tintagel'),
             ('- ', ' - '),
             (' -', ' - '),
