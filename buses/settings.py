@@ -153,7 +153,7 @@ PIPELINE = {
             ),
             'output_filename': 'js/hugemap.min.js',
             'extra_context': {
-                'async': True
+                'async': not DEBUG
             }
         },
         'vehicles': {
@@ -164,7 +164,7 @@ PIPELINE = {
             ),
             'output_filename': 'js/vehicles.min.js',
             'extra_context': {
-                'async': True
+                'async': not DEBUG
             }
         },
         'livemap': {
@@ -175,7 +175,7 @@ PIPELINE = {
             ),
             'output_filename': 'js/livemap.min.js',
             'extra_context': {
-                'async': True
+                'async': not DEBUG
             }
         },
 
