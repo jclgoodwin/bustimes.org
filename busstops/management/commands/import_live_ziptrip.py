@@ -40,6 +40,11 @@ class Command(ImportLiveVehiclesCommand):
                 item['routeName'] = 'Snaefell Mountain Railway'
             else:
                 operator_id = 'bus-vannin'
+        elif operator_id == 'Rtl':
+            if item['routeName'].startswith('K'):
+                item['routeName'] = item['routeName'][1:]
+                operator_id = 'KENN'
+            operator_id = ('RBUS', 'GLRB')
 
         if operator_id in self.operators:
             operator = self.operators[operator_id]
@@ -77,7 +82,7 @@ class Command(ImportLiveVehiclesCommand):
                 service = services.get(operator__in=operator_id)
             elif operator:
                 service = services.get(operator=operator)
-            elif operator_id != 'Rtl':
+            else:
                 print(item)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             print(e, operator_id, item['routeName'])

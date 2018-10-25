@@ -40,6 +40,8 @@ class Command(ImportLiveVehiclesCommand):
         'RL': ('RLNE',),
         'FT': ('FTVA',),
         'FD': ('FDOR',),
+        'RB': ('RBUS', 'GLRB'),
+        'TV': ('THVB',),
     }
 
     def get_items(self):
@@ -76,7 +78,7 @@ class Command(ImportLiveVehiclesCommand):
         service = mvj.find('siri:LineRef', NS).text
 
         try:
-            if operator_ref and not (operator_ref in {'TV', 'RB'} or operator_ref == 'TV' and not service):
+            if operator_ref:
                 operator_options = self.operators.get(operator_ref)
                 if operator_options:
                     operator = Operator.objects.get(id=operator_options[0])
@@ -90,9 +92,11 @@ class Command(ImportLiveVehiclesCommand):
             vehicle_code = vehicle_code[len(operator_ref) + 1:]
 
         vehicle, created = Vehicle.objects.get_or_create(
+            {
+                'source': self.source
+            },
             operator=operator,
-            source=self.source,
-            code=vehicle_code
+            code=vehicle_code,
         )
 
         # TODO: use ServiceCodes for this
@@ -106,6 +110,8 @@ class Command(ImportLiveVehiclesCommand):
             service = 'Sandon Park & Ride'
         elif service == '701' and operator_ref == 'FE':
             service = 'Chelmsford Park & Ride'
+        elif service == 'Gold':
+            service = service.upper()
         elif service and service[:3] == 'BOB':
             service = service[:3] + ' ' + service[3] + ' ' + service[4:]
 
