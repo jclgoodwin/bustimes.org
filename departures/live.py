@@ -609,7 +609,7 @@ def get_departures(stop, services, bot=False):
         live_rows = None
 
         # Belfast
-        if any(operator.id == 'MET' for operator in operators):
+        if any(operator.id == 'MET' or operator.id == 'GDR' for operator in operators):
             live_rows = AcisConnectDepartures('belfast', stop, services, now).get_departures()
             if live_rows:
                 blend(departures, live_rows)
