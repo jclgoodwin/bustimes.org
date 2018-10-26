@@ -1,4 +1,3 @@
-import ciso8601
 import xml.etree.cElementTree as ET
 from django.contrib.gis.geos import Point
 from ..import_live_vehicles import ImportLiveVehiclesCommand
