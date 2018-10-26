@@ -11,8 +11,8 @@ NS = {'siri': 'http://www.siri.org.uk/siri'}
 def get_latlong(mvj):
     vl = mvj.find('siri:VehicleLocation', NS)
     lat = vl.find('siri:Latitude', NS).text
-    long = vl.find('siri:Longitude', NS).text
-    return Point(float(long), float(lat))
+    lon = vl.find('siri:Longitude', NS).text
+    return Point(float(lon), float(lat))
 
 
 def items_from_response(response):

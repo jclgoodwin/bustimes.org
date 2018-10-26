@@ -1,0 +1,171 @@
+interactions:
+- request:
+    body: "\n            <soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n
+      \           xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n
+      \               <soap12:Body>\n                    <GetVehiclesNearPoint xmlns=\"http://www.acishorizon.com/\">\n
+      \                       \n                        <maxResults>100</maxResults>\n
+      \                   </GetVehiclesNearPoint>\n                </soap12:Body>\n
+      \           </soap12:Envelope>\n        "
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['498']
+      User-Agent: [python-requests/2.19.1]
+      content-type: [application/soap+xml]
+    method: POST
+    uri: http://belfastapp.acishorizon.com/DataService.asmx
+  response:
+    body: {string: '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetVehiclesNearPointResponse
+        xmlns="http://www.acishorizon.com/"><GetVehiclesNearPointResult><ExtensionData
+        /><ErrorCode>100</ErrorCode><PublicServices /><Stops /><Vehicles><VehicleRealtime><ExtensionData
+        /><VehicleDestination>Wellington Place</VehicleDestination><VehicleDistance>6070958</VehicleDistance><VehicleId>95</VehicleId><VehicleJourneyId>8429</VehicleJourneyId><VehicleLastStopPassed>842</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.53843139</VehicleLatitude><VehicleLinkProgress>-1</VehicleLinkProgress><VehicleLongitude>-6.01421833</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>9A</VehiclePublicServiceCode><VehicleSsi>0</VehicleSsi><VehicleType>Scania
+        Solar</VehicleType></VehicleRealtime><VehicleRealtime><ExtensionData /><VehicleDestination>Four
+        Winds</VehicleDestination><VehicleDistance>6071500</VehicleDistance><VehicleId>363</VehicleId><VehicleJourneyId>8101</VehicleJourneyId><VehicleLastStopPassed>739</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.55220056</VehicleLatitude><VehicleLinkProgress>-1</VehicleLinkProgress><VehicleLongitude>-5.89562333</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>7A</VehiclePublicServiceCode><VehicleSsi>0</VehicleSsi></VehicleRealtime><VehicleRealtime><ExtensionData
+        /><VehicleDestination>Donegall Sq West</VehicleDestination><VehicleDistance>6071513</VehicleDistance><VehicleId>279</VehicleId><VehicleJourneyId>9933</VehicleJourneyId><VehicleLastStopPassed>1661</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.54886889</VehicleLatitude><VehicleLinkProgress>0.61000001430511475</VehicleLinkProgress><VehicleLongitude>-5.94214</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>78</VehiclePublicServiceCode><VehicleSsi>4</VehicleSsi><VehicleType>Eclipse
+        Gemini</VehicleType></VehicleRealtime><VehicleRealtime><ExtensionData /><VehicleDestination>Laurelgrove</VehicleDestination><VehicleDistance>6071823</VehicleDistance><VehicleId>332</VehicleId><VehicleJourneyId>8162</VehicleJourneyId><VehicleLastStopPassed>742</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.55543917</VehicleLatitude><VehicleLinkProgress>-1</VehicleLinkProgress><VehicleLongitude>-5.89135167</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>7B</VehiclePublicServiceCode><VehicleSsi>0</VehicleSsi></VehicleRealtime><VehicleRealtime><ExtensionData
+        /><VehicleDestination>Dundonald P&amp;R</VehicleDestination><VehicleDistance>6071964</VehicleDistance><VehicleId>514</VehicleId><VehicleJourneyId>58</VehicleJourneyId><VehicleLastStopPassed>469</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.54649611</VehicleLatitude><VehicleLinkProgress>-1</VehicleLinkProgress><VehicleLongitude>-6.02815833</VehicleLongitude><VehicleOperatorId>2</VehicleOperatorId><VehicleOperatorName>Translink
+        Glider</VehicleOperatorName><VehiclePublicServiceCode>G1</VehiclePublicServiceCode><VehicleSsi>0</VehicleSsi></VehicleRealtime><VehicleRealtime><ExtensionData
+        /><VehicleDestination>City Centre</VehicleDestination><VehicleDistance>6071986</VehicleDistance><VehicleId>427</VehicleId><VehicleJourneyId>8040</VehicleJourneyId><VehicleLastStopPassed>570</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.5563725</VehicleLatitude><VehicleLinkProgress>0.52999997138977051</VehicleLinkProgress><VehicleLongitude>-5.89874167</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>7B</VehiclePublicServiceCode><VehicleSsi>4</VehicleSsi></VehicleRealtime><VehicleRealtime><ExtensionData
+        /><VehicleDestination>Colin Town Centre</VehicleDestination><VehicleDistance>6072375</VehicleDistance><VehicleId>437</VehicleId><VehicleJourneyId>10454</VehicleJourneyId><VehicleLastStopPassed>1091</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.55023361</VehicleLatitude><VehicleLinkProgress>0</VehicleLinkProgress><VehicleLongitude>-6.02796333</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>10D</VehiclePublicServiceCode><VehicleSsi>3</VehicleSsi></VehicleRealtime><VehicleRealtime><ExtensionData
+        /><VehicleDestination>Newtownbreda Tesco</VehicleDestination><VehicleDistance>6072723</VehicleDistance><VehicleId>10</VehicleId><VehicleJourneyId>9968</VehicleJourneyId><VehicleLastStopPassed>1687</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.56224361</VehicleLatitude><VehicleLinkProgress>-1</VehicleLinkProgress><VehicleLongitude>-5.90965667</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>78</VehiclePublicServiceCode><VehicleSsi>0</VehicleSsi><VehicleType>Volvo
+        Eclipse</VehicleType></VehicleRealtime><VehicleRealtime><ExtensionData /><VehicleDestination>Wellington
+        Place</VehicleDestination><VehicleDistance>6073143</VehicleDistance><VehicleId>352</VehicleId><VehicleJourneyId>8242</VehicleJourneyId><VehicleLastStopPassed>778</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.56286944</VehicleLatitude><VehicleLinkProgress>0.63999998569488525</VehicleLinkProgress><VehicleLongitude>-5.95233833</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>8B</VehiclePublicServiceCode><VehicleSsi>12</VehicleSsi></VehicleRealtime><VehicleRealtime><ExtensionData
+        /><VehicleDestination>Wellington Place</VehicleDestination><VehicleDistance>6073251</VehicleDistance><VehicleId>195</VehicleId><VehicleJourneyId>8428</VehicleJourneyId><VehicleLastStopPassed>851</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.56142556</VehicleLatitude><VehicleLinkProgress>0.81000000238418579</VehicleLinkProgress><VehicleLongitude>-5.98475167</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>9A</VehiclePublicServiceCode><VehicleSsi>10</VehicleSsi><VehicleType>Volvo
+        Gemini</VehicleType></VehicleRealtime></Vehicles></GetVehiclesNearPointResult></GetVehiclesNearPointResponse></soap:Body></soap:Envelope>'}
+    headers:
+      Cache-Control: ['private, max-age=0']
+      Content-Length: ['6923']
+      Content-Type: [application/soap+xml; charset=utf-8]
+      Date: ['Fri, 26 Oct 2018 11:52:45 GMT']
+      Server: [Microsoft-IIS/7.5]
+      Set-Cookie: [ASP.NET_SessionId=k1pkxai3jjjkzo0hu34cegw3; path=/; HttpOnly]
+      X-AspNet-Version: [4.0.30319]
+      X-Frame-Options: [SAMEORIGIN]
+      X-Powered-By: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: "\n            <soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n
+      \           xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n
+      \               <soap12:Body>\n                    <GetVehiclesNearPoint xmlns=\"http://www.acishorizon.com/\">\n
+      \                       <latitude>-5.9169</latitude><longitude>54.5957</longitude>\n
+      \                       <maxResults>100</maxResults>\n                    </GetVehiclesNearPoint>\n
+      \               </soap12:Body>\n            </soap12:Envelope>\n        "
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['556']
+      Cookie: [ASP.NET_SessionId=k1pkxai3jjjkzo0hu34cegw3]
+      User-Agent: [python-requests/2.19.1]
+      content-type: [application/soap+xml]
+    method: POST
+    uri: http://belfastapp.acishorizon.com/DataService.asmx
+  response:
+    body: {string: '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetVehiclesNearPointResponse
+        xmlns="http://www.acishorizon.com/"><GetVehiclesNearPointResult><ExtensionData
+        /><ErrorCode>100</ErrorCode><PublicServices /><Stops /><Vehicles><VehicleRealtime><ExtensionData
+        /><VehicleDestination>Dundonald P&amp;R</VehicleDestination><VehicleDistance>8709407</VehicleDistance><VehicleId>447</VehicleId><VehicleJourneyId>9512</VehicleJourneyId><VehicleLastStopPassed>488</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.5958575</VehicleLatitude><VehicleLinkProgress>-1</VehicleLinkProgress><VehicleLongitude>-5.79798</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>4A</VehiclePublicServiceCode><VehicleSsi>0</VehicleSsi></VehicleRealtime><VehicleRealtime><ExtensionData
+        /><VehicleDestination>McKinstry Road</VehicleDestination><VehicleDistance>8709998</VehicleDistance><VehicleId>528</VehicleId><VehicleJourneyId>184</VehicleJourneyId><VehicleLastStopPassed>509</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.59484889</VehicleLatitude><VehicleLinkProgress>0.699999988079071</VehicleLinkProgress><VehicleLongitude>-5.80923</VehicleLongitude><VehicleOperatorId>2</VehicleOperatorId><VehicleOperatorName>Translink
+        Glider</VehicleOperatorName><VehiclePublicServiceCode>G1</VehiclePublicServiceCode><VehicleSsi>2</VehicleSsi></VehicleRealtime><VehicleRealtime><ExtensionData
+        /><VehicleDestination>Donegall Sq West</VehicleDestination><VehicleDistance>8710049</VehicleDistance><VehicleId>282</VehicleId><VehicleJourneyId>9671</VehicleJourneyId><VehicleLastStopPassed>498</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.59493167</VehicleLatitude><VehicleLinkProgress>0.20999999344348907</VehicleLinkProgress><VehicleLongitude>-5.81005</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>4D</VehiclePublicServiceCode><VehicleSsi>1</VehicleSsi><VehicleType>Eclipse
+        Gemini</VehicleType></VehicleRealtime><VehicleRealtime><ExtensionData /><VehicleDestination>Millmount
+        Road</VehicleDestination><VehicleDistance>8711163</VehicleDistance><VehicleId>101</VehicleId><VehicleJourneyId>9734</VehicleJourneyId><VehicleLastStopPassed>1369</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.58808278</VehicleLatitude><VehicleLinkProgress>0</VehicleLinkProgress><VehicleLongitude>-5.83577</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>4C</VehiclePublicServiceCode><VehicleSsi>28</VehicleSsi><VehicleType>Scania
+        Solar</VehicleType></VehicleRealtime><VehicleRealtime><ExtensionData /><VehicleDestination>Braniel
+        Terminus</VehicleDestination><VehicleDistance>8711195</VehicleDistance><VehicleId>72</VehicleId><VehicleJourneyId>9787</VehicleJourneyId><VehicleLastStopPassed>1364</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.58110222</VehicleLatitude><VehicleLinkProgress>0.47999998927116394</VehicleLinkProgress><VehicleLongitude>-5.84267833</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>4E</VehiclePublicServiceCode><VehicleSsi>36</VehicleSsi><VehicleType>Volvo
+        Eclipse</VehicleType></VehicleRealtime><VehicleRealtime><ExtensionData /><VehicleDestination>Braniel
+        Terminus</VehicleDestination><VehicleDistance>8712253</VehicleDistance><VehicleId>231</VehicleId><VehicleJourneyId>7738</VehicleJourneyId><VehicleLastStopPassed>644</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.57917194</VehicleLatitude><VehicleLinkProgress>0.62999999523162842</VehicleLinkProgress><VehicleLongitude>-5.862945</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>5A</VehiclePublicServiceCode><VehicleSsi>26</VehicleSsi><VehicleType>Alexander
+        Dennis</VehicleType></VehicleRealtime><VehicleRealtime><ExtensionData /><VehicleDestination>Donegall
+        Sq West</VehicleDestination><VehicleDistance>8712422</VehicleDistance><VehicleId>22</VehicleId><VehicleJourneyId>9272</VehicleJourneyId><VehicleLastStopPassed>1395</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.60386361</VehicleLatitude><VehicleLinkProgress>0.15000000596046448</VehicleLinkProgress><VehicleLongitude>-5.843455</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>20</VehiclePublicServiceCode><VehicleSsi>10</VehicleSsi><VehicleType>Scania
+        Solar</VehicleType></VehicleRealtime><VehicleRealtime><ExtensionData /><VehicleDestination>Donegall
+        Sq West</VehicleDestination><VehicleDistance>8712424</VehicleDistance><VehicleId>232</VehicleId><VehicleJourneyId>9707</VehicleJourneyId><VehicleLastStopPassed>1321</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.59030278</VehicleLatitude><VehicleLinkProgress>0.68000000715255737</VehicleLinkProgress><VehicleLongitude>-5.855815</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>4E</VehiclePublicServiceCode><VehicleSsi>9</VehicleSsi><VehicleType>Alexander
+        Dennis</VehicleType></VehicleRealtime><VehicleRealtime><ExtensionData /><VehicleDestination>Laurelgrove</VehicleDestination><VehicleDistance>8712646</VehicleDistance><VehicleId>332</VehicleId><VehicleJourneyId>8162</VehicleJourneyId><VehicleLastStopPassed>742</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.55543917</VehicleLatitude><VehicleLinkProgress>-1</VehicleLinkProgress><VehicleLongitude>-5.89135167</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>7B</VehiclePublicServiceCode><VehicleSsi>0</VehicleSsi></VehicleRealtime><VehicleRealtime><ExtensionData
+        /><VehicleDestination>Four Winds</VehicleDestination><VehicleDistance>8712723</VehicleDistance><VehicleId>363</VehicleId><VehicleJourneyId>8101</VehicleJourneyId><VehicleLastStopPassed>739</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.55220056</VehicleLatitude><VehicleLinkProgress>-1</VehicleLinkProgress><VehicleLongitude>-5.89562333</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>7A</VehiclePublicServiceCode><VehicleSsi>0</VehicleSsi></VehicleRealtime></Vehicles></GetVehiclesNearPointResult></GetVehiclesNearPointResponse></soap:Body></soap:Envelope>'}
+    headers:
+      Cache-Control: ['private, max-age=0']
+      Content-Length: ['7026']
+      Content-Type: [application/soap+xml; charset=utf-8]
+      Date: ['Fri, 26 Oct 2018 11:52:45 GMT']
+      Server: [Microsoft-IIS/7.5]
+      X-AspNet-Version: [4.0.30319]
+      X-Frame-Options: [SAMEORIGIN]
+      X-Powered-By: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: "\n            <soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n
+      \           xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n
+      \               <soap12:Body>\n                    <GetVehiclesNearPoint xmlns=\"http://www.acishorizon.com/\">\n
+      \                       <latitude>-5.9364</latitude><longitude>54.6898</longitude>\n
+      \                       <maxResults>100</maxResults>\n                    </GetVehiclesNearPoint>\n
+      \               </soap12:Body>\n            </soap12:Envelope>\n        "
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['556']
+      Cookie: [ASP.NET_SessionId=k1pkxai3jjjkzo0hu34cegw3]
+      User-Agent: [python-requests/2.19.1]
+      content-type: [application/soap+xml]
+    method: POST
+    uri: http://belfastapp.acishorizon.com/DataService.asmx
+  response:
+    body: {string: '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetVehiclesNearPointResponse
+        xmlns="http://www.acishorizon.com/"><GetVehiclesNearPointResult><ExtensionData
+        /><ErrorCode>100</ErrorCode><PublicServices /><Stops /><Vehicles><VehicleRealtime><ExtensionData
+        /><VehicleDestination>Dundonald P&amp;R</VehicleDestination><VehicleDistance>8716632</VehicleDistance><VehicleId>447</VehicleId><VehicleJourneyId>9512</VehicleJourneyId><VehicleLastStopPassed>488</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.5958575</VehicleLatitude><VehicleLinkProgress>-1</VehicleLinkProgress><VehicleLongitude>-5.79798</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>4A</VehiclePublicServiceCode><VehicleSsi>0</VehicleSsi></VehicleRealtime><VehicleRealtime><ExtensionData
+        /><VehicleDestination>McKinstry Road</VehicleDestination><VehicleDistance>8717223</VehicleDistance><VehicleId>528</VehicleId><VehicleJourneyId>184</VehicleJourneyId><VehicleLastStopPassed>509</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.59484889</VehicleLatitude><VehicleLinkProgress>0.699999988079071</VehicleLinkProgress><VehicleLongitude>-5.80923</VehicleLongitude><VehicleOperatorId>2</VehicleOperatorId><VehicleOperatorName>Translink
+        Glider</VehicleOperatorName><VehiclePublicServiceCode>G1</VehiclePublicServiceCode><VehicleSsi>2</VehicleSsi></VehicleRealtime><VehicleRealtime><ExtensionData
+        /><VehicleDestination>Donegall Sq West</VehicleDestination><VehicleDistance>8717274</VehicleDistance><VehicleId>282</VehicleId><VehicleJourneyId>9671</VehicleJourneyId><VehicleLastStopPassed>498</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.59493167</VehicleLatitude><VehicleLinkProgress>0.20999999344348907</VehicleLinkProgress><VehicleLongitude>-5.81005</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>4D</VehiclePublicServiceCode><VehicleSsi>1</VehicleSsi><VehicleType>Eclipse
+        Gemini</VehicleType></VehicleRealtime><VehicleRealtime><ExtensionData /><VehicleDestination>Millmount
+        Road</VehicleDestination><VehicleDistance>8718390</VehicleDistance><VehicleId>101</VehicleId><VehicleJourneyId>9734</VehicleJourneyId><VehicleLastStopPassed>1369</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.58808278</VehicleLatitude><VehicleLinkProgress>0</VehicleLinkProgress><VehicleLongitude>-5.83577</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>4C</VehiclePublicServiceCode><VehicleSsi>28</VehicleSsi><VehicleType>Scania
+        Solar</VehicleType></VehicleRealtime><VehicleRealtime><ExtensionData /><VehicleDestination>Braniel
+        Terminus</VehicleDestination><VehicleDistance>8718423</VehicleDistance><VehicleId>72</VehicleId><VehicleJourneyId>9787</VehicleJourneyId><VehicleLastStopPassed>1364</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.58110222</VehicleLatitude><VehicleLinkProgress>0.47999998927116394</VehicleLinkProgress><VehicleLongitude>-5.84267833</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>4E</VehiclePublicServiceCode><VehicleSsi>36</VehicleSsi><VehicleType>Volvo
+        Eclipse</VehicleType></VehicleRealtime><VehicleRealtime><ExtensionData /><VehicleDestination>Braniel
+        Terminus</VehicleDestination><VehicleDistance>8719483</VehicleDistance><VehicleId>231</VehicleId><VehicleJourneyId>7738</VehicleJourneyId><VehicleLastStopPassed>644</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.57917194</VehicleLatitude><VehicleLinkProgress>0.62999999523162842</VehicleLinkProgress><VehicleLongitude>-5.862945</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>5A</VehiclePublicServiceCode><VehicleSsi>26</VehicleSsi><VehicleType>Alexander
+        Dennis</VehicleType></VehicleRealtime><VehicleRealtime><ExtensionData /><VehicleDestination>Donegall
+        Sq West</VehicleDestination><VehicleDistance>8719648</VehicleDistance><VehicleId>22</VehicleId><VehicleJourneyId>9272</VehicleJourneyId><VehicleLastStopPassed>1395</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.60386361</VehicleLatitude><VehicleLinkProgress>0.15000000596046448</VehicleLinkProgress><VehicleLongitude>-5.843455</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>20</VehiclePublicServiceCode><VehicleSsi>10</VehicleSsi><VehicleType>Scania
+        Solar</VehicleType></VehicleRealtime><VehicleRealtime><ExtensionData /><VehicleDestination>Donegall
+        Sq West</VehicleDestination><VehicleDistance>8719652</VehicleDistance><VehicleId>232</VehicleId><VehicleJourneyId>9707</VehicleJourneyId><VehicleLastStopPassed>1321</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.59030278</VehicleLatitude><VehicleLinkProgress>0.68000000715255737</VehicleLinkProgress><VehicleLongitude>-5.855815</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>4E</VehiclePublicServiceCode><VehicleSsi>9</VehicleSsi><VehicleType>Alexander
+        Dennis</VehicleType></VehicleRealtime><VehicleRealtime><ExtensionData /><VehicleDestination>Laurelgrove</VehicleDestination><VehicleDistance>8719880</VehicleDistance><VehicleId>332</VehicleId><VehicleJourneyId>8162</VehicleJourneyId><VehicleLastStopPassed>742</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.55543917</VehicleLatitude><VehicleLinkProgress>-1</VehicleLinkProgress><VehicleLongitude>-5.89135167</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>7B</VehiclePublicServiceCode><VehicleSsi>0</VehicleSsi></VehicleRealtime><VehicleRealtime><ExtensionData
+        /><VehicleDestination>Four Winds</VehicleDestination><VehicleDistance>8719957</VehicleDistance><VehicleId>363</VehicleId><VehicleJourneyId>8101</VehicleJourneyId><VehicleLastStopPassed>739</VehicleLastStopPassed><VehicleLateness>0</VehicleLateness><VehicleLatitude>54.55220056</VehicleLatitude><VehicleLinkProgress>-1</VehicleLinkProgress><VehicleLongitude>-5.89562333</VehicleLongitude><VehicleOperatorId>1</VehicleOperatorId><VehicleOperatorName>Translink
+        Metro</VehicleOperatorName><VehiclePublicServiceCode>7A</VehiclePublicServiceCode><VehicleSsi>0</VehicleSsi></VehicleRealtime></Vehicles></GetVehiclesNearPointResult></GetVehiclesNearPointResponse></soap:Body></soap:Envelope>'}
+    headers:
+      Cache-Control: ['private, max-age=0']
+      Content-Length: ['7026']
+      Content-Type: [application/soap+xml; charset=utf-8]
+      Date: ['Fri, 26 Oct 2018 11:52:45 GMT']
+      Server: [Microsoft-IIS/7.5]
+      X-AspNet-Version: [4.0.30319]
+      X-Frame-Options: [SAMEORIGIN]
+      X-Powered-By: [ASP.NET]
+    status: {code: 200, message: OK}
+version: 1
