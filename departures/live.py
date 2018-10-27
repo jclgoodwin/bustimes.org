@@ -227,17 +227,16 @@ class AcisHorizonDepartures(Departures):
 
     def get_response(self):
         data = """
-            <soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
-                <soap12:Body>
+            <s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope">
+                <s:Body>
                     <GetArrivalsForStops xmlns="http://www.acishorizon.com/">
                         <stopRefs>
                             <string>{}</string>
                         </stopRefs>
                         <maxResults>10</maxResults>
                     </GetArrivalsForStops>
-                </soap12:Body>
-            </soap12:Envelope>
+                </s:Body>
+            </s:Envelope>
         """.format(self.stop.pk)
         return SESSION.post(self.url, headers=self.headers, data=data, timeout=5)
 
@@ -253,13 +252,14 @@ class AcisHorizonDepartures(Departures):
             'destination': item.find('a:Destination', self.ns).text
         }
         time = item.find('a:TimeAsDateTime', self.ns).text
-        time = parse_datetime(time)
-        if item.find('a:IsPredicted', self.ns).text == 'true':
-            row['live'] = time
-            row['time'] = None
-        else:
-            row['time'] = time
-        return row
+        if time:
+            time = parse_datetime(time)
+            if item.find('a:IsPredicted', self.ns).text == 'true':
+                row['live'] = time
+                row['time'] = None
+            else:
+                row['time'] = time
+            return row
 
 
 class TransportApiDepartures(Departures):

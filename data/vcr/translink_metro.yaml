@@ -49,4 +49,41 @@ interactions:
       X-Frame-Options: [SAMEORIGIN]
       X-Powered-By: [ASP.NET]
     status: {code: 200, message: OK}
+- request:
+    body: "\n            <s:Envelope xmlns:s=\"http://www.w3.org/2003/05/soap-envelope\">\n
+      \               <s:Body>\n                    <GetArrivalsForStops xmlns=\"http://www.acishorizon.com/\">\n
+      \                       <stopRefs>\n                            <string>700000000748</string>\n
+      \                       </stopRefs>\n                        <maxResults>10</maxResults>\n
+      \                   </GetArrivalsForStops>\n                </s:Body>\n            </s:Envelope>\n
+      \       "
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['463']
+      Cookie: [ASP.NET_SessionId=slr0smayrwbtw2ybdn1rena2]
+      User-Agent: [python-requests/2.19.1]
+      content-type: [application/soap+xml]
+    method: POST
+    uri: http://belfastapp.acishorizon.com/DataService.asmx
+  response:
+    body: {string: '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetArrivalsForStopsResponse
+        xmlns="http://www.acishorizon.com/"><GetArrivalsForStopsResult><ExtensionData
+        /><ErrorCode>100</ErrorCode><PublicServices /><Stops><VirtualStop><ExtensionData
+        /><StopArrivals><StopRealtime><ExtensionData /><Destination>No services</Destination><IsArrival>false</IsArrival><IsPredicted>false</IsPredicted><JourneyId>-1</JourneyId><JourneyPublicServiceCode
+        /><LocalServiceID>0</LocalServiceID><OperatorId>-1</OperatorId><StoppingAt><string>currently
+        running</string></StoppingAt><TimeAsDateTime xsi:nil="true" /><IsCancelled>false</IsCancelled></StopRealtime></StopArrivals><StopCancelled>false</StopCancelled><StopDistance>0</StopDistance><StopId>1571</StopId><StopLatitude>54.62755</StopLatitude><StopLongitude>-5.93461</StopLongitude><StopName>Fortwilliam
+        Park</StopName><StopPredictedTime xsi:nil="true" /><StopRef>700000000748</StopRef><StopScheduledTime
+        xsi:nil="true" /><StopSsi>0</StopSsi></VirtualStop></Stops><Vehicles /></GetArrivalsForStopsResult></GetArrivalsForStopsResponse></soap:Body></soap:Envelope>'}
+    headers:
+      Cache-Control: ['private, max-age=0']
+      Content-Length: ['1260']
+      Content-Type: [application/soap+xml; charset=utf-8]
+      Date: ['Sat, 27 Oct 2018 20:56:02 GMT']
+      Server: [Microsoft-IIS/7.5]
+      X-AspNet-Version: [4.0.30319]
+      X-Frame-Options: [SAMEORIGIN]
+      X-Powered-By: [ASP.NET]
+    status: {code: 200, message: OK}
 version: 1
