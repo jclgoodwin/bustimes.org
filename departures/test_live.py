@@ -147,12 +147,13 @@ class LiveDeparturesTest(TestCase):
             'service': '16'
         })
 
-    @freeze_time('25 December 1904')
+    @freeze_time('27 October 2018')
     def test_translink_metro(self):
         with vcr.use_cassette('data/vcr/translink_metro.yaml'):
             res = self.client.get(self.translink_metro_stop.get_absolute_url())
-        self.assertContains(res, '<h3>Saturday</h3>')
+        self.assertNotContains(res, '<h3>')
         self.assertContains(res, '<tr><td>14B</td><td>City Express</td><td>08:22</td></tr>', html=True)
+        self.assertContains(res, '<tr><td>1A</td><td>City Centre</td><td>07:54⚡</td></tr>', html=True)
 
     @freeze_time('14 Mar 2017 20:00')
     def test_stagecoach(self):
@@ -361,6 +362,7 @@ class LiveDeparturesTest(TestCase):
         self.assertContains(response, """
             <div class="aside box">
                 <h2>Next departures</h2>
+                <h3>Wednesday</h3>
                 <table><tbody>
                     <tr><td>X98</td><td>Bratislava</td><td>11:53</td></tr>
                 </tbody></table>

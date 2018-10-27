@@ -249,7 +249,7 @@ class AcisHorizonDepartures(Departures):
 
     def get_row(self, item):
         row = {
-            'service': item.find('a:JourneyPublicServiceCode', self.ns).text,
+            'service': self.get_service(item.find('a:JourneyPublicServiceCode', self.ns).text),
             'destination': item.find('a:Destination', self.ns).text
         }
         time = item.find('a:TimeAsDateTime', self.ns).text
