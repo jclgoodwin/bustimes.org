@@ -6,7 +6,7 @@ import requests
 import pytz
 import dateutil.parser
 import logging
-from bs4 import BeautifulSoup
+import xml.etree.cElementTree as ET
 from django.conf import settings
 from django.utils.timezone import is_naive, make_naive
 from busstops.models import Operator, Service, StopPoint, ServiceCode
@@ -214,72 +214,52 @@ class PolarBearDepartures(Departures):
         super().__init__(stop, services)
 
 
-class AcisDepartures(Departures):
-    """Departures from a website ending in .acisconnect.com or .acislive.com"""
-    def get_time(self, text):
-        if 'min' in text.lower():
-            return (None, self.now + datetime.timedelta(minutes=int(text.split(' ', 1)[0])))
-        if text == 'Due':
-            return (None, self.now)
-        return (text, None)
+class AcisHorizonDepartures(Departures):
+    """Departures from a SOAP endpoint (lol)"""
+    url = 'http://belfastapp.acishorizon.com/DataService.asmx'
+    headers = {
+        'content-type': 'application/soap+xml'
+    }
+    ns = {
+        'a': 'http://www.acishorizon.com/',
+        's': 'http://www.w3.org/2003/05/soap-envelope'
+    }
 
-    def __init__(self, prefix, stop, services, now):
-        self.prefix = prefix
-        super().__init__(stop, services, now)
-
-
-class AcisLiveDepartures(AcisDepartures):
-    """Departures from an old-fashioned website ending in .acislive.com"""
-    def get_request_url(self):
-        return 'http://%s.acislive.com/pip/stop_simulator_table.asp' % self.prefix
-
-    def get_request_params(self):
-        return {
-            'naptan': self.stop.naptan_code
-        }
-
-    def get_row(self, row):
-        time, live = self.get_time(row[2])
-        return {
-            'time': time,
-            'live': live,
-            'service': self.get_service(row[0]),
-            'destination': row[1]
-        }
+    def get_response(self):
+        data = """
+            <soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
+                <soap12:Body>
+                    <GetArrivalsForStops xmlns="http://www.acishorizon.com/">
+                        <stopRefs>
+                            <string>{}</string>
+                        </stopRefs>
+                        <maxResults>10</maxResults>
+                    </GetArrivalsForStops>
+                </soap12:Body>
+            </soap12:Envelope>
+        """.format(self.stop.pk)
+        return SESSION.post(self.url, headers=self.headers, data=data, timeout=5)
 
     def departures_from_response(self, res):
-        soup = BeautifulSoup(res.text, 'lxml')
-        cells = [cell.text.strip() for cell in soup.find_all('td')]
-        rows = (cells[i * 4 - 4:i * 4] for i in range(1, int(len(cells) / 4) + 1))
-        return [self.get_row(row) for row in rows]
+        items = ET.fromstring(res.text)
+        items = items.find('s:Body/a:GetArrivalsForStopsResponse/a:GetArrivalsForStopsResult', self.ns)
+        items = items.findall('a:Stops/a:VirtualStop/a:StopArrivals/a:StopRealtime', self.ns)
+        return [self.get_row(item) for item in items]
 
-
-class AcisConnectDepartures(AcisDepartures):
-    """Departures from a website ending in '.acisconnect.com'"""
-    def get_request_url(self):
-        return 'http://%s.acisconnect.com/Text/WebDisplay.aspx' % self.prefix
-
-    def get_request_params(self):
-        return {
-            'stopRef': self.stop.naptan_code if self.prefix == 'yorkshire' else self.stop.pk
+    def get_row(self, item):
+        row = {
+            'service': item.find('a:JourneyPublicServiceCode', self.ns).text,
+            'destination': item.find('a:Destination', self.ns).text
         }
-
-    def get_row(self, row):
-        time, live = self.get_time(row[-2].text)
-        return {
-            'time': time,
-            'live': live,
-            'service': self.get_service(row[0].text),
-            'destination': row[1].text if len(row) == 4 else row[2].text
-        }
-
-    def departures_from_response(self, res):
-        soup = BeautifulSoup(res.text, 'lxml')
-        table = soup.find(id='GridViewRTI')
-        if table is None:
-            return
-        rows = (row.findAll('td') for row in table.findAll('tr')[1:])
-        return [self.get_row(row) for row in rows]
+        time = item.find('a:TimeAsDateTime', self.ns).text
+        time = parse_datetime(time)
+        if item.find('a:IsPredicted', self.ns).text == 'true':
+            row['live'] = time
+            row['time'] = None
+        else:
+            row['time'] = time
+        return row
 
 
 class TransportApiDepartures(Departures):
@@ -610,7 +590,7 @@ def get_departures(stop, services, bot=False):
 
         # Belfast
         if any(operator.id == 'MET' or operator.id == 'GDR' for operator in operators):
-            live_rows = AcisConnectDepartures('belfast', stop, services, now).get_departures()
+            live_rows = AcisHorizonDepartures(stop, services).get_departures()
             if live_rows:
                 blend(departures, live_rows)
         elif departures:

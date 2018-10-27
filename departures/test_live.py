@@ -134,88 +134,6 @@ class LiveDeparturesTest(TestCase):
             </div>
         """, html=True)
 
-    @freeze_time('12 Mar 2017 12:00')
-    def test_acisconnect_cardiff(self):
-        """Test the Cardiff live departures source
-        """
-        with vcr.use_cassette('data/vcr/cardiff.yaml'):
-            departures = live.AcisConnectDepartures(
-                'cardiff', self.cardiff_stop, (), datetime.now()
-            ).get_departures()
-
-        self.assertEqual(departures[0], {
-            'destination': 'Churchill Way HL',
-            'service': '9',
-            'time': None,
-            'live': datetime(2017, 3, 12, 12, 15)
-        })
-
-        self.assertEqual(departures[1], {
-            'destination': 'Churchill Way HL',
-            'service': '9',
-            'time': None,
-            'live': datetime(2017, 3, 12, 12, 45)
-        })
-
-        self.assertEqual('Pengam Green Tesco', departures[2]['destination'])
-        self.assertEqual('11', departures[2]['service'])
-
-        self.assertEqual(departures[3], {
-            'destination': 'Customhouse Str JL',
-            'service': '95',
-            'time': None,
-            'live': datetime(2017, 3, 12, 12, 49)
-        })
-
-    def _test_acis_yorkshire(self, departures):
-        """Test one of the Yorkshire live departures sources against the same set of data
-        """
-        self.assertEqual(departures[:4], [{
-            'destination': 'York Sport Village',
-            'service': '66',
-            'time': None,
-            'live': datetime(2017, 3, 12, 12, 1)
-        }, {
-            'destination': 'Heslington East Int',
-            'service': '44',
-            'time': None,
-            'live': datetime(2017, 3, 12, 12, 9)
-        }, {
-            'destination': 'York Sport Village',
-            'service': '66',
-            'time': '18:42',
-            'live': None
-        }, {
-            'destination': 'Heslington East Int',
-            'service': '44',
-            'time': '18:53',
-            'live': None
-        }])
-
-    @freeze_time('12 Mar 2017 12:00')
-    def test_acis_yorkshire(self):
-        """Test the two possible (old, new) Yorkshire live departure sources against the same data
-        """
-        now = datetime.now()
-
-        with vcr.use_cassette('data/vcr/acisconnect_yorkshire.yaml'):
-            departures = live.AcisConnectDepartures(
-                'yorkshire',
-                self.yorkshire_stop,
-                (),
-                now
-            ).get_departures()
-        self._test_acis_yorkshire(departures)
-
-        with vcr.use_cassette('data/vcr/acislive_yorkshire.yaml'):
-            departures = live.AcisLiveDepartures(
-                'tsy',
-                self.yorkshire_stop,
-                (),
-                now
-            ).get_departures()
-        self._test_acis_yorkshire(departures)
-
     def test_dublin(self):
         stop = StopPoint(atco_code='8220DB07602')
         with vcr.use_cassette('data/vcr/dublin.yaml'):
@@ -233,10 +151,8 @@ class LiveDeparturesTest(TestCase):
     def test_translink_metro(self):
         with vcr.use_cassette('data/vcr/translink_metro.yaml'):
             res = self.client.get(self.translink_metro_stop.get_absolute_url())
-        self.assertEqual(res.context_data['departures'][0]['live'].date(), date(1904, 12, 25))
-        self.assertEqual(res.context_data['departures'][1]['live'].date(), date(1904, 12, 25))
-        self.assertEqual(res.context_data['departures'][2]['live'].date(), date(1904, 12, 25))
-        self.assertEqual(res.context_data['departures'][0]['live'].time(), time(0, 0))
+        self.assertContains(res, '<h3>Saturday</h3>')
+        self.assertContains(res, '<tr><td>14B</td><td>City Express</td><td>08:22</td></tr>', html=True)
 
     @freeze_time('14 Mar 2017 20:00')
     def test_stagecoach(self):
