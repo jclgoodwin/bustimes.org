@@ -244,7 +244,7 @@ class AcisHorizonDepartures(Departures):
         items = ET.fromstring(res.text)
         items = items.find('s:Body/a:GetArrivalsForStopsResponse/a:GetArrivalsForStopsResult', self.ns)
         items = items.findall('a:Stops/a:VirtualStop/a:StopArrivals/a:StopRealtime', self.ns)
-        return [self.get_row(item) for item in items]
+        return [item for item in [self.get_row(item) for item in items] if item]
 
     def get_row(self, item):
         row = {

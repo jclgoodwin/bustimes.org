@@ -155,6 +155,11 @@ class LiveDeparturesTest(TestCase):
         self.assertContains(res, '<tr><td>14B</td><td>City Express</td><td>08:22</td></tr>', html=True)
         self.assertContains(res, '<tr><td>1A</td><td>City Centre</td><td>07:54⚡</td></tr>', html=True)
 
+    def test_translink_metro_no_services_running(self):
+        with vcr.use_cassette('data/vcr/translink_metro.yaml', match_on=['body']):
+            departures = live.AcisHorizonDepartures(StopPoint(pk='700000000748'), ())
+            self.assertEqual([], departures.get_departures())
+
     @freeze_time('14 Mar 2017 20:00')
     def test_stagecoach(self):
         with vcr.use_cassette('data/vcr/stagecoach.yaml'):
