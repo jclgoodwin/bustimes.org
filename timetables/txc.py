@@ -661,18 +661,6 @@ class VehicleJourney(object):
         if not date:
             return True
         if timetable and timetable.service:
-            # Coasthopper 4
-            if timetable.service.service_code == 'ea_21-4-I-y08' and date >= datetime.date(2018, 10, 14):
-                return False
-            # Coasthopper 5
-            if timetable.service.service_code == 'ea_21-5-B-y08' and date >= datetime.date(2018, 10, 14):
-                if date.weekday() == 6:  # Sunday
-                    return False
-                if self.operating_profile:
-                    if self.operating_profile.should_show(datetime.date(2018, 10, 12)):
-                        return False
-                    if self.operating_profile.should_show(datetime.date(2018, 10, 13)):
-                        return False
             region_id = timetable.service.region_id
         else:
             region_id = None
