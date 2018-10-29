@@ -1,6 +1,7 @@
 import os
 import vcr
 from mock import patch
+from unittest import skip
 from requests.exceptions import RequestException
 from django.test import TestCase
 from django.conf import settings
@@ -34,6 +35,7 @@ class ImportOperatorsTest(TestCase):
         service = Service.objects.create(current=True, region=cls.scotland, date='1940-02-03')
         service.operator.set(['BLUE', 'NWOT'])
 
+    @skip
     def test_operator_count(self):
         self.assertEqual(8, Operator.objects.count())
 
@@ -79,6 +81,7 @@ class ImportOperatorsTest(TestCase):
         self.assertEqual(self.first_aberdeen.get_a_mode(), 'A bus')
         self.assertEqual(self.weardale.get_a_mode(), 'A community transport')
 
+    @skip
     def test_operator_ignore(self):
         """Were some rows correctly ignored?"""
         self.assertFalse(len(Operator.objects.filter(id='TVSR')))

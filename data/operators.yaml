@@ -164,4 +164,21 @@ FALC:
     name: Falcon Buses
     url: https://www.falconbuses.co.uk
     email: ""
-    
+VISB:
+    address: |
+        Blackrod Interchange
+        Station Road
+        Blackrod
+        Bolton
+        BL6 5JE
+    phone: 01204 468288
+    url: http://www.visionbus.co.uk/
+    email: info@visionbus.co.uk
+SCHU:
+    name: Stagecoach in the Fens
+NFKG:
+    name: Stagecoach Norfolk
+SCCM:
+    name: Stagecoach in Cambridge
+SCBD:
+    name: Stagecoach in Bedford
