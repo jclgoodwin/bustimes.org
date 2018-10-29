@@ -467,15 +467,17 @@ table {
     right: 0;
     top: 0;
 
-    &.service-map {
-        margin: 1em 0;
-    }
-
     &.service-map,
     &.stop-map {
         position: relative;
         height: 210px;
     }
+
+    &.service-map {
+        margin: 1em 0;
+        height: 240px;
+    }
+
 }
 
 .leaflet-marker-icon.just-arrow {
