@@ -17,8 +17,10 @@
         statusBar = L.control({
             position: 'topright'
         }),
-        layer,
-        lastReq;
+        bounds,
+        lastReq,
+        oldVehicles = {},
+        newVehicles = {};
 
     L.tileLayer(tileURL, {
         attribution: '© <a href="https://openmaptiles.org">OpenMapTiles</a> | © <a href="https://www.openstreetmap.org">OpenStreetMap contributors</a>'
@@ -54,6 +56,62 @@
         });
     }
 
+    function handleVehicle(data) {
+        var marker,
+            icon = getIcon(data.properties.service, data.properties.direction),
+            latLng = L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
+
+        bounds.extend(latLng);
+
+        if (data.properties.vehicle.url in oldVehicles) {
+            marker = oldVehicles[data.properties.vehicle.url];
+            marker.setLatLng(latLng);
+            marker.setIcon(icon);
+        } else {
+            marker = L.marker(latLng, {
+                icon: icon
+            });
+            marker.addTo(map);
+        }
+
+        var popup = '';
+
+        if (data.properties.delta === 0) {
+            popup += 'On time';
+        } else if (data.properties.delta) {
+            popup += 'About ';
+            if (data.properties.delta > 0) {
+                popup += data.properties.delta;
+            } else {
+                popup += data.properties.delta * -1;
+            }
+            popup += ' minute';
+            if (data.properties.delta !== 1 && data.properties.delta !== -1) {
+                popup += 's';
+            }
+            if (data.properties.delta > 0) {
+                popup += ' early';
+            } else {
+                popup += ' late';
+            }
+        }
+
+        if (popup) {
+            popup += '<br>';
+        }
+
+        if (data.properties.vehicle && data.properties.vehicle.type) {
+            popup = data.properties.vehicle.type + '<br>' + popup;
+        }
+
+        var dateTime = new Date(data.properties.datetime);
+        popup += 'Updated at ' + dateTime.toTimeString().slice(0, 5);
+
+        marker.bindPopup(popup);
+
+        newVehicles[data.properties.vehicle.url] = marker;
+    }
+
     function processData(data) {
         if (data.features.length === 0) {
             busesOnlineCount.innerHTML = 'No buses online.';
@@ -63,53 +121,19 @@
             busesOnlineCount.innerHTML = data.features.length + ' buses online.';
         }
 
-        layer && layer.clearLayers();
-        layer = L.geoJson(data, {
-            pointToLayer: function (data, latlng) {
-                var marker = L.marker(latlng, {
-                    icon: getIcon(data.properties.service, data.properties.direction)
-                });
+        bounds = L.latLngBounds();
 
-                var popup = '';
-
-                if (data.properties.delta === 0) {
-                    popup += 'On time';
-                } else if (data.properties.delta) {
-                    popup += 'About ';
-                    if (data.properties.delta > 0) {
-                        popup += data.properties.delta;
-                    } else {
-                        popup += data.properties.delta * -1;
-                    }
-                    popup += ' minute';
-                    if (data.properties.delta !== 1 && data.properties.delta !== -1) {
-                        popup += 's';
-                    }
-                    if (data.properties.delta > 0) {
-                        popup += ' early';
-                    } else {
-                        popup += ' late';
-                    }
-                }
-
-                if (popup) {
-                    popup += '<br>';
-                }
-
-                if (data.properties.vehicle && data.properties.vehicle.type) {
-                    popup = data.properties.vehicle.type + '<br>' + popup;
-                }
-
-                var dateTime = new Date(data.properties.datetime);
-                popup += 'Updated at ' + dateTime.toTimeString().slice(0, 5);
-
-                marker.bindPopup(popup);
-
-                return marker;
+        for (var i = data.features.length - 1; i >= 0; i -= 1) {
+            handleVehicle(data.features[i]);
+        }
+        for (var vehicle in oldVehicles) {
+            if (!(vehicle in newVehicles)) {
+                map.removeLayer(oldVehicles[vehicle]);
             }
-        });
-        layer.addTo(map);
-        var bounds = layer.getBounds();
+        }
+        oldVehicles = newVehicles;
+        newVehicles = {};
+
         if (bounds.isValid() && (!map._loaded || !map.getBounds().overlaps(bounds))) {
             map.fitBounds(bounds, {
                 padding: [20, 20],
@@ -125,7 +149,7 @@
             lastReq.abort();
         }
         lastReq = reqwest('/vehicles.json?service=' + map.getContainer().getAttribute('data-service'), function(data) {
-            if (lastReq.request.status === 200) {
+            if (lastReq.request.status === 200 && data && data.features) {
                 processData(data);
             }
             setTimeout(function() {
