@@ -68,10 +68,6 @@ class Command(ImportFromCSVCommand):
         operator_name = self.get_name(row).replace('\'', '\u2019').strip()  # Fancy apostrophe
         region_id = self.get_region_id(row['TLRegOwn'])
 
-        duplicate = Operator.objects.filter(name=operator_name, region_id=region_id).exclude(id=operator_id).first()
-        if duplicate:
-            operator_id = duplicate.id
-
         mode = row['Mode'].lower()
         if mode == 'airline':
             return
