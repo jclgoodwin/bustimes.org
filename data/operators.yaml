@@ -208,3 +208,37 @@ SCWW:
     name: Stagecoach Warwickshire
 SCNH:
     name: Stagecoach Northamptonshire
+SCTE:
+    name: Stagecoach Teesside
+SCHW:
+    name: Stagecoach in Hampshire & Winchester
+SCCO:
+    name: Stagecoach in Hants & Surrey
+SCHM:
+    name: Stagecoach in Hampshire
+SCHT:
+    name: Stagecoach in Hastings
+SCEK:
+    name: Stagecoach in East Kent
+SCEB:
+    name: Stagecoach in Eastbourne
+CBBH:
+    name: Centrebus (South)
+CBNL:
+    name: Centrebus (North)
+AMTM:
+    name: Arriva Kent Thameside
+GPWS:
+    name: Whites Coaches (Shetland)
+AMNO:
+    name: Arriva Midlands North
+AFCL:
+    name: Arriva Fox County
+GLOB:
+    name: Globe Coaches (Wales)
+GLCS:
+    name: Globe Holidays (Barnsley)
+HDGS:
+    name: Hodgsons Buses (County Durham)
+JKHY:
+    name: Hodgsons Buses (North Yorkshire)
