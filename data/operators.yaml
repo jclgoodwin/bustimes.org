@@ -182,3 +182,29 @@ SCCM:
     name: Stagecoach in Cambridge
 SCBD:
     name: Stagecoach in Bedford
+SCPB:
+    name: Stagecoach in Peterborough
+YSYC:
+    name: Stagecoach in Chesterfield
+SCGL:
+    name: Stagecoach in Gloucester
+SCLI:
+    name: Stagecoach Lincolnshire
+SCGR:
+    name: Stagecoach Grimsby-Cleethorpes
+SCBL:
+    name: Stageocach Bassetlaw
+CLTL:
+    name: Stagecoach Hull
+SSTY:
+    name: Stagecoach Strathay
+SSPH:
+    name: Stagecoach Perth
+SCFI:
+    name: Stagecoach Fife
+STCR:
+    name: Stagecoach in Chester
+SCWW:
+    name: Stagecoach Warwickshire
+SCNH:
+    name: Stagecoach Northamptonshire
