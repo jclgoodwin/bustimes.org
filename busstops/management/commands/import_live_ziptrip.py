@@ -26,7 +26,7 @@ class Command(ImportLiveVehiclesCommand):
             operator_id = ('GAHL', 'LGEN')
         elif operator_id == '767STEP':
             operator_id = 'SESX'
-        elif operator_id == 'UNIB':
+        elif operator_id == 'UNIB' or operator_id == 'UNO':
             operator_id = 'UNOE'
         elif operator_id == 'CB':
             operator_id = ('CBUS', 'CACB')
