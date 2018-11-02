@@ -915,6 +915,11 @@ class Timetable(object):
                     monday_to_friday = journey.operating_profile
             reepham_to_norwich.operating_profile = monday_to_friday
             reepham_to_norwich.departure_time = datetime.time(15, 45)
+        elif self.service_code.startswith('42-40-A-y10-'):
+            for journey in journeys.values():
+                if journey.departure_time == datetime.time(17, 42):
+                    if journey.journeypattern.sections[0].timinglinks[0].origin.stop.atco_code == '3600SOA30525':
+                        journey.departure_time = datetime.time(16, 35)
         elif self.service_code == '9-365-_-y11-1':
             # 365 - Great Malvern - Welland - Upton
             for key in list(journeys.keys()):
