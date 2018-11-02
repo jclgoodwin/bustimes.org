@@ -30,6 +30,8 @@ class Command(ImportLiveVehiclesCommand):
             operator_id = 'UNOE'
         elif operator_id == 'CB':
             operator_id = ('CBUS', 'CACB')
+        elif operator_id == 'SOG':
+            operator_id = 'guernsey'
         elif operator_id == 'IOM':
             operator_id = 'IMHR'
             if item['routeName'] == 'IMR':
