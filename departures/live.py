@@ -513,7 +513,8 @@ def blend(departures, live_rows, stop=None):
                 services_match(row['service'], live_row['service']) and
                 row['time'] and row['time'] == live_row['time']
             ):
-                row['live'] = live_row['live']
+                if live_row.get('live'):
+                    row['live'] = live_row['live']
                 if live_row.get('line') and type(row['service']) is Service:
                     if live_row['line'] != row['service'].line_name:
                         ServiceCode.objects.update_or_create({'code': live_row['line']},
