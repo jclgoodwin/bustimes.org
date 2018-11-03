@@ -4,6 +4,7 @@ import os
 import json
 import ciso8601
 from django.shortcuts import render, get_object_or_404, redirect
+from django.db import transaction
 from django.db.models import Max, Q
 from django.http import (HttpResponse, JsonResponse, Http404,
                          HttpResponseBadRequest)
@@ -13,7 +14,7 @@ from django.views.decorators.http import last_modified
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.conf import settings
-from django.contrib.gis.geos import Polygon
+from django.contrib.gis.geos import Polygon, Point
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
@@ -22,7 +23,7 @@ from haystack.query import SearchQuerySet
 from departures import live
 from .utils import format_gbp
 from .models import (Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Journey, Place,
-                     Registration, Variation, Vehicle, VehicleLocation)
+                     Registration, Variation, Vehicle, VehicleLocation, DataSource)
 from .forms import ContactForm
 
 
@@ -822,3 +823,66 @@ class VehicleDetailView(DetailView):
         context['date'] = date
         context['locations'] = self.object.vehiclelocation_set.filter(datetime__date=date).select_related('service')
         return context
+
+
+@transaction.atomic
+def handle_siri_vm_vehicle(source, item):
+    operator = item['OperatorRef']
+    operator = {
+        'WP': 'WHIP',
+        'GP': 'GPLM',
+        'CBLE': 'CBBH',
+        'ATS': 'ARBB'
+    }.get(operator, operator)
+    if operator == 'UNIB':
+        return
+    try:
+        operator = Operator.objects.get(pk=operator)
+    except Operator.DoesNotExist as e:
+        print(e, operator, item)
+        return
+    if operator.pk == 'SCCM':
+        service = Service.objects.filter(operator__in=('SCCM', 'SCPB', 'SCHU', 'SCBD'))
+    else:
+        service = operator.service_set
+    service = service.filter(current=True)
+    line_name = item['PublishedLineName']
+    if line_name.startswith('PR'):
+        service = service.filter(pk__contains='-{}-'.format(line_name))
+    else:
+        if operator.pk == 'WHIP' and line_name == 'U':
+            line_name = 'Universal U'
+        service = service.filter(line_name=line_name)
+    try:
+        service = service.get()
+    except Service.MultipleObjectsReturned:
+        service = service.filter(Q(stops=item['OriginRef']) | Q(stops=item['DestinationRef'])).distinct().get()
+    except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
+        print(e, operator.pk, line_name)
+        service = None
+    vehicle, created = Vehicle.objects.get_or_create(operator=operator, code=item['VehicleRef'], source=source)
+    if not created and vehicle.latest_location and vehicle.latest_location.current:
+        vehicle.latest_location.current = False
+        vehicle.latest_location.save()
+    vehicle.latest_location = VehicleLocation.objects.create(
+        vehicle=vehicle,
+        service=service,
+        datetime=ciso8601.parse_datetime(item['RecordedAtTime']),
+        latlong=Point(float(item['Longitude']), float(item['Latitude'])),
+        source=source,
+        heading=item['Bearing'],
+        current=True
+    )
+    vehicle.save()
+
+
+@csrf_exempt
+def siri_vm(request):
+    now = timezone.now()
+    source, _ = DataSource.objects.update_or_create({
+        'datetime': now
+    }, name='SIRI POST')
+    data = json.loads(request.body)
+    for item in data:
+        handle_siri_vm_vehicle(source, item)
+    return HttpResponse()
