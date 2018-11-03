@@ -3,6 +3,7 @@
 import os
 import json
 import ciso8601
+from datetime import timedelta
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db import transaction
 from django.db.models import Max, Q
@@ -885,4 +886,6 @@ def siri_vm(request):
     data = json.loads(request.body)
     for item in data:
         handle_siri_vm_vehicle(source, item)
+    five_minutes_ago = now - timedelta(minutes=5)
+    source.vehiclelocation_set.filter(current=True, datetime__lte=five_minutes_ago).update(current=False)
     return HttpResponse()
