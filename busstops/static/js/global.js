@@ -15,6 +15,6 @@ if (navigator.serviceWorker && location.host !== 'localhost:8000') {
     var cookieMessage = document.getElementById('cookie-message');
     if (cookieMessage && document.cookie.indexOf('seen_cookie_message=yes') === -1) {
         cookieMessage.style.display = 'block';
-        document.cookie = 'seen_cookie_message=yes; max-age=31536000; path=/; secure';
+        document.cookie = 'seen_cookie_message=yes; max-age=31536000; path=/';
     }
 })();
