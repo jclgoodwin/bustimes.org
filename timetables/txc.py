@@ -661,6 +661,21 @@ class VehicleJourney(object):
         if not date:
             return True
         if timetable and timetable.service:
+            if timetable.service.service_code == 'ea_21-36-A-y08':
+                if self.operating_profile.regular_days == [6]:
+                    if self.departure_time in {
+                        datetime.time(7, 30),
+                        datetime.time(9, 30),
+                        datetime.time(11, 30),
+                        datetime.time(13, 30),
+                        datetime.time(15, 30),
+                        datetime.time(10, 0),
+                        datetime.time(12, 0),
+                        datetime.time(14, 0),
+                        datetime.time(16, 0),
+                        datetime.time(18, 0)
+                    }:
+                        return False
             region_id = timetable.service.region_id
         else:
             region_id = None
