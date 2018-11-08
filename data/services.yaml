@@ -128,6 +128,44 @@ BOBO131:
     current: false
 NE_310_PM6161_131:
     description: Jedburgh - Newcastle upon Tyne
+NW_04_ROST_469_1:
+    Tottington Line
+NW_05_LUL_X41_1:
+    line_brand: Red Express
+NW_05_BPT_X43_1:
+    line_brand: Witch Way
+NW_05_BPT_M1_1:
+    line_brand: Mainline
+NW_05_BPT_M2_1:
+    line_brand: Mainline
+NW_05_BPT_M3_1:
+    line_brand: Mainline
+NW_05_BPT_M4_1:
+    line_brand: Mainline
+YWAO840:
+    line_brand: Coastliner
+YWAO843:
+    line_brand: Coastliner
+YNAO022:
+    line_brand: Little Explorers
+YNBO022:
+    line_brand: Little Explorers
+YNCO022:
+    line_brand: Little Explorers
+YNCO023:
+    line_brand: Little Explorers
+YNDO023:
+    line_brand: Little Explorers
+YNEO023:
+    line_brand: Little Explorers
+YWAO036:
+    line_brand: Riding Redefined
+YWAB001:
+    line_brand: Brontë Bus
+YWAB002:
+    line_brand: Brontë Bus
+YWAB003:
+    line_brand: Brontë Bus
 # Hadrian's Wall Country Bus - back in Easter 2019
 NE_310_PB3954_AD12:
     current: false
