@@ -129,7 +129,7 @@ class LiveDeparturesTest(TestCase):
                     <tr><td>8</td><td>Bow Church</td><td>18:44⚡</td></tr>
                     <tr><td>8</td><td>Bow Church</td><td>18:49⚡</td></tr>
                 </tbody></table>
-                <p class="credit">⚡ denotes real-time times</p>
+                <p class="credit">⚡ denotes ‘live’ times based on actual locations of buses</p>
                 <p class="credit">TfL</p>
             </div>
         """, html=True)
