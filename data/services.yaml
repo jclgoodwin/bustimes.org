@@ -129,7 +129,7 @@ BOBO131:
 NE_310_PM6161_131:
     description: Jedburgh - Newcastle upon Tyne
 NW_04_ROST_469_1:
-    Tottington Line
+    line_brand: Tottington Line
 NW_05_LUL_X41_1:
     line_brand: Red Express
 NW_05_BPT_X43_1:
