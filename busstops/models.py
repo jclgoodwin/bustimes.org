@@ -307,16 +307,15 @@ class StopPoint(models.Model):
 
     def get_qualified_name(self, short=True):
         if self.locality:
-            locality_name = self.locality.name
+            locality_name = self.locality.name.replace(' Town Centre', '') \
+                                                .replace(' City Centre', '')
             if short:
-                locality_name = locality_name.replace(' Town Centre', '') \
-                                              .replace(' City Centre', '') \
-                                              .replace('-next-the-Sea', '') \
-                                              .replace(' Next The Sea', '') \
-                                              .replace('North ', 'N ') \
-                                              .replace('East ', 'E ') \
-                                              .replace('South ', 'S ') \
-                                              .replace('West ', 'W ')
+                locality_name = locality_name.replace('-next-the-Sea', '') \
+                                                .replace(' Next The Sea', '') \
+                                                .replace('North ', 'N ') \
+                                                .replace('East ', 'E ') \
+                                                .replace('South ', 'S ') \
+                                                .replace('West ', 'W ')
             if self.common_name in locality_name:
                 return locality_name.replace(self.common_name, str(self))  # Cardiff Airport
             if slugify(locality_name) not in slugify(self.common_name):
