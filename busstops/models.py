@@ -318,7 +318,7 @@ class StopPoint(models.Model):
                                               .replace('South ', 'S ') \
                                               .replace('West ', 'W ')
             if self.common_name in locality_name:
-                return .replace(self.common_name, str(self))  # Cardiff Airport
+                return locality_name.replace(self.common_name, str(self))  # Cardiff Airport
             if slugify(locality_name) not in slugify(self.common_name):
                 if self.indicator in self.prepositions:
                     indicator = self.indicator
