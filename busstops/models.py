@@ -305,9 +305,11 @@ class StopPoint(models.Model):
         'outside': 'outside',
     }
 
-    def get_qualified_name(self, expand_indicator=False):
+    def get_qualified_name(self, short=True):
         if self.locality:
-            locality_name = self.locality.name.replace(' Town Centre', '') \
+            locality_name = self.locality.name
+            if short:
+                locality_name = locality_name.replace(' Town Centre', '') \
                                               .replace(' City Centre', '') \
                                               .replace('-next-the-Sea', '') \
                                               .replace(' Next The Sea', '') \
@@ -316,11 +318,11 @@ class StopPoint(models.Model):
                                               .replace('South ', 'S ') \
                                               .replace('West ', 'W ')
             if self.common_name in locality_name:
-                return locality_name.replace(self.common_name, str(self))  # Cardiff Airport
+                return .replace(self.common_name, str(self))  # Cardiff Airport
             if slugify(locality_name) not in slugify(self.common_name):
                 if self.indicator in self.prepositions:
                     indicator = self.indicator
-                    if expand_indicator:
+                    if not short:
                         indicator = self.prepositions[indicator]
                     return '%s, %s %s' % (locality_name, indicator, self.common_name)
                 return '%s %s' % (locality_name, self)
@@ -329,7 +331,7 @@ class StopPoint(models.Model):
         return str(self)
 
     def get_long_name(self):
-        return self.get_qualified_name(expand_indicator=True)
+        return self.get_qualified_name(short=False)
 
     def get_streetview_url(self):
         if self.latlong:
