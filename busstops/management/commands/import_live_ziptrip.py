@@ -28,6 +28,8 @@ class Command(ImportLiveVehiclesCommand):
             operator_id = 'SESX'
         elif operator_id == 'UNIB' or operator_id == 'UNO':
             operator_id = 'UNOE'
+        elif operator_id == 'RENW':
+            operator_id = 'ECWY'
         elif operator_id == 'CB':
             operator_id = ('CBUS', 'CACB')
         elif operator_id == 'SOG':
@@ -89,7 +91,7 @@ class Command(ImportLiveVehiclesCommand):
             else:
                 print(item)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-            if item['routeName'].lower() not in {'rr', 'rail', 'transdev'}:
+            if item['routeName'].lower() not in {'rr', 'rail', 'transdev', '7777', 'shop'}:
                 print(e, operator_id, item['routeName'])
 
         return vehicle, created, service
