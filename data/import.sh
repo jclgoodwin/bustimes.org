@@ -185,7 +185,7 @@ fi
 
 for region in F B C M K G D H; do
     old=$(shasum "Bus_Variation_$region.csv")
-    wget -qN "http://www.vosa.gov.uk/vosa/apps/olbs/Bus_Variation_$region.csv"
+    wget -qN "https://content.mgmt.dvsacloud.uk/olcs.prod.dvsa.aws/data-gov-uk-export/Bus_Variation_$region.csv"
     new=$(shasum "Bus_Variation_$region.csv")
     if [[ $old != $new ]]; then
         echo $region
