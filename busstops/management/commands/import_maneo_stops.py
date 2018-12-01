@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Usage:
 
-    ./manage.py import_maneo_stops < Manéo\ Points\ d\'arrêt\ des\ lignes\ régulières.csv
+   ./manage.py import_maneo_stops < "Manéo Points d'arrêt des lignes régulières.csv"
 """
 import requests
 from urllib.parse import urlencode
