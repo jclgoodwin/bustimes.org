@@ -559,7 +559,7 @@ def get_departures(stop, services, bot=False):
         departures = UKTrainDepartures(stop, services)
         return ({
             'departures': departures,
-            'source': 'Network Rail'
+            'today': datetime.date.today(),
         }, 30)
 
     # Transport for London
@@ -568,13 +568,13 @@ def get_departures(stop, services, bot=False):
         return ({
             'departures': departures,
             'today': datetime.date.today(),
-            'source': 'TfL'
         }, 60)
 
     # Dublin
     if stop.atco_code[0] == '8' and 'DB' in stop.atco_code:
         return ({
-            'departures': DublinDepartures(stop, services).get_departures()
+            'departures': DublinDepartures(stop, services).get_departures(),
+            'today': datetime.date.today(),
         }, 60)
 
     # Singapore
@@ -586,7 +586,8 @@ def get_departures(stop, services, bot=False):
     # Jersey
     if stop.atco_code[:3] == 'je-':
         return ({
-            'departures': JerseyDepartures(stop, services).get_departures()
+            'departures': JerseyDepartures(stop, services).get_departures(),
+            'today': datetime.date.today(),
         }, 60)
 
     now = datetime.datetime.now(LOCAL_TIMEZONE)
