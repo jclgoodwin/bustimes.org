@@ -2,7 +2,7 @@
 """Tests for live departures
 """
 import vcr
-from datetime import date, time, datetime
+from datetime import date, time, datetime, timezone
 from django.test import TestCase
 from django.shortcuts import render
 from freezegun import freeze_time
@@ -139,12 +139,12 @@ class LiveDeparturesTest(TestCase):
         with vcr.use_cassette('data/vcr/dublin.yaml'):
             departures, max_age = live.get_departures(stop, ())
         self.assertEqual(max_age, 60)
-        self.assertEqual(len(departures['departures']), 12)
+        self.assertEqual(len(departures['departures']), 16)
         self.assertEqual(departures['departures'][4], {
-            'time': datetime(2017, 6, 5, 12, 43),
-            'live': datetime(2017, 6, 5, 12, 35, 58),
-            'destination': 'Dublin Airport',
-            'service': '16'
+            'time': datetime(2018, 12, 1, 12, 57, 18, tzinfo=timezone.utc),
+            'live': datetime(2018, 12, 1, 12, 59, 35, tzinfo=timezone.utc),
+            'destination': 'Swords Manor via Dublin Airport',
+            'service': '41'
         })
 
     @freeze_time('27 October 2018')
