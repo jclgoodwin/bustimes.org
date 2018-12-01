@@ -108,7 +108,6 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(26, row['live'].date().day)
 
         departures = live.get_departures(self.london_stop, ())[0]
-        self.assertEqual(departures['source'], 'TfL')
 
         with vcr.use_cassette('data/vcr/tfl_arrivals.yaml'):
             response = self.client.get('/stops/' + self.london_stop.pk)
