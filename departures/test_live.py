@@ -107,8 +107,6 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(7, row['live'].date().month)
         self.assertEqual(26, row['live'].date().day)
 
-        departures = live.get_departures(self.london_stop, ())[0]
-
         with vcr.use_cassette('data/vcr/tfl_arrivals.yaml'):
             response = self.client.get('/stops/' + self.london_stop.pk)
 
@@ -129,7 +127,6 @@ class LiveDeparturesTest(TestCase):
                     <tr><td>8</td><td>Bow Church</td><td>18:49⚡</td></tr>
                 </tbody></table>
                 <p class="credit">⚡ denotes ‘live’ times based on actual locations of buses</p>
-                <p class="credit">TfL</p>
             </div>
         """, html=True)
 
