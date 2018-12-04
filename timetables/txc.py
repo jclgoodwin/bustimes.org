@@ -45,8 +45,8 @@ BANK_HOLIDAYS = {
     datetime.date(2018, 12, 25): ('ChristmasDay', 'ChristmasDayHoliday'),
     datetime.date(2018, 12, 26): ('BoxingDay', 'BoxingDayHoliday',),
     datetime.date(2018, 12, 31): ('NewYearsEve',),
-    datetime.date(2018, 1, 1): ('NewYearsDay', 'NewYearsDayHoliday'),
-    datetime.date(2018, 1, 2): ('Jan2ndScotland'),
+    datetime.date(2019, 1, 1): ('NewYearsDay', 'NewYearsDayHoliday'),
+    datetime.date(2019, 1, 2): ('Jan2ndScotland'),
 }
 
 
