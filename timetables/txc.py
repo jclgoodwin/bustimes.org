@@ -1110,7 +1110,7 @@ class Timetable(object):
 def abbreviate(grouping, i, in_a_row, difference):
     """Given a Grouping, and a timedelta, modify each row and..."""
     seconds = difference.total_seconds()
-    if not seconds or 3600 % seconds and seconds % 3600:  # not a factor or multiple of 1 hour
+    if not seconds or (seconds != 3600 and seconds > 1800):  # neither hourly nor more than every 30 minutes
         return
     repetition = Repetition(in_a_row + 1, len(grouping.rows), difference)
     repetition.min_height = len([row for row in grouping.rows if not row.is_minor()])
