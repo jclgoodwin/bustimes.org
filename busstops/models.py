@@ -721,11 +721,6 @@ class Service(models.Model):
                 timetable.set_date(day)
                 timetable.set_description(self.description)
                 timetable.groupings = [g for g in timetable.groupings if g.rows and g.rows[0].times]
-                for grouping in timetable.groupings:
-                    if len(grouping.rows[0].times) > 100:
-                        self.show_timetable = False
-                        self.save()
-                        return
         return [t for t in timetables if t and t.groupings] or timetables[:1]
 
 
