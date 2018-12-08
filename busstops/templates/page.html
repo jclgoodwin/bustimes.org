@@ -44,6 +44,13 @@
         <ul>
             <li><a href="/map{% if object.latlong %}#{{ object.latlong.y }},{{ object.latlong.x }}{% endif %}">Map</a></li>
         </ul>
+        <form method="GET" action="/search" class="search">
+        <label>
+            Search
+            <input name="q" placeholder="Search" type="search" value="{{ query }}" required />
+        </label>
+        <input type="submit" value="Search" />
+</form>
     </div>
 </header>
 {% endblock %}

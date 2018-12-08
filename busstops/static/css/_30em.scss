@@ -1,3 +1,33 @@
+header .search {
+    display: block;
+    float: right;
+    padding-top: .7em;
+    padding-right: .5em;
+
+    label {
+        display: block;
+        float: left;
+        position: relative;
+        width: 8em;
+    }
+
+    input[type=search] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 8em;
+    }
+
+    input[type=submit] {
+        background: $brand-color-darker;
+        border: 1px solid $brand-color-darker;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        margin: 0;
+        padding: .25em .5em;
+    }
+}
+
 .long {
     column-count: 2;
 }

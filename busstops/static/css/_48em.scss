@@ -3,6 +3,16 @@ main {
     margin: 0 auto;
 }
 
+header .search {
+    label {
+        width: 10em;
+    }
+
+    input[type=search] {
+        width: 10em;
+    }
+}
+
 .narrow {
     #cookie-message {
         width: 60.5em;
