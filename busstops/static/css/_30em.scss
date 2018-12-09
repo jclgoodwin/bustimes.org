@@ -12,6 +12,8 @@ header .search {
     }
 
     input[type=search] {
+        border-color: $brand-color-darker;
+        margin: 0;
         position: absolute;
         top: 0;
         left: 0;
