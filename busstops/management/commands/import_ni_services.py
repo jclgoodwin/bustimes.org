@@ -22,7 +22,7 @@ class Command(BaseCommand):
     def set_up():
         for id, name in (
                 ('MET', 'Translink Metro'),
-                ('GDR', 'Glider'),
+                ('GDR', 'Translink Glider'),
                 ('ULB', 'Ulsterbus'),
                 ('GLE', 'Goldline Express'),
                 ('UTS', 'Ulsterbus Town Services'),
