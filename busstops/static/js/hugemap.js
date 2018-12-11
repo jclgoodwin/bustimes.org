@@ -26,8 +26,7 @@
             disableClusteringAtZoom: 15,
             maxClusterRadius: 50
         }),
-        lastReq,
-        movedByAccident;
+        lastReq;
 
     L.tileLayer(tileURL, {
         attribution: '© <a href="https://openmaptiles.org">OpenMapTiles</a> | © <a href="https://www.openstreetmap.org">OpenStreetMap contributors</a>'
@@ -43,7 +42,6 @@
         e.layer.spiderfy();
     });
     markers.on('mouseover', function(e) {
-        movedByAccident = true;
         e.layer.openPopup();
     });
 
@@ -64,7 +62,9 @@
                 a.innerHTML = data.properties.name;
                 a.href = data.properties.url;
 
-                marker.bindPopup(a.outerHTML);
+                marker.bindPopup(a.outerHTML, {
+                    autoPan: false
+                });
 
                 a.onmouseover = a.ontouchstart = function() {
                     if (!marker.getPopup().isOpen()) {
@@ -72,7 +72,6 @@
                         if (parent && parent.spiderfy) {
                             parent.spiderfy();
                         }
-                        movedByAccident = true;
                         marker.openPopup();
                     }
                 };
@@ -114,11 +113,6 @@
     }
 
     function handleMoveEnd(event) {
-        if (movedByAccident) {
-            movedByAccident = false;
-            return;
-        }
-
         var latLng = event.target.getCenter(),
             latLngString = Math.round(latLng.lat * 10000) / 10000 + ',' + Math.round(latLng.lng * 10000) / 10000;
 

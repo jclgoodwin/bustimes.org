@@ -134,7 +134,7 @@
         oldVehicles = newVehicles;
         newVehicles = {};
 
-        if (bounds.isValid() && (!map._loaded || !map.getBounds().overlaps(bounds))) {
+        if (!map._loaded && bounds.isValid()) {
             map.fitBounds(bounds, {
                 padding: [20, 20],
                 maxZoom: 12

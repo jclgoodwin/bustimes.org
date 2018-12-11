@@ -87,7 +87,9 @@
                     var marker = L.marker(location, {
                             icon: getIcon(label.getAttribute('data-indicator'), label.getAttribute('data-heading')),
                             riseOnHover: true
-                        }).addTo(map).bindPopup(label.innerHTML),
+                        }).addTo(map).bindPopup(label.innerHTML, {
+                            autoPan: false
+                        }),
                         a = label.getElementsByTagName('a');
                     if (a.length) {
                         a[0].onmouseover = a[0].ontouchstart = function() {
