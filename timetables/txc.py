@@ -665,6 +665,7 @@ class VehicleJourney(object):
         if not date:
             return True
         if timetable and timetable.service:
+            # Lynx Coastliner 36 Sundays
             if timetable.service.service_code == 'ea_21-36-A-y08':
                 if self.operating_profile.regular_days == [6]:
                     if self.departure_time in {
@@ -926,26 +927,35 @@ class Timetable(object):
                 if journey.departure_time == datetime.time(9, 50):
                     journey.departure_time = datetime.time(9, 20)
         elif self.service_code == '21-43-_-y08-1':  # 43 - Reepham - Norwich
-            for journey in journeys.values():
-                if journey.departure_time == datetime.time(11, 30):
-                    if journey.operating_profile.regular_days == [0]:
-                        reepham_to_norwich = journey
-                elif journey.departure_time == datetime.time(9, 15):
-                    monday_to_friday = journey.operating_profile
-            reepham_to_norwich.operating_profile = monday_to_friday
-            reepham_to_norwich.departure_time = datetime.time(15, 45)
-        elif self.service_code.startswith('42-40-A-y10-'):
-            for journey in journeys.values():
-                if journey.departure_time == datetime.time(17, 42):
-                    if journey.journeypattern.sections[0].timinglinks[0].origin.stop.atco_code == '3600SOA30525':
-                        journey.departure_time = datetime.time(16, 35)
-        elif self.service_code == '9-365-_-y11-1':
-            # 365 - Great Malvern - Welland - Upton
-            for key in list(journeys.keys()):
-                # shit to avoid "dictionary size changed during iteration"
+            to_delete = set()
+            for key in journeys:
                 journey = journeys[key]
-                if journey.departure_time == datetime.time(7, 18) or journey.departure_time == datetime.time(17, 18):
-                    del journeys[key]
+                if journey.departure_time == datetime.time(11, 30):  # Saturday short working
+                    reepham_to_norwich = journey.journeypattern
+                    for section in journey.journeypattern.sections:
+                        for timinglink in section.timinglinks:
+                            if timinglink.origin.stop.common_name == 'Chapel Road':
+                                journey.start_deadrun = timinglink.id
+                                break
+                elif journey.departure_time == datetime.time(13, 25):  # Saturday
+                    journey.departure_time = datetime.time(13, 5)
+                elif journey.departure_time == datetime.time(6, 42):  # Mon to Fri
+                    journey.departure_time = datetime.time(9, 5)
+                elif journey.departure_time == datetime.time(17, 6):  # Mon to Fri
+                    journey.departure_time = datetime.time(17, 16)
+                elif journey.departure_time == datetime.time(9, 2):
+                    to_delete.add(key)
+                elif journey.departure_time == datetime.time(14, 36):
+                    journey.departure_time = datetime.time(15, 26)
+                    journey.notes = {
+                        'NSch': 'School holidays only'
+                    }
+            for journey in journeys.values():
+                if journey.departure_time == datetime.time(17, 36):
+                    journey.journeypattern = reepham_to_norwich
+                    journey.departure_time = datetime.time(15, 45)
+            for key in to_delete:
+                del journeys[key]
 
         # some journeys did not have a direct reference to a journeypattern,
         # but rather a reference to another journey with a reference to a journeypattern
