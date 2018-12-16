@@ -1,6 +1,8 @@
 UKCW:
     url: https://twitter.com/ukcoachways
     phone: 01204 468288
+SNDR:
+    email: sales@sanderscoaches.com
 MHCO:
     email: info@mandhcoaches.co.uk
 AVMT:
@@ -244,3 +246,18 @@ JKHY:
     name: Hodgsons Buses (North Yorkshire)
 YCST:
     name: Transdev York
+ROSM:
+    url: ""
+SFGC:
+    twitter: Safeguardbus
+FECS:
+    twitter: |
+        FirstNorwich
+        Firstipswich
+        FirstYar_Low
+        First_excel
+        First_X1
+GECL:
+    twitter: GallowayLive
+JOHS:
+    twitter: JohnsonsTraffic

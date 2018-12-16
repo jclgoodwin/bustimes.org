@@ -83,6 +83,7 @@ class Command(BaseCommand):
             address = public_name.complenq.string
             email = public_name.ttrteenq.string
             phone = public_name.fareenq.string
+            twitter = public_name.twitter.string
 
             if website or address or email or phone:
                 if website:
@@ -98,6 +99,9 @@ class Command(BaseCommand):
                     operator.email = email.strip()
                 if phone and len(phone) <= 128:
                     operator.phone = phone
+                if twitter:
+                    assert '@' == twitter[0]
+                    operator.twitter = twitter[1:]
 
                 try:
                     operator.save()

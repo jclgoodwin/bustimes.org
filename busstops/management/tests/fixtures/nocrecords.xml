@@ -65,6 +65,7 @@
             <FareEnq>01263 712800</FareEnq>
             <ComplEnq>Sanders Coaches, Heath Drive, Holt NR25 6ER</ComplEnq>
             <Website>www.sanderscoaches.com#http://www.sanderscoaches.com#</Website>
+            <Twitter>@SandersCoaches</Twitter>
         </PublicNameRecord>
         <PublicNameRecord>
             <PubNmId>42</PubNmId>
@@ -73,6 +74,7 @@
             <FareEnq>01263 712800</FareEnq>
             <ComplEnq>Sanders Coaches, Heath Drive, Holt NR25 6ER</ComplEnq>
             <Website>www.sanderscoaches.com#http://www.sanderscoaches.com</Website>
+            <Twitter></Twitter>
         </PublicNameRecord>
         <PublicNameRecord>
             <PubNmId>43</PubNmId>
@@ -85,6 +87,7 @@
             <FareEnq>5678</FareEnq>
             <ComplEnq></ComplEnq>
             <Website>www.arrivabus.co.uk#http://www.arrivabus.co.uk/</Website>
+            <Twitter></Twitter>
         </PublicNameRecord>
         <PublicNameRecord>
             <!-- This has no corresponding NOCTableRecord and should be ignored happily -->
@@ -98,6 +101,7 @@
             <fareenq>01726 870232</fareenq>
             <complenq>Toms Yard, East Street, Polruan, Cornwall PL23 1BP</complenq>
             <website>#http://www.ctomhttp://www.ctomsandson.co.uk/bodinnick-ferry/#</website>
+            <Twitter></Twitter>
         </publicnamerecord>
     </PublicName>
 </travelinedata>

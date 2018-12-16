@@ -48,6 +48,7 @@ class ImportOperatorContactTest(TestCase):
         self.assertEqual(self.sanders.phone, '01263 712800')
         self.assertEqual(self.sanders.email, 'charles@sanderscoaches.com')
         self.assertEqual(self.sanders.url, 'http://www.sanderscoaches.com')
+        self.assertEqual(self.sanders.twitter, 'SandersCoaches')
 
         self.first.refresh_from_db()
         self.assertEqual(self.first.address, '')

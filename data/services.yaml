@@ -33,9 +33,7 @@ ea_21-18-_-y08:
     description: North Walsham - Aylsham - Cromer
 ea_21-98-_-y08:
     description: Foulsham - Fakenham
-ea_21-CH1-_-y08:
-    line_brand: Coasthopper
-ea_21-CH2-_-y08:
+ea_21-CH2-A-y08:
     line_brand: Coasthopper
 # FromeBus
 swe_47-58-_-y10:
