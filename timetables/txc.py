@@ -956,6 +956,23 @@ class Timetable(object):
                     journey.departure_time = datetime.time(15, 45)
             for key in to_delete:
                 del journeys[key]
+        elif self.service_code == '21-46-A-y08-1':  # Holt circular
+            to_delete = set()
+            for key in journeys:
+                if journeys[key].departure_time in {
+                    datetime.time(6, 13),
+                    datetime.time(8, 35),
+                    datetime.time(10, 5),
+                    datetime.time(10, 10),
+                    datetime.time(12, 15),
+                    datetime.time(13, 15),
+                    datetime.time(18, 5),
+                    datetime.time(7, 55),  # Saturday
+                    datetime.time(15),
+                }:
+                    to_delete.add(key)
+            for key in to_delete:
+                del journeys[key]
 
         # some journeys did not have a direct reference to a journeypattern,
         # but rather a reference to another journey with a reference to a journeypattern
