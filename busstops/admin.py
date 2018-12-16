@@ -103,8 +103,8 @@ class OperatorCodeAdmin(admin.ModelAdmin):
 
 class ServiceCodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'service', 'scheme', 'code')
-    list_filter = ('scheme',)
-    search_fields = ('code', 'service__line_name')
+    list_filter = ('scheme', 'service__current')
+    search_fields = ('code', 'service__line_name', 'service__description')
     raw_id_fields = ('service',)
 
 

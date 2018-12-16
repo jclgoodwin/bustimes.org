@@ -29,7 +29,8 @@ class Command(ImportLiveVehiclesCommand):
         if service:
             service = service.split('/', 1)[0]
             try:
-                service = Service.objects.get(servicecode__scheme=self.source_name, servicecode__code=service)
+                service = Service.objects.get(servicecode__scheme=self.source_name, servicecode__code=service,
+                                              current=True)
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, vehicle.operator, service)
                 service = None
