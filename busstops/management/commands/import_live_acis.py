@@ -59,6 +59,8 @@ class Command(ImportLiveVehiclesCommand):
             operator = 'GDR'
         else:
             operator = 'MET'
+            if service == '300a':
+                operator = 'ULB'
 
         vehicle, created = Vehicle.objects.get_or_create(operator_id=operator, code=vehicle, source=self.source)
 
