@@ -123,7 +123,7 @@ class VehicleTypeAdmin(admin.ModelAdmin):
 
 
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ('id', 'code', 'fleet_number', 'reg', 'operator', 'vehicle_type')
+    list_display = ('code', 'fleet_number', 'reg', 'operator', 'vehicle_type')
     list_filter = (
         ('operator', admin.RelatedOnlyFieldListFilter),
         ('source', admin.RelatedOnlyFieldListFilter),
