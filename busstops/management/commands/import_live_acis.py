@@ -59,16 +59,18 @@ class Command(ImportLiveVehiclesCommand):
             operator = 'GDR'
         else:
             operator = 'MET'
-            if service == '300a':
-                operator = 'ULB'
-
-        vehicle, created = Vehicle.objects.get_or_create(operator_id=operator, code=vehicle, source=self.source)
 
         try:
-            service = Service.objects.get(line_name__iexact=service, operator=operator)
+            try:
+                service = Service.objects.get(line_name__iexact=service, operator=operator)
+            except Service.DoesNotExist:
+                operator = 'ULB'
+                service = Service.objects.get(line_name__iexact=service, operator=operator)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             print(e, service)
             service = None
+
+        vehicle, created = Vehicle.objects.get_or_create(operator_id=operator, code=vehicle, source=self.source)
 
         return vehicle, created, service
 
