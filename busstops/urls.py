@@ -44,7 +44,6 @@ urlpatterns = [
     }),
     path('search', SearchView(form_class=CustomSearchForm)),
     path('journey', views.journey),
-    path('siri-vm', views.siri_vm),
 ]
 
 
