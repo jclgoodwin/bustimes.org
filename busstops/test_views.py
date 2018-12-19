@@ -360,7 +360,7 @@ class ViewsTests(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertContains(
             response,
-            'Sorry, it looks like the  service <strong>45A</strong> no longer exists. It might have',
+            'Sorry, it looks like the  service <strong>45A</strong> no longer exists.\n    It might have',
             status_code=404
         )
         self.assertContains(response, 'Services operated by Ainsley', status_code=404)
