@@ -14,7 +14,6 @@ urlpatterns = [
     path('awin-transaction', views.awin_transaction),
     path('cookies', views.cookies),
     path('data', views.data),
-    path('apps', views.apps),
     path('map', views.hugemap),
     path('stops.json', views.stops),
     path('regions/<pk>', views.RegionDetailView.as_view(), name='region_detail'),

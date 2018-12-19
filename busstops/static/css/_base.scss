@@ -725,33 +725,6 @@ input:not(:checked) + label {
     margin: 0;
 }
 
-.gallery {
-    margin: 1em -1em;
-    overflow: auto;
-    padding: 0 1em;
-    white-space: nowrap;
-
-    .image {
-        display: inline-block;
-        height: 18.75em;
-        position: relative;
-
-        a {
-            background: #222;
-            bottom: 0;
-            color: #fff;
-            left: 0;
-            padding: .25em .5em;
-            position: absolute;
-        }
-    }
-
-    img {
-        display: block;
-        width: auto;
-    }
-}
-
 #sidebar {
     bottom: 0;
     box-sizing: border-box;

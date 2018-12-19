@@ -9,7 +9,8 @@
 <h1>Page not found</h1>
 
 {% if service %}
-    <p>Sorry, it looks like the {{ service.mode }} service <strong>{{ service }}</strong> no longer exists. It might have been replaced by an equivalent service, or transferred to a different operator.</p>
+    <p>Sorry, it looks like the {{ service.mode }} service <strong>{{ service }}</strong> no longer exists.
+    It might have been replaced by an equivalent service, or transferred to a different operator.</p>
     <p>Perhaps one of the following pages will be useful:</p>
     <ul>
     {% for operator in service.operator.all %}
