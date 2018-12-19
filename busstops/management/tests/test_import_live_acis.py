@@ -9,11 +9,11 @@ class SiriVMImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         Region.objects.create(id='NI')
-        Operator.objects.bulk_create(
+        Operator.objects.bulk_create([
             Operator(id='MET', region_id='NI'),
             Operator(id='GDR', region_id='NI'),
             Operator(id='ULB', region_id='NI'),
-        )
+        ])
 
     @use_cassette(os.path.join('data', 'vcr', 'import_live_acis.yaml'))
     def test_handle(self):
