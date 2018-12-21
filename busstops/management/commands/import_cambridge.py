@@ -92,4 +92,7 @@ class Command(BaseCommand):
         self.source = DataSource.objects.get(name='cambridge')
 
         while True:
-            asyncio.get_event_loop().run_until_complete(self.sock_it())
+            try:
+                asyncio.get_event_loop().run_until_complete(self.sock_it())
+            except websockets.exceptions.ConnectionClosed as e:
+                print(e)
