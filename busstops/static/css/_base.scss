@@ -101,13 +101,38 @@ header {
         }
 
         a {
-            line-height: 1.5;
             padding: 1em;
+            padding-left: .5em;
+            line-height: 1.5em;
         }
     }
 
     .search {
-        display: none;
+        float: right;
+
+        label {
+            display: block;
+            line-height: 1.5;
+            padding: 1em .5em;
+            padding-left: 0;
+
+            input {
+                margin: 0;
+                position: absolute;
+                top: -3em;
+            }
+
+            input:focus {
+                border-width: .75em 1em;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+
+            + input {
+                display: none;
+            }
+        }
     }
 }
 
