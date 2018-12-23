@@ -8,7 +8,8 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
-from ...models import Operator, Service, DataSource, Vehicle, VehicleLocation
+from busstops.models import Operator, Service, DataSource
+from ...models import Vehicle, VehicleJourney, VehicleLocation
 
 
 class Command(BaseCommand):
@@ -49,15 +50,25 @@ class Command(BaseCommand):
             print(e, operator.pk, line_name)
             service = None
         vehicle, created = Vehicle.objects.get_or_create(operator=operator, code=item['VehicleRef'], source=self.source)
+        journey = None
         if not created and vehicle.latest_location and vehicle.latest_location.current:
             vehicle.latest_location.current = False
             vehicle.latest_location.save()
+            if vehicle.latest_location.journey.service == service:
+                journey = vehicle.latest_location.journey
+        if not journey or journey.code != item['DatedVehicleJourneyRef']:
+            journey = VehicleJourney.objects.create(
+                vehicle=vehicle,
+                service=service,
+                source=self.source,
+                datetime=ciso8601.parse_datetime(item['OriginAimedDepartureTime']),
+                destination=item['DestinationName'],
+                code=item['DatedVehicleJourneyRef']
+            )
         vehicle.latest_location = VehicleLocation.objects.create(
-            vehicle=vehicle,
-            service=service,
+            journey=journey,
             datetime=ciso8601.parse_datetime(item['RecordedAtTime']),
             latlong=Point(float(item['Longitude']), float(item['Latitude'])),
-            source=self.source,
             heading=item['Bearing'],
             current=True
         )
@@ -72,7 +83,8 @@ class Command(BaseCommand):
         self.source.save()
 
         five_minutes_ago = now - timedelta(minutes=5)
-        self.source.vehiclelocation_set.filter(current=True, datetime__lte=five_minutes_ago).update(current=False)
+        locations = VehicleLocation.objects.filter(journey__source=self.source, current=True)
+        locations.filter(datetime__lte=five_minutes_ago).update(current=False)
 
     async def sock_it(self):
         async with websockets.connect(self.source.url) as websocket:
