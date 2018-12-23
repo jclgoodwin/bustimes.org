@@ -27,11 +27,15 @@ class Command(BaseCommand):
 
         source = DataSource.objects.get(name='NCC Hogia')
         for vehicle in source.vehicle_set.all():
+            print(vehicle.id)
             journey = None
             new_vehicle = vehicles[vehicle]
             for location in vehicle.vehiclelocation_set.all():
-                journey_code = get_journey_code(location.data['Label'])
-                if not journey or journey_code != journey.code:
+                if location.data and 'Label' in location.data:
+                    journey_code = get_journey_code(location.data['Label'])
+                else:
+                    journey_code = ''
+                if not journey or journey_code != journey.code or journey.service != location.service:
                     journey = VehicleJourney.objects.create(code=journey_code, datetime=location.datetime,
                                                             vehicle=new_vehicle, service=location.service,
                                                             source=source)
