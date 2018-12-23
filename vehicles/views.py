@@ -5,7 +5,7 @@ from django.views.decorators.http import last_modified
 from django.views.generic.detail import DetailView
 from django.utils import timezone
 from busstops.views import get_bounding_box
-from .models import Vehicle, VehicleLocation, Operator, Service
+from .models import Vehicle, VehicleLocation, VehicleJourney, Operator, Service
 
 
 def operator_vehicles(request, slug):
@@ -15,7 +15,7 @@ def operator_vehicles(request, slug):
         'object': operator,
         'today': timezone.now().date(),
         'vehicles': operator.vehicle_set.order_by('fleet_number').select_related('vehicle_type',
-                                                                                 'latest_location__service')
+                                                                                 'latest_location__journey__service')
     })
 
 
@@ -94,19 +94,19 @@ def service_vehicles_history(request, slug):
             date = ciso8601.parse_datetime(date).date()
         except ValueError:
             date = None
-    locations = VehicleLocation.objects.filter(journey__service=service)
+    journeys = service.vehiclejourney_set
     if not date:
         try:
-            date = locations.values_list('datetime', flat=True).latest('datetime').date()
-        except VehicleLocation.DoesNotExist:
+            date = journeys.values_list('datetime', flat=True).latest('datetime').date()
+        except VehicleJourney.DoesNotExist:
             date = timezone.now().date()
-    locations = locations.filter(datetime__date=date).select_related('journey__vehicle')
+    journeys = journeys.filter(datetime__date=date).select_related('vehicle').prefetch_related('vehiclelocation_set')
     operator = service.operator.select_related('region').first()
-    return render(request, 'busstops/vehicle_detail.html', {
+    return render(request, 'vehicles/vehicle_detail.html', {
         'breadcrumb': [operator.region, operator, service],
         'date': date,
         'object': service,
-        'locations': locations.order_by('vehicle', 'id')
+        'journeys': journeys
     })
 
 
@@ -124,12 +124,13 @@ class VehicleDetailView(DetailView):
                 date = ciso8601.parse_datetime(date).date()
             except ValueError:
                 date = None
-        locations = VehicleLocation.objects.filter(journey__vehicle=self.object)
+        journeys = self.object.vehiclejourney_set
         if not date:
             try:
-                date = locations.values_list('datetime', flat=True).latest('datetime').date()
-            except VehicleLocation.DoesNotExist:
+                date = journeys.values_list('datetime', flat=True).latest('datetime').date()
+            except VehicleJourney.DoesNotExist:
                 date = timezone.now().date()
         context['date'] = date
-        context['locations'] = locations.filter(datetime__date=date).select_related('journey__service')
+        journeys = journeys.filter(datetime__date=date)
+        context['journeys'] = journeys.select_related('service').prefetch_related('vehiclelocation_set')
         return context

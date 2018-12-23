@@ -13,7 +13,7 @@
 <input type="submit">
 </form>
 
-{% if locations %}
+{% if journeys %}
 <div id="cartograph" style="height:100vh"></div>
 
 <link rel="stylesheet" href="/static/js/bower_components/leaflet/dist/leaflet.css" />
@@ -51,19 +51,17 @@
 
     L.tileLayer(tileURL).addTo(map);
 
-    {% for location in locations %}
+    {% for journey in journeys %}
         {% if object.region %}
-            {% ifchanged location.vehicle %}
-                service = '<a href="{{ location.vehicle.get_absolute_url }}">{{ location.vehicle }}</a><br>';
-            {% endifchanged %}
+            service = '<a href="{{ journey.vehicle.get_absolute_url }}">{{ journey.vehicle }}</a><br>';
         {% else %}
-            {% ifchanged location.service %}
-                service = '{% if location.service %}<a href="{{ location.service.get_absolute_url }}">{{ location.service.line_name }}</a><br>{% endif %}';
-            {% endifchanged %}
+            service = '{% if journey.service %}<a href="{{ journey.service.get_absolute_url }}">{{ journey.service.line_name }}</a><br>{% endif %}';
         {% endif %}
-        latlng = [{{ location.latlong.y }},{{ location.latlong.x }}];
-        bounds.extend(latlng);
-        getMarker(latlng, {% if location.heading is not None %}{{ location.heading }}{% else %}null{% endif %}).bindPopup(service + "{{ location.datetime }}").addTo(map);
+        {% for location in journey.vehiclelocation_set.all %}
+            latlng = [{{ location.latlong.y }},{{ location.latlong.x }}];
+            bounds.extend(latlng);
+            getMarker(latlng, {% if location.heading is not None %}{{ location.heading }}{% else %}null{% endif %}).bindPopup(service + "{{ location.datetime }}").addTo(map);
+        {% endfor %}
     {% endfor %}
     map.fitBounds(bounds);
     map.setMaxBounds(bounds.pad(.5));
@@ -73,16 +71,16 @@
     <p>Sorry, nothing found for {{ date }}</p>
 {% endif %}
 
-    {% for location in locations %}
-        {% if object.region %}
-            {% ifchanged location.vehicle %}
-                <p>{{ location.datetime }} - <a href="{{ location.vehicle.get_absolute_url }}">{{ location.vehicle }}</a></p>
-            {% endifchanged %}
-        {% else %}
-            {% ifchanged location.service %}
-                <p>{{ location.datetime }}{% if location.service %} - <a href="{{ location.service.get_absolute_url }}">{{ location.service.line_name }}</a>{% endif %}</p>
-            {% endifchanged %}
-        {% endif %}
-{% endfor %}
+    {% for journey in journeys %}
+        <p>
+            {{ journey.datetime|time }}
+            {% if journey.code %}- {{ journey.code }}{% endif %}
+            {% if object.region %}
+                - <a href="{{ journey.vehicle.get_absolute_url }}?date={{ journey.datetime }}">{{ journey.vehicle }}</a>
+            {% elif journey.service %}
+                - <a href="{{ journey.service.get_absolute_url }}">{{ journey.service.line_name }}</a>
+            {% endif %}
+        </p>
+    {% endfor %}
 
 {% endblock %}

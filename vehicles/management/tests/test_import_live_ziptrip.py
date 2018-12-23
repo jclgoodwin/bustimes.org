@@ -8,11 +8,11 @@ class ZipTripTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         Region.objects.create(id='EA')
-        Operator.objects.create(id='LYNX', region_id='EA')
+        Operator.objects.create(id='LYNX', region_id='EA', slug='lynx')
         Operator.objects.create(id='CBUS', region_id='EA')
         Operator.objects.create(id='GAHL', region_id='EA')
         Operator.objects.create(id='LGEN', region_id='EA')
-        cls.service = Service.objects.create(line_name='7777', date='2010-01-01')
+        cls.service = Service.objects.create(line_name='7777', date='2010-01-01', service_code='007', slug='foo-foo')
         cls.service.operator.set(['LGEN'])
 
         now = '2018-08-06T22:41:15+01:00'
@@ -52,3 +52,19 @@ class ZipTripTest(TestCase):
         self.assertEquals(self.service, location.journey.service)
 
         self.assertEquals(3, Vehicle.objects.count())
+
+        with self.assertNumQueries(2):
+            response = self.client.get('/vehicles.json?service=007').json()
+        self.assertEquals(1, len(response['features']))
+
+        with self.assertNumQueries(3):
+            response = self.client.get('/operators/lynx/vehicles')
+        self.assertContains(response, '2 - YJ55 BJE')
+
+        with self.assertNumQueries(3):
+            response = self.client.get(self.vehicle.get_absolute_url())
+        self.assertContains(response, 'Sorry, nothing found')
+
+        with self.assertNumQueries(6):
+            response = self.client.get('/services/foo-foo/vehicles')
+        self.assertContains(response, 'value=2018-08-31')
