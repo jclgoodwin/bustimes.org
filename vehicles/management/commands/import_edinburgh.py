@@ -1,5 +1,6 @@
 from django.contrib.gis.geos import Point
-from ...models import Vehicle, VehicleLocation, Service
+from busstops.models import Service
+from ...models import Vehicle, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 

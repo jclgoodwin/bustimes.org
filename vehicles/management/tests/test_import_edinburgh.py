@@ -1,5 +1,6 @@
 from django.test import TestCase
-from ...models import DataSource, Service, Vehicle, Operator, Region
+from busstops.models import DataSource, Service, Operator, Region
+from ...models import Vehicle
 from ..commands.import_edinburgh import Command
 
 

@@ -1,5 +1,6 @@
 from django.test import TestCase
-from ...models import Region, Operator, DataSource, Vehicle, VehicleLocation, Service
+from busstops.models import Region, Operator, DataSource, Service
+from ...models import Vehicle, VehicleLocation
 from ..commands import import_live_ziptrip
 
 
@@ -39,15 +40,15 @@ class ZipTripTest(TestCase):
         location = VehicleLocation.objects.get()
 
         self.assertEquals(336, location.heading)
-        self.assertNotEquals(self.vehicle, location.vehicle)
-        self.assertEquals('LYNX', location.vehicle.operator_id)
+        self.assertNotEquals(self.vehicle, location.journey.vehicle)
+        self.assertEquals('LYNX', location.journey.vehicle.operator_id)
 
         item['vehicleCode'] = 'LAS_203'
         # Although a vehicle called '203' exists, it belongs to a different operator, so a new one should be created
         command.handle_item(item, self.source.datetime)
         location = VehicleLocation.objects.last()
-        self.assertEquals('GAHL', location.vehicle.operator_id)
-        self.assertNotEquals(self.vehicle, location.vehicle)
-        self.assertEquals(self.service, location.service)
+        self.assertEquals('GAHL', location.journey.vehicle.operator_id)
+        self.assertNotEquals(self.vehicle, location.journey.vehicle)
+        self.assertEquals(self.service, location.journey.service)
 
         self.assertEquals(3, Vehicle.objects.count())

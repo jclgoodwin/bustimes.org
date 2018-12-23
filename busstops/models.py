@@ -537,7 +537,7 @@ class Service(models.Model):
 
     @cached_property
     def get_buses_online(self):
-        return self.vehiclelocation_set.filter(current=True).count()
+        return self.vehiclejourney_set.filter(vehiclelocation__current=True).count()
 
     @staticmethod
     def get_operator_number(code):
@@ -823,80 +823,6 @@ class Note(models.Model):
 
     def get_absolute_url(self):
         return (self.operators.first() or self.services.first()).get_absolute_url()
-
-
-class VehicleType(models.Model):
-    name = models.CharField(max_length=255, unique=True)
-    double_decker = models.NullBooleanField()
-
-    class Meta():
-        ordering = ('name',)
-
-    def __str__(self):
-        return self.name
-
-
-class Vehicle(models.Model):
-    code = models.CharField(max_length=255)
-    fleet_number = models.PositiveIntegerField(null=True, blank=True)
-    reg = models.CharField(max_length=24, blank=True)
-    source = models.ForeignKey(DataSource, models.CASCADE)
-    operator = models.ForeignKey(Operator, models.SET_NULL, null=True, blank=True)
-    vehicle_type = models.ForeignKey(VehicleType, models.SET_NULL, null=True, blank=True)
-    notes = models.CharField(max_length=255, blank=True)
-    latest_location = models.ForeignKey('VehicleLocation', models.SET_NULL, null=True, blank=True,
-                                        related_name='latest_vehicle', editable=False)
-
-    class Meta():
-        unique_together = ('code', 'operator')
-
-    def __str__(self):
-        code = self.code
-        if '_' in code:
-            return code.replace('_', ' ')
-        return self.code.replace('-', ' ')
-
-    def get_reg(self):
-        reg = self.code.split('-')[-1].replace('_', ' ')
-        if not reg.isdigit() and reg.isupper():
-            reg = reg.split()
-            if reg[0].isdigit():
-                reg = reg[-2:]
-            return ''.join(reg)
-
-    def get_absolute_url(self):
-        return reverse('vehicle_detail', args=(self.id,))
-
-
-class VehicleLocation(models.Model):
-    data = JSONField(null=True, blank=True)
-    datetime = models.DateTimeField()
-    latlong = models.PointField()
-    service = models.ForeignKey(Service, models.SET_NULL, null=True, blank=True)
-    source = models.ForeignKey(DataSource, models.CASCADE)
-    vehicle = models.ForeignKey(Vehicle, models.SET_NULL, null=True, blank=True)
-    heading = models.PositiveIntegerField(null=True, blank=True)
-    early = models.IntegerField(null=True, blank=True)
-    current = models.BooleanField(default=False, db_index=True)
-
-    class Meta():
-        ordering = ('id',)
-        index_together = (
-            ('service', 'datetime'),
-            ('service', 'current'),
-            ('source', 'current'),
-            ('vehicle', 'datetime'),
-            ('vehicle', 'current'),
-        )
-
-    def get_label(self):
-        if self.data:
-            if 'Label' in self.data:
-                label = self.data['Label'].split()
-                if len(label) > 1:
-                    return label[1]
-            else:
-                return self.data.get('service') or self.data.get('service_name')
 
 
 class SIRISource(models.Model):

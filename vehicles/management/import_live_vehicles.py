@@ -7,7 +7,7 @@ from time import sleep
 from django.db import OperationalError, IntegrityError, transaction
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from ..models import DataSource
+from ..models import DataSource, VehicleJourney, VehicleLocation
 
 
 logger = logging.getLogger(__name__)
@@ -54,7 +54,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         else:
             latest = vehicle.latest_location
             if latest and latest.current:
-                if latest.source != self.source:
+                if latest.journey.source != self.source:
                     return  # defer to other source
                 if (type(item) is dict and latest.data == item):
                     self.current_location_ids.add(latest.id)
@@ -70,13 +70,15 @@ class ImportLiveVehiclesCommand(BaseCommand):
             elif location.latlong == latest.latlong:
                 self.current_location_ids.add(latest.id)
                 return
-        location.vehicle = vehicle
-        location.service = service
-        location.source = self.source
-        if not location.heading and latest and latest.service == service:
-            location.heading = calculate_bearing(latest.latlong, location.latlong)
         if not location.datetime:
             location.datetime = now
+        if latest and latest.journey.service == service:
+            location.journey = latest.journey
+        else:
+            location.journey = VehicleJourney.objects.create(vehicle=vehicle, service=service, source=self.source,
+                                                             datetime=location.datetime)
+        if not location.heading and latest and latest.journey.service == service:
+            location.heading = calculate_bearing(latest.latlong, location.latlong)
         # save new location
         location.current = True
         location.save()
@@ -97,17 +99,18 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         self.current_location_ids = set()
 
+        current_locations = VehicleLocation.objects.filter(journey__source=self.source, current=True)
+
         try:
             for item in self.get_items():
                 self.handle_item(item, now)
             # mark any vehicles that have gone offline as not current
-            old_locations = self.source.vehiclelocation_set.filter(current=True)
-            old_locations = old_locations.exclude(id__in=self.current_location_ids)
+            old_locations = current_locations.exclude(id__in=self.current_location_ids)
             print(old_locations.update(current=False), end='\t', flush=True)
         except (requests.exceptions.RequestException, IntegrityError, TypeError, ValueError) as e:
             print(e)
             logger.error(e, exc_info=True)
-            self.source.vehiclelocation_set.filter(current=True).update(current=False)
+            current_locations.update(current=False)
             return 120
 
         return 40

@@ -5,8 +5,7 @@ from django.db.models import Count, Q
 from django.contrib.gis.db.models import PointField
 from .models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note, Journey, StopUsageUsage,
-    ServiceCode, OperatorCode, DataSource, Place, Registration, Variation, Vehicle, VehicleLocation, VehicleType,
-    SIRISource
+    ServiceCode, OperatorCode, DataSource, Place, Registration, Variation, SIRISource
 )
 
 
@@ -117,42 +116,6 @@ class VariationAdmin(admin.ModelAdmin):
     list_filter = ('registration_status',)
 
 
-class VehicleTypeAdmin(admin.ModelAdmin):
-    search_fields = ('name',)
-    list_display = ('name', 'double_decker')
-
-
-class VehicleAdmin(admin.ModelAdmin):
-    list_display = ('code', 'fleet_number', 'reg', 'operator', 'vehicle_type')
-    list_filter = (
-        ('operator', admin.RelatedOnlyFieldListFilter),
-        ('source', admin.RelatedOnlyFieldListFilter),
-        ('vehicle_type', admin.RelatedOnlyFieldListFilter),
-    )
-    list_select_related = ('operator', 'vehicle_type')
-    list_editable = ('fleet_number', 'reg', 'operator', 'vehicle_type')
-    search_fields = ('code',)
-    raw_id_fields = ('operator',)
-    autocomplete_fields = ('vehicle_type',)
-    ordering = ('-id',)
-
-
-class VehicleLocationAdmin(admin.ModelAdmin):
-    show_full_result_count = False
-    list_display = ('vehicle', 'service', 'datetime')
-    list_filter = (
-        'current',
-        ('service__operator', admin.RelatedOnlyFieldListFilter),
-        ('service', admin.RelatedOnlyFieldListFilter),
-        ('source', admin.RelatedOnlyFieldListFilter),
-    )
-    list_select_related = ('vehicle', 'service')
-    raw_id_fields = ('vehicle', 'service')
-    formfield_overrides = {
-        PointField: {'widget': OSMWidget}
-    }
-
-
 class DataSourceAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'datetime')
 
@@ -174,7 +137,4 @@ admin.site.register(DataSource, DataSourceAdmin)
 admin.site.register(Place, PlaceAdmin)
 admin.site.register(Registration)
 admin.site.register(Variation, VariationAdmin)
-admin.site.register(VehicleType, VehicleTypeAdmin)
-admin.site.register(Vehicle, VehicleAdmin)
-admin.site.register(VehicleLocation, VehicleLocationAdmin)
 admin.site.register(SIRISource)

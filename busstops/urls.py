@@ -4,6 +4,7 @@ from django.urls import path
 from django.contrib import staticfiles
 from django.contrib.sitemaps.views import sitemap
 from haystack.views import SearchView
+from vehicles.urls import urlpatterns as vehicles_urls
 from .forms import CustomSearchForm
 from . import views
 
@@ -26,16 +27,16 @@ urlpatterns = [
     path('stops/<pk>', views.StopPointDetailView.as_view(), name='stoppoint_detail'),
     url(r'^operators/(?P<pk>[A-Z]+)$', views.OperatorDetailView.as_view()),
     path('operators/<slug>', views.OperatorDetailView.as_view(), name='operator_detail'),
-    path('operators/<slug>/vehicles', views.operator_vehicles),
-    path('services/<slug>/vehicles', views.service_vehicles_history),
+    # path('operators/<slug>/vehicles', views.operator_vehicles),
+    # path('services/<slug>/vehicles', views.service_vehicles_history),
     path('services/<pk>.xml', views.service_xml),
     path('services/<slug>', views.ServiceDetailView.as_view(), name='service_detail'),
     path('licences/<licence_number>', views.RegistrationView.as_view(), name='registration_list'),
     path('registrations/<path:registration__registration_number>', views.VariationView.as_view(),
          name='variation_list'),
-    path('vehicles', views.vehicles),
-    path('vehicles.json', views.vehicles_json),
-    path('vehicles/<int:pk>', views.VehicleDetailView.as_view(), name='vehicle_detail'),
+    # path('vehicles', views.vehicles),
+    # path('vehicles.json', views.vehicles_json),
+    # path('vehicles/<int:pk>', views.VehicleDetailView.as_view(), name='vehicle_detail'),
     path('sitemap.xml', sitemap, {
         'sitemaps': {
              'operators': views.OperatorSitemap,
@@ -44,7 +45,7 @@ urlpatterns = [
     }),
     path('search', SearchView(form_class=CustomSearchForm)),
     path('journey', views.journey),
-]
+] + vehicles_urls
 
 
 if settings.DEBUG and hasattr(staticfiles, 'views'):

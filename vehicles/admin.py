@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.gis.forms import OSMWidget
 from django.contrib.gis.db.models import PointField
-from .models import VehicleType, Vehicle, VehicleLocation
+from .models import VehicleType, Vehicle, VehicleLocation, VehicleJourney
 
 
 class VehicleTypeAdmin(admin.ModelAdmin):
@@ -39,6 +39,11 @@ class VehicleLocationAdmin(admin.ModelAdmin):
     }
 
 
+class VehicleJourneyAdmin(admin.ModelAdmin):
+    raw_id_fields = ('service',)
+
+
 admin.site.register(VehicleType, VehicleTypeAdmin)
 admin.site.register(Vehicle, VehicleAdmin)
 admin.site.register(VehicleLocation)
+admin.site.register(VehicleJourney, VehicleJourneyAdmin)

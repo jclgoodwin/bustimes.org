@@ -63,33 +63,3 @@ class HogiaImportTest(TestCase):
         with patch('requests.Session.get', side_effect=timeout):
             command.update()
         self.assertEqual(VehicleLocation.objects.filter(current=True).count(), 0)
-
-    def test_vehicle_reg(self):
-        vehicle = Vehicle()
-
-        vehicle.code = '_7_-_YJ58_CEY'
-        self.assertEqual(vehicle.get_reg(), 'YJ58CEY')
-
-        vehicle.code = '3990_ME'
-        self.assertEqual(vehicle.get_reg(), '3990ME')
-
-        vehicle.code = '50_-_UWW_2X'
-        self.assertEqual(vehicle.get_reg(), 'UWW2X')
-
-        vehicle.code = '407_YJ59_AYY'
-        self.assertEqual(vehicle.get_reg(), 'YJ59AYY')
-
-        vehicle.code = '116-YN53_CFZ'
-        self.assertEqual(vehicle.get_reg(), 'YN53CFZ')
-
-        vehicle.code = 'MX_53_JVF'
-        self.assertEqual(vehicle.get_reg(), 'MX53JVF')
-
-        vehicle.code = 'Handheld'
-        self.assertIsNone(vehicle.get_reg())
-
-        vehicle.code = '33824'
-        self.assertIsNone(vehicle.get_reg())
-
-        vehicle.code = 'SQ-SQ-2278'
-        self.assertIsNone(vehicle.get_reg())

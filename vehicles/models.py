@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
+from django.urls import reverse
 from busstops.models import Operator, Service, DataSource
 
 
@@ -19,16 +20,22 @@ class Vehicle(models.Model):
     code = models.CharField(max_length=255)
     fleet_number = models.PositiveIntegerField(null=True, blank=True)
     reg = models.CharField(max_length=24, blank=True)
-    source = models.ForeignKey(DataSource, models.CASCADE, null=True, blank=True, related_name='new_vehicle')
-    operator = models.ForeignKey(Operator, models.SET_NULL, null=True, blank=True, related_name='new_vehicle')
+    source = models.ForeignKey(DataSource, models.CASCADE, null=True, blank=True)
+    operator = models.ForeignKey(Operator, models.SET_NULL, null=True, blank=True)
     vehicle_type = models.ForeignKey(VehicleType, models.SET_NULL, null=True, blank=True)
     colours = models.CharField(max_length=255, blank=True)
     notes = models.CharField(max_length=255, blank=True)
     latest_location = models.ForeignKey('VehicleLocation', models.SET_NULL, null=True, blank=True,
-                                        related_name='latest_location', editable=False)
+                                        related_name='latest_vehicle', editable=False)
 
     class Meta():
         unique_together = ('code', 'operator')
+
+    def __str__(self):
+        return self.code.replace('_', ' ')
+
+    def get_absolute_url(self):
+        return reverse('vehicle_detail', args=(self.id,))
 
 
 class VehicleJourney(models.Model):

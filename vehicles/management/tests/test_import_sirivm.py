@@ -1,7 +1,8 @@
 import os
 from vcr import use_cassette
 from django.test import TestCase
-from ...models import Region, Operator, Service, DataSource
+from busstops.models import Region, Operator, Service, DataSource
+from ...models import VehicleLocation
 from ..commands import import_sirivm
 
 
@@ -32,20 +33,20 @@ class SiriVMImportTest(TestCase):
         self.assertEqual('2018-08-06 21:44:32+01:00', str(location.datetime))
         self.assertIsNone(location.heading)
 
-        locations = command.source.vehiclelocation_set
+        locations = VehicleLocation.objects.filter(journey__source=command.source)
 
         command.handle_item(item, None)
         self.assertIsNone(locations.get().heading)
 
         # if datetime is the same, shouldn't create new vehicle location
         command.handle_item(item, None)
-        self.assertEqual(1, command.source.vehiclelocation_set.count())
+        self.assertEqual(1, locations.count())
 
         # different datetime - should create new vehicle location
         item.find('siri:RecordedAtTime', import_sirivm.NS).text = '2018-08-06T21:45:32+01:00'
         command.handle_item(item, None)
-        self.assertEqual(2, command.source.vehiclelocation_set.count())
-        self.assertIsNone(command.source.vehiclelocation_set.last().heading)
+        self.assertEqual(2, locations.count())
+        self.assertIsNone(locations.last().heading)
 
         # test an item with an invalid delay ('-PT2M.492S')
         item = next(items)

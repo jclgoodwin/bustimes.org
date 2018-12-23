@@ -1,7 +1,8 @@
 from urllib.parse import unquote
 from django.contrib.gis.geos import Point
+from busstops.models import Service
 from ..import_live_vehicles import ImportLiveVehiclesCommand
-from ...models import Vehicle, VehicleLocation, Service
+from ...models import Vehicle, VehicleLocation
 
 
 class Command(ImportLiveVehiclesCommand):

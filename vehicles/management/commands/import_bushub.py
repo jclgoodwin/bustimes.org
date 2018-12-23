@@ -1,8 +1,9 @@
 import pytz
 from datetime import datetime
 from django.contrib.gis.geos import Point
+from busstops.models import Operator, Service
+from ...models import Vehicle, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
-from ...models import Operator, Vehicle, VehicleLocation, Service
 
 
 LOCAL_TIMEZONE = pytz.timezone('Europe/London')

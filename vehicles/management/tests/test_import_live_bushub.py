@@ -1,5 +1,6 @@
 from django.test import TestCase
-from ...models import Region, Operator, DataSource, VehicleLocation
+from busstops.models import Region, Operator, DataSource
+from ...models import VehicleLocation
 from ..commands import import_bushub
 
 
@@ -56,4 +57,4 @@ class BusHubTest(TestCase):
         location = VehicleLocation.objects.get()
         self.assertEquals('2018-08-31 21:49:33+00:00', str(location.datetime))
         self.assertEquals(143, location.heading)
-        self.assertEquals('DIAM', location.vehicle.operator_id)
+        self.assertEquals('DIAM', location.journey.vehicle.operator_id)

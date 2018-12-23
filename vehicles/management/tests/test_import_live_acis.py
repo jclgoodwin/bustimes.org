@@ -1,7 +1,8 @@
 import os
 from vcr import use_cassette
 from django.test import TestCase
-from ...models import Region, Operator, VehicleLocation
+from busstops.models import Region, Operator
+from ...models import VehicleLocation
 from ..commands import import_live_acis
 
 

@@ -9,7 +9,6 @@ from django.http import (HttpResponse, JsonResponse, Http404,
                          HttpResponseBadRequest)
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import last_modified
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.conf import settings
@@ -22,7 +21,7 @@ from haystack.query import SearchQuerySet
 from departures import live
 from .utils import format_gbp
 from .models import (Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Journey, Place,
-                     Registration, Variation, Vehicle, VehicleLocation)
+                     Registration, Variation)
 from .forms import ContactForm
 
 
@@ -154,88 +153,6 @@ def stops(request):
                 'url': stop.get_absolute_url(),
             }
         } for stop in results]
-    })
-
-
-def vehicles(request):
-    return render(request, 'vehicles.html')
-
-
-def vehicles_last_modified(request):
-    locations = VehicleLocation.objects.filter(current=True)
-    if 'service' in request.GET:
-        locations = locations.filter(service_id=request.GET['service'])
-
-    try:
-        location = locations.values('datetime').latest('datetime')
-        return location['datetime']
-    except VehicleLocation.DoesNotExist:
-        return
-
-
-@last_modified(vehicles_last_modified)
-def vehicles_json(request):
-    locations = VehicleLocation.objects.filter(current=True).order_by()
-
-    try:
-        bounding_box = get_bounding_box(request)
-        locations = locations.filter(latlong__within=bounding_box)
-    except KeyError:
-        pass
-
-    if 'service' in request.GET:
-        locations = locations.filter(service_id=request.GET['service'])
-
-    locations = locations.select_related('service', 'vehicle__operator', 'vehicle__vehicle_type')
-
-    return JsonResponse({
-        'type': 'FeatureCollection',
-        'features': [{
-            'type': 'Feature',
-            'geometry': {
-                'type': 'Point',
-                'coordinates': tuple(location.latlong),
-            },
-            'properties': {
-                'vehicle': location.vehicle and {
-                    'url': location.vehicle.get_absolute_url(),
-                    'name': str(location.vehicle),
-                    'type': location.vehicle.vehicle_type and str(location.vehicle.vehicle_type),
-                },
-                'operator': location.vehicle and location.vehicle.operator and str(location.vehicle.operator),
-                'service': location.service and {
-                    'line_name': location.service.line_name,
-                    'url': location.service.get_absolute_url(),
-                },
-                'journey': location.get_label(),
-                'delta': location.early,
-                'direction': location.heading,
-                'datetime': location.datetime
-            }
-        } for location in locations]
-    })
-
-
-def service_vehicles_history(request, slug):
-    service = get_object_or_404(Service, slug=slug)
-    date = request.GET.get('date')
-    if date:
-        try:
-            date = ciso8601.parse_datetime(date).date()
-        except ValueError:
-            date = None
-    if not date:
-        try:
-            date = service.vehiclelocation_set.values_list('datetime', flat=True).latest('datetime').date()
-        except VehicleLocation.DoesNotExist:
-            date = timezone.now().date()
-    locations = service.vehiclelocation_set.filter(datetime__date=date).select_related('vehicle')
-    operator = service.operator.select_related('region').first()
-    return render(request, 'busstops/vehicle_detail.html', {
-        'breadcrumb': [operator.region, operator, service],
-        'date': date,
-        'object': service,
-        'locations': locations.order_by('vehicle', 'id')
     })
 
 
@@ -531,17 +448,6 @@ class OperatorDetailView(DetailView):
         return super().render_to_response(context)
 
 
-def operator_vehicles(request, slug):
-    operator = get_object_or_404(Operator, slug=slug)
-    return render(request, 'operator_vehicles.html', {
-        'breadcrumb': [operator.region, operator],
-        'object': operator,
-        'today': timezone.now().date(),
-        'vehicles': operator.vehicle_set.order_by('fleet_number').select_related('vehicle_type',
-                                                                                 'latest_location__service')
-    })
-
-
 class ServiceDetailView(DetailView):
     "A service and the stops it stops at"
 
@@ -794,27 +700,3 @@ def journey(request):
         'to_options': to_options,
         'journeys': journeys
     })
-
-
-class VehicleDetailView(DetailView):
-    model = Vehicle
-    queryset = model.objects.select_related('operator', 'operator__region')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.object.operator:
-            context['breadcrumb'] = [self.object.operator.region, self.object.operator]
-        date = self.request.GET.get('date')
-        if date:
-            try:
-                date = ciso8601.parse_datetime(date).date()
-            except ValueError:
-                date = None
-        if not date:
-            try:
-                date = self.object.vehiclelocation_set.values_list('datetime', flat=True).latest('datetime').date()
-            except VehicleLocation.DoesNotExist:
-                date = timezone.now().date()
-        context['date'] = date
-        context['locations'] = self.object.vehiclelocation_set.filter(datetime__date=date).select_related('service')
-        return context
