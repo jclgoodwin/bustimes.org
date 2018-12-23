@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.gis.forms import OSMWidget
 from django.db.models import Count, Q
 from django.contrib.gis.db.models import PointField
-from busstops.models import (
+from .models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note, Journey, StopUsageUsage,
     ServiceCode, OperatorCode, DataSource, Place, Registration, Variation, Vehicle, VehicleLocation, VehicleType,
     SIRISource

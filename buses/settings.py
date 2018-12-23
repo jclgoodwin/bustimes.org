@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'haystack',
     'busstops',
+    'vehicles',
     'multigtfs',
     'pipeline',
     'antispam',
