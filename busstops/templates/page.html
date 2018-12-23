@@ -16,8 +16,7 @@
 <link rel="manifest" href="{% static 'manifest.webmanifest' %}" />
 <!--[if gte IE 9]><!-->
     {% load pipeline %}
-    {% load inline_style %}
-    {% inline_stylesheet 'main' %}
+    {% stylesheet 'main' %}
     {% if object.geometry or object.get_buses_online %}
         <link rel="stylesheet" href="{% static "js/bower_components/leaflet/dist/leaflet.css" %}" />
     {% endif %}
