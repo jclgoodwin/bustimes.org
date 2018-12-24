@@ -100,10 +100,6 @@
             popup += '<br>';
         }
 
-        if (data.properties.vehicle && data.properties.vehicle.type) {
-            popup = data.properties.vehicle.type + '<br>' + popup;
-        }
-
         var dateTime = new Date(data.properties.datetime);
         popup += 'Updated at ' + dateTime.toTimeString().slice(0, 5);
 
