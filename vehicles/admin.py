@@ -1,12 +1,11 @@
 from django.contrib import admin
-from django.contrib.gis.forms import OSMWidget
-from django.contrib.gis.db.models import PointField
-from .models import VehicleType, Vehicle, VehicleLocation, VehicleJourney
+from .models import VehicleType, Vehicle, VehicleJourney
 
 
 class VehicleTypeAdmin(admin.ModelAdmin):
     search_fields = ('name',)
-    list_display = ('name', 'double_decker')
+    list_display = ('name', 'double_decker', 'coach')
+    list_editable = list_display[1:]
 
 
 class VehicleAdmin(admin.ModelAdmin):
@@ -16,7 +15,7 @@ class VehicleAdmin(admin.ModelAdmin):
         ('source', admin.RelatedOnlyFieldListFilter),
         ('vehicle_type', admin.RelatedOnlyFieldListFilter),
     )
-    list_select_related = ('operator', 'vehicle_type')
+    list_select_related = ['operator', 'vehicle_type']
     list_editable = ('fleet_number', 'reg', 'operator', 'vehicle_type', 'colours')
     search_fields = ('code',)
     raw_id_fields = ('operator',)
@@ -24,26 +23,12 @@ class VehicleAdmin(admin.ModelAdmin):
     ordering = ('-id',)
 
 
-class VehicleLocationAdmin(admin.ModelAdmin):
-    show_full_result_count = False
-#     list_display = ('vehicle', 'service', 'datetime')
-#     list_filter = (
-#         'current',
-#         ('service__operator', admin.RelatedOnlyFieldListFilter),
-#         ('service', admin.RelatedOnlyFieldListFilter),
-#         ('source', admin.RelatedOnlyFieldListFilter),
-#     )
-    raw_id_fields = ('journey',)
-    formfield_overrides = {
-        PointField: {'widget': OSMWidget}
-    }
-
-
 class VehicleJourneyAdmin(admin.ModelAdmin):
+    list_display = ('datetime', 'vehicle', 'service', 'code', 'destination')
+    list_select_related = ('vehicle', 'service')
     raw_id_fields = ('service',)
 
 
 admin.site.register(VehicleType, VehicleTypeAdmin)
 admin.site.register(Vehicle, VehicleAdmin)
-admin.site.register(VehicleLocation)
 admin.site.register(VehicleJourney, VehicleJourneyAdmin)
