@@ -8,9 +8,9 @@ class ZipTripTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         Region.objects.create(id='EA')
-        Operator.objects.create(id='LYNX', region_id='EA', slug='lynx')
+        Operator.objects.create(id='LYNX', region_id='EA')
         Operator.objects.create(id='CBUS', region_id='EA')
-        Operator.objects.create(id='GAHL', region_id='EA')
+        Operator.objects.create(id='GAHL', region_id='EA', slug='go-ahead-lichtenstein')
         Operator.objects.create(id='LGEN', region_id='EA')
         cls.service = Service.objects.create(line_name='7777', date='2010-01-01', service_code='007', slug='foo-foo')
         cls.service.operator.set(['LGEN'])
@@ -58,8 +58,9 @@ class ZipTripTest(TestCase):
         self.assertEquals(1, len(response['features']))
 
         with self.assertNumQueries(3):
-            response = self.client.get('/operators/lynx/vehicles')
-        self.assertContains(response, '2 - YJ55 BJE')
+            response = self.client.get('/operators/go-ahead-lichtenstein/vehicles')
+        self.assertContains(response, '/services/foo-foo')
+        self.assertContains(response, '203')
 
         with self.assertNumQueries(3):
             response = self.client.get(self.vehicle.get_absolute_url())

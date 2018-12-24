@@ -23,9 +23,9 @@
                 <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
                 <td>
                     {% if vehicle.latest_location %}
-                        {% if vehicle.latest_location.service %}
-                            <a href="{{ vehicle.latest_location.service.get_absolute_url }}">
-                                {{ vehicle.latest_location.service.line_name }}
+                        {% if vehicle.latest_location.journey.service %}
+                            <a href="{{ vehicle.latest_location.journey.service.get_absolute_url }}">
+                                {{ vehicle.latest_location.journey.service.line_name }}
                             </a><br>
                         {% endif %}
                         {% if vehicle.latest_location.datetime.date == today %}
