@@ -12,15 +12,16 @@
             <th scope="col"></th>
             <th scope="col">№</th>
             <th scope="col">Reg</th>
-            <th scope="col">Type</th>
             <th scope="col">Last seen</th>
+            <th scope="col" colspan="3">Type</th>
+            <th scope="col">Colour</th>
+            <th scope="col">Notes</th>
         </tr>
         {% for vehicle in vehicles %}
             <tr>
                 <td><a href="{{ vehicle.get_absolute_url }}">{{ vehicle }}</a></td>
-                <td>{% if vehicle.fleet_number %}{{ vehicle.fleet_number }}{% endif %}</td>
-                <td>{% if vehicle.reg %}{{ vehicle.reg }}{% endif %}</td>
-                <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
+                <td>{% firstof vehicle.fleet_number "" %}</td>
+                <td>{{ vehicle.reg }}</td>
                 <td>
                     {% if vehicle.latest_location %}
                         {% if vehicle.latest_location.journey.service %}
@@ -35,6 +36,13 @@
                         {% endif %}
                     {% endif %}
                 </td>
+                <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
+                <td>{% if vehicle.vehicle_type.double_decker %}Decker{% endif %}</td>
+                <td>{% if vehicle.vehicle_type.coach %}Coach){% endif %}</td>
+                <td>
+                    {% for colour in vehicle.colours.split %}<div style="height:1em;width:1em;display:inline-block;background:{{ colour }}"></div>{% endfor %}
+                </td>
+                <td>{{ vehicle.notes }}</td>
             </tr>
         {% endfor %}
     </table>

@@ -57,6 +57,7 @@ def location_json(location):
                 'url': journey.service.get_absolute_url(),
             },
             'journey': journey.code,
+            'destination': journey.destination,
             'delta': location.early,
             'direction': location.heading,
             'datetime': location.datetime

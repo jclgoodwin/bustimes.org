@@ -76,9 +76,9 @@
             {{ journey.datetime|time }}
             {% if journey.code %}- {{ journey.code }}{% endif %}
             {% if object.region %}
-                - <a href="{{ journey.vehicle.get_absolute_url }}?date={{ journey.datetime }}">{{ journey.vehicle }}</a>
+                - <a href="{{ journey.vehicle.get_absolute_url }}?date={{ journey.datetime|date:"Y-m-d" }}">{{ journey.vehicle }}</a>
             {% elif journey.service %}
-                - <a href="{{ journey.service.get_absolute_url }}">{{ journey.service.line_name }}</a>
+                - <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ journey.datetime|date:"Y-m-d" }}">{{ journey.service.line_name }}</a>
             {% endif %}
         </p>
     {% endfor %}
