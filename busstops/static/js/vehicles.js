@@ -77,7 +77,7 @@
 
         var dateTime = new Date(data.properties.datetime);
         if (data.properties.vehicle) {
-            popup += '<a href="' + data.properties.vehicle.url + '/vehicles">' + data.properties.vehicle.name + '</a>';
+            popup += '<a href="' + data.properties.vehicle.url + '">' + data.properties.vehicle.name + '</a>';
             if (data.properties.vehicle.type) {
                 popup += '<br>' + data.properties.vehicle.type;
             }
@@ -159,7 +159,7 @@
         var parts = localStorage.vehicleMap.split('/');
         map.setView([parts[1], parts[2]], parts[0]);
     } else {
-        map.setView([52.6, 1.1], 10);
+        map.setView([51.9, 0.9], 9);
     }
 
     load(map, statusBar);
