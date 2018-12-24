@@ -39,7 +39,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
     current_location_ids = set()
 
     def get_items(self):
-        response = self.session.get(self.url, timeout=5)
+        response = self.session.get(self.url, timeout=10)
         if response.ok:
             return response.json()
         return ()
