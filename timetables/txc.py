@@ -926,53 +926,6 @@ class Timetable(object):
             for journey in journeys.values():
                 if journey.departure_time == datetime.time(9, 50):
                     journey.departure_time = datetime.time(9, 20)
-        elif self.service_code == '21-43-_-y08-1':  # 43 - Reepham - Norwich
-            to_delete = set()
-            for key in journeys:
-                journey = journeys[key]
-                if journey.departure_time == datetime.time(11, 30):  # Saturday short working
-                    reepham_to_norwich = journey.journeypattern
-                    for section in journey.journeypattern.sections:
-                        for timinglink in section.timinglinks:
-                            if timinglink.origin.stop.common_name == 'Chapel Road':
-                                journey.start_deadrun = timinglink.id
-                                break
-                elif journey.departure_time == datetime.time(13, 25):  # Saturday
-                    journey.departure_time = datetime.time(13, 5)
-                elif journey.departure_time == datetime.time(6, 42):  # Mon to Fri
-                    journey.departure_time = datetime.time(9, 5)
-                elif journey.departure_time == datetime.time(17, 6):  # Mon to Fri
-                    journey.departure_time = datetime.time(17, 16)
-                elif journey.departure_time == datetime.time(9, 2):
-                    to_delete.add(key)
-                elif journey.departure_time == datetime.time(14, 36):
-                    journey.departure_time = datetime.time(15, 26)
-                    journey.notes = {
-                        'NSch': 'School holidays only'
-                    }
-            for journey in journeys.values():
-                if journey.departure_time == datetime.time(17, 36):
-                    journey.journeypattern = reepham_to_norwich
-                    journey.departure_time = datetime.time(15, 45)
-            for key in to_delete:
-                del journeys[key]
-        elif self.service_code == '21-46-A-y08-1':  # Holt circular
-            to_delete = set()
-            for key in journeys:
-                if journeys[key].departure_time in {
-                    datetime.time(6, 13),
-                    datetime.time(8, 35),
-                    datetime.time(10, 5),
-                    datetime.time(10, 10),
-                    datetime.time(12, 15),
-                    datetime.time(13, 15),
-                    datetime.time(18, 5),
-                    datetime.time(7, 55),  # Saturday
-                    datetime.time(15),
-                }:
-                    to_delete.add(key)
-            for key in to_delete:
-                del journeys[key]
 
         # some journeys did not have a direct reference to a journeypattern,
         # but rather a reference to another journey with a reference to a journeypattern

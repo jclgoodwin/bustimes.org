@@ -1,40 +1,19 @@
 # Sanders
-ea_21-9-E-y08:
-    description: Holt - Briston - Melton Constable - Fakenham
-ea_21-X40-_-y08:
-    description: Norwich - Cromer - Sheringham
-ea_21-X44-_-y08:
-    description: Norwich - Aylsham - Cromer - Sheringham
-ea_21-44A-_-y08:
-    description: Norwich - Aylsham - Cromer - Sheringham
-ea_21-X55-_-y08:
-    description: Norwich - Sprowston - North Walsham
-ea_21-45-A-y08:
-    description: Norwich - Felthorpe - Briston - Holt
-ea_21-45A-_-y08:
-    description: Norwich - Reepham - Briston - Holt
-ea_21-XL-_-y08:
-    description: Peterborough - Wisbech - King's Lynn - Swaffham - Dereham - Norwich
-ea_21-X11-A-y08:
-    description: Norwich - Great Yarmouth - Gorleston - Belton
-ea_21-43-_-y08:
-    description: Norwich - Aylsham - Reepham
-ea_21-43A-_-y08:
-    description: Norwich - Aylsham
-    current: true
-ea_21-5-B-y08:
-    description: North Walsham - Cromer - Sheringham - Holt
-    line_brand: ''
-    current: true
-    timetable_wrong: true  # temporary
-ea_21-17-A-y08:
-    description: Cromer - Gresham - Sheringham - West Runton
-ea_21-18-_-y08:
-    description: North Walsham - Aylsham - Cromer
 ea_21-98-_-y08:
     description: Foulsham - Fakenham
-ea_21-CH2-A-y08:
-    line_brand: Coasthopper
+# FECS
+ea_21-XL-_-y08:
+    description: Peterborough - Wisbech - King's Lynn - Swaffham - Dereham - Norwich
+ea_21-X11-_-y08:
+    description: Norwich - Great Yarmouth - Gorleston - Belton
+ea_21-X29-A-y08:
+    line_brand: Yellow Line
+ea_21-1-R-y08:
+    line_brand: Coastal Clipper
+ea_21-1A-_-y08:
+    line_brand: Coastal Clipper
+suf_1-99-_-y08:
+    line_brand: Coastal Clipper
 # FromeBus
 swe_47-58-_-y10:
     current: false
