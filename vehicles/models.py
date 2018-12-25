@@ -58,3 +58,40 @@ class VehicleLocation(models.Model):
 
     class Meta():
         ordering = ('id',)
+
+    def get_json(location):
+        journey = location.journey
+        vehicle = journey.vehicle
+        operator = vehicle and vehicle.operator
+        reg = None
+        if vehicle and len(vehicle.reg) > 3:
+            if vehicle.reg[-3:].isalpha():
+                reg = vehicle.reg[:-3] + ' ' + vehicle.reg[-3:]
+            elif vehicle.reg[:3].isalpha():
+                reg = vehicle.reg[:3] + ' ' + vehicle.reg[3:]
+        return {
+            'type': 'Feature',
+            'geometry': {
+                'type': 'Point',
+                'coordinates': tuple(location.latlong),
+            },
+            'properties': {
+                'vehicle': vehicle and {
+                    'url': vehicle.get_absolute_url(),
+                    'name': str(vehicle),
+                    'type': vehicle.vehicle_type and str(vehicle.vehicle_type),
+                    'fleet_number': vehicle.fleet_number,
+                    'reg': reg,
+                },
+                'operator': operator and str(operator),
+                'service': journey.service and {
+                    'line_name': journey.service.line_name,
+                    'url': journey.service.get_absolute_url(),
+                },
+                'journey': journey.code,
+                'destination': journey.destination,
+                'delta': location.early,
+                'direction': location.heading,
+                'datetime': location.datetime
+            }
+        }

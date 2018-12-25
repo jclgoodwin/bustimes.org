@@ -23,51 +23,8 @@ def vehicles(request):
     return render(request, 'vehicles.html')
 
 
-def vehicles_last_modified(request):
+def get_locations(request):
     locations = VehicleLocation.objects.filter(current=True)
-    if 'service' in request.GET:
-        locations = locations.filter(journey__service=request.GET['service'])
-
-    try:
-        location = locations.values('datetime').latest('datetime')
-        return location['datetime']
-    except VehicleLocation.DoesNotExist:
-        return
-
-
-def location_json(location):
-    journey = location.journey
-    vehicle = journey.vehicle
-    operator = vehicle and vehicle.operator
-    return {
-        'type': 'Feature',
-        'geometry': {
-            'type': 'Point',
-            'coordinates': tuple(location.latlong),
-        },
-        'properties': {
-            'vehicle': vehicle and {
-                'url': vehicle.get_absolute_url(),
-                'name': str(vehicle),
-                'type': vehicle.vehicle_type and str(vehicle.vehicle_type),
-            },
-            'operator': operator and str(operator),
-            'service': journey.service and {
-                'line_name': journey.service.line_name,
-                'url': journey.service.get_absolute_url(),
-            },
-            'journey': journey.code,
-            'destination': journey.destination,
-            'delta': location.early,
-            'direction': location.heading,
-            'datetime': location.datetime
-        }
-    }
-
-
-@last_modified(vehicles_last_modified)
-def vehicles_json(request):
-    locations = VehicleLocation.objects.filter(current=True).order_by()
 
     try:
         bounding_box = get_bounding_box(request)
@@ -78,12 +35,29 @@ def vehicles_json(request):
     if 'service' in request.GET:
         locations = locations.filter(journey__service=request.GET['service'])
 
+    return locations
+
+
+def vehicles_last_modified(request):
+    locations = get_locations(request)
+
+    try:
+        location = locations.values('datetime').latest('datetime')
+        return location['datetime']
+    except VehicleLocation.DoesNotExist:
+        return
+
+
+@last_modified(vehicles_last_modified)
+def vehicles_json(request):
+    locations = get_locations(request).order_by()
+
     locations = locations.select_related('journey__service', 'journey__vehicle__operator',
                                                              'journey__vehicle__vehicle_type')
 
     return JsonResponse({
         'type': 'FeatureCollection',
-        'features': [location_json(location) for location in locations]
+        'features': [location.get_json() for location in locations]
     })
 
 
