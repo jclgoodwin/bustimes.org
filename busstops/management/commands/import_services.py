@@ -322,10 +322,8 @@ class Command(BaseCommand):
                 for service_code in records:
                     Service.objects.filter(service_code=service_code).update(**records[service_code])
 
-        if self.region_id != 'GB':
-            stops = StopPoint.objects.filter(admin_area__region=self.region_id)
-            stops.filter(active=True).exclude(service__current=True).update(active=False)
-            stops.filter(active=False, service__current=True).update(active=True)
+        StopPoint.objects.filter(active=True).exclude(service__current=True).update(active=False)
+        StopPoint.objects.filter(active=False, service__current=True).update(active=True)
 
         with transaction.atomic():
             Journey.objects.filter(service__region=self.region_id).delete()
