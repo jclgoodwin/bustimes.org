@@ -2,7 +2,8 @@ import ciso8601
 from django.contrib.gis.geos import Point
 from django.db.utils import IntegrityError
 from ..import_live_vehicles import ImportLiveVehiclesCommand
-from ...models import Operator, Vehicle, VehicleLocation, Service
+from busstops.models import Operator, Service
+from ...models import Vehicle, VehicleLocation, VehicleJourney
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -13,7 +14,9 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         return super().get_items()['items']
 
-    def get_vehicle_and_service(self, item):
+    def get_journey(self, item):
+        journey = VehicleJourney()
+
         operator_id, vehicle = item['vehicleCode'].split('_', 1)
 
         if operator_id == 'BOWE':
@@ -24,16 +27,16 @@ class Command(ImportLiveVehiclesCommand):
                 item['routeName'] = 'Transpeak'
         elif operator_id == 'LAS':
             operator_id = ('GAHL', 'LGEN')
-        elif operator_id == '767STEP':
-            operator_id = 'SESX'
-        elif operator_id == 'UNIB' or operator_id == 'UNO':
-            operator_id = 'UNOE'
-        elif operator_id == 'RENW':
-            operator_id = 'ECWY'
+        # elif operator_id == '767STEP':
+        #     operator_id = 'SESX'
+        # elif operator_id == 'UNIB' or operator_id == 'UNO':
+        #     operator_id = 'UNOE'
+        # elif operator_id == 'RENW':
+        #     operator_id = 'ECWY'
         elif operator_id == 'CB':
             operator_id = ('CBUS', 'CACB')
-        elif operator_id == 'SOG':
-            operator_id = 'guernsey'
+        # elif operator_id == 'SOG':
+        #     operator_id = 'guernsey'
         elif operator_id == 'IOM':
             operator_id = 'IMHR'
             if item['routeName'] == 'IMR':
@@ -73,28 +76,26 @@ class Command(ImportLiveVehiclesCommand):
         if operator:
             defaults['source'] = self.source
             try:
-                vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
+                journey.vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
             except IntegrityError:
                 defaults['operator'] = operator
-                vehicle, created = Vehicle.objects.get_or_create(defaults, source=self.source, code=vehicle)
+                journey.vehicle, created = Vehicle.objects.get_or_create(defaults, source=self.source, code=vehicle)
         else:
-            vehicle = None
             created = False
 
-        service = None
         services = Service.objects.filter(line_name__iexact=item['routeName'], current=True)
         try:
             if type(operator_id) is tuple:
-                service = services.get(operator__in=operator_id)
+                journey.service = services.get(operator__in=operator_id)
             elif operator:
-                service = services.get(operator=operator)
+                journey.service = services.get(operator=operator)
             else:
                 print(item)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             if item['routeName'].lower() not in {'rr', 'rail', 'transdev', '7777', 'shop'}:
                 print(e, operator_id, item['routeName'])
 
-        return vehicle, created, service
+        return journey, created
 
     def create_vehicle_location(self, item, vehicle, service):
         bearing = item.get('bearing')

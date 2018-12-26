@@ -1,8 +1,9 @@
 import ciso8601
 import xml.etree.cElementTree as ET
 from django.contrib.gis.geos import Point
+from busstops.models import Operator, Service
 from ..import_live_vehicles import ImportLiveVehiclesCommand
-from ...models import Vehicle, VehicleLocation, Operator, Service
+from ...models import Vehicle, VehicleLocation, VehicleJourney
 
 
 NS = {'siri': 'http://www.siri.org.uk/siri'}
@@ -69,7 +70,9 @@ class Command(ImportLiveVehiclesCommand):
         for item in items_from_response(response):
             yield item
 
-    def get_vehicle_and_service(self, item):
+    def get_journey(self, item):
+        journey = VehicleJourney()
+
         mvj = item.find('siri:MonitoredVehicleJourney', NS)
         operator_ref = mvj.find('siri:OperatorRef', NS).text
         operator = None
@@ -91,7 +94,7 @@ class Command(ImportLiveVehiclesCommand):
         if operator_ref and vehicle_code.startswith(operator_ref + '-'):
             vehicle_code = vehicle_code[len(operator_ref) + 1:]
 
-        vehicle, created = Vehicle.objects.get_or_create(
+        journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
             {
                 'source': self.source
             },
@@ -119,19 +122,18 @@ class Command(ImportLiveVehiclesCommand):
         elif operator:
             services = services.filter(operator=operator)
         else:
-            return vehicle, created, None
+            return journey, vehicle_created
 
         if services.count() > 1:
             latlong = get_latlong(mvj)
             services = services.filter(geometry__bboverlaps=latlong.buffer(0.1))
 
         try:
-            service = services.get()
+            journey.service = services.get()
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             print(e, operator_ref, service, services, get_latlong(mvj))
-            service = None
 
-        return vehicle, created, service
+        return journey, vehicle_created
 
     def create_vehicle_location(self, item, vehicle, service):
         datetime = item.find('siri:RecordedAtTime', NS).text

@@ -7,7 +7,7 @@ from time import sleep
 from django.db import OperationalError, IntegrityError, transaction
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from ..models import DataSource, VehicleJourney, VehicleLocation
+from ..models import DataSource, VehicleLocation
 
 
 logger = logging.getLogger(__name__)
@@ -34,6 +34,15 @@ def calculate_bearing(a, b):
     return bearing_degrees
 
 
+def same_journey(latest_location, journey):
+    if not latest_location:
+        return False
+    if journey.code:
+        return latest_location.journey.code == journey.code
+    if latest_location.current:
+        return latest_location.journey.service == journey.service
+
+
 class ImportLiveVehiclesCommand(BaseCommand):
     session = requests.Session()
     current_location_ids = set()
@@ -46,20 +55,20 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     @transaction.atomic
     def handle_item(self, item, now):
-        vehicle, vehicle_created, service = self.get_vehicle_and_service(item)
-        if not vehicle:
+        journey, vehicle_created = self.get_journey(item)
+        if not journey:
             return
         if vehicle_created:
             latest = None
         else:
-            latest = vehicle.latest_location
+            latest = journey.vehicle.latest_location
             if latest and latest.current:
                 if latest.journey.source != self.source:
                     return  # defer to other source
                 if (type(item) is dict and latest.data == item):
                     self.current_location_ids.add(latest.id)
                     return  # no change
-        location = self.create_vehicle_location(item, vehicle, service)
+        location = self.create_vehicle_location(item, journey.vehicle, journey.vehicle)
         if type(item) is dict:
             location.data = item
         elif latest:
@@ -72,18 +81,20 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 return
         if not location.datetime:
             location.datetime = now
-        if latest and latest.journey.service == service:
+        if same_journey(latest, journey):
             location.journey = latest.journey
+            if location.heading is None:
+                location.heading = calculate_bearing(latest.latlong, location.latlong)
         else:
-            location.journey = VehicleJourney.objects.create(vehicle=vehicle, service=service, source=self.source,
-                                                             datetime=location.datetime)
-        if not location.heading and latest and latest.journey.service == service:
-            location.heading = calculate_bearing(latest.latlong, location.latlong)
+            journey.source = self.source
+            journey.datetime = location.datetime
+            journey.save()
+            location.journey = journey
         # save new location
         location.current = True
         location.save()
-        vehicle.latest_location = location
-        vehicle.save()
+        journey.vehicle.latest_location = location
+        journey.vehicle.save()
         self.current_location_ids.add(location.id)
         if latest:
             # mark old location as not current

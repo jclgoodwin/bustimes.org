@@ -1,7 +1,7 @@
 import xml.etree.cElementTree as ET
 from django.contrib.gis.geos import Point
 from ..import_live_vehicles import ImportLiveVehiclesCommand
-from ...models import Vehicle, VehicleLocation, Service
+from ...models import Vehicle, VehicleLocation, VehicleJourney, Service
 
 
 NS = {
@@ -50,7 +50,12 @@ class Command(ImportLiveVehiclesCommand):
         for item in items_from_response(self.get_response(-5.9169, 54.5957)):
             yield item
 
-    def get_vehicle_and_service(self, item):
+    def get_journey(self, item):
+        journey = VehicleJourney()
+
+        journey.code = item.find('a:VehicleJourneyId', NS).text
+        journey.destination = item.find('a:VehicleDestination', NS).text
+
         service = item.find('a:VehiclePublicServiceCode', NS).text
         vehicle = item.find('a:VehicleId', NS).text
         operator = item.find('a:VehicleOperatorName', NS).text
@@ -62,17 +67,17 @@ class Command(ImportLiveVehiclesCommand):
 
         try:
             try:
-                service = Service.objects.get(line_name__iexact=service, operator=operator)
+                journey.service = Service.objects.get(line_name__iexact=service, operator=operator)
             except Service.DoesNotExist:
                 operator = 'ULB'
                 service = Service.objects.get(line_name__iexact=service, operator=operator)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             print(e, service)
-            service = None
 
-        vehicle, created = Vehicle.objects.get_or_create(operator_id=operator, code=vehicle, source=self.source)
+        journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(operator_id=operator, code=vehicle,
+                                                                         source=self.source)
 
-        return vehicle, created, service
+        return journey, vehicle_created
 
     def create_vehicle_location(self, item, vehicle, service):
         lat = item.find('a:VehicleLatitude', NS).text

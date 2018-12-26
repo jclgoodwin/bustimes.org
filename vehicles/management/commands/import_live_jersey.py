@@ -1,7 +1,7 @@
 import datetime
 from django.contrib.gis.geos import Point
 from ..import_live_vehicles import ImportLiveVehiclesCommand
-from ...models import Vehicle, VehicleLocation, Service
+from ...models import Vehicle, VehicleLocation, VehicleJourney, Service
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -12,26 +12,27 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         return super().get_items()['minimumInfoUpdates']
 
-    def get_vehicle_and_service(self, item):
+    def get_journey(self, item):
+        journey = VehicleJourney()
         del item['age']
         code = item['bus'].split('-')[-1]
+        defaults = {
+            'operator_id': self.operator,
+        }
         if code.isdigit():
-            fleet_number = code
-        else:
-            fleet_number = None
-        vehicle, created = Vehicle.objects.get_or_create(
-            {'operator_id': self.operator, 'fleet_number': fleet_number},
+            defaults['fleet_number'] = code
+        journey.vehicle, created = Vehicle.objects.get_or_create(
+            defaults,
             source=self.source,
             code=code
         )
 
         try:
-            service = Service.objects.get(line_name=item['line'].lower(), current=True, operator=self.operator)
+            journey.service = Service.objects.get(line_name=item['line'].lower(), current=True, operator=self.operator)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             print(e, item['line'])
-            service = None
 
-        return vehicle, created, service
+        return journey, created
 
     def create_vehicle_location(self, item, vehicle, service):
         now_datetime = datetime.datetime.now(datetime.timezone.utc)

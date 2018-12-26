@@ -22,14 +22,14 @@ class SiriVMImportTest(TestCase):
 
         command.source = DataSource.objects.create(datetime='2018-08-06T22:41:15+01:00')
 
-        vehicle, created, service = command.get_vehicle_and_service(item)
+        journey, vehicle_created = command.get_journey(item)
 
-        self.assertEqual('69532', str(vehicle))
-        self.assertTrue(created)
-        self.assertEqual(self.service, service)
-        self.assertEqual(self.operator, vehicle.operator)
+        self.assertEqual('69532', str(journey.vehicle))
+        self.assertTrue(vehicle_created)
+        self.assertEqual(self.service, journey.service)
+        self.assertEqual(self.operator, journey.vehicle.operator)
 
-        location = command.create_vehicle_location(item, vehicle, service)
+        location = command.create_vehicle_location(item, journey.vehicle, journey.service)
         self.assertEqual('2018-08-06 21:44:32+01:00', str(location.datetime))
         self.assertIsNone(location.heading)
 
@@ -50,5 +50,5 @@ class SiriVMImportTest(TestCase):
 
         # test an item with an invalid delay ('-PT2M.492S')
         item = next(items)
-        location = command.create_vehicle_location(item, vehicle, service)
+        location = command.create_vehicle_location(item, journey.vehicle, journey.service)
         self.assertIsNone(location.early)

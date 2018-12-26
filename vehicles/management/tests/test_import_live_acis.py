@@ -6,7 +6,7 @@ from ...models import VehicleLocation
 from ..commands import import_live_acis
 
 
-class SiriVMImportTest(TestCase):
+class ACISImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         Region.objects.create(id='NI')

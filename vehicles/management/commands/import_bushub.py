@@ -2,7 +2,7 @@ import pytz
 from datetime import datetime
 from django.contrib.gis.geos import Point
 from busstops.models import Operator, Service
-from ...models import Vehicle, VehicleLocation
+from ...models import Vehicle, VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
@@ -13,13 +13,17 @@ class Command(ImportLiveVehiclesCommand):
     source_name = 'BusHub'
     url = 'http://portal.diamondbuses.com/api/buses/nearby?latitude&longitude'
 
-    def get_vehicle_and_service(self, item):
+    def get_journey(self, item):
+        journey = VehicleJourney()
+
         operator = Operator.objects.get(id=item['OperatorRef'])
         try:
-            service = operator.service_set.get(current=True, line_name=item['PublishedLineName'])
+            journey.service = operator.service_set.get(current=True, line_name=item['PublishedLineName'])
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             print(e, operator, item['PublishedLineName'], item['DestinationRef'])
-            service = None
+
+        journey.code = item['JourneyCode']
+        journey.destination = item['DestinationStopLocality']
 
         code = item['VehicleRef']
         if code.isdigit():
@@ -27,13 +31,13 @@ class Command(ImportLiveVehiclesCommand):
         else:
             fleet_number = None
 
-        vehicle, created = Vehicle.objects.get_or_create(
+        journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
             {'operator': operator, 'fleet_number': fleet_number},
             source=self.source,
             code=code
         )
 
-        return vehicle, created, service
+        return journey, vehicle_created
 
     def create_vehicle_location(self, item, vehicle, service):
         when = datetime.strptime(item['RecordedAtTime'], '%d/%m/%Y %H:%M:%S')
