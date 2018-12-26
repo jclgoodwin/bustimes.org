@@ -103,7 +103,7 @@
         var dateTime = new Date(data.properties.datetime);
         popup += 'Updated at ' + dateTime.toTimeString().slice(0, 5);
 
-        var vehicle = data.properties.vehicle
+        var vehicle = data.properties.vehicle;
         if (vehicle) {
             if (vehicle.reg) {
                 popup = vehicle.reg + '<br>' + popup;
