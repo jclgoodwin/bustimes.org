@@ -15,16 +15,18 @@ class Command(ImportLiveVehiclesCommand):
     def get_journey(self, item):
         journey = VehicleJourney()
         del item['age']
-        code = item['bus'].split('-')[-1]
+        parts = item['bus'].split('-')
+        journey.code = parts[-2]
+        vehicle_code = parts[-1]
         defaults = {
             'operator_id': self.operator,
         }
-        if code.isdigit():
-            defaults['fleet_number'] = code
+        if vehicle_code.isdigit():
+            defaults['fleet_number'] = vehicle_code
         journey.vehicle, created = Vehicle.objects.get_or_create(
             defaults,
             source=self.source,
-            code=code
+            code=vehicle_code
         )
 
         try:
