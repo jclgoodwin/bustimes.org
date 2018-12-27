@@ -16,6 +16,14 @@ class Command(ImportLiveVehiclesCommand):
         )
 
         vehicle_defaults = {}
+
+        try:
+            journey.service = self.services.get(line_name=item['service_name'])
+            vehicle_defaults['operator'] = journey.service.operator.first()
+        except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+            if item['service_name'] not in {'ET1', 'MA1', '3BBT'}:
+                print(e, item['service_name'])
+
         vehicle_code = item['vehicle_id']
         if vehicle_code.isdigit():
             vehicle_defaults['fleet_number'] = vehicle_code
@@ -26,19 +34,9 @@ class Command(ImportLiveVehiclesCommand):
             code=vehicle_code
         )
 
-        try:
-            journey.service = self.services.get(line_name=item['service_name'])
-        except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-            if item['service_name'] not in {'ET1', 'MA1', '3BBT'}:
-                print(e, item['service_name'])
-
         return journey, vehicle_created
 
-    def create_vehicle_location(self, item, vehicle, service):
-        if service and vehicle.operator != service.operator.first():
-            vehicle.operator = service.operator.first()
-            vehicle.save()
-
+    def create_vehicle_location(self, item):
         return VehicleLocation(
             latlong=Point(item['longitude'], item['latitude']),
             heading=item['heading']

@@ -35,7 +35,7 @@ class Command(ImportLiveVehiclesCommand):
 
         return journey, created
 
-    def create_vehicle_location(self, item, vehicle, service):
+    def create_vehicle_location(self, item):
         now_datetime = datetime.datetime.now(datetime.timezone.utc)
         then_time = datetime.datetime.strptime(item['time'], '%H:%M:%S').time()
 

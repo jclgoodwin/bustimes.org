@@ -38,7 +38,7 @@ class Command(ImportLiveVehiclesCommand):
 
         return journey, vehicle_created
 
-    def create_vehicle_location(self, item, *args):
+    def create_vehicle_location(self, item):
         location = VehicleLocation(
             latlong=Point(item['Longitude'], item['Latitude']),
             heading=item['Direction']

@@ -39,7 +39,7 @@ class Command(ImportLiveVehiclesCommand):
 
         return journey, vehicle_created
 
-    def create_vehicle_location(self, item, vehicle, service):
+    def create_vehicle_location(self, item):
         when = datetime.strptime(item['RecordedAtTime'], '%d/%m/%Y %H:%M:%S')
         when = LOCAL_TIMEZONE.localize(when)
         bearing = item['Bearing']

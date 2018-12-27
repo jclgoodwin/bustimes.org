@@ -102,6 +102,18 @@ class Command(ImportLiveVehiclesCommand):
             code=vehicle_code,
         )
 
+        journey_code = mvj.find('siri:FramedVehicleJourneyRef/siri:DatedVehicleJourneyRef', NS)
+        if journey_code is not None:
+            journey.code = journey_code.text
+
+        departure_time = mvj.find('siri:OriginAimedDepartureTime', NS)
+        if departure_time is not None:
+            journey.datetime = ciso8601.parse_datetime(departure_time.text)
+
+        destination = mvj.find('siri:DestinationName', NS)
+        if destination is not None:
+            journey.destination = destination.text
+
         # TODO: use ServiceCodes for this
         if service == 'QC':
             service = 'QuayConnect'
@@ -135,7 +147,7 @@ class Command(ImportLiveVehiclesCommand):
 
         return journey, vehicle_created
 
-    def create_vehicle_location(self, item, vehicle, service):
+    def create_vehicle_location(self, item):
         datetime = item.find('siri:RecordedAtTime', NS).text
         mvj = item.find('siri:MonitoredVehicleJourney', NS)
         latlong = get_latlong(mvj)

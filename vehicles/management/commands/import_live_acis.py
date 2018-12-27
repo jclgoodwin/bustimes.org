@@ -79,7 +79,7 @@ class Command(ImportLiveVehiclesCommand):
 
         return journey, vehicle_created
 
-    def create_vehicle_location(self, item, vehicle, service):
+    def create_vehicle_location(self, item):
         lat = item.find('a:VehicleLatitude', NS).text
         lon = item.find('a:VehicleLongitude', NS).text
         latlong = Point(float(lon), float(lat))

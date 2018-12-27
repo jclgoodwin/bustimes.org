@@ -97,7 +97,7 @@ class Command(ImportLiveVehiclesCommand):
 
         return journey, created
 
-    def create_vehicle_location(self, item, vehicle, service):
+    def create_vehicle_location(self, item):
         bearing = item.get('bearing')
         while bearing and bearing < 0:
             bearing += 360
