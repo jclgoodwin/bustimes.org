@@ -1,5 +1,4 @@
 from django.contrib.gis.db import models
-from django.contrib.postgres.fields import JSONField
 from django.urls import reverse
 from busstops.models import Operator, Service, DataSource
 
@@ -48,7 +47,6 @@ class VehicleJourney(models.Model):
 
 
 class VehicleLocation(models.Model):
-    data = JSONField(null=True, blank=True)
     datetime = models.DateTimeField()
     latlong = models.PointField()
     journey = models.ForeignKey(VehicleJourney, models.CASCADE)

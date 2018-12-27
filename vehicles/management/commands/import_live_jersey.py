@@ -14,7 +14,6 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_journey(self, item):
         journey = VehicleJourney()
-        del item['age']
         parts = item['bus'].split('-')
         journey.code = parts[-2]
         vehicle_code = parts[-1]

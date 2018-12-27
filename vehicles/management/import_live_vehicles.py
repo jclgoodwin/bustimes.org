@@ -67,18 +67,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if latest and latest.current and latest.journey.source != self.source:
                 if latest.journey.service or not journey.service:
                     return  # defer to other source
-                if (type(item) is dict and latest.data == item):
-                    self.current_location_ids.add(latest.id)
-                    return  # no change
         location = self.create_vehicle_location(item, journey.vehicle, journey.vehicle)
-        if type(item) is dict:
-            location.data = item
-        elif latest:
+        if latest:
             if location.datetime:
                 if location.datetime == latest.datetime:
                     self.current_location_ids.add(latest.id)
                     return
-            elif location.latlong == latest.latlong:
+            elif location.latlong == latest.latlong and location.heading == latest.heading:
                 self.current_location_ids.add(latest.id)
                 return
         if not location.datetime:
@@ -86,6 +81,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if same_journey(latest, journey):
             if journey.service and not latest.journey.service:
                 latest.journey.service = journey.service
+                latest.journey.save()
+            if journey.destination and not latest.journey.destination:
+                latest.journey.destination = journey.destination
                 latest.journey.save()
             location.journey = latest.journey
             if location.heading is None:
