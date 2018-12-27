@@ -41,6 +41,8 @@ def same_journey(latest_location, journey):
         return False
     if latest_location.current:
         return latest_location.journey.service == journey.service
+    if journey.code and latest_location.journey.code == journey.code:
+        return True
 
 
 class ImportLiveVehiclesCommand(BaseCommand):
@@ -62,8 +64,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
             latest = None
         else:
             latest = journey.vehicle.latest_location
-            if latest and latest.current:
-                if latest.journey.source != self.source:
+            if latest and latest.current and latest.journey.source != self.source:
+                if latest.journey.service or not journey.service:
                     return  # defer to other source
                 if (type(item) is dict and latest.data == item):
                     self.current_location_ids.add(latest.id)
