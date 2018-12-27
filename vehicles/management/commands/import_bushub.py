@@ -13,14 +13,32 @@ class Command(ImportLiveVehiclesCommand):
     source_name = 'BusHub'
     url = 'http://portal.diamondbuses.com/api/buses/nearby?latitude&longitude'
 
+    @classmethod
+    def get_service(cls, operator, item):
+        line_name = item['PublishedLineName']
+        services = operator.service_set.filter(current=True, line_name=line_name)
+        try:
+            return services.get()
+        except Service.DoesNotExist as e:
+            if line_name[-1].isalpha():
+                item['PublishedLineName'] = line_name[:-1]
+            elif line_name[0].isalpha():
+                item['PublishedLineName'] = line_name[1:]
+            else:
+                print(e, operator, line_name)
+                return
+            return cls.get_service(operator, item)
+        except Service.MultipleObjectsReturned:
+            try:
+                return services.get(stops=item['DestinationRef'])
+            except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+                print(e, operator, item['PublishedLineName'], item['DestinationRef'])
+
     def get_journey(self, item):
         journey = VehicleJourney()
 
         operator = Operator.objects.get(id=item['OperatorRef'])
-        try:
-            journey.service = operator.service_set.get(current=True, line_name=item['PublishedLineName'])
-        except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-            print(e, operator, item['PublishedLineName'], item['DestinationRef'])
+        journey.service = self.get_service(operator, item)
 
         journey.code = item['JourneyCode']
         journey.destination = item['DestinationStopLocality']
