@@ -82,6 +82,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if not location.datetime:
             location.datetime = now
         if same_journey(latest, journey):
+            if journey.service and not latest.journey.service:
+                latest.journey.service = journey.service
+                latest.journey.save()
             location.journey = latest.journey
             if location.heading is None:
                 location.heading = calculate_bearing(latest.latlong, location.latlong)

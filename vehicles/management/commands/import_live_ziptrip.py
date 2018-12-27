@@ -27,16 +27,16 @@ class Command(ImportLiveVehiclesCommand):
                 item['routeName'] = 'Transpeak'
         elif operator_id == 'LAS':
             operator_id = ('GAHL', 'LGEN')
-        # elif operator_id == '767STEP':
-        #     operator_id = 'SESX'
-        # elif operator_id == 'UNIB' or operator_id == 'UNO':
-        #     operator_id = 'UNOE'
-        # elif operator_id == 'RENW':
-        #     operator_id = 'ECWY'
+        elif operator_id == '767STEP':
+            operator_id = 'SESX'
+        elif operator_id == 'UNIB' or operator_id == 'UNO':
+            operator_id = 'UNOE'
+        elif operator_id == 'RENW':
+            operator_id = 'ECWY'
         elif operator_id == 'CB':
             operator_id = ('CBUS', 'CACB')
-        # elif operator_id == 'SOG':
-        #     operator_id = 'guernsey'
+        elif operator_id == 'SOG':
+            operator_id = 'guernsey'
         elif operator_id == 'IOM':
             operator_id = 'IMHR'
             if item['routeName'] == 'IMR':
