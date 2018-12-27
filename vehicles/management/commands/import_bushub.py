@@ -30,7 +30,7 @@ class Command(ImportLiveVehiclesCommand):
             return cls.get_service(operator, item)
         except Service.MultipleObjectsReturned:
             try:
-                return services.get(stops=item['DestinationRef'])
+                return services.filter(stops=item['DestinationRef']).distinct().get()
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, operator, item['PublishedLineName'], item['DestinationRef'])
 
