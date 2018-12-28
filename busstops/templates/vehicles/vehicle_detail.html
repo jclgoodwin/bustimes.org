@@ -9,12 +9,37 @@
 {% endif %}
 
 <form>
-<input type="date" name="date" value={{ date.isoformat }}>
-<input type="submit">
+    <label>
+        Date:
+        <input type="date" name="date" value={{ date.isoformat }}>
+    </label>
+    <input type="submit" value="Show">
 </form>
 
+<table>
+    <tr>
+        <th scope="col" colspan="2">Journey</th>
+        <th scope="col">To</th>
+        <th scope="col">{% if object.region_id %}Vehicle{% else %}Service{% endif %}</th>
+    </tr>
+{% for journey in journeys %}
+    <tr>
+        <td>{{ journey.datetime|time }}</td>
+        <td>{{ journey.code }}</td>
+        <td>{{ journey.destination }}</td>
+        <td>
+            {% if object.region_id %}
+                <a href="{{ journey.vehicle.get_absolute_url }}?date={{ journey.datetime|date:"Y-m-d" }}">{{ journey.vehicle }}</a>
+            {% elif journey.service %}
+                <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ journey.datetime|date:"Y-m-d" }}">{{ journey.service.line_name }}</a>
+            {% endif %}
+        </td>
+    </tr>
+{% endfor %}
+</table>
+
 {% if journeys %}
-<div id="cartograph" style="height:100vh"></div>
+<div id="cartograph" style="height:80vh"></div>
 
 <link rel="stylesheet" href="/static/js/bower_components/leaflet/dist/leaflet.css" />
 <script src="/static/js/bower_components/leaflet/dist/leaflet.js"></script>
@@ -52,15 +77,15 @@
     L.tileLayer(tileURL).addTo(map);
 
     {% for journey in journeys %}
-        {% if object.region %}
+        {% if object.region_id %}
             service = '<a href="{{ journey.vehicle.get_absolute_url }}">{{ journey.vehicle }}</a><br>';
         {% else %}
-            service = '{% if journey.service %}<a href="{{ journey.service.get_absolute_url }}">{{ journey.service.line_name }}</a><br>{% endif %}';
+            service = '{% if journey.service %}<a href="{{ journey.service.get_absolute_url }}/vehicles">{{ journey.service.line_name }}</a><br>{% endif %}';
         {% endif %}
         {% for location in journey.vehiclelocation_set.all %}
             latlng = [{{ location.latlong.y }},{{ location.latlong.x }}];
             bounds.extend(latlng);
-            getMarker(latlng, {% if location.heading is not None %}{{ location.heading }}{% else %}null{% endif %}).bindPopup(service + "{{ location.datetime }}").addTo(map);
+            getMarker(latlng, {% firstof location.heading 0 %}).bindPopup(service + "{{ location.datetime|time }}").addTo(map);
         {% endfor %}
     {% endfor %}
     map.fitBounds(bounds);
@@ -70,17 +95,5 @@
 {% else %}
     <p>Sorry, nothing found for {{ date }}</p>
 {% endif %}
-
-    {% for journey in journeys %}
-        <p>
-            {{ journey.datetime|time }}
-            {% if journey.code %}- {{ journey.code }}{% endif %}
-            {% if object.region %}
-                - <a href="{{ journey.vehicle.get_absolute_url }}?date={{ journey.datetime|date:"Y-m-d" }}">{{ journey.vehicle }}</a>
-            {% elif journey.service %}
-                - <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ journey.datetime|date:"Y-m-d" }}">{{ journey.service.line_name }}</a>
-            {% endif %}
-        </p>
-    {% endfor %}
 
 {% endblock %}

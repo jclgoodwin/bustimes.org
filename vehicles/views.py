@@ -87,7 +87,7 @@ def service_vehicles_history(request, slug):
 
 class VehicleDetailView(DetailView):
     model = Vehicle
-    queryset = model.objects.select_related('operator', 'operator__region')
+    queryset = model.objects.select_related('operator', 'operator__region', 'vehicle_type')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
