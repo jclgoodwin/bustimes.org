@@ -38,7 +38,7 @@ class ContactTests(TestCase):
         self.assertEqual(['contact@bustimes.org'], mail.outbox[0].to)
 
     def test_awin_post(self):
-        self.assertEquals(400, self.client.get('/awin-transaction').status_code)
+        self.assertEqual(400, self.client.get('/awin-transaction').status_code)
         self.client.post('/awin-transaction', {
             'AwinTransactionPush': json.dumps({
                 'transactionId': '244231459',

@@ -40,23 +40,23 @@ class ZipTripTest(TestCase):
 
         location = VehicleLocation.objects.get()
 
-        self.assertEquals(336, location.heading)
-        self.assertNotEquals(self.vehicle, location.journey.vehicle)
-        self.assertEquals('LYNX', location.journey.vehicle.operator_id)
+        self.assertEqual(336, location.heading)
+        self.assertNotEqual(self.vehicle, location.journey.vehicle)
+        self.assertEqual('LYNX', location.journey.vehicle.operator_id)
 
         item['vehicleCode'] = 'LAS_203'
         # Although a vehicle called '203' exists, it belongs to a different operator, so a new one should be created
         command.handle_item(item, self.source.datetime)
         location = VehicleLocation.objects.last()
-        self.assertEquals('GAHL', location.journey.vehicle.operator_id)
-        self.assertNotEquals(self.vehicle, location.journey.vehicle)
-        self.assertEquals(self.service, location.journey.service)
+        self.assertEqual('GAHL', location.journey.vehicle.operator_id)
+        self.assertNotEqual(self.vehicle, location.journey.vehicle)
+        self.assertEqual(self.service, location.journey.service)
 
-        self.assertEquals(3, Vehicle.objects.count())
+        self.assertEqual(3, Vehicle.objects.count())
 
         with self.assertNumQueries(2):
             response = self.client.get('/vehicles.json?service=007').json()
-        self.assertEquals(1, len(response['features']))
+        self.assertEqual(1, len(response['features']))
 
         with self.assertNumQueries(3):
             response = self.client.get('/operators/go-ahead-lichtenstein/vehicles')
