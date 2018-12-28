@@ -27,6 +27,9 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
     list_display = ('datetime', 'vehicle', 'service', 'code', 'destination')
     list_select_related = ('vehicle', 'service')
     raw_id_fields = ('service',)
+    list_filter = (
+        ('source', admin.RelatedOnlyFieldListFilter),
+    )
 
 
 admin.site.register(VehicleType, VehicleTypeAdmin)
