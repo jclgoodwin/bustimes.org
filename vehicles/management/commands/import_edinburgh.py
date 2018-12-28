@@ -11,8 +11,8 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_journey(self, item):
         journey = VehicleJourney(
-            code=item['journey_id'],
-            destination=item['destination']
+            code=item['journey_id'] or '',
+            destination=item['destination'] or ''
         )
 
         vehicle_defaults = {}
