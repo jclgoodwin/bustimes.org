@@ -31,20 +31,35 @@
     };
     statusBar.addTo(map);
 
-    function getIcon(service, direction) {
-        if (direction !== null) {
-            var html = '<div class="arrow" style="-ms-transform: rotate(' + direction + 'deg);-webkit-transform: rotate(' + direction + 'deg);-moz-transform: rotate(' + direction + 'deg);-o-transform: rotate(' + direction + 'deg);transform: rotate(' + direction + 'deg)"></div>';
-        } else {
-            html = '';
+    function getRotation(direction) {
+        if (direction == null) {
+            return '';
         }
+        var rotation = 'transform: rotate(' + direction + 'deg)';
+        rotation = '-ms-' + rotation + ';-webkit-' + rotation + ';-moz-' + rotation + ';-o-' + rotation + ';' + rotation;
+        return ' style="' + rotation + '"';
+    }
+
+    function getIcon(service, direction) {
+        if (direction == null) {
+            var html = ''
+        } else {
+            html = '<div class="arrow"' + getRotation(direction) + '></div>';
+        }
+        if (direction < 180) {
+            direction -= 90;
+        } else {
+            direction -= 270;
+        }
+        html += '<div class="bus"' + getRotation(direction) + '>';
         if (service) {
             html += service.line_name;
         }
+        html += '</div>';
         return L.divIcon({
             iconSize: [20, 20],
             html: html,
             popupAnchor: [0, -5],
-            className: 'leaflet-div-icon'
         });
     }
 
@@ -65,17 +80,13 @@
         }
 
         var popup = '';
-        if (data.properties.operator) {
-            popup += data.properties.operator + ' ';
-        }
         if (data.properties.service) {
-            popup += '<a href="' + data.properties.service.url + '/vehicles">' + data.properties.service.line_name + '</a>';
+            popup = '<a href="' + data.properties.service.url + '/vehicles">' + data.properties.service.line_name + '</a><br>';
         }
-        if (popup) {
-            popup += '<br>';
+        if (data.properties.operator) {
+            popup += data.properties.operator + '<br>';
         }
 
-        var dateTime = new Date(data.properties.datetime);
         if (data.properties.vehicle) {
             popup += '<a href="' + data.properties.vehicle.url + '">' + data.properties.vehicle.name + '</a>';
             if (data.properties.vehicle.type) {
@@ -102,6 +113,8 @@
                 popup += ' late';
             }
         }
+
+        var dateTime = new Date(data.properties.datetime);
         popup += '<br>Updated at ' + dateTime.toTimeString().slice(0, 5);
 
         marker.bindPopup(popup);
@@ -161,6 +174,16 @@
     } else {
         map.setView([51.9, 0.9], 9);
     }
+
+    function handleVisibilityChange(event) {
+        if (event.target.hidden === true) {
+            clearTimeout(timeout);
+        } else {
+            load(map, statusBar);
+        }
+    }
+
+    document.onvisibilitychange = handleVisibilityChange;
 
     load(map, statusBar);
 })();

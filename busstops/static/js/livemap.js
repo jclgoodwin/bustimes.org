@@ -42,23 +42,37 @@
     };
     statusBar.addTo(map);
 
-    function getIcon(service, direction) {
-        if (direction !== null) {
-            var html = '<div class="arrow" style="-ms-transform: rotate(' + direction + 'deg);-webkit-transform: rotate(' + direction + 'deg);-moz-transform: rotate(' + direction + 'deg);-o-transform: rotate(' + direction + 'deg);transform: rotate(' + direction + 'deg)"></div>';
-        } else {
-            html = '';
+    function getRotation(direction) {
+        if (direction == null) {
+            return '';
         }
+        var rotation = 'transform: rotate(' + direction + 'deg)';
+        rotation = '-ms-' + rotation + ';-webkit-' + rotation + ';-moz-' + rotation + ';-o-' + rotation + ';' + rotation;
+        return ' style="' + rotation + '"';
+    }
+
+    function getIcon(direction) {
+        if (direction == null) {
+            var html = ''
+        } else {
+            html = '<div class="arrow"' + getRotation(direction) + '></div>';
+        }
+        if (direction < 180) {
+            direction -= 90;
+        } else {
+            direction -= 270;
+        }
+        html += '<div class="bus"' + getRotation(direction) + '></div>';
         return L.divIcon({
             iconSize: [20, 20],
             html: html,
             popupAnchor: [0, -5],
-            className: 'leaflet-div-icon'
         });
     }
 
     function handleVehicle(data) {
         var marker,
-            icon = getIcon(data.properties.service, data.properties.direction),
+            icon = getIcon(data.properties.direction),
             latLng = L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
 
         bounds.extend(latLng);

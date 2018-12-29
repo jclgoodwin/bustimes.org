@@ -13,12 +13,6 @@
             maxZoom: 18,
         }),
         tileURL = 'https://bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
-        pin = L.icon({
-            iconUrl:    '/static/svg/pin.svg',
-            iconSize:   [16, 22],
-            iconAnchor: [8, 22],
-            popupAnchor: [0, -22],
-        }),
         statusBar = L.control({
             position: 'topright'
         }),
@@ -47,6 +41,40 @@
 
     map.addLayer(markers);
 
+    function getRotation(direction) {
+        if (direction == null) {
+            return '';
+        }
+        var rotation = 'transform: rotate(' + direction + 'deg)';
+        rotation = '-ms-' + rotation + ';-webkit-' + rotation + ';-moz-' + rotation + ';-o-' + rotation + ';' + rotation;
+        return ' style="' + rotation + '"';
+    }
+
+    function getIcon(indicator, bearing) {
+        var className = 'leaflet-div-icon';
+        if (indicator) {
+            var indicatorParts = indicator.split(' ');
+            var firstPart = indicatorParts[0].toLowerCase();
+            if (indicatorParts.length === 2 && (firstPart === 'stop' || firstPart === 'bay' || firstPart === 'stand' || firstPart === 'stance')) {
+                indicator = indicatorParts[1];
+            } else {
+                indicator = indicator.slice(0, 3);
+            }
+        } else {
+            indicator = '';
+        }
+        indicator = '<div class="stop">' + indicator + '</div>';
+        if (bearing !== null) {
+            indicator += '<div class="arrow"' + getRotation(bearing) + '></div>';
+        }
+        return L.divIcon({
+            iconSize: [20, 20],
+            html: indicator,
+            popupAnchor: [0, -5],
+            className: className
+        });
+    }
+
     function processStopsData(data) {
         var sidebar = document.getElementById('sidebar');
         sidebar.innerHTML = '<h2>Stops</h2>';
@@ -56,7 +84,7 @@
                 var li = document.createElement('li');
                 var a = document.createElement('a');
                 var marker = L.marker(latlng, {
-                    icon: pin
+                    icon: getIcon(data.properties.indicator, data.properties.bearing)
                 });
 
                 a.innerHTML = data.properties.name;

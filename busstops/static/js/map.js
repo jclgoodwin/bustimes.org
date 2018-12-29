@@ -14,6 +14,15 @@
         return;
     }
 
+    function getRotation(direction) {
+        if (direction == null) {
+            return '';
+        }
+        var rotation = 'transform: rotate(' + direction + 'deg)';
+        rotation = '-ms-' + rotation + ';-webkit-' + rotation + ';-moz-' + rotation + ';-o-' + rotation + ';' + rotation;
+        return ' style="' + rotation + '"';
+    }
+
     function getIcon(indicator, bearing, active) {
         var className = 'leaflet-div-icon';
         if (active) {
@@ -30,8 +39,9 @@
         } else {
             indicator = '';
         }
+        indicator = '<div class="stop">' + indicator + '</div>';
         if (bearing !== null) {
-            indicator = '<div class="arrow" style="-ms-transform: rotate(' + bearing + 'deg);-webkit-transform: rotate(' + bearing + 'deg);-moz-transform: rotate(' + bearing + 'deg);-o-transform: rotate(' + bearing + 'deg);transform: rotate(' + bearing + 'deg)"></div>' + indicator;
+            indicator += '<div class="arrow"' + getRotation(bearing) + '></div>';
         }
         return L.divIcon({
             iconSize: [20, 20],

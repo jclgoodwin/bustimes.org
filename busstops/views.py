@@ -150,6 +150,8 @@ def stops(request):
             },
             'properties': {
                 'name': stop.get_qualified_name(),
+                'indicator': stop.indicator,
+                'bearing': stop.get_heading(),
                 'url': stop.get_absolute_url(),
             }
         } for stop in results]
