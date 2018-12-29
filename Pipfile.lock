@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "be4f64299669b667431c64036295481ce995e0ddd8dbd59702935cf8b1486cc5"
+            "sha256": "413f54acd40cd11ecc19df1bf557e715a6bd86aaac821425f06435e5bde7e8af"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -71,10 +71,10 @@
         },
         "ddtrace": {
             "hashes": [
-                "sha256:6d27a974199b0b5eb06a464eb15c546d3800bad90c23ce5fff86669c78c5fa78"
+                "sha256:0f2ba9394369b0d3c33ffc17842a37f8a9df056acdf807e7ada833d8c6ed7bc0"
             ],
             "index": "pypi",
-            "version": "==0.18.0"
+            "version": "==0.19.0"
         },
         "django": {
             "hashes": [
@@ -378,6 +378,14 @@
                 "sha256:aaf7362464532b1036ab0092e2eee78e8fd7b56787baa9ed4967457b083d011b"
             ],
             "version": "==1.19.0"
+        },
+        "webcolors": {
+            "hashes": [
+                "sha256:030562f624467a9901f0b455fef05486a88cfb5daa1e356bd4aacea043850b59",
+                "sha256:b3b88e5ef2b35fa9e01e3fabe99dddf49da074459c44774c59f3ccab3be4f121"
+            ],
+            "index": "pypi",
+            "version": "==1.8.1"
         },
         "websockets": {
             "hashes": [

@@ -53,7 +53,7 @@
 
     function getIcon(direction) {
         if (direction == null) {
-            var html = ''
+            var html = '';
         } else {
             html = '<div class="arrow"' + getRotation(direction) + '></div>';
         }

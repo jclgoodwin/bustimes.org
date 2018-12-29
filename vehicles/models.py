@@ -1,3 +1,4 @@
+from webcolors import html5_parse_simple_color
 from django.contrib.gis.db import models
 from django.urls import reverse
 from busstops.models import Operator, Service, DataSource
@@ -62,11 +63,18 @@ class VehicleLocation(models.Model):
         vehicle = journey.vehicle
         operator = vehicle and vehicle.operator
         reg = None
-        if vehicle and len(vehicle.reg) > 3:
+        if len(vehicle.reg) > 3:
             if vehicle.reg[-3:].isalpha():
                 reg = vehicle.reg[:-3] + ' ' + vehicle.reg[-3:]
             elif vehicle.reg[:3].isalpha():
                 reg = vehicle.reg[:3] + ' ' + vehicle.reg[3:]
+        colours = vehicle.colours.split()
+        text_colour = None
+        if colours:
+            parsed_colours = [html5_parse_simple_color(colour) for colour in colours]
+            lightness = sum(c.red + c.blue + c.green for c in parsed_colours) / len(parsed_colours) / 3
+            if lightness < 200:
+                text_colour = '#fff'
         return {
             'type': 'Feature',
             'geometry': {
@@ -74,12 +82,14 @@ class VehicleLocation(models.Model):
                 'coordinates': tuple(location.latlong),
             },
             'properties': {
-                'vehicle': vehicle and {
+                'vehicle': {
                     'url': vehicle.get_absolute_url(),
                     'name': str(vehicle),
                     'type': vehicle.vehicle_type and str(vehicle.vehicle_type),
                     'fleet_number': vehicle.fleet_number,
                     'reg': reg,
+                    'colours': colours,
+                    'text_colour': text_colour
                 },
                 'operator': operator and str(operator),
                 'service': journey.service and {
