@@ -45,12 +45,6 @@
         } else {
             html = '<div class="arrow" style="' + getRotation(direction) + '"></div>';
         }
-        if (direction < 180) {
-            direction -= 90;
-        } else {
-            direction -= 270;
-        }
-        var style = getRotation(direction);
         if (colours.length) {
             if (colours.length == 1) {
                 var background = colours[0];
@@ -63,11 +57,20 @@
                 }
                 background += colours[0] + ' 50%,' + colours[1] + ' 50%)';
             }
-            style += ';background:' + background;
+            var style = 'background:' + background;
             if (textColour) {
                 style += ';border-color:' + textColour + ';color:' + textColour;
             }
+            style += ';';
+        } else {
+            style = '';
         }
+        if (direction < 180) {
+            direction -= 90;
+        } else {
+            direction -= 270;
+        }
+        style += getRotation(direction);
         html += '<div class="bus" style="' + style + '">';
         if (service) {
             html += service.line_name;
