@@ -72,14 +72,16 @@
             if (textColour) {
                 style += ';border-color:' + textColour + ';color:' + textColour;
             }
-            style += ';'
+            style += ';';
+        } else {
+            style = '';
         }
         if (direction < 180) {
             direction -= 90;
         } else {
             direction -= 270;
         }
-        var style += getRotation(direction);
+        style += getRotation(direction);
         html += '<div class="bus" style="' + style + '"></div>';
         return L.divIcon({
             iconSize: [20, 20],
