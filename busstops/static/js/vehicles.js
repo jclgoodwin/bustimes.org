@@ -52,7 +52,18 @@
         }
         var style = getRotation(direction);
         if (colours.length) {
-            style += ';background:' + colours[colours.length - 1];
+            if (colours.length == 1) {
+                var background = colours[0];
+            } else {
+                background = 'linear-gradient(';
+                if (direction < 180) {
+                    background += 'to right,';
+                } else {
+                    background += 'to left,';
+                }
+                background += colours[0] + ' 50%,' + colours[1] + ' 50%)';
+            }
+            style += ';background:' + background;
             if (textColour) {
                 style += ';border-color:' + textColour + ';color:' + textColour;
             }

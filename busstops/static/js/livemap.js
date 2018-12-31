@@ -47,22 +47,39 @@
             return '';
         }
         var rotation = 'transform: rotate(' + direction + 'deg)';
-        rotation = '-ms-' + rotation + ';-webkit-' + rotation + ';-moz-' + rotation + ';-o-' + rotation + ';' + rotation;
-        return ' style="' + rotation + '"';
+        return '-ms-' + rotation + ';-webkit-' + rotation + ';-moz-' + rotation + ';-o-' + rotation + ';' + rotation;
     }
 
-    function getIcon(direction) {
+    function getIcon(direction, colours, textColour) {
         if (direction == null) {
             var html = '';
         } else {
-            html = '<div class="arrow"' + getRotation(direction) + '></div>';
+            html = '<div class="arrow" style="' + getRotation(direction) + '"></div>';
         }
         if (direction < 180) {
             direction -= 90;
         } else {
             direction -= 270;
         }
-        html += '<div class="bus"' + getRotation(direction) + '></div>';
+        var style = getRotation(direction);
+        if (colours.length) {
+            if (colours.length == 1) {
+                var background = colours[0];
+            } else {
+                background = 'linear-gradient(';
+                if (direction < 180) {
+                    background += 'to right,';
+                } else {
+                    background += 'to left,';
+                }
+                background += colours[0] + ' 50%,' + colours[1] + ' 50%)';
+            }
+            style += ';background:' + background;
+            if (textColour) {
+                style += ';border-color:' + textColour + ';color:' + textColour;
+            }
+        }
+        html += '<div class="bus" style="' + style + '"></div>';
         return L.divIcon({
             iconSize: [20, 20],
             html: html,
@@ -72,7 +89,7 @@
 
     function handleVehicle(data) {
         var marker,
-            icon = getIcon(data.properties.direction),
+            icon = getIcon(data.properties.direction, data.properties.vehicle.colours, data.properties.vehicle.text_colour),
             latLng = L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
 
         bounds.extend(latLng);
