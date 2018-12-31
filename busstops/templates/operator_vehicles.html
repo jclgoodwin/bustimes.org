@@ -10,8 +10,6 @@
     <table>
         <tr>
             <th scope="col"></th>
-            <th scope="col">№</th>
-            <th scope="col">Reg</th>
             <th scope="col">Last seen</th>
             <th scope="col" colspan="3">Type</th>
             <th scope="col">Colour</th>
@@ -20,8 +18,6 @@
         {% for vehicle in vehicles %}
             <tr>
                 <td><a href="{{ vehicle.get_absolute_url }}">{{ vehicle }}</a></td>
-                <td>{% firstof vehicle.fleet_number "" %}</td>
-                <td>{{ vehicle.reg }}</td>
                 <td>
                     {% if vehicle.latest_location %}
                         {% if vehicle.latest_location.journey.service %}

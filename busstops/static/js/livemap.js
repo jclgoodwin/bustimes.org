@@ -117,18 +117,7 @@
         var dateTime = new Date(data.properties.datetime);
         popup += 'Updated at ' + dateTime.toTimeString().slice(0, 5);
 
-        var vehicle = data.properties.vehicle;
-        if (vehicle) {
-            if (vehicle.reg) {
-                popup = vehicle.reg + '<br>' + popup;
-                if (vehicle.fleet_number) {
-                    popup = vehicle.fleet_number + ' - ' + popup;
-                }
-            } else if (vehicle.fleet_number) {
-                popup = vehicle.fleet_number + '<br>' + popup;
-            }
-
-        }
+        popup = data.properties.vehicle.name + '<br>' + popup;
 
         marker.bindPopup(popup);
 

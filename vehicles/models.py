@@ -32,7 +32,21 @@ class Vehicle(models.Model):
         unique_together = ('code', 'operator')
 
     def __str__(self):
+        if len(self.reg) > 3:
+            reg = self.get_reg()
+            if self.fleet_number:
+                return '{} - {}'.format(self.fleet_number, reg)
+            return reg
+        if self.fleet_number:
+            return str(self.fleet_number)
         return self.code.replace('_', ' ')
+
+    def get_reg(self):
+        if self.reg[-3:].isalpha():
+            return self.reg[:-3] + ' ' + self.reg[-3:]
+        if self.reg[:3].isalpha():
+            return self.reg[:3] + ' ' + self.reg[3:]
+        return self.reg
 
     def get_absolute_url(self):
         return reverse('vehicle_detail', args=(self.id,))
@@ -62,12 +76,6 @@ class VehicleLocation(models.Model):
         journey = location.journey
         vehicle = journey.vehicle
         operator = vehicle and vehicle.operator
-        reg = None
-        if len(vehicle.reg) > 3:
-            if vehicle.reg[-3:].isalpha():
-                reg = vehicle.reg[:-3] + ' ' + vehicle.reg[-3:]
-            elif vehicle.reg[:3].isalpha():
-                reg = vehicle.reg[:3] + ' ' + vehicle.reg[3:]
         colours = vehicle.colours.split()
         text_colour = None
         if colours:
@@ -87,7 +95,7 @@ class VehicleLocation(models.Model):
                     'name': str(vehicle),
                     'type': vehicle.vehicle_type and str(vehicle.vehicle_type),
                     'fleet_number': vehicle.fleet_number,
-                    'reg': reg,
+                    'reg': vehicle.get_reg(),
                     'colours': colours,
                     'text_colour': text_colour
                 },
