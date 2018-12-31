@@ -62,9 +62,9 @@
             } else {
                 background = 'linear-gradient(';
                 if (direction < 180) {
-                    background += 'to right,';
-                } else {
                     background += 'to left,';
+                } else {
+                    background += 'to right,';
                 }
                 background += colours[0] + ' 50%,' + colours[1] + ' 50%)';
             }
