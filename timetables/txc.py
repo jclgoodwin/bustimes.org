@@ -53,6 +53,22 @@ BANK_HOLIDAYS = {
 }
 
 
+def not_scotland(bank_holiday):
+    if bank_holiday.endswith('NotScotland'):
+        return True
+    if bank_holiday == 'EasterMonday':
+        return True
+    return False
+
+
+def only_scotland(bank_holiday):
+    if not_scotland(bank_holiday):
+        return False
+    if bank_holiday.endswith('Scotland'):
+        return True
+    return False
+
+
 def parse_duration(string):
     """Given an ISO 8601 formatted duration string like "PT2M", return a timedelta.
 
@@ -828,8 +844,8 @@ class OperatingProfile(object):
 
         if date in BANK_HOLIDAYS:
             if not (
-                region_id == 'S' and any('yNotScotland' in bank_holiday for bank_holiday in BANK_HOLIDAYS[date])
-                or region_id != 'S' and any('yScotland' in bank_holiday for bank_holiday in BANK_HOLIDAYS[date])
+                region_id == 'S' and any(not_scotland(bank_holiday) for bank_holiday in BANK_HOLIDAYS[date])
+                or region_id != 'S' and any(only_scotland(bank_holiday) for bank_holiday in BANK_HOLIDAYS[date])
             ):
                 if 'AllBankHolidays' in self.operation_bank_holidays:
                     return True
