@@ -16,10 +16,10 @@
 <p>{{ object.get_a_mode }} operating company in <a href="{{ object.region.get_absolute_url }}">{{ object.region.the }}</a></p>
 
 {% if operator.get_licences %}
-    <p>PSV license number: {% for licence in operator.get_licences %}<a href="{{ licence.get_absolute_url }}">{{ licence }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+    <p>PSV operator license: {% for licence in operator.get_licences %}<a href="{{ licence.get_absolute_url }}">{{ licence }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
 {% endif %}
 
-{% if False and operator.vehicle_set.exists %}
+{% if operator.vehicle_set.exists %}
     <p>For anoraks: <a href="{{ object.get_absolute_url }}/vehicles">an incomplete {{ object }} fleet list</a></p>
 {% endif %}
 
