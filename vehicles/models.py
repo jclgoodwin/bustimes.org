@@ -46,6 +46,8 @@ class Vehicle(models.Model):
             return self.reg[:-3] + ' ' + self.reg[-3:]
         if self.reg[:3].isalpha():
             return self.reg[:3] + ' ' + self.reg[3:]
+        if self.reg[-2:].isalpha():
+            return self.reg[:-2] + ' ' + self.reg[-2:]
         return self.reg
 
     def get_absolute_url(self):
@@ -81,7 +83,7 @@ class VehicleLocation(models.Model):
         if colours:
             parsed_colours = [html5_parse_simple_color(colour) for colour in colours]
             lightness = sum(c.red + c.blue + c.green for c in parsed_colours) / len(parsed_colours) / 3
-            if lightness < 200:
+            if lightness < 170:
                 text_colour = '#fff'
         return {
             'type': 'Feature',
