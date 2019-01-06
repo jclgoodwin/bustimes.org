@@ -830,3 +830,6 @@ class SIRISource(models.Model):
     url = models.URLField()
     requestor_ref = models.CharField(max_length=255, blank=True)
     admin_areas = models.ManyToManyField(AdminArea, blank=True)
+
+    def __str__(self):
+        return self.name

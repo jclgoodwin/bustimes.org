@@ -120,6 +120,10 @@ class DataSourceAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'datetime')
 
 
+class SIRISourceAdmin(admin.ModelAdmin):
+    list_display = ('name', 'url', 'requestor_ref')
+
+
 admin.site.register(Region)
 admin.site.register(AdminArea, AdminAreaAdmin)
 admin.site.register(District)
@@ -137,4 +141,4 @@ admin.site.register(DataSource, DataSourceAdmin)
 admin.site.register(Place, PlaceAdmin)
 admin.site.register(Registration)
 admin.site.register(Variation, VariationAdmin)
-admin.site.register(SIRISource)
+admin.site.register(SIRISource, SIRISourceAdmin)

@@ -398,6 +398,66 @@ def parse_datetime(string):
     return ciso8601.parse_datetime(string).astimezone(LOCAL_TIMEZONE)
 
 
+class SiriSmDepartures(Departures):
+    ns = {
+        's': 'http://www.siri.org.uk/siri'
+    }
+
+    def __init__(self, source, stop, services):
+        self.source = source
+        super().__init__(stop, services)
+
+    def get_row(self, element):
+        aimed_time = element.find('s:MonitoredCall/s:AimedDepartureTime', self.ns)
+        expected_time = element.find('s:MonitoredCall/s:ExpectedDepartureTime', self.ns)
+        line = element.find('s:PublishedLineName', self.ns)
+        destination = element.find('s:DestinationName', self.ns)
+        if aimed_time is not None:
+            aimed_time = parse_datetime(aimed_time.text)
+        if expected_time is not None:
+            expected_time = parse_datetime(expected_time.text)
+        if line is None:
+            line = element.find('s:LineRef', self.ns)
+        if line is not None:
+            line = line.text
+        if destination is None:
+            destination = element.find('s:DestinationDisplay', self.ns)
+        if destination is not None:
+            destination = destination.text
+        return {
+            'time': aimed_time,
+            'live': expected_time,
+            'service': line,
+            'destination': destination,
+        }
+
+    def departures_from_response(self, response):
+        tree = ET.fromstring(response.text).find('s:ServiceDelivery', self.ns)
+        departures = tree.findall('s:StopMonitoringDelivery/s:MonitoredStopVisit/s:MonitoredVehicleJourney', self.ns)
+        return [self.get_row(element) for element in departures]
+
+    def get_response(self):
+        if self.source.requestor_ref:
+            username = '<RequestorRef>{}</RequestorRef>'.format(self.source.requestor_ref)
+        else:
+            username = ''
+        timestamp = '<RequestTimestamp>{}</RequestTimestamp>'.format(datetime.datetime.utcnow().isoformat())
+        request_xml = """
+            <Siri version="1.3" xmlns="http://www.siri.org.uk/siri">
+                <ServiceRequest>
+                    {}
+                    {}
+                    <StopMonitoringRequest version="1.3">
+                        {}
+                        <MonitoringRef>{}</MonitoringRef>
+                    </StopMonitoringRequest>
+                </ServiceRequest>
+            </Siri>
+        """.format(timestamp, username, timestamp, self.stop.atco_code)
+        headers = {'Content-Type': 'application/xml'}
+        return SESSION.post(self.source.url, data=request_xml, headers=headers, timeout=15)
+
+
 class LambdaDepartures(Departures):
     def get_request_url(self):
         return 'https://api.bustim.es/' + self.stop.atco_code
