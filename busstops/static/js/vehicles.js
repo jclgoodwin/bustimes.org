@@ -12,7 +12,7 @@
             minZoom: 6,
             maxZoom: 18,
         }),
-        tileURL = 'https://maps.tilehosting.com/styles/basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png?key=RXrAQ6RZ239ClCzC8uZj',
+        tileURL = 'https://bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
         statusBar = L.control({
             position: 'topright'
         }),
