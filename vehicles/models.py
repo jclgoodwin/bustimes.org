@@ -74,10 +74,9 @@ class VehicleLocation(models.Model):
     class Meta():
         ordering = ('id',)
 
-    def get_json(location):
-        journey = location.journey
+    def get_json(self, extended=False):
+        journey = self.journey
         vehicle = journey.vehicle
-        operator = vehicle and vehicle.operator
         colours = vehicle.colours.split()
         text_colour = None
         if colours:
@@ -85,31 +84,32 @@ class VehicleLocation(models.Model):
             lightness = sum(c.red + c.blue + c.green for c in parsed_colours) / len(parsed_colours) / 3
             if lightness < 170:
                 text_colour = '#fff'
-        return {
+        json = {
             'type': 'Feature',
             'geometry': {
                 'type': 'Point',
-                'coordinates': tuple(location.latlong),
+                'coordinates': tuple(self.latlong),
             },
             'properties': {
                 'vehicle': {
                     'url': vehicle.get_absolute_url(),
                     'name': str(vehicle),
-                    'type': vehicle.vehicle_type and str(vehicle.vehicle_type),
-                    'fleet_number': vehicle.fleet_number,
-                    'reg': vehicle.get_reg(),
                     'colours': colours,
                     'text_colour': text_colour
                 },
-                'operator': operator and str(operator),
-                'service': journey.service and {
-                    'line_name': journey.service.line_name,
-                    'url': journey.service.get_absolute_url(),
-                },
-                'journey': journey.code,
-                'destination': journey.destination,
-                'delta': location.early,
-                'direction': location.heading,
-                'datetime': location.datetime
+                'delta': self.early,
+                'direction': self.heading,
+                'datetime': self.datetime
             }
         }
+        if extended:
+            if vehicle.vehicle_type:
+                json['properties']['vehicle']['type'] = str(vehicle.vehicle_type)
+            if journey.service:
+                json['properties']['service'] = {
+                    'line_name': journey.service.line_name,
+                    'url': journey.service.get_absolute_url(),
+                }
+            if vehicle.operator:
+                json['properties']['operator'] = str(vehicle.operator)
+        return json

@@ -25,14 +25,14 @@ class VehiclesTests(TestCase):
 
         with self.assertNumQueries(2):
             response = self.client.get('/vehicles.json')
-            self.assertEqual(response.json()['features'][0]['properties']['vehicle']['reg'], 'FD54 JYA')
+            self.assertEqual(response.json()['features'][0]['properties']['vehicle']['name'], '1 - FD54 JYA')
             self.assertEqual(response.get('last-modified'), 'Tue, 25 Dec 2018 19:47:00 GMT')
 
     def test_location_json(self):
         location = VehicleLocation.objects.get()
         location.journey.vehicle = self.vehicle_2
-        json = location.get_json()
-        self.assertEqual(json['properties']['vehicle']['reg'], 'UWW 2X')
+        json = location.get_json(True)
+        self.assertEqual(json['properties']['vehicle']['name'], '50 - UWW 2X')
 
     @freeze_time('4 July 1940')
     def test_vehicle_detail(self):

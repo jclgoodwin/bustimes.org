@@ -186,6 +186,8 @@
         statusBar.getContainer().innerHTML = '';
     }
 
+    var timeout;
+
     function load(map, statusBar) {
         statusBar.getContainer().innerHTML = 'Loading\u2026';
         if (lastReq) {
@@ -195,13 +197,23 @@
             if (lastReq.request.status === 200 && data && data.features) {
                 processData(data);
             }
-            setTimeout(function() {
+            timeout = setTimeout(function() {
                 load(map, statusBar);
             }, 10000);
         });
     }
 
+    function handleVisibilityChange(event) {
+        if (event.target.hidden === true) {
+            clearTimeout(timeout);
+        } else {
+            load(map, statusBar);
+        }
+    }
+
     if (busesOnlineCount) {
+        document.onvisibilitychange = handleVisibilityChange;
+
         load(map, statusBar);
     }
 })();
