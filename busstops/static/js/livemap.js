@@ -62,15 +62,26 @@
             } else {
                 background = 'linear-gradient(';
                 if (direction < 180) {
-                    background += 'to left,';
+                    background += 'to left';
                 } else {
-                    background += 'to right,';
+                    background += 'to right';
                 }
-                background += colours[0] + ' 50%,' + colours[1] + ' 50%)';
+                var percentage = 100 / colours.length;
+                for (var i = 0; i < colours.length; i++) {
+                    if (i != 0) {
+                        background += ',' + colours[i];
+                        background += ' ' + Math.ceil(percentage * i) + '%';
+                    }
+                    if (i != colours.length - 1) {
+                        background += ',' + colours[i];
+                        background += ' ' + Math.ceil(percentage * (i + 1)) + '%';
+                    }
+                }
+                background += ')';
             }
             var style = 'background:' + background;
             if (textColour) {
-                style += ';border-color:' + textColour + ';color:' + textColour;
+                style += ';border-color:' + textColour;
             }
             style += ';';
         } else {
