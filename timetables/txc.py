@@ -50,6 +50,14 @@ BANK_HOLIDAYS = {
     datetime.date(2019, 4, 19): ('GoodFriday',),
     datetime.date(2019, 4, 22): ('EasterMonday',),  # TODO: not in Scotland?
     datetime.date(2019, 5, 6): ('MayDay',),
+    datetime.date(2019, 5, 27): ('SpringBank',)
+    datetime.date(2019, 8, 5): ('AugustBankHolidayScotland',),
+    datetime.date(2019, 8, 26): ('LateSummerBankHolidayNotScotland',),
+    datetime.date(2019, 12, 2): ('StAndrewsDay',),
+    datetime.date(2019, 12, 24): ('ChristmasEve',),  # Not actually a bank holiday?
+    datetime.date(2019, 12, 25): ('ChristmasDay',),
+    datetime.date(2019, 12, 26): ('BoxingDay',),
+    datetime.date(2019, 12, 31): ('NewYearsEve',),  # Not actually a bank holiday?
 }
 
 
@@ -65,6 +73,8 @@ def only_scotland(bank_holiday):
     if not_scotland(bank_holiday):
         return False
     if bank_holiday.endswith('Scotland'):
+        return True
+    if bank_holiday == 'StAndrewsDay':
         return True
     return False
 
