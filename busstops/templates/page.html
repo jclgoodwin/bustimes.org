@@ -8,9 +8,11 @@
 <link rel="preconnect" href="https://cdn.ravenjs.com" />
 <link rel="preconnect" href="https://www.google-analytics.com" />
 <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
-{% if object.get_absolute_url %}
-    <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}" />
-{% endif %}
+{% block canonical %}
+    {% if object.get_absolute_url %}
+        <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}" />
+    {% endif %}
+{% endblock %}
 <script type="application/ld+json">{"@context":"http://schema.org","@type":"WebSite","url":"https://bustimes.org","name":"Bus Times","potentialAction":{"@type":"SearchAction","target":"https://bustimes.org/search?q={q}","query-input":"required name=q"}}</script>
 {% load static %}
 <link rel="manifest" href="{% static 'manifest.webmanifest' %}" />
