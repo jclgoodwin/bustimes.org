@@ -6,41 +6,43 @@
 
 <h1>{{ object }}</h1>
 
-{% if vehicles %}
-    <table>
+<p>This is an incomplete, unofficial fleet list for {{ object }}, only showing vehicles that have appeared in the live bus tracking system.</p>
+
+<p>Thanks to the marvels of modern technology, you can see where a particular vehicle has been recently, and which vehicles have operated a particular service.</p>
+
+<table>
+    <tr>
+        <th scope="col"></th>
+        <th scope="col">Last seen</th>
+        <th scope="col" colspan="3">Type</th>
+        <th scope="col">Colour</th>
+        <th scope="col">Notes</th>
+    </tr>
+    {% for vehicle in vehicles %}
         <tr>
-            <th scope="col"></th>
-            <th scope="col">Last seen</th>
-            <th scope="col" colspan="3">Type</th>
-            <th scope="col">Colour</th>
-            <th scope="col">Notes</th>
-        </tr>
-        {% for vehicle in vehicles %}
-            <tr>
-                <td><a href="{{ vehicle.get_absolute_url }}">{{ vehicle }}</a></td>
-                <td>
-                    {% if vehicle.latest_location %}
-                        {% if vehicle.latest_location.journey.service %}
-                            <a href="{{ vehicle.latest_location.journey.service.get_absolute_url }}">{{ vehicle.latest_location.journey.service.line_name }}</a>
-                            <br>
-                        {% endif %}
-                        {% if vehicle.latest_location.datetime.date == today %}
-                            {{ vehicle.latest_location.datetime | time }}
-                        {% else %}
-                            {{ vehicle.latest_location.datetime }}
-                        {% endif %}
+            <td><a href="{{ vehicle.get_absolute_url }}">{{ vehicle }}</a></td>
+            <td>
+                {% if vehicle.latest_location %}
+                    {% if vehicle.latest_location.journey.service %}
+                        <a href="{{ vehicle.latest_location.journey.service.get_absolute_url }}">{{ vehicle.latest_location.journey.service.line_name }}</a>
+                        <br>
                     {% endif %}
-                </td>
-                <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
-                <td>{% if vehicle.vehicle_type.double_decker %}Decker{% endif %}</td>
-                <td>{% if vehicle.vehicle_type.coach %}Coach){% endif %}</td>
-                <td>
-                    {% for colour in vehicle.colours.split %}<div style="height:1em;width:1em;display:inline-block;background:{{ colour }}"></div>{% endfor %}
-                </td>
-                <td>{{ vehicle.notes }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-{% endif %}
+                    {% if vehicle.latest_location.datetime.date == today %}
+                        {{ vehicle.latest_location.datetime | time }}
+                    {% else %}
+                        {{ vehicle.latest_location.datetime }}
+                    {% endif %}
+                {% endif %}
+            </td>
+            <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
+            <td>{% if vehicle.vehicle_type.double_decker %}Decker{% endif %}</td>
+            <td>{% if vehicle.vehicle_type.coach %}Coach){% endif %}</td>
+            <td>
+                {% for colour in vehicle.colours.split %}<div style="height:1em;width:1em;display:inline-block;background:{{ colour }}"></div>{% endfor %}
+            </td>
+            <td>{{ vehicle.notes }}</td>
+        </tr>
+    {% endfor %}
+</table>
 
 {% endblock %}

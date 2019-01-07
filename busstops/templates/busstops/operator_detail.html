@@ -15,14 +15,6 @@
 
 <p>{{ object.get_a_mode }} operating company in <a href="{{ object.region.get_absolute_url }}">{{ object.region.the }}</a></p>
 
-{% if operator.get_licences %}
-    <p>PSV operator license: {% for licence in operator.get_licences %}<a href="{{ licence.get_absolute_url }}">{{ licence }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
-{% endif %}
-
-{% if operator.vehicle_set.exists %}
-    <p>For anoraks: <a href="{{ object.get_absolute_url }}/vehicles">an incomplete {{ object }} fleet list</a></p>
-{% endif %}
-
 {% for note in notes %}
     <p class="warning">{{ note|safe }}</p>
 {% endfor %}
@@ -54,6 +46,18 @@
         {% endfor %}
     {% endif %}
     </div>
+{% endif %}
+
+{% if operator.get_licences or operator.vehicle_set.exists %}
+    <h2>For anoraks</h2>
+
+    {% if operator.get_licences %}
+        <p>PSV operator license: {% for licence in operator.get_licences %}<a href="{{ licence.get_absolute_url }}">{{ licence }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+    {% endif %}
+
+    {% if operator.vehicle_set.exists %}
+        <p><a href="{{ object.get_absolute_url }}/vehicles">An incomplete {{ object }} fleet list</a></p>
+    {% endif %}
 {% endif %}
 
 </div>

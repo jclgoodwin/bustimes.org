@@ -1,6 +1,6 @@
 import ciso8601
 from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.views.decorators.http import last_modified
 from django.views.generic.detail import DetailView
 from django.utils import timezone
@@ -10,12 +10,15 @@ from .models import Vehicle, VehicleLocation, VehicleJourney, Operator, Service
 
 def operator_vehicles(request, slug):
     operator = get_object_or_404(Operator, slug=slug)
+    vehicles = operator.vehicle_set.order_by('fleet_number')
+    vehicles = vehicles.select_related('vehicle_type', 'latest_location__journey__service')
+    if not vehicles:
+        raise Http404()
     return render(request, 'operator_vehicles.html', {
         'breadcrumb': [operator.region, operator],
         'object': operator,
         'today': timezone.now().date(),
-        'vehicles': operator.vehicle_set.order_by('fleet_number').select_related('vehicle_type',
-                                                                                 'latest_location__journey__service')
+        'vehicles': vehicles
     })
 
 
