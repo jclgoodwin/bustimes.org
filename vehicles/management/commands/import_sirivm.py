@@ -35,6 +35,7 @@ class Command(ImportLiveVehiclesCommand):
         'SE': ('SESX',),
         'SE': ('SESX',),
         'FE': ('FESX',),
+        'TG': ('ARHE',),
         'AKE': ('ARHE',),
         'SQ': ('BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TDTR', 'TOUR', 'WDBC'),
         'FH': ('FHAM',),
@@ -119,6 +120,8 @@ class Command(ImportLiveVehiclesCommand):
             service = 'QuayConnect'
         elif service == 'FLCN':
             service = 'FALCON'
+        elif service is None and operator_ref == 'TG':
+            service = 'Colchester Park & Ride'
         elif service == 'P&R' and operator_ref == 'AKE':
             service = 'Colchester Park & Ride'
         elif service == '700' and operator_ref == 'FE':
