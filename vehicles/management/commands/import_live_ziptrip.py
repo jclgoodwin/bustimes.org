@@ -28,7 +28,10 @@ class Command(ImportLiveVehiclesCommand):
         elif operator_id == 'LAS':
             operator_id = ('GAHL', 'LGEN')
         elif operator_id == '767STEP':
-            operator_id = ('SESX', 'GECL')
+            if '(' in vehicle:
+                operator_id = 'GECL'
+            else:
+                operator_id = 'SESX'
         elif operator_id == 'UNIB' or operator_id == 'UNO':
             operator_id = 'UNOE'
         elif operator_id == 'RENW':
