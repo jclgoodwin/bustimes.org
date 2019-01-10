@@ -47,7 +47,7 @@ class Command(ImportLiveVehiclesCommand):
     }
 
     def get_items(self):
-        for subdomain in ('essex', 'southampton', 'slough'):
+        for subdomain in ('essex', 'southampton', 'slough', 'staffordshire'):
             data = """
                 <Siri xmlns="http://www.siri.org.uk/siri">
                     <ServiceRequest><VehicleMonitoringRequest/></ServiceRequest>
