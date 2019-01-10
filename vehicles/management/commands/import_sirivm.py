@@ -44,6 +44,12 @@ class Command(ImportLiveVehiclesCommand):
         'FD': ('FDOR',),
         'RB': ('RBUS', 'GLRB'),
         'TV': ('THVB',),
+        'STA': ('SCWW',),
+        'NXB': ('TNXB',),
+        'AMN': ('AMNO',),
+        'ANW': ('ANWE',),
+        'MDC': ('MDCL',),
+        'FP': ('FPOT',),
     }
 
     def get_items(self):
