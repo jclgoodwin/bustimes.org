@@ -27,7 +27,7 @@
 
 {% if object.get_buses_online %}
     <p><strong id="buses-online-count">{{ object.get_buses_online }} bus{{ object.get_buses_online|pluralize:"es" }} online.</strong>
-    This live map might be incomplete or out of date. Click on a bus to see when it last updated</p>
+    Click on a bus to see when it last updated</p>
 {% endif %}
 
 {% if object.geometry or object.get_buses_online %}
