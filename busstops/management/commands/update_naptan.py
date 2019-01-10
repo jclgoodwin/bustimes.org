@@ -42,10 +42,10 @@ class Command(BaseCommand):
         }
         if areas:
             params['LA'] = '|'.join(areas)
-        return requests.get('http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx', params, stream=True)
+        return requests.get('http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx', params, stream=True, timeout=60)
 
     def handle(self, *args, **options):
-        new_response = requests.get('http://naptan.app.dft.gov.uk/GridMethods/%s' % JSON_NAME)
+        new_response = requests.get('http://naptan.app.dft.gov.uk/GridMethods/%s' % JSON_NAME, timeout=60)
         new_rows = [row for row in new_response.json()['rows'] if row['cell'][0]]
         old_rows = [row for row in self.get_old_rows() if row['cell'][0]]
 
