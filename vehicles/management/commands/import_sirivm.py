@@ -58,18 +58,19 @@ class Command(ImportLiveVehiclesCommand):
             for item in items_from_response(response):
                 yield item
 
-        data = """
-            <Siri xmlns="http://www.siri.org.uk/siri">
-                <ServiceRequest>
-                    <RequestorRef>torbaydevon_siri_traveline</RequestorRef>
-                    <VehicleMonitoringRequest/>
-                </ServiceRequest>
-            </Siri>
-        """
-        response = self.session.post('http://data.icarus.cloudamber.com/VehicleMonitoringRequest.ashx',
-                                     data=data, timeout=10)
-        for item in items_from_response(response):
-            yield item
+        for requestor_ref in ('torbaydevon_siri_traveline', 'Cornwall_SIRI'):
+            data = """
+                <Siri xmlns="http://www.siri.org.uk/siri">
+                    <ServiceRequest>
+                        <RequestorRef>{}</RequestorRef>
+                        <VehicleMonitoringRequest/>
+                    </ServiceRequest>
+                </Siri>
+            """.format(requestor_ref)
+            response = self.session.post('http://data.icarus.cloudamber.com/VehicleMonitoringRequest.ashx',
+                                         data=data, timeout=10)
+            for item in items_from_response(response):
+                yield item
 
     def get_journey(self, item):
         journey = VehicleJourney()
