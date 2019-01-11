@@ -30,26 +30,8 @@ class Command(ImportLiveVehiclesCommand):
     url = 'sslink/SSLinkHTTP'
 
     operators = {
-        'ENS': ('ENSB',),
-        'HO': ('HEDO',),
-        'SE': ('SESX',),
-        'SE': ('SESX',),
-        'FE': ('FESX',),
-        'TG': ('ARHE',),
-        'AKE': ('ARHE',),
         'SQ': ('BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TDTR', 'TOUR', 'WDBC'),
-        'FH': ('FHAM',),
-        'RL': ('RLNE',),
-        'FT': ('FTVA',),
-        'FD': ('FDOR',),
         'RB': ('RBUS', 'GLRB'),
-        'TV': ('THVB',),
-        'STA': ('SCWW',),
-        'NXB': ('TNXB',),
-        'AMN': ('AMNO',),
-        'ANW': ('ANWE',),
-        'MDC': ('MDCL',),
-        'FP': ('FPOT',),
     }
 
     def get_items(self):
@@ -93,8 +75,10 @@ class Command(ImportLiveVehiclesCommand):
                 operator_options = self.operators.get(operator_ref)
                 if operator_options:
                     operator = Operator.objects.get(id=operator_options[0])
-                else:
+                elif len(operator_ref) == 4:
                     operator = Operator.objects.get(id=operator_ref)
+                else:
+                    operator = Operator.objects.get(operatorcode__source=self.source, operatorcode__code=operator_ref)
         except (Operator.MultipleObjectsReturned, Operator.DoesNotExist) as e:
             print(e, operator_ref, service)
 
