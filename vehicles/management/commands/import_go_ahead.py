@@ -47,6 +47,9 @@ class Command(ImportLiveVehiclesCommand):
     def get_journey(self, item):
         journey = VehicleJourney()
 
+        journey.code = item['datedVehicleJourney']
+        journey.destination = item['destination']['name']
+
         vehicle = item['vehicleRef']
         operator, fleet_number = item['vehicleRef'].split('-', 1)
         operators = self.operators.get(operator)
