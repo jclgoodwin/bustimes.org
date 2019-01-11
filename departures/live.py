@@ -650,6 +650,13 @@ def get_departures(stop, services, bot=False):
             'today': datetime.date.today(),
         }, 60)
 
+    for source in stop.admin_area.sirisource_set.all():
+        departures = SiriSmDepartures(source, stop, services).get_departures()
+        return ({
+            'departures': departures,
+            'today': datetime.date.today(),
+        }, 60)
+
     now = datetime.datetime.now(LOCAL_TIMEZONE)
 
     departures = TimetableDepartures(stop, services, now)

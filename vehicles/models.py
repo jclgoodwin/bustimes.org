@@ -99,7 +99,8 @@ class VehicleLocation(models.Model):
                 },
                 'delta': self.early,
                 'direction': self.heading,
-                'datetime': self.datetime
+                'datetime': self.datetime,
+                'destination': journey.destination
             }
         }
         if extended:

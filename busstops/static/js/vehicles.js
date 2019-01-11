@@ -145,6 +145,10 @@
             }
         }
 
+        if (data.properties.destination) {
+            popup = 'To ' + data.properties.destination + '<br>' + popup;
+        }
+
         var dateTime = new Date(data.properties.datetime);
         popup += '<br>Updated at ' + dateTime.toTimeString().slice(0, 5);
 
