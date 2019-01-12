@@ -1,4 +1,5 @@
 from time import sleep
+from requests.exceptions import RequestException
 from django.contrib.gis.geos import Point
 from busstops.models import Service
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -39,7 +40,10 @@ class Command(ImportLiveVehiclesCommand):
         ):
             params = {'lat': lat, 'lng': lng}
             headers = {'opco': opco}
-            response = self.session.get(self.url, params=params, timeout=30, headers=headers)
+            try:
+                response = self.session.get(self.url, params=params, timeout=30, headers=headers)
+            except RequestException:
+                pass
             for item in response.json()['data']:
                 yield item
             sleep(5)

@@ -1,5 +1,6 @@
 import ciso8601
 import xml.etree.cElementTree as ET
+from requests.exceptions import RequestException
 from django.contrib.gis.geos import Point
 from busstops.models import Operator, Service
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -17,6 +18,8 @@ def get_latlong(mvj):
 
 
 def items_from_response(response):
+    if not response:
+        return ()
     try:
         items = ET.fromstring(response.text)
     except ET.ParseError:
@@ -34,29 +37,36 @@ class Command(ImportLiveVehiclesCommand):
         'RB': ('RBUS', 'GLRB'),
     }
 
+    def get_response(self, url, xml):
+        try:
+            return self.session.post(url, data=xml, timeout=10)
+        except RequestException as e:
+            print(e)
+            return
+
     def get_items(self):
+        url = 'http://{}.jmwrti.co.uk:8080/RTI-SIRI-Server/SIRIHandler'
+        data = """
+            <Siri xmlns="http://www.siri.org.uk/siri">
+                <ServiceRequest><VehicleMonitoringRequest/></ServiceRequest>
+            </Siri>
+        """
         for subdomain in ('essex', 'southampton', 'slough', 'staffordshire'):
-            data = """
-                <Siri xmlns="http://www.siri.org.uk/siri">
-                    <ServiceRequest><VehicleMonitoringRequest/></ServiceRequest>
-                </Siri>
-            """
-            response = self.session.post('http://{}.jmwrti.co.uk:8080/RTI-SIRI-Server/SIRIHandler'.format(subdomain),
-                                         data=data, timeout=10)
+            response = self.get_response(url.format(subdomain), data)
             for item in items_from_response(response):
                 yield item
 
+        url = 'http://data.icarus.cloudamber.com/VehicleMonitoringRequest.ashx'
+        data = """
+            <Siri xmlns="http://www.siri.org.uk/siri">
+                <ServiceRequest>
+                    <RequestorRef>{}</RequestorRef>
+                    <VehicleMonitoringRequest/>
+                </ServiceRequest>
+            </Siri>
+        """
         for requestor_ref in ('torbaydevon_siri_traveline', 'Cornwall_SIRI'):
-            data = """
-                <Siri xmlns="http://www.siri.org.uk/siri">
-                    <ServiceRequest>
-                        <RequestorRef>{}</RequestorRef>
-                        <VehicleMonitoringRequest/>
-                    </ServiceRequest>
-                </Siri>
-            """.format(requestor_ref)
-            response = self.session.post('http://data.icarus.cloudamber.com/VehicleMonitoringRequest.ashx',
-                                         data=data, timeout=10)
+            response = self.get_response(url, data.format(requestor_ref))
             for item in items_from_response(response):
                 yield item
 
