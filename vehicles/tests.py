@@ -3,7 +3,6 @@ from django.test import TestCase
 from django.contrib.gis.geos import Point
 from busstops.models import DataSource
 from .models import Vehicle, VehicleJourney, VehicleLocation
-# from ..commands import import_bushub
 
 
 class VehiclesTests(TestCase):
@@ -12,9 +11,13 @@ class VehiclesTests(TestCase):
         datetime = '2018-12-25 19:47+00:00'
         source = DataSource.objects.create(name='HP', datetime=datetime)
         cls.vehicle_1 = Vehicle.objects.create(fleet_number=1, reg='FD54JYA')
-        cls.vehicle_2 = Vehicle.objects.create(fleet_number=50, reg='UWW2X')
+        cls.vehicle_2 = Vehicle.objects.create(fleet_number=50, reg='UWW2X', colours='#FF0000')
         journey = VehicleJourney.objects.create(vehicle=cls.vehicle_1, datetime=datetime, source=source)
         VehicleLocation.objects.create(datetime=datetime, latlong=Point(0, 51), journey=journey, current=True)
+
+    def test_vehicle(self):
+        vehicle = Vehicle(reg='3990ME')
+        self.assertEqual(str(vehicle), '3990 ME')
 
     def test_vehicles_json(self):
         with self.assertNumQueries(2):
@@ -33,6 +36,7 @@ class VehiclesTests(TestCase):
         location.journey.vehicle = self.vehicle_2
         json = location.get_json(True)
         self.assertEqual(json['properties']['vehicle']['name'], '50 - UWW 2X')
+        self.assertEqual(json['properties']['vehicle']['text_colour'], '#fff')
 
     @freeze_time('4 July 1940')
     def test_vehicle_detail(self):

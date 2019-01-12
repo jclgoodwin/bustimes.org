@@ -37,11 +37,11 @@ def calculate_bearing(a, b):
 def same_journey(latest_location, journey):
     if not latest_location:
         return False
-    if journey.code and latest_location.journey.code != journey.code:
+    if journey.code and latest_location.journey.code != str(journey.code):
         return False
     if latest_location.current:
         return latest_location.journey.service == journey.service
-    if journey.code and latest_location.journey.code == journey.code:
+    if journey.code and latest_location.journey.code == str(journey.code):
         return True
 
 
