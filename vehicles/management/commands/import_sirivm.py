@@ -143,6 +143,9 @@ class Command(ImportLiveVehiclesCommand):
         if services.count() > 1:
             latlong = get_latlong(mvj)
             services = services.filter(geometry__bboverlaps=latlong.buffer(0.1))
+            if services.count() > 1:
+                latlong = get_latlong(mvj)
+                services = services.filter(geometry__bboverlaps=latlong)
 
         try:
             journey.service = services.get()
