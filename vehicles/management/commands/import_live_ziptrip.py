@@ -91,6 +91,10 @@ class Command(ImportLiveVehiclesCommand):
         else:
             created = False
 
+        if item['routeName'].endswith('_Essex'):
+            item['routeName'] = item['routeName'][:-6]
+        elif operator_id == 'CUBU' and item['routeName'] == '157A':
+            item['routeName'] = item['routeName'][:-1]
         services = Service.objects.filter(line_name__iexact=item['routeName'], current=True)
         if type(operator_id) is tuple:
             services = services.filter(operator__in=operator_id)
@@ -103,7 +107,7 @@ class Command(ImportLiveVehiclesCommand):
             else:
                 print(item)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-            if item['routeName'].lower() not in {'rr', 'rail', 'transdev', '7777', 'shop'}:
+            if item['routeName'].lower() not in {'rr', 'rail', 'transdev', '7777', 'shop', 'pos'}:
                 print(e, operator_id, item['routeName'])
 
         return journey, created
