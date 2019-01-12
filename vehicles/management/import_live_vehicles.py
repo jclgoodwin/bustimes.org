@@ -55,6 +55,18 @@ class ImportLiveVehiclesCommand(BaseCommand):
             return response.json()
         return ()
 
+    @staticmethod
+    def get_service(queryset, latlong):
+        try:
+            try:
+                return queryset.get()
+            except queryset.model.MultipleObjectsReturned:
+                return queryset.get(geometry__bboverlaps=latlong.buffer(0.1))
+        except queryset.model.DoesNotExist:
+            return
+        except queryset.model.MultipleObjectsReturned:
+            return queryset.get(geometry__bboverlaps=latlong)
+
     @transaction.atomic
     def handle_item(self, item, now):
         journey, vehicle_created = self.get_journey(item)

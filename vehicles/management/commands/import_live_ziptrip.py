@@ -6,6 +6,11 @@ from busstops.models import Operator, Service
 from ...models import Vehicle, VehicleLocation, VehicleJourney
 
 
+def get_latlong(item):
+    position = item['position']
+    return Point(position['longitude'], position['latitude'])
+
+
 class Command(ImportLiveVehiclesCommand):
     operators = {}
     source_name = 'ZipTrip'
@@ -87,11 +92,14 @@ class Command(ImportLiveVehiclesCommand):
             created = False
 
         services = Service.objects.filter(line_name__iexact=item['routeName'], current=True)
+        if type(operator_id) is tuple:
+            services = services.filter(operator__in=operator_id)
+        elif operator:
+            services = services.filter(operator=operator)
+
         try:
-            if type(operator_id) is tuple:
-                journey.service = services.get(operator__in=operator_id)
-            elif operator:
-                journey.service = services.get(operator=operator)
+            if operator:
+                journey.service = self.get_service(services, get_latlong(item))
             else:
                 print(item)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
@@ -104,9 +112,8 @@ class Command(ImportLiveVehiclesCommand):
         bearing = item.get('bearing')
         while bearing and bearing < 0:
             bearing += 360
-        position = item['position']
         return VehicleLocation(
             datetime=ciso8601.parse_datetime(item['reported']),
-            latlong=Point(position['longitude'], position['latitude']),
+            latlong=get_latlong(item),
             heading=bearing
         )

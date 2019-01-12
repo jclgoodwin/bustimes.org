@@ -140,15 +140,8 @@ class Command(ImportLiveVehiclesCommand):
         else:
             return journey, vehicle_created
 
-        if services.count() > 1:
-            latlong = get_latlong(mvj)
-            services = services.filter(geometry__bboverlaps=latlong.buffer(0.1))
-            if services.count() > 1:
-                latlong = get_latlong(mvj)
-                services = services.filter(geometry__bboverlaps=latlong)
-
         try:
-            journey.service = services.get()
+            journey.service = self.get_service(services, get_latlong(mvj))
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             print(e, operator_ref, service, services, get_latlong(mvj))
 
