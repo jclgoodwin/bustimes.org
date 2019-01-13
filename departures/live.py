@@ -677,10 +677,11 @@ def get_departures(stop, services, bot=False):
             if live_rows:
                 blend(departures, live_rows)
         elif departures:
-            if stop.atco_code[:3] == '430':
+            source = stop.admin_area and stop.admin_area.sirisource_set.first()
+            if source:
+                live_rows = SiriSmDepartures(source, stop, services).get_departures()
+            elif stop.atco_code[:3] == '430':
                 live_rows = WestMidlandsDepartures(stop, services).get_departures()
-                if live_rows:
-                    blend(departures, live_rows)
             elif stop.atco_code[:3] in {
                 '639', '630', '649', '607', '018', '020', '129', '038', '149', '010', '040', '050', '021',
                 '110', '120', '640', '618', '611', '612', '140', '150', '609', '160', '180', '190', '670',
@@ -689,14 +690,11 @@ def get_departures(stop, services, bot=False):
                 '119', '030', '608', '440', '460', '036', '035', '200'
             } and not all(operator.name.startswith('Stagecoach') for operator in operators):
                 live_rows = LambdaDepartures(stop, services).get_departures()
-                if live_rows:
-                    blend(departures, live_rows)
+            elif any(operator.name in {'Coastliner', 'The Blackburn Bus Company', 'Rosso'} for operator in operators):
+                live_rows = PolarBearDepartures('transdevblazefield', stop, services).get_departures()
 
-            if not live_rows:
-                if any(operator.name in {'Coastliner', 'The Blackburn Bus Company', 'Rosso'} for operator in operators):
-                    live_rows = PolarBearDepartures('transdevblazefield', stop, services).get_departures()
-                    if live_rows:
-                        blend(departures, live_rows)
+            if live_rows:
+                blend(departures, live_rows)
 
     if bot:
         max_age = 0
