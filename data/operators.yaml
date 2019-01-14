@@ -196,7 +196,7 @@ SCLI:
 SCGR:
     name: Stagecoach Grimsby-Cleethorpes
 SCBL:
-    name: Stageocach Bassetlaw
+    name: Stagecoach Bassetlaw
 CLTL:
     name: Stagecoach Hull
 SSTY:
@@ -225,6 +225,8 @@ SCEK:
     name: Stagecoach in East Kent
 SCEB:
     name: Stagecoach in Eastbourne
+SCHA:
+    name: Stagecoach in Hartlepool
 CBBH:
     name: Centrebus (South)
 CBNL:
@@ -237,6 +239,14 @@ AMNO:
     name: Arriva Midlands North
 AFCL:
     name: Arriva Fox County
+ANEA:
+    name: Arriva Durham County
+ANUM:
+    name: Arriva Northumbria
+A1CS:
+    name: A1 Coaches (Fife)
+AOLC:
+    name: A1 Coaches (Liverpool)
 GLOB:
     name: Globe Coaches (Wales)
 GLCS:
