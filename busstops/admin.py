@@ -121,7 +121,14 @@ class DataSourceAdmin(admin.ModelAdmin):
 
 
 class SIRISourceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'url', 'requestor_ref')
+    list_display = ('name', 'url', 'requestor_ref', 'areas')
+
+    def get_queryset(self, _):
+        return self.model.objects.prefetch_related('admin_areas')
+
+    @staticmethod
+    def areas(obj):
+        return ', '.join('{} ({})'.format(area, area.atco_code) for area in obj.admin_areas.all())
 
 
 admin.site.register(Region)
