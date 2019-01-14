@@ -389,8 +389,10 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
 def stop_xml(_, pk):
     stop = get_object_or_404(StopPoint, atco_code=pk)
     source = stop.admin_area.sirisource_set.first()
-    departures = live.SiriSmDepartures(source, stop, ())
-    return HttpResponse(departures.get_response().text, content_type='text/xml')
+    if source:
+        departures = live.SiriSmDepartures(source, stop, ())
+        return HttpResponse(departures.get_response().text, content_type='text/xml')
+    raise Http404()
 
 
 def stop_json(_, pk):
