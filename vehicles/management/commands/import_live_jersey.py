@@ -28,10 +28,12 @@ class Command(ImportLiveVehiclesCommand):
             code=vehicle_code
         )
 
-        try:
-            journey.service = Service.objects.get(line_name=item['line'].lower(), current=True, operator=self.operator)
-        except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-            print(e, item['line'])
+        if item['cat'] != 'School Bus':
+            try:
+                line_name = item['line'].lower()
+                journey.service = Service.objects.get(line_name=line_name, current=True, operator=self.operator)
+            except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
+                print(e, line_name)
 
         return journey, created
 

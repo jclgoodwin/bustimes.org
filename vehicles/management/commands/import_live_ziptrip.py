@@ -24,12 +24,14 @@ class Command(ImportLiveVehiclesCommand):
 
         operator_id, vehicle = item['vehicleCode'].split('_', 1)
 
+        route_name = item['routeName']
+
         if operator_id == 'BOWE':
             operator_id = 'HIPK'
-            if item['routeName'] == '199':
-                item['routeName'] = 'Skyline 199'
-            if item['routeName'] == 'TP':
-                item['routeName'] = 'Transpeak'
+            if route_name == '199':
+                route_name = 'Skyline 199'
+            if route_name == 'TP':
+                route_name = 'Transpeak'
         elif operator_id == 'LAS':
             operator_id = ('GAHL', 'LGEN')
         elif operator_id == '767STEP':
@@ -37,8 +39,12 @@ class Command(ImportLiveVehiclesCommand):
                 operator_id = 'GECL'
             else:
                 operator_id = 'SESX'
+                if route_name == '2':
+                    route_name = 'Breeze 2'
         elif operator_id == 'UNIB' or operator_id == 'UNO':
             operator_id = 'UNOE'
+            if route_name == '690':
+                route_name = 'Inter-campus Shuttle'
         elif operator_id == 'RENW':
             operator_id = 'ECWY'
         elif operator_id == 'CB':
@@ -47,19 +53,19 @@ class Command(ImportLiveVehiclesCommand):
             operator_id = 'guernsey'
         elif operator_id == 'IOM':
             operator_id = 'IMHR'
-            if item['routeName'] == 'IMR':
-                item['routeName'] = 'Isle of Man Steam Railway'
-            elif item['routeName'] == 'HT':
-                item['routeName'] = 'Douglas Bay Horse Tram'
-            elif item['routeName'] == 'MER':
-                item['routeName'] = 'Manx Electric Railway'
-            elif item['routeName'] == 'SMR':
-                item['routeName'] = 'Snaefell Mountain Railway'
+            if route_name == 'IMR':
+                route_name = 'Isle of Man Steam Railway'
+            elif route_name == 'HT':
+                route_name = 'Douglas Bay Horse Tram'
+            elif route_name == 'MER':
+                route_name = 'Manx Electric Railway'
+            elif route_name == 'SMR':
+                route_name = 'Snaefell Mountain Railway'
             else:
                 operator_id = 'bus-vannin'
         elif operator_id == 'Rtl':
-            if item['routeName'].startswith('K'):
-                item['routeName'] = item['routeName'][1:]
+            if route_name.startswith('K'):
+                route_name = route_name[1:]
                 operator_id = 'KENN'
             operator_id = ('RBUS', 'GLRB')
 
@@ -91,11 +97,17 @@ class Command(ImportLiveVehiclesCommand):
         else:
             created = False
 
-        if item['routeName'].endswith('_Essex'):
-            item['routeName'] = item['routeName'][:-6]
-        elif operator_id == 'CUBU' and item['routeName'] == '157A':
-            item['routeName'] = item['routeName'][:-1]
-        services = Service.objects.filter(line_name__iexact=item['routeName'], current=True)
+        if route_name.endswith('_Essex'):
+            route_name = route_name[:-6]
+        elif operator_id == 'CUBU' and route_name == '157A':
+            route_name = route_name[:-1]
+
+        services = Service.objects.filter(current=True)
+        if operator_id == 'SESX' and item['route_name'] == '1':
+            services = services.filter(line_name__in=['1', 'Breeze 1'])
+        else:
+            services = services.filter(line_name__iexact=route_name)
+
         if type(operator_id) is tuple:
             services = services.filter(operator__in=operator_id)
         elif operator:
@@ -107,8 +119,8 @@ class Command(ImportLiveVehiclesCommand):
             else:
                 print(item)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-            if item['routeName'].lower() not in {'rr', 'rail', 'transdev', '7777', 'shop', 'pos'}:
-                print(e, operator_id, item['routeName'])
+            if route_name.lower() not in {'rr', 'rail', 'transdev', '7777', 'shop', 'pos'}:
+                print(e, operator_id, route_name)
 
         return journey, created
 
