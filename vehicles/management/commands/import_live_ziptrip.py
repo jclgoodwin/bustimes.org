@@ -103,8 +103,8 @@ class Command(ImportLiveVehiclesCommand):
             route_name = route_name[:-1]
 
         services = Service.objects.filter(current=True)
-        if operator_id == 'SESX' and item['route_name'] == '1':
-            services = services.filter(line_name__in=['1', 'Breeze 1'])
+        if operator_id == 'SESX' and route_name == '1':
+            services = services.filter(line_name__in=('1', 'Breeze 1'))
         else:
             services = services.filter(line_name__iexact=route_name)
 
