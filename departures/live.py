@@ -428,10 +428,14 @@ class SiriSmDepartures(Departures):
             destination = destination.text
         service = self.get_service(line_name)
         if line_ref is not None and type(service) is Service:
-            line_ref = line_ref.text
-            if line_ref and line_ref not in self.line_refs:
-                ServiceCode.objects.update_or_create({'code': line_ref}, service=service, scheme=self.source.name)
-                self.line_refs.add(line_ref)
+            scheme = self.source.name
+            if scheme == 'NCC Hogia' or expected_time and ('icarus' in self.source.url or 'sslink' in self.source.url):
+                if scheme != 'NCC Hogia':
+                    scheme += ' SIRI'
+                line_ref = line_ref.text
+                if line_ref and line_ref not in self.line_refs:
+                    ServiceCode.objects.update_or_create({'code': line_ref}, service=service, scheme=scheme)
+                    self.line_refs.add(line_ref)
 
         return {
             'time': aimed_time,
