@@ -405,29 +405,38 @@ class SiriSmDepartures(Departures):
 
     def __init__(self, source, stop, services):
         self.source = source
+        self.line_refs = set()
         super().__init__(stop, services)
 
     def get_row(self, element):
         aimed_time = element.find('s:MonitoredCall/s:AimedDepartureTime', self.ns)
         expected_time = element.find('s:MonitoredCall/s:ExpectedDepartureTime', self.ns)
-        line = element.find('s:PublishedLineName', self.ns)
+        line_name = element.find('s:PublishedLineName', self.ns)
+        line_ref = element.find('s:LineRef', self.ns)
         destination = element.find('s:DestinationName', self.ns)
         if aimed_time is not None:
             aimed_time = parse_datetime(aimed_time.text)
         if expected_time is not None:
             expected_time = parse_datetime(expected_time.text)
-        if line is None:
-            line = element.find('s:LineRef', self.ns)
-        if line is not None:
-            line = line.text
+        if line_name is None:
+            line_name = line_ref
+        if line_name is not None:
+            line_name = line_name.text
         if destination is None:
             destination = element.find('s:DestinationDisplay', self.ns)
         if destination is not None:
             destination = destination.text
+        service = self.get_service(line_name)
+        if line_ref is not None and type(service) is Service:
+            line_ref = line_ref.text
+            if line_ref and line_ref not in self.line_refs:
+                ServiceCode.objects.update_or_create({'code': line_ref}, service=service, scheme=self.source.name)
+                self.line_refs.add(line_ref)
+
         return {
             'time': aimed_time,
             'live': expected_time,
-            'service': line,
+            'service': service,
             'destination': destination,
         }
 
@@ -596,10 +605,6 @@ def blend(departures, live_rows, stop=None):
             ):
                 if live_row.get('live'):
                     row['live'] = live_row['live']
-                if live_row.get('line') and type(row['service']) is Service:
-                    if live_row['line'] != row['service'].line_name:
-                        ServiceCode.objects.update_or_create({'code': live_row['line']},
-                                                             service=row['service'], scheme='NCC Hogia')
                 replaced = True
                 break
         if not replaced:
