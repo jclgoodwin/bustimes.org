@@ -955,6 +955,17 @@ class Timetable(object):
             for journey in journeys.values():
                 if journey.departure_time == datetime.time(9, 50):
                     journey.departure_time = datetime.time(9, 20)
+        elif self.service_code == '5-42A-_-y08-1':
+            bad_journey = None
+            good_pattern = None
+            for journey in journeys.values():
+                if journey.journeypattern.grouping.direction == 'inbound':
+                    if journey.departure_time == datetime.time(8, 55):
+                        good_pattern = journey.journeypattern
+                    elif journey.departure_time == datetime.time(9, 55):
+                        bad_journey = journey
+            if bad_journey and good_pattern:
+                bad_journey.journeypattern = good_pattern
 
         # some journeys did not have a direct reference to a journeypattern,
         # but rather a reference to another journey with a reference to a journeypattern
