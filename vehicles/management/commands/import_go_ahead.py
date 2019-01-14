@@ -43,7 +43,7 @@ class Command(ImportLiveVehiclesCommand):
             try:
                 response = self.session.get(self.url, params=params, timeout=30, headers=headers)
             except RequestException:
-                pass
+                continue
             for item in response.json()['data']:
                 yield item
             sleep(5)
