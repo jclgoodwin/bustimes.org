@@ -31,6 +31,8 @@ class Command(BaseCommand):
             return
         if operator.pk == 'SCCM':
             service = Service.objects.filter(operator__in=('SCCM', 'SCPB', 'SCHU', 'SCBD'))
+        elif operator.pk == 'CBBH':
+            service = Service.objects.filter(operator__in=('CBBH', 'CBNL'))
         else:
             service = operator.service_set
         service = service.filter(current=True)
@@ -47,7 +49,8 @@ class Command(BaseCommand):
             except Service.MultipleObjectsReturned:
                 service = service.filter(Q(stops=item['OriginRef']) | Q(stops=item['DestinationRef'])).distinct().get()
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-            print(e, operator.pk, line_name)
+            if operator.pk != 'SCCM' and line_name != 'Tour':
+                print(e, operator.pk, line_name)
             service = None
         vehicle, created = Vehicle.objects.get_or_create(operator=operator, code=item['VehicleRef'], source=self.source)
         journey = None
