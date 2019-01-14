@@ -169,6 +169,9 @@ for region in "${REGIONS[@]}"; do
         updated_services=1
         ../../../manage.py import_services "$region.zip"
         cp "$region.zip" ..
+        if [[ $region_id == "L" ]]; then
+            ../../../manage.py import_tfl
+        fi
     fi
 done
 cd ../..
