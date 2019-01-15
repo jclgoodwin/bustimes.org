@@ -22,7 +22,7 @@ trap finish EXIT SIGINT SIGTERM
 
 USERNAME=$1
 PASSWORD=$2
-REGIONS=(NCSD EA W EM Y NW S WM SW SE NE L) # roughly in ascending size order
+REGIONS=(NCSD W EM Y NW S WM SW SE EA NE L) # roughly in ascending size order. SE before EA in case any more Norfolk services are reclassified (!)
 
 function import_csv {
     # name of a zip archive:
