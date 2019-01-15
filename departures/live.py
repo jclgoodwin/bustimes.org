@@ -23,10 +23,16 @@ class Departures(object):
     def __init__(self, stop, services, now=None):
         self.stop = stop
         self.now = now
-        self.services = {
-            service.line_name.split('|', 1)[0].lower(): service
-            for service in services
-        }
+        self.services = {}
+        duplicate_line_names = set()
+        for service in services:
+            line_name = service.line_name.lower()
+            if line_name in self.services:
+                duplicate_line_names.add(line_name)
+            else:
+                self.services[line_name] = service
+        for line_name in duplicate_line_names:
+            del self.services[line_name]
 
     def get_request_url(self):
         """Return a URL string to pass to get_response"""
