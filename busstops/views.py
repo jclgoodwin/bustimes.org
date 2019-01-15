@@ -561,7 +561,7 @@ class ServiceDetailView(DetailView):
         if self.object.description and self.object.line_name:
             related = Service.objects.filter(current=True).exclude(pk=self.object.pk).defer('geometry')
             related = related.filter(Q(description=self.object.description) |
-                                     Q(line_name=self.object.line_name, operator__in=context['operators']))
+                                     Q(line_name=self.object.line_name, operator__in=context['operators'])).distinct()
             context['related'] = sorted(related, key=Service.get_order)
 
         return context
@@ -569,11 +569,11 @@ class ServiceDetailView(DetailView):
     def render_to_response(self, context):
         if not self.object.current:
             alternative = Service.objects.filter(
-                description=self.object.description,
-                current=True
-            ).defer('geometry').first() or Service.objects.filter(
                 line_name=self.object.line_name,
                 stopusage__stop_id__in=self.object.stopusage_set.values_list('stop_id', flat=True),
+                current=True
+            ).defer('geometry').first() or Service.objects.filter(
+                description=self.object.description,
                 current=True
             ).defer('geometry').first()
 
