@@ -129,8 +129,6 @@ class Command(ImportLiveVehiclesCommand):
             service = 'Sandon Park & Ride'
         elif service == '701' and operator_ref == 'FE':
             service = 'Chelmsford Park & Ride'
-        elif service and service[:3] == 'BOB':
-            service = service[:3] + ' ' + service[3] + ' ' + service[4:]
 
         services = Service.objects.filter(line_name__iexact=service, current=True)
         if operator_options:
