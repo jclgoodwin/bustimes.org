@@ -47,14 +47,17 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         new_response = requests.get('http://naptan.app.dft.gov.uk/GridMethods/%s' % JSON_NAME, timeout=60)
         new_rows = [row for row in new_response.json()['rows'] if row['cell'][0]]
-        old_rows = [row for row in self.get_old_rows() if row['cell'][0]]
+        old_rows = self.get_old_rows()
 
-        changed_regions, changed_areas = self.get_diff(new_rows, old_rows)
+        if old_rows:
+            old_rows = [row for row in self.get_old_rows() if row['cell'][0]]
 
-        if changed_areas:
-            print(changed_regions, changed_areas)
+            changed_regions, changed_areas = self.get_diff(new_rows, old_rows)
 
-            response = self.get_data(changed_areas)
+            if not changed_areas:
+                return
+
+            response = self.get_data(changed_areas)  # get data for changed areas only
 
             if response.headers.get('Content-Type') != 'application/zip':
                 print(response)
@@ -62,10 +65,12 @@ class Command(BaseCommand):
                 print(response.content)
                 print(response.headers)
                 response = self.get_data()
+        else:  # get all data
+            response = self.get_data()
 
-            with open(os.path.join(settings.DATA_DIR, 'NaPTAN', 'naptan.zip'), 'wb') as zip_file:
-                for chunk in response.iter_content(chunk_size=102400):
-                    zip_file.write(chunk)
+        with open(os.path.join(settings.DATA_DIR, 'NaPTAN', 'naptan.zip'), 'wb') as zip_file:
+            for chunk in response.iter_content(chunk_size=102400):
+                zip_file.write(chunk)
 
-            with open(os.path.join(settings.DATA_DIR, 'NaPTAN', JSON_NAME), 'w') as json_file:
-                json_file.write(new_response.text)
+        with open(os.path.join(settings.DATA_DIR, 'NaPTAN', JSON_NAME), 'w') as json_file:
+            json_file.write(new_response.text)
