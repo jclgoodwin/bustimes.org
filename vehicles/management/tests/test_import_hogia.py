@@ -2,6 +2,7 @@ import vcr
 import requests
 from mock import patch
 from django.test import TestCase
+from busstops.models import Service, ServiceCode
 from ...models import Vehicle, VehicleLocation, VehicleType
 with patch('time.sleep', return_value=None):
     from ..commands import import_hogia
@@ -16,6 +17,15 @@ def timeout(*args, **kwargs):
 
 
 class HogiaImportTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        service = Service.objects.create(date='2010-10-10', service_code='18')
+        other_service = Service.objects.create(date='2010-10-10', service_code='36')
+
+        ServiceCode.objects.create(scheme='NCC Hogia', service=service, code='231')
+        ServiceCode.objects.create(scheme='NCC Hogia', service=other_service, code='240')
+        ServiceCode.objects.create(scheme='Idris Elba', service=other_service, code='231')
+
     def test_handle(self):
         command = import_hogia.Command()
 
@@ -49,6 +59,7 @@ class HogiaImportTest(TestCase):
         self.assertEqual(len(json['features']), 4)
         self.assertEqual(json['features'][0]['properties']['delta'], -5)
         self.assertEqual(json['features'][0]['properties']['direction'], 114)
+        self.assertEqual(json['features'][0]['properties']['service']['url'], '/services/18')
 
         self.assertEqual(VehicleLocation.objects.count(), 4)
         self.assertEqual(VehicleLocation.objects.filter(current=True).count(), 4)
