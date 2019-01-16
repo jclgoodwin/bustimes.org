@@ -1,17 +1,4 @@
-# Sanders
-ea_21-98-_-y08:
-    description: Foulsham - Fakenham
 # FECS
-ea_21-XL-_-y08:
-    description: Peterborough - Wisbech - King's Lynn - Swaffham - Dereham - Norwich
-ea_21-X11-_-y08:
-    description: Norwich - Great Yarmouth - Gorleston - Belton
-ea_21-X29-A-y08:
-    line_brand: Yellow Line
-ea_21-1-R-y08:
-    line_brand: Coastal Clipper
-ea_21-1A-_-y08:
-    line_brand: Coastal Clipper
 suf_1-99-_-y08:
     line_brand: Coastal Clipper
 # FromeBus
