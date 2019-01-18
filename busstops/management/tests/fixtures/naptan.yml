@@ -9,7 +9,8 @@ interactions:
     method: GET
     uri: http://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx
   response:
-    body: {string: '{"page":1,"total":147,"records":147,"rows":[{"id":109,"cell":["S","Shetland Islands","603","19/09/2017","918","45","0","0","378","0","0","V2","10/1/2017"]}]}'}
+    body: {string: '{"page":1,"total":147,"records":147,"rows":[{"id":109,"cell":["S","Shetland
+        Islands","603","19/09/2017","918","45","0","0","378","0","0","V2","10/1/2017"]}]}'}
     headers:
       Cache-Control: [private]
       Content-Length: ['16163']
@@ -29,7 +30,8 @@ interactions:
     method: GET
     uri: http://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx
   response:
-    body: {string: '{"page":1,"total":147,"records":147,"rows":[{"id":109,"cell":["S","Shetland Islands","603","19/09/2017","918","45","0","0","378","0","0","V2","10/1/2017"]}]}'}
+    body: {string: '{"page":1,"total":147,"records":147,"rows":[{"id":109,"cell":["S","Shetland
+        Islands","603","19/09/2017","918","45","0","0","378","0","0","V2","10/1/2017"]}]}'}
     headers:
       Cache-Control: [private]
       Content-Length: ['16163']
@@ -49,8 +51,7 @@ interactions:
     method: GET
     uri: http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv&LA=603
   response:
-    body:
-      string: 'these pretzels are making me thirsty'
+    body: {string: these pretzels are making me thirsty}
     headers:
       Cache-Control: [private]
       Content-Length: ['182925']
@@ -60,5 +61,27 @@ interactions:
       X-AspNet-Version: [4.0.30319]
       X-Powered-By: [ASP.NET]
       content-disposition: [attachment; filename=DATA_165519.zip]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.21.0]
+    method: GET
+    uri: http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv
+  response:
+    body:
+    body: {string: these pretzels are making me thirsty again}
+    headers:
+      Cache-Control: [private]
+      Content-Length: ['30621994']
+      Content-Type: [application/zip]
+      Date: ['Fri, 18 Jan 2019 21:19:14 GMT']
+      Server: [Microsoft-IIS/8.5]
+      X-AspNet-Version: [4.0.30319]
+      X-Powered-By: [ASP.NET]
+      content-disposition: [attachment; filename=NaPTANcsv.zip]
     status: {code: 200, message: OK}
 version: 1

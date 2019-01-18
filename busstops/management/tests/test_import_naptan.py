@@ -50,11 +50,14 @@ class UpdateNaptanTest(TestCase):
         naptan_dir = os.path.join(FIXTURES_DIR, 'NaPTAN')
         json_path = os.path.join(naptan_dir, 'NPTGLastSubs_Load.ashx')
         os.mkdir(naptan_dir)
+        zipfile_path = os.path.join(naptan_dir, 'naptan.zip')
 
-        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan.yml')):
-            with self.assertRaises(TypeError):
-                # will error because no file exists yet
-                self.command.handle()
+        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan.yml'), record_mode='new_episodes'):
+
+            self.command.handle()
+
+            with open(zipfile_path) as open_file:
+                self.assertEqual(open_file.read(), 'these pretzels are making me thirsty again')
 
             with open(os.path.join(json_path), 'w') as open_file:
                 json.dump({'rows': [{
@@ -65,7 +68,6 @@ class UpdateNaptanTest(TestCase):
             self.command.handle()
 
         # verify that a pretend zipfile containing some text was downloaded and saved
-        zipfile_path = os.path.join(naptan_dir, 'naptan.zip')
         with open(zipfile_path) as open_file:
             self.assertEqual(open_file.read(), 'these pretzels are making me thirsty')
 
