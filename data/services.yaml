@@ -1,3 +1,15 @@
+bed_44-46-_-y08:
+    line_brand: Holt Circular
+    description: Wells-next-the-Sea - Langham - Blakeney - Cley - Glandford - Holt
+    outbound_description: Wells-next-the-Sea - Langham - Blakeney - Cley - Glandford - Holt
+    inbound_description: Holt - Glandford - Cley - Blakeney - Langham - Wells-next-the-Sea
+ea_21-26-A-y08:
+    description: Fakenham - Great Massingham - King's Lynn
+bed_44-98-_-y08:
+    description: Foulsham - Reepham - Hindolveston - Barney - Fakenham
+ea_21-18-D-y08:
+    outbound_description: Dereham - Billingford - Bawdeswell - Foulsham - Guist - Dereham
+    inbound_description: Dereham - Guist - Foulsham - Bawdeswell - Billingford - Dereham
 # FECS
 suf_1-99-_-y08:
     line_brand: Coastal Clipper
@@ -170,4 +182,9 @@ em_11-19-C-y08:
 em_11-9-B-y08:
     current: false
 em_11-X39-_-y08:
+    current: false
+# Warrington's Own Buses duplicates (one version of each timetable is wrong!)
+NW_07_NW_P5_1:
+    current: false
+NW_07_NW_P6_1:
     current: false
