@@ -2,12 +2,13 @@ import asyncio
 import websockets
 import ciso8601
 import json
+from pyppeteer import launch
 from datetime import timedelta
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import Q
-from django.utils import timezone
+from django.utils import timezone, dateparse
 from busstops.models import Operator, Service, DataSource
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 
@@ -49,7 +50,7 @@ class Command(BaseCommand):
             except Service.MultipleObjectsReturned:
                 service = service.filter(Q(stops=item['OriginRef']) | Q(stops=item['DestinationRef'])).distinct().get()
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-            if operator.pk != 'SCCM' and line_name != 'Tour':
+            if not (operator.pk == 'SCCM' and line_name == 'Tour'):
                 print(e, operator.pk, line_name)
             service = None
         vehicle, created = Vehicle.objects.get_or_create(operator=operator, code=item['VehicleRef'], source=self.source)
@@ -68,12 +69,15 @@ class Command(BaseCommand):
                 destination=item['DestinationName'],
                 code=item['DatedVehicleJourneyRef']
             )
+        delay = item['Delay']
+        early = -dateparse.parse_duration(delay).total_seconds()
         vehicle.latest_location = VehicleLocation.objects.create(
             journey=journey,
             datetime=ciso8601.parse_datetime(item['RecordedAtTime']),
             latlong=Point(float(item['Longitude']), float(item['Latitude'])),
             heading=item['Bearing'],
-            current=True
+            current=True,
+            early=early
         )
         vehicle.save()
 
@@ -89,9 +93,25 @@ class Command(BaseCommand):
         locations = VehicleLocation.objects.filter(journey__source=self.source, current=True)
         locations.filter(datetime__lte=five_minutes_ago).update(current=False)
 
+    async def get_client_data(self):
+        browser = await launch()
+        page = await browser.newPage()
+        await page.goto(self.source.url)
+        client_data = await page.evaluate('CLIENT_DATA')
+        url = await page.evaluate('RTMONITOR_URI')
+        origin = await page.evaluate('window.location.origin')
+        await browser.close()
+        return client_data, url.replace('https://', 'wss://') + 'websocket', origin
+
     async def sock_it(self):
-        async with websockets.connect(self.source.url) as websocket:
-            await websocket.send('{ "msg_type": "rt_connect" }')
+        client_data, url, origin = await self.get_client_data()
+
+        async with websockets.connect(url, origin=origin) as websocket:
+            message = json.dumps({
+                'msg_type': 'rt_connect',
+                'client_data': client_data
+            })
+            await websocket.send(message)
 
             response = await websocket.recv()
 
