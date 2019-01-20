@@ -2,6 +2,7 @@ import asyncio
 import websockets
 import ciso8601
 import json
+import html
 from pyppeteer import launch
 from datetime import timedelta
 from django.contrib.gis.geos import Point
@@ -66,7 +67,7 @@ class Command(BaseCommand):
                 service=service,
                 source=self.source,
                 datetime=ciso8601.parse_datetime(item['OriginAimedDepartureTime']),
-                destination=item['DestinationName'],
+                destination=html.unescape(item['DestinationName']),
                 code=item['DatedVehicleJourneyRef']
             )
         delay = item['Delay']

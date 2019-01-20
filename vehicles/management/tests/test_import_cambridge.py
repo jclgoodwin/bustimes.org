@@ -20,12 +20,6 @@ class CambridgeImportTest(TestCase):
         cls.command.source = DataSource.objects.create(datetime='2019-01-20T16:16:53+00:00')
         Region.objects.create(id='EA', name='East Anglia')
         Operator.objects.create(id='SCCM', region_id='EA', name='Stagecoach Cumbernauld')
-        # service = Service.objects.create(date='2010-10-10', service_code='18')
-        # other_service = Service.objects.create(date='2010-10-10', service_code='36')
-
-        # ServiceCode.objects.create(scheme='NCC Hogia', service=service, code='231')
-        # ServiceCode.objects.create(scheme='NCC Hogia', service=other_service, code='240')
-        # ServiceCode.objects.create(scheme='Idris Elba', service=other_service, code='231')
 
     def test_handle_data(self):
 
@@ -47,7 +41,7 @@ class CambridgeImportTest(TestCase):
                     'OriginRef': '0590PSP592',
                     'OriginName': 'Ellwood Avenue',
                     'DestinationRef': '0590PNB058',
-                    'DestinationName': 'Heltwate',
+                    'DestinationName': 'Trumpington P &amp; R',
                     'OriginAimedDepartureTime': '2019-01-20T15:47:00+00:00',
                     'Monitored': 'true',
                     'InPanic': '0',
@@ -69,4 +63,4 @@ class CambridgeImportTest(TestCase):
         self.assertEqual(vehicle.operator.name, 'Stagecoach Cumbernauld')
 
         self.assertEqual(vehicle.latest_location.early, -2)
-        self.assertEqual(vehicle.latest_location.journey.destination, 'Heltwate')
+        self.assertEqual(vehicle.latest_location.journey.destination, 'Trumpington P & R')
