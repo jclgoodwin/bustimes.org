@@ -48,7 +48,9 @@ class SiriVMImportTest(TestCase):
         item.find('siri:RecordedAtTime', import_sirivm.NS).text = '2018-08-06T21:45:32+01:00'
         self.command.handle_item(item, None)
         self.assertEqual(2, locations.count())
-        self.assertIsNone(locations.last().heading)
+        last_location = locations.last()
+        self.assertIsNone(last_location.heading)
+        self.assertEqual(last_location.early, -8)
 
         # test an item with an invalid delay ('-PT2M.492S')
         item = next(items)

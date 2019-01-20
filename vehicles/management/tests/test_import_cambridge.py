@@ -68,5 +68,5 @@ class CambridgeImportTest(TestCase):
         self.assertEqual(vehicle.code, 'SCCM-37220')
         self.assertEqual(vehicle.operator.name, 'Stagecoach Cumbernauld')
 
-        self.assertEqual(vehicle.latest_location.early, -94)
+        self.assertEqual(vehicle.latest_location.early, -2)
         self.assertEqual(vehicle.latest_location.journey.destination, 'Heltwate')

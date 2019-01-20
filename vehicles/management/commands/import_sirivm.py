@@ -2,6 +2,7 @@ import ciso8601
 import xml.etree.cElementTree as ET
 from requests.exceptions import RequestException
 from django.contrib.gis.geos import Point
+from isodate import parse_duration
 from busstops.models import Operator, Service
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import Vehicle, VehicleLocation, VehicleJourney
@@ -154,8 +155,18 @@ class Command(ImportLiveVehiclesCommand):
             heading = int(heading.text)
             if heading == -1:
                 heading = None
+        delay = mvj.find('siri:Delay', NS)
+        if (delay is not None) and delay.text:
+            try:
+                delay = parse_duration(delay.text)
+                early = -round(delay.total_seconds()/60)
+            except ValueError:
+                early = None
+        else:
+            early = None
         return VehicleLocation(
             datetime=ciso8601.parse_datetime(datetime),
             latlong=latlong,
             heading=heading,
+            early=early
         )

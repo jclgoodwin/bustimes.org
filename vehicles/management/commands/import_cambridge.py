@@ -70,7 +70,7 @@ class Command(BaseCommand):
                 code=item['DatedVehicleJourneyRef']
             )
         delay = item['Delay']
-        early = -dateparse.parse_duration(delay).total_seconds()
+        early = -round(dateparse.parse_duration(delay).total_seconds()/60)
         vehicle.latest_location = VehicleLocation.objects.create(
             journey=journey,
             datetime=ciso8601.parse_datetime(item['RecordedAtTime']),
