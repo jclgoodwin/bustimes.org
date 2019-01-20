@@ -10,6 +10,7 @@ import ciso8601
 import difflib
 from functools import cmp_to_key
 from django.utils.text import slugify
+from django.utils.dateparse import parse_duration
 from titlecase import titlecase
 
 NS = {
@@ -18,9 +19,6 @@ NS = {
 # A safe date, far from any daylight savings changes or leap seconds
 DUMMY_DATE = datetime.date(2016, 4, 5)
 DESCRIPTION_REGEX = re.compile(r'.+,([^ ].+)$')
-DURATION_REGEX = re.compile(
-    r'P((?P<days>-?\d+?)D)?T((?P<hours>-?\d+?)H)?((?P<minutes>-?\d+?)M)?((?P<seconds>-?\d+?)S)?'
-)
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}
 BANK_HOLIDAYS = {
     datetime.date(2016, 12, 26): ('BoxingDay',),
@@ -77,18 +75,6 @@ def only_scotland(bank_holiday):
     if bank_holiday == 'StAndrewsDay':
         return True
     return False
-
-
-def parse_duration(string):
-    """Given an ISO 8601 formatted duration string like "PT2M", return a timedelta.
-
-    Unlike django.utils.dateparse parse_duration, may return a negative timedelta
-    """
-    matches = iter(DURATION_REGEX.match(string).groupdict().items())
-    params = {
-        key: int(value) for key, value in matches if value is not None
-    }
-    return datetime.timedelta(**params)
 
 
 def time_between(end, start):
