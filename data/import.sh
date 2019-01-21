@@ -164,16 +164,18 @@ for region in "${REGIONS[@]}"; do
     region_old=$(ls -l "$region.zip")
     wget -qN --user="$USERNAME" --password="$PASSWORD" "ftp://ftp.tnds.basemap.co.uk/$region.zip"
     region_new=$(ls -l "$region.zip")
+    wait
     if [[ $region_old != $region_new ]]; then
-        s3cmd put "$region.zip" "s3://bustimes-backup/$region-$date.zip"
+        s3cmd put "$region.zip" "s3://bustimes-backup/$region-$date.zip" &
         updated_services=1
-        ../../../manage.py import_services "$region.zip"
-        cp "$region.zip" ..
+        ../../../manage.py import_services "$region.zip" &
         if [[ $region_id == "L" ]]; then
+            wait
             ../../../manage.py import_tfl
         fi
     fi
 done
+wait
 cd ../..
 [ $updated_services ] && ../manage.py update_index
 [ $updated_services ] && ../manage.py update_search_indexes

@@ -10,6 +10,7 @@ Usage:
 """
 
 import os
+import shutil
 import zipfile
 import csv
 import yaml
@@ -21,8 +22,9 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.db import transaction
 from timetables.txc import Timetable, sanitize_description_part
-from ...models import Operator, StopPoint, Service, StopUsage, Region, Journey, ServiceCode
-from .generate_departures import handle_region
+from ...models import Operator, StopPoint, Service, StopUsage, Region, Journey, ServiceDate, ServiceCode
+from .generate_departures import handle_region as generate_departures
+# from .generate_service_dates import handle_services as generate_service_dates
 
 
 # see https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml-with-namespaces
@@ -322,12 +324,19 @@ class Command(BaseCommand):
                 for service_code in records:
                     Service.objects.filter(service_code=service_code).update(**records[service_code])
 
+            Journey.objects.filter(service__region=self.region_id).delete()
+            generate_departures(Region.objects.get(id=self.region_id))
+
+            # ServiceDate.objects.filter(service__region=self.region_id).delete()
+            # generate_service_dates(Service.objects.filter(region=self.region_id))
+
+        try:
+            shutil.copy(archive_name, settings.TNDS_DIR)
+        except shutil.SameFileError:
+            pass
+
         StopPoint.objects.filter(active=True).exclude(service__current=True).update(active=False)
         StopPoint.objects.filter(active=False, service__current=True).update(active=True)
-
-        with transaction.atomic():
-            Journey.objects.filter(service__region=self.region_id).delete()
-            handle_region(Region.objects.get(id=self.region_id))
 
         Service.objects.filter(region=self.region_id, current=False, geometry__isnull=False).update(geometry=None)
 
