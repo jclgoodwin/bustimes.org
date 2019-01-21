@@ -95,12 +95,12 @@ if [ "$metro_old" != "$metro_new" ] || [ "$ulb_old" != "$ulb_new" ]; then
 fi
 
 
-ie_nptg_old=$(shasum nptgfinal.xml)
-#wget -qN https://data.dublinked.ie/dataset/14ea12be-9d95-4119-8a9b-1e83cb777fa0/resource/3b7d9d7e-5f0d-4462-b123-2466f1641909/download/nptgfinal.xml
-ie_nptg_new=$(shasum nptgfinal.xml)
+ie_nptg_old=$(shasum NPTG_final.xml)
+wget -qN https://www.transportforireland.ie/transitData/NPTG_final.xml
+ie_nptg_new=$(shasum NPTG_final.xml)
 if [[ "$ie_nptg_old" != "$ie_nptg_new" ]]; then
     echo "Irish NPTG"
-    ../manage.py import_ie_nptg nptgfinal.xml
+    ../manage.py import_ie_nptg NPTG_final.xml
 fi
 
 
