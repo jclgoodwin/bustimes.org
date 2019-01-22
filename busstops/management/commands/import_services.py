@@ -22,7 +22,7 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.db import transaction
 from timetables.txc import Timetable, sanitize_description_part
-from ...models import Operator, StopPoint, Service, StopUsage, Region, Journey, ServiceDate, ServiceCode
+from ...models import Operator, StopPoint, Service, StopUsage, Region, Journey, ServiceCode
 from .generate_departures import handle_region as generate_departures
 # from .generate_service_dates import handle_services as generate_service_dates
 
