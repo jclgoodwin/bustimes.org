@@ -1,5 +1,5 @@
 """Import an Irish NPTG XML file, obtainable from
-https://data.dublinked.ie/dataset/nptg
+https://www.transportforireland.ie/transitData/PT_Data.html
 """
 
 import xml.etree.cElementTree as ET

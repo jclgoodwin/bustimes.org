@@ -11,8 +11,13 @@
 			<Place>
 				<LocalityCentre>false</LocalityCentre>
 				<Location>
-					<Longitude>-6.15849970528097</Longitude>
-					<Latitude>54.236552528081</Latitude>
+					<Translation>
+						<GridType>ITM</GridType>
+						<Easting>720044</Easting>
+						<Northing>833531</Northing>
+						<Longitude>-6.15849970562435</Longitude>
+						<Latitude>54.2365525253834</Latitude>
+					</Translation>
 				</Location>
 			</Place>
 			<StopClassification>
@@ -30,8 +35,13 @@
 			<Place>
 				<LocalityCentre>false</LocalityCentre>
 				<Location>
-					<Longitude>-5.93626793184173</Longitude>
-					<Latitude>54.5950542848164</Latitude>
+					<Translation>
+						<GridType>ITM</GridType>
+						<Easting>733360</Easting>
+						<Northing>873822</Northing>
+						<Longitude>-5.93626793243424</Longitude>
+						<Latitude>54.5950542821242</Latitude>
+					</Translation>
 				</Location>
 			</Place>
 			<StopClassification>
@@ -54,8 +64,13 @@
 			<Place>
 				<LocalityCentre>false</LocalityCentre>
 				<Location>
-					<Longitude>-6.27154284054358</Longitude>
-					<Latitude>54.3464550775593</Latitude>
+					<Translation>
+						<GridType>ITM</GridType>
+						<Easting>712376</Easting>
+						<Northing>845574</Northing>
+						<Longitude>-6.27154284081228</Longitude>
+						<Latitude>54.346455074862</Latitude>
+					</Translation>
 				</Location>
 			</Place>
 			<StopClassification>
@@ -85,8 +100,13 @@
 				<NptgLocalityRef>E0846001</NptgLocalityRef>
 				<LocalityCentre>false</LocalityCentre>
 				<Location>
-					<Longitude>-9.05469898181141</Longitude>
-					<Latitude>53.2719763661735</Latitude>
+					<Translation>
+						<GridType>ITM</GridType>
+						<Easting>529650</Easting>
+						<Northing>725146</Northing>
+						<Longitude>-9.05469898171887</Longitude>
+						<Latitude>53.2719763634638</Latitude>
+					</Translation>
 				</Location>
 			</Place>
 			<StopClassification>
@@ -102,7 +122,7 @@
 			</StopAreas>
 			<AdministrativeAreaRef>846</AdministrativeAreaRef>
 		</StopPoint>
-		<!-- This stop's locality should be created cos it's not present in the NPTG -->
+		<!-- This stop's locality is not present in the NPTG -->
 		<StopPoint CreationDateTime="2013-06-12T11:04:31.6941915+01:00" Modification="new" ModificationDateTime="2013-02-06T14:27:26" Status="active">
 			<AtcoCode>7050B1520901</AtcoCode>
 			<Descriptor>
@@ -113,8 +133,13 @@
 				<NptgLocalityRef>E0853142</NptgLocalityRef>
 				<LocalityCentre>false</LocalityCentre>
 				<Location>
-					<Longitude>-8.0985317294645</Longitude>
-					<Latitude>54.4773354609513</Latitude>
+					<Translation>
+						<GridType>ITM</GridType>
+						<Easting>593617</Easting>
+						<Northing>858769</Northing>
+						<Longitude>-8.09848548469931</Longitude>
+						<Latitude>54.4773534663924</Latitude>
+					</Translation>
 				</Location>
 			</Place>
 			<StopClassification>

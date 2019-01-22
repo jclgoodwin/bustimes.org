@@ -1,5 +1,5 @@
 """Import an Irish NaPTAN XML file, obtainable from
-https://data.dublinked.ie/dataset/national-public-transport-nodes/resource/6d997756-4dba-40d8-8526-7385735dc345
+https://www.transportforireland.ie/transitData/PT_Data.html
 """
 
 import warnings
@@ -24,6 +24,10 @@ class Command(BaseCommand):
             active=element.get('Status') == 'active',
         )
 
+        plate_code = element.find('naptan:PlateCode', self.ns)
+        if plate_code is not None:
+            stop.naptan_code = plate_code.text
+
         for subelement in element.find('naptan:Descriptor', self.ns):
             tag = subelement.tag[27:]
             if tag == 'CommonName':
@@ -32,7 +36,7 @@ class Command(BaseCommand):
                 stop.street = subelement.text
             elif tag == 'Indicator':
                 stop.indicator = subelement.text.lower()
-            else:
+            elif tag != 'ShortCommonName':
                 warnings.warn('Stop {} has an unexpected property: {}'.format(stop.atco_code, tag))
 
         stop_classification_element = element.find('naptan:StopClassification', self.ns)
@@ -58,24 +62,27 @@ class Command(BaseCommand):
 
         place_element = element.find('naptan:Place', self.ns)
 
-        location_element = place_element.find('naptan:Location', self.ns)
-        longitude_element = location_element.find('naptan:Longitude', self.ns)
-        latitude_element = location_element.find('naptan:Latitude', self.ns)
-        if longitude_element is None:
-            warnings.warn('Stop {} has no location'.format(stop.atco_code))
+        location_element = place_element.find('naptan:Location/naptan:Translation', self.ns)
+        if location_element is not None:
+            longitude_element = location_element.find('naptan:Longitude', self.ns)
+            latitude_element = location_element.find('naptan:Latitude', self.ns)
+            if longitude_element is not None:
+                stop.latlong = Point(float(longitude_element.text), float(latitude_element.text))
         else:
-            stop.latlong = Point(float(longitude_element.text), float(latitude_element.text))
+            warnings.warn('Stop {} has no location'.format(stop.atco_code))
 
         admin_area_id = element.find('naptan:AdministrativeAreaRef', self.ns).text
-        if not AdminArea.objects.filter(atco_code=admin_area_id).exists():
-            AdminArea.objects.create(id=admin_area_id, atco_code=admin_area_id, region_id='NI')
-        stop.admin_area_id = admin_area_id
+        if AdminArea.objects.filter(atco_code=admin_area_id).exists():
+            stop.admin_area_id = admin_area_id
+        else:
+                print(admin_area_id)
 
         locality_element = place_element.find('naptan:NptgLocalityRef', self.ns)
         if locality_element is not None:
-            if not Locality.objects.filter(id=locality_element.text).exists():
-                Locality.objects.create(id=locality_element.text, admin_area_id=admin_area_id)
-            stop.locality_id = locality_element.text
+            if Locality.objects.filter(id=locality_element.text).exists():
+                stop.locality_id = locality_element.text
+            else:
+                print(locality_element.text)
 
         stop.save()
 
@@ -92,4 +99,5 @@ class Command(BaseCommand):
         for filename in options['filenames']:
             with zipfile.ZipFile(filename) as archive:
                 for filename in archive.namelist():
-                    self.handle_file(archive, filename)
+                    if filename.endswith('.xml'):
+                        self.handle_file(archive, filename)

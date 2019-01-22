@@ -42,34 +42,27 @@ class ImportIrelandTest(TransactionTestCase):
 
     def test_areas(self):
         areas = AdminArea.objects.all().order_by('name')
-        self.assertEqual(len(areas), 41)
+        self.assertEqual(len(areas), 40)
 
-        self.assertEqual(areas[0].atco_code, 700)
-        self.assertEqual(areas[0].name, '')
+        self.assertEqual(areas[0].name, 'Antrim')
         self.assertEqual(areas[0].region.name, 'Northern Ireland')
 
-        self.assertEqual(areas[1].name, 'Antrim')
-        self.assertEqual(areas[1].region.name, 'Northern Ireland')
-
-        self.assertEqual(areas[3].name, 'Carlow')
-        self.assertEqual(areas[3].region.name, 'Leinster')
+        self.assertEqual(areas[2].name, 'Carlow')
+        self.assertEqual(areas[2].region.name, 'Leinster')
 
     def test_localities(self):
         localities = Locality.objects.all().order_by('name')
-        self.assertEqual(len(localities), 5)
-        self.assertEqual(localities[0].name, '')
+        self.assertEqual(len(localities), 3)
 
-        self.assertEqual(localities[1].name, '')
+        self.assertEqual(localities[0].name, 'Dangan')
+        self.assertEqual(localities[0].admin_area.name, 'Galway City')
+        self.assertAlmostEqual(localities[0].latlong.x, -9.077645)
+        self.assertAlmostEqual(localities[0].latlong.y, 53.290138)
 
-        self.assertEqual(localities[2].name, 'Dangan')
+        self.assertEqual(localities[2].name, 'Salthill')
         self.assertEqual(localities[2].admin_area.name, 'Galway City')
-        self.assertEqual(localities[2].latlong.x, -9.077645)
-        self.assertEqual(localities[2].latlong.y, 53.290138)
-
-        self.assertEqual(localities[4].name, 'Salthill')
-        self.assertEqual(localities[4].admin_area.name, 'Galway City')
-        self.assertEqual(localities[4].latlong.x, -9.070427)
-        self.assertEqual(localities[4].latlong.y, 53.262565)
+        self.assertAlmostEqual(localities[2].latlong.x, -9.070427)
+        self.assertAlmostEqual(localities[2].latlong.y, 53.262565)
 
     def test_stops_from_xml(self):
         stops = StopPoint.objects.all().order_by('atco_code')
@@ -79,8 +72,8 @@ class ImportIrelandTest(TransactionTestCase):
         self.assertEqual(stops[0].stop_type, '')
         self.assertEqual(stops[0].bus_stop_type, '')
         self.assertEqual(stops[0].timing_status, '')
-        self.assertEqual(stops[0].latlong.x, -6.15849970528097)
-        self.assertEqual(stops[0].latlong.y, 54.236552528081)
+        self.assertAlmostEqual(stops[0].latlong.x, -6.15849970528097)
+        self.assertAlmostEqual(stops[0].latlong.y, 54.236552528081)
 
         stop = stops.get(atco_code='700000015422')
         self.assertEqual(stop.common_name, 'Europa Buscentre Belfast')
@@ -166,7 +159,7 @@ class ImportIrelandTest(TransactionTestCase):
         # Should run without an error:
         import_ie_naptan_csv.Command().handle_row({'NaPTANId': ''})
 
-    def test_transxchange(self):
-        self.assertEqual(Locality.objects.get(id='E0824005').name, '')
-        call_command('import_ie_transxchange', os.path.join(FIXTURES_DIR, 'ie_transxchange.xml'))
-        self.assertEqual(Locality.objects.get(id='E0824005').name, 'Balbriggan')
+    # def test_transxchange(self):
+    #     self.assertEqual(Locality.objects.get(id='E0824005').name, '')
+    #     call_command('import_ie_transxchange', os.path.join(FIXTURES_DIR, 'ie_transxchange.xml'))
+    #     self.assertEqual(Locality.objects.get(id='E0824005').name, 'Balbriggan')
