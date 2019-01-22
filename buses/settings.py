@@ -85,7 +85,6 @@ if DEBUG:
 else:
     STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'pipeline.finders.PipelineFinder',
 )
@@ -183,7 +182,7 @@ PIPELINE = {
     },
     'YUGLIFY_BINARY': os.path.join(BASE_DIR, 'node_modules', '.bin', 'yuglify'),
     'CSS_COMPRESSOR': None,
-    'SASS_ARGUMENTS': '--style compressed --sourcemap=none',
+    'SASS_ARGUMENTS': '--style compressed',
 }
 PIPELINE_AUTOPREFIXER_BINARY = os.path.join(BASE_DIR, 'node_modules', '.bin', 'postcss')
 
