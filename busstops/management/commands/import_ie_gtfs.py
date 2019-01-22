@@ -103,7 +103,8 @@ class Command(BaseCommand):
                 'date': time.strftime('%Y-%m-%d'),
                 'mode': MODES.get(route.rtype, ''),
                 'current': True,
-                'show_timetable': True
+                'show_timetable': True,
+                'geometry': route.geometry
             }
             service, created = Service.objects.update_or_create(
                 service_code=service_code,
