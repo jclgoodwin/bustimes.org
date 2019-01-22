@@ -5,7 +5,7 @@
 <title>{% block title %}{% if object %}{% firstof object.get_long_name object.get_qualified_name object %} – {% endif %}Bus Times{% endblock %}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#fe9" />
-<link rel="preconnect" href="https://cdn.ravenjs.com" />
+<link rel="preconnect" href="https://browser.sentry-cdn.com" />
 <link rel="preconnect" href="https://www.google-analytics.com" />
 <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
 {% block canonical %}
@@ -97,13 +97,14 @@ ga('require', 'GTM-W66PKML');
 ga('send', 'pageview');
 </script>
 {% load raven %}
-<script src="https://cdn.ravenjs.com/3.24.0/raven.min.js" crossorigin="anonymous"></script>
+<script src="https://browser.sentry-cdn.com/4.5.3/bundle.min.js" crossorigin="anonymous"></script>
 <script>
-    Raven.config('{% sentry_public_dsn %}', {
+    Sentry.init({
+        dsn: '{% sentry_public_dsn %}',
         whitelistUrls: [/bustimes\.org\/static\/js\/.*\.js/]
-    }).install();
+    });
 </script>
-{% if stops or stoppoint and stoppoint.latlong %}
+{% if stops or stoppoint.latlong %}
     {% javascript 'map' %}
 {% endif %}
 
