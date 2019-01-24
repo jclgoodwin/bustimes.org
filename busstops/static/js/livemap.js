@@ -13,7 +13,6 @@
         }),
         tileURL = 'https://bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
         polyline,
-        busesOnlineCount = document.getElementById('buses-online-count'),
         statusBar = L.control({
             position: 'topright'
         }),
@@ -190,7 +189,7 @@
         statusBar.getContainer().innerHTML = '';
     }
 
-    var timeout;
+    var timeout, busesOnlineCount;
 
     function load(map, statusBar) {
         statusBar.getContainer().innerHTML = 'Loading\u2026';
@@ -199,6 +198,16 @@
         }
         lastReq = reqwest('/vehicles.json?service=' + map.getContainer().getAttribute('data-service'), function(data) {
             if (lastReq.request.status === 200 && data && data.features) {
+                if (!busesOnlineCount) { // first load
+                    if (data.features.length) {
+                        var p = document.getElementById('buses-online');
+                        p.innerHTML = '<strong id="buses-online-count"></strong> Click on a bus to see when it last updated';
+                        busesOnlineCount = document.getElementById('buses-online-count');
+                        document.onvisibilitychange = handleVisibilityChange;
+                    } else {
+                        return;
+                    }
+                }
                 processData(data);
             }
             timeout = setTimeout(function() {
@@ -215,9 +224,5 @@
         }
     }
 
-    if (busesOnlineCount) {
-        document.onvisibilitychange = handleVisibilityChange;
-
-        load(map, statusBar);
-    }
+    load(map, statusBar);
 })();

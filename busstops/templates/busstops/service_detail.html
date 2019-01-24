@@ -25,13 +25,9 @@
     <p class="warning">{{ note|safe }}</p>
 {% endfor %}
 
-{% if object.get_buses_online %}
-    <p><strong id="buses-online-count">{{ object.get_buses_online }} bus{{ object.get_buses_online|pluralize:"es" }} online.</strong>
-    Click on a bus to see when it last updated</p>
-{% endif %}
-
 {% if object.geometry or object.get_buses_online %}
-    <p><div class="service-map" id="map" data-service="{{ object.service_code }}"></div></p>
+    <p id="buses-online"></p>
+    <div class="service-map" id="map" data-service="{{ object.service_code }}"></div>
 {% endif %}
 
 {% for timetable in timetables %}
