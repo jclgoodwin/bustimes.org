@@ -143,7 +143,8 @@ class Command(ImportLiveVehiclesCommand):
         try:
             journey.service = self.get_service(services, get_latlong(mvj))
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-            print(e, operator_ref, service, services, get_latlong(mvj))
+            if operator_ref != 'OFJ':
+                print(e, operator_ref, service, services, get_latlong(mvj))
 
         return journey, vehicle_created
 
