@@ -24,11 +24,11 @@ class Command(ImportLiveVehiclesCommand):
             # ('eastangliabuses', 52.4593, 1.5661),
             # ('eastangliabuses', 52.8313, 0.8393),
             ('eastangliabuses', 52.7043, 1.4073),
-            # ('brightonhove', 51, -0.1372),
-            # ('brightonhove', 50.6, -0.1372),
-            # ('brightonhove', 50.8225, -0.1372),
-            # ('brightonhove', 50.8225, -0.2),
-            # ('brightonhove', 50.8225, 0),
+            ('brightonhove', 51, -0.1372),
+            ('brightonhove', 50.6, -0.1372),
+            ('brightonhove', 50.8225, -0.1372),
+            ('brightonhove', 50.8225, -0.2),
+            ('brightonhove', 50.8225, 0),
             # ('oxford', 51.752, -1.2577),
             # ('oxford', 51.752, -1.3),
             # ('oxford', 51.752, -1.4),
@@ -36,16 +36,16 @@ class Command(ImportLiveVehiclesCommand):
             # ('oxford', 51.8, -1.4),
             # ('oxford', 51.752, -1.0577),
             # ('oxford', 51.752, -0.9),
-            # ('gonortheast', 54.9783, -1.6178),
+            ('gonortheast', 54.9783, -1.6178),
         ):
             params = {'lat': lat, 'lng': lng}
             headers = {'opco': opco}
             try:
                 response = self.session.get(self.url, params=params, timeout=30, headers=headers)
-            except RequestException:
+                for item in response.json()['data']:
+                    yield item
+            except (RequestException, KeyError):
                 continue
-            for item in response.json()['data']:
-                yield item
             sleep(5)
 
     def get_journey(self, item):
