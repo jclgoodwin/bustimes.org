@@ -436,11 +436,14 @@ class SiriSmDepartures(Departures):
         service = self.get_service(line_name)
         vehicle = element.find('s:VehicleRef', self.ns)
         if vehicle is not None and vehicle.text:
-            operator = element.find('s:OperatorRef')
-            if operator is not None and operator.text and Operator.objects.filter(pk=operator.text).exists():
-                Vehicle.objects.get_or_create(operator=operator.text, code=vehicle.text)
-            else:
-                Vehicle.objects.get_or_create(code=vehicle.text)
+            operator = element.find('s:OperatorRef', self.ns)
+            try:
+                if operator is not None and operator.text and Operator.objects.filter(pk=operator.text).exists():
+                    Vehicle.objects.get_or_create(operator=operator.text, code=vehicle.text)
+                elif type(service) is not None:
+                    Vehicle.objects.get_or_create(operator=service.operator.first(), code=vehicle.text)
+            except Vehicle.MultipleObjectsReturned:
+                pass
         if line_ref is not None and type(service) is Service:
             scheme = self.source.name
             if scheme == 'NCC Hogia' or expected_time and ('icarus' in self.source.url or 'sslink' in self.source.url):
