@@ -69,7 +69,7 @@ class Command(ImportLiveVehiclesCommand):
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, operators, item['lineRef'])
 
-        journey.vehicle, created = Vehicle.objects.update_or_create(defaults, code=vehicle)
+        journey.vehicle, created = Vehicle.objects.get_or_create(defaults, code=vehicle)
 
         return journey, created
 
