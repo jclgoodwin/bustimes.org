@@ -205,6 +205,7 @@
                         busesOnlineCount = document.getElementById('buses-online-count');
                         document.onvisibilitychange = handleVisibilityChange;
                     } else {
+                        statusBar.getContainer().innerHTML = '';
                         return;
                     }
                 }
