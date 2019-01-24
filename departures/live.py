@@ -440,7 +440,7 @@ class SiriSmDepartures(Departures):
             try:
                 if operator is not None and operator.text and Operator.objects.filter(pk=operator.text).exists():
                     Vehicle.objects.get_or_create(operator=operator.text, code=vehicle.text)
-                elif type(service) is not None:
+                elif type(service) is Service:
                     Vehicle.objects.get_or_create(operator=service.operator.first(), code=vehicle.text)
             except Vehicle.MultipleObjectsReturned:
                 pass
