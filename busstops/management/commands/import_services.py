@@ -256,7 +256,8 @@ class Command(BaseCommand):
 
             parts = service_code.split('_')
             if parts[0] == 'NW':
-                assert len(parts) == 5
+                assert len(parts) >= 5
+                assert parts[-1].isdigit()
 
                 homogeneous_service_code = '_'.join(parts[:-1])
 
