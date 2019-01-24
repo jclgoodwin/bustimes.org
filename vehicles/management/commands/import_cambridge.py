@@ -18,16 +18,11 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle_siri_vm_vehicle(self, item):
         operator = item['OperatorRef']
-        operator = {
-            'WP': 'WHIP',
-            'GP': 'GPLM',
-            'CBLE': 'CBBH',
-            'ATS': 'ARBB'
-        }.get(operator, operator)
         if operator == 'UNIB':
             return
         try:
-            operator = Operator.objects.get(pk=operator)
+            operator = Operator.objects.get(Q(operatorcode__source=self.source, operatorcode__code=operator)
+                                            | Q(pk=operator))
         except Operator.DoesNotExist as e:
             print(e, operator, item)
             return
