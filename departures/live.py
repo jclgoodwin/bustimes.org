@@ -439,7 +439,7 @@ class SiriSmDepartures(Departures):
             operator = element.find('s:OperatorRef', self.ns)
             try:
                 if operator is not None and operator.text and Operator.objects.filter(pk=operator.text).exists():
-                    Vehicle.objects.get_or_create(operator=operator.text, code=vehicle.text)
+                    Vehicle.objects.get_or_create(operator_id=operator.text, code=vehicle.text)
                 elif type(service) is Service:
                     Vehicle.objects.get_or_create(operator=service.operator.first(), code=vehicle.text)
             except Vehicle.MultipleObjectsReturned:

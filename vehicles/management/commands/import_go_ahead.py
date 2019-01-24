@@ -59,7 +59,9 @@ class Command(ImportLiveVehiclesCommand):
         vehicle = item['vehicleRef']
         operator, fleet_number = item['vehicleRef'].split('-', 1)
         operators = self.operators.get(operator)
-        defaults = {}
+        defaults = {
+            'source': self.source
+        }
         if fleet_number.isdigit():
             defaults['fleet_number'] = fleet_number
         if operators:
