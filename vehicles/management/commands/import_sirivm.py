@@ -99,9 +99,10 @@ class Command(ImportLiveVehiclesCommand):
 
         journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
             {
-                'source': self.source
+                'source': self.source,
+                'operator': operator
             },
-            operator=operator,
+            operator__in=operator_options or (operator,),
             code=vehicle_code,
         )
 
