@@ -58,7 +58,7 @@ class Command(BaseCommand):
 
         if collection == 'sro':
             roscommon_mart_road = Stop.objects.get(stop_id='850000013')
-            stop_times = StopTime.objects.filter(stop__feed=feed, trip__route__agency__name='Brendan Boyle')
+            stop_times = StopTime.objects.filter(stop__feed=feed, trip__route__agency__name='Bus4u')
             stop_times.filter(stop__stop_id='850000014').update(stop=roscommon_mart_road)
             stop_times.filter(stop__stop_id='850000015').update(stop=roscommon_mart_road)
 
