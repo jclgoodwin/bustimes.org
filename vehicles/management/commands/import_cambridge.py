@@ -21,8 +21,8 @@ class Command(BaseCommand):
         if operator == 'UNIB':
             return
         try:
-            operator = Operator.objects.get(Q(operatorcode__source=self.source, operatorcode__code=operator)
-                                            | Q(pk=operator))
+            operator = Operator.objects.filter(Q(operatorcode__code=operator, operatorcode__source=self.source)
+                                               | Q(pk=operator)).distinct().get()
         except Operator.DoesNotExist as e:
             print(e, operator, item)
             return
