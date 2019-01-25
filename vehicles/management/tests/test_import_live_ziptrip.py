@@ -55,8 +55,14 @@ class ZipTripTest(TestCase):
         self.assertEqual(3, Vehicle.objects.count())
 
         with self.assertNumQueries(2):
-            response = self.client.get('/vehicles.json?service=007').json()
+            with freeze_time('2018-08-31T21:35:04+00:00'):
+                response = self.client.get('/vehicles.json?service=007').json()
         self.assertEqual(1, len(response['features']))
+
+        with self.assertNumQueries(2):
+            with freeze_time('2018-08-31T22:55:04+00:00'):
+                response = self.client.get('/vehicles.json?service=007').json()
+        self.assertEqual(0, len(response['features']))
 
         with self.assertNumQueries(3):
             response = self.client.get('/operators/go-ahead-lichtenstein/vehicles')

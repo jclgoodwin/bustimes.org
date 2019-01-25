@@ -446,8 +446,6 @@ class SiriSmDepartures(Departures):
             try:
                 if operator and Operator.objects.filter(pk=operator).exists():
                     Vehicle.objects.get_or_create({'operator_id': operator}, code=vehicle)
-                elif type(service) is Service:
-                    Vehicle.objects.get_or_create({'operator': service.operator.first()}, code=vehicle)
             except Vehicle.MultipleObjectsReturned:
                 pass
         if line_ref is not None and type(service) is Service:
