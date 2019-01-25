@@ -96,11 +96,10 @@ ga('require', 'GTM-W66PKML');
 {% endif %}
 ga('send', 'pageview');
 </script>
-{% load raven %}
 <script src="https://browser.sentry-cdn.com/4.5.3/bundle.min.js" crossorigin="anonymous"></script>
 <script>
     Sentry.init({
-        dsn: '{% sentry_public_dsn %}',
+        dsn: 'https://0d628b6fff45463bb803d045b99aa542@sentry.io/1379883',
         whitelistUrls: [/bustimes\.org\/static\/js\/.*\.js/]
     });
 </script>
