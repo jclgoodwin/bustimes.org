@@ -226,7 +226,7 @@ USE_I18N = False
 
 if not DEBUG and 'test' not in sys.argv:
     sentry_sdk.init(
-        dsn="https://7db9132b77e14914ba6ee3eedd682589@sentry.io/845451",
+        dsn=os.environ.get('SENTRY_DSN'),
         integrations=[DjangoIntegration()]
     )
 
