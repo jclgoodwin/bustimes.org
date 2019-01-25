@@ -17,7 +17,6 @@ elasticsearch = ">=2.0.0,<3.0.0"
 gunicorn = "*"
 python-memcached = "*"
 setproctitle = "*"
-raven = "*"
 multigtfs = "*"
 requests = "*"
 titlecase = "*"
@@ -30,6 +29,7 @@ django-autoslug = {git = "https://github.com/justinmayer/django-autoslug",editab
 websockets = "*"
 isodate = "*"
 webcolors = "*"
+sentry-sdk = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

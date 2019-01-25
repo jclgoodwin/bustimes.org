@@ -3,7 +3,8 @@
 
 import os
 import sys
-import raven
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -31,7 +32,6 @@ INSTALLED_APPS = [
     'pipeline',
     'antispam',
     'email_obfuscator',
-    'raven.contrib.django.raven_compat',
 ]
 
 MIDDLEWARE = [
@@ -225,33 +225,12 @@ USE_TZ = True
 USE_I18N = False
 
 if not DEBUG and 'test' not in sys.argv:
-    RAVEN_CONFIG = {
-        'dsn': os.environ.get('SENTRY_DSN'),
-        'release': raven.fetch_git_sha(BASE_DIR)
-    }
+    sentry_sdk.init(
+        dsn="https://7db9132b77e14914ba6ee3eedd682589@sentry.io/845451",
+        integrations=[DjangoIntegration()]
+    )
 
     INSTALLED_APPS.append('ddtrace.contrib.django')
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': True,
-        'root': {
-            'level': 'WARNING',
-            'handlers': ['sentry'],
-        },
-        'formatters': {
-            'verbose': {
-                'format': '%(levelname)s %(asctime)s %(module)s '
-                          '%(process)d %(thread)d %(message)s'
-            },
-        },
-        'handlers': {
-            'sentry': {
-                'level': 'ERROR',
-                'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
-            },
-        },
-    }
-
     DATADOG_TRACE = {
         'DEFAULT_SERVICE': 'bustimes',
         'TAGS': {'env': 'production'},
