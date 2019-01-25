@@ -1,4 +1,5 @@
 import ciso8601
+from datetime import timedelta
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, Http404
 from django.views.decorators.http import last_modified
@@ -27,7 +28,8 @@ def vehicles(request):
 
 
 def get_locations(request):
-    locations = VehicleLocation.objects.filter(current=True)
+    fifteen_minutes_ago = timezone.now() - timedelta(minutes=15)
+    locations = VehicleLocation.objects.filter(current=True, datetime__gte=fifteen_minutes_ago)
 
     try:
         bounding_box = get_bounding_box(request)
