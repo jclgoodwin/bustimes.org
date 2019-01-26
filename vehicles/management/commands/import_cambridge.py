@@ -18,8 +18,9 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle_siri_vm_vehicle(self, item):
         operator = item['OperatorRef']
-        if operator == 'UNIB':
-            return
+        vehicle = item['VehicleRef']
+        if vehicle.startswith(operator + '-'):
+            vehicle = vehicle[len(operator) + 1]
         try:
             operator = Operator.objects.filter(Q(operatorcode__code=operator, operatorcode__source=self.source)
                                                | Q(pk=operator)).distinct().get()
@@ -49,7 +50,10 @@ class Command(BaseCommand):
             if not (operator.pk == 'SCCM' and line_name == 'Tour'):
                 print(e, operator.pk, line_name)
             service = None
-        vehicle, created = Vehicle.objects.get_or_create(operator=operator, code=item['VehicleRef'], source=self.source)
+        defaults = {}
+        if vehicle.isdigit():
+            defaults = {'fleet_number': vehicle}
+        vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle, source=self.source)
         journey = None
         if not created and vehicle.latest_location and vehicle.latest_location.current:
             vehicle.latest_location.current = False

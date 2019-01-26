@@ -13,7 +13,7 @@ class VehicleAdmin(admin.ModelAdmin):
     list_filter = (
         ('operator', admin.RelatedOnlyFieldListFilter),
         ('source', admin.RelatedOnlyFieldListFilter),
-        ('vehicle_type', admin.RelatedOnlyFieldListFilter),
+        'vehicle_type',
     )
     list_select_related = ['operator', 'vehicle_type']
     list_editable = ('fleet_number', 'reg', 'operator', 'vehicle_type', 'colours', 'notes')

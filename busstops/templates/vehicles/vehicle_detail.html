@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}Vehicles – {{ object }} – Bus Times{% endblock %}
+{% block title %}{% if object.code %}Vehicles – {% endif %}{{ object }} – Bus Times{% endblock %}
 
 {% block canonical %}<meta name="robots" content="noindex, nofollow" />{% endblock %}
 
