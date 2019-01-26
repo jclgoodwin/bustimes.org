@@ -73,12 +73,14 @@
     }
 
     var map = L.map('cartograph'),
-        tileURL = 'https://bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
+        tileURL = 'https://maps.tilehosting.com/styles/basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png?key=RXrAQ6RZ239ClCzC8uZj',
         latlng,
         service,
 	bounds = L.latLngBounds();
 
-    L.tileLayer(tileURL).addTo(map);
+    L.tileLayer(tileURL, {
+        attribution: '<a href="https://www.maptiler.com/license/maps/">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
+    }).addTo(map);
 
     {% for journey in journeys %}
         {% if object.region_id %}

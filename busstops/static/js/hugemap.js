@@ -12,7 +12,7 @@
             minZoom: 6,
             maxZoom: 18,
         }),
-        tileURL = 'https://bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
+        tileURL = 'https://maps.tilehosting.com/styles/basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png?key=RXrAQ6RZ239ClCzC8uZj',
         statusBar = L.control({
             position: 'topright'
         }),
@@ -23,7 +23,7 @@
         lastReq;
 
     L.tileLayer(tileURL, {
-        attribution: '© <a href="https://openmaptiles.org">OpenMapTiles</a> | © <a href="https://www.openstreetmap.org">OpenStreetMap contributors</a>'
+        attribution: '<a href="https://www.maptiler.com/license/maps/">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
     }).addTo(map);
 
     statusBar.onAdd = function () {
