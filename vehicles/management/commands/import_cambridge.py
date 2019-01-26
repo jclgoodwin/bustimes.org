@@ -20,7 +20,7 @@ class Command(BaseCommand):
         operator = item['OperatorRef']
         vehicle = item['VehicleRef']
         if vehicle.startswith(operator + '-'):
-            vehicle = vehicle[len(operator) + 1]
+            vehicle = vehicle[len(operator) + 1:]
         try:
             operator = Operator.objects.filter(Q(operatorcode__code=operator, operatorcode__source=self.source)
                                                | Q(pk=operator)).distinct().get()

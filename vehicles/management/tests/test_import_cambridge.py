@@ -59,7 +59,7 @@ class CambridgeImportTest(TestCase):
         self.command.handle_data(data)
 
         vehicle = Vehicle.objects.get()
-        self.assertEqual(vehicle.code, 'SCCM-37220')
+        self.assertEqual(vehicle.code, '37220')
         self.assertEqual(vehicle.operator.name, 'Stagecoach Cumbernauld')
 
         self.assertEqual(vehicle.latest_location.early, -2)
