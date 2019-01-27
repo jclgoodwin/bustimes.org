@@ -50,14 +50,16 @@ def get_locations(request):
 
 
 def siri_one_shot(code):
-    source = SIRISource.objects.get(name=code.scheme[:-5])
-    cache_key = '{}:{}:{}'.format(source.url, source.requestor_ref, code.code)
+    source = 'Icarus'
+    siri_source = SIRISource.objects.get(name=code.scheme[:-5])
+    cache_key = '{}:{}:{}'.format(siri_source.url, siri_source.requestor_ref, code.code)
     if cache.get(cache_key):
         return
     now = timezone.now()
     if not Journey.objects.filter(service=code.service_id, datetime__lt=now, stopusageusage__datetime__gt=now).exists():
-        cache.set(cache_key, True, 600)  # cache for 10 minutes
-        return
+        if not VehicleLocation.objects.filter(service=code.service_id, current=True, source__name=source).exists():
+            cache.set(cache_key, True, 600)  # cache for 10 minutes
+            return
     cache.set(cache_key, True, 40)  # cache for 40 seconds
     data = """
         <Siri xmlns="http://www.siri.org.uk/siri">
@@ -68,13 +70,16 @@ def siri_one_shot(code):
                 </VehicleMonitoringRequest>
             </ServiceRequest>
         </Siri>
-    """.format(source.requestor_ref, code.code)
-    url = source.url.replace('StopM', 'VehicleM', 1)
+    """.format(siri_source.requestor_ref, code.code)
+    url = siri_source.url.replace('StopM', 'VehicleM', 1)
     response = session.post(url, data=data, timeout=5)
     command = import_sirivm.Command()
     command.source = DataSource.objects.get(name='Icarus')
     for item in import_sirivm.items_from_response(response):
         command.handle_item(item, now)
+    current_locations = VehicleLocation.objects.filter(journey__source=command.source,
+                                                       journey__service=code.service_id, current=True)
+    current_locations.exclude(id__in=command.current_location_ids).update(current=False)
 
 
 def vehicles_last_modified(request):
