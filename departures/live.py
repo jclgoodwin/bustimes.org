@@ -10,7 +10,6 @@ import xml.etree.cElementTree as ET
 from django.conf import settings
 from django.utils.timezone import is_naive, make_naive
 from busstops.models import Operator, Service, StopPoint, ServiceCode
-from vehicles.models import Vehicle
 
 
 logger = logging.getLogger(__name__)
@@ -434,21 +433,8 @@ class SiriSmDepartures(Departures):
         if destination is not None:
             destination = destination.text
         service = self.get_service(line_name)
-        vehicle = element.find('s:VehicleRef', self.ns)
-        scheme = self.source.name
-        if scheme != 'NCC Hogia' and vehicle is not None and vehicle.text:
-            operator = element.find('s:OperatorRef', self.ns)
-            if operator is not None:
-                operator = operator.text
-            vehicle = vehicle.text
-            if operator and vehicle.startswith(operator + '-'):
-                vehicle = vehicle[len(operator) + 1:]
-            try:
-                if operator and Operator.objects.filter(pk=operator).exists():
-                    Vehicle.objects.get_or_create({'operator_id': operator}, code=vehicle)
-            except Vehicle.MultipleObjectsReturned:
-                pass
         if line_ref is not None and type(service) is Service:
+            scheme = self.source.name
             if scheme == 'NCC Hogia' or expected_time and ('icarus' in self.source.url or 'sslink' in self.source.url):
                 if scheme != 'NCC Hogia':
                     scheme += ' SIRI'
