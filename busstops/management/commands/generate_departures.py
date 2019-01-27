@@ -25,15 +25,16 @@ def combine_date_time(date, time):
 def handle_timetable(service, timetable, day):
     if not timetable.operating_period.contains(day):
         return
+    stopusageusages = []
     for grouping in timetable.groupings:
         stops = {row.part.stop.atco_code for row in grouping.rows}
         existent_stops = StopPoint.objects.filter(atco_code__in=stops).values_list('atco_code', flat=True)
         for vj in grouping.journeys:
             if not vj.should_show(day, timetable):
                 continue
+            journey_stopusageusages = []
             date = day
             previous_time = None
-            stopusageusages = []
             journey = Journey(service=service, datetime=combine_date_time(date, vj.departure_time))
             for i, cell in enumerate(vj.get_times()):
                 su = cell.stopusage
@@ -42,7 +43,7 @@ def handle_timetable(service, timetable, day):
                     date += ONE_DAY
                 if su.stop.atco_code in existent_stops:
                     if not su.activity or su.activity.startswith('pickUp'):
-                        stopusageusages.append(
+                        journey_stopusageusages.append(
                             StopUsageUsage(datetime=combine_date_time(date, time),
                                            order=i, stop_id=su.stop.atco_code)
                         )
@@ -50,9 +51,10 @@ def handle_timetable(service, timetable, day):
                 previous_time = time
             if journey.destination_id:
                 journey.save()
-                for suu in stopusageusages:
+                for suu in journey_stopusageusages:
                     suu.journey = journey
-                StopUsageUsage.objects.bulk_create(stopusageusages)
+                stopusageusages += journey_stopusageusages
+    StopUsageUsage.objects.bulk_create(stopusageusages)
 
 
 def handle_ni_grouping(service, grouping, day):

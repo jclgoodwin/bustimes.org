@@ -314,7 +314,7 @@ class Command(BaseCommand):
                 else:
                     self.service_descriptions = None
 
-                for i, filename in enumerate(archive.namelist()):
+                for filename in archive.namelist():
                     if filename.endswith('.xml'):
                         with archive.open(filename) as open_file:
                             self.do_service(open_file, filename)
@@ -336,10 +336,10 @@ class Command(BaseCommand):
         except shutil.SameFileError:
             pass
 
-        StopPoint.objects.filter(active=True).exclude(service__current=True).update(active=False)
-        StopPoint.objects.filter(active=False, service__current=True).update(active=True)
+        # StopPoint.objects.filter(active=True).exclude(service__current=True).update(active=False)
+        # StopPoint.objects.filter(active=False, service__current=True).update(active=True)
 
-        Service.objects.filter(region=self.region_id, current=False, geometry__isnull=False).update(geometry=None)
+        # Service.objects.filter(region=self.region_id, current=False, geometry__isnull=False).update(geometry=None)
 
     def handle(self, *args, **options):
         for archive_name in options['filenames']:
