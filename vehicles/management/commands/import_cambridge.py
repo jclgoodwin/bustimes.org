@@ -22,8 +22,10 @@ class Command(BaseCommand):
         if vehicle.startswith(operator + '-'):
             vehicle = vehicle[len(operator) + 1:]
         try:
-            operator = Operator.objects.filter(Q(operatorcode__code=operator, operatorcode__source=self.source)
-                                               | Q(pk=operator)).distinct().get()
+            try:
+                operator = Operator.objects.get(operatorcode__code=operator, operatorcode__source=self.source)
+            except Operator.DoesNotExist:
+                operator = Operator.objects.get(pk=operator)
         except Operator.DoesNotExist as e:
             print(e, operator, item)
             return
@@ -50,10 +52,12 @@ class Command(BaseCommand):
             if not (operator.pk == 'SCCM' and line_name == 'Tour'):
                 print(e, operator.pk, line_name)
             service = None
-        defaults = {}
+        defaults = {
+            'source': self.source
+        }
         if vehicle.isdigit():
             defaults = {'fleet_number': vehicle}
-        vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle, source=self.source)
+        vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
         journey = None
         if not created and vehicle.latest_location and vehicle.latest_location.current:
             vehicle.latest_location.current = False
