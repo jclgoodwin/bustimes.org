@@ -62,6 +62,9 @@ class VehicleJourney(models.Model):
     code = models.CharField(max_length=255, blank=True)
     destination = models.CharField(max_length=255, blank=True)
 
+    class Meta():
+        ordering = ('id',)
+
 
 class VehicleLocation(models.Model):
     datetime = models.DateTimeField()
@@ -73,6 +76,9 @@ class VehicleLocation(models.Model):
 
     class Meta():
         ordering = ('id',)
+        index_together = (
+            ('current', 'datetime')
+        )
 
     def get_json(self, extended=False):
         journey = self.journey

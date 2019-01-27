@@ -168,7 +168,7 @@ class StopArea(models.Model):
 class DataSource(models.Model):
     name = models.CharField(max_length=255, unique=True)
     url = models.URLField(blank=True)
-    datetime = models.DateTimeField()
+    datetime = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.name
