@@ -1,12 +1,18 @@
 import ciso8601
 from datetime import timedelta
+from requests import Session
+from django.core.cache import cache
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, Http404
 from django.views.decorators.http import last_modified
 from django.views.generic.detail import DetailView
 from django.utils import timezone
 from busstops.views import get_bounding_box
-from .models import Vehicle, VehicleLocation, VehicleJourney, Operator, Service
+from busstops.models import Operator, Service, ServiceCode, SIRISource, DataSource, Journey
+from .models import Vehicle, VehicleLocation, VehicleJourney
+from .management.commands import import_sirivm
+
+session = Session()
 
 
 def operator_vehicles(request, slug):
@@ -43,8 +49,42 @@ def get_locations(request):
     return locations
 
 
+def siri_one_shot(code):
+    source = SIRISource.objects.get(name=code.scheme[:-5])
+    cache_key = '{}:{}:{}'.format(source.url, source.requestor_ref, code.code)
+    if cache.get(cache_key):
+        return
+    now = timezone.now()
+    if not Journey.objects.filter(service=code.service_id, datetime__lt=now, stopusageusage__datetime__gt=now).exists():
+        cache.set(cache_key, True, 600)  # cache for 10 minutes
+        return
+    cache.set(cache_key, True, 40)  # cache for 40 seconds
+    data = """
+        <Siri xmlns="http://www.siri.org.uk/siri">
+            <ServiceRequest>
+                <RequestorRef>{}</RequestorRef>
+                <VehicleMonitoringRequest>
+                    <LineRef>{}</LineRef>
+                </VehicleMonitoringRequest>
+            </ServiceRequest>
+        </Siri>
+    """.format(source.requestor_ref, code.code)
+    url = source.url.replace('StopM', 'VehicleM', 1)
+    response = session.post(url, data=data, timeout=5)
+    command = import_sirivm.Command()
+    command.source = DataSource.objects.get_or_create(name='Icarus')
+    for item in import_sirivm.items_from_response(response):
+        command.handle_item(item, now)
+
+
 def vehicles_last_modified(request):
     locations = get_locations(request)
+
+    if 'service' in request.GET:
+        codes = ServiceCode.objects.filter(scheme__in=('Cornwall SIRI', 'Devon SIRI'), service=request.GET['service'])
+        code = codes.first()
+        if code:
+            siri_one_shot(code)
 
     try:
         location = locations.values('datetime').latest('datetime')
