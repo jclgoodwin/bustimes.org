@@ -8,7 +8,7 @@
         {% for item in breadcrumb %}
             <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
                 <a itemprop="item" href="{{ item.get_absolute_url }}">
-                    <span itemprop="name">{{ item }}</span>
+                    <span itemprop="name">{% firstof item.line_name item %}</span>
                 </a>
             </li>
         {% endfor %}
