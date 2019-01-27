@@ -46,6 +46,6 @@ class Command(ImportLiveVehiclesCommand):
 
         label = item['Label'].split()
         if len(label) == 3:
-            location.early = int(unquote(label[2]))
+            location.early = int(unquote(label[2]).replace('±', ''))
 
         return location
