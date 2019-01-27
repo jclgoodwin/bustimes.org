@@ -72,7 +72,7 @@ def siri_one_shot(code):
     url = source.url.replace('StopM', 'VehicleM', 1)
     response = session.post(url, data=data, timeout=5)
     command = import_sirivm.Command()
-    command.source = DataSource.objects.get_or_create(name='Icarus')
+    command.source = DataSource.objects.get(name='Icarus')
     for item in import_sirivm.items_from_response(response):
         command.handle_item(item, now)
 
