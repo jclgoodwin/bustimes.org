@@ -39,6 +39,7 @@ class Command(ImportLiveVehiclesCommand):
     operators = {
         'SQ': ('BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TDTR', 'TOUR', 'WDBC'),
         'RB': ('RBUS', 'GLRB'),
+        'SCHI': ('SINV', 'SCOR'),
     }
 
     def get_response(self, url, xml):
@@ -89,11 +90,14 @@ class Command(ImportLiveVehiclesCommand):
         if operator_ref and vehicle_code.startswith(operator_ref + '-'):
             vehicle_code = vehicle_code[len(operator_ref) + 1:]
 
+        defaults = {
+            'source': self.source,
+            'operator': operator
+        }
+        if vehicle_code.isdigit():
+            defaults['fleet_number'] = vehicle_code
         journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
-            {
-                'source': self.source,
-                'operator': operator
-            },
+            defaults
             operator__in=operator_options or (operator,),
             code=vehicle_code,
         )

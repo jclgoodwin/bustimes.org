@@ -80,13 +80,9 @@ class Command(ImportLiveVehiclesCommand):
         else:
             operator = Operator.objects.get(id=operator_id[0])
 
+        defaults = {}
         if vehicle.isdigit():
-            fleet_number = vehicle
-        else:
-            fleet_number = None
-        defaults = {
-             'fleet_number': fleet_number
-        }
+            defaults['fleet_number'] = vehicle
         if operator:
             defaults['source'] = self.source
             try:
