@@ -97,7 +97,7 @@ class Command(ImportLiveVehiclesCommand):
         if vehicle_code.isdigit():
             defaults['fleet_number'] = vehicle_code
         journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
-            defaults
+            defaults,
             operator__in=operator_options or (operator,),
             code=vehicle_code,
         )
