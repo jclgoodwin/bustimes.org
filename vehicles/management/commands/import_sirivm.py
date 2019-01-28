@@ -1,4 +1,5 @@
 import ciso8601
+import logging
 import xml.etree.cElementTree as ET
 from requests.exceptions import RequestException
 from django.contrib.gis.geos import Point
@@ -8,6 +9,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import Vehicle, VehicleLocation, VehicleJourney
 
 
+logger = logging.getLogger(__name__)
 NS = {'siri': 'http://www.siri.org.uk/siri'}
 
 
@@ -23,7 +25,8 @@ def items_from_response(response):
         return ()
     try:
         items = ET.fromstring(response.text)
-    except ET.ParseError:
+    except ET.ParseError as e:
+        logger.error(e, exc_info=True)
         print(response)
         return ()
     return items.findall('siri:ServiceDelivery/siri:VehicleMonitoringDelivery/siri:VehicleActivity', NS)
@@ -77,6 +80,7 @@ class Command(ImportLiveVehiclesCommand):
                 else:
                     operator = Operator.objects.get(operatorcode__source=self.source, operatorcode__code=operator_ref)
         except (Operator.MultipleObjectsReturned, Operator.DoesNotExist) as e:
+            logger.error(e, exc_info=True)
             print(e, operator_ref, service)
 
         vehicle_code = mvj.find('siri:VehicleRef', NS).text
@@ -130,6 +134,7 @@ class Command(ImportLiveVehiclesCommand):
             journey.service = self.get_service(services, get_latlong(mvj))
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             if operator_ref != 'OFJ':
+                logger.error(e, exc_info=True)
                 print(e, operator_ref, service, services, get_latlong(mvj))
 
         return journey, vehicle_created
