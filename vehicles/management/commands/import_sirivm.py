@@ -75,10 +75,12 @@ class Command(ImportLiveVehiclesCommand):
                 operator_options = self.operators.get(operator_ref)
                 if operator_options:
                     operator = Operator.objects.get(id=operator_options[0])
-                elif len(operator_ref) == 4:
-                    operator = Operator.objects.get(id=operator_ref)
                 else:
-                    operator = Operator.objects.get(operatorcode__source=self.source, operatorcode__code=operator_ref)
+                    try:
+                        operator = Operator.objects.get(operatorcode__source=self.source,
+                                                        operatorcode__code=operator_ref)
+                    except (Operator.MultipleObjectsReturned, Operator.DoesNotExist):
+                        operator = Operator.objects.get(id=operator_ref)
         except (Operator.MultipleObjectsReturned, Operator.DoesNotExist) as e:
             logger.error(e, exc_info=True)
             print(e, operator_ref, service)

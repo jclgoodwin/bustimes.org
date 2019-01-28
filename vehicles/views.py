@@ -64,10 +64,10 @@ def siri_one_shot(code):
             return
     cache.set(cache_key, True, 40)  # cache for 40 seconds
     data = """
-        <Siri xmlns="http://www.siri.org.uk/siri">
+        <Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
             <ServiceRequest>
                 <RequestorRef>{}</RequestorRef>
-                <VehicleMonitoringRequest>
+                <VehicleMonitoringRequest version="1.3">
                     <LineRef>{}</LineRef>
                 </VehicleMonitoringRequest>
             </ServiceRequest>
