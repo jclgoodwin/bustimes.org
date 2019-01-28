@@ -58,7 +58,7 @@ class VehicleJourney(models.Model):
     datetime = models.DateTimeField()
     service = models.ForeignKey(Service, models.SET_NULL, null=True, blank=True)
     source = models.ForeignKey(DataSource, models.CASCADE)
-    vehicle = models.ForeignKey(Vehicle, models.SET_NULL, null=True, blank=True)
+    vehicle = models.ForeignKey(Vehicle, models.CASCADE)
     code = models.CharField(max_length=255, blank=True)
     destination = models.CharField(max_length=255, blank=True)
 
