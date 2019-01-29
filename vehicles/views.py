@@ -57,7 +57,7 @@ def siri_one_shot(code):
         return
     now = timezone.now()
     current_locations = VehicleLocation.objects.filter(journey__service=code.service_id, journey__source__name=source,
-                                                       current=True)
+                                                       latest_vehicle__isnull=False)
     if not Journey.objects.filter(service=code.service_id, datetime__lt=now, stopusageusage__datetime__gt=now).exists():
         if not current_locations.exists():
             cache.set(cache_key, True, 600)  # cache for 10 minutes
