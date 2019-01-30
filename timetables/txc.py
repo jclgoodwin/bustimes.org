@@ -681,6 +681,8 @@ class VehicleJourney(object):
             return True
         if timetable and timetable.service:
             region_id = timetable.service.region_id
+            if timetable.service.service_code == 'YWAO062' and self.departure_time == datetime.time(18, 15):
+                return False
         else:
             region_id = None
         if not self.operating_profile:
