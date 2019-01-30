@@ -123,10 +123,13 @@ class Command(ImportLiveVehiclesCommand):
             service = 'Colchester Park & Ride'
         elif service == 'P&R' and operator_ref == 'AKE':
             service = 'Colchester Park & Ride'
-        elif service == '700' and operator_ref == 'FE':
-            service = 'Sandon Park & Ride'
-        elif service == '701' and operator_ref == 'FE':
-            service = 'Chelmsford Park & Ride'
+        elif operator_ref == 'FE':
+            if service == '700':
+                service = 'Sandon Park & Ride'
+            elif service == '701':
+                service = 'Chelmsford Park & Ride'
+        elif service == 'm1' and operator_ref == 'FB':
+            operator = Operator.objects.get(pk='NCTP')
 
         services = Service.objects.filter(line_name__iexact=service, current=True)
         if operator_options:
