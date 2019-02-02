@@ -133,7 +133,7 @@ class Command(ImportLiveVehiclesCommand):
 
         services = Service.objects.filter(line_name__iexact=service, current=True)
         if operator_options:
-            services = services.filter(operator__in=operator_options)
+            services = services.filter(operator__in=operator_options).distinct()
         elif operator:
             services = services.filter(operator=operator)
         else:
