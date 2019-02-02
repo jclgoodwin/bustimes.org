@@ -62,8 +62,8 @@ def siri_one_shot(code):
         if not current_locations.exists():
             cache.set(cache_key, True, 600)  # cache for 10 minutes
             return
-    if VehicleLocation.objects.filter(vehiclelocation__current=True,
-                                      service=code.service_id).exclude(source__name=source).exists():
+    if VehicleLocation.objects.filter(journey__service=code.service_id,
+                                      current=True).exclude(journey__source__name=source).exists():
         cache.set(cache_key, True, 3600)  # cache for 1 hour
         return
     cache.set(cache_key, True, 40)  # cache for 40 seconds
