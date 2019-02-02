@@ -83,14 +83,16 @@ def siri_one_shot(code):
     command.source = DataSource.objects.get(name='Icarus')
     for item in import_sirivm.items_from_response(response):
         command.handle_item(item, now)
-    current_locations.exclude(id__in=command.current_location_ids).update(current=False)
+    # current_locations.exclude(id__in=command.current_location_ids).update(current=False)
 
 
 def vehicles_last_modified(request):
     locations = get_locations(request)
 
     if 'service' in request.GET:
-        codes = ServiceCode.objects.filter(scheme__in=('Cornwall SIRI', 'Devon SIRI'), service=request.GET['service'])
+        schemes = ('Cornwall SIRI', 'Devon SIRI', 'Highland SIRI', 'Dundee SIRI', 'Bristol SIRI',
+                   'Leicestershire SIRI', 'Dorset SIRI')
+        codes = ServiceCode.objects.filter(scheme__in=schemes, service=request.GET['service'])
         code = codes.first()
         if code:
             siri_one_shot(code)

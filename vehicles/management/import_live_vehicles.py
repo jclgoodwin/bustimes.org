@@ -123,7 +123,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         self.current_location_ids = set()
 
-        current_locations = VehicleLocation.objects.filter(journey__source=self.source, current=True)
+        current_locations = VehicleLocation.objects.filter(journey__source=self.source, current=True,
+                                                           latest_vehicle__isnull=False)
 
         try:
             for item in self.get_items():

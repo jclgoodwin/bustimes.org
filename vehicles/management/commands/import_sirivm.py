@@ -40,6 +40,7 @@ class Command(ImportLiveVehiclesCommand):
         'SQ': ('BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TDTR', 'TOUR', 'WDBC'),
         'RB': ('RBUS', 'GLRB'),
         'SCHI': ('SINV', 'SCOR'),
+        'SCFI': ('SCFI', 'SSPH', 'SSTY'),
     }
 
     def get_response(self, url, xml):
@@ -140,11 +141,24 @@ class Command(ImportLiveVehiclesCommand):
             return journey, vehicle_created
 
         try:
-            journey.service = self.get_service(services, get_latlong(mvj))
+            if operator and operator.id == 'TNXB' and service == '4':
+                journey.service_id = 'cen_33-4-W-y11'
+            else:
+                journey.service = self.get_service(services, get_latlong(mvj))
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             if operator_ref != 'OFJ':
                 logger.error(e, exc_info=True)
                 print(e, operator_ref, service, services, get_latlong(mvj))
+
+        if operator_options and operator and journey.service and operator.id == operator_options[0]:
+            if operator.id != 'RBUS':
+                try:
+                    operator = journey.service.operator.get()
+                    if journey.vehicle.operator_id != operator.id:
+                        journey.vehicle.operator = operator
+                        journey.vehicle.save()
+                except (Operator.MultipleObjectsReturned, Operator.DoesNotExist):
+                    pass
 
         return journey, vehicle_created
 
