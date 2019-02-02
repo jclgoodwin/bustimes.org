@@ -179,6 +179,10 @@ class ImportNaptanTest(TestCase):
         self.assertEqual(irish_stop.common_name, 'Belcoo')
         self.assertEqual(irish_stop.street, 'N16')
 
+        stop = StopPoint.objects.get(atco_code='2900B482')
+        self.assertAlmostEqual(stop.latlong.x, 1.0261288054215825)
+        self.assertAlmostEqual(stop.latlong.y, 51.86800772276406)
+
     def test_stop_areas(self):
         """Given a row, does handle_row return a StopArea object with the correct field values?
         """

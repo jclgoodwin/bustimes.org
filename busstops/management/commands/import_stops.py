@@ -90,12 +90,14 @@ class Command(ImportFromCSVCommand):
             'admin_area_id': row.get('AdministrativeAreaCode') or row['AdministrativeAreaRef']
         }
 
-        if row['Longitude']:
+        if row['Longitude'] and row['Longitude'] != '0':
             defaults['latlong'] = Point(
                 float(row['Longitude']),
                 float(row['Latitude']),
                 srid=4326  # World Geodetic System
             )
+        elif row['Easting']:
+            defaults['latlong'] = Point(int(row['Easting']), int(row['Northing']), srid=27700)
 
         if 'NptgLocalityCode' in row:
             defaults['locality_id'] = row['NptgLocalityCode']
