@@ -569,6 +569,30 @@ class VehicleJourney(object):
                 for note_element in note_elements
             }
 
+    def skip_stopusage(self, stopusage, time):
+        if self.code.startswith('VJ_45-16A-_-y10-2') and stopusage.timingstatus == 'OTH':
+            return True
+
+        # Ebley Coaches
+        if self.private_code and self.private_code.startswith('014MFMHA') and time == datetime.time(6, 40):
+            if stopusage.sequencenumber == 12:
+                return True
+
+        # Shiel Buses ferry terminal
+        if stopusage.stop.atco_code == '670088829' and time.hour == 11:
+            return True
+
+        # Sanders 45, 45A Briston loop
+        if '-45-_-' in self.code or '-45A-_-' in self.code:
+            if stopusage.stop.atco_code in {'2900B511', '2900B517', '2900B5119', '2900B5120'}:
+                return True
+
+        # Sanders 24 Salle
+        if '-24-_-' in self.code and stopusage.stop.atco_code in {'2900S031', '2900S032'}:
+            return True
+
+        return False
+
     def get_times(self):
         stopusage = self.journeypattern.sections[0].timinglinks[0].origin
         time = self.departure_time
@@ -592,12 +616,7 @@ class VehicleJourney(object):
 
                 time = add_time(time, timinglink.runtime)
 
-                if not deadrun and not (
-                    self.code.startswith('VJ_45-16A-_-y10-2') and stopusage.timingstatus == 'OTH'  # Ebley Coaches
-                    or (self.private_code and self.private_code.startswith('014MFMHA') and time == datetime.time(6, 40)
-                        and stopusage.sequencenumber == 12)
-                    or stopusage.stop.atco_code == '670088829' and time.hour == 11  # Shiel Buses ferry terminal
-                ):
+                if not deadrun and not self.skip_stopusage(stopusage, time):
                     if stopusage.wait_time:
                         next_time = add_time(time, stopusage.wait_time)
                         yield Cell(stopusage, time, next_time)
