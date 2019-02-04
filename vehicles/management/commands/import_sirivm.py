@@ -21,7 +21,7 @@ def get_latlong(mvj):
 
 
 def items_from_response(response):
-    if not response:
+    if not (response and response.text):
         return ()
     try:
         items = ET.fromstring(response.text)
