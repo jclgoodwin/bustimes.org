@@ -114,6 +114,10 @@
         if (data.properties.service) {
             popup = '<a href="' + data.properties.service.url + '/vehicles">' + data.properties.service.line_name + '</a>';
         }
+        if (data.properties.destination) {
+            popup += 'To ' + data.properties.destination + '<br>';
+        }
+
         if (data.properties.operator) {
             popup += data.properties.operator + '<br>';
         }
@@ -121,14 +125,14 @@
         if (data.properties.vehicle) {
             popup += '<a href="' + data.properties.vehicle.url + '">' + data.properties.vehicle.name + '</a>';
             if (data.properties.vehicle.type) {
-                popup += data.properties.vehicle.type;
+                popup += data.properties.vehicle.type + '<br>';
             }
         }
 
         if (data.properties.delta === 0) {
-            popup += '<br>On time';
+            popup += 'On time<br>';
         } else if (data.properties.delta) {
-            popup += '<br>About ';
+            popup += 'About ';
             if (data.properties.delta > 0) {
                 popup += data.properties.delta;
             } else {
@@ -143,14 +147,11 @@
             } else {
                 popup += ' late';
             }
-        }
-
-        if (data.properties.destination) {
-            popup = 'To ' + data.properties.destination + '<br>' + popup;
+            popup += '<br>';
         }
 
         var dateTime = new Date(data.properties.datetime);
-        popup += '<br>Updated at ' + dateTime.toTimeString().slice(0, 5);
+        popup += 'Updated at ' + dateTime.toTimeString().slice(0, 5);
 
         marker.bindPopup(popup);
 

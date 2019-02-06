@@ -307,46 +307,37 @@ main li {
         padding: .125em 0;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+}
 
-        small {
-            color: #222;
-            display: block;
-            font-size: .75em;
-            padding-bottom: .33em;
+.has-smalls {
+    li {
+        a {
+            text-decoration: none;
         }
-    }
 
-    a:hover {
-        // a bunch of hacks to:
-        // stop the second line being underlined on hover,
-        // and make sure underlines the first line on hover (it ignores it without the `color:` pretend-change)
-        color: #222;
-        text-decoration: none;
-    }
-
-    a:hover:first-line {
-        color: $link-color;
-        text-decoration: underline;
-    }
-
-    a:focus:first-line,
-    a:active:first-line {
-        color: #000;
+        a:hover span {
+            text-decoration: underline;
+        }
     }
 
     span {
         display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    span + small,
-    small + small {
+    small {
+        color: #222;
+        display: block;
         float: left;
+        font-size: .75em;
         margin-right: .5em;
-        padding-bottom: 0;
     }
 
     a small:last-child {
         padding-bottom: .33em;
+        margin: 0;
     }
 }
 

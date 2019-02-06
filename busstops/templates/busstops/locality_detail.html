@@ -21,11 +21,11 @@
 {% if services %}
     <h2>{% include 'modes.html' with modes=modes noun='services' %}</h2>
 
-    <ul>
+    <ul class="has-smalls">
         {% for service in services %}
             <li>
                 <a href="{{ service.get_absolute_url }}">
-                    {{ service }}
+                    <span>{{ service }}</span>
                     {% if service.operator %}<small>{{ service.operator.all|join:", " }}</small>{% endif %}
                 </a>
             </li>

@@ -217,7 +217,7 @@ class ImportNaptanTest(TestCase):
         self.assertContains(res, """
             <div class="aside box">
                 <h2>Nearby stops</h2>
-                <ul>
+                <ul class="has-smalls">
                     <li itemscope itemtype="https://schema.org/BusStop" data-indicator="NE-bound" data-heading="45">
                         <a href="/stops/5820AWN26438">
                             <span itemprop="name">Ty&#39;n y Twr Club (NE-bound)</span>

@@ -1,4 +1,4 @@
-<ul>
+<ul class="has-smalls">
 {% for stop in stops %}
     <li itemscope itemtype="https://schema.org/BusStop" data-indicator="{{ stop.indicator }}"{% if stop.get_heading is not None %} data-heading="{{ stop.get_heading }}"{% endif %}>
         <a href="{{ stop.get_absolute_url }}">
@@ -10,12 +10,13 @@
                     {% endif %}
                 {% else %}
                     {{ stop }}
-                {% endif %}</span>
-                {% for line_name in stop.get_line_names %}
-                    {% ifchanged line_name %}
-                        <small>{{ line_name }}</small>
-                    {% endifchanged %}
-                {% endfor %}
+                {% endif %}
+            </span>
+            {% for line_name in stop.get_line_names %}
+                {% ifchanged line_name %}
+                    <small>{{ line_name }}</small>
+                {% endifchanged %}
+            {% endfor %}
         </a>
         {% if stop.latlong %}
             <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">

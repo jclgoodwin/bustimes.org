@@ -24,11 +24,11 @@
             <h2>{{ paginator.count }} result{{ paginator.count|pluralize }} found for ‘{{ query }}’</h2>
 
             {% if page.object_list %}
-                <ul class="search-results">
+                <ul class="has-smalls">
                     {% for result in page.object_list %}
                         <li>
                             <a href="{{ result.object.get_absolute_url }}">
-                                {% firstof result.object.get_qualified_name result.object %}
+                                <span>{% firstof result.object.get_qualified_name result.object %}</span>
                                 {% if result.object.operator %}<small>{{ result.object.operator.all|join:", " }}</small>{% endif %}
                             </a>
                         </li>
