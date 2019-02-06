@@ -168,9 +168,13 @@ class Command(ImportLiveVehiclesCommand):
             destination_ref = destination_ref.text
 
         if origin_ref:
-            services = services.filter(Q(stops=origin_ref) | Q(stops=destination_ref)).distinct()
-            if services.count() > 1:
-                services = services.filter(stops=origin_ref).filter(stops=destination_ref).distinct()
+            for queryset in (
+                services.filter(stops=origin_ref).filter(stops=destination_ref),
+                services.filter(Q(stops=origin_ref) | Q(stops=destination_ref)),
+            ):
+                if queryset.exists():
+                    services = queryset
+                    break
 
         try:
             if operator and operator.id == 'TNXB' and service == '4':
