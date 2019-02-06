@@ -63,7 +63,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
             try:
                 return queryset.get(geometry__bboverlaps=latlong.buffer(0.1))
             except queryset.model.MultipleObjectsReturned:
-                return queryset.get(geometry__bboverlaps=latlong)
+                try:
+                    return queryset.get(geometry__bboverlaps=latlong.buffer(0.05))
+                except queryset.model.MultipleObjectsReturned:
+                    return queryset.get(geometry__bboverlaps=latlong)
 
     @transaction.atomic
     def handle_item(self, item, now):

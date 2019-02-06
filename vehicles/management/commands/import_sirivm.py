@@ -3,6 +3,7 @@ import logging
 import xml.etree.cElementTree as ET
 from requests.exceptions import RequestException
 from django.contrib.gis.geos import Point
+from django.db.models import Q
 from isodate import parse_duration
 from busstops.models import Operator, Service
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -65,6 +66,20 @@ class Command(ImportLiveVehiclesCommand):
             response = self.get_response(url.format(subdomain), data)
             for item in items_from_response(response):
                 yield item
+
+        url = 'http://data.icarus.cloudamber.com/VehicleMonitoringRequest.ashx'
+        data = """
+            <Siri xmlns="http://www.siri.org.uk/siri">
+                <ServiceRequest>
+                    <RequestorRef>{}</RequestorRef>
+                    <VehicleMonitoringRequest/>
+                </ServiceRequest>
+            </Siri>
+        """
+        requestor_ref = 'gatwick_app'
+        response = self.get_response(url, data.format(requestor_ref))
+        for item in items_from_response(response):
+            yield item
 
     def get_journey(self, item):
         journey = VehicleJourney()
@@ -144,15 +159,24 @@ class Command(ImportLiveVehiclesCommand):
         else:
             return journey, vehicle_created
 
+        origin_ref = mvj.find('siri:OriginRef', NS)
+        destination_ref = mvj.find('siri:DestinationRef', NS)
+        if origin_ref is not None:
+            origin_ref = origin_ref.text
+        if destination_ref is not None:
+            destination_ref = destination_ref.text
+
+        if origin_ref:
+            services = services.filter(Q(stops=origin_ref) | Q(stops=destination_ref)).distinct()
+
         try:
             if operator and operator.id == 'TNXB' and service == '4':
                 journey.service_id = 'cen_33-4-W-y11'
-            else:
+            elif operator_ref != 'OFJ':
                 journey.service = self.get_service(services, get_latlong(mvj))
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-            if operator_ref != 'OFJ':
-                logger.error(e, exc_info=True)
-                print(e, operator_ref, service, services, get_latlong(mvj))
+            logger.error(e, exc_info=True)
+            print(e, operator_ref, service, services, get_latlong(mvj))
 
         if operator_options and operator and journey.service and operator.id == operator_options[0]:
             if operator.id != 'RBUS':
