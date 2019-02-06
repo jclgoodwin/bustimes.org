@@ -42,10 +42,10 @@ class Command(ImportLiveVehiclesCommand):
         'RB': ('RBUS', 'GLRB'),
         'SCHI': ('SINV', 'SCOR'),
         'SCFI': ('SCFI', 'SSPH', 'SSTY'),
-        'SCSO': ('SCHM', 'SCCO', 'SMSO'),
+        'SCSO': ('SCHM', 'SCCO', 'SMSO', 'SCHW'),
         'CBLE': ('CBBH', 'CBNL'),
         'RED': ('RRTR', 'RLNE'),
-        'SCCM': ('SCCM', 'SCPB', 'SCHU', 'SCBD')
+        'SCCM': ('SCCM', 'SCPB', 'SCHU', 'SCBD'),
     }
 
     def get_response(self, url, xml):
@@ -107,8 +107,9 @@ class Command(ImportLiveVehiclesCommand):
             print(e, operator_ref, service)
 
         vehicle_code = mvj.find('siri:VehicleRef', NS).text
-        if operator_ref and vehicle_code.startswith(operator_ref + '-') and operator_ref != 'SQ':
-            vehicle_code = vehicle_code[len(operator_ref) + 1:]
+        if operator_ref and vehicle_code.startswith(operator_ref + '-'):
+            if operator_ref != 'SQ' or vehicle_code.startswith('SQ-SQ-'):
+                vehicle_code = vehicle_code[len(operator_ref) + 1:]
 
         defaults = {
             'source': self.source,
@@ -168,6 +169,8 @@ class Command(ImportLiveVehiclesCommand):
 
         if origin_ref:
             services = services.filter(Q(stops=origin_ref) | Q(stops=destination_ref)).distinct()
+            if services.count() > 1:
+                services = services.filter(stops=origin_ref).filter(stops=destination_ref).distinct()
 
         try:
             if operator and operator.id == 'TNXB' and service == '4':
