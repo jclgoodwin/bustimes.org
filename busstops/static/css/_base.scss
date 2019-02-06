@@ -307,6 +307,46 @@ main li {
         padding: .125em 0;
         text-overflow: ellipsis;
         white-space: nowrap;
+
+        small {
+            color: #222;
+            display: block;
+            font-size: .75em;
+            padding-bottom: .33em;
+        }
+    }
+
+    a:hover {
+        // a bunch of hacks to:
+        // stop the second line being underlined on hover,
+        // and make sure underlines the first line on hover (it ignores it without the `color:` pretend-change)
+        color: #222;
+        text-decoration: none;
+    }
+
+    a:hover:first-line {
+        color: $link-color;
+        text-decoration: underline;
+    }
+
+    a:focus:first-line,
+    a:active:first-line {
+        color: #000;
+    }
+
+    span {
+        display: block;
+    }
+
+    span + small,
+    small + small {
+        float: left;
+        margin-right: .5em;
+        padding-bottom: 0;
+    }
+
+    a small:last-child {
+        padding-bottom: .33em;
     }
 }
 
@@ -362,6 +402,17 @@ table {
 .services {
     a {
         white-space: normal;
+    }
+
+    // override `main li a` styles
+    a:hover {
+        color: $link-color;
+        text-decoration: underline;
+    }
+
+    a:focus,
+    a:active {
+        color: #000;
     }
 
     .name {
@@ -556,9 +607,29 @@ table {
 
 }
 
-body .leaflet-container {
-    font-family: inherit;
-    font-size: .875em;
+body {
+    .leaflet-container {
+        font-family: inherit;
+        font-size: .875em;
+    }
+}
+
+.leaflet-popup-content a {
+    display: block;
+    font-size: 1em;
+    overflow: hidden;
+
+    span {
+        display: block;
+    }
+
+    small {
+        color: #222;
+        display: block;
+        float: left;
+        font-size: .75em;
+        margin-right: .5em;
+    }
 }
 
 table {
@@ -709,19 +780,6 @@ input:not(:checked) + label {
     .TIP {
         a {
             padding-left: 1em;
-        }
-    }
-}
-
-.search-results {
-    li {
-        a {
-            padding: .25em 0;
-
-            small {
-                display: block;
-                color: #222;
-            }
         }
     }
 }

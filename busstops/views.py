@@ -4,7 +4,7 @@ import os
 import json
 import ciso8601
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Max, Q
+from django.db.models import Max, Q, Prefetch
 from django.http import (HttpResponse, JsonResponse, Http404,
                          HttpResponseBadRequest)
 from django.utils import timezone
@@ -291,7 +291,9 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             Q(locality__stoppoint__active=True),
         ).defer('latlong').distinct()
 
-        context['stops'] = self.object.stoppoint_set.filter(active=True).defer('osm')
+        context['stops'] = self.object.stoppoint_set.filter(active=True).prefetch_related(
+            Prefetch('service_set', queryset=Service.objects.filter(current=True).distinct().defer('geometry'))
+        ).defer('osm')
 
         if not (context['localities'] or context['stops']):
             raise Http404('Sorry, it looks like no services currently stop at {}'.format(self.object))
@@ -299,7 +301,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             context['services'] = sorted(Service.objects.filter(
                 stops__locality=self.object,
                 current=True
-            ).defer('geometry').distinct(), key=Service.get_order)
+            ).prefetch_related('operator').defer('geometry').distinct(), key=Service.get_order)
             context['modes'] = {service.mode for service in context['services'] if service.mode}
 
         context['breadcrumb'] = [crumb for crumb in [
@@ -325,7 +327,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         context = super().get_context_data(**kwargs)
 
         context['services'] = sorted(
-            self.object.service_set.filter(current=True).defer('geometry').distinct(),
+            self.object.service_set.filter(current=True).defer('geometry').prefetch_related('operator').distinct(),
             key=Service.get_order
         )
 
@@ -372,8 +374,8 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
             nearby = StopPoint.objects.filter(common_name__iexact=self.object.common_name,
                                               atco_code__startswith=self.object.atco_code[:3])
         if nearby is not None:
-            context['nearby'] = nearby.filter(active=True).exclude(
-                pk=self.object.pk
+            context['nearby'] = nearby.filter(active=True).exclude(pk=self.object.pk).prefetch_related(
+                Prefetch('service_set', queryset=Service.objects.filter(current=True).distinct().defer('geometry'))
             ).defer('osm')
 
         context['breadcrumb'] = [crumb for crumb in (

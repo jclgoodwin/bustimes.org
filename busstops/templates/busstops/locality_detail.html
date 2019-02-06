@@ -24,7 +24,10 @@
     <ul>
         {% for service in services %}
             <li>
-                <a href="{{ service.get_absolute_url }}">{{ service }}</a>
+                <a href="{{ service.get_absolute_url }}">
+                    {{ service }}
+                    {% if service.operator %}<small>{{ service.operator.all|join:", " }}</small>{% endif %}
+                </a>
             </li>
         {% endfor %}
     </ul>

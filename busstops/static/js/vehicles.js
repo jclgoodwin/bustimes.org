@@ -112,7 +112,7 @@
 
         var popup = '';
         if (data.properties.service) {
-            popup = '<a href="' + data.properties.service.url + '/vehicles">' + data.properties.service.line_name + '</a><br>';
+            popup = '<a href="' + data.properties.service.url + '/vehicles">' + data.properties.service.line_name + '</a>';
         }
         if (data.properties.operator) {
             popup += data.properties.operator + '<br>';
@@ -121,7 +121,7 @@
         if (data.properties.vehicle) {
             popup += '<a href="' + data.properties.vehicle.url + '">' + data.properties.vehicle.name + '</a>';
             if (data.properties.vehicle.type) {
-                popup += '<br>' + data.properties.vehicle.type;
+                popup += data.properties.vehicle.type;
             }
         }
 

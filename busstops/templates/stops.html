@@ -11,13 +11,18 @@
                 {% else %}
                     {{ stop }}
                 {% endif %}</span>
-            {% if stop.latlong %}
+                {% for line_name in stop.get_line_names %}
+                    {% ifchanged line_name %}
+                        <small>{{ line_name }}</small>
+                    {% endifchanged %}
+                {% endfor %}
+        </a>
+        {% if stop.latlong %}
             <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
                 <meta itemprop="latitude" content="{{ stop.latlong.y }}" />
                 <meta itemprop="longitude" content="{{ stop.latlong.x }}" />
             </span>
-            {% endif %}
-        </a>
+        {% endif %}
     </li>
 {% endfor %}
 </ul>

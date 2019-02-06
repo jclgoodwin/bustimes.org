@@ -354,6 +354,9 @@ class StopPoint(models.Model):
     def get_absolute_url(self):
         return reverse('stoppoint_detail', args=(self.atco_code,))
 
+    def get_line_names(self):
+        return [service.line_name for service in sorted(self.service_set.all(), key=Service.get_order)]
+
 
 @python_2_unicode_compatible
 class Operator(ValidateOnSaveMixin, models.Model):

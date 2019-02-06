@@ -32,7 +32,12 @@
     <h2>{% include 'modes.html' with modes=modes noun='services' %}</h2>
     <ul>
     {% for s in services %}
-        <li><a href="{{ s.get_absolute_url }}">{{ s }}</a></li>
+        <li>
+            <a href="{{ s.get_absolute_url }}">
+                {{ s }}
+                <small>{{ s.operator.all|join:", " }}</small>
+            </a>
+        </li>
     {% endfor %}
     </ul>
     </div>
