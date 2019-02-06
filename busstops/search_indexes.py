@@ -56,7 +56,7 @@ class ServiceIndex(indexes.SearchIndex, indexes.Indexable):
     def index_queryset(self, using=None):
         return self.get_model().objects.filter(current=True).prefetch_related(
             'operator', 'stops', 'stops__locality'
-        ).defer('stops__latlong', 'stops__locality__latlong').distinct()
+        ).defer('geometry', 'stops__latlong', 'stops__locality__latlong').distinct()
 
     def read_queryset(self, using=None):
-        return self.get_model().objects.all()
+        return self.get_model().objects.defer('geometry').prefetch_related('operator')
