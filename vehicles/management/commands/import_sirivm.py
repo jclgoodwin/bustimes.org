@@ -173,7 +173,7 @@ class Command(ImportLiveVehiclesCommand):
                 services.filter(Q(stops=origin_ref) | Q(stops=destination_ref)),
             ):
                 if queryset.exists():
-                    services = queryset
+                    services = queryset.distinct()
                     break
 
         try:
