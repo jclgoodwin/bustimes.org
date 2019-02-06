@@ -41,6 +41,10 @@ class Command(ImportLiveVehiclesCommand):
         'RB': ('RBUS', 'GLRB'),
         'SCHI': ('SINV', 'SCOR'),
         'SCFI': ('SCFI', 'SSPH', 'SSTY'),
+        'SCSO': ('SCHM', 'SCCO', 'SMSO'),
+        'CBLE': ('CBBH', 'CBNL'),
+        'RED': ('RRTR', 'RLNE'),
+        'SCCM': ('SCCM', 'SCPB', 'SCHU', 'SCBD')
     }
 
     def get_response(self, url, xml):
@@ -88,7 +92,7 @@ class Command(ImportLiveVehiclesCommand):
             print(e, operator_ref, service)
 
         vehicle_code = mvj.find('siri:VehicleRef', NS).text
-        if operator_ref and vehicle_code.startswith(operator_ref + '-'):
+        if operator_ref and vehicle_code.startswith(operator_ref + '-') and operator_ref != 'SQ':
             vehicle_code = vehicle_code[len(operator_ref) + 1:]
 
         defaults = {
