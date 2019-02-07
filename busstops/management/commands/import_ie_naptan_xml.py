@@ -75,7 +75,7 @@ class Command(BaseCommand):
         if AdminArea.objects.filter(atco_code=admin_area_id).exists():
             stop.admin_area_id = admin_area_id
         else:
-                print(admin_area_id)
+            print(admin_area_id)
 
         locality_element = place_element.find('naptan:NptgLocalityRef', self.ns)
         if locality_element is not None:
