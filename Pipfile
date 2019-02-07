@@ -30,6 +30,7 @@ websockets = "*"
 isodate = "*"
 webcolors = "*"
 sentry-sdk = "*"
+gtfs-realtime-bindings = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

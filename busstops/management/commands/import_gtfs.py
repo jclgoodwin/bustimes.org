@@ -1,5 +1,7 @@
 from datetime import date
+from urllib.parse import urlencode
 from django.core.management.base import BaseCommand
+from django.conf import settings
 from multigtfs.models import Feed
 from ...models import Operator, Service, ServiceCode
 from .import_ie_gtfs import download_if_modified
@@ -7,7 +9,8 @@ from .import_ie_gtfs import download_if_modified
 
 class Command(BaseCommand):
     urls = {
-        'hi': 'http://webapps.thebus.org/transitdata/Production/google_transit.zip'
+        'hi': 'http://webapps.thebus.org/transitdata/Production/google_transit.zip',
+        'tfwm': 'http://api.tfwm.org.uk/gtfs/tfwm_gtfs.zip?' + urlencode(settings.TFWM),
     }
 
     @classmethod
@@ -15,12 +18,15 @@ class Command(BaseCommand):
         archive_name = 'google_transit_{}.zip'.format(collection)
         modified = download_if_modified(archive_name, cls.urls[collection])
 
-        if modified:
-            feed = Feed.objects.filter(name=collection).delete()
-            feed = Feed.objects.create(name=collection)
-            feed.import_gtfs(archive_name)
-        else:
-            feed = Feed.objects.get(name=collection)
+        if not modified:
+            return
+
+        Feed.objects.filter(name=collection).delete()
+        feed = Feed.objects.create(name=collection)
+        feed.import_gtfs(archive_name)
+
+        if collection != 'hi':
+            return
 
         scheme = '{} GTFS'.format(collection)
         ServiceCode.objects.filter(scheme=scheme).delete()
@@ -54,3 +60,4 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # hawaii
         self.handle_collection('hi')
+        self.handle_collection('tfwm')
