@@ -11,7 +11,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 class Command(ImportLiveVehiclesCommand):
     source_name = 'TfWM'
-    url = 'http://api.tfwm.org.uk/gtfs/trip_updates'
+    url = 'http://api.tfwm.org.uk/gtfs/vehicle_positions'
 
     def get_items(self):
         response = self.session.get(self.source.url, params=settings.TFWM, timeout=10)
@@ -20,7 +20,6 @@ class Command(ImportLiveVehiclesCommand):
         return feed.entity
 
     def get_journey(self, item):
-
         journey = VehicleJourney()
         operator = None
         vehicle_code = item.vehicle.vehicle.id
@@ -30,7 +29,9 @@ class Command(ImportLiveVehiclesCommand):
             trip = Trip.objects.get(route__feed__name='tfwm', trip_id=journey.code)
             journey.destination = trip.headsign
             operator = Operator.objects.get(name=trip.route.agency.name)
-            print(item)
+            journey.datetime = timezone.make_aware(
+                datetime.strptime(item.vehicle.trip.start_date + item.vehicle.trip.start_time, '%Y%m%d%H:%M:%S')
+            )
 
             try:
                 journey.service = Service.objects.get(operator=operator, line_name=trip.route.short_name, current=True)

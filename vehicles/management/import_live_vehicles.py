@@ -103,7 +103,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 location.heading = calculate_bearing(latest.latlong, location.latlong)
         else:
             journey.source = self.source
-            journey.datetime = location.datetime
+            if not journey.datetime:
+                journey.datetime = location.datetime
             journey.save()
             location.journey = journey
         # save new location
