@@ -212,14 +212,14 @@
     }
 
     function handleVisibilityChange(event) {
-        if (event.target.hidden === true) {
+        if (event.target.hidden) {
             clearTimeout(timeout);
         } else {
             load(map, statusBar);
         }
     }
 
-    document.onvisibilitychange = handleVisibilityChange;
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     load(map, statusBar);
 })();

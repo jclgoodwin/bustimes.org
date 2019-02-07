@@ -203,7 +203,7 @@
                         var p = document.getElementById('buses-online');
                         p.innerHTML = '<strong id="buses-online-count"></strong> Click on a bus to see when it last updated';
                         busesOnlineCount = document.getElementById('buses-online-count');
-                        document.onvisibilitychange = handleVisibilityChange;
+                        document.addEventListener('visibilitychange', handleVisibilityChange);
                     } else {
                         statusBar.getContainer().innerHTML = '';
                         return;
@@ -218,7 +218,7 @@
     }
 
     function handleVisibilityChange(event) {
-        if (event.target.hidden === true) {
+        if (event.target.hidden) {
             clearTimeout(timeout);
         } else {
             load(map, statusBar);
