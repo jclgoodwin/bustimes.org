@@ -269,23 +269,6 @@ input[type='search']::-webkit-search-decoration {
     -webkit-appearance: none;
 }
 
-.search {
-    input[type='submit'] {
-        margin-bottom: -.125em;
-        outline: 0;
-    }
-}
-
-.button-locate + .search {
-    display: inline-block;
-    margin-bottom: .6em;
-    position: relative;
-
-    input[type='search'] {
-        width: 11.5em;
-    }
-}
-
 ul,
 ol,
 li {
@@ -489,7 +472,6 @@ table {
 }
 
 #regions {
-    margin-top: -.5em;
     position: relative;
 }
 
