@@ -46,6 +46,7 @@ class Command(ImportLiveVehiclesCommand):
         'CBLE': ('CBBH', 'CBNL'),
         'RED': ('RRTR', 'RLNE'),
         'SCCM': ('SCCM', 'SCPB', 'SCHU', 'SCBD'),
+        'ATS': ('ARBB', 'ARHE'),
     }
 
     def get_response(self, url, xml):
