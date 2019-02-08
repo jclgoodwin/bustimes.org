@@ -442,7 +442,7 @@ class SiriSmDepartures(Departures):
                 if scheme != 'NCC Hogia':
                     scheme += ' SIRI'
                 line_ref = line_ref.text
-                if line_ref and line_ref not in self.line_refs and operator_ref != 'TD':
+                if line_ref and line_ref not in self.line_refs and operator != 'TD':
                     ServiceCode.objects.update_or_create({'code': line_ref}, service=service, scheme=scheme)
                     self.line_refs.add(line_ref)
 
