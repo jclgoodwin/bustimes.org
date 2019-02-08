@@ -27,33 +27,50 @@ class Command(ImportLiveVehiclesCommand):
         trip = None
         if item.vehicle.HasField('trip'):
             journey.code = item.vehicle.trip.trip_id
-            try:
-                trip = Trip.objects.get(route__feed__name='tfwm', trip_id=journey.code)
-            except Trip.DoesNotExist:
-                print(item)
-                pass
-            if trip:
-                journey.destination = trip.headsign
-                operator = Operator.objects.get(name=trip.route.agency.name)
-
-                try:
-                    journey.service = Service.objects.get(operator=operator, line_name=trip.route.short_name, current=True)
-                except Service.MultipleObjectsReturned as e:
-                    print(e, operator, trip)
-
-                if vehicle_code.endswith(trip.route.short_name):
-                    vehicle_code = vehicle_code[:-len(trip.route.short_name)]
-
             journey.datetime = timezone.make_aware(
                 datetime.strptime(item.vehicle.trip.start_date + item.vehicle.trip.start_time, '%Y%m%d%H:%M:%S')
             )
+            try:
+                trip = Trip.objects.get(route__feed__name='tfwm', trip_id=journey.code)
+            except Trip.DoesNotExist:
+                print(journey.code)
+                pass
+            if trip:
+                journey.destination = trip.headsign
+                route = trip.route
+                operator = Operator.objects.get(name=route.agency.name)
 
-        # else:
-        #     print(item)
+                try:
+                    journey.service = operator.service_set.get(line_name=route.short_name, current=True)
+                except Service.MultipleObjectsReturned as e:
+                    print(e, operator, route.short_name)
 
+                if vehicle_code.endswith(route.short_name):
+                    vehicle_code = vehicle_code[:-len(route.short_name)]
+
+                journey.vehicle, vehicle_created = Vehicle.objects.get_or_create({
+                    'source': self.source
+                }, operator=operator, code=vehicle_code)
+
+                return journey, vehicle_created
+
+        if len(vehicle_code) > 5 and vehicle_code[:5].isdigit():
+            # route = vehicle_code[5:]
+            vehicle_code = vehicle_code[:5]
+
+            try:
+                journey.vehicle, vehicle_created = Vehicle.objects.get_or_create({
+                    'source': self.source
+                }, operator__in=('CLAC', 'DIAM', 'FSMR'), code=vehicle_code)
+
+                return journey, vehicle_created
+            except VehicleJourney.MultipleObjectsReturned:
+                pass
+        elif vehicle_code.startswith('BUS_'):
+            operator = 'SLBS'
         journey.vehicle, vehicle_created = Vehicle.objects.get_or_create({
             'source': self.source
-        }, operator=operator, code=vehicle_code)
+        }, operator_id=operator, code=vehicle_code)
 
         return journey, vehicle_created
 
