@@ -198,6 +198,7 @@ for region in F B C M K G D H; do
     fi
 done
 
+../manage.py import_gtfs
 
 cd ..
 

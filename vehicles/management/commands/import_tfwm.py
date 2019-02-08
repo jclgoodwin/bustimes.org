@@ -24,22 +24,30 @@ class Command(ImportLiveVehiclesCommand):
         operator = None
         vehicle_code = item.vehicle.vehicle.id
 
+        trip = None
         if item.vehicle.HasField('trip'):
             journey.code = item.vehicle.trip.trip_id
-            trip = Trip.objects.get(route__feed__name='tfwm', trip_id=journey.code)
-            journey.destination = trip.headsign
-            operator = Operator.objects.get(name=trip.route.agency.name)
+            try:
+                trip = Trip.objects.get(route__feed__name='tfwm', trip_id=journey.code)
+            except Trip.DoesNotExist:
+                print(item)
+                pass
+            if trip:
+                journey.destination = trip.headsign
+                operator = Operator.objects.get(name=trip.route.agency.name)
+
+                try:
+                    journey.service = Service.objects.get(operator=operator, line_name=trip.route.short_name, current=True)
+                except Service.MultipleObjectsReturned as e:
+                    print(e, operator, trip)
+
+                if vehicle_code.endswith(trip.route.short_name):
+                    vehicle_code = vehicle_code[:-len(trip.route.short_name)]
+
             journey.datetime = timezone.make_aware(
                 datetime.strptime(item.vehicle.trip.start_date + item.vehicle.trip.start_time, '%Y%m%d%H:%M:%S')
             )
 
-            try:
-                journey.service = Service.objects.get(operator=operator, line_name=trip.route.short_name, current=True)
-            except Service.MultipleObjectsReturned as e:
-                print(e, operator, trip.route.short_name)
-
-            if vehicle_code.endswith(trip.route.short_name):
-                vehicle_code = vehicle_code[:-len(trip.route.short_name)]
         # else:
         #     print(item)
 
