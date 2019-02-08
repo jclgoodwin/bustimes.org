@@ -2,7 +2,6 @@ from django import template
 from django.template.defaultfilters import stringfilter
 from django.utils.safestring import mark_safe
 from django.utils.html import urlize
-from ..utils import viglink
 
 register = template.Library()
 
@@ -12,7 +11,7 @@ register = template.Library()
 def urlise(value, autoescape=None):
     """Like the built-in Django urlize filter,
     but strips the 'http://' from the link text,
-    and replaces Megabus URLs with venal Affiliate Window ones
+    and replaces Megabus and National Express URLs with venal affiliate ones
     """
 
     markup = urlize(value, nofollow=True).replace('">https://', '">', 1).replace('">http://', '">', 1)
@@ -30,9 +29,4 @@ def urlise(value, autoescape=None):
         markup = markup.replace('"http://nationalexpress.com"', replacement, 1)
         markup = markup.replace('"http://www.nationalexpress.com"', replacement, 1)
         markup = markup.replace('"https://www.nationalexpress.com"', replacement, 1)
-    elif 'flixbus' in value or 'ouibus' in value:
-        original = '"{}"'.format(value)
-        replacement = '"{}"'.format(viglink(value))
-        markup = markup.replace(original, replacement, 1)
-
     return mark_safe(markup)

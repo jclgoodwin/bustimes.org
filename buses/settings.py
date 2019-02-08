@@ -236,9 +236,6 @@ if not DEBUG and 'test' not in sys.argv:
         'TAGS': {'env': 'production'},
     }
 
-STREETVIEW_KEY = os.environ.get('STREETVIEW_KEY')
-STREETVIEW_SECRET = os.environ.get('STREETVIEW_SECRET')
-
 TRANSPORTAPI = {
    'app_id': os.environ.get('TRANSPORTAPI_APP_ID'),
    'app_key': os.environ.get('TRANSPORTAPI_APP_KEY')
@@ -255,8 +252,6 @@ TFWM = {
 
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 TNDS_DIR = os.path.join(DATA_DIR, 'TNDS')
-
-VIGLINK_KEY = '63dc39b879576a255e9dcee17b6c1929'
 
 AKISMET_API_KEY = os.environ.get('AKISMET_API_KEY')
 AKISMET_SITE_URL = 'https://bustimes.org'

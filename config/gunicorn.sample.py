@@ -12,8 +12,6 @@ raw_env = [
     "DB_PASS=",
     "SECRET_KEY=",
     "SENTRY_DSN=",
-    "STREETVIEW_KEY=",
-    "STREETVIEW_SECRET=",
     "TRANSPORTAPI_APP_ID=",
     "TRANSPORTAPI_APP_KEY=",
 ]

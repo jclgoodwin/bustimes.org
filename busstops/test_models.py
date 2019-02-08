@@ -140,14 +140,3 @@ class StopPointTests(TestCase):
         self.assertEqual('Cardiff Airport', self.cardiff_airport_stop.get_qualified_name())
         self.cardiff_airport_stop.indicator = 'Stop M'
         self.assertEqual('Cardiff Airport (Stop M)', self.cardiff_airport_stop.get_qualified_name())
-
-    @override_settings(STREETVIEW_KEY='-234457789999=AaaaaAbBbcDde',
-                       STREETVIEW_SECRET='EeefgHIiKKLlmNnOOPQQQqqrrRRrSUUuwXyyYzZz')
-    def test_streetview_url(self):
-        self.ballyblack_church.latlong = Point(0, 0)
-        streetview_url = self.ballyblack_church.get_streetview_url()
-        self.assertEqual(streetview_url,
-                         'https://maps.googleapis.com/maps/api/streetview?si' +
-                         'ze=480x360&location=0.0%2C0.0&heading=None&key=-23' +
-                         '4457789999%3DAaaaaAbBbcDde&signature=ulHDbCRCGIPRl' +
-                         '0NQN1yp2FvLE4M=')

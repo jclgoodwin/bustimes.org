@@ -262,7 +262,6 @@ class ViewsTests(TestCase):
         self.assertContains(response, 'North')
         self.assertContains(response, 'Norfolk')
         self.assertContains(response, 'Melton Constable, opposite Bus Shelter')
-        self.assertIn('heading=270', response.context_data['object'].get_streetview_url())
         self.assertContains(response, '/static/js/map.')
 
     def test_stop_json(self):
@@ -292,7 +291,7 @@ class ViewsTests(TestCase):
             self.assertContains(response, '&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#97;&#105;' +
                                 '&#110;&#115;&#108;&#101;&#121;&#64;&#101;&#120;&#97;&#109;' +
                                 '&#112;&#108;&#101;&#46;&#99;&#111;&#109;')
-            self.assertContains(response, 'viglink')
+            self.assertContains(response, 'http://www.ouibus.com')
             self.assertContains(response, '@dril on Twitter')
             self.assertContains(response, 'Mind your head')  # Note
 

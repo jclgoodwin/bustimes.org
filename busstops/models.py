@@ -17,7 +17,6 @@ from django.utils.functional import cached_property
 from django.utils.text import slugify
 from multigtfs.models import Route
 from timetables import txc, northern_ireland, gtfs
-from .utils import sign_url
 
 
 TIMING_STATUS_CHOICES = (
@@ -331,20 +330,6 @@ class StopPoint(models.Model):
 
     def get_long_name(self):
         return self.get_qualified_name(short=False)
-
-    def get_streetview_url(self):
-        if self.latlong:
-            url = 'https://maps.googleapis.com/maps/api/streetview?%s' % urlencode(
-                (
-                    ('size', '480x360'),
-                    ('location', '%s,%s' % (self.latlong.y, self.latlong.x)),
-                    ('heading', self.get_heading()),
-                    ('key', settings.STREETVIEW_KEY)
-                )
-            )
-            if settings.STREETVIEW_SECRET:
-                return sign_url(url, settings.STREETVIEW_SECRET)
-            return url
 
     def get_region(self):
         if self.admin_area_id:
