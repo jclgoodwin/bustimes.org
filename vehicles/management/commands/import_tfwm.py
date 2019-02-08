@@ -64,7 +64,7 @@ class Command(ImportLiveVehiclesCommand):
                 }, operator__in=('CLAC', 'DIAM', 'FSMR'), code=vehicle_code)
 
                 return journey, vehicle_created
-            except VehicleJourney.MultipleObjectsReturned:
+            except Vehicle.MultipleObjectsReturned:
                 pass
         elif vehicle_code.startswith('BUS_'):
             operator = 'SLBS'
