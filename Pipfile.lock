@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "19912dffeda3aa690745359ffb7d8418551f5e27a42a36b35ae8b938c39d39f0"
+            "sha256": "9411aca56847a5544d8278c2e83aaf45e1c6a1ded6139f0eede0fb41ac56e014"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -85,9 +85,12 @@
             "ref": "ad9ffbc8950f41f71efb3501bc545a588c8991a4"
         },
         "django-autoslug": {
-            "editable": true,
-            "git": "https://github.com/justinmayer/django-autoslug",
-            "ref": "b3991daddf5a476a829b48c28afad4ae08a18179"
+            "hashes": [
+                "sha256:08ba143ce5914d2689972c0adaea56abc37fb7175e9f6939fe0e3ac26374e7a0",
+                "sha256:aece8613eb173854462c656e91d81aa7ddfacaa49fb500d549f2143d1ce48721"
+            ],
+            "index": "pypi",
+            "version": "==1.9.4"
         },
         "django-email-obfuscator": {
             "hashes": [

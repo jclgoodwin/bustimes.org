@@ -25,7 +25,7 @@ python-dateutil = "*"
 "psycopg2-binary" = "*"
 requests-html = "*"
 django-antispam = {git = "https://github.com/mixkorshun/django-antispam",editable = true}
-django-autoslug = {git = "https://github.com/justinmayer/django-autoslug",editable = true}
+django-autoslug = "*"
 websockets = "*"
 isodate = "*"
 webcolors = "*"
