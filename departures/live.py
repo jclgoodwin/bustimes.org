@@ -432,6 +432,9 @@ class SiriSmDepartures(Departures):
             destination = element.find('s:DestinationDisplay', self.ns)
         if destination is not None:
             destination = destination.text
+        operator = element.find('s:OperatorRef', self.ns)
+        if operator is not None:
+            operator = operator.text
         service = self.get_service(line_name)
         if line_ref is not None and type(service) is Service:
             scheme = self.source.name
@@ -439,7 +442,7 @@ class SiriSmDepartures(Departures):
                 if scheme != 'NCC Hogia':
                     scheme += ' SIRI'
                 line_ref = line_ref.text
-                if line_ref and line_ref not in self.line_refs:
+                if line_ref and line_ref not in self.line_refs and operator_ref != 'TD':
                     ServiceCode.objects.update_or_create({'code': line_ref}, service=service, scheme=scheme)
                     self.line_refs.add(line_ref)
 
