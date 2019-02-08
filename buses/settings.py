@@ -253,8 +253,6 @@ TFWM = {
 
 }
 
-SINGAPORE_KEY = os.environ.get('SINGAPORE_KEY')
-
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 TNDS_DIR = os.path.join(DATA_DIR, 'TNDS')
 

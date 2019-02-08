@@ -9,7 +9,7 @@ import logging
 import xml.etree.cElementTree as ET
 from django.conf import settings
 from django.utils.timezone import is_naive, make_naive
-from busstops.models import Operator, Service, StopPoint, ServiceCode
+from busstops.models import Operator, Service, ServiceCode
 
 
 logger = logging.getLogger(__name__)
@@ -119,43 +119,6 @@ class DublinDepartures(Departures):
             'destination': item.find('MonitoredVehicleJourney_DestinationName').text,
             'service': self.get_service(item.find('MonitoredVehicleJourney_PublishedLineName').text)
         }
-
-
-class SingaporeDepartures(Departures):
-    def get_request_url(self):
-        return 'http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2'
-
-    def get_request_params(self):
-        return {
-            'BusStopCode': self.stop.atco_code[3:]
-        }
-
-    def get_request_headers(self):
-        return {
-            'AccountKey': settings.SINGAPORE_KEY
-        }
-
-    def departures_from_response(self, response):
-        departures = []
-        for service_response in response.json()['Services']:
-            service = self.get_service(service_response['ServiceNo'])
-            key = 'NextBus'
-            i = 1
-            while key in service_response:
-                item = service_response[key]
-                if not item['EstimatedArrival']:
-                    break
-                departures.append({
-                    'live': ciso8601.parse_datetime(item['EstimatedArrival']),
-                    'destination': item['DestinationCode'],
-                    'service': service
-                })
-                i += 1
-                key = 'NextBus{}'.format(i)
-        destinations = StopPoint.objects.in_bulk(['sg-' + departure['destination'] for departure in departures])
-        for departure in departures:
-            departure['destination'] = destinations.get('sg-' + departure['destination'], '')
-        return departures
 
 
 class JerseyDepartures(Departures):
@@ -480,29 +443,6 @@ class SiriSmDepartures(Departures):
         return SESSION.post(self.source.url, data=request_xml, headers=headers, timeout=15)
 
 
-class LambdaDepartures(Departures):
-    def get_request_url(self):
-        return 'https://api.bustim.es/' + self.stop.atco_code
-
-    def get_row(self, item):
-        row = {
-            'time': parse_datetime(item['aimed_time']),
-            'live': item['expected_time'],
-            'service': self.get_service(item['service']),
-            'destination': item['destination_name']
-        }
-        if row['live']:
-            row['live'] = parse_datetime(row['live'])
-        if self.stop.atco_code[:3] == '290':
-            row['line'] = item.get('line')
-        return row
-
-    def departures_from_response(self, res):
-        json = res.json()
-        if 'departures' in json:
-            return [self.get_row(item) for item in json['departures'] if item['aimed_time']]
-
-
 def get_max_age(departures, now):
     """Given a list of departures and the current datetime, returns an
     appropriate max_age in seconds (for use in a cache-control header)
@@ -655,12 +595,6 @@ def get_departures(stop, services, bot=False):
             'today': datetime.date.today(),
         }, 60)
 
-    # Singapore
-    if stop.atco_code[:3] == 'sg-':
-        return ({
-            'departures': SingaporeDepartures(stop, services).get_departures()
-        }, 60)
-
     # Jersey
     if stop.atco_code[:3] == 'je-':
         return ({
@@ -700,15 +634,7 @@ def get_departures(stop, services, bot=False):
                 live_rows = SiriSmDepartures(source, stop, services).get_departures()
             elif stop.atco_code[:3] == '430':
                 live_rows = WestMidlandsDepartures(stop, services).get_departures()
-            elif stop.atco_code[:3] in {
-                '639', '630', '649', '607', '018', '020', '129', '038', '149', '010', '040', '050', '021',
-                '110', '120', '640', '618', '611', '612', '140', '150', '609', '160', '180', '190', '670',
-                '269', '260', '270', '029', '049', '290', '300', '617', '228', '616', '227', '019', '340', '648',
-                '059', '128', '199', '039', '614', '037', '198', '619', '158', '017', '615', '390', '400', '159',
-                '119', '030', '608', '440', '460', '036', '035', '200'
-            } and not all(operator.name.startswith('Stagecoach') for operator in operators):
-                live_rows = LambdaDepartures(stop, services).get_departures()
-            elif any(operator.name in {'Coastliner', 'The Blackburn Bus Company', 'Rosso'} for operator in operators):
+            elif any(operator.id in {'YCST', 'HRGT', 'KDTR'} for operator in operators):
                 live_rows = PolarBearDepartures('transdevblazefield', stop, services).get_departures()
 
             if live_rows:

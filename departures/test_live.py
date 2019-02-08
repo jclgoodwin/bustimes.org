@@ -51,7 +51,6 @@ class LiveDeparturesTest(TestCase):
         stagecoach_operator = Operator.objects.create(id='SCOX',
                                                       name='Stagecoach Oxenholme',
                                                       region_id='W')
-        non_stagecoach_operator = Operator.objects.create(id='AINS', name="Ainsley's Chariots", region_id='W')
         cls.stagecoach_service = Service.objects.create(service_code='15', line_name='15',
                                                         region_id='W', date='2017-01-01')
         cls.stagecoach_service.operator.add(stagecoach_operator)
@@ -71,20 +70,6 @@ class LiveDeparturesTest(TestCase):
             StopUsageUsage(journey=stagecoach_journey, order=0, datetime=datetime, stop=cls.stagecoach_stop)
             for datetime in ['2017-03-14T20:23:00Z', '2017-03-14T21:23:00Z', '2017-03-28 18:53:00+01:00']
         ])
-
-        cls.norfolk_stop = StopPoint.objects.create(atco_code='2900M115', active=True, locality_centre=False)
-        norfolk_service = Service.objects.create(service_code='9', line_name='9', region_id='W', date='2018-01-04',
-                                                 current=True)
-        norfolk_service.operator.add(non_stagecoach_operator)
-        StopUsage.objects.create(stop=cls.norfolk_stop, service=norfolk_service, order=1)
-        norfolk_journey = Journey.objects.create(datetime='2018-01-04T10:00:00+00:00', service_id='9',
-                                                 destination=cls.yorkshire_stop)
-        StopUsageUsage.objects.create(journey=norfolk_journey, order=0, datetime='2018-01-04T10:02:00+00:00',
-                                      stop=cls.norfolk_stop)
-
-        cls.singapore_stop = StopPoint.objects.create(atco_code='sg-53341', active=True, locality_centre=False)
-        StopPoint.objects.create(atco_code='sg-55509', common_name='Yio Chu Kang Interchange', active=True,
-                                 locality_centre=False)
 
         cls.jersey_stop = StopPoint.objects.create(atco_code='je-2734', active=True, locality_centre=False)
 
@@ -373,34 +358,6 @@ class LiveDeparturesTest(TestCase):
                 </tbody></table>
             </div>
         """, html=True)
-
-    def test_lambda(self):
-        with vcr.use_cassette('data/vcr/lambda_manchester.yaml'):
-            departures = live.LambdaDepartures(StopPoint(atco_code='1800SB04611'), ()).get_departures()
-        self.assertEqual(str(departures[0]['time']), '2018-05-14 19:47:00+01:00')
-
-    def test_blended_lambda(self):
-        with freeze_time('4 Jan 2018 10:02'):
-            with vcr.use_cassette('data/vcr/lambda_norfolk.yaml'):
-                response = self.client.get(self.norfolk_stop.get_absolute_url())
-        self.assertContains(
-            response, '<tr><td><a href=/services/9>9</a></td><td>Victoria Bar</td><td>10:03⚡</td></tr>',
-            html=True
-        )
-        self.assertEqual(str(response.context_data['departures'][0]['live']), '2018-01-04 10:03:21+00:00')
-
-        with freeze_time('4 Jan 2018 10:02:01'):
-            with vcr.use_cassette('data/vcr/lambda_norfolk.yaml'):
-                response = self.client.get(self.norfolk_stop.get_absolute_url())
-        # Live departures have (unfortunately) not been fetched, because the only departure is (barely) in the past
-        self.assertEqual(response.context_data['departures'], [])
-
-    def test_singapore(self):
-        with vcr.use_cassette('data/vcr/singapore_live.yaml'):
-            response = self.client.get(self.singapore_stop.get_absolute_url())
-        self.assertEqual(len(response.context_data['departures']), 9)
-        self.assertEqual(response.context_data['departures'][0]['service'], '162M')
-        self.assertEqual(str(response.context_data['departures'][0]['destination']), 'Yio Chu Kang Interchange')
 
     def test_jersey(self):
         with vcr.use_cassette('data/vcr/jersey_live.yaml'):

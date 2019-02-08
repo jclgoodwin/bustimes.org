@@ -200,10 +200,6 @@ class PlaceDetailView(DetailView):
 
         context['places'] = self.model.objects.filter(polygon__coveredby=self.object.polygon).exclude(id=self.object.id)
 
-        if 'Singapore' in self.object.source.name:
-            breadcrumb = list(self.model.objects.filter(polygon__covers=self.object.polygon).exclude(id=self.object.id))
-            context['breadcrumb'] = [Region.objects.get(id='SG')] + breadcrumb
-
         if not context['places']:
             context['stops'] = StopPoint.objects.filter(latlong__coveredby=self.object.polygon)
 

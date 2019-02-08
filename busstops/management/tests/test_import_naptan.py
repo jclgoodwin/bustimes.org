@@ -52,7 +52,7 @@ class UpdateNaptanTest(TestCase):
         os.mkdir(naptan_dir)
         zipfile_path = os.path.join(naptan_dir, 'naptan.zip')
 
-        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan.yml'), record_mode='new_episodes'):
+        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan.yml')):
 
             self.command.handle()
 
