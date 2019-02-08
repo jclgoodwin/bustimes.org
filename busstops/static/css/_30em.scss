@@ -32,6 +32,7 @@ header {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
             display: block;
+            float: right; // work around transient Chrome bug?
             margin: 0;
             padding: .25em .5em;
         }
