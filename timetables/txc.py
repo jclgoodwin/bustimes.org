@@ -542,19 +542,6 @@ class VehicleJourney(object):
 
         self.start_deadrun, self.end_deadrun = get_deadruns(element)
 
-        service_ref = element.find('txc:ServiceRef', NS)
-        if service_ref is not None:
-            # X29 - Fakenham - Norwich
-            if service_ref.text == '21-X29-A-y08-1':
-                if self.departure_time == datetime.time(6, 8):
-                    self.departure_time = datetime.time(6, 15)
-                elif self.departure_time == datetime.time(6, 16):
-                    self.departure_time = datetime.time(6, 38)
-                elif self.departure_time == datetime.time(6, 58):
-                    self.departure_time = datetime.time(7, 3)
-                elif self.departure_time == datetime.time(16, 20):
-                    self.departure_time = datetime.time(16, 30)
-
         self.operator = element.find('txc:OperatorRef', NS)
         if self.operator is not None:
             self.operator = self.operator.text
@@ -570,13 +557,9 @@ class VehicleJourney(object):
             }
 
     def skip_stopusage(self, stopusage, time):
-        if self.code.startswith('VJ_45-16A-_-y10-2') and stopusage.timingstatus == 'OTH':
-            return True
-
         # Ebley Coaches
-        if self.private_code and self.private_code.startswith('014MFMHA') and time == datetime.time(6, 40):
-            if stopusage.sequencenumber == 12:
-                return True
+        if self.code.startswith('VJ_45-16A-_-y10-') and stopusage.timingstatus == 'OTH':
+            return True
 
         # Shiel Buses ferry terminal
         if stopusage.stop.atco_code == '670088829' and time.hour == 11:
@@ -941,22 +924,6 @@ class Timetable(object):
                 for element in journeys_element
             )
         }
-
-        if self.service_code == '21-584-_-y08-1':  # 584 - Diss - Pulham Market
-            for journey in journeys.values():
-                if journey.departure_time == datetime.time(9, 50):
-                    journey.departure_time = datetime.time(9, 20)
-        elif self.service_code == '5-42A-_-y08-1':
-            bad_journey = None
-            good_pattern = None
-            for journey in journeys.values():
-                if journey.journeypattern.grouping.direction == 'inbound':
-                    if journey.departure_time == datetime.time(8, 55):
-                        good_pattern = journey.journeypattern
-                    elif journey.departure_time == datetime.time(9, 55):
-                        bad_journey = journey
-            if bad_journey and good_pattern:
-                bad_journey.journeypattern = good_pattern
 
         # some journeys did not have a direct reference to a journeypattern,
         # but rather a reference to another journey with a reference to a journeypattern
