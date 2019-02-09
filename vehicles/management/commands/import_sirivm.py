@@ -93,7 +93,9 @@ class Command(ImportLiveVehiclesCommand):
         service = mvj.find('siri:LineRef', NS).text
 
         try:
-            if operator_ref:
+            if operator_ref == 'TD':  # Xplore Dundee
+                return None, None
+            elif operator_ref:
                 operator_options = self.operators.get(operator_ref)
                 if operator_options:
                     operator = Operator.objects.get(id=operator_options[0])
