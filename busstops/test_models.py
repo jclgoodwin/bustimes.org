@@ -1,5 +1,4 @@
-from django.test import TestCase, override_settings
-from django.contrib.gis.geos import Point
+from django.test import TestCase
 from .models import (
     Region, AdminArea, District, Locality, Operator, Service, StopPoint, ServiceCode
 )
