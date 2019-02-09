@@ -172,7 +172,8 @@ class LiveDeparturesTest(TestCase):
     @freeze_time('14 Mar 2017 20:00')
     def test_stagecoach(self):
         with vcr.use_cassette('data/vcr/stagecoach.yaml'):
-            res = self.client.get('/stops/64801092')
+            with self.assertNumQueries(5):
+                res = self.client.get('/stops/64801092')
         self.assertContains(res, '<td><a href=/services/15>15</a></td>', html=True)
         self.assertContains(res, '<td>Hillend</td>')
         self.assertEqual(res.context_data['departures'][0]['service'], self.stagecoach_service)
@@ -185,18 +186,17 @@ class LiveDeparturesTest(TestCase):
     @freeze_time('28 Mar 2017 17:00')
     def test_stagecoach_timezone(self):
         with vcr.use_cassette('data/vcr/stagecoach_timezone.yaml'):
-            res = self.client.get('/stops/64801092')
+            with self.assertNumQueries(5):
+                res = self.client.get('/stops/64801092')
         self.assertEqual(res.context_data['departures'][0]['destination'].common_name, 'Wood Street')
         self.assertEqual(res.context_data['departures'][1]['destination'], 'Hillend')
-        # self.assertEqual(res.context_data['departures'][2]['destination'], 'Perth')
+        self.assertEqual(res.context_data['departures'][2]['destination'], 'Hillend')
         self.assertEqual(res.context_data['departures'][0]['service'].line_name, '15')
         self.assertEqual(res.context_data['departures'][1]['service'], '7')
-        # self.assertEqual(res.context_data['departures'][2]['service'].line_name, '15')
-        # self.assertEqual(str(res.context_data['departures'][0]['time']), '2017-03-28 18:53:00+01:00')
-        # self.assertEqual(str(res.context_data['departures'][1]['time']), '2017-03-28 19:08:00+01:00')
-        # self.assertEqual(str(res.context_data['departures'][1]['live']), '2017-03-28 19:08:25+01:00')
-        # self.assertEqual(str(res.context_data['departures'][2]['time']), '2017-03-28 19:20:00+01:00')
-        # self.assertEqual(str(res.context_data['departures'][2]['live']), '2017-03-28 19:24:08+01:00')
+        self.assertEqual(res.context_data['departures'][4]['service'].line_name, '15')
+        self.assertEqual(str(res.context_data['departures'][0]['time']), '2017-03-28 18:53:00+01:00')
+        self.assertEqual(str(res.context_data['departures'][2]['time']), '2017-03-28 19:08:00+01:00')
+        self.assertEqual(str(res.context_data['departures'][2]['live']), '2017-03-28 19:08:25+01:00')
 
     def test_transportapi(self):
         """Test the get_row and other methods for Transport API departures
@@ -389,7 +389,8 @@ class LiveDeparturesTest(TestCase):
 
     def test_jersey(self):
         with vcr.use_cassette('data/vcr/jersey_live.yaml'):
-            response = self.client.get(self.jersey_stop.get_absolute_url())
+            with self.assertNumQueries(4):
+                response = self.client.get(self.jersey_stop.get_absolute_url())
         self.assertEqual(len(response.context_data['departures']), 9)
         self.assertEqual(response.context_data['departures'][0]['service'], '16')
         self.assertEqual(str(response.context_data['departures'][0]['destination']), 'St Helier')
@@ -397,7 +398,8 @@ class LiveDeparturesTest(TestCase):
     def test_worcestershire(self):
         with freeze_time('Sat Feb 09 10:45:45 GMT 2019'):
             with vcr.use_cassette('data/vcr/worcester.yaml'):
-                response = self.client.get(self.worcester_stop.get_absolute_url())
+                with self.assertNumQueries(5):
+                    response = self.client.get(self.worcester_stop.get_absolute_url())
         self.assertContains(response, """
             <tr>
                 <td>

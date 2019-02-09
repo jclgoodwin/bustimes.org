@@ -9,7 +9,7 @@ import logging
 import xml.etree.cElementTree as ET
 from django.conf import settings
 from django.utils.timezone import is_naive, make_naive
-from busstops.models import Operator, Service, ServiceCode
+from busstops.models import Service, ServiceCode
 
 
 logger = logging.getLogger(__name__)
@@ -50,7 +50,7 @@ class Departures(object):
         return {
             'params': self.get_request_params(),
             'headers': self.get_request_headers(),
-            'timeout': 10
+            'timeout': 5
         }
 
     def get_response(self):
@@ -104,7 +104,7 @@ class DublinDepartures(Departures):
                 </Body>
             </Envelope>
         """.format(stop_id)
-        return SESSION.post(self.url, headers=self.headers, data=data, timeout=5)
+        return SESSION.post(self.url, headers=self.headers, data=data, timeout=2)
 
     def departures_from_response(self, response):
         items = ET.fromstring(response.text)
@@ -228,7 +228,7 @@ class AcisHorizonDepartures(Departures):
                 </s:Body>
             </s:Envelope>
         """.format(self.stop.pk)
-        return SESSION.post(self.url, headers=self.headers, data=data, timeout=5)
+        return SESSION.post(self.url, headers=self.headers, data=data, timeout=2)
 
     def departures_from_response(self, res):
         items = ET.fromstring(res.text)
@@ -440,7 +440,7 @@ class SiriSmDepartures(Departures):
             </Siri>
         """.format(timestamp, username, timestamp, self.stop.atco_code)
         headers = {'Content-Type': 'application/xml'}
-        return SESSION.post(self.source.url, data=request_xml, headers=headers, timeout=15)
+        return SESSION.post(self.source.url, data=request_xml, headers=headers, timeout=5)
 
 
 def get_max_age(departures, now):
@@ -498,7 +498,7 @@ def add_stagecoach_departures(stop, services_dict, departures):
                 aimed, expected = [parse_datetime(time)
                                    for time in (monitor['aimedDepartureTime'], monitor['expectedDepartureTime'])]
                 line = monitor['lineRef']
-                if aimed >= departures[0]['time']:
+                if departures and aimed >= departures[0]['time']:
                     replaced = False
                     for departure in departures:
                         if aimed == departure['time']:
@@ -613,18 +613,15 @@ def get_departures(stop, services, bot=False):
 
     if not bot and (not departures or (departures[0]['time'] - now) < one_hour or one_hour_ago.exists()):
 
-        operators = Operator.objects.filter(service__stops=stop,
-                                            service__current=True).distinct()
-
-        # Stagecoach
-        if departures:
-            if any(operator.name.startswith('Stagecoach') for operator in operators):
-                departures = add_stagecoach_departures(stop, services_dict, departures)
+        operators = set()
+        for service in services:
+            for operator in service.operator.all():
+                operators.add(operator)
 
         live_rows = None
 
         # Belfast
-        if any(operator.id == 'MET' or operator.id == 'GDR' for operator in operators):
+        if stop.atco_code[0] == '7' and any(operator.id == 'MET' or operator.id == 'GDR' for operator in operators):
             live_rows = AcisHorizonDepartures(stop, services).get_departures()
             if live_rows:
                 blend(departures, live_rows)
@@ -636,6 +633,14 @@ def get_departures(stop, services, bot=False):
                 live_rows = WestMidlandsDepartures(stop, services).get_departures()
             elif any(operator.id in {'YCST', 'HRGT', 'KDTR'} for operator in operators):
                 live_rows = PolarBearDepartures('transdevblazefield', stop, services).get_departures()
+
+            if any(operator.name[:11] == 'Stagecoach ' for operator in operators):
+                if not any(
+                    row.get('live') and any(
+                        operator.name[:11] == 'Stagecoach ' for operator in row['service'].operator.all()
+                    ) for row in departures
+                ):
+                    departures = add_stagecoach_departures(stop, services_dict, departures)
 
             if live_rows:
                 blend(departures, live_rows)

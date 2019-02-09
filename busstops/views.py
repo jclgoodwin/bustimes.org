@@ -322,10 +322,8 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['services'] = sorted(
-            self.object.service_set.filter(current=True).defer('geometry').prefetch_related('operator').distinct(),
-            key=Service.get_order
-        )
+        services = self.object.service_set.filter(current=True).defer('geometry')
+        context['services'] = sorted(services.order_by().prefetch_related('operator').distinct(), key=Service.get_order)
 
         if not (self.object.active or context['services']):
             raise Http404('Sorry, it looks like no services currently stop at {}'.format(self.object))
@@ -370,8 +368,9 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
             nearby = StopPoint.objects.filter(common_name__iexact=self.object.common_name,
                                               atco_code__startswith=self.object.atco_code[:3])
         if nearby is not None:
+            services = Service.objects.filter(current=True).defer('geometry').order_by().distinct()
             context['nearby'] = nearby.filter(active=True).exclude(pk=self.object.pk).prefetch_related(
-                Prefetch('service_set', queryset=Service.objects.filter(current=True).distinct().defer('geometry'))
+                Prefetch('service_set', queryset=services)
             ).defer('osm')
 
         context['breadcrumb'] = [crumb for crumb in (
