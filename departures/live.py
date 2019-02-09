@@ -560,7 +560,7 @@ def blend(departures, live_rows, stop=None):
                     row['live'] = live_row['live']
                 replaced = True
                 break
-        if not replaced:
+        if not replaced and (live_row.get('live') or live_row['time']):
             departures.append(live_row)
             added = True
     if added and all(can_sort(departure) for departure in departures):

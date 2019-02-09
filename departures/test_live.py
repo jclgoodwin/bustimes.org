@@ -6,7 +6,9 @@ from datetime import date, time, datetime, timezone
 from django.test import TestCase
 from django.shortcuts import render
 from freezegun import freeze_time
-from busstops.models import StopPoint, Service, Region, Operator, StopUsage, Journey, StopUsageUsage
+from busstops.models import (
+    StopPoint, Service, Region, Operator, StopUsage, Journey, StopUsageUsage, AdminArea, SIRISource
+)
 from . import live
 
 
@@ -23,6 +25,8 @@ class LiveDeparturesTest(TestCase):
     """
     @classmethod
     def setUpTestData(cls):
+        cls.region = Region.objects.create(id='W', name='Wales')
+
         cls.london_stop = StopPoint.objects.create(
             pk='490014721F',
             common_name='Wilmot Street',
@@ -45,7 +49,26 @@ class LiveDeparturesTest(TestCase):
             active=True
         )
 
-        cls.region = Region.objects.create(id='W', name='Wales')
+        admin_area = AdminArea.objects.create(
+            pk=109,
+            atco_code=200,
+            name='Worcestershire',
+            region=cls.region
+        )
+        siri_source = SIRISource.objects.create(
+            name='Worcestershire',
+            url='http://worcestershire-rt-http.trapezenovus.co.uk:8080',
+            requestor_ref='Traveline_To_Trapeze',
+        )
+        siri_source.admin_areas.add(admin_area)
+        cls.worcester_stop = StopPoint.objects.create(
+            pk='2000G000106',
+            common_name='Crowngate Bus Station',
+            locality_centre=False,
+            active=True,
+            admin_area=admin_area
+        )
+
         cls.stagecoach_stop = StopPoint.objects.create(atco_code='64801092', active=True,
                                                        locality_centre=False)
         stagecoach_operator = Operator.objects.create(id='SCOX',
@@ -72,6 +95,11 @@ class LiveDeparturesTest(TestCase):
         ])
 
         cls.jersey_stop = StopPoint.objects.create(atco_code='je-2734', active=True, locality_centre=False)
+
+        worcester_journey = Journey.objects.create(datetime='2019-02-09T10:06:00Z', destination=cls.worcester_stop,
+                                                   service=cls.stagecoach_service)
+        StopUsageUsage.objects.create(journey=worcester_journey, order=0, datetime='2019-02-09T10:54:00Z',
+                                      stop=cls.worcester_stop)
 
     def test_abstract(self):
         departures = live.Departures(None, ())
@@ -365,3 +393,19 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(len(response.context_data['departures']), 9)
         self.assertEqual(response.context_data['departures'][0]['service'], '16')
         self.assertEqual(str(response.context_data['departures'][0]['destination']), 'St Helier')
+
+    def test_worcestershire(self):
+        with freeze_time('Sat Feb 09 10:45:45 GMT 2019'):
+            with vcr.use_cassette('data/vcr/worcester.yaml'):
+                response = self.client.get(self.worcester_stop.get_absolute_url())
+        self.assertContains(response, """
+            <tr>
+                <td>
+                    <a href=/services/15>15</a>
+                </td>
+                <td>Crowngate Bus Station</td>
+                <td>10:54</td>
+            </tr>
+        """, html=True)
+        self.assertContains(response, 'EVESHAM Bus Station')
+        self.assertNotContains(response, 'WORCESTER')
