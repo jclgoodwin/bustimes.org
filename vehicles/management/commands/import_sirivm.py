@@ -43,10 +43,11 @@ class Command(ImportLiveVehiclesCommand):
         'SCHI': ('SINV', 'SCOR'),
         'SCFI': ('SCFI', 'SSPH', 'SSTY'),
         'SCSO': ('SCHM', 'SCCO', 'SMSO', 'SCHW'),
+        'SCNH': ('SCNH', 'SCWW'),
         'CBLE': ('CBBH', 'CBNL'),
         'RED': ('RRTR', 'RLNE'),
         'SCCM': ('SCCM', 'SCPB', 'SCHU', 'SCBD'),
-        'ATS': ('ARBB', 'ARHE'),
+        'ATS': ('ARBB', 'ARHE', 'GLAR'),
     }
 
     def get_response(self, url, xml):
@@ -138,24 +139,14 @@ class Command(ImportLiveVehiclesCommand):
         if destination is not None:
             journey.destination = destination.text
 
-        # TODO: use ServiceCodes for this
-        if service == 'QC':
-            service = 'QuayConnect'
-        elif service == 'FLCN':
-            service = 'FALCON'
-        elif service is None and operator_ref == 'TG':
+        if service is None and operator_ref == 'TG':
             service = 'Colchester Park & Ride'
-        elif service == 'P&R' and operator_ref == 'AKE':
-            service = 'Colchester Park & Ride'
-        elif operator_ref == 'FE':
-            if service == '700':
-                service = 'Sandon Park & Ride'
-            elif service == '701':
-                service = 'Chelmsford Park & Ride'
         elif service == 'm1' and operator_ref == 'FB':
             operator = Operator.objects.get(pk='NCTP')
 
-        services = Service.objects.filter(line_name__iexact=service, current=True)
+        services = Service.objects.filter(current=True)
+        services = services.filter(Q(line_name__iexact=service) | Q(servicecode__scheme__endswith=' SIRI',
+                                                                    servicecode__code=service))
         if operator_options:
             services = services.filter(operator__in=operator_options).distinct()
         elif operator:
@@ -189,7 +180,7 @@ class Command(ImportLiveVehiclesCommand):
             print(e, operator_ref, service, services, get_latlong(mvj))
 
         if operator_options and operator and journey.service and operator.id == operator_options[0]:
-            if operator.id != 'RBUS':
+            if operator.id != 'RBUS' and operator.id != 'ARBB':
                 try:
                     operator = journey.service.operator.get()
                     if journey.vehicle.operator_id != operator.id:
