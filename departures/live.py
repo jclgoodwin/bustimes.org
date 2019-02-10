@@ -71,9 +71,8 @@ class Departures(object):
                 'PR4': 'babraham road park & ride',
                 'PR5': 'milton road park & ride',
                 'U': 'universal u',
-                'PULS': 'pulse',
+                'Puls': 'pulse',
                 'FLCN': 'falcon',
-                'ARRO': 'the sherwood arrow',
             }
             alternative = alternatives.get(line_name)
             if alternative and alternative in self.services:
@@ -652,11 +651,11 @@ def get_departures(stop, services, bot=False):
                 live_rows = PolarBearDepartures('transdevblazefield', stop, services).get_departures()
 
             if any(operator.name[:11] == 'Stagecoach ' for operator in operators):
-                if not any(
-                    row.get('live') and any(
+                if not (live_rows and any(
+                    row.get('live') and type(row['service']) is Service and any(
                         operator.name[:11] == 'Stagecoach ' for operator in row['service'].operator.all()
-                    ) for row in departures
-                ):
+                    ) for row in live_rows
+                )):
                     departures = add_stagecoach_departures(stop, services_dict, departures)
 
             if live_rows:
