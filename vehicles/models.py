@@ -87,8 +87,9 @@ class VehicleLocation(models.Model):
         text_colour = None
         if colours:
             parsed_colours = [html5_parse_simple_color(colour) for colour in colours]
-            lightness = sum(c.red + c.blue + c.green for c in parsed_colours) / len(parsed_colours) / 3
-            if lightness < 170:
+            luminences = [c.red * .299 + c.blue * .587 + c.green * .144 for c in parsed_colours]
+            luminence = sum(luminences) / len(luminences) / 255
+            if luminence < .5:
                 text_colour = '#fff'
         json = {
             'type': 'Feature',

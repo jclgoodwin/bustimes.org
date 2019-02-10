@@ -56,6 +56,7 @@
         } else {
             html = '<div class="arrow" style="' + getRotation(direction) + '"></div>';
         }
+        var className = 'bus';
         if (colours.length) {
             if (colours.length == 1) {
                 var background = colours[0];
@@ -79,11 +80,11 @@
                 }
                 background += ')';
             }
-            var style = 'background:' + background;
+            var style = 'background:' + background + ';';
+            className += ' coloured';
             if (textColour) {
-                style += ';border-color:' + textColour;
+                className += ' white-text';
             }
-            style += ';';
         } else {
             style = '';
         }
@@ -93,7 +94,7 @@
             direction -= 270;
         }
         style += getRotation(direction);
-        html += '<div class="bus" style="' + style + '"></div>';
+        html += '<div class="' + className + '" style="' + style + '"></div>';
         return L.divIcon({
             iconSize: [20, 20],
             html: html,
