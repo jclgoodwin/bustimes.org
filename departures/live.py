@@ -61,7 +61,24 @@ class Departures(object):
         (case-insensitively), or a line name string
         """
         if line_name:
-            return self.services.get(line_name.lower(), line_name)
+            line_name_lower = line_name.lower()
+            if line_name_lower in self.services:
+                return self.services[line_name_lower]
+            alternatives = {
+                'PR1': 'madingley road park & ride',
+                'PR2': 'newmarket road park & ride',
+                'PR3': 'trumpington park & ride',
+                'PR4': 'babraham road park & ride',
+                'PR5': 'milton road park & ride',
+                'U': 'universal u',
+                'PULS': 'pulse',
+                'FLCN': 'falcon',
+                'ARRO': 'the sherwood arrow',
+            }
+            alternative = alternatives.get(line_name)
+            if alternative and alternative in self.services:
+                return self.services[alternative]
+        return line_name
 
     def departures_from_response(self, res):
         """Given a Response object from the requests module,
