@@ -145,15 +145,9 @@ class Command(ImportLiveVehiclesCommand):
         elif service == 'm1' and operator_ref == 'FB':
             operator = Operator.objects.get(pk='NCTP')
 
-<<<<<<< Updated upstream
         services = Service.objects.filter(current=True)
         services = services.filter(Q(line_name__iexact=service) | Q(servicecode__scheme__endswith=' SIRI',
                                                                     servicecode__code=service))
-=======
-        services = Service.objects.filter(Q(line_name__iexact=service) | Q(servicecode__endswith=' SIRI',
-                                                                           servicecode__code=service))
-        services = Service.objects.filter(current=True)
->>>>>>> Stashed changes
         if operator_options:
             services = services.filter(operator__in=operator_options).distinct()
         elif operator:
