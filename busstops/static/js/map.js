@@ -90,7 +90,8 @@
 
         if (mainLocations.length) {
             var map = L.map('map', {
-                    tap: false
+                    tap: false,
+                    scrollWheelZoom: false,
                 }),
                 tileURL = 'https://maps.tilehosting.com/styles/basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png?key=RXrAQ6RZ239ClCzC8uZj',
                 setUpPopup = function (location, label) {

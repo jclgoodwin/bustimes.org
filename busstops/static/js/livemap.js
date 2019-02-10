@@ -9,7 +9,8 @@
     */
 
     var map = L.map('map', {
-            tap: false
+            tap: false,
+            scrollWheelZoom: false,
         }),
         tileURL = 'https://maps.tilehosting.com/styles/basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png?key=RXrAQ6RZ239ClCzC8uZj',
         polyline,
@@ -182,7 +183,7 @@
 
         if (!map._loaded && bounds.isValid()) {
             map.fitBounds(bounds, {
-                padding: [20, 20],
+                padding: [10, 10],
                 maxZoom: 12
             });
         }
