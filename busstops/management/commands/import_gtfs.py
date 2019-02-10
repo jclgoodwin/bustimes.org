@@ -8,15 +8,10 @@ from .import_ie_gtfs import download_if_modified
 
 
 class Command(BaseCommand):
-    urls = {
-        'hi': 'http://webapps.thebus.org/transitdata/Production/google_transit.zip',
-        'tfwm': 'http://api.tfwm.org.uk/gtfs/tfwm_gtfs.zip?' + urlencode(settings.TFWM),
-    }
-
-    @classmethod
-    def handle_collection(cls, collection):
+    @staticmethod
+    def handle_collection(collection, url):
         archive_name = 'google_transit_{}.zip'.format(collection)
-        modified = download_if_modified(archive_name, cls.urls[collection])
+        modified = download_if_modified(archive_name, url)
 
         if not modified:
             return
@@ -58,6 +53,7 @@ class Command(BaseCommand):
         parser.add_argument('--force', action='store_true', help='Import data even if the GTFS feeds haven\'t changed')
 
     def handle(self, *args, **options):
-        # hawaii
-        self.handle_collection('hi')
-        self.handle_collection('tfwm')
+        # Hawaii
+        self.handle_collection('hi', 'http://webapps.thebus.org/transitdata/Production/google_transit.zip')
+        # West Midlands
+        self.handle_collection('tfwm', 'http://api.tfwm.org.uk/gtfs/tfwm_gtfs.zip?' + urlencode(settings.TFWM))
