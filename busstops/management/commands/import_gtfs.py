@@ -1,3 +1,4 @@
+from os.path import join
 from datetime import date
 from urllib.parse import urlencode
 from django.core.management.base import BaseCommand
@@ -10,7 +11,7 @@ from .import_ie_gtfs import download_if_modified
 class Command(BaseCommand):
     @staticmethod
     def handle_collection(collection, url):
-        archive_name = 'google_transit_{}.zip'.format(collection)
+        archive_name = join(settings.DATA_DIR, 'google_transit_{}.zip'.format(collection))
         modified = download_if_modified(archive_name, url)
 
         if not modified:

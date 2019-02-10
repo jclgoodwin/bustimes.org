@@ -1,5 +1,6 @@
 import os
 import vcr
+from mock import patch
 from django.test import TestCase, override_settings
 from django.core.management import call_command
 from multigtfs.models import Feed
@@ -26,7 +27,11 @@ class ImportGTFSTest(TestCase):
         os.remove(path)
 
     def test_handle(self):
-        with vcr.use_cassette('data/vcr/import_gtfs.yaml'):
-            with override_settings(TFWM={'app_id': 'Mark', 'app_key': 'Mardell'}):
-                call_command('import_gtfs')
+        with patch('busstops.management.commands.import_gtfs.download_if_modified', return_value=False):
+            call_command('import_gtfs')
         self.assertFalse(Feed.objects.all())
+
+        with patch('busstops.management.commands.import_gtfs.download_if_modified', return_value=True):
+            with self.assertRaises(Exception):
+                call_command('import_gtfs')
+        self.assertTrue(Feed.objects.all())
