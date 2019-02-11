@@ -540,6 +540,10 @@ class VehicleJourney(object):
             element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
         ).time()
 
+        if self.private_code and self.private_code.startswith('set-6-168-A-y08-'):
+            if self.departure_time == datetime.time(12, 35):
+                self.departure_time = datetime.time(12, 30)
+
         self.start_deadrun, self.end_deadrun = get_deadruns(element)
 
         self.operator = element.find('txc:OperatorRef', NS)
@@ -683,8 +687,12 @@ class VehicleJourney(object):
             return True
         if timetable and timetable.service:
             region_id = timetable.service.region_id
-            if timetable.service.service_code == 'YWAO062' and self.departure_time == datetime.time(18, 15):
-                return False
+            if timetable.service.service_code == 'YWAO062':
+                if self.departure_time == datetime.time(18, 15):
+                    return False
+            elif timetable.service.service_code == 'set_6-168-A-y08':
+                if self.departure_time == datetime.time(11, 25):
+                    return False
         else:
             region_id = None
         if not self.operating_profile:
