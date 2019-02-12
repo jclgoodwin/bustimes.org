@@ -295,3 +295,14 @@ SWDC:
         EX7 9QH
 TRDU:
     twitter: XploreDundee
+RYCA:
+    url: https://ryedalect.org/regular-bus-routes/
+    address: |
+        2 Minster Court
+        Hugden Way
+        Norton
+        Malton
+        YO17 9NJ
+    phone: 01653 699 059
+    email: post@ryedalect.org
+    twitter: RyedaleCT
