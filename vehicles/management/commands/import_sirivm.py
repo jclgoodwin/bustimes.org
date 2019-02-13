@@ -45,7 +45,7 @@ class Command(ImportLiveVehiclesCommand):
         'SCSO': ('SCHM', 'SCCO', 'SMSO', 'SCHW'),
         'SCNH': ('SCNH', 'SCWW'),
         'CBLE': ('CBBH', 'CBNL'),
-        'RED': ('RRTR', 'RLNE'),
+        'RED': ('RRTR', 'RLNE', 'REDE'),
         'SCCM': ('SCCM', 'SCPB', 'SCHU', 'SCBD'),
         'ATS': ('ARBB', 'ARHE', 'GLAR'),
         'ASC': ('ARBB', 'GLAR'),
@@ -152,24 +152,25 @@ class Command(ImportLiveVehiclesCommand):
             services = services.filter(operator__in=operator_options).distinct()
         elif operator:
             services = services.filter(operator=operator)
+
+            origin_ref = mvj.find('siri:OriginRef', NS)
+            destination_ref = mvj.find('siri:DestinationRef', NS)
+            if origin_ref is not None:
+                origin_ref = origin_ref.text
+            if destination_ref is not None:
+                destination_ref = destination_ref.text
+
+            if origin_ref:
+                for queryset in (
+                    services.filter(stops=origin_ref).filter(journey__destination=destination_ref),
+                    services.filter(stops=origin_ref).filter(stops=destination_ref),
+                    services.filter(Q(stops=origin_ref) | Q(stops=destination_ref)),
+                ):
+                    if queryset.exists():
+                        services = queryset.distinct()
+                        break
         else:
             return journey, vehicle_created
-
-        origin_ref = mvj.find('siri:OriginRef', NS)
-        destination_ref = mvj.find('siri:DestinationRef', NS)
-        if origin_ref is not None:
-            origin_ref = origin_ref.text
-        if destination_ref is not None:
-            destination_ref = destination_ref.text
-
-        if origin_ref:
-            for queryset in (
-                services.filter(stops=origin_ref).filter(stops=destination_ref),
-                services.filter(Q(stops=origin_ref) | Q(stops=destination_ref)),
-            ):
-                if queryset.exists():
-                    services = queryset.distinct()
-                    break
 
         try:
             if operator and operator.id == 'TNXB' and service == '4':
