@@ -38,7 +38,7 @@ class Command(ImportLiveVehiclesCommand):
             # ('oxford', 51.752, -1.0577),
             # ('oxford', 51.752, -0.9),
             # ('gonortheast', 54.9783, -1.6178),
-            ('southernvectis', 50.6332, -1.2547),
+            # ('southernvectis', 50.6332, -1.2547),
         ):
             params = {'lat': lat, 'lng': lng}
             headers = {'opco': opco}
