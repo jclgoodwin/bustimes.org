@@ -38,7 +38,7 @@ class Command(ImportLiveVehiclesCommand):
             if '(' in vehicle:
                 operator_id = 'GECL'
             else:
-                operator_id = 'SESX'
+                operator_id = ('SESX', 'GECL')
                 if route_name == '2':
                     route_name = 'Breeze 2'
         elif operator_id == 'UNIB' or operator_id == 'UNO':
