@@ -90,7 +90,7 @@ class Command(ImportFromCSVCommand):
             'admin_area_id': row.get('AdministrativeAreaCode') or row['AdministrativeAreaRef']
         }
 
-        if row['Longitude'] and row['Longitude'] != '0':
+        if row['Longitude'] and float(row['Longitude']) != 0:
             defaults['latlong'] = Point(
                 float(row['Longitude']),
                 float(row['Latitude']),
