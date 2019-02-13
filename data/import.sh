@@ -168,7 +168,7 @@ for region in "${REGIONS[@]}"; do
     if [[ $region_old != $region_new ]]; then
         s3cmd put "$region.zip" "s3://bustimes-backup/$region-$date.zip" &
         updated_services=1
-        ../../../manage.py import_services "$region.zip" &
+        nice -n 10 ../../../manage.py import_services "$region.zip" &
         if [[ $region_id == "L" ]]; then
             wait
             ../../../manage.py import_tfl
