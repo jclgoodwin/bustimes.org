@@ -57,9 +57,10 @@ def siri_one_shot(code):
         return
     now = timezone.now()
     current_locations = VehicleLocation.objects.filter(journey__service=code.service_id, journey__source__name=source,
-                                                       latest_vehicle__isnull=False)
+                                                       latest_vehicle__isnull=False, current=True)
     if not Journey.objects.filter(service=code.service_id, datetime__lt=now, stopusageusage__datetime__gt=now).exists():
-        if not current_locations.exists():
+        fifteen_minutes_ago = timezone.now() - timedelta(minutes=15)
+        if not current_locations.filter(datetime__gte=fifteen_minutes_ago).exists():
             cache.set(cache_key, True, 600)  # cache for 10 minutes
             return
     if VehicleLocation.objects.filter(journey__service=code.service_id,
@@ -83,7 +84,7 @@ def siri_one_shot(code):
     command.source = DataSource.objects.get(name='Icarus')
     for item in import_sirivm.items_from_response(response):
         command.handle_item(item, now)
-    current_locations.exclude(id__in=command.current_location_ids).update(current=False)
+    # current_locations.exclude(id__in=command.current_location_ids).update(current=False)
 
 
 def vehicles_last_modified(request):
