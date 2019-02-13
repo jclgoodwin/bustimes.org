@@ -29,10 +29,13 @@ class Command(BaseCommand):
         except Operator.DoesNotExist as e:
             print(e, operator, item)
             return
+        operator_options = None
         if operator.pk == 'SCCM':
-            service = Service.objects.filter(operator__in=('SCCM', 'SCPB', 'SCHU', 'SCBD'))
+            operator_options = ('SCCM', 'SCPB', 'SCHU', 'SCBD')
         elif operator.pk == 'CBBH':
-            service = Service.objects.filter(operator__in=('CBBH', 'CBNL'))
+            operator_options = ('CBBH', 'CBNL')
+        if operator_options:
+            service = Service.objects.filter(operator__in=operator_options)
         else:
             service = operator.service_set
         service = service.filter(current=True)
@@ -57,7 +60,11 @@ class Command(BaseCommand):
         }
         if vehicle.isdigit():
             defaults = {'fleet_number': vehicle}
-        vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
+        if operator_options:
+            defaults = {'operator': operator}
+            vehicle, created = Vehicle.objects.get_or_create(defaults, operator__in=operator_options, code=vehicle)
+        else:
+            vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
         journey = None
         if not created and vehicle.latest_location and vehicle.latest_location.current:
             vehicle.latest_location.current = False
