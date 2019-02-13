@@ -38,8 +38,11 @@ class Command(ImportLiveVehiclesCommand):
             if trip:
                 journey.destination = trip.headsign
                 route = trip.route
-                operator = Operator.objects.get(name=route.agency.name)
-
+                if route.agency.name == 'Claribel Coaches':
+                    print(item)
+                    operator = Operator.objects.get(name='Diamond Bus')
+                else:
+                    operator = Operator.objects.get(name=route.agency.name)
                 try:
                     journey.service = operator.service_set.get(line_name=route.short_name, current=True)
                 except Service.MultipleObjectsReturned as e:
@@ -61,13 +64,16 @@ class Command(ImportLiveVehiclesCommand):
             try:
                 journey.vehicle, vehicle_created = Vehicle.objects.get_or_create({
                     'source': self.source
-                }, operator__in=('CLAC', 'DIAM', 'FSMR'), code=vehicle_code)
+                }, operator__in=('DIAM', 'FSMR'), code=vehicle_code)
 
                 return journey, vehicle_created
             except Vehicle.MultipleObjectsReturned:
                 pass
         elif vehicle_code.startswith('BUS_'):
             operator = 'SLBS'
+        elif vehicle_code.endswith('X12'):
+            vehicle_code = vehicle_code[:-3]
+            operator = 'MDCL'
         journey.vehicle, vehicle_created = Vehicle.objects.get_or_create({
             'source': self.source
         }, operator_id=operator, code=vehicle_code)
