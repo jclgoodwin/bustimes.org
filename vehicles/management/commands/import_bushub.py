@@ -50,8 +50,7 @@ class Command(ImportLiveVehiclesCommand):
             fleet_number = None
 
         journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
-            {'operator': operator, 'fleet_number': fleet_number},
-            source=self.source,
+            {'operator': operator, 'fleet_number': fleet_number, 'source': self.source},
             code=code
         )
 
