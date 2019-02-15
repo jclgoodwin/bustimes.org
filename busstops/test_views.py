@@ -326,13 +326,13 @@ class ViewsTests(TestCase):
         self.assertEqual(self.note.get_absolute_url(), '/operators/ainsleys-chariots')
 
     def test_national_express_service(self):
-        self.chariots.name = 'National Express Hotel Hoppa'
+        self.chariots.name = 'Hotel Hoppa'
         self.chariots.url = 'http://nationalexpress.com'
         self.chariots.save()
 
         response = self.client.get(self.service.get_absolute_url())
         self.assertEqual(response.context_data['links'][0], {
-            'text': 'Buy tickets on the National Express Hotel Hoppa website',
+            'text': 'Buy tickets on the National Express website',
             'url': 'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&a=3022528&g=24233768'
         })
 

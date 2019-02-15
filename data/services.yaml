@@ -144,6 +144,12 @@ YWAB003:
     line_brand: Brontë Bus
 set_7-610-A-y08:
     line_brand: Dragonfly
+set_7-644-_-y08:
+    line_brand: Comet
+set_7-614-A-y08:
+    line_brand: Comet
+ea_20-P-_-y08:
+    line_brand: Pedigree
 # Hadrian's Wall Country Bus - back in Easter 2019
 NE_310_PB3954_AD12:
     current: false
@@ -193,7 +199,3 @@ twm_8-7-_-y11:
     current: false
 cen_37-71-_-y11:
     current: false
-set_7-644-_-y08:
-    line_brand: Comet
-set_7-614-A-y08:
-    line_brand: Comet

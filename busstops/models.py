@@ -367,7 +367,7 @@ class Operator(ValidateOnSaveMixin, models.Model):
         return str(self.name or self.id)
 
     national_expresses = {
-        'National Express Hotel Hoppa': '24233768',
+        'Hotel Hoppa': '24233768',
         'National Express Airport': '24233764',
         'National Express': '21039402',
     }

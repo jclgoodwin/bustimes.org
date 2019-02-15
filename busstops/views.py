@@ -532,9 +532,9 @@ class ServiceDetailView(DetailView):
                     if operator.is_national_express():
                         context['links'].append({
                             'url': operator.get_national_express_url(),
-                            'text': 'Buy tickets on the {} website'.format(operator.name)
+                            'text': 'Buy tickets on the National Express website'.format(operator.name)
                         })
-                    elif operator.url.startswith('http'):
+                    if operator.url.startswith('http'):
                         context['links'].append({
                             'url': operator.url,
                             'text': '{} website'.format(operator.name)
