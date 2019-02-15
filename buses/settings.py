@@ -9,7 +9,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ['SECRET_KEY']
-ALLOWED_HOSTS = ['bustimes.org', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split()
 
 DEBUG = bool(os.environ.get('DEBUG', False)) or 'test' in sys.argv
 
