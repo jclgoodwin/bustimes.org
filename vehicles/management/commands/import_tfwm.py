@@ -71,9 +71,18 @@ class Command(ImportLiveVehiclesCommand):
                 pass
         elif vehicle_code.startswith('BUS_'):
             operator = 'SLBS'
-        elif vehicle_code.endswith('X12'):
-            vehicle_code = vehicle_code[:-3]
-            operator = 'MDCL'
+            for service in Service.objects.filter(operator='SLBS', current=True).order_by('-line_name'):
+                if vehicle_code.endswith(service.line_name) and not vehicle_code.endswith('_' + service.line_name):
+                    vehicle_code = vehicle_code[:-len(service.line_name)]
+                    journey.service = service
+                    break
+        else:
+            for service in Service.objects.filter(operator='MDCL', current=True).order_by('-line_name'):
+                if vehicle_code.endswith(service.line_name):
+                    vehicle_code = vehicle_code[:-len(service.line_name)]
+                    journey.service = service
+                    operator = 'MDCL'
+                    break
         journey.vehicle, vehicle_created = Vehicle.objects.get_or_create({
             'source': self.source
         }, operator_id=operator, code=vehicle_code)
