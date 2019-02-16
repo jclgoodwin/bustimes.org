@@ -869,6 +869,12 @@ input:not(:checked) + label {
     padding: 0 5px;
 }
 
+.colour {
+    display: inline-block;
+    height: 1em;
+    width: 1em;
+}
+
 .warning {
     border: 1px solid $brand-color;
     padding: 1em;

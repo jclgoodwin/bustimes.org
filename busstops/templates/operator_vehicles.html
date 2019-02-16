@@ -40,7 +40,7 @@
             <td>{% if vehicle.vehicle_type.double_decker %}Decker{% endif %}</td>
             <td>{% if vehicle.vehicle_type.coach %}Coach){% endif %}</td>
             <td>
-                {% for colour in vehicle.colours.split %}<div style="height:1em;width:1em;display:inline-block;background:{{ colour }}"></div>{% endfor %}
+                {% for colour in vehicle.colours.split %}<div class="colour" style="background:{{ colour }}"></div>{% endfor %}
             </td>
             <td>{{ vehicle.notes }}</td>
         </tr>

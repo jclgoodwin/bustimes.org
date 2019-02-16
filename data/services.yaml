@@ -150,6 +150,8 @@ set_7-614-A-y08:
     line_brand: Comet
 ea_20-P-_-y08:
     line_brand: Pedigree
+swe_40-376-_-y10:
+    line_brand: Mendip Xplorer
 # Hadrian's Wall Country Bus - back in Easter 2019
 NE_310_PB3954_AD12:
     current: false

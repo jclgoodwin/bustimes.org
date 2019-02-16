@@ -91,7 +91,6 @@ def do_ni_service(service, groupings, day):
             handle_ni_grouping(service, grouping, day)
 
 
-@transaction.atomic
 def handle_region(region):
     today = date.today()
     if region.id == 'NI':
@@ -106,24 +105,24 @@ def handle_region(region):
         today = last_journey.datetime.astimezone(timezone.get_current_timezone()).date() + ONE_DAY
         if today > NEXT_WEEK:
             return
-
-    for service in Service.objects.filter(region=region, current=True, timetable_wrong=False):
-        if region.id == 'NI':
-            path = os.path.join(settings.DATA_DIR, 'NI', service.pk + '.json')
-            if not os.path.exists(path):
-                continue
-            groupings = northern_ireland.get_data(path)
-            day = today
-            while day <= NEXT_WEEK:
-                do_ni_service(service, groupings, day)
-                day += ONE_DAY
-        else:
-            for i, xml_file in enumerate(service.get_files_from_zipfile()):
-                timetable = txc.Timetable(xml_file, None, service)
+    with transaction.atomic():
+        for service in Service.objects.filter(region=region, current=True, timetable_wrong=False):
+            if region.id == 'NI':
+                path = os.path.join(settings.DATA_DIR, 'NI', service.pk + '.json')
+                if not os.path.exists(path):
+                    continue
+                groupings = northern_ireland.get_data(path)
                 day = today
                 while day <= NEXT_WEEK:
-                    handle_timetable(service, timetable, day)
+                    do_ni_service(service, groupings, day)
                     day += ONE_DAY
+            else:
+                for i, xml_file in enumerate(service.get_files_from_zipfile()):
+                    timetable = txc.Timetable(xml_file, None, service)
+                    day = today
+                    while day <= NEXT_WEEK:
+                        handle_timetable(service, timetable, day)
+                        day += ONE_DAY
 
 
 class Command(BaseCommand):

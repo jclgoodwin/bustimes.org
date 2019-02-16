@@ -1,5 +1,0 @@
-[MASTER]
-load-plugins = pylint_django
-max-line-length = 120
-# invalid name, missing docstring, too many ancestors, no member (but some types could not be inferred), too few public methods
-disable = C0103,C0111,R0901,E1103,R0903

@@ -12,6 +12,14 @@
     <p>{{ object.vehicle_type }}</p>
 {% endif %}
 
+{% if object.colours %}
+    {% for colour in object.colours.split %}<div class="colour" style="background:{{ colour }}"></div>{% endfor %}
+{% endif %}
+
+{% if object.notes %}
+    <p>{{ object.notes }}</p>
+{% endif %}
+
 <form>
     <label>
         Date:

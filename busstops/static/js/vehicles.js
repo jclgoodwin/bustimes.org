@@ -8,10 +8,7 @@
         L, reqwest, Cowboy
     */
 
-    var map = L.map('hugemap', {
-            minZoom: 6,
-            maxZoom: 18,
-        }),
+    var map = L.map('hugemap'),
         tileURL = 'https://maps.tilehosting.com/styles/basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png?key=RXrAQ6RZ239ClCzC8uZj',
         statusBar = L.control({
             position: 'topright'
