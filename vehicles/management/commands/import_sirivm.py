@@ -174,7 +174,7 @@ class Command(ImportLiveVehiclesCommand):
             if origin_ref:
                 for queryset in (
                     services.filter(journey__stopusageusage__stop=origin_ref, journey__destination=destination_ref,
-                                    journey__stopusageusage__order=0)
+                                    journey__stopusageusage__order=0),
                     services.filter(stops=origin_ref).filter(journey__destination=destination_ref),
                     services.filter(stops=origin_ref).filter(stops=destination_ref),
                     services.filter(Q(stops=origin_ref) | Q(stops=destination_ref)),
