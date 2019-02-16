@@ -153,6 +153,17 @@ class Command(ImportLiveVehiclesCommand):
         elif operator:
             services = services.filter(operator=operator)
 
+        else:
+            return journey, vehicle_created
+
+        latlong = get_latlong(mvj)
+
+        try:
+            if operator and operator.id == 'TNXB' and service == '4':
+                journey.service_id = 'cen_33-4-W-y11'
+            elif operator_ref != 'OFJ':
+                journey.service = self.get_service(services, latlong)
+        except (Service.MultipleObjectsReturned, Service.DoesNotExist):
             origin_ref = mvj.find('siri:OriginRef', NS)
             destination_ref = mvj.find('siri:DestinationRef', NS)
             if origin_ref is not None:
@@ -169,17 +180,10 @@ class Command(ImportLiveVehiclesCommand):
                     if queryset.exists():
                         services = queryset.distinct()
                         break
-        else:
-            return journey, vehicle_created
-
-        try:
-            if operator and operator.id == 'TNXB' and service == '4':
-                journey.service_id = 'cen_33-4-W-y11'
-            elif operator_ref != 'OFJ':
-                journey.service = self.get_service(services, get_latlong(mvj))
-        except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-            logger.error(e, exc_info=True)
-            print(e, operator_ref, service, services, get_latlong(mvj))
+            try:
+                journey.service = self.get_service(services, latlong)
+            except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
+                logger.error(e)
 
         if operator_options and operator and journey.service and operator.id == operator_options[0]:
             if operator.id != 'RBUS' and operator.id != 'ARBB':
