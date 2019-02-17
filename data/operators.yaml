@@ -313,3 +313,19 @@ NXHH:
     address: ""
     email: ""
     phone: ""
+MAYC:
+    name: Maynes Coaches
+    url: http://www.maynes.co.uk
+    twitter: MaynesCoaches
+    address: ""
+    email: ""
+    phone: ""
+CTCL:
+    name: CT Passenger
+    url: http://www.ctpassenger.org/
+    address: |
+        Oban Road
+        Longford
+        Coventry
+        CV6 6HH
+    phone: 024 7669 1433
