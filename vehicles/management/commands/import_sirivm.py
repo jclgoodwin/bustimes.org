@@ -1,6 +1,7 @@
 import ciso8601
 import logging
 import xml.etree.cElementTree as ET
+from io import StringIO
 from requests.exceptions import RequestException
 from django.contrib.gis.geos import Point
 from django.db.models import Q
@@ -25,12 +26,15 @@ def items_from_response(response):
     if not (response and response.text):
         return ()
     try:
-        items = ET.fromstring(response.text)
+        iterator = ET.iterparse(StringIO(response.text))
     except ET.ParseError as e:
         logger.error(e, exc_info=True)
         print(response)
         return ()
-    return items.findall('siri:ServiceDelivery/siri:VehicleMonitoringDelivery/siri:VehicleActivity', NS)
+    for _, element in iterator:
+        if element.tag[29:] == 'VehicleActivity':
+            yield element
+            element.clear()
 
 
 class Command(ImportLiveVehiclesCommand):
