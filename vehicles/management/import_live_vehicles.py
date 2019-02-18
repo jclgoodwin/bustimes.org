@@ -7,7 +7,8 @@ from time import sleep
 from django.db import OperationalError, IntegrityError, transaction
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from ..models import DataSource, VehicleLocation
+from busstops.models import DataSource, ServiceCode
+from ..models import VehicleLocation
 
 
 logger = logging.getLogger(__name__)
@@ -69,7 +70,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     return queryset.get(geometry__bboverlaps=latlong)
 
     @transaction.atomic
-    def handle_item(self, item, now):
+    def handle_item(self, item, now, service_code=None):
         journey, vehicle_created = self.get_journey(item)
         if not journey:
             return
@@ -106,6 +107,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if not journey.datetime:
                 journey.datetime = location.datetime
             journey.save()
+            if service_code and journey.service_id and journey.service_id != service_code.service_id:
+                # doppelgänger
+                if not journey.service.servicecode_set.filter(scheme__endswith=' SIRI').exists():
+                    ServiceCode.objects.create(scheme=service_code.scheme, code=service_code.code)
             location.journey = journey
         # save new location
         location.current = True

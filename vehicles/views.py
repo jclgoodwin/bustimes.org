@@ -83,7 +83,7 @@ def siri_one_shot(code):
     command = import_sirivm.Command()
     command.source = DataSource.objects.get(name='Icarus')
     for item in import_sirivm.items_from_response(response):
-        command.handle_item(item, now)
+        command.handle_item(item, now, code)
     # current_locations.exclude(id__in=command.current_location_ids).update(current=False)
 
 
