@@ -126,11 +126,18 @@ class Command(ImportLiveVehiclesCommand):
         }
         if vehicle_code.isdigit():
             defaults['fleet_number'] = vehicle_code
-        journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
-            defaults,
-            operator__in=operator_options or (operator,),
-            code=vehicle_code,
-        )
+
+        if vehicle_code.startswith('GOEA-'):
+            journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
+                defaults,
+                code=vehicle_code,
+            )
+        else:
+            journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
+                defaults,
+                operator__in=operator_options or (operator,),
+                code=vehicle_code,
+            )
 
         journey_code = mvj.find('siri:FramedVehicleJourneyRef/siri:DatedVehicleJourneyRef', NS)
         if journey_code is not None:
