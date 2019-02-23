@@ -893,6 +893,7 @@ input:not(:checked) + label {
     height: 2em;
     margin: 0 auto;
     max-width: 80.66667em;
+    text-align: left;
 }
 
 .adsbygoogle {
@@ -903,6 +904,7 @@ input:not(:checked) + label {
 
 footer {
     margin-top: 1.5em;
+    text-align: center;
 
     ul,
     .banner-ad {
@@ -916,7 +918,6 @@ footer {
         color: #555;
         font-size: .75em;
         padding: 1em;
-        text-align: center;
 
         a {
             padding: 1.2em .25em;
