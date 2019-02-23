@@ -67,7 +67,7 @@ class Command(ImportLiveVehiclesCommand):
             if route_name.startswith('K'):
                 route_name = route_name[1:]
                 operator_id = 'KENN'
-            operator_id = ('RBUS', 'GLRB')
+            operator_id = ('RBUS', 'GLRB', 'KENN')
 
         if operator_id in self.operators:
             operator = self.operators[operator_id]
