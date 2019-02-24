@@ -102,7 +102,12 @@ class OperatorCodeAdmin(admin.ModelAdmin):
 
 class ServiceCodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'service', 'scheme', 'code')
-    list_filter = ('scheme', 'service__current', ('service__operator', admin.RelatedOnlyFieldListFilter), 'service__stops__admin_area')
+    list_filter = (
+        'scheme',
+        'service__current',
+        ('service__operator', admin.RelatedOnlyFieldListFilter),
+        'service__stops__admin_area'
+    )
     search_fields = ('code', 'service__line_name', 'service__description')
     raw_id_fields = ('service',)
 
