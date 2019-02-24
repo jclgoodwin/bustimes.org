@@ -73,6 +73,10 @@ class Departures(object):
                 'U': 'universal u',
                 'Puls': 'pulse',
                 'FLCN': 'falcon',
+                'Yo-Y': 'yoyo',
+                'Hov': 'hoverbus',
+                'Port': 'portway park and ride',
+                'Bris': 'brislington park and ride',
             }
             alternative = alternatives.get(line_name)
             if alternative and alternative in self.services:
