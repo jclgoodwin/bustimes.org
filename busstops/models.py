@@ -462,8 +462,7 @@ class StopUsageUsage(models.Model):
     class Meta():
         ordering = ('datetime',)
         index_together = (
-            ('journey', 'datetime'),
-            ('stop', 'datetime')
+            ('stop', 'datetime'),
         )
 
     def __str__(self):
