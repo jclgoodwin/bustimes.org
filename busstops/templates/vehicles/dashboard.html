@@ -1,0 +1,33 @@
+{% extends 'page.html' %}
+
+{% block title %}Dashboard – Bus Times{% endblock %}
+
+{% block canonical %}{% endblock %}
+
+{% block content %}
+
+<h1>Dashboard</h1>
+
+<table>
+    <tr>
+        <th scope="col">Operator</th>
+    </tr>
+    {% for operator in operators %}
+        <tr>
+            <td>{{ operator }}</td>
+            <th>Service</th>
+            <th>Tracking?</th>
+        </tr>
+        {% for service in operator.service_set.all %}
+            <tr>
+                <td></td>
+                <td><a href="{{ service.get_absolute_url }}">{{ service }}</a></td>
+                <td>{% if service.tracking %}Yes{% endif %}</td>
+            </tr>
+        {% endfor %}
+    {% endfor %}
+</table>
+
+{% endblock %}
+
+{% block ad %}{% endblock %}

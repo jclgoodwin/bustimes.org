@@ -1,6 +1,7 @@
 import ciso8601
 from datetime import timedelta
 from requests import Session
+from django.db.models import Exists, OuterRef, Prefetch
 from django.core.cache import cache
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, Http404
@@ -172,3 +173,15 @@ class VehicleDetailView(DetailView):
         journeys = journeys.filter(datetime__date=date)
         context['journeys'] = journeys.select_related('service').prefetch_related('vehiclelocation_set')
         return context
+
+
+def dashboard(request):
+    operators = Operator.objects.filter(vehicle__isnull=False)
+    tracking_exists = Exists(VehicleJourney.objects.filter(service=OuterRef('pk')))
+    services = Service.objects.filter(current=True).annotate(tracking=tracking_exists)
+    prefetch = Prefetch('service_set', queryset=services)
+    operators = operators.prefetch_related(prefetch)
+    operators = operators.distinct()
+    return render(request, 'vehicles/dashboard.html', {
+        'operators': operators
+    })
