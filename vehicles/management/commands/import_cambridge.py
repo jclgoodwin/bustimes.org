@@ -45,6 +45,8 @@ class Command(BaseCommand):
         else:
             if operator.pk == 'WHIP' and line_name == 'U':
                 line_name = 'Universal U'
+            elif operator.pk == 'SCCM' and line_name == 'NG1':
+                line_name = 'NG01'
             service = service.filter(line_name=line_name)
         try:
             try:
