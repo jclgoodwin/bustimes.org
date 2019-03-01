@@ -693,6 +693,9 @@ class VehicleJourney(object):
             elif timetable.service.service_code == 'set_6-168-A-y08':
                 if self.departure_time == datetime.time(11, 25):
                     return False
+            elif timetable.service.service_code == 'swe_32-73-_-y10':
+                if self.departure_time == datetime.time(18, 40):
+                    return False
         else:
             region_id = None
         if not self.operating_profile:
