@@ -1,12 +1,14 @@
 {% extends 'page.html' %}
 
-{% block title %}Dashboard – Bus Times{% endblock %}
+{% block title %}Vehicle tracking report – Bus Times{% endblock %}
 
 {% block canonical %}{% endblock %}
 
 {% block content %}
 
-<h1>Dashboard</h1>
+<h1>Vehicle tracking report</h1>
+
+<p>This list lists bus operators and their services for which live vehicle tracking is available. Some services (marked *) only track when someone is viewing the map and timetable page for that service.</p>
 
 <table>
     <tr>
@@ -14,7 +16,7 @@
     </tr>
     {% for operator in operators %}
         <tr>
-            <td>{{ operator }}</td>
+            <td><a href="{{ operator.get_absolute_url }}">{{ operator }}</a></td>
             <th>Service</th>
             <th>Tracking?</th>
         </tr>
@@ -22,7 +24,7 @@
             <tr>
                 <td></td>
                 <td><a href="{{ service.get_absolute_url }}">{{ service }}</a></td>
-                <td>{% if service.tracking %}Yes{% endif %}</td>
+                <td>{% if service.tracking %}Yes{% if not service.full_tracking %}*{% endif %}{% endif %}</td>
             </tr>
         {% endfor %}
     {% endfor %}

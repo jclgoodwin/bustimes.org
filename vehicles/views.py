@@ -176,9 +176,10 @@ class VehicleDetailView(DetailView):
 
 
 def dashboard(request):
-    operators = Operator.objects.filter(vehicle__isnull=False)
+    operators = Operator.objects.filter(service__vehiclejourney__isnull=False)
     tracking_exists = Exists(VehicleJourney.objects.filter(service=OuterRef('pk')))
-    services = Service.objects.filter(current=True).annotate(tracking=tracking_exists)
+    full_tracking = Exists(VehicleJourney.objects.filter(service=OuterRef('pk')).exclude(source__name='Icarus'))
+    services = Service.objects.filter(current=True).annotate(tracking=tracking_exists, full_tracking=full_tracking)
     prefetch = Prefetch('service_set', queryset=services)
     operators = operators.prefetch_related(prefetch)
     operators = operators.distinct()
