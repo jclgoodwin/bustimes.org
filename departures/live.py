@@ -10,7 +10,7 @@ import xml.etree.cElementTree as ET
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.db import transaction
-from django.utils.timezone import is_naive, make_naive, make_aware
+from django.utils import timezone
 from busstops.models import Service, ServiceCode, DataSource
 from vehicles.models import Vehicle, VehicleJourney, VehicleLocation
 
@@ -243,16 +243,29 @@ class RifkindDepartures(Departures):
     def get_row(self, item):
         service = self.get_service(item['service_name'])
         operator = None
+        vehicle_number = str(item['vehicle_number'])
+        if len(vehicle_number) == 6:
+            if vehicle_number[:2] == '21':
+                operator = 'KBUS'
+                vehicle_number = vehicle_number[2:]
+            elif vehicle_number[:2] == '20':
+                operator = 'TBTN'
+                vehicle_number = vehicle_number[2:]
+        else:
+            operator = 'NCTR'
+            if type(service) is str and ' ' in service:
+                service = self.get_service(service.split()[-1])
         if type(service) is Service:
             journey_service = service
             for operator in service.operator.all():
                 if operator.id in RIFKIND_OPERATORS:
-                    operator = operator
+                    operator = operator.id
                     break
         else:
             journey_service = None
         with transaction.atomic():
-            vehicle, _ = Vehicle.objects.get_or_create(code=item['vehicle_number'], operator=operator)
+            vehicle, _ = Vehicle.objects.get_or_create(code=vehicle_number, fleet_number=vehicle_number,
+                                                       operator_id=operator)
             journey_datetime = datetime.datetime.fromtimestamp(item['origin_departure_time'])
             journey, journey_created = VehicleJourney.objects.get_or_create(vehicle=vehicle, service=journey_service,
                                                                             destination=item['journey_destination'],
@@ -268,8 +281,8 @@ class RifkindDepartures(Departures):
                                                                          datetime=self.now)
                 vehicle.save()
         return {
-            'time': make_aware(datetime.datetime.fromtimestamp(item['scheduled_departure_time'])),
-            'live': make_aware(datetime.datetime.fromtimestamp(item['actual_departure_time'])),
+            'time': timezone.make_aware(datetime.datetime.fromtimestamp(item['scheduled_departure_time'])),
+            'live': timezone.make_aware(datetime.datetime.fromtimestamp(item['actual_departure_time'])),
             'service': service,
             'destination': item['journey_destination'],
         }
@@ -440,7 +453,7 @@ class TimetableDepartures(Departures):
     def get_row(suu):
         destination = suu.journey.destination
         return {
-            'time': suu.datetime.astimezone(LOCAL_TIMEZONE),
+            'time': timezone.localtime(suu.datetime),
             'destination': destination.locality or destination.town or destination,
             'service': suu.journey.service
         }
@@ -631,11 +644,13 @@ def can_sort(departure):
 
 
 def get_departure_order(departure):
-    if departure['time']:
-        if is_naive(departure['time']):
-            return departure['time']
-        return make_naive(departure['time'])
-    return make_naive(departure['live'])
+    if departure['live']:
+        time = departure['live']
+    else:
+        time = departure['time']
+    if timezone.is_naive(time):
+        return time
+    return timezone.make_naive(time)
 
 
 def blend(departures, live_rows, stop=None):
@@ -693,7 +708,7 @@ def get_departures(stop, services, bot=False):
             'today': datetime.date.today(),
         }, 60)
 
-    now = datetime.datetime.now(LOCAL_TIMEZONE)
+    now = timezone.now()
 
     departures = TimetableDepartures(stop, services, now)
     services_dict = departures.services
@@ -724,7 +739,7 @@ def get_departures(stop, services, bot=False):
                 live_rows = WestMidlandsDepartures(stop, services).get_departures()
             elif any(operator.id in {'YCST', 'HRGT', 'KDTR'} for operator in operators):
                 live_rows = PolarBearDepartures('transdevblazefield', stop, services).get_departures()
-            elif any(operator.id in RIFKIND_OPERATORS for operator in operators):
+            if any(operator.id in RIFKIND_OPERATORS for operator in operators):
                 live_rows = RifkindDepartures(stop, services, now).get_departures()
             if any(operator.name[:11] == 'Stagecoach ' for operator in operators):
                 if not (live_rows and any(
