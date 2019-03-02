@@ -644,7 +644,7 @@ def can_sort(departure):
 
 
 def get_departure_order(departure):
-    if departure['live']:
+    if departure('live'):
         time = departure['live']
     else:
         time = departure['time']
