@@ -242,44 +242,54 @@ class RifkindDepartures(Departures):
 
     def get_row(self, item):
         service = self.get_service(item['service_name'])
-        operator = None
-        vehicle_number = str(item['vehicle_number'])
-        if len(vehicle_number) == 6:
-            if vehicle_number[:2] == '21':
-                operator = 'KBUS'
-                vehicle_number = vehicle_number[2:]
-            elif vehicle_number[:2] == '20':
-                operator = 'TBTN'
-                vehicle_number = vehicle_number[2:]
-        else:
-            operator = 'NCTR'
-            if type(service) is str and ' ' in service:
-                service = self.get_service(service.split()[-1])
-        if type(service) is Service:
-            journey_service = service
-            for operator in service.operator.all():
-                if operator.id in RIFKIND_OPERATORS:
-                    operator = operator.id
-                    break
-        else:
-            journey_service = None
-        with transaction.atomic():
-            vehicle, _ = Vehicle.objects.get_or_create(code=vehicle_number, fleet_number=vehicle_number,
-                                                       operator_id=operator)
-            journey_datetime = datetime.datetime.fromtimestamp(item['origin_departure_time'])
-            journey, journey_created = VehicleJourney.objects.get_or_create(vehicle=vehicle, service=journey_service,
-                                                                            destination=item['journey_destination'],
-                                                                            datetime=journey_datetime,
-                                                                            source=self.source)
-            latlong = Point(item['vehicle_location_lng'], item['vehicle_location_lat'])
-            if journey_created or not vehicle.latest_location_id or vehicle.latest_location.latlong != latlong:
-                if vehicle.latest_location_id and vehicle.latest_location.current:
-                    vehicle.latest_location.current = False
-                    vehicle.latest_location.save()
-                vehicle.latest_location = VehicleLocation.objects.create(journey=journey, latlong=latlong,
-                                                                         current=True,
-                                                                         datetime=self.now)
-                vehicle.save()
+        if item['vehicle_number']:
+            operator = None
+            vehicle_number = str(item['vehicle_number'])
+            if len(vehicle_number) == 6:
+                if vehicle_number[:2] == '21':
+                    operator = 'KBUS'
+                    vehicle_number = int(vehicle_number[2:])
+                    if type(service) is str:
+                        if service == 'Derby':
+                            service = 'Skylink Leicester Derby'
+                        else:
+                            service = service.replace('kinchbus ', '', 1)
+                        service = self.get_service(service)
+                elif vehicle_number[:2] == '20':
+                    operator = 'TBTN'
+                    vehicle_number = int(vehicle_number[2:])
+            else:
+                operator = 'NCTR'
+                if type(service) is str and ' ' in service:
+                    service = self.get_service(service.split()[-1])
+
+            if type(service) is Service:
+                journey_service = service
+                for operator in service.operator.all():
+                    if operator.id in RIFKIND_OPERATORS:
+                        operator = operator.id
+                        break
+            else:
+                journey_service = None
+
+            with transaction.atomic():
+                vehicle, _ = Vehicle.objects.get_or_create(code=vehicle_number, fleet_number=vehicle_number,
+                                                           operator_id=operator)
+                journey_datetime = datetime.datetime.fromtimestamp(item['origin_departure_time'])
+                journey, journey_created = VehicleJourney.objects.get_or_create(vehicle=vehicle,
+                                                                                service=journey_service,
+                                                                                destination=item['journey_destination'],
+                                                                                datetime=journey_datetime,
+                                                                                source=self.source)
+                latlong = Point(item['vehicle_location_lng'], item['vehicle_location_lat'])
+                if journey_created or not vehicle.latest_location_id or vehicle.latest_location.latlong != latlong:
+                    if vehicle.latest_location_id and vehicle.latest_location.current:
+                        vehicle.latest_location.current = False
+                        vehicle.latest_location.save()
+                    vehicle.latest_location = VehicleLocation.objects.create(journey=journey, latlong=latlong,
+                                                                             current=True,
+                                                                             datetime=self.now)
+                    vehicle.save()
         return {
             'time': timezone.make_aware(datetime.datetime.fromtimestamp(item['scheduled_departure_time'])),
             'live': timezone.make_aware(datetime.datetime.fromtimestamp(item['actual_departure_time'])),
