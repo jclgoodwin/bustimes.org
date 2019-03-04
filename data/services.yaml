@@ -204,3 +204,7 @@ HIAO811:
 # Hatch Green Coaches
 swe_41-633-_-y10:
     current: false
+# typo
+em_18-CC-_-y08:
+    line_name: calverton connection
+    line_brand: C
