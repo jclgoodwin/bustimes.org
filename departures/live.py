@@ -533,11 +533,13 @@ class SiriSmDepartures(Departures):
     def departures_from_response(self, response):
         try:
             tree = ET.fromstring(response.text).find('s:ServiceDelivery', self.ns)
-            departures = tree.findall('s:StopMonitoringDelivery/s:MonitoredStopVisit/s:MonitoredVehicleJourney',
-                                      self.ns)
-            return [self.get_row(element) for element in departures]
-        except AttributeError as e:
+        except ET.ParseError as e:
             logger.error(e, exc_info=True)
+            return
+        if tree is None:
+            return
+        departures = tree.findall('s:StopMonitoringDelivery/s:MonitoredStopVisit/s:MonitoredVehicleJourney', self.ns)
+        return [self.get_row(element) for element in departures]
 
     def get_response(self):
         if self.source.requestor_ref:
