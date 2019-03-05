@@ -52,7 +52,10 @@ def get_locations(request):
 
 def siri_one_shot(code):
     source = 'Icarus'
-    siri_source = SIRISource.objects.get(name=code.scheme[:-5])
+    try:
+        siri_source = SIRISource.objects.get(name=code.scheme[:-5])
+    except SIRISource.DoesNotExist:
+        return
     cache_key = '{}:{}:{}'.format(siri_source.url, siri_source.requestor_ref, code.code)
     if cache.get(cache_key):
         return
