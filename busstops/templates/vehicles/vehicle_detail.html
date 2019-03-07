@@ -57,15 +57,6 @@
 <script src="/static/js/bower_components/leaflet/dist/leaflet.js"></script>
 <script>
 (function() {
-    function getRandomColor() {
-        var letters = '0123456789';
-        var color = '#';
-        for (var i = 0; i < 3; i++) {
-            color += letters[Math.floor(Math.random() * 10)];
-        }
-        return color;
-    }
-
     function getMarker(latlng, direction) {
         var html = '';
         if (direction !== null) {
@@ -81,10 +72,12 @@
     }
 
     var map = L.map('cartograph'),
-        tileURL = 'https://maps.tilehosting.com/styles/basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png?key=RXrAQ6RZ239ClCzC8uZj',
+        tileURL = 'https://maps.bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
         latlng,
         service,
-	bounds = L.latLngBounds();
+        bounds = L.latLngBounds();
+
+    map.attributionControl.setPrefix('');
 
     L.tileLayer(tileURL, {
         attribution: '<a href="https://www.maptiler.com/license/maps/">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'

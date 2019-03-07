@@ -9,7 +9,7 @@
     */
 
     var map = L.map('hugemap'),
-        tileURL = 'https://maps.tilehosting.com/styles/basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png?key=RXrAQ6RZ239ClCzC8uZj',
+        tileURL = 'https://maps.bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
         statusBar = L.control({
             position: 'topright'
         }),
@@ -17,6 +17,8 @@
         timeout,
         oldVehicles = {},
         newVehicles = {};
+
+    map.attributionControl.setPrefix('');
 
     L.tileLayer(tileURL, {
         attribution: '<a href="https://www.maptiler.com/license/maps/">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
