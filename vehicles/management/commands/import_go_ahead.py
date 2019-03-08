@@ -1,54 +1,65 @@
 from time import sleep
+from datetime import timedelta
 from requests.exceptions import RequestException
-from django.contrib.gis.geos import Point
-from busstops.models import Service
-from ..import_live_vehicles import ImportLiveVehiclesCommand
+from django.contrib.gis.geos import Point, Polygon
+from django.contrib.gis.db.models import Extent
+from busstops.models import Service, StopPoint
 from ...models import Vehicle, VehicleLocation, VehicleJourney
+from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
     url = 'http://api.otrl-bus.io/api/bus/nearby'
     source_name = 'Go-Ahead'
     operators = {
-        'GOEA': ('KCTB',),
-        'CSLB': ('OXBC', 'THTR'),
+        'GOEA': ('KCTB', 'CHAM'),
+        'CSLB': ('OXBC', 'CSBL', 'THTR'),
         'GNE': ('GNEL',),
         'BH': ('BHBC',),
         'SQ': ('SVCT',),
+        'TT': ('TDTR',),
     }
 
+    opcos = {
+        'eastangliabuses': ('KCTB', 'CHAM'),
+        'oxford': ('OXBC', 'CSBL', 'THTR'),
+        'gonortheast': ('GNEL',),
+        'brightonhove': ('BHBC',),
+        'swindon': ('TDTR',),
+    }
+
+    def get_bounding_boxes(self, extent):
+        extent = extent['latlong__extent']
+        lng = extent[0]
+        while lng < extent[2]:
+            lat = extent[1]
+            while lat < extent[3]:
+                yield (lng, lat)
+                lat += 0.2
+            lng += 0.2
+
     def get_items(self):
-        for opco, lat, lng in (
-            ('eastangliabuses', 52.6, 1.3),
-            ('eastangliabuses', 52.6458, 1.1162),
-            ('eastangliabuses', 52.6816, 0.9378),
-            # ('eastangliabuses', 52.4593, 1.5661),
-            # ('eastangliabuses', 52.8313, 0.8393),
-            ('eastangliabuses', 52.7043, 1.4073),
-            # ('brightonhove', 51, -0.1372),
-            # ('brightonhove', 50.6, -0.1372),
-            # ('brightonhove', 50.8225, -0.1372),
-            # ('brightonhove', 50.8225, -0.2),
-            # ('brightonhove', 50.8225, 0),
-            # ('oxford', 51.752, -1.2577),
-            # ('oxford', 51.752, -1.3),
-            # ('oxford', 51.752, -1.4),
-            # ('oxford', 51.6, -1.3),
-            # ('oxford', 51.8, -1.4),
-            # ('oxford', 51.752, -1.0577),
-            # ('oxford', 51.752, -0.9),
-            # ('gonortheast', 54.9783, -1.6178),
-            # ('southernvectis', 50.6332, -1.2547),
-        ):
-            params = {'lat': lat, 'lng': lng}
-            headers = {'opco': opco}
-            try:
-                response = self.session.get(self.url, params=params, timeout=30, headers=headers)
-                for item in response.json()['data']:
-                    yield item
-            except (RequestException, KeyError):
-                continue
-            sleep(5)
+        for opco in self.opcos:
+            for operator in self.opcos[opco]:
+                stops = StopPoint.objects.filter(service__operator=operator, service__current=True)
+                extent = stops.aggregate(Extent('latlong'))
+                stops = stops.filter(stopusageusage__datetime__lt=self.source.datetime + timedelta(minutes=5),
+                                     stopusageusage__datetime__gt=self.source.datetime - timedelta(hours=1))
+                for lng, lat in self.get_bounding_boxes(extent):
+                    bbox = Polygon.from_bbox(
+                        (lng - 0.1, lat - 0.1, lng + 0.1, lat + 0.1)
+                    )
+                    if stops.filter(latlong__within=bbox).exists():
+                        params = {'lat': lat, 'lng': lng}
+                        headers = {'opco': opco}
+                        try:
+                            response = self.session.get(self.url, params=params, timeout=30, headers=headers)
+                            print(opco, response.url)
+                            for item in response.json()['data']:
+                                yield item
+                        except (RequestException, KeyError):
+                            continue
+                        sleep(1)
 
     def get_journey(self, item):
         journey = VehicleJourney()
@@ -59,6 +70,8 @@ class Command(ImportLiveVehiclesCommand):
         vehicle = item['vehicleRef']
         operator, fleet_number = item['vehicleRef'].split('-', 1)
         operators = self.operators.get(operator)
+        if not operators:
+            print(operator)
         defaults = {
             'source': self.source
         }
