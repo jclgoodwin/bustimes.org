@@ -117,7 +117,7 @@
             map.attributionControl.setPrefix('');
 
             L.tileLayer(tileURL, {
-                attribution: '<a href="https://www.maptiler.com/license/maps/">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
+                attribution: '<a href="https://www.maptiler.com/copyright/">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
             }).addTo(map);
 
             if (mainLocations.length > labels.length) { // on a stop point detail page
