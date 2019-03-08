@@ -13,7 +13,7 @@ class Command(ImportLiveVehiclesCommand):
     source_name = 'Go-Ahead'
     operators = {
         'GOEA': ('KCTB', 'CHAM'),
-        'CSLB': ('OXBC', 'CSBL', 'THTR'),
+        'CSLB': ('OXBC', 'CSLB', 'THTR'),
         'GNE': ('GNEL',),
         'BH': ('BHBC',),
         'SQ': ('SVCT',),
@@ -22,7 +22,7 @@ class Command(ImportLiveVehiclesCommand):
 
     opcos = {
         'eastangliabuses': ('KCTB', 'CHAM'),
-        'oxford': ('OXBC', 'CSBL', 'THTR'),
+        'oxford': ('OXBC', 'CSLB', 'THTR'),
         'gonortheast': ('GNEL',),
         'brightonhove': ('BHBC',),
         'swindon': ('TDTR',),
