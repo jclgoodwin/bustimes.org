@@ -47,3 +47,8 @@ class VehiclesTests(TestCase):
             response = self.client.get(vehicle.get_absolute_url() + '?date=poo poo pants')
         self.assertEqual('1940-07-04', str(response.context['date']))
         self.assertContains(response, 'Sorry, nothing found for')
+
+    def test_dashboard(self):
+        with self.assertNumQueries(1):
+            response = self.client.get('/vehicle-tracking-report')
+        self.assertContains(response, 'Vehicle tracking report')
