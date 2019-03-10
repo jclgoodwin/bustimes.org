@@ -44,7 +44,8 @@ class Command(ImportLiveVehiclesCommand):
                 stops = StopPoint.objects.filter(service__operator=operator, service__current=True)
                 extent = stops.aggregate(Extent('latlong'))
                 stops = stops.filter(stopusageusage__datetime__lt=self.source.datetime + timedelta(minutes=5),
-                                     stopusageusage__datetime__gt=self.source.datetime - timedelta(hours=1))
+                                     stopusageusage__datetime__gt=self.source.datetime - timedelta(hours=1),
+                                     stopusageusage__journey__service__operator=operator)
                 for lng, lat in self.get_bounding_boxes(extent):
                     bbox = Polygon.from_bbox(
                         (lng - 0.1, lat - 0.1, lng + 0.1, lat + 0.1)
@@ -89,8 +90,11 @@ class Command(ImportLiveVehiclesCommand):
         return journey, created
 
     def create_vehicle_location(self, item):
+        bearing = item['geo']['bearing']
+        if bearing == 0 and item['vehicleRef'].startswith('BH-'):
+            bearing = None
         return VehicleLocation(
             datetime=item['recordedTime'],
             latlong=Point(item['geo']['longitude'], item['geo']['latitude']),
-            heading=item['geo']['bearing']
+            heading=bearing
         )

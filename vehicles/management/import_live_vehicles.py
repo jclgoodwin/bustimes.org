@@ -51,10 +51,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
     current_location_ids = set()
 
     def get_items(self):
-        response = self.session.get(self.url, timeout=10)
+        response = self.session.get(self.url, timeout=40)
         if response.ok:
             return response.json()
-        return ()
 
     @staticmethod
     def get_service(queryset, latlong):
@@ -137,18 +136,20 @@ class ImportLiveVehiclesCommand(BaseCommand):
                                                            latest_vehicle__isnull=False)
 
         try:
-            for item in self.get_items():
-                self.handle_item(item, now)
+            items = self.get_items()
+            if items:
+                for item in items:
+                    self.handle_item(item, now)
             # mark any vehicles that have gone offline as not current
             old_locations = current_locations.exclude(id__in=self.current_location_ids)
             print(old_locations.update(current=False), end='\t', flush=True)
         except (requests.exceptions.RequestException, IntegrityError, TypeError, ValueError) as e:
             print(e)
             logger.error(e, exc_info=True)
-            current_locations.update(current=False)
-            return 120
+            # current_locations.update(current=False)
+            return 80
 
-        return 40
+        return 60
 
     def handle(self, *args, **options):
         setproctitle(sys.argv[1])
