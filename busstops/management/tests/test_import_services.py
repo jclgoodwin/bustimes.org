@@ -72,12 +72,14 @@ class ImportServicesTest(TestCase):
             # simulate an East Anglia zipfile:
             cls.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml'])
 
+            print(caught_warnings)
             assert len(caught_warnings) == 1
             assert 'LineString requires at least 2 points, got 1' in str(caught_warnings[0])
 
             # simulate a Scotland zipfile:
             cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml', 'CGAO305.xml'])
 
+            print(caught_warnings)
             assert len(caught_warnings) == 2
             assert 'No operator found for element' in str(caught_warnings[1])
 
@@ -85,6 +87,7 @@ class ImportServicesTest(TestCase):
             cls.write_files_to_zipfile_and_import('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml',
                                                              'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
 
+            print(caught_warnings)
             assert len(caught_warnings) == 5
             assert 'No operator found for element' in str(caught_warnings[2])
             assert 'No operator found for element' in str(caught_warnings[3])
