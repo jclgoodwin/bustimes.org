@@ -70,7 +70,7 @@ class HogiaImportTest(TestCase):
         self.assertEqual(VehicleLocation.objects.count(), 4)
         self.assertEqual(VehicleLocation.objects.filter(current=True).count(), 4)
 
-        # if request times out, no locations should be 'current'
+        # if request times out...
         with patch('requests.Session.get', side_effect=timeout):
             command.update()
-        self.assertEqual(VehicleLocation.objects.filter(current=True).count(), 0)
+        self.assertEqual(VehicleLocation.objects.filter(current=True).count(), 4)

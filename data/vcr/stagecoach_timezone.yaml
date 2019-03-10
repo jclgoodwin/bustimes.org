@@ -18,21 +18,16 @@ interactions:
     uri: https://api.stagecoachbus.com/adc/stop-monitor
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAANWUXW+CMBSG/4rptSalBUHuNs0yl/mRTXexZRdVjrNJLaQUM2P87yvgmCOZCMku
-        TLhpz/OeHnhS9ijWYTQKJdehipG/P10j/y1fT0Mu9SNbgEA+6toetnCPoDba5BwEfSZElv61k+XD
-        CBQzW0+wMuHn/t3QBAOmIXiBNV8KeAgTJWGX1y3SM+Utj7keJ5sFmBmI20aCS8gB15TPjVTUxmwD
-        6YFhotetEej1FmTrWSuA9HyINZdM81AOeBwJtjPoPRcCZGDKmm+4/MjaIH/FRAwmwhUs04AhJ/PZ
-        7WQ+HqSj5i/xPT110/mXTC7BNAuKNHxGJg3BjVJ8y8SMZ8MRbLkdTDvEm1mu71CfOK/oBx5AxJRO
-        FJzHmalWNca4ICu7puyhXdscta7cXLehOc/HXg1zJ3iFuYy80FzB1jdHu2VxlJyKs5z/MzcFpddl
-        b1olJW3D8R/WiIMbWyO2+WaXWyvwSmsEX27tyDaw5pWt2fa1WLNsu7E1Ws8avdgarWGNNrVm4yu+
-        a6TpXev5uI61E7zSmlPjD3lkD++H9PkCttVyg/sIAAA=
+      string: '{"stopMonitors":{"stopMonitor":[{"stopPointLabel":"64801092","monitoredCalls":{"monitoredCall":[
+        {"operatorRef":"SCOX","datedVehicleJourneyRef":"129","visitNumber":27,"lineRef":"7","stopPointLabel":"64801092","stopPointName":"South Methven Stree","destinationDisplay":"Hillend","timingPoint":false,"direction":"OUTBOUND","vehicleRef":"SCOX-12379","cancelled":false,"expectedArrivalTime":"2017-03-28T17:53:25Z","expectedDepartureTime":"2017-03-28T17:53:25Z","aimedArrivalTime":"2017-03-28T17:53:00Z","aimedDepartureTime":"2017-03-28T17:53:00Z"},
+        {"operatorRef":"SCOX","datedVehicleJourneyRef":"131","visitNumber":27,"lineRef":"7","stopPointLabel":"64801092","stopPointName":"South Methven Stree","destinationDisplay":"Hillend","timingPoint":false,"direction":"OUTBOUND","vehicleRef":"SCOX-12376","cancelled":false,"expectedArrivalTime":"2017-03-28T18:08:25Z","expectedDepartureTime":"2017-03-28T18:08:25Z","aimedArrivalTime":"2017-03-28T18:08:00Z","aimedDepartureTime":"2017-03-28T18:08:00Z"},
+        {"operatorRef":"SCOX","datedVehicleJourneyRef":"36","visitNumber":32,"lineRef":"15","stopPointLabel":"64801092","stopPointName":"South Methven Stree","destinationDisplay":"Perth","timingPoint":true,"direction":"INBOUND","vehicleRef":"SCOX-12250","cancelled":false,"expectedArrivalTime":"2017-03-28T18:24:08Z","expectedDepartureTime":"2017-03-28T18:24:08Z","aimedArrivalTime":"2017-03-28T18:20:00Z","aimedDepartureTime":"2017-03-28T18:20:00Z"},
+        {"operatorRef":"SCOX","datedVehicleJourneyRef":"38","visitNumber":44,"lineRef":"15","stopPointLabel":"64801092","stopPointName":"South Methven Stree","destinationDisplay":"Perth","timingPoint":true,"direction":"INBOUND","vehicleRef":"SCOX-12144","cancelled":false,"expectedArrivalTime":"2017-03-28T18:34:08Z","expectedDepartureTime":"2017-03-28T18:34:08Z","aimedArrivalTime":"2017-03-28T18:30:00Z","aimedDepartureTime":"2017-03-28T18:30:00Z"},
+        {"operatorRef":"SCOX","datedVehicleJourneyRef":"40","visitNumber":32,"lineRef":"15","stopPointLabel":"64801092","stopPointName":"South Methven Stree","destinationDisplay":"Perth","timingPoint":true,"direction":"INBOUND","vehicleRef":"SCOX-12220","cancelled":false,"expectedArrivalTime":"2017-03-28T19:04:08Z","expectedDepartureTime":"2017-03-28T19:04:08Z","aimedArrivalTime":"2017-03-28T18:58:00Z","aimedDepartureTime":"2017-03-28T18:58:00Z"}]}}]}}'
     headers:
       Accept: ['text/xml, text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2']
       Access-Control-Allow-Origin: ['https://www.stagecoachbus.com']
       Connection: [keep-alive]
-      Content-Encoding: [gzip]
-      Content-Length: ['431']
       Content-Type: [application/json]
       Date: ['Tue, 28 Mar 2017 17:40:05 GMT']
       Server: [UltraESB/2.3.2 (GA)]
