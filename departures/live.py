@@ -9,7 +9,7 @@ import logging
 import xml.etree.cElementTree as ET
 from django.conf import settings
 from django.contrib.gis.geos import Point
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.utils import timezone
 from busstops.models import Service, ServiceCode, DataSource
 from vehicles.models import Vehicle, VehicleJourney, VehicleLocation
@@ -618,6 +618,22 @@ def add_stagecoach_departures(stop, services_dict, departures):
                 aimed, expected = [parse_datetime(time)
                                    for time in (monitor['aimedDepartureTime'], monitor['expectedDepartureTime'])]
                 line = monitor['lineRef']
+                vehicle = monitor['vehicleRef']
+                vehicle = vehicle.split('-', 1)[1]
+                source = DataSource.objects.get_or_create(name='Stagecoach')[0]
+                try:
+                    vehicle, vehicle_created = Vehicle.objects.get_or_create({
+                        'operator_id': monitor['operatorRef'],
+                        'code': vehicle,
+                        'fleet_number': vehicle,
+                        'source': source
+                    }, fleet_number=vehicle, operator__name__startswith='Stagecoach ')
+                    if not vehicle_created:
+                        now = timezone.now()
+                        journeys = vehicle.vehiclejourney_set.filter(code=monitor['datedVehicleJourneyRef'],
+                                                                     datetime__date=now.date())
+                except (Vehicle.MultipleObjectsReturned, IntegrityError):
+                    vehicle = None
                 if departures and aimed >= departures[0]['time']:
                     replaced = False
                     for departure in departures:
@@ -625,6 +641,12 @@ def add_stagecoach_departures(stop, services_dict, departures):
                             if type(departure['service']) is Service and line == departure['service'].line_name:
                                 departure['live'] = expected
                                 replaced = True
+                                if vehicle:
+                                    if vehicle_created or not journeys.filter(service=departure['service']).exists():
+                                        VehicleJourney.objects.create(vehicle=vehicle, datetime=timezone.now(),
+                                                                      source=source,
+                                                                      code=monitor['datedVehicleJourneyRef'],
+                                                                      service=departure['service'])
                                 break
                     if replaced:
                         continue
@@ -642,6 +664,12 @@ def add_stagecoach_departures(stop, services_dict, departures):
                     'destination': monitor['destinationDisplay']
                 })
                 added = True
+                if vehicle and type(departures[-1]['service']) is Service:
+                    if vehicle_created or not journeys.filter(service=departures[-1]['service']).exists():
+                        VehicleJourney.objects.create(vehicle=vehicle, datetime=timezone.now(),
+                                                      source=source,
+                                                      code=monitor['datedVehicleJourneyRef'],
+                                                      service=departures[-1]['service'])
         if added:
             departures.sort(key=lambda d: d['time'])
     return departures
@@ -749,14 +777,14 @@ def get_departures(stop, services, bot=False):
                 blend(departures, live_rows)
         elif departures:
             source = stop.admin_area and stop.admin_area.sirisource_set.first()
+
             if source:
                 live_rows = SiriSmDepartures(source, stop, services).get_departures()
             elif stop.atco_code[:3] == '430':
                 live_rows = WestMidlandsDepartures(stop, services).get_departures()
             elif any(operator.id in {'YCST', 'HRGT', 'KDTR'} for operator in operators):
                 live_rows = PolarBearDepartures('transdevblazefield', stop, services).get_departures()
-            if any(operator.id in RIFKIND_OPERATORS for operator in operators):
-                live_rows = RifkindDepartures(stop, services, now).get_departures()
+
             if any(operator.name[:11] == 'Stagecoach ' for operator in operators):
                 if not (live_rows and any(
                     row.get('live') and type(row['service']) is Service and any(

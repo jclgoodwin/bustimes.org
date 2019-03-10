@@ -52,10 +52,7 @@ def get_locations(request):
 
 def siri_one_shot(code):
     source = 'Icarus'
-    try:
-        siri_source = SIRISource.objects.get(name=code.scheme[:-5])
-    except SIRISource.DoesNotExist:
-        return
+    siri_source = SIRISource.objects.get(name=code.scheme[:-5])
     cache_key = '{}:{}:{}'.format(siri_source.url, siri_source.requestor_ref, code.code)
     if cache.get(cache_key):
         return
@@ -99,10 +96,12 @@ def vehicles_last_modified(request):
                    'Leicestershire SIRI', 'Dorset SIRI', 'Hampshire SIRI', 'West Sussex SIRI', 'Bucks SIRI',
                    'Peterborough SIRI')
         codes = ServiceCode.objects.filter(scheme__in=schemes, service=request.GET['service'])
-        code = codes.first()
-        if code:
-            siri_one_shot(code)
-
+        for code in codes:
+            try:
+                siri_one_shot(code)
+                break
+            except SIRISource.DoesNotExist:
+                continue
     try:
         location = locations.values('datetime').latest('datetime')
         return location['datetime']

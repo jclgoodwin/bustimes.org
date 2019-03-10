@@ -34,6 +34,17 @@
                     {% else %}
                         {{ vehicle.latest_location.datetime }}
                     {% endif %}
+                {% elif vehicle.vehiclejourney_set.last %}
+                    {% if vehicle.vehiclejourney_set.last.service %}
+                        <a href="{{ vehicle.vehiclejourney_set.last.service.get_absolute_url }}">{{ vehicle.vehiclejourney_set.last.service.line_name }}</a>
+                        <br>
+                    {% endif %}
+                    {% if vehicle.vehiclejourney_set.last.datetime.date == today %}
+                        {{ vehicle.vehiclejourney_set.last.datetime | time }}
+                    {% else %}
+                        {{ vehicle.vehiclejourney_set.last.datetime }}
+                    {% endif %}
+
                 {% endif %}
             </td>
             <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
