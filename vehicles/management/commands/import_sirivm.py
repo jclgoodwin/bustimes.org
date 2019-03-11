@@ -128,12 +128,12 @@ class Command(ImportLiveVehiclesCommand):
             defaults['fleet_number'] = vehicle_code
 
         if vehicle_code.startswith('GOEA-'):
-            journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
+            journey.vehicle, vehicle_created = Vehicle.objects.using('default').get_or_create(
                 defaults,
                 code=vehicle_code,
             )
         else:
-            journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
+            journey.vehicle, vehicle_created = Vehicle.objects.using('default').get_or_create(
                 defaults,
                 operator__in=operator_options or (operator,),
                 code=vehicle_code,

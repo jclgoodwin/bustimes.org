@@ -45,7 +45,7 @@ def get_locations(request):
         pass
 
     if 'service' in request.GET:
-        locations = locations.filter(journey__service=request.GET['service'])
+        locations = locations.using('default').filter(journey__service=request.GET['service'])
 
     return locations
 
@@ -57,15 +57,15 @@ def siri_one_shot(code):
     if cache.get(cache_key):
         return
     now = timezone.now()
-    current_locations = VehicleLocation.objects.filter(journey__service=code.service_id, journey__source__name=source,
-                                                       latest_vehicle__isnull=False, current=True)
+    locations = VehicleLocation.objects.using('default').filter(current=True)
+    current_locations = locations.filter(journey__service=code.service_id, journey__source__name=source,
+                                         latest_vehicle__isnull=False)
     if not Journey.objects.filter(service=code.service_id, datetime__lt=now, stopusageusage__datetime__gt=now).exists():
         fifteen_minutes_ago = timezone.now() - timedelta(minutes=15)
         if not current_locations.filter(datetime__gte=fifteen_minutes_ago).exists():
             cache.set(cache_key, True, 600)  # cache for 10 minutes
             return
-    if VehicleLocation.objects.filter(journey__service=code.service_id,
-                                      current=True).exclude(journey__source__name=source).exists():
+    if locations.filter(journey__service=code.service_id).exclude(journey__source__name=source).exists():
         cache.set(cache_key, True, 3600)  # cache for 1 hour
         return
     cache.set(cache_key, True, 40)  # cache for 40 seconds
