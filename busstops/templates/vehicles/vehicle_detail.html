@@ -50,7 +50,7 @@
 {% endfor %}
 </table>
 
-{% if journeys %}
+{% if locations %}
 <div id="cartograph" style="height:80vh"></div>
 
 <link rel="stylesheet" href="/static/js/bower_components/leaflet/dist/leaflet.css" />
@@ -99,7 +99,7 @@
     map.setMaxBounds(bounds.pad(.5));
 })();
 </script>
-{% else %}
+{% elif not journeys %}
     <p>Sorry, nothing found for {{ date }}</p>
 {% endif %}
 

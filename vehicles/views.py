@@ -147,7 +147,8 @@ def service_vehicles_history(request, slug):
         'breadcrumb': [operator.region, operator, service],
         'date': date,
         'object': service,
-        'journeys': journeys
+        'journeys': journeys,
+        'locations': any(journey.vehiclelocation_set.all() for journey in journeys)
     })
 
 
@@ -174,12 +175,14 @@ class VehicleDetailView(DetailView):
         context['date'] = date
         journeys = journeys.filter(datetime__date=date)
         context['journeys'] = journeys.select_related('service').prefetch_related('vehiclelocation_set')
+        context['locations'] = any(journey.vehiclelocation_set.all() for journey in journeys)
         return context
 
 
 def dashboard(request):
-    operators = Operator.objects.filter(service__vehiclejourney__isnull=False)
-    tracking = VehicleJourney.objects.filter(service=OuterRef('pk')).exclude(source__name='Stagecoach')
+    tracking = VehicleJourney.objects.exclude(source__name='Stagecoach')
+    operators = Operator.objects.filter(service__vehiclejourney__in=tracking)
+    tracking = tracking.filter(service=OuterRef('pk'))
     full_tracking = tracking.exclude(source__name='Icarus')
     services = Service.objects.filter(current=True).annotate(tracking=Exists(tracking),
                                                              full_tracking=Exists(full_tracking)).defer('geometry')

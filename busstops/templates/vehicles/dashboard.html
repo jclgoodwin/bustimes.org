@@ -24,7 +24,11 @@
             {% for service in operator.service_set.all %}
                 <tr>
                     <td><a href="{{ service.get_absolute_url }}">{{ service }}</a></td>
-                    <td>{% if service.tracking %}Yes{% if not service.full_tracking %}*{% endif %}{% endif %}</td>
+                    <td>
+                        {% if service.tracking %}
+                            <a href="{{ service.get_absolute_url }}/vehicles">Yes</a>{% if not service.full_tracking %}*{% endif %}
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
         </table>
