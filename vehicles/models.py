@@ -70,7 +70,7 @@ class Vehicle(models.Model):
             return
         colours = self.colours.split()
         if len(colours) == 1:
-            return colours
+            return colours[0]
         else:
             background = 'linear-gradient('
             if direction < 180:
@@ -131,7 +131,6 @@ class VehicleLocation(models.Model):
                 'vehicle': {
                     'url': vehicle.get_absolute_url(),
                     'name': str(vehicle),
-                    'colours': vehicle.colours.split(),
                     'text_colour': vehicle.get_text_colour(),
                     'livery': vehicle.get_livery()
                 },
