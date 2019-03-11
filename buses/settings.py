@@ -71,6 +71,16 @@ DATABASES = {
         'CONN_MAX_AGE': None
     }
 }
+if os.environ.get('READ_ONLY_DB_HOST'):
+    DATABASES['read-only'] = {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': os.environ.get('DB_NAME', 'bustimes'),
+        'HOST': os.environ.get('READ_ONLY_DB_HOST'),
+        'POST': os.environ.get('READ_ONLY_DB_PORT'),
+        'CONN_MAX_AGE': None
+    }
+    DATABASE_ROUTERS = ['buses.routers.Router']
+
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
