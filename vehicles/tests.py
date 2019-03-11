@@ -44,7 +44,7 @@ class VehiclesTests(TestCase):
     @freeze_time('4 July 1940')
     def test_vehicle_detail(self):
         vehicle = Vehicle.objects.get(fleet_number='50')
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             response = self.client.get(vehicle.get_absolute_url() + '?date=poo poo pants')
         self.assertEqual('1940-07-04', str(response.context['date']))
         self.assertContains(response, 'Sorry, nothing found for')

@@ -77,7 +77,7 @@ class ZipTripTest(TestCase):
         self.assertNotContains(response, '31 August 2018')
         self.assertContains(response, '22:30')
 
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             response = self.client.get(self.vehicle.get_absolute_url())
         self.assertContains(response, 'Sorry, nothing found')
 
