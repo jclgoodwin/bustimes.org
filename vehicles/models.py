@@ -1,6 +1,8 @@
+from math import ceil
 from webcolors import html5_parse_simple_color
 from django.contrib.gis.db import models
 from django.urls import reverse
+from django.utils.functional import cached_property
 from busstops.models import Operator, Service, DataSource
 
 
@@ -41,6 +43,10 @@ class Vehicle(models.Model):
             return str(self.fleet_number)
         return self.code.replace('_', ' ')
 
+    @cached_property
+    def latest_journey(self):
+        return self.vehiclejourney_set.select_related('service').latest('datetime')
+
     def get_reg(self):
         if self.reg[-3:].isalpha():
             return self.reg[:-3] + ' ' + self.reg[-3:]
@@ -49,6 +55,38 @@ class Vehicle(models.Model):
         if self.reg[-2:].isalpha():
             return self.reg[:-2] + ' ' + self.reg[-2:]
         return self.reg
+
+    def get_text_colour(self):
+        if self.colours:
+            colours = self.colours.split()
+            parsed_colours = [html5_parse_simple_color(colour) for colour in colours]
+            luminences = [c.red * .299 + c.blue * .587 + c.green * .144 for c in parsed_colours]
+            luminence = sum(luminences) / len(luminences) / 255
+            if luminence < .5:
+                return '#fff'
+
+    def get_livery(self, direction=180):
+        if not self.colours:
+            return
+        colours = self.colours.split()
+        if len(colours) == 1:
+            return colours
+        else:
+            background = 'linear-gradient('
+            if direction < 180:
+                background += 'to left'
+            else:
+                background += 'to right'
+
+            percentage = 100 / len(colours)
+            for i, colour in enumerate(colours):
+                if i != 0:
+                    background += ',{} {}%'.format(colour, ceil(percentage * i))
+                if i != len(colours) - 1:
+                    background += ',{} {}%'.format(colour, ceil(percentage * (i + 1)))
+            background += ')'
+
+            return background
 
     def get_absolute_url(self):
         return reverse('vehicle_detail', args=(self.id,))
@@ -83,14 +121,6 @@ class VehicleLocation(models.Model):
     def get_json(self, extended=False):
         journey = self.journey
         vehicle = journey.vehicle
-        colours = vehicle.colours.split()
-        text_colour = None
-        if colours:
-            parsed_colours = [html5_parse_simple_color(colour) for colour in colours]
-            luminences = [c.red * .299 + c.blue * .587 + c.green * .144 for c in parsed_colours]
-            luminence = sum(luminences) / len(luminences) / 255
-            if luminence < .5:
-                text_colour = '#fff'
         json = {
             'type': 'Feature',
             'geometry': {
@@ -101,8 +131,9 @@ class VehicleLocation(models.Model):
                 'vehicle': {
                     'url': vehicle.get_absolute_url(),
                     'name': str(vehicle),
-                    'colours': colours,
-                    'text_colour': text_colour
+                    'colours': vehicle.colours.split(),
+                    'text_colour': vehicle.get_text_colour(),
+                    'livery': vehicle.get_livery()
                 },
                 'delta': self.early,
                 'direction': self.heading,

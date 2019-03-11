@@ -531,6 +531,10 @@ table {
 
 }
 
+.bus {
+    height: 1em;
+}
+
 .leaflet-marker-icon.just-arrow {
     .arrow {
         border: 8px solid transparent;
@@ -865,12 +869,6 @@ input:not(:checked) + label {
     background: rgba(255, 255, 255, .8);
     margin: 0;
     padding: 0 5px;
-}
-
-.colour {
-    display: inline-block;
-    height: 1em;
-    width: 1em;
 }
 
 .warning {

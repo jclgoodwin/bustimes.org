@@ -34,15 +34,15 @@
                     {% else %}
                         {{ vehicle.latest_location.datetime }}
                     {% endif %}
-                {% elif vehicle.vehiclejourney_set.last %}
-                    {% if vehicle.vehiclejourney_set.last.service %}
-                        <a href="{{ vehicle.vehiclejourney_set.last.service.get_absolute_url }}">{{ vehicle.vehiclejourney_set.last.service.line_name }}</a>
+                {% elif vehicle.latest_journey %}
+                    {% if vehicle.latest_journey.service %}
+                        <a href="{{ vehicle.latest_journey.service.get_absolute_url }}">{{ vehicle.latest_journey.service.line_name }}</a>
                         <br>
                     {% endif %}
-                    {% if vehicle.vehiclejourney_set.last.datetime.date == today %}
-                        {{ vehicle.vehiclejourney_set.last.datetime | time }}
+                    {% if vehicle.latest_journey.datetime.date == today %}
+                        {{ vehicle.latest_journey.datetime | time }}
                     {% else %}
-                        {{ vehicle.vehiclejourney_set.last.datetime }}
+                        {{ vehicle.latest_journey.datetime }}
                     {% endif %}
 
                 {% endif %}
@@ -50,9 +50,7 @@
             <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
             <td>{% if vehicle.vehicle_type.double_decker %}Decker{% endif %}</td>
             <td>{% if vehicle.vehicle_type.coach %}Coach{% endif %}</td>
-            <td>
-                {% for colour in vehicle.colours.split %}<div class="colour" style="background:{{ colour }}"></div>{% endfor %}
-            </td>
+            <td>{% if vehicle.colours %}<div class="bus" style="background:{{ vehicle.get_livery }}"></div>{% endif %}</td>
             <td>{{ vehicle.notes }}</td>
         </tr>
     {% endfor %}

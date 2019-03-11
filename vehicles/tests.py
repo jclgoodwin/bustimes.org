@@ -11,7 +11,7 @@ class VehiclesTests(TestCase):
         cls.datetime = '2018-12-25 19:47+00:00'
         source = DataSource.objects.create(name='HP', datetime=cls.datetime)
         cls.vehicle_1 = Vehicle.objects.create(fleet_number=1, reg='FD54JYA')
-        cls.vehicle_2 = Vehicle.objects.create(fleet_number=50, reg='UWW2X', colours='#FF0000')
+        cls.vehicle_2 = Vehicle.objects.create(fleet_number=50, reg='UWW2X', colours='#FF0000 #0000FF')
         journey = VehicleJourney.objects.create(vehicle=cls.vehicle_1, datetime=cls.datetime, source=source)
         VehicleLocation.objects.create(datetime=cls.datetime, latlong=Point(0, 51), journey=journey, current=True)
 
@@ -39,6 +39,7 @@ class VehiclesTests(TestCase):
         json = location.get_json(True)
         self.assertEqual(json['properties']['vehicle']['name'], '50 - UWW 2X')
         self.assertEqual(json['properties']['vehicle']['text_colour'], '#fff')
+        self.assertEqual(json['properties']['vehicle']['livery'], 'linear-gradient(to right,#FF0000 50%,#0000FF 50%)')
 
     @freeze_time('4 July 1940')
     def test_vehicle_detail(self):

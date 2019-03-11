@@ -52,37 +52,15 @@
         return '-ms-' + rotation + ';-webkit-' + rotation + ';-moz-' + rotation + ';-o-' + rotation + ';' + rotation;
     }
 
-    function getIcon(direction, colours, textColour) {
+    function getIcon(direction, livery, textColour) {
         if (direction == null) {
             var html = '';
         } else {
             html = '<div class="arrow" style="' + getRotation(direction) + '"></div>';
         }
         var className = 'bus';
-        if (colours.length) {
-            if (colours.length == 1) {
-                var background = colours[0];
-            } else {
-                background = 'linear-gradient(';
-                if (direction < 180) {
-                    background += 'to left';
-                } else {
-                    background += 'to right';
-                }
-                var percentage = 100 / colours.length;
-                for (var i = 0; i < colours.length; i++) {
-                    if (i != 0) {
-                        background += ',' + colours[i];
-                        background += ' ' + Math.ceil(percentage * i) + '%';
-                    }
-                    if (i != colours.length - 1) {
-                        background += ',' + colours[i];
-                        background += ' ' + Math.ceil(percentage * (i + 1)) + '%';
-                    }
-                }
-                background += ')';
-            }
-            var style = 'background:' + background + ';';
+        if (livery) {
+            var style = 'background:' + livery + ';';
             className += ' coloured';
             if (textColour) {
                 className += ' white-text';
@@ -106,7 +84,7 @@
 
     function handleVehicle(data) {
         var marker,
-            icon = getIcon(data.properties.direction, data.properties.vehicle.colours, data.properties.vehicle.text_colour),
+            icon = getIcon(data.properties.direction, data.properties.vehicle.livery, data.properties.vehicle.text_colour),
             latLng = L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
 
         bounds.extend(latLng);
