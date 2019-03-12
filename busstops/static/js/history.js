@@ -48,6 +48,7 @@
             a.onclick = function() {
                 map.remove();
                 main.removeChild(mapContainer);
+                return false;
             };
             a.innerHTML = '❌';
             div.appendChild(a);
