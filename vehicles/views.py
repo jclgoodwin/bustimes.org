@@ -141,14 +141,14 @@ def service_vehicles_history(request, slug):
             date = journeys.values_list('datetime', flat=True).latest('datetime').date()
         except VehicleJourney.DoesNotExist:
             date = timezone.now().date()
-    journeys = journeys.filter(datetime__date=date).select_related('vehicle').prefetch_related('vehiclelocation_set')
+    locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
+    journeys = journeys.filter(datetime__date=date).select_related('vehicle').annotate(locations=Exists(locations))
     operator = service.operator.select_related('region').first()
     return render(request, 'vehicles/vehicle_detail.html', {
         'breadcrumb': [operator.region, operator, service],
         'date': date,
         'object': service,
         'journeys': journeys,
-        'locations': any(journey.vehiclelocation_set.all() for journey in journeys)
     })
 
 
