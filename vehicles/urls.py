@@ -9,4 +9,5 @@ urlpatterns = [
     path('vehicles.json', views.vehicles_json),
     path('vehicles/<int:pk>', views.VehicleDetailView.as_view(), name='vehicle_detail'),
     path('vehicle-tracking-report', views.dashboard),
+    path('journeys/<int:pk>.json', views.journey_json),
 ]

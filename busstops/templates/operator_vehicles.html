@@ -16,7 +16,7 @@
     <tr>
         <th scope="col"></th>
         <th scope="col">Last seen</th>
-        <th scope="col" colspan="3">Type</th>
+        <th scope="col">Type</th>
         <th scope="col">Colour</th>
         <th scope="col">Notes</th>
     </tr>
@@ -48,8 +48,6 @@
                 {% endif %}
             </td>
             <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
-            <td>{% if vehicle.vehicle_type.double_decker %}Decker{% endif %}</td>
-            <td>{% if vehicle.vehicle_type.coach %}Coach{% endif %}</td>
             <td>{% if vehicle.colours %}<div class="bus" style="background:{{ vehicle.get_livery }}"></div>{% endif %}</td>
             <td>{{ vehicle.notes }}</td>
         </tr>

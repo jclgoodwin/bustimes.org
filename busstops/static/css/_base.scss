@@ -212,6 +212,7 @@ input[type='text'],
 input[type='url'],
 input[type='email'],
 input[type='search'],
+input[type='date'],
 textarea {
     appearance: none;
     border: 1px solid $brand-color;
@@ -250,6 +251,7 @@ textarea {
         appearance: none;
         background: none;
         border: 1px solid $brand-color;
+        border-radius: .5em;
         font: inherit;
         height: 2.5em;
         padding: 0 1.5em 0 .5em;

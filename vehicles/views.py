@@ -174,8 +174,8 @@ class VehicleDetailView(DetailView):
                 date = timezone.now().date()
         context['date'] = date
         journeys = journeys.filter(datetime__date=date)
-        context['journeys'] = journeys.select_related('service').prefetch_related('vehiclelocation_set')
-        context['locations'] = any(journey.vehiclelocation_set.all() for journey in journeys)
+        locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
+        context['journeys'] = journeys.select_related('service').annotate(locations=Exists(locations))
         return context
 
 
@@ -191,3 +191,12 @@ def dashboard(request):
     return render(request, 'vehicles/dashboard.html', {
         'operators': operators
     })
+
+
+def journey_json(request, pk):
+    return JsonResponse([{
+        'coordinates': tuple(location.latlong),
+        'delta': location.early,
+        'direction': location.heading,
+        'datetime': location.datetime,
+    } for location in VehicleLocation.objects.filter(journey=pk)], safe=False)

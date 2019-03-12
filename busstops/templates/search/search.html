@@ -10,6 +10,8 @@
 
 <p>{{ form.q }} <input type="submit" value="Search" /></p>
 
+</form>
+
 {% if query %}
     {% with postcode=form.get_postcode %}
         {% if postcode %}
@@ -41,6 +43,5 @@
     {% endwith %}
 {% endif %}
 
-</form>
 
 {% endblock %}

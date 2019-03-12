@@ -13,7 +13,7 @@
 {% endif %}
 
 {% if object.colours %}
-    {% for colour in object.colours.split %}<div class="colour" style="background:{{ colour }}"></div>{% endfor %}
+    <p>{% if vehicle.colours %}<div class="bus" style="background:{{ vehicle.get_livery }}"></div>{% endif %}</p>
 {% endif %}
 
 {% if object.notes %}
@@ -21,85 +21,51 @@
 {% endif %}
 
 <form>
-    <label>
-        Date:
-        <input type="date" name="date" value={{ date.isoformat }}>
-    </label>
-    <input type="submit" value="Show">
+    <p>
+        <label>
+            Date:
+            <input type="date" name="date" value={{ date.isoformat }}>
+        </label>
+        <input type="submit" value="Show journeys">
+    </p>
 </form>
 
-<table>
-    <tr>
-        <th scope="col" colspan="2">Journey</th>
-        <th scope="col">To</th>
-        <th scope="col">{% if object.region_id %}Vehicle{% else %}Service{% endif %}</th>
-    </tr>
-{% for journey in journeys %}
-    <tr>
-        <td>{{ journey.datetime|time }}</td>
-        <td>{{ journey.code }}</td>
-        <td>{{ journey.destination }}</td>
-        <td>
-            {% if object.region_id %}
-                <a href="{{ journey.vehicle.get_absolute_url }}?date={{ journey.datetime|date:"Y-m-d" }}">{{ journey.vehicle }}</a>
-            {% elif journey.service %}
-                <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ journey.datetime|date:"Y-m-d" }}">{{ journey.service.line_name }}</a>
-            {% endif %}
-        </td>
-    </tr>
-{% endfor %}
-</table>
-
-{% if locations %}
-<div id="cartograph" style="height:80vh"></div>
-
-<link rel="stylesheet" href="/static/js/bower_components/leaflet/dist/leaflet.css" />
-<script src="/static/js/bower_components/leaflet/dist/leaflet.js"></script>
-<script>
-(function() {
-    function getMarker(latlng, direction) {
-        var html = '';
-        if (direction !== null) {
-            html = '<div class="arrow" style="-ms-transform: rotate(' + direction + 'deg);-webkit-transform: rotate(' + direction + 'deg);-moz-transform: rotate(' + direction + 'deg);-o-transform: rotate(' + direction + 'deg);transform: rotate(' + direction + 'deg)"></div>';
-        }
-        return L.marker(latlng, {
-            icon: L.divIcon({
-                iconSize: [16, 8],
-                html: html,
-                className: 'just-arrow'
-            })
-        });
-    }
-
-    var map = L.map('cartograph'),
-        tileURL = 'https://maps.bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
-        latlng,
-        service,
-        bounds = L.latLngBounds();
-
-    map.attributionControl.setPrefix('');
-
-    L.tileLayer(tileURL, {
-        attribution: '<a href="https://www.maptiler.com/copyright/">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
-    }).addTo(map);
-
+{% if journeys %}
+    <table>
+        <tr>
+            <th scope="col">{% if object.region_id %}Vehicle{% else %}Service{% endif %}</th>
+            <th scope="col" colspan="2">Journey</th>
+            <th scope="col">To</th>
+            <th scope="col"></th>
+        </tr>
     {% for journey in journeys %}
-        {% if object.region_id %}
-            service = '<a href="{{ journey.vehicle.get_absolute_url }}">{{ journey.vehicle }}</a><br>';
-        {% else %}
-            service = '{% if journey.service %}<a href="{{ journey.service.get_absolute_url }}/vehicles">{{ journey.service.line_name }}</a><br>{% endif %}';
-        {% endif %}
-        {% for location in journey.vehiclelocation_set.all %}
-            latlng = [{{ location.latlong.y }},{{ location.latlong.x }}];
-            bounds.extend(latlng);
-            getMarker(latlng, {% firstof location.heading 0 %}).bindPopup(service + "{{ location.datetime|time }}").addTo(map);
-        {% endfor %}
+        <tr>
+            <td>
+                {% if object.region_id %}
+                    <a href="{{ journey.vehicle.get_absolute_url }}?date={{ journey.datetime|date:"Y-m-d" }}">{{ journey.vehicle }}</a>
+                {% elif journey.service %}
+                    <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ journey.datetime|date:"Y-m-d" }}">{{ journey.service.line_name }}</a>
+                {% endif %}
+            </td>
+            <td>{{ journey.datetime|time }}</td>
+            <td>{{ journey.code }}</td>
+            <td>{{ journey.destination }}</td>
+            <td>
+                {% if journey.locations %}
+                    <button data-journey-id="{{ journey.id }}">Show map</button>
+                {% endif %}
+            </td>
+        </tr>
     {% endfor %}
-    map.fitBounds(bounds);
-    map.setMaxBounds(bounds.pad(.5));
-})();
-</script>
-{% elif not journeys %}
+    </table>
+
+    {% load static %}
+    <link rel="stylesheet" href="/static/js/bower_components/leaflet/dist/leaflet.css" />
+    <script src="/static/js/bower_components/leaflet/dist/leaflet.js"></script>
+    <script src="/static/js/bower_components/reqwest/reqwest.min.js"></script>
+    <script async src="{% static 'js/history.js' %}"></script>
+
+{% else %}
     <p>Sorry, nothing found for {{ date }}</p>
 {% endif %}
 
