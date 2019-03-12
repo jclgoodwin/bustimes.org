@@ -65,13 +65,15 @@ class Vehicle(models.Model):
             if luminence < .5:
                 return '#fff'
 
-    def get_livery(self, direction=180):
+    def get_livery(self, direction=None):
         if not self.colours:
             return
         colours = self.colours.split()
         if len(colours) == 1:
             return colours[0]
         else:
+            if direction is None:
+                direction = 180
             background = 'linear-gradient('
             if direction < 180:
                 background += 'to left'
@@ -132,7 +134,7 @@ class VehicleLocation(models.Model):
                     'url': vehicle.get_absolute_url(),
                     'name': str(vehicle),
                     'text_colour': vehicle.get_text_colour(),
-                    'livery': vehicle.get_livery()
+                    'livery': vehicle.get_livery(self.heading)
                 },
                 'delta': self.early,
                 'direction': self.heading,
