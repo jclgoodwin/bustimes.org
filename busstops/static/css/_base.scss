@@ -531,6 +531,9 @@ table {
         height: 240px;
     }
 
+    &.full-screen {
+        position: fixed;
+    }
 }
 
 .bus {

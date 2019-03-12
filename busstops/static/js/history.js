@@ -23,6 +23,7 @@
     function openMap(event) {
         var mapContainer = document.createElement('div');
         mapContainer.id = 'map';
+        mapContainer.className = 'full-screen';
         var main = document.getElementsByTagName('main')[0];
         main.appendChild(mapContainer);
 
