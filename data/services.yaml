@@ -156,6 +156,8 @@ NE_310_PB3954_X122:
 # deduplicate cross-border services:
 NW_03_BRD_X95_1:
     current: false
+YWDO007:
+    current: false
 # Midland Classic cross-border services
 em_11-4-E-y08:
     current: false

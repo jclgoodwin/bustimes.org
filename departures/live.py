@@ -469,7 +469,7 @@ class TimetableDepartures(Departures):
         }
 
     def get_departures(self):
-        queryset = self.stop.stopusageusage_set.filter(datetime__gte=self.now, journey__service__current=True,
+        queryset = self.stop.stopusageusage_set.filter(datetime__gte=self.now,
                                                        journey__service__timetable_wrong=False)
         queryset = queryset.select_related('journey__destination__locality', 'journey__service')
         queryset = queryset.defer('journey__destination__latlong', 'journey__destination__locality__latlong',
