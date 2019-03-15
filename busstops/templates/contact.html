@@ -42,7 +42,7 @@
         <p>However, a few bus operating companies do offer this information on their websites. You can find links to their websites elsewhere on this website.</p>
     </details>
 
-    <details>
+    <details{% if form.is_bound %} open{% endif %}>
         <summary>This website, bustimes.org</summary>
 
         {% load email_obfuscator %}
