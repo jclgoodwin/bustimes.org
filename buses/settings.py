@@ -5,6 +5,7 @@ import os
 import sys
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from django_replicated.settings import *
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -79,8 +80,9 @@ if os.environ.get('READ_ONLY_DB_HOST'):
         'PORT': os.environ.get('READ_ONLY_DB_PORT'),
         'CONN_MAX_AGE': None
     }
-    DATABASE_ROUTERS = ['buses.routers.Router']
-
+    REPLICATED_DATABASE_SLAVES = ['read-only']
+    DATABASE_ROUTERS = ['django_replicated.router.ReplicationRouter']
+    MIDDLEWARE.append('django_replicated.middleware.ReplicationMiddleware')
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
