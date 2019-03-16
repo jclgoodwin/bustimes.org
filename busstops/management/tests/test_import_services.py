@@ -276,7 +276,7 @@ class ImportServicesTest(TestCase):
     @freeze_time('30 December 2016')
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_service_dates(self):
-        self.assertEqual(0, ServiceDate.objects.count())
+        self.assertEqual(14, ServiceDate.objects.count())
 
         # speed up
         self.ea_service.current = False
