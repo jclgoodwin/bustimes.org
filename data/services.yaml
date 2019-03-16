@@ -148,6 +148,14 @@ ea_20-P-_-y08:
     line_brand: Pedigree
 swe_40-376-_-y10:
     line_brand: Mendip Xplorer
+NE_130_PB3954_50:
+    line_brand: Whey Aye Five O
+NE_130_PB3954_50A:
+    line_brand: Whey Aye Five O
+NE_410_PB1954_1:
+    line_brand: Coaster
+NE_410_PB1954_1A:
+    line_brand: Coaster
 # Hadrian's Wall Country Bus - back in Easter 2019
 NE_310_PB3954_AD12:
     current: false
