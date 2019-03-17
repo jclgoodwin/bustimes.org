@@ -9,6 +9,10 @@ from ...models import Vehicle, VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
+def get_latlong(item):
+    return Point(item['geo']['longitude'], item['geo']['latitude'])
+
+
 class Command(ImportLiveVehiclesCommand):
     url = 'http://api.otrl-bus.io/api/bus/nearby'
     source_name = 'Go-Ahead'
@@ -56,7 +60,7 @@ class Command(ImportLiveVehiclesCommand):
                         headers = {'opco': opco}
                         try:
                             response = self.session.get(self.url, params=params, timeout=30, headers=headers)
-                            print(opco, response.url)
+                            #print(opco, response.url)
                             for item in response.json()['data']:
                                 yield item
                         except (RequestException, KeyError):
@@ -81,8 +85,12 @@ class Command(ImportLiveVehiclesCommand):
             defaults['fleet_number'] = fleet_number
         if operators:
             defaults['operator_id'] = operators[0]
+            services = Service.objects.filter(operator__in=operators, line_name=item['lineRef'], current=True)
             try:
-                journey.service = Service.objects.get(operator__in=operators, line_name=item['lineRef'], current=True)
+                try:
+                    journey.service = self.get_service(services, get_latlong(item))
+                except Service.MultipleObjectsReturned:
+                    journey.service = services.filter(stops__locality__stoppoint=item['destination']['ref']).distinct().get()
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, operators, item['lineRef'])
 
@@ -96,6 +104,6 @@ class Command(ImportLiveVehiclesCommand):
             bearing = None
         return VehicleLocation(
             datetime=parse_datetime(item['recordedTime']),
-            latlong=Point(item['geo']['longitude'], item['geo']['latitude']),
+            latlong=get_latlong(item),
             heading=bearing
         )
