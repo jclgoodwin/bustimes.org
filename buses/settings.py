@@ -79,9 +79,6 @@ if os.environ.get('READ_ONLY_DB_HOST'):
         'PORT': os.environ.get('READ_ONLY_DB_PORT'),
         'CONN_MAX_AGE': None
     }
-    REPLICATED_DATABASE_SLAVES = ['read-only']
-    DATABASE_ROUTERS = ['django_replicated.router.ReplicationRouter']
-    MIDDLEWARE.append('django_replicated.middleware.ReplicationMiddleware')
     REPLICA_DATABASES = ['read-only']
     DATABASE_ROUTERS = ['multidb.ReplicaRouter']
 
