@@ -18,7 +18,7 @@ class VehicleAdmin(ModelAdmin):
     )
     list_select_related = ['operator', 'vehicle_type']
     list_editable = ('fleet_number', 'reg', 'operator', 'vehicle_type', 'colours', 'notes')
-    search_fields = ('code',)
+    search_fields = ('code', 'fleet_number', 'reg')
     raw_id_fields = ('operator',)
     autocomplete_fields = ('vehicle_type',)
     ordering = ('-id',)
