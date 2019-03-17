@@ -60,7 +60,6 @@ class Command(ImportLiveVehiclesCommand):
                         headers = {'opco': opco}
                         try:
                             response = self.session.get(self.url, params=params, timeout=30, headers=headers)
-                            #print(opco, response.url)
                             for item in response.json()['data']:
                                 yield item
                         except (RequestException, KeyError):
@@ -90,7 +89,8 @@ class Command(ImportLiveVehiclesCommand):
                 try:
                     journey.service = self.get_service(services, get_latlong(item))
                 except Service.MultipleObjectsReturned:
-                    journey.service = services.filter(stops__locality__stoppoint=item['destination']['ref']).distinct().get()
+                    destination = item['destination']['ref']
+                    journey.service = services.filter(stops__locality__stoppoint=destination).distinct().get()
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, operators, item['lineRef'])
 
