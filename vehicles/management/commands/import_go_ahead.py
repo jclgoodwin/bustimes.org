@@ -1,5 +1,6 @@
 from time import sleep
 from datetime import timedelta
+from ciso8601 import parse_datetime
 from requests.exceptions import RequestException
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models import Extent
@@ -31,9 +32,9 @@ class Command(ImportLiveVehiclesCommand):
     def get_bounding_boxes(self, extent):
         extent = extent['latlong__extent']
         lng = extent[0]
-        while lng < extent[2]:
+        while lng <= extent[2]:
             lat = extent[1]
-            while lat < extent[3]:
+            while lat <= extent[3]:
                 yield (lng, lat)
                 lat += 0.2
             lng += 0.2
@@ -94,7 +95,7 @@ class Command(ImportLiveVehiclesCommand):
         if bearing == 0 and item['vehicleRef'].startswith('BH-'):
             bearing = None
         return VehicleLocation(
-            datetime=item['recordedTime'],
+            datetime=parse_datetime(item['recordedTime']),
             latlong=Point(item['geo']['longitude'], item['geo']['latitude']),
             heading=bearing
         )
