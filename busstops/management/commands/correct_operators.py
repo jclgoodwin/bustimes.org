@@ -41,6 +41,6 @@ class Command(BaseCommand):
             self.maybe_print(self.maybe_move_operator(operator, regions))
 
         with open(os.path.join(settings.DATA_DIR, 'operators.yaml')) as open_file:
-            records = yaml.load(open_file)
+            records = yaml.load(open_file, Loader=yaml.FullLoader)
             for code in records:
                 Operator.objects.filter(id=code).update(**records[code])

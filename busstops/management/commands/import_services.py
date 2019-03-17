@@ -321,7 +321,7 @@ class Command(BaseCommand):
 
             # correct services
             with open(os.path.join(settings.DATA_DIR, 'services.yaml')) as open_file:
-                records = yaml.load(open_file)
+                records = yaml.load(open_file, Loader=yaml.FullLoader)
                 for service_code in records:
                     Service.objects.filter(service_code=service_code).update(**records[service_code])
 
