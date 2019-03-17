@@ -1,18 +1,19 @@
 from django.contrib import admin
+from busstops.admin import ModelAdmin, RelatedOnlyFieldListFilter
 from .models import VehicleType, Vehicle, VehicleJourney
 
 
-class VehicleTypeAdmin(admin.ModelAdmin):
+class VehicleTypeAdmin(ModelAdmin):
     search_fields = ('name',)
     list_display = ('name', 'double_decker', 'coach')
     list_editable = list_display[1:]
 
 
-class VehicleAdmin(admin.ModelAdmin):
+class VehicleAdmin(ModelAdmin):
     list_display = ('code', 'fleet_number', 'reg', 'operator', 'vehicle_type', 'colours', 'notes')
     list_filter = (
-        ('operator', admin.RelatedOnlyFieldListFilter),
-        ('source', admin.RelatedOnlyFieldListFilter),
+        ('operator', RelatedOnlyFieldListFilter),
+        ('source', RelatedOnlyFieldListFilter),
         'vehicle_type',
     )
     list_select_related = ['operator', 'vehicle_type']
@@ -23,12 +24,12 @@ class VehicleAdmin(admin.ModelAdmin):
     ordering = ('-id',)
 
 
-class VehicleJourneyAdmin(admin.ModelAdmin):
+class VehicleJourneyAdmin(ModelAdmin):
     list_display = ('datetime', 'vehicle', 'service', 'code', 'destination')
     list_select_related = ('vehicle', 'service')
     raw_id_fields = ('service',)
     list_filter = (
-        ('source', admin.RelatedOnlyFieldListFilter),
+        ('source', RelatedOnlyFieldListFilter),
     )
 
 

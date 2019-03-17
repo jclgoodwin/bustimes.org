@@ -31,7 +31,7 @@ isodate = "*"
 webcolors = "*"
 sentry-sdk = "*"
 gtfs-realtime-bindings = "*"
-django-replicated = "*"
+django-multidb-router = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

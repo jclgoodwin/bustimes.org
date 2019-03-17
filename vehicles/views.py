@@ -8,6 +8,7 @@ from django.http import JsonResponse, Http404
 from django.views.decorators.http import last_modified
 from django.views.generic.detail import DetailView
 from django.utils import timezone
+from multidb.pinning import use_primary_db
 from busstops.views import get_bounding_box
 from busstops.models import Operator, Service, ServiceCode, SIRISource, DataSource, Journey
 from .models import Vehicle, VehicleLocation, VehicleJourney
@@ -50,6 +51,7 @@ def get_locations(request):
     return locations
 
 
+@use_primary_db
 def siri_one_shot(code):
     source = 'Icarus'
     siri_source = SIRISource.objects.get(name=code.scheme[:-5])
