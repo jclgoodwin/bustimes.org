@@ -1,5 +1,5 @@
 import pytz
-from datetime import datetime
+from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
 from busstops.models import Operator, Service
 from ...models import Vehicle, VehicleLocation, VehicleJourney
@@ -58,8 +58,7 @@ class Command(ImportLiveVehiclesCommand):
         return journey, vehicle_created
 
     def create_vehicle_location(self, item):
-        when = datetime.strptime(item['RecordedAtTime'], '%d/%m/%Y %H:%M:%S')
-        when = LOCAL_TIMEZONE.localize(when)
+        when = parse_datetime(item['RecordedAtTime'])
         bearing = item['Bearing']
         if bearing == '-1':
             bearing = None
