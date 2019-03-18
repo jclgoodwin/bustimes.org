@@ -49,10 +49,13 @@ class Command(ImportLiveVehiclesCommand):
         else:
             fleet_number = None
 
+        operators = ('NXHH', 'WNGS')
+        if operator not in operators:
+            operators = (operator,)
         journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
-            {'fleet_number': fleet_number, 'source': self.source},
+            {'fleet_number': fleet_number, 'source': self.source, 'operator_id': operator},
             code=code,
-            operator=operator
+            operator__in=operators
         )
 
         return journey, vehicle_created
