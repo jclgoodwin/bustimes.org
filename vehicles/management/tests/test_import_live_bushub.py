@@ -1,6 +1,6 @@
 from django.test import TestCase
 from busstops.models import Region, Operator, DataSource
-from ...models import VehicleLocation
+from ...models import VehicleLocation, Vehicle
 from ..commands import import_bushub
 
 
@@ -8,7 +8,9 @@ class BusHubTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         Region.objects.create(id='WM')
-        Operator.objects.create(id='DIAM', region_id='WM')
+        Operator.objects.create(id='DIAM', name='Graphite Buses', region_id='WM')
+        Operator.objects.create(id='WNGS', name='Paul McCartney & Wings', region_id='WM')
+        cls.vehicle = Vehicle.objects.create(code='20052', operator_id='WNGS')
         now = '2018-08-06T22:41:15+01:00'
         cls.source = DataSource.objects.create(datetime=now)
 
@@ -58,3 +60,9 @@ class BusHubTest(TestCase):
         self.assertEqual('2018-08-31 21:49:33+00:00', str(location.datetime))
         self.assertEqual(143, location.heading)
         self.assertEqual('DIAM', location.journey.vehicle.operator_id)
+
+        item['OperatorRef'] = 'WNGS'
+        command.handle_item(item, self.source.datetime)
+        self.assertEqual(2, Vehicle.objects.count())
+        self.vehicle.refresh_from_db()
+        self.assertIsNotNone(self.vehicle.latest_location)

@@ -1,12 +1,8 @@
-import pytz
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
 from busstops.models import Operator, Service
 from ...models import Vehicle, VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
-
-
-LOCAL_TIMEZONE = pytz.timezone('Europe/London')
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -50,10 +46,11 @@ class Command(ImportLiveVehiclesCommand):
             fleet_number = None
 
         operators = ('NXHH', 'WNGS')
-        if operator not in operators:
-            operators = (operator,)
+        if operator.id not in operators:
+            operators = (operator.id,)
+
         journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
-            {'fleet_number': fleet_number, 'source': self.source, 'operator_id': operator},
+            {'fleet_number': fleet_number, 'source': self.source, 'operator': operator},
             code=code,
             operator__in=operators
         )
