@@ -8,18 +8,16 @@ import dateutil.parser
 import logging
 import xml.etree.cElementTree as ET
 from django.conf import settings
-from django.contrib.gis.geos import Point
-from django.db import transaction, IntegrityError
+from django.db import IntegrityError
 from django.utils import timezone
 from busstops.models import Service, ServiceCode, DataSource
-from vehicles.models import Vehicle, VehicleJourney, VehicleLocation
+from vehicles.models import Vehicle, VehicleJourney
 
 
 logger = logging.getLogger(__name__)
 DESTINATION_REGEX = re.compile(r'.+\((.+)\)')
 LOCAL_TIMEZONE = pytz.timezone('Europe/London')
 SESSION = requests.Session()
-RIFKIND_OPERATORS = {'KBUS', 'NCTR', 'TBTN'}
 
 
 class Departures(object):
@@ -223,79 +221,6 @@ class EdinburghDepartures(Departures):
 class GoAheadDepartures(Departures):
     def get_request_url(self):
         return 'https://api.otrl-bus.io/api/stops/departures/' + self.stop.pk
-
-
-class RifkindDepartures(Departures):
-    def get_response(self):
-        return SESSION.post('https://apps.trentbarton.co.uk/HugoTest/index.php', json={
-            "apiKey": "9gs9c4ifoc2en5ipea9w",
-            "function": "get_realtime_full",
-            "token": "$2y$10$tCWAo4OrB0IRCHu4ycjCAeWDadS9VX3DDb.AtD3GsJTFm4GYVdWG61551553143125",
-            "atcoCode": self.stop.pk
-        })
-
-    def departures_from_response(self, res):
-        data = res.json()['data']
-        if data:
-            self.source, _ = DataSource.objects.get_or_create(name='Rifkind')
-        return [self.get_row(item) for item in data]
-
-    def get_row(self, item):
-        service = self.get_service(item['service_name'])
-        if item['vehicle_number']:
-            operator = None
-            vehicle_number = str(item['vehicle_number'])
-            if len(vehicle_number) == 6:
-                if vehicle_number[:2] == '21':
-                    operator = 'KBUS'
-                    vehicle_number = int(vehicle_number[2:])
-                    if type(service) is str:
-                        if service == 'Derby':
-                            service = 'Skylink Leicester Derby'
-                        else:
-                            service = service.replace('kinchbus ', '', 1)
-                        service = self.get_service(service)
-                elif vehicle_number[:2] == '20':
-                    operator = 'TBTN'
-                    vehicle_number = int(vehicle_number[2:])
-            else:
-                operator = 'NCTR'
-                if type(service) is str and ' ' in service:
-                    service = self.get_service(service.split()[-1])
-
-            if type(service) is Service:
-                journey_service = service
-                for operator in service.operator.all():
-                    if operator.id in RIFKIND_OPERATORS:
-                        operator = operator.id
-                        break
-            else:
-                journey_service = None
-
-            with transaction.atomic():
-                vehicle, _ = Vehicle.objects.get_or_create(code=vehicle_number, fleet_number=vehicle_number,
-                                                           operator_id=operator)
-                journey_datetime = datetime.datetime.fromtimestamp(item['origin_departure_time'])
-                journey, journey_created = VehicleJourney.objects.get_or_create(vehicle=vehicle,
-                                                                                service=journey_service,
-                                                                                destination=item['journey_destination'],
-                                                                                datetime=journey_datetime,
-                                                                                source=self.source)
-                latlong = Point(item['vehicle_location_lng'], item['vehicle_location_lat'])
-                if journey_created or not vehicle.latest_location_id or vehicle.latest_location.latlong != latlong:
-                    if vehicle.latest_location_id and vehicle.latest_location.current:
-                        vehicle.latest_location.current = False
-                        vehicle.latest_location.save()
-                    vehicle.latest_location = VehicleLocation.objects.create(journey=journey, latlong=latlong,
-                                                                             current=True,
-                                                                             datetime=self.now)
-                    vehicle.save()
-        return {
-            'time': timezone.make_aware(datetime.datetime.fromtimestamp(item['scheduled_departure_time'])),
-            'live': timezone.make_aware(datetime.datetime.fromtimestamp(item['actual_departure_time'])),
-            'service': service,
-            'destination': item['journey_destination'],
-        }
 
 
 class PolarBearDepartures(Departures):
