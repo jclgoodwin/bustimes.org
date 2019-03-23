@@ -35,6 +35,7 @@ django-multidb-router = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
+django-debug-toolbar-force = "*"
 "flake8" = "*"
 freezegun = "*"
 vcrpy = "*"

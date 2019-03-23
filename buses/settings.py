@@ -48,7 +48,10 @@ MIDDLEWARE = [
 if DEBUG and 'runserver' in sys.argv:
     INTERNAL_IPS = ['127.0.0.1']
     INSTALLED_APPS.append('debug_toolbar')
-    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+    MIDDLEWARE += [
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+        'debug_toolbar_force.middleware.ForceDebugToolbarMiddleware',
+    ]
 
 ROOT_URLCONF = 'buses.urls'
 
@@ -80,7 +83,7 @@ if os.environ.get('READ_ONLY_DB_HOST'):
         'CONN_MAX_AGE': None
     }
     REPLICA_DATABASES = ['read-only']
-    DATABASE_ROUTERS = ['multidb.ReplicaRouter']
+    DATABASE_ROUTERS = ['multidb.PinningReplicaRouter']
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'

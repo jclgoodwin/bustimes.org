@@ -59,7 +59,7 @@ def siri_one_shot(code):
     if cache.get(cache_key):
         return
     now = timezone.now()
-    locations = VehicleLocation.objects.using('default').filter(current=True)
+    locations = VehicleLocation.objects.filter(current=True)
     current_locations = locations.filter(journey__service=code.service_id, journey__source__name=source,
                                          latest_vehicle__isnull=False)
     if not Journey.objects.filter(service=code.service_id, datetime__lt=now, stopusageusage__datetime__gt=now).exists():

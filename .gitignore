@@ -1,7 +1,9 @@
 .DS_Store
+.metadata_never_index
 *.pyc
 config/gunicorn.py
 data/TNDS/*.zip
+data/TNDS/tmp/*.zip
 data/*.zip
 data/*.ashx
 data/*.xml
@@ -10,4 +12,5 @@ data/*.csv
 node_modules
 htmlcov
 **/bower_components
+.env
 .coverage
