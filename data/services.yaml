@@ -207,6 +207,21 @@ twm_8-7-_-y11:
     current: false
 cen_37-71-_-y11:
     current: false
+# South East/West duplicates
+swe_44-1-E-y10:
+    current: false
+swe_44-3-D-y10:
+    current: false
+swe_44-404-A-y10:
+    current: false
+swe_44-405-A-y10:
+    current: false
+swe_44-412-_-y10:
+    current: false
+swe_44-417-_-y10:
+    current: false
+swe_44-KTE-_-y10:
+    current: false
 tfl_87-LWB-_-y05:
     timetable_wrong: true
 HIAO811:
