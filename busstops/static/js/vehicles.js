@@ -94,21 +94,25 @@
             popup = '<a href="' + data.properties.service.url + '/vehicles">' + data.properties.service.line_name + '</a>';
         }
         if (data.properties.destination) {
-            popup += 'To ' + data.properties.destination + '<br>';
+            popup += ' to ' + data.properties.destination;
         }
 
         if (data.properties.operator) {
+            if (popup) {
+                popup += '<br>';
+            }
             popup += data.properties.operator + '<br>';
         }
 
         if (data.properties.vehicle) {
             popup += '<a href="' + data.properties.vehicle.url + '">' + data.properties.vehicle.name + '</a>';
             if (data.properties.vehicle.type) {
-                popup += data.properties.vehicle.type + '<br>';
+                popup += ' - ' + data.properties.vehicle.type;
             }
             if (data.properties.vehicle.notes) {
-                popup += data.properties.vehicle.notes + '<br>';
+                popup += ' - ' + data.properties.vehicle.notes;
             }
+            popup += '<br>';
         }
 
         if (data.properties.delta === 0) {
