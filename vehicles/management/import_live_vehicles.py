@@ -41,7 +41,7 @@ def same_journey(latest_location, journey):
     if journey.code and latest_location.journey.code != str(journey.code):
         return False
     if latest_location.current:
-        return latest_location.journey.service == journey.service
+        return latest_location.journey.service_id == journey.service_id
     if journey.code and latest_location.journey.code == str(journey.code):
         return True
 
