@@ -91,7 +91,7 @@
 
         var popup = '';
         if (data.properties.service) {
-            popup = '<a href="' + data.properties.service.url + '/vehicles">' + data.properties.service.line_name + '</a>';
+            popup = '<a href="' + data.properties.service.url + '">' + data.properties.service.line_name + '</a>';
         }
         if (data.properties.destination) {
             popup += ' to ' + data.properties.destination;
