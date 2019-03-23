@@ -134,12 +134,14 @@ class VehicleLocation(models.Model):
                     'url': vehicle.get_absolute_url(),
                     'name': str(vehicle),
                     'text_colour': vehicle.get_text_colour(),
-                    'livery': vehicle.get_livery(self.heading)
+                    'livery': vehicle.get_livery(self.heading),
+                    'notes': vehicle.notes
                 },
                 'delta': self.early,
                 'direction': self.heading,
                 'datetime': self.datetime,
-                'destination': journey.destination
+                'destination': journey.destination,
+                'source': journey.source_id
             }
         }
         if extended:

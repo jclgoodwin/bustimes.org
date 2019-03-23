@@ -106,6 +106,9 @@
             if (data.properties.vehicle.type) {
                 popup += data.properties.vehicle.type + '<br>';
             }
+            if (data.properties.vehicle.notes) {
+                popup += data.properties.vehicle.notes + '<br>';
+            }
         }
 
         if (data.properties.delta === 0) {
@@ -131,6 +134,10 @@
 
         var dateTime = new Date(data.properties.datetime);
         popup += 'Updated at ' + dateTime.toTimeString().slice(0, 5);
+
+        if (data.properties.source === 75) {
+            popup += '<br>(Only updates when someone is viewing the route map and timetable page)';
+        }
 
         marker.bindPopup(popup);
 
