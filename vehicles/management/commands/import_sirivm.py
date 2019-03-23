@@ -49,6 +49,7 @@ class Command(ImportLiveVehiclesCommand):
         'SCSO': ('SCHM', 'SCCO', 'SMSO', 'SCHW'),
         'SCNH': ('SCNH', 'SCWW'),
         'CBLE': ('CBBH', 'CBNL'),
+        'CSLB': ('CSLB', 'OXBC'),
         'RED': ('RRTR', 'RLNE', 'REDE'),
         'SCCM': ('SCCM', 'SCPB', 'SCHU', 'SCBD'),
         'ATS': ('ARBB', 'ARHE', 'GLAR'),
@@ -116,9 +117,10 @@ class Command(ImportLiveVehiclesCommand):
             print(e, operator_ref, service)
 
         vehicle_code = mvj.find('siri:VehicleRef', NS).text
-        if operator_ref and vehicle_code.startswith(operator_ref + '-'):
-            if operator_ref != 'SQ' or vehicle_code.startswith('SQ-SQ-'):
-                vehicle_code = vehicle_code[len(operator_ref) + 1:]
+        while operator_ref and vehicle_code.startswith(operator_ref + '-'):
+            if operator_ref == 'SQ' and not vehicle_code.startswith('SQ-SQ-'):
+                break
+            vehicle_code = vehicle_code[len(operator_ref) + 1:]
 
         defaults = {
             'source': self.source,
@@ -128,7 +130,7 @@ class Command(ImportLiveVehiclesCommand):
             defaults['fleet_number'] = vehicle_code
 
         vehicles = Vehicle.objects.select_related('latest_location__journey')
-        if vehicle_code.startswith('GOEA-'):
+        if vehicle_code.startswith('GOEA-') or vehicle_code.startswith('CSLB-'):
             journey.vehicle, vehicle_created = vehicles.get_or_create(
                 defaults,
                 code=vehicle_code,
