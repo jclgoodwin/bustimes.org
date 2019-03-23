@@ -139,8 +139,8 @@
         var dateTime = new Date(data.properties.datetime);
         popup += 'Updated at ' + dateTime.toTimeString().slice(0, 5);
 
-        if (data.properties.source === 75) {
-            popup += '<br>(Only updates when someone is viewing the route map and timetable page)';
+        if (data.properties.source === 75 && data.properties.service) {
+            popup += '<br>(Updates if someone views<br><a href="' + data.properties.service.url + '">the ' + data.properties.service.line_name + ' page</a>)';
         }
 
         marker.bindPopup(popup);
