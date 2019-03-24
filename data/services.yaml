@@ -228,7 +228,14 @@ swe_44-18-C-y10:
     current: false
 swe_44-19-B-y10:
     current: false
-
+set_6-13-F-y08:
+    current: false
+swe_44-4-C-y10:
+    current: false
+swe_44-5-A-y10:
+    current: false
+swe_44-16-A-y10:
+    current: false
 tfl_87-LWB-_-y05:
     timetable_wrong: true
 HIAO811:
