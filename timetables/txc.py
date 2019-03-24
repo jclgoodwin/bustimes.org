@@ -110,6 +110,7 @@ def correct_description(description):
             ('Camleford', 'Camelford'),
             ('Greenstead Green', 'Greensted Green'),
             ('Tinagel', 'Tintagel'),
+            ('Plymouh City Cerntre', 'Plymouth City Centre'),
             ('- ', ' - '),
             (' -', ' - '),
             ('  -', ' -'),
