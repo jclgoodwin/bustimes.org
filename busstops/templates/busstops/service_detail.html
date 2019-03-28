@@ -159,15 +159,15 @@
     </ul>
 {% endif %}
 
-{% load pipeline %}
 
 {% if object.geometry or object.get_buses_online %}
     {% if object.geometry %}
         <script>window.geometry = {{ object.geometry.merged.json|safe }};</script>
     {% endif %}
 
+    {% load static %}
+    {% load pipeline %}
     <link rel="stylesheet" href="{% static "js/bower_components/leaflet/dist/leaflet.css" %}" />
-
     {% javascript 'livemap' %}
 {% endif %}
 
