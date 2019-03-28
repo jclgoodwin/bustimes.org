@@ -524,7 +524,8 @@ class Service(models.Model):
 
     @cached_property
     def get_buses_online(self):
-        return self.vehiclejourney_set.filter(latest_vehicle__isnull=False, vehiclelocation__current=True).exists()
+        return self.vehiclejourney_set.filter(vehiclelocation__latest_vehicle__isnull=False,
+                                              vehiclelocation__current=True).exists()
 
     @staticmethod
     def get_operator_number(code):

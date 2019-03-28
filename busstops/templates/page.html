@@ -19,9 +19,6 @@
 <!--[if gte IE 9]><!-->
     {% load pipeline %}
     {% stylesheet 'main' %}
-    {% if object.geometry or object.get_buses_online %}
-        <link rel="stylesheet" href="{% static "js/bower_components/leaflet/dist/leaflet.css" %}" />
-    {% endif %}
 <!--<![endif]-->
 <!--[if lt IE 9]>
     {% stylesheet 'ie' %}

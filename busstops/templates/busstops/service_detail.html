@@ -162,6 +162,8 @@
         <script>window.geometry = {{ object.geometry.merged.json|safe }};</script>
     {% endif %}
 
+    <link rel="stylesheet" href="{% static "js/bower_components/leaflet/dist/leaflet.css" %}" />
+
     {% javascript 'livemap' %}
 {% endif %}
 
