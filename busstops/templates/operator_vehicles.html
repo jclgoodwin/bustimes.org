@@ -14,7 +14,7 @@
 
 <table>
     <tr>
-        <th scope="col"></th>
+        <th scope="col"{% if code_column %} colspan="2"{% endif %}></th>
         <th scope="col">Last seen</th>
         <th scope="col">Type</th>
         <th scope="col">Colour</th>
@@ -22,6 +22,9 @@
     </tr>
     {% for vehicle in vehicles %}
         <tr>
+            {% if code_column %}
+                <td>{{ vehicle.code }}</td>
+            {% endif %}
             <td><a href="{{ vehicle.get_absolute_url }}">{{ vehicle }}</a></td>
             <td>
                 {% if vehicle.latest_location %}

@@ -27,7 +27,8 @@ def operator_vehicles(request, slug):
         'breadcrumb': [operator.region, operator],
         'object': operator,
         'today': timezone.now().date(),
-        'vehicles': vehicles
+        'vehicles': vehicles,
+        'code_column': any(v.code.isdigit() and v.fleet_number and v.code != str(v.fleet_number) for v in vehicles)
     })
 
 
