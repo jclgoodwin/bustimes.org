@@ -84,7 +84,7 @@ if os.environ.get('READ_ONLY_DB_HOST'):
     }
     REPLICA_DATABASES = ['read-only']
     DATABASE_ROUTERS = ['multidb.PinningReplicaRouter']
-    MIDDLEWARE.apend('busstops.middleware.admin_db_middleware')
+    MIDDLEWARE.append('busstops.middleware.admin_db_middleware')
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
