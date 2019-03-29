@@ -1,3 +1,5 @@
+from datetime import datetime
+from django.utils import timezone
 from django.contrib.gis.geos import Point
 from busstops.models import Service
 from ...models import Vehicle, VehicleLocation, VehicleJourney
@@ -5,7 +7,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
-    url = 'http://tfeapp.com/live/vehicles.php'
+    url = 'http://tfe-opendata.com/api/v1/vehicle_locations'
     source_name = 'TfE'
     services = Service.objects.filter(operator__in=('LOTH', 'EDTR', 'ECBU', 'NELB'), current=True)
 
@@ -28,7 +30,7 @@ class Command(ImportLiveVehiclesCommand):
         if vehicle_code.isdigit():
             vehicle_defaults['fleet_number'] = vehicle_code
 
-        journey.vehicle, vehicle_created = Vehicle.objects.update_or_create(
+        journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
             vehicle_defaults,
             source=self.source,
             code=vehicle_code
@@ -38,6 +40,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
+            datetime=timezone.make_aware(datetime.fromtimestamp(item['last_gps_fix'])),
             latlong=Point(item['longitude'], item['latitude']),
             heading=item['heading']
         )

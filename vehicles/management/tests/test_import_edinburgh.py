@@ -19,9 +19,9 @@ class EdinburghImportTest(TestCase):
             'journey_id': '1135',
             'vehicle_id': '3032',
             'destination': 'Yoker',
-            'service_name': '11'
+            'service_name': '11',
         }
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(6):
             journey, created = self.command.get_journey(item)
         self.assertEqual('1135', journey.code)
         self.assertEqual('Yoker', journey.destination)
@@ -30,7 +30,7 @@ class EdinburghImportTest(TestCase):
         self.assertEqual(self.service, journey.service)
         self.assertTrue(created)
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(3):
             journey, created = self.command.get_journey(item)
 
     def test_vehicle_location(self):
@@ -38,6 +38,9 @@ class EdinburghImportTest(TestCase):
             'heading': 76,
             'latitude': 55.95376,
             'longitude': -3.18718,
+            'last_gps_fix': 1553898132,
         }
         location = self.command.create_vehicle_location(item)
+        self.assertEqual(76, location.heading)
+        self.assertEqual('2019-03-29 22:22:12+00:00', str(location.datetime))
         self.assertTrue(location.latlong)
