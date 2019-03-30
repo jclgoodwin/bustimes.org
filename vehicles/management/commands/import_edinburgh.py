@@ -11,6 +11,9 @@ class Command(ImportLiveVehiclesCommand):
     source_name = 'TfE'
     services = Service.objects.filter(operator__in=('LOTH', 'EDTR', 'ECBU', 'NELB'), current=True)
 
+    def get_items(self):
+        return super().get_items()['vehicles']
+
     def get_journey(self, item):
         journey = VehicleJourney(
             code=item['journey_id'] or '',
@@ -19,12 +22,13 @@ class Command(ImportLiveVehiclesCommand):
 
         vehicle_defaults = {}
 
-        try:
-            journey.service = self.services.get(line_name=item['service_name'])
-            vehicle_defaults['operator'] = journey.service.operator.first()
-        except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-            if item['service_name'] not in {'ET1', 'MA1', '3BBT', 'C134'}:
-                print(e, item['service_name'])
+        if item['service_name']:
+            try:
+                journey.service = self.services.get(line_name=item['service_name'])
+                vehicle_defaults['operator'] = journey.service.operator.first()
+            except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+                if item['service_name'] not in {'ET1', 'MA1', '3BBT', 'C134'}:
+                    print(e, item['service_name'])
 
         vehicle_code = item['vehicle_id']
         if vehicle_code.isdigit():
