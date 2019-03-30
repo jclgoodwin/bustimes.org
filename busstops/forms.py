@@ -28,7 +28,7 @@ class ContactForm(forms.Form):
         super().__init__(*args, **kwargs)
 
     def clean(self):
-        if self.request and self.is_valid() and akismet.check(
+        if self.request and self.is_valid() and 'seen_cookie_message' not in self.request.COOKIES and akismet.check(
             request=akismet.Request.from_django_request(self.request),
             comment=akismet.Comment(
                 content=self.cleaned_data['message'],

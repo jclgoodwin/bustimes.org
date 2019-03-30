@@ -70,9 +70,9 @@ def contact(request):
             message = EmailMessage(
                 subject,
                 body,
-                '"%s" <%s>' % (form.cleaned_data['name'], 'robot@bustimes.org'),
-                ('contact@bustimes.org',),
-                reply_to=(form.cleaned_data['email'],),
+                'contact@bustimes.org',
+                ['contact@bustimes.org'],
+                headers={'From': '"{}" <{}>'.format(form.cleaned_data['name'], form.cleaned_data['email'])}
             )
             message.send()
             submitted = True
