@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'haystack',
     'busstops',
     'vehicles',
+    'vosa',
     'multigtfs',
     'pipeline',
     'antispam',
