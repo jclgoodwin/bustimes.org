@@ -338,8 +338,8 @@ class Command(BaseCommand):
             ServiceDate.objects.filter(service__region=self.region_id).delete()
             generate_service_dates(Service.objects.filter(region=self.region_id))
 
-        StopPoint.objects.filter(active=True).exclude(service__current=True).update(active=False)
-        StopPoint.objects.filter(active=False, service__current=True).update(active=True)
+        # StopPoint.objects.filter(active=True).exclude(service__current=True).update(active=False)
+        # StopPoint.objects.filter(active=False, service__current=True).update(active=True)
 
         Service.objects.filter(region=self.region_id, current=False, geometry__isnull=False).update(geometry=None)
 
