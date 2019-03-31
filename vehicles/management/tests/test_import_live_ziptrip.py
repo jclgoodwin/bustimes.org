@@ -83,4 +83,4 @@ class ZipTripTest(TestCase):
 
         with self.assertNumQueries(4):
             response = self.client.get('/services/foo-foo/vehicles')
-        self.assertContains(response, 'value=2018-08-31')
+        self.assertContains(response, 'value="2018-08-31"')

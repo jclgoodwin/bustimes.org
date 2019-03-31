@@ -24,7 +24,7 @@
     <p>
         <label>
             Date:
-            <input type="date" name="date" value={{ date.isoformat }}>
+            <input type="date" name="date" value="{{ date.isoformat }}" max="{{ today.isoformat }}">
         </label>
         <input type="submit" value="Show journeys">
     </p>
@@ -42,9 +42,9 @@
         <tr>
             <td>
                 {% if object.region_id %}
-                    <a href="{{ journey.vehicle.get_absolute_url }}?date={{ journey.datetime|date:"Y-m-d" }}">{{ journey.vehicle }}</a>
+                    <a href="{{ journey.vehicle.get_absolute_url }}?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.vehicle }}</a>
                 {% elif journey.service %}
-                    <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ journey.datetime|date:"Y-m-d" }}">{{ journey.service.line_name }}</a>
+                    <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.service.line_name }}</a>
                 {% endif %}
             </td>
             <td>{{ journey.datetime|time }}</td>

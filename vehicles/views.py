@@ -133,6 +133,7 @@ def vehicles_json(request):
 def service_vehicles_history(request, slug):
     service = get_object_or_404(Service, slug=slug)
     date = request.GET.get('date')
+    today = timezone.now().date()
     if date:
         try:
             date = ciso8601.parse_datetime(date).date()
@@ -143,13 +144,14 @@ def service_vehicles_history(request, slug):
         try:
             date = journeys.values_list('datetime', flat=True).latest('datetime').date()
         except VehicleJourney.DoesNotExist:
-            date = timezone.now().date()
+            date = today
     locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
     journeys = journeys.filter(datetime__date=date).select_related('vehicle').annotate(locations=Exists(locations))
     operator = service.operator.select_related('region').first()
     return render(request, 'vehicles/vehicle_detail.html', {
         'breadcrumb': [operator.region, operator, service],
         'date': date,
+        'today': today,
         'object': service,
         'journeys': journeys,
     })
@@ -164,6 +166,7 @@ class VehicleDetailView(DetailView):
         if self.object.operator:
             context['breadcrumb'] = [self.object.operator.region, self.object.operator]
         date = self.request.GET.get('date')
+        context['today'] = timezone.now().date()
         if date:
             try:
                 date = ciso8601.parse_datetime(date).date()
@@ -174,7 +177,7 @@ class VehicleDetailView(DetailView):
             try:
                 date = journeys.values_list('datetime', flat=True).latest('datetime').date()
             except VehicleJourney.DoesNotExist:
-                date = timezone.now().date()
+                date = context['today']
         context['date'] = date
         journeys = journeys.filter(datetime__date=date)
         locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
