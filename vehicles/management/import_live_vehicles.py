@@ -57,16 +57,22 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     @staticmethod
     def get_service(queryset, latlong):
-        try:
-            return queryset.get()
-        except queryset.model.MultipleObjectsReturned:
+        for filtered_queryset in (
+            queryset,
+            queryset.filter(geometry__bboverlaps=latlong.buffer(0.1)),
+            queryset.filter(geometry__bboverlaps=latlong.buffer(0.05)),
+            queryset.filter(geometry__bboverlaps=latlong)
+        ):
             try:
-                return queryset.get(geometry__bboverlaps=latlong.buffer(0.1))
+                return filtered_queryset.get()
             except queryset.model.MultipleObjectsReturned:
-                try:
-                    return queryset.get(geometry__bboverlaps=latlong.buffer(0.05))
-                except queryset.model.MultipleObjectsReturned:
-                    return queryset.get(geometry__bboverlaps=latlong)
+                continue
+            except queryset.model.DoesNotExist:
+                break
+
+        now = timezone.now()
+        return queryset.filter(journey__datetime__lte=now,
+                               journey__stopusageusage__datetime__gte=now).distinct().get()
 
     @transaction.atomic
     def handle_item(self, item, now, service_code=None):
