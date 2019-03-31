@@ -1,7 +1,8 @@
 from time import sleep
 from datetime import timedelta
-from ciso8601 import parse_datetime
+from ciso8601 import parse_datetime_as_naive
 from requests.exceptions import RequestException
+from django.utils import timezone
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models import Extent
 from busstops.models import Service, StopPoint
@@ -103,7 +104,7 @@ class Command(ImportLiveVehiclesCommand):
         if bearing == 0 and item['vehicleRef'].startswith('BH-'):
             bearing = None
         return VehicleLocation(
-            datetime=parse_datetime(item['recordedTime']),
+            datetime=timezone.make_aware(parse_datetime_as_naive(item['recordedTime'])),
             latlong=get_latlong(item),
             heading=bearing
         )

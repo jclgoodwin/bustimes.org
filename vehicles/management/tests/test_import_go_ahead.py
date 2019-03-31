@@ -53,10 +53,11 @@ class GoAheadImportTest(TestCase):
             },
             "vehicleMake": "",
             "stopProgress": 0,
-            "recordedTime": "2019-03-17T14:27:17.000Z",
-            "updatedAtUTC": "2019-03-17T14:27:25.000Z"
+            "recordedTime": "2019-03-31T12:24:54.000Z",
+            "updatedAtUTC": "2019-03-31T11:25:05.000Z"
         }
         self.command.handle_item(item, self.command.source.datetime)
         self.command.handle_item(item, self.command.source.datetime)
 
-        self.assertEqual(VehicleLocation.objects.count(), 1)
+        location = VehicleLocation.objects.get()
+        self.assertEqual('2019-03-31 11:24:54+00:00', str(location.datetime))
