@@ -557,7 +557,8 @@ def add_stagecoach_departures(stop, services_dict, departures):
                         now = timezone.now()
                         journeys = vehicle.vehiclejourney_set.filter(code=monitor['datedVehicleJourneyRef'],
                                                                      datetime__date=now.date())
-                except (Vehicle.MultipleObjectsReturned, IntegrityError):
+                except (Vehicle.MultipleObjectsReturned, IntegrityError) as e:
+                    logger.error(e, exc_info=True)
                     vehicle = None
                 if departures and aimed >= departures[0]['time']:
                     replaced = False
