@@ -38,9 +38,9 @@ class EdinburghImportTest(TestCase):
             'heading': 76,
             'latitude': 55.95376,
             'longitude': -3.18718,
-            'last_gps_fix': 1554036201,
+            'last_gps_fix': 1554038242,
         }
         location = self.command.create_vehicle_location(item)
         self.assertEqual(76, location.heading)
-        self.assertEqual('2019-03-31 13:43:21+01:00', str(location.datetime))
+        self.assertEqual('2019-03-31 13:17:22+01:00', str(location.datetime))
         self.assertTrue(location.latlong)

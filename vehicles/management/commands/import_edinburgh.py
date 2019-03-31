@@ -1,12 +1,9 @@
-import pytz
 from datetime import datetime
+from django.utils.timezone import make_aware
 from django.contrib.gis.geos import Point
 from busstops.models import Service
 from ...models import Vehicle, VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
-
-
-LOCAL_TIMEZONE = pytz.timezone('Europe/London')
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -49,7 +46,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
-            datetime=datetime.fromtimestamp(item['last_gps_fix'], tz=LOCAL_TIMEZONE),
+            datetime=make_aware(datetime.utcfromtimestamp(item['last_gps_fix'])),
             latlong=Point(item['longitude'], item['latitude']),
             heading=item['heading']
         )
