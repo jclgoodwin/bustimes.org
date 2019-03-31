@@ -26,7 +26,7 @@ class Command(ImportFromCSVCommand):
         if not self.licence or self.licence.licence_number != row['Lic_No']:
             self.licence, _ = Licence.objects.update_or_create(
                 {
-                    'name': row['Op_Name'],
+                    'name': row['Op_Name'][:48],
                     'trading_name': row['trading_name'],
                     'traffic_area': row['Current Traffic Area'],
                     'discs': row['Discs in Possession'] or 0,
@@ -52,8 +52,6 @@ class Command(ImportFromCSVCommand):
                 },
                 registration_number=row['Reg_No'],
             )
-
-        print(row)
 
         Variation.objects.update_or_create(
             {
