@@ -15,7 +15,9 @@ class Command(ImportLiveVehiclesCommand):
     services = Service.objects.filter(operator__in=('LOTH', 'EDTR', 'ECBU', 'NELB'), current=True)
 
     def get_items(self):
-        return super().get_items()['vehicles']
+        items = super().get_items()
+        if items:
+            return items['vehicles']
 
     def get_journey(self, item):
         journey = VehicleJourney(
