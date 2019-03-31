@@ -25,7 +25,7 @@
     <p class="warning">{{ note|safe }}</p>
 {% endfor %}
 
-{% if object.geometry or object.get_buses_online %}
+{% if object.geometry %}
     <p id="buses-online"></p>
     <div class="service-map" id="map" data-service="{{ object.service_code }}"></div>
 {% endif %}
@@ -160,11 +160,8 @@
 {% endif %}
 
 
-{% if object.geometry or object.get_buses_online %}
-    {% if object.geometry %}
-        <script>window.geometry = {{ object.geometry.merged.json|safe }};</script>
-    {% endif %}
-
+{% if object.geometry %}
+    <script>window.geometry = {{ object.geometry.merged.json|safe }};</script>
     {% load static %}
     {% load pipeline %}
     <link rel="stylesheet" href="{% static "js/bower_components/leaflet/dist/leaflet.css" %}" />

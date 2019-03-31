@@ -522,11 +522,6 @@ class Service(models.Model):
         groups = SERVICE_ORDER_REGEX.match(self.line_name).groups()
         return (groups[0], int(groups[1]) if groups[1] else 0, groups[2])
 
-    @cached_property
-    def get_buses_online(self):
-        return self.vehiclejourney_set.filter(vehiclelocation__latest_vehicle__isnull=False,
-                                              vehiclelocation__current=True).exists()
-
     @staticmethod
     def get_operator_number(code):
         if code in {'MEGA', 'MBGD'}:
