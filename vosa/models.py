@@ -10,6 +10,12 @@ class Licence(models.Model):
     discs = models.PositiveIntegerField()
     authorised_discs = models.PositiveIntegerField()
 
+    def __str__(self):
+        return self.licence_number
+
+    def get_absolute_url(self):
+        return reverse('licence_detail', args=(self.licence_number,))
+
 
 class Registration(models.Model):
     licence = models.ForeignKey(Licence, models.CASCADE)
@@ -32,7 +38,7 @@ class Registration(models.Model):
         return string
 
     def get_absolute_url(self):
-        return reverse('variation_list', args=(self.registration_number,))
+        return reverse('registration_detail', args=(self.registration_number,))
 
 
 class Variation(models.Model):
@@ -58,4 +64,4 @@ class Variation(models.Model):
         return str(self.registration)
 
     def get_absolute_url(self):
-        return reverse('variation_list', args=(self.registration.registration_number,))
+        return reverse('registration_detail', args=(self.registration.registration_number,))

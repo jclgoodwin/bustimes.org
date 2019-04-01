@@ -47,19 +47,19 @@ Other details: Daily Service Every Twenty Minutes""",
             'reg_code': '284'
         })
 
-    # def test_licence_view(self):
-    #     response = self.client.get('/licences/PH1020951')
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertContains(response, '<a href="/registrations/PH1020951/284">')
+    def test_licence_view(self):
+        response = self.client.get('/licences/PH1020951')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '<a href="/registrations/PH1020951/284">')
 
-    # def test_licence_404(self):
-    #     response = self.client.get('/licences/PH102095')
-    #     self.assertEqual(response.status_code, 404)
+    def test_licence_404(self):
+        response = self.client.get('/licences/PH102095')
+        self.assertEqual(response.status_code, 404)
 
-    # def test_registration_view(self):
-    #     response = self.client.get('/registrations/PH1020951/284')
-    #     self.assertEqual(response.status_code, 200)
+    def test_registration_view(self):
+        response = self.client.get('/registrations/PH1020951/284')
+        self.assertEqual(response.status_code, 200)
 
-    # def test_registration_404(self):
-    #     response = self.client.get('/registrations/PH1020951/d')
-    #     self.assertEqual(response.status_code, 404)
+    def test_registration_404(self):
+        response = self.client.get('/registrations/PH1020951/d')
+        self.assertEqual(response.status_code, 404)

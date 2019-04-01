@@ -418,7 +418,7 @@ class OperatorCode(models.Model):
         return self.code
 
     def get_absolute_url(self):
-        return reverse('registration_list', args=(self.code,))
+        return reverse('licence_detail', args=(self.code,))
 
 
 class StopUsage(models.Model):

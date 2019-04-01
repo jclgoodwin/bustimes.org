@@ -1,12 +1,12 @@
 {% extends 'page.html' %}
 
-{% block title %}{{ operator }} – {{ operator.operator }} – Bus Times{% endblock %}
+{% block title %}{{ object }} – {{ operator }} – Bus Times{% endblock %}
 
 {% block content %}
 
-<h1>{{ operator }}</h1>
+<h1>{{ object }}</h1>
 
-{% if object_list %}
+{% if registrations %}
     <h2>Current and future bus service registrations</h2>
 
     <table>
@@ -17,22 +17,22 @@
             <th scope="col">Via</th>
             <th scope="col">Last changed</th>
         </tr>
-        {% for registration in object_list %}
+        {% for registration in registrations %}
             <tr>
                 <td><a href="{{ registration.get_absolute_url }}">{{ registration.registration_number }}</a></td>
                 <td>{{ registration.service_number }}</td>
                 <td>{{ registration.start_point }}</td>
                 <td>{{ registration.finish_point }}</td>
                 <td>{{ registration.via }}</td>
-                <td>{{ registration.date|date:"j M y" }}</td>
+                <td>{{ registration.effective_date|date:"j M y" }}</td>
             </tr>
         {% endfor %}
     </table>
 {% endif %}
 
-<h2>Cancelled bus service registrations</h2>
-
 {% if cancelled %}
+    <h2>Cancelled bus service registrations</h2>
+
     <table>
         <tr>
             <th colspan="2"></th>
@@ -48,7 +48,7 @@
                 <td>{{ registration.start_point }}</td>
                 <td>{{ registration.finish_point }}</td>
                 <td>{{ registration.via }}</td>
-                <td>{{ registration.date|date:"j M y" }}</td>
+                <td>{{ registration.effective_date|date:"j M y" }}</td>
             </tr>
         {% endfor %}
     </table>

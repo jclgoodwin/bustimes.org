@@ -1,27 +1,35 @@
 {% extends 'page.html' %}
 
-{% block title %}{{ object_list.0.registration.registration_number }} – Bus Times{% endblock %}
+{% block title %}{{ object.registration_number }} – Bus Times{% endblock %}
 
 {% block content %}
 
-<h1>{{ object_list.0.registration.registration_number }}</h1>
+<h1>{{ object.registration_number }}</h1>
 
 <table>
     <tr>
         <th scope="row"></th>
-        <td>{{ object_list.0.registration.service_number }}</td>
+        <td>{{ object.service_number }}</td>
     </tr>
     <tr>
         <th scope="row">From</th>
-        <td>{{ object_list.0.registration.start_point }}</td>
+        <td>{{ object.start_point }}</td>
     </tr>
     <tr>
         <th scope="row">To</th>
-        <td>{{ object_list.0.registration.finish_point }}</td>
+        <td>{{ object.finish_point }}</td>
     </tr>
     <tr>
         <th scope="row">Via</th>
-        <td>{{ object_list.0.registration.via }}</td>
+        <td>{{ object.via }}</td>
+    </tr>
+    <tr>
+        <th scope="row">Supported by subsidy?</th>
+        <td>{{ object.subsidies_description }} {{ object.subsidies_details }} </td>
+    </tr>
+    <tr>
+        <th scope="row">Status</th>
+        <td>{{ object.registration_status }}</td>
     </tr>
 </table>
 
@@ -34,7 +42,7 @@
     <th scope="col">Status</th>
     <th scope="col">Details</th>
     <th scope="col">Publication text</th>
-    {% for variation in object_list %}
+    {% for variation in variations %}
         <tr>
             <td>{{ variation.variation_number }}</td>
             <td>{% firstof variation.date_received|date:"j M y" '' %}</td>

@@ -5,6 +5,7 @@ from django.contrib import staticfiles
 from django.contrib.sitemaps.views import sitemap
 from haystack.views import SearchView
 from vehicles.urls import urlpatterns as vehicles_urls
+from vosa.urls import urlpatterns as vosa_urls
 from .forms import CustomSearchForm
 from . import views
 
@@ -30,9 +31,6 @@ urlpatterns = [
     path('operators/<slug>', views.OperatorDetailView.as_view(), name='operator_detail'),
     path('services/<pk>.xml', views.service_xml),
     path('services/<slug>', views.ServiceDetailView.as_view(), name='service_detail'),
-    path('licences/<licence_number>', views.RegistrationView.as_view(), name='registration_list'),
-    path('registrations/<path:registration__registration_number>', views.VariationView.as_view(),
-         name='variation_list'),
     path('sitemap.xml', sitemap, {
         'sitemaps': {
              'operators': views.OperatorSitemap,
@@ -41,7 +39,7 @@ urlpatterns = [
     }),
     path('search', SearchView(form_class=CustomSearchForm)),
     path('journey', views.journey),
-] + vehicles_urls
+] + vehicles_urls + vosa_urls
 
 
 if settings.DEBUG and hasattr(staticfiles, 'views'):

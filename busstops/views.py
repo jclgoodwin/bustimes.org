@@ -4,13 +4,11 @@ import os
 import json
 import ciso8601
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Max, Q, Prefetch
-from django.http import (HttpResponse, JsonResponse, Http404,
-                         HttpResponseBadRequest)
+from django.db.models import Q, Prefetch
+from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import DetailView
-from django.views.generic.list import ListView
 from django.conf import settings
 from django.contrib.gis.geos import Polygon
 from django.contrib.gis.db.models.functions import Distance
@@ -20,8 +18,7 @@ from django.core.mail import EmailMessage
 from haystack.query import SearchQuerySet
 from departures import live
 from .utils import format_gbp
-from .models import (Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Journey, Place,
-                     Registration, Variation)
+from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Journey, Place
 from .forms import ContactForm
 
 
@@ -583,55 +580,6 @@ class ServiceDetailView(DetailView):
             return redirect(self.object, permanent=True)
 
         return super().render_to_response(context)
-
-
-class RegistrationView(ListView):
-    model = Registration
-
-    def get_queryset(self):
-        return self.model.objects.filter(**self.kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        object_list = self.object_list.annotate(
-            date=Max('variation__effective_date')
-        ).order_by('-date')
-
-        cancelled_statuses = ('Admin Cancelled', 'Cancellation', 'Cancelled', 'Expired', 'Refused', 'Withdrawn')
-        context['cancelled'] = object_list.filter(registration_status__in=cancelled_statuses)
-        context['object_list'] = object_list.exclude(pk__in=context['cancelled'])
-
-        if not (context['object_list'] or context['cancelled']):
-            raise Http404()
-
-        context['operator'] = self.object_list.select_related('operator__operator__region').first().operator
-        if context['operator']:
-            context['breadcrumb'] = [context['operator'].operator.region, context['operator'].operator]
-
-        return context
-
-
-class VariationView(ListView):
-    model = Variation
-
-    def get_queryset(self):
-        return self.model.objects.filter(**self.kwargs).select_related('registration__operator__operator__region')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        if not self.object_list:
-            raise Http404()
-
-        if self.object_list[0].registration.operator:
-            context['breadcrumb'] = [
-                self.object_list[0].registration.operator.operator.region,
-                self.object_list[0].registration.operator.operator,
-                self.object_list[0].registration.operator
-            ]
-
-        return context
 
 
 def service_xml(_, pk):
