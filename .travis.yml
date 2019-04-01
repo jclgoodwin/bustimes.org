@@ -8,10 +8,10 @@ cache:
   directories:
     - node_modules
 addons:
-  postgresql: "9.5"
+  postgresql: "10"
   apt:
     packages:
-      postgresql-9.5-postgis-2.3
+      postgis
 env:
  - DEBUG=True
 before_install:
