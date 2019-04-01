@@ -11,7 +11,8 @@ addons:
   postgresql: "10"
   apt:
     packages:
-      postgis
+      - postgresql-10
+      - postgis
 env:
  - DEBUG=True
 before_install:
