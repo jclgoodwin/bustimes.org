@@ -64,6 +64,12 @@ class ZipTripTest(TestCase):
                 response = self.client.get('/vehicles.json?service=007').json()
         self.assertEqual(0, len(response['features']))
 
+        self.service.operator.set(['LGEN', 'GAHL'])
+
+        response = self.client.get('/operators/go-ahead-lichtenstein')
+        self.assertContains(response, 'anoraks')
+        self.assertContains(response, '/operators/go-ahead-lichtenstein/vehicles')
+
         with self.assertNumQueries(3):
             response = self.client.get('/operators/go-ahead-lichtenstein/vehicles')
         self.assertContains(response, '/services/foo-foo')

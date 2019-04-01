@@ -395,7 +395,7 @@ class Operator(ValidateOnSaveMixin, models.Model):
 
     @cached_property
     def get_licences(self):
-        return self.operatorcode_set.filter(source__name='Licence').exclude(registration=None)
+        return self.operatorcode_set.filter(source__name='Licence')
 
 
 class OperatorCode(models.Model):
