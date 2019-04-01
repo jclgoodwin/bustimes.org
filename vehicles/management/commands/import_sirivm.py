@@ -98,7 +98,6 @@ class Command(ImportLiveVehiclesCommand):
         operator_options = None
 
         service = mvj.find('siri:LineRef', NS).text
-        journey.route_name = service
 
         try:
             if operator_ref == 'TD':  # Xplore Dundee
@@ -160,6 +159,9 @@ class Command(ImportLiveVehiclesCommand):
         elif service == 'm1' and operator_ref == 'FB':
             operator = Operator.objects.get(pk='NCTP')
 
+        if service:
+            journey.route_name = service
+
         services = Service.objects.filter(current=True)
         services = services.filter(Q(line_name__iexact=service) | Q(servicecode__scheme__endswith=' SIRI',
                                                                     servicecode__code=service))
@@ -167,7 +169,6 @@ class Command(ImportLiveVehiclesCommand):
             services = services.filter(operator__in=operator_options).distinct()
         elif operator:
             services = services.filter(operator=operator)
-
         else:
             return journey, vehicle_created
 

@@ -93,7 +93,7 @@
         if (data.properties.service) {
             if (data.properties.service.url) {
                 popup = '<a href="' + data.properties.service.url + '">' + data.properties.service.line_name + '</a>';
-            else {
+            } else {
                 popup = data.properties.service.line_name;
             }
         }
@@ -143,7 +143,7 @@
         var dateTime = new Date(data.properties.datetime);
         popup += 'Updated at ' + dateTime.toTimeString().slice(0, 5);
 
-        if (data.properties.source === 75 && data.properties.service) {
+        if (data.properties.source === 75 && data.properties.service && data.properties.service.url) {
             popup += '<br>(Updates if someone views<br><a href="' + data.properties.service.url + '">the ' + data.properties.service.line_name + ' page</a>)';
         }
 
