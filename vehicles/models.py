@@ -97,6 +97,7 @@ class Vehicle(models.Model):
 class VehicleJourney(models.Model):
     datetime = models.DateTimeField()
     service = models.ForeignKey(Service, models.SET_NULL, null=True, blank=True)
+    route_name = models.CharField(max_length=64, blank=True)
     source = models.ForeignKey(DataSource, models.CASCADE)
     vehicle = models.ForeignKey(Vehicle, models.CASCADE)
     code = models.CharField(max_length=255, blank=True)

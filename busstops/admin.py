@@ -5,7 +5,7 @@ from django.db.models import Count, Q
 from django.contrib.gis.db.models import PointField
 from .models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note, Journey, StopUsageUsage,
-    ServiceCode, OperatorCode, DataSource, Place, Registration, Variation, SIRISource
+    ServiceCode, OperatorCode, DataSource, Place, SIRISource, PaymentMethod
 )
 
 
@@ -117,10 +117,6 @@ class PlaceAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
-class VariationAdmin(admin.ModelAdmin):
-    list_filter = ('registration_status',)
-
-
 class DataSourceAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'datetime')
 
@@ -151,6 +147,5 @@ admin.site.register(OperatorCode, OperatorCodeAdmin)
 admin.site.register(ServiceCode, ServiceCodeAdmin)
 admin.site.register(DataSource, DataSourceAdmin)
 admin.site.register(Place, PlaceAdmin)
-admin.site.register(Registration)
-admin.site.register(Variation, VariationAdmin)
 admin.site.register(SIRISource, SIRISourceAdmin)
+admin.site.register(PaymentMethod)

@@ -12,7 +12,6 @@ from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
 from django.urls import reverse
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.text import slugify
 from multigtfs.models import Route
@@ -36,7 +35,6 @@ class ValidateOnSaveMixin(object):
         super().save(force_insert, force_update, **kwargs)
 
 
-@python_2_unicode_compatible
 class Region(models.Model):
     """The largest type of geographical area"""
     id = models.CharField(max_length=2, primary_key=True)
@@ -60,7 +58,6 @@ class Region(models.Model):
         return reverse('region_detail', args=(self.id,))
 
 
-@python_2_unicode_compatible
 class AdminArea(models.Model):
     """An administrative area within a region,
     or possibly a national transport (rail/air/ferry) network
@@ -82,7 +79,6 @@ class AdminArea(models.Model):
         return reverse('adminarea_detail', args=(self.id,))
 
 
-@python_2_unicode_compatible
 class District(models.Model):
     """A district within an administrative area.
     Note: some administrative areas *do not* have districts.
@@ -101,7 +97,6 @@ class District(models.Model):
         return reverse('district_detail', args=(self.id,))
 
 
-@python_2_unicode_compatible
 class Locality(models.Model):
     """A locality within an administrative area,
     and possibly within a district.
@@ -135,7 +130,6 @@ class Locality(models.Model):
         return reverse('locality_detail', args=(self.slug,))
 
 
-@python_2_unicode_compatible
 class StopArea(models.Model):
     """A small area containing multiple stops, such as a bus station"""
 
@@ -163,7 +157,6 @@ class StopArea(models.Model):
         return self.name
 
 
-@python_2_unicode_compatible
 class DataSource(models.Model):
     name = models.CharField(max_length=255, unique=True)
     url = models.URLField(blank=True)
@@ -173,7 +166,6 @@ class DataSource(models.Model):
         return self.name
 
 
-@python_2_unicode_compatible
 class Place(models.Model):
     source = models.ForeignKey(DataSource, models.CASCADE)
     code = models.CharField(max_length=255)
@@ -192,7 +184,6 @@ class Place(models.Model):
         return reverse('place_detail', args=(self.pk,))
 
 
-@python_2_unicode_compatible
 class StopPoint(models.Model):
     """The smallest type of geographical point.
     A point at which vehicles stop"""
@@ -343,7 +334,6 @@ class StopPoint(models.Model):
         return [service.line_name for service in sorted(self.service_set.all(), key=Service.get_order)]
 
 
-@python_2_unicode_compatible
 class Operator(ValidateOnSaveMixin, models.Model):
     """An entity that operates public transport services"""
 
@@ -359,6 +349,8 @@ class Operator(ValidateOnSaveMixin, models.Model):
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=128, blank=True)
     twitter = models.CharField(max_length=255, blank=True)
+
+    payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
 
     class Meta():
         ordering = ('name',)
@@ -392,14 +384,14 @@ class Operator(ValidateOnSaveMixin, models.Model):
     def get_a_mode(self):
         """Return the the name of the operator's vehicle mode,
         with the correct indefinite article
-        depending on whether it begins with a vowel sound.
+        depending on whether it begins with a vowel.
 
         'Airline' becomes 'An airline', 'Bus' becomes 'A bus'.
         """
         mode = str(self.vehicle_mode).lower()
         if not mode or mode[0].lower() in 'aeiou':
-            return 'An ' + mode  # 'An airline operating company' or 'An  operating company'
-        return 'A ' + mode  # 'A hovercraft operating company'
+            return 'An ' + mode  # 'An airline' or 'An '
+        return 'A ' + mode  # 'A hovercraft'
 
     @cached_property
     def get_licences(self):
@@ -438,7 +430,6 @@ class StopUsage(models.Model):
         return self.timing_status == 'OTH' or self.timing_status == 'TIP'
 
 
-@python_2_unicode_compatible
 class Journey(models.Model):
     service = models.ForeignKey('Service', models.CASCADE)
     datetime = models.DateTimeField()
@@ -451,7 +442,6 @@ class Journey(models.Model):
         return '{} {}'.format(self.service, self.datetime)
 
 
-@python_2_unicode_compatible
 class StopUsageUsage(models.Model):
     id = models.BigAutoField(primary_key=True)
     journey = models.ForeignKey(Journey, models.CASCADE)
@@ -469,7 +459,6 @@ class StopUsageUsage(models.Model):
         return '{} {}'.format(self.stop, self.datetime)
 
 
-@python_2_unicode_compatible
 class Service(models.Model):
     """A bus service"""
     service_code = models.CharField(max_length=24, primary_key=True)
@@ -496,6 +485,8 @@ class Service(models.Model):
     low_floor = models.NullBooleanField()
     assistance_service = models.NullBooleanField()
     mobility_scooter = models.NullBooleanField()
+
+    payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
 
     class Meta():
         ordering = ('service_code',)
@@ -731,58 +722,18 @@ class ServiceDate(models.Model):
         unique_together = ('service', 'date')
 
 
-class Registration(models.Model):
-    registration_number = models.CharField(max_length=20, unique=True)
-    service_number = models.CharField(max_length=100)
-    traffic_area = models.CharField(max_length=1)
-    licence_number = models.CharField(max_length=20, db_index=True)
-    discs = models.PositiveIntegerField()
-    authorised_discs = models.PositiveIntegerField()
-    description = models.CharField(max_length=255)
-    operator = models.ForeignKey(OperatorCode, models.SET_NULL, null=True)
-    start_point = models.CharField(max_length=255)
-    finish_point = models.CharField(max_length=255)
-    via = models.CharField(blank=True, max_length=255)
-    subsidies_description = models.CharField(max_length=255)
-    subsidies_details = models.CharField(max_length=255)
-    licence_status = models.CharField(max_length=255)
-    registration_status = models.CharField(max_length=255, db_index=True)
-    traffic_area_office_covered_by_area = models.CharField(max_length=100)
+class ServiceLink(models.Model):
+    from_service = models.ForeignKey(Service, models.CASCADE, 'link_from')
+    to_service = models.ForeignKey(Service, models.CASCADE, 'link_to')
+    how = models.CharField(max_length=10)
+
+
+class PaymentMethod(models.Model):
+    name = models.CharField(max_length=48)
+    url = models.URLField(blank=True)
 
     def __str__(self):
-        string = '{} - {} - {}'.format(self.service_number, self.start_point, self.finish_point)
-        if self.via:
-            string = '{} via {}'.format(string, self.via)
-        return string
-
-    def get_absolute_url(self):
-        return reverse('variation_list', args=(self.registration_number,))
-
-
-class Variation(models.Model):
-    registration = models.ForeignKey(Registration, models.CASCADE)
-    variation_number = models.PositiveIntegerField()
-    granted_date = models.DateField()
-    expiry_date = models.DateField()
-    effective_date = models.DateField(null=True)
-    date_received = models.DateField(null=True)
-    end_date = models.DateField(null=True)
-    service_type_other_details = models.TextField()
-    registration_status = models.CharField(max_length=255)
-    publication_text = models.TextField()
-    service_type_description = models.CharField(max_length=255)
-    short_notice = models.CharField(max_length=255)
-    authority_description = models.CharField(max_length=255)
-
-    class Meta():
-        ordering = ('-variation_number',)
-        unique_together = ('registration', 'variation_number')
-
-    def __str__(self):
-        return str(self.registration)
-
-    def get_absolute_url(self):
-        return reverse('variation_list', args=(self.registration.registration_number,))
+        return self.name
 
 
 class Contact(models.Model):
@@ -794,7 +745,6 @@ class Contact(models.Model):
     referrer = models.URLField(blank=True)
 
 
-@python_2_unicode_compatible
 class Note(models.Model):
     """A note about an error in the timetable, the operator going bust, or something"""
     operators = models.ManyToManyField(Operator, blank=True)
