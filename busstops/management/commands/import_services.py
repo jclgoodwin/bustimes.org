@@ -323,7 +323,15 @@ class Command(BaseCommand):
             with open(os.path.join(settings.DATA_DIR, 'services.yaml')) as open_file:
                 records = yaml.load(open_file, Loader=yaml.FullLoader)
                 for service_code in records:
-                    Service.objects.filter(service_code=service_code).update(**records[service_code])
+                    services = Service.objects.filter(service_code=service_code)
+                    if 'operator' in records[service_code]:
+                        print(records)
+                        if services.exists():
+                            services.get().operator.set(records[service_code]['operator'])
+                            del records[service_code]['operator']
+                        else:
+                            continue
+                    services.update(**records[service_code])
 
         try:
             shutil.copy(archive_name, settings.TNDS_DIR)

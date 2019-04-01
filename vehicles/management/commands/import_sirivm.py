@@ -156,8 +156,6 @@ class Command(ImportLiveVehiclesCommand):
 
         if service is None and operator_ref == 'TG':
             service = 'Colchester Park & Ride'
-        elif service == 'm1' and operator_ref == 'FB':
-            operator = Operator.objects.get(pk='NCTP')
 
         if service:
             journey.route_name = service

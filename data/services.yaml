@@ -247,3 +247,6 @@ swe_41-633-_-y10:
 em_18-CC-_-y08:
     line_name: calverton connection
     line_brand: C
+swe_38-m1-_-y10:
+    operator:
+        - FBRI
