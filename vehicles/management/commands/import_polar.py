@@ -19,17 +19,6 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         return super().get_items()['features']
 
-    @classmethod
-    def get_service(cls, operator, item):
-        line_name = item['properties']['line']
-        if operator == 'BLAC' and line_name == 'PRM':
-            line_name = '1'
-        services = Service.objects.filter(current=True, operator=operator, line_name=line_name)
-        try:
-            return services.get()
-        except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-            print(operator, line_name, e)
-
     def get_journey(self, item):
         journey = VehicleJourney()
         journey.route_name = item['properties']['line']
@@ -51,7 +40,14 @@ class Command(ImportLiveVehiclesCommand):
         if ' - ' in fleet_number:
             fleet_number, defaults['reg'] = fleet_number.split(' - ')
 
-        journey.service = self.get_service(operator, item)
+        line_name = item['properties']['line']
+        if operator == 'BLAC' and line_name == 'PRM':
+            line_name = '1'
+        services = Service.objects.filter(current=True, operator=operator, line_name=line_name)
+        try:
+            journey.service = self.get_service(services, Point(item['geometry']['coordinates']))
+        except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+            print(operator, line_name, e)
 
         journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
             defaults,
