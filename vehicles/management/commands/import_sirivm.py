@@ -98,6 +98,7 @@ class Command(ImportLiveVehiclesCommand):
         operator_options = None
 
         service = mvj.find('siri:LineRef', NS).text
+        journey.route_name = service
 
         try:
             if operator_ref == 'TD':  # Xplore Dundee

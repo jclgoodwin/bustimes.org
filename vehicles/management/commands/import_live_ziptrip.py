@@ -25,6 +25,8 @@ class Command(ImportLiveVehiclesCommand):
         operator_id, vehicle = item['vehicleCode'].split('_', 1)
 
         route_name = item['routeName']
+        if route_name:
+            journey.route_name = route_name
 
         if operator_id == 'BOWE':
             operator_id = 'HIPK'

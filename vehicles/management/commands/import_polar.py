@@ -32,6 +32,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_journey(self, item):
         journey = VehicleJourney()
+        journey.route_name = item['properties']['line']
 
         fleet_number = item['properties']['vehicle']
         if '-' in fleet_number:

@@ -38,6 +38,7 @@ class Command(ImportLiveVehiclesCommand):
             if trip:
                 journey.destination = trip.headsign
                 route = trip.route
+                journey.route_name = route.short_name
                 if route.agency.name == 'Claribel Coaches':
                     print(item)
                     operator = Operator.objects.get(name='Diamond Bus')

@@ -16,6 +16,7 @@ class Command(ImportLiveVehiclesCommand):
         journey = VehicleJourney()
         parts = item['bus'].split('-')
         journey.code = parts[-2]
+        journey.route_name = item['line']
         vehicle_code = parts[-1]
         defaults = {
             'operator_id': self.operator,

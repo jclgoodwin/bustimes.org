@@ -151,7 +151,11 @@ class VehicleLocation(models.Model):
             if journey.service:
                 json['properties']['service'] = {
                     'line_name': journey.service.line_name,
-                    'url': journey.service.get_absolute_url(),
+                    'url': journey.service.get_absolute_url()
+                }
+            else:
+                json['properties']['service'] = {
+                    'line_name': journey.route_name
                 }
             if vehicle.operator:
                 json['properties']['operator'] = str(vehicle.operator)

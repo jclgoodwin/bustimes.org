@@ -72,6 +72,7 @@ class Command(ImportLiveVehiclesCommand):
 
         journey.code = item['datedVehicleJourney']
         journey.destination = item['destination']['name']
+        journey.route_name = item['lineRef']
 
         vehicle = item['vehicleRef']
         operator, fleet_number = item['vehicleRef'].split('-', 1)

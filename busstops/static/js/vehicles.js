@@ -91,7 +91,11 @@
 
         var popup = '';
         if (data.properties.service) {
-            popup = '<a href="' + data.properties.service.url + '">' + data.properties.service.line_name + '</a>';
+            if (data.properties.service.url) {
+                popup = '<a href="' + data.properties.service.url + '">' + data.properties.service.line_name + '</a>';
+            else {
+                popup = data.properties.service.line_name;
+            }
         }
         if (data.properties.destination) {
             popup += ' to ' + data.properties.destination;

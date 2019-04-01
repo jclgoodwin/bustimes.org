@@ -25,6 +25,7 @@ class Command(ImportLiveVehiclesCommand):
         vehicle_defaults = {}
 
         if item['service_name']:
+            journey.route_name = item['service_name']
             try:
                 journey.service = self.services.get(line_name=item['service_name'])
                 vehicle_defaults['operator'] = journey.service.operator.first()

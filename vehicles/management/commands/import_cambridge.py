@@ -55,7 +55,7 @@ class Command(BaseCommand):
                 service = service.filter(Q(stops=item['OriginRef']) | Q(stops=item['DestinationRef'])).distinct().get()
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             if not (operator.pk == 'SCCM' and line_name == 'Tour'):
-                print(e, operator.pk, line_name)
+                print(e, item)
             service = None
         defaults = {
             'source': self.source
@@ -77,6 +77,7 @@ class Command(BaseCommand):
             journey = VehicleJourney.objects.create(
                 vehicle=vehicle,
                 service=service,
+                route_name=line_name,
                 source=self.source,
                 datetime=ciso8601.parse_datetime(item['OriginAimedDepartureTime']),
                 destination=html.unescape(item['DestinationName']),

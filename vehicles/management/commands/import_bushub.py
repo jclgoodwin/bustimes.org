@@ -34,7 +34,10 @@ class Command(ImportLiveVehiclesCommand):
         journey = VehicleJourney()
 
         operator = Operator.objects.get(id=item['OperatorRef'])
-        journey.service = self.get_service(operator, item)
+
+        if item['PublishedLineName']:
+            journey.route_name = item['PublishedLineName']
+            journey.service = self.get_service(operator, item)
 
         journey.code = item['JourneyCode']
         journey.destination = item['DestinationStopLocality']
