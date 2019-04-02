@@ -56,6 +56,10 @@ class BusHubTest(TestCase):
 
         command.handle_item(item, self.source.datetime)
 
+        item["RecordedAtTime"] = "31/08/2018 22:49:33"
+
+        command.handle_item(item, self.source.datetime)
+
         location = VehicleLocation.objects.get()
         self.assertEqual('2018-08-31 21:49:33+00:00', str(location.datetime))
         self.assertEqual(143, location.heading)

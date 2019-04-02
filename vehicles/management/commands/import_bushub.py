@@ -1,4 +1,6 @@
+from datetime import datetime
 from ciso8601 import parse_datetime
+from django.utils import timezone
 from django.contrib.gis.geos import Point
 from busstops.models import Operator, Service
 from ...models import Vehicle, VehicleLocation, VehicleJourney
@@ -61,7 +63,10 @@ class Command(ImportLiveVehiclesCommand):
         return journey, vehicle_created
 
     def create_vehicle_location(self, item):
-        when = parse_datetime(item['RecordedAtTime'])
+        try:
+            when = parse_datetime(item['RecordedAtTime'])
+        except ValueError:
+            when = timezone.make_aware(datetime.strptime(item['RecordedAtTime'], '%d/%m/%Y %H:%M:%S'))
         bearing = item['Bearing']
         if bearing == '-1':
             bearing = None

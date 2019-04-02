@@ -325,7 +325,6 @@ class Command(BaseCommand):
                 for service_code in records:
                     services = Service.objects.filter(service_code=service_code)
                     if 'operator' in records[service_code]:
-                        print(records)
                         if services.exists():
                             services.get().operator.set(records[service_code]['operator'])
                             del records[service_code]['operator']
