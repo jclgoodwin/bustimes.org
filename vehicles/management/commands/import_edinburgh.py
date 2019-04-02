@@ -17,6 +17,9 @@ class Command(ImportLiveVehiclesCommand):
             return items['vehicles']
 
     def get_journey(self, item):
+        if not item['service_name']:
+            return None, None
+
         journey = VehicleJourney(
             code=item['journey_id'] or '',
             destination=item['destination'] or ''
@@ -24,14 +27,14 @@ class Command(ImportLiveVehiclesCommand):
 
         vehicle_defaults = {}
 
-        if item['service_name']:
-            journey.route_name = item['service_name']
-            try:
-                journey.service = self.services.get(line_name=item['service_name'])
-                vehicle_defaults['operator'] = journey.service.operator.first()
-            except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-                if item['service_name'] not in {'ET1', 'MA1', '3BBT', 'C134'}:
-                    print(e, item['service_name'])
+        journey.route_name = item['service_name']
+
+        try:
+            journey.service = self.services.get(line_name=item['service_name'])
+            vehicle_defaults['operator'] = journey.service.operator.first()
+        except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+            if item['service_name'] not in {'ET1', 'MA1', '3BBT', 'C134'}:
+                print(e, item['service_name'])
 
         vehicle_code = item['vehicle_id']
         if vehicle_code.isdigit():

@@ -51,6 +51,10 @@ class Command(ImportLiveVehiclesCommand):
             operator_id = 'ECWY'
         elif operator_id == 'CB':
             operator_id = ('CBUS', 'CACB')
+        elif operator_id == 'CUBU':
+            operator_id = ('CUBU', 'RSTY')
+            if route_name == '157A':
+                route_name = route_name[:-1]
         elif operator_id == 'SOG':
             operator_id = 'guernsey'
         elif operator_id == 'IOM':
@@ -97,8 +101,6 @@ class Command(ImportLiveVehiclesCommand):
 
         if route_name.endswith('_Essex'):
             route_name = route_name[:-6]
-        elif operator_id == 'CUBU' and route_name == '157A':
-            route_name = route_name[:-1]
 
         services = Service.objects.filter(current=True)
         if operator_id == 'SESX' and route_name == '1':
