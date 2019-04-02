@@ -148,9 +148,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if items:
                 for item in items:
                     self.handle_item(item, now)
-            # mark any vehicles that have gone offline as not current
-            old_locations = current_locations.exclude(id__in=self.current_location_ids)
-            print(old_locations.update(current=False), end='\t', flush=True)
+                # mark any vehicles that have gone offline as not current
+                old_locations = current_locations.exclude(id__in=self.current_location_ids)
+                print(old_locations.update(current=False), end='\t', flush=True)
         except (requests.exceptions.RequestException, IntegrityError, TypeError, ValueError) as e:
             print(e)
             logger.error(e, exc_info=True)
