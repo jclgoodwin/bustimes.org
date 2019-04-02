@@ -1,3 +1,4 @@
+dist: xenial
 language: python
 sudo: false
 group: edge
@@ -8,11 +9,10 @@ cache:
   directories:
     - node_modules
 addons:
-  postgresql: "9.6"
+  postgresql: 10
   apt:
     packages:
-      - postgresql-9.6-postgis-2.3
-      - gdal-bin
+      - postgresql-10-postgis-2.4
 env:
  - DEBUG=True
 before_install:
