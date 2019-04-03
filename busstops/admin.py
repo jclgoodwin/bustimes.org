@@ -122,7 +122,7 @@ class DataSourceAdmin(admin.ModelAdmin):
 
 
 class SIRISourceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'url', 'requestor_ref', 'areas')
+    list_display = ('name', 'url', 'requestor_ref', 'areas', 'get_poorly')
 
     def get_queryset(self, _):
         return self.model.objects.prefetch_related('admin_areas')

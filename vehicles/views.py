@@ -57,7 +57,7 @@ def siri_one_shot(code):
     source = 'Icarus'
     siri_source = SIRISource.objects.get(name=code.scheme[:-5])
     cache_key = '{}:{}:{}'.format(siri_source.url, siri_source.requestor_ref, code.code)
-    if cache.get(cache_key):
+    if cache.get(cache_key) or siri_source.get_poorly():
         return
     now = timezone.now()
     locations = VehicleLocation.objects.filter(current=True)
@@ -84,6 +84,8 @@ def siri_one_shot(code):
     """.format(siri_source.requestor_ref, code.code)
     url = siri_source.url.replace('StopM', 'VehicleM', 1)
     response = session.post(url, data=data, timeout=5)
+    if 'Client.AUTHENTICATION_FAILED' in response.text or not response.ok:
+        cache.set(siri_source.get_poorly_key(), True, 3600)  # back off for an hour
     command = import_sirivm.Command()
     command.source = DataSource.objects.get(name='Icarus')
     for item in import_sirivm.items_from_response(response):

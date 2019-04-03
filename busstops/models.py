@@ -766,3 +766,11 @@ class SIRISource(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_poorly_key(self):
+        return '{}:{}:poorly'.format(self.url, self.requestor_ref)
+
+    def get_poorly(self):
+        return cache.get(self.get_poorly_key())
+
+    get_poorly.short_description = 'Poorly'

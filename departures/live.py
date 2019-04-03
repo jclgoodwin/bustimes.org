@@ -8,6 +8,7 @@ import dateutil.parser
 import logging
 import xml.etree.cElementTree as ET
 from django.conf import settings
+from django.core.cache import cache
 from django.db import IntegrityError
 from django.utils import timezone
 from busstops.models import Service, ServiceCode, DataSource
@@ -106,7 +107,7 @@ class Departures(object):
         except requests.exceptions.RequestException as e:
             logger.error(e, exc_info=True)
             return
-        if response.ok:
+        if response and response.ok:
             return self.departures_from_response(response)
 
 
@@ -456,6 +457,9 @@ class SiriSmDepartures(Departures):
         }
 
     def departures_from_response(self, response):
+        if 'Client.AUTHENTICATION_FAILED' in response.text:
+            cache.set(self.source.get_poorly_key(), True, 3600)  # back off for an hour
+            return
         try:
             tree = ET.fromstring(response.text).find('s:ServiceDelivery', self.ns)
         except ET.ParseError as e:
@@ -467,6 +471,8 @@ class SiriSmDepartures(Departures):
         return [self.get_row(element) for element in departures]
 
     def get_response(self):
+        if self.source.get_poorly():
+            return
         if self.source.requestor_ref:
             username = '<RequestorRef>{}</RequestorRef>'.format(self.source.requestor_ref)
         else:
