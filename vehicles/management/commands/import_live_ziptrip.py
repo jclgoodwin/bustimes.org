@@ -1,8 +1,11 @@
-import ciso8601
+from time import sleep
+from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
 from django.db.utils import IntegrityError
+from requests.exceptions import RequestException
+from django.contrib.gis.db.models import Extent
 from ..import_live_vehicles import ImportLiveVehiclesCommand
-from busstops.models import Operator, Service
+from busstops.models import Operator, Service, StopPoint
 from ...models import Vehicle, VehicleLocation, VehicleJourney
 
 
@@ -14,15 +17,57 @@ def get_latlong(item):
 class Command(ImportLiveVehiclesCommand):
     operators = {}
     source_name = 'ZipTrip'
-    url = 'http://ziptrip-vps.api.urbanthings.cloud/api/0.2/vehiclepositions?maxLat=60&maxLng=10&minLng=-50&minLat=40'
+    url = 'https://ziptrip1.ticketer.org.uk/v1/vehiclepositions'
 
     def get_items(self):
+        for operator in (
+            'SBAY',
+            'CBUS',
+            'CUBU',
+            'ECWY',
+            'FALC',
+            'GECL',
+            'GAHL',
+            'guernsey',
+            'HIPK',
+            'IPSW',
+            'LYNX',
+            'MDCL',
+            'NDTR',
+            'DPCE',
+            'RBUS',
+            'RENW',
+            'SFGC',
+            'SESX',
+            'UNOE',
+            'WHTL',
+            'TRDU',
+        ):
+            stops = StopPoint.objects.filter(service__operator=operator, service__current=True)
+            extent = stops.aggregate(Extent('latlong'))['latlong__extent']
+            if not extent:
+                continue
+            params = {
+                'maxLat': extent[3] + 0.1,
+                'maxLng': extent[2] + 0.1,
+                'minLat': extent[1] - 0.1,
+                'minLng': extent[0] - 0.1,
+            }
+            try:
+                response = self.session.get(self.url, params=params, timeout=5)
+                for item in response.json()['items']:
+                    yield item
+            except (RequestException, KeyError):
+                continue
+            sleep(1)
+
         return super().get_items()['items']
 
     def get_journey(self, item):
         journey = VehicleJourney()
 
         operator_id, vehicle = item['vehicleCode'].split('_', 1)
+        vehicle = vehicle.replace(' ', '_')
 
         route_name = item['routeName']
         if route_name:
@@ -130,7 +175,7 @@ class Command(ImportLiveVehiclesCommand):
         while bearing and bearing < 0:
             bearing += 360
         return VehicleLocation(
-            datetime=ciso8601.parse_datetime(item['reported']),
+            datetime=parse_datetime(item['reported']),
             latlong=get_latlong(item),
             heading=bearing
         )
