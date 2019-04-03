@@ -55,8 +55,12 @@ class Command(ImportLiveVehiclesCommand):
             }
             try:
                 response = self.session.get(self.url, params=params, timeout=5)
-                for item in response.json()['items']:
-                    yield item
+                items = response.json()['items']
+                if items:
+                    for item in items:
+                        yield item
+                    else:
+                        print(operator, response.url)
             except (RequestException, KeyError):
                 continue
             sleep(1)
