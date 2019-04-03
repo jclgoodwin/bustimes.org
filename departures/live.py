@@ -547,8 +547,11 @@ def add_stagecoach_departures(stop, services_dict, departures):
                 vehicle = vehicle.split('-', 1)[1]
                 source = DataSource.objects.get_or_create(name='Stagecoach')[0]
                 try:
+                    operator = monitor['operatorRef']
+                    if operator == 'SCEM':
+                        operator = 'CLTL'
                     vehicle, vehicle_created = Vehicle.objects.get_or_create({
-                        'operator_id': monitor['operatorRef'],
+                        'operator_id': operator,
                         'code': vehicle,
                         'fleet_number': vehicle,
                         'source': source
