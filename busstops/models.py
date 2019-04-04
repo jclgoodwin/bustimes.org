@@ -689,6 +689,8 @@ class Service(models.Model):
                     timetables.append(timetable)
                 cache.set(cache_key, timetables)
 
+            if len(timetables) > 1 and timetables[1].operating_period.start > day:
+                self.timetable_change = timetables[1].operating_period.start
             timetables = [timetable for timetable in timetables if timetable.operating_period.contains(day)]
             for timetable in timetables:
                 timetable.service = self

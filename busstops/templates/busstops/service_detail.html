@@ -25,6 +25,10 @@
     <p class="warning">{{ note|safe }}</p>
 {% endfor %}
 
+{% if object.timetable_change %}
+    <p class="warning">Timetable changes from {{ object.timetable_change }}</p>
+{% endif %}
+
 {% if object.geometry %}
     <p id="buses-online"></p>
     <div class="service-map" id="map" data-service="{{ object.service_code }}"></div>
