@@ -321,18 +321,6 @@ class OperatingPeriodTest(TestCase):
         operating_period = txc.OperatingPeriod(element)
         self.assertEqual(str(operating_period), 'from 1 to 5 February 2056')
 
-    @freeze_time('1 January 2056')
-    def test_short_range_cross_month(self):
-        """Test an OperatingPeriod starting and ending in different months in the present"""
-        element = ET.fromstring("""
-            <OperatingPeriod xmlns="http://www.transxchange.org.uk/">
-                <StartDate>2056-02-01</StartDate>
-                <EndDate>2056-03-05</EndDate>
-            </OperatingPeriod>
-        """)
-        operating_period = txc.OperatingPeriod(element)
-        self.assertEqual(str(operating_period), 'from 1 February to 5 March 2056')
-
     @freeze_time('29 December 2056')
     def test_short_range_cross_year(self):
         """Test an OperatingPeriod starting and ending in different years in the present"""

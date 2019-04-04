@@ -423,10 +423,10 @@ class JourneyPattern(object):
         existing_row.last = True  # row is the last row of this pattern
 
     def get_grouping(self, element, groupings, routes):
-        route = element.find('txc:RouteRef', NS)
-        if route is not None:
-            route_id = route.text
-            route = routes.get(route_id)
+        # route = element.find('txc:RouteRef', NS)
+        # if route is not None:
+        #     route_id = route.text
+        #     route = routes.get(route_id)
 
         direction_element = element.find('txc:Direction', NS)
 
@@ -900,21 +900,20 @@ class OperatingPeriod(DateRange):
             return self.start.strftime('on %-d %B %Y')
         today = datetime.date.today()
         if self.start > today:
-            if self.end is None or self.end.year > today.year + 1:
-                return self.start.strftime('from %-d %B %Y')
-            if self.start.year == self.end.year:
-                if self.start.month == self.end.month:
-                    start_format = '%-d'
-                else:
-                    start_format = '%-d %B'
-            else:
-                start_format = '%-d %B %Y'
-            return 'from %s to %s' % (
-                self.start.strftime(start_format), self.end.strftime('%-d %B %Y')
-            )
+            if self.end and (self.end - self.start).days < 14:
+                start_format = '%-d'
+                if self.start.month != self.end.month:
+                    start_format += ' %B'
+                if self.start.year != self.end.year:
+                    start_format += ' %Y'
+                return 'from {} to {}'.format(
+                    self.start.strftime(start_format),
+                    self.end.strftime('%-d %B %Y')
+                )
+            return self.start.strftime('from %-d %B %Y')
         # The end date is often bogus,
         # but show it if the period seems short enough to be relevant
-        if self.end is not None and (self.end - self.start).days < 7:
+        if self.end and (self.end - self.start).days < 7:
             return self.end.strftime('until %-d %B %Y')
         return ''
 
