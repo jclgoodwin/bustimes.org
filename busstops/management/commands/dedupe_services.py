@@ -24,4 +24,3 @@ class Command(BaseCommand):
                         service.save()
                 print(service.get_absolute_url())
                 print(service.journey_set.count())
-                print('')

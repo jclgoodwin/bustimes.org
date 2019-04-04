@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b820a06481c370459becb8b667dfbd85658d017a7df70b20a6817ef28ae4df9b"
+            "sha256": "0006f9ac4b9937b86d808e27a8fd0839c9dd34af675c4862ea980494793dcb8b"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -142,6 +142,13 @@
                 "sha256:c104998b750eb097eefc28ae28e92d66397598d2cf41a31aa45d5559ef1adf35"
             ],
             "version": "==0.1.11"
+        },
+        "gpxpy": {
+            "hashes": [
+                "sha256:b09e3212c9af83188d308214428c20c57b4ec1d45c3a3fc40f4b3d49c758aebf"
+            ],
+            "index": "pypi",
+            "version": "==1.3.5"
         },
         "gtfs-realtime-bindings": {
             "hashes": [
