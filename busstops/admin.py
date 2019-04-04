@@ -4,8 +4,8 @@ from django.contrib.gis.forms import OSMWidget
 from django.db.models import Count, Q
 from django.contrib.gis.db.models import PointField
 from .models import (
-    Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, Note, Journey, StopUsageUsage,
-    ServiceCode, OperatorCode, DataSource, Place, SIRISource, PaymentMethod
+    Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, ServiceLink,
+    Note, Journey, StopUsageUsage, ServiceCode, OperatorCode, DataSource, Place, SIRISource, PaymentMethod
 )
 
 
@@ -60,6 +60,20 @@ class ServiceAdmin(admin.ModelAdmin):
     search_fields = ('service_code', 'line_name', 'description')
     raw_id_fields = ('operator', 'stops')
     ordering = ('service_code',)
+
+
+class ServiceLinkAdmin(admin.ModelAdmin):
+    list_display = ('from_service', 'from_service__current', 'to_service', 'to_service__current')
+    autocomplete_fields = ('from_service', 'to_service')
+    list_select_related = ('from_service', 'to_service')
+
+    @staticmethod
+    def from_service__current(obj):
+        return obj.from_service.current
+
+    @staticmethod
+    def to_service__current(obj):
+        return obj.to_service.current
 
 
 class LocalityAdmin(admin.ModelAdmin):
@@ -140,6 +154,7 @@ admin.site.register(StopArea)
 admin.site.register(StopPoint, StopPointAdmin)
 admin.site.register(Operator, OperatorAdmin)
 admin.site.register(Service, ServiceAdmin)
+admin.site.register(ServiceLink, ServiceLinkAdmin)
 admin.site.register(Note, NoteAdmin)
 admin.site.register(Journey, JourneyAdmin)
 admin.site.register(StopUsageUsage, StopUsageUsageAdmin)

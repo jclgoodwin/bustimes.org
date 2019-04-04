@@ -552,11 +552,12 @@ class ServiceDetailView(DetailView):
                 'text': 'Timetable on the %s website' % traveline_text
             })
 
+        related_q = Q(link_from__to_service=self.object) | Q(link_to__from_service=self.object)
         if self.object.description and self.object.line_name:
-            related = Service.objects.filter(current=True).exclude(pk=self.object.pk).defer('geometry')
-            related = related.filter(Q(description=self.object.description) |
-                                     Q(line_name=self.object.line_name, operator__in=context['operators'])).distinct()
-            context['related'] = sorted(related, key=Service.get_order)
+            related_q |= Q(description=self.object.description)
+            related_q |= Q(line_name=self.object.line_name, operator__in=context['operators'])
+        related = Service.objects.filter(related_q, current=True).exclude(pk=self.object.pk).defer('geometry')
+        context['related'] = sorted(related.distinct().prefetch_related('operator'), key=Service.get_order)
 
         return context
 

@@ -727,6 +727,9 @@ class ServiceLink(models.Model):
     to_service = models.ForeignKey(Service, models.CASCADE, 'link_to')
     how = models.CharField(max_length=10)
 
+    def get_absolute_url(self):
+        return self.from_service.get_absolute_url()
+
 
 class PaymentMethod(models.Model):
     name = models.CharField(max_length=48)

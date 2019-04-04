@@ -141,20 +141,26 @@
 
 -->
 
+{% if related %}
+    <h2>Related services</h2>
+    <ul class="has-smalls">
+    {% for s in related %}
+        <li>
+            <a href="{{ s.get_absolute_url }}">
+                <span>{{ s }}</span>
+                <small>{{ s.operator.all|join:", " }}</small>
+            </a>
+        </li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+
 {% if links %}
     <h2>More information</h2>
     <ul class="bulleted">
     {% for link in links %}
        <li><a href="{{ link.url }}" rel="nofollow">{{ link.text }}</a></li>
-    {% endfor %}
-    </ul>
-{% endif %}
-
-{% if related %}
-    <h2>See also</h2>
-    <ul>
-    {% for service in related %}
-       <li><a href="{{ service.get_absolute_url }}">{{ service }}</a></li>
     {% endfor %}
     </ul>
 {% endif %}
