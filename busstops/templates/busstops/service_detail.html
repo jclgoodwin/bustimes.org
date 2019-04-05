@@ -83,7 +83,7 @@
                                         {% endif %}
                                     </th>
                                     {% for cell in row.times %}
-                                        <td>{{ cell.departure_time }}</td>
+                                        <td>{% if cell.stopusage.wait_time %}{{ cell.departure_time }}{% endif %}</td>
                                     {% endfor %}
                                 </tr>
                             {% endif %}

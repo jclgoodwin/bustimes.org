@@ -376,14 +376,14 @@ class ImportServicesTest(TestCase):
             'Belgravia Victoria Coach Station', '049004705400', 'Rugby ASDA', 'Fosse Park ASDA',
             'Loughborough Holywell Way', 'Nottingham Broad Marsh Bus Station', 'Meadowhall Interchange',
             'Leeds City Centre York Street', 'Bradford City Centre Hall Ings',
-            'Huddersfield Town Centre Market Street', 'Leeds City Centre Bus Stn', 'Leeds City Centre Bus Stn',
+            'Huddersfield Town Centre Market Street', 'Leeds City Centre Bus Stn',
             'Shudehill Interchange', 'Middlesbrough Bus Station Express Lounge', 'Sunderland Interchange',
             'Newcastle upon Tyne John Dobson Street',
         ])
         self.assertEqual(inbound_stops, [
             'Huddersfield Town Centre Market Street', 'Bradford City Centre Interchange',
             'Newcastle upon Tyne John Dobson Street', 'Sunderland Interchange',
-            'Middlesbrough Bus Station Express Lounge',  'Leeds City Centre Bus Stn', 'Leeds City Centre Bus Stn',
+            'Middlesbrough Bus Station Express Lounge',  'Leeds City Centre Bus Stn',
             'Shudehill Interchange', 'Leeds City Centre York Street', 'Meadowhall Interchange',
             'Nottingham Broad Marsh Bus Station', 'Loughborough Holywell Way', 'Fosse Park ASDA',
             'Rugby ASDA', '049004705400', 'Victoria Coach Station Arrivals'

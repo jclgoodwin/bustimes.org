@@ -368,8 +368,6 @@ class JourneyPattern(object):
                 if timinglink.origin.wait_time:
                     rows.append(Row(timinglink.origin))
                 rows.append(Row(timinglink.destination))
-                if timinglink.destination.wait_time:
-                    rows.append(Row(timinglink.destination))
 
         self.grouping = self.get_grouping(element, groupings, routes)
         self.grouping.journeypatterns.append(self)
