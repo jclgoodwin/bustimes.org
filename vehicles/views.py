@@ -1,7 +1,7 @@
 import ciso8601
 from datetime import timedelta
 from requests import Session
-from django.db.models import Exists, OuterRef, Prefetch
+from django.db.models import Exists, OuterRef, Prefetch, Count
 from django.core.cache import cache
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, Http404
@@ -188,8 +188,11 @@ class VehicleDetailView(DetailView):
 
 
 def dashboard(request):
-    tracking = VehicleJourney.objects.exclude(source__name='Stagecoach')
-    operators = Operator.objects.filter(service__vehiclejourney__in=tracking)
+    week_ago = timezone.now() - timedelta(days=7)
+    tracking = VehicleJourney.objects.filter(datetime__gt=week_ago).exclude(source__name='Stagecoach')
+    operators = Operator.objects.filter(
+        service__vehiclejourney__in=tracking.annotate(operators=Count('service__operator')).filter(operators=1)
+    )
     tracking = tracking.filter(service=OuterRef('pk'))
     full_tracking = tracking.exclude(source__name='Icarus')
     services = Service.objects.filter(current=True).annotate(tracking=Exists(tracking),
