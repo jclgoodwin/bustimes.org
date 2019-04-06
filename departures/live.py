@@ -385,13 +385,15 @@ class UKTrainDepartures(Departures):
 
 
 class TimetableDepartures(Departures):
-    @staticmethod
-    def get_row(suu):
+    def get_row(self, suu):
         destination = suu.journey.destination
+        service = self.get_service(suu.journey.service.line_name)
+        if type(service) is not Service:
+            service = suu.journey.service
         return {
             'time': timezone.localtime(suu.datetime),
             'destination': destination.locality or destination.town or destination,
-            'service': suu.journey.service
+            'service': service
         }
 
     def get_departures(self):
@@ -556,6 +558,8 @@ def add_stagecoach_departures(stop, services_dict, departures):
                     operator = monitor['operatorRef']
                     if operator == 'SCEM':
                         operator = 'CLTL'
+                    elif operator == 'SCSO':
+                        operator = 'SMSO'
                     vehicle, vehicle_created = Vehicle.objects.get_or_create({
                         'operator_id': operator,
                         'code': vehicle,
@@ -582,6 +586,12 @@ def add_stagecoach_departures(stop, services_dict, departures):
                                                                       source=source,
                                                                       code=monitor['datedVehicleJourneyRef'],
                                                                       service=departure['service'])
+                                        for operator in departure['service'].operator.all():
+                                            if operator.name.startswith('Stagecoach '):
+                                                if vehicle.operator_id != operator.id:
+                                                    vehicle.operator_id = operator.id
+                                                    vehicle.save()
+                                                break
                                 break
                     if replaced:
                         continue
