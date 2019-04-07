@@ -39,13 +39,15 @@ class Command(ImportLiveVehiclesCommand):
             'RENW',
             'SFGC',
             'SESX',
+            'NIBS',
             'UNOE',
             'WHTL',
-            'TRDU',
+            'TRDU'
         ):
             stops = StopPoint.objects.filter(service__operator=operator, service__current=True)
             extent = stops.aggregate(Extent('latlong'))['latlong__extent']
             if not extent:
+                print(operator)
                 continue
             params = {
                 'maxLat': extent[3] + 0.1,
@@ -59,13 +61,11 @@ class Command(ImportLiveVehiclesCommand):
                 if items:
                     for item in items:
                         yield item
-                    else:
-                        print(operator, response.url)
+                else:
+                    print(operator, response.url)
             except (RequestException, KeyError):
                 continue
             sleep(1)
-
-        return super().get_items()['items']
 
     def get_journey(self, item):
         journey = VehicleJourney()
@@ -89,7 +89,7 @@ class Command(ImportLiveVehiclesCommand):
             if '(' in vehicle:
                 operator_id = 'GECL'
             else:
-                operator_id = ('SESX', 'GECL')
+                operator_id = ('SESX', 'GECL', 'NIBS')
                 if route_name == '2':
                     route_name = 'Breeze 2'
         elif operator_id == 'UNIB' or operator_id == 'UNO':
@@ -148,7 +148,7 @@ class Command(ImportLiveVehiclesCommand):
         else:
             created = False
 
-        if route_name.endswith('_Essex'):
+        if route_name.endswith(' Essex'):
             route_name = route_name[:-6]
 
         services = Service.objects.filter(current=True)

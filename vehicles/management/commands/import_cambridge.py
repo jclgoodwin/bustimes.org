@@ -143,5 +143,5 @@ class Command(BaseCommand):
         while True:
             try:
                 asyncio.get_event_loop().run_until_complete(self.sock_it())
-            except websockets.exceptions.ConnectionClosed as e:
+            except (websockets.exceptions.ConnectionClosed, asyncio.base_futures.InvalidStateError) as e:
                 print(e)
