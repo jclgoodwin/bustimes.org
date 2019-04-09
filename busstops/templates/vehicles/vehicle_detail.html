@@ -50,7 +50,7 @@
                 {% endif %}
             </td>
             <td>{{ journey.datetime|time }}</td>
-            <td>{{ journey.code }}</td>
+            <td>{% if journey.code|length < 20 %}{{ journey.code }}{% endif %}</td>
             <td>{{ journey.destination }}</td>
             <td>
                 {% if journey.locations %}
