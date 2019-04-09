@@ -8,7 +8,7 @@ from django.db.models import Q
 from isodate import parse_duration
 from busstops.models import Operator, Service
 from ..import_live_vehicles import ImportLiveVehiclesCommand
-from ...models import Vehicle, VehicleLocation, VehicleJourney
+from ...models import Vehicle, VehicleLocation, VehicleJourney, JourneyCode
 
 
 logger = logging.getLogger(__name__)
@@ -114,7 +114,7 @@ class Command(ImportLiveVehiclesCommand):
                         operator = Operator.objects.get(id=operator_ref)
         except (Operator.MultipleObjectsReturned, Operator.DoesNotExist) as e:
             logger.error(e, exc_info=True)
-            print(e, operator_ref, service)
+            print(e, operator_ref, service, ET.tostring(item))
 
         vehicle_code = mvj.find('siri:VehicleRef', NS).text
         while operator_ref and vehicle_code.startswith(operator_ref + '-'):
@@ -200,6 +200,13 @@ class Command(ImportLiveVehiclesCommand):
                 journey.service = self.get_service(services, latlong)
             except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
                 logger.error(e)
+
+        if not journey.destination and journey.code and journey.service:
+            try:
+                journey_code = journey.service.journeycode_set.get(code=journey.code)
+                journey.destination = journey_code.destination
+            except (JourneyCode.DoesNotExist, JourneyCode.MultipleObjectsReturned):
+                pass
 
         if operator_options and operator and journey.service and operator.id == operator_options[0]:
             if operator.id != 'RBUS' and operator.id != 'ARBB':

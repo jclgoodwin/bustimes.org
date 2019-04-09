@@ -22,12 +22,17 @@ class Command(ImportLiveVehiclesCommand):
         label = item['Label']
         if ': ' in label:
             vehicle, journey_code = label.split(': ', 1)
-            journey.code = journey_code.split(' ', 1)[0]
-            service = journey_code.split('/', 1)[0]
+            journey.code = journey_code.split(' ', 1)[0]  # '136/1241'
+            service, journey_code = journey.code.split('/', 1)  # '136', '1241'
+
             try:
                 journey.service = self.services.get(servicecode__scheme=self.source_name, servicecode__code=service)
+                journey_code = journey.service.journeycode_set.filter(code=journey_code).first()
+                if journey_code:
+                    journey.destination = journey_code.destination
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-                print(e, vehicle, service)
+                print(e, item)
+
         else:
             vehicle = label
 
