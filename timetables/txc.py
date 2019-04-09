@@ -456,6 +456,11 @@ class JourneyPatternStopUsage(object):
         self.stop = stops.get(element.find('txc:StopPointRef', NS).text)
         if self.stop is None:
             self.stop = Stop(element)
+
+        # for Ellenvale Coaches
+        if self.stop.atco_code == '090002492728':
+            self.activity = 'pickUpAndSetDown'
+
         self.timingstatus = element.find('txc:TimingStatus', NS).text
 
         self.wait_time = element.find('txc:WaitTime', NS)
