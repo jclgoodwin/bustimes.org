@@ -96,6 +96,8 @@ class Command(ImportLiveVehiclesCommand):
             operator_id = 'UNOE'
             if route_name == '690':
                 route_name = 'Inter-campus Shuttle'
+        elif operator_id == 'LYNX' and route_name == '48b':
+            route_name = '48'
         elif operator_id == 'RENW':
             operator_id = 'ECWY'
         elif operator_id == 'CB':
@@ -168,7 +170,7 @@ class Command(ImportLiveVehiclesCommand):
             else:
                 print(item)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-            if route_name.lower() not in {'rr', 'rail', 'transdev', '7777', 'shop', 'pos', 'kiosk', 'rolls_royce'}:
+            if route_name.lower() not in {'rr', 'rail', 'transdev', '7777', 'shop', 'pos', 'kiosk', 'rolls-royce'}:
                 if not (operator_id[0] == 'RBUS' and route_name[0] == 'V'):
                     print(e, operator_id, route_name)
 
