@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import VehicleType, Vehicle, VehicleJourney
+from .models import VehicleType, Vehicle, VehicleJourney, Livery, JourneyCode
 
 
 class VehicleTypeAdmin(admin.ModelAdmin):
@@ -32,6 +32,14 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
     )
 
 
+class JourneyCodeAdmin(admin.ModelAdmin):
+    list_display = ['code', 'service', 'destination']
+    list_select_related = ['service']
+    raw_id_fields = ['service']
+
+
 admin.site.register(VehicleType, VehicleTypeAdmin)
 admin.site.register(Vehicle, VehicleAdmin)
 admin.site.register(VehicleJourney, VehicleJourneyAdmin)
+admin.site.register(JourneyCode, JourneyCodeAdmin)
+admin.site.register(Livery)

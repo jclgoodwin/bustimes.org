@@ -12,7 +12,7 @@ from django.core.cache import cache
 from django.db import IntegrityError
 from django.utils import timezone
 from busstops.models import Service, ServiceCode, DataSource
-from vehicles.models import Vehicle, VehicleJourney
+from vehicles.models import Vehicle, VehicleJourney, JourneyCode
 
 
 logger = logging.getLogger(__name__)
@@ -441,16 +441,25 @@ class SiriSmDepartures(Departures):
         if operator is not None:
             operator = operator.text
         service = self.get_service(line_name)
-        if line_ref is not None and type(service) is Service:
+        if type(service) is Service:
             scheme = self.source.name
-            if scheme == 'NCC Hogia' or expected_time and ('icarus' in self.source.url or 'sslink' in self.source.url):
-                if scheme != 'NCC Hogia':
-                    scheme += ' SIRI'
-                line_ref = line_ref.text
-                if line_ref and line_ref not in self.line_refs and operator != 'TD':
-                    ServiceCode.objects.update_or_create({'code': line_ref}, service=service, scheme=scheme)
-                    self.line_refs.add(line_ref)
-
+            url = self.source.url
+            if line_ref is not None:
+                if scheme == 'NCC Hogia' or (expected_time and ('icarus' in url or 'sslink' in url)):
+                    if scheme != 'NCC Hogia':
+                        scheme += ' SIRI'
+                    line_ref = line_ref.text
+                    if line_ref and line_ref not in self.line_refs and operator != 'TD':
+                        ServiceCode.objects.update_or_create({'code': line_ref}, service=service, scheme=scheme)
+                        self.line_refs.add(line_ref)
+            if (scheme == 'NCC Hogia' or 'jmwrti' in url) and destination:
+                journey_ref = element.find('s:FramedVehicleJourneyRef/s:DatedVehicleJourneyRef', self.ns)
+                if journey_ref is not None:
+                    journey_ref = journey_ref.text
+                    if journey_ref:
+                        JourneyCode.objects.update_or_create({
+                            'destination': destination
+                        }, service=service, code=journey_ref, siri_source=self.source)
         return {
             'time': aimed_time,
             'live': expected_time,
