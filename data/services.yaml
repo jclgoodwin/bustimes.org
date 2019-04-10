@@ -9,26 +9,10 @@ bed_41-18-_-y08:
 # FECS
 suf_1-99-_-y08:
     line_brand: Coastal Clipper
-# FromeBus
-swe_47-58-_-y10:
-    current: false
-swe_47-58A-_-y10:
-    current: false
-swe_47-58B-_-y10:
-    current: false
-swe_47-58C-_-y10:
-    current: false
-# Remove Whincop Coaches school services
-suf_48-TM1-_-y08:
-    current: false
-suf_48-TM2-_-y08:
-    current: false
 FSAW032:
     description: Castlebay - Barra
 FSBW033:
     description: Castlebay - Vatersay
-em_18-X52-_-y08: # deduplicate X52 Alton Towers
-    current: false
 YNAO042S:
     description: York - Naburn - Cawood - Selby
 YNAO042:
@@ -94,9 +78,9 @@ em_12-40-A-y08:
     description: Leicester Outer Circle
     inbound_description: Clockwise
     outbound_description: Anticlockwise
-HIDO001:
+HIDO001:  # Transport for Tongue Durness
     current: false
-BOBO131:
+BOBO131:  # Peter Hogg cross-border
     current: false
 NE_310_PM6161_131:
     description: Jedburgh - Newcastle upon Tyne
@@ -156,92 +140,11 @@ NE_410_PB1954_1:
     line_brand: Coaster
 NE_410_PB1954_1A:
     line_brand: Coaster
-# Hadrian's Wall Country Bus - back in Easter 2019
-NE_310_PB3954_AD12:
-    current: false
-NE_310_PB3954_X122:
-    current: false
-# deduplicate cross-border services:
-NW_03_BRD_X95_1:
-    current: false
-YWDO007:
-    current: false
-# Midland Classic cross-border services
-em_11-4-E-y08:
-    current: false
-em_11-8-E-y08:
-    current: false
-em_11-8H-_-y08:
-    current: false
-em_11-401-A-y08:
-    current: false
-twm_4-22S-_-y11:
-    current: false
-em_11-22-D-y08:
-    current: false
-em_11-21E-_-y08:
-    current: false
-em_11-21B-_-y08:
-    current: false
-em_11-21-C-y08:
-    current: false
-em_11-19S-_-y08:
-    current: false
-em_11-19C-_-y08:
-    current: false
-em_11-19B-_-y08:
-    current: false
-em_11-19-C-y08:
-    current: false
-em_11-9-B-y08:
-    current: false
-em_11-X39-_-y08:
-    current: false
-# Warrington's Own Buses duplicates (one version of each timetable is wrong!)
-NW_07_NW_P5_1:
-    current: false
-NW_07_NW_P6_1:
-    current: false
-# East/West Midlands duplicates
-twm_8-7-_-y11:
-    current: false
-cen_37-71-_-y11:
-    current: false
-# South East/West duplicates
-swe_44-1-E-y10:
-    current: false
-swe_44-3-D-y10:
-    current: false
-swe_44-404-A-y10:
-    current: false
-swe_44-405-A-y10:
-    current: false
-swe_44-412-_-y10:
-    current: false
-swe_44-417-_-y10:
-    current: false
-swe_44-KTE-_-y10:
-    current: false
-swe_44-17-B-y10:
-    current: false
-swe_44-18-C-y10:
-    current: false
-swe_44-19-B-y10:
-    current: false
-set_6-13-F-y08:
-    current: false
-swe_44-4-C-y10:
-    current: false
-swe_44-5-A-y10:
-    current: false
-swe_44-16-A-y10:
-    current: false
 tfl_87-LWB-_-y05:
     timetable_wrong: true
-HIAO811:
+HIAO811:  # 811 - Achduart - Ullapool
     timetable_wrong: true
-# Hatch Green Coaches
-swe_41-633-_-y10:
+swe_41-633-_-y10:  # Hatch Green Coaches
     current: false
 # typo
 em_18-CC-_-y08:
