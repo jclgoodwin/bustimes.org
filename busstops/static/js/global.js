@@ -1,14 +1,16 @@
 /*jslint browser: true*/
 
-if (navigator.serviceWorker && location.host !== 'localhost:8000') {
-    navigator.serviceWorker.register('/serviceworker.js', {
-        scope: '/'
-    });
-    window.addEventListener('load', function () {
-        if (navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({'command': 'trimCaches'});
-        }
-    });
+if (navigator.serviceWorker && location.protocol === 'https://') {
+    try {
+        navigator.serviceWorker.register('/serviceworker.js', {
+            scope: '/'
+        });
+        window.addEventListener('load', function () {
+            if (navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({'command': 'trimCaches'});
+            }
+        });
+    } catch {}
 }
 
 (function () {
