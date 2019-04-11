@@ -199,7 +199,7 @@ class Command(ImportLiveVehiclesCommand):
             try:
                 journey.service = self.get_service(services, latlong)
             except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-                logger.error(e)
+                print(e)
 
         if not journey.destination and journey.code and journey.service:
             try:
