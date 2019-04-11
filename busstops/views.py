@@ -516,34 +516,35 @@ class ServiceDetailView(DetailView):
                     for row in grouping.rows:
                         row.part.stop.stop = stops_dict.get(row.part.stop.atco_code)
 
-        if bool(context['operators']):
-            operator = context['operators']
-            context['breadcrumb'] = (self.object.region, context['operators'][0])
+        try:
+            context['breadcrumb'] = [Region.objects.filter(adminarea__stoppoint__service=self.object).distinct().get()]
+        except (Region.DoesNotExist, Region.MultipleObjectsReturned):
+            context['breadcrumb'] = [self.object.region]
+
+        if context['operators']:
+            context['breadcrumb'].append(context['operators'][0])
             if self.object.is_megabus():
                 context['links'].append({
                     'url': self.object.get_megabus_url(),
                     'text': 'Buy tickets from megabus.com'
                 })
-            else:
-                for operator in context['operators']:
-                    if operator.is_national_express():
+            for operator in context['operators']:
+                if operator.is_national_express():
+                    context['links'].append({
+                        'url': operator.get_national_express_url(),
+                        'text': 'Buy tickets on the National Express website'.format(operator.name)
+                    })
+                elif operator.url.startswith('http') and 'megabus' not in operator.url:
+                    context['links'].append({
+                        'url': operator.url,
+                        'text': '{} website'.format(operator.name)
+                    })
+                if operator.twitter:
+                    for handle in operator.twitter.split():
                         context['links'].append({
-                            'url': operator.get_national_express_url(),
-                            'text': 'Buy tickets on the National Express website'.format(operator.name)
+                            'url': 'https://twitter.com/{}'.format(handle),
+                            'text': '@{} on Twitter'.format(handle)
                         })
-                    if operator.url.startswith('http'):
-                        context['links'].append({
-                            'url': operator.url,
-                            'text': '{} website'.format(operator.name)
-                        })
-                    if operator.twitter:
-                        for handle in operator.twitter.split():
-                            context['links'].append({
-                                'url': 'https://twitter.com/{}'.format(handle),
-                                'text': '@{} on Twitter'.format(handle)
-                            })
-        else:
-            context['breadcrumb'] = (self.object.region,)
 
         traveline_url, traveline_text = self.object.get_traveline_link(date)
         if traveline_url:
