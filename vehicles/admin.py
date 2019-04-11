@@ -30,6 +30,7 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
     list_filter = (
         ('source', admin.RelatedOnlyFieldListFilter),
     )
+    ordering = ('-id',)
 
 
 class JourneyCodeAdmin(admin.ModelAdmin):
