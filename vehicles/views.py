@@ -20,7 +20,7 @@ session = Session()
 def operator_vehicles(request, slug):
     operator = get_object_or_404(Operator, slug=slug)
     vehicles = operator.vehicle_set.order_by('fleet_number')
-    vehicles = vehicles.select_related('vehicle_type', 'latest_location__journey__service')
+    vehicles = vehicles.select_related('vehicle_type', 'livery', 'latest_location__journey__service')
     if not vehicles:
         raise Http404()
     return render(request, 'operator_vehicles.html', {
@@ -162,7 +162,7 @@ def service_vehicles_history(request, slug):
 
 class VehicleDetailView(DetailView):
     model = Vehicle
-    queryset = model.objects.select_related('operator', 'operator__region', 'vehicle_type')
+    queryset = model.objects.select_related('operator', 'operator__region', 'vehicle_type', 'livery')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

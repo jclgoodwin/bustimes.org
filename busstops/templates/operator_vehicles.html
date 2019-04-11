@@ -51,7 +51,7 @@
                 {% endif %}
             </td>
             <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
-            <td>{% if vehicle.colours %}<div class="bus" style="background:{{ vehicle.get_livery }}"></div>{% endif %}</td>
+            <td>{% if vehicle.colours or vehicle.livery %}<div class="bus" style="background:{{ vehicle.get_livery }}"></div>{% endif %}</td>
             <td>{{ vehicle.notes }}</td>
         </tr>
     {% endfor %}
