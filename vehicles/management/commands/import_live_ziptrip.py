@@ -19,7 +19,7 @@ class Command(ImportLiveVehiclesCommand):
     source_name = 'ZipTrip'
     url = 'https://ziptrip1.ticketer.org.uk/v1/vehiclepositions'
 
-    def get_items(self):
+    def get_extents(self):
         for operator in (
             'SBAY',
             'CBUS',
@@ -42,27 +42,36 @@ class Command(ImportLiveVehiclesCommand):
             'NIBS',
             'UNOE',
             'WHTL',
-            'TRDU'
+            'TRDU',
         ):
             stops = StopPoint.objects.filter(service__operator=operator, service__current=True)
             extent = stops.aggregate(Extent('latlong'))['latlong__extent']
             if not extent:
                 print(operator)
                 continue
-            params = {
+            yield {
                 'maxLat': extent[3] + 0.1,
                 'maxLng': extent[2] + 0.1,
                 'minLat': extent[1] - 0.1,
                 'minLng': extent[0] - 0.1,
             }
+
+        # Mann
+        yield {
+            'maxLat': 54.5,
+            'maxLng': -3.8,
+            'minLat': 53.9,
+            'minLng': -5.1
+        }
+
+    def get_items(self):
+        for params in self.get_extents():
             try:
                 response = self.session.get(self.url, params=params, timeout=5)
                 items = response.json()['items']
                 if items:
                     for item in items:
                         yield item
-                else:
-                    print(operator, response.url)
             except (RequestException, KeyError):
                 continue
             sleep(1)
