@@ -118,9 +118,10 @@ def vehicles_last_modified(request):
 def vehicles_json(request):
     locations = get_locations(request).order_by()
 
+    locations = locations.select_related('journey__vehicle__livery')
+
     if 'service' in request.GET:
         extended = False
-        locations = locations.select_related('journey__vehicle')
     else:
         extended = True
         locations = locations.select_related('journey__service', 'journey__vehicle__operator',

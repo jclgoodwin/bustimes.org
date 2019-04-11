@@ -3,7 +3,35 @@ from webcolors import html5_parse_simple_color
 from django.contrib.gis.db import models
 from django.urls import reverse
 from django.utils.functional import cached_property
+from django.utils.safestring import mark_safe
 from busstops.models import Operator, Service, DataSource, SIRISource
+
+
+def get_css(colours, direction=None, horizontal=False):
+    if len(colours) == 1:
+        return colours[0]
+    else:
+        if direction is None:
+            direction = 180
+        background = 'linear-gradient('
+        if direction < 180:
+            if horizontal:
+                background + 'to top'
+            else:
+                background += 'to left'
+        elif horizontal:
+            background += 'to bottom'
+        else:
+            background += 'to right'
+        percentage = 100 / len(colours)
+        for i, colour in enumerate(colours):
+            if i != 0:
+                background += ',{} {}%'.format(colour, ceil(percentage * i))
+            if i != len(colours) - 1:
+                background += ',{} {}%'.format(colour, ceil(percentage * (i + 1)))
+        background += ')'
+
+        return background
 
 
 class VehicleType(models.Model):
@@ -23,6 +51,15 @@ class Livery(models.Model):
     colours = models.CharField(max_length=255, blank=True)
     css = models.CharField(max_length=255, blank=True)
     horizontal = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+    def preview(self):
+        if not self.colours:
+            return
+        background = get_css(self.colours.split(), None, self.horizontal)
+        return mark_safe('<div style="height:1.5em;width:4em;background:{}"></div>'.format(background))
 
 
 class Vehicle(models.Model):
@@ -67,8 +104,9 @@ class Vehicle(models.Model):
         return self.reg
 
     def get_text_colour(self):
-        if self.colours:
-            colours = self.colours.split()
+        colours = self.livery and self.livery.colours or self.colours
+        if colours:
+            colours = colours.split()
             parsed_colours = [html5_parse_simple_color(colour) for colour in colours]
             luminences = [c.red * .299 + c.blue * .587 + c.green * .144 for c in parsed_colours]
             luminence = sum(luminences) / len(luminences) / 255
@@ -76,29 +114,10 @@ class Vehicle(models.Model):
                 return '#fff'
 
     def get_livery(self, direction=None):
-        if not self.colours:
-            return
-        colours = self.colours.split()
-        if len(colours) == 1:
-            return colours[0]
-        else:
-            if direction is None:
-                direction = 180
-            background = 'linear-gradient('
-            if direction < 180:
-                background += 'to left'
-            else:
-                background += 'to right'
-
-            percentage = 100 / len(colours)
-            for i, colour in enumerate(colours):
-                if i != 0:
-                    background += ',{} {}%'.format(colour, ceil(percentage * i))
-                if i != len(colours) - 1:
-                    background += ',{} {}%'.format(colour, ceil(percentage * (i + 1)))
-            background += ')'
-
-            return background
+        colours = self.livery and self.livery.colours or self.colours
+        if colours:
+            colours = colours.split()
+            return get_css(colours, direction, False)
 
     def get_absolute_url(self):
         return reverse('vehicle_detail', args=(self.id,))
