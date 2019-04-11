@@ -117,7 +117,7 @@ class Vehicle(models.Model):
         colours = self.livery and self.livery.colours or self.colours
         if colours:
             colours = colours.split()
-            return get_css(colours, direction, False)
+            return get_css(colours, direction, self.livery and self.livery.horizontal)
 
     def get_absolute_url(self):
         return reverse('vehicle_detail', args=(self.id,))

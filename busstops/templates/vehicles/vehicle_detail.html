@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}{% if not object.code %}Vehicles – {% endif %}{{ object }} – Bus Times{% endblock %}
+{% block title %}{% if service %}Vehicles – {% endif %}{{ object }} – Bus Times{% endblock %}
 
 {% block canonical %}<meta name="robots" content="noindex, nofollow" />{% endblock %}
 
@@ -8,16 +8,16 @@
 
 <h1>{{ object }}</h1>
 
-{% if object.vehicle_type %}
-    <p>{{ object.vehicle_type }}</p>
+{% if vehicle.vehicle_type %}
+    <p>{{ vehicle.vehicle_type }}</p>
 {% endif %}
 
-{% if object.colours %}
-    <p>{% if vehicle.colours or vehicle.livery %}<div class="bus" style="background:{{ vehicle.get_livery }}"></div>{% endif %}</p>
+{% if vehicle.colours or vehicle.livery %}
+    <p><div class="bus" style="background:{{ vehicle.get_livery }}"></div>{% endif %}</p>
 {% endif %}
 
-{% if object.notes %}
-    <p>{{ object.notes }}</p>
+{% if vehicle.notes %}
+    <p>{{ vehicle.notes }}</p>
 {% endif %}
 
 <form>
@@ -33,7 +33,7 @@
 {% if journeys %}
     <table>
         <tr>
-            <th scope="col">{% if object.region_id %}Vehicle{% else %}Service{% endif %}</th>
+            <th scope="col">{% if service %}Vehicle{% else %}Service{% endif %}</th>
             <th scope="col" colspan="2">Journey</th>
             <th scope="col">To</th>
             <th scope="col"></th>
@@ -41,7 +41,7 @@
     {% for journey in journeys %}
         <tr>
             <td>
-                {% if object.region_id %}
+                {% if service %}
                     <a href="{{ journey.vehicle.get_absolute_url }}?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.vehicle }}</a>
                 {% elif journey.service %}
                     <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.service.line_name }}</a>
