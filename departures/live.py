@@ -456,10 +456,15 @@ class SiriSmDepartures(Departures):
                 journey_ref = element.find('s:FramedVehicleJourneyRef/s:DatedVehicleJourneyRef', self.ns)
                 if journey_ref is not None:
                     journey_ref = journey_ref.text
+                    if scheme == 'NCC Hogia':
+                        journey_ref = int(journey_ref)
                     if journey_ref:
-                        JourneyCode.objects.update_or_create({
-                            'destination': destination
-                        }, service=service, code=journey_ref, siri_source=self.source)
+                        try:
+                            JourneyCode.objects.update_or_create({
+                                'destination': destination
+                            }, service=service, code=journey_ref, siri_source=self.source)
+                        except JourneyCode.MultipleObjectsReturned:
+                            pass
         return {
             'time': aimed_time,
             'live': expected_time,

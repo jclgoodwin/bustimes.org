@@ -125,6 +125,9 @@ class JourneyCode(models.Model):
     siri_source = models.ForeignKey(SIRISource, models.SET_NULL, null=True, blank=True)
     destination = models.CharField(max_length=255, blank=True)
 
+    class Meta():
+        unique_together = ('code', 'service', 'siri_source')
+
 
 class VehicleLocation(models.Model):
     datetime = models.DateTimeField()
