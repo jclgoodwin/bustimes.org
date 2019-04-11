@@ -37,18 +37,18 @@ class SiriVMImportTest(TestCase):
 
         locations = VehicleLocation.objects.filter(journey__source=self.command.source)
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             self.command.handle_item(item, None)
         self.assertIsNone(locations.get().heading)
 
         # if datetime is the same, shouldn't create new vehicle location
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             self.command.handle_item(item, None)
         self.assertEqual(1, locations.count())
 
         # different datetime - should create new vehicle location
         item.find('siri:RecordedAtTime', import_sirivm.NS).text = '2018-08-06T21:45:32+01:00'
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             self.command.handle_item(item, None)
         self.assertEqual(2, locations.count())
         last_location = locations.last()
