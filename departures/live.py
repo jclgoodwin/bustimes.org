@@ -324,20 +324,19 @@ class TransportApiDepartures(Departures):
         if not time:
             return
         if item.get('date') is not None:
-            time = ciso8601.parse_datetime(item['date'] + ' ' + time)
+            time = timezone.make_aware(ciso8601.parse_datetime(item['date'] + ' ' + time))
             if live_time:
-                live_time = ciso8601.parse_datetime(item['date'] + ' ' + live_time)
-            if (item['source'].startswith('Traveline timetable') and
-                    time.date() > self.today):
+                live_time = timezone.make_aware(ciso8601.parse_datetime(item['date'] + ' ' + live_time))
+            if (item['source'].startswith('Traveline timetable') and time.date() > self.today):
                 return
         else:
-            time = datetime.datetime.combine(
+            time = timezone.make_aware(datetime.datetime.combine(
                 self.today, dateutil.parser.parse(time).time()
-            )
+            ))
             if live_time:
-                live_time = datetime.datetime.combine(
+                live_time = timezone.make_aware(datetime.datetime.combine(
                     self.today, dateutil.parser.parse(live_time).time()
-                )
+                ))
         return {
             'time': time,
             'live': live_time,
