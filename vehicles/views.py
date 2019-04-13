@@ -17,6 +17,10 @@ from .management.commands import import_sirivm
 session = Session()
 
 
+class Poorly(Exception):
+    pass
+
+
 def operator_vehicles(request, slug):
     operator = get_object_or_404(Operator, slug=slug)
     vehicles = operator.vehicle_set.order_by('fleet_number')
@@ -57,8 +61,10 @@ def siri_one_shot(code):
     source = 'Icarus'
     siri_source = SIRISource.objects.get(name=code.scheme[:-5])
     cache_key = '{}:{}:{}'.format(siri_source.url, siri_source.requestor_ref, code.code)
-    if cache.get(cache_key) or siri_source.get_poorly():
+    if cache.get(cache_key):
         return
+    if siri_source.get_poorly():
+        raise Poorly()
     now = timezone.now()
     locations = VehicleLocation.objects.filter(current=True)
     current_locations = locations.filter(journey__service=code.service_id, journey__source__name=source,
@@ -86,6 +92,7 @@ def siri_one_shot(code):
     response = session.post(url, data=data, timeout=5)
     if 'Client.AUTHENTICATION_FAILED' in response.text or not response.ok:
         cache.set(siri_source.get_poorly_key(), True, 3600)  # back off for an hour
+        raise Poorly()
     command = import_sirivm.Command()
     command.source = DataSource.objects.get(name='Icarus')
     for item in import_sirivm.items_from_response(response):
@@ -105,7 +112,7 @@ def vehicles_last_modified(request):
             try:
                 siri_one_shot(code)
                 break
-            except SIRISource.DoesNotExist:
+            except (SIRISource.DoesNotExist, Poorly):
                 continue
     try:
         location = locations.values('datetime').latest('datetime')
