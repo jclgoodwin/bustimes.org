@@ -14,13 +14,10 @@ def get_css(colours, direction=None, horizontal=False):
         if direction is None:
             direction = 180
         background = 'linear-gradient('
-        if direction < 180:
-            if horizontal:
-                background + 'to top'
-            else:
-                background += 'to left'
-        elif horizontal:
-            background += 'to bottom'
+        if horizontal:
+            background += 'to top'
+        elif direction < 180:
+            background += 'to left'
         else:
             background += 'to right'
         percentage = 100 / len(colours)
