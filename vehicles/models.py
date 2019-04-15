@@ -49,6 +49,10 @@ class Livery(models.Model):
     css = models.CharField(max_length=255, blank=True)
     horizontal = models.BooleanField(default=False)
 
+    class Meta():
+        ordering = ('name',)
+        verbose_name_plural = 'liveries'
+
     def __str__(self):
         return self.name
 

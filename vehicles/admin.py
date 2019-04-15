@@ -2,6 +2,16 @@ from django.contrib import admin
 from .models import VehicleType, Vehicle, VehicleJourney, Livery, JourneyCode
 
 
+def copy_livery(modeladmin, request, queryset):
+    livery = Livery.objects.filter(vehicle__in=queryset).first()
+    queryset.update(livery=livery)
+
+
+def copy_type(modeladmin, request, queryset):
+    vehicle_type = VehicleType.objects.filter(vehicle__in=queryset).first()
+    queryset.update(vehicle_type=vehicle_type)
+
+
 class VehicleTypeAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     list_display = ('name', 'double_decker', 'coach')
@@ -21,6 +31,7 @@ class VehicleAdmin(admin.ModelAdmin):
     raw_id_fields = ('operator',)
     autocomplete_fields = ('vehicle_type',)
     ordering = ('-id',)
+    actions = (copy_livery, copy_type)
 
 
 class VehicleJourneyAdmin(admin.ModelAdmin):
