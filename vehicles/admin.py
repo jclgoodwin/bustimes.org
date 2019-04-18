@@ -35,11 +35,13 @@ class VehicleAdmin(admin.ModelAdmin):
 
 
 class VehicleJourneyAdmin(admin.ModelAdmin):
-    list_display = ('datetime', 'vehicle', 'service', 'code', 'destination')
+    list_display = ('datetime', 'vehicle', 'service', 'route_name', 'code', 'destination')
     list_select_related = ('vehicle', 'service')
-    raw_id_fields = ('service',)
+    raw_id_fields = ('vehicle', 'service')
     list_filter = (
+        ('service', admin.BooleanFieldListFilter),
         ('source', admin.RelatedOnlyFieldListFilter),
+        'vehicle__operator',
     )
     ordering = ('-id',)
 
