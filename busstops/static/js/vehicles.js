@@ -31,7 +31,7 @@
     statusBar.addTo(map);
 
     function getRotation(direction) {
-        if (direction == null) {
+        if (direction === null) {
             return '';
         }
         var rotation = 'transform: rotate(' + direction + 'deg)';
@@ -187,19 +187,44 @@
     }
 
     function handleMoveEnd(event) {
-        var latLng = event.target.getCenter(),
-            string = map.getZoom() + '/' + latLng.lat + '/' + latLng.lng;
-
-        localStorage.setItem('vehicleMap', string);
-
         clearTimeout(timeout);
         load(map, statusBar);
+
+        var latLng = event.target.getCenter(),
+            string = event.target.getZoom() + '/' + Math.round(latLng.lat * 10000) / 10000 + '/' + Math.round(latLng.lng * 10000) / 10000;
+
+        if (history.replaceState) {
+            history.replaceState(null, null, location.pathname + '#' + string);
+        }
+        if (window.localStorage) {
+            localStorage.setItem('vehicleMap', string);
+        }
+
+        var links = document.getElementsByTagName('header')[0].getElementsByTagName('a');
+        for (var i = links.length - 1; i >= 0; i -= 1) {
+            if (links[i].href.indexOf('/map') !== -1) {
+                links[i].href = '/map#' + string;
+                break;
+            }
+        }
     }
 
     map.on('moveend', Cowboy.debounce(500, handleMoveEnd));
 
-    if (localStorage.vehicleMap) {
-        var parts = localStorage.vehicleMap.split('/');
+    window.onhashchange = function(event) {
+        var parts = event.target.location.hash.substr(1).split('/');
+        if (parts.length == 3) {
+            map.setView([parts[1], parts[2]], parts[0]);
+        }
+    };
+
+    var parts;
+    if (location.hash) {
+        parts = location.hash.substring(1).split('/');
+    } else if (localStorage.vehicleMap) {
+        parts = localStorage.vehicleMap.split('/');
+    }
+    if (parts) {
         map.setView([parts[1], parts[2]], parts[0]);
     } else {
         map.setView([51.9, 0.9], 9);

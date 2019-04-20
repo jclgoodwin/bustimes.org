@@ -19,7 +19,13 @@
 {% block cookies %}{% endblock %}
 
 {% block header %}
-<header><a href="/" class="site-name">Bus Times</a></header>
+	<header>
+		<a href="/" class="site-name">Bus Times</a>
+        <ul>
+            <li><a href="/vehicles">Buses</a></li>
+            <li><a href="/map">Stops</a></li>
+        </ul>
+	</header>
 {% endblock %}
 
 {% block breadcrumb %}{% endblock %}

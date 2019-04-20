@@ -136,15 +136,26 @@
             history.replaceState(null, null, window.location.pathname + '#' + latLngString);
         }
         try {
-            localStorage.setItem('location', latLngString);
+            if (window.localStorage) {
+                localStorage.setItem('location', latLngString);
+            }
         } catch (ignore) {
             // localStorage disabled
         }
+
+        var links = document.getElementsByTagName('header')[0].getElementsByTagName('a');
+        for (var i = links.length - 1; i >= 0; i -= 1) {
+            if (links[i].href.indexOf('/vehicles') !== -1) {
+                links[i].href = '/vehicles#' + latLngString;
+                break;
+            }
+        }
+
     }
 
     function handleMoveEnd(event) {
         var latLng = event.target.getCenter(),
-            latLngString = Math.round(latLng.lat * 10000) / 10000 + ',' + Math.round(latLng.lng * 10000) / 10000;
+            latLngString = event.target.getZoom() + '/' + Math.round(latLng.lat * 10000) / 10000 + '/' + Math.round(latLng.lng * 10000) / 10000;
 
         rememberLocation(latLngString);
 
@@ -161,22 +172,36 @@
         statusBar.getContainer().innerHTML = '';
     });
 
+    window.onhashchange = function(event) {
+        var parts = event.target.location.hash.substr(1).split('/');
+        if (parts.length == 3) {
+            map.setView([parts[1], parts[2]], parts[0]);
+        }
+    };
+
     var parts,
         shouldLocate = true;
     if (window.location.hash) {
-        parts = window.location.hash.substr(1).split(',');
+        parts = window.location.hash.substr(1).split('/');
         shouldLocate = false;
     } else {
         try {
             if (localStorage.getItem('location')) {
-                parts = localStorage.getItem('location').split(',');
+                parts = localStorage.getItem('location').split('/');
             }
         } catch (ignore) {
             // localStorage disabled
         }
     }
     if (parts) {
-        map.setView([parts[0], parts[1]], 14);
+        if (parts.length === 1) {
+            parts = parts[0].split(',');
+        }
+        if (parts.length === 3) {
+            map.setView([parts[1], parts[2]], parts[0]);
+        } else {
+            map.setView([parts[0], parts[1]], 14);
+        }
     } else {
         map.setView([54, -2.5], 6);
     }
