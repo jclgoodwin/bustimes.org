@@ -246,16 +246,17 @@ class LiveDeparturesTest(TestCase):
             'dir': 'inbound'
         }]}}))
         self.assertEqual(len(rows), 2)
+        tzinfo = live.parse_datetime('2019-04-20T18:30:00+01:00').tzinfo
         self.assertEqual(rows[0], {
             'destination': 'Hellesdon',
             'service': '37',
-            'time': datetime(2016, 6, 10, 22, 17),
-            'live': datetime(2016, 6, 10, 22, 15)
+            'time': datetime(2016, 6, 10, 22, 17, tzinfo=tzinfo),
+            'live': datetime(2016, 6, 10, 22, 15, tzinfo=tzinfo)
         })
         self.assertEqual(rows[1], {
             'destination': 'Sheringham',
             'service': '44A',
-            'time': datetime(2016, 6, 10, 22, 47),
+            'time': datetime(2016, 6, 10, 22, 47, tzinfo=tzinfo),
             'live': None
         })
 
