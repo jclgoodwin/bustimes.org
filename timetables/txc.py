@@ -46,9 +46,9 @@ BANK_HOLIDAYS = {
     datetime.date(2019, 1, 1): ('NewYearsDay', 'NewYearsDayHoliday'),
     datetime.date(2019, 1, 2): ('Jan2ndScotland',),
     datetime.date(2019, 4, 19): ('GoodFriday',),
-    datetime.date(2019, 4, 22): ('EasterMonday',),  # TODO: not in Scotland?
-    datetime.date(2019, 5, 6): ('MayDay',),
-    datetime.date(2019, 5, 27): ('SpringBank',),
+    datetime.date(2019, 4, 22): ('EasterMonday', 'HolidayMondays'),  # TODO: not in Scotland?
+    datetime.date(2019, 5, 6): ('MayDay', 'HolidayMondays'),
+    datetime.date(2019, 5, 27): ('SpringBank', 'HolidayMondays'),
     datetime.date(2019, 8, 5): ('AugustBankHolidayScotland',),
     datetime.date(2019, 8, 26): ('LateSummerBankHolidayNotScotland',),
     datetime.date(2019, 12, 2): ('StAndrewsDay',),
