@@ -41,6 +41,14 @@ class Command(ImportLiveVehiclesCommand):
             code=vehicle
         )
 
+        if not journey.service_id and journey.vehicle.operator_id:
+            services = self.services.filter(operator=journey.vehicle.operator_id)
+            latlong = Point(item['Longitude'], item['Latitude'])
+            try:
+                journey.service = self.get_service(services, latlong)
+            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                pass
+
         return journey, vehicle_created
 
     def create_vehicle_location(self, item):
