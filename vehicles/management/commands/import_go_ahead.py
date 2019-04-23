@@ -86,6 +86,8 @@ class Command(ImportLiveVehiclesCommand):
             defaults['fleet_number'] = fleet_number
         if operators:
             defaults['operator_id'] = operators[0]
+            if item['lineRef'] == 'CSR' and defaults['operator_id'] == 'BHBC':
+                item['lineRef'] = 'CSS'
             services = Service.objects.filter(operator__in=operators, line_name=item['lineRef'], current=True)
             try:
                 try:

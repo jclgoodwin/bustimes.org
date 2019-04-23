@@ -1,7 +1,9 @@
 from time import sleep
+from datetime import timedelta
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
 from django.db.utils import IntegrityError
+from django.utils import timezone
 from requests.exceptions import RequestException
 from django.contrib.gis.db.models import Extent
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -36,13 +38,14 @@ class Command(ImportLiveVehiclesCommand):
             'NDTR',
             'DPCE',
             'RBUS',
-            'RENW',
+            'NADS',
             'SFGC',
             'SESX',
             'NIBS',
             'UNOE',
             'WHTL',
             'TRDU',
+            # 'ROST',
         ):
             stops = StopPoint.objects.filter(service__operator=operator, service__current=True)
             extent = stops.aggregate(Extent('latlong'))['latlong__extent']
@@ -65,13 +68,19 @@ class Command(ImportLiveVehiclesCommand):
         }
 
     def get_items(self):
+        fifteen_minutes_ago = timezone.now() - timedelta(minutes=15)
         for params in self.get_extents():
             try:
                 response = self.session.get(self.url, params=params, timeout=5)
                 items = response.json()['items']
+                any = False
                 if items:
                     for item in items:
-                        yield item
+                        if parse_datetime(item['reported']) > fifteen_minutes_ago:
+                            any = True
+                            yield item
+                if not any:
+                    print(response.url)
             except (RequestException, KeyError):
                 continue
             sleep(1)
@@ -133,7 +142,7 @@ class Command(ImportLiveVehiclesCommand):
             if route_name.startswith('K'):
                 route_name = route_name[1:]
                 operator_id = 'KENN'
-            operator_id = ('RBUS', 'GLRB', 'KENN')
+            operator_id = ('RBUS', 'GLRB', 'KENN', 'NADS')
 
         if operator_id in self.operators:
             operator = self.operators[operator_id]
@@ -180,7 +189,7 @@ class Command(ImportLiveVehiclesCommand):
                 print(item)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             if route_name.lower() not in {'rr', 'rail', 'transdev', '7777', 'shop', 'pos', 'kiosk', 'rolls-royce'}:
-                if not (operator_id[0] == 'RBUS' and route_name[0] == 'V'):
+                if not (operator_id == 'bus-vannin' or operator_id == 'IMHR' or operator_id[0] == 'RBUS' and route_name[0] == 'V'):
                     print(e, operator_id, route_name)
 
         return journey, created

@@ -47,7 +47,7 @@ class Command(ImportLiveVehiclesCommand):
                 try:
                     journey.service = operator.service_set.get(line_name=route.short_name, current=True)
                 except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-                    print(e, operator, route.short_name, item)
+                    print(e, operator, route.short_name)
 
                 if vehicle_code.endswith(route.short_name):
                     vehicle_code = vehicle_code[:-len(route.short_name)]
