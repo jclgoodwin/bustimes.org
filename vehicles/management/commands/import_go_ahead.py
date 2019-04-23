@@ -18,7 +18,7 @@ class Command(ImportLiveVehiclesCommand):
     url = 'http://api.otrl-bus.io/api/bus/nearby'
     source_name = 'Go-Ahead'
     operators = {
-        'GOEA': ('KCTB', 'CHAM'),
+        'GOEA': ('KCTB', 'CHAM', 'HEDO'),
         'CSLB': ('OXBC', 'CSLB', 'THTR'),
         'GNE': ('GNEL',),
         'BH': ('BHBC',),
@@ -99,6 +99,15 @@ class Command(ImportLiveVehiclesCommand):
                 print(e, operators, item['lineRef'])
 
         journey.vehicle, created = Vehicle.objects.get_or_create(defaults, code=vehicle)
+
+        if journey.service:
+            try:
+                operator = journey.service.operator.get()
+                if journey.vehicle.operator_id != operator.id:
+                    journey.vehicle.operator_id = operator.id
+                    journey.vehicle.save()
+            except journey.service.operator.model.MultipleObjectsReturned:
+                pass
 
         return journey, created
 
