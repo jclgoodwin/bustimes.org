@@ -189,8 +189,9 @@ class Command(ImportLiveVehiclesCommand):
                 print(item)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             if route_name.lower() not in {'rr', 'rail', 'transdev', '7777', 'shop', 'pos', 'kiosk', 'rolls-royce'}:
-                if not (operator_id == 'bus-vannin' or operator_id == 'IMHR' or operator_id[0] == 'RBUS' and route_name[0] == 'V'):
-                    print(e, operator_id, route_name)
+                if operator_id not in {'bus-vannin', 'IMHR'}:
+                    if not (operator_id[0] == 'RBUS' and route_name[0] == 'V'):
+                        print(e, operator_id, route_name)
 
         return journey, created
 
