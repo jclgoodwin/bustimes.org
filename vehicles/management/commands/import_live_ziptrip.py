@@ -73,13 +73,13 @@ class Command(ImportLiveVehiclesCommand):
             try:
                 response = self.session.get(self.url, params=params, timeout=5)
                 items = response.json()['items']
-                any = False
+                any_items = False
                 if items:
                     for item in items:
                         if parse_datetime(item['reported']) > fifteen_minutes_ago:
-                            any = True
+                            any_items = True
                             yield item
-                if not any:
+                if not any_items:
                     print(response.url)
             except (RequestException, KeyError):
                 continue
