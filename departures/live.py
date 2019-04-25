@@ -474,7 +474,7 @@ class SiriSmDepartures(Departures):
         }
 
     def departures_from_response(self, response):
-        if 'Client.AUTHENTICATION_FAILED' in response.text:
+        if not response.ok or 'Client.AUTHENTICATION_FAILED' in response.text:
             cache.set(self.source.get_poorly_key(), True, 3600)  # back off for an hour
             return
         try:
@@ -582,9 +582,8 @@ def add_stagecoach_departures(stop, services_dict, departures):
                         'source': source
                     }, fleet_number=vehicle, operator__name__startswith='Stagecoach ')
                     if not vehicle_created:
-                        now = timezone.now()
                         journeys = vehicle.vehiclejourney_set.filter(code=monitor['datedVehicleJourneyRef'],
-                                                                     datetime__date=now.date())
+                                                                     datetime__date=aimed.date())
                 except (Vehicle.MultipleObjectsReturned, IntegrityError) as e:
                     logger.error(e, exc_info=True)
                     vehicle = None
