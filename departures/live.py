@@ -426,7 +426,7 @@ class SiriSmDepartures(Departures):
             return
         origin_aimed_departure_time = parse_datetime(origin_aimed_departure_time.text)
 
-        source, _ = DataSource.objects.get_or_create(name=self.source.name, url=self.source.url)
+        source, _ = DataSource.objects.get_or_create({'url': self.source.url}, name=self.source.name)
         defaults = {
             'source': source
         }
