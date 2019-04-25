@@ -441,10 +441,39 @@ class SiriSmDepartures(Departures):
         operator = element.find('s:OperatorRef', self.ns)
         if operator is not None:
             operator = operator.text
+        vehicle = element.find('s:VehicleRef', self.ns)
+        if vehicle is not None:
+            vehicle = vehicle.text
         service = self.get_service(line_name)
+
         if type(service) is Service:
+            journey_ref = element.find('s:FramedVehicleJourneyRef/s:DatedVehicleJourneyRef', self.ns)
+            if journey_ref is not None:
+                journey_ref = journey_ref.text
+
             scheme = self.source.name
             url = self.source.url
+
+            if vehicle and scheme != 'NCC Hogia' and 'sslink' not in url:
+                source, _ = DataSource.objects.get_or_create(name=scheme, url=url)
+                defaults = {
+                    'source': source
+                }
+                if operator and vehicle.startswith(operator + '-'):
+                    vehicle = vehicle[len(operator) + 1:]
+                operator = service.operator.all()[0]
+                if vehicle.isdigit():
+                    defaults['code'] = vehicle
+                    vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, fleet_number=vehicle)
+                else:
+                    vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
+                if created or not vehicle.vehiclejourney_set.filter(service=service, code=journey_ref,
+                                                                    datetime__date=aimed_time.date()).exists():
+                    source, _ = DataSource.objects.get_or_create(name=scheme, url=url)
+                    origin_aimed_departure_time = element.find('s:OriginAimedDepartureTime', self.ns).text
+                    VehicleJourney.objects.create(vehicle=vehicle, service=service, code=journey_ref, source=source,
+                                                  datetime=parse_datetime(origin_aimed_departure_time))
+
             if line_ref is not None:
                 if scheme == 'NCC Hogia' or (expected_time and ('icarus' in url or 'sslink' in url)):
                     if scheme != 'NCC Hogia':
@@ -453,19 +482,17 @@ class SiriSmDepartures(Departures):
                     if line_ref and line_ref not in self.line_refs and operator != 'TD':
                         ServiceCode.objects.update_or_create({'code': line_ref}, service=service, scheme=scheme)
                         self.line_refs.add(line_ref)
-            if (scheme == 'NCC Hogia' or 'jmwrti' in url) and destination:
-                journey_ref = element.find('s:FramedVehicleJourneyRef/s:DatedVehicleJourneyRef', self.ns)
-                if journey_ref is not None:
-                    journey_ref = journey_ref.text
-                    if scheme == 'NCC Hogia':
-                        journey_ref = int(journey_ref)
-                    if journey_ref:
-                        try:
-                            JourneyCode.objects.update_or_create({
-                                'destination': destination
-                            }, service=service, code=journey_ref, siri_source=self.source)
-                        except JourneyCode.MultipleObjectsReturned:
-                            pass
+
+            if (scheme == 'NCC Hogia' or 'jmwrti' in url) and destination and journey_ref:
+                if scheme == 'NCC Hogia':
+                    journey_ref = int(journey_ref)
+                try:
+                    JourneyCode.objects.update_or_create({
+                        'destination': destination
+                    }, service=service, code=journey_ref, siri_source=self.source)
+                except JourneyCode.MultipleObjectsReturned:
+                    pass
+
         return {
             'time': aimed_time,
             'live': expected_time,
