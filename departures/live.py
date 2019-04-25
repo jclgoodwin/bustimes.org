@@ -474,6 +474,8 @@ class SiriSmDepartures(Departures):
         }
 
     def get_departures(self):
+        if self.source.get_poorly():
+            return
         try:
             response = self.get_response()
         except requests.exceptions.RequestException:
@@ -498,8 +500,6 @@ class SiriSmDepartures(Departures):
         return [self.get_row(element) for element in departures]
 
     def get_response(self):
-        if self.source.get_poorly():
-            return
         if self.source.requestor_ref:
             username = '<RequestorRef>{}</RequestorRef>'.format(self.source.requestor_ref)
         else:
