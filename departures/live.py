@@ -420,6 +420,29 @@ class SiriSmDepartures(Departures):
         self.line_refs = set()
         super().__init__(stop, services)
 
+    def log_vehicle_journey(self, element, operator, vehicle, service, journey_ref):
+        origin_aimed_departure_time = element.find('s:OriginAimedDepartureTime', self.ns)
+        if origin_aimed_departure_time is None:
+            return
+        origin_aimed_departure_time = parse_datetime(origin_aimed_departure_time.text)
+
+        source, _ = DataSource.objects.get_or_create(name=self.source.name, url=self.source.url)
+        defaults = {
+            'source': source
+        }
+        if operator and vehicle.startswith(operator + '-'):
+            vehicle = vehicle[len(operator) + 1:]
+        operator = service.operator.all()[0]
+        if vehicle.isdigit():
+            defaults['code'] = vehicle
+            vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, fleet_number=vehicle)
+        else:
+            vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
+        if created or not vehicle.vehiclejourney_set.filter(service=service, code=journey_ref,
+                                                            datetime__date=origin_aimed_departure_time.date()).exists():
+            VehicleJourney.objects.create(vehicle=vehicle, service=service, code=journey_ref, source=source,
+                                          datetime=origin_aimed_departure_time)
+
     def get_row(self, element):
         aimed_time = element.find('s:MonitoredCall/s:AimedDepartureTime', self.ns)
         expected_time = element.find('s:MonitoredCall/s:ExpectedDepartureTime', self.ns)
@@ -455,24 +478,7 @@ class SiriSmDepartures(Departures):
             url = self.source.url
 
             if vehicle and scheme != 'NCC Hogia' and 'sslink' not in url:
-                source, _ = DataSource.objects.get_or_create(name=scheme, url=url)
-                defaults = {
-                    'source': source
-                }
-                if operator and vehicle.startswith(operator + '-'):
-                    vehicle = vehicle[len(operator) + 1:]
-                operator = service.operator.all()[0]
-                if vehicle.isdigit():
-                    defaults['code'] = vehicle
-                    vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, fleet_number=vehicle)
-                else:
-                    vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
-                if created or not vehicle.vehiclejourney_set.filter(service=service, code=journey_ref,
-                                                                    datetime__date=aimed_time.date()).exists():
-                    source, _ = DataSource.objects.get_or_create(name=scheme, url=url)
-                    origin_aimed_departure_time = element.find('s:OriginAimedDepartureTime', self.ns).text
-                    VehicleJourney.objects.create(vehicle=vehicle, service=service, code=journey_ref, source=source,
-                                                  datetime=parse_datetime(origin_aimed_departure_time))
+                self.log_vehicle_journey(element, operator, vehicle, service, journey_ref)
 
             if line_ref is not None:
                 if scheme == 'NCC Hogia' or (expected_time and ('icarus' in url or 'sslink' in url)):
