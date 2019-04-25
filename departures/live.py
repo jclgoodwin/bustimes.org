@@ -473,8 +473,18 @@ class SiriSmDepartures(Departures):
             'destination': destination,
         }
 
+    def get_departures(self):
+        try:
+            response = self.get_response()
+        except requests.exceptions.RequestException:
+            cache.set(self.source.get_poorly_key(), True, 300)  # back off for 5 minutes
+            return
+        if response.ok:
+            return self.departures_from_response(response)
+        cache.set(self.source.get_poorly_key(), True, 3600)  # back off for an hour
+
     def departures_from_response(self, response):
-        if not response.ok or 'Client.AUTHENTICATION_FAILED' in response.text:
+        if 'Client.AUTHENTICATION_FAILED' in response.text:
             cache.set(self.source.get_poorly_key(), True, 3600)  # back off for an hour
             return
         try:
