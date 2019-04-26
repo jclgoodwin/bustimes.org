@@ -143,7 +143,7 @@ class Command(ImportLiveVehiclesCommand):
                     code=vehicle_code,
                 )
             except Vehicle.MultipleObjectsReturned:
-                journey.vehicles = Vehicle.objects.filter(
+                journey.vehicle = Vehicle.objects.filter(
                     operator__in=operator_options or (operator,),
                     code=vehicle_code
                 ).first()
