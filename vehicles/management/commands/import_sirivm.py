@@ -136,11 +136,18 @@ class Command(ImportLiveVehiclesCommand):
                 code=vehicle_code,
             )
         else:
-            journey.vehicle, vehicle_created = vehicles.get_or_create(
-                defaults,
-                operator__in=operator_options or (operator,),
-                code=vehicle_code,
-            )
+            try:
+                journey.vehicle, vehicle_created = vehicles.get_or_create(
+                    defaults,
+                    operator__in=operator_options or (operator,),
+                    code=vehicle_code,
+                )
+            except Vehicle.MultipleObjectsReturned:
+                journey.vehicles = Vehicle.objects.filter(
+                    operator__in=operator_options or (operator,),
+                    code=vehicle_code
+                ).first()
+                vehicle_created = False
 
         journey_code = mvj.find('siri:FramedVehicleJourneyRef/siri:DatedVehicleJourneyRef', NS)
         if journey_code is not None:
