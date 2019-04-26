@@ -438,6 +438,7 @@ class SiriSmDepartures(Departures):
             vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, fleet_number=vehicle)
         else:
             vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
+
         if created or not vehicle.vehiclejourney_set.filter(service=service, code=journey_ref,
                                                             datetime__date=origin_aimed_departure_time.date()).exists():
             VehicleJourney.objects.create(vehicle=vehicle, service=service, code=journey_ref, source=source,
@@ -478,7 +479,10 @@ class SiriSmDepartures(Departures):
             url = self.source.url
 
             if vehicle and scheme != 'NCC Hogia' and 'sslink' not in url:
-                self.log_vehicle_journey(element, operator, vehicle, service, journey_ref)
+                try:
+                    self.log_vehicle_journey(element, operator, vehicle, service, journey_ref)
+                except Vehicle.MultipleObjectsReturned:
+                    pass
 
             if line_ref is not None:
                 if scheme == 'NCC Hogia' or (expected_time and ('icarus' in url or 'sslink' in url)):
