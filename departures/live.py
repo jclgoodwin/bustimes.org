@@ -420,7 +420,10 @@ class SiriSmDepartures(Departures):
         self.line_refs = set()
         super().__init__(stop, services)
 
-    def log_vehicle_journey(self, element, operator, vehicle, service, journey_ref):
+    def log_vehicle_journey(self, element, operator_ref, vehicle, service, journey_ref, destination):
+        operator = service.operator.all()[0]
+        if operator.name[:11] == 'Stagecoach ':
+            return
         origin_aimed_departure_time = element.find('s:OriginAimedDepartureTime', self.ns)
         if origin_aimed_departure_time is None:
             return
@@ -430,9 +433,8 @@ class SiriSmDepartures(Departures):
         defaults = {
             'source': source
         }
-        if operator and vehicle.startswith(operator + '-'):
-            vehicle = vehicle[len(operator) + 1:]
-        operator = service.operator.all()[0]
+        if operator_ref and vehicle.startswith(operator_ref + '-'):
+            vehicle = vehicle[len(operator_ref) + 1:]
         if vehicle.isdigit():
             defaults['code'] = vehicle
             vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, fleet_number=vehicle)
@@ -441,7 +443,11 @@ class SiriSmDepartures(Departures):
 
         if created or not vehicle.vehiclejourney_set.filter(service=service, code=journey_ref,
                                                             datetime__date=origin_aimed_departure_time.date()).exists():
-            VehicleJourney.objects.create(vehicle=vehicle, service=service, code=journey_ref, source=source,
+            defaults = {
+                'source': source,
+                'destination': destination or ''
+            }
+            VehicleJourney.objects.create(defaults, vehicle=vehicle, service=service, code=journey_ref,
                                           datetime=origin_aimed_departure_time)
 
     def get_row(self, element):
@@ -478,9 +484,9 @@ class SiriSmDepartures(Departures):
             scheme = self.source.name
             url = self.source.url
 
-            if vehicle and scheme != 'NCC Hogia' and 'sslink' not in url:
+            if vehicle and scheme != 'NCC Hogia' and scheme != 'Reading' and 'sslink' not in url:
                 try:
-                    self.log_vehicle_journey(element, operator, vehicle, service, journey_ref)
+                    self.log_vehicle_journey(element, operator, vehicle, service, journey_ref, destination)
                 except Vehicle.MultipleObjectsReturned:
                     pass
 
