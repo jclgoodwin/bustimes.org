@@ -127,17 +127,18 @@ class Stop(object):
     locality = None
 
     def __init__(self, element):
-        self.atco_code = element.find('txc:StopPointRef', NS)
-        if self.atco_code is None:
-            self.atco_code = element.find('txc:AtcoCode', NS)
-        if self.atco_code is not None:
-            self.atco_code = self.atco_code.text or ''
-        self.common_name = element.find('txc:CommonName', NS)
-        self.locality = element.find('txc:LocalityName', NS)
-        if self.common_name is not None:
-            self.common_name = self.common_name.text
-        if self.locality is not None:
-            self.locality = self.locality.text
+        if element:
+            self.atco_code = element.find('txc:StopPointRef', NS)
+            if self.atco_code is None:
+                self.atco_code = element.find('txc:AtcoCode', NS)
+            if self.atco_code is not None:
+                self.atco_code = self.atco_code.text or ''
+            self.common_name = element.find('txc:CommonName', NS)
+            self.locality = element.find('txc:LocalityName', NS)
+            if self.common_name is not None:
+                self.common_name = self.common_name.text
+            if self.locality is not None:
+                self.locality = self.locality.text
 
     def __str__(self):
         if not self.locality or self.locality in self.common_name:
@@ -610,6 +611,13 @@ class VehicleJourney(object):
                     time = add_time(time, timinglink.runtime)
 
                 if not deadrun and not self.skip_stopusage(stopusage, time):
+                    # Simonds Diss to Beccles
+                    if stopusage.stop.atco_code == '2900R241' and timinglink.origin.stop.atco_code == '2900R2417':
+                        stopusage.stop = Stop(None)
+                        stopusage.stop.atco_code = None
+                        stopusage.stop.locality = 'Harleston'
+                        stopusage.stop.common_name = 'Redenhall Rd/Station Rd'
+
                     if stopusage.wait_time:
                         next_time = add_time(time, stopusage.wait_time)
                         yield Cell(stopusage, time, next_time)
