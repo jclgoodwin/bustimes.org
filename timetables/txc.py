@@ -606,7 +606,8 @@ class VehicleJourney(object):
 
                 stopusage = timinglink.destination
 
-                time = add_time(time, timinglink.runtime)
+                if timinglink.runtime:
+                    time = add_time(time, timinglink.runtime)
 
                 if not deadrun and not self.skip_stopusage(stopusage, time):
                     if stopusage.wait_time:

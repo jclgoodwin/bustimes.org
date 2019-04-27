@@ -3130,7 +3130,7 @@
           <TimingStatus>OTH</TimingStatus>
         </To>
         <RouteLinkRef>RL_32-20-_-y10-1-R-2-1</RouteLinkRef>
-        <RunTime>PT0S</RunTime>
+        <RunTime>PT-0M</RunTime>
       </JourneyPatternTimingLink>
       <JourneyPatternTimingLink id="JPL_32-20-_-y10-1-4-R-2-3">
         <From SequenceNumber="7">
