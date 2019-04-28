@@ -67,9 +67,9 @@ def contact(request):
             message = EmailMessage(
                 subject,
                 body,
-                'contact@bustimes.org',
+                '"{}" <contact@bustimes.org>'.format(form.cleaned_data['name']),
                 ['contact@bustimes.org'],
-                headers={'From': '"{}" <{}>'.format(form.cleaned_data['name'], form.cleaned_data['email'])}
+                reply_to=[form.cleaned_data['email']],
             )
             message.send()
             submitted = True

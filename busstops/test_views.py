@@ -26,14 +26,14 @@ class ContactTests(TestCase):
     def test_contact_post(self):
         with vcr.use_cassette(os.path.join(DIR, '..', 'data', 'vcr', 'akismet.yaml')):
             response = self.client.post('/contact', {
-                'name': 'Rufus Herring',
+                'name': 'Rufus "Red" Herring',
                 'email': 'rufus@example.com',
                 'message': 'Dear John,\r\n\r\nHow are you?\r\n\r\nAll the best,\r\nRufus',
                 'referrer': 'https://www.yahoo.com'
             })
         self.assertContains(response, '<h1>Thank you</h1>', html=True)
         self.assertEqual('Dear John,', mail.outbox[0].subject)
-        self.assertEqual('contact@bustimes.org', mail.outbox[0].from_email)
+        self.assertEqual('"Rufus "Red" Herring" <contact@bustimes.org>', mail.outbox[0].from_email)
         self.assertEqual(['contact@bustimes.org'], mail.outbox[0].to)
 
     def test_awin_post(self):
