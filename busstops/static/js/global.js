@@ -6,6 +6,7 @@ if (navigator.serviceWorker && location.host !== 'localhost:8000') {
             scope: '/'
         });
     } catch (ignore) {
+        // never mind
     }
     window.addEventListener('load', function () {
         if (navigator.serviceWorker.controller) {
