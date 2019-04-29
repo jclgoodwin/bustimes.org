@@ -1118,8 +1118,8 @@ def abbreviate(grouping, i, in_a_row, difference):
     seconds = difference.total_seconds()
     if not seconds or (seconds != 3600 and seconds > 1800):  # neither hourly nor more than every 30 minutes
         return
-    repetition = Repetition(in_a_row + 1, sum(2 if row.has_waittimes() else 1 for row in grouping.rows), difference)
-    repetition.min_height = sum(2 if row.has_waittimes() else 1 for row in grouping.rows if not row.is_minor())
+    repetition = Repetition(in_a_row + 1, sum(2 if row.has_waittimes else 1 for row in grouping.rows), difference)
+    repetition.min_height = sum(2 if row.has_waittimes else 1 for row in grouping.rows if not row.is_minor())
     grouping.rows[0].times[i - in_a_row - 2] = repetition
     for j in range(i - in_a_row - 1, i - 1):
         grouping.rows[0].times[j] = None
