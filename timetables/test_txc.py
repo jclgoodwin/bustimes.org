@@ -221,10 +221,10 @@ class TimetableTest(TestCase):
         self.assertEqual(str(timetable.groupings[1].rows[5]), "Plympton Dark Street Lane")
         self.assertEqual(str(timetable.groupings[1].rows[6]), "Plympton Colebrook Tunnel")
         self.assertEqual(str(timetable.groupings[1].rows[7]), "Plympton Ridgeway School")
-        self.assertFalse(timetable.groupings[1].rows[3].has_waittimes())
-        self.assertTrue(timetable.groupings[1].rows[4].has_waittimes())
-        self.assertFalse(timetable.groupings[1].rows[5].has_waittimes())
-        self.assertFalse(timetable.groupings[1].rows[6].has_waittimes())
+        self.assertFalse(timetable.groupings[1].rows[3].has_waittimes)
+        self.assertTrue(timetable.groupings[1].rows[4].has_waittimes)
+        self.assertFalse(timetable.groupings[1].rows[5].has_waittimes)
+        self.assertFalse(timetable.groupings[1].rows[6].has_waittimes)
 
 
 class RepetitionTest(TestCase):
