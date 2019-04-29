@@ -447,8 +447,8 @@ class SiriSmDepartures(Departures):
                 'source': source,
                 'destination': destination or ''
             }
-            VehicleJourney.objects.create(defaults, vehicle=vehicle, service=service, code=journey_ref,
-                                          datetime=origin_aimed_departure_time)
+            VehicleJourney.objects.get_or_create(defaults, vehicle=vehicle, service=service, code=journey_ref,
+                                                 datetime=origin_aimed_departure_time)
 
     def get_row(self, element):
         aimed_time = element.find('s:MonitoredCall/s:AimedDepartureTime', self.ns)

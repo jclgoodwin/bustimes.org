@@ -53,7 +53,7 @@ class Command(ImportLiveVehiclesCommand):
         'RED': ('RRTR', 'RLNE', 'REDE'),
         'SCCM': ('SCCM', 'SCPB', 'SCHU', 'SCBD'),
         'ATS': ('ARBB', 'ARHE', 'GLAR'),
-        'ASC': ('ARBB', 'GLAR'),
+        'ASC': ('ARBB', 'ARHE', 'GLAR'),
     }
 
     def get_response(self, url, xml):
