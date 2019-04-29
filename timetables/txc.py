@@ -11,6 +11,7 @@ import difflib
 from functools import cmp_to_key
 from django.utils.text import slugify
 from django.utils.dateparse import parse_duration
+from django.utils.functional import cached_property
 from titlecase import titlecase
 
 NS = {
@@ -176,6 +177,7 @@ class Row(object):
     def is_minor(self):
         return self.part.timingstatus == 'OTH' or self.part.timingstatus == 'TIP'
 
+    @cached_property
     def has_waittimes(self):
         return any(type(cell) is Cell and cell.arrival_time != cell.departure_time for cell in self.times)
 
