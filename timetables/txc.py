@@ -350,6 +350,8 @@ class Grouping(object):
 
 
 class JourneyPattern(object):
+    differ = difflib.Differ(charjunk=lambda _: True)
+
     """A collection of JourneyPatternSections, in order."""
     def __init__(self, element, sections, groupings, routes):
         self.id = element.attrib.get('id')
@@ -381,7 +383,7 @@ class JourneyPattern(object):
 
         # this journey pattern again
         current_list = [row.part.stop.atco_code for row in rows]
-        diff = difflib.ndiff(previous_list, current_list)
+        diff = self.differ.compare(previous_list, current_list)
 
         i = 0
         first = True
