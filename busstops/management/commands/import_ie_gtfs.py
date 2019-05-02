@@ -54,7 +54,6 @@ class Command(BaseCommand):
 
         operators = set()
 
-        feed = Feed.objects.filter(name=collection).delete()
         feed = Feed.objects.create(name=collection)
         feed.import_gtfs(archive_name)
 
@@ -151,6 +150,8 @@ class Command(BaseCommand):
             if operator.region_id:
                 operator.save()
 
+        return feed
+
     def add_arguments(self, parser):
         parser.add_argument('--force', action='store_true', help='Import data even if the GTFS feeds haven\'t changed')
 
@@ -164,4 +165,6 @@ class Command(BaseCommand):
             modified = download_if_modified(path, url)
             if modified or options['force']:
                 print(collection)
-                self.handle_zipfile(path, collection)
+                feed = self.handle_zipfile(path, collection)
+                # delete old feeds
+                Feed.objects.filter(name=collection).exclude(id=feed.id).delete()

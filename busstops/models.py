@@ -14,7 +14,7 @@ from django.core.cache import cache
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.text import slugify
-from multigtfs.models import Route
+from multigtfs.models import Feed, Route
 from timetables import txc, northern_ireland, gtfs
 
 
@@ -712,7 +712,8 @@ class ServiceCode(models.Model):
         return '{} {}'.format(self.scheme, self.code)
 
     def get_routes(self):
-        return Route.objects.filter(feed__name=self.scheme.split()[0], route_id=self.code)
+        feed = Feed.objects.filter(name=self.scheme.split()[0]).latest('created')
+        return feed.route_set.filter(feed=feed, route_id=self.code)
 
 
 class ServiceDate(models.Model):
