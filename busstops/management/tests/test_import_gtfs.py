@@ -32,6 +32,6 @@ class ImportGTFSTest(TestCase):
         self.assertFalse(Feed.objects.all())
 
         with patch('busstops.management.commands.import_gtfs.download_if_modified', return_value=True):
-            with self.assertRaises(Exception):
+            with self.assertRaises(FileNotFoundError):
                 call_command('import_gtfs')
-        self.assertTrue(Feed.objects.all())
+        self.assertFalse(Feed.objects.all())
