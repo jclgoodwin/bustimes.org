@@ -114,42 +114,21 @@ class Departures(object):
 
 
 class DublinDepartures(Departures):
-    url = 'http://rtpi.dublinbus.ie/DublinBusRTPIService.asmx'
-    headers = {
-        'content-type': 'text/xml'
-    }
-    ns = {
-        's': 'http://schemas.xmlsoap.org/soap/envelope/',
-        'db': 'http://dublinbus.ie/',
-        'dg': 'urn:schemas-microsoft-com:xml-diffgram-v1',
-    }
+    def get_request_url(self):
+        return 'http://data.smartdublin.ie/cgi-bin/rtpi/realtimebusinformation'
 
-    def get_response(self):
-        stop_id = int(self.stop.atco_code.split('DB', 1)[-1])
-        data = """
-            <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
-                <Body>
-                    <GetRealTimeStopData xmlns="http://dublinbus.ie/">
-                        <stopId>{}</stopId>
-                    </GetRealTimeStopData>
-                </Body>
-            </Envelope>
-        """.format(stop_id)
-        return SESSION.post(self.url, headers=self.headers, data=data, timeout=2)
+    def get_request_params(self):
+        return {
+            'stopid': int(self.stop.atco_code.split('B', 1)[-1])
+        }
 
     def departures_from_response(self, response):
-        items = ET.fromstring(response.text)
-        items = items.find('s:Body/db:GetRealTimeStopDataResponse/db:GetRealTimeStopDataResult/dg:diffgram', self.ns)
-        items = items.findall('DocumentElement/StopData')
-        return [self.get_row(item) for item in items]
-
-    def get_row(self, item):
-        return {
-            'time': parse_datetime(item.find('MonitoredCall_AimedDepartureTime').text),
-            'live': parse_datetime(item.find('MonitoredCall_ExpectedDepartureTime').text),
-            'destination': item.find('MonitoredVehicleJourney_DestinationName').text,
-            'service': self.get_service(item.find('MonitoredVehicleJourney_PublishedLineName').text)
-        }
+        return [{
+            'time': dateutil.parser.parse(item['scheduleddeparturedatetime'], dayfirst=True),
+            'live': dateutil.parser.parse(item['departuredatetime'], dayfirst=True),
+            'destination': item['destination'],
+            'service': self.get_service(item['route'])
+        } for item in response.json()['results']]
 
 
 class JerseyDepartures(Departures):
