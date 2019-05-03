@@ -33,6 +33,7 @@ sentry-sdk = "*"
 gtfs-realtime-bindings = "*"
 django-multidb-router = "*"
 gpxpy = "*"
+python-socketio = {extras = ["client"],version = "*"}
 
 [dev-packages]
 django-debug-toolbar = "*"
