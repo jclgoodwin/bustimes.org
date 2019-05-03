@@ -74,12 +74,18 @@
     }
 
     function handleVehicle(data) {
-        var marker,
-            icon = getIcon(data.properties.service, data.properties.direction, data.properties.vehicle.livery, data.properties.vehicle.text_colour),
+        if (data.properties.vehicle.url in oldVehicles) {
+            var marker = oldVehicles[data.properties.vehicle.url];
+            newVehicles[data.properties.vehicle.url] = marker;
+            if (marker.datetime === data.properties.datetime) {
+                return;
+            }
+        }
+
+        var icon = getIcon(data.properties.service, data.properties.direction, data.properties.vehicle.livery, data.properties.vehicle.text_colour),
             latLng = L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
 
-        if (data.properties.vehicle.url in oldVehicles) {
-            marker = oldVehicles[data.properties.vehicle.url];
+        if (marker) {
             marker.setLatLng(latLng);
             marker.setIcon(icon);
         } else {
@@ -87,7 +93,9 @@
                 icon: icon
             });
             marker.addTo(map);
+            newVehicles[data.properties.vehicle.url] = marker;
         }
+        marker.datetime = data.properties.datetime;
 
         var popup = '';
         if (data.properties.service) {
@@ -148,8 +156,6 @@
         }
 
         marker.bindPopup(popup);
-
-        newVehicles[data.properties.vehicle.url] = marker;
     }
 
 
