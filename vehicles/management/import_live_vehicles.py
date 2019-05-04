@@ -52,6 +52,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
     session = requests.Session()
     current_location_ids = set()
 
+    @staticmethod
+    def get_datetime(_):
+        return
+
     def get_items(self):
         response = self.session.get(self.url, timeout=40)
         if response.ok:
@@ -89,6 +93,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 if latest.journey.service or not journey.service:
                     return  # defer to other source
         location = self.create_vehicle_location(item)
+        location.datetime = self.get_datetime(item)
         if latest:
             if location.datetime:
                 if location.datetime == latest.datetime:

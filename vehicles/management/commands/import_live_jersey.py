@@ -9,6 +9,19 @@ class Command(ImportLiveVehiclesCommand):
     operator = 'libertybus'
     url = 'http://sojbuslivetimespublic.azurewebsites.net/api/Values/GetMin?secondsAgo=360'
 
+    @staticmethod
+    def get_datetime(item):
+        now_datetime = datetime.datetime.now(datetime.timezone.utc)
+        then_time = datetime.datetime.strptime(item['time'], '%H:%M:%S').time()
+
+        now_time = now_datetime.time().replace(tzinfo=now_datetime.tzinfo)
+        then_time = then_time.replace(tzinfo=now_datetime.tzinfo)
+
+        if now_time < then_time:
+            # yesterday
+            now_datetime -= datetime.timedelta(days=1)
+        return datetime.datetime.combine(now_datetime, then_time)
+
     def get_items(self):
         return super().get_items()['minimumInfoUpdates']
 
@@ -39,19 +52,7 @@ class Command(ImportLiveVehiclesCommand):
         return journey, created
 
     def create_vehicle_location(self, item):
-        now_datetime = datetime.datetime.now(datetime.timezone.utc)
-        then_time = datetime.datetime.strptime(item['time'], '%H:%M:%S').time()
-
-        now_time = now_datetime.time().replace(tzinfo=now_datetime.tzinfo)
-        then_time = then_time.replace(tzinfo=now_datetime.tzinfo)
-
-        if now_time < then_time:
-            # yesterday
-            now_datetime -= datetime.timedelta(days=1)
-        then_datetime = datetime.datetime.combine(now_datetime, then_time)
-
         return VehicleLocation(
-            datetime=then_datetime,
             latlong=Point(item['lon'], item['lat']),
             heading=item['bearing']
         )

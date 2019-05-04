@@ -56,6 +56,11 @@ class Command(ImportLiveVehiclesCommand):
         'ASC': ('ARBB', 'ARHE', 'GLAR'),
     }
 
+    @staticmethod
+    def get_datetime(item):
+        datetime = item.find('siri:RecordedAtTime', NS).text
+        return ciso8601.parse_datetime(datetime)
+
     def get_response(self, url, xml):
         try:
             return self.session.post(url, data=xml, timeout=10)
@@ -228,7 +233,6 @@ class Command(ImportLiveVehiclesCommand):
         return journey, vehicle_created
 
     def create_vehicle_location(self, item):
-        datetime = item.find('siri:RecordedAtTime', NS).text
         mvj = item.find('siri:MonitoredVehicleJourney', NS)
         latlong = get_latlong(mvj)
         heading = mvj.find('siri:Bearing', NS)
@@ -246,7 +250,6 @@ class Command(ImportLiveVehiclesCommand):
         else:
             early = None
         return VehicleLocation(
-            datetime=ciso8601.parse_datetime(datetime),
             latlong=latlong,
             heading=heading,
             early=early

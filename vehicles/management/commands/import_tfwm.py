@@ -13,6 +13,10 @@ class Command(ImportLiveVehiclesCommand):
     source_name = 'TfWM'
     url = 'http://api.tfwm.org.uk/gtfs/vehicle_positions'
 
+    @staticmethod
+    def get_datetime(item):
+        return timezone.make_aware(datetime.fromtimestamp(item.vehicle.timestamp))
+
     def get_items(self):
         response = self.session.get(self.source.url, params=settings.TFWM, timeout=10)
         feed = gtfs_realtime_pb2.FeedMessage()
@@ -92,6 +96,5 @@ class Command(ImportLiveVehiclesCommand):
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
-            latlong=Point(item.vehicle.position.longitude, item.vehicle.position.latitude),
-            datetime=timezone.make_aware(datetime.fromtimestamp(item.vehicle.timestamp)),
+            latlong=Point(item.vehicle.position.longitude, item.vehicle.position.latitude)
         )

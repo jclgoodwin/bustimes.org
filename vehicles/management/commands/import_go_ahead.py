@@ -34,6 +34,10 @@ class Command(ImportLiveVehiclesCommand):
         'swindon': ('TDTR',),
     }
 
+    @staticmethod
+    def get_datetime(item):
+        return timezone.make_aware(parse_datetime_as_naive(item['recordedTime']))
+
     def get_bounding_boxes(self, extent):
         extent = extent['latlong__extent']
         lng = extent[0]
@@ -116,7 +120,6 @@ class Command(ImportLiveVehiclesCommand):
         if bearing == 0 and item['vehicleRef'].startswith('BH-'):
             bearing = None
         return VehicleLocation(
-            datetime=timezone.make_aware(parse_datetime_as_naive(item['recordedTime'])),
             latlong=get_latlong(item),
             heading=bearing
         )

@@ -32,8 +32,9 @@ class SiriVMImportTest(TestCase):
         self.assertEqual(self.operator, journey.vehicle.operator)
 
         location = self.command.create_vehicle_location(item)
-        self.assertEqual('2018-08-06 21:44:32+01:00', str(location.datetime))
         self.assertIsNone(location.heading)
+
+        self.assertEqual('2018-08-06 21:44:32+01:00', str(self.command.get_datetime(item)))
 
         locations = VehicleLocation.objects.filter(journey__source=self.command.source)
 

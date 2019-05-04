@@ -21,6 +21,10 @@ class Command(ImportLiveVehiclesCommand):
     source_name = 'ZipTrip'
     url = 'https://ziptrip1.ticketer.org.uk/v1/vehiclepositions'
 
+    @staticmethod
+    def get_datetime(item):
+        return parse_datetime(item['reported'])
+
     def get_extents(self):
         for operator in (
             'SBAY',
@@ -200,7 +204,6 @@ class Command(ImportLiveVehiclesCommand):
         while bearing and bearing < 0:
             bearing += 360
         return VehicleLocation(
-            datetime=parse_datetime(item['reported']),
             latlong=get_latlong(item),
             heading=bearing
         )

@@ -11,6 +11,13 @@ class Command(ImportLiveVehiclesCommand):
     source_name = 'BusHub'
     url = 'http://portal.diamondbuses.com/api/buses/nearby?latitude&longitude'
 
+    @staticmethod
+    def get_datetime(item):
+        try:
+            return parse_datetime(item['RecordedAtTime'])
+        except ValueError:
+            return timezone.make_aware(datetime.strptime(item['RecordedAtTime'], '%d/%m/%Y %H:%M:%S'))
+
     @classmethod
     def get_service(cls, operator, item):
         line_name = item['PublishedLineName']
@@ -63,15 +70,10 @@ class Command(ImportLiveVehiclesCommand):
         return journey, vehicle_created
 
     def create_vehicle_location(self, item):
-        try:
-            when = parse_datetime(item['RecordedAtTime'])
-        except ValueError:
-            when = timezone.make_aware(datetime.strptime(item['RecordedAtTime'], '%d/%m/%Y %H:%M:%S'))
         bearing = item['Bearing']
         if bearing == '-1':
             bearing = None
         return VehicleLocation(
-            datetime=when,
             latlong=Point(float(item['Longitude']), float(item['Latitude'])),
             heading=bearing
         )
