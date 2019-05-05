@@ -53,8 +53,11 @@ class ImportLiveVehiclesCommand(BaseCommand):
     current_location_ids = set()
 
     @staticmethod
-    def get_datetime(_):
+    def get_datetime(self):
         return
+
+    def get_vehicle(self, item):
+        return None, None
 
     def get_items(self):
         response = self.session.get(self.url, timeout=40)
@@ -82,7 +85,18 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     @transaction.atomic
     def handle_item(self, item, now, service_code=None):
-        journey, vehicle_created = self.get_journey(item)
+        datetime = self.get_datetime(item)
+        vehicle, vehicle_created = self.get_vehicle(item)
+        if datetime and vehicle and not vehicle_created:
+            latest = vehicle.latest_location
+            if latest.datetime == datetime:
+                self.current_location_ids.add(latest.id)
+                return
+        if vehicle:
+            journey = self.get_journey(item)
+            journey.vehicle = vehicle
+        else:
+            journey, vehicle_created = self.get_journey(item)
         if not journey:
             return
         if vehicle_created:
@@ -93,7 +107,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 if latest.journey.service or not journey.service:
                     return  # defer to other source
         location = self.create_vehicle_location(item)
-        location.datetime = self.get_datetime(item)
+        location.datetime = datetime
         if latest:
             if location.datetime:
                 if location.datetime == latest.datetime:

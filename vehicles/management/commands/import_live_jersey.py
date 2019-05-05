@@ -22,6 +22,20 @@ class Command(ImportLiveVehiclesCommand):
             now_datetime -= datetime.timedelta(days=1)
         return datetime.datetime.combine(now_datetime, then_time)
 
+    def get_vehicle(self, item):
+        parts = item['bus'].split('-')
+        vehicle_code = parts[-1]
+        defaults = {
+            'operator_id': self.operator,
+        }
+        if vehicle_code.isdigit():
+            defaults['fleet_number'] = vehicle_code
+        return Vehicle.objects.get_or_create(
+            defaults,
+            source=self.source,
+            code=vehicle_code
+        )
+
     def get_items(self):
         return super().get_items()['minimumInfoUpdates']
 
@@ -30,17 +44,6 @@ class Command(ImportLiveVehiclesCommand):
         parts = item['bus'].split('-')
         journey.code = parts[-2]
         journey.route_name = item['line']
-        vehicle_code = parts[-1]
-        defaults = {
-            'operator_id': self.operator,
-        }
-        if vehicle_code.isdigit():
-            defaults['fleet_number'] = vehicle_code
-        journey.vehicle, created = Vehicle.objects.get_or_create(
-            defaults,
-            source=self.source,
-            code=vehicle_code
-        )
 
         if item['cat'] != 'School Bus':
             try:
@@ -49,7 +52,7 @@ class Command(ImportLiveVehiclesCommand):
             except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
                 print(e, line_name)
 
-        return journey, created
+        return journey
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
