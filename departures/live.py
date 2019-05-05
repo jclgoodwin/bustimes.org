@@ -400,9 +400,9 @@ class SiriSmDepartures(Departures):
         super().__init__(stop, services)
 
     def log_vehicle_journey(self, element, operator_ref, vehicle, service, journey_ref, destination):
-        operator = service.operator.all()[0]
-        if operator.name[:11] == 'Stagecoach ':
-            return
+        for operator in service.operator.all():
+            if operator.name[:11] == 'Stagecoach ':
+                return
         origin_aimed_departure_time = element.find('s:OriginAimedDepartureTime', self.ns)
         if origin_aimed_departure_time is None:
             return
@@ -463,11 +463,13 @@ class SiriSmDepartures(Departures):
             scheme = self.source.name
             url = self.source.url
 
-            if vehicle and scheme not in {'NCC Hogia', 'Reading', 'Surrey'} and 'sslink' not in url:
-                try:
-                    self.log_vehicle_journey(element, operator, vehicle, service, journey_ref, destination)
-                except Vehicle.MultipleObjectsReturned:
-                    pass
+            if vehicle:
+                if scheme not in {'NCC Hogia', 'Reading', 'Surrey'}:
+                    if 'jmwrti' not in url and 'sslink' not in url:
+                        try:
+                            self.log_vehicle_journey(element, operator, vehicle, service, journey_ref, destination)
+                        except Vehicle.MultipleObjectsReturned:
+                            pass
 
             if line_ref is not None:
                 if scheme == 'NCC Hogia' or (expected_time and ('icarus' in url or 'sslink' in url)):
