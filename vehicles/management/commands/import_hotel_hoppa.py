@@ -7,4 +7,4 @@ class Command(BusHubCommand):
 
     def get_vehicle(self, item):
         item['OperatorRef'] = 'NXHH'
-        return super().get_journey(item)
+        return super().get_vehicle(item)
