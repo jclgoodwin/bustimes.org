@@ -463,7 +463,7 @@ class SiriSmDepartures(Departures):
             scheme = self.source.name
             url = self.source.url
 
-            if vehicle and scheme != 'NCC Hogia' and scheme != 'Reading' and 'sslink' not in url:
+            if vehicle and scheme not in {'NCC Hogia', 'Reading', 'Surrey'} and 'sslink' not in url:
                 try:
                     self.log_vehicle_journey(element, operator, vehicle, service, journey_ref, destination)
                 except Vehicle.MultipleObjectsReturned:
