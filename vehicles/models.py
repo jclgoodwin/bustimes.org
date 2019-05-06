@@ -31,6 +31,10 @@ def get_css(colours, direction=None, horizontal=False):
         return background
 
 
+def get_brightness(colour):
+    return (0.299 * colour.red + 0.587 * colour.green + 0.114 * colour.blue) / 255
+
+
 class VehicleType(models.Model):
     name = models.CharField(max_length=255, unique=True)
     double_decker = models.NullBooleanField()
@@ -109,9 +113,8 @@ class Vehicle(models.Model):
         if colours:
             colours = colours.split()
             parsed_colours = [html5_parse_simple_color(colour) for colour in colours]
-            luminences = [c.red * .299 + c.blue * .587 + c.green * .144 for c in parsed_colours]
-            luminence = sum(luminences) / len(luminences) / 255
-            if luminence < .5:
+            brightness = sum(get_brightness(colour) for colour in parsed_colours) / len(colours)
+            if brightness < .5:
                 return '#fff'
 
     def get_livery(self, direction=None):
