@@ -204,4 +204,8 @@ class VehicleLocation(models.Model):
                 }
             if vehicle.operator:
                 json['properties']['operator'] = str(vehicle.operator)
+        else:
+            if vehicle.vehicle_type:
+                json['properties']['vehicle']['coach'] = vehicle.vehicle_type.coach
+                json['properties']['vehicle']['decker'] = vehicle.vehicle_type.double_decker
         return json
