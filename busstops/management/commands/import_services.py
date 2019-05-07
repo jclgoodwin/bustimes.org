@@ -294,7 +294,7 @@ class Command(BaseCommand):
     def set_region(self, archive_name):
         self.region_id, _ = os.path.splitext(os.path.basename(archive_name))
 
-        self.source, _ = DataSource.objects.get_or_create(self.region_id)
+        self.source, _ = DataSource.objects.get_or_create(name=self.region_id)
 
         if self.region_id == 'NCSD':
             self.region_id = 'GB'
