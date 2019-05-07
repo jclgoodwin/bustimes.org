@@ -38,6 +38,20 @@ class Command(ImportLiveVehiclesCommand):
     def get_datetime(item):
         return timezone.make_aware(parse_datetime_as_naive(item['recordedTime']))
 
+    def get_vehicle(self, item):
+        vehicle = item['vehicleRef']
+        operator, fleet_number = item['vehicleRef'].split('-', 1)
+        operators = self.operators.get(operator)
+        if not operators:
+            print(operator)
+        defaults = {
+            'source': self.source
+        }
+        if fleet_number.isdigit():
+            defaults['fleet_number'] = fleet_number
+
+        return Vehicle.objects.get_or_create(defaults, code=vehicle)
+
     def get_bounding_boxes(self, extent):
         extent = extent['latlong__extent']
         lng = extent[0]
@@ -78,19 +92,13 @@ class Command(ImportLiveVehiclesCommand):
         journey.destination = item['destination']['name']
         journey.route_name = item['lineRef']
 
-        vehicle = item['vehicleRef']
         operator, fleet_number = item['vehicleRef'].split('-', 1)
         operators = self.operators.get(operator)
         if not operators:
             print(operator)
-        defaults = {
-            'source': self.source
-        }
-        if fleet_number.isdigit():
-            defaults['fleet_number'] = fleet_number
+
         if operators:
-            defaults['operator_id'] = operators[0]
-            if item['lineRef'] == 'CSR' and defaults['operator_id'] == 'BHBC':
+            if item['lineRef'] == 'CSR' and operators[0] == 'BHBC':
                 item['lineRef'] = 'CSS'
             services = Service.objects.filter(operator__in=operators, line_name=item['lineRef'], current=True)
             try:
@@ -102,18 +110,16 @@ class Command(ImportLiveVehiclesCommand):
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, operators, item['lineRef'])
 
-        journey.vehicle, created = Vehicle.objects.get_or_create(defaults, code=vehicle)
+        # if journey.service:
+        #     try:
+        #         operator = journey.service.operator.get()
+        #         if journey.vehicle.operator_id != operator.id:
+        #             journey.vehicle.operator_id = operator.id
+        #             journey.vehicle.save()
+        #     except journey.service.operator.model.MultipleObjectsReturned:
+        #         pass
 
-        if journey.service:
-            try:
-                operator = journey.service.operator.get()
-                if journey.vehicle.operator_id != operator.id:
-                    journey.vehicle.operator_id = operator.id
-                    journey.vehicle.save()
-            except journey.service.operator.model.MultipleObjectsReturned:
-                pass
-
-        return journey, created
+        return journey
 
     def create_vehicle_location(self, item):
         bearing = item['geo']['bearing']
