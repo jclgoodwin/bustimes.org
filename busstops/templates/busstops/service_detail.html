@@ -171,7 +171,7 @@
 
 
 {% if object.geometry %}
-    <script>window.geometry = {{ object.geometry.merged.json|safe }};</script>
+    <script src="/services/{{ object.service_code }}/geometry.js"></script>
     {% load static %}
     {% load pipeline %}
     <link rel="stylesheet" href="{% static "js/bower_components/leaflet/dist/leaflet.css" %}" />

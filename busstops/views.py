@@ -584,7 +584,13 @@ class ServiceDetailView(DetailView):
         return super().render_to_response(context)
 
 
-def service_xml(_, pk):
+def service_geometry(request, pk):
+    service = get_object_or_404(Service, pk=pk)
+    return HttpResponse('window.geometry = {};'.format(service.geometry.simplify().json),
+                        content_type='application/javascript')
+
+
+def service_xml(request, pk):
     try:
         service = Service.objects.get(slug=pk)
     except Service.DoesNotExist:
