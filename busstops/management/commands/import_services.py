@@ -21,8 +21,9 @@ from django.contrib.gis.geos import LineString, MultiLineString
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.db import transaction
+from django.utils import timezone
 from timetables.txc import Timetable, sanitize_description_part
-from ...models import Operator, StopPoint, Service, StopUsage, Region, Journey, ServiceCode, ServiceDate
+from ...models import Operator, StopPoint, Service, StopUsage, DataSource, Region, Journey, ServiceCode, ServiceDate
 from .generate_departures import handle_region as generate_departures
 from .generate_service_dates import handle_services as generate_service_dates
 
@@ -195,7 +196,8 @@ class Command(BaseCommand):
             line_ver=line_ver,
             region_id=self.region_id,
             date=timetable.transxchange_date,
-            current=True
+            current=True,
+            source=self.source
         )
 
         # stops:
@@ -292,6 +294,8 @@ class Command(BaseCommand):
     def set_region(self, archive_name):
         self.region_id, _ = os.path.splitext(os.path.basename(archive_name))
 
+        self.source, _ = DataSource.objects.get_or_create(self.region_id)
+
         if self.region_id == 'NCSD':
             self.region_id = 'GB'
 
@@ -331,6 +335,9 @@ class Command(BaseCommand):
                         else:
                             continue
                     services.update(**records[service_code])
+
+            self.source.datetime = timezone.now()
+            self.source.save()
 
         try:
             shutil.copy(archive_name, settings.TNDS_DIR)

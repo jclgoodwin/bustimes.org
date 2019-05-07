@@ -202,7 +202,7 @@ class StopPoint(models.Model):
     locality = models.ForeignKey('Locality', models.SET_NULL, null=True, editable=False)
     suburb = models.CharField(max_length=48, blank=True)
     town = models.CharField(max_length=48, blank=True)
-    locality_centre = models.BooleanField()
+    locality_centre = models.NullBooleanField()
 
     places = models.ManyToManyField(Place, blank=True)
 
@@ -485,7 +485,8 @@ class Service(models.Model):
     low_floor = models.NullBooleanField()
     assistance_service = models.NullBooleanField()
     mobility_scooter = models.NullBooleanField()
-
+    source = models.ForeignKey(DataSource, models.SET_NULL, null=True, blank=True)
+    tracking = models.NullBooleanField()
     payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
 
     class Meta():

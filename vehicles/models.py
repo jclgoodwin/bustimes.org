@@ -67,6 +67,10 @@ class Livery(models.Model):
         return mark_safe('<div style="height:1.5em;width:4em;background:{}"></div>'.format(background))
 
 
+class VehicleFeature(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+
 class Vehicle(models.Model):
     code = models.CharField(max_length=255)
     fleet_number = models.PositiveIntegerField(null=True, blank=True)
@@ -79,8 +83,7 @@ class Vehicle(models.Model):
     notes = models.CharField(max_length=255, blank=True)
     latest_location = models.ForeignKey('VehicleLocation', models.SET_NULL, null=True, blank=True,
                                         related_name='latest_vehicle', editable=False)
-    wifi = models.NullBooleanField()
-    usb = models.NullBooleanField()
+    features = models.ManyToManyField(VehicleFeature, blank=True)
 
     class Meta():
         unique_together = ('code', 'operator')
