@@ -7,6 +7,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q, Prefetch
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.utils import timezone
+from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import DetailView
 from django.conf import settings
@@ -584,6 +585,7 @@ class ServiceDetailView(DetailView):
         return super().render_to_response(context)
 
 
+@cache_control(max_age=10080)
 def service_geometry(request, pk):
     service = get_object_or_404(Service, pk=pk)
     return HttpResponse('window.geometry = {};'.format(service.geometry.simplify().json),
