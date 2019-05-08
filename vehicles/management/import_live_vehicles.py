@@ -104,7 +104,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         else:
             latest = journey.vehicle.latest_location
             if latest and latest.current and latest.journey.source_id != self.source.id:
-                if latest.journey.service or not journey.service:
+                if latest.journey.service_id or not journey.service:
                     return  # defer to other source
         location = self.create_vehicle_location(item)
         location.datetime = datetime
@@ -120,7 +120,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             location.datetime = now
         if same_journey(latest, journey):
             changed = False
-            if journey.service and not latest.journey.service:
+            if journey.service and not latest.journey.service_id:
                 latest.journey.service = journey.service
                 changed = True
             if journey.destination and not latest.journey.destination:

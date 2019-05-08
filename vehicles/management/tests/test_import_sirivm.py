@@ -12,7 +12,7 @@ class SiriVMImportTest(TestCase):
     def setUpTestData(cls):
         Region.objects.create(id='EA')
         cls.operator = Operator.objects.create(id='FESX', region_id='EA')
-        cls.service = Service.objects.create(line_name='73', date='2010-01-01', tracking=True)
+        cls.service = Service.objects.create(service_code='73', line_name='73', date='2010-01-01', tracking=True)
         cls.service.operator.set(['FESX'])
         cls.command = import_sirivm.Command()
         cls.command.source = DataSource.objects.create(datetime='2018-08-06T22:41:15+01:00')
@@ -49,7 +49,7 @@ class SiriVMImportTest(TestCase):
 
         # different datetime - should create new vehicle location
         item.find('siri:RecordedAtTime', import_sirivm.NS).text = '2018-08-06T21:45:32+01:00'
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(9):
             self.command.handle_item(item, None)
         self.assertEqual(2, locations.count())
         last_location = locations.last()
