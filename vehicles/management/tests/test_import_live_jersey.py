@@ -20,7 +20,7 @@ class JerseyImportTest(TestCase):
 
         command.source = DataSource.objects.create(datetime='2018-08-06T22:41:15+01:00')
 
-        journey = command.get_journey(items[0])
+        journey = command.get_journey(items[0], None)
         self.assertIsNone(journey.service)
 
         vehicle, created = command.get_vehicle(items[0])
@@ -34,7 +34,7 @@ class JerseyImportTest(TestCase):
         self.assertEqual('2018-08-20 23:59:00+00:00', str(command.get_datetime(items[0])))
 
         # test a time after midnight (today)
-        journey = command.get_journey(items[1])
+        journey = command.get_journey(items[1], None)
 
         location = command.create_vehicle_location(items[1])
         self.assertEqual(204, location.heading)

@@ -30,7 +30,7 @@ class Command(ImportLiveVehiclesCommand):
         }
         if vehicle_code.isdigit():
             defaults['fleet_number'] = vehicle_code
-        return Vehicle.objects.get_or_create(
+        return Vehicle.objects.select_related('latest_location').get_or_create(
             defaults,
             source=self.source,
             code=vehicle_code
@@ -39,7 +39,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         return super().get_items()['minimumInfoUpdates']
 
-    def get_journey(self, item):
+    def get_journey(self, item, vehicle):
         journey = VehicleJourney()
         parts = item['bus'].split('-')
         journey.code = parts[-2]

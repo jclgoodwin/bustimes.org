@@ -11,46 +11,48 @@ class Command(ImportLiveVehiclesCommand):
     source_name = 'TfE'
     services = Service.objects.filter(operator__in=('LOTH', 'EDTR', 'ECBU', 'NELB'), current=True)
 
+    @staticmethod
+    def get_datetime(item):
+        return make_aware(datetime.utcfromtimestamp(item['last_gps_fix']))
+
     def get_items(self):
         items = super().get_items()
         if items:
-            return items['vehicles']
+            return (item for item in items['vehicles'] if item['service_name'])
 
-    def get_journey(self, item):
-        if not item['service_name']:
-            return None, None
-
-        journey = VehicleJourney(
-            code=item['journey_id'] or '',
-            destination=item['destination'] or ''
-        )
-
+    def get_vehicle(self, item):
         vehicle_defaults = {}
-
-        journey.route_name = item['service_name']
-
-        try:
-            journey.service = self.services.get(line_name=item['service_name'])
-            vehicle_defaults['operator'] = journey.service.operator.first()
-        except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-            if item['service_name'] not in {'ET1', 'MA1', '3BBT', 'C134'}:
-                print(e, item['service_name'])
-
         vehicle_code = item['vehicle_id']
         if vehicle_code.isdigit():
             vehicle_defaults['fleet_number'] = vehicle_code
 
-        journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
+        return Vehicle.objects.select_related('latest_location').get_or_create(
             vehicle_defaults,
             source=self.source,
             code=vehicle_code
         )
 
-        return journey, vehicle_created
+    def get_journey(self, item, vehicle):
+        journey = VehicleJourney(
+            code=item['journey_id'] or '',
+            destination=item['destination'] or ''
+        )
+
+        journey.route_name = item['service_name']
+
+        try:
+            journey.service = self.services.get(line_name=item['service_name'])
+            if not vehicle.operator:
+                vehicle.operator = journey.service.operator.first()
+                vehicle.save()
+        except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+            if item['service_name'] not in {'ET1', 'MA1', '3BBT', 'C134'}:
+                print(e, item['service_name'])
+
+        return journey
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
-            datetime=make_aware(datetime.utcfromtimestamp(item['last_gps_fix'])),
             latlong=Point(item['longitude'], item['latitude']),
             heading=item['heading']
         )

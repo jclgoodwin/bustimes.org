@@ -29,7 +29,7 @@ class Command(ImportLiveVehiclesCommand):
         if item['OperatorRef'] not in operators:
             operators = [item['OperatorRef']]
 
-        return Vehicle.objects.get_or_create(
+        return Vehicle.objects.select_related('latest_location').get_or_create(
             {'fleet_number': fleet_number, 'source': self.source, 'operator_id': item['OperatorRef']},
             code=code,
             operator__in=operators
@@ -56,7 +56,7 @@ class Command(ImportLiveVehiclesCommand):
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, item['OperatorRef'], item['PublishedLineName'], item['DestinationRef'])
 
-    def get_journey(self, item):
+    def get_journey(self, item, vehicle):
         journey = VehicleJourney()
 
         if item['PublishedLineName']:

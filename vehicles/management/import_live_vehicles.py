@@ -93,7 +93,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 self.current_location_ids.add(latest.id)
                 return
         if vehicle:
-            journey = self.get_journey(item)
+            journey = self.get_journey(item, vehicle)
             journey.vehicle = vehicle
         else:
             journey, vehicle_created = self.get_journey(item)

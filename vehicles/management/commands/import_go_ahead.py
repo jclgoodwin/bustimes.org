@@ -50,7 +50,7 @@ class Command(ImportLiveVehiclesCommand):
         if fleet_number.isdigit():
             defaults['fleet_number'] = fleet_number
 
-        return Vehicle.objects.get_or_create(defaults, code=vehicle)
+        return Vehicle.objects.select_related('latest_location').get_or_create(defaults, code=vehicle)
 
     def get_bounding_boxes(self, extent):
         extent = extent['latlong__extent']
@@ -85,7 +85,7 @@ class Command(ImportLiveVehiclesCommand):
                             continue
                         sleep(1)
 
-    def get_journey(self, item):
+    def get_journey(self, item, vehicle):
         journey = VehicleJourney()
 
         journey.code = item['datedVehicleJourney']
@@ -110,14 +110,14 @@ class Command(ImportLiveVehiclesCommand):
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, operators, item['lineRef'])
 
-        # if journey.service:
-        #     try:
-        #         operator = journey.service.operator.get()
-        #         if journey.vehicle.operator_id != operator.id:
-        #             journey.vehicle.operator_id = operator.id
-        #             journey.vehicle.save()
-        #     except journey.service.operator.model.MultipleObjectsReturned:
-        #         pass
+        if journey.service:
+            try:
+                operator = journey.service.operator.get()
+                if vehicle.operator_id != operator.id:
+                    vehicle.operator_id = operator.id
+                    vehicle.save()
+            except journey.service.operator.model.MultipleObjectsReturned:
+                pass
 
         return journey
 

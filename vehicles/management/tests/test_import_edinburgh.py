@@ -20,18 +20,24 @@ class EdinburghImportTest(TestCase):
             'vehicle_id': '3032',
             'destination': 'Yoker',
             'service_name': '11',
+            'heading': 76,
+            'latitude': 55.95376,
+            'longitude': -3.18718,
+            'last_gps_fix': 1554038242,
         }
-        with self.assertNumQueries(6):
-            journey, created = self.command.get_journey(item)
+        with self.assertNumQueries(15):
+            self.command.handle_item(item, None)
+        journey = self.command.source.vehiclejourney_set.get()
+
         self.assertEqual('1135', journey.code)
         self.assertEqual('Yoker', journey.destination)
-        self.assertEqual('3032', journey.vehicle.fleet_number)
-        self.assertEqual(self.operator, journey.vehicle.operator)
         self.assertEqual(self.service, journey.service)
-        self.assertTrue(created)
 
-        with self.assertNumQueries(3):
-            journey, created = self.command.get_journey(item)
+        with self.assertNumQueries(1):
+            vehicle, created = self.command.get_vehicle(item)
+        self.assertEqual(self.operator, vehicle.operator)
+        self.assertEqual(3032, vehicle.fleet_number)
+        self.assertFalse(created)
 
     def test_vehicle_location(self):
         item = {
@@ -42,5 +48,6 @@ class EdinburghImportTest(TestCase):
         }
         location = self.command.create_vehicle_location(item)
         self.assertEqual(76, location.heading)
-        self.assertEqual('2019-03-31 13:17:22+01:00', str(location.datetime))
         self.assertTrue(location.latlong)
+
+        self.assertEqual('2019-03-31 13:17:22+01:00', str(self.command.get_datetime(item)))
