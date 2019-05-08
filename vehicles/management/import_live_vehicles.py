@@ -103,7 +103,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             latest = None
         else:
             latest = journey.vehicle.latest_location
-            if latest and latest.current and latest.journey.source != self.source:
+            if latest and latest.current and latest.journey.source_id != self.source.id:
                 if latest.journey.service or not journey.service:
                     return  # defer to other source
         location = self.create_vehicle_location(item)
@@ -119,11 +119,14 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if not location.datetime:
             location.datetime = now
         if same_journey(latest, journey):
+            changed = False
             if journey.service and not latest.journey.service:
                 latest.journey.service = journey.service
-                latest.journey.save()
+                changed = True
             if journey.destination and not latest.journey.destination:
                 latest.journey.destination = journey.destination
+                changed = True
+            if changed:
                 latest.journey.save()
             location.journey = latest.journey
             if location.heading is None or journey.vehicle.operator_id == 'ARBB' and location.heading == 0:
@@ -133,6 +136,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if not journey.datetime:
                 journey.datetime = location.datetime
             journey.save()
+            if journey.service and not journey.service.tracking:
+                journey.service.tracking = True
+                journey.service.save()
             if service_code and journey.service_id and journey.service_id != service_code.service_id:
                 # doppelgänger
                 if not journey.service.servicecode_set.filter(scheme__endswith=' SIRI').exists():
