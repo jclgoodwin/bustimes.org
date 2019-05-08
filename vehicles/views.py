@@ -203,7 +203,7 @@ def dashboard(request):
     )
     tracking = tracking.filter(service=OuterRef('pk'))
     full_tracking = tracking.exclude(source__name='Icarus')
-    services = Service.objects.filter(current=True).annotate(tracking=Exists(tracking),
+    services = Service.objects.filter(current=True).annotate(recent_tracking=Exists(tracking),
                                                              full_tracking=Exists(full_tracking)).defer('geometry')
     prefetch = Prefetch('service_set', queryset=services)
     operators = operators.prefetch_related(prefetch).distinct()
