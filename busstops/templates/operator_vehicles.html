@@ -25,7 +25,13 @@
             {% if code_column %}
                 <td>{{ vehicle.code }}</td>
             {% endif %}
-            <td><a href="{{ vehicle.get_absolute_url }}">{{ vehicle }}</a></td>
+            <td>
+                {% if vehicle.latest_location or vehicle.latest_journey %}
+                    <a href="{{ vehicle.get_absolute_url }}">{{ vehicle }}</a>
+                {% else %}
+                    {{ vehicle }}
+                {% endif %}
+            </td>
             <td>
                 {% if vehicle.latest_location %}
                     {% if vehicle.latest_location.journey.service %}
@@ -38,14 +44,10 @@
                         {{ vehicle.latest_location.datetime }}
                     {% endif %}
                 {% elif vehicle.latest_journey %}
-                    {% if vehicle.latest_journey.service %}
-                        <a href="{{ vehicle.latest_journey.service.get_absolute_url }}">{{ vehicle.latest_journey.service.line_name }}</a>
-                        <br>
-                    {% endif %}
-                    {% if vehicle.latest_journey.datetime.date == today %}
-                        {{ vehicle.latest_journey.datetime | time }}
+                    {% if vehicle.latest_journey.date == today %}
+                        {{ vehicle.latest_journey | time }}
                     {% else %}
-                        {{ vehicle.latest_journey.datetime }}
+                        {{ vehicle.latest_journey }}
                     {% endif %}
 
                 {% endif %}

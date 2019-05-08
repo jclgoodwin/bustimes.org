@@ -2,7 +2,6 @@ from math import ceil
 from webcolors import html5_parse_simple_color
 from django.contrib.gis.db import models
 from django.urls import reverse
-from django.utils.functional import cached_property
 from django.utils.safestring import mark_safe
 from busstops.models import Operator, Service, DataSource, SIRISource
 
@@ -97,10 +96,6 @@ class Vehicle(models.Model):
         if self.fleet_number:
             return str(self.fleet_number)
         return self.code.replace('_', ' ')
-
-    @cached_property
-    def latest_journey(self):
-        return self.vehiclejourney_set.select_related('service').latest('datetime')
 
     def get_reg(self):
         if self.reg[-3:].isalpha():

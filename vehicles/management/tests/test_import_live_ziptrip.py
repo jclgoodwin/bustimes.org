@@ -83,12 +83,12 @@ class ZipTripTest(TestCase):
         self.assertNotContains(response, '31 August 2018')
         self.assertContains(response, '22:30')
 
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             response = self.client.get(self.vehicle.get_absolute_url())
-        self.assertContains(response, 'Sorry, nothing found')
+        self.assertEqual(response.status_code, 404)
 
         # service vehicle history
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(5):
             response = self.client.get('/services/foo-foo/vehicles')
         self.assertContains(response, 'Vehicles')
         self.assertContains(response, '/vehicles/')

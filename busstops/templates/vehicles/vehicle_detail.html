@@ -24,7 +24,11 @@
     <p>
         <label>
             Date:
-            <input type="date" name="date" value="{{ date.isoformat }}" max="{{ today.isoformat }}">
+            <select onchange="this.form.submit()" name="date">
+                {% for option in dates %}
+                    <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
+                {% endfor %}
+            </select>
         </label>
         <input type="submit" value="Show journeys">
     </p>
