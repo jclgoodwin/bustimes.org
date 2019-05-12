@@ -16,7 +16,6 @@ class BusHubTest(TestCase):
         service_b.operator.add('DIAM')
         service = Service.objects.create(service_code='44', line_name='44', date='2018-08-06', tracking=True)
         service.operator.add('WNGS')
-        service.operator.add('WNGS')
         cls.vehicle = Vehicle.objects.create(code='20052', operator_id='WNGS')
         now = '2018-08-06T22:41:15+01:00'
         cls.source = DataSource.objects.create(datetime=now)
@@ -38,7 +37,7 @@ class BusHubTest(TestCase):
             "ValidUntilTime": "2018-08-31T22:49:33+01:00",
             "LineRef": "R57",
             "DirectionRef": "outbound",
-            "PublishedLineName": "44",
+            "PublishedLineName": "44a",
             "OperatorRef": "DIAM",
             "Bearing": "143",
             "BlockRef": "2027",
@@ -61,7 +60,7 @@ class BusHubTest(TestCase):
             "Destination": None
         }
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(12):
             command.handle_item(item, self.source.datetime)
 
         with self.assertNumQueries(3):
@@ -74,11 +73,13 @@ class BusHubTest(TestCase):
         self.assertIsNone(location.journey.service_id)
 
         item['OperatorRef'] = 'WNGS'
+        item['Bearing'] = '-1'
         with self.assertNumQueries(7):
             command.handle_item(item, self.source.datetime)
         self.assertEqual(2, Vehicle.objects.count())
         self.vehicle.refresh_from_db()
         self.assertIsNotNone(self.vehicle.latest_location)
+        self.assertIsNone(self.vehicle.latest_location.heading)
         self.assertEqual('44', self.vehicle.latest_location.journey.service_id)
 
         item["RecordedAtTime"] = "31/08/2018 23:10:33"
