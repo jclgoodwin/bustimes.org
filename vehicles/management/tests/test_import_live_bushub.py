@@ -1,5 +1,5 @@
 from django.test import TestCase
-from busstops.models import Region, Operator, DataSource
+from busstops.models import Region, Operator, DataSource, Service
 from ...models import VehicleLocation, Vehicle
 from ..commands import import_bushub
 
@@ -10,6 +10,13 @@ class BusHubTest(TestCase):
         Region.objects.create(id='WM')
         Operator.objects.create(id='DIAM', name='Graphite Buses', region_id='WM')
         Operator.objects.create(id='WNGS', name='Paul McCartney & Wings', region_id='WM')
+        service_a = Service.objects.create(service_code='44a', line_name='44', date='2018-08-06', tracking=True)
+        service_b = Service.objects.create(service_code='44b', line_name='44', date='2018-08-06', tracking=True)
+        service_a.operator.add('DIAM')
+        service_b.operator.add('DIAM')
+        service = Service.objects.create(service_code='44', line_name='44', date='2018-08-06', tracking=True)
+        service.operator.add('WNGS')
+        service.operator.add('WNGS')
         cls.vehicle = Vehicle.objects.create(code='20052', operator_id='WNGS')
         now = '2018-08-06T22:41:15+01:00'
         cls.source = DataSource.objects.create(datetime=now)
@@ -31,7 +38,7 @@ class BusHubTest(TestCase):
             "ValidUntilTime": "2018-08-31T22:49:33+01:00",
             "LineRef": "R57",
             "DirectionRef": "outbound",
-            "PublishedLineName": "57",
+            "PublishedLineName": "44",
             "OperatorRef": "DIAM",
             "Bearing": "143",
             "BlockRef": "2027",
@@ -54,19 +61,26 @@ class BusHubTest(TestCase):
             "Destination": None
         }
 
-        command.handle_item(item, self.source.datetime)
+        with self.assertNumQueries(11):
+            command.handle_item(item, self.source.datetime)
 
-        item["RecordedAtTime"] = "31/08/2018 22:49:33"
-
-        command.handle_item(item, self.source.datetime)
+        with self.assertNumQueries(3):
+            command.handle_item(item, self.source.datetime)
 
         location = VehicleLocation.objects.get()
         self.assertEqual('2018-08-31 21:49:33+00:00', str(location.datetime))
         self.assertEqual(143, location.heading)
         self.assertEqual('DIAM', location.journey.vehicle.operator_id)
+        self.assertIsNone(location.journey.service_id)
 
         item['OperatorRef'] = 'WNGS'
-        command.handle_item(item, self.source.datetime)
+        with self.assertNumQueries(7):
+            command.handle_item(item, self.source.datetime)
         self.assertEqual(2, Vehicle.objects.count())
         self.vehicle.refresh_from_db()
         self.assertIsNotNone(self.vehicle.latest_location)
+        self.assertEqual('44', self.vehicle.latest_location.journey.service_id)
+
+        item["RecordedAtTime"] = "31/08/2018 23:10:33"
+        with self.assertNumQueries(6):
+            command.handle_item(item, self.source.datetime)

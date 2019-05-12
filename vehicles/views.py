@@ -27,7 +27,7 @@ def operator_vehicles(request, slug):
     vehicles = vehicles.select_related('vehicle_type', 'livery', 'latest_location__journey__service')
     vehicles = vehicles.annotate(latest_journey=Max('vehiclejourney__datetime'))
     if not vehicles:
-        raise Http404
+        raise Http404()
     return render(request, 'operator_vehicles.html', {
         'breadcrumb': [operator.region, operator],
         'object': operator,
@@ -154,7 +154,7 @@ def service_vehicles_history(request, slug):
     if not date:
         date = dates.last()
         if not date:
-            raise Http404
+            raise Http404()
     locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
     journeys = journeys.filter(datetime__date=date).select_related('vehicle').annotate(locations=Exists(locations))
     operator = service.operator.select_related('region').first()
@@ -186,7 +186,7 @@ class VehicleDetailView(DetailView):
         if not date:
             date = context['dates'].last()
             if not date:
-                raise Http404
+                raise Http404()
         context['date'] = date
         journeys = journeys.filter(datetime__date=date)
         locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
