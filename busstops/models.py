@@ -398,6 +398,18 @@ class Operator(ValidateOnSaveMixin, models.Model):
         return self.operatorcode_set.filter(source__name='Licence')
 
 
+class StopCode(models.Model):
+    stop = models.ForeignKey(StopPoint, models.CASCADE)
+    source = models.ForeignKey(DataSource, models.CASCADE)
+    code = models.CharField(max_length=100)
+
+    class Meta(object):
+        unique_together = ('code', 'source')
+
+    def __str__(self):
+        return self.code
+
+
 class OperatorCode(models.Model):
     operator = models.ForeignKey(Operator, models.CASCADE)
     source = models.ForeignKey(DataSource, models.CASCADE)
