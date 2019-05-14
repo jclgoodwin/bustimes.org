@@ -30,7 +30,7 @@ def on_message(data):
     if not created:
         latest_location = vehicle.latest_location
         current = latest_location and (datetime - latest_location.datetime).total_seconds() < 180
-        if current and latest_location.journey.service and latest_location.journey.service.geometry.overlaps(latlong):
+        if current and latest_location.journey.service and latest_location.journey.service.geometry.envelope.covers(latlong):
             journey = latest_location.journey
 
         if not journey:
