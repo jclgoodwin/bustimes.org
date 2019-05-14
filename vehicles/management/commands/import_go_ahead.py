@@ -100,7 +100,7 @@ class Command(ImportLiveVehiclesCommand):
         if operators:
             if item['lineRef'] == 'CSR' and operators[0] == 'BHBC':
                 item['lineRef'] = 'CSS'
-            services = Service.objects.filter(operator__in=operators, line_name=item['lineRef'], current=True)
+            services = Service.objects.filter(operator__in=operators, line_name__iexact=item['lineRef'], current=True)
             try:
                 try:
                     journey.service = self.get_service(services, get_latlong(item))
