@@ -6,19 +6,18 @@ from ..commands import import_live_ziptrip
 
 
 class ZipTripTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
+    def setUp(self):
         Region.objects.create(id='EA')
         Operator.objects.create(id='LYNX', region_id='EA')
         Operator.objects.create(id='CBUS', region_id='EA')
         Operator.objects.create(id='GAHL', region_id='EA', slug='go-ahead-lichtenstein')
         Operator.objects.create(id='LGEN', region_id='EA')
-        cls.service = Service.objects.create(line_name='7777', date='2010-01-01', service_code='007', slug='foo-foo')
-        cls.service.operator.set(['LGEN'])
+        self.service = Service.objects.create(line_name='7777', date='2010-01-01', service_code='007', slug='foo-foo')
+        self.service.operator.set(['LGEN'])
 
         now = '2018-08-06T22:41:15+01:00'
-        cls.source = DataSource.objects.create(datetime=now)
-        cls.vehicle = Vehicle.objects.create(code='203', operator_id='CBUS', source=cls.source)
+        self.source = DataSource.objects.create(datetime=now)
+        self.vehicle = Vehicle.objects.create(code='203', operator_id='CBUS', source=self.source)
 
     def test_handle(self):
         command = import_live_ziptrip.Command()
@@ -93,3 +92,20 @@ class ZipTripTest(TestCase):
         self.assertContains(response, 'Vehicles')
         self.assertContains(response, '/vehicles/')
         self.assertContains(response, 'value="2018-08-31"')
+
+    def test_unknown_operator(self):
+        command = import_live_ziptrip.Command()
+        command.source = self.source
+
+        item = {
+            "vehicleCode": "GHA_-_DA04_GHA",
+            "position": {
+                "latitude": 0,
+                "longitude": 0
+            },
+            "reported": "2018-08-31T21:30:04+00:00",
+            "received": "2018-08-31T21:30:15.8465176+00:00",
+            "bearing": -24,
+        }
+        command.handle_item(item, self.source.datetime)
+        self.assertFalse(VehicleLocation.objects.all())

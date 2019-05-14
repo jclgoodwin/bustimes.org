@@ -57,7 +57,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         return
 
     def get_vehicle(self, item):
-        return None, None
+        raise NotImplementedError
 
     def get_items(self):
         response = self.session.get(self.url, timeout=40)
@@ -86,16 +86,18 @@ class ImportLiveVehiclesCommand(BaseCommand):
     @transaction.atomic
     def handle_item(self, item, now, service_code=None):
         datetime = self.get_datetime(item)
-        vehicle, vehicle_created = self.get_vehicle(item)
-        if datetime and vehicle and not vehicle_created:
-            latest = vehicle.latest_location
-            if latest and latest.datetime == datetime:
-                self.current_location_ids.add(latest.id)
+        try:
+            vehicle, vehicle_created = self.get_vehicle(item)
+            if not vehicle:
                 return
-        if vehicle:
+            if not vehicle_created:
+                latest = vehicle.latest_location
+                if latest and latest.datetime == datetime:
+                    self.current_location_ids.add(latest.id)
+                    return
             journey = self.get_journey(item, vehicle)
             journey.vehicle = vehicle
-        else:
+        except NotImplementedError:
             journey, vehicle_created = self.get_journey(item)
         if not journey:
             return

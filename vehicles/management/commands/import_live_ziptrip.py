@@ -2,7 +2,6 @@ from time import sleep
 from datetime import timedelta
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
-from django.db.utils import IntegrityError
 from django.utils import timezone
 from requests.exceptions import RequestException
 from django.contrib.gis.db.models import Extent
@@ -17,6 +16,19 @@ def get_latlong(item):
 
 
 class Command(ImportLiveVehiclesCommand):
+    operator_ids = {
+        'BOWE': 'HIPK',
+        'LAS': ('GAHL', 'LGEN'),
+        '767STEP': ('SESX', 'GECL', 'NIBS'),
+        'UNIB': 'UNOE',
+        'UNO': 'UNOE',
+        'RENW': 'ECWY',
+        'CB': ('CBUS', 'CACB'),
+        'CUBU': ('CUBU', 'RSTY'),
+        'SOG': 'guernsey',
+        'IOM': ('IMHR', 'bus-vannin'),
+        'Rtl': ('RBUS', 'GLRB', 'KENN', 'NADS'),
+    }
     operators = {}
     source_name = 'ZipTrip'
     url = 'https://ziptrip1.ticketer.org.uk/v1/vehiclepositions'
@@ -89,49 +101,58 @@ class Command(ImportLiveVehiclesCommand):
                 continue
             sleep(1)
 
-    def get_journey(self, item):
-        journey = VehicleJourney()
-
+    def get_vehicle(self, item):
         operator_id, vehicle = item['vehicleCode'].split('_', 1)
         vehicle = vehicle.replace(' ', '_')
 
-        route_name = item['routeName']
+        if operator_id in self.operator_ids:
+            operator_id = self.operator_ids[operator_id]
+
+        defaults = {}
+        if vehicle.isdigit():
+            defaults['fleet_number'] = vehicle
+        defaults['source'] = self.source
+        vehicles = Vehicle.objects.select_related('latest_location__journey__service')
+        if type(operator_id) is tuple:
+            defaults['operator_id'] = operator_id[0]
+            return vehicles.get_or_create(defaults, operator_id__in=operator_id, code=vehicle)
+        else:
+            try:
+                if operator_id not in self.operators:
+                    self.operators['operator_id'] = Operator.objects.get(id=operator_id)
+                return vehicles.get_or_create(defaults, operator_id=operator_id, code=vehicle)
+            except Operator.DoesNotExist as e:
+                print(e, operator_id)
+                return None, None
+
+    def get_journey(self, item, vehicle):
+        journey = VehicleJourney()
+
+        operator_id = item['vehicleCode'].split('_', 1)[0]
+
+        route_name = item.get('routeName', '')
         if route_name:
             journey.route_name = route_name
 
         if operator_id == 'BOWE':
-            operator_id = 'HIPK'
             if route_name == '199':
                 route_name = 'Skyline 199'
             if route_name == 'TP':
                 route_name = 'Transpeak'
-        elif operator_id == 'LAS':
-            operator_id = ('GAHL', 'LGEN')
         elif operator_id == '767STEP':
-            if '(' in vehicle:
-                operator_id = 'GECL'
-            else:
-                operator_id = ('SESX', 'GECL', 'NIBS')
-                if route_name == '2':
-                    route_name = 'Breeze 2'
+            if route_name == '2':
+                route_name = 'Breeze 2'
+            elif route_name.endswith(' Essex'):
+                route_name = route_name[:-6]
         elif operator_id == 'UNIB' or operator_id == 'UNO':
-            operator_id = 'UNOE'
             if route_name == '690':
                 route_name = 'Inter-campus Shuttle'
         elif operator_id == 'LYNX' and route_name == '48b':
             route_name = '48'
-        elif operator_id == 'RENW':
-            operator_id = 'ECWY'
-        elif operator_id == 'CB':
-            operator_id = ('CBUS', 'CACB')
         elif operator_id == 'CUBU':
-            operator_id = ('CUBU', 'RSTY')
             if route_name == '157A':
                 route_name = route_name[:-1]
-        elif operator_id == 'SOG':
-            operator_id = 'guernsey'
         elif operator_id == 'IOM':
-            operator_id = 'IMHR'
             if route_name == 'IMR':
                 route_name = 'Isle of Man Steam Railway'
             elif route_name == 'HT':
@@ -140,40 +161,12 @@ class Command(ImportLiveVehiclesCommand):
                 route_name = 'Manx Electric Railway'
             elif route_name == 'SMR':
                 route_name = 'Snaefell Mountain Railway'
-            else:
-                operator_id = 'bus-vannin'
         elif operator_id == 'Rtl':
             if route_name.startswith('K'):
                 route_name = route_name[1:]
-                operator_id = 'KENN'
-            operator_id = ('RBUS', 'GLRB', 'KENN', 'NADS')
 
-        if operator_id in self.operators:
-            operator = self.operators[operator_id]
-        elif type(operator_id) is str:
-            try:
-                operator = Operator.objects.get(id=operator_id)
-            except Operator.DoesNotExist:
-                operator = None
-            self.operators[operator_id] = operator
-        else:
-            operator = Operator.objects.get(id=operator_id[0])
-
-        defaults = {}
-        if vehicle.isdigit():
-            defaults['fleet_number'] = vehicle
-        if operator:
-            defaults['source'] = self.source
-            try:
-                journey.vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
-            except IntegrityError:
-                defaults['operator'] = operator
-                journey.vehicle, created = Vehicle.objects.get_or_create(defaults, source=self.source, code=vehicle)
-        else:
-            created = False
-
-        if route_name.endswith(' Essex'):
-            route_name = route_name[:-6]
+        if operator_id in self.operator_ids:
+            operator_id = self.operator_ids[operator_id]
 
         services = Service.objects.filter(current=True)
         if operator_id == 'SESX' and route_name == '1':
@@ -183,21 +176,18 @@ class Command(ImportLiveVehiclesCommand):
 
         if type(operator_id) is tuple:
             services = services.filter(operator__in=operator_id)
-        elif operator:
-            services = services.filter(operator=operator)
+        else:
+            services = services.filter(operator=operator_id)
 
         try:
-            if operator:
-                journey.service = self.get_service(services, get_latlong(item))
-            else:
-                print(item)
+            journey.service = self.get_service(services, get_latlong(item))
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             if route_name.lower() not in {'rr', 'rail', 'transdev', '7777', 'shop', 'pos', 'kiosk', 'rolls-royce'}:
                 if operator_id not in {'bus-vannin', 'IMHR'}:
                     if not (operator_id[0] == 'RBUS' and route_name[0] == 'V'):
                         print(e, operator_id, route_name)
 
-        return journey, created
+        return journey
 
     def create_vehicle_location(self, item):
         bearing = item.get('bearing')
