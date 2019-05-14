@@ -43,17 +43,29 @@ class Command(ImportLiveVehiclesCommand):
         line_name = item['properties']['line']
         if operator == 'BLAC' and line_name == 'PRM':
             line_name = '1'
-        services = Service.objects.filter(current=True, operator=operator, line_name=line_name)
+        services = Service.objects.filter(current=True, line_name=line_name)
+        if operator == 'BORD':
+            services = services.filter(operator__in=('BORD', 'PERY'))
+        else:
+            services = services.filter(operator=operator)
+
         try:
             journey.service = self.get_service(services, Point(item['geometry']['coordinates']))
         except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
             print(operator, line_name, e)
 
-        journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
-            defaults,
-            fleet_number=fleet_number,
-            operator__in=self.operators.values()
-        )
+        if fleet_number.isdigit():
+            journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
+                defaults,
+                fleet_number=fleet_number,
+                operator__in=self.operators.values()
+            )
+        else:
+            journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
+                defaults,
+                code=fleet_number,
+                operator__in=self.operators.values()
+            )
 
         return journey, vehicle_created
 
