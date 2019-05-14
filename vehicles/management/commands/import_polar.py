@@ -19,10 +19,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         return super().get_items()['features']
 
-    def get_journey(self, item):
-        journey = VehicleJourney()
-        journey.route_name = item['properties']['line']
-
+    def get_vehicle(self, item):
         fleet_number = item['properties']['vehicle']
         if '-' in fleet_number:
             operator, fleet_number = item['properties']['vehicle'].split('-', 1)
@@ -37,8 +34,29 @@ class Command(ImportLiveVehiclesCommand):
             'code': fleet_number
         }
 
-        if ' - ' in fleet_number:
-            fleet_number, defaults['reg'] = fleet_number.split(' - ')
+        if fleet_number.isdigit():
+            return Vehicle.objects.get_or_create(
+                defaults,
+                fleet_number=fleet_number,
+                operator__in=self.operators.values()
+            )
+        return Vehicle.objects.get_or_create(
+            defaults,
+            code=fleet_number,
+            operator__in=self.operators.values()
+        )
+
+    def get_journey(self, item, vehicle):
+        journey = VehicleJourney()
+        journey.route_name = item['properties']['line']
+
+        fleet_number = item['properties']['vehicle']
+        if '-' in fleet_number:
+            operator, fleet_number = item['properties']['vehicle'].split('-', 1)
+        else:
+            operator = item['_embedded']['transmodel:line']['id'].split(':')[0]
+
+        operator = self.operators[operator]
 
         line_name = item['properties']['line']
         if operator == 'BLAC' and line_name == 'PRM':
@@ -54,20 +72,7 @@ class Command(ImportLiveVehiclesCommand):
         except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
             print(operator, line_name, e)
 
-        if fleet_number.isdigit():
-            journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
-                defaults,
-                fleet_number=fleet_number,
-                operator__in=self.operators.values()
-            )
-        else:
-            journey.vehicle, vehicle_created = Vehicle.objects.get_or_create(
-                defaults,
-                code=fleet_number,
-                operator__in=self.operators.values()
-            )
-
-        return journey, vehicle_created
+        return journey
 
     def create_vehicle_location(self, item):
         return VehicleLocation(

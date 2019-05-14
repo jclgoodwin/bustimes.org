@@ -86,15 +86,23 @@ class ImportLiveVehiclesCommand(BaseCommand):
     @transaction.atomic
     def handle_item(self, item, now, service_code=None):
         datetime = self.get_datetime(item)
+        location = None
         try:
             vehicle, vehicle_created = self.get_vehicle(item)
             if not vehicle:
                 return
             if not vehicle_created:
                 latest = vehicle.latest_location
-                if latest and latest.datetime == datetime:
-                    self.current_location_ids.add(latest.id)
-                    return
+                if latest:
+                    if datetime:
+                        if latest.datetime == datetime:
+                            self.current_location_ids.add(latest.id)
+                            return
+                    else:
+                        location = self.create_vehicle_location(item)
+                        if location.latlong == latest.latlong:
+                            self.current_location_ids.add(latest.id)
+                            return
             journey = self.get_journey(item, vehicle)
             journey.vehicle = vehicle
         except NotImplementedError:
@@ -108,7 +116,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if latest and latest.current and latest.journey.source_id != self.source.id:
                 if latest.journey.service_id or not journey.service:
                     return  # defer to other source
-        location = self.create_vehicle_location(item)
+        if not location:
+            location = self.create_vehicle_location(item)
         location.datetime = datetime
         if latest:
             if location.datetime:
