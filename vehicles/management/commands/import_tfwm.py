@@ -34,11 +34,7 @@ class Command(ImportLiveVehiclesCommand):
             journey.datetime = timezone.make_aware(
                 datetime.strptime(item.vehicle.trip.start_date + item.vehicle.trip.start_time, '%Y%m%d%H:%M:%S')
             )
-            try:
-                trip = Trip.objects.get(route__feed__name='tfwm', trip_id=journey.code)
-            except Trip.DoesNotExist:
-                print(journey.code)
-                pass
+            trip = Trip.objects.filter(route__feed__name='tfwm', trip_id=journey.code).first()
             if trip:
                 journey.destination = trip.headsign
                 route = trip.route
