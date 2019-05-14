@@ -23,13 +23,14 @@ class SiriVMImportTest(TestCase):
         items = self.command.get_items()
         item = next(items)
 
-        journey, vehicle_created = self.command.get_journey(item)
+        vehicle, vehicle_created = self.command.get_vehicle(item)
+        journey = self.command.get_journey(item, vehicle)
 
         self.assertEqual('14', journey.code)
-        self.assertEqual('69532', str(journey.vehicle))
+        self.assertEqual('69532', str(vehicle))
         self.assertTrue(vehicle_created)
         self.assertEqual(self.service, journey.service)
-        self.assertEqual(self.operator, journey.vehicle.operator)
+        self.assertEqual(self.operator, vehicle.operator)
 
         location = self.command.create_vehicle_location(item)
         self.assertIsNone(location.heading)
@@ -38,18 +39,18 @@ class SiriVMImportTest(TestCase):
 
         locations = VehicleLocation.objects.filter(journey__source=self.command.source)
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(8):
             self.command.handle_item(item, None)
         self.assertIsNone(locations.get().heading)
 
         # if datetime is the same, shouldn't create new vehicle location
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(3):
             self.command.handle_item(item, None)
         self.assertEqual(1, locations.count())
 
         # different datetime - should create new vehicle location
         item.find('siri:RecordedAtTime', import_sirivm.NS).text = '2018-08-06T21:45:32+01:00'
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(8):
             self.command.handle_item(item, None)
         self.assertEqual(2, locations.count())
         last_location = locations.last()

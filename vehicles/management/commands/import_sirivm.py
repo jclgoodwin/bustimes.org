@@ -41,7 +41,7 @@ class Command(ImportLiveVehiclesCommand):
     source_name = 'sirivm'
     url = 'sslink/SSLinkHTTP'
 
-    operators = {
+    operators_options = {
         'SQ': ('BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TDTR', 'TOUR', 'WDBC'),
         'RB': ('RBUS', 'GLRB'),
         'SCHI': ('SINV', 'SCOR'),
@@ -55,6 +55,7 @@ class Command(ImportLiveVehiclesCommand):
         'ATS': ('ARBB', 'ARHE', 'GLAR'),
         'ASC': ('ARBB', 'ARHE', 'GLAR'),
     }
+    operators = {}
 
     @staticmethod
     def get_datetime(item):
@@ -94,38 +95,37 @@ class Command(ImportLiveVehiclesCommand):
         for item in items_from_response(response):
             yield item
 
-    def get_journey(self, item):
-        journey = VehicleJourney()
+    def get_operator(self, operator_ref):
+        operator_options = self.operators_options.get(operator_ref)
+        if operator_ref in self.operators:
+            return self.operators[operator_ref], operator_options
+        if operator_options:
+            operator = Operator.objects.get(id=operator_options[0])
+        else:
+            try:
+                try:
+                    operator = Operator.objects.get(operatorcode__source=self.source,
+                                                    operatorcode__code=operator_ref)
+                except (Operator.MultipleObjectsReturned, Operator.DoesNotExist):
+                    operator = Operator.objects.get(id=operator_ref)
+            except (Operator.MultipleObjectsReturned, Operator.DoesNotExist) as e:
+                logger.error(e, exc_info=True)
+                operator = None
+        self.operators[operator_ref] = operator
+        return operator, operator_options
 
+    def get_vehicle(self, item):
         mvj = item.find('siri:MonitoredVehicleJourney', NS)
         operator_ref = mvj.find('siri:OperatorRef', NS).text
-        operator = None
-        operator_options = None
-
-        service = mvj.find('siri:LineRef', NS).text
-
-        try:
-            if operator_ref == 'TD' or operator_ref == 'TV':  # Xplore Dundee
-                return None, None
-            elif operator_ref:
-                operator_options = self.operators.get(operator_ref)
-                if operator_options:
-                    operator = Operator.objects.get(id=operator_options[0])
-                else:
-                    try:
-                        operator = Operator.objects.get(operatorcode__source=self.source,
-                                                        operatorcode__code=operator_ref)
-                    except (Operator.MultipleObjectsReturned, Operator.DoesNotExist):
-                        operator = Operator.objects.get(id=operator_ref)
-        except (Operator.MultipleObjectsReturned, Operator.DoesNotExist) as e:
-            logger.error(e, exc_info=True)
-            print(e, operator_ref, service, ET.tostring(item))
-
+        if operator_ref == 'TD' or operator_ref == 'TV':  # Xplore Dundee or Thames Valley
+            return None, None
         vehicle_code = mvj.find('siri:VehicleRef', NS).text
         while operator_ref and vehicle_code.startswith(operator_ref + '-'):
             if operator_ref == 'SQ' and not vehicle_code.startswith('SQ-SQ-'):
                 break
             vehicle_code = vehicle_code[len(operator_ref) + 1:]
+
+        operator, operator_options = self.get_operator(operator_ref)
 
         defaults = {
             'source': self.source,
@@ -133,26 +133,35 @@ class Command(ImportLiveVehiclesCommand):
         }
         if vehicle_code.isdigit():
             defaults['fleet_number'] = vehicle_code
+        elif vehicle_code.startswith('WN-'):
+            defaults['fleet_number'] = vehicle_code[3:]
 
-        vehicles = Vehicle.objects.select_related('latest_location__journey')
+        vehicles = Vehicle.objects.select_related('latest_location__journey__service')
         if vehicle_code.startswith('GOEA-') or vehicle_code.startswith('CSLB-'):
-            journey.vehicle, vehicle_created = vehicles.get_or_create(
+            return vehicles.get_or_create(
                 defaults,
                 code=vehicle_code,
             )
-        else:
-            try:
-                journey.vehicle, vehicle_created = vehicles.get_or_create(
-                    defaults,
-                    operator__in=operator_options or (operator,),
-                    code=vehicle_code,
-                )
-            except Vehicle.MultipleObjectsReturned:
-                journey.vehicle = Vehicle.objects.filter(
-                    operator__in=operator_options or (operator,),
-                    code=vehicle_code
-                ).first()
-                vehicle_created = False
+        if not operator_options:
+            operator_options = (operator,)
+        try:
+            return vehicles.get_or_create(
+                defaults,
+                operator__in=operator_options,
+                code=vehicle_code,
+            )
+        except Vehicle.MultipleObjectsReturned:
+            return Vehicle.objects.filter(
+                operator__in=operator_options,
+                code=vehicle_code
+            ).first(), False
+
+    def get_journey(self, item, vehicle):
+        journey = VehicleJourney()
+
+        mvj = item.find('siri:MonitoredVehicleJourney', NS)
+        operator_ref = mvj.find('siri:OperatorRef', NS).text
+        service = mvj.find('siri:LineRef', NS).text
 
         journey_code = mvj.find('siri:FramedVehicleJourneyRef/siri:DatedVehicleJourneyRef', NS)
         if journey_code is not None:
@@ -175,12 +184,14 @@ class Command(ImportLiveVehiclesCommand):
         services = Service.objects.filter(current=True)
         services = services.filter(Q(line_name__iexact=service) | Q(servicecode__scheme__endswith=' SIRI',
                                                                     servicecode__code=service))
+
+        operator, operator_options = self.get_operator(operator_ref)
         if operator_options:
             services = services.filter(operator__in=operator_options).distinct()
         elif operator:
             services = services.filter(operator=operator)
         else:
-            return journey, vehicle_created
+            return journey
 
         latlong = get_latlong(mvj)
 
@@ -224,13 +235,13 @@ class Command(ImportLiveVehiclesCommand):
             if operator.id != 'RBUS' and operator.id != 'ARBB':
                 try:
                     operator = journey.service.operator.get()
-                    if journey.vehicle.operator_id != operator.id:
-                        journey.vehicle.operator = operator
-                        journey.vehicle.save()
+                    if vehicle.operator_id != operator.id:
+                        vehicle.operator = operator
+                        vehicle.save()
                 except (Operator.MultipleObjectsReturned, Operator.DoesNotExist):
                     pass
 
-        return journey, vehicle_created
+        return journey
 
     def create_vehicle_location(self, item):
         mvj = item.find('siri:MonitoredVehicleJourney', NS)
