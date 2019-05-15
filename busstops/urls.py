@@ -2,12 +2,17 @@ from django.conf import settings
 from django.conf.urls import include, url, static
 from django.urls import path
 from django.contrib import staticfiles
-from django.contrib.sitemaps.views import sitemap
+from django.contrib.sitemaps.views import sitemap, index
 from haystack.views import SearchView
 from vehicles.urls import urlpatterns as vehicles_urls
 from vosa.urls import urlpatterns as vosa_urls
 from .forms import CustomSearchForm
 from . import views
+
+sitemaps = {
+    'operators': views.OperatorSitemap,
+    'services': views.ServiceSitemap,
+}
 
 urlpatterns = [
     path('', views.index),
@@ -32,12 +37,9 @@ urlpatterns = [
     path('services/<pk>/geometry.js', views.service_geometry),
     path('services/<pk>.xml', views.service_xml),
     path('services/<slug>', views.ServiceDetailView.as_view(), name='service_detail'),
-    path('sitemap.xml', sitemap, {
-        'sitemaps': {
-             'operators': views.OperatorSitemap,
-             'services': views.ServiceSitemap,
-        }
-    }),
+    path('sitemap.xml', index, {'sitemaps': sitemaps}),
+    path('sitemap-<section>.xml', sitemap, {'sitemaps': sitemaps},
+         name='django.contrib.sitemaps.views.sitemap'),
     path('search', SearchView(form_class=CustomSearchForm)),
     path('journey', views.journey),
 ] + vehicles_urls + vosa_urls

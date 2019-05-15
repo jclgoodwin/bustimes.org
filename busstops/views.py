@@ -617,7 +617,7 @@ class ServiceSitemap(Sitemap):
     protocol = 'https'
 
     def items(self):
-        return Service.objects.filter(current=True)
+        return Service.objects.filter(current=True).defer('geometry')
 
 
 def journey(request):

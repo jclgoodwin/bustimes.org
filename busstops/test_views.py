@@ -393,10 +393,17 @@ class ViewsTests(TestCase):
             'noun': 'operators'
         }), 'Bus, coach, tram and cable car operators')
 
-    def test_sitemap(self):
-        """XML sitemap contains active services and operators"""
+    def test_sitemap_index(self):
         response = self.client.get('/sitemap.xml')
+        self.assertContains(response, 'https://example.com/sitemap-operators.xml')
+        self.assertContains(response, 'https://example.com/sitemap-services.xml')
+
+    def test_sitemap_operators(self):
+        response = self.client.get('/sitemap-operators.xml')
         self.assertContains(response, '<url><loc>https://example.com/operators/ainsleys-chariots</loc></url>')
+
+    def test_sitemap_services(self):
+        response = self.client.get('/sitemap-services.xml')
         self.assertContains(response, 'https://example.com/services/45a-holt-norwich')
 
     def test_journey(self):
