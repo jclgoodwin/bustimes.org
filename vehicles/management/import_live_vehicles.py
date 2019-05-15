@@ -132,7 +132,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             location.datetime = now
         if same_journey(latest, journey):
             changed = False
-            if journey.service and latest.journey.service_id is None:
+            if journey.service and not latest.journey.service:
                 latest.journey.service = journey.service
                 changed = True
             if journey.destination and not latest.journey.destination:
