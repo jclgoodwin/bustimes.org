@@ -15,85 +15,107 @@ from ...models import Vehicle, VehicleJourney, VehicleLocation
 
 
 class Command(BaseCommand):
-    @transaction.atomic
-    def handle_siri_vm_vehicle(self, item):
-        operator = item['OperatorRef']
-        vehicle = item['VehicleRef']
-        if vehicle.startswith(operator + '-'):
-            vehicle = vehicle[len(operator) + 1:]
+    operators = {}
+    vehicles = Vehicle.objects.select_related('latest_location__journey__service')
+
+    def get_operator(self, ref):
+        if ref in self.operators:
+            return self.operators[ref]
         try:
             try:
-                operator = Operator.objects.get(operatorcode__code=operator, operatorcode__source=self.source)
+                operator = Operator.objects.get(operatorcode__code=ref, operatorcode__source=self.source)
             except Operator.DoesNotExist:
-                operator = Operator.objects.get(pk=operator)
+                operator = Operator.objects.get(pk=ref)
         except Operator.DoesNotExist as e:
-            print(e, operator, item)
+            print(e, ref)
+            return
+        self.operators[ref] = operator
+        return operator
+
+    def get_vehicle(self, operator, item):
+        vehicle = item['VehicleRef']
+        if vehicle.startswith(item['OperatorRef'] + '-'):
+            vehicle = vehicle[len(item['OperatorRef']) + 1:]
+        defaults = {
+            'source': self.source
+        }
+        if vehicle.isdigit():
+            defaults = {'fleet_number': vehicle}
+        if type(operator) is Operator:
+            return self.vehicles.get_or_create(defaults, operator=operator, code=vehicle)
+        defaults = {'operator_id': operator[0]}
+        return self.vehicles.get_or_create(defaults, operator__in=operator, code=vehicle)
+
+    def get_service(self, operator, item):
+        line_name = item['PublishedLineName']
+
+        if type(operator) is Operator:
+            service = operator.service_set
+            if operator.pk == 'WHIP' and line_name == 'U':
+                line_name = 'Universal U'
+        else:
+            service = Service.objects.filter(operator__in=operator)
+            if operator[0] == 'SCCM' and line_name == 'NG1':
+                line_name = 'NG01'
+        service = service.filter(current=True)
+
+        if line_name.startswith('PR'):
+            service = service.filter(pk__contains='-{}-'.format(line_name))
+        else:
+            service = service.filter(line_name=line_name)
+
+        try:
+            try:
+                return service.get()
+            except Service.MultipleObjectsReturned:
+                return service.filter(Q(stops=item['OriginRef']) | Q(stops=item['DestinationRef'])).distinct().get()
+        except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
+            if line_name != 'Tour':
+                print(e, item)
+
+    def handle_siri_vm_vehicle(self, item):
+        operator = self.get_operator(item['OperatorRef'])
+        if not operator:
             return
         operator_options = None
         if operator.pk == 'SCCM':
             operator_options = ('SCCM', 'SCPB', 'SCHU', 'SCBD')
         elif operator.pk == 'CBBH':
             operator_options = ('CBBH', 'CBNL')
-        if operator_options:
-            service = Service.objects.filter(operator__in=operator_options)
-        else:
-            service = operator.service_set
-        service = service.filter(current=True)
-        line_name = item['PublishedLineName']
-        if line_name.startswith('PR'):
-            service = service.filter(pk__contains='-{}-'.format(line_name))
-        else:
-            if operator.pk == 'WHIP' and line_name == 'U':
-                line_name = 'Universal U'
-            elif operator.pk == 'SCCM' and line_name == 'NG1':
-                line_name = 'NG01'
-            service = service.filter(line_name=line_name)
-        try:
-            try:
-                service = service.get()
-            except Service.MultipleObjectsReturned:
-                service = service.filter(Q(stops=item['OriginRef']) | Q(stops=item['DestinationRef'])).distinct().get()
-        except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-            if not (operator.pk == 'SCCM' and line_name == 'Tour'):
-                print(e, item)
-            service = None
-        defaults = {
-            'source': self.source
-        }
-        if vehicle.isdigit():
-            defaults = {'fleet_number': vehicle}
-        if operator_options:
-            defaults = {'operator': operator}
-            vehicle, created = Vehicle.objects.get_or_create(defaults, operator__in=operator_options, code=vehicle)
-        else:
-            vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
+
+        vehicle, created = self.get_vehicle(operator_options or operator, item)
+
         journey = None
-        if not created and vehicle.latest_location and vehicle.latest_location.current:
-            vehicle.latest_location.current = False
-            vehicle.latest_location.save()
-            if vehicle.latest_location.journey.service == service:
-                journey = vehicle.latest_location.journey
-        if not journey or journey.code != item['DatedVehicleJourneyRef']:
-            journey = VehicleJourney.objects.create(
-                vehicle=vehicle,
-                service=service,
-                route_name=line_name,
-                source=self.source,
-                datetime=ciso8601.parse_datetime(item['OriginAimedDepartureTime']),
-                destination=html.unescape(item['DestinationName']),
-                code=item['DatedVehicleJourneyRef']
+        with transaction.atomic():
+            line_name = item['PublishedLineName']
+            journey_code = item['DatedVehicleJourneyRef']
+            if not created and vehicle.latest_location and vehicle.latest_location.current:
+                latest_location = vehicle.latest_location
+                latest_location.current = False
+                latest_location.save()
+                if line_name == latest_location.journey.route_name and journey_code == latest_location.journey.code:
+                    journey = vehicle.latest_location.journey
+            if not journey:
+                journey = VehicleJourney.objects.create(
+                    vehicle=vehicle,
+                    service=self.get_service(operator_options or operator, item),
+                    route_name=line_name,
+                    source=self.source,
+                    datetime=ciso8601.parse_datetime(item['OriginAimedDepartureTime']),
+                    destination=html.unescape(item['DestinationName']),
+                    code=journey_code
+                )
+            delay = item['Delay']
+            early = -round(dateparse.parse_duration(delay).total_seconds()/60)
+            vehicle.latest_location = VehicleLocation.objects.create(
+                journey=journey,
+                datetime=ciso8601.parse_datetime(item['RecordedAtTime']),
+                latlong=Point(float(item['Longitude']), float(item['Latitude'])),
+                heading=item['Bearing'],
+                current=True,
+                early=early
             )
-        delay = item['Delay']
-        early = -round(dateparse.parse_duration(delay).total_seconds()/60)
-        vehicle.latest_location = VehicleLocation.objects.create(
-            journey=journey,
-            datetime=ciso8601.parse_datetime(item['RecordedAtTime']),
-            latlong=Point(float(item['Longitude']), float(item['Latitude'])),
-            heading=item['Bearing'],
-            current=True,
-            early=early
-        )
-        vehicle.save()
+            vehicle.save()
 
     def handle_data(self, data):
         for item in data['request_data']:

@@ -1,5 +1,7 @@
 import requests
 from django.test import TestCase
+from freezegun import freeze_time
+from pyppeteer.errors import NetworkError
 from busstops.models import DataSource, Region, Operator
 from ...models import Vehicle
 from ..commands import import_cambridge
@@ -17,12 +19,12 @@ class CambridgeImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.command = import_cambridge.Command()
-        cls.command.source = DataSource.objects.create(datetime='2019-01-20T16:16:53+00:00')
+        cls.command.source = DataSource.objects.create(name='cambridge', datetime='2019-01-20T16:16:53+00:00')
         Region.objects.create(id='EA', name='East Anglia')
         Operator.objects.create(id='SCCM', region_id='EA', name='Stagecoach Cumbernauld')
 
+    @freeze_time('2019-01-20T16:17:53+00:00')
     def test_handle_data(self):
-
         data = {
             'request_data': [
                 {
@@ -56,11 +58,21 @@ class CambridgeImportTest(TestCase):
             ]
         }
 
-        self.command.handle_data(data)
+        with self.assertNumQueries(14):
+            self.command.handle_data(data)
+
+        with self.assertNumQueries(8):
+            self.command.handle_data(data)
 
         vehicle = Vehicle.objects.get()
         self.assertEqual(vehicle.code, '37220')
         self.assertEqual(vehicle.operator.name, 'Stagecoach Cumbernauld')
 
         self.assertEqual(vehicle.latest_location.early, -2)
-        self.assertEqual(vehicle.latest_location.journey.destination, 'Trumpington P & R')
+
+        journey = vehicle.vehiclejourney_set.get()
+        self.assertEqual(journey.destination, 'Trumpington P & R')
+
+    def test_handle(self):
+        with self.assertRaises(NetworkError):
+            self.command.handle()
