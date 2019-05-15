@@ -186,9 +186,8 @@ class Command(ImportLiveVehiclesCommand):
                     journey.service = self.get_service(services, get_latlong(item))
                 except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
                     if route_name.lower() not in self.ignorable_route_names:
-                        if operator_id not in {'bus-vannin', 'IMHR'}:
-                            if not (operator_id[0] == 'RBUS' and route_name[0] == 'V'):
-                                print(e, operator_id, route_name)
+                        if operator_id[0] != 'bus-vannin' and not (operator_id[0] == 'RBUS' and route_name[0] == 'V'):
+                            print(e, operator_id, route_name)
 
         return journey
 
