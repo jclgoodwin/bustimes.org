@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models import Extent
 from busstops.models import Service, StopPoint
-from ...models import Vehicle, VehicleLocation, VehicleJourney
+from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
@@ -50,7 +50,7 @@ class Command(ImportLiveVehiclesCommand):
         if fleet_number.isdigit():
             defaults['fleet_number'] = fleet_number
 
-        return Vehicle.objects.select_related('latest_location').get_or_create(defaults, code=vehicle)
+        return self.vehicles.get_or_create(defaults, code=vehicle)
 
     def get_bounding_boxes(self, extent):
         extent = extent['latlong__extent']
@@ -88,7 +88,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
 
-        journey.code = item['datedVehicleJourney']
+        journey.code = str(item['datedVehicleJourney'])
         journey.destination = item['destination']['name']
         journey.route_name = item['lineRef']
 
@@ -98,26 +98,32 @@ class Command(ImportLiveVehiclesCommand):
             print(operator)
 
         if operators:
-            if item['lineRef'] == 'CSR' and operators[0] == 'BHBC':
-                item['lineRef'] = 'CSS'
-            services = Service.objects.filter(operator__in=operators, line_name__iexact=item['lineRef'], current=True)
-            try:
+            if vehicle.latest_location and vehicle.latest_location.journey.code == journey.code and (
+                                           vehicle.latest_location.journey.route_name == journey.route_name
+            ):
+                journey.service = vehicle.latest_location.journey.service
+            else:
+                if item['lineRef'] == 'CSR' and operators[0] == 'BHBC':
+                    item['lineRef'] = 'CSS'
+                services = Service.objects.filter(operator__in=operators, line_name__iexact=item['lineRef'],
+                                                  current=True)
                 try:
-                    journey.service = self.get_service(services, get_latlong(item))
-                except Service.MultipleObjectsReturned:
-                    destination = item['destination']['ref']
-                    journey.service = services.filter(stops__locality__stoppoint=destination).distinct().get()
-            except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-                print(e, operators, item['lineRef'])
+                    try:
+                        journey.service = self.get_service(services, get_latlong(item))
+                    except Service.MultipleObjectsReturned:
+                        destination = item['destination']['ref']
+                        journey.service = services.filter(stops__locality__stoppoint=destination).distinct().get()
+                except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+                    print(e, operators, item['lineRef'])
 
-        if journey.service:
-            try:
-                operator = journey.service.operator.get()
-                if vehicle.operator_id != operator.id:
-                    vehicle.operator_id = operator.id
-                    vehicle.save()
-            except journey.service.operator.model.MultipleObjectsReturned:
-                pass
+                if journey.service:
+                    try:
+                        operator = journey.service.operator.get()
+                        if vehicle.operator_id != operator.id:
+                            vehicle.operator_id = operator.id
+                            vehicle.save()
+                    except journey.service.operator.model.MultipleObjectsReturned:
+                        pass
 
         return journey
 

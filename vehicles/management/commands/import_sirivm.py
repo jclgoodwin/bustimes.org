@@ -136,22 +136,21 @@ class Command(ImportLiveVehiclesCommand):
         elif vehicle_code.startswith('WN-'):
             defaults['fleet_number'] = vehicle_code[3:]
 
-        vehicles = Vehicle.objects.select_related('latest_location__journey__service')
         if vehicle_code.startswith('GOEA-') or vehicle_code.startswith('CSLB-'):
-            return vehicles.get_or_create(
+            return self.vehicles.get_or_create(
                 defaults,
                 code=vehicle_code,
             )
         if not operator_options:
             operator_options = (operator,)
         try:
-            return vehicles.get_or_create(
+            return self.vehicles.get_or_create(
                 defaults,
                 operator__in=operator_options,
                 code=vehicle_code,
             )
         except Vehicle.MultipleObjectsReturned:
-            return Vehicle.objects.filter(
+            return self.vehicles.filter(
                 operator__in=operator_options,
                 code=vehicle_code
             ).first(), False
@@ -180,6 +179,15 @@ class Command(ImportLiveVehiclesCommand):
 
         if service:
             journey.route_name = service
+
+        if vehicle.latest_location and vehicle.latest_location.journey.code == journey.code and (
+                                       vehicle.latest_location.journey.route_name == journey.route_name
+        ):
+
+            journey.service = vehicle.latest_location.journey.service
+            if not journey.destination and vehicle.latest_location.journey.destination:
+                journey.destination = vehicle.latest_location.journey.destination
+            return journey
 
         services = Service.objects.filter(current=True)
         services = services.filter(Q(line_name__iexact=service) | Q(servicecode__scheme__endswith=' SIRI',

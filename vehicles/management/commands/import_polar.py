@@ -1,6 +1,6 @@
 from django.contrib.gis.geos import Point
 from busstops.models import Service
-from ...models import Vehicle, VehicleLocation, VehicleJourney
+from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
@@ -35,12 +35,12 @@ class Command(ImportLiveVehiclesCommand):
         }
 
         if fleet_number.isdigit():
-            return Vehicle.objects.get_or_create(
+            return self.vehicles.objects.get_or_create(
                 defaults,
                 fleet_number=fleet_number,
                 operator__in=self.operators.values()
             )
-        return Vehicle.objects.get_or_create(
+        return self.vehicles.get_or_create(
             defaults,
             code=fleet_number,
             operator__in=self.operators.values()
@@ -61,16 +61,19 @@ class Command(ImportLiveVehiclesCommand):
         line_name = item['properties']['line']
         if operator == 'BLAC' and line_name == 'PRM':
             line_name = '1'
-        services = Service.objects.filter(current=True, line_name=line_name)
-        if operator == 'BORD':
-            services = services.filter(operator__in=('BORD', 'PERY'))
+        if vehicle.latest_location and vehicle.latest_location.journey.route_name == journey.route_name:
+            journey.service = vehicle.latest_location.journey.service
         else:
-            services = services.filter(operator=operator)
+            services = Service.objects.filter(current=True, line_name=line_name)
+            if operator == 'BORD':
+                services = services.filter(operator__in=('BORD', 'PERY'))
+            else:
+                services = services.filter(operator=operator)
 
-        try:
-            journey.service = self.get_service(services, Point(item['geometry']['coordinates']))
-        except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-            print(operator, line_name, e)
+            try:
+                journey.service = self.get_service(services, Point(item['geometry']['coordinates']))
+            except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+                print(operator, line_name, e)
 
         return journey
 

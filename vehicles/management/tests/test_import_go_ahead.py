@@ -11,7 +11,7 @@ from ...models import VehicleLocation
 class GoAheadImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        source = DataSource.objects.create(name='TfE', datetime=timezone.now())
+        source = DataSource.objects.create(name='Go Ahead', datetime=timezone.now())
         cls.command = Command()
         cls.command.source = source
         cls.command.opcos = {
@@ -56,8 +56,14 @@ class GoAheadImportTest(TestCase):
             "recordedTime": "2019-03-31T12:24:54.000Z",
             "updatedAtUTC": "2019-03-31T11:25:05.000Z"
         }
-        self.command.handle_item(item, self.command.source.datetime)
-        self.command.handle_item(item, self.command.source.datetime)
+        with self.assertNumQueries(15):
+            self.command.handle_item(item, self.command.source.datetime)
+        with self.assertNumQueries(3):
+            self.command.handle_item(item, self.command.source.datetime)
 
         location = VehicleLocation.objects.get()
         self.assertEqual('2019-03-31 11:24:54+00:00', str(location.datetime))
+
+        item['recordedTime'] = '2019-03-31T12:30:00.000Z'
+        with self.assertNumQueries(6):
+            self.command.handle_item(item, self.command.source.datetime)

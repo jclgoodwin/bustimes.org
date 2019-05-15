@@ -27,6 +27,8 @@ class EdinburghImportTest(TestCase):
         }
         with self.assertNumQueries(15):
             self.command.handle_item(item, None)
+        with self.assertNumQueries(3):
+            self.command.handle_item(item, None)
         journey = self.command.source.vehiclejourney_set.get()
 
         self.assertEqual('1135', journey.code)
@@ -38,6 +40,10 @@ class EdinburghImportTest(TestCase):
         self.assertEqual(self.operator, vehicle.operator)
         self.assertEqual(3032, vehicle.fleet_number)
         self.assertFalse(created)
+
+        item['last_gps_fix'] += 200
+        with self.assertNumQueries(6):
+            self.command.handle_item(item, None)
 
     def test_vehicle_location(self):
         item = {

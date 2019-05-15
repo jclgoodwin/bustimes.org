@@ -8,7 +8,7 @@ from django.db import OperationalError, IntegrityError, transaction
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from busstops.models import DataSource, ServiceCode
-from ..models import VehicleLocation
+from ..models import Vehicle, VehicleLocation
 
 
 logger = logging.getLogger(__name__)
@@ -51,6 +51,7 @@ def same_journey(latest_location, journey):
 class ImportLiveVehiclesCommand(BaseCommand):
     session = requests.Session()
     current_location_ids = set()
+    vehicles = Vehicle.objects.select_related('latest_location__journey__service')
 
     @staticmethod
     def get_datetime(self):
@@ -131,7 +132,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             location.datetime = now
         if same_journey(latest, journey):
             changed = False
-            if journey.service and not latest.journey.service_id:
+            if journey.service and latest.journey.service_id is None:
                 latest.journey.service = journey.service
                 changed = True
             if journey.destination and not latest.journey.destination:

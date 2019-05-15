@@ -7,7 +7,7 @@ from requests.exceptions import RequestException
 from django.contrib.gis.db.models import Extent
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from busstops.models import Operator, Service, StopPoint
-from ...models import Vehicle, VehicleLocation, VehicleJourney
+from ...models import VehicleLocation, VehicleJourney
 
 
 def get_latlong(item):
@@ -32,6 +32,7 @@ class Command(ImportLiveVehiclesCommand):
     operators = {}
     source_name = 'ZipTrip'
     url = 'https://ziptrip1.ticketer.org.uk/v1/vehiclepositions'
+    ignorable_route_names = {'rr', 'rail', 'transdev', '7777', 'shop', 'pos', 'kiosk', 'rolls-royce'}
 
     @staticmethod
     def get_datetime(item):
@@ -112,15 +113,14 @@ class Command(ImportLiveVehiclesCommand):
         if vehicle.isdigit():
             defaults['fleet_number'] = vehicle
         defaults['source'] = self.source
-        vehicles = Vehicle.objects.select_related('latest_location__journey__service')
         if type(operator_id) is tuple:
             defaults['operator_id'] = operator_id[0]
-            return vehicles.get_or_create(defaults, operator_id__in=operator_id, code=vehicle)
+            return self.vehicles.get_or_create(defaults, operator_id__in=operator_id, code=vehicle)
         else:
             try:
                 if operator_id not in self.operators:
                     self.operators['operator_id'] = Operator.objects.get(id=operator_id)
-                return vehicles.get_or_create(defaults, operator_id=operator_id, code=vehicle)
+                return self.vehicles.get_or_create(defaults, operator_id=operator_id, code=vehicle)
             except Operator.DoesNotExist as e:
                 print(e, operator_id)
                 return None, None
@@ -168,24 +168,27 @@ class Command(ImportLiveVehiclesCommand):
         if operator_id in self.operator_ids:
             operator_id = self.operator_ids[operator_id]
 
-        services = Service.objects.filter(current=True)
-        if operator_id == 'SESX' and route_name == '1':
-            services = services.filter(line_name__in=('1', 'Breeze 1'))
-        else:
-            services = services.filter(line_name__iexact=route_name)
+            if vehicle.latest_location and vehicle.latest_location.journey.route_name == journey.route_name:
+                journey.service = vehicle.latest_location.journey.service
+            else:
+                services = Service.objects.filter(current=True)
+                if operator_id == 'SESX' and route_name == '1':
+                    services = services.filter(line_name__in=('1', 'Breeze 1'))
+                else:
+                    services = services.filter(line_name__iexact=route_name)
 
-        if type(operator_id) is tuple:
-            services = services.filter(operator__in=operator_id)
-        else:
-            services = services.filter(operator=operator_id)
+                if type(operator_id) is tuple:
+                    services = services.filter(operator__in=operator_id)
+                else:
+                    services = services.filter(operator=operator_id)
 
-        try:
-            journey.service = self.get_service(services, get_latlong(item))
-        except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-            if route_name.lower() not in {'rr', 'rail', 'transdev', '7777', 'shop', 'pos', 'kiosk', 'rolls-royce'}:
-                if operator_id not in {'bus-vannin', 'IMHR'}:
-                    if not (operator_id[0] == 'RBUS' and route_name[0] == 'V'):
-                        print(e, operator_id, route_name)
+                try:
+                    journey.service = self.get_service(services, get_latlong(item))
+                except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
+                    if route_name.lower() not in self.ignorable_route_names:
+                        if operator_id not in {'bus-vannin', 'IMHR'}:
+                            if not (operator_id[0] == 'RBUS' and route_name[0] == 'V'):
+                                print(e, operator_id, route_name)
 
         return journey
 

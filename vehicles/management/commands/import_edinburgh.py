@@ -2,7 +2,7 @@ from datetime import datetime
 from django.utils.timezone import make_aware
 from django.contrib.gis.geos import Point
 from busstops.models import Service
-from ...models import Vehicle, VehicleLocation, VehicleJourney
+from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
@@ -26,7 +26,7 @@ class Command(ImportLiveVehiclesCommand):
         if vehicle_code.isdigit():
             vehicle_defaults['fleet_number'] = vehicle_code
 
-        return Vehicle.objects.select_related('latest_location').get_or_create(
+        return self.vehicles.get_or_create(
             vehicle_defaults,
             source=self.source,
             code=vehicle_code
@@ -40,14 +40,17 @@ class Command(ImportLiveVehiclesCommand):
 
         journey.route_name = item['service_name']
 
-        try:
-            journey.service = self.services.get(line_name=item['service_name'])
-            if not vehicle.operator:
-                vehicle.operator = journey.service.operator.first()
-                vehicle.save()
-        except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-            if item['service_name'] not in {'ET1', 'MA1', '3BBT', 'C134'}:
-                print(e, item['service_name'])
+        if vehicle.latest_location and vehicle.latest_location.journey.route_name == journey.route_name:
+            journey.service = vehicle.latest_location.journey.service
+        else:
+            try:
+                journey.service = self.services.get(line_name=item['service_name'])
+                if not vehicle.operator:
+                    vehicle.operator = journey.service.operator.first()
+                    vehicle.save()
+            except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+                if item['service_name'] not in {'ET1', 'MA1', '3BBT', 'C134'}:
+                    print(e, item['service_name'])
 
         return journey
 
