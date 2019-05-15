@@ -26,7 +26,7 @@ class Command(ImportLiveVehiclesCommand):
         'CB': ('CBUS', 'CACB'),
         'CUBU': ('CUBU', 'RSTY'),
         'SOG': 'guernsey',
-        'IOM': ('IMHR', 'bus-vannin'),
+        'IOM': ('bus-vannin', 'IMHR'),
         'Rtl': ('RBUS', 'GLRB', 'KENN', 'NADS'),
     }
     operators = {}
@@ -168,8 +168,9 @@ class Command(ImportLiveVehiclesCommand):
         if operator_id in self.operator_ids:
             operator_id = self.operator_ids[operator_id]
 
-        if vehicle.latest_location and vehicle.latest_location.journey.route_name == journey.route_name:
-            journey.service = vehicle.latest_location.journey.service
+        latest_location = vehicle.latest_location
+        if latest_location and latest_location.journey.service and latest_location.journey.route_name == journey.route_name:
+            journey.service = latest_location.journey.service
         else:
             services = Service.objects.filter(current=True)
             if operator_id == 'SESX' and route_name == '1':
@@ -180,12 +181,13 @@ class Command(ImportLiveVehiclesCommand):
             if type(operator_id) is tuple:
                 services = services.filter(operator__in=operator_id)
             else:
-                try:
-                    journey.service = self.get_service(services, get_latlong(item))
-                except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-                    if route_name.lower() not in self.ignorable_route_names:
-                        if operator_id[0] != 'bus-vannin' and not (operator_id[0] == 'RBUS' and route_name[0] == 'V'):
-                            print(e, operator_id, route_name)
+                services = services.filter(operator=operator_id)
+            try:
+                journey.service = self.get_service(services, get_latlong(item))
+            except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
+                if route_name.lower() not in self.ignorable_route_names:
+                    if operator_id[0] != 'bus-vannin' and not (operator_id[0] == 'RBUS' and route_name[0] == 'V'):
+                        print(e, operator_id, route_name)
 
         return journey
 
