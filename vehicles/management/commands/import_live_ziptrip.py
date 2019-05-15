@@ -169,7 +169,7 @@ class Command(ImportLiveVehiclesCommand):
             operator_id = self.operator_ids[operator_id]
 
         latest_location = vehicle.latest_location
-        if latest_location and latest_location.journey.service and latest_location.journey.route_name == journey.route_name:
+        if latest_location and latest_location.journey.route_name == journey.route_name:
             journey.service = latest_location.journey.service
         else:
             services = Service.objects.filter(current=True)
