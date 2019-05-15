@@ -673,7 +673,7 @@ def services_match(a, b):
         a = a.line_name
     if type(b) == Service:
         b = b.line_name
-    return a == b
+    return a.lower() == b.lower()
 
 
 def can_sort(departure):
