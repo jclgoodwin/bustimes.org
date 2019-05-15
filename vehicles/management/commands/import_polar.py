@@ -35,7 +35,7 @@ class Command(ImportLiveVehiclesCommand):
         }
 
         if fleet_number.isdigit():
-            return self.vehicles.objects.get_or_create(
+            return self.vehicles.get_or_create(
                 defaults,
                 fleet_number=fleet_number,
                 operator__in=self.operators.values()
