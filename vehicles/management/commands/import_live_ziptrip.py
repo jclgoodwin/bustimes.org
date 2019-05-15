@@ -168,20 +168,18 @@ class Command(ImportLiveVehiclesCommand):
         if operator_id in self.operator_ids:
             operator_id = self.operator_ids[operator_id]
 
-            if vehicle.latest_location and vehicle.latest_location.journey.route_name == journey.route_name:
-                journey.service = vehicle.latest_location.journey.service
+        if vehicle.latest_location and vehicle.latest_location.journey.route_name == journey.route_name:
+            journey.service = vehicle.latest_location.journey.service
+        else:
+            services = Service.objects.filter(current=True)
+            if operator_id == 'SESX' and route_name == '1':
+                services = services.filter(line_name__in=('1', 'Breeze 1'))
             else:
-                services = Service.objects.filter(current=True)
-                if operator_id == 'SESX' and route_name == '1':
-                    services = services.filter(line_name__in=('1', 'Breeze 1'))
-                else:
-                    services = services.filter(line_name__iexact=route_name)
+                services = services.filter(line_name__iexact=route_name)
 
-                if type(operator_id) is tuple:
-                    services = services.filter(operator__in=operator_id)
-                else:
-                    services = services.filter(operator=operator_id)
-
+            if type(operator_id) is tuple:
+                services = services.filter(operator__in=operator_id)
+            else:
                 try:
                     journey.service = self.get_service(services, get_latlong(item))
                 except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:

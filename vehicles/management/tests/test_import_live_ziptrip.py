@@ -13,7 +13,7 @@ class ZipTripTest(TestCase):
         Operator.objects.create(id='GAHL', region_id='EA', slug='go-ahead-lichtenstein')
         Operator.objects.create(id='LGEN', region_id='EA')
         self.service = Service.objects.create(line_name='7777', date='2010-01-01', service_code='007', slug='foo-foo')
-        self.service.operator.set(['LGEN'])
+        self.service.operator.set(['LYNX'])
 
         now = '2018-08-06T22:41:15+01:00'
         self.source = DataSource.objects.create(datetime=now)
@@ -42,6 +42,9 @@ class ZipTripTest(TestCase):
         self.assertEqual(336, location.heading)
         self.assertNotEqual(self.vehicle, location.journey.vehicle)
         self.assertEqual('LYNX', location.journey.vehicle.operator_id)
+        self.assertEqual(self.service, location.journey.service)
+
+        self.service.operator.set(['LGEN'])
 
         item['vehicleCode'] = 'LAS_203'
         # Although a vehicle called '203' exists, it belongs to a different operator, so a new one should be created
@@ -56,7 +59,7 @@ class ZipTripTest(TestCase):
         with self.assertNumQueries(3):
             with freeze_time('2018-08-31T21:35:04+00:00'):
                 response = self.client.get('/vehicles.json?service=007').json()
-        self.assertEqual(1, len(response['features']))
+        self.assertEqual(2, len(response['features']))
 
         with self.assertNumQueries(3):
             with freeze_time('2018-08-31T22:55:04+00:00'):
