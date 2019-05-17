@@ -8,6 +8,6 @@ urlpatterns = [
     path('vehicles', views.vehicles),
     path('vehicles.json', views.vehicles_json),
     path('vehicles/<int:pk>', views.VehicleDetailView.as_view(), name='vehicle_detail'),
-    path('vehicle-tracking-report', views.dashboard),
+    path('vehicle-tracking-report', views.tracking_report),
     path('journeys/<int:pk>.json', views.journey_json),
 ]

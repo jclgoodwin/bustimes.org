@@ -1,7 +1,7 @@
 import ciso8601
 from datetime import timedelta
 from requests import Session
-from django.db.models import Exists, OuterRef, Prefetch, Count, Max
+from django.db.models import Exists, OuterRef, Prefetch, Max
 from django.core.cache import cache
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, Http404
@@ -194,18 +194,18 @@ class VehicleDetailView(DetailView):
         return context
 
 
-def dashboard(request):
+def tracking_report(request):
     week_ago = timezone.now() - timedelta(days=7)
-    tracking = VehicleJourney.objects.filter(datetime__gt=week_ago).exclude(source__name='Stagecoach')
-    operators = Operator.objects.filter(
-        service__vehiclejourney__in=tracking.annotate(operators=Count('service__operator')).filter(operators=1)
-    )
-    tracking = tracking.filter(service=OuterRef('pk'))
-    full_tracking = tracking.exclude(source__name='Icarus')
-    services = Service.objects.filter(current=True).annotate(recent_tracking=Exists(tracking),
-                                                             full_tracking=Exists(full_tracking)).defer('geometry')
+    full_tracking = VehicleJourney.objects.filter(datetime__gt=week_ago)
+    full_tracking = full_tracking.filter(service=OuterRef('pk')).exclude(source__name='Icarus')
+
+    services = Service.objects.filter(current=True).annotate(full_tracking=Exists(full_tracking)).defer('geometry')
     prefetch = Prefetch('service_set', queryset=services)
-    operators = operators.prefetch_related(prefetch).distinct()
+    operators = Operator.objects.filter(
+        service__current=True,
+        service__tracking=True
+    ).prefetch_related(prefetch).distinct()
+
     return render(request, 'vehicles/dashboard.html', {
         'operators': operators
     })
