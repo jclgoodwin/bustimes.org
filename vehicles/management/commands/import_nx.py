@@ -38,8 +38,11 @@ class Command(ImportLiveVehiclesCommand):
         journey = VehicleJourney()
         journey.route_name = item['route']
         journey.destination = item['arrival']
+        journey.code = item['journeyId']
+        journey.datetime = item['arrival']
 
-        if vehicle.latest_location and vehicle.latest_location.current and vehicle.latest_location.journey.service:
+        latest_location = vehicle.latest_location
+        if latest_location and latest_location.current and journey.route_name == latest_location.journey.route_name:
             journey.service = vehicle.latest_location.journey.service
         else:
             try:

@@ -96,7 +96,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 latest = vehicle.latest_location
                 if latest:
                     if datetime:
-                        if latest.datetime == datetime:
+                        if latest.datetime >= datetime:
                             self.current_location_ids.add(latest.id)
                             return
                     else:
