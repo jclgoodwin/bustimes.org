@@ -39,7 +39,7 @@ class Command(ImportLiveVehiclesCommand):
         journey.route_name = item['route']
         journey.destination = item['arrival']
         journey.code = item['journeyId']
-        journey.datetime = item['arrival']
+        journey.datetime = timezone.make_aware(parse_datetime(item['startTime']['dateTime']))
 
         latest_location = vehicle.latest_location
         if latest_location and latest_location.current and journey.route_name == latest_location.journey.route_name:
