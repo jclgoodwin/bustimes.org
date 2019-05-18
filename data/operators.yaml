@@ -343,3 +343,8 @@ RBTS:
     url: https://www.robertstravelgroup.co.uk/local-service-routes
 YELL:
     url: https://www.yellowbuses.co.uk/
+EOSB:
+    name: Swallow Coaches
+    url: https://www.swallowcoach.co.uk/bus-services
+    address: ""
+    phone: ""
