@@ -4,7 +4,7 @@ from django.contrib.gis.forms import OSMWidget
 from django.db.models import Count, Q
 from django.contrib.gis.db.models import PointField
 from .models import (
-    Region, AdminArea, District, Locality, StopArea, StopPoint, Operator, Service, ServiceLink,
+    Region, AdminArea, District, Locality, StopArea, StopPoint, StopCode, Operator, Service, ServiceLink,
     Note, Journey, StopUsageUsage, ServiceCode, OperatorCode, DataSource, Place, SIRISource, PaymentMethod
 )
 
@@ -25,6 +25,11 @@ class StopPointAdmin(admin.ModelAdmin):
     formfield_overrides = {
         PointField: {'widget': OSMWidget}
     }
+
+
+class StopCodeAdmin(admin.ModelAdmin):
+    list_display = ['stop', 'code', 'source']
+    raw_id_fields = ['stop']
 
 
 class OperatorAdmin(admin.ModelAdmin):
@@ -151,6 +156,7 @@ admin.site.register(AdminArea, AdminAreaAdmin)
 admin.site.register(District)
 admin.site.register(Locality, LocalityAdmin)
 admin.site.register(StopArea)
+admin.site.register(StopCode, StopCodeAdmin)
 admin.site.register(StopPoint, StopPointAdmin)
 admin.site.register(Operator, OperatorAdmin)
 admin.site.register(Service, ServiceAdmin)

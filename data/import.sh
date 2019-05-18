@@ -42,7 +42,7 @@ function import_csv {
     fi
 }
 
-mkdir -p NPTG/previous NaPTAN TNDS/tmp
+mkdir -p NPTG/previous NaPTAN TNDS/tmp variations
 
 cd NPTG
 nptg_old=$(shasum nptg.ashx\?format=csv)
@@ -126,6 +126,8 @@ if compgen -G "*csv.zip" > /dev/null; then
         tr -d '\000' < StopAreas.csv | ../../manage.py import_stop_areas && rm StopAreas.csv
         echo "  Stops in area"
         tr -d '\000' < StopsInArea.csv | ../../manage.py import_stops_in_area || continue && rm StopsInArea.csv
+        echo "  Coach references"
+        tr -d '\000' < CoachReferences.csv | ../../manage.py import_coach_references || continue && rm CoachReferences.csv
         rm "$file"
     done
 elif [ -f Stops.csv ]; then
@@ -135,6 +137,8 @@ elif [ -f Stops.csv ]; then
     tr -d '\000' < StopAreas.csv | ../../manage.py import_stop_areas && rm StopAreas.csv
     echo "  Stops in area"
     tr -d '\000' < StopsInArea.csv | ../../manage.py import_stops_in_area && rm StopsInArea.csv
+    echo "  Stops in area"
+    tr -d '\000' < CoachReferences.csv | ../../manage.py import_coach_references && rm CoachReferences.csv
 fi
 
 
@@ -188,15 +192,25 @@ if [[ $accessibility_old != $accessibility_new ]]; then
 fi
 
 
+cd variations
+
 for region in F B C M K G D H; do
+    tail -n +2 "$csv" > "previous/Bus_Variation_$region.csv"
+    first=$? # 1 if previous command failed (file doesn't exist yet), 0 otherwise
     old=$(shasum "Bus_Variation_$region.csv")
     wget -qN "https://content.mgmt.dvsacloud.uk/olcs.prod.dvsa.aws/data-gov-uk-export/Bus_Variation_$region.csv"
     new=$(shasum "Bus_Variation_$region.csv")
     if [[ $old != $new ]]; then
         echo $region
-        ../manage.py import_variations < "Bus_Variation_$region.csv"
+        if [ $first ]; then
+            ../../manage.py import_variations < "Bus_Variation_$region.csv"
+        else
+            diff -h "previous/Bus_Variation_$region.csv" "Bus_Variation_$region.csv" | grep '^> ' | sed 's/^> //' | ../../manage.py import_variations
+        fi
     fi
 done
+
+cd ..
 
 ../manage.py import_gtfs
 
