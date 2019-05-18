@@ -3,7 +3,7 @@ import xml.etree.cElementTree as ET
 from vcr import use_cassette
 from django.test import TestCase
 from busstops.models import Region, Operator, Service, OperatorCode, DataSource
-from ...models import VehicleLocation
+from ...models import VehicleLocation, JourneyCode
 from ..commands import import_sirivm
 
 
@@ -17,6 +17,7 @@ class SiriVMImportTest(TestCase):
         cls.command = import_sirivm.Command()
         cls.command.source = DataSource.objects.create(datetime='2018-08-06T22:41:15+01:00')
         OperatorCode.objects.create(operator=cls.operator, source=cls.command.source, code='FE')
+        JourneyCode.objects.create(service=cls.service, code='14', destination='Hundred Acre Wood')
 
     @use_cassette(os.path.join('data', 'vcr', 'import_sirivm.yaml'), decode_compressed_response=True)
     def test_handle(self):
@@ -27,6 +28,7 @@ class SiriVMImportTest(TestCase):
         journey = self.command.get_journey(item, vehicle)
 
         self.assertEqual('14', journey.code)
+        self.assertEqual('Hundred Acre Wood', journey.destination)
         self.assertEqual('69532', str(vehicle))
         self.assertTrue(vehicle_created)
         self.assertEqual(self.service, journey.service)
