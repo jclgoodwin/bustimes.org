@@ -348,3 +348,27 @@ EOSB:
     url: https://www.swallowcoach.co.uk/bus-services
     address: ""
     phone: ""
+KCTB:
+    url: https://www.konectbus.co.uk/
+    phone: 03300 539358
+    address: |
+        Norwich Bus Station
+        Surrey Street
+        Norwich
+        NR1 3NX
+HEDO:
+    url: https://www.hedingham.co.uk/
+    phone: 03301 020801
+    address: |
+        Unit 6-7 Stephenson Road
+        Clacton
+        Essex
+        CO15 4XA
+CHAM:
+    url: https://www.chambersbus.co.uk/
+    phone: 03301 020801
+    address: |
+        Unit 6-7 Stephenson Road
+        Clacton
+        Essex
+        CO15 4XA
