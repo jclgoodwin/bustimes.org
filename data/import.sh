@@ -42,7 +42,7 @@ function import_csv {
     fi
 }
 
-mkdir -p NPTG/previous NaPTAN TNDS/tmp variations
+mkdir -p NPTG/previous NaPTAN TNDS/tmp variations/previous
 
 cd NPTG
 nptg_old=$(shasum nptg.ashx\?format=csv)
@@ -195,7 +195,7 @@ fi
 cd variations
 
 for region in F B C M K G D H; do
-    tail -n +2 "$csv" > "previous/Bus_Variation_$region.csv"
+    tail -n +2 "Bus_Variation_$region.csv" > "previous/Bus_Variation_$region.csv"
     first=$? # 1 if previous command failed (file doesn't exist yet), 0 otherwise
     old=$(shasum "Bus_Variation_$region.csv")
     wget -qN "https://content.mgmt.dvsacloud.uk/olcs.prod.dvsa.aws/data-gov-uk-export/Bus_Variation_$region.csv"
