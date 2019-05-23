@@ -1,10 +1,12 @@
 from time import sleep
+from random import shuffle
 from datetime import timedelta
 from ciso8601 import parse_datetime_as_naive
 from requests.exceptions import RequestException
-from django.utils import timezone
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models import Extent
+from django.db.models import Q
+from django.utils import timezone
 from busstops.models import Service, StopPoint
 from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -22,7 +24,7 @@ class Command(ImportLiveVehiclesCommand):
         'CSLB': ('OXBC', 'CSLB', 'THTR'),
         'GNE': ('GNEL',),
         'BH': ('BHBC',),
-        'SQ': ('SVCT',),
+        'SQ': ('BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TOUR', 'WDBC'),
         'TT': ('TDTR',),
     }
 
@@ -32,6 +34,7 @@ class Command(ImportLiveVehiclesCommand):
         'gonortheast': ('GNEL',),
         'brightonhove': ('BHBC',),
         'swindon': ('TDTR',),
+        'more': ('WDBC',),
     }
 
     @staticmethod
@@ -52,38 +55,45 @@ class Command(ImportLiveVehiclesCommand):
 
         return self.vehicles.get_or_create(defaults, code=vehicle)
 
-    def get_bounding_boxes(self, extent):
-        extent = extent['latlong__extent']
-        lng = extent[0]
-        while lng <= extent[2]:
-            lat = extent[1]
-            while lat <= extent[3]:
-                yield (lng, lat)
-                lat += 0.2
-            lng += 0.2
-
-    def get_items(self):
+    def get_points(self):
+        boxes = []
         for opco in self.opcos:
             for operator in self.opcos[opco]:
                 stops = StopPoint.objects.filter(service__operator=operator, service__current=True)
-                extent = stops.aggregate(Extent('latlong'))
+                extent = stops.aggregate(Extent('latlong'))['latlong__extent']
+                lng = extent[0]
+                services = Service.objects.filter(current=True, operator=operator).exclude(
+                    ~Q(vehiclejourney__source=self.source), vehiclejourney__vehiclelocation__current=True
+                )
                 stops = stops.filter(stopusageusage__datetime__lt=self.source.datetime + timedelta(minutes=5),
                                      stopusageusage__datetime__gt=self.source.datetime - timedelta(hours=1),
-                                     stopusageusage__journey__service__operator=operator)
-                for lng, lat in self.get_bounding_boxes(extent):
-                    bbox = Polygon.from_bbox(
-                        (lng - 0.1, lat - 0.1, lng + 0.1, lat + 0.1)
-                    )
-                    if stops.filter(latlong__within=bbox).exists():
-                        params = {'lat': lat, 'lng': lng}
-                        headers = {'opco': opco}
-                        try:
-                            response = self.session.get(self.url, params=params, timeout=30, headers=headers)
-                            for item in response.json()['data']:
-                                yield item
-                        except (RequestException, KeyError):
-                            continue
-                        sleep(1)
+                                     stopusageusage__journey__service__in=services)
+
+                while lng <= extent[2]:
+                    lat = extent[1]
+                    while lat <= extent[3]:
+                        boxes.append((opco, stops, lng, lat))
+                        lat += 0.2
+                    lng += 0.2
+        shuffle(boxes)
+        return boxes
+
+    def get_items(self):
+        for opco, stops, lng, lat in self.get_points():
+            print(opco, stops, lat, lng)
+            bbox = Polygon.from_bbox(
+                (lng - 0.1, lat - 0.1, lng + 0.1, lat + 0.1)
+            )
+            if stops.filter(latlong__within=bbox).exists():
+                params = {'lat': lat, 'lng': lng}
+                headers = {'opco': opco}
+                try:
+                    response = self.session.get(self.url, params=params, timeout=30, headers=headers)
+                    for item in response.json()['data']:
+                        yield item
+                except (RequestException, KeyError):
+                    continue
+                sleep(1)
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
