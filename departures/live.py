@@ -632,6 +632,7 @@ def add_stagecoach_departures(stop, services_dict, departures):
                                     if vehicle_created or not journeys.filter(service=departure['service']).exists():
                                         VehicleJourney.objects.create(vehicle=vehicle, datetime=timezone.now(),
                                                                       source=source,
+                                                                      destination=monitor['destinationDisplay'],
                                                                       code=monitor['datedVehicleJourneyRef'],
                                                                       service=departure['service'])
                                         for operator in departure['service'].operator.all():
@@ -660,7 +661,7 @@ def add_stagecoach_departures(stop, services_dict, departures):
                 if vehicle and type(departures[-1]['service']) is Service:
                     if vehicle_created or not journeys.filter(service=departures[-1]['service']).exists():
                         VehicleJourney.objects.create(vehicle=vehicle, datetime=timezone.now(),
-                                                      source=source,
+                                                      source=source, destination=monitor['destinationDisplay'],
                                                       code=monitor['datedVehicleJourneyRef'],
                                                       service=departures[-1]['service'])
         if added:
