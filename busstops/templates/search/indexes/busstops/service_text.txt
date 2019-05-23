@@ -1,7 +1,6 @@
 {% for operator in object.operator.all %}
     {{ operator }}
 {% endfor %}
-{{ object }}
 {% for stop in object.stops.all %}
-    {{ stop.get_qualified_name }}
+    {{ stop.get_long_name }}
 {% endfor %}
