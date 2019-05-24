@@ -10,8 +10,9 @@ import xml.etree.cElementTree as ET
 from django.conf import settings
 from django.core.cache import cache
 from django.db import IntegrityError
+from django.db.models import Q
 from django.utils import timezone
-from busstops.models import Service, ServiceCode, DataSource
+from busstops.models import Service, ServiceCode, DataSource, SIRISource
 from vehicles.models import Vehicle, VehicleJourney, JourneyCode
 
 
@@ -498,8 +499,6 @@ class SiriSmDepartures(Departures):
         }
 
     def get_departures(self):
-        if self.source.get_poorly():
-            return
         try:
             response = self.get_response()
         except requests.exceptions.RequestException:
@@ -770,8 +769,16 @@ def get_departures(stop, services, bot=False):
             if live_rows:
                 blend(departures, live_rows)
         elif departures:
-            source = stop.admin_area and stop.admin_area.sirisource_set.first()
-
+            source = None
+            schemes = ServiceCode.objects.filter(service__current=True, service__stops=stop)
+            schemes = schemes.values_list('scheme', flat=True).distinct()
+            if stop.admin_area:
+                schemes = [scheme.replace(' SIRI', '') for scheme in schemes]
+                possible_sources = SIRISource.objects.filter(Q(name__in=schemes) | Q(admin_areas=stop.admin_area))
+                for possible_source in possible_sources:
+                    if not possible_source.get_poorly():
+                        source = possible_source
+                        break
             if source:
                 live_rows = SiriSmDepartures(source, stop, services).get_departures()
             elif stop.atco_code[:3] in {'450', '240'} or any(operator.id in {'FSCE'} for operator in operators):
