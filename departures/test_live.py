@@ -399,7 +399,7 @@ class LiveDeparturesTest(TestCase):
     def test_worcestershire(self):
         with freeze_time('Sat Feb 09 10:45:45 GMT 2019'):
             with vcr.use_cassette('data/vcr/worcester.yaml'):
-                with self.assertNumQueries(5):
+                with self.assertNumQueries(6):
                     response = self.client.get(self.worcester_stop.get_absolute_url())
         self.assertContains(response, """
             <tr>

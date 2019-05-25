@@ -502,7 +502,7 @@ class SiriSmDepartures(Departures):
         try:
             response = self.get_response()
         except requests.exceptions.RequestException:
-            cache.set(self.source.get_poorly_key(), True, 300)  # back off for 5 minutes
+            cache.set(self.source.get_poorly_key(), True, 60)  # back off for 1 minute
             return
         if response.ok:
             return self.departures_from_response(response)
