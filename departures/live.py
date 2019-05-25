@@ -401,9 +401,8 @@ class SiriSmDepartures(Departures):
         super().__init__(stop, services)
 
     def log_vehicle_journey(self, element, operator_ref, vehicle, service, journey_ref, destination):
-        for operator in service.operator.all():
-            if operator.name[:11] == 'Stagecoach ':
-                return
+        if operator_ref == 'UNIB':
+            return
         origin_aimed_departure_time = element.find('s:OriginAimedDepartureTime', self.ns)
         if origin_aimed_departure_time is None:
             return
@@ -415,9 +414,14 @@ class SiriSmDepartures(Departures):
         }
         if operator_ref and vehicle.startswith(operator_ref + '-'):
             vehicle = vehicle[len(operator_ref) + 1:]
+        operator = service.operator.all()[0]
         if vehicle.isdigit():
             defaults['code'] = vehicle
-            vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, fleet_number=vehicle)
+            if operator.name[:11] == 'Stagecoach ':
+                vehicle, created = Vehicle.objects.get_or_create(defaults, operator__name__startswith='Stagecoach ',
+                                                                 fleet_number=vehicle)
+            else:
+                vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, fleet_number=vehicle)
         else:
             vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
 
@@ -464,14 +468,21 @@ class SiriSmDepartures(Departures):
             scheme = self.source.name
             url = self.source.url
 
+            # Record some information about the vehicle and journey,
+            # for enthusiasts,
+            # because the source doesn't support vehicle locations
             if vehicle:
                 if scheme not in {'NCC Hogia', 'Reading', 'Surrey'}:
-                    if 'jmwrti' not in url and 'sslink' not in url:
+                    if 'jmwrti' not in url and 'sslink' not in url or scheme == 'Bristol':
                         try:
                             self.log_vehicle_journey(element, operator, vehicle, service, journey_ref, destination)
                         except Vehicle.MultipleObjectsReturned:
                             pass
 
+            # Create a "service code",
+            # because the source supports vehicle locations.
+            # For Norfolk, the code is useful for deciphering out what route a vehicle is on.
+            # For other sources, it just denotes that some live tracking is available.
             if line_ref is not None:
                 if scheme == 'NCC Hogia' or (expected_time and ('icarus' in url or 'sslink' in url)):
                     if scheme != 'NCC Hogia':
@@ -481,6 +492,7 @@ class SiriSmDepartures(Departures):
                         ServiceCode.objects.update_or_create({'code': line_ref}, service=service, scheme=scheme)
                         self.line_refs.add(line_ref)
 
+            # Create a "journey code", which can be used to work out the destination of a vehicle.
             if (scheme == 'NCC Hogia' or 'jmwrti' in url) and destination and journey_ref:
                 if scheme == 'NCC Hogia':
                     journey_ref = int(journey_ref)
