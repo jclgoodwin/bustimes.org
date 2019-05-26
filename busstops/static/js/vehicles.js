@@ -43,6 +43,11 @@
             var html = '';
         } else {
             html = '<div class="arrow" style="' + getRotation(direction) + '"></div>';
+            if (direction < 180) {
+                direction -= 90;
+            } else {
+                direction -= 270;
+            }
         }
         var className = 'bus';
         if (livery) {
@@ -54,11 +59,6 @@
             style += ';';
         } else {
             style = '';
-        }
-        if (direction < 180) {
-            direction -= 90;
-        } else {
-            direction -= 270;
         }
         style += getRotation(direction);
         html += '<div class="' + className + '" style="' + style + '">';
