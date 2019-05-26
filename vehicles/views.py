@@ -23,7 +23,7 @@ class Poorly(Exception):
 
 def operator_vehicles(request, slug):
     operator = get_object_or_404(Operator, slug=slug)
-    vehicles = operator.vehicle_set.order_by('fleet_number')
+    vehicles = operator.vehicle_set.order_by('fleet_number', 'reg')
     vehicles = vehicles.select_related('vehicle_type', 'livery', 'latest_location__journey__service')
     vehicles = vehicles.annotate(latest_journey=Max('vehiclejourney__datetime'))
     if not vehicles:
