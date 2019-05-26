@@ -20,19 +20,16 @@
     <p>{{ vehicle.notes }}</p>
 {% endif %}
 
-<form>
-    <p>
-        <label>
-            Date:
-            <select onchange="this.form.submit()" name="date">
-                {% for option in dates %}
-                    <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
-                {% endfor %}
-            </select>
-        </label>
-        <input type="submit" value="Show journeys">
-    </p>
-</form>
+<p>
+    <form class="timetable-date">
+        <select onchange="this.form.submit()" name="date" aria-label="Date">
+            {% for option in dates %}
+                <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
+            {% endfor %}
+        </select>
+        <noscript><input type="submit" /></noscript>
+    </form>
+</p>
 
 {% if journeys %}
     <table>
