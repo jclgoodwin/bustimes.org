@@ -414,6 +414,8 @@ class SiriSmDepartures(Departures):
         }
         if operator_ref and vehicle.startswith(operator_ref + '-'):
             vehicle = vehicle[len(operator_ref) + 1:]
+        if operator_ref == 'FAB' and vehicle.startswith('111-'):
+            vehicle = vehicle[4:]
         operator = service.operator.all()[0]
         if operator.name[:11] == 'Stagecoach ':
             vehicle = vehicle.split('-')[-1]
@@ -428,6 +430,9 @@ class SiriSmDepartures(Departures):
                 vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, fleet_number=vehicle)
         else:
             vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
+
+        if journey_ref and journey_ref.startswith('Unknown'):
+            journey_ref = ''
 
         defaults = {
             'source': source,
