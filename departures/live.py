@@ -479,12 +479,11 @@ class SiriSmDepartures(Departures):
             # for enthusiasts,
             # because the source doesn't support vehicle locations
             if vehicle:
-                if scheme not in {'NCC Hogia', 'Reading', 'Surrey'}:
-                    if 'jmwrti' not in url and 'sslink' not in url or scheme == 'Bristol':
-                        try:
-                            self.log_vehicle_journey(element, operator, vehicle, service, journey_ref, destination)
-                        except (Vehicle.MultipleObjectsReturned, VehicleJourney.MultipleObjectsReturned):
-                            pass
+                if not ('sslink' in url or 'jmwrti' in url or scheme in {'NCC Hogia', 'Reading', 'Surrey'}):
+                    try:
+                        self.log_vehicle_journey(element, operator, vehicle, service, journey_ref, destination)
+                    except (Vehicle.MultipleObjectsReturned, VehicleJourney.MultipleObjectsReturned):
+                        pass
 
             # Create a "service code",
             # because the source supports vehicle locations.

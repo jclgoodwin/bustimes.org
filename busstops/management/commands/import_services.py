@@ -279,6 +279,9 @@ class Command(BaseCommand):
         if created:
             service.operator.add(*operators)
         else:
+            if service.slug == service_code.lower():
+                service.slug = ''
+                service.save()
             service.operator.set(operators)
             if service_code not in self.service_codes:
                 service.stops.clear()
