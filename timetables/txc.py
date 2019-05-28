@@ -1095,7 +1095,8 @@ class Timetable(object):
         for journey in journeys:
             journey.journeypattern.grouping.journeys.append(journey)
 
-        if journey.private_code and ':' in journey.private_code:
+        # a code used in Traveline Cymru URLs
+        if journey and journey.private_code and ':' in journey.private_code:
             self.private_code = journey.private_code.split(':', 1)[0]
         else:
             self.private_code = None
