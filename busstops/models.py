@@ -340,6 +340,7 @@ class Operator(ValidateOnSaveMixin, models.Model):
 
     id = models.CharField(max_length=10, primary_key=True)  # e.g. 'YCST'
     name = models.CharField(max_length=100, db_index=True)
+    aka = models.CharField(max_length=100, blank=True)
     slug = AutoSlugField(populate_from=str, unique=True, editable=True)
     vehicle_mode = models.CharField(max_length=48, blank=True)
     parent = models.CharField(max_length=48, blank=True)
@@ -417,7 +418,7 @@ class OperatorCode(models.Model):
     code = models.CharField(max_length=100, db_index=True)
 
     class Meta(object):
-        unique_together = ('code', 'source')
+        unique_together = ('operator', 'code', 'source')
 
     def __str__(self):
         return self.code

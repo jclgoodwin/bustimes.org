@@ -4,8 +4,8 @@ from busstops.models import Locality, Place, Operator, Service
 
 
 class LocalityIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.CharField(document=True, model_attr='name', boost=1.2)
-    name = indexes.CharField(model_attr='qualifier_name', boost=0.5)
+    name = indexes.CharField(document=True, model_attr='name', boost=1.2)
+    text = indexes.CharField(model_attr='qualifier_name', boost=0.5)
 
     def get_model(self):
         return Locality
@@ -35,6 +35,7 @@ class PlaceIndex(indexes.SearchIndex, indexes.Indexable):
 
 class OperatorIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, model_attr='name')
+    name = indexes.CharField(model_attr='aka')
 
     def get_model(self):
         return Operator
@@ -47,8 +48,8 @@ class OperatorIndex(indexes.SearchIndex, indexes.Indexable):
 
 
 class ServiceIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.CharField(document=True, use_template=True, boost=0.8)
     name = indexes.CharField(use_template=True, boost=1.2)
+    text = indexes.CharField(document=True, use_template=True, boost=0.8)
 
     def get_model(self):
         return Service

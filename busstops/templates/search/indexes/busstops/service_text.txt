@@ -1,7 +1,7 @@
 {% for operator in object.operator.all %}
-    {{ operator }}
+    {{ operator }} {{ operator.aka }}
 {% endfor %}
-{{ object.description }}
+{{ object }}
 {% for stop in object.stops.all %}
     {{ stop.get_long_name }}
 {% endfor %}

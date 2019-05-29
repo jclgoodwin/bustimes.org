@@ -1,1 +1,1 @@
-{{ object.line_name}} {{ object.line_brand }}
+{{ object.line_name }} {{ object.line_brand }}
