@@ -12,83 +12,105 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 class Command(ImportLiveVehiclesCommand):
     source_name = 'TfWM'
     url = 'http://api.tfwm.org.uk/gtfs/vehicle_positions'
+    routes = {}
+    select_bus_services = set()
 
     @staticmethod
     def get_datetime(item):
         return timezone.make_aware(datetime.fromtimestamp(item.vehicle.timestamp))
 
     def get_items(self):
-        response = self.session.get(self.source.url, params=settings.TFWM, timeout=10)
+        if not self.routes:
+            response = self.session.get('http://api.tfwm.org.uk/line/route', params={**settings.TFWM,
+                                                                                     'formatter': 'json'}, timeout=10)
+            for route in response.json()['ArrayOfLine']['Line']:
+                self.routes[route['Id']] = route
+                if route['Operators']['Operator'][0]['Name'] == 'Select Bus Services':
+                    self.select_bus_services.add(route['Name'])
+
+        response = self.session.get(self.url, params=settings.TFWM, timeout=10)
         feed = gtfs_realtime_pb2.FeedMessage()
         feed.ParseFromString(response.content)
         return feed.entity
 
-    def get_journey(self, item):
-        journey = VehicleJourney()
-        operator = None
+    def get_vehicle(self, item):
         vehicle_code = item.vehicle.vehicle.id
 
-        trip = None
         if item.vehicle.HasField('trip'):
+            route = self.routes.get(item.vehicle.trip.route_id)
+            if route:
+                operator = route['Operators']['Operator'][0]['Name']
+                if operator == 'Midland Classic' or operator == 'Diamond Bus':
+                    return None, None
+
+                vehicle_code = vehicle_code[:-len(route['Name'])]
+                if operator == 'Select Bus Services':
+                    return self.vehicles.get_or_create({
+                        'source': self.source
+                    }, operator_id='SLBS', code=vehicle_code)
+                if operator == 'First Worcestershire':
+                    return self.vehicles.get_or_create({
+                        'source': self.source
+                    }, operator_id='FSMR', code=vehicle_code)
+
+                print(vehicle_code, operator)
+                return None, None
+
+        if len(vehicle_code) > 5 and vehicle_code[:5].isdigit():
+            vehicle_code = vehicle_code[:5]
+            try:
+                vehicle, created = self.vehicles.get_or_create({
+                    'source': self.source,
+                    'fleet_number': vehicle_code
+                }, operator__in=['DIAM', 'FSMR'], code=vehicle_code)
+                if vehicle.operator_id == 'DIAM':
+                    return None, None
+                return vehicle, created
+            except Vehicle.MultipleObjectsReturned as e:
+                print(e)
+        elif vehicle_code.startswith('BUS_'):
+            for line_name in self.select_bus_services:
+                if vehicle_code.endswith(line_name) and not vehicle_code.endswith('_' + line_name):
+                    return self.vehicles.get_or_create({
+                        'source': self.source,
+                    }, operator_id='SLBS', code=vehicle_code[:-len(line_name)])
+
+        print(vehicle_code)
+        return None, None
+
+    def get_journey(self, item, vehicle):
+        journey = VehicleJourney()
+
+        if item.vehicle.HasField('trip'):
+            if vehicle.latest_location and vehicle.latest_location.journey.code == item.vehicle.trip.trip_id:
+                return vehicle.latest_location.journey
+
             journey.code = item.vehicle.trip.trip_id
             journey.datetime = timezone.make_aware(
                 datetime.strptime(item.vehicle.trip.start_date + item.vehicle.trip.start_time, '%Y%m%d%H:%M:%S')
             )
-            trip = Trip.objects.filter(route__feed__name='tfwm', trip_id=journey.code).first()
+            trips = Trip.objects.filter(route__feed__name='tfwm', trip_id=journey.code)
+            trip = trips.first()
             if trip:
                 journey.destination = trip.headsign
-                route = trip.route
-                journey.route_name = route.short_name
-                if route.agency.name == 'Claribel Coaches':
-                    print(item)
-                    operator = Operator.objects.get(name='Diamond Bus')
-                else:
-                    operator = Operator.objects.get(name=route.agency.name)
-                try:
-                    journey.service = operator.service_set.get(line_name=route.short_name, current=True)
-                except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-                    print(e, operator, route.short_name)
 
-                if vehicle_code.endswith(route.short_name):
-                    vehicle_code = vehicle_code[:-len(route.short_name)]
+        if vehicle.operator_id and (len(vehicle.code) == 5 or vehicle.code.startswith('BUS_')):
+            vehicle_code = item.vehicle.vehicle.id
+            journey.route_name = vehicle_code[len(vehicle.code):]
 
-                journey.vehicle, vehicle_created = Vehicle.objects.get_or_create({
-                    'source': self.source
-                }, operator=operator, code=vehicle_code)
+        if item.vehicle.HasField('trip'):
+            route = self.routes.get(item.vehicle.trip.route_id)
+            if route:
+                journey.route_name = route['Name']
 
-                return journey, vehicle_created
-
-        if len(vehicle_code) > 5 and vehicle_code[:5].isdigit():
-            # route = vehicle_code[5:]
-            vehicle_code = vehicle_code[:5]
-
+        if vehicle.operator_id:
             try:
-                journey.vehicle, vehicle_created = Vehicle.objects.get_or_create({
-                    'source': self.source
-                }, operator__in=('DIAM', 'FSMR'), code=vehicle_code)
+                journey.service = Service.objects.get(current=True, line_name__iexact=journey.route_name,
+                                                      operator=vehicle.operator_id)
+            except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
+                print(e, vehicle.operator_id, vehicle, journey.route_name)
 
-                return journey, vehicle_created
-            except Vehicle.MultipleObjectsReturned:
-                pass
-        elif vehicle_code.startswith('BUS_'):
-            operator = 'SLBS'
-            for service in Service.objects.filter(operator='SLBS', current=True).order_by('-line_name'):
-                if vehicle_code.endswith(service.line_name) and not vehicle_code.endswith('_' + service.line_name):
-                    vehicle_code = vehicle_code[:-len(service.line_name)]
-                    journey.service = service
-                    break
-        else:
-            for service in Service.objects.filter(operator='MDCL', current=True).order_by('-line_name'):
-                if vehicle_code.endswith(service.line_name):
-                    vehicle_code = vehicle_code[:-len(service.line_name)]
-                    journey.service = service
-                    operator = 'MDCL'
-                    break
-        journey.vehicle, vehicle_created = Vehicle.objects.get_or_create({
-            'source': self.source
-        }, operator_id=operator, code=vehicle_code)
-
-        return journey, vehicle_created
+        return journey
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
