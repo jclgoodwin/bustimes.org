@@ -436,9 +436,10 @@ class SiriSmDepartures(Departures):
 
         defaults = {
             'source': source,
-            'destination': destination or ''
+            'destination': destination or '',
+            'code': journey_ref
         }
-        VehicleJourney.objects.get_or_create(defaults, vehicle=vehicle, service=service, code=journey_ref,
+        VehicleJourney.objects.get_or_create(defaults, vehicle=vehicle, service=service,
                                              datetime=origin_aimed_departure_time)
 
     def get_row(self, element):

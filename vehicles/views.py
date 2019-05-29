@@ -165,7 +165,7 @@ def service_vehicles_history(request, slug):
         'date': date,
         'dates': dates,
         'object': service,
-        'journeys': journeys,
+        'journeys': journeys.order_by('datetime'),
     })
 
 
@@ -190,7 +190,7 @@ class VehicleDetailView(DetailView):
             if not date:
                 raise Http404()
         context['date'] = date
-        journeys = journeys.filter(datetime__date=date)
+        journeys = journeys.filter(datetime__date=date).order_by('datetime')
         locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
         context['journeys'] = journeys.select_related('service').annotate(locations=Exists(locations))
         return context
