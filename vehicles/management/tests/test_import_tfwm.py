@@ -1,7 +1,7 @@
 import os
 from freezegun import freeze_time
 from vcr import use_cassette
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from busstops.models import Region, Operator, DataSource
 from ...models import Vehicle
 from ..commands import import_tfwm
@@ -22,7 +22,8 @@ class TfWMImportTest(TestCase):
 
         command.source = self.source
 
-        items = command.get_items()
+        with override_settings(TFWM={}):
+            items = command.get_items()
 
         with self.assertNumQueries(2):
             command.handle_item(items[0], self.source.datetime)

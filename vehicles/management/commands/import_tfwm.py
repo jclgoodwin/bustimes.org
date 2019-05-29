@@ -36,6 +36,10 @@ class Command(ImportLiveVehiclesCommand):
     def get_vehicle(self, item):
         vehicle_code = item.vehicle.vehicle.id
 
+        defaults = {
+            'source': self.source
+        }
+
         if item.vehicle.HasField('trip'):
             route = self.routes.get(item.vehicle.trip.route_id)
             if route:
@@ -52,17 +56,17 @@ class Command(ImportLiveVehiclesCommand):
                     print(vehicle_code, operator)
                     return None, None
 
-                return self.vehicles.get_or_create({
-                    'source': self.source
-                }, operator_id=operator, code=vehicle_code)
+                if vehicle_code.isdigit():
+                    defaults['fleet_number'] = vehicle_code
+
+                return self.vehicles.get_or_create(defaults, operator_id=operator, code=vehicle_code)
 
         if len(vehicle_code) > 5 and vehicle_code[:5].isdigit():
             vehicle_code = vehicle_code[:5]
+            defaults['fleet_number'] = vehicle_code
             try:
-                vehicle, created = self.vehicles.get_or_create({
-                    'source': self.source,
-                    'fleet_number': vehicle_code
-                }, operator__in=['DIAM', 'FSMR'], code=vehicle_code)
+                vehicle, created = self.vehicles.get_or_create(defaults, operator__in=['DIAM', 'FSMR'],
+                                                               code=vehicle_code)
                 if vehicle.operator_id == 'DIAM':
                     return None, None
                 return vehicle, created
@@ -71,9 +75,9 @@ class Command(ImportLiveVehiclesCommand):
         elif vehicle_code.startswith('BUS_'):
             for line_name in self.select_bus_services:
                 if vehicle_code.endswith(line_name) and not vehicle_code.endswith('_' + line_name):
-                    return self.vehicles.get_or_create({
-                        'source': self.source,
-                    }, operator_id='SLBS', code=vehicle_code[:-len(line_name)])
+                    vehicle_code = vehicle_code[:-len(line_name)]
+                    defaults['fleet_number'] = vehicle_code.split('_')[-1]
+                    return self.vehicles.get_or_create(defaults, operator_id='SLBS', code=vehicle_code)
 
         print(vehicle_code)
         return None, None
