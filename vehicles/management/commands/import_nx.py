@@ -1,5 +1,6 @@
 from time import sleep
 from ciso8601 import parse_datetime
+from requests import RequestException
 from django.contrib.gis.geos import Point
 from django.utils import timezone
 from busstops.models import Service
@@ -23,7 +24,14 @@ class Command(ImportLiveVehiclesCommand):
                                           operator__in=self.operators).distinct().values('line_name')
         for service in services:
             for direction in 'OI':
-                res = self.session.get(url.format(service['line_name'], direction))
+                try:
+                    res = self.session.get(url.format(service['line_name'], direction), timeout=5)
+                except RequestException as e:
+                    print(e)
+                    continue
+                if not res.ok:
+                    print(res)
+                    continue
                 if direction != res.json()['dir']:
                     print(res.url)
                 for item in res.json()['services']:
