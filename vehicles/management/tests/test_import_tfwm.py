@@ -28,7 +28,7 @@ class TfWMImportTest(TestCase):
         with self.assertNumQueries(2):
             command.handle_item(items[0], self.source.datetime)
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(11):
             command.handle_item(items[217], self.source.datetime)
 
         with self.assertNumQueries(3):

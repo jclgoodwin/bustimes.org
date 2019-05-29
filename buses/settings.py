@@ -72,7 +72,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': os.environ.get('DB_NAME', 'bustimes'),
-        'DISABLE_SERVER_SIDE_CURSORS': True
+        'DISABLE_SERVER_SIDE_CURSORS': True,
+        'CONN_MAX_AGE': None
     }
 }
 if os.environ.get('READ_ONLY_DB_HOST'):
@@ -80,7 +81,8 @@ if os.environ.get('READ_ONLY_DB_HOST'):
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': os.environ.get('READ_ONLY_DB_NAME', 'bus_times'),
         'HOST': os.environ.get('READ_ONLY_DB_HOST'),
-        'DISABLE_SERVER_SIDE_CURSORS': True
+        'DISABLE_SERVER_SIDE_CURSORS': True,
+        'CONN_MAX_AGE': None
     }
     REPLICA_DATABASES = ['read-only']
     DATABASE_ROUTERS = ['multidb.PinningReplicaRouter']
