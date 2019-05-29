@@ -133,6 +133,16 @@
     {% include 'route.html' %}
 {% endfor %}
 
+{% if payment_methods %}
+    <p>
+        {% for method in payment_methods %}{% if forloop.first %}{{ method.capitalize }}{% elif forloop.last %}
+        or {{ method.html }}
+        {% else %},
+        {{ method.html }}{% endif %}{% endfor %}
+        accepted
+    </p>
+{% endif %}
+
 <!--
 
 {% if object.low_floor is not None %}<p>♿ {% if object.low_floor %}Operated{% else %}Not operated{% endif %} by low-floor buses</p>{% endif %}
@@ -164,7 +174,7 @@
     <h2>More information</h2>
     <ul class="bulleted">
     {% for link in links %}
-       <li><a href="{{ link.url }}" rel="nofollow">{{ link.text }}</a></li>
+       <li><a href="{{ link.url }}"{% if 'traveline' in link.url %} rel="nofollow"{% endif %}>{{ link.text }}</a></li>
     {% endfor %}
     </ul>
 {% endif %}

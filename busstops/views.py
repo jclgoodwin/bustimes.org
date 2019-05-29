@@ -522,13 +522,15 @@ class ServiceDetailView(DetailView):
         except (Region.DoesNotExist, Region.MultipleObjectsReturned):
             context['breadcrumb'] = [self.object.region]
 
+        if self.object.is_megabus():
+            context['links'].append({
+                'url': self.object.get_megabus_url(),
+                'text': 'Buy tickets from megabus.com'
+            })
+
         if context['operators']:
             context['breadcrumb'].append(context['operators'][0])
-            if self.object.is_megabus():
-                context['links'].append({
-                    'url': self.object.get_megabus_url(),
-                    'text': 'Buy tickets from megabus.com'
-                })
+            context['payment_methods'] = context['operators'][0].payment_methods.all()
             for operator in context['operators']:
                 if operator.is_national_express():
                     context['links'].append({
