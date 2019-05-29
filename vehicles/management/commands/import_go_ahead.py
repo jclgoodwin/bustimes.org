@@ -26,15 +26,19 @@ class Command(ImportLiveVehiclesCommand):
         'BH': ('BHBC',),
         'SQ': ('BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TOUR', 'WDBC'),
         'TT': ('TDTR',),
+        'PC': ('PLYC',),
     }
 
     opcos = {
-        'eastangliabuses': ('KCTB', 'CHAM'),
+        'eastangliabuses': ('KCTB', 'CHAM', 'HEDO'),
         'oxford': ('OXBC', 'CSLB', 'THTR'),
         'gonortheast': ('GNEL',),
         'brightonhove': ('BHBC',),
         'swindon': ('TDTR',),
         'more': ('WDBC',),
+        'bluestar': ('BLUS', 'UNIL'),
+        'salisburyreds': ('SWWD',),
+        'plymouth': ('PLYC',),
     }
 
     @staticmethod
@@ -52,6 +56,9 @@ class Command(ImportLiveVehiclesCommand):
         }
         if fleet_number.isdigit():
             defaults['fleet_number'] = fleet_number
+
+        if operator == 'PC':
+            return self.vehicles.get_or_create(defaults, code=fleet_number, operator_id='PLYC')
 
         return self.vehicles.get_or_create(defaults, code=vehicle)
 
@@ -80,7 +87,6 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_items(self):
         for opco, stops, lng, lat in self.get_points():
-            print(opco, stops, lat, lng)
             bbox = Polygon.from_bbox(
                 (lng - 0.1, lat - 0.1, lng + 0.1, lat + 0.1)
             )
@@ -115,6 +121,8 @@ class Command(ImportLiveVehiclesCommand):
             else:
                 if item['lineRef'] == 'CSR' and operators[0] == 'BHBC':
                     item['lineRef'] = 'CSS'
+                if operators[0] == 'BLUS' and item['lineRef'] == 'QC':
+                    item['lineRef'] = 'QuayConnect'
                 services = Service.objects.filter(operator__in=operators, line_name__iexact=item['lineRef'],
                                                   current=True)
                 try:
