@@ -959,7 +959,7 @@ class Timetable(object):
             if hasattr(journey, 'journeyref'):
                 journey.journeypattern = journeys[journey.journeyref].journeypattern
 
-        return (journey for journey in journeys.values() if journey.journeypattern)
+        return [journey for journey in journeys.values() if journey.journeypattern]
 
     def date_options(self):
         start_date = min(self.date, datetime.date.today())
@@ -1096,7 +1096,7 @@ class Timetable(object):
             journey.journeypattern.grouping.journeys.append(journey)
 
         # a code used in Traveline Cymru URLs
-        if journey and journey.private_code and ':' in journey.private_code:
+        if journeys and journey.private_code and ':' in journey.private_code:
             self.private_code = journey.private_code.split(':', 1)[0]
         else:
             self.private_code = None
