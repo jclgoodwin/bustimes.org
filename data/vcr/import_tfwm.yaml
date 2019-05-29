@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - python-requests/2.22.0
     method: GET
-    uri: http://api.tfwm.org.uk/gtfs/vehicle_positions?app_id=0ee5d3f5&app_key=7f5b3740698c9355c7d20bc209d71572
+    uri: http://api.tfwm.org.uk/gtfs/vehicle_positions
   response:
     body:
       string: !!binary |
@@ -412,7 +412,7 @@ interactions:
       User-Agent:
       - python-requests/2.22.0
     method: GET
-    uri: http://api.tfwm.org.uk/line/route?app_id=0ee5d3f5&app_key=7f5b3740698c9355c7d20bc209d71572&formatter=json
+    uri: http://api.tfwm.org.uk/line/route?formatter=json
   response:
     body:
       string: "{\n\t\"ArrayOfLine\": {\n\t\t\"Line\": [\n\t\t\t{\n\t\t\t\t\"Id\":\
