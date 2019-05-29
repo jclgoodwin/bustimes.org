@@ -24,12 +24,16 @@ class TfWMImportTest(TestCase):
 
         items = command.get_items()
 
-        with self.assertNumQueries(1120):
-            for item in items:
-                command.handle_item(item, self.source.datetime)
+        with self.assertNumQueries(2):
+            command.handle_item(items[0], self.source.datetime)
 
-        with self.assertNumQueries(824):
-            for item in items:
-                command.handle_item(item, self.source.datetime)
+        with self.assertNumQueries(13):
+            command.handle_item(items[217], self.source.datetime)
 
-        self.assertEqual(137, Vehicle.objects.all().count())
+        with self.assertNumQueries(3):
+            command.handle_item(items[217], self.source.datetime)
+
+        with self.assertNumQueries(11):
+            command.handle_item(items[216], self.source.datetime)
+
+        self.assertEqual(2, Vehicle.objects.all().count())

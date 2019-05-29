@@ -4,7 +4,7 @@ from django.contrib.gis.geos import Point
 from django.conf import settings
 from django.utils import timezone
 from multigtfs.models import Trip
-from busstops.models import Operator, Service
+from busstops.models import Service
 from ...models import Vehicle, VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
@@ -45,16 +45,16 @@ class Command(ImportLiveVehiclesCommand):
 
                 vehicle_code = vehicle_code[:-len(route['Name'])]
                 if operator == 'Select Bus Services':
-                    return self.vehicles.get_or_create({
-                        'source': self.source
-                    }, operator_id='SLBS', code=vehicle_code)
-                if operator == 'First Worcestershire':
-                    return self.vehicles.get_or_create({
-                        'source': self.source
-                    }, operator_id='FSMR', code=vehicle_code)
+                    operator = 'SLBS'
+                elif operator == 'First Worcestershire':
+                    operator = 'FSMR'
+                else:
+                    print(vehicle_code, operator)
+                    return None, None
 
-                print(vehicle_code, operator)
-                return None, None
+                return self.vehicles.get_or_create({
+                    'source': self.source
+                }, operator_id=operator, code=vehicle_code)
 
         if len(vehicle_code) > 5 and vehicle_code[:5].isdigit():
             vehicle_code = vehicle_code[:5]
