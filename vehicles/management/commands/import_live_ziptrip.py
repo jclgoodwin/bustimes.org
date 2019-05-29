@@ -171,7 +171,7 @@ class Command(ImportLiveVehiclesCommand):
         latest_location = vehicle.latest_location
         if latest_location and latest_location.journey.route_name == journey.route_name:
             journey.service = latest_location.journey.service
-        else:
+        elif route_name:
             services = Service.objects.filter(current=True)
             if operator_id == 'SESX' and route_name == '1':
                 services = services.filter(line_name__in=('1', 'Breeze 1'))
