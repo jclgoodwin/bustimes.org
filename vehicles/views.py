@@ -61,8 +61,9 @@ def get_locations(request):
 def siri_one_shot(code):
     source = 'Icarus'
     siri_source = SIRISource.objects.get(name=code.scheme[:-5])
-    cache_key = '{}:{}:{}'.format(siri_source.url, siri_source.requestor_ref, code.code)
-    if cache.get(cache_key):
+    line_name_cache_key = '{}:{}:{}'.format(siri_source.url, siri_source.requestor_ref, code.code)
+    service_cache_key = '{}:{}'.format(code.service_id, source)
+    if cache.get(line_name_cache_key) or cache.get(service_cache_key):
         return
     if siri_source.get_poorly():
         raise Poorly()
@@ -70,15 +71,16 @@ def siri_one_shot(code):
     locations = VehicleLocation.objects.filter(current=True)
     current_locations = locations.filter(journey__service=code.service_id, journey__source__name=source,
                                          latest_vehicle__isnull=False)
+    fifteen_minutes_ago = timezone.now() - timedelta(minutes=15)
     if not Journey.objects.filter(service=code.service_id, datetime__lt=now, stopusageusage__datetime__gt=now).exists():
-        fifteen_minutes_ago = timezone.now() - timedelta(minutes=15)
         if not current_locations.filter(datetime__gte=fifteen_minutes_ago).exists():
-            cache.set(cache_key, True, 600)  # cache for 10 minutes
+            # no journeys currently scheduled, and no vehicles online recently
+            cache.set(service_cache_key, True, 600)  # back off for 10 minutes
             return
     if locations.filter(journey__service=code.service_id).exclude(journey__source__name=source).exists():
-        cache.set(cache_key, True, 3600)  # cache for 1 hour
+        cache.set(service_cache_key, True, 3600)  # back off for for 1 hour
         return
-    cache.set(cache_key, True, 40)  # cache for 40 seconds
+    cache.set(line_name_cache_key, True, 40)  # cache for 40 seconds
     data = """
         <Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
             <ServiceRequest>
