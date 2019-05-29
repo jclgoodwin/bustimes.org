@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import VehicleType, Vehicle, VehicleJourney, Livery, JourneyCode
+from .models import VehicleType, VehicleFeature, Vehicle, VehicleJourney, Livery, JourneyCode
 
 
 def copy_livery(modeladmin, request, queryset):
@@ -57,6 +57,7 @@ class LiveryAdmin(admin.ModelAdmin):
 
 
 admin.site.register(VehicleType, VehicleTypeAdmin)
+admin.site.register(VehicleFeature)
 admin.site.register(Vehicle, VehicleAdmin)
 admin.site.register(VehicleJourney, VehicleJourneyAdmin)
 admin.site.register(JourneyCode, JourneyCodeAdmin)
