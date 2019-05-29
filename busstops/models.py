@@ -4,7 +4,7 @@ import re
 import os
 import zipfile
 import time
-from urllib.parse import urlencode
+from urllib.parse import urlencode, quote
 from datetime import date
 from autoslug import AutoSlugField
 from django.conf import settings
@@ -686,7 +686,7 @@ class Service(models.Model):
             service_codes = self.servicecode_set.filter(scheme__endswith=' GTFS')
             timetables = [gtfs.get_timetable(service_code.get_routes(), day) for service_code in service_codes]
         else:
-            cache_key = '{}:{}'.format(self.service_code, self.date)
+            cache_key = '{}:{}'.format(quote(self.service_code), self.date)
             timetables = cache.get(cache_key)
 
             if timetables is None:
