@@ -607,6 +607,7 @@ def add_stagecoach_departures(stop, services_dict, departures):
     if not response.ok:
         return departures
     stop_monitors = response.json()['stopMonitors']
+    source = None
     if 'stopMonitor' in stop_monitors:
         added = False
         for monitor in stop_monitors['stopMonitor'][0]['monitoredCalls']['monitoredCall']:
@@ -616,7 +617,8 @@ def add_stagecoach_departures(stop, services_dict, departures):
                 line = monitor['lineRef']
                 vehicle = monitor['vehicleRef']
                 vehicle = vehicle.split('-', 1)[1]
-                source = DataSource.objects.get_or_create(name='Stagecoach')[0]
+                if not source:
+                    source = DataSource.objects.get_or_create(name='Stagecoach')[0]
                 try:
                     operator = monitor['operatorRef']
                     if operator == 'SCEM':
@@ -762,7 +764,7 @@ def get_departures(stop, services, bot=False):
 
     now = timezone.now()
 
-    departures = TimetableDepartures(stop, (), now)
+    departures = TimetableDepartures(stop, services, now)
     services_dict = departures.services
     departures = departures.get_departures()
 
