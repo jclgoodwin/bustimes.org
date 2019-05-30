@@ -1,7 +1,7 @@
 import ciso8601
 from datetime import timedelta
 from requests import Session
-from django.db.models import Exists, OuterRef, Prefetch, Max
+from django.db.models import Exists, OuterRef, Prefetch, Subquery
 from django.core.cache import cache
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, Http404
@@ -22,10 +22,18 @@ class Poorly(Exception):
 
 
 def operator_vehicles(request, slug):
-    operator = get_object_or_404(Operator, slug=slug)
-    vehicles = operator.vehicle_set.order_by('fleet_number', 'reg')
+    operator = get_object_or_404(Operator.objects.select_related('region'), slug=slug)
+    vehicles = operator.vehicle_set
+    latest_journeys = Subquery(VehicleJourney.objects.filter(
+        vehicle=OuterRef('pk')
+    ).order_by('-datetime').values('pk')[:1])
+    latest_journeys = vehicles.filter(latest_location=None).annotate(latest_journey=latest_journeys)
+    latest_journeys = VehicleJourney.objects.filter(id__in=latest_journeys.values('latest_journey'))
+    prefetch = Prefetch('vehiclejourney_set',
+                        queryset=latest_journeys.select_related('service'), to_attr='latest_journeys')
+    vehicles = vehicles.prefetch_related(prefetch)
+    vehicles = vehicles.order_by('fleet_number', 'reg')
     vehicles = vehicles.select_related('vehicle_type', 'livery', 'latest_location__journey__service')
-    vehicles = vehicles.annotate(latest_journey=Max('vehiclejourney__datetime'))
     if not vehicles:
         raise Http404()
     return render(request, 'operator_vehicles.html', {
@@ -93,7 +101,7 @@ def siri_one_shot(code):
     """.format(siri_source.requestor_ref, code.code)
     url = siri_source.url.replace('StopM', 'VehicleM', 1)
     response = session.post(url, data=data, timeout=5)
-    if 'Client.AUTHENTICATION_FAILED' in response.text or not response.ok:
+    if 'Client.AUTHENTICATION_FAILED' in response.text:
         cache.set(siri_source.get_poorly_key(), True, 3600)  # back off for an hour
         raise Poorly()
     command = import_sirivm.Command()
