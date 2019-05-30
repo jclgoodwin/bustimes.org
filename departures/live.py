@@ -419,6 +419,7 @@ class SiriSmDepartures(Departures):
         if vehicle.isdigit():
             defaults['code'] = vehicle
             if operator.name[:11] == 'Stagecoach ':
+                defaults['operator'] = operator
                 vehicle, created = Vehicle.objects.get_or_create(defaults, operator__name__startswith='Stagecoach ',
                                                                  fleet_number=vehicle)
             else:
