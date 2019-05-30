@@ -35,6 +35,15 @@ class Departures(object):
                 duplicate_line_names.add(line_name)
             else:
                 self.services[line_name] = service
+            if service.net:
+                # there's sometimes an alternative abbreviated line name hidden in the service code
+                parts = service.service_code.split('-')
+                part = parts[1].lower()
+                if part != line_name:
+                    if part in self.services:
+                        duplicate_line_names.add(part)
+                    else:
+                        self.services[part] = service
         for line_name in duplicate_line_names:
             del self.services[line_name]
 
@@ -736,7 +745,7 @@ def get_departures(stop, services, bot=False):
 
     # 🚂
     if stop.atco_code[:3] == '910':
-        departures = UKTrainDepartures(stop, services)
+        departures = UKTrainDepartures(stop, ())
         return ({
             'departures': departures,
             'today': datetime.date.today(),
@@ -766,7 +775,7 @@ def get_departures(stop, services, bot=False):
 
     now = timezone.now()
 
-    departures = TimetableDepartures(stop, services, now)
+    departures = TimetableDepartures(stop, (), now)
     services_dict = departures.services
     departures = departures.get_departures()
 
