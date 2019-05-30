@@ -78,26 +78,12 @@ class Departures(object):
             if line_name_lower in self.services:
                 return self.services[line_name_lower]
             alternatives = {
-                'PR1': 'madingley road park & ride',
-                'PR2': 'newmarket road park & ride',
-                'PR3': 'trumpington park & ride',
-                'PR4': 'babraham road park & ride',
-                'PR5': 'milton road park & ride',
-                'U': 'universal u',
                 'Puls': 'pulse',
                 'FLCN': 'falcon',
                 'Yo-Y': 'yoyo',
-                'Hov': 'hoverbus',
-                '904': 'portway park and ride',
                 'Port': 'portway park and ride',
-                '902': 'brislington park and ride',
                 'Bris': 'brislington park and ride',
-                '15': 'my15',
-                'sky': 'skylink nottingham',
                 'sp': 'sprint',
-                'two': 'the two',
-                'sixes 6.2': '6.2',
-                'sixes 6.3': '6.3',
             }
             alternative = alternatives.get(line_name)
             if alternative and alternative in self.services:
