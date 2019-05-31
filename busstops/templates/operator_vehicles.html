@@ -13,57 +13,84 @@
 <p>Thanks to the marvels of modern technology, you can see where a particular vehicle has been recently, and which vehicles have operated a particular service.</p>
 
 <table>
-    <tr>
-        <th scope="col"{% if code_column %} colspan="2"{% endif %}></th>
-        <th scope="col">Last seen</th>
-        <th scope="col">Type</th>
-        <th scope="col">Colour</th>
-        <th scope="col">Notes</th>
-    </tr>
-    {% for vehicle in vehicles %}
+    <thead>
         <tr>
-            {% if code_column %}
-                <td>{{ vehicle.code }}</td>
-            {% endif %}
-            <td>
-                {% if vehicle.latest_location or vehicle.latest_journeys %}
-                    <a href="{{ vehicle.get_absolute_url }}">{{ vehicle }}</a>
-                {% else %}
-                    {{ vehicle }}
+            <th scope="col"{% if code_column %} colspan="2"{% endif %}></th>
+            <th scope="col">Last seen</th>
+            <th scope="col">Type</th>
+            <th scope="col">Colour</th>
+            <th scope="col">Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for vehicle in vehicles %}
+            <tr>
+                {% if code_column %}
+                    <td>{{ vehicle.code }}</td>
                 {% endif %}
-            </td>
-            <td>
-                {% if vehicle.latest_location %}
-                    {% if vehicle.latest_location.journey.service %}
-                        <a href="{{ vehicle.latest_location.journey.service.get_absolute_url }}">{{ vehicle.latest_location.journey.service.line_name }}</a>
-                        <br>
-                    {% endif %}
-                    {% if vehicle.latest_location.datetime.date == today %}
-                        {{ vehicle.latest_location.datetime | time }}
+                <td>
+                    {% if vehicle.latest_location or vehicle.latest_journeys %}
+                        <a href="{{ vehicle.get_absolute_url }}">{{ vehicle }}</a>
                     {% else %}
-                        {{ vehicle.latest_location.datetime }}
+                        {{ vehicle }}
                     {% endif %}
-                {% else %}
-                    {% for journey in vehicle.latest_journeys %}
-                        {% if journey.service %}
-                            <a href="{{ journey.service.get_absolute_url }}">{{ journey.service.line_name }}</a>
+                </td>
+                <td>
+                    {% if vehicle.latest_location %}
+                        {% if vehicle.latest_location.journey.service %}
+                            <a href="{{ vehicle.latest_location.journey.service.get_absolute_url }}">{{ vehicle.latest_location.journey.service.line_name }}</a>
                             <br>
                         {% endif %}
-                        {% if journey.datetime.date == today %}
-                            {{ journey.datetime | time }}
+                        {% if vehicle.latest_location.datetime.date == today %}
+                            {{ vehicle.latest_location.datetime | time }}
                         {% else %}
-                            {{ journey.datetime }}
+                            {{ vehicle.latest_location.datetime }}
                         {% endif %}
-                    {% endfor %}
-                {% endif %}
-            </td>
-            <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
-            <td>{% if vehicle.colours or vehicle.livery %}<div class="bus" style="background:{{ vehicle.get_livery }}"></div>{% endif %}</td>
-            <td>{{ vehicle.notes }}</td>
-        </tr>
-    {% endfor %}
+                    {% else %}
+                        {% for journey in vehicle.latest_journeys %}
+                            {% if journey.service %}
+                                <a href="{{ journey.service.get_absolute_url }}">{{ journey.service.line_name }}</a>
+                                <br>
+                            {% endif %}
+                            {% if journey.datetime.date == today %}
+                                {{ journey.datetime | time }}
+                            {% else %}
+                                {{ journey.datetime }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </td>
+                <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
+                <td>{% if vehicle.colours or vehicle.livery %}<div class="bus" style="background:{{ vehicle.get_livery }}"></div>{% endif %}</td>
+                <td>{{ vehicle.notes }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
 </table>
 
+{% if user.is_authenticated %}
+    <script>
+        var operator = document.querySelector('h1').textContent;
+        for (row of document.querySelectorAll('tbody tr')) {
+            let td = row.querySelector('td');
+            let text = encodeURIComponent(`${operator} bus ${td.textContent.trim()}`);
+            td = row.appendChild(document.createElement('td'));
+            fetch(
+                'https://www.flickr.com/services/rest/?api_key=c73bab2eb6d9be4a2e53d92d1452a645&format=json&nojsoncallback=1&sort=relevance&method=flickr.photos.search&per_page=5&text=' + text
+            )
+            .then(response => response.json())
+            .then(json => {
+                for (photo of json.photos.photo) {
+                    let src = `https://farm${photo.farm}.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}_s.jpg`;
+                    let href = `https://www.flickr.com/photos/${photo.owner}/${photo.id}`;
+                    td.innerHTML += `<a href="${href}" title="${photo.title}"><img src="${src}" width="75" height="75" alt="" /></a> `;
+                }
+            });
+        }
+    </script>
+{% endif %}
+
 {% endblock %}
+
 
 {% block ad %}{% endblock %}

@@ -41,7 +41,7 @@ def operator_vehicles(request, slug):
         'object': operator,
         'today': timezone.now().date(),
         'vehicles': vehicles,
-        'code_column': any(v.code.isdigit() and int(v.code) != v.fleet_number for v in vehicles)
+        'code_column': any(v.code.isdigit() and v.fleet_number and int(v.code) != v.fleet_number for v in vehicles)
     })
 
 
