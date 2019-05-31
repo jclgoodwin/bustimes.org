@@ -135,11 +135,10 @@
 
 {% if payment_methods %}
     <p>
-        {% for method in payment_methods %}{% if forloop.first %}{{ method.capitalize }}{% elif forloop.last %}
-        or {{ method.html }}
-        {% else %},
-        {{ method.html }}{% endif %}{% endfor %}
-        accepted
+        {% for method in payment_methods %}
+            {% if not forloop.first %}{% if forloop.last %} or {% else %}, {% endif %}{% endif %}{% if method.url %}<a href="{{ method.url }}">{% endif %}
+            {% if forloop.first %}{{ method.name.capitalize }}{% else %}{{ method }}{% endif %}{% if method.url %}</a>{% endif %}
+        {% endfor %} accepted
     </p>
 {% endif %}
 

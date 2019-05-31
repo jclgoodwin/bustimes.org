@@ -14,7 +14,6 @@ from django.core.cache import cache
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.text import slugify
-from django.utils.safestring import mark_safe
 from multigtfs.models import Feed
 from timetables import txc, northern_ireland, gtfs
 
@@ -755,17 +754,6 @@ class PaymentMethod(models.Model):
 
     def __str__(self):
         return self.name
-
-    def html(self, capitalize=False):
-        name = self.name
-        if capitalize:
-            name = name.capitalize()
-        if self.url:
-            return mark_safe('<a href="{}">{}</a>'.format(self.url, name))
-        return name
-
-    def capitalize(self):
-        return self.html(True)
 
 
 class Contact(models.Model):
