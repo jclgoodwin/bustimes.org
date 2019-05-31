@@ -7,6 +7,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, Http404
 from django.views.decorators.http import last_modified
 from django.views.generic.detail import DetailView
+from django.urls import reverse
 from django.utils import timezone
 from multidb.pinning import use_primary_db
 from busstops.views import get_bounding_box
@@ -19,6 +20,17 @@ session = Session()
 
 class Poorly(Exception):
     pass
+
+
+class Vehicles():
+    def __init__(self, operator):
+        self.operator = operator
+
+    def __str__(self):
+        return 'Vehicles'
+
+    def get_absolute_url(self):
+        return reverse('operator_vehicles', args=(self.operator.slug,))
 
 
 def operator_vehicles(request, slug):
@@ -183,20 +195,20 @@ class VehicleDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        journeys = self.object.vehiclejourney_set
+        context['dates'] = journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date')
+        if not context['dates']:
+            raise Http404()
         if self.object.operator:
-            context['breadcrumb'] = [self.object.operator.region, self.object.operator]
+            context['breadcrumb'] = [self.object.operator.region, self.object.operator, Vehicles(self.object.operator)]
         date = self.request.GET.get('date')
         if date:
             try:
                 date = ciso8601.parse_datetime(date).date()
             except ValueError:
                 date = None
-        journeys = self.object.vehiclejourney_set
-        context['dates'] = journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date')
         if not date:
             date = context['dates'].last()
-            if not date:
-                raise Http404()
         context['date'] = date
         journeys = journeys.filter(datetime__date=date).order_by('datetime')
         locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
