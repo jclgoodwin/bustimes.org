@@ -4,6 +4,7 @@ import re
 import os
 import zipfile
 import time
+import logging
 from urllib.parse import urlencode, quote
 from datetime import date
 from autoslug import AutoSlugField
@@ -16,6 +17,9 @@ from django.utils.functional import cached_property
 from django.utils.text import slugify
 from multigtfs.models import Feed
 from timetables import txc, northern_ireland, gtfs
+
+
+logger = logging.getLogger(__name__)
 
 
 TIMING_STATUS_CHOICES = (
@@ -669,7 +673,8 @@ class Service(models.Model):
             with zipfile.ZipFile(archive_path) as archive:
                 filenames = self.get_filenames(archive)
                 return [archive.open(filename) for filename in filenames]
-        except (zipfile.BadZipfile, IOError, KeyError):
+        except (zipfile.BadZipfile, IOError, KeyError) as e:
+            logger.error(e, exc_info=True)
             return []
 
     def get_timetables(self, day=None):
