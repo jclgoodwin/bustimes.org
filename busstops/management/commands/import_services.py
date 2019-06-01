@@ -184,7 +184,7 @@ class Command(BaseCommand):
                                                              filename)
 
         # net and service code:
-        net, service_code, line_ver = self.infer_from_filename(timetable.element.attrib['FileName'])
+        net, service_code, line_ver = self.infer_from_filename(filename)
         if service_code is None:
             service_code = timetable.service_code
 
