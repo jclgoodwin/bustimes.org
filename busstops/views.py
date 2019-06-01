@@ -590,9 +590,11 @@ class ServiceDetailView(DetailView):
 @cache_control(max_age=10080)
 def service_geometry(request, pk):
     service = get_object_or_404(Service, pk=pk)
-    return HttpResponse('window.geometry = {};'.format(service.geometry.simplify().json),
-                        content_type='application/javascript')
-
+    if service.geometry:
+        content = 'window.geometry = {};'.format(service.geometry.simplify().json)
+    else:
+        content = ''
+    return HttpResponse(content, content_type='application/javascript')
 
 def service_xml(request, pk):
     try:
