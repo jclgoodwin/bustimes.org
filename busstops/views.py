@@ -596,6 +596,7 @@ def service_geometry(request, pk):
         content = ''
     return HttpResponse(content, content_type='application/javascript')
 
+
 def service_xml(request, pk):
     try:
         service = Service.objects.get(slug=pk)
