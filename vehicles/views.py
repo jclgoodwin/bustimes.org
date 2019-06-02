@@ -1,6 +1,6 @@
 import ciso8601
 from datetime import timedelta
-from requests import Session
+from requests import Session, exceptions
 from django.db.models import Exists, OuterRef, Prefetch, Subquery
 from django.core.cache import cache
 from django.shortcuts import render, get_object_or_404
@@ -14,6 +14,7 @@ from busstops.views import get_bounding_box
 from busstops.models import Operator, Service, ServiceCode, SIRISource, DataSource, Journey
 from .models import Vehicle, VehicleLocation, VehicleJourney
 from .management.commands import import_sirivm
+
 
 session = Session()
 
@@ -135,7 +136,7 @@ def vehicles_last_modified(request):
             try:
                 siri_one_shot(code)
                 break
-            except (SIRISource.DoesNotExist, Poorly):
+            except (SIRISource.DoesNotExist, Poorly, exceptions.RequestException):
                 continue
     try:
         location = locations.values('datetime').latest('datetime')
