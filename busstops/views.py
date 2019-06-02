@@ -23,6 +23,10 @@ from .models import Region, StopPoint, AdminArea, Locality, District, Operator, 
 from .forms import ContactForm
 
 
+prefetch_stop_services = Prefetch('service_set', to_attr='current_services',
+                                  queryset=Service.objects.filter(current=True).distinct().order_by().defer('geometry'))
+
+
 def index(request):
     """The home page with a list of regions"""
     return render(request, 'index.html', {
@@ -285,9 +289,8 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             Q(locality__stoppoint__active=True),
         ).defer('latlong').distinct()
 
-        context['stops'] = self.object.stoppoint_set.filter(active=True).prefetch_related(
-            Prefetch('service_set', queryset=Service.objects.filter(current=True).distinct().defer('geometry'))
-        ).defer('osm')
+        context['stops'] = self.object.stoppoint_set.filter(active=True).prefetch_related(prefetch_stop_services
+                                                                                          ).defer('osm')
 
         if not (context['localities'] or context['stops']):
             raise Http404('Sorry, it looks like no services currently stop at {}'.format(self.object))
@@ -351,11 +354,11 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         region = self.object.get_region()
 
-        nearby = None
+        nearby = StopPoint.objects.filter(active=True)
         if self.object.stop_area_id is not None:
-            nearby = StopPoint.objects.filter(stop_area=self.object.stop_area_id)
+            nearby = nearby.filter(stop_area=self.object.stop_area_id)
         elif self.object.locality or self.object.admin_area:
-            nearby = StopPoint.objects.filter(common_name=self.object.common_name)
+            nearby = nearby.filter(common_name=self.object.common_name)
             if self.object.locality:
                 nearby = nearby.filter(locality=self.object.locality)
             else:
@@ -363,13 +366,13 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
                 if self.object.town:
                     nearby = nearby.filter(town=self.object.town)
         elif self.object.atco_code[:3] in {'je-', 'gg-'}:
-            nearby = StopPoint.objects.filter(common_name__iexact=self.object.common_name,
-                                              atco_code__startswith=self.object.atco_code[:3])
+            nearby = nearby.filter(common_name__iexact=self.object.common_name,
+                                   atco_code__startswith=self.object.atco_code[:3])
+        else:
+            nearby = None
+
         if nearby is not None:
-            services = Service.objects.filter(current=True).defer('geometry').order_by().distinct()
-            context['nearby'] = nearby.filter(active=True).exclude(pk=self.object.pk).prefetch_related(
-                Prefetch('service_set', queryset=services)
-            ).defer('osm')
+            context['nearby'] = nearby.exclude(pk=self.object.pk).prefetch_related(prefetch_stop_services).defer('osm')
 
         context['breadcrumb'] = [crumb for crumb in (
             region,

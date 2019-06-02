@@ -335,7 +335,7 @@ class StopPoint(models.Model):
         return reverse('stoppoint_detail', args=(self.atco_code,))
 
     def get_line_names(self):
-        return [service.line_name for service in sorted(self.service_set.all(), key=Service.get_order)]
+        return [service.line_name for service in sorted(self.current_services, key=Service.get_order)]
 
 
 class Operator(ValidateOnSaveMixin, models.Model):
