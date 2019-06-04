@@ -168,6 +168,12 @@ class ImportLiveVehiclesCommand(BaseCommand):
             latest.current = False
             latest.save()
 
+            distance = latest.latlong.distance(location.latlong) * 69
+            time = location.datetime - latest.datetime
+            speed = distance / time.total_seconds() * 60 * 60
+            if speed > 55:
+                print('{} mph\t{}'.format(speed, journey.vehicle.get_absolute_url()))
+
     def update(self):
         now = timezone.now()
         self.source, source_created = DataSource.objects.update_or_create(
