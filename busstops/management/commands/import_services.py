@@ -307,7 +307,7 @@ class Command(BaseCommand):
         self.service_codes = set()
 
         with transaction.atomic():
-            Service.objects.filter(region=self.region_id, current=True).update(current=False)
+            Service.objects.filter(source=self.source, current=True).update(current=False)
 
             with zipfile.ZipFile(archive_name) as archive:
                 # the NCSD has service descriptions in a separate file:

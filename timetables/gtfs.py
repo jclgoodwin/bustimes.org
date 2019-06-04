@@ -96,6 +96,7 @@ def get_timetable(routes, day=None, collection=None):
                                **{'service__' + day.strftime('%A').lower(): True}))
         trips = trips.exclude(service__servicedate__date=day, service__servicedate__exception_type=2)
     else:
+        # every trip (for getting full list of stops)
         today = datetime.date.today()
         trips = trips.filter(Q(service__end_date__gte=today) |
                              Q(service__servicedate__date__gte=today, service__servicedate__exception_type=1))
