@@ -384,6 +384,13 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         return context
 
 
+def stop_gtfs(_, pk):
+    stop = get_object_or_404(StopPoint, atco_code=pk)
+    content = 'stop_id,stop_name,stop_lat,stop_lon\n{},{},{},{}\n'.format(
+        stop.atco_code, stop.get_qualified_name(), stop.latlong.y, stop.latlong.x)
+    return HttpResponse(content, content_type='text/plain')
+
+
 def stop_xml(_, pk):
     stop = get_object_or_404(StopPoint, atco_code=pk)
     source = stop.admin_area.sirisource_set.first()
