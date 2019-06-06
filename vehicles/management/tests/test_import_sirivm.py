@@ -1,5 +1,6 @@
 import os
 import xml.etree.cElementTree as ET
+from mock import patch
 from vcr import use_cassette
 from django.test import TestCase
 from busstops.models import Region, Operator, Service, OperatorCode, DataSource
@@ -110,7 +111,9 @@ class SiriVMImportTest(TestCase):
                 </MonitoredVehicleJourney>
             </VehicleActivity>
         """)
-        self.command.handle_item(item, None)
+        with patch('vehicles.management.commands.import_sirivm.logger') as logger:
+            self.command.handle_item(item, None)
+        self.assertTrue(logger.error.called)
         location = VehicleLocation.objects.get()
         self.assertEqual(240, location.heading)
         self.assertEqual('1607', location.journey.code)

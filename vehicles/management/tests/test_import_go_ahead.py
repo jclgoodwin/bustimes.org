@@ -1,4 +1,5 @@
 import vcr
+from mock import patch
 from freezegun import freeze_time
 from django.test import TestCase
 from django.utils import timezone
@@ -28,11 +29,12 @@ class GoAheadImportTest(TestCase):
         journey = Journey.objects.create(datetime=source.datetime, destination_id=stop, service=cls.service)
         StopUsageUsage.objects.create(journey=journey, datetime=source.datetime, order=1, stop=stop)
 
-    def test_get_items(self):
+    @patch('vehicles.management.commands.import_go_ahead.sleep')
+    def test_get_items(self, sleep):
         with vcr.use_cassette('data/vcr/go_ahead.yaml'):
             items = list(self.command.get_items())
-
         self.assertEqual(len(items), 3)
+        self.assertTrue(sleep.called)
 
     def test_handle_item(self):
         item = {

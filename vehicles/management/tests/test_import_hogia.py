@@ -4,8 +4,7 @@ from mock import patch
 from django.test import TestCase
 from busstops.models import Service, ServiceCode
 from ...models import Vehicle, VehicleLocation, VehicleType
-with patch('time.sleep', return_value=None):
-    from ..commands import import_hogia
+from ..commands import import_hogia
 
 
 def error():
@@ -31,7 +30,7 @@ class HogiaImportTest(TestCase):
 
         # handle should call update
         with self.assertRaises(Exception):
-            with patch('busstops.management.commands.import_hogia.Command.update', side_effect=error):
+            with patch('vehicles.management.commands.import_hogia.Command.update', side_effect=error):
                 command.handle()
 
         # now actually test update
@@ -71,6 +70,8 @@ class HogiaImportTest(TestCase):
         self.assertEqual(VehicleLocation.objects.filter(current=True).count(), 4)
 
         # if request times out...
-        with patch('requests.Session.get', side_effect=timeout):
-            command.update()
+        with patch('vehicles.management.import_live_vehicles.logger') as logger:
+            with patch('requests.Session.get', side_effect=timeout):
+                command.update()
+        self.assertTrue(logger.error.called)
         self.assertEqual(VehicleLocation.objects.filter(current=True).count(), 4)
