@@ -109,7 +109,7 @@
             </div>
         </div>
 
-        {% if not forloop.last or not forloop.parentloop.last %}
+        {% if grouping.rows|length > 10 and not forloop.last or not forloop.parentloop.last %}
             <!--[if gte IE 9]><!-->
                 <div class="banner-ad">
                     <div class="ad-label">Advertisement</div>
