@@ -45,9 +45,11 @@ class Command(ImportLiveVehiclesCommand):
         else:
             try:
                 journey.service = self.services.get(line_name=item['service_name'])
-                if not vehicle.operator:
-                    vehicle.operator = journey.service.operator.first()
-                    vehicle.save()
+                if journey.service:
+                    operator = journey.service.operator.first()
+                    if not vehicle.operator_id or vehicle.operator_id != operator.id:
+                        vehicle.operator = operator
+                        vehicle.save()
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 if item['service_name'] not in {'ET1', 'MA1', '3BBT', 'C134'}:
                     print(e, item['service_name'])
