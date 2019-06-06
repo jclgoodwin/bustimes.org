@@ -92,8 +92,6 @@ class ImportNPTGTest(TestCase):
         self.assertContains(res, 'Places in Cambridge')
         self.assertContains(res, 'Addenbrooke')
 
-        self.assertContains(self.client.get(self.addenbrookes.get_absolute_url()), 'Captain Birdseye Road')
-
     def test_super(self):
         command = import_from_csv.ImportFromCSVCommand()
         with self.assertRaises(NotImplementedError):

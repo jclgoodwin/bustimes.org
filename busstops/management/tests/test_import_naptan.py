@@ -148,6 +148,7 @@ class ImportNaptanTest(TestCase):
                                              date='2004-04-04', region_id='GB', service_code='44')
         StopUsage.objects.create(service=cls.service, stop_id='5820AWN26274', order=0)  # Legion
         StopUsage.objects.create(service=cls.service, stop_id='5820AWN26361', order=1)  # Parkway
+        StopUsage.objects.create(service=cls.service, stop_id='5820AWN26438', order=2)
 
     def test_stops(self):
         legion = StopPoint.objects.get(pk='5820AWN26274')
@@ -221,6 +222,7 @@ class ImportNaptanTest(TestCase):
                     <li itemscope itemtype="https://schema.org/BusStop" data-indicator="NE-bound" data-heading="45">
                         <a href="/stops/5820AWN26438">
                             <span itemprop="name">Ty&#39;n y Twr Club (NE-bound)</span>
+                            <small>44</small>
                         </a>
                         <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
                             <meta itemprop="latitude" content="51.6171316877" />
