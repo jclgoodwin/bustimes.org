@@ -17,6 +17,12 @@ YNAO042S:
     description: York - Naburn - Cawood - Selby
 YNAO042:
     description: Cawood - Selby
+FWAO266:
+    description: Newmains or Shotts - Hamilon
+FWAO267:
+    description: Hamilton - Glasgow
+set_2-210-_-y08:
+    description: The Wynchwoods - Witney
 sro-288:
     current: false
 expressbus-787:
