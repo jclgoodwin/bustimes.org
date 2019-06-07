@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 from .models import VehicleType, VehicleFeature, Vehicle, VehicleJourney, Livery, JourneyCode
 
@@ -18,6 +19,13 @@ class VehicleTypeAdmin(admin.ModelAdmin):
     list_editable = list_display[1:]
 
 
+class VehicleAdminForm(forms.ModelForm):
+    class Meta:
+        widgets = {
+            'reg': forms.TextInput(attrs={'style': 'width: 8em'})
+        }
+
+
 class VehicleAdmin(admin.ModelAdmin):
     list_display = ('code', 'fleet_number', 'reg', 'operator', 'vehicle_type', 'livery', 'colours', 'notes')
     list_filter = (
@@ -32,6 +40,10 @@ class VehicleAdmin(admin.ModelAdmin):
     autocomplete_fields = ('vehicle_type',)
     ordering = ('-id',)
     actions = (copy_livery, copy_type)
+
+    def get_changelist_form(self, request, **kwargs):
+        kwargs.setdefault('form', VehicleAdminForm)
+        return super().get_changelist_form(request, **kwargs)
 
 
 class VehicleJourneyAdmin(admin.ModelAdmin):

@@ -41,7 +41,16 @@ class OperatorCodeInline(admin.TabularInline):
     model = OperatorCode
 
 
+class OperatorAdminForm(forms.ModelForm):
+    class Meta:
+        widgets = {
+            'address': forms.Textarea,
+            'twitter': forms.Textarea,
+        }
+
+
 class OperatorAdmin(admin.ModelAdmin):
+    form = OperatorAdminForm
     list_display = ('name', 'operator_codes', 'id', 'vehicle_mode', 'parent', 'region', 'service_count', 'twitter')
     list_filter = ('region', 'vehicle_mode', 'parent')
     search_fields = ('id', 'name')
@@ -58,12 +67,6 @@ class OperatorAdmin(admin.ModelAdmin):
     @staticmethod
     def operator_codes(obj):
         return ', '.join(str(code) for code in obj.operatorcode_set.all())
-
-    def formfield_for_dbfield(self, db_field, **kwargs):
-        formfield = super().formfield_for_dbfield(db_field, **kwargs)
-        if db_field.name == 'address' or db_field.name == 'twitter':
-            formfield.widget = forms.Textarea(attrs=formfield.widget.attrs)
-        return formfield
 
     service_count.admin_order_field = 'service_count'
 
@@ -105,12 +108,6 @@ class LocalityAdmin(admin.ModelAdmin):
 
 class NoteAdmin(admin.ModelAdmin):
     raw_id_fields = ('operators', 'services')
-
-    def formfield_for_dbfield(self, db_field, **kwargs):
-        formfield = super().formfield_for_dbfield(db_field, **kwargs)
-        if db_field.name == 'text':
-            formfield.widget = forms.Textarea(attrs=formfield.widget.attrs)
-        return formfield
 
 
 class JourneyAdmin(admin.ModelAdmin):
