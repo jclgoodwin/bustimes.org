@@ -15,6 +15,10 @@ class AdminAreaAdmin(admin.ModelAdmin):
     search_fields = ('atco_code',)
 
 
+class StopCodeInline(admin.TabularInline):
+    model = StopCode
+
+
 class StopPointAdmin(admin.ModelAdmin):
     list_display = ('atco_code', 'naptan_code', 'locality', 'admin_area', '__str__')
     list_select_related = ('locality', 'admin_area')
@@ -25,6 +29,7 @@ class StopPointAdmin(admin.ModelAdmin):
     formfield_overrides = {
         PointField: {'widget': OSMWidget}
     }
+    inlines = [StopCodeInline]
 
 
 class StopCodeAdmin(admin.ModelAdmin):
@@ -32,10 +37,15 @@ class StopCodeAdmin(admin.ModelAdmin):
     raw_id_fields = ['stop']
 
 
+class OperatorCodeInline(admin.TabularInline):
+    model = OperatorCode
+
+
 class OperatorAdmin(admin.ModelAdmin):
     list_display = ('name', 'operator_codes', 'id', 'vehicle_mode', 'parent', 'region', 'service_count', 'twitter')
     list_filter = ('region', 'vehicle_mode', 'parent')
     search_fields = ('id', 'name')
+    inlines = [OperatorCodeInline]
 
     def get_queryset(self, _):
         service_count = Count('service', filter=Q(service__current=True))
@@ -58,6 +68,10 @@ class OperatorAdmin(admin.ModelAdmin):
     service_count.admin_order_field = 'service_count'
 
 
+class ServiceCodeInline(admin.TabularInline):
+    model = ServiceCode
+
+
 class ServiceAdmin(admin.ModelAdmin):
     list_display = ('service_code', '__str__', 'mode', 'net', 'region', 'current', 'show_timetable', 'timetable_wrong')
     list_filter = ('current', 'show_timetable', 'timetable_wrong', 'mode', 'net', 'region',
@@ -65,6 +79,7 @@ class ServiceAdmin(admin.ModelAdmin):
     search_fields = ('service_code', 'line_name', 'description')
     raw_id_fields = ('operator', 'stops')
     ordering = ('service_code',)
+    inlines = [ServiceCodeInline]
 
 
 class ServiceLinkAdmin(admin.ModelAdmin):
