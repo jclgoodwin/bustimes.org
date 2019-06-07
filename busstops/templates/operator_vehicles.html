@@ -12,6 +12,10 @@
 
 <p>Thanks to the marvels of modern technology, you can see where a particular vehicle has been recently, and which vehicles have operated a particular service.</p>
 
+{% if user.is_authenticated %}
+    <button id="flickr-load">Load images from Flickr</button>
+{% endif %}
+
 <table>
     <thead>
         <tr>
@@ -63,6 +67,7 @@
                 <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
                 <td>{% if vehicle.colours or vehicle.livery %}<div class="bus" style="background:{{ vehicle.get_livery }}"></div>{% endif %}</td>
                 <td>{{ vehicle.notes }}</td>
+                <td>{{ vehicle.get_flickr_link }}</td>
             </tr>
         {% endfor %}
     </tbody>
@@ -70,23 +75,25 @@
 
 {% if user.is_authenticated %}
     <script>
-        var operator = document.querySelector('h1').textContent;
-        for (row of document.querySelectorAll('tbody tr')) {
-            let td = row.querySelector('td');
-            let text = encodeURIComponent(`${operator} bus ${td.textContent.trim()}`);
-            td = row.appendChild(document.createElement('td'));
-            fetch(
-                'https://www.flickr.com/services/rest/?api_key=c73bab2eb6d9be4a2e53d92d1452a645&format=json&nojsoncallback=1&sort=relevance&method=flickr.photos.search&per_page=5&text=' + text
-            )
-            .then(response => response.json())
-            .then(json => {
-                for (photo of json.photos.photo) {
-                    let src = `https://farm${photo.farm}.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}_s.jpg`;
-                    let href = `https://www.flickr.com/photos/${photo.owner}/${photo.id}`;
-                    td.innerHTML += `<a href="${href}" title="${photo.title}"><img src="${src}" width="75" height="75" alt="" /></a> `;
-                }
-            });
-        }
+        document.getElementById('flickr-load').onclick = function() {
+            var operator = document.querySelector('h1').textContent;
+            for (row of document.querySelectorAll('tbody tr')) {
+                let td = row.querySelector('td');
+                let text = encodeURIComponent(`${operator} bus ${td.textContent.trim()}`);
+                td = row.appendChild(document.createElement('td'));
+                fetch(
+                    'https://www.flickr.com/services/rest/?api_key=c73bab2eb6d9be4a2e53d92d1452a645&format=json&nojsoncallback=1&sort=relevance&method=flickr.photos.search&per_page=5&text=' + text
+                )
+                .then(response => response.json())
+                .then(json => {
+                    for (photo of json.photos.photo) {
+                        let src = `https://farm${photo.farm}.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}_s.jpg`;
+                        let href = `https://www.flickr.com/photos/${photo.owner}/${photo.id}`;
+                        td.innerHTML += `<a href="${href}" title="${photo.title}"><img src="${src}" width="75" height="75" alt="" /></a> `;
+                    }
+                });
+            }
+        };
     </script>
 {% endif %}
 

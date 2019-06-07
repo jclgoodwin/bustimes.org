@@ -1,4 +1,5 @@
 from math import ceil
+from urllib.parse import quote
 from webcolors import html5_parse_simple_color
 from django.contrib.gis.db import models
 from django.urls import reverse
@@ -39,7 +40,7 @@ class VehicleType(models.Model):
     double_decker = models.NullBooleanField()
     coach = models.NullBooleanField()
 
-    class Meta():
+    class Meta:
         ordering = ('name',)
 
     def __str__(self):
@@ -52,7 +53,7 @@ class Livery(models.Model):
     css = models.CharField(max_length=255, blank=True)
     horizontal = models.BooleanField(default=False)
 
-    class Meta():
+    class Meta:
         ordering = ('name',)
         verbose_name_plural = 'liveries'
 
@@ -87,7 +88,7 @@ class Vehicle(models.Model):
                                         related_name='latest_vehicle', editable=False)
     features = models.ManyToManyField(VehicleFeature, blank=True)
 
-    class Meta():
+    class Meta:
         unique_together = ('code', 'operator')
 
     def __str__(self):
@@ -127,6 +128,18 @@ class Vehicle(models.Model):
     def get_absolute_url(self):
         return reverse('vehicle_detail', args=(self.id,))
 
+    def get_flickr_url(self):
+        if self.reg:
+            search = f'{self.reg} or "{self.get_reg()}"'
+        else:
+            search = self.code
+        return f'https://www.flickr.com/search/?text={quote(search)}&sort=date-taken-desc'
+
+    def get_flickr_link(self):
+        return mark_safe(f'<a href="{self.get_flickr_url()}" target="_blank" rel="noopener">Flickr</a>')
+
+    get_flickr_link.short_description = 'Flickr'
+
 
 class VehicleJourney(models.Model):
     datetime = models.DateTimeField()
@@ -138,7 +151,7 @@ class VehicleJourney(models.Model):
     destination = models.CharField(max_length=255, blank=True)
     direction = models.CharField(max_length=8, blank=True)
 
-    class Meta():
+    class Meta:
         ordering = ('id',)
 
 
@@ -149,7 +162,7 @@ class JourneyCode(models.Model):
     siri_source = models.ForeignKey(SIRISource, models.SET_NULL, null=True, blank=True)
     destination = models.CharField(max_length=255, blank=True)
 
-    class Meta():
+    class Meta:
         unique_together = ('code', 'service', 'siri_source')
 
 
@@ -161,7 +174,7 @@ class VehicleLocation(models.Model):
     early = models.IntegerField(null=True, blank=True)
     current = models.BooleanField(default=False, db_index=True)
 
-    class Meta():
+    class Meta:
         ordering = ('id',)
         index_together = (
             ('current', 'datetime')
