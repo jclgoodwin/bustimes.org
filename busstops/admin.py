@@ -88,7 +88,6 @@ class ServiceAdmin(admin.ModelAdmin):
 class ServiceLinkAdmin(admin.ModelAdmin):
     list_display = ('from_service', 'from_service__current', 'to_service', 'to_service__current')
     autocomplete_fields = ('from_service', 'to_service')
-    list_select_related = ('from_service', 'to_service')
 
     @staticmethod
     def from_service__current(obj):

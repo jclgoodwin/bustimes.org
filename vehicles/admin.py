@@ -22,7 +22,9 @@ class VehicleTypeAdmin(admin.ModelAdmin):
 class VehicleAdminForm(forms.ModelForm):
     class Meta:
         widgets = {
-            'reg': forms.TextInput(attrs={'style': 'width: 8em'})
+            'reg': forms.TextInput(attrs={'style': 'width: 8em'}),
+            'fleet_number': forms.TextInput(attrs={'style': 'width: 4em'}),
+            'operator': forms.TextInput(attrs={'style': 'width: 4em'}),
         }
 
 
@@ -33,13 +35,23 @@ class VehicleAdmin(admin.ModelAdmin):
         ('source', admin.RelatedOnlyFieldListFilter),
         'vehicle_type',
     )
-    list_select_related = ['operator', 'vehicle_type']
+    list_select_related = ['operator', 'vehicle_type', 'livery']
     list_editable = ('fleet_number', 'reg', 'operator', 'vehicle_type', 'livery', 'colours', 'notes')
     search_fields = ('code', 'fleet_number', 'reg')
     raw_id_fields = ('operator',)
     autocomplete_fields = ('vehicle_type',)
     ordering = ('-id',)
     actions = (copy_livery, copy_type)
+
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        formfield = super().formfield_for_dbfield(db_field, **kwargs)
+        if db_field.name == 'livery':
+            request = kwargs['request']
+            choices = getattr(request, '_livery_choices_cache', None)
+            if choices is None:
+                request._livery_choices_cache = choices = list(formfield.choices)
+            formfield.choices = choices
+        return formfield
 
     def get_changelist_form(self, request, **kwargs):
         kwargs.setdefault('form', VehicleAdminForm)
