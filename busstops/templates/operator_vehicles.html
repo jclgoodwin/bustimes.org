@@ -76,11 +76,11 @@
 {% if user.is_authenticated %}
     <script>
         document.getElementById('flickr-load').onclick = function() {
-            var operator = document.querySelector('h1').textContent;
             for (row of document.querySelectorAll('tbody tr')) {
-                let td = row.querySelector('td');
-                let text = encodeURIComponent(`${operator} bus ${td.textContent.trim()}`);
-                td = row.appendChild(document.createElement('td'));
+                let cells = row.getElementsByTagName('td');
+                let url = cells[cells.length - 1].querySelector('a').href;
+                let text = new URL(url).searchParams.get('text')
+                let td = row.appendChild(document.createElement('td'));
                 fetch(
                     'https://www.flickr.com/services/rest/?api_key=c73bab2eb6d9be4a2e53d92d1452a645&format=json&nojsoncallback=1&sort=relevance&method=flickr.photos.search&per_page=5&text=' + text
                 )
