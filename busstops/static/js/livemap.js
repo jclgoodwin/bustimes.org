@@ -142,9 +142,12 @@
         popup += 'Updated at ' + dateTime.toTimeString().slice(0, 5);
 
         if (data.properties.vehicle.decker) {
-            popup = 'Double-decker' + '<br>' + popup;
-        }
-        if (data.properties.vehicle.coach) {
+            var vehicleFeatures = 'Double-decker';
+            if (data.properties.vehicle.coach) {
+                vehicleFeatures += ' coach';
+            }
+            popup = vehicleFeatures + '<br>' + popup;
+        } else if (data.properties.vehicle.coach) {
             popup = 'Coach' + '<br>' + popup;
         }
 
