@@ -31,4 +31,4 @@ class SIRIOneShotTest(TestCase):
 
         json = res.json()
 
-        self.assertEqual(len(json['features']), 4
+        self.assertEqual(len(json['features']), 4)
