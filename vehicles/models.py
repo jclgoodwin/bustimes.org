@@ -130,10 +130,16 @@ class Vehicle(models.Model):
     def get_flickr_url(self):
         if self.reg:
             search = f'{self.reg} or "{self.get_reg()}"'
-        elif self.fleet_number:
-            search = str(self.fleet_number)
         else:
-            search = self.code
+            if self.fleet_number:
+                search = str(self.fleet_number)
+            else:
+                search = self.code
+            if self.operator:
+                if self.operator.name.startswith('First ') or self.operator.name.startswith('Stagecoach '):
+                    search = f'{self.operator.name.split()[0]} {search}'
+                else:
+                    search = f'{self.operator} {search}'
         return f'https://www.flickr.com/search/?text={quote(search)}&sort=date-taken-desc'
 
     def get_flickr_link(self):

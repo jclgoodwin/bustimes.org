@@ -31,6 +31,12 @@ class VehiclesTests(TestCase):
         vehicle = Vehicle(code='RML2604')
         self.assertIn('search/?text=RML2604&sort', vehicle.get_flickr_url())
 
+        vehicle.operator = Operator(name='Lynx')
+        self.assertIn('search/?text=Lynx%20RML2604&sort', vehicle.get_flickr_url())
+
+        vehicle.operator.name = 'Stagecoach Oxenholme'
+        self.assertIn('search/?text=Stagecoach%20RML2604&sort', vehicle.get_flickr_url())
+
     def test_vehicle_views(self):
         response = self.client.get('/operators/bova-and-over/vehicles')
         self.assertEqual(404, response.status_code)
