@@ -80,6 +80,7 @@ class Departures(object):
             alternatives = {
                 'Puls': 'pulse',
                 'FLCN': 'falcon',
+                'TUBE': 'oxford tube',
                 'Yo-Y': 'yoyo',
                 'Port': 'portway park and ride',
                 'Bris': 'brislington park and ride',
