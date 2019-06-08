@@ -468,7 +468,7 @@ class ServiceDetailView(DetailView):
     "A service and the stops it stops at"
 
     model = Service
-    queryset = model.objects.select_related('region').prefetch_related('operator')
+    queryset = model.objects.select_related('region', 'source').prefetch_related('operator')
 
     def get_object(self, **kwargs):
         try:

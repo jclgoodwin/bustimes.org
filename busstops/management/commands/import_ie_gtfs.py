@@ -6,9 +6,10 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.db.models import Count
 from django.conf import settings
+from django.utils import timezone
 from multigtfs.models import Feed
 from timetables.gtfs import get_stop_id, get_timetable
-from ...models import Operator, Service, StopPoint, StopUsage, Region, ServiceCode
+from ...models import Operator, DataSource, Service, StopPoint, StopUsage, Region, ServiceCode
 
 
 MODES = {
@@ -51,6 +52,8 @@ class Command(BaseCommand):
         Service.objects.filter(service_code__startswith=collection + '-').update(current=False)
         StopUsage.objects.filter(service__service_code__startswith=collection + '-').delete()
         ServiceCode.objects.filter(service__service_code__startswith=collection + '-').delete()
+
+        source = DataSource.objects.update_or_create({'datetime': timezone.now()}, name=f'{collection} GTFS')[0]
 
         operators = set()
 
@@ -103,6 +106,7 @@ class Command(BaseCommand):
             }
             service, created = Service.objects.update_or_create(
                 service_code=service_code,
+                source=source,
                 defaults=defaults
             )
             ServiceCode.objects.create(service=service, scheme=collection + ' GTFS', code=route.route_id)

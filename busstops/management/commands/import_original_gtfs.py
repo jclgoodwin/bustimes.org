@@ -20,6 +20,7 @@ class Command(BaseCommand):
 
         for route in feed.route_set.all():
             service = Service.objects.get(service_code=route.route_id)
+            service.stopusage_set.all().delete()
 
             timetable = get_timetable((route,))
 
