@@ -45,7 +45,7 @@ class GoAheadImportTest(TestCase):
                 "distance": 1.69,
                 "longitude": 1.2934628,
                 "latitude": 52.6241455,
-                "bearing": 0
+                "bearing": None
             },
             "lineRef": "501",
             "direction": "inbound",
@@ -65,7 +65,12 @@ class GoAheadImportTest(TestCase):
 
         location = VehicleLocation.objects.get()
         self.assertEqual('2019-03-31 11:24:54+00:00', str(location.datetime))
+        self.assertIsNone(location.heading)
 
         item['recordedTime'] = '2019-03-31T12:30:00.000Z'
+        item['geo']['longitude'] = 0
         with self.assertNumQueries(6):
             self.command.handle_item(item, self.command.source.datetime)
+
+        location = VehicleLocation.objects.last()
+        self.assertEqual(270, location.heading)

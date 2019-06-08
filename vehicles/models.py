@@ -131,7 +131,7 @@ class Vehicle(models.Model):
         if self.reg:
             search = f'{self.reg} or "{self.get_reg()}"'
         elif self.fleet_number:
-            search = self.fleet_number
+            search = str(self.fleet_number)
         else:
             search = self.code
         return f'https://www.flickr.com/search/?text={quote(search)}&sort=date-taken-desc'
