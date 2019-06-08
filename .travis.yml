@@ -8,6 +8,7 @@ cache:
   pip: true
   directories:
     - node_modules
+    - $HOME/.cache/pipenv
 addons:
   postgresql: 10
   apt:
