@@ -11,7 +11,7 @@ class VehiclesTests(TestCase):
         cls.datetime = '2018-12-25 19:47+00:00'
         source = DataSource.objects.create(name='HP', datetime=cls.datetime)
         ea = Region.objects.create(id='EA', name='East Anglia')
-        bova = Operator.objects.create(region=ea, name='Bova and Over', id='BOVA', slug='bova-and-over')
+        Operator.objects.create(region=ea, name='Bova and Over', id='BOVA', slug='bova-and-over')
         lynx = Operator.objects.create(region=ea, name='Lynx', id='LYNX', slug='lynx')
         spectra = VehicleType.objects.create(name='Optare Spectra', coach=False, double_decker=True)
         cls.vehicle_1 = Vehicle.objects.create(fleet_number=1, reg='FD54JYA')
