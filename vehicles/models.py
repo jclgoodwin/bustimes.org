@@ -10,25 +10,24 @@ from busstops.models import Operator, Service, DataSource, SIRISource
 def get_css(colours, direction=None, horizontal=False):
     if len(colours) == 1:
         return colours[0]
+    if direction is None:
+        direction = 180
+    background = 'linear-gradient('
+    if horizontal:
+        background += 'to top'
+    elif direction < 180:
+        background += 'to left'
     else:
-        if direction is None:
-            direction = 180
-        background = 'linear-gradient('
-        if horizontal:
-            background += 'to top'
-        elif direction < 180:
-            background += 'to left'
-        else:
-            background += 'to right'
-        percentage = 100 / len(colours)
-        for i, colour in enumerate(colours):
-            if i != 0:
-                background += ',{} {}%'.format(colour, ceil(percentage * i))
-            if i != len(colours) - 1 and colour != colours[i + 1]:
-                background += ',{} {}%'.format(colour, ceil(percentage * (i + 1)))
-        background += ')'
+        background += 'to right'
+    percentage = 100 / len(colours)
+    for i, colour in enumerate(colours):
+        if i != 0:
+            background += ',{} {}%'.format(colour, ceil(percentage * i))
+        if i != len(colours) - 1 and colour != colours[i + 1]:
+            background += ',{} {}%'.format(colour, ceil(percentage * (i + 1)))
+    background += ')'
 
-        return background
+    return background
 
 
 def get_brightness(colour):
@@ -131,6 +130,8 @@ class Vehicle(models.Model):
     def get_flickr_url(self):
         if self.reg:
             search = f'{self.reg} or "{self.get_reg()}"'
+        elif self.fleet_number:
+            search = self.fleet_number
         else:
             search = self.code
         return f'https://www.flickr.com/search/?text={quote(search)}&sort=date-taken-desc'

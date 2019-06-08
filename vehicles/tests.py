@@ -2,7 +2,7 @@ from freezegun import freeze_time
 from django.test import TestCase
 from django.contrib.gis.geos import Point
 from busstops.models import DataSource
-from .models import Vehicle, VehicleJourney, VehicleLocation
+from .models import Vehicle, Livery, VehicleJourney, VehicleLocation
 
 
 class VehiclesTests(TestCase):
@@ -18,6 +18,20 @@ class VehiclesTests(TestCase):
     def test_vehicle(self):
         vehicle = Vehicle(reg='3990ME')
         self.assertEqual(str(vehicle), '3990 ME')
+
+    def test_livery(self):
+        livery = Livery(name='Go-Coach')
+        self.assertEqual('Go-Coach', str(livery))
+        self.assertIsNone(livery.preview())
+
+        livery.colours = '#7D287D #FDEE00 #FDEE00'
+        livery.horizontal = True
+        self.assertEqual('<div style="height:1.5em;width:4em;background:linear-gradient' +
+                         '(to top,#7D287D 34%,#FDEE00 34%,#FDEE00 67%)"></div>', livery.preview())
+
+        self.vehicle_1.livery = livery
+        self.vehicle_1.livery.horizontal = False
+        self.assertEqual('linear-gradient(to right,#7D287D 34%,#FDEE00 34%,#FDEE00 67%)', self.vehicle_1.get_livery(200))
 
     def test_vehicles_json(self):
         with freeze_time(self.datetime):
