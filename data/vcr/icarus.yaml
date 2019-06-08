@@ -1,0 +1,80 @@
+interactions:
+- request:
+    body: "\n        <Siri xmlns=\"http://www.siri.org.uk/siri\" version=\"1.3\">\n\
+      \            <ServiceRequest>\n                <RequestorRef>torbaydevon_siri_traveline</RequestorRef>\n\
+      \                <VehicleMonitoringRequest version=\"1.3\">\n              \
+      \      <LineRef>FLCN</LineRef>\n                </VehicleMonitoringRequest>\n\
+      \            </ServiceRequest>\n        </Siri>\n    "
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '362'
+      User-Agent:
+      - python-requests/2.22.0
+    method: POST
+    uri: http://data.icarus.cloudamber.com/VehicleMonitoringRequest.ashx
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAEAO29B2AcSZYlJi9tynt/SvVK1+B0oQiAYBMk2JBAEOzBiM3mkuwdaUcjKasqgcpl
+        VmVdZhZAzO2dvPfee++999577733ujudTif33/8/XGZkAWz2zkrayZ4hgKrIHz9+fB8/Ih7/Hu8W
+        ZXqZ101RLT/7aHe881GaL6fVrFhefPbRuj3fPvjo9zh6/Lqoi/RdUzxqpvN8kT2vplnLL8zbdvXo
+        7t2rq6txQ23GVX0xXr+9i9/Toe8YxN3d8T1uNn7XzD7yMbj3UUo4LZtH1F/QwdU9gLi7t7Oze/f3
+        /uL5a4azXSybNltOc30reIPh0zvcLf3+EY0kry+Laf40Lwvq8/ro8au8WVXLJn9TLHKCtFgd7e3s
+        Ptze+XR75+DN7sNH+3uPdu//1OO7/XaPX9bVbD3N61f5+dFJWa1nx4tJXj++63/++HWbtevmqK3X
+        +eO7+sfjL6o6f5q12dF5Vjb0uf378U/m82Ja5l9Uy6KtapoFg2lIog/C+/V60kzrgnAFhtTNJLue
+        5ZfV8vcHkX7/ts4uqdMl4RW2jI/lJ7OymH21bItyAAOvwePX86puCY+XVdMUkzI/uabBHr18c2/n
+        NUGMfmlIcjxti8ui5SmbVvUsnx23GJTf697Oo/3dR/f3P9nZfbSzg8EHLR+ftfnibJYTLudFXh89
+        PHhwf3+ye7A9mRxMtvdnD+5vH+zn97azh/m9vU9n9/bzyf7ju52XvAEz0A3dd1qakbjJBVVfP/3J
+        F9v39+/t3aMXYg2IW/jPfKZff6da18ucCPGcJgktnj0/efH4rvnr8dOizolY1RJ/LStMZPDR42d1
+        tuhC4y/Ag/wl/nIDo/f9L9As9vre3qfcMvbd47v8euwb/f1l1rZ5zQh+evDgYPf+47v9bx6/XE/K
+        opnnM4z2BUHUwfc/d2TgPzt04M8ef7nK64xIC9CYh8d3/U8ef1kXFwX3u7O7g+ceDdB9qN8zqJNs
+        UrXpSVFP141pw188/smCxPplmU0FrSdZXVdX6Um1WFRLwtt+QbOPlvyP+/RJXTRtVaZnS5CAtW5W
+        psdFvSJZufn1r1Y0nvR5trw4J0G4uf1350Wbpyc1SeDNjQm32cUVzTd0nv003vZNtl62txnwybos
+        q8XqVm1fV1e3a5ctZ9fp54TpzW2/nWftnAS9vAW1Xlfrdp4+qUk33Nz4eZ6nXxRleXPL0/OByXpK
+        yrEQJgD/7e4eEE/u3HtAfB1+47dkAC/L6wUje1Jl03kK3U1fBe9xO2XpY1JXs6f5Kqvbdc2mw9MG
+        b3YfPNq/TwrOqLnBd3w0+Ovjui4uM9GGHsA9guMD3PSa04Zqh9zfRr8a94QUZLW8KNr1LD/avjd+
+        uPNwb+fBwf7Dnfv7D0nZui8fP6f2/Nv9nfG9g/3dTz/99P7DnXvQfPYrmoMu+Cd5BiV9tPcpmQnz
+        Bw26zK6Ptl++2f1i7/743oN9Mm3y2eMnZTV9iwl6RtrN/mHwxu/QQh1rgI+9YeqnqhvpG/3A2cfe
+        Bx0z6FO+Y7E6LbsGc3L/fO9hlh9s3z+YHWzv79zf2c6ynXvb9x9+en7+6fnuvXsPiRk7L/2sGUy8
+        EGvgWES/trSCcUALsRnmL2cp8FfHUOCjnzWDeY+GMPDd+xtMonz/m//vG8wfmTB8+iMT9o2aMFI8
+        O/ifUTyD7/ho8Ne+LfIB3nu0e0CgDMBNrzn99H4mbG/8YHd37+Dg4afU8b0DMiHuS8+EUXx48OmD
+        vU/vPdgjHUmWyX5Fc9AFb6zW3v09skj6Bw0a5urlm0+/uH9vfG8/asFoyuwfBm38DrXQUc/42Bul
+        fqrKir7RD5zB6n3QsUs0fkv4nUf3Hj7aOzCE77TsWjCy/NN7k93p9sN792fb+7sHu9uT6eTh9vnk
+        fj6dPcw+Pd+hCem8tNmCBd13WpqR6NiJuKCFJRFNYbSB4xD92tIK2hotRImbv5zqxl8dzY2PftYs
+        2J60jH33/haMyNH/5kcWTD+ON/6RBWOj8PPOgpG1+YaDsL0fRhB279OHDx7cP6DYam8H6SL3pWfB
+        dihW29vf2Xm4v3vv4T5FQvYrmoMueGO02NSZP2jQMFcv3+x9sTfee7AbM2DUu/3DYI3foRU62hkf
+        e4PUT1VX0Tf6gbNXvQ86ZsmnO8VARPp7hu6dll0Dln366U5+P6Poa3KQbe9n2afbk4fns+3dHbJl
+        B5OH2cFk8p4GLOi+09KMRMdOtAUtlEQ7n5L2jzZwDKJfW1pBWaOF6HDzl9Pc+KujuPHRz5oBu0fs
+        NfDd+xsw8qH63/xcGTBPM7kP9XsGNaSPvCZdrfg+1ua9zNj72khC5EPyojdlYT3lB6p5vkDnG78l
+        Awi9gu63Sn5WqKGadpyLtZNvODihlRgf4KbXnOS+r2rfu7f/6d7eg/2De7v3oRjcl6Fqp8za7sGn
+        B/ce3r+PVuYronwXvNHmD0iuzO80ZuhxSq/dPxjv7d6LafZdam7+MEjjd4hLR23hY2+M+qkKMX2j
+        HzhFbj7RVwgl6p5X6Oi73uriXaycHv0/9TwkvWYdAAA=
+    headers:
+      Cache-Control:
+      - private
+      Content-Encoding:
+      - gzip
+      Content-Length:
+      - '1913'
+      Content-Type:
+      - text/html; charset=utf-8
+      Date:
+      - Sat, 08 Jun 2019 19:42:15 GMT
+      Server:
+      - Microsoft-IIS/10.0
+      Vary:
+      - Accept-Encoding
+      X-AspNet-Version:
+      - 4.0.30319
+      X-Powered-By:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+version: 1
