@@ -158,8 +158,8 @@ class Command(BaseCommand):
         try:
             linestring = LineString(points)
             return linestring
-        except ValueError as error:
-            warnings.warn('%s %s' % (error, points))
+        except ValueError:
+            pass
 
     def do_service(self, open_file, filename):
         """

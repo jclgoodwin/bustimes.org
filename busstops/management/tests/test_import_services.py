@@ -67,31 +67,16 @@ class ImportServicesTest(TestCase):
                 indicator=indicator, latlong=Point(lng, lat, srid=4326)
             )
 
-        with warnings.catch_warnings(record=True) as caught_warnings:
-
+        with override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}):
             # simulate an East Anglia zipfile:
             cls.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml'])
-
-            print([str(w) for w in caught_warnings])
-            assert len(caught_warnings) == 1
-            assert 'LineString requires at least 2 points, got 1' in str(caught_warnings[0])
 
             # simulate a Scotland zipfile:
             cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml', 'CGAO305.xml'])
 
-            print([str(w) for w in caught_warnings])
-            assert len(caught_warnings) == 2
-            assert 'No operator found for element' in str(caught_warnings[1])
-
             # simulate a North West zipfile:
             cls.write_files_to_zipfile_and_import('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml',
                                                              'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
-
-            print([str(w) for w in caught_warnings])
-            assert len(caught_warnings) == 5
-            assert 'No operator found for element' in str(caught_warnings[2])
-            assert 'No operator found for element' in str(caught_warnings[3])
-            assert 'LineString requires at least 2 points, got 1' in str(caught_warnings[4])
 
         cls.ea_service = Service.objects.get(pk='ea_21-13B-B-y08')
         cls.sc_service = Service.objects.get(pk='ABBN017')
@@ -106,13 +91,10 @@ class ImportServicesTest(TestCase):
                 'IncludedServices.csv',
                 'Operator,LineName,Dir,Description\nMEGA,M11A,O,Belgravia - Liverpool\nMEGA,M12,O,Shudehill - Victoria'
             )
-        with warnings.catch_warnings(record=True) as caught_warnings:
-            call_command(cls.command, ncsd_zipfile_path)
+        call_command(cls.command, ncsd_zipfile_path)
 
-            # test re-importing a previously imported service again
-            call_command(cls.command, ncsd_zipfile_path)
-
-            assert len(caught_warnings) == 2
+        # test re-importing a previously imported service again
+        call_command(cls.command, ncsd_zipfile_path)
 
         with freeze_time('2000-01-01'):
             call_command('generate_departures', 'GB')
