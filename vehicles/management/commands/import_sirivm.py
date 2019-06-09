@@ -117,11 +117,11 @@ class Command(ImportLiveVehiclesCommand):
     def get_vehicle(self, item):
         mvj = item.find('siri:MonitoredVehicleJourney', NS)
         operator_ref = mvj.find('siri:OperatorRef', NS).text
-        if operator_ref == 'TD' or operator_ref == 'TV':  # Xplore Dundee or Thames Valley
+        if operator_ref == 'TV':  # Thames Valley
             return None, None
         vehicle_code = mvj.find('siri:VehicleRef', NS).text
         while operator_ref and vehicle_code.startswith(operator_ref + '-'):
-            if operator_ref == 'SQ' and not vehicle_code.startswith('SQ-SQ-'):
+            if operator_ref == 'SQ' and not vehicle_code.startswith('SQ-SQ-') or operator_ref == 'CSLB':
                 break
             vehicle_code = vehicle_code[len(operator_ref) + 1:]
 
@@ -141,9 +141,20 @@ class Command(ImportLiveVehiclesCommand):
                 defaults,
                 code=vehicle_code,
             )
+
         if not operator_options:
             operator_options = (operator,)
         try:
+            if operator and operator.name.startswith('Stagecoach '):
+                if '-' in vehicle_code:
+                    vehicle_code = vehicle_code.split('-', 1)[-1]
+                    if vehicle_code.isdigit():
+                        defaults['fleet_number'] = vehicle_code
+                return self.vehicles.get_or_create(
+                    defaults,
+                    operator__name__startswith='Stagecoach ',
+                    code=vehicle_code,
+                )
             return self.vehicles.get_or_create(
                 defaults,
                 operator__in=operator_options,
@@ -206,7 +217,7 @@ class Command(ImportLiveVehiclesCommand):
         try:
             if operator and operator.id == 'TNXB' and service == '4':
                 journey.service_id = 'cen_33-4-W-y11'
-            elif operator_ref != 'OFJ':
+            elif operator_ref != 'OFJ':  # not a Gatwick Airport shuttle
                 journey.service = self.get_service(services, latlong)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist):
             origin_ref = mvj.find('siri:OriginRef', NS)
