@@ -37,7 +37,7 @@
         polyline.addTo(map);
         bounds = polyline.getBounds();
         map.fitBounds(bounds);
-        map.setMaxBounds(bounds);
+        map.setMaxBounds(bounds.pad(.5));
     }
 
     statusBar.onAdd = function () {
@@ -243,7 +243,7 @@
         a.appendChild(img);
         div.appendChild(a);
         a.onclick = function() {
-            var container = map.getContainer()
+            var container = map.getContainer();
             if (expanded) {
                 expanded = false;
                 container.className = container.className.replace(' expanded', '');
