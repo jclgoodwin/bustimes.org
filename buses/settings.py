@@ -183,13 +183,13 @@ PIPELINE = {
                 'async': not DEBUG
             }
         },
-        'livemap': {
+        'servicemap': {
             'source_filenames': (
                 'js/bower_components/leaflet/dist/leaflet.js',
                 'js/bower_components/reqwest/reqwest.min.js',
-                'js/livemap.js',
+                'js/servicemap.js',
             ),
-            'output_filename': 'js/livemap.min.js',
+            'output_filename': 'js/servicemap.min.js',
             'extra_context': {
                 'async': not DEBUG
             }

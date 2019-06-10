@@ -8,10 +8,12 @@
         L, reqwest, Cowboy
     */
 
-    var map = L.map('hugemap'),
+    var map = L.map('hugemap', {
+            minZoom: 10
+        }),
         tileURL = 'https://maps.bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
         statusBar = L.control({
-            position: 'topright'
+            position: 'bottomleft'
         }),
         lastReq,
         timeout,
@@ -38,7 +40,7 @@
         return '-ms-' + rotation + ';-webkit-' + rotation + ';-moz-' + rotation + ';-o-' + rotation + ';' + rotation;
     }
 
-    function getIcon(service, direction, livery, textColour) {
+    function getBusIcon(service, direction, livery, textColour) {
         if (direction === null) {
             var html = '';
         } else {
@@ -82,7 +84,7 @@
             }
         }
 
-        var icon = getIcon(data.properties.service, data.properties.direction, data.properties.vehicle.livery, data.properties.vehicle.text_colour),
+        var icon = getBusIcon(data.properties.service, data.properties.direction, data.properties.vehicle.livery, data.properties.vehicle.text_colour),
             latLng = L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
 
         if (marker) {
@@ -245,6 +247,30 @@
     }
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    var locateButton = L.control();
+
+    locateButton.onAdd = function(map) {
+        var div = document.createElement('div');
+        div.className = 'leaflet-bar';
+        var a = document.createElement('a');
+        a.href = '#';
+        a.title = 'Find my location';
+        a.setAttribute('role', 'button');
+        var img = document.createElement('img');
+        img.alt = 'Locate';
+        img.width = 16;
+        img.height = 16;
+        img.src = '/static/locate.png';
+        a.appendChild(img);
+        div.appendChild(a);
+        a.onclick = function() {
+            map.locate({setView: true});
+        };
+        return div;
+    };
+
+    locateButton.addTo(map);
 
     load(map, statusBar);
 })();

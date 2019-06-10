@@ -9,13 +9,13 @@
     */
 
     var map = L.map('map', {
-            tap: false,
+            // tap: false,
             scrollWheelZoom: false,
         }),
         tileURL = 'https://maps.bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
         polyline,
         statusBar = L.control({
-            position: 'topright'
+            position: 'bottomleft'
         }),
         bounds,
         lastReq,
