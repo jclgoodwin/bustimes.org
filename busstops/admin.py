@@ -78,6 +78,7 @@ class ServiceCodeInline(admin.TabularInline):
 class ServiceAdmin(admin.ModelAdmin):
     list_display = ('service_code', '__str__', 'mode', 'net', 'region', 'current', 'show_timetable', 'timetable_wrong')
     list_filter = ('current', 'show_timetable', 'timetable_wrong', 'mode', 'net', 'region',
+                   ('source', admin.RelatedOnlyFieldListFilter),
                    ('operator', admin.RelatedOnlyFieldListFilter))
     search_fields = ('service_code', 'line_name', 'description')
     raw_id_fields = ('operator', 'stops')
