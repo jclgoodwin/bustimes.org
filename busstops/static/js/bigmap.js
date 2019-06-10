@@ -271,6 +271,7 @@
             }
             if (map.getZoom() < 15) {
                 stopsGroup.clearLayers();
+                oldStops = {};
                 highWater = null;
                 return;
             }
