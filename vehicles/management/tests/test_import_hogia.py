@@ -49,10 +49,6 @@ class HogiaImportTest(TestCase):
         self.assertContains(response, '<h1>315 YN03 UVT</h1>')
         self.assertContains(response, '<p>Bristol VR</p>')
 
-        with self.assertNumQueries(0):
-            response = self.client.get('/vehicles')
-        self.assertContains(response, 'vehicles.min.js')
-
         with self.assertNumQueries(2):
             json = self.client.get('/vehicles.json').json()
         self.assertEqual(len(json['features']), 4)

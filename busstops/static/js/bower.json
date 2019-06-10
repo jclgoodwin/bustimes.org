@@ -20,7 +20,6 @@
     "html5shiv": "^3.7.3",
     "jquery-throttle-debounce": "https://github.com/cowboy/jquery-throttle-debounce.git",
     "reqwest": "^2.0.5",
-    "leaflet.markercluster": "^1.0.0",
     "loadjs": "^3.5.0"
   }
 }

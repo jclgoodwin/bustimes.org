@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}Stop map – Bus Times{% endblock %}
+{% block title %}Map – Bus Times{% endblock %}
 
 {% block head %}
 <style>
@@ -13,19 +13,19 @@
     top: 3.5em;
     width: 100%;
 }
+
+.leaflet-popup-content a {
+    display: inline;
+}
 </style>
 {% endblock %}
 
 {% block cookies %}{% endblock %}
 
 {% block header %}
-	<header>
-		<a href="/" class="site-name">Bus Times</a>
-        <ul>
-            <li><a href="/vehicles">Buses</a></li>
-            <li><a href="/map">Stops</a></li>
-        </ul>
-	</header>
+   <header>
+        <a href="/" class="site-name">Bus Times</a>
+    </header>
 {% endblock %}
 
 {% block breadcrumb %}{% endblock %}
@@ -33,13 +33,12 @@
 {% block content %}
 
 <div id="hugemap"></div>
-<div id="sidebar"></div>
 
 {% load static %}
 {% load pipeline %}
 <link rel="stylesheet" href="{% static 'js/bower_components/leaflet/dist/leaflet.css' %}" />
 <script src="{% static 'js/bower_components/leaflet/dist/leaflet.js' %}"></script>
-{% javascript 'hugemap' %}
+{% javascript 'bigmap' %}
 
 {% endblock %}
 

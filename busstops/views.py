@@ -115,8 +115,8 @@ def data(request):
     return render(request, 'data.html')
 
 
-def hugemap(request):
-    """The biggish JavaScript map"""
+def map(request):
+    """The full-page slippy map"""
     return render(request, 'map.html')
 
 

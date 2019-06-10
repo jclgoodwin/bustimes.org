@@ -20,6 +20,11 @@ class VehiclesTests(TestCase):
         journey = VehicleJourney.objects.create(vehicle=cls.vehicle_1, datetime=cls.datetime, source=source)
         VehicleLocation.objects.create(datetime=cls.datetime, latlong=Point(0, 51), journey=journey, current=True)
 
+    def test_big_map(self):
+        with self.assertNumQueries(0):
+            response = self.client.get('/vehicles')
+        self.assertContains(response, 'bigmap.min.js')
+
     def test_vehicle(self):
         vehicle = Vehicle(reg='3990ME')
         self.assertEqual(str(vehicle), '3990 ME')

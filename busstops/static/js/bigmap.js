@@ -15,10 +15,19 @@
         statusBar = L.control({
             position: 'bottomleft'
         }),
-        lastReq,
+        lastVehiclesReq,
+        lastStopsReq,
         timeout,
         oldVehicles = {},
-        newVehicles = {};
+        newVehicles = {},
+        oldStops = {},
+        newStops = {},
+        stopsGroup = L.layerGroup(),
+        vehiclesGroup = L.layerGroup(),
+        highWater;
+
+    stopsGroup.addTo(map);
+    vehiclesGroup.addTo(map);
 
     map.attributionControl.setPrefix('');
 
@@ -75,6 +84,31 @@
         });
     }
 
+    function getStopIcon(indicator, bearing) {
+        var className = 'leaflet-div-icon';
+        if (indicator) {
+            var indicatorParts = indicator.split(' ');
+            var firstPart = indicatorParts[0].toLowerCase();
+            if (indicatorParts.length === 2 && (firstPart === 'stop' || firstPart === 'bay' || firstPart === 'stand' || firstPart === 'stance')) {
+                indicator = indicatorParts[1];
+            } else {
+                indicator = indicator.slice(0, 3);
+            }
+        } else {
+            indicator = '';
+        }
+        indicator = '<div class="stop">' + indicator + '</div>';
+        if (bearing !== null) {
+            indicator += '<div class="arrow" style="' + getRotation(bearing) + '"></div>';
+        }
+        return L.divIcon({
+            iconSize: [20, 20],
+            html: indicator,
+            popupAnchor: [0, -5],
+            className: className
+        });
+    }
+
     function handleVehicle(data) {
         if (data.properties.vehicle.url in oldVehicles) {
             var marker = oldVehicles[data.properties.vehicle.url];
@@ -94,7 +128,7 @@
             marker = L.marker(latLng, {
                 icon: icon
             });
-            marker.addTo(map);
+            marker.addTo(vehiclesGroup);
             newVehicles[data.properties.vehicle.url] = marker;
         }
         marker.datetime = data.properties.datetime;
@@ -160,14 +194,36 @@
         marker.bindPopup(popup);
     }
 
+    function handleStop(data) {
+        if (data.properties.url in oldStops) {
+            var marker = oldStops[data.properties.url];
+            newStops[data.properties.url] = marker;
+            return;
+        }
 
-    function processData(data) {
+        var a = document.createElement('a');
+        marker = L.marker(L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]), {
+            icon: getStopIcon(data.properties.indicator, data.properties.bearing)
+        });
+
+        a.innerHTML = data.properties.name;
+        a.href = data.properties.url;
+
+        marker.bindPopup(a.outerHTML, {
+            autoPan: false
+        });
+
+        marker.addTo(stopsGroup);
+        newStops[data.properties.url] = marker;
+    }
+
+    function processVehiclesData(data) {
         for (var i = data.features.length - 1; i >= 0; i -= 1) {
             handleVehicle(data.features[i]);
         }
         for (var vehicle in oldVehicles) {
             if (!(vehicle in newVehicles)) {
-                map.removeLayer(oldVehicles[vehicle]);
+                vehiclesGroup.removeLayer(oldVehicles[vehicle]);
             }
         }
         oldVehicles = newVehicles;
@@ -175,28 +231,59 @@
         statusBar.getContainer().innerHTML = '';
     }
 
-    function load(map, statusBar) {
-        statusBar.getContainer().innerHTML = 'Loading\u2026';
-        if (lastReq) {
-            lastReq.abort();
+    function processStopsData(data) {
+        for (var i = data.features.length - 1; i >= 0; i -= 1) {
+            handleStop(data.features[i]);
         }
+        for (var stop in oldStops) {
+            if (!(stop in newStops)) {
+                stopsGroup.removeLayer(oldStops[stop]);
+            }
+        }
+        oldStops = newStops;
+        newStops = {};
+    }
+
+    // load vehicles, and possibly stops
+    function load(map, statusBar, stops) {
+        statusBar.getContainer().innerHTML = 'Loading\u2026';
         var bounds = map.getBounds();
-        lastReq = reqwest(
-            '/vehicles.json?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest(),
+        var params = '?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest();
+
+        if (lastVehiclesReq) {
+            lastVehiclesReq.abort();
+        }
+        lastVehiclesReq = reqwest(
+            '/vehicles.json' + params,
             function(data) {
                 if (data) {
-                    processData(data);
+                    processVehiclesData(data);
                 }
                 timeout = setTimeout(function() {
-                    load(map, statusBar);
+                    load(map, statusBar, false);
                 }, 10000);
             }
         );
+
+        if (stops) {
+            if (lastStopsReq) {
+                lastStopsReq.abort();
+            }
+            if (map.getZoom() < 15) {
+                stopsGroup.clearLayers();
+                return;
+            }
+            if (highWater && highWater.contains(bounds)) {
+                return;
+            }
+            lastStopsReq = reqwest('/stops.json' + params, processStopsData);
+            highWater = bounds;
+        }
     }
 
     function handleMoveEnd(event) {
         clearTimeout(timeout);
-        load(map, statusBar);
+        load(map, statusBar, true);
 
         var latLng = event.target.getCenter(),
             string = event.target.getZoom() + '/' + Math.round(latLng.lat * 10000) / 10000 + '/' + Math.round(latLng.lng * 10000) / 10000;
@@ -221,8 +308,13 @@
 
     window.onhashchange = function(event) {
         var parts = event.target.location.hash.substr(1).split('/');
+
         if (parts.length == 3) {
-            map.setView([parts[1], parts[2]], parts[0]);
+            try {
+                map.setView([parts[1], parts[2]], parts[0]);
+            } catch (error) {
+                // caught!
+            }
         }
     };
 
@@ -233,8 +325,20 @@
         parts = localStorage.vehicleMap.split('/');
     }
     if (parts) {
-        map.setView([parts[1], parts[2]], parts[0]);
-    } else {
+        if (parts.length === 1) {
+            parts = parts[0].split(',');
+        }
+        try {
+            if (parts.length === 3) {
+                map.setView([parts[1], parts[2]], parts[0]);
+            } else {
+                map.setView([parts[0], parts[1]], 15);
+            }
+        } catch (error) {
+            // oh well
+        }
+    }
+    if (!map._loaded) {
         map.setView([51.9, 0.9], 9);
     }
 
@@ -242,7 +346,7 @@
         if (event.target.hidden) {
             clearTimeout(timeout);
         } else {
-            load(map, statusBar);
+            load(map, statusBar, false);
         }
     }
 
@@ -284,5 +388,5 @@
 
     locateButton.addTo(map);
 
-    load(map, statusBar);
+    load(map, statusBar, true);
 })();

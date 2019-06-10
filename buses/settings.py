@@ -132,12 +132,12 @@ PIPELINE = {
                 'async': True
             }
         },
-        'map': {
+        'placemap': {
             'source_filenames': (
                 'js/bower_components/loadjs/dist/loadjs.min.js',
-                'js/map.js',
+                'js/placemap.js',
             ),
-            'output_filename': 'js/map.min.js',
+            'output_filename': 'js/placemap.min.js',
             'extra_context': {
                 'async': True
             }
@@ -160,25 +160,13 @@ PIPELINE = {
                 'async': True
             }
         },
-        'hugemap': {
-            'source_filenames': (
-                'js/bower_components/leaflet.markercluster/dist/leaflet.markercluster.js',
-                'js/bower_components/reqwest/reqwest.min.js',
-                'js/bower_components/jquery-throttle-debounce/jquery.ba-throttle-debounce.min.js',
-                'js/hugemap.js',
-            ),
-            'output_filename': 'js/hugemap.min.js',
-            'extra_context': {
-                'async': not DEBUG
-            }
-        },
-        'vehicles': {
+        'bigmap': {
             'source_filenames': (
                 'js/bower_components/reqwest/reqwest.min.js',
                 'js/bower_components/jquery-throttle-debounce/jquery.ba-throttle-debounce.min.js',
-                'js/vehicles.js',
+                'js/bigmap.js',
             ),
-            'output_filename': 'js/vehicles.min.js',
+            'output_filename': 'js/bigmap.min.js',
             'extra_context': {
                 'async': not DEBUG
             }
