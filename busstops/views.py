@@ -12,7 +12,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import DetailView
 from django.conf import settings
 from django.contrib.gis.geos import Polygon
-from django.contrib.gis.db.models.functions import Distance
 from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
@@ -23,8 +22,10 @@ from .models import Region, StopPoint, AdminArea, Locality, District, Operator, 
 from .forms import ContactForm
 
 
-prefetch_stop_services = Prefetch('service_set', to_attr='current_services',
-                                  queryset=Service.objects.filter(current=True).distinct().order_by().defer('geometry'))
+prefetch_stop_services = Prefetch(
+    'service_set', to_attr='current_services',
+    queryset=Service.objects.filter(current=True).distinct('line_name', 'stops').order_by().defer('geometry')
+)
 
 
 def index(request):
@@ -138,9 +139,9 @@ def stops(request):
 
     results = StopPoint.objects.filter(
         latlong__within=bounding_box, active=True
-    ).select_related('locality').annotate(
-        distance=Distance('latlong', bounding_box.centroid)
-    ).order_by('distance').defer('osm', 'locality__latlong')
+    ).prefetch_related(
+        prefetch_stop_services
+    ).defer('osm').select_related('locality').defer('osm', 'locality__latlong')
 
     return JsonResponse({
         'type': 'FeatureCollection',
@@ -155,8 +156,9 @@ def stops(request):
                 'indicator': stop.indicator,
                 'bearing': stop.get_heading(),
                 'url': stop.get_absolute_url(),
+                'services': stop.get_line_names()
             }
-        } for stop in results]
+        } for stop in results if stop.current_services]
     })
 
 

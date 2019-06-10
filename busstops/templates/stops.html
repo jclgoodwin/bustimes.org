@@ -14,9 +14,7 @@
                     {% endif %}
                 </span>
                 {% for line_name in stop.get_line_names %}
-                    {% ifchanged line_name %}
-                        <small>{{ line_name }}</small>
-                    {% endifchanged %}
+                    <small>{{ line_name }}</small>
                 {% endfor %}
             </a>
             {% if stop.latlong %}
