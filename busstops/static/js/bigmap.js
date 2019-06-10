@@ -271,6 +271,7 @@
             }
             if (map.getZoom() < 15) {
                 stopsGroup.clearLayers();
+                highWater = null;
                 return;
             }
             if (highWater && highWater.contains(bounds)) {
