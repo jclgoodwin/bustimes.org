@@ -43,8 +43,9 @@
             div.className = 'leaflet-bar';
             var a = document.createElement('a');
             a.href = '#';
-            a.role = 'button';
             a.title = 'Close map';
+            a.setAttribute('role', 'button');
+            a.setAttribute('aria-label', 'Close map');
             a.onclick = function() {
                 map.remove();
                 main.removeChild(mapContainer);
@@ -53,9 +54,6 @@
             a.innerHTML = '❌';
             div.appendChild(a);
             return div;
-        };
-
-        closeButton.onRemove = function() {
         };
 
         closeButton.addTo(map);

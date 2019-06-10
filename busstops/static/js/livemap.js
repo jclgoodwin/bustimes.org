@@ -35,7 +35,9 @@
             }
         });
         polyline.addTo(map);
-        map.fitBounds(polyline.getBounds());
+        bounds = polyline.getBounds();
+        map.fitBounds(bounds);
+        map.setMaxBounds(bounds);
     }
 
     statusBar.onAdd = function () {
@@ -222,6 +224,51 @@
             load(map, statusBar);
         }
     }
+
+    var expandButton = L.control(),
+        expanded = false;
+
+    expandButton.onAdd = function(map) {
+        var div = document.createElement('div');
+        div.className = 'leaflet-bar';
+        var a = document.createElement('a');
+        a.href = '#';
+        a.title = 'Bigger';
+        a.setAttribute('role', 'button');
+        var img = document.createElement('img');
+        img.alt = 'Expand';
+        img.width = 16;
+        img.height = 16;
+        img.src = '/static/expand.png';
+        a.appendChild(img);
+        div.appendChild(a);
+        a.onclick = function() {
+            var container = map.getContainer()
+            if (expanded) {
+                expanded = false;
+                container.className = container.className.replace(' expanded', '');
+                document.body.style.overflow = '';
+                map.scrollWheelZoom.disable();
+                a.title = 'Bigger';
+                img.alt = 'Expand';
+                img.src = '/static/expand.png';
+            } else {
+                expanded = true;
+                container.className += ' expanded';
+                document.body.style.overflow = 'hidden';
+                map.scrollWheelZoom.enable();
+                a.title = 'Smaller';
+                img.alt = 'Smaller';
+                img.src = '/static/contract.png';
+            }
+            map.invalidateSize();
+            map.fitBounds(polyline.getBounds());
+            return false;
+        };
+        return div;
+    };
+
+    expandButton.addTo(map);
 
     load(map, statusBar);
 })();

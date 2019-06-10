@@ -521,16 +521,29 @@ table {
     &.service-map,
     &.stop-map {
         position: relative;
-        height: 210px;
     }
 
-    &.service-map {
-        margin: 16px 0;
-        height: 240px;
+    &.service-map.expanded {
+        position: fixed;
     }
 
     &.full-screen {
         position: fixed;
+    }
+}
+
+.stop-map {
+    height: 210px;
+}
+
+.service-map {
+    height: 240px;
+    margin: 16px 0;
+
+    &.expanded {
+        height: auto;
+        margin: 0;
+        z-index: 1;
     }
 }
 
@@ -598,6 +611,10 @@ table {
         transform-origin: 5px 16px;
     }
 
+}
+
+.leaflet-touch .leaflet-bar img {
+    padding-top: 7px;
 }
 
 body {
