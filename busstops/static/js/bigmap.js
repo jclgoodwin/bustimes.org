@@ -294,14 +294,6 @@
         if (window.localStorage) {
             localStorage.setItem('vehicleMap', string);
         }
-
-        var links = document.getElementsByTagName('header')[0].getElementsByTagName('a');
-        for (var i = links.length - 1; i >= 0; i -= 1) {
-            if (links[i].href.indexOf('/map') !== -1) {
-                links[i].href = '/map#' + string;
-                break;
-            }
-        }
     }
 
     map.on('moveend', Cowboy.debounce(500, handleMoveEnd));
