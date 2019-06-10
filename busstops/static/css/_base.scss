@@ -617,6 +617,24 @@ table {
     padding-top: 7px;
 }
 
+@keyframes materialize {
+    0% {
+        opacity: 100%;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 100%;
+    }
+}
+
+.leaflet-bar .working {
+    animation: materialize 3s infinite alternate ease-in-out;
+}
+
 body {
     .leaflet-container {
         font-family: inherit;

@@ -264,9 +264,21 @@
         img.src = '/static/locate.png';
         a.appendChild(img);
         div.appendChild(a);
-        a.onclick = function() {
+
+        function locate() {
+            img.className = 'working';
             map.locate({setView: true});
-        };
+            return false;
+        }
+
+        function located() {
+            img.className = '';
+        }
+        a.onclick = locate;
+
+        map.on('locationfound', located);
+        map.on('locationerror', located);
+
         return div;
     };
 
