@@ -169,10 +169,10 @@ class Command(BaseCommand):
 
         timetable = Timetable(open_file)
 
-        if timetable.mode == 'underground':
+        if not hasattr(timetable, 'element'):  # invalid file
             return
 
-        if not hasattr(timetable, 'element'):
+        if timetable.mode == 'underground':
             return
 
         if timetable.operating_period.end and timetable.operating_period.end < date.today():
