@@ -402,67 +402,6 @@ table {
         }
     }
 
-    a[href^="/services/bakerloo-elephant"],
-    a[href^="/services/central-ealing"],
-    a[href^="/services/circle-aldgate"],
-    a[href^="/services/district-ealing"],
-    a[href^="/services/hammersmith-city"],
-    a[href^="/services/jubilee-stanmore"],
-    a[href^="/services/metropolitan"],
-    a[href^="/services/northern-morden"],
-    a[href^="/services/piccadilly-heathrow"],
-    a[href^="/services/victoria-bricton"],
-    a[href^="/services/waterloo-city"] {
-        .name {
-            color: white;
-            padding: 0 .25em;
-        }
-    }
-
-    a[href^="/services/bakerloo-elephant"] .name {
-        background: rgb(178, 99, 0);
-    }
-
-    a[href^="/services/central-ealing"] .name {
-        background: rgb(220, 36, 31);
-    }
-
-    a[href^="/services/circle-aldgate"] .name {
-        background: rgb(255, 211, 41);
-    }
-
-    a[href^="/services/district-ealing"] .name {
-        background: rgb(0, 125, 50);
-    }
-
-    a[href^="/services/hammersmith-city"] .name {
-        background: rgb(244, 169, 190);
-    }
-
-    a[href^="/services/jubilee-stanmore"] .name {
-        background: rgb(161, 165, 167);
-    }
-
-    a[href^="/services/metropolitan"] .name {
-        background: rgb(155, 0, 88);
-    }
-
-    a[href^="/services/northern-morden"] .name {
-        background: rgb(0, 0, 0);
-    }
-
-    a[href^="/services/piccadilly-heathrow"] .name {
-        background: rgb(0, 25, 168);
-    }
-
-    a[href^="/services/victoria-bricton"] .name {
-        background: rgb(0, 152, 216);
-    }
-
-    a[href^="/services/waterloo-city"] .name {
-        background: rgb(147, 206, 186);
-    }
-
     a:focus .name,
     a:active .name {
         color: inherit;

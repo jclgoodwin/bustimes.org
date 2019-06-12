@@ -169,6 +169,9 @@ class Command(BaseCommand):
 
         timetable = Timetable(open_file)
 
+        if timetable.mode == 'underground':
+            return
+
         if not hasattr(timetable, 'element'):
             return
 
