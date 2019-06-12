@@ -350,7 +350,7 @@ class Command(BaseCommand):
         except shutil.SameFileError:
             pass
 
-        if self.region.id != 'L':
+        if self.region_id != 'L':
             with transaction.atomic():
                 Journey.objects.filter(service__region=self.region_id).delete()
                 generate_departures(Region.objects.get(id=self.region_id))
