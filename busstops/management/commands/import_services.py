@@ -350,13 +350,14 @@ class Command(BaseCommand):
         except shutil.SameFileError:
             pass
 
-        with transaction.atomic():
-            Journey.objects.filter(service__region=self.region_id).delete()
-            generate_departures(Region.objects.get(id=self.region_id))
+        if self.region.id != 'L':
+            with transaction.atomic():
+                Journey.objects.filter(service__region=self.region_id).delete()
+                generate_departures(Region.objects.get(id=self.region_id))
 
-        with transaction.atomic():
-            ServiceDate.objects.filter(service__region=self.region_id).delete()
-            generate_service_dates(Service.objects.filter(region=self.region_id))
+            with transaction.atomic():
+                ServiceDate.objects.filter(service__region=self.region_id).delete()
+                generate_service_dates(Service.objects.filter(region=self.region_id))
 
         # StopPoint.objects.filter(active=True).exclude(service__current=True).update(active=False)
         # StopPoint.objects.filter(active=False, service__current=True).update(active=True)
