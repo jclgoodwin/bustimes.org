@@ -114,10 +114,12 @@ class Command(ImportLiveVehiclesCommand):
             print(operator)
 
         if operators:
-            if vehicle.latest_location and vehicle.latest_location.journey.code == journey.code and (
-                                           vehicle.latest_location.journey.route_name == journey.route_name
+            latest_location = vehicle.latest_location
+            if (
+                latest_location and latest_location.journey.code == journey.code and
+                latest_location.journey.route_name == journey.route_name and latest_location.journey.service
             ):
-                journey.service = vehicle.latest_location.journey.service
+                journey.service = latest_location.journey.service
             else:
                 if item['lineRef'] == 'CSR' and operators[0] == 'BHBC':
                     item['lineRef'] = 'CSS'
