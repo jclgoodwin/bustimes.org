@@ -116,16 +116,20 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_vehicle(self, item):
         mvj = item.find('siri:MonitoredVehicleJourney', NS)
-        operator_ref = mvj.find('siri:OperatorRef', NS).text
-        if operator_ref == 'TV':  # Thames Valley
-            return None, None
         vehicle_code = mvj.find('siri:VehicleRef', NS).text
+        operator_ref = mvj.find('siri:OperatorRef', NS).text
         while operator_ref and vehicle_code.startswith(operator_ref + '-'):
             if operator_ref == 'SQ' and not vehicle_code.startswith('SQ-SQ-') or operator_ref == 'CSLB':
                 break
             vehicle_code = vehicle_code[len(operator_ref) + 1:]
 
         operator, operator_options = self.get_operator(operator_ref)
+
+        if operator:
+            if operator.id == 'THVB':
+                operator_options = ('RBUS',)
+            elif operator.id == 'SESX':
+                operator_options = ('SESX', 'NIBS', 'GECL')
 
         defaults = {
             'source': self.source,

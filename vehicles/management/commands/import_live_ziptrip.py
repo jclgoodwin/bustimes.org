@@ -168,12 +168,12 @@ class Command(ImportLiveVehiclesCommand):
         if operator_id in self.operator_ids:
             operator_id = self.operator_ids[operator_id]
 
-        latest_location = vehicle.latest_location
-        if latest_location and latest_location.journey.route_name == journey.route_name:
-            journey.service = latest_location.journey.service
+        latest = vehicle.latest_location
+        if latest and latest.journey.route_name == journey.route_name and latest.journey.service:
+            journey.service = latest.journey.service
         elif route_name:
             services = Service.objects.filter(current=True)
-            if operator_id == 'SESX' and route_name == '1':
+            if operator_id[0] == 'SESX' and route_name == '1':
                 services = services.filter(line_name__in=('1', 'Breeze 1'))
             else:
                 services = services.filter(line_name__iexact=route_name)
@@ -184,6 +184,16 @@ class Command(ImportLiveVehiclesCommand):
                 services = services.filter(operator=operator_id)
             try:
                 journey.service = self.get_service(services, get_latlong(item))
+                try:
+                    operator = journey.service.operator.get()
+                    if vehicle.operator_id != operator.id:
+                        vehicle.operator = operator
+                        vehicle.save()
+                except Operator.MultipleObjectsReturned:
+                    pass
+                if operator_id[0] == 'SESX' and journey.service.operator.first().id != vehicle.operator_id:
+                    vehicle.operator = journey.service.operator.first()
+                    vehicle.save()
             except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
                 if route_name.lower() not in self.ignorable_route_names:
                     if operator_id[0] != 'bus-vannin' and not (operator_id[0] == 'RBUS' and route_name[0] == 'V'):
