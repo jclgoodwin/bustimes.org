@@ -141,7 +141,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if changed:
                 latest.journey.save()
             location.journey = latest.journey
-            if location.heading is None or journey.vehicle.operator_id == 'ARBB' and location.heading == 0:
+            if location.heading is None:
                 location.heading = calculate_bearing(latest.latlong, location.latlong)
         else:
             journey.source = self.source
