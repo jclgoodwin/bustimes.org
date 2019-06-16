@@ -4,16 +4,20 @@ from urllib.parse import urlencode
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.db import transaction
+from django.utils import timezone
 from multigtfs.models import Feed
-from ...models import Operator, Service, ServiceCode
+from ...models import Operator, Service, ServiceCode, DataSource
 from .import_ie_gtfs import download_if_modified
 
 
 class Command(BaseCommand):
     @staticmethod
     def process_gtfs(collection, feed):
-        scheme = '{} GTFS'.format(collection)
+        scheme = f'{collection} GTFS'
         ServiceCode.objects.filter(scheme=scheme).delete()
+
+        source = DataSource.objects.update_or_create({'datetime': timezone.now()}, name=scheme)[0]
+        source.service_set.update(current=False)
 
         thebus = Operator.objects.update_or_create(id='thebus', name='TheBus', region_id='HI')[0]
 
@@ -26,9 +30,11 @@ class Command(BaseCommand):
                     'description': route.long_name,
                     'date': date.today(),
                     'region_id': 'HI',
-                    'show_timetable': True
+                    'show_timetable': True,
+                    'current': True,
+                    'geometry': route.geometry
                 },
-                service_code='{}-{}'.format(collection, route.short_name)
+                service_code='{}-{}'.format(collection, route.short_name, source=source)
             )[0]
             service.operator.add(thebus)
             ServiceCode.objects.update_or_create(
