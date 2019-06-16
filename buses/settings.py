@@ -253,6 +253,7 @@ TFWM = {
     'app_id': os.environ.get('TFWM_APP_ID'),
     'app_key': os.environ.get('TFWM_APP_KEY')
 }
+THEBUS_KEY = os.environ.get('THEBUS_KEY')
 
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 TNDS_DIR = os.path.join(DATA_DIR, 'TNDS')
