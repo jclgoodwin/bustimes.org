@@ -58,11 +58,11 @@ class VehiclesTests(TestCase):
         livery.colours = '#7D287D #FDEE00 #FDEE00'
         livery.horizontal = True
         self.assertEqual('<div style="height:1.5em;width:4em;background:linear-gradient' +
-                         '(to top,#7D287D 34%,#FDEE00 34%,#FDEE00 67%)"></div>', livery.preview())
+                         '(to top,#7D287D 34%,#FDEE00 34%)"></div>', livery.preview())
 
         self.vehicle_1.livery = livery
         self.vehicle_1.livery.horizontal = False
-        self.assertEqual('linear-gradient(to left,#7D287D 34%,#FDEE00 34%,#FDEE00 67%)',
+        self.assertEqual('linear-gradient(to left,#7D287D 34%,#FDEE00 34%)',
                          self.vehicle_1.get_livery(179))
 
         self.vehicle_1.livery.colours = '#c0c0c0'

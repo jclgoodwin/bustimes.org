@@ -21,7 +21,7 @@ def get_css(colours, direction=None, horizontal=False):
         background += 'to right'
     percentage = 100 / len(colours)
     for i, colour in enumerate(colours):
-        if i != 0:
+        if i != 0 and colour != colours[i - 1]:
             background += ',{} {}%'.format(colour, ceil(percentage * i))
         if i != len(colours) - 1 and colour != colours[i + 1]:
             background += ',{} {}%'.format(colour, ceil(percentage * (i + 1)))
