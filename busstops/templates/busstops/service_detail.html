@@ -109,14 +109,16 @@
             </div>
         </div>
 
-        {% if grouping.rows|length > 10 and not forloop.last or not forloop.parentloop.last %}
-            <!--[if gte IE 9]><!-->
-                <div class="banner-ad">
-                    <div class="ad-label">Advertisement</div>
-                    <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="horizontal"></ins>
-                </div>
-                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-            <!--<![endif]-->
+        {% if not forloop.last or not forloop.parentloop.last %}
+            {% if grouping.rows|length > 20 %}
+                <!--[if gte IE 9]><!-->
+                    <div class="banner-ad">
+                        <div class="ad-label">Advertisement</div>
+                        <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="horizontal"></ins>
+                    </div>
+                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                <!--<![endif]-->
+            {% endif %}
         {% endif %}
 
     {% empty %}
