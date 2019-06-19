@@ -684,7 +684,7 @@ def add_stagecoach_departures(stop, services_dict, departures):
                                                       code=monitor['datedVehicleJourneyRef'],
                                                       service=departures[-1]['service'])
         if added:
-            departures.sort(key=lambda d: d['time'])
+            departures.sort(key=get_departure_order)
     return departures
 
 
@@ -701,13 +701,13 @@ def can_sort(departure):
 
 
 def get_departure_order(departure):
-    if departure.get('live'):
+    if departure.get('live') and departure['time'].date() == departure['live'].date():
         time = departure['live']
     else:
         time = departure['time']
     if timezone.is_naive(time):
         return time
-    return timezone.make_naive(time)
+    return timezone.make_naive(time, LOCAL_TIMEZONE)
 
 
 def blend(departures, live_rows, stop=None):
