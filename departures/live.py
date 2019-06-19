@@ -701,7 +701,7 @@ def can_sort(departure):
 
 
 def get_departure_order(departure):
-    if departure.get('live') and departure['time'].date() == departure['live'].date():
+    if departure.get('live') and (not departure['time'] or departure['time'].date() == departure['live'].date()):
         time = departure['live']
     else:
         time = departure['time']
