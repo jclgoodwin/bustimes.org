@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def calculate_bearing(a, b):
-    if a == b:
+    if a.equals_exact(b, 0.001):
         return
 
     a_lat = math.radians(a.y)
@@ -101,7 +101,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                             return
                     else:
                         location = self.create_vehicle_location(item)
-                        if location.latlong == latest.latlong:
+                        if location.latlong.equals_exact(latest.latlong, 0.001):
                             self.current_location_ids.add(latest.id)
                             return
             journey = self.get_journey(item, vehicle)

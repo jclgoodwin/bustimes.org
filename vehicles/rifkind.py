@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from requests import Session
 from django.contrib.gis.geos import Point
@@ -5,13 +6,13 @@ from django.db.models import Q
 from django.core.cache import cache
 from django.db import transaction
 from django.utils import timezone
-from busstops.models import DataSource, Journey, Operator, Service
+from busstops.models import DataSource, Journey, Service
 from .models import Vehicle, VehicleLocation, VehicleJourney
 from .management.import_live_vehicles import calculate_bearing
 
 
+logger = logging.getLogger(__name__)
 session = Session()
-operators = ('KBUS', 'TBTN', 'NOCT', 'NCTR')
 
 
 def register_user(source):
@@ -30,6 +31,8 @@ def handle_item(source, stop, item):
     if not (item['vehicle_number']):
         return
 
+    service_name = item['service_name']
+
     vehicle = str(item['vehicle_number'])
     if len(vehicle) == 6:
         if vehicle[:2] == '21':
@@ -38,14 +41,10 @@ def handle_item(source, stop, item):
             operator = 'TBTN'
         elif vehicle[:2] == '30':
             operator = 'NOCT'
-        else:
-            return
         vehicle = int(vehicle[2:])
     else:
         operator = 'NCTR'
-        # service = service.split()[-1]
-
-    service_name = item['service_name']
+        service_name = service_name.split()[-1]
 
     defaults = {
         'source': source,
@@ -53,7 +52,7 @@ def handle_item(source, stop, item):
         'route_name': service_name
     }
 
-    services = Service.objects.filter(operator__in=operators, current=True)
+    services = Service.objects.filter(operator=operator, current=True)
     if service_name in {'two', 'mickleover', 'allestree', 'comet', 'harlequin'}:
         service_name = 'the ' + service_name
     elif service_name == 'royal derby':
@@ -71,19 +70,15 @@ def handle_item(source, stop, item):
             if ' ' in service_name:
                 defaults['service'] = services.get(line_name__iexact=service_name.split()[-1])
             else:
-                print(e, service_name, item['stop_ref'], item['vehicle_number'])
+                logger.error(e, exc_info=True)
     except Service.DoesNotExist as e:
-        print(e, service_name, item['stop_ref'], item['vehicle_number'])
+        logger.error(e, exc_info=True)
     except Service.MultipleObjectsReturned as e:
-        print(e, service_name)
+        logger.error(e, exc_info=True)
 
     if not defaults.get('service'):
         return
 
-    try:
-        operator = defaults['service'].operator.get()
-    except Operator.MultipleObjectsReturned:
-        return
     vehicle, _ = Vehicle.objects.update_or_create({
         'source': source,
         'fleet_number': vehicle,
@@ -95,8 +90,6 @@ def handle_item(source, stop, item):
         vehicle=vehicle,
         datetime=timezone.make_aware(datetime.fromtimestamp(item['origin_departure_time']))
     )
-
-    # print(item)
 
     if not (item['vehicle_location_lng'] and item['vehicle_location_lat']):
         return
@@ -158,7 +151,6 @@ def rifkind(service_id):
         stops.add(journey.stopusageusage_set.last().stop)
     for stop in stops:
         items = get_stop_departures(source, stop)
-        print(stop)
         if items:
             for item in items:
                 handle_item(source, stop, item)
