@@ -14,6 +14,7 @@ from busstops.views import get_bounding_box
 from busstops.models import Operator, Service, ServiceCode, SIRISource, DataSource, Journey
 from .models import Vehicle, VehicleLocation, VehicleJourney
 from .management.commands import import_sirivm
+from .rifkind import rifkind
 
 
 session = Session()
@@ -127,13 +128,16 @@ def vehicles_last_modified(request):
         schemes = ('Cornwall SIRI', 'Devon SIRI', 'Highland SIRI', 'Dundee SIRI', 'Bristol SIRI',
                    'Leicestershire SIRI', 'Dorset SIRI', 'Hampshire SIRI', 'West Sussex SIRI', 'Bucks SIRI',
                    'Peterborough SIRI')
-        codes = ServiceCode.objects.filter(scheme__in=schemes, service=request.GET['service'])
+        service_id = request.GET['service']
+        codes = ServiceCode.objects.filter(scheme__in=schemes, service=service_id)
         for code in codes:
             try:
                 siri_one_shot(code)
                 break
             except (SIRISource.DoesNotExist, Poorly, exceptions.RequestException):
                 continue
+        if Operator.objects.filter(id__in=('KBUS', 'NCTR', 'TBTN', 'NOCT'), service=service_id).exists():
+            rifkind(service_id)
     try:
         location = locations.values('datetime').latest('datetime')
         return location['datetime']
