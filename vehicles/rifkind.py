@@ -53,7 +53,7 @@ def handle_item(source, stop, item):
     }
 
     services = Service.objects.filter(operator=operator, current=True)
-    if service_name in {'two', 'mickleover', 'allestree', 'comet', 'harlequin'}:
+    if service_name in {'two', 'mickleover', 'allestree', 'comet', 'harlequin', 'calverton connection'}:
         service_name = 'the ' + service_name
     elif service_name == 'royal derby':
         service_name = 'the royal'
@@ -82,8 +82,11 @@ def handle_item(source, stop, item):
     vehicle, _ = Vehicle.objects.update_or_create({
         'source': source,
         'fleet_number': vehicle,
-        'colours': item['vehicle_colour']
-    }, code=vehicle, operator=operator)
+    }, code=vehicle, operator_id=operator)
+
+    if not vehicle.colours:
+        vehicle.colours = item['vehicle_colour']
+        vehicle.save()
 
     journey, journey_created = VehicleJourney.objects.get_or_create(
         defaults,
