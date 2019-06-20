@@ -110,15 +110,17 @@
     }
 
     function handleVehicle(data) {
-        if (data.properties.vehicle.url in oldVehicles) {
-            var marker = oldVehicles[data.properties.vehicle.url];
-            newVehicles[data.properties.vehicle.url] = marker;
-            if (marker.datetime === data.properties.datetime) {
+        var props = data.properties;
+
+        if (props.vehicle.url in oldVehicles) {
+            var marker = oldVehicles[props.vehicle.url];
+            newVehicles[props.vehicle.url] = marker;
+            if (marker.datetime === props.datetime) {
                 return;
             }
         }
 
-        var icon = getBusIcon(data.properties.service, data.properties.direction, data.properties.vehicle.livery, data.properties.vehicle.text_colour),
+        var icon = getBusIcon(props.service, props.direction, props.vehicle.livery, props.vehicle.text_colour),
             latLng = L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
 
         if (marker) {
@@ -129,54 +131,54 @@
                 icon: icon
             });
             marker.addTo(vehiclesGroup);
-            newVehicles[data.properties.vehicle.url] = marker;
+            newVehicles[props.vehicle.url] = marker;
         }
-        marker.datetime = data.properties.datetime;
+        marker.datetime = props.datetime;
 
         var popup = '';
-        if (data.properties.service) {
-            if (data.properties.service.url) {
-                popup = '<a href="' + data.properties.service.url + '">' + data.properties.service.line_name + '</a>';
+        if (props.service) {
+            if (props.service.url) {
+                popup = '<a href="' + props.service.url + '">' + props.service.line_name + '</a>';
             } else {
-                popup = data.properties.service.line_name;
+                popup = props.service.line_name;
             }
         }
-        if (data.properties.destination) {
-            popup += ' to ' + data.properties.destination;
+        if (props.destination) {
+            popup += ' to ' + props.destination;
         }
 
-        if (data.properties.operator) {
+        if (props.operator) {
             if (popup) {
                 popup += '<br>';
             }
-            popup += data.properties.operator + '<br>';
+            popup += props.operator + '<br>';
         }
 
-        if (data.properties.vehicle) {
-            popup += '<a href="' + data.properties.vehicle.url + '">' + data.properties.vehicle.name + '</a>';
-            if (data.properties.vehicle.type) {
-                popup += ' - ' + data.properties.vehicle.type;
+        if (props.vehicle) {
+            popup += '<a href="' + props.vehicle.url + '">' + props.vehicle.name + '</a>';
+            if (props.vehicle.type) {
+                popup += ' - ' + props.vehicle.type;
             }
-            if (data.properties.vehicle.notes) {
-                popup += ' - ' + data.properties.vehicle.notes;
+            if (props.vehicle.notes) {
+                popup += ' - ' + props.vehicle.notes;
             }
             popup += '<br>';
         }
 
-        if (data.properties.delta === 0) {
+        if (props.delta === 0) {
             popup += 'On time<br>';
-        } else if (data.properties.delta) {
+        } else if (props.delta) {
             popup += 'About ';
-            if (data.properties.delta > 0) {
-                popup += data.properties.delta;
+            if (props.delta > 0) {
+                popup += props.delta;
             } else {
-                popup += data.properties.delta * -1;
+                popup += props.delta * -1;
             }
             popup += ' minute';
-            if (data.properties.delta !== 1 && data.properties.delta !== -1) {
+            if (props.delta !== 1 && props.delta !== -1) {
                 popup += 's';
             }
-            if (data.properties.delta > 0) {
+            if (props.delta > 0) {
                 popup += ' early';
             } else {
                 popup += ' late';
@@ -184,11 +186,11 @@
             popup += '<br>';
         }
 
-        var dateTime = new Date(data.properties.datetime);
+        var dateTime = new Date(props.datetime);
         popup += 'Updated at ' + dateTime.toTimeString().slice(0, 5);
 
-        if (data.properties.source === 75 && data.properties.service && data.properties.service.url) {
-            popup += '<br>(Updates if someone views<br><a href="' + data.properties.service.url + '">the ' + data.properties.service.line_name + ' page</a>)';
+        if ((props.source === 75 || props.source === 79 || props.source === 86) && props.service && props.service.url) {
+            popup += '<br>(Updates if someone views<br><a href="' + props.service.url + '">the ' + props.service.line_name + ' page</a>)';
         }
 
         marker.bindPopup(popup);
