@@ -6,7 +6,7 @@ from requests.exceptions import RequestException
 from django.contrib.gis.geos import Point
 from django.db.models import Q
 from isodate import parse_duration
-from busstops.models import Operator, Service
+from busstops.models import Operator, Service, Locality
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import Vehicle, VehicleLocation, VehicleJourney, JourneyCode
 
@@ -185,10 +185,6 @@ class Command(ImportLiveVehiclesCommand):
         if departure_time is not None:
             journey.datetime = ciso8601.parse_datetime(departure_time.text)
 
-        destination = mvj.find('siri:DestinationName', NS)
-        if destination is not None:
-            journey.destination = destination.text
-
         if service is None and operator_ref == 'TG':
             service = 'Colchester Park & Ride'
 
@@ -200,9 +196,23 @@ class Command(ImportLiveVehiclesCommand):
         ):
 
             journey.service = vehicle.latest_location.journey.service
-            if not journey.destination and vehicle.latest_location.journey.destination:
+            if vehicle.latest_location.journey.destination:
                 journey.destination = vehicle.latest_location.journey.destination
             return journey
+
+        destination_ref = mvj.find('siri:DestinationRef', NS)
+        if destination_ref is not None:
+            destination_ref = destination_ref.text
+
+        if destination_ref:
+            try:
+                journey.destination = Locality.objects.get(stoppoint=destination_ref).name
+            except Locality.DoesNotExist:
+                pass
+        if not journey.destination:
+            destination_name = mvj.find('siri:DestinationName', NS)
+            if destination_name is not None:
+                journey.destination = destination_name.text
 
         services = Service.objects.filter(current=True)
         services = services.filter(Q(line_name__iexact=service) | Q(servicecode__scheme__endswith=' SIRI',
