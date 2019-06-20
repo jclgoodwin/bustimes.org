@@ -7,7 +7,7 @@ from pyppeteer import launch
 from datetime import timedelta
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
-from django.db import transaction
+from django.db import transaction, OperationalError
 from django.db.models import Q
 from django.utils import timezone, dateparse
 from busstops.models import Operator, Service, DataSource
@@ -165,5 +165,5 @@ class Command(BaseCommand):
         while True:
             try:
                 asyncio.get_event_loop().run_until_complete(self.sock_it())
-            except (websockets.exceptions.ConnectionClosed, asyncio.base_futures.InvalidStateError) as e:
+            except (websockets.exceptions.ConnectionClosed, asyncio.base_futures.InvalidStateError, OperationalError) as e:
                 print(e)
