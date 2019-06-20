@@ -85,15 +85,17 @@
     }
 
     function handleVehicle(data) {
-        if (data.properties.vehicle.url in oldVehicles) {
-            var marker = oldVehicles[data.properties.vehicle.url];
-            newVehicles[data.properties.vehicle.url] = marker;
-            if (marker.datetime === data.properties.datetime) {
+        var props = data.properties;
+
+        if (props.vehicle.url in oldVehicles) {
+            var marker = oldVehicles[props.vehicle.url];
+            newVehicles[props.vehicle.url] = marker;
+            if (marker.datetime === props.datetime) {
                 return;
             }
         }
 
-        var icon = getIcon(data.properties.direction, data.properties.vehicle.livery, data.properties.vehicle.text_colour),
+        var icon = getIcon(props.direction, props.vehicle.livery, props.vehicle.text_colour),
             latLng = L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
 
         bounds.extend(latLng);
@@ -106,26 +108,26 @@
                 icon: icon
             });
             marker.addTo(map);
-            newVehicles[data.properties.vehicle.url] = marker;
+            newVehicles[props.vehicle.url] = marker;
         }
-        marker.datetime = data.properties.datetime;
+        marker.datetime = props.datetime;
 
         var popup = '';
 
-        if (data.properties.delta === 0) {
+        if (props.delta === 0) {
             popup += 'On time';
-        } else if (data.properties.delta) {
+        } else if (props.delta) {
             popup += 'About ';
-            if (data.properties.delta > 0) {
-                popup += data.properties.delta;
+            if (props.delta > 0) {
+                popup += props.delta;
             } else {
-                popup += data.properties.delta * -1;
+                popup += props.delta * -1;
             }
             popup += ' minute';
-            if (data.properties.delta !== 1 && data.properties.delta !== -1) {
+            if (props.delta !== 1 && props.delta !== -1) {
                 popup += 's';
             }
-            if (data.properties.delta > 0) {
+            if (props.delta > 0) {
                 popup += ' early';
             } else {
                 popup += ' late';
@@ -136,27 +138,27 @@
             popup += '<br>';
         }
 
-        if (data.properties.destination) {
-            popup = data.properties.destination + '<br>' + popup;
+        if (props.destination) {
+            popup = props.destination + '<br>' + popup;
             if (props.destination.indexOf(' to ') === -1) {
                 popup = 'To ' + popup;
             }
         }
 
-        var dateTime = new Date(data.properties.datetime);
+        var dateTime = new Date(props.datetime);
         popup += 'Updated at ' + dateTime.toTimeString().slice(0, 5);
 
-        if (data.properties.vehicle.decker) {
+        if (props.vehicle.decker) {
             var vehicleFeatures = 'Double-decker';
-            if (data.properties.vehicle.coach) {
+            if (props.vehicle.coach) {
                 vehicleFeatures += ' coach';
             }
             popup = vehicleFeatures + '<br>' + popup;
-        } else if (data.properties.vehicle.coach) {
+        } else if (props.vehicle.coach) {
             popup = 'Coach' + '<br>' + popup;
         }
 
-        popup = data.properties.vehicle.name + '<br>' + popup;
+        popup = props.vehicle.name + '<br>' + popup;
 
         marker.bindPopup(popup);
     }
