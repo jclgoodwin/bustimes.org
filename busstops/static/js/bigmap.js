@@ -144,7 +144,10 @@
             }
         }
         if (props.destination) {
-            popup += ' to ' + props.destination;
+            if (props.destination.indexOf(' to ') === -1) {
+                popup += ' to ';
+            }
+            popup += props.destination;
         }
 
         if (props.operator) {

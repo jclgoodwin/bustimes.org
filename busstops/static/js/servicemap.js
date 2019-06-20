@@ -137,7 +137,10 @@
         }
 
         if (data.properties.destination) {
-            popup = 'To ' + data.properties.destination + '<br>' + popup;
+            popup = data.properties.destination + '<br>' + popup;
+            if (props.destination.indexOf(' to ') === -1) {
+                popup = 'To ' + popup;
+            }
         }
 
         var dateTime = new Date(data.properties.datetime);
