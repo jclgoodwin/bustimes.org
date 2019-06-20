@@ -53,8 +53,10 @@ def handle_item(source, stop, item):
     }
 
     services = Service.objects.filter(operator=operator, current=True)
-    if service_name in {'two', 'mickleover', 'allestree', 'comet', 'harlequin', 'calverton connection'}:
+    if service_name in {'two', 'mickleover', 'allestree', 'comet', 'harlequin'}:
         service_name = 'the ' + service_name
+    elif service_name == 'calverton connection':
+        service_name = 'the calverton'
     elif service_name == 'royal derby':
         service_name = 'the royal'
     elif service_name == 'ECO':
