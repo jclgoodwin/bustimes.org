@@ -104,8 +104,15 @@ def handle_item(source, stop, item):
         if vehicle.latest_location and vehicle.latest_location.latlong == latlong:
             return
 
-    if vehicle.latest_location and journey.datetime > source.datetime:
-        journey = vehicle.latest_location.journey
+    journey_id = journey.id
+    if vehicle.latest_location:
+        if journey.datetime > source.datetime:
+            journey_id = vehicle.latest_location.journey_id
+        elif vehicle.latest_location.latlong == latlong:
+            if vehicle.latest_location.journey_id != journey_id:
+                vehicle.latest_location.journey_id = journey_id
+                vehicle.latest_location.save()
+            return
 
     with transaction.atomic():
         heading = None
@@ -115,7 +122,7 @@ def handle_item(source, stop, item):
             vehicle.latest_location.current = False
             vehicle.latest_location.save()
         vehicle.latest_location = VehicleLocation.objects.create(
-            journey=journey,
+            journey_id=journey_id,
             latlong=latlong,
             datetime=source.datetime,
             heading=heading,
