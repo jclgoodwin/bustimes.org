@@ -104,9 +104,8 @@ def handle_item(source, stop, item):
         if vehicle.latest_location and vehicle.latest_location.latlong == latlong:
             return
 
-    # for key in item:
-    #     if key.endswith('_time'):
-    #         print(key, item[key], timezone.make_aware(datetime.fromtimestamp(item[key])))
+    if vehicle.latest_location and journey.datetime > source.datetime:
+        journey = vehicle.latest_location.journey
 
     with transaction.atomic():
         heading = None
