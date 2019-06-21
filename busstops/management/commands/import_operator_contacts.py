@@ -100,8 +100,11 @@ class Command(BaseCommand):
                 if phone and len(phone) <= 128:
                     operator.phone = phone
                 if twitter:
-                    assert '@' == twitter[0]
-                    operator.twitter = twitter[1:]
+                    if twitter[0] == '@':
+                        operator.twitter = twitter[1:]
+                    else:
+                        operator.twitter = twitter
+                        print(twitter)
 
                 try:
                     operator.save()
