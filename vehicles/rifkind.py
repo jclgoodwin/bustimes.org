@@ -52,7 +52,10 @@ def handle_item(source, stop, item):
         'route_name': service_name
     }
 
-    services = Service.objects.filter(operator=operator, current=True)
+    if operator == 'KBUS' or operator == 'TBTN':
+        services = Service.objects.filter(operator__in=['KBUS', 'TBTN'], current=True)
+    else:
+        services = Service.objects.filter(operator=operator, current=True)
     if service_name in {'two', 'mickleover', 'allestree', 'comet', 'harlequin'}:
         service_name = 'the ' + service_name
     elif service_name == 'calverton connection':
