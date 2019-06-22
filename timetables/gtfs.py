@@ -21,9 +21,11 @@ def get_stop_id(stop_id):
     return stop_id
 
 
+differ = difflib.Differ(charjunk=lambda _: True)
+
+
 def handle_trips(trips, day):
-    i = 0
-    head = None
+    width = 0
 
     if not day:
         day = datetime.date.today()
@@ -31,55 +33,65 @@ def handle_trips(trips, day):
 
     previous_list = []
 
-    for trip in trips:
-        previous = None
+    rows = []
 
+    for trip in trips:
+        previous_list = [row.part.stop.atco_code for row in rows]
         current_list = [get_stop_id(stop.stop.stop_id) for stop in trip.stoptime_set.all()]
-        diff = difflib.ndiff(previous_list, current_list)
+        diff = differ.compare(previous_list, current_list)
+
+        i = 0
 
         for stop in trip.stoptime_set.all():
             stop_id = get_stop_id(stop.stop.stop_id)
-            instructions = next(diff)
 
-            while instructions[0] in '-?':
-                instructions = next(diff)
-
-            if instructions == '+ ' + stop_id:
-                row = Row(stop_id, ['     '] * i)
-                row.part.stop.name = stop.stop.name
-                if previous:
-                    previous.append(row)
-                else:
-                    if head:
-                        head.prepend(row)
-                    head = row
+            if i < len(rows):
+                existing_row = rows[i]
             else:
-                row = previous or head
-                while row.part.stop.atco_code != stop_id:
-                    row = row.next
+                existing_row = None
+
+            instruction = next(diff)
+
+            while instruction[0] in '-?':
+                if instruction[0] == '-':
+                    i += 1
+                    if i < len(rows):
+                        existing_row = rows[i]
+                    else:
+                        existing_row = None
+                instruction = next(diff)
+
+            assert instruction[2:] == stop_id
+
+            if instruction[0] == '+':
+                row = Row(stop_id, ['     '] * width)
+                row.part.stop.name = stop.stop.name
+                if not existing_row:
+                    rows.append(row)
+                else:
+                    rows = rows[:i] + [row] + rows[i:]
+                existing_row = row
+            else:
+                row = existing_row
+                assert instruction[2:] == existing_row.part.stop.atco_code
 
             time = datetime.timedelta(seconds=(stop.departure_time or stop.arrival_time).seconds)
             time = (midnight + time).time()
             row.times.append(time)
             row.part.timingstatus = None
-            previous = row
 
-        previous_list = head.list()
+            i += 1
 
-        if i:
-            p = head
-            while p:
-                if len(p.times) == i:
-                    p.times.append('     ')
-                p = p.next
-        i += 1
-    p = head
-    g = Grouping()
+        if width:
+            for row in rows:
+                if len(row.times) == width:
+                    row.times.append('     ')
+        width += 1
 
-    while p:
-        g.rows.append(p)
-        p = p.next
-    return g
+    grouping = Grouping()
+    grouping.rows = rows
+
+    return grouping
 
 
 def get_timetable(routes, day=None, collection=None):
