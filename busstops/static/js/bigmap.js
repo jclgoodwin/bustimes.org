@@ -350,7 +350,9 @@
         }
     }
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    if (document.addEventListener) {
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+    }
 
     var locateButton = L.control();
 
