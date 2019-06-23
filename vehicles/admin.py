@@ -32,8 +32,8 @@ class VehicleAdmin(admin.ModelAdmin):
     list_display = ('code', 'fleet_number', 'reg', 'operator', 'vehicle_type', 'get_flickr_link', 'livery', 'colours',
                     'notes')
     list_filter = (
-        ('operator', admin.RelatedOnlyFieldListFilter),
         ('source', admin.RelatedOnlyFieldListFilter),
+        ('operator', admin.RelatedOnlyFieldListFilter),
         'vehicle_type',
     )
     list_select_related = ['operator', 'vehicle_type', 'livery']

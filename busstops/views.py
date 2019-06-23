@@ -4,7 +4,7 @@ import os
 import json
 import ciso8601
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Q, Prefetch
+from django.db.models import Q, Prefetch, F
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
@@ -326,7 +326,8 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         context = super().get_context_data(**kwargs)
 
         services = self.object.service_set.filter(current=True).defer('geometry')
-        context['services'] = sorted(services.order_by().prefetch_related('operator').distinct(), key=Service.get_order)
+        services = services.annotate(direction=F('stopusage__direction')).distinct('pk').order_by()
+        context['services'] = sorted(services.prefetch_related('operator'), key=Service.get_order)
 
         if not (self.object.active or context['services']):
             raise Http404('Sorry, it looks like no services currently stop at {}'.format(self.object))

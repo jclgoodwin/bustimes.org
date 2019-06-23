@@ -510,8 +510,13 @@ class Service(models.Model):
         ordering = ('service_code',)
 
     def __str__(self):
-        if self.line_name or self.line_brand or self.description:
-            parts = (self.line_name, self.line_brand, self.description)
+        description = None
+        if hasattr(self, 'direction') and hasattr(self, f'{self.direction}_description'):
+            description = getattr(self, f'{self.direction}_description')
+        if not description or description.lower() == self.direction:
+            description = self.description
+        if self.line_name or self.line_brand or description:
+            parts = (self.line_name, self.line_brand, description)
             return ' - '.join(part for part in parts if part)
         return self.service_code
 
