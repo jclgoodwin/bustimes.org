@@ -25,8 +25,6 @@ differ = difflib.Differ(charjunk=lambda _: True)
 
 
 def handle_trips(trips, day):
-    width = 0
-
     if not day:
         day = datetime.date.today()
     midnight = datetime.datetime.combine(day, datetime.time())
@@ -35,18 +33,18 @@ def handle_trips(trips, day):
 
     rows = []
 
-    for trip in trips:
+    for x, trip in enumerate(trips):
         previous_list = [row.part.stop.atco_code for row in rows]
         current_list = [get_stop_id(stop.stop.stop_id) for stop in trip.stoptime_set.all()]
         diff = differ.compare(previous_list, current_list)
 
-        i = 0
+        y = 0  # how many rows along we are
 
         for stop in trip.stoptime_set.all():
             stop_id = get_stop_id(stop.stop.stop_id)
 
-            if i < len(rows):
-                existing_row = rows[i]
+            if y < len(rows):
+                existing_row = rows[y]
             else:
                 existing_row = None
 
@@ -54,9 +52,9 @@ def handle_trips(trips, day):
 
             while instruction[0] in '-?':
                 if instruction[0] == '-':
-                    i += 1
-                    if i < len(rows):
-                        existing_row = rows[i]
+                    y += 1
+                    if y < len(rows):
+                        existing_row = rows[y]
                     else:
                         existing_row = None
                 instruction = next(diff)
@@ -64,12 +62,12 @@ def handle_trips(trips, day):
             assert instruction[2:] == stop_id
 
             if instruction[0] == '+':
-                row = Row(stop_id, ['     '] * width)
+                row = Row(stop_id, ['     '] * x)
                 row.part.stop.name = stop.stop.name
                 if not existing_row:
                     rows.append(row)
                 else:
-                    rows = rows[:i] + [row] + rows[i:]
+                    rows = rows[:y] + [row] + rows[y:]
                 existing_row = row
             else:
                 row = existing_row
@@ -80,13 +78,12 @@ def handle_trips(trips, day):
             row.times.append(time)
             row.part.timingstatus = None
 
-            i += 1
+            y += 1
 
-        if width:
+        if x:
             for row in rows:
-                if len(row.times) == width:
+                if len(row.times) == x:
                     row.times.append('     ')
-        width += 1
 
     grouping = Grouping()
     grouping.rows = rows
