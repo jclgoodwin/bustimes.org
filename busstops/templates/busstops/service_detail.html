@@ -69,7 +69,7 @@
                                 {% if cell.colspan %}
                                     <td colspan="{{ cell.colspan }}" rowspan="{{ cell.rowspan }}">{{ cell }}</td>
                                 {% else %}
-                                    <td>{% if not row.has_waittimes or cell.stopusage.wait_time or cell.stopusage.activity == 'pickUp' %}{{ cell }}{% if not cell.last and cell.stopusage.activity == 'setDown' %}<abbr title="sets down only">s</abbr>{% endif %}{% endif %}</td>
+                                    <td>{% if not row.has_waittimes or cell.stopusage.wait_time or cell.last %}{{ cell }}{% if not cell.last and cell.stopusage.activity == 'setDown' %}<abbr title="sets down only">s</abbr>{% endif %}{% endif %}</td>
                                 {% endif %}
                             {% endfor %}
                             </tr>
@@ -83,7 +83,7 @@
                                         {% endif %}
                                     </th>
                                     {% for cell in row.times %}
-                                        <td>{% if cell.stopusage.wait_time or cell.stopusage.activity != 'pickUp' %}{{ cell.departure_time }}{% endif %}</td>
+                                        <td>{% if cell.stopusage.wait_time or not cell.last %}{{ cell.departure_time }}{% endif %}</td>
                                     {% endfor %}
                                 </tr>
                             {% endif %}
