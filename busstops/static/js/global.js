@@ -1,6 +1,6 @@
 /*jslint browser: true*/
 
-if (navigator.serviceWorker && location.prococol === 'https:') {
+if (navigator.serviceWorker && location.protocol === 'https:') {
     try {
         navigator.serviceWorker.register('/serviceworker.js', {
             scope: '/'
