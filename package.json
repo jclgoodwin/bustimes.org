@@ -3,8 +3,8 @@
     "autoprefixer": "^9.6.0",
     "eslint": "^5.16.0",
     "postcss-cli": "^6.1.2",
+    "sass": "^1.22.0",
     "sass-lint": "^1.13.1",
-    "yuglify": "^2.0.0",
-    "sass": "^1.21.0"
+    "yuglify": "^2.0.0"
   }
 }
