@@ -31,17 +31,21 @@ class Command(BaseCommand):
                 points = []
                 for i, row in enumerate(grouping.rows):
                     stop_id = row.part.stop.atco_code
-                    points.append(StopPoint.objects.get(atco_code=stop_id).latlong)
-                    stops.append(
-                        StopUsage(
-                            service=service,
-                            stop_id=stop_id,
-                            order=i,
-                            direction=direction
+                    try:
+                        points.append(StopPoint.objects.get(atco_code=stop_id).latlong)
+                        stops.append(
+                            StopUsage(
+                                service=service,
+                                stop_id=stop_id,
+                                order=i,
+                                direction=direction
+                            )
                         )
-                    )
+                    except StopPoint.DoesNotExist:
+                        pass
                 direction = 'Inbound'
-                linestrings.append(LineString(points))
+                if len(points) > 1:
+                    linestrings.append(LineString(points))
             StopUsage.objects.bulk_create(stops)
             service.geometry = MultiLineString(linestrings)
             service.save()

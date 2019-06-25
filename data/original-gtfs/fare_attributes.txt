@@ -1,7 +1,0 @@
-fare_id,price,currency_type,payment_method,transfers,agency_id
-ensb-x1-adult-lakeside-london,6,GBP,0,0,ENSB
-ensb-x1-child-lakeside-london,4,GBP,0,0,ENSB
-ensb-x1-adult-southend-london,15,GBP,0,0,ENSB
-ensb-x1-child-southend-london,10,GBP,0,0,ENSB
-ensb-x1-adult-lakeside-southend,12,GBP,0,0,ENSB
-ensb-x1-child-lakeside-southend,8,GBP,0,0,ENSB
