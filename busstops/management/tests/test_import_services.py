@@ -437,6 +437,7 @@ class ImportServicesTest(TestCase):
         self.assertEqual(service_code.code, '305MFMWA1')
 
         service.region = self.w
+        service.source = None
         service.save()
 
         response = self.client.get(service.get_absolute_url())
