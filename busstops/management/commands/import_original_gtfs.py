@@ -1,28 +1,34 @@
 from os.path import join
-# from datetime import date
-# from urllib.parse import urlencode
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.conf import settings
-# from django.db import transaction
+from django.db import transaction
 from multigtfs.models import Feed
-from ...models import Service, StopUsage, StopPoint
+from ...models import DataSource, Service, ServiceCode, StopPoint, StopUsage
 from timetables.gtfs import get_timetable
 
 
 class Command(BaseCommand):
+    @transaction.atomic
     def handle(self, *args, **options):
-        collection = 'Ensignbus'
+        collection = 'bustimes.org'
+        scheme = f'{collection} GTFS'
+        source, _ = DataSource.objects.get_or_create(name=scheme)
 
         Feed.objects.filter(name=collection).delete()
-        feed = Feed.objects.create(name='Ensignbus')
+        feed = Feed.objects.create(name=collection)
         feed.import_gtfs(join(settings.DATA_DIR, 'original-gtfs'))
 
         for route in feed.route_set.all():
             service = Service.objects.get(service_code=route.route_id)
             service.stopusage_set.all().delete()
+            service.servicecode_set.all().delete
 
             timetable = get_timetable((route,))
+
+            service.source = source
+
+            ServiceCode.objects.get_or_create(scheme=scheme, code=route.route_id, service=service)
 
             direction = 'Outbound'
             stops = []
@@ -47,5 +53,6 @@ class Command(BaseCommand):
                 if len(points) > 1:
                     linestrings.append(LineString(points))
             StopUsage.objects.bulk_create(stops)
-            service.geometry = MultiLineString(linestrings)
-            service.save()
+            if linestrings:
+                service.geometry = MultiLineString(linestrings)
+                service.save()

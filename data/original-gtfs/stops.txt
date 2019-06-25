@@ -5,5 +5,5 @@ stop_id,stop_name,stop_lat,stop_lon
 490006557C,Embankment (Stop 40B),51.5081158681,-0.1213399685
 490007544N1,London,51.496737716,-0.1460401487
 1590060114,Lakeside Bus Station (Bay P),51.4904072749,0.2826910444
-dundee,Dundee South Union Street opp Malmaison,51.4904072749,0.2826910444
-6200247619,Edinburgh Airport Stance E,51.4904072749,0.2826910444
+dundee,Dundee South Union Street (opposite Malmaison),0,0
+6200247619,Edinburgh Airport,0,0

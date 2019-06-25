@@ -589,7 +589,7 @@ class Service(models.Model):
         return 'https://www.awin1.com/awclick.php?' + urlencode(query)
 
     def get_traveline_link(self, date=None):
-        if self.region_id in ('Y', 'S'):
+        if self.source_id and self.source.name in ('Y', 'S'):
             return self.get_trapeze_link(date)
 
         if self.region_id == 'W':
