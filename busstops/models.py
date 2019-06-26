@@ -553,7 +553,7 @@ class Service(models.Model):
         return 'https://tfl.gov.uk/bus/timetable/%s/' % self.line_name
 
     def get_trapeze_link(self, date):
-        if self.region_id == 'Y':
+        if self.source.name == 'Y':
             domain = 'yorkshiretravel.net'
             name = 'Yorkshire Travel'
         else:

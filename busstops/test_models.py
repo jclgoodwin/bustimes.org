@@ -1,6 +1,6 @@
 from django.test import TestCase
 from .models import (
-    Region, AdminArea, District, Locality, Operator, Service, StopPoint, ServiceCode
+    Region, AdminArea, DataSource, District, Locality, Operator, Service, StopPoint, ServiceCode
 )
 from .admin import OperatorAdmin
 
@@ -96,7 +96,7 @@ class ServiceTests(TestCase):
         self.assertEqual(self.london_service.get_traveline_link(),
                          ('https://tfl.gov.uk/bus/timetable/N41/', 'Transport for London'))
 
-        self.london_service.region_id = 'Y'
+        self.london_service.source = DataSource.objects.create(name='Y')
         self.assertEqual(self.london_service.get_traveline_link()[0][:35], 'http://www.yorkshiretravel.net/lts/')
 
     def test_get_operator_number(self):
