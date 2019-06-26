@@ -40,7 +40,8 @@ class Command(ImportLiveVehiclesCommand):
             sleep(1.5)
 
     def get_vehicle(self, item):
-        return self.vehicles.get_or_create(source=self.source, operator_id='NATX', code=item['live']['vehicle'])
+        return self.vehicles.get_or_create(source=self.source, operator_id=self.operators[0],
+                                           code=item['live']['vehicle'])
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
@@ -62,7 +63,10 @@ class Command(ImportLiveVehiclesCommand):
         return journey
 
     def create_vehicle_location(self, item):
+        heading = item['live']['bearing']
+        if heading == -1:
+            heading = None
         return VehicleLocation(
             latlong=Point(item['live']['lon'], item['live']['lat']),
-            heading=item['live']['bearing']
+            heading=heading
         )
