@@ -134,12 +134,12 @@ class Vehicle(models.Model):
             if self.fleet_number:
                 search = str(self.fleet_number)
             else:
-                search = self.code
+                search = str(self).replace('/', ' ')
             if self.operator:
-                if self.operator.name.startswith('First ') or self.operator.name.startswith('Stagecoach '):
-                    search = f'{self.operator.name.split()[0]} {search}'
-                else:
-                    search = f'{self.operator} {search}'
+                name = str(self.operator).replace(' Buses', '', 1).replace(' Coaches', '', 1)
+                if name.startswith('First ') or name.startswith('Stagecoach '):
+                    name = name.split()[0]
+                search = f'{name} {search}'
         return f'https://www.flickr.com/search/?text={quote(search)}&sort=date-taken-desc'
 
     def get_flickr_link(self):

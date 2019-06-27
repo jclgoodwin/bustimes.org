@@ -46,7 +46,7 @@ def operator_vehicles(request, slug):
     prefetch = Prefetch('vehiclejourney_set',
                         queryset=latest_journeys.select_related('service'), to_attr='latest_journeys')
     vehicles = vehicles.prefetch_related(prefetch)
-    vehicles = vehicles.order_by('fleet_number', 'reg')
+    vehicles = vehicles.order_by('fleet_number', 'reg', 'code')
     vehicles = vehicles.select_related('vehicle_type', 'livery', 'latest_location__journey__service')
     if not vehicles:
         raise Http404()
