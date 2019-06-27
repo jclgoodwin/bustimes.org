@@ -1,4 +1,5 @@
 import os
+from mock import patch
 from vcr import use_cassette
 from django.test import TestCase
 from busstops.models import Region, Operator
@@ -17,7 +18,14 @@ class ACISImportTest(TestCase):
         ])
 
     @use_cassette(os.path.join('data', 'vcr', 'import_live_acis.yaml'))
-    def test_handle(self):
+    @patch('vehicles.management.commands.import_live_acis.sleep')
+    @patch('vehicles.management.commands.import_live_acis.Command.get_points')
+    def test_handle(self, get_points, sleep):
+        get_points.return_value = (
+            (None, None),
+            (54.5957, -5.9169)
+        )
+
         command = import_live_acis.Command()
 
         with use_cassette(os.path.join('data', 'vcr', 'import_live_acis.yaml'), match_on=['body']):

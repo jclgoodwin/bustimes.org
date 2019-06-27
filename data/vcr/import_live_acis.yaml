@@ -58,7 +58,7 @@ interactions:
     body: "\n            <soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n
       \           xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n
       \               <soap12:Body>\n                    <GetVehiclesNearPoint xmlns=\"http://www.acishorizon.com/\">\n
-      \                       <latitude>-5.9169</latitude><longitude>54.5957</longitude>\n
+      \                       <latitude>54.5957</latitude><longitude>-5.9169</longitude>\n
       \                       <maxResults>100</maxResults>\n                    </GetVehiclesNearPoint>\n
       \               </soap12:Body>\n            </soap12:Envelope>\n        "
     headers:
