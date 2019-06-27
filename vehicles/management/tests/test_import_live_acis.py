@@ -39,3 +39,7 @@ class ACISImportTest(TestCase):
 
         # Should create no new items - no changes
         self.assertEqual(18, VehicleLocation.objects.all().count())
+
+    def test_get_items(self):
+        command = import_live_acis.Command()
+        self.assertEqual([], list(command.get_items()))

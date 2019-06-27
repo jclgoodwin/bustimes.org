@@ -47,28 +47,28 @@ class Command(ImportLiveVehiclesCommand):
                 </soap12:Body>
             </soap12:Envelope>
         """.format(latlong)
-        print(data)
         return self.session.post(self.url, data=data, timeout=5, headers={'content-type': 'application/soap+xml'})
 
     def get_points(self):
         points = []
         stops = StopPoint.objects.filter(service__operator__in=['MET', 'GDR'], service__current=True)
         extent = stops.aggregate(Extent('latlong'))['latlong__extent']
-        longitude = extent[0]
-        stops = stops.filter(stopusageusage__datetime__lt=self.source.datetime + timedelta(minutes=5),
-                             stopusageusage__datetime__gt=self.source.datetime - timedelta(hours=1))
+        if extent:
+            longitude = extent[0]
+            stops = stops.filter(stopusageusage__datetime__lt=self.source.datetime + timedelta(minutes=5),
+                                 stopusageusage__datetime__gt=self.source.datetime - timedelta(hours=1))
 
-        while longitude <= extent[2]:
-            latitute = extent[1]
-            while latitute <= extent[3]:
-                bbox = Polygon.from_bbox(
-                    (longitude - 0.05, latitute - 0.05, longitude + 0.05, latitute + 0.05)
-                )
-                if stops.filter(latlong__within=bbox).exists():
-                    points.append((latitute, longitude))
-                latitute += 0.1
-            longitude += 0.1
-        shuffle(points)
+            while longitude <= extent[2]:
+                latitute = extent[1]
+                while latitute <= extent[3]:
+                    bbox = Polygon.from_bbox(
+                        (longitude - 0.05, latitute - 0.05, longitude + 0.05, latitute + 0.05)
+                    )
+                    if stops.filter(latlong__within=bbox).exists():
+                        points.append((latitute, longitude))
+                    latitute += 0.1
+                longitude += 0.1
+            shuffle(points)
         return points
 
     def get_items(self):
