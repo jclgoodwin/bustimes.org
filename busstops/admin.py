@@ -51,18 +51,24 @@ class OperatorAdminForm(forms.ModelForm):
 
 class OperatorAdmin(admin.ModelAdmin):
     form = OperatorAdminForm
-    list_display = ('name', 'operator_codes', 'id', 'vehicle_mode', 'parent', 'region', 'service_count', 'twitter')
-    list_filter = ('region', 'vehicle_mode', 'parent')
+    list_display = ('name', 'operator_codes', 'id', 'vehicle_mode', 'parent', 'region', 'service_count', 'twitter',
+                    'payment')
+    list_filter = ('region', 'vehicle_mode', 'payment_methods', 'parent')
     search_fields = ('id', 'name')
     inlines = [OperatorCodeInline]
 
     def get_queryset(self, _):
         service_count = Count('service', filter=Q(service__current=True))
-        return Operator.objects.annotate(service_count=service_count).prefetch_related('operatorcode_set')
+        return Operator.objects.annotate(service_count=service_count).prefetch_related('operatorcode_set',
+                                                                                       'payment_methods')
 
     @staticmethod
     def service_count(obj):
         return obj.service_count
+
+    @staticmethod
+    def payment(obj):
+        return ', '.join(str(code) for code in obj.payment_methods.all())
 
     @staticmethod
     def operator_codes(obj):
