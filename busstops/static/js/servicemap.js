@@ -37,7 +37,7 @@
         polyline.addTo(map);
         bounds = polyline.getBounds();
         map.fitBounds(bounds);
-        map.setMaxBounds(bounds.pad(.5));
+        map.setMaxBounds(bounds.pad(1));
     }
 
     statusBar.onAdd = function () {
