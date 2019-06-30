@@ -51,10 +51,6 @@ def handle_item(source, stop, item):
         'route_name': service_name
     }
 
-    if operator == 'KBUS' or operator == 'TBTN':
-        services = Service.objects.filter(operator__in=['KBUS', 'TBTN'], current=True)
-    else:
-        services = Service.objects.filter(operator=operator, current=True)
     if service_name in {'two', 'mickleover', 'allestree', 'comet', 'harlequin'}:
         service_name = 'the ' + service_name
     elif service_name == 'calverton connection':
@@ -64,12 +60,18 @@ def handle_item(source, stop, item):
     elif service_name == 'ECO':
         service_name = 'Ecolink'
     elif service_name == 'skylink Derby':
-        service_name = 'skylink Leicester Derby'
+        service_name = 'Skylink Leicester Derby'
         operator = 'KBUS'
     elif service_name == 'skylink express':
         service_name = 'skylink Clifton'
     elif operator == 'NCTR':
         service_name = service_name.split()[-1]
+
+    if operator == 'KBUS' or operator == 'TBTN':
+        services = Service.objects.filter(operator__in=['KBUS', 'TBTN'], current=True)
+    else:
+        services = Service.objects.filter(operator=operator, current=True)
+
     try:
         try:
             defaults['service'] = services.get(Q(line_name__iexact=service_name) | Q(line_brand__iexact=service_name))
