@@ -44,7 +44,6 @@ def handle_item(source, stop, item):
         vehicle = int(vehicle[2:])
     else:
         operator = 'NCTR'
-        service_name = service_name.split()[-1]
 
     defaults = {
         'source': source,
@@ -66,8 +65,11 @@ def handle_item(source, stop, item):
         service_name = 'Ecolink'
     elif service_name == 'skylink Derby':
         service_name = 'skylink Leicester Derby'
+        operator = 'KBUS'
     elif service_name == 'skylink express':
         service_name = 'skylink Clifton'
+    elif operator == 'NCTR':
+        service_name = service_name.split()[-1]
     try:
         try:
             defaults['service'] = services.get(Q(line_name__iexact=service_name) | Q(line_brand__iexact=service_name))
