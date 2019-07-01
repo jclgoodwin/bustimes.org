@@ -4,13 +4,12 @@
 config/gunicorn.py
 data/TNDS/*.zip
 data/TNDS/tmp/*.zip
+data/NI/*.json
 data/*.zip
-data/*.ashx
-data/*.xml
-data/*.csv
-.sass-cache
+data/NPTG
 node_modules
 htmlcov
 **/bower_components
 .env
 .coverage
+slim-bustimes.sql
