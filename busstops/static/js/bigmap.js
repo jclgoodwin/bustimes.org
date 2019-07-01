@@ -128,7 +128,8 @@
             marker.setIcon(icon);
         } else {
             marker = L.marker(latLng, {
-                icon: icon
+                icon: icon,
+                zIndexOffset: 1000
             });
             marker.addTo(vehiclesGroup);
             newVehicles[props.vehicle.url] = marker;
