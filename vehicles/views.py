@@ -81,8 +81,11 @@ def siri_one_shot(code):
     siri_source = SIRISource.objects.get(name=code.scheme[:-5])
     line_name_cache_key = '{}:{}:{}'.format(siri_source.url, siri_source.requestor_ref, code.code)
     service_cache_key = '{}:{}'.format(code.service_id, source)
-    if cache.get(line_name_cache_key) or cache.get(service_cache_key):
-        return 'cached'
+    if cache.get(line_name_cache_key):
+        return 'cached (line name)'
+    cached = cache.get(service_cache_key)
+    if cached:
+        return f'cached ({cached})'
     if siri_source.get_poorly():
         raise Poorly()
     now = timezone.now()
@@ -90,14 +93,16 @@ def siri_one_shot(code):
                                                journey__service=code.service_id)
     current_locations = locations.filter(journey__source__name=source)
     fifteen_minutes_ago = now - timedelta(minutes=15)
-    if not Journey.objects.filter(service=code.service_id, datetime__lt=now, stopusageusage__datetime__gt=now).exists():
+    scheduled_journeys = Journey.objects.filter(service=code.service_id, datetime__lt=now + timedelta(minutes=10),
+                                                stopusageusage__datetime__gt=now - timedelta(minutes=10))
+    if not scheduled_journeys.exists():
         if not current_locations.filter(datetime__gte=fifteen_minutes_ago).exists():
             # no journeys currently scheduled, and no vehicles online recently
-            cache.set(service_cache_key, True, 600)  # back off for 10 minutes
+            cache.set(service_cache_key, 'nothing scheduled', 300)  # back off for 5 minutes
             return 'nothing scheduled'
     # from a different source
     if locations.filter(datetime__gte=fifteen_minutes_ago).exclude(journey__source__name=source).exists():
-        cache.set(service_cache_key, True, 3600)  # back off for for 1 hour
+        cache.set(service_cache_key, 'different source', 3600)  # back off for for 1 hour
         return 'deferring to a different source'
     cache.set(line_name_cache_key, True, 40)  # cache for 40 seconds
     data = """
