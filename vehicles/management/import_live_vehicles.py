@@ -208,7 +208,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         return 60
 
     def handle(self, *args, **options):
-        setproctitle(sys.argv[1])
+        setproctitle(sys.argv[1].replace('import_', '', 1).replace('live_', '', 1))
         while True:
             try:
                 wait = self.update()
