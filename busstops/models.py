@@ -13,7 +13,6 @@ from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
 from django.urls import reverse
-from django.utils.functional import cached_property
 from django.utils.text import slugify
 from multigtfs.models import Feed
 from timetables import txc, northern_ireland, gtfs
