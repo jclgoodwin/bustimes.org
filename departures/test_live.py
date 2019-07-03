@@ -9,6 +9,7 @@ from freezegun import freeze_time
 from busstops.models import (
     StopPoint, Service, Region, Operator, StopUsage, Journey, StopUsageUsage, AdminArea, SIRISource
 )
+from vehicles.models import VehicleJourney
 from . import live
 
 
@@ -68,6 +69,9 @@ class LiveDeparturesTest(TestCase):
             active=True,
             admin_area=admin_area
         )
+        worcester_44 = Service.objects.create(service_code='44', line_name='44', region_id='W', date='2017-01-01')
+        worcester_44.operator.add(Operator.objects.create(id='FMR', name='First Midland Red', region_id='W'))
+        StopUsage.objects.create(stop=cls.worcester_stop, service_id='44', order=0)
 
         cls.stagecoach_stop = StopPoint.objects.create(atco_code='64801092', active=True,
                                                        locality_centre=False)
@@ -400,7 +404,7 @@ class LiveDeparturesTest(TestCase):
     def test_worcestershire(self):
         with freeze_time('Sat Feb 09 10:45:45 GMT 2019'):
             with vcr.use_cassette('data/vcr/worcester.yaml'):
-                with self.assertNumQueries(6):
+                with self.assertNumQueries(35):
                     response = self.client.get(self.worcester_stop.get_absolute_url())
         self.assertContains(response, """
             <tr>
@@ -413,3 +417,4 @@ class LiveDeparturesTest(TestCase):
         """, html=True)
         self.assertContains(response, 'EVESHAM Bus Station')
         self.assertNotContains(response, 'WORCESTER')
+        self.assertEqual(4, VehicleJourney.objects.count())

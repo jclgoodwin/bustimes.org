@@ -390,6 +390,7 @@ class SiriSmDepartures(Departures):
     ns = {
         's': 'http://www.siri.org.uk/siri'
     }
+    data_source = None
 
     def __init__(self, source, stop, services):
         self.source = source
@@ -404,9 +405,10 @@ class SiriSmDepartures(Departures):
             return
         origin_aimed_departure_time = parse_datetime(origin_aimed_departure_time.text)
 
-        source, _ = DataSource.objects.get_or_create({'url': self.source.url}, name=self.source.name)
+        if not self.data_source:
+            self.data_source, _ = DataSource.objects.get_or_create({'url': self.source.url}, name=self.source.name)
         defaults = {
-            'source': source
+            'source': self.data_source
         }
         if operator_ref and vehicle.startswith(operator_ref + '-'):
             vehicle = vehicle[len(operator_ref) + 1:]
@@ -433,16 +435,25 @@ class SiriSmDepartures(Departures):
         if journey_ref and journey_ref.startswith('Unknown'):
             journey_ref = ''
 
-        defaults = {
-            'source': source,
-            'destination': destination or '',
-        }
-
+        destination = destination or ''
         if journey_ref:
-            defaults['datetime'] = origin_aimed_departure_time
-            VehicleJourney.objects.update_or_create(defaults, vehicle=vehicle, service=service,
-                                                    code=journey_ref, datetime__date=origin_aimed_departure_time.date())
+            try:
+                existing_journey = VehicleJourney.objects.get(vehicle=vehicle, service=service, code=journey_ref,
+                                                              datetime__date=origin_aimed_departure_time.date())
+                if existing_journey.datetime != origin_aimed_departure_time:
+                    existing_journey.datetime = origin_aimed_departure_time
+                    existing_journey.save()
+            except VehicleJourney.DoesNotExist:
+                VehicleJourney.objects.create(vehicle=vehicle, service=service, code=journey_ref,
+                                              datetime=origin_aimed_departure_time,
+                                              source=self.data_source, destination=destination)
+            except VehicleJourney.MultipleObjectsReturned:
+                pass
         else:
+            defaults = {
+                'destination': destination,
+                'source': self.data_source
+            }
             VehicleJourney.objects.get_or_create(defaults, vehicle=vehicle, service=service,
                                                  datetime=origin_aimed_departure_time)
 

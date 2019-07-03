@@ -95,7 +95,8 @@ def siri_one_shot(code):
             # no journeys currently scheduled, and no vehicles online recently
             cache.set(service_cache_key, True, 600)  # back off for 10 minutes
             return
-    if locations.filter(journey__service=code.service_id).exclude(journey__source__name=source).exists():
+    if locations.filter(journey__service=code.service_id,
+                        datetime__gte=fifteen_minutes_ago).exclude(journey__source__name=source).exists():
         cache.set(service_cache_key, True, 3600)  # back off for for 1 hour
         return
     cache.set(line_name_cache_key, True, 40)  # cache for 40 seconds
