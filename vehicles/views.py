@@ -82,23 +82,23 @@ def siri_one_shot(code):
     line_name_cache_key = '{}:{}:{}'.format(siri_source.url, siri_source.requestor_ref, code.code)
     service_cache_key = '{}:{}'.format(code.service_id, source)
     if cache.get(line_name_cache_key) or cache.get(service_cache_key):
-        return
+        return 'cached'
     if siri_source.get_poorly():
         raise Poorly()
     now = timezone.now()
-    locations = VehicleLocation.objects.filter(current=True)
-    current_locations = locations.filter(journey__service=code.service_id, journey__source__name=source,
-                                         latest_vehicle__isnull=False)
-    fifteen_minutes_ago = timezone.now() - timedelta(minutes=15)
+    locations = VehicleLocation.objects.filter(current=True, latest_vehicle__isnull=False,
+                                               journey__service=code.service_id)
+    current_locations = locations.filter(journey__source__name=source)
+    fifteen_minutes_ago = now - timedelta(minutes=15)
     if not Journey.objects.filter(service=code.service_id, datetime__lt=now, stopusageusage__datetime__gt=now).exists():
         if not current_locations.filter(datetime__gte=fifteen_minutes_ago).exists():
             # no journeys currently scheduled, and no vehicles online recently
             cache.set(service_cache_key, True, 600)  # back off for 10 minutes
-            return
-    if locations.filter(journey__service=code.service_id,
-                        datetime__gte=fifteen_minutes_ago).exclude(journey__source__name=source).exists():
+            return 'nothing scheduled'
+    # from a different source
+    if locations.filter(datetime__gte=fifteen_minutes_ago).exclude(journey__source__name=source).exists():
         cache.set(service_cache_key, True, 3600)  # back off for for 1 hour
-        return
+        return 'deferring to a different source'
     cache.set(line_name_cache_key, True, 40)  # cache for 40 seconds
     data = """
         <Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
