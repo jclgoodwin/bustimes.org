@@ -24,9 +24,7 @@ class LicenceView(DetailView):
         if not (context['registrations'] or context['cancelled']):
             raise Http404()
 
-        operator = Operator.objects.filter(operatorcode__code=self.object.licence_number,
-                                           operatorcode__source__name='Licence')
-        context['operator'] = operator.select_related('region').first()
+        context['operator'] = self.object.operator_set.select_related('region').first()
         if context['operator']:
             context['breadcrumb'] = [context['operator'].region, context['operator']]
 

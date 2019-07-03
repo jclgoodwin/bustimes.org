@@ -69,7 +69,7 @@ class ZipTripTest(TestCase):
         self.service.operator.set(['LGEN', 'GAHL'])
 
         response = self.client.get('/operators/go-ahead-lichtenstein')
-        self.assertContains(response, 'anoraks')
+        self.assertContains(response, 'fleet list')
         self.assertContains(response, '/operators/go-ahead-lichtenstein/vehicles')
 
         with self.assertNumQueries(3):

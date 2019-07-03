@@ -5,6 +5,7 @@ Usage:
 """
 
 from django.utils import timezone
+from vosa.models import Licence
 from ..import_from_csv import ImportFromCSVCommand
 from ...models import Operator, OperatorCode, DataSource
 
@@ -12,7 +13,6 @@ from ...models import Operator, OperatorCode, DataSource
 class Command(ImportFromCSVCommand):
     code_sources = {
         'NOCCODE': 'National Operator Codes',
-        'Licence': 'Licence',
         'LO': 'L',
         'SW': 'SW',
         'WM': 'WM',
@@ -91,6 +91,12 @@ class Command(ImportFromCSVCommand):
             if row[key]:
                 OperatorCode.objects.update_or_create(code=row[key].replace('=', ''), source=self.code_sources[key],
                                                       defaults={'operator': operator})
+
+        if row['Licence']:
+            try:
+                operator.licences.add(Licence.objects.get(licence_number=row['Licence']))
+            except Licence.DoesNotExist:
+                pass
 
     def handle(self, *args, **options):
         # Operator.objects.filter(id__in=self.removed_operator_ids).delete()

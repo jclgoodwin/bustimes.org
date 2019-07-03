@@ -56,6 +56,7 @@ class OperatorAdmin(admin.ModelAdmin):
     list_filter = ('region', 'vehicle_mode', 'payment_methods', 'parent')
     search_fields = ('id', 'name')
     inlines = [OperatorCodeInline]
+    prepopulated_fields = {"slug": ("name",)}
 
     def get_queryset(self, _):
         service_count = Count('service', filter=Q(service__current=True))

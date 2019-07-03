@@ -23,6 +23,14 @@
 
 {% include 'services.html' with services=services %}
 
+{% if operator.licences.all %}
+    <p>PSV operator license: {% for licence in operator.licences.all %}<a href="{{ licence.get_absolute_url }}">{{ licence }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+{% endif %}
+
+{% if operator.vehicle_set.exists %}
+    <p><a href="{{ object.get_absolute_url }}/vehicles">An incomplete {{ object }} fleet list</a></p>
+{% endif %}
+
 {% if object.address or object.url or object.email or object.phone %}
     <h2>Contact {{ object }}</h2>
 
@@ -48,17 +56,6 @@
     </div>
 {% endif %}
 
-{% if operator.get_licences or operator.vehicle_set.exists %}
-    <h2>For anoraks</h2>
-
-    {% if operator.get_licences %}
-        <p>PSV operator license: {% for licence in operator.get_licences %}<a href="{{ licence.get_absolute_url }}">{{ licence }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
-    {% endif %}
-
-    {% if operator.vehicle_set.exists %}
-        <p><a href="{{ object.get_absolute_url }}/vehicles">An incomplete {{ object }} fleet list</a></p>
-    {% endif %}
-{% endif %}
 
 </div>
 

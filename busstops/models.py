@@ -355,6 +355,7 @@ class Operator(ValidateOnSaveMixin, models.Model):
     phone = models.CharField(max_length=128, blank=True)
     twitter = models.CharField(max_length=255, blank=True)
 
+    licences = models.ManyToManyField('vosa.Licence', blank=True)
     payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
 
     class Meta():
@@ -398,10 +399,6 @@ class Operator(ValidateOnSaveMixin, models.Model):
             return 'An ' + mode  # 'An airline' or 'An '
         return 'A ' + mode  # 'A hovercraft'
 
-    @cached_property
-    def get_licences(self):
-        return self.operatorcode_set.filter(source__name='Licence')
-
 
 class StopCode(models.Model):
     stop = models.ForeignKey(StopPoint, models.CASCADE)
@@ -425,9 +422,6 @@ class OperatorCode(models.Model):
 
     def __str__(self):
         return self.code
-
-    def get_absolute_url(self):
-        return reverse('licence_detail', args=(self.code,))
 
 
 class StopUsage(models.Model):
