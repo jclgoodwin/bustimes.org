@@ -106,7 +106,8 @@ class ZipTripTest(TestCase):
     def test_get_itmes(self, sleep):
         command = import_live_ziptrip.Command()
         with use_cassette('data/vcr/ziptrip.yaml'):
-            items = list(command.get_items())
+            with freeze_time('Thu, 04 Jul 2019 17:51:53 GMT'):
+                items = list(command.get_items())
         self.assertEqual(26, len(items))
         self.assertTrue(sleep.called)
 
