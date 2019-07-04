@@ -105,7 +105,7 @@ class ZipTripTest(TestCase):
     @patch('vehicles.management.commands.import_live_ziptrip.sleep')
     def test_get_itmes(self, sleep):
         command = import_live_ziptrip.Command()
-        with use_cassette('data/ziptrip.yaml'):
+        with use_cassette('data/vcr/ziptrip.yaml'):
             items = list(command.get_items())
         self.assertEqual(26, len(items))
         self.assertTrue(sleep.called)

@@ -6,6 +6,8 @@ data/TNDS/*.zip
 data/TNDS/tmp/*.zip
 data/NI/*.json
 data/*.zip
+data/*.xml
+data/*.csv
 data/NPTG
 node_modules
 htmlcov
