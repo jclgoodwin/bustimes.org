@@ -106,8 +106,9 @@ def handle_region(region):
         today = last_journey.datetime.astimezone(timezone.get_current_timezone()).date() + ONE_DAY
         if today > NEXT_WEEK:
             return
+    services = Service.objects.filter(region=region, current=True, timetable_wrong=False)
     with transaction.atomic():
-        for service in Service.objects.filter(region=region, current=True, timetable_wrong=False):
+        for service in services:
             if region.id == 'NI':
                 path = os.path.join(settings.DATA_DIR, 'NI', service.pk + '.json')
                 if not os.path.exists(path):
