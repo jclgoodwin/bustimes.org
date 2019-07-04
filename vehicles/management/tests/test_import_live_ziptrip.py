@@ -1,3 +1,5 @@
+from vcr import use_cassette
+from mock import patch
 from django.test import TestCase
 from freezegun import freeze_time
 from busstops.models import Region, Operator, DataSource, Service
@@ -91,10 +93,22 @@ class ZipTripTest(TestCase):
 
         # service vehicle history
         with self.assertNumQueries(5):
-            response = self.client.get('/services/foo-foo/vehicles')
+            response = self.client.get('/services/foo-foo/vehicles?date=poop')
         self.assertContains(response, 'Vehicles')
         self.assertContains(response, '/vehicles/')
         self.assertContains(response, 'value="2018-08-31"')
+
+        with self.assertNumQueries(4):
+            response = self.client.get('/services/foo-foo/vehicles?date=2004-04-04')
+        self.assertContains(response, 'Sorry, nothing found for Sunday 4 April 2004')
+
+    @patch('vehicles.management.commands.import_live_ziptrip.sleep')
+    def test_get_itmes(self, sleep):
+        command = import_live_ziptrip.Command()
+        with use_cassette('data/ziptrip.yaml'):
+            items = list(command.get_items())
+        self.assertEqual(26, len(items))
+        self.assertTrue(sleep.called)
 
     def test_unknown_operator(self):
         command = import_live_ziptrip.Command()

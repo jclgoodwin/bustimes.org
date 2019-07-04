@@ -12,10 +12,11 @@ FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixture
 class ImportGuernseyTest(TestCase):
     @classmethod
     @patch('time.sleep', return_value=None)
-    def setUpTestData(cls, _):
+    def setUpTestData(cls, sleep):
         with override_settings(DATA_DIR=FIXTURES_DIR):
             with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'guernsey.yaml')):
                 call_command('import_guernsey')
+        assert sleep.called
 
     def test_import_guernsey_stops(self):
         self.assertEqual(52, StopPoint.objects.all().count())

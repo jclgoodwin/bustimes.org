@@ -104,7 +104,7 @@ def siri_one_shot(code):
     if locations.filter(datetime__gte=fifteen_minutes_ago).exclude(journey__source__name=source).exists():
         cache.set(service_cache_key, 'different source', 3600)  # back off for for 1 hour
         return 'deferring to a different source'
-    cache.set(line_name_cache_key, True, 40)  # cache for 40 seconds
+    cache.set(line_name_cache_key, 'line name', 40)  # cache for 40 seconds
     data = """
         <Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
             <ServiceRequest>
