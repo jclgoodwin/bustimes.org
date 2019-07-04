@@ -1,9 +1,8 @@
 import vcr
 from freezegun import freeze_time
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from busstops.models import (Region, Service, ServiceCode, StopPoint, DataSource, SIRISource, Journey, StopUsageUsage,
                              Operator)
-# from .models import Vehicle, VehicleJourney, VehicleLocation
 
 
 @freeze_time('2019-06-08 20:37+01:00')
@@ -25,9 +24,13 @@ class SIRIOneShotTest(TestCase):
         SIRISource.objects.get_or_create(name='Devon', requestor_ref='torbaydevon_siri_traveline',
                                          url='http://data.icarus.cloudamber.com/StopMonitoringRequest.ashx')
 
+    @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_vehicles_json(self):
         with vcr.use_cassette('data/vcr/icarus.yaml'):
-            res = self.client.get('/vehicles.json?service=swe_33-FLC-_-y10')
+            with self.assertNumQueries(57):
+                res = self.client.get('/vehicles.json?service=swe_33-FLC-_-y10')
+            with self.assertNumQueries(6):
+                res = self.client.get('/vehicles.json?service=swe_33-FLC-_-y10')
 
         json = res.json()
 

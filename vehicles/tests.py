@@ -47,6 +47,13 @@ class VehiclesTests(TestCase):
         self.assertEqual(404, response.status_code)
         self.assertFalse(str(response.context['exception']))
 
+        response = self.client.get(self.vehicle_2.get_absolute_url() + '?date=poop')
+        self.assertEqual(404, response.status_code)
+        self.assertFalse(str(response.context['exception']))
+
+        response = self.client.get('/journeys/1.json')
+        self.assertEqual([], response.json())
+
     def test_feature(self):
         self.assertEqual('Wi-Fi', str(VehicleFeature(name='Wi-Fi')))
 
