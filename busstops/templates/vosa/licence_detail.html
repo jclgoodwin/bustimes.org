@@ -6,6 +6,31 @@
 
 <h1>{{ object }}</h1>
 
+<table>
+    <tr>
+        <th>Name</th>
+        <td>{{ object.name }}</td>
+    </tr>
+    {% if object.trading_name %}
+        <tr>
+            <th>Trading name</th>
+            <td>{{ object.trading_name }}</td>
+        </tr>
+    {% endif %}
+    <tr>
+        <th>Traffic area</th>
+        <td>{{ object.traffic_area }}</td>
+    </tr>
+    <tr>
+        <th>Discs</th>
+        <td>{{ object.discs }}</td>
+    </tr>
+    <tr>
+        <th>Authorised discs</th>
+        <td>{{ object.authorised_discs }}</td>
+    </tr>
+</table>
+
 {% if registrations %}
     <h2>Current and future bus service registrations</h2>
 

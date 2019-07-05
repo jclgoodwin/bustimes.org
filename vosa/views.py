@@ -1,5 +1,4 @@
 from django.views.generic.detail import DetailView
-from django.http import Http404
 from django.db.models import Max
 from busstops.models import Operator
 from .models import Licence, Registration
@@ -20,9 +19,6 @@ class LicenceView(DetailView):
         cancelled_statuses = ('Admin Cancelled', 'Cancellation', 'Cancelled', 'Expired', 'Refused', 'Withdrawn')
         context['cancelled'] = registrations.filter(registration_status__in=cancelled_statuses)
         context['registrations'] = registrations.exclude(pk__in=context['cancelled'])
-
-        if not (context['registrations'] or context['cancelled']):
-            raise Http404()
 
         context['operator'] = self.object.operator_set.select_related('region').first()
         if context['operator']:
