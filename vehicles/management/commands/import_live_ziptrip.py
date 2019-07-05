@@ -112,6 +112,11 @@ class Command(ImportLiveVehiclesCommand):
         defaults = {}
         if vehicle.isdigit():
             defaults['fleet_number'] = vehicle
+        elif '-' in vehicle:
+            fleet_number = vehicle.split('-')[0].replace('_', '')
+            if fleet_number.isdigit():
+                defaults['fleet_number'] = fleet_number
+
         defaults['source'] = self.source
         if type(operator_id) is tuple:
             defaults['operator_id'] = operator_id[0]
@@ -119,7 +124,10 @@ class Command(ImportLiveVehiclesCommand):
         else:
             try:
                 if operator_id not in self.operators:
-                    self.operators['operator_id'] = Operator.objects.get(id=operator_id)
+                    self.operators[operator_id] = Operator.objects.get(id=operator_id)
+                if 'fleet_number' in defaults and operator_id == 'IPSW' or operator_id == 'ROST':
+                    defaults['code'] = vehicle
+                    return self.vehicles.get_or_create(defaults, operator_id=operator_id, fleet_number=fleet_number)
                 return self.vehicles.get_or_create(defaults, operator_id=operator_id, code=vehicle)
             except Operator.DoesNotExist as e:
                 print(e, operator_id)

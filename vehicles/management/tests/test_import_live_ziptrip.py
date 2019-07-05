@@ -14,6 +14,7 @@ class ZipTripTest(TestCase):
         Operator.objects.create(id='CBUS', region_id='EA')
         Operator.objects.create(id='GAHL', region_id='EA', slug='go-ahead-lichtenstein')
         Operator.objects.create(id='LGEN', region_id='EA')
+        Operator.objects.create(id='IPSW', region_id='EA')
         self.service = Service.objects.create(line_name='7777', date='2010-01-01', service_code='007', slug='foo-foo')
         self.service.operator.set(['LYNX'])
 
@@ -116,7 +117,7 @@ class ZipTripTest(TestCase):
         command.source = self.source
 
         item = {
-            "vehicleCode": "GHA_-_DA04_GHA",
+            "vehicleCode": "GHA_DA04_GHA",
             "position": {
                 "latitude": 0,
                 "longitude": 0
@@ -127,3 +128,22 @@ class ZipTripTest(TestCase):
         }
         command.handle_item(item, self.source.datetime)
         self.assertFalse(VehicleLocation.objects.all())
+
+    def test_fleet_number(self):
+        command = import_live_ziptrip.Command()
+        command.source = self.source
+
+        item = {
+            "vehicleCode": "IPSW_91_-_YJ12_GWF",
+            "position": {
+                "latitude": 0,
+                "longitude": 0
+            },
+            "reported": "2018-08-31T21:30:04+00:00",
+            "received": "2018-08-31T21:30:15.8465176+00:00",
+            "bearing": -24,
+        }
+        command.handle_item(item, self.source.datetime)
+        vehicle = Vehicle.objects.get(code='91_-_YJ12_GWF')
+        self.assertEqual(vehicle.fleet_number, 91)
+        self.assertEqual(vehicle.reg, '')
