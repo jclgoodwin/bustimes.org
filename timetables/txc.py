@@ -182,7 +182,7 @@ class Row(object):
         return any(type(cell) is Cell and cell.arrival_time != cell.departure_time for cell in self.times)
 
     def __repr__(self):
-        return str(self.part.stop)
+        return str(self.part.stop) + ' ' + str(len(self.times))
 
     def get_order(self):
         for number in self.sequencenumbers:
@@ -527,6 +527,9 @@ class VehicleJourney(object):
     own start time (and possibly operating profile and dead run).
     """
     operating_profile = None
+
+    def __str__(self):
+        return str(self.departure_time)
 
     def __init__(self, element, journeypatterns, servicedorgs):
         self.code = element.find('txc:VehicleJourneyCode', NS).text
@@ -975,8 +978,8 @@ class Timetable(object):
             date = ciso8601.parse_datetime(date).date()
 
         if hasattr(self, 'date'):
-            if date == self.date:
-                return
+            # if date == self.date:
+            #     return
             for grouping in self.groupings:
                 for row in grouping.rows:
                     row.times.clear()

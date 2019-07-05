@@ -706,9 +706,21 @@ class Service(models.Model):
                     timetables.append(timetable)
                 cache.set(cache_key, timetables)
 
+            if self.service_code == 'swe_39-X9-A-y10':
+                timetables += Service.objects.get(service_code='swe_39-X9-_-y10').get_timetables(day)
+
             if len(timetables) > 1 and timetables[1].operating_period.start > day:
                 self.timetable_change = timetables[1].operating_period.start
             timetables = [timetable for timetable in timetables if timetable.operating_period.contains(day)]
+
+            if len(timetables) > 1:
+                for timetable in timetables[1:]:
+                    for i, grouping in enumerate(timetable.groupings):
+                        for journey in grouping.journeys:
+                            journey.journeypattern.grouping = timetables[0].groupings[i]
+                        timetables[0].groupings[i].journeys += grouping.journeys
+                timetables = timetables[:1]
+
             for timetable in timetables:
                 timetable.service = self
                 timetable.set_date(day)
