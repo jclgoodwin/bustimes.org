@@ -57,6 +57,7 @@ class OperatorAdmin(admin.ModelAdmin):
     search_fields = ('id', 'name')
     inlines = [OperatorCodeInline]
     prepopulated_fields = {"slug": ("name",)}
+    autocomplete_fields = ('licences',)
 
     def get_queryset(self, _):
         service_count = Count('service', filter=Q(service__current=True))
