@@ -11,11 +11,12 @@ FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixture
 
 class ImportJerseyTest(TestCase):
     @classmethod
-    @patch('time.sleep', return_value=None)
-    def setUpTestData(cls, _):
+    @patch('busstops.management.commands.import_guernsey.sleep')
+    def setUpTestData(cls, sleep):
         with override_settings(DATA_DIR=FIXTURES_DIR):
             with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'jersey.yaml')):
                 call_command('import_jersey')
+        assert sleep.called
 
     def test_import_jersey_stops(self):
         self.assertEqual(764, StopPoint.objects.all().count())
