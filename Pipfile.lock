@@ -166,7 +166,7 @@
         "gtfs-realtime-bindings": {
             "hashes": [
                 "sha256:6bbb8341d72ccacd04b9efe1e547682aeb2c2abd3d1d00f08d3294bbaef37034",
-                "sha256:6dbb241a5988ca7c977d21f0ef401a9022f72ba5a738372ab224dcdaae001d57"
+                "sha256:9e0f6cc3f5c561993a441cff7e09eca560c439974ff0fdd612bbc228fb967ff8"
             ],
             "index": "piwheels",
             "version": "==0.0.6"
@@ -910,8 +910,8 @@
         },
         "wrapt": {
             "hashes": [
-                "sha256:092d0bb01fe92071f97877cf93dfd519f5326b9df6ab04f17dc3e170c695488b",
-                "sha256:565a021fd19419476b9362b05eeaa094178de64f8361e44468f9e9d7843901e1"
+                "sha256:565a021fd19419476b9362b05eeaa094178de64f8361e44468f9e9d7843901e1",
+                "sha256:59bd7b6ebb54a9e4b161b40293a698c0e86c8b6b5afc5979fd4a745eed968b2e"
             ],
             "version": "==1.11.2"
         },
