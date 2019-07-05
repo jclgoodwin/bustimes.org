@@ -138,10 +138,10 @@ def stops(request):
         return HttpResponseBadRequest()
 
     results = StopPoint.objects.filter(
-        latlong__within=bounding_box, active=True
+        latlong__within=bounding_box, active=True, service__current=True
     ).prefetch_related(
         prefetch_stop_services
-    ).defer('osm').select_related('locality').defer('osm', 'locality__latlong')
+    ).select_related('locality').defer('osm', 'locality__latlong').distinct()
 
     return JsonResponse({
         'type': 'FeatureCollection',
@@ -158,7 +158,7 @@ def stops(request):
                 'url': stop.get_absolute_url(),
                 'services': stop.get_line_names()
             }
-        } for stop in results if stop.current_services]
+        } for stop in results]
     })
 
 
