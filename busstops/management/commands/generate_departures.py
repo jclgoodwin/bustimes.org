@@ -118,7 +118,8 @@ def handle_region(region):
                     do_ni_service(service, groupings, day)
                     day += ONE_DAY
             else:
-                for i, xml_file in enumerate(service.get_files_from_zipfile()):
+                files = service.get_files_from_zipfile()
+                for xml_file in files:
                     tranxchange = txc.TransXChange(xml_file)
                     day = today
                     while day <= NEXT_WEEK:
