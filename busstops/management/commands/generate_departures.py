@@ -27,7 +27,13 @@ def handle_transxchange(service, transxchange, day):
         return
     stopusageusages = []
     transxchange.service = service
-    existent_stops = StopPoint.objects.in_bulk(transxchange.stops.keys())
+    stops = set()
+    for journey_pattern in transxchange.journey_patterns.values():
+        for section in journey_pattern.sections:
+            for timinglink in section.timinglinks:
+                stops.add(timinglink.origin.stop.atco_code)
+                stops.add(timinglink.destination.stop.atco_code)
+    existent_stops = StopPoint.objects.in_bulk(stops)
     for vj in transxchange.journeys:
         if not vj.should_show(day, transxchange):
             continue

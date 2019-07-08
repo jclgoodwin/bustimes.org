@@ -3,7 +3,6 @@ import os
 import xml.etree.cElementTree as ET
 import zipfile
 import warnings
-from mock import patch
 from datetime import date, time
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
@@ -251,7 +250,7 @@ class ImportServicesTest(TestCase):
     @freeze_time('30 December 2016')
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_service_dates(self):
-        # self.assertEqual(14, ServiceDate.objects.count())
+        self.assertEqual(14, ServiceDate.objects.count())
 
         # speed up
         self.ea_service.current = False
@@ -440,8 +439,8 @@ class ImportServicesTest(TestCase):
         }])
 
     def test_departures(self):
-        # self.assertEqual(6, Journey.objects.filter(service='M12_MEGA').count())
-        # self.assertEqual(9, StopUsageUsage.objects.filter(journey__service='M12_MEGA').count())
+        self.assertEqual(6, Journey.objects.filter(service='M12_MEGA').count())
+        self.assertEqual(9, StopUsageUsage.objects.filter(journey__service='M12_MEGA').count())
 
         # Megabus services have been imported twice, but there should only be one of each StopUsage
         self.assertEqual(1, StopPoint.objects.filter(service='M12_MEGA').count())
@@ -451,8 +450,8 @@ class ImportServicesTest(TestCase):
         self.assertEqual('M12 - Shudehill - Victoria 2017-01-01 01:00:00+00:00', str(journey))
 
         stop_usage_usage = StopUsageUsage.objects.first()
-        # self.assertEqual('2017-01-01 02:20:00+00:00', str(stop_usage_usage.datetime))
-        # self.assertEqual('Kingston District Centre (o/s) 2017-01-01 02:20:00+00:00', str(stop_usage_usage))
+        self.assertEqual('2017-01-01 02:20:00+00:00', str(stop_usage_usage.datetime))
+        self.assertEqual('Kingston District Centre (o/s) 2017-01-01 02:20:00+00:00', str(stop_usage_usage))
 
         self.assertEqual(0, Journey.objects.filter(service__region='S').count())
         self.assertEqual(0, Journey.objects.filter(service__region='EA').count())

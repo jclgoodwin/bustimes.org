@@ -700,16 +700,15 @@ class Service(models.Model):
             timetable.set_date(day)
         elif timetable is None:
             xml_files = self.get_files_from_zipfile()
-            if not xml_files:
-                return
-            timetable = txc.Timetable(xml_files, day, self)
+            if xml_files:
+                timetable = txc.Timetable(xml_files, day, self)
             # del timetable.service
             # del timetable.journeypatterns
             # del timetable.stops
             # del timetable.operators
             # del timetable.element
             cache.set(cache_key, timetable or False)
-        else:
+        if not timetable:
             return
 
         # if self.service_code == 'swe_39-X9-A-y10':
