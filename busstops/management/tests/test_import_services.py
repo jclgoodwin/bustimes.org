@@ -3,6 +3,7 @@ import os
 import xml.etree.cElementTree as ET
 import zipfile
 import warnings
+from mock import patch
 from datetime import date, time
 from freezegun import freeze_time
 from django.test import TestCase, override_settings

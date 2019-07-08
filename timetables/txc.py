@@ -1060,35 +1060,43 @@ class Timetable(object):
         if self.date >= start_date:
             yield self.date
 
-#     def set_date(self, date):
-#         if date and not isinstance(date, datetime.date):
-#             date = ciso8601.parse_datetime(date).date()
+    def set_date(self, date):
+        if date and not isinstance(date, datetime.date):
+            date = ciso8601.parse_datetime(date).date()
 
-#         if hasattr(self, 'date'):
-#             # if date == self.date:
-#             #     return
-#             for grouping in self.groupings:
-#                 for row in grouping.rows:
-#                     row.times.clear()
-#                 grouping.column_feet.clear()
+        if hasattr(self, 'date'):
+            if date == self.date:
+                return
+            for grouping in self.groupings:
+                for row in grouping.rows:
+                    row.times.clear()
+                grouping.column_feet.clear()
+                grouping.journeys.clear()
 
-#         self.date = date
+        self.date = date
 
-#         for grouping in self.groupings:
-#             for journey in grouping.journeys:
-#                 if journey.should_show(self.date, self):
-#                     journey.add_times()
-#             grouping.do_heads_and_feet()
+        for transxchange in self.transxchanges:
+            for journey in transxchange.journeys:
+                if journey.should_show(date, transxchange):
+                    journey.journey_pattern.grouping.journeys.append(journey)
 
-#     def has_set_down_only(self):
-#         for grouping in self.groupings:
-#             for row in grouping.rows[:-1]:
-#                 for cell in row.times:
-#                     if type(cell) is Cell and not cell.last and cell.stopusage.activity == 'setDown':
-#                         return True
+        for grouping in self.groupings:
+            grouping.journeys.sort(key=VehicleJourney.get_order)
+            for journey in grouping.journeys:
+                journey.add_times()
+            grouping.do_heads_and_feet()
+
+        if all(len(g.journeys) for g in self.groupings):
+            self.groupings.sort(key=Grouping.get_order)
+
+    def has_set_down_only(self):
+        for grouping in self.groupings:
+            for row in grouping.rows[:-1]:
+                for cell in row.times:
+                    if type(cell) is Cell and not cell.last and cell.stopusage.activity == 'setDown':
+                        return True
 
     def __init__(self, open_files, date=None, service=None):
-        self.date = date
         self.service = service
 
         groupings = {
@@ -1097,11 +1105,11 @@ class Timetable(object):
         }
 
         if type(open_files) is list:
-            transxchanges = [TransXChange(open_file) for open_file in open_files]
+            self.transxchanges = [TransXChange(open_file) for open_file in open_files]
         else:
-            transxchanges = [TransXChange(open_files)]
+            self.transxchanges = [TransXChange(open_files)]
 
-        for transxchange in transxchanges:
+        for transxchange in self.transxchanges:
             transxchange.service = service
             for journey_pattern in transxchange.journey_patterns.values():
                 if journey_pattern.direction == 'inbound':
@@ -1113,23 +1121,9 @@ class Timetable(object):
             self.description_parts = transxchange.description_parts
             self.via = transxchange.via
 
-        groupings = groupings.values()
+        self.groupings = list(groupings.values())
 
-        for transxchange in transxchanges:
-            for journey in transxchange.journeys:
-                if journey.should_show(date, transxchange):
-                    journey.journey_pattern.grouping.journeys.append(journey)
-
-        for grouping in groupings:
-            grouping.journeys.sort(key=VehicleJourney.get_order)
-            for journey in grouping.journeys:
-                journey.add_times()
-            grouping.do_heads_and_feet()
-
-        self.groupings = list(groupings)
-
-        if all(len(g.journeys) for g in self.groupings):
-            self.groupings.sort(key=Grouping.get_order)
+        self.set_date(date)
 
 
 def abbreviate(grouping, i, in_a_row, difference):

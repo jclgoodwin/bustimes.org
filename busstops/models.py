@@ -693,31 +693,34 @@ class Service(models.Model):
                 routes += service_code.get_routes()
             return gtfs.get_timetable(routes, day)
 
-        # cache_key = '{}:{}'.format(quote(self.service_code), self.date)
-        # timetables = cache.get(cache_key)
+        cache_key = '{}:{}'.format(quote(self.service_code), self.date)
+        timetable = cache.get(cache_key)
 
-        xml_files = self.get_files_from_zipfile()
-        if not xml_files:
+        if timetable:
+            timetable.set_date(day)
+        elif timetable is None:
+            xml_files = self.get_files_from_zipfile()
+            if not xml_files:
+                return
+            timetable = txc.Timetable(xml_files, day, self)
+            # del timetable.service
+            # del timetable.journeypatterns
+            # del timetable.stops
+            # del timetable.operators
+            # del timetable.element
+            cache.set(cache_key, timetable or False)
+        else:
             return
-        timetable = txc.Timetable(xml_files, day, self)
-        # del timetable.service
-        # del timetable.journeypatterns
-        # del timetable.stops
-        # del timetable.operators
-        # del timetable.element
-        # cache.set(cache_key, timetables)
 
         # if self.service_code == 'swe_39-X9-A-y10':
         #     timetables += Service.objects.get(service_code='swe_39-X9-_-y10').get_timetables(day)
 
-        # if len(timetables) > 1 and timetables[1].operating_period.start > day:
-        #     self.timetable_change = timetables[1].operating_period.start
-        # timetables = [timetable for timetable in timetables if timetable.operating_period.contains(day)]
+        if len(timetable.transxchanges) > 1 and timetable.transxchanges[1].operating_period.start > day:
+            self.timetable_change = timetable.transxchanges[1].operating_period.start
 
-        timetable.service = self
-        # timetable.set_date(day)
-        # timetable.set_description(self.description)
-        timetable.groupings = [g for g in timetable.groupings if g.rows and g.rows[0].times]
+        # timetable.service = self
+        # # timetable.set_description(self.description)
+        # timetable.groupings = [g for g in timetable.groupings if g.rows and g.rows[0].times]
         return timetable
 
 

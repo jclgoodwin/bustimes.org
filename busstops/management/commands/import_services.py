@@ -221,9 +221,6 @@ class Command(BaseCommand):
             else:
                 grouping = groupings['outbound']
             grouping.add_journey_pattern(journey_pattern)
-            # journey_pattern.grouping = grouping
-        # grou.
-            # self.via = transxchange.via
 
         try:
             stop_usages = []
@@ -242,11 +239,10 @@ class Command(BaseCommand):
 
             show_timetable = True
             line_strings = []
-            for grouping in groupings.values():
-                for pattern in grouping.journey_patterns:
-                    line_string = self.line_string_from_journeypattern(pattern, stops)
-                    if line_string not in line_strings:
-                        line_strings.append(line_string)
+            for pattern in transxchange.journey_patterns.values():
+                line_string = self.line_string_from_journeypattern(pattern, stops)
+                if line_string not in line_strings:
+                    line_strings.append(line_string)
             multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
 
         except (AttributeError, IndexError) as error:
