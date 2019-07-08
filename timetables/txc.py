@@ -447,24 +447,24 @@ class VehicleJourney(object):
             return self.sequencenumber
         return cmp_to_key(self.cmp)(self)
 
-    def should_show(self, date, timetable=None):
+    def should_show(self, date, transxchange=None):
         if not date:
             return True
-        if timetable and timetable.service:
-            region_id = timetable.service.region_id
-            if timetable.service.service_code == 'YWAO062':
+        if transxchange and transxchange.service:
+            region_id = transxchange.service.region_id
+            if transxchange.service.service_code == 'YWAO062':
                 if self.departure_time == datetime.time(18, 15):
                     return False
-            elif timetable.service.service_code == 'set_6-168-A-y08':
+            elif transxchange.service.service_code == 'set_6-168-A-y08':
                 if self.departure_time == datetime.time(11, 25):
                     return False
-            elif timetable.service.service_code == 'swe_32-73-_-y10':
+            elif transxchange.service.service_code == 'swe_32-73-_-y10':
                 if self.departure_time == datetime.time(18, 40):
                     return False
         else:
             region_id = None
         if not self.operating_profile:
-            return timetable and timetable.operating_profile.should_show(date, region_id)
+            return transxchange and transxchange.operating_profile.should_show(date, region_id)
         return self.operating_profile.should_show(date, region_id)
 
 
@@ -1105,6 +1105,7 @@ class Timetable(object):
 #                         return True
 
     def __init__(self, open_file, date=None, service=None):
+        self.date = date
         self.service = service
 
         groupings = {
@@ -1112,10 +1113,9 @@ class Timetable(object):
             'inbound': Grouping('inbound', self)
         }
 
-        self.groupings = list(groupings.values())
-
         transxchanges = [TransXChange(open_file)]
         for transxchange in transxchanges:
+            transxchange.service = service
             for journey_pattern in transxchange.journey_patterns.values():
                 if journey_pattern.direction == 'inbound':
                     grouping = groupings['inbound']
@@ -1123,11 +1123,24 @@ class Timetable(object):
                     grouping = groupings['outbound']
                 grouping.add_journey_pattern(journey_pattern)
                 journey_pattern.grouping = grouping
+            self.description_parts = transxchange.description_parts
+            self.via = transxchange.via
+
+        groupings = groupings.values()
+
         for transxchange in transxchanges:
+            transxchange.journeys.sort(key=VehicleJourney.get_order)
             for journey in transxchange.journeys:
-                journey.add_times()
-        for grouping in groupings.values():
+                if journey.should_show(date, transxchange):
+                    journey.add_times()
+                    journey.journey_pattern.grouping.journeys.append(journey)
+        for grouping in groupings:
             grouping.do_heads_and_feet()
+
+        self.groupings = list(groupings)
+
+        if all(len(g.journeys) for g in self.groupings):
+            self.groupings.sort(key=Grouping.get_order)
 
 
 def abbreviate(grouping, i, in_a_row, difference):
