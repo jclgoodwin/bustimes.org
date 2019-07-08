@@ -682,6 +682,9 @@ class OperatingPeriod(DateRange):
 
 
 class TransXChange(object):
+    description_parts = None
+    via = None
+
     def __get_journeys(self, journeys_element, serviced_organisations):
         journeys = {
             journey.code: journey for journey in (
@@ -693,7 +696,7 @@ class TransXChange(object):
         # Some Journeys do not have a direct reference to a JourneyPattern,
         # but rather a reference to another Journey which has a reference to a JourneyPattern
         for journey in iter(journeys.values()):
-            if journey.journey_ref and not journey.jorney_pattern:
+            if journey.journey_ref and not journey.journey_pattern:
                 journey.journey_pattern = journeys[journey.journey_ref].journey_pattern
 
         return [journey for journey in journeys.values() if journey.journey_pattern]
@@ -956,16 +959,16 @@ class Grouping(object):
         return self.rows and self.rows[-1].part.stop.is_at(locality_name)
 
     def do_heads_and_feet(self):
-        journeys = [vj for vj in self.journeys if vj.should_show(self.parent.date, self.parent)]
-        if not journeys:
-            return
+        # journeys = [vj for vj in self.journeys if vj.should_show(self.parent.date, self.parent)]
+        # if not journeys:
+        #     return
 
         prev_journey = None
         in_a_row = 0
         prev_difference = None
         difference = None
 
-        for i, journey in enumerate(journeys):
+        for i, journey in enumerate(self.journeys):
             for key in journey.notes:
                 if key in self.column_feet:
                     if key in prev_journey.notes and prev_journey.notes[key] == journey.notes[key]:
@@ -1007,7 +1010,7 @@ class Grouping(object):
             prev_journey = journey
 
         if in_a_row > 1:
-            abbreviate(self, len(journeys), in_a_row - 1, prev_difference)
+            abbreviate(self, len(self.journeys), in_a_row - 1, prev_difference)
         for row in self.rows:
             # remove 'None' cells created during the abbreviation process
             # (actual empty cells will contain an empty string '')
@@ -1068,14 +1071,14 @@ class Timetable(object):
 
 #         return [journey for journey in journeys.values() if journey.journeypattern]
 
-#     def date_options(self):
-#         start_date = min(self.date, datetime.date.today())
-#         end_date = start_date + datetime.timedelta(weeks=4)
-#         while start_date <= end_date:
-#             yield start_date
-#             start_date += datetime.timedelta(days=1)
-#         if self.date >= start_date:
-#             yield self.date
+    def date_options(self):
+        start_date = min(self.date, datetime.date.today())
+        end_date = start_date + datetime.timedelta(weeks=4)
+        while start_date <= end_date:
+            yield start_date
+            start_date += datetime.timedelta(days=1)
+        if self.date >= start_date:
+            yield self.date
 
 #     def set_date(self, date):
 #         if date and not isinstance(date, datetime.date):
