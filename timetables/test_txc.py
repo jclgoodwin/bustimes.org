@@ -28,24 +28,18 @@ class TimetableTest(TestCase):
         """Test a timetable from the East Anglia region"""
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-1.xml', date(2016, 10, 16))
 
-        self.assertEqual('', str(timetable.operating_period))
-
         self.assertEqual('Attleborough - Wymondham - Norwich', str(timetable.groupings[0]))
-        # self.assertEqual(10, len(timetable.groupings[1].journeys))
 
         self.assertTrue(timetable.groupings[0].has_minor_stops())
         self.assertEqual(87, len(timetable.groupings[0].rows))
         self.assertEqual('Leys Lane', timetable.groupings[0].rows[0].part.stop.common_name)
 
         self.assertEqual('Norwich - Wymondham - Attleborough', str(timetable.groupings[1]))
-        # self.assertEqual(11, len(timetable.groupings[0].journeys))
 
     @freeze_time('1 April 2017')
     def test_timetable_ea_2(self):
         """Test a timetable with a single OperatingProfile (no per-VehicleJourney ones)"""
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_20-12-_-y08-1.xml', date(2016, 12, 2))
-
-        self.assertEqual('', str(timetable.operating_period))
 
         self.assertEqual('Outbound', str(timetable.groupings[0]))
         self.assertEqual(21, len(timetable.groupings[0].rows))
@@ -188,8 +182,6 @@ class TimetableTest(TestCase):
     def test_timetable_goole(self):
         # outside of operating period
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'SVRYEAGT00.xml', date(2007, 6, 27))
-        # self.assertEqual([], timetable.groupings)
-        self.assertEqual('', timetable.mode)
 
         # during a DaysOfNonOperation
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'SVRYEAGT00.xml', date(2012, 6, 27))
