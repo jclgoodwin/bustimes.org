@@ -4,7 +4,7 @@ import logging
 import sys
 from setproctitle import setproctitle
 from time import sleep
-from django.db import OperationalError, IntegrityError, transaction
+from django.db import Error, IntegrityError, transaction
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from busstops.models import DataSource, ServiceCode
@@ -212,7 +212,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         while True:
             try:
                 wait = self.update()
-            except OperationalError as e:
+            except Error as e:
                 wait = 0
                 print(e)
                 logger.error(e, exc_info=True)
