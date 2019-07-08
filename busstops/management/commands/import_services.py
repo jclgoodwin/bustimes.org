@@ -9,23 +9,27 @@ Usage:
     ./manage.py import_services EA.zip [EM.zip etc]
 """
 
+import csv
+import logging
 import os
 import shutil
-import zipfile
-import csv
-import yaml
 import warnings
 import xml.etree.cElementTree as ET
+import yaml
+import zipfile
 from datetime import date
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
-from timetables.txc import Timetable, sanitize_description_part
+from timetables.txc import TransXChange, Grouping, sanitize_description_part
 from ...models import Operator, StopPoint, Service, StopUsage, DataSource, Region, Journey, ServiceCode, ServiceDate
 from .generate_departures import handle_region as generate_departures
 from .generate_service_dates import handle_services as generate_service_dates
+
+
+logger = logging.getLogger(__name__)
 
 
 # see https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml-with-namespaces
@@ -167,48 +171,63 @@ class Command(BaseCommand):
         (for the NCSD), does stuff
         """
 
-        timetable = Timetable(open_file)
+        transxchange = TransXChange(open_file)
 
-        if not hasattr(timetable, 'element'):  # invalid file
+        if not hasattr(transxchange, 'element'):  # invalid file
             return
 
-        if timetable.mode == 'underground':
+        if transxchange.mode == 'underground':
             return
 
-        if timetable.operating_period.end and timetable.operating_period.end < date.today():
+        if transxchange.operating_period.end and transxchange.operating_period.end < date.today():
             return
 
-        operators = timetable.operators
+        operators = transxchange.operators
         # if timetable.operator and len(operators) > 1:
         #     operators = [operator for operator in operators if operator.get('id') == timetable.operator]
         operators = [operator for operator in map(self.get_operator, operators) if operator]
 
-        line_name, line_brand = self.get_line_name_and_brand(timetable.element.find('txc:Services/txc:Service', NS),
+        line_name, line_brand = self.get_line_name_and_brand(transxchange.element.find('txc:Services/txc:Service', NS),
                                                              filename)
 
         # net and service code:
         net, service_code, line_ver = self.infer_from_filename(filename)
         if service_code is None:
-            service_code = timetable.service_code
+            service_code = transxchange.service_code
 
         defaults = dict(
             line_name=line_name,
             line_brand=line_brand,
-            mode=timetable.mode,
+            mode=transxchange.mode,
             net=net,
             line_ver=line_ver,
             region_id=self.region_id,
-            date=timetable.transxchange_date,
+            date=transxchange.transxchange_date,
             current=True,
             source=self.source
         )
 
         # stops:
-        stops = StopPoint.objects.in_bulk(timetable.stops.keys())
+        stops = StopPoint.objects.in_bulk(transxchange.stops.keys())
+
+        groupings = {
+            'outbound': Grouping('outbound', transxchange),
+            'inbound': Grouping('inbound', transxchange)
+        }
+
+        for journey_pattern in transxchange.journey_patterns.values():
+            if journey_pattern.direction == 'inbound':
+                grouping = groupings['inbound']
+            else:
+                grouping = groupings['outbound']
+            grouping.add_journey_pattern(journey_pattern)
+            # journey_pattern.grouping = grouping
+        # grou.
+            # self.via = transxchange.via
 
         try:
             stop_usages = []
-            for grouping in timetable.groupings:
+            for grouping in groupings.values():
                 if grouping.rows:
                     stop_usages += [
                         StopUsage(
@@ -218,19 +237,20 @@ class Command(BaseCommand):
                         for i, row in enumerate(grouping.rows) if row.part.stop.atco_code in stops
                     ]
                     if grouping.direction == 'outbound' or grouping.direction == 'inbound':
+                        # grouping.description_parts = transxchange.description_parts
                         defaults[grouping.direction + '_description'] = str(grouping)
 
             show_timetable = True
             line_strings = []
-            for grouping in timetable.groupings:
-                for journeypattern in grouping.journeypatterns:
-                    line_string = self.line_string_from_journeypattern(journeypattern, stops)
+            for grouping in groupings.values():
+                for pattern in grouping.journey_patterns:
+                    line_string = self.line_string_from_journeypattern(pattern, stops)
                     if line_string not in line_strings:
                         line_strings.append(line_string)
             multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
 
         except (AttributeError, IndexError) as error:
-            warnings.warn('%s, %s' % (error, filename))
+            logger.error(error, exc_info=True)
             show_timetable = False
             stop_usages = [StopUsage(service_id=service_code, stop_id=stop, order=0) for stop in stops]
             multi_line_string = None
@@ -247,7 +267,7 @@ class Command(BaseCommand):
             defaults['inbound_description'] = self.service_descriptions.get('%s%s%s' % (operator, line_name, 'I'), '')
             defaults['description'] = defaults['outbound_description'] or defaults['inbound_description']
         else:
-            description = timetable.description
+            description = transxchange.description
             if not description:
                 warnings.warn('%s missing a description' % filename)
             elif len(description) > 255:
@@ -290,9 +310,10 @@ class Command(BaseCommand):
                 service.stops.clear()
         StopUsage.objects.bulk_create(stop_usages)
 
-        if timetable.private_code:
+        # # a code used in Traveline Cymru URLs
+        if transxchange.journeys[0].private_code and ':' in transxchange.journeys[0].private_code:
             ServiceCode.objects.update_or_create({
-                'code': timetable.private_code
+                'code': transxchange.journeys[0].private_code.split(':', 1)[0]
             }, service=service, scheme='Traveline Cymru')
 
         self.service_codes.add(service_code)

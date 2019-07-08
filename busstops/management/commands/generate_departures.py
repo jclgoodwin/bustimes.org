@@ -22,39 +22,38 @@ def combine_date_time(date, time):
         return timezone.make_aware(combo, is_dst=True)
 
 
-def handle_timetable(service, timetable, day):
-    if not timetable.operating_period.contains(day):
+def handle_transxchange(service, transxchange, day):
+    if not transxchange.operating_period.contains(day):
         return
     stopusageusages = []
-    for grouping in timetable.groupings:
-        stops = {row.part.stop.atco_code for row in grouping.rows}
-        existent_stops = StopPoint.objects.filter(atco_code__in=stops).values_list('atco_code', flat=True)
-        for vj in grouping.journeys:
-            if not vj.should_show(day, timetable):
-                continue
-            journey_stopusageusages = []
-            date = day
-            previous_time = None
-            journey = Journey(service=service, datetime=combine_date_time(date, vj.departure_time))
-            for i, cell in enumerate(vj.get_times()):
-                su = cell.stopusage
-                time = cell.departure_time
-                if previous_time and previous_time > time:
-                    date += ONE_DAY
-                if su.stop.atco_code in existent_stops:
-                    if not su.activity or su.activity.startswith('pickUp'):
-                        journey_stopusageusages.append(
-                            StopUsageUsage(datetime=combine_date_time(date, time),
-                                           order=i, stop_id=su.stop.atco_code)
-                        )
-                    journey.destination_id = su.stop.atco_code
-                previous_time = time
-            if journey.destination_id:
-                journey.save()
-                for suu in journey_stopusageusages:
-                    suu.journey = journey
-                stopusageusages += journey_stopusageusages
-    StopUsageUsage.objects.bulk_create(stopusageusages)
+    transxchange.service = service
+    existent_stops = StopPoint.objects.in_bulk(transxchange.stops.keys())
+    for vj in transxchange.journeys:
+        if not vj.should_show(day, transxchange):
+            continue
+        journey_stopusageusages = []
+        date = day
+        previous_time = None
+        journey = Journey(service=service, datetime=combine_date_time(date, vj.departure_time))
+        for i, cell in enumerate(vj.get_times()):
+            su = cell.stopusage
+            time = cell.departure_time
+            if previous_time and previous_time > time:
+                date += ONE_DAY
+            if su.stop.atco_code in existent_stops:
+                if not su.activity or su.activity.startswith('pickUp'):
+                    journey_stopusageusages.append(
+                        StopUsageUsage(datetime=combine_date_time(date, time),
+                                       order=i, stop_id=su.stop.atco_code)
+                    )
+                journey.destination_id = su.stop.atco_code
+            previous_time = time
+        if journey.destination_id:
+            journey.save()
+            for suu in journey_stopusageusages:
+                suu.journey = journey
+            stopusageusages += journey_stopusageusages
+    # StopUsageUsage.objects.bulk_create(stopusageusages)
 
 
 def handle_ni_grouping(service, grouping, day):
@@ -120,10 +119,10 @@ def handle_region(region):
                     day += ONE_DAY
             else:
                 for i, xml_file in enumerate(service.get_files_from_zipfile()):
-                    timetable = txc.Timetable(xml_file, None, service)
+                    tranxchange = txc.TransXChange(xml_file)
                     day = today
                     while day <= NEXT_WEEK:
-                        handle_timetable(service, timetable, day)
+                        handle_transxchange(service, tranxchange, day)
                         day += ONE_DAY
 
 

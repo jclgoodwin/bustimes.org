@@ -684,6 +684,7 @@ class OperatingPeriod(DateRange):
 class TransXChange(object):
     description_parts = None
     via = None
+    service = None
 
     def __get_journeys(self, journeys_element, serviced_organisations):
         journeys = {
@@ -783,17 +784,11 @@ class TransXChange(object):
                     ) if journey_pattern.sections
                 }
 
-        # self.element = element
+        self.element = element
 
         self.transxchange_date = max(
             element.attrib['CreationDateTime'], element.attrib['ModificationDateTime']
         )[:10]
-
-        # # a code used in Traveline Cymru URLs
-        # if self.journeys and journeys[0].private_code and ':' in journey.private_code:
-        #     self.private_code = journey.private_code.split(':', 1)[0]
-        # else:
-        #     self.private_code = None
 
 
 class Row(object):
@@ -1054,22 +1049,6 @@ class Timetable(object):
     service = None
 #     description = None
     description_parts = None
-
-#     def __get_journeys(self, journeys_element, servicedorgs):
-#         journeys = {
-#             journey.code: journey for journey in (
-#                 VehicleJourney(element, self.journeypatterns, servicedorgs)
-#                 for element in journeys_element
-#             )
-#         }
-
-#         # some journeys did not have a direct reference to a journeypattern,
-#         # but rather a reference to another journey with a reference to a journeypattern
-#         for journey in iter(journeys.values()):
-#             if hasattr(journey, 'journeyref'):
-#                 journey.journeypattern = journeys[journey.journeyref].journeypattern
-
-#         return [journey for journey in journeys.values() if journey.journeypattern]
 
     def date_options(self):
         start_date = min(self.date, datetime.date.today())
