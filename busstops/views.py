@@ -509,11 +509,11 @@ class ServiceDetailView(DetailView):
                 next_usage = self.object.journey_set.filter(datetime__date__gte=today).values('datetime__date').first()
                 if next_usage:
                     date = next_usage['datetime__date']
-            context['timetables'] = self.object.get_timetables(date)
+            context['timetable'] = self.object.get_timetable(date)
         else:
             date = None
 
-        if not context.get('timetables') or not context['timetables'][0].groupings:
+        if not context.get('timetable') or not context['timetable'].groupings:
             context['stopusages'] = self.object.stopusage_set.all().select_related(
                 'stop__locality'
             ).defer('stop__osm', 'stop__locality__latlong')
@@ -521,15 +521,13 @@ class ServiceDetailView(DetailView):
         else:
             stops_dict = {stop.pk: stop for stop in self.object.stops.all().select_related(
                 'locality').defer('osm', 'latlong', 'locality__latlong')}
-            for table in context['timetables']:
-                table.groupings = [grouping for grouping in table.groupings
-                                   if type(grouping.rows) is not list or
-                                   grouping.rows and grouping.rows[0].times]
-                for grouping in table.groupings:
-                    grouping.rows = [row for row in grouping.rows if any(row.times)]
-                    for row in grouping.rows:
-                        row.part.stop.stop = stops_dict.get(row.part.stop.atco_code)
-
+            context['timetable'].groupings = [grouping for grouping in context['timetable'].groupings
+                                              if type(grouping.rows) is not list or
+                                              grouping.rows and grouping.rows[0].times]
+            for grouping in context['timetable'].groupings:
+                grouping.rows = [row for row in grouping.rows if any(row.times)]
+                for row in grouping.rows:
+                    row.part.stop.stop = stops_dict.get(row.part.stop.atco_code)
         try:
             context['breadcrumb'] = [Region.objects.filter(adminarea__stoppoint__service=self.object).distinct().get()]
         except (Region.DoesNotExist, Region.MultipleObjectsReturned):

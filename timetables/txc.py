@@ -682,6 +682,7 @@ class OperatingPeriod(DateRange):
 
 
 class TransXChange(object):
+    description = None
     description_parts = None
     via = None
     service = None
@@ -1086,7 +1087,7 @@ class Timetable(object):
 #                     if type(cell) is Cell and not cell.last and cell.stopusage.activity == 'setDown':
 #                         return True
 
-    def __init__(self, open_file, date=None, service=None):
+    def __init__(self, open_files, date=None, service=None):
         self.date = date
         self.service = service
 
@@ -1095,7 +1096,11 @@ class Timetable(object):
             'inbound': Grouping('inbound', self)
         }
 
-        transxchanges = [TransXChange(open_file)]
+        if type(open_files) is list:
+            transxchanges = [TransXChange(open_file) for open_file in open_files]
+        else:
+            transxchanges = [TransXChange(open_files)]
+
         for transxchange in transxchanges:
             transxchange.service = service
             for journey_pattern in transxchange.journey_patterns.values():

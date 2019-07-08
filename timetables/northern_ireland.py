@@ -167,4 +167,4 @@ def get_timetable(path, today):
             t.groupings[-1].name = direction['Description']
 
     t.date = today
-    return [t]
+    return t
