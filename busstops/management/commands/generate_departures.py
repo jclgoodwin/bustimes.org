@@ -53,7 +53,7 @@ def handle_transxchange(service, transxchange, day):
             for suu in journey_stopusageusages:
                 suu.journey = journey
             stopusageusages += journey_stopusageusages
-    # StopUsageUsage.objects.bulk_create(stopusageusages)
+    StopUsageUsage.objects.bulk_create(stopusageusages)
 
 
 def handle_ni_grouping(service, grouping, day):
