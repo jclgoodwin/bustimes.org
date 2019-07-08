@@ -200,12 +200,12 @@ class ServiceTest(TestCase):
     def test_timetable(self):
         response = self.client.get('/services/95c_ulb')
         self.assertContains(response, '<option selected value="2017-05-04">Thursday 4 May 2017</option>')
-        self.assertContains(response, '<label for="show-all-stops-1-1">Show all stops</label>')
+        self.assertContains(response, '<label for="show-all-stops-1">Show all stops</label>')
         self.assertContains(response, '<h2>Post Office - Roslea - Buscentre - Enniskillen </h2>')
         self.assertContains(response, '<h2>Enniskillen, Buscentre - Roslea, Post Office </h2>')
-        self.assertEqual(response.context_data['timetables'][0].groupings[0].rows[0].times, ['07:35', '07:35'])
-        self.assertEqual(response.context_data['timetables'][0].groupings[0].rows[-2].times, ['     ', '08:20'])
-        self.assertEqual(response.context_data['timetables'][0].groupings[0].rows[-1].times, ['08:20', '     '])
+        self.assertEqual(response.context_data['timetable'].groupings[0].rows[0].times, ['07:35', '07:35'])
+        self.assertEqual(response.context_data['timetable'].groupings[0].rows[-2].times, ['     ', '08:20'])
+        self.assertEqual(response.context_data['timetable'].groupings[0].rows[-1].times, ['08:20', '     '])
 
         response = self.client.get('/services/95c_ULB.xml')
         self.assertContains(response, '"Post Office - Roslea - Buscentre - Enniskillen"')

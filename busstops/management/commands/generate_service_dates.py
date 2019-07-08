@@ -15,13 +15,11 @@ def handle_services(services):
         tried_days = 0
 
         while days < 7 and tried_days < 100:
-            timetables = service.get_timetables(today)
-            if timetables:
-                for timetable in timetables:
-                    if any(has_times(grouping) for grouping in timetable.groupings):
-                        ServiceDate.objects.update_or_create(service=service, date=today)
-                        days += 1
-                        break
+            timetable = service.get_timetable(today)
+            if timetable and any(has_times(grouping) for grouping in timetable.groupings):
+                ServiceDate.objects.update_or_create(service=service, date=today)
+                days += 1
+                break
             today += timedelta(days=1)
             tried_days += 1
 

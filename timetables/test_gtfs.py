@@ -74,7 +74,7 @@ class GTFSTest(TestCase):
 
     def test_small_timetable(self):
         service = Service.objects.get(service_code='mortons-165')
-        timetable = service.get_timetables(date(2017, 6, 7))[0]
+        timetable = service.get_timetable(date(2017, 6, 7))
         timetable.groupings.sort(key=lambda g: str(g), reverse=True)
         self.assertEqual(str(timetable.groupings[0]), 'Merrion - Citywest')
         self.assertEqual(str(timetable.groupings[1]), 'Citywest - Ballsbridge')
@@ -88,12 +88,12 @@ class GTFSTest(TestCase):
         self.assertEqual(len(timetable.groupings[1].rows), 14)
 
         for day in (date(2017, 6, 11), date(2017, 12, 25), date(2015, 12, 3), date(2020, 12, 3)):
-            timetable = service.get_timetables(day)[0]
+            timetable = service.get_timetable(day)
             self.assertEqual(timetable.groupings, [])
 
     def test_big_timetable(self):
         service = Service.objects.get(service_code='seamusdoherty-963-1')
-        timetable = service.get_timetables(date(2017, 6, 7))[0]
+        timetable = service.get_timetable(date(2017, 6, 7))
         self.assertEqual(timetable.groupings[0].rows[0].times,
                          ['     ', time(10, 15), '     ', time(14, 15), time(17, 45)])
         self.assertEqual(timetable.groupings[0].rows[1].times,

@@ -34,7 +34,7 @@
     <div class="service-map" id="map" data-service="{{ object.service_code }}"></div>
 {% endif %}
 
-{% for timetable in timetables %}
+{% if timetable %}
     <form class="timetable-date">
         <select onchange="this.form.submit()" name="date" aria-label="Date">
             {% for option in timetable.date_options %}
@@ -50,8 +50,8 @@
 
         <div class="timetable-wrapper-wrapper">
             {% if grouping.has_minor_stops %}
-                <input type="checkbox" id="show-all-stops-{{ forloop.parentloop.counter }}-{{ forloop.counter }}" />
-                <label for="show-all-stops-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">Show all stops</label>
+                <input type="checkbox" id="show-all-stops-{{ forloop.counter }}" />
+                <label for="show-all-stops-{{ forloop.counter }}">Show all stops</label>
             {% endif %}
             <div class="timetable-wrapper">
                 <table class="timetable">
@@ -109,16 +109,14 @@
             </div>
         </div>
 
-        {% if not forloop.last or not forloop.parentloop.last %}
-            {% if grouping.rows|length > 20 %}
-                <!--[if gte IE 9]><!-->
-                    <div class="banner-ad">
-                        <div class="ad-label">Advertisement</div>
-                        <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="horizontal"></ins>
-                    </div>
-                    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                <!--<![endif]-->
-            {% endif %}
+        {% if not forloop.last and grouping.rows|length > 20 %}
+            <!--[if gte IE 9]><!-->
+                <div class="banner-ad">
+                    <div class="ad-label">Advertisement</div>
+                    <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="horizontal"></ins>
+                </div>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            <!--<![endif]-->
         {% endif %}
 
     {% empty %}
@@ -131,9 +129,9 @@
         <p>Times marked <strong>s</strong> – “sets down only” – the {{ object.mode }} will only stop to drop passengers off</p>
     {% endif %}
 
-{% empty %}
+{% else %}
     {% include 'route.html' %}
-{% endfor %}
+{% endif %}
 
 {% if payment_methods %}
     <p>

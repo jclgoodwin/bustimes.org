@@ -675,8 +675,8 @@ class Service(models.Model):
             logger.error(e, exc_info=True)
             return []
 
-    def get_timetables(self, day=None):
-        """Given a Service, return a list of Timetables."""
+    def get_timetable(self, day=None):
+        """Given a Service, return a Timetable"""
         if day is None:
             day = date.today()
 
@@ -684,41 +684,41 @@ class Service(models.Model):
             path = os.path.join(settings.DATA_DIR, 'NI', self.pk + '.json')
             if os.path.exists(path):
                 return northern_ireland.get_timetable(path, day)
-            return []
+            return
 
         if self.source and self.source.name.endswith(' GTFS'):
             service_codes = self.servicecode_set.filter(scheme__endswith=' GTFS')
-            timetables = [gtfs.get_timetable(service_code.get_routes(), day) for service_code in service_codes]
-        else:
-            cache_key = '{}:{}'.format(quote(self.service_code), self.date)
-            timetables = cache.get(cache_key)
+            routes = []
+            for service_code in service_codes:
+                routes += service_code.get_routes()
+            return gtfs.get_timetable(routes, day)
 
-            if timetables is None:
-                timetables = []
-                for xml_file in self.get_files_from_zipfile():
-                    with xml_file:
-                        timetable = txc.Timetable(xml_file, day, self)
-                    # del timetable.service
-                    # del timetable.journeypatterns
-                    # del timetable.stops
-                    # del timetable.operators
-                    # del timetable.element
-                    timetables.append(timetable)
-                cache.set(cache_key, timetables)
+        # cache_key = '{}:{}'.format(quote(self.service_code), self.date)
+        # timetables = cache.get(cache_key)
 
-            if self.service_code == 'swe_39-X9-A-y10':
-                timetables += Service.objects.get(service_code='swe_39-X9-_-y10').get_timetables(day)
+        xml_files = self.get_files_from_zipfile()
+        if not xml_files:
+            return
+        timetable = txc.Timetable(xml_files, day, self)
+        # del timetable.service
+        # del timetable.journeypatterns
+        # del timetable.stops
+        # del timetable.operators
+        # del timetable.element
+        # cache.set(cache_key, timetables)
 
-            # if len(timetables) > 1 and timetables[1].operating_period.start > day:
-            #     self.timetable_change = timetables[1].operating_period.start
-            # timetables = [timetable for timetable in timetables if timetable.operating_period.contains(day)]
+        # if self.service_code == 'swe_39-X9-A-y10':
+        #     timetables += Service.objects.get(service_code='swe_39-X9-_-y10').get_timetables(day)
 
-            for timetable in timetables:
-                timetable.service = self
-                # timetable.set_date(day)
-                # timetable.set_description(self.description)
-                timetable.groupings = [g for g in timetable.groupings if g.rows and g.rows[0].times]
-        return [t for t in timetables if t and t.groupings] or timetables[:1]
+        # if len(timetables) > 1 and timetables[1].operating_period.start > day:
+        #     self.timetable_change = timetables[1].operating_period.start
+        # timetables = [timetable for timetable in timetables if timetable.operating_period.contains(day)]
+
+        timetable.service = self
+        # timetable.set_date(day)
+        # timetable.set_description(self.description)
+        timetable.groupings = [g for g in timetable.groupings if g.rows and g.rows[0].times]
+        return timetable
 
 
 class ServiceCode(models.Model):
