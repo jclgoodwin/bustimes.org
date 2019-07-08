@@ -73,7 +73,7 @@
         },
         "ddtrace": {
             "hashes": [
-                "sha256:328489a8c1b6739664c02ee02ea3203950c71c8660c794f1a760f48d0ef77878",
+                "sha256:ba68aac751d492973b06269158dae40100a761241db32fcbf0300a4f63cb6efd",
                 "sha256:e5ab18d308a88a65d0881558c3136e220833e6667abd181a127685a6fdb5caca"
             ],
             "index": "piwheels",
@@ -165,8 +165,8 @@
         },
         "gtfs-realtime-bindings": {
             "hashes": [
-                "sha256:6bbb8341d72ccacd04b9efe1e547682aeb2c2abd3d1d00f08d3294bbaef37034",
-                "sha256:9e0f6cc3f5c561993a441cff7e09eca560c439974ff0fdd612bbc228fb967ff8"
+                "sha256:60aa078a52a2514b64d28b6782b8c7c77bf3171510bd22739f9679fa14374089",
+                "sha256:6bbb8341d72ccacd04b9efe1e547682aeb2c2abd3d1d00f08d3294bbaef37034"
             ],
             "index": "piwheels",
             "version": "==0.0.6"
@@ -305,6 +305,7 @@
                 "sha256:52f1bdafdc764b7447e393ed39bb263eccb12bfda25a4ac06d82e3a9056251f6",
                 "sha256:5b3581319a3951f1e866f4f6c5e42023db0fae0284273b82e97dfd32c51985cd",
                 "sha256:63c1b66e3b2a3a336288e4bcec499e0dc310cd1dceaed1c46fa7419764c68877",
+                "sha256:72720e363cf443017ceb3d45ea7ea2090fce5de45b0ac815426867c796bd4699",
                 "sha256:8123a99f24ecee469e5c1339427bcdb2a33920a18bb5c0d58b7c13f3b0298ba3",
                 "sha256:85e699fcabe7f817c0f0a412d4e7c6627e00c412b418da7666ff353f38e30f67",
                 "sha256:8dbff4557bbef963697583366400822387cccf794ccb001f1f2307ed21854c68",
@@ -410,11 +411,11 @@
         },
         "sentry-sdk": {
             "hashes": [
-                "sha256:692aa93637273365166041ee8e06ccd6b61d5f06560765d78828edbaac83fae1",
-                "sha256:7c9db0e419fb0fb31c1b1d2ec9247667d2b77bd4f3136119ee6f1464e9b088a4"
+                "sha256:14cfbc61e44f7acb18c91b27a0912249c7bf941ecd7e248646e81492464faee0",
+                "sha256:ff50be281cebb77525f0a7ad43aabaf04ee61131ba09885be2544acf959e0451"
             ],
             "index": "piwheels",
-            "version": "==0.9.5"
+            "version": "==0.10.0"
         },
         "setproctitle": {
             "hashes": [
@@ -502,33 +503,20 @@
         },
         "websockets": {
             "hashes": [
-                "sha256:04b42a1b57096ffa5627d6a78ea1ff7fad3bc2c0331ffc17bc32a4024da7fea0",
-                "sha256:08e3c3e0535befa4f0c4443824496c03ecc25062debbcf895874f8a0b4c97c9f",
-                "sha256:10d89d4326045bf5e15e83e9867c85d686b612822e4d8f149cf4840aab5f46e0",
-                "sha256:232fac8a1978fc1dead4b1c2fa27c7756750fb393eb4ac52f6bc87ba7242b2fa",
-                "sha256:4bf4c8097440eff22bc78ec76fe2a865a6e658b6977a504679aaf08f02c121da",
-                "sha256:51642ea3a00772d1e48fb0c492f0d3ae3b6474f34d20eca005a83f8c9c06c561",
-                "sha256:55d86102282a636e195dad68aaaf85b81d0bef449d7e2ef2ff79ac450bb25d53",
-                "sha256:564d2675682bd497b59907d2205031acbf7d3fadf8c763b689b9ede20300b215",
-                "sha256:5d13bf5197a92149dc0badcc2b699267ff65a867029f465accfca8abab95f412",
-                "sha256:5eda665f6789edb9b57b57a159b9c55482cbe5b046d7db458948370554b16439",
-                "sha256:5edb2524d4032be4564c65dc4f9d01e79fe8fad5f966e5b552f4e5164fef0885",
-                "sha256:79691794288bc51e2a3b8de2bc0272ca8355d0b8503077ea57c0716e840ebaef",
-                "sha256:7fcc8681e9981b9b511cdee7c580d5b005f3bb86b65bde2188e04a29f1d63317",
-                "sha256:8e447e05ec88b1b408a4c9cde85aa6f4b04f06aa874b9f0b8e8319faf51b1fee",
-                "sha256:90246a90a0b3762ecfd47a0ef34466c8f3299776f88cf564dc7b5ce7804b149e",
-                "sha256:90ea6b3e7787620bb295a4ae050d2811c807d65b1486749414f78cfd6fb61489",
-                "sha256:9e13239952694b8b831088431d15f771beace10edfcf9ef230cefea14f18508f",
-                "sha256:b3b3598d3ab95675bc0ce04b6051431e7f51828152d386a8c4ea4eef86b4dc1f",
-                "sha256:ccbb2d8bd7418d0b962a7d002e328c6a30e1134c967eb720f55754fd37b4b014",
-                "sha256:d40f081187f7b54d7a99d8a5c782eaa4edc335a057aa54c85059272ed826dc09",
-                "sha256:e1df1a58ed2468c7b7ce9a2f9752a32ad08eac2bcd56318625c3647c2cd2da6f",
-                "sha256:e98d0cec437097f09c7834a11c69d79fe6241729b23f656cfc227e93294fc242",
-                "sha256:f8d59627702d2ff27cb495ca1abdea8bd8d581de425c56e93bff6517134e0a9b",
-                "sha256:fc30cdf2e949a2225b012a7911d1d031df3d23e99b7eda7dfc982dc4a860dae9"
+                "sha256:0399adba0c5200260f1935231324678ce8b203b1e407214ed5c38a3e464a1eca",
+                "sha256:0fafa13554f8e1d2a3231e7d958f7fd42661c6ada16d0e5de7be52b2ff5f70bb",
+                "sha256:4a03f31084b2b6a58a5750de91ec5f25c82b5c4ac812d70ca0347af819b10d1c",
+                "sha256:58efc149c131897e834168e4ec8a0ae0fe7a189526d0d3fc604d8691053bd564",
+                "sha256:787755b149320a3d7b47556946f7226a125f4aa47b2d29eeae5471205018b088",
+                "sha256:7bf282162e2f9a33003a7b798ef4ae728aab63792b14343bb5a7943a412d7235",
+                "sha256:945d98696c94bfa5b6d9d3aa98f2344f402bffe6c07c1920632419a41363f509",
+                "sha256:a120055616208a82609f61fe3a5008db173cad54f7c4fec5f3298fd1e271f0de",
+                "sha256:a220f1acbe656b873860a30fafa98ac99ad6a9d5106ab5c13e7e68bd4dbc4af8",
+                "sha256:dcff46946ed9c3191be22cb839280a5be1b72df6aaf731a1a90db2cc9c2f32db",
+                "sha256:e54f809a0d8b1155bd2efef669d81cb0d577184a827001cc56d6e223b40cd706"
             ],
             "index": "piwheels",
-            "version": "==7.0"
+            "version": "==8.0"
         }
     },
     "develop": {
@@ -670,11 +658,11 @@
         },
         "flake8": {
             "hashes": [
-                "sha256:859996073f341f2670741b51ec1e67a01da142831aa1fdc6242dbf88dffbe661",
-                "sha256:a796a115208f5c03b18f332f7c11729812c8c3ded6c46319c59b53efd3819da8"
+                "sha256:19241c1cbc971b9962473e4438a2ca19749a7dd002dd1a946eaba171b4114548",
+                "sha256:8e9dfa3cecb2400b3738a42c54c3043e821682b9c840b0448c0503f781130696"
             ],
             "index": "piwheels",
-            "version": "==3.7.7"
+            "version": "==3.7.8"
         },
         "freezegun": {
             "hashes": [
@@ -911,7 +899,8 @@
         "wrapt": {
             "hashes": [
                 "sha256:565a021fd19419476b9362b05eeaa094178de64f8361e44468f9e9d7843901e1",
-                "sha256:59bd7b6ebb54a9e4b161b40293a698c0e86c8b6b5afc5979fd4a745eed968b2e"
+                "sha256:59bd7b6ebb54a9e4b161b40293a698c0e86c8b6b5afc5979fd4a745eed968b2e",
+                "sha256:af5a601a700645225582482151a9a1b927f2149c22a65ac3b2bb1fc06f7eb687"
             ],
             "version": "==1.11.2"
         },
