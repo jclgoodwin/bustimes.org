@@ -698,33 +698,25 @@ class Service(models.Model):
                 for xml_file in self.get_files_from_zipfile():
                     with xml_file:
                         timetable = txc.Timetable(xml_file, day, self)
-                    del timetable.service
-                    del timetable.journeypatterns
-                    del timetable.stops
-                    del timetable.operators
-                    del timetable.element
+                    # del timetable.service
+                    # del timetable.journeypatterns
+                    # del timetable.stops
+                    # del timetable.operators
+                    # del timetable.element
                     timetables.append(timetable)
                 cache.set(cache_key, timetables)
 
             if self.service_code == 'swe_39-X9-A-y10':
                 timetables += Service.objects.get(service_code='swe_39-X9-_-y10').get_timetables(day)
 
-            if len(timetables) > 1 and timetables[1].operating_period.start > day:
-                self.timetable_change = timetables[1].operating_period.start
-            timetables = [timetable for timetable in timetables if timetable.operating_period.contains(day)]
-
-            if len(timetables) > 1:
-                for timetable in timetables[1:]:
-                    for i, grouping in enumerate(timetable.groupings):
-                        for journey in grouping.journeys:
-                            journey.journeypattern.grouping = timetables[0].groupings[i]
-                        timetables[0].groupings[i].journeys += grouping.journeys
-                timetables = timetables[:1]
+            # if len(timetables) > 1 and timetables[1].operating_period.start > day:
+            #     self.timetable_change = timetables[1].operating_period.start
+            # timetables = [timetable for timetable in timetables if timetable.operating_period.contains(day)]
 
             for timetable in timetables:
                 timetable.service = self
-                timetable.set_date(day)
-                timetable.set_description(self.description)
+                # timetable.set_date(day)
+                # timetable.set_description(self.description)
                 timetable.groupings = [g for g in timetable.groupings if g.rows and g.rows[0].times]
         return [t for t in timetables if t and t.groupings] or timetables[:1]
 
