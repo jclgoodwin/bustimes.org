@@ -1132,12 +1132,14 @@ class Timetable(object):
         groupings = groupings.values()
 
         for transxchange in transxchanges:
-            transxchange.journeys.sort(key=VehicleJourney.get_order)
             for journey in transxchange.journeys:
                 if journey.should_show(date, transxchange):
-                    journey.add_times()
                     journey.journey_pattern.grouping.journeys.append(journey)
+
         for grouping in groupings:
+            grouping.journeys.sort(key=VehicleJourney.get_order)
+            for journey in grouping.journeys:
+                journey.add_times()
             grouping.do_heads_and_feet()
 
         self.groupings = list(groupings)
