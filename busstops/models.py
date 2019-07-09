@@ -702,11 +702,9 @@ class Service(models.Model):
             xml_files = self.get_files_from_zipfile()
             if xml_files:
                 timetable = txc.Timetable(xml_files, day, self)
-            # del timetable.service
-            # del timetable.journeypatterns
-            # del timetable.stops
-            # del timetable.operators
-            # del timetable.element
+                for transxchange in timetable.transxchanges:
+                    del transxchange.stops
+                    del transxchange.element
             cache.set(cache_key, timetable or False)
         if not timetable:
             return
