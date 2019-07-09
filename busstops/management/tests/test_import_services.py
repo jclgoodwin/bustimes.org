@@ -332,6 +332,7 @@ class ImportServicesTest(TestCase):
             """,
             html=True
         )
+        self.assertContains(res, '/js/timetable.min.js')
 
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     @freeze_time('1 Dec 2016')
