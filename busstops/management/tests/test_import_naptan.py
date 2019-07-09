@@ -207,11 +207,9 @@ class ImportNaptanTest(TestCase):
             })
             self.assertEqual(1, len(caught_warnings))
 
-        with vcr.use_cassette(os.path.join(FIXTURES_DIR, '5820AWN26361.yaml')):
-            self.assertContains(self.client.get('/stops/5820AWN26361'), 'Port Talbot Circular')
+        self.assertContains(self.client.get('/stops/5820AWN26361'), 'Port Talbot Circular')
 
-        with vcr.use_cassette(os.path.join(FIXTURES_DIR, '5820AWN26274.yaml')):
-            res = self.client.get('/stops/5820AWN26274')
+        res = self.client.get('/stops/5820AWN26274')
         self.assertContains(res, 'On Talbot Road, near Eagle Street, near Port Talbot British Legion')
         self.assertContains(res, 'Services')
         self.assertContains(res, '44 - Port Talbot Circular')
