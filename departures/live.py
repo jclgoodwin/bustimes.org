@@ -194,7 +194,30 @@ class WestMidlandsDepartures(Departures):
 
 class EdinburghDepartures(Departures):
     def get_request_url(self):
-        return 'http://tfe-opendata.com/api/v1/live_bus_times/{}' + self.stop.pk
+        return 'http://tfe-opendata.com/api/v1/live_bus_times/' + self.stop.naptan_code
+
+    def departures_from_response(self, res):
+        departures = []
+        for route in res.json():
+            service = self.get_service(route['routeName'])
+            for departure in route['departures']:
+                time = ciso8601.parse_datetime(departure['departureTime'])
+                departures.append({
+                    'time': None if departure['isLive'] else time,
+                    'live': time if departure['isLive'] else None,
+                    'service': service,
+                    'destination': departure['destination']
+                })
+        hour = datetime.timedelta(hours=1)
+        if all(
+            ((departure['time'] or departure['live']) - self.now) >= hour for departure in departures
+        ):
+            for departure in departures:
+                if departure['time']:
+                    departure['time'] -= hour
+                else:
+                    departure['live'] -= hour
+        return departures
 
 
 class GoAheadDepartures(Departures):
@@ -818,6 +841,8 @@ def get_departures(stop, services, bot=False):
                         break
             if source:
                 live_rows = SiriSmDepartures(source, stop, services).get_departures()
+            elif any(operator.id in {'LOTH', 'LCBU', 'NELB', 'EDTR'} for operator in operators):
+                live_rows = EdinburghDepartures(stop, services, now).get_departures()
             elif any(operator.id == 'FSCE' for operator in operators):
                 live_rows = TransportApiDepartures(stop, services, now.date()).get_departures()
             elif stop.atco_code[:3] == '430':
