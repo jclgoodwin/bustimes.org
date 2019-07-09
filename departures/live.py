@@ -708,7 +708,7 @@ def add_stagecoach_departures(stop, services_dict, departures):
                 except (Vehicle.MultipleObjectsReturned, IntegrityError) as e:
                     logger.error(e, exc_info=True)
                     vehicle = None
-                if departures and aimed >= departures[0]['time']:
+                if departures and aimed >= (departures[0]['time'] or departures[0]['live']):
                     replaced = False
                     for departure in departures:
                         if aimed == departure['time']:
@@ -732,10 +732,11 @@ def add_stagecoach_departures(stop, services_dict, departures):
                     if replaced:
                         continue
                     for departure in departures:
-                        if not departure.get('live') and line == departure['service'].line_name:
-                            departure['live'] = expected
-                            replaced = True
-                            break
+                        if not departure.get('live'):
+                            if type(departure['service']) is Service and line == departure['service'].line_name:
+                                departure['live'] = expected
+                                replaced = True
+                                break
                     if replaced:
                         continue
                 departures.append({
@@ -870,10 +871,9 @@ def get_departures(stop, services, bot=False):
 
             if any(operator.id in {'LOTH', 'LCBU', 'NELB', 'EDTR'} for operator in operators):
                 live_rows = EdinburghDepartures(stop, services, now).get_departures()
-                blend(departures, live_rows)
-                live_rows = None
             elif any(operator.id == 'GONW' for operator in operators):
                 live_rows = GoAheadDepartures(stop, services).get_departures()
+            if live_rows:
                 blend(departures, live_rows)
                 live_rows = None
 
