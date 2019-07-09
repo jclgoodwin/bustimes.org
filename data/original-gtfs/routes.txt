@@ -1,2 +1,1 @@
 route_id,route_short_name,route_long_name,route_type
-trdu-x90,X90,"Dundee - Edinburgh Airport",200
