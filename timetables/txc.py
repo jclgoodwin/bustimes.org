@@ -1079,9 +1079,10 @@ class Timetable(object):
         self.date = date
 
         for transxchange in self.transxchanges:
-            for journey in transxchange.journeys:
-                if journey.should_show(date, transxchange):
-                    journey.journey_pattern.grouping.journeys.append(journey)
+            if not date or transxchange.operating_period.contains(date):
+                for journey in transxchange.journeys:
+                    if journey.should_show(date, transxchange):
+                        journey.journey_pattern.grouping.journeys.append(journey)
 
         for grouping in self.groupings:
             grouping.journeys.sort(key=VehicleJourney.get_order)

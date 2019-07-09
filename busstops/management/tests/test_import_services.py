@@ -220,8 +220,7 @@ class ImportServicesTest(TestCase):
         """A file with a JourneyPattern with no JourneyPatternSections should be imported"""
         with warnings.catch_warnings(record=True) as caught_warnings:
             self.do_service('swe_33-9A-A-y10-2', 'GB')
-            # self.assertEqual(len(caught_warnings), 3)
-            print(caught_warnings)
+            self.assertEqual(len(caught_warnings), 2)
         self.assertTrue(Service.objects.filter(service_code='swe_33-9A-A-y10').exists())
 
     @freeze_time('1 October 2017')
@@ -236,13 +235,13 @@ class ImportServicesTest(TestCase):
         service = Service.objects.get(service_code='NW_04_GMS_237_1')
         self.assertEqual(service.description, 'Glossop - Stalybridge - Ashton')
 
-        # # On a Sunday, both timetables should be shown
-        # res = self.client.get(service.get_absolute_url())
-        # self.assertEqual(2, len(res.context_data['timetables']))
+        # On the Sunday, both TransXChanges operating
+        res = self.client.get(service.get_absolute_url())
+        self.assertEqual(18, len(res.context_data['timetable'].groupings[0].journeys))
 
-        # # On a Tuesday, only one timetable should be shown
-        # res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
-        # self.assertEqual(1, len(res.context_data['timetables']))
+        # On the Tuesday, only one TransXChange operating
+        res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
+        self.assertEqual(27, len(res.context_data['timetable'].groupings[0].journeys))
 
         self.assertEqual(1, service.stopusage_set.all().count())
 
