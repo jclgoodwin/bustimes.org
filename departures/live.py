@@ -109,6 +109,62 @@ class Departures(object):
         if response and response.ok:
             return self.departures_from_response(response)
 
+    def log_vehicle_journey(self, operator_ref, vehicle, service, journey_ref, destination, departure_time):
+        if not self.data_source:
+            self.data_source, _ = DataSource.objects.get_or_create({'url': self.source.url}, name=self.source.name)
+        defaults = {
+            'source': self.data_source
+        }
+        if operator_ref and vehicle.startswith(operator_ref + '-'):
+            vehicle = vehicle[len(operator_ref) + 1:]
+        elif operator_ref == 'FAB' and vehicle.startswith('111-'):  # Aberdeen
+            vehicle = vehicle[4:]
+        elif vehicle.startswith('ASES-'):  # Milton Keynes
+            vehicle = vehicle[5:]
+        operator = service.operator.all()[0]
+        if operator.name[:11] == 'Stagecoach ':
+            vehicle = vehicle.split('-')[-1]
+        if not vehicle or vehicle == '-':
+            return
+        if vehicle.isdigit():
+            defaults['code'] = vehicle
+            if operator.name[:11] == 'Stagecoach ':
+                defaults['operator'] = operator
+                vehicle, created = Vehicle.objects.get_or_create(defaults, operator__name__startswith='Stagecoach ',
+                                                                 fleet_number=vehicle)
+            else:
+                vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, fleet_number=vehicle)
+        else:
+            vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
+
+        if journey_ref and journey_ref.startswith('Unknown'):
+            journey_ref = ''
+
+        if not (departure_time or journey_ref):
+            return
+
+        destination = destination or ''
+        if journey_ref:
+            try:
+                existing_journey = VehicleJourney.objects.get(vehicle=vehicle, service=service, code=journey_ref,
+                                                              datetime__date=departure_time.date())
+                if existing_journey.datetime != departure_time:
+                    existing_journey.datetime = departure_time
+                    existing_journey.save()
+            except VehicleJourney.DoesNotExist:
+                VehicleJourney.objects.create(vehicle=vehicle, service=service, code=journey_ref,
+                                              datetime=departure_time,
+                                              source=self.data_source, destination=destination)
+            except VehicleJourney.MultipleObjectsReturned:
+                pass
+        else:
+            defaults = {
+                'destination': destination,
+                'source': self.data_source
+            }
+            VehicleJourney.objects.get_or_create(defaults, vehicle=vehicle, service=service,
+                                                 datetime=departure_time)
+
 
 class DublinDepartures(Departures):
     def get_request_url(self):
@@ -223,6 +279,26 @@ class EdinburghDepartures(Departures):
 class GoAheadDepartures(Departures):
     def get_request_url(self):
         return 'https://api.otrl-bus.io/api/stops/departures/' + self.stop.pk
+
+    def get_request_headers(self):
+        return {
+            'opco': 'goNorthWest'
+        }
+
+    def departures_from_response(self, res):
+        departures = []
+        self.data_source = DataSource.objects.get(name='Go-Ahead')
+        for row in res.json()['data']:
+            service = self.get_service(row['publishedLineName'])
+            departures.append({
+                'time': parse_datetime(row['monitoredCall']['aimedDepartureTime']),
+                'live': parse_datetime(row['monitoredCall']['expectedDepartureTime']) if row['monitored'] else None,
+                'service': service,
+                'destination': row['destinationName']
+            })
+            if type(service) is Service and row['vehicleRef']:
+                self.log_vehicle_journey('GONW', row['vehicleRef'], service, None, row['destinationName'], None)
+        return departures
 
 
 class PolarBearDepartures(Departures):
@@ -428,58 +504,8 @@ class SiriSmDepartures(Departures):
         if origin_aimed_departure_time is None:
             return
         origin_aimed_departure_time = parse_datetime(origin_aimed_departure_time.text)
-
-        if not self.data_source:
-            self.data_source, _ = DataSource.objects.get_or_create({'url': self.source.url}, name=self.source.name)
-        defaults = {
-            'source': self.data_source
-        }
-        if operator_ref and vehicle.startswith(operator_ref + '-'):
-            vehicle = vehicle[len(operator_ref) + 1:]
-        elif operator_ref == 'FAB' and vehicle.startswith('111-'):  # Aberdeen
-            vehicle = vehicle[4:]
-        elif vehicle.startswith('ASES-'):  # Milton Keynes
-            vehicle = vehicle[5:]
-        operator = service.operator.all()[0]
-        if operator.name[:11] == 'Stagecoach ':
-            vehicle = vehicle.split('-')[-1]
-        if not vehicle or vehicle == '-':
-            return
-        if vehicle.isdigit():
-            defaults['code'] = vehicle
-            if operator.name[:11] == 'Stagecoach ':
-                defaults['operator'] = operator
-                vehicle, created = Vehicle.objects.get_or_create(defaults, operator__name__startswith='Stagecoach ',
-                                                                 fleet_number=vehicle)
-            else:
-                vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, fleet_number=vehicle)
-        else:
-            vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
-
-        if journey_ref and journey_ref.startswith('Unknown'):
-            journey_ref = ''
-
-        destination = destination or ''
-        if journey_ref:
-            try:
-                existing_journey = VehicleJourney.objects.get(vehicle=vehicle, service=service, code=journey_ref,
-                                                              datetime__date=origin_aimed_departure_time.date())
-                if existing_journey.datetime != origin_aimed_departure_time:
-                    existing_journey.datetime = origin_aimed_departure_time
-                    existing_journey.save()
-            except VehicleJourney.DoesNotExist:
-                VehicleJourney.objects.create(vehicle=vehicle, service=service, code=journey_ref,
-                                              datetime=origin_aimed_departure_time,
-                                              source=self.data_source, destination=destination)
-            except VehicleJourney.MultipleObjectsReturned:
-                pass
-        else:
-            defaults = {
-                'destination': destination,
-                'source': self.data_source
-            }
-            VehicleJourney.objects.get_or_create(defaults, vehicle=vehicle, service=service,
-                                                 datetime=origin_aimed_departure_time)
+        super().log_vehicle_journey(operator_ref, vehicle, service, journey_ref, destination,
+                                    origin_aimed_departure_time)
 
     def get_row(self, element):
         aimed_time = element.find('s:MonitoredCall/s:AimedDepartureTime', self.ns)
@@ -839,10 +865,18 @@ def get_departures(stop, services, bot=False):
                     if not possible_source.get_poorly():
                         source = possible_source
                         break
+
+            if any(operator.id in {'LOTH', 'LCBU', 'NELB', 'EDTR'} for operator in operators):
+                live_rows = EdinburghDepartures(stop, services, now).get_departures()
+                blend(departures, live_rows)
+                live_rows = None
+            elif any(operator.id == 'GONW' for operator in operators):
+                live_rows = GoAheadDepartures(stop, services).get_departures()
+                blend(departures, live_rows)
+                live_rows = None
+
             if source:
                 live_rows = SiriSmDepartures(source, stop, services).get_departures()
-            elif any(operator.id in {'LOTH', 'LCBU', 'NELB', 'EDTR'} for operator in operators):
-                live_rows = EdinburghDepartures(stop, services, now).get_departures()
             elif any(operator.id == 'FSCE' for operator in operators):
                 live_rows = TransportApiDepartures(stop, services, now.date()).get_departures()
             elif stop.atco_code[:3] == '430':
