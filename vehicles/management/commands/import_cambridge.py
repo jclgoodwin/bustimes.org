@@ -89,19 +89,22 @@ class Command(BaseCommand):
         with transaction.atomic():
             line_name = item['PublishedLineName']
             journey_code = item['DatedVehicleJourneyRef']
-            if not created and vehicle.latest_location and vehicle.latest_location.current:
+            departure_time = ciso8601.parse_datetime(item['OriginAimedDepartureTime'])
+            if not created and vehicle.latest_location:
                 latest_location = vehicle.latest_location
                 latest_location.current = False
                 latest_location.save()
-                if line_name == latest_location.journey.route_name and journey_code == latest_location.journey.code:
-                    journey = vehicle.latest_location.journey
+                latest_journey = latest_location.journey
+                if line_name == latest_journey.route_name and journey_code == latest_journey.code:
+                    if departure_time == latest_journey.datetime:
+                        journey = vehicle.latest_location.journey
             if not journey:
                 journey = VehicleJourney.objects.create(
                     vehicle=vehicle,
                     service=self.get_service(operator_options or operator, item),
                     route_name=line_name,
                     source=self.source,
-                    datetime=ciso8601.parse_datetime(item['OriginAimedDepartureTime']),
+                    datetime=departure_time,
                     destination=html.unescape(item['DestinationName']),
                     code=journey_code
                 )
