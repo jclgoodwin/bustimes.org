@@ -304,6 +304,7 @@ class LiveDeparturesTest(TestCase):
             'app_id': None,
             'app_key': None,
             'group': 'no',
+            'nextbuses': 'no'
         })
 
     def test_uk_train(self):
