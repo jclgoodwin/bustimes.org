@@ -293,8 +293,8 @@ class GoAheadDepartures(Departures):
         for row in res.json()['data']:
             service = self.get_service(row['publishedLineName'])
             departures.append({
-                'time': parse_datetime(row['monitoredCall']['aimedDepartureTime']),
-                'live': parse_datetime(row['monitoredCall']['expectedDepartureTime']) if row['monitored'] else None,
+                'time': parse_datetime(row['monitoredCall']['aimedDepartureTimeUTC']),
+                'live': parse_datetime(row['monitoredCall']['expectedDepartureTimeUTC']) if row['monitored'] else None,
                 'service': service,
                 'destination': row['destinationName']
             })
