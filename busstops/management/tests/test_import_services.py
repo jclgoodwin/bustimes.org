@@ -1,4 +1,3 @@
-# coding=utf-8
 import os
 import xml.etree.cElementTree as ET
 import zipfile
@@ -233,7 +232,7 @@ class ImportServicesTest(TestCase):
 
         self.assertEqual(0, service.stopusage_set.all().count())
 
-        # Stagecoach Manhester 237
+        # Stagecoach Manchester 237
         service = Service.objects.get(service_code='NW_04_GMS_237_1')
         self.assertEqual(service.description, 'Glossop - Stalybridge - Ashton')
 

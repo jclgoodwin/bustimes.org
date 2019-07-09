@@ -154,11 +154,10 @@ class Command(BaseCommand):
         stop = stops.get(journeypattern.sections[0].timinglinks[0].origin.stop.atco_code)
         if stop:
             points.append(stop.latlong)
-        for section in journeypattern.sections:
-            for timinglink in section.timinglinks:
-                stop = stops.get(timinglink.destination.stop.atco_code)
-                if stop:
-                    points.append(stop.latlong)
+        for timinglink in journeypattern.get_timinglinks():
+            stop = stops.get(timinglink.destination.stop.atco_code)
+            if stop:
+                points.append(stop.latlong)
         try:
             linestring = LineString(points)
             return linestring

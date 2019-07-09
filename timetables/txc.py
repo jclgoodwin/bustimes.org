@@ -180,6 +180,11 @@ class JourneyPattern(object):
         if self.direction is not None:
             self.direction = self.direction.text
 
+    def get_timinglinks(self):
+        for section in self.sections:
+            for timinglink in section.timinglinks:
+                yield timinglink
+
 
 class JourneyPatternSection(object):
     """A collection of JourneyPatternStopUsages, in order."""
@@ -344,40 +349,38 @@ class VehicleJourney(object):
         if not deadrun:
             yield Cell(stopusage, time, time)
 
-        for section in self.journey_pattern.sections:
-            for timinglink in section.timinglinks:
+        for timinglink in self.journey_pattern.get_timinglinks():
+            if timinglink.origin.wait_time:
+                time = add_time(time, timinglink.origin.wait_time)
+                yield Cell(stopusage, time, time)
 
-                if timinglink.origin.wait_time:
-                    time = add_time(time, timinglink.origin.wait_time)
+            if deadrun:
+                if self.start_deadrun == timinglink.id:
+                    deadrun = False  # end of dead run
                     yield Cell(stopusage, time, time)
 
-                if deadrun:
-                    if self.start_deadrun == timinglink.id:
-                        deadrun = False  # end of dead run
-                        yield Cell(stopusage, time, time)
+            stopusage = timinglink.destination
 
-                stopusage = timinglink.destination
+            if timinglink.runtime:
+                time = add_time(time, timinglink.runtime)
 
-                if timinglink.runtime:
-                    time = add_time(time, timinglink.runtime)
+            if not deadrun and not self.skip_stopusage(stopusage, time):
+                # Simonds Diss to Beccles
+                if stopusage.stop.atco_code == '2900R241' and timinglink.origin.stop.atco_code == '2900R2417':
+                    stopusage.stop = Stop(None)
+                    stopusage.stop.atco_code = None
+                    stopusage.stop.locality = 'Harleston'
+                    stopusage.stop.common_name = 'Redenhall Rd/Station Rd'
 
-                if not deadrun and not self.skip_stopusage(stopusage, time):
-                    # Simonds Diss to Beccles
-                    if stopusage.stop.atco_code == '2900R241' and timinglink.origin.stop.atco_code == '2900R2417':
-                        stopusage.stop = Stop(None)
-                        stopusage.stop.atco_code = None
-                        stopusage.stop.locality = 'Harleston'
-                        stopusage.stop.common_name = 'Redenhall Rd/Station Rd'
+                if stopusage.wait_time:
+                    next_time = add_time(time, stopusage.wait_time)
+                    yield Cell(stopusage, time, next_time)
+                    time = next_time
+                else:
+                    yield Cell(stopusage, time, time)
 
-                    if stopusage.wait_time:
-                        next_time = add_time(time, stopusage.wait_time)
-                        yield Cell(stopusage, time, next_time)
-                        time = next_time
-                    else:
-                        yield Cell(stopusage, time, time)
-
-                if self.end_deadrun == timinglink.id:
-                    deadrun = True  # start of dead run
+            if self.end_deadrun == timinglink.id:
+                deadrun = True  # start of dead run
 
     def add_times(self):
         # width before adding this journey column
@@ -878,13 +881,13 @@ class Grouping(object):
     def add_journey_pattern(self, journey_patttern):
         # the rows traversed by this journey pattern
         rows = []
-        for section in journey_patttern.sections:
-            for timinglink in section.timinglinks:
-                if not rows:
-                    rows.append(Row(timinglink.origin))
-                if timinglink.origin.wait_time:  # combine with previous?
-                    rows.append(Row(timinglink.origin))
-                rows.append(Row(timinglink.destination))
+
+        for timinglink in journey_patttern.get_timinglinks():
+            if not rows:
+                rows.append(Row(timinglink.origin))
+            if timinglink.origin.wait_time:  # combine with previous?
+                rows.append(Row(timinglink.origin))
+            rows.append(Row(timinglink.destination))
 
         if not rows:
             return
