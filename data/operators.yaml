@@ -1,6 +1,3 @@
-UKCW:
-    url: https://twitter.com/ukcoachways
-    phone: 01204 468288
 SNDR:
     email: sales@sanderscoaches.com
 MHCO:
@@ -260,15 +257,14 @@ YCST:
 ROSM:
     url: ""
 SFGC:
-    twitter: Safeguardbus
+    twitter: SafeguardBus
     url: https://www.guildfordbus.co.uk/
 FECS:
     twitter: |
         FirstNorwich
-        Firstipswich
+        FirstIpswich
         FirstYar_Low
-        First_excel
-        First_X1
+        First_Excel
 GECL:
     twitter: GallowayLive
 JOHS:
@@ -283,7 +279,7 @@ RWSW:
         WF9 4PY
 ECLN:
     url: https://edinburghcoachlines.com/service-13-2/
-    twitter: ecltravel
+    twitter: ECLTravel
 TOTN:
     name: Totnes Community Bus
 SWDC:
