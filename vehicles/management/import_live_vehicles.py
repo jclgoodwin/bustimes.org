@@ -205,7 +205,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
             # current_locations.update(current=False)
             return 80
 
-        return 60
+        wait = (timezone.now() - now).total_seconds()
+        if wait > 60:
+            return wait - 60
+        return 0
 
     def handle(self, *args, **options):
         setproctitle(sys.argv[1].replace('import_', '', 1).replace('live_', '', 1))
