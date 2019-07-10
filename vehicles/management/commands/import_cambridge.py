@@ -3,11 +3,11 @@ import websockets
 import ciso8601
 import json
 import html
-from pyppeteer import launch
+import pyppeteer
 from datetime import timedelta
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
-from django.db import transaction, OperationalError
+from django.db import transaction, Error
 from django.db.models import Q
 from django.utils import timezone, dateparse
 from busstops.models import Operator, Service, DataSource
@@ -137,7 +137,7 @@ class Command(BaseCommand):
         locations.filter(datetime__lte=five_minutes_ago).update(current=False)
 
     async def get_client_data(self):
-        browser = await launch()
+        browser = await pyppeteer.launch()
         page = await browser.newPage()
         await page.goto(self.source.url)
         client_data = await page.evaluate('CLIENT_DATA')
@@ -164,7 +164,10 @@ class Command(BaseCommand):
 
             while True:
                 response = await websocket.recv()
-                self.handle_data(json.loads(response))
+                try:
+                    self.handle_data(json.loads(response))
+                except (Error, ValueError) as e:
+                    print(e)
 
     def handle(self, *args, **options):
         self.source = DataSource.objects.get(name='cambridge')
@@ -175,6 +178,7 @@ class Command(BaseCommand):
             except (
                 websockets.exceptions.ConnectionClosed,
                 asyncio.base_futures.InvalidStateError,
-                OperationalError
+                pyppeteer.errors.NetworkError,
+                pyppeteer.errors.TimeoutError
             ) as e:
                 print(e)
