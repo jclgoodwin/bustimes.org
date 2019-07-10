@@ -10,7 +10,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction, Error
 from django.db.models import Q
 from django.utils import timezone, dateparse
-from busstops.models import Operator, Service, DataSource
+from busstops.models import Operator, Service, DataSource, Locality
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 
 
