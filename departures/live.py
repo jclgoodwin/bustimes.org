@@ -288,19 +288,12 @@ class GoAheadDepartures(Departures):
         }
 
     def departures_from_response(self, res):
-        departures = []
-        self.data_source = DataSource.objects.get(name='Go-Ahead')
-        for row in res.json()['data']:
-            service = self.get_service(row['publishedLineName'])
-            departures.append({
-                'time': parse_datetime(row['monitoredCall']['aimedDepartureTimeUTC']),
-                'live': parse_datetime(row['monitoredCall']['expectedDepartureTimeUTC']) if row['monitored'] else None,
-                'service': service,
-                'destination': row['destinationName']
-            })
-            if type(service) is Service and row['vehicleRef']:
-                self.log_vehicle_journey('GONW', row['vehicleRef'], service, None, row['destinationName'], None)
-        return departures
+        return [{
+            'time': parse_datetime(row['monitoredCall']['aimedDepartureTimeUTC']),
+            'live': parse_datetime(row['monitoredCall']['expectedDepartureTimeUTC']) if row['monitored'] else None,
+            'service': self.get_service(row['publishedLineName']),
+            'destination': row['destinationName']
+        } for row in res.json()['data']]
 
 
 class PolarBearDepartures(Departures):
