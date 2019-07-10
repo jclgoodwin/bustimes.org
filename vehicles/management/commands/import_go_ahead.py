@@ -27,6 +27,7 @@ class Command(ImportLiveVehiclesCommand):
         'SQ': ('BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TOUR', 'WDBC'),
         'TT': ('TDTR',),
         'PC': ('PLYC',),
+        'GONW': ('GONW',),
     }
 
     opcos = {
@@ -39,6 +40,7 @@ class Command(ImportLiveVehiclesCommand):
         'bluestar': ('BLUS', 'UNIL'),
         'salisburyreds': ('SWWD',),
         'plymouth': ('PLYC',),
+        'gonorthwest': ('GONW',),
     }
 
     @staticmethod
