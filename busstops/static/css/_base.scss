@@ -713,6 +713,17 @@ input:not(:checked) + label {
         }
     }
 
+    thead td {
+        border: 1px solid $brand-color;
+        border-width: 0 0 1px 1px;
+        text-align: center;
+    }
+
+    thead td:first-child {
+        border: 0;
+        padding: 0;
+    }
+
     tfoot td {
         border-left: 1px solid $brand-color;
         border-top: 1px solid $brand-color;

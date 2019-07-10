@@ -491,6 +491,13 @@ class ServiceDetailView(DetailView):
                                                | Q(services=None, operators=None))
         context['links'] = []
 
+        related_q = Q(link_from__to_service=self.object) | Q(link_to__from_service=self.object)
+        if self.object.description and self.object.line_name:
+            related_q |= Q(description=self.object.description)
+            related_q |= Q(line_name=self.object.line_name, operator__in=context['operators'])
+        related = Service.objects.filter(related_q, current=True).exclude(pk=self.object.pk).defer('geometry')
+        context['related'] = sorted(related.distinct().prefetch_related('operator'), key=Service.get_order)
+
         if self.object.show_timetable and not self.object.timetable_wrong:
             date = self.request.GET.get('date')
             today = timezone.now().date()
@@ -509,7 +516,7 @@ class ServiceDetailView(DetailView):
                 next_usage = self.object.journey_set.filter(datetime__date__gte=today).values('datetime__date').first()
                 if next_usage:
                     date = next_usage['datetime__date']
-            context['timetable'] = self.object.get_timetable(date)
+            context['timetable'] = self.object.get_timetable(date, context['related'])
         else:
             date = None
 
@@ -566,13 +573,6 @@ class ServiceDetailView(DetailView):
                 'url': traveline_url,
                 'text': 'Timetable on the %s website' % traveline_text
             })
-
-        related_q = Q(link_from__to_service=self.object) | Q(link_to__from_service=self.object)
-        if self.object.description and self.object.line_name:
-            related_q |= Q(description=self.object.description)
-            related_q |= Q(line_name=self.object.line_name, operator__in=context['operators'])
-        related = Service.objects.filter(related_q, current=True).exclude(pk=self.object.pk).defer('geometry')
-        context['related'] = sorted(related.distinct().prefetch_related('operator'), key=Service.get_order)
 
         return context
 

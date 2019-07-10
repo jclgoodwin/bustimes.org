@@ -95,7 +95,7 @@ class ServiceAdmin(admin.ModelAdmin):
 
 
 class ServiceLinkAdmin(admin.ModelAdmin):
-    list_display = ('from_service', 'from_service__current', 'to_service', 'to_service__current')
+    list_display = ('from_service', 'from_service__current', 'to_service', 'to_service__current', 'how')
     autocomplete_fields = ('from_service', 'to_service')
 
     @staticmethod

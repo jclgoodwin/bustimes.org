@@ -675,7 +675,7 @@ class Service(models.Model):
             logger.error(e, exc_info=True)
             return []
 
-    def get_timetable(self, day=None):
+    def get_timetable(self, day=None, related=()):
         """Given a Service, return a Timetable"""
         if day is None:
             day = date.today()
@@ -699,18 +699,18 @@ class Service(models.Model):
         if timetable:
             timetable.set_date(day)
         elif timetable is None:
-            xml_files = self.get_files_from_zipfile()
-            if xml_files:
-                timetable = txc.Timetable(xml_files, day, self)
+            xml_files = [(self, file) for file in self.get_files_from_zipfile()]
+            if xml_files[0][1]:
+                for service in related:
+                    if service.region_id == self.region_id and service.description == self.description:
+                        xml_files += [(service, file) for file in service.get_files_from_zipfile()]
+                timetable = txc.Timetable(xml_files, day)
                 for transxchange in timetable.transxchanges:
                     del transxchange.stops
                     del transxchange.element
             cache.set(cache_key, timetable or False)
         if not timetable:
             return
-
-        # if self.service_code == 'swe_39-X9-A-y10':
-        #     timetables += Service.objects.get(service_code='swe_39-X9-_-y10').get_timetables(day)
 
         if len(timetable.transxchanges) > 1 and timetable.transxchanges[1].operating_period.start > day:
             self.timetable_change = timetable.transxchanges[1].operating_period.start
