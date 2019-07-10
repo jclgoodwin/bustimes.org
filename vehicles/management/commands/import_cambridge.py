@@ -99,13 +99,17 @@ class Command(BaseCommand):
                     if departure_time == latest_journey.datetime:
                         journey = vehicle.latest_location.journey
             if not journey:
+                try:
+                    destination = Locality.objects.get(stoppoint=item['DestinationRef']).name
+                except Locality.DoesNotExist:
+                    destination = html.unescape(item['DestinationName'])
                 journey = VehicleJourney.objects.create(
                     vehicle=vehicle,
                     service=self.get_service(operator_options or operator, item),
                     route_name=line_name,
                     source=self.source,
                     datetime=departure_time,
-                    destination=html.unescape(item['DestinationName']),
+                    destination=destination,
                     code=journey_code
                 )
             delay = item['Delay']
