@@ -137,7 +137,7 @@ class Command(BaseCommand):
         locations.filter(datetime__lte=five_minutes_ago).update(current=False)
 
     async def get_client_data(self):
-        browser = await pyppeteer.launch()
+        browser = await pyppeteer.launch(handleSIGINT=False)
         page = await browser.newPage()
         await page.goto(self.source.url)
         client_data = await page.evaluate('CLIENT_DATA')
@@ -178,7 +178,6 @@ class Command(BaseCommand):
             except (
                 websockets.exceptions.ConnectionClosed,
                 asyncio.base_futures.InvalidStateError,
-                pyppeteer.errors.NetworkError,
                 pyppeteer.errors.TimeoutError
             ) as e:
                 print(e)
