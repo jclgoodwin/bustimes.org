@@ -205,9 +205,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
             # current_locations.update(current=False)
             return 80
 
-        wait = (timezone.now() - now).total_seconds()
-        if wait > 60:
-            return wait - 60
+        time_taken = (timezone.now() - now).total_seconds()
+        print(time_taken)
+        if time_taken < 60:
+            return 60 - time_taken
         return 0
 
     def handle(self, *args, **options):
