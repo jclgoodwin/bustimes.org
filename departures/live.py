@@ -832,7 +832,7 @@ def get_departures(stop, services, bot=False):
             'today': datetime.date.today(),
         }, 60)
 
-    now = timezone.now()
+    now = timezone.localtime()
 
     departures = TimetableDepartures(stop, services, now)
     services_dict = departures.services
