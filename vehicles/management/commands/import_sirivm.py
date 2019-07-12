@@ -137,8 +137,10 @@ class Command(ImportLiveVehiclesCommand):
         }
         if vehicle_code.isdigit():
             defaults['fleet_number'] = vehicle_code
-        elif vehicle_code.startswith('WN-'):
-            defaults['fleet_number'] = vehicle_code[3:]
+        elif '-' in vehicle_code:
+            parts = vehicle_code.split('-')
+            if len(parts) == 2 and parts[0].isalpha() and parts[0].isupper() and parts[1].isdigit():
+                defaults['fleet_number'] = parts[1]
 
         if vehicle_code.startswith('GOEA-') or vehicle_code.startswith('CSLB-'):
             return self.vehicles.get_or_create(
