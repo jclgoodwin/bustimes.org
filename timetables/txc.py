@@ -1010,7 +1010,7 @@ class Grouping(object):
             difference = None
             prev_journey = journey
 
-        if self.heads:
+        if self.heads or (prev_journey and prev_journey.service != self.parent.service):
             self.heads.append(ColumnHead(prev_journey.service,
                                          len(self.journeys) - sum(head.span for head in self.heads)))
 

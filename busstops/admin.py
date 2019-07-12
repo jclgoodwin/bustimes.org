@@ -88,10 +88,18 @@ class ServiceAdmin(admin.ModelAdmin):
     list_filter = ('current', 'show_timetable', 'timetable_wrong', 'mode', 'net', 'region',
                    ('source', admin.RelatedOnlyFieldListFilter),
                    ('operator', admin.RelatedOnlyFieldListFilter))
-    search_fields = ('service_code', 'line_name', 'description')
+    search_fields = ('service_code', 'line_name', 'line_brand', 'description')
     raw_id_fields = ('operator', 'stops')
     ordering = ('service_code',)
     inlines = [ServiceCodeInline]
+
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+
+        if request.path.endswith('/autocomplete/'):
+            queryset = queryset.filter(current=True)
+
+        return queryset, use_distinct
 
 
 class ServiceLinkAdmin(admin.ModelAdmin):
