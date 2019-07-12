@@ -55,6 +55,22 @@
             {% endif %}
             <div class="timetable-wrapper">
                 <table class="timetable">
+                    {% if grouping.heads %}
+                        <thead>
+                            <tr>
+                                <td></td>
+                                {% for head in grouping.heads %}
+                                    <td{% if head.span > 1 %} colspan="{{ head.span }}"{% endif %}>
+                                        {% if object != head.service %}
+                                            <a href="{{ head.service.get_absolute_url }}">{{ head.service.line_name }}</a>
+                                        {% else %}
+                                            {{ head.service.line_name }}
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                    {% endif %}
                     <tbody>
                         {% for row in grouping.rows %}
                             <tr{% if not row.first and not row.last %} class="{{ row.part.timingstatus }}"{% endif %}>

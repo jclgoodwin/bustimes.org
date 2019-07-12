@@ -873,6 +873,7 @@ class Grouping(object):
         self.direction = direction
         self.parent = parent
         self.description_parts = None
+        self.heads = []
         self.column_feet = {}
         self.journey_patterns = []
         self.journeys = []
@@ -958,10 +959,6 @@ class Grouping(object):
         return self.rows and self.rows[-1].part.stop.is_at(locality_name)
 
     def do_heads_and_feet(self):
-        # journeys = [vj for vj in self.journeys if vj.should_show(self.parent.date, self.parent)]
-        # if not journeys:
-        #     return
-
         prev_journey = None
         in_a_row = 0
         prev_difference = None
@@ -987,6 +984,11 @@ class Grouping(object):
                         self.column_feet[key].append(ColumnFoot(None, 1))
 
             if prev_journey:
+                if prev_journey.service != journey.service:
+                    if self.heads:
+                        self.heads.append(ColumnHead(prev_journey.service, i - sum(head.span for head in self.heads)))
+                    else:
+                        self.heads.append(ColumnHead(prev_journey.service, i))
                 if prev_journey.notes != journey.notes:
                     if in_a_row > 1:
                         abbreviate(self, i, in_a_row - 1, prev_difference)
@@ -1007,6 +1009,10 @@ class Grouping(object):
             prev_difference = difference
             difference = None
             prev_journey = journey
+
+        if self.heads:
+            self.heads.append(ColumnHead(prev_journey.service,
+                                         len(self.journeys) - sum(head.span for head in self.heads)))
 
         if in_a_row > 1:
             abbreviate(self, len(self.journeys), in_a_row - 1, prev_difference)
@@ -1043,6 +1049,12 @@ class Grouping(object):
         return self.direction.capitalize()
 
 
+class ColumnHead(object):
+    def __init__(self, service, span):
+        self.service = service
+        self.span = span
+
+
 class ColumnFoot(object):
     def __init__(self, notes, span):
         self.notes = notes
@@ -1073,6 +1085,7 @@ class Timetable(object):
             for grouping in self.groupings:
                 for row in grouping.rows:
                     row.times.clear()
+                grouping.heads.clear()
                 grouping.column_feet.clear()
                 grouping.journeys.clear()
 
@@ -1083,6 +1096,7 @@ class Timetable(object):
                 for journey in transxchange.journeys:
                     if journey.should_show(date, transxchange):
                         journey.journey_pattern.grouping.journeys.append(journey)
+                        journey.service = transxchange.service
 
         for grouping in self.groupings:
             grouping.journeys.sort(key=VehicleJourney.get_order)
@@ -1109,12 +1123,16 @@ class Timetable(object):
         }
 
         if type(open_files) is list:
-            self.transxchanges = [TransXChange(open_file) for open_file in open_files]
+            self.transxchanges = [TransXChange(pair[1]) for pair in open_files]
+            self.service = open_files[0][0]
         else:
             self.transxchanges = [TransXChange(open_files)]
 
-        for transxchange in self.transxchanges:
-            transxchange.service = service
+        for i, transxchange in enumerate(self.transxchanges):
+            if i:
+                transxchange.service = open_files[i][0]
+            else:
+                transxchange.service = self.service
             for journey_pattern in transxchange.journey_patterns.values():
                 if journey_pattern.direction == 'inbound':
                     grouping = groupings['inbound']
