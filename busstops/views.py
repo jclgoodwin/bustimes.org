@@ -518,9 +518,7 @@ class ServiceDetailView(DetailView):
                 next_usage = self.object.journey_set.filter(datetime__date__gte=today).values('datetime__date').first()
                 if next_usage:
                     date = next_usage['datetime__date']
-            related = [service for service in context['related']
-                       if service.how == 'parallel'
-                       or service.region_id == self.object.region_id and service.description == self.object.description]
+            related = [service for service in context['related'] if service.how == 'parallel']
             context['timetable'] = self.object.get_timetable(date, related)
         else:
             date = None
