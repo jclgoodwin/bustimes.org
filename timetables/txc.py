@@ -809,7 +809,6 @@ class Row(object):
         self.part = part
         part.row = self
         self.times = []
-        self.sequencenumbers = set()
 
     def is_minor(self):
         return self.part.timingstatus == 'OTH' or self.part.timingstatus == 'TIP'
@@ -819,12 +818,7 @@ class Row(object):
         return any(type(cell) is Cell and cell.arrival_time != cell.departure_time for cell in self.times)
 
     def __repr__(self):
-        # return str(self.part.stop) + ' ' + str(len(self.times))
         return str(self.part.stop)
-
-    def get_order(self):
-        for number in self.sequencenumbers:
-            return number
 
 
 class Cell(object):
@@ -935,8 +929,6 @@ class Grouping(object):
             if first:
                 existing_row.first = True  # row is the first row of this pattern
                 first = False
-            if row.part.sequencenumber:
-                existing_row.sequencenumbers.add(row.part.sequencenumber)
             i += 1
 
         existing_row.last = True  # row is the last row of this pattern
