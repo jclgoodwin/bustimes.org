@@ -105,11 +105,12 @@ def handle_region(region):
         NEXT_WEEK = today + ONE_DAY * 7
     else:  # not actually next week
         NEXT_WEEK = today + ONE_DAY * 2
+    journeys = Journey.objects.filter(service__region=region)
     # delete journeys before today
-    Journey.objects.filter(service__region=region, datetime__date__lt=today).delete()
-    Journey.objects.filter(service__region=region, service__current=False).delete()
+    journeys.filter(datetime__date__lt=today).delete()
+    journeys.filter(service__current=False).delete()
     # get the date of the last generated journey
-    last_journey = Journey.objects.filter(service__region=region).order_by('datetime').last()
+    last_journey = journeys.order_by('datetime').last()
     if last_journey:
         today = last_journey.datetime.astimezone(timezone.get_current_timezone()).date() + ONE_DAY
         if today > NEXT_WEEK:
