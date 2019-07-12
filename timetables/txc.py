@@ -346,6 +346,7 @@ class VehicleJourney(object):
         stopusage = None
         time = self.departure_time
         deadrun = self.start_deadrun is not None
+        deadrun_next = False
 
         for timinglink in self.journey_pattern.get_timinglinks():
             if stopusage and stopusage.wait_time:
@@ -376,8 +377,11 @@ class VehicleJourney(object):
             if timinglink.runtime:
                 time = add_time(time, timinglink.runtime)
 
-            if self.end_deadrun == timinglink.id:
-                deadrun = True  # start of dead run
+            if deadrun_next:
+                deadrun = True
+                deadrun_next = False
+            elif self.end_deadrun == timinglink.id:
+                deadrun_next = True  # start of dead run
 
             stopusage = timinglink.destination
 
