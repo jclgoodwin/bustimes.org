@@ -287,13 +287,18 @@ class GoAheadDepartures(Departures):
             'opco': 'goNorthWest'
         }
 
-    def departures_from_response(self, res):
-        return [{
-            'time': parse_datetime(row['monitoredCall']['aimedDepartureTimeUTC']),
-            'live': parse_datetime(row['monitoredCall']['expectedDepartureTimeUTC']) if row['monitored'] else None,
+    def get_row(self, row):
+        time = row['monitoredCall']['aimedDepartureTimeUTC']
+        live = row['monitoredCall']['expectedDepartureTimeUTC']
+        return {
+            'time': parse_datetime(time),
+            'live': parse_datetime(live) if live and row['monitored'] else None,
             'service': self.get_service(row['publishedLineName']),
             'destination': row['destinationName']
-        } for row in res.json()['data']]
+        }
+
+    def departures_from_response(self, res):
+        return [self.get_row(row) for row in res.json()['data']]
 
 
 class PolarBearDepartures(Departures):
