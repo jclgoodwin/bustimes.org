@@ -700,7 +700,7 @@ class Service(models.Model):
             timetable.set_date(day)
         elif timetable is None:
             xml_files = [(self, file) for file in self.get_files_from_zipfile()]
-            if xml_files[0][1]:
+            if xml_files and xml_files[0][1]:
                 for service in related:
                     if service.region_id == self.region_id and service.description == self.description:
                         xml_files += [(service, file) for file in service.get_files_from_zipfile()]

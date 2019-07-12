@@ -1085,6 +1085,7 @@ class Timetable(object):
             for grouping in self.groupings:
                 for row in grouping.rows:
                     row.times.clear()
+                grouping.heads.clear()
                 grouping.column_feet.clear()
                 grouping.journeys.clear()
 
@@ -1128,10 +1129,10 @@ class Timetable(object):
             self.transxchanges = [TransXChange(open_files)]
 
         for i, transxchange in enumerate(self.transxchanges):
-            if i > 1:
-                transxchange.service = self.service
-            else:
+            if i:
                 transxchange.service = open_files[i][0]
+            else:
+                transxchange.service = self.service
             for journey_pattern in transxchange.journey_patterns.values():
                 if journey_pattern.direction == 'inbound':
                     grouping = groupings['inbound']
