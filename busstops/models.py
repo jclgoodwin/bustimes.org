@@ -702,8 +702,7 @@ class Service(models.Model):
             xml_files = [(self, file) for file in self.get_files_from_zipfile()]
             if xml_files and xml_files[0][1]:
                 for service in related:
-                    if service.region_id == self.region_id and service.description == self.description:
-                        xml_files += [(service, file) for file in service.get_files_from_zipfile()]
+                    xml_files += [(service, file) for file in service.get_files_from_zipfile()]
                 timetable = txc.Timetable(xml_files, day)
                 for transxchange in timetable.transxchanges:
                     del transxchange.stops
@@ -749,7 +748,10 @@ class ServiceDate(models.Model):
 class ServiceLink(models.Model):
     from_service = models.ForeignKey(Service, models.CASCADE, 'link_from')
     to_service = models.ForeignKey(Service, models.CASCADE, 'link_to')
-    how = models.CharField(max_length=10)
+    how = models.CharField(max_length=10, choices=(
+        ('parallel', 'Combine timetables'),
+        ('also', 'Just list'),
+    ))
 
     def get_absolute_url(self):
         return self.from_service.get_absolute_url()

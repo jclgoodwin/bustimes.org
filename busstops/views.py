@@ -5,6 +5,7 @@ import json
 import ciso8601
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q, Prefetch, F
+from django.db.models.functions import Coalesce
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
@@ -496,6 +497,7 @@ class ServiceDetailView(DetailView):
             related_q |= Q(description=self.object.description)
             related_q |= Q(line_name=self.object.line_name, operator__in=context['operators'])
         related = Service.objects.filter(related_q, current=True).exclude(pk=self.object.pk).defer('geometry')
+        related = related.annotate(how=Coalesce(F('link_to__how'), F('link_from__how')))
         context['related'] = sorted(related.distinct().prefetch_related('operator'), key=Service.get_order)
 
         if self.object.show_timetable and not self.object.timetable_wrong:
@@ -516,7 +518,10 @@ class ServiceDetailView(DetailView):
                 next_usage = self.object.journey_set.filter(datetime__date__gte=today).values('datetime__date').first()
                 if next_usage:
                     date = next_usage['datetime__date']
-            context['timetable'] = self.object.get_timetable(date, context['related'])
+            related = [service for service in context['related']
+                       if service.how == 'parallel'
+                       or service.region_id == self.object.region_id and service.description == self.object.description]
+            context['timetable'] = self.object.get_timetable(date, related)
         else:
             date = None
 
@@ -526,7 +531,8 @@ class ServiceDetailView(DetailView):
             ).defer('stop__osm', 'stop__locality__latlong')
             context['has_minor_stops'] = any(s.is_minor() for s in context['stopusages'])
         else:
-            stops_dict = {stop.pk: stop for stop in self.object.stops.all().select_related(
+            stops = StopPoint.objects.filter(service__in=[self.object] + related)
+            stops_dict = {stop.pk: stop for stop in stops.select_related(
                 'locality').defer('osm', 'latlong', 'locality__latlong')}
             context['timetable'].groupings = [grouping for grouping in context['timetable'].groupings
                                               if type(grouping.rows) is not list or
