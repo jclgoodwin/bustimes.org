@@ -229,7 +229,7 @@ TIME_ZONE = 'Europe/London'
 USE_TZ = True
 USE_I18N = False
 
-if not DEBUG and 'test' not in sys.argv:
+if not DEBUG and 'test' not in sys.argv and 'collectstatic' not in sys.argv:
     sentry_sdk.init(
         dsn=os.environ.get('SENTRY_DSN'),
         integrations=[DjangoIntegration()]
