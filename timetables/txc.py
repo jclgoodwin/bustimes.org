@@ -343,26 +343,20 @@ class VehicleJourney(object):
         return False
 
     def get_times(self):
-        stopusage = self.journey_pattern.sections[0].timinglinks[0].origin
+        stopusage = None
         time = self.departure_time
         deadrun = self.start_deadrun is not None
-        if not deadrun:
-            yield Cell(stopusage, time, time)
 
         for timinglink in self.journey_pattern.get_timinglinks():
-            if timinglink.origin.wait_time:
-                time = add_time(time, timinglink.origin.wait_time)
-                yield Cell(stopusage, time, time)
+            if stopusage and stopusage.wait_time:
+                wait_time = stopusage.wait_time
+            else:
+                wait_time = None
 
-            if deadrun:
-                if self.start_deadrun == timinglink.id:
-                    deadrun = False  # end of dead run
-                    yield Cell(stopusage, time, time)
+            stopusage = timinglink.origin
 
-            stopusage = timinglink.destination
-
-            if timinglink.runtime:
-                time = add_time(time, timinglink.runtime)
+            if deadrun and self.start_deadrun == timinglink.id:
+                deadrun = False  # end of dead run
 
             if not deadrun and not self.skip_stopusage(stopusage, time):
                 # Simonds Diss to Beccles
@@ -372,15 +366,23 @@ class VehicleJourney(object):
                     stopusage.stop.locality = 'Harleston'
                     stopusage.stop.common_name = 'Redenhall Rd/Station Rd'
 
-                if stopusage.wait_time:
-                    next_time = add_time(time, stopusage.wait_time)
+                if stopusage.wait_time or wait_time:
+                    next_time = add_time(time, stopusage.wait_time or wait_time)
                     yield Cell(stopusage, time, next_time)
                     time = next_time
                 else:
                     yield Cell(stopusage, time, time)
 
+            if timinglink.runtime:
+                time = add_time(time, timinglink.runtime)
+
             if self.end_deadrun == timinglink.id:
                 deadrun = True  # start of dead run
+
+            stopusage = timinglink.destination
+
+        if not deadrun:
+            yield Cell(timinglink.destination, time, time)
 
     def add_times(self):
         # width before adding this journey column
@@ -884,11 +886,8 @@ class Grouping(object):
         rows = []
 
         for timinglink in journey_patttern.get_timinglinks():
-            if not rows:
-                rows.append(Row(timinglink.origin))
-            if timinglink.origin.wait_time:  # combine with previous?
-                rows.append(Row(timinglink.origin))
-            rows.append(Row(timinglink.destination))
+            rows.append(Row(timinglink.origin))
+        rows.append(Row(timinglink.destination))
 
         if not rows:
             return
