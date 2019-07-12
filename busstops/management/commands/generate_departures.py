@@ -53,7 +53,11 @@ def handle_transxchange(service, transxchange, day):
                     )
                 journey.destination_id = su.stop.atco_code
             previous_time = time
+        # remove last StopUsageUsage of the journey if necessary
         if journey.destination_id:
+            if i == journey_stopusageusages[-1].order:
+                assert not su.activity
+                journey_stopusageusages = journey_stopusageusages[:-1]
             journey.save()
             for suu in journey_stopusageusages:
                 suu.journey = journey
