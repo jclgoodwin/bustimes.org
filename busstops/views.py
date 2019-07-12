@@ -500,7 +500,7 @@ class ServiceDetailView(DetailView):
 
         if self.object.show_timetable and not self.object.timetable_wrong:
             date = self.request.GET.get('date')
-            today = timezone.now().date()
+            today = timezone.localtime().date()
             if date:
                 try:
                     date = ciso8601.parse_datetime(date).date()

@@ -53,7 +53,7 @@ def operator_vehicles(request, slug):
     return render(request, 'operator_vehicles.html', {
         'breadcrumb': [operator.region, operator],
         'object': operator,
-        'today': timezone.now().date(),
+        'today': timezone.localtime().date(),
         'vehicles': vehicles,
         'code_column': any(v.code.isdigit() and v.fleet_number and int(v.code) != v.fleet_number for v in vehicles)
     })
