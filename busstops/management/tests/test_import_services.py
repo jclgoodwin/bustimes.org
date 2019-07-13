@@ -396,7 +396,7 @@ class ImportServicesTest(TestCase):
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data['breadcrumb'], [self.sc, self.fabd])
         self.assertTemplateUsed(res, 'busstops/service_detail.html')
-        self.assertContains(res, '<td colspan="5" rowspan="63">then every 30 minutes until</td>', html=True)
+        self.assertContains(res, '<td rowspan="63">then every 30 minutes until</td>', html=True)
 
         # Within operating period, but with no journeys
         res = self.client.get(service.get_absolute_url() + '?date=2026-04-18')
