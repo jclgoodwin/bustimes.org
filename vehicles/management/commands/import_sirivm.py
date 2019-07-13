@@ -54,6 +54,7 @@ class Command(ImportLiveVehiclesCommand):
         'SCCM': ('SCCM', 'SCPB', 'SCHU', 'SCBD'),
         'ATS': ('ARBB', 'ARHE', 'GLAR'),
         'ASC': ('ARBB', 'ARHE', 'GLAR'),
+        'NXB': ('TNXB', 'TCVW'),
     }
     operators = {}
 
@@ -231,9 +232,7 @@ class Command(ImportLiveVehiclesCommand):
         latlong = get_latlong(mvj)
 
         try:
-            if operator and operator.id == 'TNXB' and service == '4':
-                journey.service_id = 'cen_33-4-W-y11'
-            elif operator_ref != 'OFJ':  # not a Gatwick Airport shuttle
+            if operator_ref != 'OFJ':  # not a Gatwick Airport shuttle
                 journey.service = self.get_service(services, latlong)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist):
             origin_ref = mvj.find('siri:OriginRef', NS)
