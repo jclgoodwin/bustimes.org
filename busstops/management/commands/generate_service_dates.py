@@ -4,11 +4,6 @@ from timetables.txc import TransXChange
 from ...models import Service, ServiceDate
 
 
-def has_times(grouping):
-    if grouping.rows:
-        return grouping.rows[0].times
-
-
 def try_day(day, transxchanges):
     for transxchange in transxchanges:
         if transxchange.operating_period.contains(day):
