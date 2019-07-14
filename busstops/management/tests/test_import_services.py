@@ -66,16 +66,15 @@ class ImportServicesTest(TestCase):
                 indicator=indicator, latlong=Point(lng, lat, srid=4326)
             )
 
-        with override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}):
-            # simulate an East Anglia zipfile:
-            cls.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml'])
+        # simulate an East Anglia zipfile:
+        cls.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml'])
 
-            # simulate a Scotland zipfile:
-            cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml', 'CGAO305.xml'])
+        # simulate a Scotland zipfile:
+        cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml', 'CGAO305.xml'])
 
-            # simulate a North West zipfile:
-            cls.write_files_to_zipfile_and_import('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml',
-                                                             'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
+        # simulate a North West zipfile:
+        cls.write_files_to_zipfile_and_import('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml',
+                                                         'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
 
         cls.ea_service = Service.objects.get(pk='ea_21-13B-B-y08')
         cls.sc_service = Service.objects.get(pk='ABBN017')
@@ -246,7 +245,6 @@ class ImportServicesTest(TestCase):
         self.assertEqual(1, service.stopusage_set.all().count())
 
     @freeze_time('30 December 2016')
-    @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_service_dates(self):
         self.assertEqual(14, ServiceDate.objects.count())
 
