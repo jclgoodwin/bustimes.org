@@ -545,7 +545,7 @@ class SiriSmDepartures(Departures):
             # for enthusiasts,
             # because the source doesn't support vehicle locations
             if vehicle:
-                if not ('sslink' in url or 'jmwrti' in url or scheme in {'NCC Hogia', 'Reading', 'Surrey'}):
+                if not ('sslink' in url or 'jmwrti' in url or scheme in {'Reading', 'Surrey'}):
                     try:
                         self.log_vehicle_journey(element, operator, vehicle, service, journey_ref, destination)
                     except (Vehicle.MultipleObjectsReturned, VehicleJourney.MultipleObjectsReturned):
@@ -556,18 +556,15 @@ class SiriSmDepartures(Departures):
             # For Norfolk, the code is useful for deciphering out what route a vehicle is on.
             # For other sources, it just denotes that some live tracking is available.
             if line_ref is not None:
-                if scheme == 'NCC Hogia' or (expected_time and ('icarus' in url or 'sslink' in url)):
-                    if scheme != 'NCC Hogia':
-                        scheme += ' SIRI'
+                if expected_time and ('icarus' in url or 'sslink' in url):
+                    scheme += ' SIRI'
                     line_ref = line_ref.text
                     if line_ref and line_ref not in self.line_refs and operator != 'TD':
                         ServiceCode.objects.update_or_create({'code': line_ref}, service=service, scheme=scheme)
                         self.line_refs.add(line_ref)
 
             # Create a "journey code", which can be used to work out the destination of a vehicle.
-            if (scheme == 'NCC Hogia' or 'jmwrti' in url) and destination and journey_ref:
-                if scheme == 'NCC Hogia':
-                    journey_ref = int(journey_ref)
+            if 'jmwrti' in url and destination and journey_ref:
                 try:
                     JourneyCode.objects.update_or_create({
                         'destination': destination
