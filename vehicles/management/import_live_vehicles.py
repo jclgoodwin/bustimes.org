@@ -57,9 +57,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
     def get_datetime(self):
         return
 
-    def get_vehicle(self, item):
-        raise NotImplementedError
-
     def get_items(self):
         response = self.session.get(self.url, timeout=40)
         if response.ok:
@@ -88,36 +85,31 @@ class ImportLiveVehiclesCommand(BaseCommand):
     def handle_item(self, item, now, service_code=None):
         datetime = self.get_datetime(item)
         location = None
-        try:
-            vehicle, vehicle_created = self.get_vehicle(item)
-            if not vehicle:
-                return
-            if not vehicle_created:
-                latest = vehicle.latest_location
-                if latest:
-                    if datetime:
-                        if latest.datetime >= datetime:
-                            self.current_location_ids.add(latest.id)
-                            return
-                    else:
-                        location = self.create_vehicle_location(item)
-                        if location.latlong.equals_exact(latest.latlong, 0.001):
-                            self.current_location_ids.add(latest.id)
-                            return
-            journey = self.get_journey(item, vehicle)
-            journey.vehicle = vehicle
-        except NotImplementedError:
-            journey, vehicle_created = self.get_journey(item)
-        if not journey:
+        vehicle, vehicle_created = self.get_vehicle(item)
+        if not vehicle:
             return
         if vehicle_created:
             latest = None
         else:
-            latest = journey.vehicle.latest_location
-            if latest and latest.current and latest.journey.source_id != self.source.id:
-                if ((datetime or now) - latest.datetime).total_seconds() < 300:  # less than 5 minutes old
-                    if latest.journey.service_id or not journey.service:
-                        return  # defer to other source
+            latest = vehicle.latest_location
+            if latest:
+                if datetime:
+                    if latest.datetime >= datetime:
+                        self.current_location_ids.add(latest.id)
+                        return
+                else:
+                    location = self.create_vehicle_location(item)
+                    if location.latlong.equals_exact(latest.latlong, 0.001):
+                        self.current_location_ids.add(latest.id)
+                        return
+        journey = self.get_journey(item, vehicle)
+        journey.vehicle = vehicle
+        if not journey:
+            return
+        if latest and latest.current and latest.journey.source_id != self.source.id:
+            if ((datetime or now) - latest.datetime).total_seconds() < 300:  # less than 5 minutes old
+                if latest.journey.service_id or not journey.service:
+                    return  # defer to other source
         if not location:
             location = self.create_vehicle_location(item)
         location.datetime = datetime
