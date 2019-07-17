@@ -63,7 +63,7 @@ class Livery(models.Model):
         if not self.colours:
             return
         background = get_css(self.colours.split(), None, self.horizontal)
-        return mark_safe('<div style="height:1.5em;width:4em;background:{}"></div>'.format(background))
+        return mark_safe(f'<div style="height:1.5em;width:4em;background:{background}" title="{self.name}"></div>')
 
 
 class VehicleFeature(models.Model):
