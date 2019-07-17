@@ -675,6 +675,9 @@ class Service(models.Model):
             logger.error(e, exc_info=True)
             return []
 
+    def get_timetable_cache_key(self):
+        return '{}:{}'.format(quote(self.service_code), self.date)
+
     def get_timetable(self, day=None, related=()):
         """Given a Service, return a Timetable"""
         if day is None:
@@ -693,7 +696,7 @@ class Service(models.Model):
                 routes += service_code.get_routes()
             return gtfs.get_timetable(routes, day)
 
-        cache_key = '{}:{}'.format(quote(self.service_code), self.date)
+        cache_key = self.get_timetable_cache_key()
         timetable = cache.get(cache_key)
 
         if timetable:

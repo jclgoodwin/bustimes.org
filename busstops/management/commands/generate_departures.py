@@ -3,6 +3,7 @@ from datetime import timedelta, datetime, date
 from pytz.exceptions import NonExistentTimeError, AmbiguousTimeError
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from django.core.cache import cache
 from django.conf import settings
 from django.utils import timezone
 from timetables import txc, northern_ireland
@@ -99,6 +100,15 @@ def do_ni_service(service, groupings, day):
             handle_ni_grouping(service, grouping, day)
 
 
+def get_transxchanges(service):
+    timetable = cache.get(service.get_timetable_cache_key())
+    if timetable:
+        return timetable.transxchanges
+    files = service.get_files_from_zipfile()
+    for xml_file in files:
+        yield txc.TransXChange(xml_file)
+
+
 def handle_region(region):
     today = date.today()
     if region.id == 'NI':
@@ -128,12 +138,10 @@ def handle_region(region):
                     do_ni_service(service, groupings, day)
                     day += ONE_DAY
             else:
-                files = service.get_files_from_zipfile()
-                for xml_file in files:
-                    tranxchange = txc.TransXChange(xml_file)
+                for transxchange in get_transxchanges(service):
                     day = today
                     while day <= NEXT_WEEK:
-                        handle_transxchange(service, tranxchange, day)
+                        handle_transxchange(service, transxchange, day)
                         day += ONE_DAY
 
 
