@@ -1,9 +1,9 @@
 {
   "devDependencies": {
-    "autoprefixer": "^9.6.0",
+    "autoprefixer": "^9.6.1",
     "eslint": "^6.0.1",
-    "postcss-cli": "^6.1.2",
-    "sass": "^1.22.0",
+    "postcss-cli": "^6.1.3",
+    "sass": "^1.22.5",
     "sass-lint": "^1.13.1",
     "yuglify": "^2.0.0"
   }
