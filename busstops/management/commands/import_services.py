@@ -306,10 +306,12 @@ class Command(BaseCommand):
         StopUsage.objects.bulk_create(stop_usages)
 
         # # a code used in Traveline Cymru URLs
-        if transxchange.journeys[0].private_code and ':' in transxchange.journeys[0].private_code:
-            ServiceCode.objects.update_or_create({
-                'code': transxchange.journeys[0].private_code.split(':', 1)[0]
-            }, service=service, scheme='Traveline Cymru')
+        if transxchange.journeys and transxchange.journeys[0].private_code:
+            private_code = transxchange.journeys[0].private_code
+            if ':' in private_code:
+                ServiceCode.objects.update_or_create({
+                    'code': private_code.split(':', 1)[0]
+                }, service=service, scheme='Traveline Cymru')
 
         self.service_codes.add(service_code)
 
