@@ -473,11 +473,14 @@ class WestDepartures(Departures):
         }
 
     def get_row(self, item):
+        time = item['scheduledCall']['scheduledDepartureTime']
+        if not time:
+            return
         live = item.get('expectedDepartureTime')
         if live:
             live = ciso8601.parse_datetime(live)
         return {
-            'time': ciso8601.parse_datetime(item['scheduledCall']['scheduledDepartureTime']),
+            'time': ciso8601.parse_datetime(time),
             'live': live,
             'service': self.get_service(item['routeInfo']['lineName']),
             'destination': item['tripInfo']['headsign'],
@@ -486,7 +489,8 @@ class WestDepartures(Departures):
         }
 
     def departures_from_response(self, res):
-        return [self.get_row(item) for item in res.json()['data']['rtiReports'][0]['upcomingCalls']]
+        rows = (self.get_row(item) for item in res.json()['data']['rtiReports'][0]['upcomingCalls'])
+        return [row for row in rows if row]
 
 
 class NorfokDepartures(Departures):
