@@ -143,7 +143,8 @@ def vehicles_last_modified(request):
             except (SIRISource.DoesNotExist, Poorly, exceptions.RequestException):
                 continue
         if Operator.objects.filter(id__in=('KBUS', 'NCTR', 'TBTN', 'NOCT'), service=service_id).exists():
-            rifkind(service_id)
+            with use_primary_db():
+                rifkind(service_id)
     try:
         location = locations.values('datetime').latest('datetime')
         return location['datetime']
