@@ -845,6 +845,8 @@ def blend(departures, live_rows, stop=None):
             ):
                 if live_row.get('live'):
                     row['live'] = live_row['live']
+                if 'vehicle' in live_row:
+                    row['vehicle'] = live_row['vehicle']
                 replaced = True
                 break
         if not replaced and (live_row.get('live') or live_row['time']):
