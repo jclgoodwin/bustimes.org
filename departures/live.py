@@ -461,6 +461,57 @@ class UKTrainDepartures(Departures):
         } for item in res['departures']['all']]
 
 
+class WestDepartures(Departures):
+    def get_request_url(self):
+        return 'https://journeyplanner.travelwest.info/api/idox/'
+
+    def get_request_params(self):
+        return {
+            'stopID': self.stop.atco_code,
+            'maxItems': 10,
+            'lookAheadMinutes': 180
+        }
+
+    def get_row(self, item):
+        live = item.get('expectedDepartureTime')
+        if live:
+            live = ciso8601.parse_datetime(live)
+        return {
+            'time': ciso8601.parse_datetime(item['scheduledCall']['scheduledDepartureTime']),
+            'live': live,
+            'service': self.get_service(item['routeInfo']['lineName']),
+            'destination': item['tripInfo']['headsign'],
+            'vehicle': item['vehicleRTI']['vehicleID'],
+            'operator': item['agencyCode'],
+        }
+
+    def departures_from_response(self, res):
+        return [self.get_row(item) for item in res.json()['data']['rtiReports'][0]['upcomingCalls']]
+
+
+class NorfokDepartures(Departures):
+    def get_request_url(self):
+        return 'https://ldb.norfolkbus.info/public/displays/ncc1/transitdb/querylegacytable/timetable'
+
+    def get_request_params(self):
+        return {
+            'stopId': 'NaPTAN_' + self.stop.atco_code,
+            'stopIdType': 'native'
+        }
+
+    def departures_from_response(self, res):
+        items = []
+        res = res.json()['r']
+        for i in range(0, int(len(res[1]) / 11)):
+            items.append(res[1][i * 11: (i + 1) * 11])
+        return [{
+            'time': timezone.make_aware(datetime.datetime.fromtimestamp(int(item[3]))),
+            'live': timezone.make_aware(datetime.datetime.fromtimestamp(int(item[4]))) if item[4] else None,
+            'service': self.get_service(item[2]),
+            'destination': item[6],
+        } for item in items]
+
+
 class TimetableDepartures(Departures):
     def get_row(self, suu):
         destination = suu.journey.destination
@@ -470,7 +521,8 @@ class TimetableDepartures(Departures):
         return {
             'time': timezone.localtime(suu.datetime),
             'destination': destination.locality or destination.town or destination,
-            'service': service
+            'service': service,
+            'origin_aimed_departure_time': suu.journey.datetime
         }
 
     def get_departures(self):
@@ -712,7 +764,10 @@ def add_stagecoach_departures(stop, services_dict, departures):
                                 replaced = True
                                 if vehicle:
                                     if vehicle_created or not journeys.filter(service=departure['service']).exists():
-                                        VehicleJourney.objects.create(vehicle=vehicle, datetime=timezone.now(),
+                                        origin_departure_time = departure['origin_aimed_departure_time']
+                                        if not origin_departure_time:
+                                            origin_departure_time = timezone.now()
+                                        VehicleJourney.objects.create(vehicle=vehicle, datetime=origin_departure_time,
                                                                       source=source,
                                                                       destination=monitor['destinationDisplay'],
                                                                       code=monitor['datedVehicleJourneyRef'],
@@ -743,6 +798,7 @@ def add_stagecoach_departures(stop, services_dict, departures):
                 added = True
                 if vehicle and type(departures[-1]['service']) is Service:
                     if vehicle_created or not journeys.filter(service=departures[-1]['service']).exists():
+                        assert 'origin_aimed_departure_time' not in departures[-1]
                         VehicleJourney.objects.create(vehicle=vehicle, datetime=timezone.now(),
                                                       source=source, destination=monitor['destinationDisplay'],
                                                       code=monitor['datedVehicleJourneyRef'],
@@ -853,6 +909,14 @@ def get_departures(stop, services, bot=False):
             if live_rows:
                 blend(departures, live_rows)
         elif departures:
+            if any(operator.id in {'LOTH', 'LCBU', 'NELB', 'EDTR'} for operator in operators):
+                live_rows = EdinburghDepartures(stop, services, now).get_departures()
+            elif any(operator.id == 'GONW' for operator in operators):
+                live_rows = GoAheadDepartures(stop, services).get_departures()
+            if live_rows:
+                blend(departures, live_rows)
+                live_rows = None
+
             source = None
             schemes = ServiceCode.objects.filter(service__current=True, service__stops=stop)
             schemes = schemes.values_list('scheme', flat=True).distinct()
@@ -864,22 +928,19 @@ def get_departures(stop, services, bot=False):
                         source = possible_source
                         break
 
-            if any(operator.id in {'LOTH', 'LCBU', 'NELB', 'EDTR'} for operator in operators):
-                live_rows = EdinburghDepartures(stop, services, now).get_departures()
-            elif any(operator.id == 'GONW' for operator in operators):
-                live_rows = GoAheadDepartures(stop, services).get_departures()
-            if live_rows:
-                blend(departures, live_rows)
-                live_rows = None
-
             if source:
-                live_rows = SiriSmDepartures(source, stop, services).get_departures()
+                if source.name == 'Bristol':
+                    live_rows = WestDepartures(stop, services).get_departures()
+                else:
+                    live_rows = SiriSmDepartures(source, stop, services).get_departures()
             elif any(operator.id in {'FSCE', 'FCYM'} for operator in operators):
                 live_rows = TransportApiDepartures(stop, services, now.date()).get_departures()
             elif stop.atco_code[:3] == '430':
                 live_rows = WestMidlandsDepartures(stop, services).get_departures()
             elif any(operator.id in {'YCST', 'HRGT', 'KDTR'} for operator in operators):
                 live_rows = PolarBearDepartures('transdevblazefield', stop, services).get_departures()
+            elif stop.atco_code[:3] == '290':
+                live_rows = NorfokDepartures(stop, services).get_departures()
 
             if any(operator.name[:11] == 'Stagecoach ' for operator in operators):
                 if not (live_rows and any(
