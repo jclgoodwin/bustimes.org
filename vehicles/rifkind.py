@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.core.cache import cache
 from django.db import transaction
 from django.utils import timezone
+from multidb.pinning import use_primary_db
 from busstops.models import DataSource, Journey, Service
 from .models import Vehicle, VehicleLocation, VehicleJourney
 from .management.import_live_vehicles import calculate_bearing
@@ -161,6 +162,7 @@ def get_stop_departures(source, stop):
     return response.json()['data']
 
 
+@use_primary_db
 def rifkind(service_id):
     source = DataSource.objects.get(name='Rifkind')
 
