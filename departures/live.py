@@ -504,16 +504,23 @@ class NorfokDepartures(Departures):
         }
 
     def departures_from_response(self, res):
-        items = []
+        departures = []
         res = res.json()['r']
         for i in range(0, int(len(res[1]) / 11)):
-            items.append(res[1][i * 11: (i + 1) * 11])
-        return [{
-            'time': timezone.make_aware(datetime.datetime.fromtimestamp(int(item[3]))),
-            'live': timezone.make_aware(datetime.datetime.fromtimestamp(int(item[4]))) if item[4] else None,
-            'service': self.get_service(item[2]),
-            'destination': item[6],
-        } for item in items]
+            item = (res[1][i * 11: (i + 1) * 11])
+            time = timezone.make_aware(datetime.datetime.fromtimestamp(int(item[3])))
+            live = item[4]
+            if live:
+                live = timezone.make_aware(datetime.datetime.fromtimestamp(int(live)))
+            if time < self.now or live and live < self.now:
+                continue
+            departures.append({
+                'time': time,
+                'live': live,
+                'service': self.get_service(item[2]),
+                'destination': item[6],
+            })
+        return departures
 
 
 class TimetableDepartures(Departures):
@@ -946,7 +953,7 @@ def get_departures(stop, services, bot=False):
             elif any(operator.id in {'YCST', 'HRGT', 'KDTR'} for operator in operators):
                 live_rows = PolarBearDepartures('transdevblazefield', stop, services).get_departures()
             elif stop.atco_code[:3] == '290':
-                live_rows = NorfokDepartures(stop, services).get_departures()
+                live_rows = NorfokDepartures(stop, services, now).get_departures()
 
             if any(operator.name[:11] == 'Stagecoach ' for operator in operators):
                 if not (live_rows and any(
