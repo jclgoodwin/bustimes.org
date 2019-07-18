@@ -526,7 +526,7 @@ class TimetableDepartures(Departures):
             'time': timezone.localtime(suu.datetime),
             'destination': destination.locality or destination.town or destination,
             'service': service,
-            'origin_aimed_departure_time': suu.journey.datetime
+            'origin_departure_time': suu.journey.datetime
         }
 
     def get_departures(self):
@@ -768,7 +768,7 @@ def add_stagecoach_departures(stop, services_dict, departures):
                                 replaced = True
                                 if vehicle:
                                     if vehicle_created or not journeys.filter(service=departure['service']).exists():
-                                        origin_departure_time = departure['origin_aimed_departure_time']
+                                        origin_departure_time = departure['origin_departure_time']
                                         if not origin_departure_time:
                                             origin_departure_time = timezone.now()
                                         VehicleJourney.objects.create(vehicle=vehicle, datetime=origin_departure_time,
@@ -802,7 +802,7 @@ def add_stagecoach_departures(stop, services_dict, departures):
                 added = True
                 if vehicle and type(departures[-1]['service']) is Service:
                     if vehicle_created or not journeys.filter(service=departures[-1]['service']).exists():
-                        assert 'origin_aimed_departure_time' not in departures[-1]
+                        assert 'origin_departure_time' not in departures[-1]
                         VehicleJourney.objects.create(vehicle=vehicle, datetime=timezone.now(),
                                                       source=source, destination=monitor['destinationDisplay'],
                                                       code=monitor['datedVehicleJourneyRef'],
@@ -956,6 +956,27 @@ def get_departures(stop, services, bot=False):
 
             if live_rows:
                 blend(departures, live_rows)
+
+            if source.name == 'Bristol':
+                data_source = None
+                for item in departures:
+                    if item.get('origin_departure_time') and item.get('vehicle'):
+                        if not data_source:
+                            data_source, _ = DataSource.objects.get_or_create({'url': source.url}, name=source.name)
+                        defaults = {
+                            'source': data_source
+                        }
+                        vehicle = item['vehicle']
+                        operator = item['operator']
+                        if operator and vehicle.startswith(operator + '-'):
+                            vehicle = vehicle[len(operator) + 1:]
+                        operator = item['service'].operator.all()[0]
+                        vehicle, created = Vehicle.objects.get_or_create(defaults, code=vehicle, operator=operator)
+                        existing_journey = vehicle.vehiclejourney_set.filter(datetime=item['origin_departure_time'])
+                        if created or not existing_journey.exists():
+                            VehicleJourney.objects.create(source=data_source, vehicle=vehicle, service=service,
+                                                          datetime=item['origin_departure_time'],
+                                                          destination=item['destination'])
 
     if bot:
         max_age = 0
