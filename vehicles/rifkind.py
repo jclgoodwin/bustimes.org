@@ -1,4 +1,3 @@
-import logging
 from datetime import datetime
 from requests import Session
 from django.contrib.gis.geos import Point
@@ -11,7 +10,6 @@ from .models import Vehicle, VehicleLocation, VehicleJourney
 from .management.import_live_vehicles import calculate_bearing
 
 
-logger = logging.getLogger(__name__)
 session = Session()
 
 
@@ -53,40 +51,45 @@ def handle_item(source, stop, item):
 
     if service_name in {'two', 'mickleover', 'allestree', 'comet', 'harlequin'}:
         service_name = 'the ' + service_name
+        operator = 'TBTN'
     elif service_name == 'calverton connection':
         service_name = 'the calverton'
+        operator = 'TBTN'
     elif service_name == 'royal derby':
         service_name = 'the royal'
+        operator = 'TBTN'
     elif service_name == 'ECO':
         service_name = 'Ecolink'
+        operator = 'NOCT'
     elif service_name == 'skylink Derby':
         service_name = 'Skylink Leicester Derby'
         operator = 'KBUS'
     elif service_name == 'skylink express':
-        service_name = 'skylink Clifton'
+        service_name = 'Skylink Clifton'
+        operator = 'TBTN'
+    elif service_name == 'pronto':
+        operator = 'TBTN'
     elif operator == 'NCTR':
         service_name = service_name.split()[-1]
 
+    services = Service.objects.filter(current=True)
     if operator == 'KBUS' or operator == 'TBTN':
-        services = Service.objects.filter(operator__in=['KBUS', 'TBTN'], current=True)
+        operator_services = services.filter(operator__in=['KBUS', 'TBTN'])
     else:
-        services = Service.objects.filter(operator=operator, current=True)
+        operator_services = services.filter(operator=operator)
 
-    try:
+    querysets = [
+        operator_services.filter(Q(line_name__iexact=service_name) | Q(line_brand__iexact=service_name)),
+    ]
+    if ' ' in service_name:
+        querysets.append(operator_services.filter(line_name__iexact=service_name.split()[-1]))
+
+    for queryset in querysets:
         try:
-            defaults['service'] = services.get(Q(line_name__iexact=service_name) | Q(line_brand__iexact=service_name))
-        except Service.DoesNotExist as e:
-            if ' ' in service_name:
-                defaults['service'] = services.get(line_name__iexact=service_name.split()[-1])
-            else:
-                logger.error(e, exc_info=True)
-    except Service.DoesNotExist as e:
-        logger.error(e, exc_info=True)
-    except Service.MultipleObjectsReturned as e:
-        logger.error(e, exc_info=True)
-
-    if not defaults.get('service'):
-        return
+            defaults['service'] = queryset.get()
+            break
+        except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+            continue
 
     vehicle, _ = Vehicle.objects.update_or_create({
         'source': source,
