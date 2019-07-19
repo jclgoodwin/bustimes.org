@@ -14,7 +14,9 @@ def try_day(day, transxchanges):
 
 def handle_services(services):
     today = date.today()
-    for service in services.filter(current=True, show_timetable=True, timetable_wrong=False, journey=None):
+    services = services.filter(current=True, show_timetable=True, timetable_wrong=False, journey=None, servicedate=None)
+    services = services.exclude(source=None).exclude(source__name__endswith=' GTFS')
+    for service in services:
         day = today
         days = 0
         tried_days = 0
