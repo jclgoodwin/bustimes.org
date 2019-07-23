@@ -775,7 +775,7 @@ def add_stagecoach_departures(stop, services_dict, departures):
                                 replaced = True
                                 if vehicle:
                                     if vehicle_created or not journeys.filter(service=departure['service']).exists():
-                                        origin_departure_time = departure['origin_departure_time']
+                                        origin_departure_time = departure.get('origin_departure_time')
                                         if not origin_departure_time:
                                             origin_departure_time = timezone.now()
                                         VehicleJourney.objects.create(vehicle=vehicle, datetime=origin_departure_time,
