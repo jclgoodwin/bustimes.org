@@ -512,7 +512,7 @@ class NorfokDepartures(Departures):
             live = item[4]
             if live:
                 live = timezone.make_aware(datetime.datetime.fromtimestamp(int(live)))
-            if time < self.now or live and live < self.now:
+            if not live or time < self.now and live < self.now:
                 continue
             departures.append({
                 'time': time,

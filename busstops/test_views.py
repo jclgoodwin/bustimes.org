@@ -256,8 +256,8 @@ class ViewsTests(TestCase):
         self.assertIn('features', response.json())
 
     def test_stop(self):
-        with vcr.use_cassette(os.path.join(DIR, '..', 'data', 'vcr', '2900M114.yaml')):
-            response = self.client.get('/stops/2900M114')
+        response = self.client.get('/stops/2900M114')
+        self.assertFalse(response.context_data['departures'])
         self.assertContains(response, 'North')
         self.assertContains(response, 'Norfolk')
         self.assertContains(response, 'Melton Constable, opposite Bus Shelter')
