@@ -841,6 +841,29 @@ def get_departure_order(departure):
     return timezone.make_naive(time, LOCAL_TIMEZONE)
 
 
+def log_journeys(departures, source):
+    data_source = None
+    for item in departures:
+        if item.get('origin_departure_time') and item.get('vehicle'):
+            if not data_source:
+                data_source, _ = DataSource.objects.get_or_create({'url': source.url}, name=source.name)
+            defaults = {
+                'source': data_source
+            }
+            vehicle = item['vehicle']
+            operator = item['operator']
+            service = item['service']
+            if operator and vehicle.startswith(operator + '-'):
+                vehicle = vehicle[len(operator) + 1:]
+            operator = service.operator.all()[0]
+            vehicle, created = Vehicle.objects.get_or_create(defaults, code=vehicle, operator=operator)
+            existing_journey = vehicle.vehiclejourney_set.filter(datetime=item['origin_departure_time'])
+            if created or not existing_journey.exists():
+                VehicleJourney.objects.create(source=data_source, vehicle=vehicle, service=service,
+                                              datetime=item['origin_departure_time'],
+                                              destination=item['destination'])
+
+
 def blend(departures, live_rows, stop=None):
     added = False
     for live_row in live_rows:
@@ -968,25 +991,7 @@ def get_departures(stop, services, bot=False):
                 blend(departures, live_rows)
 
                 if source and source.name == 'Bristol':
-                    data_source = None
-                    for item in departures:
-                        if item.get('origin_departure_time') and item.get('vehicle'):
-                            if not data_source:
-                                data_source, _ = DataSource.objects.get_or_create({'url': source.url}, name=source.name)
-                            defaults = {
-                                'source': data_source
-                            }
-                            vehicle = item['vehicle']
-                            operator = item['operator']
-                            if operator and vehicle.startswith(operator + '-'):
-                                vehicle = vehicle[len(operator) + 1:]
-                            operator = item['service'].operator.all()[0]
-                            vehicle, created = Vehicle.objects.get_or_create(defaults, code=vehicle, operator=operator)
-                            existing_journey = vehicle.vehiclejourney_set.filter(datetime=item['origin_departure_time'])
-                            if created or not existing_journey.exists():
-                                VehicleJourney.objects.create(source=data_source, vehicle=vehicle, service=service,
-                                                              datetime=item['origin_departure_time'],
-                                                              destination=item['destination'])
+                    log_journeys(departures, source)
 
     if bot:
         max_age = 0
