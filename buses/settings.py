@@ -79,7 +79,7 @@ DATABASES = {
 if os.environ.get('READ_ONLY_DB_HOST'):
     DATABASES['read-only'] = {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.environ.get('READ_ONLY_DB_NAME', 'bus_times'),
+        'NAME': os.environ.get('READ_ONLY_DB_NAME', 'bustimes'),
         'HOST': os.environ.get('READ_ONLY_DB_HOST'),
         'DISABLE_SERVER_SIDE_CURSORS': True,
         'CONN_MAX_AGE': None
