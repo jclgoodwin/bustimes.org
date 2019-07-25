@@ -42,7 +42,12 @@
                 <td>
                     {% if vehicle.latest_location %}
                         {% if vehicle.latest_location.journey.service %}
-                            <a href="{{ vehicle.latest_location.journey.service.get_absolute_url }}">{{ vehicle.latest_location.journey.service.line_name }}</a>
+                            <a href="{{ vehicle.latest_location.journey.service.get_absolute_url }}">
+                                {{ vehicle.latest_location.journey.service.line_name }}
+                            <br>
+                            </a>
+                        {% elif vehicle.latest_location.journey.route_name %}
+                            {{ vehicle.latest_location.journey.route_name }}
                             <br>
                         {% endif %}
                         {% if vehicle.latest_location.datetime.date == today %}
