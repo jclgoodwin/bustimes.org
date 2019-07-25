@@ -1,16 +1,15 @@
 /*jslint browser: true*/
 
 if (navigator.serviceWorker && location.protocol === 'https:') {
-    try {
-        navigator.serviceWorker.register('/serviceworker.js', {
-            scope: '/'
-        });
-    } catch (ignore) {
-        // never mind
-    }
-    window.addEventListener('load', function () {
+    window.addEventListener('load', function() {
         if (navigator.serviceWorker.controller) {
             navigator.serviceWorker.controller.postMessage({'command': 'trimCaches'});
+        } else {
+            navigator.serviceWorker.register('/serviceworker.js', {
+                scope: '/'
+            }).catch(function() {
+                // never mind
+            });
         }
     });
 }
