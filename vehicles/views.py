@@ -171,15 +171,20 @@ def vehicles_json(request):
     })
 
 
-def service_vehicles_history(request, slug):
-    service = get_object_or_404(Service, slug=slug)
+def service_vehicles_history(request, slug=None, operator=None, route=None):
+    if slug:
+        service = get_object_or_404(Service, slug=slug)
+        journeys = service.vehiclejourney_set
+    else:
+        service = None
+        operator = get_object_or_404(Operator, slug=operator)
+        journeys = VehicleJourney.objects.filter(vehicle__operator=operator, route_name=route)
     date = request.GET.get('date')
     if date:
         try:
             date = ciso8601.parse_datetime(date).date()
         except ValueError:
             date = None
-    journeys = service.vehiclejourney_set
     dates = journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date')
     if not date:
         date = dates.last()
@@ -187,12 +192,13 @@ def service_vehicles_history(request, slug):
             raise Http404()
     locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
     journeys = journeys.filter(datetime__date=date).select_related('vehicle').annotate(locations=Exists(locations))
-    operator = service.operator.select_related('region').first()
+    if slug:
+        operator = service.operator.select_related('region').first()
     return render(request, 'vehicles/vehicle_detail.html', {
-        'breadcrumb': [operator.region, operator, service],
+        'breadcrumb': [operator.region, operator, service or Vehicles(operator)],
         'date': date,
         'dates': dates,
-        'object': service,
+        'object': service or route,
         'journeys': journeys.order_by('datetime'),
     })
 
