@@ -29,19 +29,23 @@ class VehicleAdminForm(forms.ModelForm):
 
 
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ('code', 'fleet_number', 'reg', 'operator', 'vehicle_type', 'get_flickr_link', 'livery', 'colours',
-                    'notes')
+    list_display = ('code', 'fleet_number', 'reg', 'operator', 'vehicle_type',
+                    'get_flickr_link', 'last_seen', 'livery', 'colours', 'notes')
     list_filter = (
         ('source', admin.RelatedOnlyFieldListFilter),
         ('operator', admin.RelatedOnlyFieldListFilter),
         'vehicle_type',
     )
-    list_select_related = ['operator', 'livery', 'vehicle_type']
+    list_select_related = ['operator', 'livery', 'vehicle_type', 'latest_location']
     list_editable = ('fleet_number', 'reg', 'operator', 'vehicle_type', 'livery', 'colours', 'notes')
     search_fields = ('code', 'fleet_number', 'reg')
     autocomplete_fields = ('vehicle_type', 'livery')
     ordering = ('-id',)
     actions = (copy_livery, copy_type)
+
+    def last_seen(self, obj):
+        if obj.latest_location:
+            return obj.latest_location.datetime
 
     def get_changelist_form(self, request, **kwargs):
         kwargs.setdefault('form', VehicleAdminForm)
