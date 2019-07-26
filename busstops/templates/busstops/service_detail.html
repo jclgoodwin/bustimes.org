@@ -6,6 +6,10 @@
 
 {% block head %}
     <link rel="shortlink" href="https://bustimes.org/services/{{ object.service_code }}" />
+    {% if object.geometry %}
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'js/bower_components/leaflet/dist/leaflet.css' %}" />
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -197,9 +201,7 @@
 
 {% if object.geometry %}
     <script src="/services/{{ object.service_code }}/geometry.js"></script>
-    {% load static %}
     {% load pipeline %}
-    <link rel="stylesheet" href="{% static "js/bower_components/leaflet/dist/leaflet.css" %}" />
     {% javascript 'servicemap' %}
 {% endif %}
 
