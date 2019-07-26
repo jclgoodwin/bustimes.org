@@ -44,10 +44,7 @@
                 <td>
                     {% if vehicle.latest_location %}
                         {% if vehicle.latest_location.journey.service %}
-                            {{ vehicle.latest_location.journey.service.line_name }}
-                            {% if vehicle.latest_location.journey.service.line_brand %}
-                                - {{ vehicle.latest_location.journey.service.line_brand }}
-                            {% endif %}
+                            {{ vehicle.latest_location.journey.service.get_line_name_and_brand }}
                             <br>
                         {% elif vehicle.latest_location.journey.route_name %}
                             {{ vehicle.latest_location.journey.route_name }}

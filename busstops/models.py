@@ -513,6 +513,11 @@ class Service(models.Model):
             return ' - '.join(part for part in parts if part)
         return self.service_code
 
+    def get_line_name_and_brand(self):
+        if self.line_brand:
+            return f'{self.line_name} - {self.line_brand}'
+        return self.line_name
+
     def has_long_line_name(self):
         "Is this service's line_name more than 4 characters long?"
         return len(self.line_name) > 4
