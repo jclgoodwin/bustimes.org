@@ -2,6 +2,7 @@ from math import ceil
 from urllib.parse import quote
 from webcolors import html5_parse_simple_color
 from django.contrib.gis.db import models
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from busstops.models import Operator, Service, DataSource, SIRISource
@@ -34,6 +35,14 @@ def get_brightness(colour):
     return (0.299 * colour.red + 0.587 * colour.green + 0.114 * colour.blue) / 255
 
 
+def get_text_colour(colours):
+    colours = colours.split()
+    parsed_colours = [html5_parse_simple_color(colour) for colour in colours]
+    brightness = sum(get_brightness(colour) for colour in parsed_colours) / len(colours)
+    if brightness < .5:
+        return '#fff'
+
+
 class VehicleType(models.Model):
     name = models.CharField(max_length=255, unique=True)
     double_decker = models.NullBooleanField()
@@ -64,6 +73,15 @@ class Livery(models.Model):
             return
         background = get_css(self.colours.split(), None, self.horizontal)
         return mark_safe(f'<div style="height:1.5em;width:4em;background:{background}" title="{self.name}"></div>')
+
+    def clean(self):
+        if self.colours:
+            try:
+                get_text_colour(self.colours)
+            except ValueError as e:
+                raise ValidationError({
+                    'colours': str(e)
+                })
 
 
 class VehicleFeature(models.Model):
@@ -112,11 +130,7 @@ class Vehicle(models.Model):
     def get_text_colour(self):
         colours = self.livery and self.livery.colours or self.colours
         if colours:
-            colours = colours.split()
-            parsed_colours = [html5_parse_simple_color(colour) for colour in colours]
-            brightness = sum(get_brightness(colour) for colour in parsed_colours) / len(colours)
-            if brightness < .5:
-                return '#fff'
+            return get_text_colour(colours)
 
     def get_livery(self, direction=None):
         colours = self.livery and self.livery.colours or self.colours
@@ -146,6 +160,8 @@ class Vehicle(models.Model):
         return mark_safe(f'<a href="{self.get_flickr_url()}" target="_blank" rel="noopener">Flickr</a>')
 
     get_flickr_link.short_description = 'Flickr'
+
+    clean = Livery.clean
 
 
 class VehicleJourney(models.Model):
