@@ -36,6 +36,7 @@ class VehicleAdmin(admin.ModelAdmin):
         ('operator', admin.RelatedOnlyFieldListFilter),
         'vehicle_type',
     )
+    list_select_related = ['operator', 'livery', 'vehicle_type']
     list_editable = ('fleet_number', 'reg', 'operator', 'vehicle_type', 'livery', 'colours', 'notes')
     search_fields = ('code', 'fleet_number', 'reg')
     autocomplete_fields = ('vehicle_type', 'livery')
