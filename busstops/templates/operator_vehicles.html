@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}Vehicles – {{ object }} – Bus Times{% endblock %}
+{% block title %}Fleet list – {{ object }} – Bus Times{% endblock %}
 
 {% block canonical %}{% endblock %}
 
@@ -42,7 +42,10 @@
                 <td>
                     {% if vehicle.latest_location %}
                         {% if vehicle.latest_location.journey.service %}
-                            <a href="{{ vehicle.latest_location.journey.service.get_absolute_url }}">{{ vehicle.latest_location.journey.service.line_name }}</a>
+                            {{ vehicle.latest_location.journey.service.line_name }}
+                            {% if vehicle.latest_location.journey.service.line_brand %}
+                                - {{ vehicle.latest_location.journey.service.line_brand }}
+                            {% endif %}
                             <br>
                         {% elif vehicle.latest_location.journey.route_name %}
                             {{ vehicle.latest_location.journey.route_name }}
