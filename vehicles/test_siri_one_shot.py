@@ -19,10 +19,19 @@ class SIRIOneShotTest(TestCase):
         journey = Journey.objects.create(service=service, datetime='2019-06-08 20:36+01:00', destination=destination)
         StopUsageUsage.objects.create(journey=journey, datetime='2019-06-08 20:38+01:00', stop=destination, order=0)
 
-        ServiceCode.objects.get_or_create(service=service, code='FLCN', scheme='Devon SIRI')
-        ServiceCode.objects.get_or_create(service=service, code='FLC', scheme='Bucks SIRI')
-        SIRISource.objects.get_or_create(name='Devon', requestor_ref='torbaydevon_siri_traveline',
-                                         url='http://data.icarus.cloudamber.com/StopMonitoringRequest.ashx')
+        cls.code_1 = ServiceCode.objects.get_or_create(service=service, code='FLCN', scheme='Devon SIRI')
+        cls.code_2 = ServiceCode.objects.get_or_create(service=service, code='FLC', scheme='Bucks SIRI')
+        cls.siri_source = SIRISource.objects.get_or_create(
+            name='Devon', requestor_ref='torbaydevon_siri_traveline',
+            url='http://data.icarus.cloudamber.com/StopMonitoringRequest.ashx'
+        )
+
+    def test_service_codes(self):
+        self.assertEqual('Devon SIRI FLCN', str(self.code_1))
+        self.assertEqual('Bucks SIRI FLC', str(self.code_2))
+
+    def test_siri_source(self):
+        self.assertEqual('Devon', str(self.siri_source))
 
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_vehicles_json(self):

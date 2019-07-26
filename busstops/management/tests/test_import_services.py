@@ -222,7 +222,6 @@ class ImportServicesTest(TestCase):
             self.assertEqual(len(caught_warnings), 2)
         self.assertTrue(Service.objects.filter(service_code='swe_33-9A-A-y10').exists())
 
-    @freeze_time('1 October 2017')
     def test_service_nw(self):
         # 2
         service = Service.objects.get(service_code='NW_04_GMN_2_1')
@@ -234,15 +233,21 @@ class ImportServicesTest(TestCase):
         service = Service.objects.get(service_code='NW_04_GMS_237_1')
         self.assertEqual(service.description, 'Glossop - Stalybridge - Ashton')
 
-        # On the Sunday, both TransXChanges operating
-        res = self.client.get(service.get_absolute_url())
-        self.assertEqual(18, len(res.context_data['timetable'].groupings[0].journeys))
+        with freeze_time('1 September 2017'):
+            res = self.client.get(service.get_absolute_url())
+        self.assertContains(res, 'Timetable changes from Sunday 3 September 2017')
 
-        # On the Tuesday, only one TransXChange operating
-        res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
-        self.assertEqual(27, len(res.context_data['timetable'].groupings[0].journeys))
+        with freeze_time('1 October 2017'):
+            res = self.client.get(service.get_absolute_url())
 
-        self.assertEqual(1, service.stopusage_set.all().count())
+            self.assertNotContains(res, 'Timetable changes from Sunday 3 September 2017')
+
+            self.assertEqual(18, len(res.context_data['timetable'].groupings[0].journeys))
+
+            res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
+            self.assertEqual(27, len(res.context_data['timetable'].groupings[0].journeys))
+
+            self.assertEqual(1, service.stopusage_set.all().count())
 
     @freeze_time('30 December 2016')
     def test_service_dates(self):
