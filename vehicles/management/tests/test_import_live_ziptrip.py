@@ -77,7 +77,7 @@ class ZipTripTest(TestCase):
 
         with self.assertNumQueries(3):
             response = self.client.get('/operators/go-ahead-lichtenstein/vehicles')
-        self.assertContains(response, '/services/foo-foo')
+        self.assertContains(response, '7777')
         self.assertContains(response, '203')
         # last seen some days ago
         self.assertContains(response, '31 August 2018 22:30')
