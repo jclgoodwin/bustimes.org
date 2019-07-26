@@ -71,8 +71,12 @@ class Command(ImportLiveVehiclesCommand):
                 stops = StopPoint.objects.filter(service__operator=operator, service__current=True)
                 extent = stops.aggregate(Extent('latlong'))['latlong__extent']
                 lng = extent[0]
+                # services with current locations from another source
                 services = Service.objects.filter(current=True, operator=operator).exclude(
-                    ~Q(vehiclejourney__source=self.source), vehiclejourney__vehiclelocation__current=True
+                    ~Q(vehiclejourney__source=self.source),
+                    vehiclejourney__vehiclelocation__current=True,
+                    vehiclejourney__vehiclelocation__datetime__gt=self.source.datetime + timedelta(minutes=5),
+
                 )
                 stops = stops.filter(stopusageusage__datetime__lt=self.source.datetime + timedelta(minutes=5),
                                      stopusageusage__datetime__gt=self.source.datetime - timedelta(hours=1),
