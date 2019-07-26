@@ -2,7 +2,9 @@
 
 {% block title %}Fleet list – {{ object }} – Bus Times{% endblock %}
 
-{% block canonical %}{% endblock %}
+{% block canonical %}
+    <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}/vehicles" />
+{% endblock %}
 
 {% block content %}
 
