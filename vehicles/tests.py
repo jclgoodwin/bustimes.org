@@ -1,7 +1,8 @@
 from freezegun import freeze_time
 from django.test import TestCase
 from django.contrib.gis.geos import Point
-from busstops.models import DataSource, Region, Operator
+from django.core.exceptions import ValidationError
+from busstops.models import DataSource, Region, Operator, Service
 from .models import Vehicle, VehicleType, VehicleFeature, Livery, VehicleJourney, VehicleLocation
 
 
@@ -9,21 +10,29 @@ class VehiclesTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.datetime = '2018-12-25 19:47+00:00'
+
         source = DataSource.objects.create(name='HP', datetime=cls.datetime)
+
         ea = Region.objects.create(id='EA', name='East Anglia')
+
         Operator.objects.create(region=ea, name='Bova and Over', id='BOVA', slug='bova-and-over')
         lynx = Operator.objects.create(region=ea, name='Lynx', id='LYNX', slug='lynx')
-        spectra = VehicleType.objects.create(name='Optare Spectra', coach=False, double_decker=True)
-        cls.vehicle_1 = Vehicle.objects.create(fleet_number=1, reg='FD54JYA')
-        cls.vehicle_2 = Vehicle.objects.create(fleet_number=50, reg='UWW2X', colours='#FF0000 #0000FF',
-                                               vehicle_type=spectra, operator=lynx)
-        journey = VehicleJourney.objects.create(vehicle=cls.vehicle_1, datetime=cls.datetime, source=source)
-        VehicleLocation.objects.create(datetime=cls.datetime, latlong=Point(0, 51), journey=journey, current=True)
 
-    def test_big_map(self):
-        with self.assertNumQueries(0):
-            response = self.client.get('/vehicles')
-        self.assertContains(response, 'bigmap.min.js')
+        tempo = VehicleType.objects.create(name='Optare Tempo', coach=False, double_decker=False)
+        spectra = VehicleType.objects.create(name='Optare Spectra', coach=False, double_decker=True)
+
+        service = Service.objects.create(service_code='49', region=ea, date='2018-12-25', tracking=True,
+                                         description='Spixworth - Hunworth - Happisburgh')
+        service.operator.add(lynx)
+
+        cls.vehicle_1 = Vehicle.objects.create(fleet_number=1, reg='FD54JYA', vehicle_type=tempo)
+        cls.vehicle_2 = Vehicle.objects.create(code='99', fleet_number=50, reg='UWW2X', colours='#FF0000 #0000FF',
+                                               vehicle_type=spectra, operator=lynx)
+
+        journey = VehicleJourney.objects.create(vehicle=cls.vehicle_1, datetime=cls.datetime, source=source,
+                                                service=service, route_name='2')
+
+        VehicleLocation.objects.create(datetime=cls.datetime, latlong=Point(0, 51), journey=journey, current=True)
 
     def test_vehicle(self):
         vehicle = Vehicle(reg='3990ME')
@@ -46,6 +55,13 @@ class VehiclesTests(TestCase):
         response = self.client.get('/operators/bova-and-over/vehicles')
         self.assertEqual(404, response.status_code)
         self.assertFalse(str(response.context['exception']))
+
+        response = self.client.get('/operators/lynx/vehicles')
+        self.assertTrue(response.context['code_column'])
+        self.assertContains(response, '<td>99</td>')
+
+        response = self.client.get(self.vehicle_1.get_absolute_url())
+        self.assertContains(response, 'Optare Tempo')
 
         response = self.client.get(self.vehicle_2.get_absolute_url() + '?date=poop')
         self.assertEqual(404, response.status_code)
@@ -118,7 +134,21 @@ class VehiclesTests(TestCase):
             response = self.client.get(vehicle.get_absolute_url() + '?date=poo poo pants')
         self.assertEqual(response.status_code, 404)
 
+    def test_validation(self):
+        vehicle = Vehicle(colours='ploop')
+        with self.assertRaises(ValidationError):
+            vehicle.clean()
+
+        vehicle.colours = ''
+        vehicle.clean()
+
+    def test_big_map(self):
+        with self.assertNumQueries(0):
+            response = self.client.get('/vehicles')
+        self.assertContains(response, 'bigmap.min.js')
+
     def test_dashboard(self):
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             response = self.client.get('/vehicle-tracking-report')
         self.assertContains(response, 'Vehicle tracking report')
+        self.assertContains(response, '<a href="/services/spixworth-hunworth-happisburgh/vehicles">Yes</a>*')
