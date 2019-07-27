@@ -1,7 +1,9 @@
+from datetime import datetime
 from django.views.generic.detail import DetailView
+from django.contrib.syndication.views import Feed
 from django.db.models import Max
 from busstops.models import Operator
-from .models import Licence, Registration
+from .models import Licence, Registration, Variation
 
 
 class LicenceView(DetailView):
@@ -49,3 +51,29 @@ class RegistrationView(DetailView):
             ] + context['breadcrumb']
 
         return context
+
+
+class LicenceFeed(Feed):
+    def get_object(self, request, licence_number):
+        return Licence.objects.get(licence_number=licence_number)
+
+    def title(self, obj):
+        return f'{obj} – {obj.name}'
+
+    def link(self, obj):
+        return obj.get_absolute_url()
+
+    def items(self, obj):
+        items = Variation.objects.filter(registration__licence=obj).exclude(date_received=None)
+        return items.order_by('-date_received')[:100]
+
+    def item_pubdate(self, item):
+        date = item.date_received
+        return datetime(date.year, date.month, date.day)
+
+    def item_description(self, item):
+        return f'From {item.effective_date}\n\n{item.service_type_other_details}\n\n{item.publication_text}'
+
+
+class AreaFeed(Feed):
+    pass
