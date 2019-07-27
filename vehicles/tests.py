@@ -25,7 +25,8 @@ class VehiclesTests(TestCase):
                                          description='Spixworth - Hunworth - Happisburgh')
         service.operator.add(lynx)
 
-        cls.vehicle_1 = Vehicle.objects.create(fleet_number=1, reg='FD54JYA', vehicle_type=tempo)
+        cls.vehicle_1 = Vehicle.objects.create(fleet_number=1, reg='FD54JYA', vehicle_type=tempo, colours='#FF0000',
+                                               notes='Trent Barton', operator=lynx)
         cls.vehicle_2 = Vehicle.objects.create(code='99', fleet_number=50, reg='UWW2X', colours='#FF0000 #0000FF',
                                                vehicle_type=spectra, operator=lynx)
 
@@ -52,22 +53,29 @@ class VehiclesTests(TestCase):
         self.assertIn('search/?text=Stagecoach%20RML2604&sort', vehicle.get_flickr_url())
 
     def test_vehicle_views(self):
-        response = self.client.get('/operators/bova-and-over/vehicles')
+        with self.assertNumQueries(2):
+            response = self.client.get('/operators/bova-and-over/vehicles')
         self.assertEqual(404, response.status_code)
         self.assertFalse(str(response.context['exception']))
 
-        response = self.client.get('/operators/lynx/vehicles')
+        with self.assertNumQueries(3):
+            response = self.client.get('/operators/lynx/vehicles')
         self.assertTrue(response.context['code_column'])
         self.assertContains(response, '<td>99</td>')
 
-        response = self.client.get(self.vehicle_1.get_absolute_url())
+        with self.assertNumQueries(4):
+            response = self.client.get(self.vehicle_1.get_absolute_url() + '?date=poop')
         self.assertContains(response, 'Optare Tempo')
+        self.assertContains(response, 'Trent Barton')
+        self.assertContains(response, '#FF0000')
 
-        response = self.client.get(self.vehicle_2.get_absolute_url() + '?date=poop')
+        with self.assertNumQueries(2):
+            response = self.client.get(self.vehicle_2.get_absolute_url())
         self.assertEqual(404, response.status_code)
         self.assertFalse(str(response.context['exception']))
 
-        response = self.client.get('/journeys/1.json')
+        with self.assertNumQueries(1):
+            response = self.client.get('/journeys/1.json')
         self.assertEqual([], response.json())
 
     def test_feature(self):
@@ -126,13 +134,6 @@ class VehiclesTests(TestCase):
         self.assertNotIn('coach', vehicle)
         self.assertNotIn('operator', vehicle)
         self.assertEqual(properties['operator'], 'Lynx')
-
-    @freeze_time('4 July 1940')
-    def test_vehicle_detail(self):
-        vehicle = Vehicle.objects.get(fleet_number='50')
-        with self.assertNumQueries(2):
-            response = self.client.get(vehicle.get_absolute_url() + '?date=poo poo pants')
-        self.assertEqual(response.status_code, 404)
 
     def test_validation(self):
         vehicle = Vehicle(colours='ploop')
