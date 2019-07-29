@@ -57,6 +57,7 @@ def operator_vehicles(request, slug):
         'vehicles': vehicles,
         'code_column': any(v.code.isdigit() and v.fleet_number and int(v.code) != v.fleet_number for v in vehicles),
         'notes_column': any(vehicle.notes for vehicle in vehicles),
+        'edit_url': reverse('admin:vehicles_vehicle_changelist'),
     })
 
 
