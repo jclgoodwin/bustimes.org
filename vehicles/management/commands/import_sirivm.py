@@ -6,7 +6,7 @@ from requests.exceptions import RequestException
 from django.contrib.gis.geos import Point
 from django.db.models import Q
 from isodate import parse_duration
-from busstops.models import Operator, Service, Locality
+from busstops.models import Operator, Service, Locality, DataSource
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import Vehicle, VehicleLocation, VehicleJourney, JourneyCode
 
@@ -71,6 +71,8 @@ class Command(ImportLiveVehiclesCommand):
             return
 
     def get_items(self):
+        now = self.source.datetime
+
         url = 'http://{}.jmwrti.co.uk:8080/RTI-SIRI-Server/SIRIHandler'
         data = """
             <Siri xmlns="http://www.siri.org.uk/siri">
@@ -79,6 +81,10 @@ class Command(ImportLiveVehiclesCommand):
         """
         for subdomain in ('essex', 'southampton', 'slough', 'staffordshire'):
             response = self.get_response(url.format(subdomain), data)
+            self.source, _ = DataSource.objects.update_or_create(
+                {'url': response, 'datetime': now},
+                name=subdomain.title() + ' SIRI'
+            )
             for item in items_from_response(response):
                 yield item
 
@@ -94,6 +100,10 @@ class Command(ImportLiveVehiclesCommand):
         requestor_ref = 'gatwick_app'
         response = self.get_response(url, data.format(requestor_ref))
         for item in items_from_response(response):
+            self.source, _ = DataSource.objects.update_or_create(
+                {'url': response, 'datetime': now},
+                name='Gatwick SIRI'
+            )
             yield item
 
     def get_operator(self, operator_ref):

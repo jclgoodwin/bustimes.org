@@ -135,7 +135,7 @@ def vehicles_last_modified(request):
     if 'service' in request.GET:
         schemes = ('Cornwall SIRI', 'Devon SIRI', 'Highland SIRI', 'Dundee SIRI', 'Bristol SIRI',
                    'Leicestershire SIRI', 'Dorset SIRI', 'Hampshire SIRI', 'West Sussex SIRI', 'Bucks SIRI',
-                   'Peterborough SIRI')
+                   'Peterborough SIRI', 'Essex SIRI', 'Southampton SIRI', 'Slough SIRI', 'Staffordshire SIRI')
         service_id = request.GET['service']
         codes = ServiceCode.objects.filter(scheme__in=schemes, service=service_id)
         for code in codes:

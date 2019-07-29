@@ -147,11 +147,16 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if journey.service and not journey.service.tracking:
                 journey.service.tracking = True
                 journey.service.save()
-            if service_code and journey.service_id and journey.service_id != service_code.service_id:
-                # doppelgänger
-                if not journey.service.servicecode_set.filter(scheme__endswith=' SIRI').exists():
-                    ServiceCode.objects.create(scheme=service_code.scheme, service=journey.service,
-                                               code=service_code.code)
+            if journey.service_id:
+                if service_code and journey.service_id != service_code.service_id or self.source.name.endswith(' SIRI'):
+                    if not journey.service.servicecode_set.filter(scheme__endswith=' SIRI').exists():
+                        if service_code:
+                            # doppelgänger
+                            ServiceCode.objects.create(scheme=service_code.scheme, service=journey.service,
+                                                       code=service_code.code)
+                        else:
+                            ServiceCode.objects.create(scheme=self.source.name, service=journey.service,
+                                                       code=journey.route_name)
             location.journey = journey
         # save new location
         location.current = True
