@@ -122,7 +122,8 @@ class Command(ImportLiveVehiclesCommand):
             except (Operator.MultipleObjectsReturned, Operator.DoesNotExist) as e:
                 logger.error(e, exc_info=True)
                 operator = None
-        self.operators[operator_ref] = operator
+        if operator:
+            self.operators[operator_ref] = operator
         return operator, operator_options
 
     def get_vehicle(self, item):
