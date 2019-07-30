@@ -23,8 +23,6 @@ def get_latlong(mvj):
 
 
 def items_from_response(response):
-    if not (response and response.text):
-        return ()
     try:
         iterator = ET.iterparse(StringIO(response.text))
     except ET.ParseError as e:
@@ -81,12 +79,13 @@ class Command(ImportLiveVehiclesCommand):
         """
         for subdomain in ('essex', 'southampton', 'slough', 'staffordshire'):
             response = self.get_response(url.format(subdomain), data)
-            self.source, _ = DataSource.objects.update_or_create(
-                {'url': response, 'datetime': now},
-                name=subdomain.title() + ' SIRI'
-            )
-            for item in items_from_response(response):
-                yield item
+            if response and response.text:
+                self.source, _ = DataSource.objects.update_or_create(
+                    {'url': response.url, 'datetime': now},
+                    name=subdomain.title() + ' SIRI'
+                )
+                for item in items_from_response(response):
+                    yield item
 
         url = 'http://data.icarus.cloudamber.com/VehicleMonitoringRequest.ashx'
         data = """
@@ -99,12 +98,13 @@ class Command(ImportLiveVehiclesCommand):
         """
         requestor_ref = 'gatwick_app'
         response = self.get_response(url, data.format(requestor_ref))
-        for item in items_from_response(response):
+        if response and response.text:
             self.source, _ = DataSource.objects.update_or_create(
-                {'url': response, 'datetime': now},
+                {'url': response.url, 'datetime': now},
                 name='Gatwick SIRI'
             )
-            yield item
+            for item in items_from_response(response):
+                yield item
 
     def get_operator(self, operator_ref):
         operator_options = self.operators_options.get(operator_ref)
