@@ -183,11 +183,8 @@ class Command(BaseCommand):
 
         operators = transxchange.operators
         if len(operators) > 1:
-            print(filename)
-            print(ET.tostring(operators))
             journey_operators = {journey.operator for journey in transxchange.journeys}
             journey_operators.add(transxchange.operator)
-            print(journey_operators)
             operators = [operator for operator in operators if operator.get('id') in journey_operators]
         operators = [operator for operator in map(self.get_operator, operators) if operator]
 
