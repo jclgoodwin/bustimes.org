@@ -39,6 +39,7 @@ gtfs-realtime-bindings = "*"
 django-multidb-router = "*"
 gpxpy = "*"
 python-socketio = {extras = ["client"],version = "*"}
+python-varnish = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
