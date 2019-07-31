@@ -34,7 +34,7 @@ def download_if_modified(path, url):
         headers = {
             'if-modified-since': time.asctime(last_modified)
         }
-        response = SESSION.head(url, headers=headers, timeout=5)
+        response = SESSION.head(url, headers=headers, timeout=5, allow_redirects=True)
         if not response.ok:
             response = SESSION.get(url, headers=headers, timeout=5, stream=True)
         if response.status_code == 304:
