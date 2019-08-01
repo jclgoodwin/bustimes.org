@@ -1,5 +1,4 @@
 import os
-import warnings
 from django.test import TestCase
 from ...models import Region, Operator, DataSource, OperatorCode
 from ..commands import import_operator_contacts
@@ -28,12 +27,7 @@ class ImportOperatorContactTest(TestCase):
         OperatorCode.objects.create(operator=cls.loaches, code='LCHS', source=source)
         OperatorCode.objects.create(operator=cls.polruan, code='CSTL', source=source)
 
-        with warnings.catch_warnings(record=True) as cls.caught_warnings:
-            cls.command.handle()
-
-    def test_warnings(self):
-        self.assertEqual(2, len(self.caught_warnings))
-        self.assertEqual('Operator matching query does not exist. POOP', str(self.caught_warnings[0].message))
+        cls.command.handle()
 
     def test_format_address(self):
         self.assertEqual(

@@ -3,7 +3,6 @@ Usage:
 
     ./manage.py import_operator_contacts < nocrecords.xml
 """
-import warnings
 from io import open
 from bs4 import BeautifulSoup
 from django.core.exceptions import ValidationError
@@ -68,8 +67,7 @@ class Command(BaseCommand):
             try:
                 operator = Operator.objects.get(operatorcode__code=noc_code.replace('=', ''),
                                                 operatorcode__source__name='National Operator Codes')
-            except Operator.DoesNotExist as e:
-                warnings.warn('{} {}'.format(e, noc_code))
+            except Operator.DoesNotExist:
                 continue
 
             if noc_code in FIRST_OPERATORS:
