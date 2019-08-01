@@ -858,7 +858,12 @@ def log_journeys(departures, source):
             operator = service.operator.all()[0]
             if vehicle.isdigit():
                 defaults['fleet_number'] = vehicle
-            vehicle, created = Vehicle.objects.get_or_create(defaults, code=vehicle, operator=operator)
+            if operator.name.startswith('Stagecoach '):
+                defaults['operator'] = operator
+                vehicle, created = Vehicle.objects.get_or_create(defaults, code=vehicle,
+                                                                 operator__name__startswith='Stagecoach ')
+            else:
+                vehicle, created = Vehicle.objects.get_or_create(defaults, code=vehicle, operator=operator)
             existing_journey = vehicle.vehiclejourney_set.filter(datetime=item['origin_departure_time'])
             if created or not existing_journey.exists():
                 VehicleJourney.objects.create(source=data_source, vehicle=vehicle, service=service,
