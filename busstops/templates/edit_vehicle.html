@@ -1,0 +1,29 @@
+{% extends 'page.html' %}
+
+{% block title %}Update – {{ vehicle }} – Bus Times{% endblock %}
+
+{% block bodyclass %}narrow{% endblock %}
+
+{% block content %}
+
+{% if submitted %}
+
+    <h1>Thank you</h1>
+
+    <p>I’ll update those details shortly.</p>
+
+{% else %}
+
+    <h1>Update vehicle details</h1>
+
+    <form action="/vehicles/{{ vehicle.id }}/edit" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Save changes" />
+    </form>
+
+{% endif %}
+
+{% endblock %}
+
+{% block ad %}{% endblock %}
