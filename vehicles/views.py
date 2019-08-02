@@ -3,6 +3,7 @@ from datetime import timedelta
 from requests import Session, exceptions
 from django.db.models import Exists, OuterRef, Prefetch, Subquery
 from django.core.cache import cache
+from django.core.mail import EmailMessage
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, Http404
 from django.views.decorators.http import last_modified
@@ -13,6 +14,7 @@ from multidb.pinning import use_primary_db
 from busstops.views import get_bounding_box
 from busstops.models import Operator, Service, ServiceCode, SIRISource, DataSource, Journey
 from .models import Vehicle, VehicleLocation, VehicleJourney
+from .forms import EditVehicleForm
 from .management.commands import import_sirivm
 from .rifkind import rifkind
 
@@ -215,7 +217,7 @@ class VehicleDetailView(DetailView):
         if not context['dates']:
             raise Http404()
         if self.object.operator:
-            context['breadcrumb'] = [self.object.operator.region, self.object.operator, Vehicles(self.object.operator)]
+            context['breadcrumb'] = [self.object.operator, Vehicles(self.object.operator)]
         date = self.request.GET.get('date')
         if date:
             try:
@@ -229,6 +231,40 @@ class VehicleDetailView(DetailView):
         locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
         context['journeys'] = journeys.select_related('service').annotate(locations=Exists(locations))
         return context
+
+
+def edit_vehicle(request, vehicle_id):
+    vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+    submitted = False
+    if request.method == 'POST':
+        form = EditVehicleForm(request.POST)
+        if form.is_valid():
+            message = EmailMessage(
+                f'Vehicle change',
+                str(form.cleaned_data),
+                'bustimes.org <contact@bustimes.org>',
+                ['contact@bustimes.org'],
+            )
+            message.send()
+            submitted = True
+    else:
+        form = EditVehicleForm(initial={
+            'fleet_number': vehicle.fleet_number,
+            'reg': vehicle.reg,
+            'vehicle_type': vehicle.vehicle_type,
+            'colours': vehicle.livery,
+            'notes': vehicle.notes
+        })
+    if vehicle.operator:
+        breadcrumb = [vehicle.operator, Vehicles(vehicle.operator), vehicle]
+    else:
+        breadcrumb = [vehicle]
+    return render(request, 'edit_vehicle.html', {
+        'breadcrumb': breadcrumb,
+        'form': form,
+        'vehicle': vehicle,
+        'submitted': submitted
+    })
 
 
 def tracking_report(request):
