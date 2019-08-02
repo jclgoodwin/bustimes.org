@@ -301,10 +301,6 @@ class VehicleJourney(object):
             element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
         ).time()
 
-        if self.private_code and self.private_code.startswith('set-6-168-A-y08-'):
-            if self.departure_time == datetime.time(12, 35):
-                self.departure_time = datetime.time(12, 30)
-
         self.start_deadrun, self.end_deadrun = get_deadruns(element)
 
         self.operator = element.find('txc:OperatorRef', NS)
@@ -460,14 +456,11 @@ class VehicleJourney(object):
             return True
         if transxchange and transxchange.service:
             region_id = transxchange.service.region_id
-            if transxchange.service.service_code == 'YWAO062':
-                if self.departure_time == datetime.time(18, 15):
-                    return False
-            elif transxchange.service.service_code == 'set_6-168-A-y08':
-                if self.departure_time == datetime.time(11, 25):
-                    return False
-            elif transxchange.service.service_code == 'swe_32-73-_-y10':
-                if self.departure_time == datetime.time(18, 40):
+            if transxchange.service.service_code == 'swe_31-899-_-y10':
+                if (
+                    self.departure_time == datetime.time(8, 10) or self.departure_time == datetime.time(14, 30)
+                    or self.departure_time == datetime.time(9, 10) or self.departure_time == datetime.time(15, 30)
+                ):
                     return False
         else:
             region_id = None
