@@ -161,6 +161,8 @@ h3 {
     margin-left: 1em;
 }
 
+.button,
+button,
 input[type='submit'] {
     appearance: none;
     background: $brand-color;
@@ -186,11 +188,12 @@ input[type='submit'] {
         background-color: $brand-color-darker;
         border-bottom: 0;
         margin-top: .125em;
-
-        &:after {
-            content: '\2026';
-        }
     }
+}
+
+.button,
+button {
+    padding: .25em .5em .2em;
 }
 
 input[type='text'],

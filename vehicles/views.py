@@ -239,9 +239,10 @@ def edit_vehicle(request, vehicle_id):
     if request.method == 'POST':
         form = EditVehicleForm(request.POST)
         if form.is_valid():
+            url = reverse('admin:vehicles_vehicle_change', args=(vehicle_id,))
             message = EmailMessage(
                 f'Vehicle change',
-                str(form.cleaned_data),
+                url + '\n' + '\n'.join('%s: %s' % pair for pair in form.cleaned_data.items()),
                 'bustimes.org <contact@bustimes.org>',
                 ['contact@bustimes.org'],
             )

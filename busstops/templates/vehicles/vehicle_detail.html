@@ -2,6 +2,8 @@
 
 {% block title %}{% if not vehicle %}Vehicles – {% endif %}{{ object }} – Bus Times{% endblock %}
 
+{% block bodyclass %}narrow{% endblock %}
+
 {% block canonical %}
     {% if object.get_absolute_url %}
         <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}{% if not vehicle %}/vehicles{% endif %}" />
@@ -12,19 +14,23 @@
 
 <h1>{{ object }}</h1>
 
-{% if vehicle.vehicle_type %}
-    <p>{{ vehicle.vehicle_type }}</p>
-{% endif %}
+{% if vehicle %}
+    {% if vehicle.vehicle_type %}
+        <p>{{ vehicle.vehicle_type }}</p>
+    {% endif %}
 
-{% if vehicle.colours or vehicle.livery %}
-    <p><div class="bus" style="background:{{ vehicle.get_livery }}"{% if vehicle.livery %} title="{{ vehicle.livery }}"{% endif %}></div></p>
-{% endif %}
+    {% if vehicle.colours or vehicle.livery %}
+        <p><div class="bus" style="background:{{ vehicle.get_livery }}"{% if vehicle.livery %} title="{{ vehicle.livery }}"{% endif %}></div></p>
+    {% endif %}
 
-{% if vehicle.notes %}
-    <p>{{ vehicle.notes }}</p>
-{% endif %}
+    {% if vehicle.notes %}
+        <p>{{ vehicle.notes }}</p>
+    {% endif %}
 
-<p>{{ vehicle.get_flickr_link }}</p>
+    <p><a class="button" href="{{ vehicle.get_absolute_url }}/edit">Update details</a></p>
+
+    <p>{{ vehicle.get_flickr_link }}</p>
+{% endif %}
 
 <p>
     <form class="timetable-date">
@@ -61,7 +67,7 @@
             <td>{{ journey.destination }}</td>
             <td>
                 {% if journey.locations %}
-                    <button data-journey-id="{{ journey.id }}">Show map</button>
+                    <button data-journey-id="{{ journey.id }}">Map</button>
                 {% endif %}
             </td>
         </tr>
