@@ -334,8 +334,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         departures = cache.get(self.object.atco_code)
         if not departures:
-            bot = self.request.META.get('HTTP_X_BOT')
-            departures, max_age = live.get_departures(self.object, context['services'], bot)
+            departures, max_age = live.get_departures(self.object, context['services'])
             if hasattr(departures['departures'], 'get_departures'):
                 departures['departures'] = departures['departures'].get_departures()
             if max_age:

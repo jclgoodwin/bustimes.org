@@ -40,10 +40,6 @@ sub vcl_recv {
         return (pass);
     }
 
-    if (req.http.User-Agent ~ "(?i)grapeshotcrawler|bingbot|mj12bot|slurp|ahrefsbot|dotbot|semrushbot|yandexbot") {
-        set req.http.X-Bot = "bot";
-    }
-
     unset req.http.Cookie;
 }
 
@@ -54,12 +50,6 @@ sub vcl_backend_response {
         if (beresp.status >= 200 && beresp.status < 400) {
             if (bereq.url ~ "^/stops/") {
                 set beresp.ttl = 30s;
-
-                if (beresp.http.Vary) {
-                   set beresp.http.Vary = beresp.http.Vary + ", X-Bot";
-                } else {
-                    set beresp.http.Vary = "X-Bot";
-                }
             } elif (bereq.url ~ "^/vehicles\.json") {
                 set beresp.ttl = 5s;
             } elif (bereq.url ~ "^/styles/") {

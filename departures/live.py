@@ -894,7 +894,7 @@ def blend(departures, live_rows, stop=None):
         departures.sort(key=get_departure_order)
 
 
-def get_departures(stop, services, bot=False):
+def get_departures(stop, services):
     """Given a StopPoint object and an iterable of Service objects,
     returns a tuple containing a context dictionary and a max_age integer
     """
@@ -938,7 +938,7 @@ def get_departures(stop, services, bot=False):
     one_hour = datetime.timedelta(hours=1)
     one_hour_ago = stop.stopusageusage_set.filter(datetime__lte=now - one_hour, journey__service__current=True)
 
-    if not bot and (not departures or (departures[0]['time'] - now) < one_hour or one_hour_ago.exists()):
+    if not departures or (departures[0]['time'] - now) < one_hour or one_hour_ago.exists():
 
         operators = set()
         for service in services:
@@ -1000,10 +1000,7 @@ def get_departures(stop, services, bot=False):
                 if source and source.name == 'Bristol':
                     log_journeys(departures, source)
 
-    if bot:
-        max_age = 0
-    else:
-        max_age = 60
+    max_age = 60
 
     return ({
         'departures': departures,
