@@ -49,12 +49,14 @@ class ImportOperatorContactTest(TestCase):
         self.assertEqual(self.first.phone, '')
         self.assertEqual(self.first.email, '')
         self.assertEqual(self.first.url, 'https://www.firstgroup.com/norfolk-suffolk')
+        self.assertEqual(self.first.twitter, '')
 
         self.loaches.refresh_from_db()
         self.assertEqual(self.loaches.address, '')
         self.assertEqual(self.loaches.phone, '5678')
         self.assertEqual(self.loaches.email, '')
         self.assertEqual(self.loaches.url, 'http://www.arrivabus.co.uk')
+        self.assertEqual(self.loaches.twitter, 'arrivederci')
 
         self.polruan.refresh_from_db()
         self.assertEqual(self.polruan.address, 'Toms Yard\nEast Street\nPolruan\nCornwall\nPL23 1BP')

@@ -87,7 +87,7 @@
             <FareEnq>5678</FareEnq>
             <ComplEnq></ComplEnq>
             <Website>www.arrivabus.co.uk#http://www.arrivabus.co.uk/</Website>
-            <Twitter></Twitter>
+            <Twitter>arrivederci</Twitter>
         </PublicNameRecord>
         <PublicNameRecord>
             <!-- This has no corresponding NOCTableRecord and should be ignored happily -->

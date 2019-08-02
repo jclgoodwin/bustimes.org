@@ -102,7 +102,6 @@ class Command(BaseCommand):
                         operator.twitter = twitter[1:]
                     else:
                         operator.twitter = twitter
-                        print(twitter)
 
                 try:
                     operator.save()
