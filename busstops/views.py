@@ -8,7 +8,6 @@ from django.db.models import Q, Prefetch, F
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.detail import DetailView
 from django.conf import settings
 from django.contrib.gis.geos import Polygon
@@ -90,7 +89,6 @@ def contact(request):
     })
 
 
-@csrf_exempt
 def awin_transaction(request):
     json_string = request.POST.get('AwinTransactionPush') or request.body
     if not json_string:

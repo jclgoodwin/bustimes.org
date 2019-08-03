@@ -17,7 +17,6 @@
     <h1>Update vehicle details</h1>
 
     <form action="/vehicles/{{ vehicle.id }}/edit" method="POST">
-        {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Save changes" />
     </form>
