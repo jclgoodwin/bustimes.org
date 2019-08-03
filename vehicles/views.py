@@ -3,7 +3,6 @@ from datetime import timedelta
 from requests import Session, exceptions
 from django.db.models import Exists, OuterRef, Prefetch, Subquery
 from django.core.cache import cache
-from django.core.mail import EmailMessage
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, Http404
 from django.views.decorators.http import last_modified
@@ -251,14 +250,6 @@ def edit_vehicle(request, vehicle_id):
                 edit.livery_id = form.cleaned_data['colours']
                 edit.colours = ''
             edit.save()
-            url = 'https://bustimes.org' + reverse('admin:vehicles_vehicle_change', args=(vehicle_id,))
-            message = EmailMessage(
-                f'Vehicle change',
-                url + '\n\n' + '\n\n'.join('%s: %s' % pair for pair in form.cleaned_data.items()),
-                'bustimes.org <contact@bustimes.org>',
-                ['contact@bustimes.org'],
-            )
-            message.send()
             submitted = True
     else:
         form = EditVehicleForm(initial=initial, vehicle=vehicle)

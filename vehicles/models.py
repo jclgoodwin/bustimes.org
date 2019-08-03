@@ -190,6 +190,9 @@ class VehicleEdit(models.Model):
     livery = models.ForeignKey(Livery, models.SET_NULL, null=True, blank=True)
     notes = models.CharField(max_length=255, blank=True)
 
+    def get_absolute_url(self):
+        return self.vehicle.get_absolute_url()
+
     def __str__(self):
         return str(self.vehicle)
 

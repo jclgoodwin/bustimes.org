@@ -3,18 +3,6 @@ from django.contrib import admin
 from .models import VehicleType, VehicleFeature, Vehicle, VehicleEdit, VehicleJourney, Livery, JourneyCode
 
 
-def copy_livery(modeladmin, request, queryset):
-    livery = Livery.objects.filter(vehicle__in=queryset).first()
-    count = queryset.update(livery=livery)
-    modeladmin.message_user(request, f'Copied {livery} to {count} vehicles.')
-
-
-def copy_type(modeladmin, request, queryset):
-    vehicle_type = VehicleType.objects.filter(vehicle__in=queryset).first()
-    count = queryset.update(vehicle_type=vehicle_type)
-    modeladmin.message_user(request, f'Copied {vehicle_type} to {count} vehicles.')
-
-
 class VehicleTypeAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     list_display = ('name', 'double_decker', 'coach')
@@ -44,7 +32,17 @@ class VehicleAdmin(admin.ModelAdmin):
     raw_id_fields = ('operator', 'source')
     search_fields = ('code', 'fleet_number', 'reg')
     ordering = ('-id',)
-    actions = (copy_livery, copy_type)
+    actions = ('copy_livery', 'copy_type')
+
+    def copy_livery(self, request, queryset):
+        livery = Livery.objects.filter(vehicle__in=queryset).first()
+        count = queryset.update(livery=livery)
+        self.message_user(request, f'Copied {livery} to {count} vehicles.')
+
+    def copy_type(self, request, queryset):
+        vehicle_type = VehicleType.objects.filter(vehicle__in=queryset).first()
+        count = queryset.update(vehicle_type=vehicle_type)
+        self.message_user(request, f'Copied {vehicle_type} to {count} vehicles.')
 
     def last_seen(self, obj):
         if obj.latest_location:
@@ -56,30 +54,46 @@ class VehicleAdmin(admin.ModelAdmin):
 
 
 class VehicleEditAdmin(admin.ModelAdmin):
-    list_display = ['vehicle', 'fleet_number', 'reg', 'vehicle_type', 'livery_preview', 'colours_preview', 'notes',
-                    'flickr']
+    list_display = ['vehicle', 'fleet_number', 'reg', 'vehicle_type', 'current', 'suggested', 'notes', 'flickr']
     list_select_related = ['vehicle', 'livery']
+    list_filter = [
+        ('vehicle__operator', admin.RelatedOnlyFieldListFilter)
+    ]
     raw_id_fields = ['vehicle', 'livery']
     actions = ['apply_edits']
 
     def apply_edits(self, request, queryset):
         for edit in queryset:
+            ok = True
             vehicle = edit.vehicle
-            vehicle.reg = edit.reg
             vehicle.fleet_number = edit.fleet_number
-            vehicle.vehicle_type = VehicleType.objects.get(name=edit.vehicle_type)
-            vehicle.livery_id = edit.livery_id
-            vehicle.colours = edit.colours
+            if edit.reg:
+                vehicle.reg = edit.reg
+            if edit.vehicle_type:
+                try:
+                    vehicle.vehicle_type = VehicleType.objects.get(name__iexact=edit.vehicle_type)
+                except VehicleType.DoesNotExist:
+                    ok = False
+            if edit.livery_id:
+                vehicle.livery_id = edit.livery_id
+                vehicle.colours = ''
+            elif edit.colours and edit.colours != 'Other':
+                vehicle.colours = edit.colours
             vehicle.notes = edit.notes
             vehicle.save()
-            #edit.delete()
+            if ok:
+                edit.delete()
         self.message_user(request, 'Applied edits.')
 
-    def livery_preview(self, obj):
-        if obj.livery:
-           return obj.livery.preview()
+    def current(self, obj):
+        if obj.vehicle.livery:
+            return obj.vehicle.livery.preview()
+        if obj.vehicle.colours:
+            return Livery(colours=obj.vehicle.colours).preview()
 
-    def colours_preview(self, obj):
+    def suggested(self, obj):
+        if obj.livery:
+            return obj.livery.preview()
         if obj.colours:
             return Livery(colours=obj.colours).preview()
 
