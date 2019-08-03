@@ -15,20 +15,6 @@ def copy_type(modeladmin, request, queryset):
     modeladmin.message_user(request, f'Copied {vehicle_type} to {count} vehicles.')
 
 
-def apply_edits(modeladmin, request, queryset):
-    for edit in queryset:
-        vehicle = edit.vehicle
-        vehicle.reg = edit.reg
-        vehicle.fleet_number = edit.fleet_number
-        vehicle.vehicle_type = VehicleType.objects.get(name=edit.vehicle_type)
-        vehicle.livery_id = edit.livery_id
-        vehicle.colours = edit.colours
-        vehicle.notes = edit.notes
-        vehicle.save()
-        edit.delete()
-    modeladmin.message_user(request, 'Applied edits.')
-
-
 class VehicleTypeAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     list_display = ('name', 'double_decker', 'coach')
@@ -74,13 +60,28 @@ class VehicleEditAdmin(admin.ModelAdmin):
                     'flickr']
     list_select_related = ['vehicle', 'livery']
     raw_id_fields = ['vehicle', 'livery']
-    actions = [apply_edits]
+    actions = ['apply_edits']
+
+    def apply_edits(self, request, queryset):
+        for edit in queryset:
+            vehicle = edit.vehicle
+            vehicle.reg = edit.reg
+            vehicle.fleet_number = edit.fleet_number
+            vehicle.vehicle_type = VehicleType.objects.get(name=edit.vehicle_type)
+            vehicle.livery_id = edit.livery_id
+            vehicle.colours = edit.colours
+            vehicle.notes = edit.notes
+            vehicle.save()
+            #edit.delete()
+        self.message_user(request, 'Applied edits.')
 
     def livery_preview(self, obj):
-        return obj.livery.preview()
+        if obj.livery:
+           return obj.livery.preview()
 
     def colours_preview(self, obj):
-        return Livery(colours=obj.colours).preview()
+        if obj.colours:
+            return Livery(colours=obj.colours).preview()
 
     def flickr(self, obj):
         return obj.vehicle.get_flickr_link()

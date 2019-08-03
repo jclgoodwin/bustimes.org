@@ -249,11 +249,12 @@ def edit_vehicle(request, vehicle_id):
             edit = VehicleEdit(vehicle=vehicle, **form.cleaned_data)
             if form.cleaned_data['colours'].isdigit():
                 edit.livery_id = form.cleaned_data['colours']
+                edit.colours = ''
             edit.save()
-            url = reverse('admin:vehicles_vehicle_change', args=(vehicle_id,))
+            url = 'https://bustimes.org' + reverse('admin:vehicles_vehicle_change', args=(vehicle_id,))
             message = EmailMessage(
                 f'Vehicle change',
-                url + '\n' + '\n'.join('%s: %s' % pair for pair in form.cleaned_data.items()),
+                url + '\n\n' + '\n\n'.join('%s: %s' % pair for pair in form.cleaned_data.items()),
                 'bustimes.org <contact@bustimes.org>',
                 ['contact@bustimes.org'],
             )
