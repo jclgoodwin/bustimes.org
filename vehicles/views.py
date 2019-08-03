@@ -234,10 +234,10 @@ class VehicleDetailView(DetailView):
 
 
 def edit_vehicle(request, vehicle_id):
-    vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+    vehicle = get_object_or_404(Vehicle.objects.select_related('vehicle_type', 'livery', 'operator'), id=vehicle_id)
     submitted = False
     if request.method == 'POST':
-        form = EditVehicleForm(request.POST)
+        form = EditVehicleForm(request.POST, vehicle=vehicle)
         if form.is_valid():
             url = reverse('admin:vehicles_vehicle_change', args=(vehicle_id,))
             message = EmailMessage(
@@ -253,9 +253,9 @@ def edit_vehicle(request, vehicle_id):
             'fleet_number': vehicle.fleet_number,
             'reg': vehicle.reg,
             'vehicle_type': vehicle.vehicle_type,
-            'colours': vehicle.livery,
+            'colours': vehicle.livery_id or vehicle.colours,
             'notes': vehicle.notes
-        })
+        }, vehicle=vehicle)
     if vehicle.operator:
         breadcrumb = [vehicle.operator, Vehicles(vehicle.operator), vehicle]
     else:

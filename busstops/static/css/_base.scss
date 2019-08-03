@@ -59,6 +59,17 @@ summary {
     margin: 1em 0;
 }
 
+#id_colours {
+    li {
+        margin: 1em 0;
+    }
+
+    div {
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
+
 header {
     background: $brand-color;
     overflow: hidden;

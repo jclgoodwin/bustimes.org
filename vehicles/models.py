@@ -166,9 +166,28 @@ class Vehicle(models.Model):
     def get_flickr_link(self):
         return mark_safe(f'<a href="{self.get_flickr_url()}" target="_blank" rel="noopener">Flickr</a>')
 
+    def get_livery_choices(self):
+        choices = []
+        for livery in Livery.objects.filter(vehicle__operator=self.operator_id).distinct():
+            choices.append((livery.id, livery.preview()))
+        for vehicle in Vehicle.objects.filter(operator=self.operator).distinct('colours'):
+            if vehicle.colours:
+                choices.append((vehicle.colours, Livery(colours=vehicle.colours, name=vehicle.notes).preview()))
+        return choices
+
     get_flickr_link.short_description = 'Flickr'
 
     clean = Livery.clean
+
+
+class VehicleEdit(models.Model):
+    vehicle = models.ForeignKey(Vehicle, models.CASCADE)
+    fleet_number = models.PositiveIntegerField(null=True, blank=True)
+    reg = models.CharField(max_length=24, blank=True)
+    reg = models.CharField(max_length=255, blank=True)
+    colours = models.CharField(max_length=255, blank=True)
+    livery = models.ForeignKey(Livery, models.SET_NULL, null=True, blank=True)
+    notes = models.CharField(max_length=255, blank=True)
 
 
 class VehicleJourney(models.Model):
