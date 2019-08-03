@@ -1,16 +1,32 @@
 from django import forms
 from django.contrib import admin
-from .models import VehicleType, VehicleFeature, Vehicle, VehicleJourney, Livery, JourneyCode
+from .models import VehicleType, VehicleFeature, Vehicle, VehicleEdit, VehicleJourney, Livery, JourneyCode
 
 
 def copy_livery(modeladmin, request, queryset):
     livery = Livery.objects.filter(vehicle__in=queryset).first()
-    queryset.update(livery=livery)
+    count = queryset.update(livery=livery)
+    modeladmin.message_user(request, f'Copied {livery} to {count} vehicles.')
 
 
 def copy_type(modeladmin, request, queryset):
     vehicle_type = VehicleType.objects.filter(vehicle__in=queryset).first()
-    queryset.update(vehicle_type=vehicle_type)
+    count = queryset.update(vehicle_type=vehicle_type)
+    modeladmin.message_user(request, f'Copied {vehicle_type} to {count} vehicles.')
+
+
+def apply_edits(modeladmin, request, queryset):
+    for edit in queryset:
+        vehicle = edit.vehicle
+        vehicle.reg = edit.reg
+        vehicle.fleet_number = edit.fleet_number
+        vehicle.vehicle_type = VehicleType.objects.get(name=edit.vehicle_type)
+        vehicle.livery_id = edit.livery_id
+        vehicle.colours = edit.colours
+        vehicle.notes = edit.notes
+        vehicle.save()
+        edit.delete()
+    modeladmin.message_user(request, 'Applied edits.')
 
 
 class VehicleTypeAdmin(admin.ModelAdmin):
@@ -53,6 +69,23 @@ class VehicleAdmin(admin.ModelAdmin):
         return super().get_changelist_form(request, **kwargs)
 
 
+class VehicleEditAdmin(admin.ModelAdmin):
+    list_display = ['vehicle', 'fleet_number', 'reg', 'vehicle_type', 'livery_preview', 'colours_preview', 'notes',
+                    'flickr']
+    list_select_related = ['vehicle', 'livery']
+    raw_id_fields = ['vehicle', 'livery']
+    actions = [apply_edits]
+
+    def livery_preview(self, obj):
+        return obj.livery.preview()
+
+    def colours_preview(self, obj):
+        return Livery(colours=obj.colours).preview()
+
+    def flickr(self, obj):
+        return obj.vehicle.get_flickr_link()
+
+
 class VehicleJourneyAdmin(admin.ModelAdmin):
     list_display = ('datetime', 'vehicle', 'service', 'route_name', 'code', 'destination')
     list_select_related = ('vehicle', 'service')
@@ -79,6 +112,7 @@ class LiveryAdmin(admin.ModelAdmin):
 admin.site.register(VehicleType, VehicleTypeAdmin)
 admin.site.register(VehicleFeature)
 admin.site.register(Vehicle, VehicleAdmin)
+admin.site.register(VehicleEdit, VehicleEditAdmin)
 admin.site.register(VehicleJourney, VehicleJourneyAdmin)
 admin.site.register(JourneyCode, JourneyCodeAdmin)
 admin.site.register(Livery, LiveryAdmin)

@@ -13,7 +13,7 @@ from django.utils import timezone
 from multidb.pinning import use_primary_db
 from busstops.views import get_bounding_box
 from busstops.models import Operator, Service, ServiceCode, SIRISource, DataSource, Journey
-from .models import Vehicle, VehicleLocation, VehicleJourney
+from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit
 from .forms import EditVehicleForm
 from .management.commands import import_sirivm
 from .rifkind import rifkind
@@ -236,9 +236,20 @@ class VehicleDetailView(DetailView):
 def edit_vehicle(request, vehicle_id):
     vehicle = get_object_or_404(Vehicle.objects.select_related('vehicle_type', 'livery', 'operator'), id=vehicle_id)
     submitted = False
+    initial = {
+        'fleet_number': vehicle.fleet_number,
+        'reg': vehicle.reg,
+        'vehicle_type': vehicle.vehicle_type,
+        'colours': vehicle.livery_id or vehicle.colours,
+        'notes': vehicle.notes
+    }
     if request.method == 'POST':
         form = EditVehicleForm(request.POST, vehicle=vehicle)
         if form.is_valid():
+            edit = VehicleEdit(vehicle=vehicle, **form.cleaned_data)
+            if form.cleaned_data['colours'].isdigit():
+                edit.livery_id = form.cleaned_data['colours']
+            edit.save()
             url = reverse('admin:vehicles_vehicle_change', args=(vehicle_id,))
             message = EmailMessage(
                 f'Vehicle change',
@@ -249,13 +260,7 @@ def edit_vehicle(request, vehicle_id):
             message.send()
             submitted = True
     else:
-        form = EditVehicleForm(initial={
-            'fleet_number': vehicle.fleet_number,
-            'reg': vehicle.reg,
-            'vehicle_type': vehicle.vehicle_type,
-            'colours': vehicle.livery_id or vehicle.colours,
-            'notes': vehicle.notes
-        }, vehicle=vehicle)
+        form = EditVehicleForm(initial=initial, vehicle=vehicle)
     if vehicle.operator:
         breadcrumb = [vehicle.operator, Vehicles(vehicle.operator), vehicle]
     else:
