@@ -246,7 +246,7 @@ def edit_vehicle(request, vehicle_id):
         form = EditVehicleForm(request.POST, vehicle=vehicle)
         if form.is_valid():
             edit = VehicleEdit(vehicle=vehicle, **form.cleaned_data)
-            if form.cleaned_data['colours'].isdigit():
+            if form.cleaned_data['colours'] and form.cleaned_data['colours'].isdigit():
                 edit.livery_id = form.cleaned_data['colours']
                 edit.colours = ''
             edit.save()
