@@ -10,7 +10,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 class Command(ImportLiveVehiclesCommand):
     source_name = 'National coach code'
-    operators = ['NATX', 'NXSH', 'NXAP']
+    operators = ['NATX', 'NXSH', 'NXAP', 'WAIR']
     url = ''
 
     @staticmethod
