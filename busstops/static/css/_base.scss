@@ -240,14 +240,41 @@ textarea {
         border-color: $brand-color-darker;
     }
 
-    .errorlist + p & {
+    .errorlist:not(.nonfield) + p & {
         border-color: #f00;
     }
+}
+
+select {
+    background: none;
+    border: 1px solid $brand-color;
+    border-radius: .5em;
+    font: inherit;
+    height: 2.5em;
+    padding: 0 1.5em 0 .5em;
+    position: relative;
+    vertical-align: top;
+
+    &::-ms-expand {
+        display: none;
+    }
+}
+
+form p select {
+    border-radius: 0;
+    box-sizing: content-box;
+    display: block;
+    height: 2em;
+    width: 100%;
 }
 
 .timetable-date {
     display: inline-block;
     position: relative;
+
+    select {
+        appearance: none;
+    }
 
     &:after {
         border: .25em solid white;
@@ -258,22 +285,6 @@ textarea {
         position: absolute;
         right: .5em;
         top: 1em;
-    }
-
-    select {
-        appearance: none;
-        background: none;
-        border: 1px solid $brand-color;
-        border-radius: .5em;
-        font: inherit;
-        height: 2.5em;
-        padding: 0 1.5em 0 .5em;
-        position: relative;
-        vertical-align: top;
-
-        &::-ms-expand {
-            display: none;
-        }
     }
 }
 

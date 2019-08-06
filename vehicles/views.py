@@ -243,8 +243,10 @@ def edit_vehicle(request, vehicle_id):
         'notes': vehicle.notes
     }
     if request.method == 'POST':
-        form = EditVehicleForm(request.POST, vehicle=vehicle)
-        if form.is_valid():
+        form = EditVehicleForm(request.POST, initial=initial, vehicle=vehicle)
+        if not form.has_changed():
+            form.add_error(None, 'You haven\'t changed anything')
+        elif form.is_valid():
             edit = VehicleEdit(vehicle=vehicle, **form.cleaned_data)
             if form.cleaned_data['colours'] and form.cleaned_data['colours'].isdigit():
                 edit.livery_id = form.cleaned_data['colours']
