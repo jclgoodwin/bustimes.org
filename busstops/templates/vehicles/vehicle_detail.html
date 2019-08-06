@@ -27,9 +27,7 @@
         <p>{{ vehicle.notes }}</p>
     {% endif %}
 
-    {% if vehicle.latest_location_id %}
-        <p><a class="button" href="{{ vehicle.get_absolute_url }}/edit">Update details</a></p>
-    {% endif %}
+    <p><a class="button" href="{{ vehicle.get_absolute_url }}/edit">Update details</a></p>
 
     <p>{{ vehicle.get_flickr_link }}</p>
 {% endif %}

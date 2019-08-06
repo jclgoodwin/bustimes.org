@@ -3,6 +3,7 @@ from urllib.parse import quote
 from webcolors import html5_parse_simple_color
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
+from django.db.models import Count
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from busstops.models import Operator, Service, DataSource, SIRISource
@@ -168,11 +169,11 @@ class Vehicle(models.Model):
 
     def get_livery_choices(self):
         choices = []
-        for livery in Livery.objects.filter(vehicle__operator=self.operator_id).distinct():
+        liveries = Livery.objects.filter(vehicle__operator=self.operator_id).annotate(popularity=Count('vehicle'))
+        for livery in liveries.order_by('-popularity').distinct():
             choices.append((livery.id, livery.preview()))
-        for vehicle in Vehicle.objects.filter(operator=self.operator).distinct('colours'):
-            if vehicle.colours:
-                choices.append((vehicle.colours, Livery(colours=vehicle.colours, name=vehicle.notes).preview()))
+        for vehicle in Vehicle.objects.filter(operator=self.operator).exclude(colours='').distinct('colours'):
+            choices.append((vehicle.colours, Livery(colours=vehicle.colours, name=vehicle.notes).preview()))
         choices.append(('Other', 'Other'))
         return choices
 

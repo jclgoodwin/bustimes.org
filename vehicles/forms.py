@@ -2,7 +2,7 @@ from django import forms
 
 
 class EditVehicleForm(forms.Form):
-    fleet_number = forms.CharField(label='Fleet number', required=False)
+    fleet_number = forms.IntegerField(label='Fleet number', required=False, localize=True, min_value=0)
     reg = forms.CharField(label='Registration', required=False)
     vehicle_type = forms.CharField(label='Type', required=False)
     colours = forms.ChoiceField(widget=forms.RadioSelect, required=False)
