@@ -456,12 +456,6 @@ class VehicleJourney(object):
             return True
         if transxchange and transxchange.service:
             region_id = transxchange.service.region_id
-            if transxchange.service.service_code == 'swe_31-899-_-y10':
-                if (
-                    self.departure_time == datetime.time(8, 10) or self.departure_time == datetime.time(14, 30)
-                    or self.departure_time == datetime.time(9, 10) or self.departure_time == datetime.time(15, 30)
-                ):
-                    return False
         else:
             region_id = None
         if not self.operating_profile:
