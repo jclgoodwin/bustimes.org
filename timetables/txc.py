@@ -472,9 +472,9 @@ class VehicleJourney(object):
 class ServicedOrganisation(object):
     def __init__(self, element):
         self.code = element.find('txc:OrganisationCode', NS).text
-        name_element = element.find('txc:Name', NS)
-        if name_element is not None:
-            self.name = name_element.text
+        self.name = element.find('txc:Name', NS)
+        if self.name is not None:
+            self.name = self.name.text
 
         working_days_element = element.find('txc:WorkingDays', NS)
         if working_days_element is not None:
@@ -487,6 +487,14 @@ class ServicedOrganisation(object):
             self.holidays = [DateRange(e) for e in holidays_element]
         else:
             self.holidays = []
+
+        if self.name == 'Devon School Holidays':
+            self.holidays.append(DateRange(ET.fromstring("""
+                <DateRange xmlns="http://www.transxchange.org.uk/">
+                    <StartDate>2019-07-26</StartDate>
+                    <EndDate>2019-08-30</EndDate>
+                </DateRange>
+            """)))
 
 
 class ServicedOrganisationDayType(object):
