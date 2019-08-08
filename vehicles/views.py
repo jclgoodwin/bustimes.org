@@ -239,7 +239,7 @@ def edit_vehicle(request, vehicle_id):
         'fleet_number': vehicle.fleet_number,
         'reg': vehicle.reg,
         'vehicle_type': vehicle.vehicle_type,
-        'colours': vehicle.livery_id or vehicle.colours,
+        'colours': str(vehicle.livery_id or vehicle.colours),
         'notes': vehicle.notes
     }
     if request.method == 'POST':

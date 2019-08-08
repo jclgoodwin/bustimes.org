@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
 from busstops.models import DataSource, Region, Operator, Service
-from .models import Vehicle, VehicleType, VehicleFeature, Livery, VehicleJourney, VehicleLocation
+from .models import Vehicle, VehicleType, VehicleFeature, Livery, VehicleJourney, VehicleLocation, VehicleEdit
 
 
 class VehiclesTests(TestCase):
@@ -27,7 +27,8 @@ class VehiclesTests(TestCase):
 
         cls.vehicle_1 = Vehicle.objects.create(fleet_number=1, reg='FD54JYA', vehicle_type=tempo, colours='#FF0000',
                                                notes='Trent Barton', operator=lynx)
-        cls.vehicle_2 = Vehicle.objects.create(code='99', fleet_number=50, reg='UWW2X', colours='#FF0000 #0000FF',
+        livery = Livery.objects.create(colours='#FF0000 #0000FF')
+        cls.vehicle_2 = Vehicle.objects.create(code='99', fleet_number=50, reg='UWW2X', livery=livery,
                                                vehicle_type=spectra, operator=lynx)
 
         journey = VehicleJourney.objects.create(vehicle=cls.vehicle_1, datetime=cls.datetime, source=source,
@@ -98,6 +99,48 @@ class VehiclesTests(TestCase):
 
         self.vehicle_1.livery.colours = '#c0c0c0'
         self.assertEqual('#c0c0c0', self.vehicle_1.get_livery(200))
+
+    def test_vehicle_edit(self):
+        url = self.vehicle_1.get_absolute_url() + '/edit'
+
+        with self.assertNumQueries(4):
+            response = self.client.get(url)
+
+        with self.assertNumQueries(5):
+            response = self.client.post(url, {
+                'fleet_number': '1',
+                'reg': 'FD54JYA',
+                'vehicle_type': self.vehicle_1.vehicle_type_id,
+                'colours': '#FF0000',
+                'notes': 'Trent Barton'
+            })
+        self.assertFalse(response.context['form'].has_changed())
+
+        url = self.vehicle_2.get_absolute_url() + '/edit'
+
+        with self.assertNumQueries(5):
+            response = self.client.post(url, {
+                'fleet_number': '50',
+                'reg': 'UWW2X',
+                'vehicle_type': self.vehicle_2.vehicle_type_id,
+                'colours': self.vehicle_2.livery_id,
+                'notes': ''
+            })
+        self.assertFalse(response.context['form'].has_changed())
+
+        self.assertEqual(0, VehicleEdit.objects.count())
+
+        with self.assertNumQueries(5):
+            response = self.client.post(url, {
+                'fleet_number': '50',
+                'reg': 'UWW2X',
+                'vehicle_type': self.vehicle_2.vehicle_type_id,
+                'colours': self.vehicle_2.livery_id,
+                'notes': 'Ex Ipswich Buses'
+            })
+        self.assertContains(response, 'Thank you')
+        self.assertTrue(response.context['form'].has_changed())
+        self.assertEqual(1, VehicleEdit.objects.count())
 
     def test_vehicles_json(self):
         with freeze_time(self.datetime):
