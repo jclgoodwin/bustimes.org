@@ -4,6 +4,7 @@ from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
 from busstops.models import DataSource, Region, Operator, Service
 from .models import Vehicle, VehicleType, VehicleFeature, Livery, VehicleJourney, VehicleLocation, VehicleEdit
+from . import admin
 
 
 class VehiclesTests(TestCase):
@@ -145,6 +146,12 @@ class VehiclesTests(TestCase):
         edit = VehicleEdit.objects.get()
         self.assertEqual('50 - UWW 2X', str(edit))
         self.assertEqual(self.vehicle_2.get_absolute_url(), edit.get_absolute_url())
+
+        self.assertTrue(admin.VehicleEditAdmin.flickr(None, edit))
+        self.assertEqual(admin.fleet_number(edit), 50)
+        self.assertEqual(admin.reg(edit), 'UWW2X')
+        self.assertEqual(str(admin.vehicle_type(edit)), 'Optare Spectra')
+        self.assertEqual(admin.notes(edit), '<del></del><br><ins>Ex Ipswich Buses</ins>')
 
     def test_vehicles_json(self):
         with freeze_time(self.datetime):

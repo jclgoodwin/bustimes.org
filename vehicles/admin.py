@@ -53,9 +53,26 @@ class VehicleAdmin(admin.ModelAdmin):
         return super().get_changelist_form(request, **kwargs)
 
 
+def fleet_number(obj):
+    return obj.get_diff('fleet_number')
+
+
+def reg(obj):
+    return obj.get_diff('reg')
+
+
+def vehicle_type(obj):
+    return obj.get_diff('vehicle_type')
+
+
+def notes(obj):
+    return obj.get_diff('notes')
+
+
 class VehicleEditAdmin(admin.ModelAdmin):
-    list_display = ['vehicle', 'fleet_number', 'reg', 'vehicle_type', 'current', 'suggested', 'notes', 'flickr']
-    list_select_related = ['vehicle', 'livery']
+    list_display = ['id', fleet_number, reg, vehicle_type, 'current', 'suggested',
+                    notes, 'flickr']
+    list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'livery']
     list_filter = [
         ('vehicle__operator', admin.RelatedOnlyFieldListFilter)
     ]

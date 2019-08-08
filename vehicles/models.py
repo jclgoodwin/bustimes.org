@@ -191,6 +191,13 @@ class VehicleEdit(models.Model):
     livery = models.ForeignKey(Livery, models.SET_NULL, null=True, blank=True)
     notes = models.CharField(max_length=255, blank=True)
 
+    def get_diff(self, field):
+        vehicle = getattr(self.vehicle, field)
+        edit = getattr(self, field)
+        if str(vehicle) != str(edit):
+            return mark_safe(f'<del>{vehicle}</del><br><ins>{edit}</ins>')
+        return vehicle
+
     def get_absolute_url(self):
         return self.vehicle.get_absolute_url()
 
