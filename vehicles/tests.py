@@ -96,6 +96,7 @@ class VehiclesTests(TestCase):
         self.vehicle_1.livery.horizontal = False
         self.assertEqual('linear-gradient(to left,#7D287D 34%,#FDEE00 34%)',
                          self.vehicle_1.get_livery(179))
+        self.assertIsNone(self.vehicle_1.get_text_colour())
 
         self.vehicle_1.livery.colours = '#c0c0c0'
         self.assertEqual('#c0c0c0', self.vehicle_1.get_livery(200))
@@ -140,7 +141,10 @@ class VehiclesTests(TestCase):
             })
         self.assertContains(response, 'Thank you')
         self.assertTrue(response.context['form'].has_changed())
-        self.assertEqual(1, VehicleEdit.objects.count())
+
+        edit = VehicleEdit.objects.get()
+        self.assertEqual('50 - UWW 2X', str(edit))
+        self.assertEqual(self.vehicle_2.get_absolute_url(), edit.get_absolute_url())
 
     def test_vehicles_json(self):
         with freeze_time(self.datetime):
