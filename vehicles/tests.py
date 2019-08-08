@@ -105,10 +105,11 @@ class VehiclesTests(TestCase):
     def test_vehicle_edit(self):
         url = self.vehicle_1.get_absolute_url() + '/edit'
 
-        with self.assertNumQueries(4):
-            response = self.client.get(url)
-
         with self.assertNumQueries(5):
+            response = self.client.get(url)
+        self.assertNotContains(response, 'already')
+
+        with self.assertNumQueries(6):
             response = self.client.post(url, {
                 'fleet_number': '1',
                 'reg': 'FD54JYA',
@@ -120,7 +121,7 @@ class VehiclesTests(TestCase):
 
         url = self.vehicle_2.get_absolute_url() + '/edit'
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             response = self.client.post(url, {
                 'fleet_number': '50',
                 'reg': 'UWW2X',
@@ -129,6 +130,7 @@ class VehiclesTests(TestCase):
                 'notes': ''
             })
         self.assertFalse(response.context['form'].has_changed())
+        self.assertNotContains(response, 'already')
 
         self.assertEqual(0, VehicleEdit.objects.count())
 
@@ -142,6 +144,11 @@ class VehiclesTests(TestCase):
             })
         self.assertContains(response, 'Thank you')
         self.assertTrue(response.context['form'].has_changed())
+
+        with self.assertNumQueries(5):
+            response = self.client.get(url)
+
+        self.assertContains(response, 'already')
 
         edit = VehicleEdit.objects.get()
         self.assertEqual('50 - UWW 2X', str(edit))

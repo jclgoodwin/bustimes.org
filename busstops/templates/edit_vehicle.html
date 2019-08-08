@@ -10,11 +10,15 @@
 
     <h1>Thank you</h1>
 
-    <p>I’ll update those details shortly.</p>
+    <p>I’ll update those details shortly</p>
 
 {% else %}
 
     <h1>Update vehicle details</h1>
+
+    {% if vehicle.vehicleedit_set.exists %}
+	    <p>❗ There’s already a pending update for this vehicle</p>
+	{% endif %}
 
     <form action="/vehicles/{{ vehicle.id }}/edit" method="POST">
         {{ form.as_p }}
