@@ -72,7 +72,9 @@
                         {% endfor %}
                     {% endif %}
                 </td>
-                <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
+                {% ifchanged vehicle.vehicle_type %}
+                    <td{% if vehicle.rowspan > 1 %} rowspan="{{ vehicle.rowspan }}"{% endif %}>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
+                {% endifchanged %}
                 <td>{% if vehicle.colours or vehicle.livery %}<div class="bus" style="background:{{ vehicle.get_livery }}"{% if vehicle.livery %} title="{{ vehicle.livery }}"{% endif %}></div>{% endif %}</td>
                 {% if notes_column %}<td>{{ vehicle.notes }}</td>{% endif %}
                 <td>{{ vehicle.get_flickr_link }}</td>
