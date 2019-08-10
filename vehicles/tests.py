@@ -158,6 +158,8 @@ class VehiclesTests(TestCase):
         self.assertEqual(admin.fleet_number(edit), 50)
         self.assertEqual(admin.reg(edit), 'UWW2X')
         self.assertEqual(str(admin.vehicle_type(edit)), 'Optare Spectra')
+        edit.vehicle.vehicle_type = None
+        self.assertEqual(str(admin.vehicle_type(edit)), '<del></del><br><ins>Optare Spectra</ins>')
         self.assertEqual(admin.notes(edit), '<del></del><br><ins>Ex Ipswich Buses</ins>')
 
     def test_vehicles_json(self):
