@@ -192,9 +192,11 @@ class VehicleEdit(models.Model):
     notes = models.CharField(max_length=255, blank=True)
 
     def get_diff(self, field):
-        vehicle = getattr(self.vehicle, field) or ''
-        edit = getattr(self, field) or ''
-        if str(vehicle) != str(edit):
+        vehicle = str(getattr(self.vehicle, field) or '')
+        edit = str(getattr(self, field) or '')
+        if field == 'reg':
+            edit = edit.replace(' ', '')
+        if vehicle != edit:
             return mark_safe(f'<del>{vehicle}</del><br><ins>{edit}</ins>')
         return vehicle
 

@@ -137,7 +137,7 @@ class VehiclesTests(TestCase):
         with self.assertNumQueries(5):
             response = self.client.post(url, {
                 'fleet_number': '50',
-                'reg': 'UWW2X',
+                'reg': 'UWW 2X',
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
                 'colours': self.vehicle_2.livery_id,
                 'notes': 'Ex Ipswich Buses'
@@ -155,7 +155,7 @@ class VehiclesTests(TestCase):
         self.assertEqual(self.vehicle_2.get_absolute_url(), edit.get_absolute_url())
 
         self.assertTrue(admin.VehicleEditAdmin.flickr(None, edit))
-        self.assertEqual(admin.fleet_number(edit), 50)
+        self.assertEqual(admin.fleet_number(edit), '50')
         self.assertEqual(admin.reg(edit), 'UWW2X')
         self.assertEqual(str(admin.vehicle_type(edit)), 'Optare Spectra')
         edit.vehicle.vehicle_type = None
