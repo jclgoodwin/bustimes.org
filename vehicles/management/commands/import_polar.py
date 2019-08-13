@@ -70,6 +70,10 @@ class Command(ImportLiveVehiclesCommand):
             else:
                 services = services.filter(operator=operator)
 
+            if vehicle.operator_id != operator:
+                vehicle.operator_id = operator
+                vehicle.save()
+
             try:
                 journey.service = self.get_service(services, Point(item['geometry']['coordinates']))
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
