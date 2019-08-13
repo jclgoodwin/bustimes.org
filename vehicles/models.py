@@ -159,7 +159,7 @@ class Vehicle(models.Model):
                 search = str(self).replace('/', ' ')
             if self.operator:
                 name = str(self.operator).replace(' Buses', '', 1).replace(' Coaches', '', 1)
-                if name.startswith('First ') or name.startswith('Stagecoach '):
+                if name.startswith('First ') or name.startswith('Stagecoach ') or name.startswith('Arriva '):
                     name = name.split()[0]
                 search = f'{name} {search}'
         return f'https://www.flickr.com/search/?text={quote(search)}&sort=date-taken-desc'
