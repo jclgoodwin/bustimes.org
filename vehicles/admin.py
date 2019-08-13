@@ -83,9 +83,12 @@ class VehicleEditAdmin(admin.ModelAdmin):
         for edit in queryset:
             ok = True
             vehicle = edit.vehicle
-            vehicle.fleet_number = edit.fleet_number
+            if edit.fleet_number:
+                vehicle.fleet_number = edit.fleet_number
             if edit.reg:
                 vehicle.reg = edit.reg
+            if edit.notes:
+                vehicle.notes = edit.notes
             if edit.vehicle_type:
                 try:
                     vehicle.vehicle_type = VehicleType.objects.get(name__iexact=edit.vehicle_type)
@@ -96,7 +99,6 @@ class VehicleEditAdmin(admin.ModelAdmin):
                 vehicle.colours = ''
             elif edit.colours and edit.colours != 'Other':
                 vehicle.colours = edit.colours
-            vehicle.notes = edit.notes
             vehicle.save()
             if ok:
                 edit.delete()

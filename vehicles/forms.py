@@ -2,9 +2,7 @@ from django import forms
 from .models import VehicleType
 
 
-class EditVehicleForm(forms.Form):
-    fleet_number = forms.IntegerField(label='Fleet number', required=False, localize=True, min_value=0)
-    reg = forms.CharField(label='Registration', required=False)
+class EditVehiclesForm(forms.Form):
     vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False)
     colours = forms.ChoiceField(widget=forms.RadioSelect, required=False)
     notes = forms.CharField(label='Notes', required=False)
@@ -13,3 +11,10 @@ class EditVehicleForm(forms.Form):
         self.vehicle = kwargs.pop('vehicle', None)
         super().__init__(*args, **kwargs)
         self.fields['colours'].choices = self.vehicle.get_livery_choices()
+
+
+class EditVehicleForm(EditVehiclesForm):
+    fleet_number = forms.IntegerField(label='Fleet number', required=False, localize=True, min_value=0)
+    reg = forms.CharField(label='Registration', required=False)
+
+    field_order = ['fleet_number', 'reg']

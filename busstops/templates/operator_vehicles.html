@@ -10,20 +10,41 @@
 
 <h1>{{ object }}</h1>
 
-<p>This is an incomplete, unofficial fleet list for {{ object }}, only showing vehicles that have appeared in the live bus tracking system.</p>
+{% if edit %}
+    {% if submitted %}
 
-<p>Thanks to the marvels of modern technology, you can see where a particular vehicle has been recently, and which vehicles have operated a particular service. This isn’t always accurate, e.g. when ticket machines/tracking equipment are swapped between vehicles without being updated.</p>
+        <p class="message">Thank you. I’ll update those details ({{ submitted }} vehicle{{ submitted|pluralize }}) shortly</p>
+    {% endif %}
 
-{% if user.is_authenticated %}
-    <p><a href="{{ edit_url }}?o=2&amp;operator__id__exact={{ object.id }}">Edit</a></p>
+    <p>Select vehicles to update:</p>
+{% else %}
+    <p>This is an incomplete, unofficial fleet list for {{ object }},
+    only showing vehicles that have appeared in the live bus tracking system.</p>
 
-    <p><button id="flickr-load">Load images from Flickr</button></p>
+    <p>Thanks to the marvels of modern technology,
+    you can see where a particular vehicle has been recently,
+    and which vehicles have operated a particular service.
+    This isn’t always accurate,
+    e.g. when ticket machines/tracking equipment are swapped between vehicles without being updated.</p>
+
+    {% if user.is_authenticated %}
+        <p><a href="{{ edit_url }}?o=2&amp;operator__id__exact={{ object.id }}">Edit</a></p>
+
+        <p><button id="flickr-load">Load images from Flickr</button></p>
+    {% endif %}
 {% endif %}
 
+
+{% if edit %}
+    <form action="{{ object.get_absolute_url }}/vehicles/edit" method="POST">
+{% endif %}
 
 <table>
     <thead>
         <tr>
+            {% if edit %}
+                <th></th>
+            {% endif %}
             <th scope="col"{% if code_column %} colspan="2"{% endif %}></th>
             <th scope="col">Last seen</th>
             <th scope="col">Type</th>
@@ -34,6 +55,11 @@
     <tbody>
         {% for vehicle in vehicles %}
             <tr>
+                {% if edit %}
+                    <td>
+                        <input type="checkbox" name="vehicle" value="{{ vehicle.id }}" />
+                    </td>
+                {% endif %}
                 {% if code_column %}
                     <td>{{ vehicle.code }}</td>
                 {% endif %}
@@ -83,7 +109,15 @@
     </tbody>
 </table>
 
-{% if user.is_authenticated %}
+{% if edit %}
+
+    {{ form.as_p }}
+
+    <input type="submit" value="Save changes" />
+
+    </form>
+
+{% elif user.is_authenticated %}
     <script>
         document.getElementById('flickr-load').onclick = function() {
             for (row of document.querySelectorAll('tbody tr')) {

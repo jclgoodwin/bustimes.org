@@ -26,11 +26,11 @@
 </p>
 
 {% for note in notes %}
-    <p class="warning">{{ note|safe }}</p>
+    <p class="message">{{ note|safe }}</p>
 {% endfor %}
 
 {% if object.timetable_change %}
-    <p class="warning">Timetable changes from {{ object.timetable_change }}</p>
+    <p class="message">Timetable changes from {{ object.timetable_change }}</p>
 {% endif %}
 
 {% if object.geometry %}

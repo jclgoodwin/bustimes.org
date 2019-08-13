@@ -13,7 +13,7 @@ from multidb.pinning import use_primary_db
 from busstops.views import get_bounding_box
 from busstops.models import Operator, Service, ServiceCode, SIRISource, DataSource, Journey
 from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit
-from .forms import EditVehicleForm
+from .forms import EditVehiclesForm, EditVehicleForm
 from .management.commands import import_sirivm
 from .rifkind import rifkind
 
@@ -34,6 +34,28 @@ class Vehicles():
 
     def get_absolute_url(self):
         return reverse('operator_vehicles', args=(self.operator.slug,))
+
+
+def get_vehicle_edit(vehicle, fields):
+    edit = VehicleEdit(vehicle=vehicle)
+
+    for field in ('fleet_number', 'reg', 'vehicle_type', 'notes'):
+        if field in fields and str(fields[field]) != str(getattr(vehicle, field)):
+            if fields[field]:
+                setattr(edit, field, fields[field])
+            else:
+                setattr(edit, field, f'-{getattr(vehicle, field)}')
+
+    if not edit.vehicle_type:
+        edit.vehicle_type = ''
+
+    if fields['colours']:
+        if fields['colours'].isdigit():
+            edit.livery_id = fields['colours']
+        elif fields['colours']:
+            edit.colours = fields['colours']
+
+    return edit
 
 
 def operator_vehicles(request, slug):
@@ -59,6 +81,18 @@ def operator_vehicles(request, slug):
         else:
             rowspan_haver = vehicle
 
+    edit = request.path.endswith('/edit')
+    submitted = False
+    if edit:
+        form = EditVehiclesForm(request.POST, vehicle=vehicle)
+        if request.POST and form.is_valid():
+            ticked_vehicles = (vehicle for vehicle in vehicles if str(vehicle.id) in request.POST.getlist('vehicle'))
+            submitted = len(VehicleEdit.objects.bulk_create(
+                get_vehicle_edit(vehicle, form.cleaned_data) for vehicle in ticked_vehicles
+            ))
+    else:
+        form = None
+
     return render(request, 'operator_vehicles.html', {
         'breadcrumb': [operator.region, operator],
         'object': operator,
@@ -67,6 +101,9 @@ def operator_vehicles(request, slug):
         'code_column': any(v.code.isdigit() and v.fleet_number and int(v.code) != v.fleet_number for v in vehicles),
         'notes_column': any(vehicle.notes for vehicle in vehicles),
         'edit_url': reverse('admin:vehicles_vehicle_changelist'),
+        'edit': edit,
+        'submitted': submitted,
+        'form': form,
     })
 
 

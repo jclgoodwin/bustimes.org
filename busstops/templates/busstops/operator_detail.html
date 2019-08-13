@@ -16,7 +16,7 @@
 <p>{{ object.get_a_mode }} operating company in <a href="{{ object.region.get_absolute_url }}">{{ object.region.the }}</a></p>
 
 {% for note in notes %}
-    <p class="warning">{{ note|safe }}</p>
+    <p class="message">{{ note|safe }}</p>
 {% endfor %}
 
 <h2>{% include 'modes.html' with modes=modes noun='services' %} operated by {{ object }}</h2>

@@ -159,8 +159,8 @@ class VehiclesTests(TestCase):
         self.assertEqual(admin.reg(edit), 'UWW2X')
         self.assertEqual(str(admin.vehicle_type(edit)), 'Optare Spectra')
         edit.vehicle.vehicle_type = None
-        self.assertEqual(str(admin.vehicle_type(edit)), '<del></del><br><ins>Optare Spectra</ins>')
-        self.assertEqual(admin.notes(edit), '<del></del><br><ins>Ex Ipswich Buses</ins>')
+        self.assertEqual(str(admin.vehicle_type(edit)), '<ins>Optare Spectra</ins>')
+        self.assertEqual(admin.notes(edit), '<ins>Ex Ipswich Buses</ins>')
 
     def test_vehicles_json(self):
         with freeze_time(self.datetime):

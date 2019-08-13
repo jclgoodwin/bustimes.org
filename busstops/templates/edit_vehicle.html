@@ -17,8 +17,10 @@
     <h1>Update vehicle details</h1>
 
     {% if vehicle.vehicleedit_set.exists %}
-	    <p>❗ There’s already a pending update for this vehicle</p>
-	{% endif %}
+        <p class="message">❗ There’s already a pending update for this vehicle</p>
+    {% endif %}
+
+    <p>(You can also <a href="{{ vehicle.operator.get_absolute_url }}/vehicles/edit">update several {{ vehicle.operator }} vehicles at once</a>)</p>
 
     <form action="/vehicles/{{ vehicle.id }}/edit" method="POST">
         {{ form.as_p }}

@@ -197,7 +197,14 @@ class VehicleEdit(models.Model):
         if field == 'reg':
             edit = edit.replace(' ', '')
         if vehicle != edit:
-            return mark_safe(f'<del>{vehicle}</del><br><ins>{edit}</ins>')
+            if edit:
+                if vehicle:
+                    if edit == f'-{vehicle}':
+                        return mark_safe(f'<del>{vehicle}</del>')
+                    else:
+                        return mark_safe(f'<del>{vehicle}</del><br><ins>{edit}</ins>')
+                else:
+                    return mark_safe(f'<ins>{edit}</ins>')
         return vehicle
 
     def get_absolute_url(self):
