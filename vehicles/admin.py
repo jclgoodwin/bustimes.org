@@ -114,6 +114,8 @@ class VehicleEditAdmin(admin.ModelAdmin):
         if obj.livery:
             return obj.livery.preview()
         if obj.colours:
+            if obj.colours == 'Other':
+                return obj.colours
             return Livery(colours=obj.colours).preview()
 
     def flickr(self, obj):
