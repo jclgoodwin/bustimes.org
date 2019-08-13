@@ -105,6 +105,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
                 vehicle.livery_id = edit.livery_id
                 vehicle.colours = ''
             elif edit.colours and edit.colours != 'Other':
+                vehicle.livery = None
                 vehicle.colours = edit.colours
             vehicle.save()
             if ok:
