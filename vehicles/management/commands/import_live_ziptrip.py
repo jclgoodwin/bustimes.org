@@ -127,6 +127,11 @@ class Command(ImportLiveVehiclesCommand):
                     self.operators[operator_id] = Operator.objects.get(id=operator_id)
                 if 'fleet_number' in defaults and operator_id == 'IPSW' or operator_id == 'ROST':
                     defaults['code'] = vehicle
+                    if operator_id == 'ROST':
+                        defaults['operator_id'] = 'ROST'
+                        operator_ids = ('LNUD', 'BPTR', 'HRGT', 'KDTR', 'ROST', 'YCST')
+                        return self.vehicles.get_or_create(defaults, operator_id__in=operator_ids,
+                                                           fleet_number=fleet_number)
                     return self.vehicles.get_or_create(defaults, operator_id=operator_id, fleet_number=fleet_number)
                 return self.vehicles.get_or_create(defaults, operator_id=operator_id, code=vehicle)
             except Operator.DoesNotExist as e:
