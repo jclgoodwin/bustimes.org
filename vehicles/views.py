@@ -292,12 +292,7 @@ def edit_vehicle(request, vehicle_id):
         if not form.has_changed():
             form.add_error(None, 'You haven\'t changed anything')
         elif form.is_valid():
-            edit = VehicleEdit(vehicle=vehicle, **form.cleaned_data)
-            if not edit.vehicle_type:
-                edit.vehicle_type = ''
-            if form.cleaned_data['colours'] and form.cleaned_data['colours'].isdigit():
-                edit.livery_id = form.cleaned_data['colours']
-                edit.colours = ''
+            edit = get_vehicle_edit(vehicle, form.cleaned_data)
             edit.save()
             submitted = True
     else:
