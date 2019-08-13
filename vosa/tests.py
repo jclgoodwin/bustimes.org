@@ -1,3 +1,4 @@
+import os
 from django.test import TestCase
 from .management.commands import import_variations
 
@@ -7,7 +8,7 @@ class VariationsTest(TestCase):
     def setUpTestData(cls):
         command = import_variations.Command()
 
-        command.handle_row({
+        data = {
             'Reg_No': 'PH1020951/PH1020951/284',
             'Variation Number': '0',
             'Service Number': '122',
@@ -45,7 +46,11 @@ Other details: Daily Service Every Twenty Minutes""",
             'Auth_Description': 'Torbay Borough Council',
             'TAO Covered BY Area': 'West of England',
             'reg_code': '284'
-        })
+        }
+        command.handle_row(data)
+
+        command.input = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures', 'Bus_Variation_F.csv')
+        command.handle()
 
     def test_licence_view(self):
         response = self.client.get('/licences/PH1020951')
