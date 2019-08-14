@@ -18,3 +18,8 @@ class EditVehicleForm(EditVehiclesForm):
     reg = forms.CharField(label='Registration', required=False)
 
     field_order = ['fleet_number', 'reg']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.vehicle.code == str(self.vehicle.fleet_number):
+            self.fields['fleet_number'].disabled = True

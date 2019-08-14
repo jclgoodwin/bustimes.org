@@ -157,10 +157,13 @@ class VehiclesTests(TestCase):
         self.assertTrue(admin.VehicleEditAdmin.flickr(None, edit))
         self.assertEqual(admin.fleet_number(edit), '50')
         self.assertEqual(admin.reg(edit), 'UWW2X')
-        self.assertEqual(str(admin.vehicle_type(edit)), 'Optare Spectra')
-        edit.vehicle.vehicle_type = None
-        self.assertEqual(str(admin.vehicle_type(edit)), '<ins>Optare Spectra</ins>')
         self.assertEqual(admin.notes(edit), '<ins>Ex Ipswich Buses</ins>')
+
+        self.assertEqual(str(admin.vehicle_type(edit)), 'Optare Spectra')
+        edit.vehicle_type = 'Ford Transit'
+        self.assertEqual(str(admin.vehicle_type(edit)), '<del>Optare Spectra</del><br><ins>Ford Transit</ins>')
+        edit.vehicle.vehicle_type = None
+        self.assertEqual(admin.vehicle_type(edit), '<ins>Ford Transit</ins>')
 
     def test_vehicles_json(self):
         with freeze_time(self.datetime):
