@@ -191,11 +191,25 @@ class VehicleEdit(models.Model):
     livery = models.ForeignKey(Livery, models.SET_NULL, null=True, blank=True)
     notes = models.CharField(max_length=255, blank=True)
 
+    def get_changes(self):
+        changes = {}
+        for field in ('fleet_number', 'reg', 'vehicle_type', 'notes'):
+            edit = str(getattr(self, field) or '')
+            if edit:
+                if field == 'reg':
+                    edit = edit.upper().replace(' ', '')
+                vehicle = str(getattr(self.vehicle, field) or '')
+                if edit != vehicle:
+                    changes[field] = edit
+        if self.colours and self.colours != self.vehicle.colours and self.colours != str(self.vehicle.livery_id):
+            changes['colours'] = self.colours
+        return changes
+
     def get_diff(self, field):
         vehicle = str(getattr(self.vehicle, field) or '')
         edit = str(getattr(self, field) or '')
         if field == 'reg':
-            edit = edit.replace(' ', '')
+            edit = edit.upper().replace(' ', '')
         if vehicle != edit:
             if edit:
                 if vehicle:
