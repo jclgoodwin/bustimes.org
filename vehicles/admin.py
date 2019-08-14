@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 from .models import VehicleType, VehicleFeature, Vehicle, VehicleEdit, VehicleJourney, Livery, JourneyCode
 
 
@@ -53,6 +55,11 @@ class VehicleAdmin(admin.ModelAdmin):
         return super().get_changelist_form(request, **kwargs)
 
 
+def vehicle(obj):
+    url = reverse('admin:vehicles_vehicle_change', args=(obj.vehicle_id,))
+    return mark_safe(f'<a href="{url}">{obj.vehicle}</a>')
+
+
 def fleet_number(obj):
     return obj.get_diff('fleet_number')
 
@@ -70,7 +77,7 @@ def notes(obj):
 
 
 class VehicleEditAdmin(admin.ModelAdmin):
-    list_display = ['id', fleet_number, reg, vehicle_type, 'current', 'suggested',
+    list_display = ['id', vehicle, fleet_number, reg, vehicle_type, 'current', 'suggested',
                     notes, 'flickr']
     list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'livery']
     list_filter = [
