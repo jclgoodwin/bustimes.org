@@ -49,7 +49,7 @@ def get_vehicle_edit(vehicle, fields):
     if not edit.vehicle_type:
         edit.vehicle_type = ''
 
-    if fields['colours']:
+    if fields.get('colours'):
         if fields['colours'].isdigit():
             edit.livery_id = fields['colours']
         elif fields['colours']:
@@ -78,8 +78,9 @@ def operator_vehicles(request, slug):
         form = EditVehiclesForm(request.POST, vehicle=vehicles[0])
         if request.POST and form.is_valid():
             ticked_vehicles = (vehicle for vehicle in vehicles if str(vehicle.id) in request.POST.getlist('vehicle'))
+            data = {key: form.cleaned_data[key] for key in form.changed_data}
             submitted = len(VehicleEdit.objects.bulk_create(
-                get_vehicle_edit(vehicle, form.cleaned_data) for vehicle in ticked_vehicles
+                get_vehicle_edit(vehicle, data) for vehicle in ticked_vehicles
             ))
     else:
         form = None
@@ -288,7 +289,7 @@ def edit_vehicle(request, vehicle_id):
         if not form.has_changed():
             form.add_error(None, 'You haven\'t changed anything')
         elif form.is_valid():
-            edit = get_vehicle_edit(vehicle, form.cleaned_data)
+            edit = get_vehicle_edit(vehicle, {key: form.cleaned_data[key] for key in form.changed_data})
             edit.save()
             submitted = True
     else:

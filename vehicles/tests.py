@@ -102,7 +102,7 @@ class VehiclesTests(TestCase):
         self.vehicle_1.livery.colours = '#c0c0c0'
         self.assertEqual('#c0c0c0', self.vehicle_1.get_livery(200))
 
-    def test_vehicle_edit(self):
+    def test_vehicle_edit_1(self):
         url = self.vehicle_1.get_absolute_url() + '/edit'
 
         with self.assertNumQueries(5):
@@ -119,6 +119,7 @@ class VehiclesTests(TestCase):
             })
         self.assertFalse(response.context['form'].has_changed())
 
+    def test_vehicle_edit_2(self):
         url = self.vehicle_2.get_absolute_url() + '/edit'
 
         with self.assertNumQueries(6):
@@ -164,6 +165,23 @@ class VehiclesTests(TestCase):
         self.assertEqual(str(admin.vehicle_type(edit)), '<del>Optare Spectra</del><br><ins>Ford Transit</ins>')
         edit.vehicle.vehicle_type = None
         self.assertEqual(admin.vehicle_type(edit), '<ins>Ford Transit</ins>')
+
+    def test_vehicles_edit(self):
+        with self.assertNumQueries(8):
+            response = self.client.post('/operators/lynx/vehicles/edit')
+        self.assertContains(response, 'Select vehicles to update')
+        self.assertFalse(VehicleEdit.objects.all())
+
+        with self.assertNumQueries(9):
+            response = self.client.post('/operators/lynx/vehicles/edit', {
+                'vehicle': self.vehicle_1.id,
+                'notes': 'foo'
+            })
+        self.assertContains(response, 'Thank you')
+        self.assertContains(response, '(1 vehicle) shortly')
+        edit = VehicleEdit.objects.get()
+        self.assertEqual(edit.vehicle_type, '')
+        self.assertEqual(edit.notes, 'foo')
 
     def test_vehicles_json(self):
         with freeze_time(self.datetime):
