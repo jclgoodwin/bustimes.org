@@ -1,3 +1,4 @@
+import re
 from math import ceil
 from urllib.parse import quote
 from webcolors import html5_parse_simple_color
@@ -146,7 +147,12 @@ class Vehicle(models.Model):
     def get_livery(self, direction=None):
         if self.livery:
             if self.livery.css:
-                return self.livery.css
+                css = self.livery.css
+                if direction and direction < 180:
+                    for angle in re.findall('\((\d+)deg,', css):
+                        replacement = 360 - int(angle)
+                        css = css.replace(f'({angle}deg,', f'({replacement}deg,', 1)
+                return css
             colours = self.livery.colours
         else:
             colours = self.colours
