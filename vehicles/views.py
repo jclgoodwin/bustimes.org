@@ -85,6 +85,8 @@ def operator_vehicles(request, slug):
             ))
     else:
         form = None
+        pending_edits = VehicleEdit.objects.filter(vehicle=OuterRef('id'))
+        vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
 
     return render(request, 'operator_vehicles.html', {
         'breadcrumb': [operator.region, operator],
