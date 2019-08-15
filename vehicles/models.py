@@ -77,14 +77,19 @@ class Livery(models.Model):
     def __str__(self):
         return self.name
 
-    def preview(self):
+    def preview(self, name=False):
         if self.css:
             background = self.css
         elif self.colours:
             background = get_css(self.colours.split(), None, self.horizontal)
         else:
             return
-        return mark_safe(f'<div style="height:1.5em;width:4em;background:{background}" title="{self.name}"></div>')
+        div = f'<div style="height:1.5em;width:4em;background:{background}"'
+        if name:
+            div = f'{div}></div> {self.name}'
+        else:
+            div = f'{div} title="{self.name}"></div>'
+        return mark_safe(div)
 
     def clean(self):
         if self.colours:
@@ -186,9 +191,9 @@ class Vehicle(models.Model):
         choices = []
         liveries = Livery.objects.filter(vehicle__operator=self.operator_id).annotate(popularity=Count('vehicle'))
         for livery in liveries.order_by('-popularity').distinct():
-            choices.append((livery.id, livery.preview()))
+            choices.append((livery.id, livery.preview(name=True)))
         for vehicle in Vehicle.objects.filter(operator=self.operator).exclude(colours='').distinct('colours'):
-            choices.append((vehicle.colours, Livery(colours=vehicle.colours, name=vehicle.notes).preview()))
+            choices.append((vehicle.colours, Livery(colours=vehicle.colours, name=vehicle.notes).preview(name=True)))
         choices.append(('Other', 'Other'))
         return choices
 
