@@ -71,8 +71,6 @@ def operator_vehicles(request, slug):
     vehicles = vehicles.prefetch_related(prefetch)
     vehicles = vehicles.order_by('fleet_number', 'reg', 'code')
     vehicles = vehicles.select_related('vehicle_type', 'livery', 'latest_location__journey__service')
-    if not vehicles:
-        raise Http404()
 
     edit = request.path.endswith('/edit')
     submitted = False
@@ -87,6 +85,9 @@ def operator_vehicles(request, slug):
         form = None
         pending_edits = VehicleEdit.objects.filter(vehicle=OuterRef('id'))
         vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
+
+    if not vehicles:
+        raise Http404()
 
     return render(request, 'operator_vehicles.html', {
         'breadcrumb': [operator.region, operator],
