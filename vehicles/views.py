@@ -73,18 +73,11 @@ def operator_vehicles(request, slug):
     vehicles = vehicles.select_related('vehicle_type', 'livery', 'latest_location__journey__service')
     if not vehicles:
         raise Http404()
-    rowspan_haver = None
-    for vehicle in vehicles:
-        vehicle.rowspan = 1
-        if rowspan_haver and rowspan_haver.vehicle_type == vehicle.vehicle_type:
-            rowspan_haver.rowspan += 1
-        else:
-            rowspan_haver = vehicle
 
     edit = request.path.endswith('/edit')
     submitted = False
     if edit:
-        form = EditVehiclesForm(request.POST, vehicle=vehicle)
+        form = EditVehiclesForm(request.POST, vehicle=vehicles[0])
         if request.POST and form.is_valid():
             ticked_vehicles = (vehicle for vehicle in vehicles if str(vehicle.id) in request.POST.getlist('vehicle'))
             submitted = len(VehicleEdit.objects.bulk_create(

@@ -39,7 +39,7 @@ class VehiclesTests(TestCase):
 
     def test_vehicle(self):
         vehicle = Vehicle(reg='3990ME')
-        self.assertEqual(str(vehicle), '3990 ME')
+        self.assertEqual(str(vehicle), '3990\xa0ME')
         self.assertIn('search/?text=3990ME%20or%20%223990%20ME%22&sort', vehicle.get_flickr_url())
 
         vehicle.reg = 'J122018'
@@ -151,7 +151,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'already')
 
         edit = VehicleEdit.objects.get()
-        self.assertEqual('50 - UWW 2X', str(edit))
+        self.assertEqual('50 - UWW\xa02X', str(edit))
         self.assertEqual(self.vehicle_2.get_absolute_url(), edit.get_absolute_url())
 
         self.assertTrue(admin.VehicleEditAdmin.flickr(None, edit))
@@ -177,7 +177,7 @@ class VehiclesTests(TestCase):
             with self.assertNumQueries(2):
                 response = self.client.get('/vehicles.json')
         vehicle = response.json()['features'][0]['properties']['vehicle']
-        self.assertEqual(vehicle['name'], '1 - FD54 JYA')
+        self.assertEqual(vehicle['name'], '1 - FD54\xa0JYA')
         self.assertEqual(response.get('last-modified'), 'Tue, 25 Dec 2018 19:47:00 GMT')
 
     def test_location_json(self):
@@ -185,7 +185,7 @@ class VehiclesTests(TestCase):
         location.journey.vehicle = self.vehicle_2
         properties = location.get_json()['properties']
         vehicle = properties['vehicle']
-        self.assertEqual(vehicle['name'], '50 - UWW 2X')
+        self.assertEqual(vehicle['name'], '50 - UWW\xa02X')
         self.assertEqual(vehicle['text_colour'], '#fff')
         self.assertFalse(vehicle['coach'])
         self.assertTrue(vehicle['decker'])

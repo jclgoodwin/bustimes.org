@@ -128,11 +128,11 @@ class Vehicle(models.Model):
 
     def get_reg(self):
         if self.reg[-3:].isalpha():
-            return self.reg[:-3] + ' ' + self.reg[-3:]
+            return self.reg[:-3] + '\u00A0' + self.reg[-3:]
         if self.reg[:3].isalpha():
-            return self.reg[:3] + ' ' + self.reg[3:]
+            return self.reg[:3] + '\u00A0' + self.reg[3:]
         if self.reg[-2:].isalpha():
-            return self.reg[:-2] + ' ' + self.reg[-2:]
+            return self.reg[:-2] + '\u00A0' + self.reg[-2:]
         return self.reg
 
     def get_text_colour(self):
@@ -151,7 +151,8 @@ class Vehicle(models.Model):
 
     def get_flickr_url(self):
         if self.reg:
-            search = f'{self.reg} or "{self.get_reg()}"'
+            reg = self.get_reg().replace('\xa0', ' ')
+            search = f'{self.reg} or "{reg}"'
         else:
             if self.fleet_number:
                 search = str(self.fleet_number)
