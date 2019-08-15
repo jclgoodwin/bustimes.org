@@ -77,9 +77,12 @@ class Livery(models.Model):
         return self.name
 
     def preview(self):
-        if not self.colours:
+        if self.css:
+            background = self.css
+        elif self.colours:
+            background = get_css(self.colours.split(), None, self.horizontal)
+        else:
             return
-        background = get_css(self.colours.split(), None, self.horizontal)
         return mark_safe(f'<div style="height:1.5em;width:4em;background:{background}" title="{self.name}"></div>')
 
     def clean(self):
@@ -141,7 +144,12 @@ class Vehicle(models.Model):
             return get_text_colour(colours)
 
     def get_livery(self, direction=None):
-        colours = self.livery and self.livery.colours or self.colours
+        if self.livery:
+            if self.livery.css:
+                return self.livery.css
+            colours = self.livery.colours
+        else:
+            colours = self.colours
         if colours:
             colours = colours.split()
             return get_css(colours, direction, self.livery and self.livery.horizontal)
