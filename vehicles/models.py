@@ -149,7 +149,7 @@ class Vehicle(models.Model):
             if self.livery.css:
                 css = self.livery.css
                 if direction and direction < 180:
-                    for angle in re.findall('\((\d+)deg,', css):
+                    for angle in re.findall(r'\((\d+)deg,', css):
                         replacement = 360 - int(angle)
                         css = css.replace(f'({angle}deg,', f'({replacement}deg,', 1)
                 return css
