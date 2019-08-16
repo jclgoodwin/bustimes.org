@@ -2,6 +2,11 @@
 
 {% block title %}Edit details – {{ vehicle }} – Bus Times{% endblock %}
 
+{% block head %}
+    {% load static %}
+    <!-- <link rel="stylesheet" href="{% static 'js/accessible-autocomplete/dist/accessible-autocomplete.min.css' %}" /> -->
+{% endblock %}
+
 {% block bodyclass %}narrow{% endblock %}
 
 {% block content %}
@@ -36,3 +41,12 @@
 {% endblock %}
 
 {% block ad %}{% endblock %}
+
+{% block foot %}
+    <script src="{% static 'js/accessible-autocomplete/dist/accessible-autocomplete.min.js' %}"></script>
+    <script>
+        accessibleAutocomplete.enhanceSelectElement({
+            selectElement: document.getElementById('id_vehicle_type')
+        });
+    </script>
+{% endblock %}

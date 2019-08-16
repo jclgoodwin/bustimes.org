@@ -6,5 +6,8 @@
     "sass": "^1.22.5",
     "sass-lint": "^1.13.1",
     "yuglify": "^2.0.0"
+  },
+  "dependencies": {
+    "accessible-autocomplete": "^1.6.2"
   }
 }
