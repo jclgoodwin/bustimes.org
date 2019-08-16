@@ -97,7 +97,7 @@ def handle_item(source, stop, item):
         'fleet_number': vehicle,
     }, code=vehicle, operator_id=operator)
 
-    if not vehicle.colours:
+    if not (vehicle.colours or vehicle.livery_id):
         vehicle.colours = item['vehicle_colour']
         vehicle.save()
 
