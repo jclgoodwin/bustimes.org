@@ -732,7 +732,6 @@ def add_stagecoach_departures(stop, services_dict, departures):
     if not response.ok:
         return departures
     stop_monitors = response.json()['stopMonitors']
-    source = None
     if 'stopMonitor' in stop_monitors:
         added = False
         for monitor in stop_monitors['stopMonitor'][0]['monitoredCalls']['monitoredCall']:
@@ -740,28 +739,6 @@ def add_stagecoach_departures(stop, services_dict, departures):
                 aimed, expected = [parse_datetime(time)
                                    for time in (monitor['aimedDepartureTime'], monitor['expectedDepartureTime'])]
                 line = monitor['lineRef']
-                vehicle = monitor['vehicleRef']
-                vehicle = vehicle.split('-', 1)[1]
-                if not source:
-                    source = DataSource.objects.get_or_create(name='Stagecoach')[0]
-                try:
-                    operator = monitor['operatorRef']
-                    if operator == 'SCEM':
-                        operator = 'CLTL'
-                    elif operator == 'SCSO':
-                        operator = 'SMSO'
-                    vehicle, vehicle_created = Vehicle.objects.get_or_create({
-                        'operator_id': operator,
-                        'code': vehicle,
-                        'fleet_number': vehicle,
-                        'source': source
-                    }, fleet_number=vehicle, operator__name__startswith='Stagecoach ')
-                    if not vehicle_created:
-                        journeys = vehicle.vehiclejourney_set.filter(code=monitor['datedVehicleJourneyRef'],
-                                                                     datetime__date=aimed.date())
-                except (Vehicle.MultipleObjectsReturned, IntegrityError) as e:
-                    logger.error(e, exc_info=True)
-                    vehicle = None
                 if departures and aimed >= (departures[0]['time'] or departures[0]['live']):
                     replaced = False
                     for departure in departures:
@@ -769,22 +746,6 @@ def add_stagecoach_departures(stop, services_dict, departures):
                             if type(departure['service']) is Service and line == departure['service'].line_name:
                                 departure['live'] = expected
                                 replaced = True
-                                if vehicle:
-                                    if vehicle_created or not journeys.filter(service=departure['service']).exists():
-                                        origin_departure_time = departure.get('origin_departure_time')
-                                        if not origin_departure_time:
-                                            origin_departure_time = timezone.now()
-                                        VehicleJourney.objects.create(vehicle=vehicle, datetime=origin_departure_time,
-                                                                      source=source,
-                                                                      destination=monitor['destinationDisplay'],
-                                                                      code=monitor['datedVehicleJourneyRef'],
-                                                                      service=departure['service'])
-                                        for operator in departure['service'].operator.all():
-                                            if operator.name.startswith('Stagecoach '):
-                                                if vehicle.operator_id != operator.id:
-                                                    vehicle.operator_id = operator.id
-                                                    vehicle.save()
-                                                break
                                 break
                     if replaced:
                         continue
@@ -803,13 +764,6 @@ def add_stagecoach_departures(stop, services_dict, departures):
                     'destination': monitor['destinationDisplay']
                 })
                 added = True
-                if vehicle and type(departures[-1]['service']) is Service:
-                    if vehicle_created or not journeys.filter(service=departures[-1]['service']).exists():
-                        assert 'origin_departure_time' not in departures[-1]
-                        VehicleJourney.objects.create(vehicle=vehicle, datetime=timezone.now(),
-                                                      source=source, destination=monitor['destinationDisplay'],
-                                                      code=monitor['datedVehicleJourneyRef'],
-                                                      service=departures[-1]['service'])
         if added:
             departures.sort(key=get_departure_order)
     return departures
