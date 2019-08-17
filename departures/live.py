@@ -9,7 +9,6 @@ import logging
 import xml.etree.cElementTree as ET
 from django.conf import settings
 from django.core.cache import cache
-from django.db import IntegrityError
 from django.db.models import Q
 from django.utils import timezone
 from busstops.models import Service, ServiceCode, DataSource, SIRISource
@@ -81,6 +80,9 @@ class Departures(object):
                 'Puls': 'pulse',
                 'FLCN': 'falcon',
                 'TUBE': 'oxford tube',
+                'SPRI': 'spring',
+                'PRO': 'pronto',
+                'SA': 'the sherwood arrow',
                 'Yo-Y': 'yoyo',
                 'Port': 'portway park and ride',
                 'Bris': 'brislington park and ride',
