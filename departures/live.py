@@ -122,18 +122,14 @@ class Departures(object):
         elif vehicle.startswith('ASES-'):  # Milton Keynes
             vehicle = vehicle[5:]
         operator = service.operator.all()[0]
-        if operator.name[:11] == 'Stagecoach ':
-            vehicle = vehicle.split('-')[-1]
+        for operator in service.operator.all():
+            if operator.name[:11] == 'Stagecoach ':
+                return
         if not vehicle or vehicle == '-':
             return
         if vehicle.isdigit():
             defaults['code'] = vehicle
-            if operator.name[:11] == 'Stagecoach ':
-                defaults['operator'] = operator
-                vehicle, created = Vehicle.objects.get_or_create(defaults, operator__name__startswith='Stagecoach ',
-                                                                 fleet_number=vehicle)
-            else:
-                vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, fleet_number=vehicle)
+            vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, fleet_number=vehicle)
         else:
             vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
 
