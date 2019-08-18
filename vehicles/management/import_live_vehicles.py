@@ -146,7 +146,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             journey.save()
             if journey.service and not journey.service.tracking:
                 journey.service.tracking = True
-                journey.service.save()
+                journey.service.save(update_fields=['tracking'])
             if journey.service_id:
                 if service_code and journey.service_id != service_code.service_id or self.source.name.endswith(' SIRI'):
                     if not journey.service.servicecode_set.filter(scheme__endswith=' SIRI').exists():
@@ -167,7 +167,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if latest:
             # mark old location as not current
             latest.current = False
-            latest.save()
+            latest.save(update_fields=['current'])
 
             distance = latest.latlong.distance(location.latlong) * 69
             time = location.datetime - latest.datetime
