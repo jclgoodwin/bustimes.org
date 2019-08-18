@@ -25,7 +25,7 @@ class EdinburghImportTest(TestCase):
             'longitude': -3.18718,
             'last_gps_fix': 1554038242,
         }
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(13):
             self.command.handle_item(item, None)
         with self.assertNumQueries(3):
             self.command.handle_item(item, None)

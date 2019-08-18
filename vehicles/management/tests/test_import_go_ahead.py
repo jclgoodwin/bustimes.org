@@ -58,7 +58,7 @@ class GoAheadImportTest(TestCase):
             "recordedTime": "2019-03-31T12:24:54.000Z",
             "updatedAtUTC": "2019-03-31T11:25:05.000Z"
         }
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(13):
             self.command.handle_item(item, self.command.source.datetime)
         with self.assertNumQueries(3):
             self.command.handle_item(item, self.command.source.datetime)
