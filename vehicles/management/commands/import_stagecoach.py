@@ -21,6 +21,7 @@ class Command(ImportLiveVehiclesCommand):
         'SCSO': 'SCCO'
     }
     operators = {}
+    vehicles_ids = {}
 
     def get_boxes(self):
         geojson = {"type": "FeatureCollection", "features": []}
@@ -83,25 +84,31 @@ class Command(ImportLiveVehiclesCommand):
         vehicle = item['fn']
         if len(vehicle) > 5:
             return None, None
-        operator_id = item['oc']
-        operator_id = self.operator_ids.get(operator_id, operator_id)
-        operator = self.operators.get(operator_id)
-        defaults = {
-            'source': self.source
-        }
-        if not operator:
-            try:
-                operator = Operator.objects.get(id=operator_id)
-            except Operator.DoesNotExist as e:
-                print(operator_id, e)
-        if operator:
-            defaults['operator'] = operator
-        if vehicle.isdigit():
-            defaults['fleet_number'] = vehicle
-        if not operator or operator.name.startswith('Stagecoach '):
-            vehicle, created = self.vehicles.get_or_create(defaults, operator__name__startswith='Stagecoach ', code=vehicle)
-        else:  # Scottish Citylink
-            vehicle, created = self.vehicles.get_or_create(defaults, operator=operator, code=vehicle)
+        if vehicle in self.vehicles_ids:
+            vehicle = self.vehicles.objects.get(id=self.vehicles_ids[vehicle])
+            created = False
+        else:
+            operator_id = self.operator_ids.get(item['oc'], item['oc'])
+            operator = self.operators.get(operator_id)
+            if not operator:
+                try:
+                    operator = Operator.objects.get(id=operator_id)
+                except Operator.DoesNotExist as e:
+                    print(operator_id, e)
+                defaults = {
+                    'source': self.source
+                }
+            if operator:
+                defaults['operator'] = operator
+            if vehicle.isdigit():
+                defaults['fleet_number'] = vehicle
+            if not operator or operator.name.startswith('Stagecoach '):
+                vehicle, created = self.vehicles.get_or_create(defaults, operator__name__startswith='Stagecoach ',
+                                                               code=vehicle)
+            else:  # Scottish Citylink
+                vehicle, created = self.vehicles.get_or_create(defaults, operator=operator, code=vehicle)
+
+        self.vehicles_ids[item['fn']] = vehicle.id
 
         latest_location = vehicle.latest_location
         if latest_location and latest_location.journey.source_id != self.source.id:
