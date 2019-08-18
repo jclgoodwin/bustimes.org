@@ -145,7 +145,7 @@ class Command(ImportLiveVehiclesCommand):
             try:
                 journey.service = services.get()
 
-                for operator in service.operator.all():
+                for operator in journey.service.operator.all():
                     if operator.name.startswith('Stagecoach '):
                         if vehicle.operator_id != operator.id:
                             vehicle.operator_id = operator.id
