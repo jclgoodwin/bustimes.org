@@ -5,7 +5,6 @@ from ciso8601 import parse_datetime_as_naive
 from requests.exceptions import RequestException
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models import Extent
-from django.db.models import Q
 from django.utils import timezone
 from busstops.models import Service, StopPoint
 from ...models import VehicleLocation, VehicleJourney
@@ -68,17 +67,12 @@ class Command(ImportLiveVehiclesCommand):
         boxes = []
         for opco in self.opcos:
             for operator in self.opcos[opco]:
-                stops = StopPoint.objects.filter(service__operator=operator, service__current=True).using('read-only')
+                now = self.source.datetime
+                stops = StopPoint.objects.filter(active=True, service__operator=operator, service__current=True)
                 extent = stops.aggregate(Extent('latlong'))['latlong__extent']
+                stops = stops.filter(stopusageusage__datetime__lt=now + timedelta(minutes=5),
+                                     stopusageusage__datetime__gt=now - timedelta(hours=1))
                 lng = extent[0]
-                # exclude services with current locations from another source
-                services = Service.objects.filter(current=True, operator=operator).exclude(
-                    ~Q(vehiclejourney__source=self.source),
-                    vehiclejourney__vehiclelocation__current=True,
-                    vehiclejourney__vehiclelocation__datetime__gt=self.source.datetime + timedelta(minutes=5),
-                ).using('read-only')
-                stops = stops.filter(stopusageusage__journey__service__in=services)
-
                 while lng <= extent[2]:
                     lat = extent[1]
                     while lat <= extent[3]:
@@ -91,7 +85,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         for opco, stops, lng, lat in self.get_points():
             bbox = Polygon.from_bbox(
-                (lng - 0.1, lat - 0.1, lng + 0.1, lat + 0.1)
+                (lng - 0.05, lat - 0.05, lng + 0.05, lat + 0.05)
             )
             if stops.filter(latlong__within=bbox).exists():
                 params = {'lat': lat, 'lng': lng}

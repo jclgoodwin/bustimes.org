@@ -173,7 +173,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             time = location.datetime - latest.datetime
             if time:
                 speed = distance / time.total_seconds() * 60 * 60
-                if speed > 70:
+                if speed > 90:
                     print('{} mph\t{}'.format(speed, journey.vehicle.get_absolute_url()))
 
     def update(self):
