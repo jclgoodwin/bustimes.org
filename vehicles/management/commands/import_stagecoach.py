@@ -27,8 +27,9 @@ class Command(ImportLiveVehiclesCommand):
         geojson = {"type": "FeatureCollection", "features": []}
         i = 0
         operators = Operator.objects.filter(name__startswith='Stagecoach', service__current=True, vehicle_mode='bus')
-        operators = operators.exclude(service__servicecode__scheme__endswith=' SIRI', service__tracking=True)
-        services = Service.objects.filter(operator__in=operators)
+        operators = operators.exclude(service__servicecode__scheme__endswith=' SIRI',
+                                      service__tracking=True).using('read-only')
+        services = Service.objects.filter(operator__in=operators).using('read-only')
         extent = services.aggregate(Extent('geometry'))['geometry__extent']
 
         lng = extent[0]

@@ -68,7 +68,7 @@ class Command(ImportLiveVehiclesCommand):
         boxes = []
         for opco in self.opcos:
             for operator in self.opcos[opco]:
-                stops = StopPoint.objects.filter(service__operator=operator, service__current=True)
+                stops = StopPoint.objects.filter(service__operator=operator, service__current=True).using('read-only')
                 extent = stops.aggregate(Extent('latlong'))['latlong__extent']
                 lng = extent[0]
                 # exclude services with current locations from another source
@@ -76,11 +76,8 @@ class Command(ImportLiveVehiclesCommand):
                     ~Q(vehiclejourney__source=self.source),
                     vehiclejourney__vehiclelocation__current=True,
                     vehiclejourney__vehiclelocation__datetime__gt=self.source.datetime + timedelta(minutes=5),
-
-                )
-                stops = stops.filter(stopusageusage__datetime__lt=self.source.datetime + timedelta(minutes=5),
-                                     stopusageusage__datetime__gt=self.source.datetime - timedelta(hours=1),
-                                     stopusageusage__journey__service__in=services)
+                ).using('read-only')
+                stops = stops.filter(stopusageusage__journey__service__in=services)
 
                 while lng <= extent[2]:
                     lat = extent[1]
