@@ -86,7 +86,7 @@ class Command(ImportLiveVehiclesCommand):
         if len(vehicle) > 5:
             return None, None
         if vehicle in self.vehicles_ids:
-            vehicle = self.vehicles.objects.get(id=self.vehicles_ids[vehicle])
+            vehicle = self.vehicles.get(id=self.vehicles_ids[vehicle])
             created = False
         else:
             operator_id = self.operator_ids.get(item['oc'], item['oc'])
