@@ -12,7 +12,8 @@ class Command(NatExpCommand):
         for route in Route.objects.filter(agency__name='Aircoach'):
             for direction in 'OI':
                 try:
-                    res = self.session.get(url.format(route.short_name.replace('-x', 'X'), direction), timeout=5)
+                    res = self.session.get(url.format(route.short_name.replace('-x', 'X'), direction), timeout=5,
+                                           verify=0)
                 except RequestException as e:
                     print(e)
                     continue
