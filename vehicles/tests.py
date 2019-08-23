@@ -35,7 +35,10 @@ class VehiclesTests(TestCase):
         journey = VehicleJourney.objects.create(vehicle=cls.vehicle_1, datetime=cls.datetime, source=source,
                                                 service=service, route_name='2')
 
-        VehicleLocation.objects.create(datetime=cls.datetime, latlong=Point(0, 51), journey=journey, current=True)
+        location = VehicleLocation.objects.create(datetime=cls.datetime, latlong=Point(0, 51),
+                                                  journey=journey, current=True)
+        cls.vehicle_1.latest_location = location
+        cls.vehicle_1.save()
 
     def test_vehicle(self):
         vehicle = Vehicle(reg='3990ME')
