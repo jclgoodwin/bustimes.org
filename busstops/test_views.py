@@ -157,7 +157,7 @@ class ViewsTests(TestCase):
         """Offline page (for service workers) exists"""
         response = self.client.get('/offline')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Sorry, you don’t seem to be connected to the Internet.')
+        self.assertContains(response, ', it seems like you’re not connected to the Internet')
 
     def test_not_found(self):
         """Not found responses have a 404 status code"""
