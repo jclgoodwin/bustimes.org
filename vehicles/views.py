@@ -106,7 +106,8 @@ def operator_vehicles(request, slug):
 
 def get_locations(request):
     fifteen_minutes_ago = timezone.now() - timedelta(minutes=15)
-    locations = VehicleLocation.objects.filter(current=True, datetime__gte=fifteen_minutes_ago)
+    locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, current=True,
+                                               datetime__gte=fifteen_minutes_ago)
 
     try:
         bounding_box = get_bounding_box(request)
