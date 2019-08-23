@@ -130,7 +130,7 @@
         document.getElementById('flickr-load').onclick = function() {
             for (row of document.querySelectorAll('tbody tr')) {
                 let cells = row.getElementsByTagName('td');
-                let url = cells[cells.length - 1].querySelector('a').href;
+                let url = cells[cells.length - 2].querySelector('a').href;
                 let text = new URL(url).searchParams.get('text')
                 let td = row.appendChild(document.createElement('td'));
                 fetch(
