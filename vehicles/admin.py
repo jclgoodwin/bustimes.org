@@ -26,6 +26,7 @@ class VehicleAdmin(admin.ModelAdmin):
     list_filter = (
         ('source', admin.RelatedOnlyFieldListFilter),
         ('operator', admin.RelatedOnlyFieldListFilter),
+        'livery',
         'vehicle_type',
     )
     list_select_related = ['operator', 'livery', 'vehicle_type', 'latest_location']
