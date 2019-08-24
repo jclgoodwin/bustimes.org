@@ -366,6 +366,7 @@ class Operator(ValidateOnSaveMixin, models.Model):
     national_expresses = {
         'Hotel Hoppa': '24233768',
         'National Express Airport': '24233764',
+        'Xplore Dundee': '24233764',  # X90
         'National Express': '21039402',
     }
     national_expresses['National Express Shuttle'] = national_expresses['National Express']
@@ -571,8 +572,8 @@ class Service(models.Model):
 
     def is_megabus(self):
         return (self.line_name in {'FALCON', 'Oxford Tube'}
-                or self.pk in {'bed_1-X5-Z-y08', 'YWAX062', 'HIAG010', 'FSAM009', 'FSAG009', 'EDAO900', 'EDAAIR0',
-                               'YSBX010', 'ABAX010', 'ABAO010'}
+                or self.pk in {'bed_1-X5-Z-y08', 'set_6-M2-_-y08', 'YWAX062', 'FSAG010', 'FSAM009', 'FSAG009',
+                               'EDAO900', 'EDAAIR0', 'YSBX010', 'ABAX010', 'ABAO010'}
                 or any(o.pk in {'MEGA', 'MBGD', 'SCMG'} for o in self.operator.all()))
 
     def get_megabus_url(self):
