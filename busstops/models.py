@@ -366,7 +366,6 @@ class Operator(ValidateOnSaveMixin, models.Model):
     national_expresses = {
         'Hotel Hoppa': '24233768',
         'National Express Airport': '24233764',
-        'Xplore Dundee': '24233764',  # X90
         'National Express': '21039402',
     }
     national_expresses['National Express Shuttle'] = national_expresses['National Express']
@@ -378,7 +377,10 @@ class Operator(ValidateOnSaveMixin, models.Model):
     def get_national_express_url(self):
         return (
             'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&a=3022528&g='
-            + self.national_expresses[self.name]
+            + {
+                **self.national_expresses,
+                'Xplore Dundee': self.national_expresses['National Express Airport']
+            }[self.name]
         )
 
     def get_absolute_url(self):
