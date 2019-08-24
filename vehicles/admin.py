@@ -96,7 +96,10 @@ class VehicleEditAdmin(admin.ModelAdmin):
             if edit.reg:
                 vehicle.reg = edit.reg
             if edit.notes:
-                vehicle.notes = edit.notes
+                if edit.notes == f'-{vehicle.notes}':
+                    vehicle.notes = ''
+                else:
+                    vehicle.notes = edit.notes
             if edit.vehicle_type:
                 try:
                     vehicle.vehicle_type = VehicleType.objects.get(name__iexact=edit.vehicle_type)
