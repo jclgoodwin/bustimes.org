@@ -2,11 +2,6 @@
 
 {% block title %}Edit details – {{ vehicle }} – Bus Times{% endblock %}
 
-{% block head %}
-    {% load static %}
-    <!-- <link rel="stylesheet" href="{% static 'js/accessible-autocomplete/dist/accessible-autocomplete.min.css' %}" /> -->
-{% endblock %}
-
 {% block bodyclass %}narrow{% endblock %}
 
 {% block content %}
@@ -43,6 +38,7 @@
 {% block ad %}{% endblock %}
 
 {% block foot %}
+    {% load static %}
     <script src="{% static 'js/accessible-autocomplete/dist/accessible-autocomplete.min.js' %}"></script>
     <script>
         accessibleAutocomplete.enhanceSelectElement({

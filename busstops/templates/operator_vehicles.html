@@ -155,6 +155,7 @@
 
 {% block foot %}
     {% if edit %}
+        {% load static %}
         <script src="{% static 'js/accessible-autocomplete/dist/accessible-autocomplete.min.js' %}"></script>
         <script>
             accessibleAutocomplete.enhanceSelectElement({
