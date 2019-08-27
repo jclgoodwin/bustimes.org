@@ -24,14 +24,12 @@
     padding: 0;
 }
 
-.map-wrapper {
-    margin-left: 2.5%;
-    padding-top: 48.75% * .75;
-    width: 48.75%;
-}
-
 .long {
     column-count: 3;
+}
+
+.long.wide {
+    column-count: 2;
 }
 
 .contact-details p {

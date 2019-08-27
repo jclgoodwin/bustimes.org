@@ -1,4 +1,4 @@
-<ul class="has-smalls">
+<ul class="has-smalls{{ class }}">
 {% for stop in stops %}
     {% if stop.current_services %}
         <li itemscope itemtype="https://schema.org/BusStop" data-indicator="{{ stop.indicator }}"{% if stop.get_heading is not None %} data-heading="{{ stop.get_heading }}"{% endif %}>

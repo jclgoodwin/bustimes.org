@@ -558,26 +558,14 @@ table {
     }
 }
 
-.map-wrapper {
-    display: none;
-}
-
 #map {
     bottom: 0;
     left: 0;
-    position: absolute;
+    position: relative;
     right: 0;
     top: 0;
 
-    &.service-map,
-    &.stop-map {
-        position: relative;
-    }
-
-    &.service-map.expanded {
-        position: fixed;
-    }
-
+    &.service-map.expanded,
     &.full-screen {
         position: fixed;
     }

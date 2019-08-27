@@ -101,7 +101,7 @@ ga('send', 'pageview');
     });
 </script>
 
-{% if stops or stoppoint.latlong %}
+{% if stoppoint.latlong %}
     {% javascript 'placemap' %}
 {% endif %}
 {% javascript 'global' %}

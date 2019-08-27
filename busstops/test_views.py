@@ -286,7 +286,7 @@ class ViewsTests(TestCase):
         for url in ('/operators/ains', '/operators/ainsleys-chariots', '/operators/AINS?amp'):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
-            self.assertContains(response, 'An airline operating company in')
+            self.assertContains(response, 'An airline operator in')
             self.assertContains(response, 'Contact Ainsley&#39;s Chariots')
             self.assertContains(response, '10 King Road<br />Ipswich', html=True)
             self.assertContains(response, '&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#97;&#105;' +
