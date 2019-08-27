@@ -289,8 +289,8 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             Q(locality__stoppoint__active=True),
         ).defer('latlong').distinct()
 
-        context['stops'] = self.object.stoppoint_set.filter(active=True).prefetch_related(prefetch_stop_services
-                                                                                          ).defer('osm')
+        context['stops'] = self.object.stoppoint_set.filter(active=True, service__current=True).distinct()
+        context['stops'] = context['stops'].prefetch_related(prefetch_stop_services).defer('osm')
 
         if not (context['localities'] or context['stops']):
             raise Http404('Sorry, it looks like no services currently stop at {}'.format(self.object))
@@ -354,7 +354,8 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         region = self.object.get_region()
 
-        nearby = StopPoint.objects.filter(active=True)
+        nearby = StopPoint.objects.filter(active=True, service__current=True).distinct()
+
         if self.object.stop_area_id is not None:
             nearby = nearby.filter(stop_area=self.object.stop_area_id)
         elif self.object.locality or self.object.admin_area:
