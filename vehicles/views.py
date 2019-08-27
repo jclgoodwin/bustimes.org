@@ -196,28 +196,31 @@ def vehicles_last_modified(request):
             rifkind(service_id)
             tracking = True
         if not tracking and not Service.objects.filter(service_code=service_id, tracking=True).exists():
+            request.nothing = True
             return
     try:
         location = locations.values('datetime').latest('datetime')
+        request.nothing = False
         return location['datetime']
     except VehicleLocation.DoesNotExist:
+        request.nothing = True
         return
 
 
 @last_modified(vehicles_last_modified)
 def vehicles_json(request):
-    locations = get_locations(request).order_by()
-
-    locations = locations.select_related('journey__vehicle__livery', 'journey__vehicle__vehicle_type')
-
-    if 'service' in request.GET:
-        extended = False
-        if not Service.objects.filter(service_code=request.GET['service'], tracking=True).exists():
-            locations = ()
+    if request.nothing:
+        locations = ()
     else:
-        extended = True
-        locations = locations.select_related('journey__service', 'journey__vehicle__operator'
-                                             ).defer('journey__service__geometry')
+        locations = get_locations(request).order_by()
+        locations = locations.select_related('journey__vehicle__livery', 'journey__vehicle__vehicle_type')
+
+        if 'service' in request.GET:
+            extended = False
+        else:
+            extended = True
+            locations = locations.select_related('journey__service', 'journey__vehicle__operator'
+                                                 ).defer('journey__service__geometry')
 
     return JsonResponse({
         'type': 'FeatureCollection',

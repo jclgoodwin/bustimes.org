@@ -36,7 +36,7 @@ class SIRIOneShotTest(TestCase):
         with vcr.use_cassette('data/vcr/icarus.yaml'):
 
             with freeze_time('2019-06-08'):
-                with self.assertNumQueries(8):
+                with self.assertNumQueries(7):
                     self.client.get('/vehicles.json?service=swe_33-FLC-_-y10')
 
                 self.assertEqual('nothing scheduled', cache.get('swe_33-FLC-_-y10:Icarus'))

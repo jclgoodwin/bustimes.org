@@ -188,7 +188,7 @@ class VehiclesTests(TestCase):
 
     def test_vehicles_json(self):
         with freeze_time(self.datetime):
-            with self.assertNumQueries(2):
+            with self.assertNumQueries(1):
                 response = self.client.get('/vehicles.json?ymax=52&xmax=2&ymin=51&xmin=1')
         self.assertEqual(200, response.status_code)
         self.assertEqual({'type': 'FeatureCollection', 'features': []}, response.json())
