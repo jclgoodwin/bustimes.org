@@ -225,30 +225,34 @@
     }
 
     function processVehiclesData(data) {
-        for (var i = data.features.length - 1; i >= 0; i -= 1) {
-            handleVehicle(data.features[i]);
-        }
-        for (var vehicle in oldVehicles) {
-            if (!(vehicle in newVehicles)) {
-                vehiclesGroup.removeLayer(oldVehicles[vehicle]);
+        if (data && data.features) {
+            for (var i = data.features.length - 1; i >= 0; i -= 1) {
+                handleVehicle(data.features[i]);
             }
+            for (var vehicle in oldVehicles) {
+                if (!(vehicle in newVehicles)) {
+                    vehiclesGroup.removeLayer(oldVehicles[vehicle]);
+                }
+            }
+            oldVehicles = newVehicles;
+            newVehicles = {};
+            statusBar.getContainer().innerHTML = '';
         }
-        oldVehicles = newVehicles;
-        newVehicles = {};
-        statusBar.getContainer().innerHTML = '';
     }
 
     function processStopsData(data) {
-        for (var i = data.features.length - 1; i >= 0; i -= 1) {
-            handleStop(data.features[i]);
-        }
-        for (var stop in oldStops) {
-            if (!(stop in newStops)) {
-                stopsGroup.removeLayer(oldStops[stop]);
+        if (data && data.features) {
+            for (var i = data.features.length - 1; i >= 0; i -= 1) {
+                handleStop(data.features[i]);
             }
+            for (var stop in oldStops) {
+                if (!(stop in newStops)) {
+                    stopsGroup.removeLayer(oldStops[stop]);
+                }
+            }
+            oldStops = newStops;
+            newStops = {};
         }
-        oldStops = newStops;
-        newStops = {};
     }
 
     // load vehicles, and possibly stops
