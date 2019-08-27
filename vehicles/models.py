@@ -188,12 +188,16 @@ class Vehicle(models.Model):
         return mark_safe(f'<a href="{self.get_flickr_url()}" target="_blank" rel="noopener">Flickr</a>')
 
     def get_livery_choices(self):
-        choices = []
+        choices = {}
         liveries = Livery.objects.filter(vehicle__operator=self.operator_id).annotate(popularity=Count('vehicle'))
         for livery in liveries.order_by('-popularity').distinct():
-            choices.append((livery.id, livery.preview(name=True)))
-        for vehicle in Vehicle.objects.filter(operator=self.operator).exclude(colours='').distinct('colours'):
-            choices.append((vehicle.colours, Livery(colours=vehicle.colours, name=vehicle.notes).preview(name=True)))
+            choices[livery.id] = livery
+        for vehicle in Vehicle.objects.filter(operator=self.operator).exclude(colours='').distinct('colours', 'notes'):
+            if vehicle.colours in choices:
+                choices[vehicle.colours].name = ''
+            else:
+                choices[vehicle.colours] = Livery(colours=vehicle.colours, name=vehicle.notes)
+        choices = [(key, livery.preview(name=True)) for key, livery in choices.items()]
         choices.append(('Other', 'Other'))
         return choices
 
