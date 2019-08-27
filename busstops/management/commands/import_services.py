@@ -256,7 +256,7 @@ class Command(BaseCommand):
         defaults['show_timetable'] = show_timetable
         defaults['geometry'] = multi_line_string
 
-        if self.service_descriptions:
+        if self.service_descriptions:  # NCSD
             filename_parts = filename.split('_')
             operator = filename_parts[-2]
             line_name = filename_parts[-1][:-4]
@@ -270,6 +270,9 @@ class Command(BaseCommand):
             elif len(description) > 255:
                 warnings.warn('Description "%s" too long in %s' % (description, filename))
                 description = description[:255]
+            elif description == line_name:
+                print(description, line_name)
+                description = ''
 
             if self.region_id == 'NE':
                 description = self.sanitize_description(description)
