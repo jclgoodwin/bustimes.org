@@ -112,7 +112,7 @@ class Command(BaseCommand):
                     destination=destination,
                     code=journey_code
                 )
-                if not journey.service.tracking:
+                if journey.service and not journey.service.tracking:
                     journey.service.tracking = True
                     journey.service.save(update_fields=['tracking'])
             delay = item['Delay']
