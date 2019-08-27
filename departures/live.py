@@ -861,7 +861,7 @@ def get_departures(stop, services):
         }, 30)
 
     # Transport for London
-    if stop.atco_code[:3] == '490':
+    if any(service.net == 'tfl' for service in services):
         departures = TflDepartures(stop, services)
         return ({
             'departures': departures,

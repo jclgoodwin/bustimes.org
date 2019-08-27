@@ -34,6 +34,9 @@ class LiveDeparturesTest(TestCase):
             locality_centre=False,
             active=True
         )
+        cls.london_service = Service.objects.create(net='tfl', service_code='tfl_60-8-_-y05', line_name='8',
+                                                    region_id='W', date='2017-01-01')
+        StopUsage.objects.create(stop=cls.london_stop, service=cls.london_service, order=1)
 
         cls.cardiff_stop = StopPoint.objects.create(
             pk='5710WDB48471',
@@ -116,10 +119,10 @@ class LiveDeparturesTest(TestCase):
         with vcr.use_cassette('data/vcr/tfl_arrivals.yaml'):
             row = live.TflDepartures(
                 self.london_stop,
-                ()
+                [self.london_service]
             ).get_departures()[0]
         self.assertEqual('Bow Church', row['destination'])
-        self.assertEqual('8', row['service'])
+        self.assertEqual(self.london_service, row['service'])
         self.assertEqual(2016, row['live'].date().year)
         self.assertEqual(7, row['live'].date().month)
         self.assertEqual(26, row['live'].date().day)
@@ -131,17 +134,17 @@ class LiveDeparturesTest(TestCase):
             <div class="aside box">
                 <h2>Next departures</h2>
                 <table><tbody>
-                    <tr><td>8</td><td>Bow Church</td><td>18:22⚡</td></tr>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td><td>18:22⚡</td></tr>
                     <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td><td>18:23⚡</td></tr>
-                    <tr><td>8</td><td>Bow Church</td><td>18:26⚡</td></tr>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td><td>18:26⚡</td></tr>
                     <tr><td>388</td><td>Stratford City</td><td>18:26⚡</td></tr>
-                    <tr><td>8</td><td>Bow Church</td><td>18:33⚡</td></tr>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td><td>18:33⚡</td></tr>
                     <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td><td>18:33⚡</td></tr>
-                    <tr><td>8</td><td>Bow Church</td><td>18:37⚡</td></tr>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td><td>18:37⚡</td></tr>
                     <tr><td>388</td><td>Stratford City</td><td>18:44⚡</td></tr>
                     <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td><td>18:44⚡</td></tr>
-                    <tr><td>8</td><td>Bow Church</td><td>18:44⚡</td></tr>
-                    <tr><td>8</td><td>Bow Church</td><td>18:49⚡</td></tr>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td><td>18:44⚡</td></tr>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td><td>18:49⚡</td></tr>
                 </tbody></table>
                 <p class="credit">⚡ denotes ‘live’ times predicted using actual locations of buses</p>
             </div>
