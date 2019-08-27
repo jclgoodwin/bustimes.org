@@ -8,7 +8,7 @@ from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
 from django.core.management import call_command
 from ...models import (Operator, DataSource, OperatorCode, Service, Region, StopPoint, Journey, StopUsageUsage,
-                       ServiceDate)
+                       ServiceDate, ServiceLink)
 from ..commands import import_services, generate_departures
 
 
@@ -229,8 +229,12 @@ class ImportServicesTest(TestCase):
 
         self.assertEqual(0, service.stopusage_set.all().count())
 
+    def test_service_nw_2(self):
         # Stagecoach Manchester 237
         service = Service.objects.get(service_code='NW_04_GMS_237_1')
+        duplicate = Service.objects.get(service_code='NW_04_GMS_237_2')
+        ServiceLink.objects.create(from_service=service, to_service=duplicate, how='parallel')
+
         self.assertEqual(service.description, 'Glossop - Stalybridge - Ashton')
 
         with freeze_time('1 September 2017'):
@@ -240,14 +244,15 @@ class ImportServicesTest(TestCase):
         with freeze_time('1 October 2017'):
             res = self.client.get(service.get_absolute_url())
 
-            self.assertNotContains(res, 'Timetable changes from Sunday 3 September 2017')
+        self.assertNotContains(res, 'Timetable changes from Sunday 3 September 2017')
 
-            self.assertEqual(18, len(res.context_data['timetable'].groupings[0].journeys))
+        self.assertEqual(18, len(res.context_data['timetable'].groupings[0].journeys))
 
-            res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
-            self.assertEqual(27, len(res.context_data['timetable'].groupings[0].journeys))
+        res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
+        self.assertEqual(27, len(res.context_data['timetable'].groupings[0].journeys))
 
-            self.assertEqual(1, service.stopusage_set.all().count())
+        self.assertEqual(0, service.stopusage_set.all().count())
+        self.assertEqual(1, duplicate.stopusage_set.all().count())
 
     @freeze_time('30 December 2016')
     def test_service_dates(self):
