@@ -93,7 +93,7 @@ class Command(BaseCommand):
             if not created and vehicle.latest_location:
                 latest_location = vehicle.latest_location
                 latest_location.current = False
-                latest_location.save()
+                latest_location.save(update_fields=['current'])
                 latest_journey = latest_location.journey
                 if line_name == latest_journey.route_name and journey_code == latest_journey.code:
                     if departure_time == latest_journey.datetime:
@@ -112,6 +112,9 @@ class Command(BaseCommand):
                     destination=destination,
                     code=journey_code
                 )
+                if not journey.service.tracking:
+                    journey.service.tracking = True
+                    journey.service.save(update_fields=['tracking'])
             delay = item['Delay']
             early = -round(dateparse.parse_duration(delay).total_seconds()/60)
             vehicle.latest_location = VehicleLocation.objects.create(
@@ -122,7 +125,7 @@ class Command(BaseCommand):
                 current=True,
                 early=early
             )
-            vehicle.save()
+            vehicle.save(update_fields=['latest_location'])
 
     def handle_data(self, data):
         for item in data['request_data']:
@@ -130,7 +133,7 @@ class Command(BaseCommand):
 
         now = timezone.now()
         self.source.datetime = now
-        self.source.save()
+        self.source.save(update_fields=['datetime'])
 
         five_minutes_ago = now - timedelta(minutes=5)
         locations = VehicleLocation.objects.filter(journey__source=self.source, current=True)
