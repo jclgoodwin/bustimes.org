@@ -173,23 +173,30 @@ def siri_one_shot(code):
     # current_locations.exclude(id__in=command.current_location_ids).update(current=False)
 
 
+schemes = ('Cornwall SIRI', 'Devon SIRI', 'Highland SIRI', 'Dundee SIRI', 'Bristol SIRI',
+           'Leicestershire SIRI', 'Dorset SIRI', 'Hampshire SIRI', 'West Sussex SIRI', 'Bucks SIRI',
+           'Peterborough SIRI')  # , 'Essex SIRI', 'Southampton SIRI', 'Slough SIRI', 'Staffordshire SIRI')
+
+
 def vehicles_last_modified(request):
     locations = get_locations(request)
 
     if 'service' in request.GET:
-        schemes = ('Cornwall SIRI', 'Devon SIRI', 'Highland SIRI', 'Dundee SIRI', 'Bristol SIRI',
-                   'Leicestershire SIRI', 'Dorset SIRI', 'Hampshire SIRI', 'West Sussex SIRI', 'Bucks SIRI',
-                   'Peterborough SIRI', 'Essex SIRI', 'Southampton SIRI', 'Slough SIRI', 'Staffordshire SIRI')
+        tracking = False
         service_id = request.GET['service']
         codes = ServiceCode.objects.filter(scheme__in=schemes, service=service_id)
         for code in codes:
             try:
                 siri_one_shot(code)
+                tracking = True
                 break
             except (SIRISource.DoesNotExist, Poorly, exceptions.RequestException):
                 continue
         if Operator.objects.filter(id__in=('KBUS', 'NCTR', 'TBTN', 'NOCT'), service=service_id).exists():
             rifkind(service_id)
+            tracking = True
+        if not tracking and not Service.objects.filter(service_code=service_id, tracking=True).exists():
+            return
     try:
         location = locations.values('datetime').latest('datetime')
         return location['datetime']
@@ -205,6 +212,8 @@ def vehicles_json(request):
 
     if 'service' in request.GET:
         extended = False
+        if not Service.objects.filter(service_code=request.GET['service'], tracking=True).exists():
+            locations = ()
     else:
         extended = True
         locations = locations.select_related('journey__service', 'journey__vehicle__operator'
