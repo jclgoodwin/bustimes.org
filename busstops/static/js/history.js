@@ -8,6 +8,9 @@
         L, reqwest
     */
 
+    var map,
+        tileURL = 'https://maps.bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png';
+
     function getMarker(latlng, direction) {
         direction = direction || 0;
         return L.marker(latlng, {
@@ -36,8 +39,7 @@
         mapContainer.className = 'full-screen';
         document.body.appendChild(mapContainer);
 
-        var map =  L.map('map'),
-            tileURL = 'https://maps.bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png';
+        map =  L.map('map');
 
         map.attributionControl.setPrefix('');
 
@@ -47,7 +49,7 @@
 
         var closeButton = L.control();
 
-        closeButton.onAdd = function(map) {
+        closeButton.onAdd = function() {
             var div = document.createElement('div');
             div.className = 'leaflet-bar';
             var a = document.createElement('a');
