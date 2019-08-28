@@ -647,9 +647,7 @@ class Service(models.Model):
         namelist = archive.namelist()
 
         if self.region_id == 'NW':
-            codes = [code.code for code in self.servicecode_set.filter(scheme='NW TNDS')] + [self.pk]
-            return [name for name in namelist
-                    if any(name == code + '.xml' or name.startswith(code + '_') for code in codes)]
+            return [name for name in namelist if name == f'{self.pk}.xml' or name.startswith(f'{self.pk}_')]
 
         if self.net:
             return [name for name in namelist if name.startswith('{}-'.format(self.pk))]
