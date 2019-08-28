@@ -24,12 +24,13 @@
 
     function closeMap() {
         map.remove();
+        document.body.removeChild(document.getElementById('map'));
         return false;
     }
 
     window.onkeydown = function(event) {
         if (map && event.keyCode === 27) {
-            map.remove();
+            closeMap();
         }
     };
 
