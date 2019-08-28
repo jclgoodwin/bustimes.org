@@ -19,13 +19,22 @@
         });
     }
 
+    function closeMap() {
+        map.remove();
+        return false;
+    }
+
+    window.onkeydown = function(event) {
+        if (map && event.keyCode === 27) {
+            map.remove();
+        }
+    };
 
     function openMap(event) {
         var mapContainer = document.createElement('div');
         mapContainer.id = 'map';
         mapContainer.className = 'full-screen';
-        var main = document.getElementsByTagName('main')[0];
-        main.appendChild(mapContainer);
+        document.body.appendChild(mapContainer);
 
         var map =  L.map('map'),
             tileURL = 'https://maps.bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png';
@@ -43,15 +52,11 @@
             div.className = 'leaflet-bar';
             var a = document.createElement('a');
             a.href = '#';
-            a.title = 'Close map';
+            a.style.width = 'auto';
+            a.style.padding = '0 8px';
             a.setAttribute('role', 'button');
-            a.setAttribute('aria-label', 'Close map');
-            a.onclick = function() {
-                map.remove();
-                main.removeChild(mapContainer);
-                return false;
-            };
-            a.innerHTML = '❌';
+            a.innerHTML = 'Close map';
+            a.onclick = closeMap;
             div.appendChild(a);
             return div;
         };
