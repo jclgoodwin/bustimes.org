@@ -255,7 +255,7 @@
 
     var closeButton = L.control();
 
-    closeButton.onAdd = function(map) {
+    closeButton.onAdd = function() {
         var div = document.createElement('div');
         div.className = 'leaflet-bar';
 
