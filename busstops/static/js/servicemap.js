@@ -146,13 +146,6 @@
             popup += '<br>';
         }
 
-        if (props.destination) {
-            popup = props.destination + '<br>' + popup;
-            if (props.destination.indexOf(' to ') === -1) {
-                popup = 'To ' + popup;
-            }
-        }
-
         var dateTime = new Date(props.datetime);
         popup += 'Updated at ' + dateTime.toTimeString().slice(0, 5);
 
@@ -167,6 +160,13 @@
         }
 
         popup = props.vehicle.name + '<br>' + popup;
+
+        if (props.destination) {
+            popup = props.destination + '<br>' + popup;
+            if (props.destination.indexOf(' to ') === -1) {
+                popup = 'To ' + popup;
+            }
+        }
 
         marker.bindPopup(popup);
     }
