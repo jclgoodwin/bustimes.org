@@ -1,9 +1,9 @@
 <ul class="has-smalls{{ class }}">
 {% for stop in stops %}
     {% if stop.current_services %}
-        <li itemscope itemtype="https://schema.org/BusStop" data-indicator="{{ stop.indicator }}"{% if stop.get_heading is not None %} data-heading="{{ stop.get_heading }}"{% endif %}>
+        <li>
             <a href="{{ stop.get_absolute_url }}">
-                <span itemprop="name">
+                <span>
                     {% if stop.indicator and object.common_name == stop.common_name %}
                         {{ stop.indicator }}
                         {% if stop.indicator in stop.prepositions %}
@@ -17,12 +17,6 @@
                     <small>{{ line_name }}</small>
                 {% endfor %}
             </a>
-            {% if stop.latlong %}
-                <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
-                    <meta itemprop="latitude" content="{{ stop.latlong.y }}" />
-                    <meta itemprop="longitude" content="{{ stop.latlong.x }}" />
-                </span>
-            {% endif %}
         </li>
     {% endif %}
 {% endfor %}

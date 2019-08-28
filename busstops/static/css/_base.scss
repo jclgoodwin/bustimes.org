@@ -571,10 +571,6 @@ table {
     }
 }
 
-.stop-map {
-    height: 210px;
-}
-
 .service-map {
     height: 240px;
     margin: 16px 0;
@@ -867,11 +863,6 @@ input:not(:checked) + label {
     }
 }
 
-.asides {
-    clear: both;
-    overflow: hidden;
-}
-
 .aside {
     margin-top: 1em;
 
@@ -899,25 +890,19 @@ input:not(:checked) + label {
         }
     }
 
+    h2 {
+        margin: .25em 0 .5em;
+    }
+
+    ul {
+        margin: 0;
+    }
+
     .credit {
         font-size: .75em;
         margin: .3em 0 0;
         text-align: right;
     }
-}
-
-.box {
-    border: 1px solid $brand-color;
-    box-sizing: border-box;
-    padding: .5em .75em;
-}
-
-.box h2 {
-    margin: .25em 0 .5em;
-}
-
-.box ul {
-    margin: 0;
 }
 
 #hugemap {

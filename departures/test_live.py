@@ -131,7 +131,7 @@ class LiveDeparturesTest(TestCase):
             response = self.client.get('/stops/' + self.london_stop.pk)
 
         self.assertContains(response, """
-            <div class="aside box">
+            <div class="aside">
                 <h2>Next departures</h2>
                 <table><tbody>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church</td><td>18:22⚡</td></tr>
@@ -384,7 +384,7 @@ class LiveDeparturesTest(TestCase):
             ]
         })
         self.assertContains(response, """
-            <div class="aside box">
+            <div class="aside">
                 <h2>Next departures</h2>
                 <h3>Wednesday</h3>
                 <table><tbody>

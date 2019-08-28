@@ -131,16 +131,6 @@ PIPELINE = {
                 'async': True
             }
         },
-        'placemap': {
-            'source_filenames': (
-                'js/bower_components/loadjs/dist/loadjs.min.js',
-                'js/placemap.js',
-            ),
-            'output_filename': 'js/placemap.min.js',
-            'extra_context': {
-                'async': True
-            }
-        },
         'global': {
             'source_filenames': (
                 'js/global.js',

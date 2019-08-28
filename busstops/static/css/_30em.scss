@@ -48,11 +48,12 @@ header {
 
 .asides {
     margin: 0 -1.5%;
+    overflow: hidden;
 }
 
 .aside {
     float: left;
-    margin: 1em 1.5% 0;
+    margin: 0 1.5%;
     width: 47%;
 }
 

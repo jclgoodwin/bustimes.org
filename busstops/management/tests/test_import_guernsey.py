@@ -42,20 +42,12 @@ class ImportGuernseyTest(TestCase):
         response = self.client.get(service.get_absolute_url())
         self.assertContains(response, 'Guernsey Buses')
         self.assertContains(response, """
-            <li class="OTH" itemscope itemtype="https://schema.org/BusStop">
-                <a href="/stops/gg-890000560">
-                    <span itemprop="name">Glategny Esplanade (N-bound)</span>
-                </a>
+            <li class="OTH">
+                <a href="/stops/gg-890000560">Glategny Esplanade (N-bound)</a>
             </li>
         """, html=True)
         self.assertContains(response, """
-            <li class="PTP" itemscope itemtype="https://schema.org/BusStop">
-                <a href="/stops/gg-890000487">
-                    <span itemprop="name">Town Terminus</span>
-                    <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
-                        <meta itemprop="latitude" content="49.4536581719" />
-                        <meta itemprop="longitude" content="-2.53547245654" />
-                    </span>
-                </a>
+            <li class="PTP" >
+                <a href="/stops/gg-890000487">Town Terminus</a>
             </li>
         """, html=True)

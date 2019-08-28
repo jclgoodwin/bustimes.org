@@ -2,25 +2,14 @@
 
 {% block content %}
 
-<div itemscope itemtype="https://schema.org/BusStop">
-
-<h1 itemprop="name">{{ stoppoint.get_long_name }}</h1>
+<h1>{{ stoppoint.get_long_name }}</h1>
 
 {% if text %}
-<p>{{ text }}</p>
+    <p>{{ text }}</p>
 {% endif %}
 
 {% if stoppoint.bearing %}
-<p>Buses go {{ stoppoint.get_bearing_display }} from here</p>
-{% endif %}
-
-{% if stoppoint.latlong %}
-    <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
-        <meta itemprop="latitude" content="{{ stoppoint.latlong.y }}" />
-        <meta itemprop="longitude" content="{{ stoppoint.latlong.x }}" />
-    </span>
-
-    <div class="stop-map" id="map" data-indicator="{{ stoppoint.indicator }}"{% if stoppoint.get_heading is not None %} data-heading="{{ stoppoint.get_heading }}"{% endif %}></div>
+    <p>Buses go {{ stoppoint.get_bearing_display }} from here</p>
 {% endif %}
 
 <div class="asides">
@@ -28,7 +17,7 @@
 {% include 'departures.html' with departures=departures %}
 
 {% if services %}
-    <div class="aside box">
+    <div class="aside">
     <h2>{% include 'modes.html' with modes=modes noun='services' %}</h2>
     <ul class="has-smalls">
     {% for s in services %}
@@ -44,13 +33,11 @@
 {% endif %}
 
 {% if nearby %}
-<div class="aside box">
+<div class="aside">
     <h2>Nearby stops</h2>
     {% include 'stops.html' with stops=nearby %}
 </div>
 {% endif %}
-
-</div>
 
 </div>
 

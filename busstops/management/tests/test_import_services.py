@@ -299,7 +299,7 @@ class ImportServicesTest(TestCase):
         service.show_timetable = False
         service.save()
         res = self.client.get(service.get_absolute_url())
-        self.assertContains(res, '<span itemprop="name">Leys Lane (adj)</span>')
+        self.assertContains(res, 'Leys Lane (adj)')
         self.assertContains(res, 'Norwich - Wymondham - Attleborough')
         self.assertContains(res, 'Attleborough - Wymondham - Norwich')
 
@@ -416,14 +416,8 @@ class ImportServicesTest(TestCase):
         res = self.client.get(service.get_absolute_url())
         self.assertContains(res, 'Outbound')
         self.assertContains(res, """
-            <li class="OTH" itemscope itemtype="https://schema.org/BusStop">
-                <a href="/stops/639004554">
-                    <span itemprop="name">Witton Park (opp)</span>
-                    <span itemprop="geo" itemscope itemtype="https://schema.org/GeoCoordinates">
-                        <meta itemprop="latitude" content="-2.5108434749" />
-                        <meta itemprop="longitude" content="53.7389877672" />
-                    </span>
-                </a>
+            <li class="OTH">
+                <a href="/stops/639004554">Witton Park (opp)</a>
             </li>
         """, html=True)
 
