@@ -39,10 +39,12 @@
 
 {% block foot %}
     {% load static %}
-    <script src="{% static 'js/accessible-autocomplete/dist/accessible-autocomplete.min.js' %}"></script>
+    <script src="{% static 'js/accessible-autocomplete/accessible-autocomplete.min.js' %}"></script>
     <script>
-        accessibleAutocomplete.enhanceSelectElement({
-            selectElement: document.getElementById('id_vehicle_type')
+        window.addEventListener('DOMContentLoaded', function() {
+            accessibleAutocomplete.enhanceSelectElement({
+                selectElement: document.getElementById('id_vehicle_type')
+            });
         });
     </script>
 {% endblock %}

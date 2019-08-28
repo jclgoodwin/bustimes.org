@@ -14,7 +14,9 @@ Python 3.6 or newer is required. Use [Pipenv](https://docs.pipenv.org/en/latest/
     pipenv --python 3.6
     pipenv install --dev
 
-There are also some JavaScript dependencies: Node.js ones, and some front-end ones installed using Bower.
+There are also some JavaScript dependencies:
+
+	npm install
 
 ## Importing data
 

@@ -11,7 +11,6 @@ data/*.csv
 data/NPTG
 node_modules
 htmlcov
-**/bower_components
 .env
 .coverage
 slim-bustimes.sql

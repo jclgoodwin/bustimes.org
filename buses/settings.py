@@ -151,8 +151,7 @@ PIPELINE = {
         },
         'bigmap': {
             'source_filenames': (
-                'js/bower_components/reqwest/reqwest.min.js',
-                'js/bower_components/jquery-throttle-debounce/jquery.ba-throttle-debounce.min.js',
+                'js/reqwest.min.js',
                 'js/bigmap.js',
             ),
             'output_filename': 'js/bigmap.min.js',
@@ -162,8 +161,8 @@ PIPELINE = {
         },
         'servicemap': {
             'source_filenames': (
-                'js/bower_components/leaflet/dist/leaflet.js',
-                'js/bower_components/reqwest/reqwest.min.js',
+                'js/leaflet/leaflet.js',
+                'js/reqwest.min.js',
                 'js/servicemap.js',
             ),
             'output_filename': 'js/servicemap.min.js',
