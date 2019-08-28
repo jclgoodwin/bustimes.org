@@ -24,7 +24,8 @@
         newStops = {},
         stopsGroup = L.layerGroup(),
         vehiclesGroup = L.layerGroup(),
-        highWater;
+        highWater,
+        first = true;
 
     stopsGroup.addTo(map);
     vehiclesGroup.addTo(map);
@@ -250,6 +251,16 @@
                     stopsGroup.removeLayer(oldStops[stop]);
                 }
             }
+            if (first) {
+                if (document.referrer && document.referrer.indexOf('/stops/') > -1) {
+                    var stop = '/stops/' + document.referrer.split('/stops/')[1];
+                    stop = newStops[stop];
+                    if (stop) {
+                        stop.openPopup();
+                    }
+                }
+                first = false;
+            }
             oldStops = newStops;
             newStops = {};
         }
@@ -281,9 +292,11 @@
                 lastStopsReq.abort();
             }
             if (map.getZoom() < 15) {
+                // zoomed out too far to show stops
                 stopsGroup.clearLayers();
                 oldStops = {};
                 highWater = null;
+                first = false;
                 return;
             }
             if (highWater && highWater.contains(bounds)) {
