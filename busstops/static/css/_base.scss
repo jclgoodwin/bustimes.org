@@ -276,21 +276,24 @@ input[type='submit'] {
     color: inherit;
     display: inline-block;
     font: inherit;
-    margin-top: .0625em;
+    margin-bottom: 0.0625em;
+    top: .0625em;
     padding: .25em .5em;
-    vertical-align: bottom;
+    position: relative;
 
     &:hover {
         border-bottom-width: .125em;
-        margin-top: 0;
         text-decoration: none;
+        margin-bottom: 0;
+        top: 0;
     }
 
     &:focus,
     &:active {
         background-color: $brand-color-darker;
         border-bottom: 0;
-        margin-top: .125em;
+        margin-bottom: 0.125em;
+        top: .0625em;
     }
 }
 
@@ -558,6 +561,12 @@ table {
     }
 }
 
+#buses-online {
+    button {
+        margin-right: .5em;
+    }
+}
+
 #map {
     bottom: 0;
     left: 0;
@@ -572,10 +581,10 @@ table {
 }
 
 .service-map {
-    height: 240px;
-    margin: 16px 0;
+    display: none;
 
     &.expanded {
+        display: block;
         height: auto;
         margin: 0;
         z-index: 1;

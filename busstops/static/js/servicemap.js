@@ -8,10 +8,7 @@
         L, reqwest
     */
 
-    var map = L.map('map', {
-            // tap: false,
-            scrollWheelZoom: false,
-        }),
+    var map = L.map('map'),
         tileURL = 'https://maps.bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
         polyline,
         statusBar = L.control({
@@ -20,7 +17,10 @@
         bounds,
         lastReq,
         oldVehicles = {},
-        newVehicles = {};
+        newVehicles = {},
+        first = true,
+        busesOnline = document.getElementById('buses-online'),
+        button = busesOnline.getElementsByTagName('button')[0];
 
     map.attributionControl.setPrefix('');
 
@@ -28,17 +28,25 @@
         attribution: '<a href="https://www.maptiler.com/copyright/">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
     }).addTo(map);
 
-    if (window.geometry) {
-        polyline = L.geoJson(window.geometry, {
-            style: {
-                weight: 2
-            }
-        });
-        polyline.addTo(map);
-        bounds = polyline.getBounds();
-        map.fitBounds(bounds);
-        map.setMaxBounds(bounds.pad(1));
-    }
+    button.onclick = function() {
+        map.getContainer().className += ' expanded';
+        document.body.style.overflow = 'hidden';
+
+        map.invalidateSize();
+
+        if (first && window.geometry) {
+            polyline = L.geoJson(window.geometry, {
+                style: {
+                    weight: 2
+                }
+            });
+            polyline.addTo(map);
+            bounds = polyline.getBounds();
+            map.fitBounds(bounds);
+            map.setMaxBounds(bounds.pad(1));
+            first = false;
+        }
+    };
 
     statusBar.onAdd = function () {
         var div = L.DomUtil.create('div', 'hugemap-status');
@@ -164,14 +172,6 @@
     }
 
     function processData(data) {
-        if (data.features.length === 0) {
-            busesOnlineCount.innerHTML = 'No buses online.';
-        } else if (data.features.length === 1) {
-            busesOnlineCount.innerHTML = '1 bus online.';
-        } else {
-            busesOnlineCount.innerHTML = data.features.length + ' buses online.';
-        }
-
         bounds = L.latLngBounds();
 
         for (var i = data.features.length - 1; i >= 0; i -= 1) {
@@ -205,9 +205,8 @@
             if (lastReq.request.status === 200 && data && data.features) {
                 if (!busesOnlineCount) { // first load
                     if (data.features.length) {
-                        var p = document.getElementById('buses-online');
-                        p.innerHTML = '<strong id="buses-online-count"></strong> Click on a bus to see when it last updated';
-                        busesOnlineCount = document.getElementById('buses-online-count');
+                        busesOnlineCount = document.createElement('span');
+                        busesOnline.appendChild(busesOnlineCount);
                         if (document.addEventListener) {
                             document.addEventListener('visibilitychange', handleVisibilityChange);
                         }
@@ -215,6 +214,14 @@
                         statusBar.getContainer().innerHTML = '';
                         return;
                     }
+                }
+
+                if (data.features.length === 0) {
+                    busesOnlineCount.innerHTML = 'No buses online';
+                } else if (data.features.length === 1) {
+                    busesOnlineCount.innerHTML = '1 bus online';
+                } else {
+                    busesOnlineCount.innerHTML = data.features.length + ' buses online';
                 }
                 processData(data);
             }
@@ -232,50 +239,39 @@
         }
     }
 
-    var expandButton = L.control(),
-        expanded = false;
+    function closeMap() {
+        var container = map.getContainer();
+        container.className = container.className.replace(' expanded', '');
+        document.body.style.overflow = '';
 
-    expandButton.onAdd = function(map) {
+        return false;
+    }
+
+    window.onkeydown = function(event) {
+        if (event.keyCode === 27) {
+            closeMap();
+        }
+    };
+
+    var closeButton = L.control();
+
+    closeButton.onAdd = function(map) {
         var div = document.createElement('div');
         div.className = 'leaflet-bar';
+
         var a = document.createElement('a');
         a.href = '#';
-        a.title = 'Bigger';
+        a.style.width = 'auto';
+        a.style.padding = '0 8px';
         a.setAttribute('role', 'button');
-        var img = document.createElement('img');
-        img.alt = 'Expand';
-        img.width = 16;
-        img.height = 16;
-        img.src = '/static/expand.png';
-        a.appendChild(img);
+        a.innerHTML = 'Close map';
+        a.onclick = closeMap;
+
         div.appendChild(a);
-        a.onclick = function() {
-            var container = map.getContainer();
-            if (expanded) {
-                expanded = false;
-                container.className = container.className.replace(' expanded', '');
-                document.body.style.overflow = '';
-                map.scrollWheelZoom.disable();
-                a.title = 'Bigger';
-                img.alt = 'Expand';
-                img.src = '/static/expand.png';
-            } else {
-                expanded = true;
-                container.className += ' expanded';
-                document.body.style.overflow = 'hidden';
-                map.scrollWheelZoom.enable();
-                a.title = 'Smaller';
-                img.alt = 'Smaller';
-                img.src = '/static/contract.png';
-            }
-            map.invalidateSize();
-            map.fitBounds(polyline.getBounds());
-            return false;
-        };
         return div;
     };
 
-    expandButton.addTo(map);
+    closeButton.addTo(map);
 
     load(map, statusBar);
 })();

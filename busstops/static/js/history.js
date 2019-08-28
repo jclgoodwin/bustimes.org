@@ -35,45 +35,45 @@
     };
 
     function openMap(event) {
-        var mapContainer = document.createElement('div');
-        mapContainer.id = 'map';
-        mapContainer.className = 'full-screen';
-        document.body.appendChild(mapContainer);
-
-        map =  L.map('map');
-
-        map.attributionControl.setPrefix('');
-
-        L.tileLayer(tileURL, {
-            attribution: '<a href="https://www.maptiler.com/copyright/">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
-        }).addTo(map);
-
-        var closeButton = L.control();
-
-        closeButton.onAdd = function() {
-            var div = document.createElement('div');
-            div.className = 'leaflet-bar';
-            var a = document.createElement('a');
-            a.href = '#';
-            a.style.width = 'auto';
-            a.style.padding = '0 8px';
-            a.setAttribute('role', 'button');
-            a.innerHTML = 'Close map';
-            a.onclick = closeMap;
-            div.appendChild(a);
-            return div;
-        };
-
-        closeButton.addTo(map);
-
         reqwest('/journeys/' + event.target.getAttribute('data-journey-id') + '.json', function(locations) {
-            var i,
+            var mapContainer = document.createElement('div'),
+                i,
                 dateTime,
                 popup,
                 delta,
                 coordinates,
                 line = [],
                 bounds;
+
+            mapContainer.id = 'map';
+            mapContainer.className = 'full-screen';
+            document.body.appendChild(mapContainer);
+
+            map =  L.map('map');
+
+            map.attributionControl.setPrefix('');
+
+            L.tileLayer(tileURL, {
+                attribution: '<a href="https://www.maptiler.com/copyright/">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
+            }).addTo(map);
+
+            var closeButton = L.control();
+
+            closeButton.onAdd = function() {
+                var div = document.createElement('div');
+                div.className = 'leaflet-bar';
+                var a = document.createElement('a');
+                a.href = '#';
+                a.style.width = 'auto';
+                a.style.padding = '0 8px';
+                a.setAttribute('role', 'button');
+                a.innerHTML = 'Close map';
+                a.onclick = closeMap;
+                div.appendChild(a);
+                return div;
+            };
+
+            closeButton.addTo(map);
 
             for (i = locations.length - 1; i >= 0; i -= 1) {
                 dateTime = new Date(locations[i].datetime);
