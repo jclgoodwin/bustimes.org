@@ -253,7 +253,7 @@
             }
             if (first) {
                 if (document.referrer && document.referrer.indexOf('/stops/') > -1) {
-                    var stop = '/stops/' + document.referrer.split('/stops/')[1];
+                    stop = '/stops/' + document.referrer.split('/stops/')[1];
                     stop = newStops[stop];
                     if (stop) {
                         stop.openPopup();
