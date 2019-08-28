@@ -337,7 +337,7 @@
         };
     }
 
-    map.on('moveend', debounce(500, handleMoveEnd));
+    map.on('moveend', debounce(handleMoveEnd, 500));
 
     window.onhashchange = function(event) {
         var parts = event.target.location.hash.substr(1).split('/');
