@@ -69,6 +69,7 @@ class Livery(models.Model):
     colours = models.CharField(max_length=255, blank=True)
     css = models.CharField(max_length=255, blank=True)
     horizontal = models.BooleanField(default=False)
+    angle = models.PositiveSmallIntegerField(null=True, blank=True)
 
     class Meta:
         ordering = ('name',)
@@ -289,7 +290,7 @@ class VehicleLocation(models.Model):
     datetime = models.DateTimeField()
     latlong = models.PointField()
     journey = models.ForeignKey(VehicleJourney, models.CASCADE)
-    heading = models.PositiveIntegerField(null=True, blank=True)
+    heading = models.PositiveSmallIntegerField(null=True, blank=True)
     early = models.IntegerField(null=True, blank=True)
     current = models.BooleanField(default=False, db_index=True)
 
