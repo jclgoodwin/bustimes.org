@@ -135,6 +135,16 @@ class Vehicle(models.Model):
             return str(self.fleet_number)
         return self.code.replace('_', ' ')
 
+    def get_previous(self):
+        if self.fleet_number and self.operator:
+            vehicles = self.operator.vehicle_set
+            return vehicles.filter(fleet_number__lt=self.fleet_number).order_by('-fleet_number').first()
+
+    def get_next(self):
+        if self.fleet_number and self.operator:
+            vehicles = self.operator.vehicle_set
+            return vehicles.filter(fleet_number__gt=self.fleet_number).order_by('fleet_number').first()
+
     def get_reg(self):
         if self.reg[-3:].isalpha():
             return self.reg[:-3] + '\u00A0' + self.reg[-3:]

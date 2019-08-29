@@ -270,8 +270,13 @@ class VehicleDetailView(DetailView):
         context['dates'] = journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date')
         if not context['dates']:
             raise Http404()
+
         if self.object.operator:
             context['breadcrumb'] = [self.object.operator, Vehicles(self.object.operator)]
+
+            context['previous'] = self.object.get_previous()
+            context['next'] = self.object.get_next()
+
         date = self.request.GET.get('date')
         if date:
             try:
@@ -297,6 +302,7 @@ def edit_vehicle(request, vehicle_id):
         'colours': str(vehicle.livery_id or vehicle.colours),
         'notes': vehicle.notes
     }
+
     if request.method == 'POST':
         form = EditVehicleForm(request.POST, initial=initial, vehicle=vehicle)
         if not form.has_changed():
@@ -307,14 +313,18 @@ def edit_vehicle(request, vehicle_id):
             submitted = True
     else:
         form = EditVehicleForm(initial=initial, vehicle=vehicle)
+
     if vehicle.operator:
         breadcrumb = [vehicle.operator, Vehicles(vehicle.operator), vehicle]
     else:
         breadcrumb = [vehicle]
+
     return render(request, 'edit_vehicle.html', {
         'breadcrumb': breadcrumb,
         'form': form,
         'vehicle': vehicle,
+        'previous': vehicle.get_previous(),
+        'next': vehicle.get_next(),
         'submitted': submitted
     })
 

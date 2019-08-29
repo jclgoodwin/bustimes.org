@@ -934,6 +934,14 @@ input:not(:checked) + label {
     word-wrap: break-word;
 }
 
+.previous {
+    float: left;
+}
+
+.next {
+    float: right;
+}
+
 .banner-ad {
     min-height: 5.25em;
     overflow: hidden;

@@ -84,6 +84,14 @@
     <p>Sorry, nothing found for {{ date }}</p>
 {% endif %}
 
+{% if previous %}
+    <p class="previous"><a href="{{ previous.get_absolute_url }}">&larr; {{ previous }}</a></p>
+{% endif %}
+
+{% if next %}
+    <p class="next"><a href="{{ next.get_absolute_url }}">{{ next }} &rarr;</a></p>
+{% endif %}
+
 {% endblock %}
 
 {% block ad %}{% endblock %}
