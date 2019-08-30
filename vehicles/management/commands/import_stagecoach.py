@@ -99,15 +99,14 @@ class Command(ImportLiveVehiclesCommand):
                 defaults = {
                     'source': self.source
                 }
-            if operator:
-                defaults['operator'] = operator
             if vehicle.isdigit():
                 defaults['fleet_number'] = vehicle
-            if not operator or operator.name.startswith('Stagecoach '):
-                vehicle, created = self.vehicles.get_or_create(defaults, operator__name__startswith='Stagecoach ',
-                                                               code=vehicle)
-            else:  # Scottish Citylink
-                vehicle, created = self.vehicles.get_or_create(defaults, operator=operator, code=vehicle)
+            operator_condition = Q(operator__name__startswith='Stagecoach ')
+            if operator:
+                defaults['operator'] = operator
+                if not operator.name.startswith('Stagecoach '):
+                    operator_condition |= Q(operator=operator)  # Scottish Citylink
+                vehicle, created = self.vehicles.filter(operator_condition).get_or_create(defaults, code=vehicle)
 
         self.vehicles_ids[item['fn']] = vehicle.id
 
