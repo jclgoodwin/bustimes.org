@@ -136,8 +136,8 @@ class Command(BaseCommand):
         self.source.save(update_fields=['datetime'])
 
         five_minutes_ago = now - timedelta(minutes=5)
-        locations = VehicleLocation.objects.filter(journey__source=self.source, current=True)
-        locations.filter(datetime__lte=five_minutes_ago).update(current=False)
+        locations = VehicleLocation.objects.filter(journey__source=self.source, latest_vehicle__isnull=False)
+        locations.filter(current=True, datetime__lte=five_minutes_ago).update(current=False)
 
     async def get_client_data(self):
         browser = await pyppeteer.launch(handleSIGINT=False)
