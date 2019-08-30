@@ -15,9 +15,4 @@ class Migration(migrations.Migration):
             name='angle',
             field=models.PositiveSmallIntegerField(blank=True, null=True),
         ),
-        migrations.AlterField(
-            model_name='vehiclelocation',
-            name='heading',
-            field=models.PositiveSmallIntegerField(blank=True, null=True),
-        ),
     ]

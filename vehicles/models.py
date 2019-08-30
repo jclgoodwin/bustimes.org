@@ -290,7 +290,7 @@ class VehicleLocation(models.Model):
     datetime = models.DateTimeField()
     latlong = models.PointField()
     journey = models.ForeignKey(VehicleJourney, models.CASCADE)
-    heading = models.PositiveSmallIntegerField(null=True, blank=True)
+    heading = models.PositiveIntegerField(null=True, blank=True)
     early = models.IntegerField(null=True, blank=True)
     current = models.BooleanField(default=False, db_index=True)
 
