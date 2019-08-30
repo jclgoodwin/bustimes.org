@@ -4,7 +4,7 @@ import logging
 import sys
 from setproctitle import setproctitle
 from time import sleep
-from django.db import Error, IntegrityError, transaction
+from django.db import Error, IntegrityError, InterfaceError, transaction
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from busstops.models import DataSource, ServiceCode
@@ -214,7 +214,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
             try:
                 wait = self.update()
             except Error as e:
-                wait = 0
-                print(e)
                 logger.error(e, exc_info=True)
+                if type(e) is InterfaceError:
+                    sys.exit()
+                wait = 30
             sleep(wait)
