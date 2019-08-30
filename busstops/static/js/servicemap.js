@@ -81,7 +81,9 @@
             map.setMaxBounds(bounds.pad(1));
         }
 
-        processData(response);
+        if (response) {
+            processData(response);
+        }
     }
 
     function getRotation(direction) {
