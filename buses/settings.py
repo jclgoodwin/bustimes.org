@@ -161,7 +161,7 @@ PIPELINE = {
         },
         'servicemap': {
             'source_filenames': (
-                'js/leaflet/leaflet.js',
+                'js/loadjs/loadjs.min.js',
                 'js/reqwest.min.js',
                 'js/servicemap.js',
             ),
