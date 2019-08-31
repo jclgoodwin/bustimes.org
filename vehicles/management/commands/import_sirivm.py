@@ -280,9 +280,7 @@ class Command(ImportLiveVehiclesCommand):
             if operator.id != 'RBUS' and operator.id != 'ARBB':
                 try:
                     operator = journey.service.operator.get()
-                    if vehicle.operator_id != operator.id:
-                        vehicle.operator = operator
-                        vehicle.save()
+                    vehicle.maybe_change_operator(operator)
                 except (Operator.MultipleObjectsReturned, Operator.DoesNotExist):
                     pass
 

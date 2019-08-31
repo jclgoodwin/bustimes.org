@@ -2,6 +2,8 @@ import re
 from math import ceil
 from urllib.parse import quote
 from webcolors import html5_parse_simple_color
+from datetime import timedelta
+from django.utils import timezone
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
 from django.db.models import Count
@@ -215,6 +217,13 @@ class Vehicle(models.Model):
     get_flickr_link.short_description = 'Flickr'
 
     clean = Livery.clean
+
+    def maybe_change_operator(self, operator):
+        if self.operator_id != operator.id:
+            week_ago = timezone.now() - timedelta(days=7)
+            if not self.vehiclejourney_set.filter(service__operator=operator, datetime__gt=week_ago).exists():
+                self.operator_id = operator.id
+                self.save(update_fields=['operator'])
 
 
 class VehicleEdit(models.Model):
