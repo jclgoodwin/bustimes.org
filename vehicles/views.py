@@ -59,7 +59,11 @@ def get_vehicle_edit(vehicle, fields):
 
 
 def operator_vehicles(request, slug):
-    operator = get_object_or_404(Operator.objects.select_related('region'), slug=slug)
+    operators = Operator.objects.select_related('region')
+    try:
+        operator = get_object_or_404(operators, slug=slug)
+    except Http404:
+        operator = get_object_or_404(operators, operatorcode__code=slug, operatorcode__source__name='slug')
     vehicles = operator.vehicle_set
     latest_journeys = Subquery(VehicleJourney.objects.filter(
         vehicle=OuterRef('pk')

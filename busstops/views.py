@@ -431,15 +431,19 @@ class OperatorDetailView(DetailView):
     "An operator and the services it operates"
 
     model = Operator
-    queryset = model.objects.select_related('region')
+    queryset = model.objects.select_related('region').prefetch_related('licences')
 
     def get_object(self, **kwargs):
         try:
             return super().get_object(**kwargs)
         except Http404 as e:
             if 'slug' in self.kwargs:
-                self.kwargs['pk'] = self.kwargs['slug'].upper()
-                return super().get_object(**kwargs)
+                try:
+                    return get_object_or_404(self.queryset, operatorcode__code=self.kwargs['slug'],
+                                             operatorcode__source__name='slug')
+                except Http404:
+                    self.kwargs['pk'] = self.kwargs['slug'].upper()
+                    return super().get_object(**kwargs)
             raise e
 
     def get_context_data(self, **kwargs):
@@ -455,13 +459,12 @@ class OperatorDetailView(DetailView):
     def render_to_response(self, context):
         if not context['services']:
             alternative = self.model.objects.filter(
-                operatorcode__code=self.object.id,
-                operatorcode__source__name='National Operator Codes',
+                name=self.object.name,
                 service__current=True
             ).first()
             if alternative:
                 return redirect(alternative)
-            raise Http404('Sorry, it looks like no services are currently operated by {}'.format(self.object))
+            raise Http404
         return super().render_to_response(context)
 
 
