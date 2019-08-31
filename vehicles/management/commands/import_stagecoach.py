@@ -123,7 +123,7 @@ class Command(ImportLiveVehiclesCommand):
         journey.destination = item.get('dd', '')
         journey.route_name = item.get('sn', '')
 
-        if item['ao']:
+        if item['ao'] and journey.route_name:
             journey.datetime = datetime.fromtimestamp(int(item['ao']) / 1000, timezone.utc)
 
         latest_location = vehicle.latest_location
