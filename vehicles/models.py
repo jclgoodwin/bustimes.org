@@ -12,7 +12,7 @@ from django.utils.safestring import mark_safe
 from busstops.models import Operator, Service, DataSource, SIRISource
 
 
-def get_css(colours, direction=None, horizontal=False):
+def get_css(colours, direction=None, horizontal=False, angle=None):
     if len(colours) == 1:
         return colours[0]
     if direction is None:
@@ -21,7 +21,12 @@ def get_css(colours, direction=None, horizontal=False):
     if horizontal:
         background += 'to top'
     elif direction < 180:
-        background += 'to left'
+        if angle:
+            background += f'{360-angle}deg'
+        else:
+            background += 'to left'
+    elif angle:
+        background += f'{angle}deg'
     else:
         background += 'to right'
     percentage = 100 / len(colours)
@@ -80,12 +85,20 @@ class Livery(models.Model):
     def __str__(self):
         return self.name
 
-    def preview(self, name=False):
+    def get_css(self, direction=None):
         if self.css:
-            background = self.css
-        elif self.colours:
-            background = get_css(self.colours.split(), None, self.horizontal)
-        else:
+            css = self.css
+            if direction and direction < 180:
+                for angle in re.findall(r'\((\d+)deg,', css):
+                    replacement = 360 - int(angle)
+                    css = css.replace(f'({angle}deg,', f'({replacement}deg,', 1)
+                return css
+        if self.colours:
+            return get_css(self.colours.split(), direction, self.horizontal, self.angle)
+
+    def preview(self, name=False):
+        background = self.get_css()
+        if not background:
             return
         div = f'<div style="height:1.5em;width:4em;background:{background}"'
         if name:
@@ -164,14 +177,7 @@ class Vehicle(models.Model):
 
     def get_livery(self, direction=None):
         if self.livery:
-            if self.livery.css:
-                css = self.livery.css
-                if direction and direction < 180:
-                    for angle in re.findall(r'\((\d+)deg,', css):
-                        replacement = 360 - int(angle)
-                        css = css.replace(f'({angle}deg,', f'({replacement}deg,', 1)
-                return css
-            colours = self.livery.colours
+            return self.livery.get_css(direction=direction)
         else:
             colours = self.colours
         if colours:
@@ -200,6 +206,8 @@ class Vehicle(models.Model):
     def get_flickr_link(self):
         return mark_safe(f'<a href="{self.get_flickr_url()}" target="_blank" rel="noopener">Flickr</a>')
 
+    get_flickr_link.short_description = 'Flickr'
+
     def get_livery_choices(self):
         choices = {}
         liveries = Livery.objects.filter(vehicle__operator=self.operator_id).annotate(popularity=Count('vehicle'))
@@ -213,8 +221,6 @@ class Vehicle(models.Model):
         choices = [(key, livery.preview(name=True)) for key, livery in choices.items()]
         choices.append(('Other', 'Other'))
         return choices
-
-    get_flickr_link.short_description = 'Flickr'
 
     clean = Livery.clean
 
