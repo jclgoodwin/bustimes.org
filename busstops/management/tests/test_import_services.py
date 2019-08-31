@@ -248,8 +248,10 @@ class ImportServicesTest(TestCase):
 
         self.assertEqual(18, len(res.context_data['timetable'].groupings[0].journeys))
 
-        res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
+        with freeze_time('1 October 2017'):
+            res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
         self.assertEqual(27, len(res.context_data['timetable'].groupings[0].journeys))
+        self.assertEqual(30, len(res.context_data['timetable'].groupings[1].journeys))
 
         self.assertEqual(0, service.stopusage_set.all().count())
         self.assertEqual(1, duplicate.stopusage_set.all().count())
