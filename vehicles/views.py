@@ -379,14 +379,36 @@ def siri(request):
     iterator = ET.iterparse(BytesIO(request.body))
     for _, element in iterator:
         if element.tag[29:] == 'EstimatedJourneyVersionFrame':
-            vehicle = element.find('siri:EstimatedVehicleJourney/siri:VehicleRef', ns)
+            journey = element.find('siri:EstimatedVehicleJourney', ns)
+            vehicle = journey.find('siri:VehicleRef', ns)
             if vehicle is not None:
-                operator_ref = element.find('siri:EstimatedVehicleJourney/siri:OperatorRef', ns).text
+                operator_ref, fleet_number = vehicle.text.split('-')
+                if not fleet_number.isdigit():
+                    fleet_number = None
                 if operator_ref in operator_refs:
                     operator = operator_refs[operator_ref]
-                    Vehicle.objects.get_or_create({'source': source}, code=vehicle.text, operator_id=operator[0])
+                    vehicle, _ = Vehicle.objects.get_or_create({'source': source}, code=vehicle.text,
+                                                               fleet_number=fleet_number, operator_id=operator[0])
                 else:
-                    Vehicle.objects.get_or_create({'source': source}, code=vehicle.text)
-                    print(ET.tostring(element).decode())
+                    vehicle, _ = Vehicle.objects.get_or_create({'source': source}, code=vehicle.text,
+                                                               fleet_number=fleet_number)
+                for call in journey.find('siri:EstimatedCalls', ns):
+                    visit_number = int(call.find('siri:VisitNumber', ns).text)
+                    if visit_number == 1:
+                        departure_time = call.find('siri:ExpectedDepartureTime', ns).text
+                        journey_ref = journey.find('siri:DatedVehicleJourneyRef', ns).text
+                        route_name = journey.find('siri:PublishedLineName', ns).text
+                        destination = journey.find('siri:DirectionName', ns).text
+                        VehicleJourney.objects.get_or_create(
+                            {
+                                'code': journey_ref,
+                                'route_name': route_name,
+                                'destination': destination,
+                                'source': source,
+                            },
+                            vehicle=vehicle,
+                            datetime=departure_time
+                        )
+                    break
             element.clear()
     return HttpResponse()
