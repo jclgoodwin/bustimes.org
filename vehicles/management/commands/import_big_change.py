@@ -58,14 +58,11 @@ def on_message(data):
         )
 
     with atomic():
-        if not created and latest_location:
-            latest_location.journey.vehiclelocation_set.update(current=False)
         vehicle.latest_location = VehicleLocation.objects.create(
             journey=journey,
             datetime=datetime,
             latlong=latlong,
             heading=data['dir'],
-            current=True
         )
         vehicle.save()
 

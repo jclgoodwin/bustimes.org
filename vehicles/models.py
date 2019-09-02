@@ -286,8 +286,20 @@ class VehicleJourney(models.Model):
     destination = models.CharField(max_length=255, blank=True)
     direction = models.CharField(max_length=8, blank=True)
 
+    def __str__(self):
+        return f'{self.datetime}'
+
     class Meta:
         ordering = ('id',)
+
+
+class Call(models.Model):
+    journey = models.ForeignKey(VehicleJourney, models.CASCADE, editable=False)
+    visit_number = models.PositiveSmallIntegerField()
+    aimed_arrival_time = models.DateTimeField()
+    expected_arrival_time = models.DateTimeField()
+    aimed_departure_time = models.DateTimeField()
+    expected_departure_time = models.DateTimeField()
 
 
 class JourneyCode(models.Model):
@@ -307,13 +319,9 @@ class VehicleLocation(models.Model):
     journey = models.ForeignKey(VehicleJourney, models.CASCADE)
     heading = models.PositiveIntegerField(null=True, blank=True)
     early = models.IntegerField(null=True, blank=True)
-    current = models.BooleanField(default=False, db_index=True)
 
     class Meta:
         ordering = ('id',)
-        index_together = (
-            ('current', 'datetime')
-        )
 
     def get_json(self, extended=False):
         journey = self.journey

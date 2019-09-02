@@ -4,7 +4,6 @@ import ciso8601
 import json
 import html
 import pyppeteer
-from datetime import timedelta
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
 from django.db import transaction, Error
@@ -92,12 +91,10 @@ class Command(BaseCommand):
             departure_time = ciso8601.parse_datetime(item['OriginAimedDepartureTime'])
             if not created and vehicle.latest_location:
                 latest_location = vehicle.latest_location
-                latest_location.current = False
-                latest_location.save(update_fields=['current'])
                 latest_journey = latest_location.journey
                 if line_name == latest_journey.route_name and journey_code == latest_journey.code:
                     if departure_time == latest_journey.datetime:
-                        journey = vehicle.latest_location.journey
+                        journey = latest_journey
             if not journey:
                 try:
                     destination = Locality.objects.get(stoppoint=item['DestinationRef']).name
@@ -122,7 +119,6 @@ class Command(BaseCommand):
                 datetime=ciso8601.parse_datetime(item['RecordedAtTime']),
                 latlong=Point(float(item['Longitude']), float(item['Latitude'])),
                 heading=item['Bearing'],
-                current=True,
                 early=early
             )
             vehicle.save(update_fields=['latest_location'])
@@ -134,10 +130,6 @@ class Command(BaseCommand):
         now = timezone.now()
         self.source.datetime = now
         self.source.save(update_fields=['datetime'])
-
-        five_minutes_ago = now - timedelta(minutes=5)
-        locations = VehicleLocation.objects.filter(journey__source=self.source, latest_vehicle__isnull=False)
-        locations.filter(current=True, datetime__lte=five_minutes_ago).update(current=False)
 
     async def get_client_data(self):
         browser = await pyppeteer.launch(handleSIGINT=False)

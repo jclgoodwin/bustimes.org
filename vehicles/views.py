@@ -112,8 +112,7 @@ def operator_vehicles(request, slug):
 
 def get_locations(request):
     fifteen_minutes_ago = timezone.now() - timedelta(minutes=15)
-    locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, current=True,
-                                               datetime__gte=fifteen_minutes_ago)
+    locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, datetime__gte=fifteen_minutes_ago)
 
     try:
         bounding_box = get_bounding_box(request)
@@ -141,8 +140,7 @@ def siri_one_shot(code):
     if siri_source.get_poorly():
         raise Poorly()
     now = timezone.now()
-    locations = VehicleLocation.objects.filter(current=True, latest_vehicle__isnull=False,
-                                               journey__service=code.service_id)
+    locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, journey__service=code.service_id)
     current_locations = locations.filter(journey__source__name=source)
     fifteen_minutes_ago = now - timedelta(minutes=15)
     scheduled_journeys = Journey.objects.filter(service=code.service_id, datetime__lt=now + timedelta(minutes=10),
@@ -176,7 +174,6 @@ def siri_one_shot(code):
     command.source = DataSource.objects.get(name='Icarus')
     for item in import_sirivm.items_from_response(response):
         command.handle_item(item, now, code)
-    # current_locations.exclude(id__in=command.current_location_ids).update(current=False)
 
 
 schemes = ('Cornwall SIRI', 'Devon SIRI', 'Highland SIRI', 'Dundee SIRI', 'Bristol SIRI',
