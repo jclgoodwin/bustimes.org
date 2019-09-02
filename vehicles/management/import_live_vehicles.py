@@ -4,7 +4,7 @@ import logging
 import sys
 from setproctitle import setproctitle
 from time import sleep
-from django.db import Error, IntegrityError, InterfaceError, transaction
+from django.db import Error, IntegrityError, InterfaceError
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from busstops.models import DataSource, ServiceCode
