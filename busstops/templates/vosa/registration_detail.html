@@ -7,51 +7,57 @@
 <h1>{{ object.registration_number }}</h1>
 
 <table>
-    <tr>
-        <th scope="row"></th>
-        <td>{{ object.service_number }}</td>
-    </tr>
-    <tr>
-        <th scope="row">From</th>
-        <td>{{ object.start_point }}</td>
-    </tr>
-    <tr>
-        <th scope="row">To</th>
-        <td>{{ object.finish_point }}</td>
-    </tr>
-    <tr>
-        <th scope="row">Via</th>
-        <td>{{ object.via }}</td>
-    </tr>
-    <tr>
-        <th scope="row">Supported by subsidy?</th>
-        <td>{{ object.subsidies_description }} {{ object.subsidies_details }} </td>
-    </tr>
-    <tr>
-        <th scope="row">Status</th>
-        <td>{{ object.registration_status }}</td>
-    </tr>
+    <tbody>
+        <tr>
+            <th scope="row"></th>
+            <td>{{ object.service_number }}</td>
+        </tr>
+        <tr>
+            <th scope="row">From</th>
+            <td>{{ object.start_point }}</td>
+        </tr>
+        <tr>
+            <th scope="row">To</th>
+            <td>{{ object.finish_point }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Via</th>
+            <td>{{ object.via }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Supported by subsidy?</th>
+            <td>{{ object.subsidies_description }} {{ object.subsidies_details }} </td>
+        </tr>
+        <tr>
+            <th scope="row">Status</th>
+            <td>{{ object.registration_status }}</td>
+        </tr>
+    </tbody>
 </table>
 
 <h2>History</h2>
 
 <table>
-    <th scope="col">#</th>
-    <th scope="col">Received</th>
-    <th scope="col">Effective date</th>
-    <th scope="col">Status</th>
-    <th scope="col">Details</th>
-    <th scope="col">Publication text</th>
-    {% for variation in variations %}
-        <tr>
-            <td>{{ variation.variation_number }}</td>
-            <td>{% firstof variation.date_received|date:"j M y" '' %}</td>
-            <td>{% firstof variation.effective_date|date:"j M y" '' %}</td>
-            <td>{{ variation.registration_status }}</td>
-            <td>{{ variation.service_type_other_details }}</td>
-            <td>{{ variation.publication_text|linebreaksbr }}</td>
-        </tr>
-    {% endfor %}
+    <thead>
+        <th scope="col">#</th>
+        <th scope="col">Received</th>
+        <th scope="col">Effective date</th>
+        <th scope="col">Status</th>
+        <th scope="col">Details</th>
+        <th scope="col">Publication text</th>
+    </thead>
+    <tbody>
+        {% for variation in variations %}
+            <tr>
+                <td>{{ variation.variation_number }}</td>
+                <td>{% firstof variation.date_received|date:"j M y" '' %}</td>
+                <td>{% firstof variation.effective_date|date:"j M y" '' %}</td>
+                <td>{{ variation.registration_status }}</td>
+                <td>{{ variation.service_type_other_details }}</td>
+                <td>{{ variation.publication_text|linebreaksbr }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
 </table>
 
 {% endblock %}

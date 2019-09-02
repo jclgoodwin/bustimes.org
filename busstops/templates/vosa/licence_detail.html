@@ -7,51 +7,57 @@
 <h1>{{ object }}</h1>
 
 <table>
-    <tr>
-        <th>Name</th>
-        <td>{{ object.name }}</td>
-    </tr>
-    {% if object.trading_name %}
+    <tbody>
         <tr>
-            <th>Trading name</th>
-            <td>{{ object.trading_name }}</td>
+            <th>Name</th>
+            <td>{{ object.name }}</td>
         </tr>
-    {% endif %}
-    <tr>
-        <th>Traffic area</th>
-        <td>{{ object.traffic_area }}</td>
-    </tr>
-    <tr>
-        <th>Discs</th>
-        <td>{{ object.discs }}</td>
-    </tr>
-    <tr>
-        <th>Authorised discs</th>
-        <td>{{ object.authorised_discs }}</td>
-    </tr>
+        {% if object.trading_name %}
+            <tr>
+                <th>Trading name</th>
+                <td>{{ object.trading_name }}</td>
+            </tr>
+        {% endif %}
+        <tr>
+            <th>Traffic area</th>
+            <td>{{ object.traffic_area }}</td>
+        </tr>
+        <tr>
+            <th>Discs</th>
+            <td>{{ object.discs }}</td>
+        </tr>
+        <tr>
+            <th>Authorised discs</th>
+            <td>{{ object.authorised_discs }}</td>
+        </tr>
+    </tbody>
 </table>
 
 {% if registrations %}
     <h2>Current and future bus service registrations</h2>
 
     <table>
-        <tr>
-            <th colspan="2"></th>
-            <th scope="col">From</th>
-            <th scope="col">To</th>
-            <th scope="col">Via</th>
-            <th scope="col">Last changed</th>
-        </tr>
-        {% for registration in registrations %}
+        <thead>
             <tr>
-                <td><a href="{{ registration.get_absolute_url }}">{{ registration.registration_number }}</a></td>
-                <td>{{ registration.service_number }}</td>
-                <td>{{ registration.start_point }}</td>
-                <td>{{ registration.finish_point }}</td>
-                <td>{{ registration.via }}</td>
-                <td>{{ registration.effective_date|date:"j M y" }}</td>
+                <th colspan="2"></th>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+                <th scope="col">Via</th>
+                <th scope="col">Last changed</th>
             </tr>
-        {% endfor %}
+        </thead>
+        <tbody>
+            {% for registration in registrations %}
+                <tr>
+                    <td><a href="{{ registration.get_absolute_url }}">{{ registration.registration_number }}</a></td>
+                    <td>{{ registration.service_number }}</td>
+                    <td>{{ registration.start_point }}</td>
+                    <td>{{ registration.finish_point }}</td>
+                    <td>{{ registration.via }}</td>
+                    <td>{{ registration.effective_date|date:"j M y" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
 {% endif %}
 
@@ -59,23 +65,27 @@
     <h2>Cancelled bus service registrations</h2>
 
     <table>
-        <tr>
-            <th colspan="2"></th>
-            <th scope="col">From</th>
-            <th scope="col">To</th>
-            <th scope="col">Via</th>
-            <th scope="col">Cancelled</th>
-        </tr>
-        {% for registration in cancelled %}
+        <thead>
             <tr>
-                <td><a href="{{ registration.get_absolute_url }}">{{ registration.registration_number }}</a></td>
-                <td>{{ registration.service_number }}</td>
-                <td>{{ registration.start_point }}</td>
-                <td>{{ registration.finish_point }}</td>
-                <td>{{ registration.via }}</td>
-                <td>{{ registration.effective_date|date:"j M y" }}</td>
+                <th colspan="2"></th>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+                <th scope="col">Via</th>
+                <th scope="col">Cancelled</th>
             </tr>
-        {% endfor %}
+        </thead>
+        <tbody>
+            {% for registration in cancelled %}
+                <tr>
+                    <td><a href="{{ registration.get_absolute_url }}">{{ registration.registration_number }}</a></td>
+                    <td>{{ registration.service_number }}</td>
+                    <td>{{ registration.start_point }}</td>
+                    <td>{{ registration.finish_point }}</td>
+                    <td>{{ registration.via }}</td>
+                    <td>{{ registration.effective_date|date:"j M y" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
 {% endif %}
 

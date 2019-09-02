@@ -733,6 +733,11 @@ td {
     }
 }
 
+thead th {
+    padding-top: 0;
+    vertical-align: bottom;
+}
+
 .timetable-wrapper-wrapper {
     font-size: .875em;
     margin: 1em 0;

@@ -17,20 +17,24 @@
         <summary>{{ operator }}</summary>
 
         <table>
-            <tr>
-                <th>Service</th>
-                <th>Tracking?</th>
-            </tr>
-            {% for service in operator.service_set.all %}
+            <thead>
                 <tr>
-                    <td><a href="{{ service.get_absolute_url }}">{{ service }}</a></td>
-                    <td>
-                        {% if service.tracking %}
-                            <a href="{{ service.get_absolute_url }}/vehicles">Yes</a>{% if not service.full_tracking %}*{% endif %}
-                        {% endif %}
-                    </td>
+                    <th>Service</th>
+                    <th>Tracking?</th>
                 </tr>
-            {% endfor %}
+            </thead>
+            <tbody>
+                {% for service in operator.service_set.all %}
+                    <tr>
+                        <td><a href="{{ service.get_absolute_url }}">{{ service }}</a></td>
+                        <td>
+                            {% if service.tracking %}
+                                <a href="{{ service.get_absolute_url }}/vehicles">Yes</a>{% if not service.full_tracking %}*{% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </details>
 {% endfor %}
