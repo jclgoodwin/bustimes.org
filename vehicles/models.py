@@ -88,11 +88,11 @@ class Livery(models.Model):
     def get_css(self, direction=None):
         if self.css:
             css = self.css
-            if direction and direction < 180:
+            if direction is not None and direction < 180:
                 for angle in re.findall(r'\((\d+)deg,', css):
                     replacement = 360 - int(angle)
                     css = css.replace(f'({angle}deg,', f'({replacement}deg,', 1)
-                return css
+            return css
         if self.colours:
             return get_css(self.colours.split(), direction, self.horizontal, self.angle)
 
