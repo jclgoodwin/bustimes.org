@@ -12,4 +12,5 @@ urlpatterns = [
     path('vehicles/<int:vehicle_id>/edit', views.edit_vehicle),
     path('vehicle-tracking-report', views.tracking_report),
     path('journeys/<int:pk>.json', views.journey_json),
+    path('siri', views.siri),
 ]

@@ -1,10 +1,12 @@
 import ciso8601
+import xml.etree.cElementTree as ET
+from io import BytesIO
 from datetime import timedelta
 from requests import Session, exceptions
 from django.db.models import Exists, OuterRef, Prefetch, Subquery
 from django.core.cache import cache
 from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse, Http404
+from django.http import HttpResponse, JsonResponse, Http404
 from django.views.decorators.http import last_modified
 from django.views.generic.detail import DetailView
 from django.urls import reverse
@@ -357,3 +359,34 @@ def journey_json(request, pk):
         'direction': location.heading,
         'datetime': location.datetime,
     } for location in VehicleLocation.objects.filter(journey=pk)], safe=False)
+
+
+ns = {
+    'siri': 'http://www.siri.org.uk/siri'
+}
+operator_refs = {
+    'ANW': ('ANWE',),
+    'AYK': ('WRAY',),
+    'YTG': ('YTIG',),
+    'ATS': ('ARBB',),
+    'ANE': ('ANEA',),
+    'ASC': ('ARHE',),
+}
+
+
+def siri(request):
+    source = DataSource.objects.get_or_create(name='Arriva')[0]
+    iterator = ET.iterparse(BytesIO(request.body))
+    for _, element in iterator:
+        if element.tag[29:] == 'EstimatedJourneyVersionFrame':
+            vehicle = element.find('siri:EstimatedVehicleJourney/siri:VehicleRef', ns)
+            if vehicle is not None:
+                operator_ref = element.find('siri:EstimatedVehicleJourney/siri:OperatorRef', ns).text
+                if operator_ref in operator_refs:
+                    operator = operator_refs[operator_ref]
+                    Vehicle.objects.get_or_create({'source': source}, code=vehicle.text, operator_id=operator[0])
+                else:
+                    Vehicle.objects.get_or_create({'source': source}, code=vehicle.text)
+                    print(ET.tostring(element).decode())
+            element.clear()
+    return HttpResponse()
