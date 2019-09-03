@@ -291,6 +291,10 @@ class VehicleJourney(models.Model):
 
     class Meta:
         ordering = ('id',)
+        index_together = (
+            ('vehicle', 'datetime'),
+            ('service', 'datetime'),
+        )
 
 
 class Call(models.Model):
