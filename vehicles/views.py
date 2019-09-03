@@ -111,8 +111,11 @@ def operator_vehicles(request, slug):
 
 
 def get_locations(request):
-    fifteen_minutes_ago = timezone.now() - timedelta(minutes=15)
-    locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, datetime__gte=fifteen_minutes_ago)
+    now = timezone.now()
+    yesterday = now - timedelta(days=1)
+    fifteen_minutes_ago = now - timedelta(minutes=15)
+    locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, datetime__gte=fifteen_minutes_ago,
+                                               journey__datetime__gte=yesterday)
 
     try:
         bounding_box = get_bounding_box(request)
@@ -140,7 +143,9 @@ def siri_one_shot(code):
     if siri_source.get_poorly():
         raise Poorly()
     now = timezone.now()
-    locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, journey__service=code.service_id)
+    yesterday = now - timedelta(days=1)
+    locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, journey__service=code.service_id,
+                                               journey__datetime__gte=yesterday)
     current_locations = locations.filter(journey__source__name=source)
     fifteen_minutes_ago = now - timedelta(minutes=15)
     scheduled_journeys = Journey.objects.filter(service=code.service_id, datetime__lt=now + timedelta(minutes=10),
