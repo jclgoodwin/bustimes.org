@@ -2,6 +2,7 @@ import math
 import requests
 import logging
 import sys
+from datetime import timedelta
 from setproctitle import setproctitle
 from time import sleep
 from django.db import Error, IntegrityError, InterfaceError
@@ -35,7 +36,7 @@ def calculate_bearing(a, b):
     return bearing_degrees
 
 
-def same_journey(latest_location, journey):
+def same_journey(latest_location, journey, datetime):
     if not latest_location:
         return False
     if latest_location.journey.route_name and journey.route_name:
@@ -45,7 +46,7 @@ def same_journey(latest_location, journey):
     if same_route:
         if latest_location.journey.code and journey.code:
             return str(latest_location.journey.code) == str(journey.code)
-        return True
+        return datetime - latest_location.datetime < timedelta(minutes=15)
     return False
 
 
@@ -118,7 +119,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 return
         if not location.datetime:
             location.datetime = now
-        if same_journey(latest, journey):
+        if same_journey(latest, journey, location.datetime):
             changed = False
             if latest.journey.source_id != self.source.id:
                 latest.journey.source = self.source
