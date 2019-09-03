@@ -51,7 +51,7 @@ class Command(ImportLiveVehiclesCommand):
         journey.datetime = timezone.make_aware(parse_datetime(item['startTime']['dateTime']))
 
         latest_location = vehicle.latest_location
-        if latest_location and latest_location.current and journey.route_name == latest_location.journey.route_name:
+        if latest_location and journey.route_name == latest_location.journey.route_name:
             journey.service = vehicle.latest_location.journey.service
         else:
             try:
