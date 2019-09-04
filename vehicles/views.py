@@ -123,7 +123,7 @@ def get_locations(request):
         pass
 
     if 'service' in request.GET:
-        locations = locations.using('default').filter(journey__service=request.GET['service'])
+        locations = locations.filter(journey__service=request.GET['service'])
 
     return locations
 
