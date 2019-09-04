@@ -54,10 +54,11 @@ def handle_journey(element, source):
                     route_name = journey.find('siri:PublishedLineName', ns).text
                     destination = journey.find('siri:DirectionName', ns).text
                     try:
+                        services = Service.objects.get(current=True, stops=stop_id, line_name=route_name)
                         if operator:
-                            service = Service.objects.get(current=True, stops=stop_id, operator__in=operator, line_name=route_name)
+                            service = services.get(operator__in=operator)
                         else:
-                            service = Service.objects.get(current=True, stops=stop_id, line_name=route_name)
+                            service = services.get()
                         if not service.tracking:
                             service.tracking = True
                             service.save(update_fields=['tracking'])
