@@ -16,7 +16,7 @@ from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit
 from .forms import EditVehiclesForm, EditVehicleForm
 from .management.commands import import_sirivm
 from .rifkind import rifkind
-from .siri_et import siri_et
+from .tasks import handle_siri_et
 
 
 session = Session()
@@ -369,5 +369,5 @@ operator_refs = {
 
 
 def siri(request):
-    siri_et(request.body)
+    handle_siri_et.delay(request.body.decode())
     return HttpResponse()

@@ -1,5 +1,5 @@
 import xml.etree.cElementTree as ET
-from io import BytesIO
+from io import StringIO
 from ciso8601 import parse_datetime
 from django.utils import timezone
 from busstops.models import Service, StopPoint, DataSource
@@ -123,7 +123,7 @@ def handle_journey(element, source):
 
 def siri_et(request_body):
     source = DataSource.objects.get_or_create(name='Arriva')[0]
-    iterator = ET.iterparse(BytesIO(request_body))
+    iterator = ET.iterparse(StringIO(request_body))
     for _, element in iterator:
         if element.tag[29:] == 'EstimatedJourneyVersionFrame':
             handle_journey(element, source)
