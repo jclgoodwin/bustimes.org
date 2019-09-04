@@ -355,19 +355,6 @@ def journey_json(request, pk):
     } for location in VehicleLocation.objects.filter(journey=pk)], safe=False)
 
 
-ns = {
-    'siri': 'http://www.siri.org.uk/siri'
-}
-operator_refs = {
-    'ANW': ('ANWE',),
-    'AYK': ('WRAY',),
-    'YTG': ('YTIG',),
-    'ATS': ('ARBB',),
-    'ANE': ('ANEA',),
-    'ASC': ('ARHE',),
-}
-
-
 def siri(request):
     body = request.body.decode()
     if not body:

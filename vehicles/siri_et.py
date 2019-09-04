@@ -10,13 +10,13 @@ ns = {
     'siri': 'http://www.siri.org.uk/siri'
 }
 operator_refs = {
-    'ANW': ('ANWE',),
+    'ANW': ('ANWE', 'AMSY', 'ACYM'),
     'AYK': ('WRAY',),
     'YTG': ('YTIG',),
-    'ATS': ('ARBB',),
-    'ANE': ('ANEA',),
-    'ASC': ('ARHE',),
-    'AMD': ('AMNO', 'AMID'),
+    'ATS': ('ARBB', 'GLAR'),
+    'ANE': ('ANEA', 'ANUM'),
+    'ASC': ('ARHE', 'AKSS', 'AMTM'),
+    'AMD': ('AMNO', 'AMID', 'AFCL'),
 }
 
 
@@ -55,7 +55,7 @@ def handle_journey(element, source):
                     route_name = journey.find('siri:PublishedLineName', ns).text
                     destination = journey.find('siri:DirectionName', ns).text
                     try:
-                        services = Service.objects.get(current=True, stops=stop_id, line_name=route_name)
+                        services = Service.objects.filter(current=True, stops=stop_id, line_name=route_name)
                         if operator:
                             service = services.get(operator__in=operator)
                         else:
