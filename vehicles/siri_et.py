@@ -39,11 +39,11 @@ def handle_journey(element, source):
         vehicle, vehicle_created = vehicles.get_or_create({'source': source}, code=vehicle.text,
                                                           fleet_number=fleet_number)
 
-    journey = None
-
     journey_ref = journey_element.find('siri:DatedVehicleJourneyRef', ns).text
     if vehicle.latest_location and vehicle.latest_location.journey.code == journey_ref:
         journey = vehicle.latest_location.journey
+    else:
+        journey = None
 
     for call in journey_element.find('siri:EstimatedCalls', ns):
         visit_number = int(call.find('siri:VisitNumber', ns).text)
@@ -124,9 +124,5 @@ def siri_et(request_body):
     iterator = ET.iterparse(StringIO(request_body))
     for _, element in iterator:
         if element.tag[29:] == 'EstimatedJourneyVersionFrame':
-            try:
-                handle_journey(element, source)
-            except StopPoint.DoesNotExist as e:
-                print(e)
-                pass
+            handle_journey(element, source)
             element.clear()
