@@ -93,7 +93,7 @@ def handle_journey(element, source):
                 if vehicle.latest_location:
                     vehicle.latest_location.journey = vehicle_journey
                     vehicle.latest_location.latlong = stop.latlong
-                    vehicle.latest_location.heading = stop.heading
+                    vehicle.latest_location.heading = stop.get_heading()
                     vehicle.latest_location.datetime = expected_arrival_time
                     vehicle.latest_location.save()
                 else:
