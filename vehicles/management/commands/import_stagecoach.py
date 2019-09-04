@@ -154,7 +154,7 @@ class Command(ImportLiveVehiclesCommand):
 
                 for operator in journey.service.operator.all():
                     if operator.name.startswith('Stagecoach '):
-                        vehicle.maybe_change_operator(operator.id)
+                        vehicle.maybe_change_operator(operator)
                         break
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, item['or'], service)
