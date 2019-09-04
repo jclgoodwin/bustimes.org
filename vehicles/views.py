@@ -159,16 +159,9 @@ def siri_one_shot(code):
         cache.set(service_cache_key, 'different source', 3600)  # back off for for 1 hour
         return 'deferring to a different source'
     cache.set(line_name_cache_key, 'line name', 40)  # cache for 40 seconds
-    data = """
-        <Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
-            <ServiceRequest>
-                <RequestorRef>{}</RequestorRef>
-                <VehicleMonitoringRequest version="1.3">
-                    <LineRef>{}</LineRef>
-                </VehicleMonitoringRequest>
-            </ServiceRequest>
-        </Siri>
-    """.format(siri_source.requestor_ref, code.code)
+    data = """<Siri xmlns="http://www.siri.org.uk/siri" version="1.3"><ServiceRequest><RequestorRef>{}</RequestorRef>
+<VehicleMonitoringRequest version="1.3"><LineRef>{}</LineRef></VehicleMonitoringRequest>
+</ServiceRequest></Siri>""".format(siri_source.requestor_ref, code.code)
     url = siri_source.url.replace('StopM', 'VehicleM', 1)
     response = session.post(url, data=data, timeout=5)
     if 'Client.AUTHENTICATION_FAILED' in response.text:

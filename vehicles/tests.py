@@ -26,8 +26,8 @@ class VehiclesTests(TestCase):
                                          description='Spixworth - Hunworth - Happisburgh')
         service.operator.add(lynx)
 
-        cls.vehicle_1 = Vehicle.objects.create(code='2', fleet_number=1, reg='FD54JYA', vehicle_type=tempo, colours='#FF0000',
-                                               notes='Trent Barton', operator=lynx)
+        cls.vehicle_1 = Vehicle.objects.create(code='2', fleet_number=1, reg='FD54JYA', vehicle_type=tempo,
+                                               colours='#FF0000', notes='Trent Barton', operator=lynx)
         livery = Livery.objects.create(colours='#FF0000 #0000FF')
         cls.vehicle_2 = Vehicle.objects.create(code='50', fleet_number=50, reg='UWW2X', livery=livery,
                                                vehicle_type=spectra, operator=lynx)

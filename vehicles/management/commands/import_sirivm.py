@@ -72,11 +72,9 @@ class Command(ImportLiveVehiclesCommand):
         now = self.source.datetime
 
         url = 'http://{}.jmwrti.co.uk:8080/RTI-SIRI-Server/SIRIHandler'
-        data = """
-            <Siri xmlns="http://www.siri.org.uk/siri">
-                <ServiceRequest><VehicleMonitoringRequest/></ServiceRequest>
-            </Siri>
-        """
+        data = """<Siri xmlns="http://www.siri.org.uk/siri">
+<ServiceRequest><VehicleMonitoringRequest/></ServiceRequest>
+</Siri>"""
         for subdomain in ('essex', 'southampton', 'slough', 'staffordshire'):
             response = self.get_response(url.format(subdomain), data)
             if response and response.text:
@@ -88,14 +86,10 @@ class Command(ImportLiveVehiclesCommand):
                     yield item
 
         url = 'http://data.icarus.cloudamber.com/VehicleMonitoringRequest.ashx'
-        data = """
-            <Siri xmlns="http://www.siri.org.uk/siri">
-                <ServiceRequest>
-                    <RequestorRef>{}</RequestorRef>
-                    <VehicleMonitoringRequest/>
-                </ServiceRequest>
-            </Siri>
-        """
+        data = """<Siri xmlns="http://www.siri.org.uk/siri">
+<ServiceRequest><RequestorRef>{}</RequestorRef><VehicleMonitoringRequest/>
+</ServiceRequest>
+</Siri>"""
         requestor_ref = 'gatwick_app'
         response = self.get_response(url, data.format(requestor_ref))
         if response and response.text:
