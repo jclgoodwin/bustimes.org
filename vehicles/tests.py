@@ -26,10 +26,10 @@ class VehiclesTests(TestCase):
                                          description='Spixworth - Hunworth - Happisburgh')
         service.operator.add(lynx)
 
-        cls.vehicle_1 = Vehicle.objects.create(fleet_number=1, reg='FD54JYA', vehicle_type=tempo, colours='#FF0000',
+        cls.vehicle_1 = Vehicle.objects.create(code='2', fleet_number=1, reg='FD54JYA', vehicle_type=tempo, colours='#FF0000',
                                                notes='Trent Barton', operator=lynx)
         livery = Livery.objects.create(colours='#FF0000 #0000FF')
-        cls.vehicle_2 = Vehicle.objects.create(code='99', fleet_number=50, reg='UWW2X', livery=livery,
+        cls.vehicle_2 = Vehicle.objects.create(code='50', fleet_number=50, reg='UWW2X', livery=livery,
                                                vehicle_type=spectra, operator=lynx)
 
         journey = VehicleJourney.objects.create(vehicle=cls.vehicle_1, datetime=cls.datetime, source=source,
@@ -66,7 +66,7 @@ class VehiclesTests(TestCase):
         with self.assertNumQueries(3):
             response = self.client.get('/operators/lynx/vehicles')
         self.assertTrue(response.context['code_column'])
-        self.assertContains(response, '<td>99</td>')
+        self.assertContains(response, '<td>2</td>')
 
         with self.assertNumQueries(6):
             response = self.client.get(self.vehicle_1.get_absolute_url() + '?date=poop')
@@ -145,6 +145,7 @@ class VehiclesTests(TestCase):
                 'colours': self.vehicle_2.livery_id,
                 'notes': ''
             })
+        self.assertTrue(response.context['form'].fields['fleet_number'].disabled)
         self.assertFalse(response.context['form'].has_changed())
         self.assertNotContains(response, 'already')
 
@@ -153,7 +154,7 @@ class VehiclesTests(TestCase):
         with self.assertNumQueries(7):
             response = self.client.post(url, {
                 'fleet_number': '50',
-                'reg': 'UWW 2X',
+                'reg': '',
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
                 'colours': self.vehicle_2.livery_id,
                 'notes': 'Ex Ipswich Buses'
@@ -167,14 +168,14 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'already')
 
         edit = VehicleEdit.objects.get()
-        self.assertEqual(edit.get_changes(), {'notes': 'Ex Ipswich Buses'})
+        self.assertEqual(edit.get_changes(), {'notes': 'Ex Ipswich Buses', 'reg': '-UWW2X'})
 
         self.assertEqual('50 - UWW\xa02X', str(edit))
         self.assertEqual(self.vehicle_2.get_absolute_url(), edit.get_absolute_url())
 
         self.assertTrue(admin.VehicleEditAdmin.flickr(None, edit))
         self.assertEqual(admin.fleet_number(edit), '50')
-        self.assertEqual(admin.reg(edit), 'UWW2X')
+        self.assertEqual(admin.reg(edit), '<del>UWW2X</del>')
         self.assertEqual(admin.notes(edit), '<ins>Ex Ipswich Buses</ins>')
 
         self.assertEqual(str(admin.vehicle_type(edit)), 'Optare Spectra')
