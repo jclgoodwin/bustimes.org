@@ -6,7 +6,7 @@ from datetime import timedelta
 from django.utils import timezone
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
-from django.db.models import Count
+from django.db.models import Count, Index, Q
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from busstops.models import Operator, Service, StopPoint, DataSource, SIRISource
@@ -332,6 +332,9 @@ class VehicleLocation(models.Model):
 
     class Meta:
         ordering = ('id',)
+        indexes = (
+            Index(name='datetime', fields=('datetime',), condition=Q(latest_vehicle__isnull=False)),
+        )
 
     def get_json(self, extended=False):
         journey = self.journey
