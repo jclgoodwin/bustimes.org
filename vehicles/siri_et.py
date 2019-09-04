@@ -16,6 +16,7 @@ operator_refs = {
     'ATS': ('ARBB',),
     'ANE': ('ANEA',),
     'ASC': ('ARHE',),
+    'AMD': ('AMNO', 'AMID'),
 }
 
 
