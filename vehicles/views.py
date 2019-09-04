@@ -369,5 +369,19 @@ operator_refs = {
 
 
 def siri(request):
-    handle_siri_et.delay(request.body.decode())
-    return HttpResponse()
+    body = request.body.decode()
+    if not body:
+        return HttpResponse()
+    if 'HeartbeatNotification>' in body:
+        source = DataSource.objects.get(name='Arriva')
+        source.datetime = timezone.now()
+        source.save(update_fields=['datetime'])
+    else:
+        handle_siri_et.delay(body)
+    return HttpResponse(f"""<?xml version="1.0" ?>
+<Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
+  <DataReceivedAcknowledgement>
+    <ResponseTimestamp>{timezone.localtime().isoformat()}</ResponseTimestamp>
+    <Status>true</Status>
+  </DataReceivedAcknowledgement>
+</Siri>""", content_type='text/xml')

@@ -122,7 +122,7 @@ def handle_journey(element, source):
 
 
 def siri_et(request_body):
-    source = DataSource.objects.get_or_create(name='Arriva')[0]
+    source = DataSource.objects.get(name='Arriva')
     iterator = ET.iterparse(StringIO(request_body))
     for _, element in iterator:
         if element.tag[29:] == 'EstimatedJourneyVersionFrame':

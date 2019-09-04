@@ -75,19 +75,17 @@ DATABASES = {
         'CONN_MAX_AGE': None
     }
 }
+
 if os.environ.get('READ_ONLY_DB_HOST'):
-    DATABASES['read-only'] = {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.environ.get('READ_ONLY_DB_NAME', 'bustimes'),
-        'HOST': os.environ.get('READ_ONLY_DB_HOST'),
-        'DISABLE_SERVER_SIDE_CURSORS': True,
-        'CONN_MAX_AGE': None
-    }
+    DATABASES['read-only'] = DATABASES['default']
+    DATABASES['read-only']['HOST'] = os.environ.get('READ_ONLY_DB_HOST')
     REPLICA_DATABASES = ['read-only']
     DATABASE_ROUTERS = ['multidb.PinningReplicaRouter']
     MIDDLEWARE.append('busstops.middleware.admin_db_middleware')
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
+
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379')
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'

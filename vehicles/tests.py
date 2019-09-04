@@ -5582,5 +5582,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.3">
         ])
 
         response = self.client.post('/siri', xml, content_type='text/xml')
+        self.assertTrue(response.content)
 
-        self.assertFalse(response.content)
+        self.assertFalse(self.client.get('/siri').content)
