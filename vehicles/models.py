@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Count
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from busstops.models import Operator, Service, DataSource, SIRISource
+from busstops.models import Operator, Service, StopPoint, DataSource, SIRISource
 
 
 def get_css(colours, direction=None, horizontal=False, angle=None):
@@ -300,10 +300,16 @@ class VehicleJourney(models.Model):
 class Call(models.Model):
     journey = models.ForeignKey(VehicleJourney, models.CASCADE, editable=False)
     visit_number = models.PositiveSmallIntegerField()
-    aimed_arrival_time = models.DateTimeField()
-    expected_arrival_time = models.DateTimeField()
-    aimed_departure_time = models.DateTimeField()
-    expected_departure_time = models.DateTimeField()
+    stop = models.ForeignKey(StopPoint, models.CASCADE)
+    aimed_arrival_time = models.DateTimeField(null=True)
+    expected_arrival_time = models.DateTimeField(null=True)
+    aimed_departure_time = models.DateTimeField(null=True)
+    expected_departure_time = models.DateTimeField(null=True)
+
+    class Meta:
+        index_together = (
+            ('stop', 'expected_departure_time'),
+        )
 
 
 class JourneyCode(models.Model):

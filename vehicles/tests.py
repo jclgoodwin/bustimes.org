@@ -5564,7 +5564,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.3">
             Operator(region_id='EA', id='ARHE')
         ])
 
-        with self.assertNumQueries(376):
-            response = self.client.post('/siri', xml, content_type='text/xml')
+        response = self.client.post('/siri', xml, content_type='text/xml')
 
         self.assertFalse(response.content)

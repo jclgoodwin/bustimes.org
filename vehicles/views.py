@@ -1,8 +1,6 @@
-import ciso8601
-import xml.etree.cElementTree as ET
-from io import BytesIO
 from datetime import timedelta
 from requests import Session, exceptions
+from ciso8601 import parse_datetime
 from django.db.models import Exists, OuterRef, Prefetch, Subquery
 from django.core.cache import cache
 from django.shortcuts import render, get_object_or_404
@@ -18,6 +16,7 @@ from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit
 from .forms import EditVehiclesForm, EditVehicleForm
 from .management.commands import import_sirivm
 from .rifkind import rifkind
+from .siri_et import siri_et
 
 
 session = Session()
@@ -247,7 +246,7 @@ def service_vehicles_history(request, slug=None, operator=None, route=None):
     date = request.GET.get('date')
     if date:
         try:
-            date = ciso8601.parse_datetime(date).date()
+            date = parse_datetime(date).date()
         except ValueError:
             date = None
     dates = journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date')
@@ -288,7 +287,7 @@ class VehicleDetailView(DetailView):
         date = self.request.GET.get('date')
         if date:
             try:
-                date = ciso8601.parse_datetime(date).date()
+                date = parse_datetime(date).date()
             except ValueError:
                 date = None
         if not date:
@@ -377,40 +376,5 @@ operator_refs = {
 
 
 def siri(request):
-    source = DataSource.objects.get_or_create(name='Arriva')[0]
-    iterator = ET.iterparse(BytesIO(request.body))
-    for _, element in iterator:
-        if element.tag[29:] == 'EstimatedJourneyVersionFrame':
-            journey = element.find('siri:EstimatedVehicleJourney', ns)
-            vehicle = journey.find('siri:VehicleRef', ns)
-            if vehicle is not None:
-                operator_ref, fleet_number = vehicle.text.split('-')
-                if not fleet_number.isdigit():
-                    fleet_number = None
-                if operator_ref in operator_refs:
-                    operator = operator_refs[operator_ref]
-                    vehicle, _ = Vehicle.objects.get_or_create({'source': source}, code=vehicle.text,
-                                                               fleet_number=fleet_number, operator_id=operator[0])
-                else:
-                    vehicle, _ = Vehicle.objects.get_or_create({'source': source}, code=vehicle.text,
-                                                               fleet_number=fleet_number)
-                for call in journey.find('siri:EstimatedCalls', ns):
-                    visit_number = int(call.find('siri:VisitNumber', ns).text)
-                    if visit_number == 1:
-                        departure_time = call.find('siri:ExpectedDepartureTime', ns).text
-                        journey_ref = journey.find('siri:DatedVehicleJourneyRef', ns).text
-                        route_name = journey.find('siri:PublishedLineName', ns).text
-                        destination = journey.find('siri:DirectionName', ns).text
-                        VehicleJourney.objects.get_or_create(
-                            {
-                                'code': journey_ref,
-                                'route_name': route_name,
-                                'destination': destination,
-                                'source': source,
-                            },
-                            vehicle=vehicle,
-                            datetime=departure_time
-                        )
-                    break
-            element.clear()
+    siri_et(request.body)
     return HttpResponse()
