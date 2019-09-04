@@ -1,6 +1,7 @@
 import requests
-import datetime
+from datetime import timedelta
 from requests_toolbelt.adapters.source import SourceAddressAdapter
+from django.utils import timezone
 from django.core.management.base import BaseCommand
 
 
@@ -14,16 +15,15 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         session = requests.Session()
 
-        now = datetime.datetime.now()
+        now = timezone.localtime()
         timestamp = now.isoformat()
-        termination_time = (now + datetime.timedelta(minutes=5)).isoformat()
+        termination_time = (now + timedelta(minutes=5)).isoformat()
         requestor_ref = 'HAConToBusTimesET'
 
         session.mount('http://', SourceAddressAdapter('10.16.0.6'))
 
         response = session.get('http://icanhazip.com/')
         print(response.text)
-        return
 
         if options['terminate']:
             xml = f"""
@@ -61,6 +61,7 @@ class Command(BaseCommand):
         """
 
         print(xml)
+
         url = 'http://gate-nat.hacon.de:26747'
         headers = {
            'Content-Type': 'application/xml'
