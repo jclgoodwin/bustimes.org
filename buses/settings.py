@@ -77,7 +77,7 @@ DATABASES = {
 }
 
 if os.environ.get('READ_ONLY_DB_HOST'):
-    DATABASES['read-only'] = DATABASES['default']
+    DATABASES['read-only'] = DATABASES['default'].copy()
     DATABASES['read-only']['HOST'] = os.environ.get('READ_ONLY_DB_HOST')
     REPLICA_DATABASES = ['read-only']
     DATABASE_ROUTERS = ['multidb.PinningReplicaRouter']
