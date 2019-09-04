@@ -95,9 +95,14 @@ class VehiclesTests(TestCase):
         livery.horizontal = True
         self.assertEqual('<div style="height:1.5em;width:4em;background:linear-gradient' +
                          '(to top,#7D287D 34%,#FDEE00 34%)" title="Go-Coach"></div>', livery.preview())
+        livery.horizontal = False
+        livery.angle = 45
+        self.assertEqual('linear-gradient(45deg,#7D287D 34%,#FDEE00 34%)', livery.get_css())
+        self.assertEqual('linear-gradient(315deg,#7D287D 34%,#FDEE00 34%)', livery.get_css(10))
+        self.assertEqual('linear-gradient(45deg,#7D287D 34%,#FDEE00 34%)', livery.get_css(300))
 
+        livery.angle = None
         self.vehicle_1.livery = livery
-        self.vehicle_1.livery.horizontal = False
         self.assertEqual('linear-gradient(to left,#7D287D 34%,#FDEE00 34%)',
                          self.vehicle_1.get_livery(179))
         self.assertIsNone(self.vehicle_1.get_text_colour())
@@ -162,6 +167,8 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'already')
 
         edit = VehicleEdit.objects.get()
+        self.assertEqual(edit.get_changes(), {'notes': 'Ex Ipswich Buses'})
+
         self.assertEqual('50 - UWW\xa02X', str(edit))
         self.assertEqual(self.vehicle_2.get_absolute_url(), edit.get_absolute_url())
 
@@ -197,16 +204,25 @@ class VehiclesTests(TestCase):
         with freeze_time(self.datetime):
             with self.assertNumQueries(1):
                 response = self.client.get('/vehicles.json?ymax=52&xmax=2&ymin=51&xmin=1')
-        self.assertEqual(200, response.status_code)
-        self.assertEqual({'type': 'FeatureCollection', 'features': []}, response.json())
-        self.assertIsNone(response.get('last-modified'))
+            self.assertEqual(200, response.status_code)
+            self.assertEqual({'type': 'FeatureCollection', 'features': []}, response.json())
+            self.assertIsNone(response.get('last-modified'))
 
-        with freeze_time(self.datetime):
             with self.assertNumQueries(2):
                 response = self.client.get('/vehicles.json')
-        vehicle = response.json()['features'][0]['properties']['vehicle']
-        self.assertEqual(vehicle['name'], '1 - FD54\xa0JYA')
-        self.assertEqual(response.get('last-modified'), 'Tue, 25 Dec 2018 19:47:00 GMT')
+            features = response.json()['features']
+            self.assertEqual(features[0]['properties']['vehicle']['name'], '1 - FD54\xa0JYA')
+            self.assertEqual(features[0]['properties']['service'],
+                             {'line_name': '', 'url': '/services/spixworth-hunworth-happisburgh'})
+
+            self.assertEqual(response.get('last-modified'), 'Tue, 25 Dec 2018 19:47:00 GMT')
+
+            VehicleJourney.objects.update(service=None)
+            with self.assertNumQueries(2):
+                response = self.client.get('/vehicles.json')
+            features = response.json()['features']
+            self.assertEqual(features[0]['properties']['vehicle']['name'], '1 - FD54\xa0JYA')
+            self.assertEqual(features[0]['properties']['service'], {'line_name': '2'})
 
     def test_location_json(self):
         location = VehicleLocation.objects.get()
