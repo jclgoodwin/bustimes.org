@@ -24,8 +24,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.source = DataSource.objects.get(name='Arriva')
-        if self.source.datetime and (timezone.now() - self.source.datetime) < timedelta(minutes=3):
-            print(self.source.datetime)
+
+        if not options['terminate']:
+            if self.source.datetime and (timezone.now() - self.source.datetime) < timedelta(minutes=3):
+                print(self.source.datetime)
+                return
 
         now = timezone.localtime()
 
