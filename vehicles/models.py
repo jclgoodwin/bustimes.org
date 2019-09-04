@@ -329,11 +329,12 @@ class VehicleLocation(models.Model):
     journey = models.ForeignKey(VehicleJourney, models.CASCADE)
     heading = models.PositiveIntegerField(null=True, blank=True)
     early = models.IntegerField(null=True, blank=True)
+    current = models.BooleanField(default=False)
 
     class Meta:
         ordering = ('id',)
         indexes = (
-            Index(name='datetime', fields=('datetime',), condition=Q(latest_vehicle__isnull=False)),
+            Index(name='datetime', fields=('current', '-datetime'), condition=Q(current=True)),
         )
 
     def get_json(self, extended=False):

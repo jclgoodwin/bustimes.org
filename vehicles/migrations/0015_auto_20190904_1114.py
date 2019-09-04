@@ -17,6 +17,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name='vehiclelocation',
-            index=models.Index(condition=models.Q(latest_vehicle__isnull=False), fields=['current', '-datetime'], name='datetime'),
+            index=models.Index(condition=models.Q(current=True), fields=['current', '-datetime'], name='datetime'),
         ),
     ]
