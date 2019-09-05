@@ -2,9 +2,8 @@ from freezegun import freeze_time
 from django.test import TestCase
 from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
-from busstops.models import DataSource, Region, Operator, Service, StopPoint
-from .models import Vehicle, VehicleType, VehicleFeature, Livery, VehicleJourney, VehicleLocation, VehicleEdit, Call
-from .siri_et import siri_et
+from busstops.models import DataSource, Region, Operator, Service
+from .models import Vehicle, VehicleType, VehicleFeature, Livery, VehicleJourney, VehicleLocation, VehicleEdit
 from . import admin
 
 
