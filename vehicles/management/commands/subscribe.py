@@ -26,9 +26,8 @@ class Command(BaseCommand):
         self.source = DataSource.objects.get(name='Arriva')
 
         if not options['terminate']:
-            if self.source.datetime and (timezone.now() - self.source.datetime) < timedelta(minutes=3):
-                print(self.source.datetime)
-                return
+            if self.source.datetime and (timezone.now() - self.source.datetime) < timedelta(minutes=4):
+                return  # received a heartbeat recently, no need to resubscribe
 
         now = timezone.localtime()
 
