@@ -56,14 +56,14 @@ def handle_journey(element, source):
             route_name = journey_element.find('siri:PublishedLineName', ns).text
             destination = journey_element.find('siri:DirectionName', ns).text
             try:
-                services = Service.objects.filter(current=True, stops=stop_id, line_name=route_name)
+                services = Service.objects.filter(current=True, stops=stop_id, line_name=route_name).distinct()
                 if operator:
                     service = services.get(operator__in=operator)
                 else:
                     service = services.get()
-                    if not service.tracking:
-                        service.tracking = True
-                        service.save(update_fields=['tracking'])
+                if not service.tracking:
+                    service.tracking = True
+                    service.save(update_fields=['tracking'])
             except (Service.MultipleObjectsReturned, Service.DoesNotExist):
                 service = None
 
