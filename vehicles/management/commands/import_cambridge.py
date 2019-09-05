@@ -4,9 +4,10 @@ import ciso8601
 import json
 import html
 import pyppeteer
+from datetime import timedelta
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
-from django.db import Error
+from django.db import transaction, Error
 from django.db.models import Q
 from django.utils import timezone, dateparse
 from busstops.models import Operator, Service, DataSource, Locality
@@ -85,42 +86,50 @@ class Command(BaseCommand):
         vehicle, created = self.get_vehicle(operator_options or operator, item)
 
         journey = None
-        line_name = item['PublishedLineName']
-        journey_code = item['DatedVehicleJourneyRef']
-        departure_time = ciso8601.parse_datetime(item['OriginAimedDepartureTime'])
-        if not created and vehicle.latest_location:
-            latest_location = vehicle.latest_location
-            latest_journey = latest_location.journey
-            if line_name == latest_journey.route_name and journey_code == latest_journey.code:
-                if departure_time == latest_journey.datetime:
-                    journey = latest_journey
-        if not journey:
-            try:
-                destination = Locality.objects.get(stoppoint=item['DestinationRef']).name
-            except Locality.DoesNotExist:
-                destination = html.unescape(item['DestinationName'])
-            journey = VehicleJourney.objects.create(
-                vehicle=vehicle,
-                service=self.get_service(operator_options or operator, item),
-                route_name=line_name,
-                source=self.source,
-                datetime=departure_time,
-                destination=destination,
-                code=journey_code
+
+        with transaction.atomic():
+            line_name = item['PublishedLineName']
+            journey_code = item['DatedVehicleJourneyRef']
+            departure_time = ciso8601.parse_datetime(item['OriginAimedDepartureTime'])
+            if not created and vehicle.latest_location:
+                latest_location = vehicle.latest_location
+                latest_location.current = False
+                latest_location.save(update_fields=['current'])
+                latest_journey = latest_location.journey
+                if line_name == latest_journey.route_name and journey_code == latest_journey.code:
+                    if departure_time == latest_journey.datetime:
+                        journey = latest_journey
+            if not journey:
+                try:
+                    destination = Locality.objects.get(stoppoint=item['DestinationRef']).name
+                except Locality.DoesNotExist:
+                    destination = html.unescape(item['DestinationName'])
+                journey = VehicleJourney.objects.create(
+                    vehicle=vehicle,
+                    service=self.get_service(operator_options or operator, item),
+                    route_name=line_name,
+                    source=self.source,
+                    datetime=departure_time,
+                    destination=destination,
+                    code=journey_code
+                )
+                if journey.service and not journey.service.tracking:
+                    journey.service.tracking = True
+                    journey.service.save(update_fields=['tracking'])
+            delay = item['Delay']
+            early = -round(dateparse.parse_duration(delay).total_seconds()/60)
+            vehicle.latest_location = VehicleLocation.objects.create(
+                journey=journey,
+                datetime=ciso8601.parse_datetime(item['RecordedAtTime']),
+                latlong=Point(float(item['Longitude']), float(item['Latitude'])),
+                heading=item['Bearing'],
+                current=True,
+                early=early
             )
             if journey.service and not journey.service.tracking:
                 journey.service.tracking = True
                 journey.service.save(update_fields=['tracking'])
-        delay = item['Delay']
-        early = -round(dateparse.parse_duration(delay).total_seconds()/60)
-        vehicle.latest_location = VehicleLocation.objects.create(
-            journey=journey,
-            datetime=ciso8601.parse_datetime(item['RecordedAtTime']),
-            latlong=Point(float(item['Longitude']), float(item['Latitude'])),
-            heading=item['Bearing'],
-            early=early
-        )
-        vehicle.save(update_fields=['latest_location'])
+            vehicle.save(update_fields=['latest_location'])
 
     def handle_data(self, data):
         for item in data['request_data']:
@@ -129,6 +138,10 @@ class Command(BaseCommand):
         now = timezone.now()
         self.source.datetime = now
         self.source.save(update_fields=['datetime'])
+
+        five_minutes_ago = now - timedelta(minutes=5)
+        locations = VehicleLocation.objects.filter(journey__source=self.source, latest_vehicle__isnull=False)
+        locations.filter(current=True, datetime__lte=five_minutes_ago).update(current=False)
 
     async def get_client_data(self):
         browser = await pyppeteer.launch(handleSIGINT=False)

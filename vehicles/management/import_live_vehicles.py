@@ -5,11 +5,11 @@ import sys
 from datetime import timedelta
 from setproctitle import setproctitle
 from time import sleep
-from django.db import Error, IntegrityError, InterfaceError
+from django.db import Error, IntegrityError, InterfaceError, transaction
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from busstops.models import DataSource, ServiceCode
-from ..models import Vehicle
+from ..models import Vehicle, VehicleLocation
 
 
 logger = logging.getLogger(__name__)
@@ -52,6 +52,7 @@ def same_journey(latest_location, journey, datetime):
 
 class ImportLiveVehiclesCommand(BaseCommand):
     session = requests.Session()
+    current_location_ids = set()
     vehicles = Vehicle.objects.select_related('latest_location__journey__service')
 
     @staticmethod
@@ -82,6 +83,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         return queryset.filter(journey__datetime__lte=now,
                                journey__stopusageusage__datetime__gte=now).distinct().get()
 
+    @transaction.atomic
     def handle_item(self, item, now, service_code=None):
         datetime = self.get_datetime(item)
         location = None
@@ -95,16 +97,18 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if latest:
                 if datetime:
                     if latest.datetime >= datetime:
+                        self.current_location_ids.add(latest.id)
                         return
                 else:
                     location = self.create_vehicle_location(item)
                     if location.latlong.equals_exact(latest.latlong, 0.001):
+                        self.current_location_ids.add(latest.id)
                         return
         journey = self.get_journey(item, vehicle)
         journey.vehicle = vehicle
         if not journey:
             return
-        if latest and latest.journey.source_id != self.source.id:
+        if latest and latest.current and latest.journey.source_id != self.source.id:
             if ((datetime or now) - latest.datetime).total_seconds() < 300:  # less than 5 minutes old
                 if latest.journey.service_id or not journey.service:
                     return  # defer to other source
@@ -114,8 +118,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if latest:
             if location.datetime:
                 if location.datetime == latest.datetime:
+                    self.current_location_ids.add(latest.id)
                     return
             elif location.latlong == latest.latlong and location.heading == latest.heading:
+                self.current_location_ids.add(latest.id)
                 return
         if not location.datetime:
             location.datetime = now
@@ -155,9 +161,22 @@ class ImportLiveVehiclesCommand(BaseCommand):
                                                        code=journey.route_name)
             location.journey = journey
         # save new location
+        location.current = True
         location.save()
         journey.vehicle.latest_location = location
         journey.vehicle.save(update_fields=['latest_location'])
+        self.current_location_ids.add(location.id)
+        if latest:
+            # mark old location as not current
+            latest.current = False
+            latest.save(update_fields=['current'])
+
+            distance = latest.latlong.distance(location.latlong) * 69
+            time = location.datetime - latest.datetime
+            if time:
+                speed = distance / time.total_seconds() * 60 * 60
+                if speed > 90:
+                    print('{} mph\t{}'.format(speed, journey.vehicle.get_absolute_url()))
 
     def update(self):
         now = timezone.now()
@@ -166,11 +185,21 @@ class ImportLiveVehiclesCommand(BaseCommand):
             name=self.source_name
         )
 
+        self.current_location_ids = set()
+
+        current_locations = VehicleLocation.objects.filter(journey__source=self.source, current=True,
+                                                           latest_vehicle__isnull=False)
+
         try:
             items = self.get_items()
             if items:
                 for item in items:
                     self.handle_item(item, now)
+                # mark any vehicles that have gone offline as not current
+                old_locations = current_locations.exclude(id__in=self.current_location_ids)
+                print(old_locations.update(current=False), end='\t', flush=True)
+            else:
+                return 300  # no items - wait five minutes
         except (requests.exceptions.RequestException, IntegrityError, TypeError, ValueError) as e:
             print(e)
             logger.error(e, exc_info=True)

@@ -111,10 +111,9 @@ def operator_vehicles(request, slug):
 
 def get_locations(request):
     now = timezone.now()
-    yesterday = now - timedelta(days=1)
     fifteen_minutes_ago = now - timedelta(minutes=15)
     locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, datetime__gte=fifteen_minutes_ago,
-                                               journey__datetime__gte=yesterday)
+                                               current=True)
 
     try:
         bounding_box = get_bounding_box(request)
@@ -142,20 +141,18 @@ def siri_one_shot(code):
     if siri_source.get_poorly():
         raise Poorly()
     now = timezone.now()
-    yesterday = now - timedelta(days=1)
-    locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, journey__service=code.service_id,
-                                               journey__datetime__gte=yesterday)
-    current_locations = locations.filter(journey__source__name=source)
     fifteen_minutes_ago = now - timedelta(minutes=15)
+    locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, journey__service=code.service_id,
+                                               datetime__gte=fifteen_minutes_ago, current=True)
     scheduled_journeys = Journey.objects.filter(service=code.service_id, datetime__lt=now + timedelta(minutes=10),
                                                 stopusageusage__datetime__gt=now - timedelta(minutes=10))
     if not scheduled_journeys.exists():
-        if not current_locations.filter(datetime__gte=fifteen_minutes_ago).exists():
+        if not locations.filter(journey__source__name=source).exists():
             # no journeys currently scheduled, and no vehicles online recently
             cache.set(service_cache_key, 'nothing scheduled', 300)  # back off for 5 minutes
             return 'nothing scheduled'
     # from a different source
-    if locations.filter(datetime__gte=fifteen_minutes_ago).exclude(journey__source__name=source).exists():
+    if locations.exclude(journey__source__name=source).exists():
         cache.set(service_cache_key, 'different source', 3600)  # back off for for 1 hour
         return 'deferring to a different source'
     cache.set(line_name_cache_key, 'line name', 40)  # cache for 40 seconds

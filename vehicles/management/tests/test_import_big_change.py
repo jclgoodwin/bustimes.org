@@ -4,7 +4,7 @@ from ...models import Vehicle
 from ..commands import import_big_change
 
 
-class BigChangeImportTest(TestCase):
+class CambridgeImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         Region.objects.create(id='EM', name='East Midlands')
