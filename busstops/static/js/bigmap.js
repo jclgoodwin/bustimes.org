@@ -51,10 +51,8 @@
     }
 
     function getBusIcon(service, direction, livery, textColour) {
-        if (direction === null) {
-            var html = '';
-        } else {
-            html = '<div class="arrow" style="' + getRotation(direction) + '"></div>';
+        if (direction !== null) {
+            var arrow = '<div class="arrow" style="' + getRotation(direction) + '"></div>';
             if (direction < 180) {
                 direction -= 90;
             } else {
@@ -73,11 +71,14 @@
             style = '';
         }
         style += getRotation(direction);
-        html += '<div class="' + className + '" style="' + style + '">';
+        var html = '<div class="' + className + '" style="' + style + '">';
         if (service) {
             html += service.line_name;
         }
         html += '</div>';
+        if (arrow) {
+            html += arrow;
+        }
         return L.divIcon({
             iconSize: [20, 20],
             html: html,
@@ -103,9 +104,9 @@
             indicator += '<div class="arrow" style="' + getRotation(bearing) + '"></div>';
         }
         return L.divIcon({
-            iconSize: [20, 20],
+            iconSize: [18, 18],
             html: indicator,
-            popupAnchor: [0, -5],
+            popupAnchor: [0, -6],
             className: className
         });
     }

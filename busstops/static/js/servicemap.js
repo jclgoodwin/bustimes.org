@@ -95,10 +95,8 @@
     }
 
     function getIcon(direction, livery, textColour) {
-        if (direction == null) {
-            var html = '';
-        } else {
-            html = '<div class="arrow" style="' + getRotation(direction) + '"></div>';
+        if (direction !== null) {
+            var arrow = '<div class="arrow" style="' + getRotation(direction) + '"></div>';
             if (direction < 180) {
                 direction -= 90;
             } else {
@@ -116,7 +114,10 @@
             style = '';
         }
         style += getRotation(direction);
-        html += '<div class="' + className + '" style="' + style + '"></div>';
+        var html = '<div class="' + className + '" style="' + style + '"></div>';
+        if (arrow) {
+            html += arrow;
+        }
         return L.divIcon({
             iconSize: [20, 20],
             html: html,

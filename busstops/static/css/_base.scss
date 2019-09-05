@@ -637,24 +637,24 @@ table {
     .stop {
         background: $brand-color;
         border-radius: 10px;
-        line-height: 16px;
-        height: 18px;
-    }
-
-    &.active .stop {
-        background: #fff;
+        line-height: 14px;
+        height: 16px;
     }
 
     .arrow {
-        border: 5px solid transparent;
+        border: 4px solid transparent;
         border-bottom: 5px solid #000;
         border-top: 0;
         left: 5px;
         position: absolute;
         top: -6px;
-        transform-origin: 5px 16px;
+        transform-origin: 4px 15px;
     }
 
+    .bus + .arrow {
+        left: 6px;
+        transform-origin: 4px 16px;
+    }
 }
 
 .leaflet-bar img {
