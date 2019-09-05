@@ -1,5 +1,5 @@
 from django.shortcuts import redirect
-from multidb.pinning import pin_this_thread
+from multidb.pinning import pin_this_thread, unpin_this_thread
 from .models import Service, StopPoint
 
 
@@ -58,7 +58,8 @@ def admin_db_middleware(get_response):
     def middleware(request):
         if request.path.startswith('/admin/'):
             pin_this_thread()
-
+        else:
+            unpin_this_thread()
         return get_response(request)
 
     return middleware
