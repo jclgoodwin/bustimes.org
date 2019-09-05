@@ -122,7 +122,7 @@ def handle_item(source, stop, item):
         elif vehicle.latest_location.latlong == latlong:
             if vehicle.latest_location.journey_id != journey_id:
                 vehicle.latest_location.journey_id = journey_id
-                vehicle.latest_location.save()
+                vehicle.latest_location.save(update_fields=['journey'])
             return
 
     with transaction.atomic():
@@ -130,13 +130,16 @@ def handle_item(source, stop, item):
         if vehicle.latest_location:
             if (source.datetime - vehicle.latest_location.datetime).total_seconds() < 1200:
                 heading = calculate_bearing(vehicle.latest_location.latlong, latlong)
+            vehicle.latest_location.current = False
+            vehicle.latest_location.save(update_fields=['current'])
         vehicle.latest_location = VehicleLocation.objects.create(
             journey_id=journey_id,
             latlong=latlong,
             datetime=source.datetime,
             heading=heading,
+            current=True
         )
-        vehicle.save()
+        vehicle.save(update_fields=['latest_location'])
 
 
 def get_stop_departures(source, stop):
