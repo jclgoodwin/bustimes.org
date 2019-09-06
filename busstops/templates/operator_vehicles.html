@@ -87,7 +87,10 @@
                     {% else %}
                         {% for journey in vehicle.latest_journeys %}
                             {% if journey.service %}
-                                <a href="{{ journey.service.get_absolute_url }}">{{ journey.service.line_name }}</a>
+                                {{ journey.service.get_line_name_and_brand }}
+                                <br>
+                            {% elif journey.route_name %}
+                                {{ journey.route_name }}
                                 <br>
                             {% endif %}
                             {% if journey.datetime.date == today %}

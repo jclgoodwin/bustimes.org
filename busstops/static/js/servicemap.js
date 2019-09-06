@@ -28,6 +28,8 @@
             map.invalidateSize();
         } else {
             loadjs([LEAFLET_CSS_URL, LEAFLET_JS_URL], setUpMap);
+            clearTimeout(timeout);
+            load();
         }
     };
 
@@ -268,7 +270,7 @@
             }
             timeout = setTimeout(function() {
                 load();
-            }, 10000); // 10 seconds
+            }, map ? 10000 : 120000); // 10 seconds or 2 minute
         });
     }
 
