@@ -648,11 +648,11 @@ class SiriSmDepartures(Departures):
             return
         if response.ok:
             return self.departures_from_response(response)
-        cache.set(self.source.get_poorly_key(), True, 3600)  # back off for an hour
+        cache.set(self.source.get_poorly_key(), True, 1800)  # back off for 30 minutes
 
     def departures_from_response(self, response):
-        if 'Client.AUTHENTICATION_FAILED' in response.text:
-            cache.set(self.source.get_poorly_key(), True, 3600)  # back off for an hour
+        if not response.text or 'Client.AUTHENTICATION_FAILED' in response.text:
+            cache.set(self.source.get_poorly_key(), True, 1800)  # back off for 30 minutes
             return
         try:
             tree = ET.fromstring(response.text).find('s:ServiceDelivery', self.ns)
