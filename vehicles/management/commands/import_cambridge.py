@@ -130,6 +130,7 @@ class Command(BaseCommand):
                 journey.service.tracking = True
                 journey.service.save(update_fields=['tracking'])
             vehicle.save(update_fields=['latest_location'])
+        vehicle.update_last_modified()
 
     def handle_data(self, data):
         for item in data['request_data']:

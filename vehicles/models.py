@@ -5,6 +5,7 @@ from webcolors import html5_parse_simple_color
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.gis.db import models
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Index, Q
 from django.urls import reverse
@@ -230,6 +231,10 @@ class Vehicle(models.Model):
             if not self.vehiclejourney_set.filter(service__operator=operator, datetime__gt=week_ago).exists():
                 self.operator_id = operator.id
                 self.save(update_fields=['operator'])
+
+    def update_last_modified(self):
+        if self.latest_location.journey.service_id:
+            cache.set(f'{self.latest_location.journey.service_id}:vehicles_last_modified', timezone.now())
 
 
 class VehicleEdit(models.Model):

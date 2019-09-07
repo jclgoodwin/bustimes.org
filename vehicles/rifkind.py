@@ -140,6 +140,7 @@ def handle_item(source, stop, item):
             current=True
         )
         vehicle.save(update_fields=['latest_location'])
+    vehicle.update_last_modified()
 
 
 def get_stop_departures(source, stop):

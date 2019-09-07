@@ -170,6 +170,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 latest.current = False
                 latest.save(update_fields=['current'])
         self.current_location_ids.add(location.id)
+        vehicle.update_last_modified()
 
         if latest:
             distance = latest.latlong.distance(location.latlong) * 69
