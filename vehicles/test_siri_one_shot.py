@@ -36,15 +36,15 @@ class SIRIOneShotTest(TestCase):
         with vcr.use_cassette('data/vcr/icarus.yaml'):
 
             with freeze_time('2019-06-08'):
-                with self.assertNumQueries(7):
+                with self.assertNumQueries(6):
                     self.client.get('/vehicles.json?service=swe_33-FLC-_-y10')
 
                 self.assertEqual('nothing scheduled', cache.get('swe_33-FLC-_-y10:Icarus'))
 
             with freeze_time('2019-06-08 20:37+01:00'):
-                with self.assertNumQueries(56):
+                with self.assertNumQueries(55):
                     self.client.get('/vehicles.json?service=swe_33-FLC-_-y10')
-                with self.assertNumQueries(6):
+                with self.assertNumQueries(1):
                     res = self.client.get('/vehicles.json?service=swe_33-FLC-_-y10')
 
                 key = 'http://data.icarus.cloudamber.com/StopMonitoringRequest.ashx:torbaydevon_siri_traveline:FLCN'

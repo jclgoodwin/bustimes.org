@@ -1,12 +1,13 @@
 from vcr import use_cassette
 from mock import patch
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from freezegun import freeze_time
 from busstops.models import Region, Operator, DataSource, Service
 from ...models import Vehicle, VehicleLocation
 from ..commands import import_live_ziptrip
 
 
+@override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
 class ZipTripTest(TestCase):
     def setUp(self):
         Region.objects.create(id='EA')
@@ -59,12 +60,12 @@ class ZipTripTest(TestCase):
 
         self.assertEqual(3, Vehicle.objects.count())
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(1):
             with freeze_time('2018-08-31T21:35:04+00:00'):
                 response = self.client.get('/vehicles.json?service=007').json()
         self.assertEqual(2, len(response['features']))
 
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(1):
             with freeze_time('2018-08-31T22:55:04+00:00'):
                 response = self.client.get('/vehicles.json?service=007').json()
         self.assertEqual(0, len(response['features']))

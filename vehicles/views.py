@@ -128,7 +128,7 @@ def get_locations(request):
 
 
 @use_primary_db
-def siri_one_shot(code):
+def siri_one_shot(code, now):
     source = 'Icarus'
     siri_source = SIRISource.objects.get(name=code.scheme[:-5])
     line_name_cache_key = '{}:{}:{}'.format(siri_source.url, siri_source.requestor_ref, code.code)
@@ -140,7 +140,6 @@ def siri_one_shot(code):
         return f'cached ({cached})'
     if siri_source.get_poorly():
         raise Poorly()
-    now = timezone.now()
     fifteen_minutes_ago = now - timedelta(minutes=15)
     locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, journey__service=code.service_id,
                                                datetime__gte=fifteen_minutes_ago, current=True)
@@ -176,25 +175,33 @@ schemes = ('Cornwall SIRI', 'Devon SIRI', 'Highland SIRI', 'Dundee SIRI', 'Brist
 
 
 def vehicles_last_modified(request):
-    locations = get_locations(request)
+    request.nothing = False
 
     if 'service' in request.GET:
-        tracking = False
         service_id = request.GET['service']
+        now = timezone.now()
+
+        last_modified = cache.get(f'{service_id}:vehicles_last_modified')
+        if last_modified and (now - last_modified).total_seconds() < 40:
+            return last_modified
+
         codes = ServiceCode.objects.filter(scheme__in=schemes, service=service_id)
         for code in codes:
             try:
-                siri_one_shot(code)
-                tracking = True
+                siri_one_shot(code, now)
                 break
             except (SIRISource.DoesNotExist, Poorly, exceptions.RequestException):
                 continue
+
         if Operator.objects.filter(id__in=('KBUS', 'NCTR', 'TBTN', 'NOCT'), service=service_id).exists():
             rifkind(service_id)
-            tracking = True
-        if not tracking and not Service.objects.filter(service_code=service_id, tracking=True).exists():
+
+        last_modified = cache.get(f'{service_id}:vehicles_last_modified')
+        if not last_modified or (now - last_modified).total_seconds() > 900:  # older than 15 minutes
             request.nothing = True
-            return
+        return last_modified
+
+    locations = get_locations(request)
     try:
         location = locations.values('datetime').latest('datetime')
         request.nothing = False
