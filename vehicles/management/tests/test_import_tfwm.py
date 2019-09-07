@@ -25,13 +25,13 @@ class TfWMImportTest(TestCase):
         with override_settings(TFWM={}):
             items = command.get_items()
 
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(0):
             command.handle_item(items[0], self.source.datetime)
 
         with self.assertNumQueries(11):
             command.handle_item(items[217], self.source.datetime)
 
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(1):
             command.handle_item(items[217], self.source.datetime)
 
         with self.assertNumQueries(11):

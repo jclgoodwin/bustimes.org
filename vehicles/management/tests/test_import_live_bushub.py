@@ -63,7 +63,7 @@ class BusHubTest(TestCase):
         with self.assertNumQueries(12):
             command.handle_item(item, self.source.datetime)
 
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(1):
             command.handle_item(item, self.source.datetime)
 
         location = VehicleLocation.objects.get()

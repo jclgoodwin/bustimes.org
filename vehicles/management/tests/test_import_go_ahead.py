@@ -60,7 +60,7 @@ class GoAheadImportTest(TestCase):
         }
         with self.assertNumQueries(13):
             self.command.handle_item(item, self.command.source.datetime)
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(1):
             self.command.handle_item(item, self.command.source.datetime)
 
         location = VehicleLocation.objects.get()

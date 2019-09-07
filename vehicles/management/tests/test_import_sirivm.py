@@ -47,7 +47,7 @@ class SiriVMImportTest(TestCase):
         self.assertIsNone(locations.get().heading)
 
         # if datetime is the same, shouldn't create new vehicle location
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(1):
             self.command.handle_item(item, None)
         self.assertEqual(1, locations.count())
 

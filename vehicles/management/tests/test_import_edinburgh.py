@@ -27,7 +27,7 @@ class EdinburghImportTest(TestCase):
         }
         with self.assertNumQueries(13):
             self.command.handle_item(item, None)
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(1):
             self.command.handle_item(item, None)
         journey = self.command.source.vehiclejourney_set.get()
 

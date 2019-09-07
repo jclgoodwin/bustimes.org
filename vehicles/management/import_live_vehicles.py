@@ -83,7 +83,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
         return queryset.filter(journey__datetime__lte=now,
                                journey__stopusageusage__datetime__gte=now).distinct().get()
 
-    @transaction.atomic
     def handle_item(self, item, now, service_code=None):
         datetime = self.get_datetime(item)
         location = None
@@ -160,17 +159,19 @@ class ImportLiveVehiclesCommand(BaseCommand):
                             ServiceCode.objects.create(scheme=self.source.name, service=journey.service,
                                                        code=journey.route_name)
             location.journey = journey
-        # save new location
-        location.current = True
-        location.save()
-        journey.vehicle.latest_location = location
-        journey.vehicle.save(update_fields=['latest_location'])
+        with transaction.atomic():
+            # save new location
+            location.current = True
+            location.save()
+            journey.vehicle.latest_location = location
+            journey.vehicle.save(update_fields=['latest_location'])
+            if latest:
+                # mark old location as not current
+                latest.current = False
+                latest.save(update_fields=['current'])
         self.current_location_ids.add(location.id)
-        if latest:
-            # mark old location as not current
-            latest.current = False
-            latest.save(update_fields=['current'])
 
+        if latest:
             distance = latest.latlong.distance(location.latlong) * 69
             time = location.datetime - latest.datetime
             if time:
