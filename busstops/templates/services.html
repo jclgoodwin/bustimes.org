@@ -1,11 +1,18 @@
 <ul class="services">
-{% for s in services %}
+{% for service in services %}
     <li>
-        <a href="{{ s.get_absolute_url }}">
-            <span class="name{% if not s.has_long_line_name and not s.line_brand %} is-short{% endif %}">
-                {{ s.get_line_name_and_brand }}
+        <a href="{{ service.get_absolute_url }}">
+            {% if service.line_name and service.line_name != service.description %}
+                <span class="name{% if not service.has_long_line_name %} is-short{% endif %}">
+                    {{ service.line_name }}
+                </span>
+            {% endif %}
+            {% if service.line_brand %}
+                <span class="name">{{ service.line_brand }}</span>
+            {% endif %}
+            <span class="description">
+                {{ service.description }}
             </span>
-            <span class="description">{{ s.description }}</span>
         </a>
     </li>
 {% endfor %}

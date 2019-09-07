@@ -511,6 +511,8 @@ class Service(models.Model):
             description = getattr(self, f'{self.direction}_description')
         if not description or description.lower() == self.direction:
             description = self.description
+        if description == self.line_name:
+            description = None
         if self.line_name or self.line_brand or description:
             parts = (self.line_name, self.line_brand, description)
             return ' - '.join(part for part in parts if part)

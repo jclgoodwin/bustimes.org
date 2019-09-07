@@ -488,13 +488,18 @@ table {
 
 .services {
     a {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1em;
         white-space: normal;
     }
 
-    // override `main li a` styles
     a:hover {
-        color: $link-color;
-        text-decoration: underline;
+        text-decoration: none;
+
+        .description {
+            text-decoration: underline;
+        }
     }
 
     a:focus,
@@ -505,15 +510,13 @@ table {
     .name {
         color: #dc7;
         float: left;
-        font-variant-numeric: tabular-nums;
-        margin-bottom: .5em;
         margin-right: 1em;
 
         &.is-short {
-            font-size: 3em;
-            line-height: 1.2em;
-            margin-bottom: 0;
-            margin-right: .33em;
+            font-variant-numeric: tabular-nums;
+            font-size: 2.5em;
+            line-height: 1em;
+            margin-right: .4em;
         }
     }
 
