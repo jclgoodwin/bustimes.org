@@ -272,8 +272,6 @@ class VehicleDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         journeys = self.object.vehiclejourney_set
         context['dates'] = journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date')
-        if not context['dates']:
-            raise Http404()
 
         if self.object.operator:
             context['breadcrumb'] = [self.object.operator, Vehicles(self.object.operator)]
@@ -281,18 +279,19 @@ class VehicleDetailView(DetailView):
             context['previous'] = self.object.get_previous()
             context['next'] = self.object.get_next()
 
-        date = self.request.GET.get('date')
-        if date:
-            try:
-                date = parse_datetime(date).date()
-            except ValueError:
-                date = None
-        if not date:
-            date = context['dates'].last()
-        context['date'] = date
-        journeys = journeys.filter(datetime__date=date).order_by('datetime')
-        locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
-        context['journeys'] = journeys.select_related('service').annotate(locations=Exists(locations))
+        if context['dates']:
+            date = self.request.GET.get('date')
+            if date:
+                try:
+                    date = parse_datetime(date).date()
+                except ValueError:
+                    date = None
+            if not date:
+                date = context['dates'].last()
+            context['date'] = date
+            journeys = journeys.filter(datetime__date=date).order_by('datetime')
+            locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
+            context['journeys'] = journeys.select_related('service').annotate(locations=Exists(locations))
         return context
 
 

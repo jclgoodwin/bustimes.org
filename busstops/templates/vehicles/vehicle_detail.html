@@ -32,60 +32,61 @@
     <p>{{ vehicle.get_flickr_link }}</p>
 {% endif %}
 
-<p>
-    <form class="timetable-date">
-        <select onchange="this.form.submit()" name="date" aria-label="Date">
-            {% for option in dates %}
-                <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
-            {% endfor %}
-        </select>
-        <noscript><input type="submit" /></noscript>
-    </form>
-</p>
+{% if date %}
 
-{% if journeys %}
-    <table>
-        <thead>
-            <tr>
-                <th scope="col">{% if not vehicle %}Vehicle{% else %}Service{% endif %}</th>
-                <th scope="col" colspan="2">Journey</th>
-                <th scope="col">To</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for journey in journeys %}
+    <p>
+        <form class="timetable-date">
+            <select onchange="this.form.submit()" name="date" aria-label="Date">
+                {% for option in dates %}
+                    <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+            <noscript><input type="submit" /></noscript>
+        </form>
+    </p>
+
+    {% if journeys %}
+        <table>
+            <thead>
                 <tr>
-                    <td>
-                        {% if not vehicle %}
-                            <a href="{{ journey.vehicle.get_absolute_url }}?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.vehicle }}</a>
-                        {% elif journey.service %}
-                            <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.service.get_line_name_and_brand }}</a>
-                        {% elif journey.route_name  %}
-                            <a href="{{ vehicle.operator.get_absolute_url }}/services/{{ journey.route_name }}/vehicles?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.route_name }}</a>
-                        {% endif %}
-                    </td>
-                    <td>{{ journey.datetime|time }}</td>
-                    <td>{% if journey.code|length < 20 %}{{ journey.code }}{% endif %}</td>
-                    <td>{{ journey.destination }}</td>
-                    <td>
-                        {% if journey.locations %}
-                            <button data-journey-id="{{ journey.id }}">Map</button>
-                        {% endif %}
-                    </td>
+                    <th scope="col">{% if not vehicle %}Vehicle{% else %}Service{% endif %}</th>
+                    <th scope="col" colspan="2">Journey</th>
+                    <th scope="col">To</th>
+                    <th scope="col"></th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for journey in journeys %}
+                    <tr>
+                        <td>
+                            {% if not vehicle %}
+                                <a href="{{ journey.vehicle.get_absolute_url }}?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.vehicle }}</a>
+                            {% elif journey.service %}
+                                <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.service.get_line_name_and_brand }}</a>
+                            {% elif journey.route_name  %}
+                                <a href="{{ vehicle.operator.get_absolute_url }}/services/{{ journey.route_name }}/vehicles?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.route_name }}</a>
+                            {% endif %}
+                        </td>
+                        <td>{{ journey.datetime|time }}</td>
+                        <td>{% if journey.code|length < 20 %}{{ journey.code }}{% endif %}</td>
+                        <td>{{ journey.destination }}</td>
+                        <td>
+                            {% if journey.locations %}
+                                <button data-journey-id="{{ journey.id }}">Map</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}" />
-    <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
-    <script src="{% static 'js/reqwest.min.js' %}"></script>
-    <script async src="{% static 'js/history.js' %}"></script>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}" />
+        <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
+        <script src="{% static 'js/reqwest.min.js' %}"></script>
+        <script async src="{% static 'js/history.js' %}"></script>
+    {% endif %}
 
-{% else %}
-    <p>Sorry, nothing found for {{ date }}</p>
 {% endif %}
 
 {% if previous %}

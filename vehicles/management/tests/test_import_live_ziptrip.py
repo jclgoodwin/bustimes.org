@@ -91,7 +91,7 @@ class ZipTripTest(TestCase):
 
         with self.assertNumQueries(2):
             response = self.client.get(self.vehicle.get_absolute_url())
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 200)
 
         # service vehicle history
         with self.assertNumQueries(5):
@@ -102,7 +102,7 @@ class ZipTripTest(TestCase):
 
         with self.assertNumQueries(4):
             response = self.client.get('/services/foo-foo/vehicles?date=2004-04-04')
-        self.assertContains(response, 'Sorry, nothing found for Sunday 4 April 2004')
+        self.assertNotContains(response, 'table>')
 
     @patch('vehicles.management.commands.import_live_ziptrip.sleep')
     def test_get_itmes(self, sleep):
