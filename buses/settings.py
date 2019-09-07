@@ -206,7 +206,7 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache'
     } if DEBUG else {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211'
+        'LOCATION': os.environ.get('MEMCACHED_LOCATION', '127.0.0.1:11211')
     }
 }
 
