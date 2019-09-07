@@ -99,25 +99,25 @@
         },
         "ddtrace": {
             "hashes": [
-                "sha256:18d3e42bef2603c1a261205e9b17bd8819a352a77aafd1518104a3f2f475d02e",
-                "sha256:22b73194310a64bf72bb53d3a454cd4a3ac14d7366498daf3b9b5fbdc0f5bb5d",
-                "sha256:33ce2adf478b4dbfb0f31e7ba079fc1fd6884d9ec52ca88006987888e1bfe9f9",
-                "sha256:62ec3c0449dc9d03511c66b61a9a69f6b95b29a16455ffb80f5171da2f182e60",
-                "sha256:785dc3696247752d7e5d7cc17c9200434485bce3077b4a690b4e0882b9afb88c",
-                "sha256:7d01b85502c8902976f6aab675e19ec50ada9d3b20134f2be6d9f13344c712cc",
-                "sha256:894d63bf6807cf199f21e0cff995c0f4d808b06d191376ece1ade5e6e6090fa7",
-                "sha256:9b3e6d8577dbb67d6d4b0416e61eef758e01d74c91d61c5e2984c50e963f7d89",
-                "sha256:9bb7fb648b5514dfeb096d096b9e6af8e879c8c1550c209524e134c7e20e9eb1",
-                "sha256:a8a4097e5f83e05217ae18ebe7df7ec7ac83e7af02fbf42909877567c95fc76d",
-                "sha256:b1a8b90eac9ab039c54736b5c00bcbf93f09e1c4e8dbaefeca01c89a82615829",
-                "sha256:bb1d7bc5218f36d5254e8fc00040ce6d13106ab2d5dc1e14812af22e86270170",
-                "sha256:d227c030379169716f3009787f4d12c92096a24418dda6ea73ac41aaf0d197cb",
-                "sha256:db36cd3b01b338af14f65862f98991206c6ad33f808796c5a7a0b8adcda61219",
-                "sha256:e7be9de304bb1b98799411fe185171348194744a7885e3c8f2f97d54c9b09ac0",
-                "sha256:faf42f64ed38b15c19e5c86abf84d7f4945ebeb406b84b558b30ae4bd5fb78e3"
+                "sha256:08e77c47b94b719279346fbaa294704359c14051b611df4bb00ad0ad4cb3975f",
+                "sha256:3cbea8187b843c2cb1129b30e2234bee45ea602b3ea263bd84c8285e81cee0ba",
+                "sha256:3cf4707ee7929319684b25aaa5489af178b25c8b1c53fbd33bdf71aae3d46233",
+                "sha256:52526870c287c693bdaa85a971d676f9148533cb50844d8b6028813e9a75877a",
+                "sha256:5bd8a947a171972e4398d508b7789322fae94fe69aee77ea9e61cf551df953b6",
+                "sha256:72aecae3ba1436c0809b4cf6de31a1d5f48b7d6ed20478a0993a16022f35c542",
+                "sha256:7323d2ab131ab64e0cfe9b5d2e01d910e10e3d344e8422bc2595fb8e4fc28a89",
+                "sha256:74dd72c67a37c74213940a8072ca6e2b10d0979619c42f8c6e2c3e2479e04df1",
+                "sha256:83d6eafcebbf63375dc54adba4a0edf0d3660015c21eee2c2947add1c6494411",
+                "sha256:9252c65a7ff8deb3eca531aa9eb04c16b6be45c4fc3deaa0d202632a0beb613a",
+                "sha256:96a44ece2cff41d09bca5f958235dc1df01da27c3dcbcec48502a7554d5eb299",
+                "sha256:c9d89e40cd1a1d408caf3223aa0353792150878cf539db48a137e4758cacf705",
+                "sha256:d43792eef031d5f1fe495edcefec8af54d6b44601e2d224f25652807157a47b2",
+                "sha256:d643ccee1ab7809fc31c459c24784320b46f6b2a51ff1d9f5031fc20dca2d500",
+                "sha256:e571b67c50e67691eef41af2cf60bfa30fb286f8fc8a2d476e49f9f77f24c311",
+                "sha256:fee1f271705cadd87545ea893392b9bc5d180c16a8a328cb5a98f5c68d9f7846"
             ],
             "index": "pypi",
-            "version": "==0.28.0"
+            "version": "==0.29.0"
         },
         "django": {
             "hashes": [
@@ -274,7 +274,7 @@
                 "sha256:891fe897b49abb7db470c55664b198b1095e4943b9f82b7dcab317a19116cd38",
                 "sha256:a471628e20f03dcdfde00770eeaf9c77811f0c331c8805219ca7b87ac17576c5",
                 "sha256:a63b4fd3e2cabdcc9d918ed280bdde3e8e9641e04f3c59a2a3109644a07b9832",
-                "sha256:b32ba18b7dcba67eb136a988bedb0a556ee61ea6adc911fcda65220ea7f1cc8f",
+                "sha256:b0b84408d4eabc6de9dd1e1e0bc63e7731e890c0b378a62443e5741cfd0ae90a",
                 "sha256:be78485e5d5f3684e875dab60f40cddace2f5b2a8f7fede412358ab3214c3a6f",
                 "sha256:c27eaed872185f047bb7f7da2d21a7d8913457678c9a100a50db6da890bc28b9",
                 "sha256:c81cb40bff373ab7a7446d6bbca0190bccc5be3448b47b51d729e37799bb5692",
@@ -600,14 +600,6 @@
         }
     },
     "develop": {
-        "appnope": {
-            "hashes": [
-                "sha256:5b26757dc6f79a3b7dc9fab95359328d5747fcb2409d331ea66d0272b90ab2a0",
-                "sha256:8b995ffe925347a2138d7ac0fe77155e4311a0ea6d6da4f5128fe4b3cbe5ed71"
-            ],
-            "markers": "sys_platform == 'darwin'",
-            "version": "==0.1.0"
-        },
         "backcall": {
             "hashes": [
                 "sha256:1fac21e6861f538700a5d498620153f38407a4bacf9e1d5047b3d717f10bc4ab",
