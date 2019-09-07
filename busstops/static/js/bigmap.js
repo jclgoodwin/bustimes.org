@@ -284,7 +284,7 @@
                 }
                 timeout = setTimeout(function() {
                     load(map, statusBar, false);
-                }, 10000);
+                }, 15000);
             }
         );
 

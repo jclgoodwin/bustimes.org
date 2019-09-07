@@ -28,8 +28,10 @@
             map.invalidateSize();
         } else {
             loadjs([LEAFLET_CSS_URL, LEAFLET_JS_URL], setUpMap);
-            clearTimeout(timeout);
-            load();
+            if (busesOnlineCount) {
+                clearTimeout(timeout);
+                load();
+            }
         }
     };
 
