@@ -426,6 +426,12 @@ class VehicleJourney(object):
 
     def cmp(self, x, y):
         """Compare two journeys"""
+        if x.sequencenumber is not None and y.sequencenumber is not None:
+            if x.sequencenumber > y.sequencenumber:
+                return 1
+            if x.sequencenumber < y.sequencenumber:
+                return -1
+            return 0
         x_time = x.departure_time
         y_time = y.departure_time
         if (
@@ -447,8 +453,6 @@ class VehicleJourney(object):
         return 0
 
     def get_order(self):
-        if self.sequencenumber is not None:
-            return self.sequencenumber
         return cmp_to_key(self.cmp)(self)
 
     def should_show(self, date, transxchange=None):
