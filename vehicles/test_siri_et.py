@@ -1,4 +1,3 @@
-from freezegun import freeze_time
 from django.test import TestCase
 from django.contrib.gis.geos import Point
 from busstops.models import DataSource, Region, Operator, StopPoint

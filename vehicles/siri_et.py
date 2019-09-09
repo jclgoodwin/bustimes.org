@@ -1,8 +1,7 @@
 import xml.etree.cElementTree as ET
 from io import StringIO
 from ciso8601 import parse_datetime
-from django.utils import timezone
-from busstops.models import Service, StopPoint, DataSource
+from busstops.models import Service, DataSource
 from .models import Vehicle, VehicleLocation, VehicleJourney, Call
 
 
