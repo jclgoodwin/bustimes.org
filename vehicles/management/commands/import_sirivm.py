@@ -271,7 +271,7 @@ class Command(ImportLiveVehiclesCommand):
                 pass
 
         if operator_options and operator and journey.service and operator.id == operator_options[0]:
-            if operator.id != 'RBUS' and operator.id != 'ARBB':
+            if operator.id not in {'RBUS', 'ARBB', 'ARHE'}:
                 try:
                     operator = journey.service.operator.get()
                     vehicle.maybe_change_operator(operator)
