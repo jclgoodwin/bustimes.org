@@ -296,7 +296,6 @@ class ViewsTests(TestCase):
             self.assertContains(response, 'Mind your head')  # Note
 
         self.assertContains(response, '<style amp-custom>')
-        self.assertContains(response, "\"data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000")
 
     def test_operator_not_found(self):
         """An operator with no services, or that doesn't exist, should should return a 404 response"""
