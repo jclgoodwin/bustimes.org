@@ -51,7 +51,6 @@ class Command(ImportLiveVehiclesCommand):
         'RED': ('RRTR', 'RLNE', 'REDE'),
         'SCCM': ('SCCM', 'SCPB', 'SCHU', 'SCBD'),
         'ATS': ('ARBB', 'GLAR'),
-        'ASC': ('ARHE'),
         'NXB': ('TNXB', 'TCVW'),
     }
     operators = {}
@@ -148,11 +147,11 @@ class Command(ImportLiveVehiclesCommand):
             if len(parts) == 2 and parts[0].isalpha() and parts[0].isupper() and parts[1].isdigit():
                 defaults['fleet_number'] = parts[1]
 
-        if vehicle_code.startswith('GOEA-') or vehicle_code.startswith('CSLB-'):
-            return self.vehicles.get_or_create(
-                defaults,
-                code=vehicle_code,
-            )
+            if parts[0] in {'GOEA', 'CSLB'}:
+                return self.vehicles.get_or_create(
+                    defaults,
+                    code=vehicle_code,
+                )
 
         if not operator_options:
             operator_options = (operator,)
