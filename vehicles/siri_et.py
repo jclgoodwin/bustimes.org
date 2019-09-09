@@ -96,11 +96,18 @@ def handle_journey(element, source, when):
         if journey_created:
             call = Call(stop_id=stop_id, journey=journey, visit_number=visit_number,
                         aimed_arrival_time=aimed_arrival_time, aimed_departure_time=aimed_departure_time)
+            call_created = False
         else:
-            call = Call.objects.get(stop_id=stop_id, journey=journey, visit_number=visit_number)
-        call.expected_arrival_time = expected_arrival_time
-        call.expected_departure_time = expected_departure_time
-        calls.append(call)
+            call, call_created = Call.objects.get_or_create({
+                'aimed_arrival_time': aimed_arrival_time,
+                'expected_arrival_time': expected_arrival_time,
+                'aimed_departure_time': aimed_departure_time,
+                'expected_departure_time': expected_departure_time
+            }, stop_id=stop_id, journey=journey, visit_number=visit_number)
+        if not call_created:
+            call.expected_arrival_time = expected_arrival_time
+            call.expected_departure_time = expected_departure_time
+            calls.append(call)
     if journey_created:
         Call.objects.bulk_create(calls)
     else:
@@ -110,7 +117,7 @@ def handle_journey(element, source, when):
         if previous_call:
             previous_time = previous_call.expected_arrival_time or previous_call.expected_departure_time
             time = call.expected_departure_time or call.expected_arrival_time
-            if previous_time <= when and time >= when:
+            if previous_time and time and previous_time <= when and time >= when:
                 if vehicle.latest_location:
                     vehicle.latest_location.journey = journey
                     vehicle.latest_location.latlong = previous_call.stop.latlong
