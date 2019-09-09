@@ -169,7 +169,8 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.3">
         """
 
         with freeze_time('2019-09-02T16:37:00+01:00'):
-            siri_et(xml)
+            with self.assertNumQueries(23):
+                siri_et(xml)
 
         self.assertEqual(3, Call.objects.count())
         self.assertEqual(1, VehicleLocation.objects.count())

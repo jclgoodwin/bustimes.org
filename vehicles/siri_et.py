@@ -21,7 +21,7 @@ operator_refs = {
 vehicles = Vehicle.objects.select_related('latest_location__journey')
 
 
-def handle_journey(element, source):
+def handle_journey(element, source, when):
     journey_element = element.find('siri:EstimatedVehicleJourney', ns)
     vehicle = journey_element.find('siri:VehicleRef', ns)
     if vehicle is None:
@@ -45,6 +45,8 @@ def handle_journey(element, source):
     else:
         journey = None
 
+    calls = []
+
     for call in journey_element.find('siri:EstimatedCalls', ns):
         visit_number = int(call.find('siri:VisitNumber', ns).text)
         stop_id = call.find('siri:StopPointRef', ns).text
@@ -67,7 +69,7 @@ def handle_journey(element, source):
             except (Service.MultipleObjectsReturned, Service.DoesNotExist):
                 service = None
 
-            journey, _ = VehicleJourney.objects.get_or_create({
+            journey, created = VehicleJourney.objects.get_or_create({
                 'code': journey_ref,
                 'route_name': route_name,
                 'destination': destination,
@@ -91,38 +93,48 @@ def handle_journey(element, source):
         expected_departure_time = call.find('siri:ExpectedDepartureTime', ns)
         if expected_departure_time is not None:
             expected_departure_time = parse_datetime(expected_departure_time.text)
-        if expected_arrival_time and expected_arrival_time < timezone.now():
-            stop = StopPoint.objects.get(pk=stop_id)
+        if created:
+            call = Call(stop_id=stop_id, journey=journey, visit_number=visit_number)
+        else:
+            call = Call.objects.get(stop_id=stop_id, journey=journey, visit_number=visit_number)
+        call.aimed_arrival_time = aimed_arrival_time
+        call.expected_arrival_time = expected_arrival_time
+        call.aimed_departure_time = aimed_departure_time
+        call.expected_departure_time = expected_departure_time
+        calls.append(call)
+    if created:
+        Call.objects.bulk_create(calls)
+    else:
+        Call.objects.bulk_update(calls)
+    previous_call = None
+    for call in journey.call_set.order_by('visit_number'):
+        if previous_call and previous_call.expected_arrival_time <= when and call.expected_arrival_time >= when:
             if vehicle.latest_location:
                 vehicle.latest_location.journey = journey
-                vehicle.latest_location.latlong = stop.latlong
-                vehicle.latest_location.heading = stop.get_heading()
-                vehicle.latest_location.datetime = expected_arrival_time
+                vehicle.latest_location.latlong = previous_call.stop.latlong
+                vehicle.latest_location.heading = previous_call.stop.get_heading()
+                vehicle.latest_location.datetime = previous_call.expected_arrival_time
                 vehicle.latest_location.save()
             else:
                 vehicle.latest_location = VehicleLocation.objects.create(
                     journey=journey,
-                    latlong=stop.latlong,
-                    heading=stop.heading,
-                    datetime=expected_arrival_time
+                    latlong=previous_call.stop.latlong,
+                    heading=previous_call.stop.get_heading(),
+                    datetime=previous_call.expected_arrival_time,
+                    current=True
                 )
                 vehicle.save(update_fields=['latest_location'])
-        Call.objects.update_or_create({
-            'aimed_arrival_time': aimed_arrival_time,
-            'expected_arrival_time': expected_arrival_time,
-            'aimed_departure_time': aimed_departure_time,
-            'expected_departure_time': expected_departure_time,
-            },
-            stop_id=stop_id,
-            journey=journey,
-            visit_number=visit_number
-        )
+            return
+        previous_call = call
 
 
 def siri_et(request_body):
     source = DataSource.objects.get(name='Arriva')
     iterator = ET.iterparse(StringIO(request_body))
     for _, element in iterator:
-        if element.tag[29:] == 'EstimatedJourneyVersionFrame':
-            handle_journey(element, source)
+        tag = element.tag[29:]
+        if tag == 'RecordedAtTime':
+            when = parse_datetime(element.text)
+        elif tag == 'EstimatedJourneyVersionFrame':
+            handle_journey(element, source, when)
             element.clear()
