@@ -354,6 +354,18 @@ def tracking_report(request):
     })
 
 
+class JourneyDetailView(DetailView):
+    model = VehicleJourney
+    queryset = model.objects.select_related('vehicle', 'service')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['calls'] = self.object.call_set.order_by('visit_number').select_related('stop__locality')
+
+        return context
+
+
 def journey_json(request, pk):
     return JsonResponse([{
         'coordinates': tuple(location.latlong),
