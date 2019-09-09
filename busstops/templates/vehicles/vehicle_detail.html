@@ -50,7 +50,7 @@
             <thead>
                 <tr>
                     <th scope="col">{% if not vehicle %}Vehicle{% else %}Service{% endif %}</th>
-                    <th scope="col" colspan="2">Journey</th>
+                    <th scope="col">Journey</th>
                     <th scope="col">To</th>
                     <th scope="col"></th>
                 </tr>
@@ -68,10 +68,11 @@
                             {% endif %}
                         </td>
                         <td>{{ journey.datetime|time }}</td>
-                        <td>{% if journey.code|length < 20 %}{{ journey.code }}{% endif %}</td>
                         <td>{{ journey.destination }}</td>
                         <td>
-                            {% if journey.locations %}
+                            {% if journey.calls %}
+                                <a href="{{ journey.get_absolute_url }}">Times</a>
+                            {% elif journey.locations %}
                                 <button data-journey-id="{{ journey.id }}">Map</button>
                             {% endif %}
                         </td>

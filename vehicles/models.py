@@ -291,6 +291,9 @@ class VehicleJourney(models.Model):
     destination = models.CharField(max_length=255, blank=True)
     direction = models.CharField(max_length=8, blank=True)
 
+    def get_absolute_url(self):
+        return reverse('journey_detail', args=(self.id,))
+
     def __str__(self):
         return f'{self.datetime}'
 
@@ -310,6 +313,18 @@ class Call(models.Model):
     expected_arrival_time = models.DateTimeField(null=True)
     aimed_departure_time = models.DateTimeField(null=True)
     expected_departure_time = models.DateTimeField(null=True)
+
+    def arrival_delay(self):
+        delay = (self.expected_arrival_time - self.aimed_arrival_time).total_seconds()
+        if delay:
+            return '{0:+d}'.format(int(delay / 60))
+        return ''
+
+    def departure_delay(self):
+        delay = (self.expected_departure_time - self.aimed_departure_time).total_seconds()
+        if delay:
+            return '{0:+d}'.format(int(delay / 60))
+        return ''
 
     class Meta:
         index_together = (

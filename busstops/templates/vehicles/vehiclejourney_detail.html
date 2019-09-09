@@ -1,0 +1,41 @@
+{% extends 'page.html' %}
+
+{% block bodyclass %}narrow{% endblock %}
+
+{% block content %}
+
+<h1>{{ object.service }}</h1>
+
+<p>Journey: {{ object.datetime }} to {{ object.destination }}</p>
+
+<p>Vehicle: <a href="{{ object.vehicle.get_absolute_url }}">{{ object.vehicle }}</a></p>
+
+<table>
+    <thead>
+        <th></th><th>Timetable</th><th>Live</th></tr>
+    </thead>
+    <tbody>
+        {% for call in calls %}
+            {% if call.aimed_arrival_time and call.aimed_arrival_time != call.aimed_departure_time %}
+                <tr>
+                    <td><a href="{{ call.stop.get_absolute_url }}">{{ call.stop.get_qualified_name }}</a></td>
+                    <td>{{ call.aimed_arrival_time|time }}</td>
+                    <td>{{ call.expected_arrival_time|time }}</td>
+                    <td>{{ call.arrival_delay }}</td>
+                </tr>
+            {% endif %}
+            {% if call.aimed_departure_time %}
+                <tr>
+                    <td><a href="{{ call.stop.get_absolute_url }}">{{ call.stop.get_qualified_name }}</a></td>
+                    <td>{{ call.aimed_departure_time|time }}</td>
+                    <td>{{ call.expected_departure_time|time }}</td>
+                    <td>{{ call.departure_delay }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
+
+{% block ad %}{% endblock %}

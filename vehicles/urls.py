@@ -11,6 +11,7 @@ urlpatterns = [
     path('vehicles/<int:pk>', views.VehicleDetailView.as_view(), name='vehicle_detail'),
     path('vehicles/<int:vehicle_id>/edit', views.edit_vehicle),
     path('vehicle-tracking-report', views.tracking_report),
+    path('journeys/<int:pk>', views.JourneyDetailView.as_view(), name='journey_detail'),
     path('journeys/<int:pk>.json', views.journey_json),
     path('siri', views.siri),
 ]

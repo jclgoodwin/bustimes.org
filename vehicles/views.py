@@ -12,7 +12,7 @@ from django.utils import timezone
 from multidb.pinning import use_primary_db
 from busstops.views import get_bounding_box
 from busstops.models import Operator, Service, ServiceCode, SIRISource, DataSource, Journey
-from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit
+from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, Call
 from .forms import EditVehiclesForm, EditVehicleForm
 from .management.commands import import_sirivm
 from .rifkind import rifkind
@@ -251,8 +251,11 @@ def service_vehicles_history(request, slug=None, operator=None, route=None):
         date = dates.last()
         if not date:
             raise Http404()
+    calls = Call.objects.filter(journey=OuterRef('pk'))
     locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
-    journeys = journeys.filter(datetime__date=date).select_related('vehicle').annotate(locations=Exists(locations))
+    journeys = journeys.filter(datetime__date=date).select_related('vehicle').annotate(calls=Exists(calls),
+                                                                                       locations=Exists(locations))
+
     if slug:
         operator = service.operator.select_related('region').first()
     return render(request, 'vehicles/vehicle_detail.html', {
@@ -290,8 +293,10 @@ class VehicleDetailView(DetailView):
                 date = context['dates'].last()
             context['date'] = date
             journeys = journeys.filter(datetime__date=date).order_by('datetime')
+            calls = Call.objects.filter(journey=OuterRef('pk'))
             locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
-            context['journeys'] = journeys.select_related('service').annotate(locations=Exists(locations))
+            journeys = journeys.select_related('service').annotate(calls=Exists(calls), locations=Exists(locations))
+            context['journeys'] = journeys
         return context
 
 
