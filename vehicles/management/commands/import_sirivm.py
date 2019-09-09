@@ -50,8 +50,8 @@ class Command(ImportLiveVehiclesCommand):
         'CSLB': ('CSLB', 'OXBC'),
         'RED': ('RRTR', 'RLNE', 'REDE'),
         'SCCM': ('SCCM', 'SCPB', 'SCHU', 'SCBD'),
-        'ATS': ('ARBB', 'ARHE', 'GLAR'),
-        'ASC': ('ARBB', 'ARHE', 'GLAR'),
+        'ATS': ('ARBB', 'GLAR'),
+        'ASC': ('ARHE'),
         'NXB': ('TNXB', 'TCVW'),
     }
     operators = {}
