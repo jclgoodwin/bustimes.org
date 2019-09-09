@@ -129,7 +129,7 @@ def handle_journey(element, source, when):
                         journey=journey,
                         latlong=previous_call.stop.latlong,
                         heading=previous_call.stop.get_heading(),
-                        datetime=previous_call.expected_arrival_time,
+                        datetime=previous_time,
                         current=True
                     )
                     vehicle.save(update_fields=['latest_location'])

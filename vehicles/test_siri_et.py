@@ -137,8 +137,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.3">
              <StopPointRef>069000023592</StopPointRef>
              <VisitNumber>1</VisitNumber>
              <StopPointName xml:lang="EN">Cuerdley Cross Golf Centre</StopPointName>
-             <AimedArrivalTime>2019-09-02T16:26:00+01:00</AimedArrivalTime>
-             <ExpectedArrivalTime>2019-09-02T16:36:00+01:00</ExpectedArrivalTime>
              <AimedDepartureTime>2019-09-02T16:26:00+01:00</AimedDepartureTime>
              <ExpectedDepartureTime>2019-09-02T16:36:00+01:00</ExpectedDepartureTime>
            </EstimatedCall>
