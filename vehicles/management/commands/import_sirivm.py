@@ -51,6 +51,7 @@ class Command(ImportLiveVehiclesCommand):
         'RED': ('RRTR', 'RLNE', 'REDE'),
         'SCCM': ('SCCM', 'SCPB', 'SCHU', 'SCBD'),
         'ATS': ('ARBB', 'GLAR'),
+        'ASC': ('ARHE', 'GLAR'),
         'NXB': ('TNXB', 'TCVW'),
     }
     operators = {}
