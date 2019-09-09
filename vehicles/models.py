@@ -339,7 +339,7 @@ class VehicleLocation(models.Model):
     class Meta:
         ordering = ('id',)
         indexes = (
-            Index(name='datetime', fields=('current', '-datetime'), condition=Q(current=True)),
+            Index(name='datetime', fields=('current', 'datetime'), condition=Q(current=True)),
         )
 
     def get_json(self, extended=False):
