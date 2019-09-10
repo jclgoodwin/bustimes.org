@@ -51,7 +51,7 @@ class Command(BaseCommand):
   </TerminateSubscriptionRequest>
 </Siri>""")
 
-        termination_time = (now + timedelta(minutes=5)).isoformat()
+        termination_time = (now + timedelta(hours=24)).isoformat()
 
         # (re)subscribe
         if not options['terminate']:

@@ -83,7 +83,7 @@ if os.environ.get('READ_ONLY_DB_HOST'):
     DATABASE_ROUTERS = ['multidb.PinningReplicaRouter']
     MIDDLEWARE.append('busstops.middleware.admin_db_middleware')
 
-DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
+DATA_UPLOAD_MAX_MEMORY_SIZE = None
 
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379')
 
