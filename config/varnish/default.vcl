@@ -1,42 +1,25 @@
+# Marker to tell the VCL compiler that this VCL has been adapted to the
+# new 4.0 format.
 vcl 4.0;
 
+# Default backend definition. Set this to point to your content server.
 backend default {
-    .host = "127.0.0.1";
-    .port = "8081";
-}
-
-backend bustimesio {
-    .host = "127.0.0.1";
-    .port = "8082";
-}
-
-backend supermarket {
-    .host = "127.0.0.1";
-    .port = "8000";
-}
-
-backend basiltherat {
-    .host = "127.0.0.1";
-    .port = "8083";
-}
-
-backend tileserver {
     .host = "127.0.0.1";
     .port = "8080";
 }
 
 sub vcl_recv {
-    if (req.http.host == "bustimes.io") {
-        set req.backend_hint = bustimesio;
-    } elif (req.http.host == "www.supermarketmarket.co.uk") {
-        set req.backend_hint = supermarket;
-    } elif (req.http.host == "hygieneratings.co.uk") {
-        set req.backend_hint = basiltherat;
-    } elif (req.url ~ "^/styles/") {
-        set req.backend_hint = tileserver;
+    # Happens before we check if we have this in cache already.
+    #
+    # Typically you clean up the request here, removing cookies you don't need,
+    # rewriting the request, etc.
+
+    if (req.url ~ "^/(admin/|contact|awin-transaction)" || req.url ~ "/edit") {
+        return (pass);
     }
 
-    if (req.url ~ "^/(admin/|contact|awin-transaction)") {
+    # special features on fleet lists for logged in users
+    if (req.http.Cookie ~ "sessionid" && req.url ~ "operator" && req.url ~ "vehicles") {
         return (pass);
     }
 
@@ -44,26 +27,22 @@ sub vcl_recv {
 }
 
 sub vcl_backend_response {
-    if (bereq.url !~ "^/(admin/|contact)") {
+    # Happens after we have read the response headers from the backend.
+    #
+    # Here you clean the response headers, removing silly Set-Cookie headers
+    # and other mistakes your backend does.
+
+    if (bereq.url !~ "^/(admin/|contact|edit)") {
         unset beresp.http.set-cookie;
 
         if (beresp.status >= 200 && beresp.status < 400) {
             if (bereq.url ~ "^/stops/") {
-                set beresp.ttl = 30s;
-            } elif (bereq.url ~ "^/vehicles\.json") {
-                set beresp.ttl = 5s;
-            } elif (bereq.url ~ "^/styles/") {
-                set beresp.ttl = 30d;
+                set beresp.ttl = 50s;
+            } elif (bereq.url ~ "/(vehicles|journeys/)") {
+                set beresp.ttl = 6s;
             } else {
                 set beresp.ttl = 1h;
             }
         }
-
-    }
-}
-
-sub vcl_deliver {
-    if (req.url ~ "/stops/" && resp.status >= 200 && resp.status < 400) {
-        set resp.http.X-Accel-Buffering = "no";
     }
 }
