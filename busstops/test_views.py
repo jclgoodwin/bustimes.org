@@ -353,17 +353,9 @@ class ViewsTests(TestCase):
         self.assertEqual(response.status_code, 301)
 
     def test_service_not_found(self):
-        """An inactive service with no replacement should show a clever 404 page"""
+        """An inactive service with no replacement should show a 404 page"""
         response = self.client.get('/services/45A')
         self.assertEqual(response.status_code, 404)
-        self.assertContains(
-            response,
-            'Sorry, it looks like the  service <strong>45A</strong> no longer exists.\n    It might have',
-            status_code=404
-        )
-        self.assertContains(response, 'Services operated by Ainsley', status_code=404)
-        self.assertContains(response, '<li><a href="/localities/melton-constable">Melton Constable</a></li>',
-                            status_code=404)
 
     def test_service_xml(self):
         """I can view the TransXChange XML for a service"""

@@ -36,21 +36,12 @@ def index(request):
 
 def not_found(request, exception):
     """Custom 404 handler view"""
-    context = None
     if request.resolver_match:
-        view_name = request.resolver_match.view_name.lower()
-        if view_name == 'service_detail':
-            slug = request.resolver_match.kwargs.get('slug')
-            service = Service.objects.filter(Q(service_code=slug) | Q(slug=slug)).defer('geometry').first()
-            localities = Locality.objects.filter(stoppoint__service=service).defer('latlong').distinct()
-            context = {
-                'service': service,
-                'localities': localities,
-            }
-        else:
-            context = {
-                'exception': exception
-            }
+        context = {
+            'exception': exception
+        }
+    else:
+        context = None
     response = render(request, '404.html', context)
     response.status_code = 404
     return response
