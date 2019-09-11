@@ -199,10 +199,10 @@
 
 {% if object.geometry %}
     <script>
+        GEOMETRY_URL = '/services/{{ object.service_code }}/geometry.js';
         LEAFLET_CSS_URL = '{% static 'js/leaflet/leaflet.css' %}';
         LEAFLET_JS_URL = '{% static 'js/leaflet/leaflet.js' %}';
     </script>
-    <script src="/services/{{ object.service_code }}/geometry.js"></script>
     {% javascript 'servicemap' %}
 {% endif %}
 

@@ -27,7 +27,7 @@
         if (map) {
             map.invalidateSize();
         } else {
-            loadjs([LEAFLET_CSS_URL, LEAFLET_JS_URL], setUpMap);
+            loadjs([GEOMETRY_URL, LEAFLET_CSS_URL, LEAFLET_JS_URL], setUpMap);
             if (busesOnlineCount) {
                 clearTimeout(timeout);
                 load();
