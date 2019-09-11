@@ -198,13 +198,14 @@
         <h2>{{ operator }}</h2>
 
         <ul>
-        {% for handle in operator.twitter.split %}
-            <li><a href="https://twitter.com/{{ handle }}">@{{ handle }} on Twitter</a></li>
-        {% endfor %}
+            {% if operator.url %}
+                <li>{{ operator.url|urlise }}</li>
+            {% endif %}
 
-        {% if operator.url %}
-            <li>{{ operator.url|urlise }}</li>
-        {% endif %}
+            {% for handle in operator.twitter.split %}
+                <li><a href="https://twitter.com/{{ handle }}">@{{ handle }} on Twitter</a></li>
+            {% endfor %}
+        </ul>
     {% endif %}
 {% endfor %}
 

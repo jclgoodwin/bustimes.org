@@ -35,27 +35,30 @@
     <h2>Contact {{ object }}</h2>
 
     <div class="contact-details">
-    {% if object.twitter %}
-        {% for handle in object.twitter.split %}
-            <p><a href="https://twitter.com/{{ handle }}">@{{ handle }} on Twitter</a></p>
-        {% endfor %}
-    {% endif %}
-    {% if object.url %}
-        <p itemprop="url">{{ object.url|urlise }}</p>
-    {% endif %}
-    {% if object.email %}
-        {% load email_obfuscator %}
-        <p itemprop="email">{{ object.email|obfuscate_mailto }}</p>
-    {% endif %}
-    {% if object.phone %}
-        <p itemprop="telephone">{{ object.phone }}</p>
-    {% endif %}
-    {% if object.address %}
-        <p itemprop="address">{{ object.address|linebreaksbr }}</p>
-    {% endif %}
+        {% if object.url %}
+            <p itemprop="url">{{ object.url|urlise }}</p>
+        {% endif %}
+
+        {% if object.twitter %}
+            {% for handle in object.twitter.split %}
+                <p><a href="https://twitter.com/{{ handle }}">@{{ handle }} on Twitter</a></p>
+            {% endfor %}
+        {% endif %}
+
+        {% if object.email %}
+            {% load email_obfuscator %}
+            <p itemprop="email">{{ object.email|obfuscate_mailto }}</p>
+        {% endif %}
+
+        {% if object.phone %}
+            <p itemprop="telephone">{{ object.phone }}</p>
+        {% endif %}
+
+        {% if object.address %}
+            <p itemprop="address">{{ object.address|linebreaksbr }}</p>
+        {% endif %}
     </div>
 {% endif %}
-
 
 </div>
 

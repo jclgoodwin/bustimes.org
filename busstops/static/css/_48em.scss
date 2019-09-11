@@ -29,21 +29,18 @@ h1 {
     width: 25%;
 }
 
-.services {
+.services,
+.contact-details {
     column-count: 2;
     column-gap: 1em;
 }
 
 .contact-details {
-    margin: 0 -.5em;
-    overflow: hidden;
+    margin-top: 1em;
 
     p {
-        box-sizing: border-box;
-        float: left;
-        margin: .5em 0;
-        padding: 0 .5em;
-        width: 50%;
+        break-inside: avoid;
+        margin-top: 0;
     }
 }
 
