@@ -5,7 +5,7 @@
         browser: true
     */
     /*global
-        L, reqwest, loadjs, LEAFLET_CSS_URL, LEAFLET_JS_URL
+        L, reqwest, loadjs, GEOMETRY_URL, LEAFLET_CSS_URL, LEAFLET_JS_URL
     */
 
     var container = document.getElementById('map'),
