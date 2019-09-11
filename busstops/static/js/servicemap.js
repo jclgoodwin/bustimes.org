@@ -5,12 +5,12 @@
         browser: true
     */
     /*global
-        L, reqwest, loadjs, GEOMETRY_URL, LEAFLET_CSS_URL, LEAFLET_JS_URL
+        L, reqwest, loadjs
     */
 
     var container = document.getElementById('map'),
+        service = container.getAttribute('data-service'),
         map,
-        polyline,
         statusBar,
         bounds,
         lastReq,
@@ -27,7 +27,7 @@
         if (map) {
             map.invalidateSize();
         } else {
-            loadjs([GEOMETRY_URL, LEAFLET_CSS_URL, LEAFLET_JS_URL], setUpMap);
+            loadjs([window.LEAFLET_CSS_URL, window.LEAFLET_JS_URL], setUpMap);
             if (busesOnlineCount) {
                 clearTimeout(timeout);
                 load();
@@ -36,7 +36,9 @@
     };
 
     function setUpMap() {
-        map = L.map(container);
+        map = L.map(container, {
+            minZoom: 9
+        }),
         map.attributionControl.setPrefix('');
         L.tileLayer('https://maps.bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png', {
             attribution: '<a href="https://www.maptiler.com/copyright/">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
@@ -73,17 +75,31 @@
 
         closeButton.addTo(map);
 
-        if (window.geometry) {
-            polyline = L.geoJson(window.geometry, {
-                style: {
-                    weight: 2
-                }
-            });
-            polyline.addTo(map);
-            bounds = polyline.getBounds();
-            map.fitBounds(bounds);
-            map.setMaxBounds(bounds.pad(1));
+        if (window.EXTENT) {
+            map.fitBounds([[window.EXTENT[1], window.EXTENT[0]], [window.EXTENT[3], window.EXTENT[2]]]);
         }
+
+        reqwest('/services/' + service + '.json', function(data) {
+            L.geoJson(data.geometry, {
+                style: {
+                    weight: 3,
+                    color: '#87f'
+                }
+            }).addTo(map);
+            var options = {
+                radius: 3,
+                fillColor: "#fff",
+                color: "#87f",
+                weight: 2,
+                fillOpacity: 1
+            };
+
+            L.geoJson(data.stops, {
+                pointToLayer: function (feature, latlng) {
+                    return L.circleMarker(latlng, options).bindPopup('<a href="' + feature.properties.url + '">' + feature.properties.name + '</a>');
+                }
+            }).addTo(map);
+        });
 
         if (response) {
             processData(response);
@@ -240,7 +256,7 @@
         if (lastReq) {
             lastReq.abort();
         }
-        lastReq = reqwest('/vehicles.json?service=' + container.getAttribute('data-service'), function(data) {
+        lastReq = reqwest('/vehicles.json?service=' + service, function(data) {
             if (lastReq.request.status === 200 && data && data.features) {
                 if (!busesOnlineCount) { // first load
                     if (data.features.length) {

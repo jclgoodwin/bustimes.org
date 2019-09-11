@@ -588,6 +588,33 @@ class ServiceDetailView(DetailView):
 
 
 @cache_control(max_age=10080)
+def service_map_data(request, pk):
+    service = get_object_or_404(Service, pk=pk)
+    stops = StopPoint.objects.filter(service=service)
+    data = {
+        "stops": {
+            'type': 'FeatureCollection',
+            'features': [{
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Point',
+                    'coordinates': tuple(stop.latlong)
+                },
+                'properties': {
+                    'name': stop.get_qualified_name(),
+                    'indicator': stop.indicator,
+                    'bearing': stop.get_heading(),
+                    'url': stop.get_absolute_url(),
+                }
+            } for stop in stops]
+        }
+    }
+    if service.geometry:
+        data['geometry'] = json.loads(service.geometry.simplify().json)
+    return JsonResponse(data)
+
+
+@cache_control(max_age=10080)
 def service_geometry(request, pk):
     service = get_object_or_404(Service, pk=pk)
     if service.geometry:

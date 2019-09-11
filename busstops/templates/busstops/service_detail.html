@@ -215,7 +215,7 @@
 
 {% if object.geometry %}
     <script>
-        GEOMETRY_URL = '/services/{{ object.service_code }}/geometry.js';
+        EXTENT = [{{ object.geometry.extent|join:"," }}];
         LEAFLET_CSS_URL = '{% static 'js/leaflet/leaflet.css' %}';
         LEAFLET_JS_URL = '{% static 'js/leaflet/leaflet.js' %}';
     </script>
