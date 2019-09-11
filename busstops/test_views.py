@@ -331,7 +331,7 @@ class ViewsTests(TestCase):
 
         response = self.client.get(self.service.get_absolute_url())
         self.assertEqual(response.context_data['links'][0], {
-            'text': 'Buy tickets on the National Express website',
+            'text': 'Buy tickets at nationalexpress.com',
             'url': 'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&a=3022528&g=24233768'
         })
 

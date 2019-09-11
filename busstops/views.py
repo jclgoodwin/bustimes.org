@@ -543,7 +543,7 @@ class ServiceDetailView(DetailView):
         if self.object.is_megabus():
             context['links'].append({
                 'url': self.object.get_megabus_url(),
-                'text': 'Buy tickets from megabus.com'
+                'text': 'Buy tickets at megabus.com'
             })
 
         if context['operators']:
@@ -553,19 +553,8 @@ class ServiceDetailView(DetailView):
                 if operator.is_national_express() or self.object.service_code == 'DNAX090':
                     context['links'].append({
                         'url': operator.get_national_express_url(),
-                        'text': 'Buy tickets on the National Express website'
+                        'text': 'Buy tickets at nationalexpress.com'
                     })
-                elif operator.url.startswith('http') and 'megabus' not in operator.url:
-                    context['links'].append({
-                        'url': operator.url,
-                        'text': '{} website'.format(operator.name)
-                    })
-                if operator.twitter:
-                    for handle in operator.twitter.split():
-                        context['links'].append({
-                            'url': 'https://twitter.com/{}'.format(handle),
-                            'text': '@{} on Twitter'.format(handle)
-                        })
 
         traveline_url, traveline_text = self.object.get_traveline_link(date)
         if traveline_url:

@@ -171,7 +171,7 @@
 -->
 
 {% if related %}
-    <h2>Related services</h2>
+    <h2>Similar services</h2>
     <ul class="has-smalls">
     {% for s in related %}
         <li>
@@ -184,15 +184,30 @@
     </ul>
 {% endif %}
 
-
 {% if links %}
     <h2>More information</h2>
-    <ul class="bulleted">
+    <ul>
     {% for link in links %}
        <li><a href="{{ link.url }}"{% if 'traveline' in link.url %} rel="nofollow"{% endif %}>{{ link.text }}</a></li>
     {% endfor %}
     </ul>
 {% endif %}
+
+{% for operator in operators %}
+    {% if operator.url or operator.twitter %}
+        <h2>{{ operator }}</h2>
+
+        <ul>
+        {% for handle in operator.twitter.split %}
+            <li><a href="https://twitter.com/{{ handle }}">@{{ handle }} on Twitter</a></li>
+        {% endfor %}
+
+        {% if operator.url %}
+            <li>{{ operator.url|urlise }}</li>
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
 
 {% load static %}
 {% load pipeline %}
