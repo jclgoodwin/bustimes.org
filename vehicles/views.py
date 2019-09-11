@@ -274,15 +274,15 @@ class VehicleDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         journeys = self.object.vehiclejourney_set
-        context['dates'] = journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date')
-
+        dates = list(journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date'))
         if self.object.operator:
             context['breadcrumb'] = [self.object.operator, Vehicles(self.object.operator)]
 
             context['previous'] = self.object.get_previous()
             context['next'] = self.object.get_next()
 
-        if context['dates']:
+        if dates:
+            context['dates'] = dates
             date = self.request.GET.get('date')
             if date:
                 try:
@@ -290,7 +290,7 @@ class VehicleDetailView(DetailView):
                 except ValueError:
                     date = None
             if not date:
-                date = context['dates'].last()
+                date = context['dates'][-1]
             context['date'] = date
             journeys = journeys.filter(datetime__date=date).order_by('datetime')
             calls = Call.objects.filter(journey=OuterRef('pk'))

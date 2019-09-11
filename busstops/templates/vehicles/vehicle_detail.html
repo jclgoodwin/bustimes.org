@@ -27,7 +27,7 @@
         <p>{{ vehicle.notes }}</p>
     {% endif %}
 
-    <p><a class="button" href="{{ vehicle.get_absolute_url }}/edit">Update details</a></p>
+    <p><a class="button" href="{{ vehicle.get_absolute_url }}/edit">Edit</a>{% if vehicle.vehicleedit_set.exists %}*{% endif %}</p>
 
     <p>{{ vehicle.get_flickr_link }}</p>
 {% endif %}

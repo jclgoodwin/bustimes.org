@@ -74,7 +74,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Trent Barton')
         self.assertContains(response, '#FF0000')
 
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(5):
             response = self.client.get(self.vehicle_2.get_absolute_url())
         self.assertEqual(200, response.status_code)
 
