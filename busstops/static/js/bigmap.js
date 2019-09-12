@@ -9,12 +9,10 @@
     */
 
     var map = L.map('hugemap', {
-            minZoom: 10
+            minZoom: 8
         }),
         tileURL = 'https://maps.bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png',
-        statusBar = L.control({
-            position: 'bottomleft'
-        }),
+        statusBar = L.control(),
         lastVehiclesReq,
         lastStopsReq,
         timeout,
@@ -269,6 +267,10 @@
 
     // load vehicles, and possibly stops
     function load(map, statusBar, stops) {
+        if (map.getZoom() < 11) {
+            statusBar.getContainer().innerHTML = 'Zoom in to see buses and stops';
+            return;
+        }
         statusBar.getContainer().innerHTML = 'Loading\u2026';
         var bounds = map.getBounds();
         var params = '?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest();
@@ -310,8 +312,14 @@
 
     function handleMoveEnd(event) {
         clearTimeout(timeout);
-        load(map, statusBar, true);
 
+        loadOnMoveEnd(map, statusBar, true);
+        updateLocation(event);
+    }
+
+    var loadOnMoveEnd = debounce(load, 700);
+
+    var updateLocation = debounce(function(event) {
         var latLng = event.target.getCenter(),
             string = event.target.getZoom() + '/' + Math.round(latLng.lat * 10000) / 10000 + '/' + Math.round(latLng.lng * 10000) / 10000;
 
@@ -321,7 +329,7 @@
         if (window.localStorage) {
             localStorage.setItem('vehicleMap', string);
         }
-    }
+    }, 2000);
 
     function debounce(func, wait, immediate) {
         var timeout;
@@ -338,7 +346,7 @@
         };
     }
 
-    map.on('moveend', debounce(handleMoveEnd, 500));
+    map.on('moveend', handleMoveEnd);
 
     window.onhashchange = function(event) {
         var parts = event.target.location.hash.substr(1).split('/');
@@ -388,7 +396,9 @@
         document.addEventListener('visibilitychange', handleVisibilityChange);
     }
 
-    var locateButton = L.control();
+    var locateButton = L.control({
+        position: 'topleft'
+    });
 
     locateButton.onAdd = function(map) {
         var div = document.createElement('div');
