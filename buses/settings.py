@@ -5,6 +5,8 @@ import os
 import sys
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
+from sentry_sdk.integrations.celery import CeleryIntegration
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -220,7 +222,7 @@ USE_I18N = False
 if not DEBUG and 'test' not in sys.argv and 'collectstatic' not in sys.argv:
     sentry_sdk.init(
         dsn=os.environ.get('SENTRY_DSN'),
-        integrations=[DjangoIntegration()]
+        integrations=[DjangoIntegration(), RedisIntegration(), CeleryIntegration()]
     )
 
     INSTALLED_APPS.append('ddtrace.contrib.django')
