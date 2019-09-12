@@ -88,8 +88,8 @@
             }).addTo(map);
             var options = {
                 radius: 3,
-                fillColor: "#fff",
-                color: "#87f",
+                fillColor: '#fff',
+                color: '#87f',
                 weight: 2,
                 fillOpacity: 1
             };
