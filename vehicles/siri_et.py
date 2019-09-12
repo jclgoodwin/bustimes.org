@@ -9,11 +9,11 @@ ns = {
     'siri': 'http://www.siri.org.uk/siri'
 }
 operator_refs = {
+    'ANE': ('ANEA', 'ANUM'),
     'ANW': ('ANWE', 'AMSY', 'ACYM'),
     'AYK': ('WRAY',),
     'YTG': ('YTIG',),
     'ATS': ('ARBB', 'GLAR'),
-    'ANE': ('ANEA', 'ANUM'),
     'ASC': ('ARHE', 'AKSS', 'AMTM'),
     'AMD': ('AMNO', 'AMID', 'AFCL'),
 }
@@ -32,8 +32,16 @@ def handle_journey(element, source, when):
         fleet_number = None
     if operator_ref in operator_refs:
         operator = operator_refs[operator_ref]
-        vehicle, vehicle_created = vehicles.get_or_create({'source': source}, code=vehicle.text,
-                                                          fleet_number=fleet_number, operator_id=operator[0])
+        if operator_ref[:2] == 'AN':
+            vehicle, vehicle_created = vehicles.get_or_create(
+                {'source': source, 'operator_id': operator[0]},
+                code=vehicle.text, fleet_number=fleet_number, operator_id__in=operator
+            )
+        else:
+            vehicle, vehicle_created = vehicles.get_or_create(
+                {'source': source, 'operator_id': operator[0], 'code': vehicle.text},
+                fleet_number=fleet_number, operator_id=operator
+            )
     else:
         vehicle, vehicle_created = vehicles.get_or_create({'source': source}, code=vehicle.text,
                                                           fleet_number=fleet_number)
@@ -66,6 +74,10 @@ def handle_journey(element, source, when):
                 if not service.tracking:
                     service.tracking = True
                     service.save(update_fields=['tracking'])
+                for operator in service.operator.all():
+                    if operator.name.startswith('Arriva '):
+                        vehicle.maybe_change_operator(operator)
+                        break
             except (Service.MultipleObjectsReturned, Service.DoesNotExist):
                 service = None
 
