@@ -587,10 +587,10 @@ class ServiceDetailView(DetailView):
         return super().render_to_response(context)
 
 
-@cache_control(max_age=10080)
+@cache_control(max_age=86400)
 def service_map_data(request, pk):
     service = get_object_or_404(Service, pk=pk)
-    stops = StopPoint.objects.filter(service=service)
+    stops = StopPoint.objects.filter(service=service, latlong__isnull=False)
     data = {
         "stops": {
             'type': 'FeatureCollection',
@@ -612,16 +612,6 @@ def service_map_data(request, pk):
     if service.geometry:
         data['geometry'] = json.loads(service.geometry.simplify().json)
     return JsonResponse(data)
-
-
-@cache_control(max_age=10080)
-def service_geometry(request, pk):
-    service = get_object_or_404(Service, pk=pk)
-    if service.geometry:
-        content = 'window.geometry = {};'.format(service.geometry.simplify().json)
-    else:
-        content = ''
-    return HttpResponse(content, content_type='application/javascript')
 
 
 def service_xml(request, pk):
