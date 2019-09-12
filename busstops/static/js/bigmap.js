@@ -267,7 +267,7 @@
 
     // load vehicles, and possibly stops
     function load(map, statusBar, stops) {
-        if (map.getZoom() < 11) {
+        if (map.getZoom() < 10) {
             statusBar.getContainer().innerHTML = 'Zoom in to see buses and stops';
             return;
         }
