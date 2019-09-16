@@ -63,7 +63,7 @@ def contact(request):
             message = EmailMessage(
                 subject,
                 body,
-                '"{}" <contact@bustimes.org>'.format(form.cleaned_data['name']),
+                '"{}" <contactform@bustimes.org>'.format(form.cleaned_data['name']),
                 ['contact@bustimes.org'],
                 reply_to=[form.cleaned_data['email']],
             )
