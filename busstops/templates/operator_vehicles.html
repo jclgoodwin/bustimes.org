@@ -46,7 +46,7 @@
                 <th></th>
             {% endif %}
             <th scope="col"{% if code_column %} colspan="2"{% endif %}></th>
-            <th scope="col">Last seen</th>
+            <th scope="col" colspan="2">Last seen</th>
             <th scope="col">Type</th>
             <th scope="col">Colour</th>
             {% if notes_column %}<th scope="col">Notes</th>{% endif %}
@@ -74,11 +74,21 @@
                     {% if vehicle.latest_location %}
                         {% if vehicle.latest_location.journey.service %}
                             {{ vehicle.latest_location.journey.service.get_line_name_and_brand }}
-                            <br>
                         {% elif vehicle.latest_location.journey.route_name %}
                             {{ vehicle.latest_location.journey.route_name }}
-                            <br>
                         {% endif %}
+                    {% else %}
+                        {% for journey in vehicle.latest_journeys %}
+                            {% if journey.service %}
+                                {{ journey.service.get_line_name_and_brand }}
+                            {% elif journey.route_name %}
+                                {{ journey.route_name }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if vehicle.latest_location %}
                         {% if vehicle.latest_location.datetime.date == today %}
                             {{ vehicle.latest_location.datetime | time }}
                         {% else %}
@@ -86,13 +96,6 @@
                         {% endif %}
                     {% else %}
                         {% for journey in vehicle.latest_journeys %}
-                            {% if journey.service %}
-                                {{ journey.service.get_line_name_and_brand }}
-                                <br>
-                            {% elif journey.route_name %}
-                                {{ journey.route_name }}
-                                <br>
-                            {% endif %}
                             {% if journey.datetime.date == today %}
                                 {{ journey.datetime | time }}
                             {% else %}
