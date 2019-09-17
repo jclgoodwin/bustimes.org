@@ -81,12 +81,12 @@ class ZipTripTest(TestCase):
         self.assertContains(response, '7777')
         self.assertContains(response, '203')
         # last seen some days ago
-        self.assertContains(response, '31 August 2018 22:30')
+        self.assertContains(response, '31 Aug 22:30')
 
         with freeze_time('31 August 2018'):
             response = self.client.get('/operators/go-ahead-lichtenstein/vehicles')
         # last seen today - should only show time
-        self.assertNotContains(response, '31 August 2018')
+        self.assertNotContains(response, '31 Aug')
         self.assertContains(response, '22:30')
 
         with self.assertNumQueries(3):
