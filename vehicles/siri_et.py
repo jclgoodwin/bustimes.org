@@ -32,7 +32,7 @@ def handle_journey(element, source, when):
         fleet_number = None
     if operator_ref in operator_refs:
         operator = operator_refs[operator_ref]
-        if operator_ref[:2] == 'AN':
+        if operator_ref[:2] == 'AN' or not fleet_number:
             vehicle, vehicle_created = vehicles.get_or_create(
                 {'source': source, 'operator_id': operator[0]},
                 code=vehicle.text, fleet_number=fleet_number, operator_id__in=operator
@@ -74,10 +74,11 @@ def handle_journey(element, source, when):
                 if not service.tracking:
                     service.tracking = True
                     service.save(update_fields=['tracking'])
-                for operator in service.operator.all():
-                    if operator.name.startswith('Arriva '):
-                        vehicle.maybe_change_operator(operator)
-                        break
+                if operator_ref[:2] == 'AN':
+                    for operator in service.operator.all():
+                        if operator.name.startswith('Arriva '):
+                            vehicle.maybe_change_operator(operator)
+                            break
             except (Service.MultipleObjectsReturned, Service.DoesNotExist):
                 service = None
 
