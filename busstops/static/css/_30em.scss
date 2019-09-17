@@ -29,8 +29,8 @@ header {
         input[type=submit] {
             background: $brand-color-darker;
             border: 1px solid $brand-color-darker;
-            border-top-left-radius: 0;
             border-bottom-left-radius: 0;
+            border-top-left-radius: 0;
             display: block;
             float: right; // work around transient Chrome bug?
             margin: 0;
