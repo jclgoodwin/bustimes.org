@@ -1,4 +1,5 @@
 import json
+from time import sleep
 from datetime import datetime
 from requests.exceptions import RequestException
 from django.contrib.gis.geos import Point, Polygon
@@ -73,6 +74,7 @@ class Command(ImportLiveVehiclesCommand):
                 print(response.url)
                 for item in response.json()['services']:
                     yield item
+                sleep(1)
             except (RequestException, KeyError) as e:
                 print(e)
                 continue
