@@ -330,6 +330,7 @@ def edit_vehicle(request, vehicle_id):
     return render(request, 'edit_vehicle.html', {
         'breadcrumb': breadcrumb,
         'form': form,
+        'object': vehicle,
         'vehicle': vehicle,
         'previous': vehicle.get_previous(),
         'next': vehicle.get_next(),
