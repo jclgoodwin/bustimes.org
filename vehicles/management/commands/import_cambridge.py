@@ -40,6 +40,9 @@ class Command(BaseCommand):
             'source': self.source
         }
         if vehicle.isdigit():
+            if item['OperatorRef'] == 'ATS':
+                defaults['code'] = vehicle
+                return self.vehicles.get_or_create(defaults, operator=operator, fleet_number=vehicle)
             defaults = {'fleet_number': vehicle}
         if type(operator) is Operator:
             return self.vehicles.get_or_create(defaults, operator=operator, code=vehicle)
