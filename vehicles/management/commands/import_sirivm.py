@@ -260,7 +260,9 @@ class Command(ImportLiveVehiclesCommand):
                         break
             try:
                 journey.service = self.get_service(services, latlong)
-            except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
+            except Service.MultipleObjectsReturned:
+                journey.service = services.first()
+            except Service.DoesNotExist as e:
                 print(e, operator, service)
 
         if not journey.destination and journey.code and journey.service:
