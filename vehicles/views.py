@@ -361,6 +361,7 @@ class JourneyDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        context['breadcrumb'] = [self.object.service]
         context['calls'] = self.object.call_set.order_by('visit_number').select_related('stop__locality')
 
         return context

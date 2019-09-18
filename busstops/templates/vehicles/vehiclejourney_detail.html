@@ -18,6 +18,7 @@
         {% for call in calls %}
             {% if call.aimed_arrival_time and call.aimed_arrival_time != call.aimed_departure_time %}
                 <tr>
+                    <td>{{ call.visit_number }}</td>
                     <td><a href="{{ call.stop.get_absolute_url }}">{{ call.stop.get_qualified_name }}</a></td>
                     <td>{{ call.aimed_arrival_time|time }}</td>
                     <td>{{ call.expected_arrival_time|time }}</td>
@@ -26,6 +27,7 @@
             {% endif %}
             {% if call.aimed_departure_time %}
                 <tr>
+                    <td>{{ call.visit_number }}</td>
                     <td><a href="{{ call.stop.get_absolute_url }}">{{ call.stop.get_qualified_name }}</a></td>
                     <td>{{ call.aimed_departure_time|time }}</td>
                     <td>{{ call.expected_departure_time|time }}</td>
