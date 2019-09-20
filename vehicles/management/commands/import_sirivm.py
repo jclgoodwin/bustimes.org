@@ -136,6 +136,11 @@ class Command(ImportLiveVehiclesCommand):
                 operator_options = ('RBUS',)
             elif operator.id == 'SESX':
                 operator_options = ('SESX', 'NIBS', 'GECL')
+            elif operator.id == 'FBRI':
+                if len(vehicle_code) < 4:
+                    return None, None
+                if not (vehicle_code.isdigit() or vehicle_code.isalpha()) and vehicle_code.isupper():
+                    operator_options = ('FBRI',)
 
         defaults = {
             'source': self.source,
