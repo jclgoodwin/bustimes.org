@@ -124,17 +124,15 @@ class Command(BaseCommand):
         warnings.warn('No operator found for element %s' %
                       ET.tostring(operator_element).decode('utf-8'))
 
-    @classmethod
-    def get_line_name_and_brand(cls, service_element, filename):
+    @staticmethod
+    def get_line_name_and_brand(service_element, filename):
         """
         Given a Service element and (purely for debugging) a filename
         returns a (line_name, line_brand) tuple
         """
         line_name = service_element.find('txc:Lines', NS)[0][0].text
         if '|' in line_name:
-            line_name_parts = line_name.split('|', 1)
-            line_name = line_name_parts[0]
-            line_brand = line_name_parts[1]
+            line_name, line_brand = line_name.split('|', 1)
         elif line_name == 'ZAP':
             line_brand = 'Cityzap'
         elif line_name == 'TAD':
