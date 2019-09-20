@@ -61,7 +61,7 @@
                     </td>
                 {% endif %}
                 {% if code_column %}
-                    <td>{{ vehicle.code }}</td>
+                    <td>{% if vehicle.fleet_number_mismatch %}{{ vehicle.code }}{% endif %}</td>
                 {% endif %}
                 <td>
                     {% if vehicle.latest_location or vehicle.latest_journeys %}
