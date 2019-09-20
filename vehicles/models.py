@@ -188,6 +188,10 @@ class Vehicle(models.Model):
     def get_absolute_url(self):
         return reverse('vehicle_detail', args=(self.id,))
 
+    def fleet_number_mismatch(self):
+        if self.code.isdigit() and self.fleet_number and int(self.code) != self.fleet_number:
+            return True
+
     def get_flickr_url(self):
         if self.reg:
             reg = self.get_reg().replace('\xa0', ' ')
