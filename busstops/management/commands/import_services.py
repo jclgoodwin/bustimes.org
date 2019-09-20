@@ -1,9 +1,4 @@
 """
-Command for importing transport services.
-
-So far, all services in the SE, EA, Y and NCSD regions can be imported without
-known errors.
-
 Usage:
 
     ./manage.py import_services EA.zip [EM.zip etc]
@@ -32,13 +27,10 @@ from .generate_service_dates import handle_services as generate_service_dates
 logger = logging.getLogger(__name__)
 
 
-# see https://docs.python.org/2/library/xml.etree.elementtree.html#parsing-xml-with-namespaces
 NS = {'txc': 'http://www.transxchange.org.uk/'}
 
 
 class Command(BaseCommand):
-    "Command that imports bus services from a zip file"
-
     service_descriptions = None
     region_id = None
 
