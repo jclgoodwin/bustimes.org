@@ -359,7 +359,7 @@ class Operator(ValidateOnSaveMixin, models.Model):
 
     licences = models.ManyToManyField('vosa.Licence', blank=True)
     payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
-    search_vector = SearchVectorField(null=True)
+    search_vector = SearchVectorField(null=True, blank=True)
 
     class Meta():
         ordering = ('name',)
