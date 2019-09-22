@@ -11,6 +11,7 @@ from autoslug import AutoSlugField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
+from django.contrib.postgres.search import SearchVectorField
 from django.core.cache import cache
 from django.urls import reverse
 from django.utils.text import slugify
@@ -116,6 +117,7 @@ class Locality(models.Model):
     parent = models.ForeignKey('Locality', models.SET_NULL, null=True, editable=False)
     latlong = models.PointField(null=True, blank=True)
     adjacent = models.ManyToManyField('Locality', related_name='neighbour', blank=True)
+    search_vector = SearchVectorField(null=True)
 
     class Meta():
         ordering = ('name',)
@@ -176,6 +178,7 @@ class Place(models.Model):
     latlong = models.PointField(null=True, blank=True)
     polygon = models.PolygonField(null=True, blank=True)
     parent = models.ForeignKey('Place', models.SET_NULL, null=True, editable=False)
+    search_vector = SearchVectorField(null=True)
 
     class Meta():
         unique_together = ('source', 'code')
@@ -356,6 +359,7 @@ class Operator(ValidateOnSaveMixin, models.Model):
 
     licences = models.ManyToManyField('vosa.Licence', blank=True)
     payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
+    search_vector = SearchVectorField(null=True)
 
     class Meta():
         ordering = ('name',)
@@ -501,6 +505,7 @@ class Service(models.Model):
     source = models.ForeignKey(DataSource, models.SET_NULL, null=True, blank=True)
     tracking = models.NullBooleanField()
     payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
+    search_vector = SearchVectorField(null=True)
 
     class Meta():
         ordering = ('service_code',)
