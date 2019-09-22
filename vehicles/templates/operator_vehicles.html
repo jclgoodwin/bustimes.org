@@ -49,6 +49,8 @@
             <th scope="col" colspan="2">Last seen</th>
             <th scope="col">Type</th>
             <th scope="col">Colour</th>
+            {% if branding_column %}<th scope="col">Branding</th>{% endif %}
+            {% if name_column %}<th scope="col">Name</th>{% endif %}
             {% if notes_column %}<th scope="col">Notes</th>{% endif %}
         </tr>
     </thead>
@@ -110,6 +112,8 @@
                         <div class="bus" style="background:{{ vehicle.get_livery }}"{% if vehicle.livery %} title="{{ vehicle.livery }}"{% endif %}></div>
                     {% endif %}
                 </td>
+                {% if branding_column %}<td>{{ vehicle.branding }}</td>{% endif %}
+                {% if name_column %}<td>{{ vehicle.name }}</td>{% endif %}
                 {% if notes_column %}<td>{{ vehicle.notes }}</td>{% endif %}
                 <td>{{ vehicle.get_flickr_link }}</td>
                 {% if not edit %}

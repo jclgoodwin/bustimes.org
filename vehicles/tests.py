@@ -68,13 +68,13 @@ class VehiclesTests(TestCase):
         self.assertTrue(response.context['code_column'])
         self.assertContains(response, '<td>2</td>')
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             response = self.client.get(self.vehicle_1.get_absolute_url() + '?date=poop')
         self.assertContains(response, 'Optare Tempo')
         self.assertContains(response, 'Trent Barton')
         self.assertContains(response, '#FF0000')
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             response = self.client.get(self.vehicle_2.get_absolute_url())
         self.assertEqual(200, response.status_code)
 

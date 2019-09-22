@@ -23,9 +23,21 @@
         <p><div class="bus" style="background:{{ vehicle.get_livery }}"{% if vehicle.livery %} title="{{ vehicle.livery }}"{% endif %}></div></p>
     {% endif %}
 
+    {% if vehicle.branding %}
+        <p>{{ vehicle.branding }}</p>
+    {% endif %}
+
+    {% if vehicle.name %}
+        <p>{{ vehicle.name }}</p>
+    {% endif %}
+
     {% if vehicle.notes %}
         <p>{{ vehicle.notes }}</p>
     {% endif %}
+
+    {% for feature in vehicle.features.all %}
+        <p>{{ feature }}</p>
+    {% endfor %}
 
     <p><a class="button" href="{{ vehicle.get_absolute_url }}/edit">Edit</a>{% if vehicle.vehicleedit_set.exists %}*{% endif %}</p>
 
