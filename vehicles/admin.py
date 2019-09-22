@@ -17,12 +17,15 @@ class VehicleAdminForm(forms.ModelForm):
             'reg': forms.TextInput(attrs={'style': 'width: 8em'}),
             'fleet_number': forms.TextInput(attrs={'style': 'width: 4em'}),
             'operator': forms.TextInput(attrs={'style': 'width: 4em'}),
+            'branding': forms.TextInput(attrs={'style': 'width: 8em'}),
+            'name': forms.TextInput(attrs={'style': 'width: 8em'}),
+            'notes': forms.TextInput(attrs={'style': 'width: 8em'}),
         }
 
 
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ('code', 'fleet_number', 'reg', 'operator', 'vehicle_type',
-                    'get_flickr_link', 'last_seen', 'livery', 'colours', 'notes')
+    list_display = ('code', 'fleet_number', 'reg', 'operator', 'vehicle_type', 'get_flickr_link', 'last_seen',
+                    'livery', 'colours', 'branding', 'name', 'notes')
     list_filter = (
         ('source', admin.RelatedOnlyFieldListFilter),
         ('operator', admin.RelatedOnlyFieldListFilter),
@@ -30,7 +33,8 @@ class VehicleAdmin(admin.ModelAdmin):
         'vehicle_type',
     )
     list_select_related = ['operator', 'livery', 'vehicle_type', 'latest_location']
-    list_editable = ('fleet_number', 'reg', 'operator', 'vehicle_type', 'livery', 'colours', 'notes')
+    list_editable = ('fleet_number', 'reg', 'operator', 'vehicle_type',
+                     'livery', 'colours', 'branding', 'name', 'notes')
     autocomplete_fields = ('vehicle_type', 'livery')
     raw_id_fields = ('operator', 'source')
     search_fields = ('code', 'fleet_number', 'reg')
@@ -74,6 +78,14 @@ def vehicle_type(obj):
     return obj.get_diff('vehicle_type')
 
 
+def branding(obj):
+    return obj.get_diff('branding')
+
+
+def name(obj):
+    return obj.get_diff('name')
+
+
 def notes(obj):
     return obj.get_diff('notes')
 
@@ -81,11 +93,13 @@ def notes(obj):
 vehicle.admin_order_field = 'vehicle'
 reg.admin_order_field = 'reg'
 vehicle_type.admin_order_field = 'vehicle_type'
+branding.admin_order_field = 'branding'
+name.admin_order_field = 'name'
 notes.admin_order_field = 'notes'
 
 
 class VehicleEditAdmin(admin.ModelAdmin):
-    list_display = ['id', vehicle, fleet_number, reg, vehicle_type, 'current', 'suggested',
+    list_display = ['id', vehicle, fleet_number, reg, vehicle_type, branding, name, 'current', 'suggested',
                     notes, 'flickr']
     list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'livery']
     list_filter = [

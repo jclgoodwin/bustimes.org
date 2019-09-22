@@ -263,7 +263,7 @@ class VehicleEdit(models.Model):
 
     def get_changes(self):
         changes = {}
-        for field in ('fleet_number', 'reg', 'vehicle_type', 'notes', 'colours', 'livery'):
+        for field in ('fleet_number', 'reg', 'vehicle_type', 'branding', 'name', 'notes', 'colours', 'livery'):
             edit = str(getattr(self, field) or '')
             if edit:
                 if field == 'reg':

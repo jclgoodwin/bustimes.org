@@ -40,7 +40,7 @@ class Vehicles():
 def get_vehicle_edit(vehicle, fields):
     edit = VehicleEdit(vehicle=vehicle)
 
-    for field in ('fleet_number', 'reg', 'vehicle_type', 'notes'):
+    for field in ('fleet_number', 'reg', 'vehicle_type', 'branding', 'name', 'notes'):
         if field in fields and str(fields[field]) != str(getattr(vehicle, field)):
             if fields[field]:
                 setattr(edit, field, fields[field])

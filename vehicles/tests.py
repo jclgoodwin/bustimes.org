@@ -129,7 +129,7 @@ class VehiclesTests(TestCase):
                 'reg': 'FD54JYA',
                 'vehicle_type': self.vehicle_1.vehicle_type_id,
                 'colours': '#FF0000',
-                'notes': 'Trent Barton'
+                'notes': 'Trent Barton',
             })
         self.assertFalse(response.context['form'].has_changed())
 
@@ -142,7 +142,7 @@ class VehiclesTests(TestCase):
                 'reg': 'UWW2X',
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
                 'colours': self.vehicle_2.livery_id,
-                'notes': ''
+                'notes': '',
             })
         self.assertTrue(response.context['form'].fields['fleet_number'].disabled)
         self.assertFalse(response.context['form'].has_changed())
@@ -156,7 +156,9 @@ class VehiclesTests(TestCase):
                 'reg': '',
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
                 'colours': self.vehicle_2.livery_id,
-                'notes': 'Ex Ipswich Buses'
+                'notes': 'Ex Ipswich Buses',
+                'name': 'Luther Blisset',
+                'branding': 'Coastliner',
             })
         self.assertContains(response, 'Thank you')
         self.assertTrue(response.context['form'].has_changed())
@@ -167,7 +169,8 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'already')
 
         edit = VehicleEdit.objects.get()
-        self.assertEqual(edit.get_changes(), {'notes': 'Ex Ipswich Buses', 'reg': '-UWW2X'})
+        self.assertEqual(edit.get_changes(), {'branding': 'Coastliner', 'name': 'Luther Blisset',
+                                              'notes': 'Ex Ipswich Buses', 'reg': '-UWW2X'})
 
         self.assertEqual('50 - UWW\xa02X', str(edit))
         self.assertEqual(self.vehicle_2.get_absolute_url(), edit.get_absolute_url())
