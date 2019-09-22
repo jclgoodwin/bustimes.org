@@ -50,6 +50,7 @@ class VehicleAdmin(admin.ModelAdmin):
     def last_seen(self, obj):
         if obj.latest_location:
             return obj.latest_location.datetime
+    last_seen.admin_order_field = 'latest_location__datetime'
 
     def get_changelist_form(self, request, **kwargs):
         kwargs.setdefault('form', VehicleAdminForm)
@@ -75,6 +76,12 @@ def vehicle_type(obj):
 
 def notes(obj):
     return obj.get_diff('notes')
+
+
+vehicle.admin_order_field = 'vehicle'
+reg.admin_order_field = 'reg'
+vehicle_type.admin_order_field = 'vehicle_type'
+notes.admin_order_field = 'notes'
 
 
 class VehicleEditAdmin(admin.ModelAdmin):
@@ -121,6 +128,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
             return obj.vehicle.livery.preview()
         if obj.vehicle.colours:
             return Livery(colours=obj.vehicle.colours).preview()
+    current.admin_order_field = 'vehicle__livery'
 
     def suggested(self, obj):
         if obj.livery:
@@ -129,6 +137,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
             if obj.colours == 'Other':
                 return obj.colours
             return Livery(colours=obj.colours).preview()
+    suggested.admin_order_field = 'livery'
 
     def flickr(self, obj):
         return obj.vehicle.get_flickr_link()
