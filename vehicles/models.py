@@ -134,6 +134,8 @@ class Vehicle(models.Model):
     vehicle_type = models.ForeignKey(VehicleType, models.SET_NULL, null=True, blank=True)
     colours = models.CharField(max_length=255, blank=True)
     livery = models.ForeignKey(Livery, models.SET_NULL, null=True, blank=True)
+    name = models.CharField(max_length=255, blank=True)
+    branding = models.CharField(max_length=255, blank=True)
     notes = models.CharField(max_length=255, blank=True)
     latest_location = models.ForeignKey('VehicleLocation', models.SET_NULL, null=True, blank=True,
                                         related_name='latest_vehicle', editable=False)
@@ -243,12 +245,21 @@ class Vehicle(models.Model):
 
 class VehicleEdit(models.Model):
     vehicle = models.ForeignKey(Vehicle, models.CASCADE)
+
     fleet_number = models.PositiveIntegerField(null=True, blank=True)
     reg = models.CharField(max_length=24, blank=True)
     vehicle_type = models.CharField(max_length=255, blank=True)
     colours = models.CharField(max_length=255, blank=True)
     livery = models.ForeignKey(Livery, models.SET_NULL, null=True, blank=True)
+    name = models.CharField(max_length=255, blank=True)
+    branding = models.CharField(max_length=255, blank=True)
     notes = models.CharField(max_length=255, blank=True)
+    features = models.ManyToManyField(VehicleFeature, blank=True)
+    withdrawn = models.BooleanField(default=False)
+    url = models.URLField(blank=True)
+    approved = models.BooleanField(default=False)
+    datetime = models.DateTimeField(null=True, blank=True)
+    user = models.CharField(max_length=255, blank=True)
 
     def get_changes(self):
         changes = {}
