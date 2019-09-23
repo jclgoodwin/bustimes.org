@@ -388,7 +388,6 @@ class VehicleLocation(models.Model):
                     'name': str(vehicle),
                     'text_colour': vehicle.get_text_colour(),
                     'livery': vehicle.get_livery(self.heading),
-                    'notes': vehicle.notes
                 },
                 'delta': self.early,
                 'direction': self.heading,

@@ -163,9 +163,6 @@
             if (props.vehicle.type) {
                 popup += ' - ' + props.vehicle.type;
             }
-            if (props.vehicle.notes) {
-                popup += ' - ' + props.vehicle.notes;
-            }
             popup += '<br>';
         }
 
