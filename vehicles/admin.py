@@ -116,6 +116,16 @@ class VehicleEditAdmin(admin.ModelAdmin):
                 vehicle.fleet_number = edit.fleet_number
             if edit.reg:
                 vehicle.reg = edit.reg
+            if edit.branding:
+                if edit.branding == f'-{vehicle.branding}':
+                    vehicle.branding = ''
+                else:
+                    vehicle.branding = edit.branding
+            if edit.name:
+                if edit.name == f'-{vehicle.name}':
+                    vehicle.name = ''
+                else:
+                    vehicle.name = edit.name
             if edit.notes:
                 if edit.notes == f'-{vehicle.notes}':
                     vehicle.notes = ''
