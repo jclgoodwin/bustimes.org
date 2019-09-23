@@ -49,13 +49,23 @@ Other details: Daily Service Every Twenty Minutes""",
         }
         command.handle_row(data)
 
-        command.input = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures', 'Bus_Variation_F.csv')
-        command.handle()
-
     def test_licence_view(self):
         response = self.client.get('/licences/PH1020951')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '<a href="/registrations/PH1020951/284">')
+
+    def test_beestons(self):
+        command = import_variations.Command()
+        command.input = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures', 'Bus_Variation_F.csv')
+
+        with self.assertNumQueries(290):
+            command.handle()
+        with self.assertNumQueries(115):
+            command.handle()
+
+        response = self.client.get('/licences/PF0000003')
+        self.assertEqual(2, len(response.context_data['registrations']))
+        self.assertEqual(10, len(response.context_data['cancelled']))
 
     def test_licence_404(self):
         response = self.client.get('/licences/PH102095')
