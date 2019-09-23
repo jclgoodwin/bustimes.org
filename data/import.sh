@@ -35,10 +35,10 @@ function import_csv {
     tail -n +2 "$csv" > "previous/$csv"
     first=$? # 1 if previous command failed ($csv doesn't exist yet), 0 otherwise
     unzip -oq "$zip" "$csv"
-    if [ $first ]; then
-        ../../manage.py "import_$cmd" < "$csv"
-    else
+    if [[ $first == "0" ]]; then
         diff -h "previous/$csv" "$csv" | grep '^> ' | sed 's/^> //' | ../../manage.py "import_$cmd"
+    else
+        ../../manage.py "import_$cmd" < "$csv"
     fi
 }
 
@@ -202,10 +202,10 @@ for region in F B C M K G D H; do
     new=$(shasum "Bus_Variation_$region.csv")
     if [[ $old != $new ]]; then
         echo $region
-        if [ $first ]; then
-            ../../manage.py import_variations < "Bus_Variation_$region.csv"
-        else
+        if [[ $first == "0" ]]; then
             diff -h "previous/Bus_Variation_$region.csv" "Bus_Variation_$region.csv" | grep '^> ' | sed 's/^> //' | ../../manage.py import_variations
+        else
+            ../../manage.py import_variations < "Bus_Variation_$region.csv"
         fi
     fi
 done
