@@ -174,12 +174,20 @@ class Command(ImportLiveVehiclesCommand):
                     operator__name__startswith='Stagecoach ',
                     code=vehicle_code,
                 )
+            if operator_ref == 'ATS' and vehicle_code.isdigit():
+                defaults['code'] = vehicle_code
+                return self.vehicles.get_or_create(
+                    defaults,
+                    operator__in=operator_options,
+                    fleet_number=vehicle_code,
+                )
             return self.vehicles.get_or_create(
                 defaults,
                 operator__in=operator_options,
                 code=vehicle_code,
             )
-        except Vehicle.MultipleObjectsReturned:
+        except Vehicle.MultipleObjectsReturned as e:
+            logger.error(e, exc_info=True)
             return self.vehicles.filter(
                 operator__in=operator_options,
                 code=vehicle_code
