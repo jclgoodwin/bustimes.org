@@ -53,7 +53,6 @@ class Command(ImportFromCSVCommand):
 
     def handle_registration(self, row):
         if not self.registration or self.registration.registration_number != row['Reg_No']:
-            assert row['Variation Number'] == '0'
 
             # the previous row contains the latest status for the previous registration
             if self.previous_row:
@@ -93,7 +92,6 @@ class Command(ImportFromCSVCommand):
                 row[key] = titlecase(row[key])
 
         if not self.licence or self.licence.licence_number != row['Lic_No']:
-            assert row['Variation Number'] == '0'
             self.handle_licence(row)
 
         self.handle_registration(row)
