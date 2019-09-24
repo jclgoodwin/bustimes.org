@@ -3,7 +3,7 @@
 body {
     // http://blog.55minutes.com/2012/04/iphone-text-resizing/
     -webkit-text-size-adjust: 100%;
-    color: #222;
+    color: $text-color;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-size: 16px;
     line-height: 1.5;
@@ -24,7 +24,7 @@ footer {
 }
 
 main {
-    background: #fff;
+    background: $background-color;
     padding: 0 1em;
 }
 
@@ -40,7 +40,7 @@ a {
     &:focus,
     &:active {
         background-color: $brand-color;
-        color: #000;
+        color: $active-link-color;
     }
 }
 
@@ -169,7 +169,7 @@ header {
     overflow: hidden;
 
     a {
-        color: #000;
+        color: $black;
         display: inline-block;
         line-height: 1;
         padding: .66667em;
@@ -181,7 +181,6 @@ header {
     }
 
     .site-name {
-        float: left;
         font-size: 1.5em;
 
         &:after {
@@ -277,15 +276,15 @@ input[type='submit'] {
     color: inherit;
     display: inline-block;
     font: inherit;
-    margin-bottom: 0.0625em;
-    top: .0625em;
+    margin-bottom: .0625em;
     padding: .25em .5em;
     position: relative;
+    top: .0625em;
 
     &:hover {
         border-bottom-width: .125em;
-        text-decoration: none;
         margin-bottom: 0;
+        text-decoration: none;
         top: 0;
     }
 
@@ -293,15 +292,15 @@ input[type='submit'] {
     &:active {
         background-color: $brand-color-darker;
         border-bottom: 0;
-        margin-bottom: 0.125em;
+        margin-bottom: .125em;
         top: .0625em;
     }
 }
 
 input[type='text'],
 input[type='url'],
-input[type='number'],
 input[type='email'],
+input[type='number'],
 textarea {
     display: block;
     width: 100%;
@@ -321,7 +320,7 @@ input[type='email'],
 input[type='search'],
 textarea {
     appearance: none;
-    border: 1px solid $brand-color;
+    border: 1px solid $border-color;
     border-radius: 0;
     box-sizing: border-box;
     font: inherit;
@@ -330,17 +329,17 @@ textarea {
     padding-right: 0;
 
     &:focus {
-        border-color: $brand-color-darker;
+        border-color: $border-color-darker;
     }
 
     .errorlist:not(.nonfield) + p & {
-        border-color: #f00;
+        border-color: $red;
     }
 }
 
 select {
     background: none;
-    border: 1px solid $brand-color;
+    border: 1px solid $border-color;
     border-radius: .5em;
     font: inherit;
     height: 2.5em;
@@ -370,9 +369,9 @@ form p select {
     }
 
     &:after {
-        border: .25em solid white;
+        border: .25em solid $background-color;
         border-bottom: 0;
-        border-top: .5em solid #222;
+        border-top: .5em solid $text-color;
         content: '';
         height: 0;
         position: absolute;
@@ -427,7 +426,7 @@ main li {
     }
 
     small {
-        color: #222;
+        color: $text-color;
         display: block;
         float: left;
         font-size: .75em;
@@ -435,8 +434,8 @@ main li {
     }
 
     a small:last-child {
-        padding-bottom: .33em;
         margin: 0;
+        padding-bottom: .33em;
     }
 }
 
@@ -454,7 +453,7 @@ table {
 }
 
 .breadcrumb {
-    border-bottom: 1px solid $brand-color;
+    border-bottom: 1px solid $border-color;
     margin: 0 -1em;
     overflow: hidden;
     padding: .5em 0 0 1em;
@@ -463,6 +462,18 @@ table {
         float: left;
         margin: 0;
         margin-top: -.5em;
+
+        &:after {
+            color: $border-color-darker;
+            content: '\203A';
+            float: left;
+            padding: .75em .5em;
+        }
+
+        &:last-child:after {
+            padding-right: 0;
+            width: 0;
+        }
     }
 
     a {
@@ -470,23 +481,12 @@ table {
         padding: .75em 0;
     }
 
-    li:after {
-        color: $brand-color-darker;
-        content: '\203A';
-        float: left;
-        padding: .75em .5em;
-    }
-
-    li:last-child:after {
-        padding-right: 0;
-        width: 0;
-    }
 }
 
 .services {
     a {
-        display: flex;
         align-items: center;
+        display: flex;
         margin-bottom: 1em;
         white-space: normal;
     }
@@ -501,17 +501,17 @@ table {
 
     a:focus,
     a:active {
-        color: #000;
+        color: $black;
     }
 
     .name {
-        color: #dc7;
+        color: $brand-color-darker-darker;
         float: left;
         margin-right: 1em;
 
         &.is-short {
-            font-variant-numeric: tabular-nums;
             font-size: 2.5em;
+            font-variant-numeric: tabular-nums;
             line-height: 1em;
             margin-right: .4em;
         }
@@ -537,7 +537,7 @@ table {
 
     path {
         fill: $brand-color-darker;
-        stroke: #fff;
+        stroke: $white;
     }
 
     a {
@@ -550,7 +550,7 @@ table {
         outline: 0;
 
         path {
-            fill: #7d8;
+            fill: $brand-color-darker-darker;
         }
     }
 }
@@ -589,75 +589,79 @@ table {
     height: 1em;
 }
 
-.leaflet-marker-icon.just-arrow {
-    .arrow {
-        border: 8px solid transparent;
-        border-bottom-color: #333;
-        border-top: 0;
+.leaflet-marker-icon {
+    &.just-arrow {
+        .arrow {
+            border: 8px solid transparent;
+            border-bottom: 12px solid $black;
+            border-top: 0;
+        }
+    }
+
+    &.leaflet-div-icon {
+        background: none;
+        border: 0;
+        color: $text-color;
+        font-size: 10px;
+        text-align: center;
+        white-space: nowrap;
+
+        .bus,
+        .stop {
+            border: 1px solid rgba(0, 0, 0, .2);
+            overflow: hidden;
+        }
+
+        .bus {
+            background: $white;
+            height: 12px;
+            line-height: 12px;
+            margin-top: 3px;
+        }
+
+        .coloured {
+            border-color: $white;
+            // text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+        }
+
+        .white-text {
+            color: $white;
+            // text-shadow: -1px -1px 0 #444, 1px -1px 0 #444, -1px 1px 0 #444, 1px 1px 0 #444;
+        }
+
+        .stop {
+            background: $brand-color;
+            border-radius: 10px;
+            height: 16px;
+            line-height: 14px;
+        }
+
+        .arrow {
+            border: 4px solid transparent;
+            border-bottom: 5px solid $black;
+            border-top: 0;
+            left: 5px;
+            position: absolute;
+            top: -6px;
+            transform-origin: 4px 15px;
+        }
+
+        .bus + .arrow {
+            left: 6px;
+            transform-origin: 4px 16px;
+        }
     }
 }
 
-.leaflet-marker-icon.leaflet-div-icon {
-    background: none;
-    border: 0;
-    color: #222;
-    font-size: 10px;
-    text-align: center;
-    white-space: nowrap;
+.leaflet-bar {
+    img {
+        border: 0;
+        padding-top: 5px;
 
-    .bus,
-    .stop {
-        border: 1px solid rgba(0, 0, 0, 0.2);
-        overflow: hidden;
+        .leaflet-touch & {
+            padding-top: 7px;
+        }
     }
-
-    .bus {
-        background: #fff;
-        height: 12px;
-        line-height: 12px;
-        margin-top: 3px;
-    }
-
-    .coloured {
-        border-color: #fff;
-        // text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
-    }
-
-    .white-text {
-        color: #fff;
-        // text-shadow: -1px -1px 0 #444, 1px -1px 0 #444, -1px 1px 0 #444, 1px 1px 0 #444;
-    }
-
-    .stop {
-        background: $brand-color;
-        border-radius: 10px;
-        line-height: 14px;
-        height: 16px;
-    }
-
-    .arrow {
-        border: 4px solid transparent;
-        border-bottom: 5px solid #000;
-        border-top: 0;
-        left: 5px;
-        position: absolute;
-        top: -6px;
-        transform-origin: 4px 15px;
-    }
-
-    .bus + .arrow {
-        left: 6px;
-        transform-origin: 4px 16px;
-    }
-}
-
-.leaflet-bar img {
-    padding-top: 5px;
-    border: 0;
-}
-
-.leaflet-touch .leaflet-bar img {
-    padding-top: 7px;
 }
 
 @keyframes materialize {
@@ -695,7 +699,7 @@ body {
     }
 
     small {
-        color: #222;
+        color: $text-color;
         display: block;
         float: left;
         font-size: .75em;
@@ -708,12 +712,12 @@ table {
 }
 
 td {
-    border-top: 1px solid $brand-color;
+    border-top: 1px solid $border-color;
 }
 
 th,
 td {
-    border-left: 1px solid $brand-color;
+    border-left: 1px solid $border-color;
     padding: .25em .5em;
     text-align: left;
 
@@ -795,13 +799,13 @@ input:not(:checked) + label {
         }
 
         a {
-            color: #000;
+            color: $active-link-color;
         }
     }
 
     th {
-        border-right: 1px solid $brand-color;
-        border-top: 1px solid $brand-color;
+        border-right: 1px solid $border-color;
+        border-top: 1px solid $border-color;
         font-weight: normal;
         white-space: nowrap;
 
@@ -817,25 +821,29 @@ input:not(:checked) + label {
         }
     }
 
-    thead td {
-        border: 1px solid $brand-color;
-        border-width: 0 0 1px 1px;
-        text-align: center;
+    thead {
+        td {
+            border: 1px solid $border-color;
+            border-width: 0 0 1px 1px;
+            text-align: center;
+
+            &:first-child {
+                border: 0;
+                padding: 0;
+            }
+        }
     }
 
-    thead td:first-child {
-        border: 0;
-        padding: 0;
-    }
+    tfoot {
+        td {
+            border-left: 1px solid $border-color;
+            border-top: 1px solid $border-color;
+            vertical-align: top;
 
-    tfoot td {
-        border-left: 1px solid $brand-color;
-        border-top: 1px solid $brand-color;
-        vertical-align: top;
-    }
-
-    tfoot td:first-child {
-        border: 0;
+            &:first-child {
+                border: 0;
+            }
+        }
     }
 
     .OTH,
@@ -918,7 +926,7 @@ input:not(:checked) + label {
 }
 
 .leaflet-container .leaflet-control.hugemap-status {
-    background: #fff;
+    background: $white;
     background: rgba(255, 255, 255, .8);
     margin: 0;
     padding: 0 5px;
@@ -974,7 +982,6 @@ footer {
     }
 
     ul {
-        color: #555;
         font-size: .75em;
         padding: 1em;
 
@@ -986,7 +993,7 @@ footer {
     li {
         display: inline;
 
-        &::before {
+        &:before {
             color: $brand-color-darker;
             content: '  \2022  ';
         }
