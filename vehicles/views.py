@@ -80,13 +80,17 @@ def operator_vehicles(request, slug):
     edit = request.path.endswith('/edit')
     submitted = False
     if edit:
-        form = EditVehiclesForm(request.POST, vehicle=vehicles[0])
+        form = EditVehiclesForm(request.POST, operator=operator, initial={
+            'operator': operator
+        })
         if request.POST and form.is_valid():
             ticked_vehicles = (vehicle for vehicle in vehicles if str(vehicle.id) in request.POST.getlist('vehicle'))
             data = {key: form.cleaned_data[key] for key in form.changed_data}
             submitted = len(VehicleEdit.objects.bulk_create(
                 get_vehicle_edit(vehicle, data) for vehicle in ticked_vehicles
             ))
+            if form.cleaned_data.get('operator') and form.cleaned_data['operator'] != operator:
+                Vehicle.objects.filter(id__in=request.POST.getlist('vehicle')).update(operator=operator)
     else:
         form = None
         pending_edits = VehicleEdit.objects.filter(vehicle=OuterRef('id'))
@@ -306,6 +310,7 @@ def edit_vehicle(request, vehicle_id):
     vehicle = get_object_or_404(Vehicle.objects.select_related('vehicle_type', 'livery', 'operator'), id=vehicle_id)
     submitted = False
     initial = {
+        'operator': vehicle.operator,
         'fleet_number': vehicle.fleet_number,
         'reg': vehicle.reg,
         'vehicle_type': vehicle.vehicle_type,
@@ -316,15 +321,18 @@ def edit_vehicle(request, vehicle_id):
     }
 
     if request.method == 'POST':
-        form = EditVehicleForm(request.POST, initial=initial, vehicle=vehicle)
+        form = EditVehicleForm(request.POST, initial=initial, operator=vehicle.operator, vehicle=vehicle)
         if not form.has_changed():
             form.add_error(None, 'You haven\'t changed anything')
         elif form.is_valid():
             edit = get_vehicle_edit(vehicle, {key: form.cleaned_data[key] for key in form.changed_data})
             edit.save()
+            if form.cleaned_data.get('operator') and form.cleaned_data['operator'] != vehicle.operator:
+                vehicle.operator = form.cleaned_data['operator']
+                vehicle.save()
             submitted = True
     else:
-        form = EditVehicleForm(initial=initial, vehicle=vehicle)
+        form = EditVehicleForm(initial=initial, operator=vehicle.operator, vehicle=vehicle)
 
     if vehicle.operator:
         breadcrumb = [vehicle.operator, Vehicles(vehicle.operator), vehicle]

@@ -153,11 +153,6 @@ class Command(ImportLiveVehiclesCommand):
             services = services.filter(stops__locality__stoppoint=item['or']).distinct()
             try:
                 journey.service = services.get()
-
-                for operator in journey.service.operator.all():
-                    if operator.name.startswith('Stagecoach '):
-                        vehicle.maybe_change_operator(operator)
-                        break
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, item['or'], service)
 

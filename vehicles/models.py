@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.contrib.gis.db import models
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
-from django.db.models import Count, Index, Q
+from django.db.models import Index, Q
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from busstops.models import Operator, Service, StopPoint, DataSource, SIRISource
@@ -214,20 +214,6 @@ class Vehicle(models.Model):
         return mark_safe(f'<a href="{self.get_flickr_url()}" target="_blank" rel="noopener">Flickr</a>')
 
     get_flickr_link.short_description = 'Flickr'
-
-    def get_livery_choices(self):
-        choices = {}
-        liveries = Livery.objects.filter(vehicle__operator=self.operator_id).annotate(popularity=Count('vehicle'))
-        for livery in liveries.order_by('-popularity').distinct():
-            choices[livery.id] = livery
-        for vehicle in Vehicle.objects.filter(operator=self.operator).exclude(colours='').distinct('colours', 'notes'):
-            if vehicle.colours in choices:
-                choices[vehicle.colours].name = ''
-            else:
-                choices[vehicle.colours] = Livery(colours=vehicle.colours, name=vehicle.notes)
-        choices = [(key, livery.preview(name=True)) for key, livery in choices.items()]
-        choices.append(('Other', 'Other'))
-        return choices
 
     clean = Livery.clean
 

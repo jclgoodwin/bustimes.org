@@ -187,12 +187,12 @@ class VehiclesTests(TestCase):
         self.assertEqual(admin.vehicle_type(edit), '<ins>Ford Transit</ins>')
 
     def test_vehicles_edit(self):
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(6):
             response = self.client.post('/operators/lynx/vehicles/edit')
         self.assertContains(response, 'Select vehicles to update')
         self.assertFalse(VehicleEdit.objects.all())
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(7):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
                 'notes': 'foo'
