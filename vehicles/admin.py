@@ -100,7 +100,7 @@ notes.admin_order_field = 'notes'
 
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['id', vehicle, fleet_number, reg, vehicle_type, branding, name, 'current', 'suggested',
-                    notes, 'flickr']
+                    notes, 'withdrawn', 'flickr']
     list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'livery']
     list_filter = [
         ('vehicle__operator', admin.RelatedOnlyFieldListFilter)
@@ -112,6 +112,9 @@ class VehicleEditAdmin(admin.ModelAdmin):
         for edit in queryset:
             ok = True
             vehicle = edit.vehicle
+            if edit.withdrawn:
+                vehicle.delete()
+                continue
             if edit.fleet_number:
                 vehicle.fleet_number = edit.fleet_number
             if edit.reg:

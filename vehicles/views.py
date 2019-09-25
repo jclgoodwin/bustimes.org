@@ -56,6 +56,9 @@ def get_vehicle_edit(vehicle, fields):
         elif fields['colours']:
             edit.colours = fields['colours']
 
+    if fields.get('withdrawn'):
+        edit.withdrawn = True
+
     return edit
 
 
