@@ -106,7 +106,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
         ('vehicle__operator', admin.RelatedOnlyFieldListFilter)
     ]
     raw_id_fields = ['vehicle', 'livery']
-    actions = ['apply_edits']
+    actions = ['apply_edits', 'delete_vehicles']
 
     def apply_edits(self, request, queryset):
         for edit in queryset:
@@ -146,6 +146,9 @@ class VehicleEditAdmin(admin.ModelAdmin):
             if ok:
                 edit.delete()
         self.message_user(request, 'Applied edits.')
+
+    def delete_vehicles(self, request, queryset):
+        Vehicle.objects.filter(vehicleedit__in=queryset).delete()
 
     def current(self, obj):
         if obj.vehicle.livery:
