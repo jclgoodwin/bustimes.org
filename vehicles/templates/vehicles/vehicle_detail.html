@@ -20,7 +20,8 @@
     {% endif %}
 
     {% if vehicle.colours or vehicle.livery %}
-        <p><div class="bus" style="background:{{ vehicle.get_livery }}"{% if vehicle.livery %} title="{{ vehicle.livery }}"{% endif %}></div></p>
+        <div class="livery" style="background:{{ vehicle.get_livery }}"></div>
+        {% if vehicle.livery %}{{ vehicle.livery }}{% endif %}
     {% endif %}
 
     {% if vehicle.branding %}

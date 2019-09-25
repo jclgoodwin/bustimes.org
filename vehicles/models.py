@@ -101,7 +101,7 @@ class Livery(models.Model):
         background = self.get_css()
         if not background:
             return
-        div = f'<div style="height:1.5em;width:4em;background:{background}"'
+        div = f'<div style="height:1.5em;width:2.25em;background:{background}"'
         if name:
             div = f'{div}></div> {self.name}'
         else:

@@ -4,9 +4,9 @@ from .models import VehicleType
 
 class EditVehiclesForm(forms.Form):
     vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False)
-    colours = forms.ChoiceField(widget=forms.RadioSelect, required=False)
-    branding = forms.CharField(label='Branding', required=False)
-    notes = forms.CharField(label='Notes', required=False)
+    colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
+    branding = forms.CharField(required=False)
+    notes = forms.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         self.vehicle = kwargs.pop('vehicle', None)
@@ -15,7 +15,7 @@ class EditVehiclesForm(forms.Form):
 
 
 class EditVehicleForm(EditVehiclesForm):
-    fleet_number = forms.IntegerField(label='Fleet number', required=False, min_value=0)
+    fleet_number = forms.IntegerField(required=False, min_value=0)
     reg = forms.CharField(label='Registration', required=False)
     name = forms.CharField(label='Name', required=False)
 

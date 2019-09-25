@@ -585,8 +585,11 @@ table {
     }
 }
 
-.bus {
-    height: 1em;
+.livery {
+    float: left;
+    height: 1.5em;
+    margin-right: .5em;
+    width: 2.25em;
 }
 
 .leaflet-marker-icon {
@@ -709,6 +712,10 @@ body {
 
 table {
     border-collapse: collapse;
+}
+
+.fleet {
+    font-size: .875em;
 }
 
 td {
