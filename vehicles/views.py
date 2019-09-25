@@ -99,6 +99,15 @@ def operator_vehicles(request, slug):
     if not vehicles:
         raise Http404()
 
+    if operator.name == 'National Express':
+        for v in vehicles:
+            parts = v.notes.split()
+            if parts and parts[-1].isdigit():
+                v.fleet_number = int(parts[-1])
+                v.notes = ' '.join(parts[:-1])
+                vehicles = sorted(vehicles, key=lambda v: v.fleet_number or 0)
+                vehicles = sorted(vehicles, key=lambda v: v.notes or 'z')
+
     return render(request, 'operator_vehicles.html', {
         'breadcrumb': [operator.region, operator],
         'object': operator,
