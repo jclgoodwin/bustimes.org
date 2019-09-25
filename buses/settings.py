@@ -86,6 +86,7 @@ if os.environ.get('READ_ONLY_DB_HOST'):
     MIDDLEWARE.append('busstops.middleware.admin_db_middleware')
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = None
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379')
 
