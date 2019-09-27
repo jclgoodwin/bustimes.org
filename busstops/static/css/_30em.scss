@@ -1,6 +1,8 @@
 header {
-    ul a {
-        padding-left: 1em;
+    ul {
+        a {
+            padding-left: 1em;
+        }
     }
 
     .search {
@@ -16,7 +18,10 @@ header {
 
             input {
                 border: 1px solid $brand-color-darker;
+                border-bottom-left-radius: .5em;
+                border-top-left-radius: .5em;
                 left: 0;
+                padding: .25em .5em;
                 top: 0;
                 width: 100%;
             }

@@ -453,7 +453,7 @@ table {
 }
 
 .breadcrumb {
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $brand-color-darker;
     margin: 0 -1em;
     overflow: hidden;
     padding: .5em 0 0 1em;
@@ -716,6 +716,11 @@ table {
 
 .fleet {
     font-size: .875em;
+    white-space: nowrap;
+
+    th {
+        white-space: normal;
+    }
 }
 
 td {
@@ -738,9 +743,11 @@ td {
     }
 }
 
-thead th {
-    padding-top: 0;
-    vertical-align: bottom;
+thead {
+    th {
+        padding-top: 0;
+        vertical-align: bottom;
+    }
 }
 
 .timetable-wrapper-wrapper {
@@ -843,13 +850,14 @@ input:not(:checked) + label {
 
     tfoot {
         td {
-            border-left: 1px solid $border-color;
-            border-top: 1px solid $border-color;
+            border: 1px solid $border-color;
+            border-width: 1px 1px 0 0;
             vertical-align: top;
 
-            &:first-child {
-                border: 0;
+            &:last-child {
+                border-right: 0;
             }
+
         }
     }
 
@@ -872,8 +880,10 @@ input:not(:checked) + label {
         }
     }
 
-    tfoot td:first-child {
-        position: absolute;
+    tfoot {
+        td:first-child {
+            position: absolute;
+        }
     }
 }
 
@@ -982,7 +992,7 @@ footer {
 
     ul,
     .banner-ad {
-        border-top: 1px solid $brand-color;
+        border-top: 1px solid $brand-color-darker;
         clear: both;
         margin: 0;
         padding: 1em .625em;
