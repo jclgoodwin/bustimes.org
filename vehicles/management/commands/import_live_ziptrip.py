@@ -119,24 +119,34 @@ class Command(ImportLiveVehiclesCommand):
 
         defaults['source'] = self.source
         if type(operator_id) is tuple:
-            defaults['operator_id'] = operator_id[0]
-            return self.vehicles.get_or_create(defaults, operator_id__in=operator_id, code=vehicle)
-        else:
-            try:
-                if operator_id not in self.operators:
-                    self.operators[operator_id] = Operator.objects.get(id=operator_id)
-                if 'fleet_number' in defaults and operator_id == 'IPSW' or operator_id == 'ROST':
-                    defaults['code'] = vehicle
-                    if operator_id == 'ROST':
-                        defaults['operator_id'] = 'ROST'
-                        operator_ids = ('LNUD', 'BPTR', 'HRGT', 'KDTR', 'ROST', 'YCST')
-                        return self.vehicles.get_or_create(defaults, operator_id__in=operator_ids,
-                                                           fleet_number=fleet_number)
-                    return self.vehicles.get_or_create(defaults, operator_id=operator_id, fleet_number=fleet_number)
-                return self.vehicles.get_or_create(defaults, operator_id=operator_id, code=vehicle)
-            except Operator.DoesNotExist as e:
-                print(e, operator_id)
-                return None, None
+            if operator_id[0] == 'SESX' and operator_id[0] == 'CUBU':
+                # vehicles may have multiple operators
+                defaults['operator_id'] = operator_id[0]
+                return self.vehicles.get_or_create(defaults, operator_id__in=operator_id, code=vehicle)
+
+            # services may have multiple operators, but vehicles all have the same operator (e.g. Reading Buses)
+            operator_id = operator_id[0]
+
+        try:
+            if operator_id not in self.operators:
+                # cache operators by id to save a query
+                self.operators[operator_id] = Operator.objects.get(id=operator_id)
+
+            if 'fleet_number' in defaults and operator_id == 'IPSW' or operator_id == 'ROST':
+                # vehicle codes differ between sources, so use fleet number
+                defaults['code'] = vehicle
+                if operator_id == 'ROST':
+                    defaults['operator_id'] = 'ROST'
+                    # query all Transdev Blazefield operators
+                    operator_ids = ('LNUD', 'BPTR', 'HRGT', 'KDTR', 'ROST', 'YCST')
+                    return self.vehicles.get_or_create(defaults, operator_id__in=operator_ids,
+                                                       fleet_number=fleet_number)
+                return self.vehicles.get_or_create(defaults, operator_id=operator_id, fleet_number=fleet_number)
+
+            return self.vehicles.get_or_create(defaults, operator_id=operator_id, code=vehicle)
+        except Operator.DoesNotExist as e:
+            print(e, operator_id)
+            return None, None
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()

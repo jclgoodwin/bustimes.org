@@ -133,6 +133,7 @@ class Command(ImportLiveVehiclesCommand):
 
         if operator:
             if operator.id == 'THVB':
+                operator.id = 'RBUS'
                 operator_options = ('RBUS',)
             elif operator.id == 'SESX':
                 operator_options = ('SESX', 'NIBS', 'GECL')
