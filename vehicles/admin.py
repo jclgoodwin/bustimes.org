@@ -99,11 +99,12 @@ notes.admin_order_field = 'notes'
 
 
 class VehicleEditAdmin(admin.ModelAdmin):
-    list_display = ['id', vehicle, fleet_number, reg, vehicle_type, branding, name, 'current', 'suggested',
+    list_display = ['id', 'datetime', vehicle, fleet_number, reg, vehicle_type, branding, name, 'current', 'suggested',
                     notes, 'withdrawn', 'flickr']
     list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'livery']
     list_filter = [
-        ('vehicle__operator', admin.RelatedOnlyFieldListFilter)
+        'approved',
+        ('vehicle__operator', admin.RelatedOnlyFieldListFilter),
     ]
     raw_id_fields = ['vehicle', 'livery']
     actions = ['apply_edits', 'delete_vehicles']
