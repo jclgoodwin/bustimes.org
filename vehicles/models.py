@@ -257,6 +257,8 @@ class VehicleEdit(models.Model):
                 vehicle = str(getattr(self.vehicle, field) or '')
                 if edit != vehicle:
                     changes[field] = edit
+        if self.withdrawn:
+            changes['withdrawn'] = self.withdrawn
         return changes
 
     def get_diff(self, field):
