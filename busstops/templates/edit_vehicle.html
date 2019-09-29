@@ -16,7 +16,7 @@
 
     <h1>Edit vehicle details</h1>
 
-    {% if vehicle.vehicleedit_set.exists %}
+    {% if pending_edits %}
         <p class="message">❗ There’s already a pending edit for this vehicle</p>
     {% endif %}
 

@@ -40,7 +40,7 @@
         <p>{{ feature }}</p>
     {% endfor %}
 
-    <p><a class="button" href="{{ vehicle.get_absolute_url }}/edit">Edit</a>{% if vehicle.vehicleedit_set.exists %}*{% endif %}</p>
+    <p><a class="button" href="{{ vehicle.get_absolute_url }}/edit">Edit</a>{% if pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}</p>
 
     <p>{{ vehicle.get_flickr_link }}</p>
 {% endif %}

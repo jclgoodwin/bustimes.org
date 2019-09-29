@@ -28,7 +28,7 @@
 {% endif %}
 
 {% if operator.vehicle_set.exists %}
-    <p><a href="{{ object.get_absolute_url }}/vehicles">An incomplete {{ object }} fleet list</a></p>
+    <p><a href="{{ object.get_absolute_url }}/vehicles">Unofficial, incomplete fleet list</a></p>
 {% endif %}
 
 {% if object.address or object.url or object.email or object.phone %}

@@ -148,7 +148,8 @@ class VehicleEditAdmin(admin.ModelAdmin):
                 vehicle.colours = edit.colours
             vehicle.save()
             if ok:
-                edit.delete()
+                edit.approved = True
+                edit.save(update_fields=['approved'])
         self.message_user(request, 'Applied edits.')
 
     def delete_vehicles(self, request, queryset):

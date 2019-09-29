@@ -18,14 +18,14 @@
 
     <p>Select vehicles to update:</p>
 {% else %}
-    <p>This is an incomplete, unofficial fleet list for {{ object }},
-    only showing vehicles that have appeared in the live bus tracking system.</p>
+    <p>This is an unofficial and probably incomplete fleet list for {{ object }}.
+    It only lists vehicles that have ever appeared in the live bus tracking system.</p>
 
     <p>Thanks to the marvels of modern technology,
     you can see where a particular vehicle has been recently,
     and which vehicles have operated a particular service.
     This isn’t always accurate,
-    e.g. when ticket machines/tracking equipment are swapped between vehicles without being updated.</p>
+    e.g. when ticket machines/tracking equipment are swapped between vehicles.</p>
 
     {% if user.is_authenticated %}
         <p><a href="{{ edit_url }}?o=2&amp;operator__id__exact={{ object.id }}">Edit</a></p>

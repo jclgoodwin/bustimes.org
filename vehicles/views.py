@@ -96,7 +96,7 @@ def operator_vehicles(request, slug):
                 Vehicle.objects.filter(id__in=request.POST.getlist('vehicle')).update(operator=operator)
     else:
         form = None
-        pending_edits = VehicleEdit.objects.filter(vehicle=OuterRef('id'))
+        pending_edits = VehicleEdit.objects.filter(approved=False, vehicle=OuterRef('id'))
         vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
 
     if not vehicles:
@@ -292,6 +292,7 @@ class VehicleDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         journeys = self.object.vehiclejourney_set
+        context['pending_edits'] = self.object.vehicleedit_set.filter(approved=False).exists()
         dates = list(journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date'))
         if self.object.operator:
             context['breadcrumb'] = [self.object.operator, Vehicles(self.object.operator)]
@@ -358,7 +359,8 @@ def edit_vehicle(request, vehicle_id):
         'vehicle': vehicle,
         'previous': vehicle.get_previous(),
         'next': vehicle.get_next(),
-        'submitted': submitted
+        'submitted': submitted,
+        'pending_edits': not submitted and vehicle.vehicleedit_set.filter(approved=False).exists()
     })
 
 
