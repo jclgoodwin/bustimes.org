@@ -40,9 +40,7 @@
 <table class="fleet">
     <thead>
         <tr>
-            {% if edit %}
-                <th></th>
-            {% endif %}
+            {% if edit %}<th></th>{% endif %}
             <th scope="col"{% if code_column %} colspan="2"{% endif %}></th>
             <th scope="col" colspan="2">Last seen</th>
             <th scope="col">Type</th>
@@ -105,13 +103,13 @@
                     {% endif %}
                 </td>
                 <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
-                <td>
-                    {% if vehicle.colours or vehicle.livery %}
+                <td{% if vehicle.colours or vehicle.livery %} class="livery-cell">
+
                         <div class="livery" style="background:{{ vehicle.get_livery }}"></div>
                         {% if vehicle.livery %}
                             {{ vehicle.livery }}
                         {% endif %}
-                    {% endif %}
+                    {% else %}>{% endif %}
                 </td>
                 {% if branding_column %}<td>{{ vehicle.branding }}</td>{% endif %}
                 {% if name_column %}<td>{{ vehicle.name }}</td>{% endif %}

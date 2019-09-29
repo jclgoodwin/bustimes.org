@@ -586,9 +586,10 @@ table {
 }
 
 .livery {
-    float: left;
+    display: inline-block;
     height: 1.5em;
     margin-right: .5em;
+    vertical-align: text-top;
     width: 2.25em;
 }
 
@@ -717,6 +718,17 @@ table {
 .fleet {
     font-size: .875em;
     white-space: nowrap;
+
+    .livery-cell {
+        padding-left: 3.25em;
+        position: relative;
+    }
+
+    .livery {
+        left: .5em;
+        position: absolute;
+        top: .2em;
+    }
 
     th {
         white-space: normal;
