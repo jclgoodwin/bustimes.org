@@ -85,16 +85,20 @@ def handle_journey(element, source, when):
             except (Service.MultipleObjectsReturned, Service.DoesNotExist):
                 service = None
 
-            journey, journey_created = VehicleJourney.objects.get_or_create({
+            defaults = {
                 'code': journey_ref,
                 'route_name': route_name,
                 'destination': destination,
                 'source': source,
                 'service': service
-                },
-                vehicle=vehicle,
-                datetime=departure_time
-            )
+            }
+            try:
+                journey, journey_created = VehicleJourney.objects.get_or_create(defaults, vehicle=vehicle,
+                                                                                datetime=departure_time)
+            except VehicleJourney.MultipleObjectsReturned:
+                journey, journey_created = VehicleJourney.objects.get_or_create(defaults, vehicle=vehicle,
+                                                                                datetime=departure_time,
+                                                                                code=journey_ref)
         if not journey:
             return
         aimed_arrival_time = call.find('siri:AimedArrivalTime', ns)

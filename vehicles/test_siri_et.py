@@ -53,46 +53,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.3">
          <OperatorRef>ANW</OperatorRef>
          <Monitored>true</Monitored>
          <VehicleRef>ANW-2934</VehicleRef>
-         <EstimatedCalls>
-           <EstimatedCall>
-             <StopPointRef>0600CR372</StopPointRef>
-             <VisitNumber>17</VisitNumber>
-             <StopPointName xml:lang="EN">Winterley Pool</StopPointName>
-             <AimedArrivalTime>2019-09-02T16:36:00+01:00</AimedArrivalTime>
-             <ExpectedArrivalTime>2019-09-02T16:36:00+01:00</ExpectedArrivalTime>
-             <AimedDepartureTime>2019-09-02T16:36:00+01:00</AimedDepartureTime>
-             <ExpectedDepartureTime>2019-09-02T16:36:00+01:00</ExpectedDepartureTime>
-           </EstimatedCall>
-           <EstimatedCall>
-             <StopPointRef>0600CR375</StopPointRef>
-             <VisitNumber>18</VisitNumber>
-             <StopPointName xml:lang="EN">Wheelock Heath Foresters Arms PH</StopPointName>
-             <AimedArrivalTime>2019-09-02T16:37:00+01:00</AimedArrivalTime>
-             <ExpectedArrivalTime>2019-09-02T16:36:00+01:00</ExpectedArrivalTime>
-             <AimedDepartureTime>2019-09-02T16:37:00+01:00</AimedDepartureTime>
-             <ExpectedDepartureTime>2019-09-02T16:36:00+01:00</ExpectedDepartureTime>
-           </EstimatedCall>
-           <EstimatedCall>
-             <StopPointRef>0600CO053</StopPointRef>
-             <VisitNumber>20</VisitNumber>
-             <StopPointName xml:lang="EN">Wheelock Crewe Road</StopPointName>
-             <AimedArrivalTime>2019-09-02T16:39:00+01:00</AimedArrivalTime>
-             <ExpectedArrivalTime>2019-09-02T16:38:00+01:00</ExpectedArrivalTime>
-             <ArrivalPlatformName xml:lang="EN">o/s 597</ArrivalPlatformName>
-             <AimedDepartureTime>2019-09-02T16:39:00+01:00</AimedDepartureTime>
-             <ExpectedDepartureTime>2019-09-02T16:38:00+01:00</ExpectedDepartureTime>
-             <DeparturePlatformName xml:lang="EN">o/s 597</DeparturePlatformName>
-           </EstimatedCall>
-           <EstimatedCall>
-             <StopPointRef>0600CO069</StopPointRef>
-             <VisitNumber>27</VisitNumber>
-             <StopPointName xml:lang="EN">Sandbach Common</StopPointName>
-             <AimedArrivalTime>2019-09-02T16:45:00+01:00</AimedArrivalTime>
-             <ExpectedArrivalTime>2019-09-02T16:44:00+01:00</ExpectedArrivalTime>
-             <AimedDepartureTime>2019-09-02T16:48:00+01:00</AimedDepartureTime>
-             <ExpectedDepartureTime>2019-09-02T16:48:00+01:00</ExpectedDepartureTime>
-           </EstimatedCall>
-         </EstimatedCalls>
        </EstimatedVehicleJourney>
      </EstimatedJourneyVersionFrame>
      <EstimatedJourneyVersionFrame>
@@ -109,7 +69,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.3">
          <VehicleRef>ANW-5017</VehicleRef>
          <EstimatedCalls>
            <EstimatedCall>
-             <StopPointRef>068000000142</StopPointRef>
+             <StopPointRef>0690WNA02877</StopPointRef>
              <VisitNumber>64</VisitNumber>
              <StopPointName xml:lang="EN">Ditton Crossway</StopPointName>
              <AimedArrivalTime>2019-09-02T16:28:00+01:00</AimedArrivalTime>
@@ -165,11 +125,11 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.3">
 </Siri>
         """
 
-        with self.assertNumQueries(23):
+        with self.assertNumQueries(30):
             siri_et(xml)
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(16):
             siri_et(xml)
 
-        self.assertEqual(3, Call.objects.count())
+        self.assertEqual(4, Call.objects.count())
         self.assertEqual(1, VehicleLocation.objects.count())
