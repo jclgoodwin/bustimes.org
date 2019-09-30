@@ -19,7 +19,6 @@ class VehicleAdminForm(forms.ModelForm):
             'operator': forms.TextInput(attrs={'style': 'width: 4em'}),
             'branding': forms.TextInput(attrs={'style': 'width: 8em'}),
             'name': forms.TextInput(attrs={'style': 'width: 8em'}),
-            'notes': forms.TextInput(attrs={'style': 'width: 8em'}),
         }
 
 
@@ -37,7 +36,7 @@ class VehicleAdmin(admin.ModelAdmin):
                      'livery', 'colours', 'branding', 'name', 'notes')
     autocomplete_fields = ('vehicle_type', 'livery')
     raw_id_fields = ('operator', 'source')
-    search_fields = ('code', 'fleet_number', 'reg')
+    search_fields = ('code', 'fleet_number', 'reg', 'notes')
     ordering = ('-id',)
     actions = ('copy_livery', 'copy_type')
 
