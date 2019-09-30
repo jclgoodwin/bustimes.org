@@ -20,42 +20,51 @@ class Command(ImportLiveVehiclesCommand):
         return super().get_items()['features']
 
     def get_vehicle(self, item):
-        fleet_number = item['properties']['vehicle']
-        if '-' in fleet_number:
-            operator, fleet_number = item['properties']['vehicle'].split('-', 1)
+        code = item['properties']['vehicle']
+        if '-' in code and code[0].isalpha():
+            operator, code = code.split('-', 1)
         else:
             operator = item['_embedded']['transmodel:line']['id'].split(':')[0]
 
         operator = self.operators[operator]
 
+        fleet_number = code
+
+        if '_-_' in code:
+            parts = code.split('_-_')
+            if parts[0].isdigit():
+                fleet_number = parts[0]
+
         defaults = {
             'source': self.source,
             'operator_id': operator,
-            'code': fleet_number
+            'code': code
         }
 
         if fleet_number.isdigit():
-            return self.vehicles.get_or_create(
+            vehicle = self.vehicles.get_or_create(
                 defaults,
                 fleet_number=fleet_number,
                 operator__in=self.operators.values()
             )
-        return self.vehicles.get_or_create(
-            defaults,
-            code=fleet_number,
-            operator__in=self.operators.values()
-        )
+        else:
+            vehicle = self.vehicles.get_or_create(
+                defaults,
+                code=code,
+                operator__in=self.operators.values()
+            )
+
+        if vehicle[0].code.isdigit() and not code.isdigit():
+            vehicle[0].code = code
+            vehicle[0].save()
+
+        return vehicle
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
         journey.route_name = item['properties']['line']
 
-        fleet_number = item['properties']['vehicle']
-        if '-' in fleet_number:
-            operator, fleet_number = item['properties']['vehicle'].split('-', 1)
-        else:
-            operator = item['_embedded']['transmodel:line']['id'].split(':')[0]
-
+        operator = item['_embedded']['transmodel:line']['id'].split(':')[0]
         operator = self.operators[operator]
 
         line_name = item['properties']['line']
