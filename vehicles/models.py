@@ -318,15 +318,17 @@ class Call(models.Model):
     expected_departure_time = models.DateTimeField(null=True)
 
     def arrival_delay(self):
-        delay = (self.expected_arrival_time - self.aimed_arrival_time).total_seconds()
-        if delay:
-            return '{0:+d}'.format(int(delay / 60))
+        if self.expected_arrival_time and self.aimed_arrival_time:
+            delay = (self.expected_arrival_time - self.aimed_arrival_time).total_seconds()
+            if delay:
+                return '{0:+d}'.format(int(delay / 60))
         return ''
 
     def departure_delay(self):
-        delay = (self.expected_departure_time - self.aimed_departure_time).total_seconds()
-        if delay:
-            return '{0:+d}'.format(int(delay / 60))
+        if self.expected_departure_time and self.aimed_departure_time:
+            delay = (self.expected_departure_time - self.aimed_departure_time).total_seconds()
+            if delay:
+                return '{0:+d}'.format(int(delay / 60))
         return ''
 
     class Meta:
