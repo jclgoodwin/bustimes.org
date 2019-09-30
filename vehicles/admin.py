@@ -99,8 +99,9 @@ notes.admin_order_field = 'notes'
 
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['id', 'datetime', vehicle, fleet_number, reg, vehicle_type, branding, name, 'current', 'suggested',
-                    notes, 'withdrawn', 'flickr']
-    list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'livery']
+                    notes, 'withdrawn', 'last_seen', 'flickr']
+    list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'vehicle__latest_location'
+                           'livery']
     list_filter = [
         'approved',
         ('vehicle__operator', admin.RelatedOnlyFieldListFilter),
@@ -172,6 +173,11 @@ class VehicleEditAdmin(admin.ModelAdmin):
 
     def flickr(self, obj):
         return obj.vehicle.get_flickr_link()
+
+    def last_seen(self, obj):
+        if obj.vehicle.latest_location:
+            return obj.vehicle.latest_location.datetime
+    last_seen.admin_order_field = 'vehicle__latest_location__datetime'
 
 
 class VehicleJourneyAdmin(admin.ModelAdmin):
