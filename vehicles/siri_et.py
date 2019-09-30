@@ -55,10 +55,13 @@ def handle_journey(element, source, when):
 
     calls = []
 
-    for call in journey_element.find('siri:EstimatedCalls', ns):
+    calls_element = journey_element.find('siri:EstimatedCalls', ns)
+    if calls_element is None:
+        return
+    for call in calls_element:
         visit_number = int(call.find('siri:VisitNumber', ns).text)
         stop_id = call.find('siri:StopPointRef', ns).text
-        if not journey and visit_number == 1:
+        if not journey:
             departure_time = call.find('siri:AimedDepartureTime', ns)
             if departure_time is None:
                 return
@@ -111,12 +114,17 @@ def handle_journey(element, source, when):
                         aimed_arrival_time=aimed_arrival_time, aimed_departure_time=aimed_departure_time)
             call_created = False
         else:
-            call, call_created = Call.objects.get_or_create({
-                'aimed_arrival_time': aimed_arrival_time,
-                'expected_arrival_time': expected_arrival_time,
-                'aimed_departure_time': aimed_departure_time,
-                'expected_departure_time': expected_departure_time
-            }, stop_id=stop_id, journey=journey, visit_number=visit_number)
+            try:
+                call, call_created = Call.objects.get_or_create({
+                    'aimed_arrival_time': aimed_arrival_time,
+                    'expected_arrival_time': expected_arrival_time,
+                    'aimed_departure_time': aimed_departure_time,
+                    'expected_departure_time': expected_departure_time
+                }, stop_id=stop_id, journey=journey, visit_number=visit_number)
+            except Call.MultipleObjectsReturned as e:
+                print(e)
+                call = Call.objects.filter(stop_id=stop_id, journey=journey, visit_number=visit_number).first()
+                call_created = False
         if not call_created:
             call.expected_arrival_time = expected_arrival_time
             call.expected_departure_time = expected_departure_time
