@@ -117,7 +117,7 @@ class Locality(models.Model):
     parent = models.ForeignKey('Locality', models.SET_NULL, null=True, editable=False)
     latlong = models.PointField(null=True, blank=True)
     adjacent = models.ManyToManyField('Locality', related_name='neighbour', blank=True)
-    search_vector = SearchVectorField(null=True)
+    search_vector = SearchVectorField(null=True, blank=True)
 
     class Meta():
         ordering = ('name',)
@@ -178,7 +178,7 @@ class Place(models.Model):
     latlong = models.PointField(null=True, blank=True)
     polygon = models.PolygonField(null=True, blank=True)
     parent = models.ForeignKey('Place', models.SET_NULL, null=True, editable=False)
-    search_vector = SearchVectorField(null=True)
+    search_vector = SearchVectorField(null=True, blank=True)
 
     class Meta():
         unique_together = ('source', 'code')
@@ -505,7 +505,7 @@ class Service(models.Model):
     source = models.ForeignKey(DataSource, models.SET_NULL, null=True, blank=True)
     tracking = models.NullBooleanField()
     payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
-    search_vector = SearchVectorField(null=True)
+    search_vector = SearchVectorField(null=True, blank=True)
 
     class Meta():
         ordering = ('service_code',)
