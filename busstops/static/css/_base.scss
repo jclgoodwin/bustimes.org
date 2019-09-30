@@ -715,9 +715,12 @@ table {
     border-collapse: collapse;
 }
 
+.tabular {
+    font-variant-numeric: tabular-nums;
+}
+
 .fleet {
     font-size: .875em;
-    white-space: nowrap;
 
     .livery-cell {
         padding-left: 3.25em;
@@ -732,6 +735,10 @@ table {
 
     th {
         white-space: normal;
+    }
+
+    td {
+        vertical-align: top;
     }
 }
 

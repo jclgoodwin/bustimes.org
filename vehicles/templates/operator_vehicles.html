@@ -41,7 +41,7 @@
     <thead>
         <tr>
             {% if edit %}<th></th>{% endif %}
-            <th scope="col"{% if code_column %} colspan="2"{% endif %}></th>
+            <th scope="col" colspan="{% if vehicle.code_column %}3{% else %}2{% endif %}"></th>
             <th scope="col" colspan="2">Last seen</th>
             <th scope="col">Type</th>
             <th scope="col">Livery</th>
@@ -61,12 +61,13 @@
                 {% if code_column %}
                     <td>{% if vehicle.fleet_number_mismatch %}{{ vehicle.code }}{% endif %}</td>
                 {% endif %}
-                <td>
-                    {% if vehicle.latest_location or vehicle.latest_journeys %}
-                        <a href="{{ vehicle.get_absolute_url }}">{{ vehicle }}</a>
-                    {% else %}
-                        {{ vehicle }}
+                <td class="tabular">
+                    {% if vehicle.fleet_number %}
+                        <a href="{{ vehicle.get_absolute_url }}">{{ vehicle.fleet_number }}</a>
                     {% endif %}
+                </td>
+                <td class="tabular">
+                    <a href="{{ vehicle.get_absolute_url }}">{% if vehicle.reg %}{{ vehicle.get_reg }}{% elif not vehicle.fleet_number %}{{ vehicle }}{% endif %}</a>
                 </td>
                 <td>
                     {% if vehicle.latest_location %}
@@ -85,7 +86,7 @@
                         {% endfor %}
                     {% endif %}
                 </td>
-                <td>
+                <td class="tabular">
                     {% if vehicle.latest_location %}
                         {% if vehicle.latest_location.datetime.date == today %}
                             {{ vehicle.latest_location.datetime | time }}
