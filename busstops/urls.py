@@ -8,6 +8,7 @@ from vehicles.urls import urlpatterns as vehicles_urls
 from vosa.urls import urlpatterns as vosa_urls
 from .forms import CustomSearchForm
 from . import views
+from bustimes.views import RouteDetailView
 
 sitemaps = {
     'operators': views.OperatorSitemap,
@@ -44,6 +45,7 @@ urlpatterns = [
          name='django.contrib.sitemaps.views.sitemap'),
     path('search', SearchView(form_class=CustomSearchForm)),
     path('journey', views.journey),
+    path('routes/<int:pk>', RouteDetailView.as_view(), name='route_detail'),
 ] + vehicles_urls + vosa_urls
 
 

@@ -1,0 +1,81 @@
+{% extends 'page.html' %}
+
+{% block content %}
+
+<h1>{{ object }}</h1>
+
+<p>{{ object.code }}</p>
+
+{% if timetable %}
+    <form class="timetable-date">
+        <select onchange="this.form.submit()" name="date" aria-label="Date">
+            {% for option in timetable.date_options %}
+                <option{% if option == timetable.date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
+            {% endfor %}
+        </select>
+        <noscript><input type="submit" /></noscript>
+    </form>
+
+    {% for grouping in timetable.groupings %}
+
+        {% if forloop.first != forloop.last %}<h2>{{ grouping }}</h2>{% endif %}
+
+        <div class="timetable-wrapper-wrapper">
+            <div class="timetable-wrapper">
+                <table class="timetable">
+                    <tbody>
+                        {% for row in grouping.rows %}
+                            <tr>
+                                <th>
+                                    {{ row.stop }}
+                            </th>
+                            {% for cell in row.times %}
+                                {% if cell.colspan %}
+                                    <td{% if grouping.heads or grouping.column_feet %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}">{{ cell }}</td>
+                                {% else %}
+                                    <td>{% if not row.has_waittimes or cell.stopusage.wait_time or cell.last %}{{ cell }}{% if not cell.last and cell.stopusage.activity == 'setDown' %}<abbr title="sets down only">s</abbr>{% endif %}{% endif %}</td>
+                                {% endif %}
+                            {% endfor %}
+                            </tr>
+                            {% if row.has_waittimes %}
+                                <tr>
+                                    <th>
+                                        {% if row.part.stop.stop %}
+                                            <a href="{{ row.part.stop.stop.get_absolute_url }}">{{ row.part.stop.stop.get_qualified_name }}</a>
+                                        {% else %}
+                                            {{ row.part.stop }}
+                                        {% endif %}
+                                    </th>
+                                    {% for cell in row.times %}
+                                        <td>{% if cell.stopusage.wait_time or not cell.last %}{{ cell.departure_time }}{% endif %}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% if not forloop.last and grouping.rows|length > 20 %}
+            <!--[if gte IE 9]><!-->
+                <div class="banner-ad">
+                    <div class="ad-label">Advertisement</div>
+                    <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="horizontal"></ins>
+                </div>
+                <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            <!--<![endif]-->
+        {% endif %}
+
+    {% empty %}
+        <p>Sorry, no journeys found for {{ timetable.date }}</p>
+
+        {% include 'route.html' %}
+    {% endfor %}
+
+    {% if timetable.has_set_down_only %}
+        <p>Times marked <strong>s</strong> – “sets down only” – the {{ object.mode }} will only stop to drop passengers off</p>
+    {% endif %}
+{% endif %}
+
+{% endblock %}
