@@ -6,7 +6,7 @@ Usage:
 
 import zipfile
 from django.core.management.base import BaseCommand
-from ...models import Source, Route, Calendar, Trip, StopTime
+from ...models import Source, Route, Calendar, CalendarDate, Trip, StopTime
 from timetables.txc import TransXChange
 
 
@@ -52,6 +52,9 @@ class Command(BaseCommand):
              'end_date': transxchange.operating_period.end}, source=source, code=filename
         )
 
+        calendar_dates = []
+        stop_times = []
+
         for journey in transxchange.journeys:
             calendar = Calendar(
                 mon=False,
@@ -82,6 +85,15 @@ class Command(BaseCommand):
                     calendar.sun = True
             calendar.save()
 
+            calendar_dates += [
+                CalendarDate(start_date=date_range.start, end_date=date_range.end, calendar=calendar, operation=False)
+                for date_range in journey.operating_profile.nonoperation_days
+            ]
+            calendar_dates += [
+                CalendarDate(start_date=date_range.start, end_date=date_range.end, calendar=calendar, operation=True)
+                for date_range in journey.operating_profile.operation_days
+            ]
+
             trip = Trip(
                 inbound=journey.journey_pattern.direction == 'inbound',
                 calendar=calendar,
@@ -90,7 +102,7 @@ class Command(BaseCommand):
             )
             trip.save()
 
-            stop_times = [
+            stop_times += [
                 StopTime(
                     stop_code=cell.stopusage.stop.atco_code,
                     trip=trip,
@@ -99,4 +111,6 @@ class Command(BaseCommand):
                     sequence=i
                 ) for i, cell in enumerate(journey.get_times())
             ]
-            StopTime.objects.bulk_create(stop_times)
+
+        CalendarDate.objects.bulk_create(calendar_dates)
+        StopTime.objects.bulk_create(stop_times)

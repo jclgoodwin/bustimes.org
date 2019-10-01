@@ -1,6 +1,7 @@
 from ciso8601 import parse_datetime
 from django.views.generic.detail import DetailView
 from django.utils import timezone
+from busstops.models import StopPoint
 from .models import Route
 
 
@@ -25,6 +26,11 @@ class RouteDetailView(DetailView):
 
         timetable = self.object.get_timetable(date)
         timetable.groupings = [grouping for grouping in timetable.groupings if grouping.rows]
+
+        stops = [row.stop for grouping in timetable.groupings for row in grouping.rows]
+        # print(stops)
+        stops = StopPoint.objects.in_bulk(stops)
+        # print(stops)
 
         context['timetable'] = timetable
 

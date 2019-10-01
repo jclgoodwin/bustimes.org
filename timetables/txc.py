@@ -549,6 +549,10 @@ class DayOfWeek(object):
 
 
 class OperatingProfile(object):
+    servicedorganisation = None
+    nonoperation_days = ()
+    operation_days = ()
+
     def __init__(self, element, servicedorgs):
         element = element
 
@@ -604,15 +608,13 @@ class OperatingProfile(object):
             self.nonoperation_bank_holidays = []
 
     def should_show(self, date, region_id=None):
-        if hasattr(self, 'nonoperation_days'):
-            for daterange in self.nonoperation_days:
-                if daterange.contains(date):
-                    return False
+        for daterange in self.nonoperation_days:
+            if daterange.contains(date):
+                return False
 
-        if hasattr(self, 'operation_days'):
-            for daterange in self.operation_days:
-                if daterange.contains(date):
-                    return True
+        for daterange in self.operation_days:
+            if daterange.contains(date):
+                return True
 
         if date in BANK_HOLIDAYS:
             if not (
@@ -636,7 +638,7 @@ class OperatingProfile(object):
         if not self.regular_days:
             return False
 
-        if hasattr(self, 'servicedorganisation'):
+        if self.servicedorganisation:
             org = self.servicedorganisation
 
             nonoperation_days = (org.nonoperation_workingdays and org.nonoperation_workingdays.working_days or

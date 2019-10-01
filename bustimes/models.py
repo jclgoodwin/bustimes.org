@@ -111,7 +111,7 @@ class Route(models.Model):
     line_name = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     start_date = models.DateField()
-    end_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
 
     class Meta:
         unique_together = ('source', 'code')
@@ -135,7 +135,7 @@ class Calendar(models.Model):
     sat = models.BooleanField()
     sun = models.BooleanField()
     start_date = models.DateField()
-    end_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
 
 
 class CalendarDate(models.Model):
