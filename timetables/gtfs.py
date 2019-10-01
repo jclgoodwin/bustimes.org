@@ -3,6 +3,12 @@ import difflib
 from django.db.models import Min, Q, Prefetch
 from multigtfs.models import Trip, StopTime
 from .northern_ireland import Grouping, Timetable, Row
+from .txc import Cell
+
+
+class StopUsage(object):
+    def __init__(self, wait_time):
+        self.wait_time = wait_time
 
 
 def get_grouping_name_part(stop_name):
@@ -73,9 +79,22 @@ def handle_trips(trips, day):
                 row = existing_row
                 assert instruction[2:] == existing_row.part.stop.atco_code
 
-            time = datetime.timedelta(seconds=(stop.departure_time or stop.arrival_time).seconds)
-            time = (midnight + time).time()
-            row.times.append(time)
+            if stop.arrival_time:
+                arrival_time = (midnight + datetime.timedelta(seconds=stop.arrival_time.seconds)).time()
+            else:
+                arrival_time = None
+
+            if stop.departure_time and stop.departure_time != stop.arrival_time:
+                departure_time = (midnight + datetime.timedelta(seconds=stop.departure_time.seconds)).time()
+            else:
+                departure_time = None
+
+            stop_usage = None
+            if arrival_time and departure_time:
+                row.has_waittimes = True
+                stop_usage = StopUsage(row.has_waittimes)
+
+            row.times.append(Cell(stop_usage, arrival_time or departure_time, departure_time))
             row.part.timingstatus = None
 
             y += 1
