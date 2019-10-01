@@ -136,14 +136,14 @@ class ImportTransXChangeTest(TestCase):
 
     @freeze_time('3 October 2016')
     def test_east_anglia(self):
-        with self.assertNumQueries(156):
-            self.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml'])
+        with self.assertNumQueries(172):
+            self.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml', 'ea_20-12-_-y08-1.xml'])
 
         service = Route.objects.get(line_name='13B', line_brand='Turquoise Line')
 
-        self.assertEqual(70, Trip.objects.count())
-        self.assertEqual(6, Calendar.objects.count())
-        self.assertEqual(6, CalendarDate.objects.count())
+        self.assertEqual(75, Trip.objects.count())
+        self.assertEqual(7, Calendar.objects.count())
+        self.assertEqual(8, CalendarDate.objects.count())
 
         # self.assertEqual(str(service), '13B - Turquoise Line - Norwich - Wymondham - Attleborough')
         self.assertEqual(service.line_name, '13B')

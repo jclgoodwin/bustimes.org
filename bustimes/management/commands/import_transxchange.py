@@ -53,6 +53,9 @@ class Command(BaseCommand):
             for date_range in operating_profile.operation_days
         ]
 
+        if not calendar_dates and not operating_profile.regular_days:
+            return
+
         calendar_hash = f'{operating_profile.regular_days}{operating_period.start}{operating_period.end}'
         calendar_hash += ''.join(f'{date.start_date}{date.end_date}{date.operation}' for date in calendar_dates)
 
@@ -107,8 +110,17 @@ class Command(BaseCommand):
              'end_date': transxchange.operating_period.end}, source=source, code=filename
         )
 
+        default_calendar = None
+
         for journey in transxchange.journeys:
-            calendar = self.get_calendar(journey.operating_profile, transxchange.operating_period)
+            if journey.operating_profile:
+                calendar = self.get_calendar(journey.operating_profile, transxchange.operating_period)
+                if not calendar:
+                    continue
+            else:
+                if not default_calendar:
+                    default_calendar = self.get_calendar(transxchange.operating_profile, transxchange.operating_period)
+                calendar = default_calendar
 
             trip = Trip(
                 inbound=journey.journey_pattern.direction == 'inbound',
