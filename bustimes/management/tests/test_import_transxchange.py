@@ -6,7 +6,7 @@ from django.test import TestCase, override_settings
 from django.core.management import call_command
 # from ...models import (Operator, DataSource, OperatorCode, Service, Region, StopPoint, Journey, StopUsageUsage,
 #                        ServiceDate, ServiceLink)
-from ...models import Route
+from ...models import Route, Trip, Calendar, CalendarDate
 from ..commands import import_transxchange
 
 
@@ -136,10 +136,14 @@ class ImportTransXChangeTest(TestCase):
 
     @freeze_time('3 October 2016')
     def test_east_anglia(self):
-        with self.assertNumQueries(150):
+        with self.assertNumQueries(156):
             self.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml'])
 
         service = Route.objects.get(line_name='13B', line_brand='Turquoise Line')
+
+        self.assertEqual(70, Trip.objects.count())
+        self.assertEqual(6, Calendar.objects.count())
+        self.assertEqual(6, CalendarDate.objects.count())
 
         # self.assertEqual(str(service), '13B - Turquoise Line - Norwich - Wymondham - Attleborough')
         self.assertEqual(service.line_name, '13B')

@@ -23,6 +23,8 @@ def get_line_name_and_brand(service_element):
 
 
 class Command(BaseCommand):
+    calendar_cache = {}
+
     @staticmethod
     def add_arguments(parser):
         parser.add_argument('filenames', nargs='+', type=str)
@@ -41,6 +43,59 @@ class Command(BaseCommand):
                     with archive.open(filename) as open_file:
                         self.handle_file(open_file, filename, source)
 
+    def get_calendar(self, operating_profile, operating_period):
+        calendar_dates = [
+            CalendarDate(start_date=date_range.start, end_date=date_range.end, operation=False)
+            for date_range in operating_profile.nonoperation_days
+        ]
+        calendar_dates += [
+            CalendarDate(start_date=date_range.start, end_date=date_range.end, operation=True)
+            for date_range in operating_profile.operation_days
+        ]
+
+        calendar_hash = f'{operating_profile.regular_days}{operating_period.start}{operating_period.end}'
+        calendar_hash += ''.join(f'{date.start_date}{date.end_date}{date.operation}' for date in calendar_dates)
+
+        if calendar_hash in self.calendar_cache:
+            return self.calendar_cache[calendar_hash]
+
+        calendar = Calendar(
+            mon=False,
+            tue=False,
+            wed=False,
+            thu=False,
+            fri=False,
+            sat=False,
+            sun=False,
+            start_date=operating_period.start,
+            end_date=operating_period.end
+        )
+
+        for day in operating_profile.regular_days:
+            if day == 0:
+                calendar.mon = True
+            elif day == 1:
+                calendar.tue = True
+            elif day == 2:
+                calendar.wed = True
+            elif day == 3:
+                calendar.thu = True
+            elif day == 4:
+                calendar.fri = True
+            elif day == 5:
+                calendar.sat = True
+            elif day == 6:
+                calendar.sun = True
+
+        calendar.save()
+        for date in calendar_dates:
+            date.calendar = calendar
+        CalendarDate.objects.bulk_create(calendar_dates)
+
+        self.calendar_cache[calendar_hash] = calendar
+
+        return calendar
+
     def handle_file(self, open_file, filename, source):
         transxchange = TransXChange(open_file)
 
@@ -52,47 +107,8 @@ class Command(BaseCommand):
              'end_date': transxchange.operating_period.end}, source=source, code=filename
         )
 
-        calendar_dates = []
-        stop_times = []
-
         for journey in transxchange.journeys:
-            calendar = Calendar(
-                mon=False,
-                tue=False,
-                wed=False,
-                thu=False,
-                fri=False,
-                sat=False,
-                sun=False,
-                start_date=transxchange.operating_period.start,
-                end_date=transxchange.operating_period.end
-            )
-
-            for day in journey.operating_profile.regular_days:
-                if day == 0:
-                    calendar.mon = True
-                elif day == 1:
-                    calendar.tue = True
-                elif day == 2:
-                    calendar.wed = True
-                elif day == 3:
-                    calendar.thu = True
-                elif day == 4:
-                    calendar.fri = True
-                elif day == 5:
-                    calendar.sat = True
-                elif day == 6:
-                    calendar.sun = True
-            calendar.save()
-
-            calendar_dates += [
-                CalendarDate(start_date=date_range.start, end_date=date_range.end, calendar=calendar, operation=False)
-                for date_range in journey.operating_profile.nonoperation_days
-            ]
-            calendar_dates += [
-                CalendarDate(start_date=date_range.start, end_date=date_range.end, calendar=calendar, operation=True)
-                for date_range in journey.operating_profile.operation_days
-            ]
+            calendar = self.get_calendar(journey.operating_profile, transxchange.operating_period)
 
             trip = Trip(
                 inbound=journey.journey_pattern.direction == 'inbound',
@@ -102,7 +118,7 @@ class Command(BaseCommand):
             )
             trip.save()
 
-            stop_times += [
+            stop_times = [
                 StopTime(
                     stop_code=cell.stopusage.stop.atco_code,
                     trip=trip,
@@ -112,5 +128,4 @@ class Command(BaseCommand):
                 ) for i, cell in enumerate(journey.get_times())
             ]
 
-        CalendarDate.objects.bulk_create(calendar_dates)
-        StopTime.objects.bulk_create(stop_times)
+            StopTime.objects.bulk_create(stop_times)
