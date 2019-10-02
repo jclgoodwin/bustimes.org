@@ -220,7 +220,8 @@ class Vehicle(models.Model):
     def maybe_change_operator(self, operator):
         if self.operator_id != operator.id:
             week_ago = timezone.now() - timedelta(days=7)
-            if not self.vehiclejourney_set.filter(service__operator=operator, datetime__gt=week_ago).exists():
+            # hasn't operated as the current operator in the last week
+            if not self.vehiclejourney_set.filter(service__operator=self.operator_id, datetime__gt=week_ago).exists():
                 self.operator_id = operator.id
                 self.save(update_fields=['operator'])
 
