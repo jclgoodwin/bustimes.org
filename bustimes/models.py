@@ -121,7 +121,7 @@ class Route(models.Model):
         unique_together = ('source', 'code')
 
     def __str__(self):
-        return ' – '.join(part for part in set((self.line_brand, self.line_name, self.description)) if part)
+        return ' – '.join(part for part in (self.line_name, self.line_brand, self.description) if part)
 
     def get_absolute_url(self):
         return reverse('route_detail', args=(self.id,))

@@ -145,7 +145,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(6, Calendar.objects.count())
         self.assertEqual(8, CalendarDate.objects.count())
 
-        # self.assertEqual(str(service), '13B - Turquoise Line - Norwich - Wymondham - Attleborough')
+        self.assertEqual(str(service), '13B – Turquoise Line – Norwich - Wymondham - Attleborough')
         self.assertEqual(service.line_name, '13B')
         self.assertEqual(service.line_brand, 'Turquoise Line')
         self.assertEqual(service.start_date, date(2016, 4, 18))
