@@ -1,10 +1,12 @@
 import datetime
-import difflib
+from difflib import Differ
+from functools import cmp_to_key
 from django.contrib.gis.db import models
+from django.db.models import Min
 from django.urls import reverse
 
 
-differ = difflib.Differ(charjunk=lambda _: True)
+differ = Differ(charjunk=lambda _: True)
 
 
 class Timetable:
@@ -19,8 +21,10 @@ class Timetable:
         trips = trips.exclude(calendar__calendardate__operation=False,
                               calendar__calendardate__start_date__lte=self.date,
                               calendar__calendardate__end_date__gte=self.date)
+        trips = trips.annotate(departure_time=Min('stoptime__departure')).order_by('departure_time')
 
-        trips = trips.prefetch_related('stoptime_set')
+        trips = list(trips.prefetch_related('stoptime_set'))
+        trips.sort(key=Trip.get_order)
 
         for trip in trips:
             if trip.inbound:
@@ -117,7 +121,7 @@ class Route(models.Model):
         unique_together = ('source', 'code')
 
     def __str__(self):
-        return ' – '.join(part for part in set((self.line_name, self.line_brand, self.description)) if part)
+        return ' – '.join(part for part in set((self.line_brand, self.line_name, self.description)) if part)
 
     def get_absolute_url(self):
         return reverse('route_detail', args=(self.id,))
@@ -151,6 +155,36 @@ class Trip(models.Model):
     journey_pattern = models.CharField(max_length=255)
     destination = models.CharField(max_length=255)
     calendar = models.ForeignKey(Calendar, models.CASCADE)
+
+    def cmp(self, a, b):
+        """Compare two journeys"""
+        # if x.sequencenumber is not None and y.sequencenumber is not None:
+        #     if x.sequencenumber > y.sequencenumber:
+        #         return 1
+        #     if x.sequencenumber < y.sequencenumber:
+        #         return -1
+        #     return 0
+        a_times = a.stoptime_set.all()
+        b_times = b.stoptime_set.all()
+        a_time = a_times[0].arrival
+        b_time = b_times[0].arrival
+        if a_times[0].stop_code != b_times[0].stop_code:
+            times = {time.stop_code: time.arrival for time in a_times}
+            for time in b_times:
+                if time.stop_code in times:
+                    if time.arrival >= b_time:
+                        if times[time.stop_code] >= a_time:
+                            a_time = times[time.stop_code]
+                            b_time = time.arrival
+        #             break
+        if a_time > b_time:
+            return 1
+        if b_time < a_time:
+            return -1
+        return 0
+
+    def get_order(self):
+        return cmp_to_key(self.cmp)(self)
 
 
 class StopTime(models.Model):

@@ -27,8 +27,10 @@
                         {% for row in grouping.rows %}
                             <tr>
                                 <th>
-                                    {{ row.stop }}
-                            </th>
+                                    {% if row.stop.pk %}
+                                        <a href="{{ row.stop.get_absolute_url }}">{{ row.stop.get_qualified_name }}</a>
+                                    {% else %}{{ row.stop }}{% endif %}
+                                </th>
                             {% for cell in row.times %}
                                 {% if cell.colspan %}
                                     <td{% if grouping.heads or grouping.column_feet %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}">{{ cell }}</td>

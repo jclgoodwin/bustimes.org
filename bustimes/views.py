@@ -28,9 +28,10 @@ class RouteDetailView(DetailView):
         timetable.groupings = [grouping for grouping in timetable.groupings if grouping.rows]
 
         stops = [row.stop for grouping in timetable.groupings for row in grouping.rows]
-        # print(stops)
-        stops = StopPoint.objects.in_bulk(stops)
-        # print(stops)
+        stops = StopPoint.objects.select_related('locality').in_bulk(stops)
+        for grouping in timetable.groupings:
+            for row in grouping.rows:
+                row.stop = stops.get(row.stop, row.stop)
 
         context['timetable'] = timetable
 

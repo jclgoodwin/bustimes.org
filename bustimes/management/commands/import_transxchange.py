@@ -107,7 +107,8 @@ class Command(BaseCommand):
 
         route, created = Route.objects.get_or_create(
             {'line_name': line_name, 'line_brand': line_brand, 'start_date': transxchange.operating_period.start,
-             'end_date': transxchange.operating_period.end}, source=source, code=filename
+             'end_date': transxchange.operating_period.end, 'description': transxchange.description},
+            source=source, code=filename
         )
 
         default_calendar = None
