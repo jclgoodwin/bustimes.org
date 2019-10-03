@@ -26,25 +26,31 @@ class Departures(object):
     def __init__(self, stop, services, now=None):
         self.stop = stop
         self.now = now
-        self.services = {}
-        duplicate_line_names = set()
+        self.services_by_name = {}
+        self.services_by_alternative_name = {}
+        duplicate_names = set()
+        duplicate_alternative_names = set()
+
         for service in services:
             line_name = service.line_name.lower()
-            if line_name in self.services:
-                duplicate_line_names.add(line_name)
+            if line_name in self.services_by_name:
+                duplicate_names.add(line_name)
             else:
-                self.services[line_name] = service
+                self.services_by_name[line_name] = service
+
             if service.net:
                 # there's sometimes an alternative abbreviated line name hidden in the service code
                 parts = service.service_code.split('-')
                 part = parts[1].lower()
-                if part != line_name:
-                    if part in self.services:
-                        duplicate_line_names.add(part)
-                    else:
-                        self.services[part] = service
-        for line_name in duplicate_line_names:
-            del self.services[line_name]
+                if part in self.services_by_alternative_name:
+                    duplicate_alternative_names.add(part)
+                else:
+                    self.services_by_alternative_name[part] = service
+
+        for line_name in duplicate_names:
+            del self.services_by_name[line_name]
+        for line_name in duplicate_alternative_names:
+            del self.services_by_alternative_name[line_name]
 
     def get_request_url(self):
         """Return a URL string to pass to get_response"""
@@ -74,8 +80,10 @@ class Departures(object):
         """
         if line_name:
             line_name_lower = line_name.lower()
-            if line_name_lower in self.services:
-                return self.services[line_name_lower]
+            if line_name_lower in self.services_by_name:
+                return self.services_by_name[line_name_lower]
+            if line_name_lower in self.services_by_alternative_name:
+                return self.services_by_alternative_name[line_name_lower]
             alternatives = {
                 'Puls': 'pulse',
                 'FLCN': 'falcon',
@@ -686,6 +694,51 @@ class SiriSmDepartures(Departures):
         return SESSION.post(self.source.url, data=request_xml, headers=headers, timeout=5)
 
 
+class StagecoachDepartures(Departures):
+    def get_response(self):
+        headers = {
+            'Origin': 'https://www.stagecoachbus.com',
+            'Referer': 'https://www.stagecoachbus.com',
+            'X-SC-apiKey': 'ukbusprodapi_9T61Jo3vsbql#!',
+            'X-SC-securityMethod': 'API'
+        }
+        json = {
+            'StopMonitorRequest': {
+                'header': {
+                    'retailOperation': '',
+                    'channel': '',
+                },
+                'stopMonitorQueries': {
+                    'stopMonitorQuery': [{
+                        'stopPointLabel': self.stop.atco_code,
+                        'servicesFilters': {}
+                    }]
+                }
+            }
+        }
+        return SESSION.post('https://api.stagecoachbus.com/adc/stop-monitor',
+                            headers=headers, json=json, timeout=2)
+
+    def departures_from_response(self, response):
+        stop_monitors = response.json()['stopMonitors']
+        departures = []
+
+        if 'stopMonitor' in stop_monitors:
+            for monitor in stop_monitors['stopMonitor'][0]['monitoredCalls']['monitoredCall']:
+
+                if 'expectedDepartureTime' not in monitor:
+                    continue
+
+                departures.append({
+                    'time': parse_datetime(monitor['aimedDepartureTime']),
+                    'live': parse_datetime(monitor['expectedDepartureTime']),
+                    'service': self.get_service(monitor['lineRef']),
+                    'destination': monitor['destinationDisplay'],
+                })
+
+        return departures
+
+
 def get_max_age(departures, now):
     """Given a list of departures and the current datetime, returns an
     appropriate max_age in seconds (for use in a cache-control header)
@@ -702,73 +755,6 @@ def get_max_age(departures, now):
         )
         return (midnight - now).seconds
     return 3600
-
-
-def add_stagecoach_departures(stop, services_dict, departures):
-    headers = {
-        'Origin': 'https://www.stagecoachbus.com',
-        'Referer': 'https://www.stagecoachbus.com',
-        'X-SC-apiKey': 'ukbusprodapi_9T61Jo3vsbql#!',
-        'X-SC-securityMethod': 'API'
-    }
-    json = {
-        'StopMonitorRequest': {
-            'header': {
-                'retailOperation': '',
-                'channel': '',
-            },
-            'stopMonitorQueries': {
-                'stopMonitorQuery': [{
-                    'stopPointLabel': stop.atco_code,
-                    'servicesFilters': {}
-                }]
-            }
-        }
-    }
-    try:
-        response = SESSION.post('https://api.stagecoachbus.com/adc/stop-monitor',
-                                headers=headers, json=json, timeout=2)
-    except requests.exceptions.RequestException as e:
-        logger.error(e, exc_info=True)
-        return departures
-    if not response.ok:
-        return departures
-    stop_monitors = response.json()['stopMonitors']
-    if 'stopMonitor' in stop_monitors:
-        added = False
-        for monitor in stop_monitors['stopMonitor'][0]['monitoredCalls']['monitoredCall']:
-            if 'expectedDepartureTime' in monitor:
-                aimed, expected = [parse_datetime(time)
-                                   for time in (monitor['aimedDepartureTime'], monitor['expectedDepartureTime'])]
-                line = monitor['lineRef']
-                if departures and aimed >= (departures[0]['time'] or departures[0]['live']):
-                    replaced = False
-                    for departure in departures:
-                        if aimed == departure['time']:
-                            if type(departure['service']) is Service and line == departure['service'].line_name:
-                                departure['live'] = expected
-                                replaced = True
-                                break
-                    if replaced:
-                        continue
-                    for departure in departures:
-                        if not departure.get('live'):
-                            if type(departure['service']) is Service and line == departure['service'].line_name:
-                                departure['live'] = expected
-                                replaced = True
-                                break
-                    if replaced:
-                        continue
-                departures.append({
-                    'time': aimed,
-                    'live': expected,
-                    'service': services_dict.get(line.lower(), line),
-                    'destination': monitor['destinationDisplay']
-                })
-                added = True
-        if added:
-            departures.sort(key=get_departure_order)
-    return departures
 
 
 def services_match(a, b):
@@ -885,7 +871,6 @@ def get_departures(stop, services):
     now = timezone.localtime()
 
     departures = TimetableDepartures(stop, services, now)
-    services_dict = departures.services
     departures = departures.get_departures()
 
     one_hour = datetime.timedelta(hours=1)
@@ -945,7 +930,9 @@ def get_departures(stop, services):
                         operator.name[:11] == 'Stagecoach ' for operator in row['service'].operator.all()
                     ) for row in live_rows
                 )):
-                    departures = add_stagecoach_departures(stop, services_dict, departures)
+                    stagecoach_rows = StagecoachDepartures(stop, services).get_departures()
+                    if stagecoach_rows:
+                        blend(departures, stagecoach_rows)
 
             if live_rows:
                 blend(departures, live_rows)
