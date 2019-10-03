@@ -97,8 +97,8 @@ class Departures(object):
                 'sp': 'sprint',
             }
             alternative = alternatives.get(line_name)
-            if alternative and alternative in self.services:
-                return self.services[alternative]
+            if alternative:
+                return self.get_service(alternative)
         return line_name
 
     def departures_from_response(self, res):
