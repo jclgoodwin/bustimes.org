@@ -149,12 +149,19 @@ class CalendarDate(models.Model):
     operation = models.BooleanField()
 
 
+class Note(models.Model):
+    code = models.CharField(max_length=16)
+    text = models.CharField(max_length=255)
+
+
 class Trip(models.Model):
     route = models.ForeignKey(Route, models.CASCADE)
     inbound = models.BooleanField(default=False)
-    journey_pattern = models.CharField(max_length=255)
-    destination = models.CharField(max_length=255)
+    journey_pattern = models.CharField(max_length=255, blank=True)
+    destination = models.CharField(max_length=255, blank=True)
     calendar = models.ForeignKey(Calendar, models.CASCADE)
+    sequence = models.PositiveSmallIntegerField(null=True, blank=True)
+    notes = models.ManyToManyField(Note, blank=True)
 
     def cmp(self, a, b):
         """Compare two journeys"""
@@ -193,6 +200,8 @@ class StopTime(models.Model):
     arrival = models.DurationField()
     departure = models.DurationField()
     sequence = models.PositiveSmallIntegerField()
+    timing_status = models.CharField(max_length=3, blank=True)
+    activity = models.CharField(max_length=16, blank=True)
 
     class Meta:
         ordering = ('sequence',)
