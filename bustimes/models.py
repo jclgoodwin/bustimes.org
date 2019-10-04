@@ -24,7 +24,7 @@ class Timetable:
         trips = trips.annotate(departure_time=Min('stoptime__departure')).order_by('departure_time')
 
         trips = list(trips.prefetch_related('stoptime_set'))
-        trips.sort(key=Trip.get_order)
+        trips.sort(key=cmp_to_key(Trip.cmp))
 
         for trip in trips:
             if trip.inbound:
@@ -163,7 +163,7 @@ class Trip(models.Model):
     sequence = models.PositiveSmallIntegerField(null=True, blank=True)
     notes = models.ManyToManyField(Note, blank=True)
 
-    def cmp(self, a, b):
+    def cmp(a, b):
         """Compare two journeys"""
         # if x.sequencenumber is not None and y.sequencenumber is not None:
         #     if x.sequencenumber > y.sequencenumber:
@@ -189,9 +189,6 @@ class Trip(models.Model):
         if b_time < a_time:
             return -1
         return 0
-
-    def get_order(self):
-        return cmp_to_key(self.cmp)(self)
 
 
 class StopTime(models.Model):
