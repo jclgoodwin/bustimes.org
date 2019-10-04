@@ -590,7 +590,7 @@ class ServiceDetailView(DetailView):
 @cache_control(max_age=86400)
 def service_map_data(request, pk):
     service = get_object_or_404(Service, pk=pk)
-    stops = StopPoint.objects.filter(service=service, latlong__isnull=False)
+    stops = StopPoint.objects.filter(service=service, latlong__isnull=False).select_related('locality')
     data = {
         "stops": {
             'type': 'FeatureCollection',
