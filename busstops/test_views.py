@@ -274,6 +274,12 @@ class ViewsTests(TestCase):
         self.assertIsNone(data['heading'])
         self.assertIsNone(data['stop_area'])
 
+    def test_stop_gtfs(self):
+        response = self.client.get('/stops/2900M114.txt')
+        self.assertEqual("""stop_id,stop_name,stop_lat,stop_lon
+2900M114,Melton Constable, opp Bus Shelter,1.0331935468,52.8566019427
+""", response.content.decode())
+
     def test_inactive_stop(self):
         response = self.client.get('/stops/2900M115')
         self.assertContains(response, 'Sorry, it looks like no services currently stop at', status_code=404)

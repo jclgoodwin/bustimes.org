@@ -410,6 +410,9 @@ class LiveDeparturesTest(TestCase):
             with vcr.use_cassette('data/vcr/worcester.yaml'):
                 with self.assertNumQueries(35):
                     response = self.client.get(self.worcester_stop.get_absolute_url())
+            with vcr.use_cassette('data/vcr/worcester.yaml'):
+                with self.assertNumQueries(3):
+                    xml_response = self.client.get(self.worcester_stop.get_absolute_url() + '.xml')
         self.assertContains(response, """
             <tr>
                 <td>
@@ -422,3 +425,5 @@ class LiveDeparturesTest(TestCase):
         self.assertContains(response, 'EVESHAM Bus Station')
         self.assertNotContains(response, 'WORCESTER')
         self.assertEqual(4, VehicleJourney.objects.count())
+
+        self.assertEqual(xml_response['Content-Type'], 'text/xml')
