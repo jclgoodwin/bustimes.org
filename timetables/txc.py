@@ -424,7 +424,7 @@ class VehicleJourney(object):
 
             previous_row = row
 
-    def cmp(self, x, y):
+    def cmp(x, y):
         """Compare two journeys"""
         if x.sequencenumber is not None and y.sequencenumber is not None:
             if x.sequencenumber > y.sequencenumber:
@@ -451,9 +451,6 @@ class VehicleJourney(object):
         if x_time < y_time:
             return -1
         return 0
-
-    def get_order(self):
-        return cmp_to_key(self.cmp)(self)
 
     def should_show(self, date, transxchange=None):
         if not date:
@@ -1096,7 +1093,7 @@ class Timetable(object):
                         journey.service = transxchange.service
 
         for grouping in self.groupings:
-            grouping.journeys.sort(key=VehicleJourney.get_order)
+            grouping.journeys.sort(key=cmp_to_key(VehicleJourney.cmp))
             for journey in grouping.journeys:
                 journey.add_times()
             for row in grouping.rows:
