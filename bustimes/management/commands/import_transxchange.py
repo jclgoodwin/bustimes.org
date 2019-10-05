@@ -23,13 +23,12 @@ def get_line_name_and_brand(service_element):
 
 
 class Command(BaseCommand):
-    calendar_cache = {}
-
     @staticmethod
     def add_arguments(parser):
         parser.add_argument('filenames', nargs='+', type=str)
 
     def handle(self, *args, **options):
+        self.calendar_cache = {}
         for archive_name in options['filenames']:
             self.handle_archive(archive_name)
 
@@ -105,15 +104,21 @@ class Command(BaseCommand):
         service_element = transxchange.element.find('txc:Services/txc:Service', NS)
         line_name, line_brand = get_line_name_and_brand(service_element)
 
-        route, created = Route.objects.get_or_create(
-            {'line_name': line_name, 'line_brand': line_brand, 'start_date': transxchange.operating_period.start,
-             'end_date': transxchange.operating_period.end, 'description': transxchange.description},
-            source=source, code=filename
-        )
+        defaults = {
+            'line_name': line_name,
+            'line_brand': line_brand,
+            'start_date': transxchange.operating_period.start,
+            'end_date': transxchange.operating_period.end
+        }
+        if transxchange.description:
+            defaults['description'] = transxchange.description
+
+        route, created = Route.objects.get_or_create(defaults,source=source, code=filename)
 
         default_calendar = None
 
         for journey in transxchange.journeys:
+            calendar = None
             if journey.operating_profile:
                 calendar = self.get_calendar(journey.operating_profile, transxchange.operating_period)
                 if not calendar:

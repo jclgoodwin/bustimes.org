@@ -7,7 +7,6 @@ from django.core.management import call_command
 # from ...models import (Operator, DataSource, OperatorCode, Service, Region, StopPoint, Journey, StopUsageUsage,
 #                        ServiceDate, ServiceLink)
 from ...models import Route, Trip, Calendar, CalendarDate
-from ..commands import import_transxchange
 
 
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
@@ -23,34 +22,9 @@ def clean_up():
 
 @override_settings(TNDS_DIR=FIXTURES_DIR)
 class ImportTransXChangeTest(TestCase):
-    command = import_transxchange.Command()
-
     @classmethod
-    @freeze_time('2016-01-01')
     def setUpTestData(cls):
         clean_up()
-
-        # # simulate a Scotland zipfile:
-        # cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml', 'CGAO305.xml'])
-
-        # # simulate a North West zipfile:
-        # cls.write_files_to_zipfile_and_import('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml',
-        #                                                  'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
-
-        # # simulate a National Coach Service Database zip file
-        # ncsd_zipfile_path = os.path.join(FIXTURES_DIR, 'NCSD.zip')
-        # with zipfile.ZipFile(ncsd_zipfile_path, 'a') as ncsd_zipfile:
-        #     for line_name in ('M11A', 'M12'):
-        #         file_name = 'Megabus_Megabus14032016 163144_MEGA_' + line_name + '.xml'
-        #         cls.write_file_to_zipfile(ncsd_zipfile, os.path.join('NCSD_TXC', file_name))
-        #     ncsd_zipfile.writestr(
-        #         'IncludedServices.csv',
-        #        'Operator,LineName,Dir,Description\nMEGA,M11A,O,Belgravia - Liverpool\nMEGA,M12,O,Shudehill - Victoria'
-        #     )
-        # call_command(cls.command, ncsd_zipfile_path)
-
-        # # test re-importing a previously imported service again
-        # call_command(cls.command, ncsd_zipfile_path)
 
     @classmethod
     def write_files_to_zipfile_and_import(cls, zipfile_name, filenames):
@@ -58,7 +32,7 @@ class ImportTransXChangeTest(TestCase):
         with zipfile.ZipFile(zipfile_path, 'a') as open_zipfile:
             for filename in filenames:
                 cls.write_file_to_zipfile(open_zipfile, filename)
-        call_command(cls.command, zipfile_path)
+        call_command('import_transxchange', zipfile_path)
 
     @staticmethod
     def write_file_to_zipfile(open_zipfile, filename):
@@ -134,6 +108,14 @@ class ImportTransXChangeTest(TestCase):
     #     # Test bank holiday non operation (Boxing Day)
     #     timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_20-12-_-y08-1.xml', date(2016, 12, 26))
     #     self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
+
+    @freeze_time('30 October 2017')
+    def test_service_with_no_description_and_empty_pattern(self):
+        with self.assertNumQueries(237):
+            self.write_files_to_zipfile_and_import('EA.zip', ['swe_33-9A-A-y10-2.xml'])
+
+        service = Route.objects.get(line_name='9A')
+        self.assertEqual('9A', str(service))
 
     @classmethod
     def tearDownClass(cls):
