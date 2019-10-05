@@ -22,6 +22,8 @@ class Timetable:
             for date in self.date_options():
                 self.date = date
                 break
+        if not self.date:
+            return
 
         midnight = datetime.datetime.combine(self.date, datetime.time())
 
@@ -35,60 +37,76 @@ class Timetable:
         trips.sort(key=cmp_to_key(Trip.cmp))
 
         for trip in trips:
-            if trip.inbound:
-                rows = self.groupings[1].rows
+            self.handle_trip(trip, midnight)
+
+    def handle_trip(self, trip, midnight):
+        if trip.inbound:
+            grouping = self.groupings[1]
+        else:
+            grouping = self.groupings[0]
+        rows = grouping.rows
+        if rows:
+            x = len(rows[0].times)
+        else:
+            x = 0
+        previous_list = [row.stop for row in rows]
+        current_list = [stoptime.stop_code for stoptime in trip.stoptime_set.all()]
+        diff = differ.compare(previous_list, current_list)
+
+        y = 0  # how many rows along we are
+
+        for stoptime in trip.stoptime_set.all():
+            if y < len(rows):
+                existing_row = rows[y]
             else:
-                rows = self.groupings[0].rows
-            if rows:
-                x = len(rows[0].times)
-            else:
-                x = 0
-            previous_list = [row.stop for row in rows]
-            current_list = [stoptime.stop_code for stoptime in trip.stoptime_set.all()]
-            diff = differ.compare(previous_list, current_list)
+                existing_row = None
 
-            y = 0  # how many rows along we are
+            instruction = next(diff)
 
-            for stoptime in trip.stoptime_set.all():
-                if y < len(rows):
-                    existing_row = rows[y]
-                else:
-                    existing_row = None
-
+            while instruction[0] in '-?':
+                if instruction[0] == '-':
+                    y += 1
+                    if y < len(rows):
+                        existing_row = rows[y]
+                    else:
+                        existing_row = None
                 instruction = next(diff)
 
-                while instruction[0] in '-?':
-                    if instruction[0] == '-':
-                        y += 1
-                        if y < len(rows):
-                            existing_row = rows[y]
-                        else:
-                            existing_row = None
-                    instruction = next(diff)
+            assert instruction[2:] == stoptime.stop_code
 
-                assert instruction[2:] == stoptime.stop_code
-
-                if instruction[0] == '+':
-                    row = Row(stoptime.stop_code, [''] * x)
-                    if not existing_row:
-                        rows.append(row)
-                    else:
-                        rows = rows[:y] + [row] + rows[y:]
-                    existing_row = row
+            if instruction[0] == '+':
+                row = Row(stoptime.stop_code, [''] * x)
+                row.timing_status = stoptime.timing_status
+                if not existing_row:
+                    rows.append(row)
                 else:
-                    row = existing_row
-                    assert instruction[2:] == existing_row.stop
+                    rows = grouping.rows = rows[:y] + [row] + rows[y:]
+                existing_row = row
+            else:
+                row = existing_row
+                assert instruction[2:] == existing_row.stop
 
-                time = datetime.timedelta(seconds=(stoptime.departure or stoptime.arrival).seconds)
-                time = (midnight + time).time()
-                row.times.append(time)
+            if stoptime.arrival:
+                arrival = (midnight + datetime.timedelta(seconds=stoptime.arrival.seconds)).time()
+            else:
+                arrival = None
 
-                y += 1
+            if stoptime.departure and stoptime.departure != stoptime.arrival:
+                departure = (midnight + datetime.timedelta(seconds=stoptime.departure.seconds)).time()
+            else:
+                departure = None
 
-            if x:
-                for row in rows:
-                    if len(row.times) == x:
-                        row.times.append('')
+            cell = Cell(stoptime, arrival or departure, departure)
+            row.times.append(cell)
+
+            y += 1
+
+        cell.last = True
+
+        if x:
+            for row in rows:
+                if len(row.times) == x:
+                    row.times.append('')
 
     def date_options(self):
         date = max(self.route.start_date, datetime.date.today())
@@ -103,11 +121,33 @@ class Grouping:
     def __init__(self):
         self.rows = []
 
+    def has_minor_stops(self):
+        for row in self.rows:
+            if row.timing_status == 'OTH':
+                return True
+
 
 class Row:
     def __init__(self, stop, times=[]):
         self.stop = stop
         self.times = times
+
+
+class Cell(object):
+    last = False
+
+    def __init__(self, stoptime, arrival, departure):
+        self.stoptime = stoptime
+        self.arrival = arrival
+        self.departure = departure
+
+    def __str__(self):
+        return self.arrival.strftime('%H:%M')
+
+    def __eq__(self, other):
+        if type(other) == datetime.time:
+            return self.stoptime.arrival == other or self.stoptime.departure == other
+        return self.stoptime.arrival == other.stoptime.arrival and self.stoptime.departure == other.stoptime.departure
 
 
 class Source(models.Model):

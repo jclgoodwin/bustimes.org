@@ -21,11 +21,15 @@
         {% if forloop.first != forloop.last %}<h2>{{ grouping }}</h2>{% endif %}
 
         <div class="timetable-wrapper-wrapper">
+            {% if grouping.has_minor_stops %}
+                <input type="checkbox" id="show-all-stops-{{ forloop.counter }}" />
+                <label for="show-all-stops-{{ forloop.counter }}">Show all stops</label>
+            {% endif %}
             <div class="timetable-wrapper">
                 <table class="timetable">
                     <tbody>
                         {% for row in grouping.rows %}
-                            <tr>
+                            <tr class="{{ row.timing_status }}">
                                 <th>
                                     {% if row.stop.pk %}
                                         <a href="{{ row.stop.get_absolute_url }}">{{ row.stop.get_qualified_name }}</a>
@@ -35,7 +39,7 @@
                                 {% if cell.colspan %}
                                     <td{% if grouping.heads or grouping.column_feet %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}">{{ cell }}</td>
                                 {% else %}
-                                    <td>{% if not row.has_waittimes or cell.stopusage.wait_time or cell.last %}{{ cell }}{% if not cell.last and cell.stopusage.activity == 'setDown' %}<abbr title="sets down only">s</abbr>{% endif %}{% endif %}</td>
+                                    <td>{{ cell }}{% if not cell.last and cell.stoptime.activity == 'setDown' %}<abbr title="sets down only">s</abbr>{% endif %}</td>
                                 {% endif %}
                             {% endfor %}
                             </tr>
@@ -49,7 +53,7 @@
                                         {% endif %}
                                     </th>
                                     {% for cell in row.times %}
-                                        <td>{% if cell.stopusage.wait_time or not cell.last %}{{ cell.departure_time }}{% endif %}</td>
+                                        <td>{% if cell.wait_time or not cell.last %}{{ cell.departure_time }}{% endif %}</td>
                                     {% endfor %}
                                 </tr>
                             {% endif %}

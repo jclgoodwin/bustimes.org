@@ -58,7 +58,7 @@ class ImportTransXChangeTest(TestCase):
         res = self.client.get(service.get_absolute_url())
         self.assertContains(res, '<option selected value="2016-10-03">Monday 3 October 2016</option>')
         self.assertContains(res, """
-            <tr>
+            <tr class="OTH">
                 <th>2900N12348</th>
                 <td>19:47</td>
                 <td>22:55</td>
@@ -71,10 +71,10 @@ class ImportTransXChangeTest(TestCase):
         # self.assertEqual('Attleborough - Wymondham - Norwich', str(timetable.groupings[0]))
 
         # self.assertTrue(timetable.groupings[0].has_minor_stops())
-        # self.assertEqual(87, len(timetable.groupings[0].rows))
+        self.assertEqual(91, len(timetable.groupings[0].rows))
         # self.assertEqual('Leys Lane', timetable.groupings[0].rows[0].stop)
 
-        # self.assertTrue(timetable.groupings[0].has_minor_stops())
+        self.assertTrue(timetable.groupings[0].has_minor_stops())
         # self.assertEqual(5, len(timetable.groupings[1].rows[0].times))
         self.assertEqual('', timetable.groupings[0].rows[0].times[-1])
 
@@ -82,32 +82,21 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(['', '', '', '', '', '', '', ''], timetable.groupings[1].rows[0].times[-8:])
 
         service = Route.objects.get(line_name='12')
+
+        res = self.client.get(service.get_absolute_url())
         timetable = res.context_data['timetable']
-
-        # self.assertEqual('Outbound', str(timetable.groupings[0]))
-        # self.assertEqual(21, len(timetable.groupings[0].rows))
-
-    #     self.assertEqual('St Ives (Cambs) Bus Station', str(timetable.groupings[0].rows[0])[:29])
-    #     self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
-    #     self.assertEqual(3, timetable.groupings[0].rows[0].times[1].colspan)
-    #     self.assertEqual(21, timetable.groupings[0].rows[0].times[1].rowspan)
-    #     self.assertEqual(2, len(timetable.groupings[0].rows[1].times))
-    #     self.assertEqual(2, len(timetable.groupings[0].rows[20].times))
-
-    #     self.assertEqual(0, len(timetable.groupings[1].rows))
-
-    #     # with self.assertRaises(IndexError):
-    #     #     str(timetable.groupings[1])
+        self.assertEqual(1, len(timetable.groupings))
+        self.assertEqual(21, len(timetable.groupings[0].rows))
 
         # Test operating profile days of non operation
         res = self.client.get(service.get_absolute_url() + '?date=2016-12-28')
         timetable = res.context_data['timetable']
-
         self.assertEqual(0, len(timetable.groupings))
 
-    #     # Test bank holiday non operation (Boxing Day)
-    #     timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_20-12-_-y08-1.xml', date(2016, 12, 26))
-    #     self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
+        # Test bank holiday non operation (Boxing Day)
+        res = self.client.get(service.get_absolute_url() + '?date=2016-12-28')
+        timetable = res.context_data['timetable']
+        self.assertEqual(0, len(timetable.groupings))
 
     @freeze_time('30 October 2017')
     def test_service_with_no_description_and_empty_pattern(self):
@@ -116,6 +105,11 @@ class ImportTransXChangeTest(TestCase):
 
         service = Route.objects.get(line_name='9A')
         self.assertEqual('9A', str(service))
+
+        res = self.client.get(service.get_absolute_url() + '?date=2016-12-28')
+        timetable = res.context_data['timetable']
+        self.assertEqual(75, len(timetable.groupings[0].rows))
+        self.assertEqual(82, len(timetable.groupings[1].rows))
 
     @classmethod
     def tearDownClass(cls):

@@ -142,7 +142,9 @@ class Command(BaseCommand):
                     trip=trip,
                     arrival=cell.arrival_time,
                     departure=cell.departure_time,
-                    sequence=i
+                    sequence=i,
+                    timing_status=cell.stopusage.timingstatus,
+                    activity=cell.stopusage.activity
                 ) for i, cell in enumerate(journey.get_times())
             ]
 
