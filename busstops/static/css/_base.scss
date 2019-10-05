@@ -901,7 +901,7 @@ input:not(:checked) + label {
 
     tfoot {
         td:first-child {
-            position: absolute;
+            padding: 0;
         }
     }
 }
