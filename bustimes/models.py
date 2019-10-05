@@ -14,7 +14,15 @@ class Timetable:
         self.route = route
         self.groupings = (Grouping(), Grouping())
 
+        self.calendars = Calendar.objects.filter(trip__route=self.route).distinct()
+
         self.date = date
+
+        if not self.date:
+            for date in self.date_options():
+                self.date = date
+                break
+
         midnight = datetime.datetime.combine(self.date, datetime.time())
 
         trips = self.route.trip_set.filter(**{'calendar__' + self.date.strftime('%a').lower(): True})
@@ -86,7 +94,8 @@ class Timetable:
         date = max(self.route.start_date, datetime.date.today())
         end_date = min(self.route.end_date, date + datetime.timedelta(days=21))
         while date <= end_date:
-            yield date
+            if any(getattr(calendar, date.strftime('%a').lower()) for calendar in self.calendars):
+                yield date
             date += datetime.timedelta(days=1)
 
 

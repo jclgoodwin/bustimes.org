@@ -20,9 +20,9 @@ class RouteDetailView(DetailView):
                 if date < today:
                     date = today
             except ValueError:
-                date = today
+                date = None
         if not date:
-            date = today
+            date = None
 
         timetable = self.object.get_timetable(date)
         timetable.groupings = [grouping for grouping in timetable.groupings if grouping.rows]

@@ -32,9 +32,14 @@ class TimetableTest(TestCase):
 
         self.assertTrue(timetable.groupings[0].has_minor_stops())
         self.assertEqual(87, len(timetable.groupings[0].rows))
+        self.assertEqual(5, len(timetable.groupings[0].rows[0].times))
+        self.assertEqual('', timetable.groupings[0].rows[0].times[-1])
         self.assertEqual('Leys Lane', timetable.groupings[0].rows[0].part.stop.common_name)
 
         self.assertEqual('Norwich - Wymondham - Attleborough', str(timetable.groupings[1]))
+        self.assertEqual(91, len(timetable.groupings[1].rows))
+        self.assertEqual(4, len(timetable.groupings[1].rows[0].times))
+        self.assertEqual('', timetable.groupings[1].rows[0].times[-1])
 
     @freeze_time('1 April 2017')
     def test_timetable_ea_2(self):
@@ -52,9 +57,6 @@ class TimetableTest(TestCase):
         self.assertEqual(2, len(timetable.groupings[0].rows[20].times))
 
         self.assertEqual(0, len(timetable.groupings[1].rows))
-
-        # with self.assertRaises(IndexError):
-        #     str(timetable.groupings[1])
 
         # Test operating profile days of non operation
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_20-12-_-y08-1.xml', date(2016, 12, 28))
