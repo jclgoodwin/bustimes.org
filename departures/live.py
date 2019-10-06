@@ -739,7 +739,7 @@ class StagecoachDepartures(Departures):
         return departures
 
 
-def SiriEtDepartures(Departures):
+class SiriEtDepartures(Departures):
     def get_row(self, call):
         return {
             'time': timezone.localtime(call.aimed_departure_time),
@@ -952,7 +952,7 @@ def get_departures(stop, services):
                         blend(departures, stagecoach_rows)
 
             if any(operator.name[:7] == 'Arriva ' or operator.id == 'YTIG' for operator in operators):
-                arriva_rows = SiriEtDepartures(stop, services).get_departures()
+                arriva_rows = SiriEtDepartures(stop, services, now).get_departures()
                 if arriva_rows:
                     blend(departures, arriva_rows)
 
