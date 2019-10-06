@@ -745,7 +745,7 @@ class SiriEtDepartures(Departures):
             'time': timezone.localtime(call.aimed_departure_time),
             'live': timezone.localtime(call.expected_departure_time),
             'destination': call.journey.destination,
-            'service': call.journey.service,
+            'service': call.journey.service or call.journey.route_name,
             'origin_departure_time': call.journey.datetime
         }
 
