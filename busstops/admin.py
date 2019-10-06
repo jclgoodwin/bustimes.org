@@ -142,7 +142,9 @@ class StopUsageUsageAdmin(admin.ModelAdmin):
 
 class OperatorCodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'operator', 'source', 'code')
-    list_filter = ('source',)
+    list_filter = [
+        ('source', admin.RelatedOnlyFieldListFilter)
+    ]
     search_fields = ('code',)
     raw_id_fields = ('operator',)
 

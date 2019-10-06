@@ -193,7 +193,7 @@ class Command(BaseCommand):
             net=net,
             line_ver=line_ver,
             region_id=self.region_id,
-            date=transxchange.transxchange_date,
+            date=self.source.datetime.date(),
             current=True,
             source=self.source
         )
@@ -307,6 +307,8 @@ class Command(BaseCommand):
         with transaction.atomic():
             Service.objects.filter(source=self.source, current=True).update(current=False)
 
+            self.source.datetime = timezone.now()
+
             with zipfile.ZipFile(archive_name) as archive:
                 # the NCSD has service descriptions in a separate file:
                 if 'IncludedServices.csv' in archive.namelist():
@@ -337,8 +339,7 @@ class Command(BaseCommand):
                             continue
                     services.update(**records[service_code])
 
-            self.source.datetime = timezone.now()
-            self.source.save()
+            self.source.save(update_fields=['datetime'])
 
         try:
             shutil.copy(archive_name, settings.TNDS_DIR)
