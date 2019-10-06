@@ -4,9 +4,16 @@ Usage:
     ./manage.py import_transxchange EA.zip [EM.zip etc]
 """
 
+import os
+import shutil
+import yaml
 import zipfile
+from django.conf import settings
 from django.core.management.base import BaseCommand
-from ...models import Source, Route, Calendar, CalendarDate, Trip, StopTime
+from django.db import transaction
+from django.utils import timezone
+from busstops.models import Operator, Service, DataSource
+from ...models import Route, Calendar, CalendarDate, Trip, StopTime
 from timetables.txc import TransXChange
 
 
@@ -22,6 +29,55 @@ def get_line_name_and_brand(service_element):
     return line_name, line_brand
 
 
+def infer_from_filename(filename):
+    """
+    Given a filename like 'ea_21-45A-_-y08-1.xml',
+    returns a (net, service_code, line_ver) tuple like ('ea', 'ea_21-45A-_-y08', '1')
+
+    Given any other sort of filename, returns ('', None, None)
+    """
+    parts = filename.split('-')  # ['ea_21', '3', '_', '1']
+    if len(parts) == 5:
+        net = parts[0].split('_')[0]
+        if len(net) <= 3 and net.islower():
+            return (net, '-'.join(parts[:-1]), parts[-1][:-4])
+    return ('', None, None)
+
+
+def correct_services():
+    with open(os.path.join(settings.DATA_DIR, 'services.yaml')) as open_file:
+        records = yaml.load(open_file, Loader=yaml.FullLoader)
+        for service_code in records:
+            services = Service.objects.filter(service_code=service_code)
+            if 'operator' in records[service_code]:
+                if services.exists():
+                    services.get().operator.set(records[service_code]['operator'])
+                    del records[service_code]['operator']
+                else:
+                    continue
+            services.update(**records[service_code])
+
+
+def get_operator_code(operator_element, element_name):
+    element = operator_element.find('txc:{}'.format(element_name), NS)
+    if element is not None:
+        return element.text
+
+
+def get_operator_name(operator_element):
+    "Given an Operator element, returns the operator name or None"
+
+    for element_name in ('TradingName', 'OperatorNameOnLicence', 'OperatorShortName'):
+        name = get_operator_code(operator_element, element_name)
+        if name:
+            return name.replace('&amp;', '&')
+
+
+def get_operator_by(scheme, code):
+    if code:
+        return Operator.objects.filter(operatorcode__code=code, operatorcode__source__name=scheme).first()
+
+
 class Command(BaseCommand):
     @staticmethod
     def add_arguments(parser):
@@ -32,15 +88,75 @@ class Command(BaseCommand):
         for archive_name in options['filenames']:
             self.handle_archive(archive_name)
 
+    def set_region(self, archive_name):
+        self.region_id, _ = os.path.splitext(os.path.basename(archive_name))
+
+        self.source, created = DataSource.objects.get_or_create(name=self.region_id)
+
+        if not created:
+            self.source.service_set.filter(current=True).update(current=False)
+            self.source.route_set.all().delete()
+
+        if self.region_id == 'NCSD':
+            self.region_id = 'GB'
+
+    def get_operator(self, operator_element):
+        "Given an Operator element, returns an operator code for an operator that exists."
+
+        for tag_name, scheme in (
+            ('NationalOperatorCode', 'National Operator Codes'),
+            ('LicenceNumber', 'Licence'),
+        ):
+            operator_code = get_operator_code(operator_element, tag_name)
+            if operator_code:
+                operator = get_operator_by(scheme, operator_code)
+                if operator:
+                    return operator
+
+        # Get by regional operator code
+        operator_code = get_operator_code(operator_element, 'OperatorCode')
+        if operator_code:
+            operator = get_operator_by(self.region_id, operator_code)
+            if not operator:
+                operator = get_operator_by('National Operator Codes', operator_code)
+            if operator:
+                return operator
+
+        # Get by name
+        operator_name = get_operator_name(operator_element)
+
+        print(operator_name)
+
+    def get_operators(self, transxchange):
+        operators = transxchange.operators
+        if len(operators) > 1:
+            journey_operators = {journey.operator for journey in transxchange.journeys}
+            journey_operators.add(transxchange.operator)
+            operators = [operator for operator in operators if operator.get('id') in journey_operators]
+        operators = (self.get_operator(operator) for operator in operators)
+        return [operator for operator in operators if operator]
+
     def handle_archive(self, archive_name):
-        source, source_created = Source.objects.get_or_create(name=archive_name)
-        if not source_created:
-            source.route_set.all().delete()
-        with zipfile.ZipFile(archive_name) as archive:
-            for filename in archive.namelist():
-                if filename.endswith('.xml'):
-                    with archive.open(filename) as open_file:
-                        self.handle_file(open_file, filename, source)
+        self.service_codes = set()
+
+        with transaction.atomic():
+            self.set_region(archive_name)
+
+            with zipfile.ZipFile(archive_name) as archive:
+                for filename in archive.namelist():
+                    if filename.endswith('.xml'):
+                        with archive.open(filename) as open_file:
+                            self.handle_file(open_file, filename)
+
+            correct_services()
+
+            self.source.datetime = timezone.now()
+            self.source.save(update_fields=['datetime'])
+
+        try:
+            shutil.copy(archive_name, settings.TNDS_DIR)
+        except shutil.SameFileError:
+            pass
 
     def get_calendar(self, operating_profile, operating_period):
         calendar_dates = [
@@ -98,22 +214,43 @@ class Command(BaseCommand):
 
         return calendar
 
-    def handle_file(self, open_file, filename, source):
+    def handle_file(self, open_file, filename):
         transxchange = TransXChange(open_file)
 
         service_element = transxchange.element.find('txc:Services/txc:Service', NS)
+
         line_name, line_brand = get_line_name_and_brand(service_element)
+
+        net, service_code, line_ver = infer_from_filename(filename)
+        if service_code is None:
+            service_code = transxchange.service_code
+
+        defaults = {
+            'line_name': line_name,
+            'line_brand': line_brand,
+            'mode': transxchange.mode,
+            'net': net,
+            'line_ver': line_ver,
+            'region_id': self.region_id,
+            'date': transxchange.transxchange_date,
+            'current': True,
+            'source': self.source,
+            'show_timetable': True
+        }
+
+        service, service_created = Service.objects.update_or_create(service_code=service_code, defaults=defaults)
 
         defaults = {
             'line_name': line_name,
             'line_brand': line_brand,
             'start_date': transxchange.operating_period.start,
-            'end_date': transxchange.operating_period.end
+            'end_date': transxchange.operating_period.end,
+            'service': service
         }
         if transxchange.description:
             defaults['description'] = transxchange.description
 
-        route, created = Route.objects.get_or_create(defaults,source=source, code=filename)
+        route, route_created = Route.objects.get_or_create(defaults, source=self.source, code=filename)
 
         default_calendar = None
 
@@ -149,3 +286,15 @@ class Command(BaseCommand):
             ]
 
             StopTime.objects.bulk_create(stop_times)
+
+        operators = self.get_operators(transxchange)
+        if service_created:
+            service.operator.add(*operators)
+        else:
+            if service.slug == service_code.lower():
+                service.slug = ''
+                service.save()
+            service.operator.set(operators)
+            if service_code not in self.service_codes:
+                service.stops.clear()
+        # StopUsage.objects.bulk_create(stop_usages)

@@ -150,21 +150,15 @@ class Cell(object):
         return self.stoptime.arrival == other.stoptime.arrival and self.stoptime.departure == other.stoptime.departure
 
 
-class Source(models.Model):
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
-
-
 class Route(models.Model):
-    source = models.ForeignKey(Source, models.CASCADE)
+    source = models.ForeignKey('busstops.DataSource', models.CASCADE)
     code = models.CharField(max_length=255)
     line_brand = models.CharField(max_length=255)
     line_name = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
+    service = models.ForeignKey('busstops.Service', models.CASCADE)
 
     class Meta:
         unique_together = ('source', 'code')

@@ -10,7 +10,6 @@ import os
 import shutil
 import warnings
 import xml.etree.cElementTree as ET
-import yaml
 import zipfile
 from datetime import date
 from django.contrib.gis.geos import LineString, MultiLineString
@@ -19,7 +18,9 @@ from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 from timetables.txc import TransXChange, Grouping, sanitize_description_part
-from ...models import Operator, StopPoint, Service, StopUsage, DataSource, Region, Journey, ServiceCode, ServiceDate
+from bustimes.management.commands.import_transxchange import (
+    correct_services, infer_from_filename, get_operator_name, get_operator_code, get_operator_by)
+from ...models import StopPoint, Service, StopUsage, DataSource, Region, Journey, ServiceCode, ServiceDate
 from .generate_departures import handle_region as generate_departures
 from .generate_service_dates import handle_services as generate_service_dates
 
@@ -39,21 +40,6 @@ class Command(BaseCommand):
         parser.add_argument('filenames', nargs='+', type=str)
 
     @staticmethod
-    def infer_from_filename(filename):
-        """
-        Given a filename like 'ea_21-45A-_-y08-1.xml',
-        returns a (net, service_code, line_ver) tuple like ('ea', 'ea_21-45A-_-y08', '1')
-
-        Given any other sort of filename, returns ('', None, None)
-        """
-        parts = filename.split('-')  # ['ea_21', '3', '_', '1']
-        if len(parts) == 5:
-            net = parts[0].split('_')[0]
-            if len(net) <= 3 and net.islower():
-                return (net, '-'.join(parts[:-1]), parts[-1][:-4])
-        return ('', None, None)
-
-    @staticmethod
     def sanitize_description(name):
         """
         Given an oddly formatted description from the North East,
@@ -65,26 +51,6 @@ class Command(BaseCommand):
         parts = [sanitize_description_part(part) for part in name.split(' - ')]
         return ' - '.join(parts)
 
-    @staticmethod
-    def get_operator_code(operator_element, element_name):
-        element = operator_element.find('txc:{}'.format(element_name), NS)
-        if element is not None:
-            return element.text
-
-    @classmethod
-    def get_operator_name(cls, operator_element):
-        "Given an Operator element, returns the operator name or None"
-
-        for element_name in ('TradingName', 'OperatorNameOnLicence', 'OperatorShortName'):
-            name = cls.get_operator_code(operator_element, element_name)
-            if name:
-                return name.replace('&amp;', '&')
-
-    @staticmethod
-    def get_operator_by(scheme, code):
-        if code:
-            return Operator.objects.filter(operatorcode__code=code, operatorcode__source__name=scheme).first()
-
     def get_operator(self, operator_element):
         "Given an Operator element, returns an operator code for an operator that exists."
 
@@ -92,23 +58,23 @@ class Command(BaseCommand):
             ('NationalOperatorCode', 'National Operator Codes'),
             ('LicenceNumber', 'Licence'),
         ):
-            operator_code = self.get_operator_code(operator_element, tag_name)
+            operator_code = get_operator_code(operator_element, tag_name)
             if operator_code:
-                operator = self.get_operator_by(scheme, operator_code)
+                operator = get_operator_by(scheme, operator_code)
                 if operator:
                     return operator
 
         # Get by regional operator code
-        operator_code = self.get_operator_code(operator_element, 'OperatorCode')
+        operator_code = get_operator_code(operator_element, 'OperatorCode')
         if operator_code:
-            operator = self.get_operator_by(self.region_id, operator_code)
+            operator = get_operator_by(self.region_id, operator_code)
             if not operator:
-                operator = self.get_operator_by('National Operator Codes', operator_code)
+                operator = get_operator_by('National Operator Codes', operator_code)
             if operator:
                 return operator
 
         # Get by name
-        operator_name = self.get_operator_name(operator_element)
+        operator_name = get_operator_name(operator_element)
 
         if operator_name in ('Replacement Service', 'UNKWN'):
             return None
@@ -182,7 +148,7 @@ class Command(BaseCommand):
                                                              filename)
 
         # net and service code:
-        net, service_code, line_ver = self.infer_from_filename(filename)
+        net, service_code, line_ver = infer_from_filename(filename)
         if service_code is None:
             service_code = transxchange.service_code
 
@@ -327,17 +293,7 @@ class Command(BaseCommand):
                             self.do_service(open_file, filename)
 
             # correct services
-            with open(os.path.join(settings.DATA_DIR, 'services.yaml')) as open_file:
-                records = yaml.load(open_file, Loader=yaml.FullLoader)
-                for service_code in records:
-                    services = Service.objects.filter(service_code=service_code)
-                    if 'operator' in records[service_code]:
-                        if services.exists():
-                            services.get().operator.set(records[service_code]['operator'])
-                            del records[service_code]['operator']
-                        else:
-                            continue
-                    services.update(**records[service_code])
+            correct_services()
 
             self.source.save(update_fields=['datetime'])
 

@@ -153,7 +153,7 @@ class ImportServicesTest(TestCase):
         )
 
         for filename, parts in data:
-            self.assertEqual(self.command.infer_from_filename(filename), parts)
+            self.assertEqual(import_services.infer_from_filename(filename), parts)
 
     def test_get_operator_name(self):
         blue_triangle_element = ET.fromstring("""
@@ -164,7 +164,7 @@ class ImportServicesTest(TestCase):
                 <txc:TradingName>BLUE TRIANGLE BUSES LIMITED</txc:TradingName>
             </txc:Operator>
         """)
-        self.assertEqual(self.command.get_operator_name(blue_triangle_element), 'BLUE TRIANGLE BUSES LIMITED')
+        self.assertEqual(import_services.get_operator_name(blue_triangle_element), 'BLUE TRIANGLE BUSES LIMITED')
 
     def test_get_operator(self):
         element = ET.fromstring("""
