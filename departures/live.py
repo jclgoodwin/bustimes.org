@@ -739,6 +739,23 @@ class StagecoachDepartures(Departures):
         return departures
 
 
+def SiriEtDepartures(Departures):
+    def get_row(self, call):
+        return {
+            'time': timezone.localtime(call.aimed_departure_time),
+            'live': timezone.localtime(call.expected_departure_time),
+            'destination': call.journey.destination,
+            'service': call.journey.service,
+            'origin_departure_time': call.journey.datetime
+        }
+
+    def get_departures(self):
+        calls = self.stop.call_set.filter(expected_departure_time__gte=self.now)
+        calls = calls.select_related('journey__service').order_by('expected_departure_time')
+        calls = calls[:10]
+        return [self.get_row(call) for call in calls]
+
+
 def get_max_age(departures, now):
     """Given a list of departures and the current datetime, returns an
     appropriate max_age in seconds (for use in a cache-control header)
@@ -933,6 +950,11 @@ def get_departures(stop, services):
                     stagecoach_rows = StagecoachDepartures(stop, services).get_departures()
                     if stagecoach_rows:
                         blend(departures, stagecoach_rows)
+
+            if any(operator.name[:7] == 'Arriva ' or operator.id == 'YTIG' for operator in operators):
+                arriva_rows = SiriEtDepartures(stop, services).get_departures()
+                if arriva_rows:
+                    blend(departures, arriva_rows)
 
             if live_rows:
                 blend(departures, live_rows)
