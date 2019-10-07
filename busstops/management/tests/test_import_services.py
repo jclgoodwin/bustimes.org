@@ -185,7 +185,7 @@ class ImportServicesTest(TestCase):
                     <txc:TradingName>Bakers</txc:TradingName>
                 </txc:Operator>
             """)))
-            # self.assertTrue('No operator found for element' in str(caught_warnings[0].message))
+            self.assertTrue('Operator not found:' in str(caught_warnings[0].message))
 
     @classmethod
     def do_service(cls, filename, region_id):

@@ -5,6 +5,7 @@ Usage:
 """
 
 import logging
+import warnings
 import os
 import shutil
 import csv
@@ -159,10 +160,8 @@ class Command(BaseCommand):
             if operator:
                 return operator
 
-        # Get by name
-        operator_name = get_operator_name(operator_element)
-
-        print(operator_name)
+        if get_operator_name(operator_element) not in {'Replacement Service', 'UNKWN'}:
+            warnings.warn('Operator not found:\n{}.format(ET.tostring(operator_element).decode()')
 
     def get_operators(self, transxchange):
         operators = transxchange.operators
