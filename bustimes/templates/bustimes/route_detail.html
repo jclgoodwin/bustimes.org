@@ -6,6 +6,8 @@
 
 <p>{{ object.code }}</p>
 
+<p><a href="{{ object.service.get_absolute_url }}">{{ object.service }}</a></p>
+
 {% if timetable %}
     <form class="timetable-date">
         <select onchange="this.form.submit()" name="date" aria-label="Date">
