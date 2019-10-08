@@ -11,6 +11,7 @@ import shutil
 import csv
 import yaml
 import zipfile
+import xml.etree.cElementTree as ET
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -20,7 +21,7 @@ from busstops.models import (Operator, Service, DataSource, StopPoint, StopUsage
                              Region)
 from busstops.management.commands.generate_departures import handle_region as generate_departures
 from busstops.management.commands.generate_service_dates import handle_services as generate_service_dates
-from ...models import Route, Calendar, CalendarDate, Trip, StopTime
+from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
 from timetables.txc import TransXChange, Grouping, sanitize_description_part
 
 
@@ -161,7 +162,7 @@ class Command(BaseCommand):
                 return operator
 
         if get_operator_name(operator_element) not in {'Replacement Service', 'UNKWN'}:
-            warnings.warn('Operator not found:\n{}.format(ET.tostring(operator_element).decode()')
+            warnings.warn('Operator not found:\n{}'.format(ET.tostring(operator_element).decode()))
 
     def get_operators(self, transxchange):
         operators = transxchange.operators
@@ -431,6 +432,10 @@ class Command(BaseCommand):
                 journey_pattern=journey.journey_pattern.id,
             )
             trip.save()
+
+            for note in journey.notes:
+                note, _ = Note.objects.get_or_create(code=note, text=journey.notes[note])
+                trip.notes.add(note)
 
             stop_times = [
                 StopTime(
