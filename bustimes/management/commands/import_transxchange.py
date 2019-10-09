@@ -243,21 +243,23 @@ class Command(BaseCommand):
         ]
 
         if operating_profile.servicedorganisation:
-            org = self.servicedorganisation
+            org = operating_profile.servicedorganisation
 
             nonoperation_days = (org.nonoperation_workingdays and org.nonoperation_workingdays.working_days or
                                  org.nonoperation_holidays and org.nonoperation_holidays.holidays)
-            calendar_dates += [
-                CalendarDate(start_date=date_range.start, end_date=date_range.end, operation=False)
-                for date_range in nonoperation_days
-            ]
+            if nonoperation_days:
+                calendar_dates += [
+                    CalendarDate(start_date=date_range.start, end_date=date_range.end, operation=False)
+                    for date_range in nonoperation_days
+                ]
 
             operation_days = (org.operation_workingdays and org.operation_workingdays.working_days or
                               org.operation_holidays and org.operation_holidays.holidays)
-            calendar_dates += [
-                CalendarDate(start_date=date_range.start, end_date=date_range.end, operation=True)
-                for date_range in operation_days
-            ]
+            if operation_days:
+                calendar_dates += [
+                    CalendarDate(start_date=date_range.start, end_date=date_range.end, operation=True)
+                    for date_range in operation_days
+                ]
 
         if not calendar_dates and not operating_profile.regular_days:
             return
