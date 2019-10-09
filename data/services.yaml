@@ -149,3 +149,13 @@ em_18-CC-_-y08:
 swe_38-m1-_-y10:
     operator:
         - FBRI
+swe_41-31-A-y10:
+    line_name: 31A
+swe_41-31-B-y10:
+    line_name: 31B
+swe_47-58A-_-y10:
+    current: false
+swe_47-58B-_-y10:
+    current: false
+swe_47-67-_-y10:
+    description: Trowbridge - Frome
