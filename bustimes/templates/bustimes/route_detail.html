@@ -8,6 +8,27 @@
 
 <p><a href="{{ object.service.get_absolute_url }}">{{ object.service }}</a></p>
 
+<ul class="bulleted">
+{% for trip in trips %}
+<li>
+    {{ trip.departure_time }}<br>
+    {{ trip.calendar.start_date }} – {{ trip.calendar.end_date }}:<br>
+    {% if trip.calendar.mon %}mon{% endif %}
+    {% if trip.calendar.tue %}tue{% endif %}
+    {% if trip.calendar.wed %}wed{% endif %}
+    {% if trip.calendar.thu %}thu{% endif %}
+    {% if trip.calendar.fri %}fri{% endif %}
+    {% if trip.calendar.sat %}sat{% endif %}
+    {% if trip.calendar.sun %}sun{% endif %}
+    <ul class="bulleted">
+    {% for d in trip.calendar.calendardate_set.all %}
+        <li>{{ d.start_date }} - {{ d.end_date }}: {{ d.operation }}</li>
+    {% endfor %}
+    </ul>
+</li>
+{% endfor %}
+</ul>
+
 {% if timetable %}
     <form class="timetable-date">
         <select onchange="this.form.submit()" name="date" aria-label="Date">

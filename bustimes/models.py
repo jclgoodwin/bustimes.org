@@ -27,10 +27,12 @@ class Timetable:
 
         midnight = datetime.datetime.combine(self.date, datetime.time())
 
+        exclusions = Calendar.objects.filter(calendardate__operation=False,
+                                             calendardate__start_date__lte=self.date,
+                                             calendardate__end_date__gte=self.date)
+
         trips = self.route.trip_set.filter(**{'calendar__' + self.date.strftime('%a').lower(): True})
-        trips = trips.exclude(calendar__calendardate__operation=False,
-                              calendar__calendardate__start_date__lte=self.date,
-                              calendar__calendardate__end_date__gte=self.date)
+        trips = trips.exclude(calendar__in=exclusions)
         trips = trips.annotate(departure_time=Min('stoptime__departure')).order_by('departure_time')
 
         trips = list(trips.prefetch_related('stoptime_set'))

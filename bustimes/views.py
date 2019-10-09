@@ -1,4 +1,5 @@
 from ciso8601 import parse_datetime
+from django.db.models import Min
 from django.views.generic.detail import DetailView
 from django.utils import timezone
 from busstops.models import StopPoint
@@ -7,10 +8,12 @@ from .models import Route
 
 class RouteDetailView(DetailView):
     model = Route
-    # queryset = model.objects.prefetch_related('trip_set__stoptime_set')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        trips = self.object.trip_set.prefetch_related('calendar__calendardate_set')
+        context['trips'] = trips.annotate(departure_time=Min('stoptime__departure'))
 
         date = self.request.GET.get('date')
         today = timezone.localtime().date()
