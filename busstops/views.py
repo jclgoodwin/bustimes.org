@@ -525,16 +525,15 @@ class ServiceDetailView(DetailView):
             ).defer('stop__osm', 'stop__locality__latlong')
             context['has_minor_stops'] = any(s.is_minor() for s in context['stopusages'])
         else:
-            stops = StopPoint.objects.filter(service__in=[self.object] + parallel)
-            stops_dict = {stop.pk: stop for stop in stops.select_related(
-                'locality').defer('osm', 'latlong', 'locality__latlong')}
+            stops = StopPoint.objects.select_related('locality').defer('osm', 'latlong', 'locality__latlong')
             context['timetable'].groupings = [grouping for grouping in context['timetable'].groupings
                                               if type(grouping.rows) is not list or
                                               grouping.rows and grouping.rows[0].times]
+            stops = stops.in_bulk(row.stop for grouping in context['timetable'].groupings for row in grouping.rows)
             for grouping in context['timetable'].groupings:
                 grouping.rows = [row for row in grouping.rows if any(row.times)]
                 for row in grouping.rows:
-                    row.part.stop.stop = stops_dict.get(row.part.stop.atco_code)
+                    row.stop = stops.get(row.stop)
         try:
             context['breadcrumb'] = [Region.objects.filter(adminarea__stoppoint__service=self.object).distinct().get()]
         except (Region.DoesNotExist, Region.MultipleObjectsReturned):

@@ -3,6 +3,7 @@ from django.db.models import Min
 from django.views.generic.detail import DetailView
 from django.utils import timezone
 from busstops.models import StopPoint
+from .timetables import Timetable
 from .models import Route
 
 
@@ -27,7 +28,7 @@ class RouteDetailView(DetailView):
         if not date:
             date = None
 
-        timetable = self.object.get_timetable(date)
+        timetable = Timetable([self.object], date)
         timetable.groupings = [grouping for grouping in timetable.groupings if grouping.rows]
 
         stops = [row.stop for grouping in timetable.groupings for row in grouping.rows]

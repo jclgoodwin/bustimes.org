@@ -75,12 +75,10 @@
                         {% for row in grouping.rows %}
                             <tr{% if not row.first and not row.last %} class="{{ row.part.timingstatus }}"{% endif %}>
                                 <th>
-                            {% if row.part.stop.stop %}
-                                <a href="{{ row.part.stop.stop.get_absolute_url }}">{{ row.part.stop.stop.get_qualified_name }}</a>
-                            {% else %}
-                                {{ row.part.stop }}
-                            {% endif %}
-                            </th>
+                                    {% if row.stop.pk %}
+                                        <a href="{{ row.stop.get_absolute_url }}">{{ row.stop.get_qualified_name }}</a>
+                                    {% else %}{{ row.stop }}{% endif %}
+                                </th>
                             {% for cell in row.times %}
                                 {% if cell.colspan %}
                                     <td{% if grouping.heads or grouping.column_feet %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}">{{ cell }}</td>

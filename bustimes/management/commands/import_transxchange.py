@@ -17,10 +17,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.utils import timezone
-from busstops.models import (Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, Journey, ServiceDate,
-                             Region)
-from busstops.management.commands.generate_departures import handle_region as generate_departures
-from busstops.management.commands.generate_service_dates import handle_services as generate_service_dates
+from busstops.models import (Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode)
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
 from timetables.txc import TransXChange, Grouping, sanitize_description_part
 
@@ -217,15 +214,6 @@ class Command(BaseCommand):
             shutil.copy(archive_name, settings.TNDS_DIR)
         except shutil.SameFileError:
             pass
-
-        if self.region_id != 'L':
-            with transaction.atomic():
-                Journey.objects.filter(service__region=self.region_id).delete()
-                generate_departures(Region.objects.get(id=self.region_id))
-
-            with transaction.atomic():
-                ServiceDate.objects.filter(service__region=self.region_id).delete()
-                generate_service_dates(Service.objects.filter(region=self.region_id))
 
         StopPoint.objects.filter(active=False, service__current=True).update(active=True)
         StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)

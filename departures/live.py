@@ -12,6 +12,7 @@ from django.core.cache import cache
 from django.db.models import Q
 from django.utils import timezone
 from busstops.models import Service, ServiceCode, DataSource, SIRISource
+from bustimes.models import CalendarDate, StopTime
 from vehicles.models import Vehicle, VehicleJourney, JourneyCode
 
 
@@ -530,25 +531,25 @@ class NorfokDepartures(Departures):
 
 
 class TimetableDepartures(Departures):
-    def get_row(self, suu):
-        destination = suu.journey.destination
-        service = self.get_service(suu.journey.service.line_name)
-        if type(service) is not Service:
-            service = suu.journey.service
+    def get_row(self, stop_time):
+        destination = stop_time.trip.destination
         return {
-            'time': timezone.localtime(suu.datetime),
-            'destination': destination.locality or destination.town or destination,
-            'service': service,
-            'origin_departure_time': suu.journey.datetime
+            'time': self.midnight + stop_time.departure,
+            'destination': destination,
+            'service': stop_time.trip.route.service,
         }
 
     def get_departures(self):
-        queryset = self.stop.stopusageusage_set.filter(datetime__gte=self.now,
-                                                       journey__service__timetable_wrong=False)
-        queryset = queryset.select_related('journey__destination__locality', 'journey__service')
-        queryset = queryset.defer('journey__destination__latlong', 'journey__destination__locality__latlong',
-                                  'journey__service__geometry')[:10]
-        return [self.get_row(suu) for suu in queryset]
+        time_since_midnight = datetime.timedelta(hours=self.now.hour, minutes=self.now.minute, seconds=self.now.second,
+                                                 microseconds=self.now.microsecond)
+        self.midnight = self.now - time_since_midnight
+        exclusions = CalendarDate.objects.filter(operation=False, start_date__lte=self.now, end_date__gte=self.now)
+        times = StopTime.objects.filter(stop_code=self.stop.atco_code)
+        times = times.filter(**{'trip__calendar__' + self.now.strftime('%a').lower(): True},
+                             departure__gte=time_since_midnight).exclude(trip__calendar__calendardate__in=exclusions)
+        times = times.exclude(activity='setDown')
+        times = times.select_related('trip__route__service').defer('trip__route__service__geometry')
+        return [self.get_row(time) for time in times.order_by('departure')[:10]]
 
 
 def parse_datetime(string):

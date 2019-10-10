@@ -16,7 +16,8 @@ from django.core.cache import cache
 from django.urls import reverse
 from django.utils.text import slugify
 from multigtfs.models import Feed
-from timetables import txc, northern_ireland, gtfs
+from timetables import txc, gtfs
+from bustimes.timetables import Timetable
 
 
 logger = logging.getLogger(__name__)
@@ -693,14 +694,12 @@ class Service(models.Model):
 
     def get_timetable(self, day=None, related=()):
         """Given a Service, return a Timetable"""
-        if day is None:
-            day = date.today()
 
         if self.region_id == 'NI':
-            path = os.path.join(settings.DATA_DIR, 'NI', self.pk + '.json')
-            if os.path.exists(path):
-                return northern_ireland.get_timetable(path, day)
-            return
+            return Timetable(self.route_set.all(), day)
+
+        if day is None:
+            day = date.today()
 
         if self.source and self.source.name.endswith(' GTFS'):
             service_codes = self.servicecode_set.filter(scheme__endswith=' GTFS')

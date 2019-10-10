@@ -9,7 +9,7 @@ from django.contrib.gis.geos import Point
 from django.core.management import call_command
 from bustimes.management.commands import import_transxchange
 from ...models import (Operator, DataSource, OperatorCode, Service, Region, StopPoint, Journey, StopUsageUsage,
-                       ServiceDate, ServiceLink)
+                       ServiceLink)
 from ..commands import generate_departures
 
 
@@ -243,20 +243,6 @@ class ImportServicesTest(TestCase):
 
         self.assertEqual(0, service.stopusage_set.all().count())
         self.assertEqual(1, duplicate.stopusage_set.all().count())
-
-    @freeze_time('30 December 2016')
-    def test_service_dates(self):
-        self.assertEqual(14, ServiceDate.objects.count())
-
-        # speed up
-        self.ea_service.current = False
-        self.ea_service.save()
-
-        call_command('generate_service_dates')
-        self.assertEqual(28, ServiceDate.objects.count())
-
-        call_command('generate_service_dates')
-        self.assertEqual(28, ServiceDate.objects.count())
 
     @freeze_time('3 October 2016')
     def test_do_service_ea(self):
