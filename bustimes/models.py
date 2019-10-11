@@ -50,7 +50,7 @@ class Trip(models.Model):
     route = models.ForeignKey(Route, models.CASCADE)
     inbound = models.BooleanField(default=False)
     journey_pattern = models.CharField(max_length=255, blank=True)
-    destination = models.CharField(max_length=255, blank=True)
+    destination = models.ForeignKey('busstops.StopPoint', models.CASCADE)
     calendar = models.ForeignKey(Calendar, models.CASCADE)
     sequence = models.PositiveSmallIntegerField(null=True, blank=True)
     notes = models.ManyToManyField(Note, blank=True)
@@ -94,3 +94,6 @@ class StopTime(models.Model):
 
     class Meta:
         ordering = ('sequence',)
+        index_together = (
+            ('stop_code', 'departure'),
+        )

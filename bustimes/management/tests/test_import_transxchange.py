@@ -4,7 +4,8 @@ from datetime import date
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
 from django.core.management import call_command
-from busstops.models import Region
+from django.contrib.gis.geos import Point
+from busstops.models import Region, StopPoint
 from ...models import Route, Trip, Calendar, CalendarDate
 
 
@@ -24,6 +25,19 @@ class ImportTransXChangeTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.ea = Region.objects.create(pk='EA', name='East Anglia')
+
+        StopPoint.objects.bulk_create(
+            StopPoint(atco_code, latlong=Point(0, 0), active=True) for atco_code in (
+                '1100DEB10368',
+                '1100DEC10085',
+                '1100DEC10720',
+                '1100DEB10354',
+                '2900A181',
+                '2900S367',
+                '2900N12106',
+                '0500HSTIV002'
+            )
+        )
 
         clean_up()
 

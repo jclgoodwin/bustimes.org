@@ -99,8 +99,8 @@ class LiveDeparturesTest(TestCase):
         calendar_2 = Calendar.objects.create(mon=False, tue=True, wed=False, thu=False, fri=False, sat=False, sun=False,
                                              start_date='2017-03-28', end_date='2017-03-28')
         route = Route.objects.create(service=cls.stagecoach_service, start_date='2017-03-04', source=source)
-        trip_1 = Trip.objects.create(calendar=calendar_1, route=route)
-        trip_2 = Trip.objects.create(calendar=calendar_2, route=route)
+        trip_1 = Trip.objects.create(calendar=calendar_1, route=route, destination=cls.cardiff_stop)
+        trip_2 = Trip.objects.create(calendar=calendar_2, route=route, destination=cls.cardiff_stop)
         StopTime.objects.bulk_create(
             StopTime(trip=trip, sequence=0, arrival=when, departure=when, stop_code='64801092')
             for trip, when in (
@@ -114,7 +114,7 @@ class LiveDeparturesTest(TestCase):
 
         calendar = Calendar.objects.create(mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
                                            start_date='2019-02-09', end_date='2019-02-09')
-        trip = Trip.objects.create(calendar=calendar, route=route, destination='Crowngate Bus Station')
+        trip = Trip.objects.create(calendar=calendar, route=route, destination=cls.worcester_stop)
         StopTime.objects.create(trip=trip, sequence=0, arrival='10:54', departure='10:54',
                                 stop_code=cls.worcester_stop.pk)
 
@@ -206,16 +206,16 @@ class LiveDeparturesTest(TestCase):
         with vcr.use_cassette('data/vcr/stagecoach_timezone.yaml'):
             with self.assertNumQueries(5):
                 res = self.client.get('/stops/64801092')
-        print(res.context_data['departures'])
-        # self.assertEqual(res.context_data['departures'][0]['destination'].common_name, 'Wood Street')
-        # self.assertEqual(res.context_data['departures'][1]['destination'], 'Hillend')
-        # self.assertEqual(res.context_data['departures'][2]['destination'], 'Hillend')
+        self.assertEqual(6, len(res.context_data['departures']))
+        self.assertEqual(res.context_data['departures'][0]['destination'].common_name, 'Wood Street')
+        self.assertEqual(res.context_data['departures'][1]['destination'], 'Hillend')
+        self.assertEqual(res.context_data['departures'][2]['destination'], 'Hillend')
 
-        # self.assertEqual(res.context_data['departures'][1]['service'], '7')
+        self.assertEqual(res.context_data['departures'][1]['service'], '7')
         self.assertEqual(res.context_data['departures'][0]['service'].line_name, '15')
         self.assertEqual(res.context_data['departures'][0]['service'].line_name, '15')
-        # self.assertEqual(str(res.context_data['departures'][0]['time']), '2017-03-28 18:53:00+01:00')
-        # self.assertEqual(str(res.context_data['departures'][2]['time']), '2017-03-28 19:08:00+01:00')
+        self.assertEqual(str(res.context_data['departures'][0]['time']), '2017-03-28 18:53:00+01:00')
+        self.assertEqual(str(res.context_data['departures'][2]['time']), '2017-03-28 19:08:00+01:00')
         self.assertEqual(str(res.context_data['departures'][2]['live']), '2017-03-28 19:08:25+01:00')
 
     def test_transportapi(self):

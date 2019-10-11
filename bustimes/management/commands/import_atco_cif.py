@@ -125,7 +125,7 @@ class Command(BaseCommand):
             self.sequence = 0
             if self.route:
                 calendar = self.get_calendar(line)
-                self.trip = Trip.objects.create(
+                self.trip = Trip(
                     route=self.route,
                     calendar=calendar,
                     inbound=line[64:65] == b'I'
@@ -168,15 +168,20 @@ class Command(BaseCommand):
             if self.trip:
                 arrival = parse_time(line[14:18])
                 self.sequence += 1
+                stop_code = line[2:14].decode()
                 self.stop_times.append(
                     StopTime(
                         arrival=arrival,
                         departure=arrival,
-                        stop_code=line[2:14].decode(),
+                        stop_code=stop_code,
                         sequence=self.sequence,
                         trip=self.trip
                     )
                 )
+                self.trip.destination_id = stop_code
+                self.trip.save()
+                for stop_time in self.stop_times:
+                    stop_time.trip = stop_time.trip  # set trip_id
                 StopTime.objects.bulk_create(self.stop_times)
                 self.stop_times = []
 

@@ -101,11 +101,11 @@ def get_operator_by(scheme, code):
 def line_string_from_journeypattern(journeypattern, stops):
     points = []
     stop = stops.get(journeypattern.sections[0].timinglinks[0].origin.stop.atco_code)
-    if stop:
+    if stop and stop.latlong:
         points.append(stop.latlong)
     for timinglink in journeypattern.get_timinglinks():
         stop = stops.get(timinglink.destination.stop.atco_code)
-        if stop:
+        if stop and stop.latlong:
             points.append(stop.latlong)
     try:
         linestring = LineString(points)
@@ -438,11 +438,6 @@ class Command(BaseCommand):
                 route=route,
                 journey_pattern=journey.journey_pattern.id,
             )
-            trip.save()
-
-            for note in journey.notes:
-                note, _ = Note.objects.get_or_create(code=note, text=journey.notes[note])
-                trip.notes.add(note)
 
             stop_times = [
                 StopTime(
@@ -456,4 +451,13 @@ class Command(BaseCommand):
                 ) for i, cell in enumerate(journey.get_times())
             ]
 
+            trip.destination_id = stop_times[-1].stop_code
+            trip.save()
+
+            for note in journey.notes:
+                note, _ = Note.objects.get_or_create(code=note, text=journey.notes[note])
+                trip.notes.add(note)
+
+            for stop_time in stop_times:
+                stop_time.trip = stop_time.trip  # set trip_id
             StopTime.objects.bulk_create(stop_times)

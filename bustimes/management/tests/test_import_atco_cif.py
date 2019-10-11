@@ -1,10 +1,10 @@
 import os
 import zipfile
-from datetime import date
 from freezegun import freeze_time
 from django.test import TestCase
 from django.core.management import call_command
-from busstops.models import Region, Operator, Service
+from django.contrib.gis.geos import Point
+from busstops.models import Region, Operator, Service, StopPoint
 from ...models import Route
 
 
@@ -34,6 +34,15 @@ class ImportAtcoCifTest(TestCase):
         cls.ni = Region.objects.create(pk='NI', name='Northern Ireland')
         cls.gle = Operator.objects.create(pk='GLE', name='Goldline Express', region=cls.ni)
 
+        StopPoint.objects.bulk_create(
+            StopPoint(atco_code, latlong=Point(0, 0), active=True) for atco_code in (
+                '700000015363',
+                '700000015687',
+                '700000004923',
+                '700000005645'
+            )
+        )
+
     def test_ulsterbus(self):
         zipfile_path = os.path.join(FIXTURES_DIR, 'ulb.zip')
 
@@ -47,8 +56,24 @@ class ImportAtcoCifTest(TestCase):
         self.assertEqual(5, Service.objects.count())
 
         with freeze_time('2019-10-01'):
-            response = self.client.get('/services/219a-belfast-europa-buscentre-antrim-buscentre')
+            with self.assertNumQueries(13):
+                response = self.client.get('/services/219a-belfast-europa-buscentre-antrim-buscentre')
         self.assertContains(response, '<option selected value="2019-10-09">Wednesday 9 October 2019</option>')
         self.assertNotContains(response, 'Sunday')
         self.assertContains(response, '<label for="show-all-stops-1">Show all stops</label>')
         self.assertContains(response, '<h1>219a - Belfast, Europa Buscentre - Antrim, Buscentre</h1>')
+
+        with freeze_time('2019-10-01'):
+            with self.assertNumQueries(11):
+                response = self.client.get('/services/219a-belfast-europa-buscentre-antrim-buscentre?date=2019-10-01')
+        self.assertContains(response, '<option selected value="2019-10-01">Tuesday 1 October 2019</option>')
+        self.assertNotContains(response, 'Sunday')
+        self.assertContains(response, '<label for="show-all-stops-1">Show all stops</label>')
+        self.assertContains(response, '<h1>219a - Belfast, Europa Buscentre - Antrim, Buscentre</h1>')
+
+        with freeze_time('2019-08-12'):
+            with self.assertNumQueries(9):
+                response = self.client.get('/services/219a-belfast-europa-buscentre-antrim-buscentre?date=2019-08-12')
+        self.assertContains(response, '<option selected value="2019-08-12">Monday 12 August 2019</option>')
+        self.assertNotContains(response, 'Sunday')
+        self.assertContains(response, 'Sorry, no journeys found for Monday 12 August 2019')

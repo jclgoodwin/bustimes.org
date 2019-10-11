@@ -535,7 +535,7 @@ class TimetableDepartures(Departures):
         destination = stop_time.trip.destination
         return {
             'time': self.midnight + stop_time.departure,
-            'destination': destination,
+            'destination': destination.locality or destination.town or destination,
             'service': stop_time.trip.route.service,
         }
 
@@ -545,7 +545,8 @@ class TimetableDepartures(Departures):
         self.midnight = self.now - time_since_midnight
 
         times = get_stop_times(self.now, self.stop.atco_code)
-        times = times.select_related('trip__route__service').defer('trip__route__service__geometry')
+        times = times.select_related('trip__route__service',
+                                     'trip__destination__locality').defer('trip__route__service__geometry')
         return [self.get_row(time) for time in times.order_by('departure')[:10]]
 
 
@@ -854,7 +855,8 @@ def get_stop_times(when, stop):
     exclusions = CalendarDate.objects.filter(operation=False, start_date__lte=when, end_date__gte=when)
     times = StopTime.objects.filter(stop_code=stop, departure__gte=time_since_midnight,
                                     trip__route__service__current=True)
-    times = times.filter(**{'trip__calendar__' + when.strftime('%a').lower(): True})
+    times = times.filter(trip__calendar__start_date__lte=when, trip__calendar__end_date__gte=when,
+                         **{'trip__calendar__' + when.strftime('%a').lower(): True})
     times = times.exclude(trip__calendar__calendardate__in=exclusions).exclude(activity='setDown')
     return times
 

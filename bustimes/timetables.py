@@ -32,7 +32,10 @@ class Timetable:
                                              calendardate__start_date__lte=self.date,
                                              calendardate__end_date__gte=self.date)
 
-        trips = Trip.objects.filter(route__in=routes, **{'calendar__' + self.date.strftime('%a').lower(): True})
+        trips = Trip.objects.filter(route__in=routes,
+                                    calendar__start_date__lte=self.date,
+                                    calendar__end_date__gte=self.date,
+                                    **{'calendar__' + self.date.strftime('%a').lower(): True})
         trips = trips.exclude(calendar__in=exclusions)
         trips = trips.annotate(departure_time=Min('stoptime__departure')).order_by('departure_time')
 

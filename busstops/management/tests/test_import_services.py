@@ -2,14 +2,12 @@ import os
 import xml.etree.cElementTree as ET
 import zipfile
 import warnings
-from datetime import date, time
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
 from django.core.management import call_command
 from bustimes.management.commands import import_transxchange
-from ...models import (Operator, DataSource, OperatorCode, Service, Region, StopPoint, Journey, StopUsageUsage,
-                       ServiceLink)
+from ...models import Operator, DataSource, OperatorCode, Service, Region, StopPoint, ServiceLink
 
 
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
@@ -51,20 +49,53 @@ class ImportServicesTest(TestCase):
         OperatorCode.objects.create(operator=cls.megabus, source=nocs, code='MEGA')
         OperatorCode.objects.create(operator=cls.fabd, source=nocs, code='FABD')
 
-        for atco_code, common_name, indicator, lat, lng in (
-                ('639004572', 'Bulls Head', 'adj', -2.5042125060, 53.7423055225),
-                ('639004562', 'Markham Road', 'by"', -2.5083672338, 53.7398252112),
-                ('639004554', 'Witton Park', 'opp', -2.5108434749, 53.7389877672),
-                ('639004552', 'The Griffin', 'adj', -2.4989239373, 53.7425523688),
-                ('049004705400', 'Kingston District Centre', 'o/s', 0, 0),
-                ('4200F156472', 'Asda', 'opp', 0, 0),
-                ('2900A1820', 'Leys Lane', 'adj', 0, 0),
-                ('1000DDDV4248', 'Dinting Value Works', '', 0, 0),
-        ):
-            StopPoint.objects.create(
+        StopPoint.objects.bulk_create(
+            StopPoint(
                 atco_code=atco_code, locality_centre=False, active=True, common_name=common_name,
                 indicator=indicator, latlong=Point(lng, lat, srid=4326)
+            ) for atco_code, common_name, indicator, lat, lng in (
+                    ('639004572', 'Bulls Head', 'adj', -2.5042125060, 53.7423055225),
+                    ('639004562', 'Markham Road', 'by"', -2.5083672338, 53.7398252112),
+                    ('639004554', 'Witton Park', 'opp', -2.5108434749, 53.7389877672),
+                    ('639004552', 'The Griffin', 'adj', -2.4989239373, 53.7425523688),
+                    ('049004705400', 'Kingston District Centre', 'o/s', 0, 0),
+                    ('4200F156472', 'Asda', 'opp', 0, 0),
+                    ('2900A1820', 'Leys Lane', 'adj', 0, 0),
+                    ('1000DDDV4248', 'Dinting Value Works', '', 0, 0),
             )
+        )
+
+        StopPoint.objects.bulk_create(
+            StopPoint(atco_code, active=True) for atco_code in (
+                '639006355',
+                '639004802',
+                '1800EB00011',
+                '1800SB08951',
+                '1800BNIN001',
+                '1800TCBS001',
+                '1000DGHS0900',
+                '1800ANBS001',
+                '1000DGSD4386',
+                '1000DGHS1150',
+                '490016736W',
+                '1800SHIC0G1',
+                '2800S42098F',
+                '450030220',
+                '41000008NC67',
+                '4100024PARWS',
+                '450017207',
+                '3390BB01',
+                '1100DEB10368',
+                '1100DEC10085',
+                '1100DEC10720',
+                '1100DEB10354',
+                '5230WDB25331',
+                '2900A181',
+                '2900S367',
+                '2900N12106',
+                # '0500HSTIV002'
+            )
+        )
 
         # simulate an East Anglia zipfile:
         cls.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml'])
@@ -206,7 +237,7 @@ class ImportServicesTest(TestCase):
         service = Service.objects.get(service_code='NW_04_GMN_2_1')
         self.assertEqual(service.description, 'intu Trafford Centre - Eccles - Swinton - Bolton')
 
-        self.assertEqual(0, service.stopusage_set.all().count())
+        self.assertEqual(2, service.stopusage_set.all().count())
 
     def test_service_nw_2(self):
         # Stagecoach Manchester 237
@@ -232,8 +263,8 @@ class ImportServicesTest(TestCase):
         self.assertEqual(27, len(res.context_data['timetable'].groupings[0].journeys))
         self.assertEqual(30, len(res.context_data['timetable'].groupings[1].journeys))
 
-        self.assertEqual(0, service.stopusage_set.all().count())
-        self.assertEqual(1, duplicate.stopusage_set.all().count())
+        self.assertEqual(1, service.stopusage_set.all().count())
+        self.assertEqual(6, duplicate.stopusage_set.all().count())
 
     @freeze_time('3 October 2016')
     def test_do_service_ea(self):
