@@ -6,7 +6,7 @@ from datetime import date, time, datetime
 from django.test import TestCase
 from django.shortcuts import render
 from freezegun import freeze_time
-from busstops import StopPoint, Service, Region, Operator, StopUsage, AdminArea, DataSource, SIRISource
+from busstops.models import StopPoint, Service, Region, Operator, StopUsage, AdminArea, DataSource, SIRISource
 from bustimes.models import Route, Trip, Calendar, StopTime
 from vehicles.models import VehicleJourney
 from . import live

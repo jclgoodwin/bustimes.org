@@ -52,7 +52,7 @@ class Timetable:
             x = len(rows[0].times)
         else:
             x = 0
-        previous_list = [row.stop for row in rows]
+        previous_list = [row.stop.atco_code for row in rows]
         current_list = [stoptime.stop_code for stoptime in trip.stoptime_set.all()]
         diff = differ.compare(previous_list, current_list)
 
@@ -78,7 +78,7 @@ class Timetable:
             assert instruction[2:] == stoptime.stop_code
 
             if instruction[0] == '+':
-                row = Row(stoptime.stop_code, [''] * x)
+                row = Row(Stop(stoptime.stop_code), [''] * x)
                 row.timing_status = stoptime.timing_status
                 if not existing_row:
                     rows.append(row)
@@ -87,7 +87,7 @@ class Timetable:
                 existing_row = row
             else:
                 row = existing_row
-                assert instruction[2:] == existing_row.stop
+                assert instruction[2:] == existing_row.stop.atco_code
 
             if stoptime.arrival:
                 arrival = (midnight + datetime.timedelta(seconds=stoptime.arrival.seconds)).time()
@@ -143,7 +143,15 @@ class Row:
         self.times = times
 
 
-class Cell(object):
+class Stop:
+    def __init__(self, atco_code):
+        self.atco_code = atco_code
+
+    def __str__(self):
+        return self.atco_code
+
+
+class Cell:
     last = False
 
     def __init__(self, stoptime, arrival, departure):

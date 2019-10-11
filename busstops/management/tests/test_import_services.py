@@ -10,7 +10,6 @@ from django.core.management import call_command
 from bustimes.management.commands import import_transxchange
 from ...models import (Operator, DataSource, OperatorCode, Service, Region, StopPoint, Journey, StopUsageUsage,
                        ServiceLink)
-from ..commands import generate_departures
 
 
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
@@ -94,14 +93,6 @@ class ImportServicesTest(TestCase):
 
         # test re-importing a previously imported service again
         call_command(cls.command, ncsd_zipfile_path)
-
-        with freeze_time('2000-01-01'):
-            call_command('generate_departures', 'GB')
-        with freeze_time('2016-12-31'):
-            call_command('generate_departures', 'GB')
-        with freeze_time('2017-01-01'):
-            call_command('generate_departures', 'GB')
-            call_command('generate_departures', 'GB')
 
         cls.gb_m11a = Service.objects.get(pk='M11A_MEGA')
         cls.gb_m12 = Service.objects.get(pk='M12_MEGA')
@@ -319,11 +310,10 @@ class ImportServicesTest(TestCase):
         self.assertContains(res, '/js/timetable.min.js')
 
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
-    @freeze_time('1 Dec 2016')
+    @freeze_time('1 Jan 2017')
     def test_do_service_m12(self):
         res = self.client.get(self.gb_m12.get_absolute_url())
 
-        # The date of the next StopUsageUsage should be used, even though today is 1 Dec 2016
         self.assertContains(res, '<option selected value="2017-01-01">Sunday 1 January 2017</option>')
 
         groupings = res.context_data['timetable'].groupings
@@ -415,30 +405,12 @@ class ImportServicesTest(TestCase):
             'text': 'Timetable on the Traveline Cymru website'
         }])
 
-    def test_departures(self):
-        self.assertEqual(6, Journey.objects.filter(service='M12_MEGA').count())
-        self.assertEqual(9, StopUsageUsage.objects.filter(journey__service='M12_MEGA').count())
-
-        # Megabus services have been imported twice, but there should only be one of each StopUsage
-        self.assertEqual(1, StopPoint.objects.filter(service='M12_MEGA').count())
-
-        # This should be the first journey (some earlier journeys should have been deleted)
-        journey = Journey.objects.first()
-        self.assertEqual('M12 - Shudehill - Victoria 2017-01-01 01:00:00+00:00', str(journey))
-
-        stop_usage_usage = StopUsageUsage.objects.first()
-        self.assertEqual('2017-01-01 02:20:00+00:00', str(stop_usage_usage.datetime))
-        self.assertEqual('Kingston District Centre (o/s) 2017-01-01 02:20:00+00:00', str(stop_usage_usage))
-
-        self.assertEqual(0, Journey.objects.filter(service__region='S').count())
-        self.assertEqual(0, Journey.objects.filter(service__region='EA').count())
-
-    def test_combine_date_time(self):
-        combine_date_time = generate_departures.combine_date_time
-        self.assertEqual(str(combine_date_time(date(2017, 3, 26), time(0, 10))), '2017-03-26 00:10:00+00:00')
-        # Clocks go forward 1 hour at 1am. Not sure what buses *actually* do, but pretending
-        self.assertEqual(str(combine_date_time(date(2017, 3, 26), time(1, 10))), '2017-03-26 02:10:00+01:00')
-        self.assertEqual(str(combine_date_time(date(2017, 3, 27), time(0, 10))), '2017-03-27 00:10:00+01:00')
+    # def test_combine_date_time(self):
+    #     combine_date_time = generate_departures.combine_date_time
+    #     self.assertEqual(str(combine_date_time(date(2017, 3, 26), time(0, 10))), '2017-03-26 00:10:00+00:00')
+    #     # Clocks go forward 1 hour at 1am. Not sure what buses *actually* do, but pretending
+    #     self.assertEqual(str(combine_date_time(date(2017, 3, 26), time(1, 10))), '2017-03-26 02:10:00+01:00')
+    #     self.assertEqual(str(combine_date_time(date(2017, 3, 27), time(0, 10))), '2017-03-27 00:10:00+01:00')
 
     @classmethod
     def tearDownClass(cls):

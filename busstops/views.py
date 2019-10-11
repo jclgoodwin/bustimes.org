@@ -529,11 +529,12 @@ class ServiceDetailView(DetailView):
             context['timetable'].groupings = [grouping for grouping in context['timetable'].groupings
                                               if type(grouping.rows) is not list or
                                               grouping.rows and grouping.rows[0].times]
-            stops = stops.in_bulk(row.stop for grouping in context['timetable'].groupings for row in grouping.rows)
+            stop_codes = (row.stop.atco_code for grouping in context['timetable'].groupings for row in grouping.rows)
+            stops = stops.in_bulk(stop_codes)
             for grouping in context['timetable'].groupings:
                 grouping.rows = [row for row in grouping.rows if any(row.times)]
                 for row in grouping.rows:
-                    row.stop = stops.get(row.stop)
+                    row.stop = stops.get(row.stop.atco_code, row.stop)
         try:
             context['breadcrumb'] = [Region.objects.filter(adminarea__stoppoint__service=self.object).distinct().get()]
         except (Region.DoesNotExist, Region.MultipleObjectsReturned):

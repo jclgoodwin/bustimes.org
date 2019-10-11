@@ -812,6 +812,7 @@ class Row(object):
     """
     def __init__(self, part):
         self.part = part
+        self.stop = part.stop
         part.row = self
         self.times = []
 
@@ -819,7 +820,7 @@ class Row(object):
         return self.part.timingstatus == 'OTH' or self.part.timingstatus == 'TIP'
 
     def __repr__(self):
-        return str(self.part.stop)
+        return str(self.stop)
 
 
 class Cell(object):
