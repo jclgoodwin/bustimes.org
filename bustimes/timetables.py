@@ -126,7 +126,7 @@ class Timetable:
             if any(getattr(calendar, date.strftime('%a').lower()) for calendar in self.calendars):
                 yield date
             date += datetime.timedelta(days=1)
-        if self.date and date < end_date:
+        if self.date and self.date > end_date:
             yield self.date
 
 
