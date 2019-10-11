@@ -543,11 +543,8 @@ class TimetableDepartures(Departures):
         time_since_midnight = datetime.timedelta(hours=self.now.hour, minutes=self.now.minute, seconds=self.now.second,
                                                  microseconds=self.now.microsecond)
         self.midnight = self.now - time_since_midnight
-        exclusions = CalendarDate.objects.filter(operation=False, start_date__lte=self.now, end_date__gte=self.now)
-        times = StopTime.objects.filter(stop_code=self.stop.atco_code)
-        times = times.filter(**{'trip__calendar__' + self.now.strftime('%a').lower(): True},
-                             departure__gte=time_since_midnight).exclude(trip__calendar__calendardate__in=exclusions)
-        times = times.exclude(activity='setDown')
+
+        times = get_stop_times(self.now, self.stop.atco_code)
         times = times.select_related('trip__route__service').defer('trip__route__service__geometry')
         return [self.get_row(time) for time in times.order_by('departure')[:10]]
 
@@ -851,6 +848,17 @@ def blend(departures, live_rows, stop=None):
         departures.sort(key=get_departure_order)
 
 
+def get_stop_times(when, stop):
+    time_since_midnight = datetime.timedelta(hours=when.hour, minutes=when.minute, seconds=when.second,
+                                             microseconds=when.microsecond)
+    exclusions = CalendarDate.objects.filter(operation=False, start_date__lte=when, end_date__gte=when)
+    times = StopTime.objects.filter(stop_code=stop, departure__gte=time_since_midnight,
+                                    trip__route__service__current=True)
+    times = times.filter(**{'trip__calendar__' + when.strftime('%a').lower(): True})
+    times = times.exclude(trip__calendar__calendardate__in=exclusions).exclude(activity='setDown')
+    return times
+
+
 def get_departures(stop, services):
     """Given a StopPoint object and an iterable of Service objects,
     returns a tuple containing a context dictionary and a max_age integer
@@ -892,9 +900,9 @@ def get_departures(stop, services):
     departures = departures.get_departures()
 
     one_hour = datetime.timedelta(hours=1)
-    one_hour_ago = stop.stopusageusage_set.filter(datetime__lte=now - one_hour, journey__service__current=True)
+    times_one_hour_ago = get_stop_times(now - one_hour, stop.atco_code)
 
-    if not departures or (departures[0]['time'] - now) < one_hour or one_hour_ago.exists():
+    if not departures or (departures[0]['time'] - now) < one_hour or times_one_hour_ago.exists():
 
         operators = set()
         for service in services:
