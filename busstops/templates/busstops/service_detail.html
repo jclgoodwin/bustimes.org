@@ -73,7 +73,7 @@
                     {% endif %}
                     <tbody>
                         {% for row in grouping.rows %}
-                            <tr{% if not row.first and not row.last %} class="{{ row.part.timingstatus }}"{% endif %}>
+                            <tr{% if not row.first and not row.last %} class="{{ row.timing_status }}"{% endif %}>
                                 <th>
                                     {% if row.stop.pk %}
                                         <a href="{{ row.stop.get_absolute_url }}">{{ row.stop.get_qualified_name }}</a>

@@ -816,6 +816,9 @@ class Row(object):
         part.row = self
         self.times = []
 
+    def timing_status(self):
+        return self.part.timingstatus
+
     def is_minor(self):
         return self.part.timingstatus == 'OTH' or self.part.timingstatus == 'TIP'
 

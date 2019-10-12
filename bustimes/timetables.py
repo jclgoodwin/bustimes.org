@@ -1,6 +1,6 @@
 import datetime
 from difflib import Differ
-from functools import cmp_to_key
+# from functools import cmp_to_key
 from django.db.models import Min
 from .models import Calendar, Trip
 
@@ -23,8 +23,6 @@ class Timetable:
             for date in self.date_options():
                 self.date = date
                 break
-        # if not self.date:
-        #     return
 
         midnight = datetime.datetime.combine(self.date, datetime.time())
 
@@ -41,7 +39,7 @@ class Timetable:
         trips = trips.prefetch_related('notes')
 
         trips = list(trips.prefetch_related('stoptime_set'))
-        trips.sort(key=cmp_to_key(Trip.cmp))
+        # trips.sort(key=cmp_to_key(Trip.cmp))
 
         for trip in trips:
             self.handle_trip(trip, midnight)
@@ -97,17 +95,7 @@ class Timetable:
                 row = existing_row
                 assert instruction[2:] == existing_row.stop.atco_code
 
-            if stoptime.arrival:
-                arrival = (midnight + datetime.timedelta(seconds=stoptime.arrival.seconds)).time()
-            else:
-                arrival = None
-
-            if stoptime.departure and stoptime.departure != stoptime.arrival:
-                departure = (midnight + datetime.timedelta(seconds=stoptime.departure.seconds)).time()
-            else:
-                departure = None
-
-            cell = Cell(stoptime, arrival or departure, departure)
+            cell = Cell(stoptime, stoptime.arrival, stoptime.departure)
             row.times.append(cell)
 
             y += 1
@@ -217,7 +205,10 @@ class Cell:
         self.activity = stoptime.activity
 
     def __str__(self):
-        return self.arrival.strftime('%H:%M')
+        string = str(self.arrival)[:-3]
+        if len(string) == 4:
+            return '0' + string
+        return string
 
     def __eq__(self, other):
         if type(other) == datetime.time:
