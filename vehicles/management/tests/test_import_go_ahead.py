@@ -3,7 +3,8 @@ from mock import patch
 from freezegun import freeze_time
 from django.test import TestCase
 from django.utils import timezone
-from busstops.models import DataSource, Region, Operator, Service, StopPoint, StopUsage, Journey, StopUsageUsage
+from busstops.models import DataSource, Region, Operator, Service, StopPoint
+from bustimes.models import Route, Trip, Calendar, StopTime
 from ..commands.import_go_ahead import Command
 from ...models import VehicleLocation
 
@@ -21,18 +22,23 @@ class GoAheadImportTest(TestCase):
 
         Region.objects.create(name='East Anglia', id='EA')
         cls.operator = Operator.objects.create(name='Go East', id='KCTB', region_id='EA')
-        cls.service = Service.objects.create(line_name='501', date='2019-03-17', current=True)
+        cls.service = Service.objects.create(line_name='501', date='2019-03-17', current=True,
+                                             geometry='MULTILINESTRING((1.3 52.6, 1.3 52.6))')
         cls.service.operator.add(cls.operator)
 
         stop = StopPoint.objects.create(latlong='POINT(1.3 52.6)', locality_centre=False, active=True)
-        StopUsage.objects.create(stop=stop, order=1, service=cls.service)
-        journey = Journey.objects.create(datetime=source.datetime, destination_id=stop, service=cls.service)
-        StopUsageUsage.objects.create(journey=journey, datetime=source.datetime, order=1, stop=stop)
+        route = Route.objects.create(service=cls.service, source=source)
+        calendar = Calendar.objects.create(mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
+                                           start_date='2019-03-17', end_date='2019-03-17')
+        trip = Trip.objects.create(calendar=calendar, route=route, destination=stop)
+        StopTime.objects.create(trip=trip, arrival='16:10', departure='16:10', sequence=0)
+        StopTime.objects.create(trip=trip, arrival='16:20', departure='16:20', sequence=1)
 
     @patch('vehicles.management.commands.import_go_ahead.sleep')
     def test_get_items(self, sleep):
         with vcr.use_cassette('data/vcr/go_ahead.yaml'):
-            items = list(self.command.get_items())
+            with self.assertNumQueries(2):
+                items = list(self.command.get_items())
         self.assertEqual(len(items), 3)
         self.assertTrue(sleep.called)
 

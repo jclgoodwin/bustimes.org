@@ -3,10 +3,12 @@ from random import shuffle
 from datetime import timedelta
 from ciso8601 import parse_datetime_as_naive
 from requests.exceptions import RequestException
+from django.db.models import Min, Max
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models import Extent
 from django.utils import timezone
-from busstops.models import Service, StopPoint
+from busstops.models import Service
+from bustimes.models import Trip
 from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
@@ -64,30 +66,41 @@ class Command(ImportLiveVehiclesCommand):
         return self.vehicles.get_or_create(defaults, code=vehicle)
 
     def get_points(self):
+        now = self.source.datetime
+        time_since_midnight = timedelta(hours=now.hour, minutes=now.minute, seconds=now.second,
+                                        microseconds=now.microsecond)
+        trips = Trip.objects.filter(calendar__start_date__lte=now, calendar__end_date__gte=now,
+                                    **{'calendar__' + now.strftime('%a').lower(): True})
+        trips = trips.annotate(start=Min('stoptime__departure'), end=Max('stoptime__arrival'))
+        trips = trips.filter(start__lte=time_since_midnight, end__gte=time_since_midnight)
+        trips = trips.exclude(calendar__calendardate__operation=False,
+                              calendar__calendardate__start_date__lte=now,
+                              calendar__calendardate__end_date__gte=now)
+        services = Service.objects.filter(current=True, route__trip__in=trips)
         boxes = []
+
         for opco in self.opcos:
             for operator in self.opcos[opco]:
-                now = self.source.datetime
-                stops = StopPoint.objects.filter(active=True, service__operator=operator, service__current=True)
-                extent = stops.aggregate(Extent('latlong'))['latlong__extent']
-                stops = stops.filter(stopusageusage__datetime__lt=now + timedelta(minutes=5),
-                                     stopusageusage__datetime__gt=now - timedelta(hours=1))
+                operator_services = services.filter(operator=operator)
+                extent = operator_services.aggregate(Extent('geometry'))['geometry__extent']
+                if not extent:
+                    continue
                 lng = extent[0]
                 while lng <= extent[2]:
                     lat = extent[1]
                     while lat <= extent[3]:
-                        boxes.append((opco, stops, lng, lat))
+                        boxes.append((opco, operator_services, lng, lat))
                         lat += 0.2
                     lng += 0.2
         shuffle(boxes)
         return boxes
 
     def get_items(self):
-        for opco, stops, lng, lat in self.get_points():
+        for opco, services, lng, lat in self.get_points():
             bbox = Polygon.from_bbox(
                 (lng - 0.05, lat - 0.05, lng + 0.05, lat + 0.05)
             )
-            if stops.filter(latlong__within=bbox).exists():
+            if services.filter(geometry__bboverlaps=bbox).exists():
                 params = {'lat': lat, 'lng': lng}
                 headers = {'opco': opco}
                 try:
