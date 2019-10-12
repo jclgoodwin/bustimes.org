@@ -8,7 +8,7 @@ class Route(models.Model):
     line_brand = models.CharField(max_length=255)
     line_name = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
-    start_date = models.DateField()
+    start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     service = models.ForeignKey('busstops.Service', models.CASCADE)
 
@@ -37,7 +37,7 @@ class Calendar(models.Model):
 class CalendarDate(models.Model):
     calendar = models.ForeignKey(Calendar, models.CASCADE)
     start_date = models.DateField()
-    end_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
     operation = models.BooleanField()
 
 

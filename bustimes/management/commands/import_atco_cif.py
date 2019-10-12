@@ -116,7 +116,6 @@ class Command(BaseCommand):
                     service=service,
                     line_name=line_name,
                     description=description,
-                    start_date=service.date,
                     source=self.source
                 )
                 self.services[key] = service
