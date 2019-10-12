@@ -115,11 +115,16 @@ class Timetable:
                     row.times.append('')
 
     def date_options(self):
-        date = max(*(route.start_date for route in self.routes), datetime.date.today())
+        date = datetime.date.today()
+        start_dates = [route.start_date for route in self.routes if route.start_date]
+        if start_dates:
+            date = max(date, max(start_dates))
+
         end_date = date + datetime.timedelta(days=21)
         end_dates = [route.end_date for route in self.routes if route.end_date]
         if end_dates:
             end_date = min(end_date, max(end_dates))
+
         if self.date and self.date < date:
             yield self.date
         while date <= end_date:
