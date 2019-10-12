@@ -181,7 +181,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     print('{} mph\t{}'.format(speed, journey.vehicle.get_absolute_url()))
 
     def update(self):
-        now = timezone.now()
+        now = timezone.localtime()
         self.source, source_created = DataSource.objects.update_or_create(
             {'url': self.url, 'datetime': now},
             name=self.source_name
