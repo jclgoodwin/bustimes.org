@@ -13,7 +13,7 @@ from django.core.management.base import BaseCommand
 # from django.contrib.gis.geos import LineString, MultiLineString
 from django.utils import timezone
 from busstops.models import Service, DataSource
-from ...models import Route, Calendar, Trip, StopTime
+from ...models import Route, Calendar, Trip, StopTime, Note
 # from timetables.txc import TransXChange, Grouping, sanitize_description_part
 
 
@@ -42,9 +42,10 @@ class Command(BaseCommand):
     def handle_archive(self, archive_name):
         self.route = None
         self.trip = None
-        self.services = {}
+        self.routes = {}
         self.calendars = {}
         self.stop_times = []
+        self.notes = []
         if 'ulb' in archive_name.lower():
             source_name = 'ULB'
         else:
@@ -64,9 +65,11 @@ class Command(BaseCommand):
         self.source.save(update_fields=['datetime'])
 
     def handle_file(self, open_file):
-        print(open_file)
+        # print(open_file)
+        previous_line = None
         for line in open_file:
-            self.handle_line(line)
+            self.handle_line(line, previous_line)
+            previous_line = line
 
     def get_calendar(self, line):
         key = line[13:38]
@@ -86,19 +89,18 @@ class Command(BaseCommand):
         self.calendars[key] = calendar
         return calendar
 
-    def handle_line(self, line):
+    def handle_line(self, line, previous_line):
         identity = line[:2]
 
         if identity == b'QD':
             operator = line[3:7].decode().strip()
             line_name = line[7:11].decode().strip()
             key = f'{line_name}_{operator}'
-            if key in self.services:
-                service = self.services[key]
+            if key in self.routes:
+                self.route = self.routes[key]
             else:
                 description = line[12:].decode().strip()
-                print(key)
-                service, created = Service.objects.update_or_create(
+                service, _ = Service.objects.update_or_create(
                     {
                         'line_name': line_name,
                         'description': description,
@@ -111,14 +113,14 @@ class Command(BaseCommand):
                 )
                 if operator:
                     service.operator.add(operator)
-                self.route, created = Route.objects.update_or_create(
+                self.route, _ = Route.objects.update_or_create(
                     code=key,
                     service=service,
                     line_name=line_name,
                     description=description,
                     source=self.source
                 )
-                self.services[key] = service
+                self.routes[key] = self.route
 
         elif identity == b'QS':
             self.sequence = 0
@@ -179,10 +181,31 @@ class Command(BaseCommand):
                 )
                 self.trip.destination_id = stop_code
                 self.trip.save()
+
+                self.trip.notes.set(self.notes)
+                self.notes = []
+
                 for stop_time in self.stop_times:
                     stop_time.trip = stop_time.trip  # set trip_id
                 StopTime.objects.bulk_create(self.stop_times)
                 self.stop_times = []
+
+        elif identity == b'QN':
+            if previous_line[:2] == b'QI':
+                note = line[7:].decode().strip().lower()
+                if note == 'pick up only' or note == 'pick up  only':
+                    self.stop_times[-1].activity = 'pickUp'
+                elif note == 'set down only' or note == '.set down only':
+                    self.stop_times[-1].activity = 'setDown'
+                else:
+                    print(note)
+            elif previous_line[:2] == b'QS':
+                code = line[2:7].decode().strip()
+                note = line[7:].decode().strip()
+                note, _ = Note.objects.get_or_create(code=code, text=note)
+                self.notes.append(note)
+            else:
+                print(previous_line[:2], line)
 
         # # QI - Journey Intermediate
         # # QT - Journey Destination

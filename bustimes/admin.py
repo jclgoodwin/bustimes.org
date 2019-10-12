@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Route, Trip, Calendar
+from .models import Route, Trip, Calendar, Note
 
 
 class RouteAdmin(admin.ModelAdmin):
@@ -11,6 +11,12 @@ class RouteAdmin(admin.ModelAdmin):
     search_fields = ['line_name', 'line_brand', 'description']
 
 
+class NoteAdmin(admin.ModelAdmin):
+    list_display = ['code', 'text']
+    search_fields = ['code', 'text']
+
+
 admin.site.register(Route, RouteAdmin)
 admin.site.register(Trip)
 admin.site.register(Calendar)
+admin.site.register(Note, NoteAdmin)

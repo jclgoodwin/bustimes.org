@@ -56,7 +56,7 @@ class ImportAtcoCifTest(TestCase):
         self.assertEqual(5, Service.objects.count())
 
         with freeze_time('2019-10-01'):
-            with self.assertNumQueries(11):
+            with self.assertNumQueries(12):
                 response = self.client.get('/services/219a-belfast-europa-buscentre-antrim-buscentre?date=2019-10-01')
         self.assertContains(response, '<option selected value="2019-10-01">Tuesday 1 October 2019</option>')
         self.assertNotContains(response, 'Sunday')
@@ -71,7 +71,7 @@ class ImportAtcoCifTest(TestCase):
         self.assertContains(response, 'Sorry, no journeys found for Monday 12 August 2019')
 
         with freeze_time('2019-08-12'):
-            with self.assertNumQueries(11):
+            with self.assertNumQueries(12):
                 response = self.client.get('/services/219a-belfast-europa-buscentre-antrim-buscentre?date=2019-12-25')
         self.assertContains(response, '<option selected value="2019-12-25">Wednesday 25 December 2019</option>')
         self.assertNotContains(response, 'Sunday')

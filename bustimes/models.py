@@ -45,6 +45,9 @@ class Note(models.Model):
     code = models.CharField(max_length=16)
     text = models.CharField(max_length=255)
 
+    def get_absolute_url(self):
+        return self.trip_set.first().route.service.get_absolute_url()
+
 
 class Trip(models.Model):
     route = models.ForeignKey(Route, models.CASCADE)

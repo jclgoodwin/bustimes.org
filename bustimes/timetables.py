@@ -13,7 +13,7 @@ class Timetable:
             return
 
         self.routes = routes
-        self.groupings = (Grouping(), Grouping())
+        self.groupings = (Grouping(), Grouping(True))
 
         self.calendars = Calendar.objects.filter(trip__route__in=routes).distinct()
 
@@ -38,6 +38,7 @@ class Timetable:
                                     **{'calendar__' + self.date.strftime('%a').lower(): True})
         trips = trips.exclude(calendar__in=exclusions)
         trips = trips.annotate(departure_time=Min('stoptime__departure')).order_by('departure_time')
+        trips = trips.prefetch_related('notes')
 
         trips = list(trips.prefetch_related('stoptime_set'))
         trips.sort(key=cmp_to_key(Trip.cmp))
@@ -45,11 +46,15 @@ class Timetable:
         for trip in trips:
             self.handle_trip(trip, midnight)
 
+        for grouping in self.groupings:
+            grouping.do_heads_and_feet()
+
     def handle_trip(self, trip, midnight):
         if trip.inbound:
             grouping = self.groupings[1]
         else:
             grouping = self.groupings[0]
+        grouping.trips.append(trip)
         rows = grouping.rows
         if rows:
             x = len(rows[0].times)
@@ -136,13 +141,56 @@ class Timetable:
 
 
 class Grouping:
-    def __init__(self):
+    def __init__(self, inbound=False):
         self.rows = []
+        self.trips = []
+        self.inbound = inbound
+        self.column_feet = {}
+
+    def __str__(self):
+        if self.inbound:
+            return 'Inbound'
+        return 'Outbound'
 
     def has_minor_stops(self):
         for row in self.rows:
             if row.timing_status == 'OTH':
                 return True
+
+    def do_heads_and_feet(self):
+        # previous_trip = None
+
+        for i, trip in enumerate(self.trips):
+            for note in trip.notes.all():
+                # print(note)
+                # if note.code in self.column_feet:
+                #     if note in previous_trip.notes.all():
+                #         self.column_feet[note.code][-1].span += 1
+                #     else:
+                #         self.column_feet[note.code].append(ColumnFoot(note))
+                if i:
+                    self.column_feet[note.code] = [ColumnFoot(None, i), ColumnFoot(note)]
+                else:
+                    self.column_feet[note.code] = [ColumnFoot(note)]
+            # for key in self.column_feet:
+            #     if key not in trip.notes:
+            #         if not self.column_feet[key][-1].notes:
+            #             self.column_feet[key][-1].span += 1
+            #         else:
+            #             self.column_feet[key].append(ColumnFoot(None, 1))
+            # previous_trip = trip
+
+
+class ColumnHead(object):
+    def __init__(self, service, span):
+        self.service = service
+        self.span = span
+
+
+class ColumnFoot(object):
+    def __init__(self, note, span=1):
+        self.notes = note and note.text
+        self.span = span
 
 
 class Row:
@@ -166,6 +214,7 @@ class Cell:
         self.stoptime = stoptime
         self.arrival = arrival
         self.departure = departure
+        self.activity = stoptime.activity
 
     def __str__(self):
         return self.arrival.strftime('%H:%M')
