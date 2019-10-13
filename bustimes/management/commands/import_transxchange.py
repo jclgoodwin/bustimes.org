@@ -451,8 +451,17 @@ class Command(BaseCommand):
                 ) for i, cell in enumerate(journey.get_times())
             ]
 
-            trip.destination_id = stop_times[-1].stop_code
-            trip.save()
+            if stop_times[-1].stop_code in stops:
+                trip.destination_id = stop_times[-1].stop_code
+                trip.save()
+            else:
+                print(stop_times[-1].stop_code, service)
+                if stop_times[-2].stop_code in stops:
+                    trip.destination_id = stop_times[-2].stop_code
+                    trip.save()
+                else:
+                    print(stop_times[-2].stop_code, service)
+                    return
 
             for note in journey.notes:
                 note, _ = Note.objects.get_or_create(code=note, text=journey.notes[note])
