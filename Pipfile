@@ -41,6 +41,7 @@ gpxpy = "*"
 python-socketio = {extras = ["client"],version = "*"}
 celery = {extras = ["redis"],version = "*"}
 requests-toolbelt = "*"
+pyyaml = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
