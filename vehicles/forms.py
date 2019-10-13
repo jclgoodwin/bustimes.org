@@ -9,11 +9,13 @@ def get_livery_choices(operator):
     liveries = Livery.objects.filter(vehicle__operator=operator).annotate(popularity=Count('vehicle'))
     for livery in liveries.order_by('-popularity').distinct():
         choices[livery.id] = livery
-    for vehicle in operator.vehicle_set.exclude(colours='').distinct('colours', 'notes'):
+    for vehicle in operator.vehicle_set.exclude(colours='').distinct('colours', 'notes', 'branding'):
+        notes = vehicle.branding or vehicle.notes
         if vehicle.colours in choices:
-            choices[vehicle.colours].name = ''
+            if choices[vehicle.colours].name != notes:
+                choices[vehicle.colours].name = ''
         else:
-            choices[vehicle.colours] = Livery(colours=vehicle.colours, name=vehicle.notes)
+            choices[vehicle.colours] = Livery(colours=vehicle.colours, name=notes)
     choices = [(key, livery.preview(name=True)) for key, livery in choices.items()]
     choices.append(('Other', 'Other'))
     return choices
