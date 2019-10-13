@@ -1,23 +1,10 @@
-# import logging
-# import warnings
-# import os
-# import shutil
-# import csv
-# import yaml
 import zipfile
-# import xml.etree.cElementTree as ET
 from datetime import date, timedelta
-# from django.conf import settings
 from django.core.management.base import BaseCommand
-# from django.db import transaction
 # from django.contrib.gis.geos import LineString, MultiLineString
 from django.utils import timezone
 from busstops.models import Service, DataSource
-from ...models import Route, Calendar, Trip, StopTime, Note
-# from timetables.txc import TransXChange, Grouping, sanitize_description_part
-
-
-# logger = logging.getLogger(__name__)
+from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
 
 
 def parse_date(string):
@@ -51,7 +38,6 @@ class Command(BaseCommand):
         else:
             source_name = 'MET'
         self.source, source_created = DataSource.objects.get_or_create(name=source_name)
-        self.source.route_set.all().delete()
         self.source.datetime = timezone.localtime()
 
         with zipfile.ZipFile(archive_name) as archive:
@@ -60,19 +46,21 @@ class Command(BaseCommand):
                     with archive.open(filename) as open_file:
                         self.handle_file(open_file)
 
-        StopTime.objects.bulk_create(self.stop_times)
+        assert self.stop_times == []
 
+        self.source.route_set.exclude(code__in=self.routes.keys()).delete()
+        self.source.service_set.filter(current=True).exclude(service_code__in=self.routes.keys()).update(current=False)
         self.source.save(update_fields=['datetime'])
 
     def handle_file(self, open_file):
-        # print(open_file)
         previous_line = None
         for line in open_file:
             self.handle_line(line, previous_line)
             previous_line = line
 
-    def get_calendar(self, line):
-        key = line[13:38]
+    def get_calendar(self):
+        line = self.trip_header
+        key = line[13:38].decode() + str(self.exceptions)
         if key in self.calendars:
             return self.calendars[key]
         calendar = Calendar.objects.create(
@@ -86,6 +74,15 @@ class Command(BaseCommand):
             start_date=parse_date(line[13:21]),
             end_date=parse_date(line[21:29])
         )
+        CalendarDate.objects.bulk_create(
+            CalendarDate(
+                calendar=calendar,
+                start_date=parse_date(exception[2:10]),
+                end_date=parse_date(exception[10:18]),
+                operation=exception[18:19] == b'1',
+            ) for exception in self.exceptions
+        )
+
         self.calendars[key] = calendar
         return calendar
 
@@ -95,7 +92,7 @@ class Command(BaseCommand):
         if identity == b'QD':
             operator = line[3:7].decode().strip()
             line_name = line[7:11].decode().strip()
-            key = f'{line_name}_{operator}'
+            key = f'{line_name}_{operator}'.upper()
             if key in self.routes:
                 self.route = self.routes[key]
             else:
@@ -113,28 +110,35 @@ class Command(BaseCommand):
                 )
                 if operator:
                     service.operator.add(operator)
-                self.route, _ = Route.objects.update_or_create(
+                self.route, created = Route.objects.update_or_create(
                     code=key,
                     service=service,
                     line_name=line_name,
                     description=description,
                     source=self.source
                 )
+                if not created:
+                    self.route.trip_set.all().delete()
                 self.routes[key] = self.route
 
         elif identity == b'QS':
             self.sequence = 0
+            self.trip_header = line
+            self.exceptions = []
+
+        elif identity == b'QE':
+            self.exceptions.append(line)
+
+        elif identity == b'QO':
             if self.route:
-                calendar = self.get_calendar(line)
+                calendar = self.get_calendar()
                 self.trip = Trip(
                     route=self.route,
                     calendar=calendar,
-                    inbound=line[64:65] == b'I'
+                    inbound=self.trip_header[64:65] == b'I'
                 )
 
-        elif identity == b'QO':
-            if self.trip:
-                departure = parse_time(line[14:18]),
+                departure = parse_time(line[14:18])
                 self.stop_times.append(
                     StopTime(
                         arrival=departure,

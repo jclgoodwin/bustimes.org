@@ -75,3 +75,22 @@ class ImportAtcoCifTest(TestCase):
                 response = self.client.get('/services/219a-belfast-europa-buscentre-antrim-buscentre?date=2019-12-25')
         self.assertContains(response, '<option selected value="2019-12-25">Wednesday 25 December 2019</option>')
         self.assertNotContains(response, 'Sunday')
+
+        with freeze_time('2019-08-12'):
+            with self.assertNumQueries(12):
+                response = self.client.get('/services/219a-belfast-europa-buscentre-antrim-buscentre?date=2019-12-25')
+        self.assertContains(response, '<option selected value="2019-12-25">Wednesday 25 December 2019</option>')
+        self.assertNotContains(response, 'Sunday')
+
+        # no journeys on this date - CalendarDate with operation = False
+        with freeze_time('2019-07-20'):
+            with self.assertNumQueries(13):
+                response = self.client.get('/services/219-belfast-europa-buscentre-ballymena-buscentre')
+                self.assertEqual('2019-07-20', str(response.context_data['timetable'].date))
+                self.assertEqual(0, len(response.context_data['timetable'].groupings))
+
+        with freeze_time('2019-07-27'):
+            with self.assertNumQueries(16):
+                response = self.client.get('/services/219-belfast-europa-buscentre-ballymena-buscentre')
+                self.assertEqual('2019-07-27', str(response.context_data['timetable'].date))
+                self.assertEqual(1, len(response.context_data['timetable'].groupings))
