@@ -1,5 +1,6 @@
 import datetime
 from difflib import Differ
+from django.db.models import Q
 # from functools import cmp_to_key
 from .models import Calendar, Trip
 
@@ -8,30 +9,29 @@ differ = Differ(charjunk=lambda _: True)
 
 class Timetable:
     def __init__(self, routes, date):
-        if not routes:
-            return
-
         self.routes = routes
         self.groupings = (Grouping(), Grouping(True))
 
+        self.date = date
+
         self.calendars = Calendar.objects.filter(trip__route__in=routes).distinct()
 
-        self.date = date
+        if not routes:
+            return
 
         if not self.date:
             for date in self.date_options():
                 self.date = date
                 break
+        if not self.date:
+            return
 
-        midnight = datetime.datetime.combine(self.date, datetime.time())
-
-        exclusions = Calendar.objects.filter(calendardate__operation=False,
+        exclusions = Calendar.objects.filter(Q(calendardate__end_date__gte=self.date) | Q(calendardate__end_date=None),
                                              calendardate__start_date__lte=self.date,
-                                             calendardate__end_date__gte=self.date)
-
-        trips = Trip.objects.filter(route__in=routes,
+                                             calendardate__operation=False)
+        trips = Trip.objects.filter(Q(calendar__end_date__gte=self.date) | Q(calendar__end_date=None),
+                                    route__in=routes,
                                     calendar__start_date__lte=self.date,
-                                    calendar__end_date__gte=self.date,
                                     **{'calendar__' + self.date.strftime('%a').lower(): True})
         trips = trips.exclude(calendar__in=exclusions).order_by('start').prefetch_related('notes')
 
@@ -39,12 +39,12 @@ class Timetable:
         # trips.sort(key=cmp_to_key(Trip.cmp))
 
         for trip in trips:
-            self.handle_trip(trip, midnight)
+            self.handle_trip(trip)
 
         for grouping in self.groupings:
             grouping.do_heads_and_feet()
 
-    def handle_trip(self, trip, midnight):
+    def handle_trip(self, trip):
         if trip.inbound:
             grouping = self.groupings[1]
         else:

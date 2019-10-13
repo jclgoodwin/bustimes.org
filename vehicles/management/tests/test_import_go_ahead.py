@@ -29,7 +29,7 @@ class GoAheadImportTest(TestCase):
         stop = StopPoint.objects.create(latlong='POINT(1.3 52.6)', locality_centre=False, active=True)
         route = Route.objects.create(service=cls.service, source=source)
         calendar = Calendar.objects.create(mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
-                                           start_date='2019-03-17', end_date='2019-03-17')
+                                           start_date='2019-03-17')
         Trip.objects.create(calendar=calendar, route=route, destination=stop, start='16:10', end='16:20')
 
     @patch('vehicles.management.commands.import_go_ahead.sleep')

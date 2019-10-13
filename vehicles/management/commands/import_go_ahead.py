@@ -5,9 +5,10 @@ from ciso8601 import parse_datetime_as_naive
 from requests.exceptions import RequestException
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models import Extent
+from django.db.models import Q
 from django.utils import timezone
 from busstops.models import Service
-from bustimes.models import Trip
+from bustimes.models import Trip, Calendar
 from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
@@ -68,12 +69,14 @@ class Command(ImportLiveVehiclesCommand):
         now = self.source.datetime
         time_since_midnight = timedelta(hours=now.hour, minutes=now.minute, seconds=now.second,
                                         microseconds=now.microsecond)
-        trips = Trip.objects.filter(calendar__start_date__lte=now, calendar__end_date__gte=now,
+        trips = Trip.objects.filter(Q(calendar__end_date__gte=now) | Q(calendar__end_date=None),
+                                    calendar__start_date__lte=now,
                                     **{'calendar__' + now.strftime('%a').lower(): True})
-        trips = trips.filter(start__lte=time_since_midnight, end__gte=time_since_midnight)
-        trips = trips.exclude(calendar__calendardate__operation=False,
-                              calendar__calendardate__start_date__lte=now,
-                              calendar__calendardate__end_date__gte=now)
+        exclusions = Calendar.objects.filter(Q(calendardate__end_date__gte=now) | Q(calendardate__end_date=None),
+                                             calendardate__start_date__lte=now,
+                                             calendardate__operation=False)
+        trips = trips.exclude(calendar__in=exclusions).filter(start__lte=time_since_midnight,
+                                                              end__gte=time_since_midnight)
         services = Service.objects.filter(current=True, route__trip__in=trips)
         boxes = []
 
