@@ -193,16 +193,14 @@ class Command(BaseCommand):
 
         self.source.datetime = timezone.now()
 
-        with transaction.atomic():
-            self.source.route_set.all().delete()
+        with zipfile.ZipFile(archive_name) as archive:
 
-            with zipfile.ZipFile(archive_name) as archive:
+            self.set_service_descriptions(archive)
 
-                self.set_service_descriptions(archive)
-
-                for filename in archive.namelist():
-                    if filename.endswith('.xml'):
-                        with archive.open(filename) as open_file:
+            for filename in archive.namelist():
+                if filename.endswith('.xml'):
+                    with archive.open(filename) as open_file:
+                        with transaction.atomic():
                             self.handle_file(open_file, filename)
 
             correct_services()
@@ -319,7 +317,9 @@ class Command(BaseCommand):
         if service_code is None:
             service_code = transxchange.service_code
 
-        self.service_codes.add(service_code)
+        if service_code not in self.service_codes:
+            self.service_codes.add(service_code)
+            self.source.route_set.filter(service=service_code).delete()
 
         defaults = {
             'line_name': line_name,
