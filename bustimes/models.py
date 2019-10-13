@@ -57,6 +57,13 @@ class Trip(models.Model):
     calendar = models.ForeignKey(Calendar, models.CASCADE)
     sequence = models.PositiveSmallIntegerField(null=True, blank=True)
     notes = models.ManyToManyField(Note, blank=True)
+    start = models.DurationField()
+    end = models.DurationField()
+
+    class Meta:
+        index_together = (
+            ('route', 'start', 'end'),
+        )
 
     def cmp(a, b):
         """Compare two journeys"""
