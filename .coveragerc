@@ -4,6 +4,7 @@ plugins =
 source =
     buses
     busstops
+    bustimes
     departures
     timetables
     vehicles
