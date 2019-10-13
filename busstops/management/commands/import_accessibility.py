@@ -2,7 +2,6 @@ import os
 import zipfile
 import csv
 from django.core.management.base import BaseCommand
-from django.db import transaction
 from django.conf import settings
 from ...models import Service
 
@@ -37,7 +36,6 @@ def handle_file(open_file):
 
 
 class Command(BaseCommand):
-    @transaction.atomic
     def handle(self, *args, **options):
         path = os.path.join(settings.DATA_DIR, 'accessibility-data.zip')
         with zipfile.ZipFile(path) as archive:
