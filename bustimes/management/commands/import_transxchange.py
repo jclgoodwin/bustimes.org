@@ -442,6 +442,9 @@ class Command(BaseCommand):
                 ) for i, cell in enumerate(journey.get_times())
             ]
 
+            trip.start = stop_times[0].arrival or stop_times[0].departure
+            trip.end = stop_times[-1].departure or stop_times[-1].arrival
+
             if stop_times[-1].stop_code in stops:
                 trip.destination_id = stop_times[-1].stop_code
                 trip.save()

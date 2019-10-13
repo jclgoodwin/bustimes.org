@@ -3,7 +3,6 @@ from random import shuffle
 from datetime import timedelta
 from ciso8601 import parse_datetime_as_naive
 from requests.exceptions import RequestException
-from django.db.models import Min, Max
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models import Extent
 from django.utils import timezone
@@ -71,7 +70,6 @@ class Command(ImportLiveVehiclesCommand):
                                         microseconds=now.microsecond)
         trips = Trip.objects.filter(calendar__start_date__lte=now, calendar__end_date__gte=now,
                                     **{'calendar__' + now.strftime('%a').lower(): True})
-        trips = trips.annotate(start=Min('stoptime__departure'), end=Max('stoptime__arrival'))
         trips = trips.filter(start__lte=time_since_midnight, end__gte=time_since_midnight)
         trips = trips.exclude(calendar__calendardate__operation=False,
                               calendar__calendardate__start_date__lte=now,

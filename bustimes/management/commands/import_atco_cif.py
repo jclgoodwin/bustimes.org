@@ -144,6 +144,7 @@ class Command(BaseCommand):
                         trip=self.trip
                     )
                 )
+                self.trip.start = departure
 
         elif identity == b'QI':
             if self.trip:
@@ -180,6 +181,8 @@ class Command(BaseCommand):
                     )
                 )
                 self.trip.destination_id = stop_code
+                self.trip.end = arrival
+
                 self.trip.save()
 
                 self.trip.notes.set(self.notes)

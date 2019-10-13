@@ -34,9 +34,7 @@ class Timetable:
                                     calendar__start_date__lte=self.date,
                                     calendar__end_date__gte=self.date,
                                     **{'calendar__' + self.date.strftime('%a').lower(): True})
-        trips = trips.exclude(calendar__in=exclusions)
-        trips = trips.annotate(departure_time=Min('stoptime__departure')).order_by('departure_time')
-        trips = trips.prefetch_related('notes')
+        trips = trips.exclude(calendar__in=exclusions).order_by('start').prefetch_related('notes')
 
         trips = list(trips.prefetch_related('stoptime_set'))
         # trips.sort(key=cmp_to_key(Trip.cmp))

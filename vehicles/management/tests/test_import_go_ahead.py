@@ -4,7 +4,7 @@ from freezegun import freeze_time
 from django.test import TestCase
 from django.utils import timezone
 from busstops.models import DataSource, Region, Operator, Service, StopPoint
-from bustimes.models import Route, Trip, Calendar, StopTime
+from bustimes.models import Route, Trip, Calendar
 from ..commands.import_go_ahead import Command
 from ...models import VehicleLocation
 
@@ -30,9 +30,7 @@ class GoAheadImportTest(TestCase):
         route = Route.objects.create(service=cls.service, source=source)
         calendar = Calendar.objects.create(mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
                                            start_date='2019-03-17', end_date='2019-03-17')
-        trip = Trip.objects.create(calendar=calendar, route=route, destination=stop)
-        StopTime.objects.create(trip=trip, arrival='16:10', departure='16:10', sequence=0)
-        StopTime.objects.create(trip=trip, arrival='16:20', departure='16:20', sequence=1)
+        Trip.objects.create(calendar=calendar, route=route, destination=stop, start='16:10', end='16:20')
 
     @patch('vehicles.management.commands.import_go_ahead.sleep')
     def test_get_items(self, sleep):
