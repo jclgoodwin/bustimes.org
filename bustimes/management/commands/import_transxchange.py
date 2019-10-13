@@ -64,20 +64,6 @@ def infer_from_filename(filename):
     return ('', None, None)
 
 
-def correct_services():
-    with open(os.path.join(settings.DATA_DIR, 'services.yaml')) as open_file:
-        records = yaml.load(open_file, Loader=yaml.FullLoader)
-        for service_code in records:
-            services = Service.objects.filter(service_code=service_code)
-            if 'operator' in records[service_code]:
-                if services.exists():
-                    services.get().operator.set(records[service_code]['operator'])
-                    del records[service_code]['operator']
-                else:
-                    continue
-            services.update(**records[service_code])
-
-
 def get_operator_code(operator_element, element_name):
     element = operator_element.find('txc:{}'.format(element_name), NS)
     if element is not None:
@@ -193,6 +179,9 @@ class Command(BaseCommand):
 
         self.source.datetime = timezone.now()
 
+        with open(os.path.join(settings.DATA_DIR, 'services.yaml')) as open_file:
+            self.corrections = yaml.load(open_file, Loader=yaml.FullLoader)
+
         with zipfile.ZipFile(archive_name) as archive:
 
             self.set_service_descriptions(archive)
@@ -202,8 +191,6 @@ class Command(BaseCommand):
                     with archive.open(filename) as open_file:
                         with transaction.atomic():
                             self.handle_file(open_file, filename)
-
-            correct_services()
 
             old_services = self.source.service_set.filter(current=True).exclude(service_code__in=self.service_codes)
             old_services.update(current=False)
@@ -474,3 +461,12 @@ class Command(BaseCommand):
             for stop_time in stop_times:
                 stop_time.trip = stop_time.trip  # set trip_id
             StopTime.objects.bulk_create(stop_times)
+
+        if service_code in self.corrections:
+            corrections = {}
+            for field in self.corrections[service_code]:
+                if field == 'operator':
+                    service.operator.set(self.corrections[service_code][field])
+                else:
+                    corrections[field] = self.corrections[service_code][field]
+            Service.objects.filter(service_code=service_code).update(**corrections)
