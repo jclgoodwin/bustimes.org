@@ -129,10 +129,6 @@ class Command(BaseCommand):
 
         self.source, created = DataSource.objects.get_or_create(name=self.region_id)
 
-        if not created:
-            self.source.service_set.filter(current=True).update(current=False)
-            self.source.route_set.all().delete()
-
         if self.region_id == 'NCSD':
             self.region_id = 'GB'
 
@@ -193,12 +189,15 @@ class Command(BaseCommand):
     def handle_archive(self, archive_name):
         self.service_codes = set()
 
-        with transaction.atomic():
-            self.set_region(archive_name)
+        self.set_region(archive_name)
 
-            self.source.datetime = timezone.now()
+        self.source.datetime = timezone.now()
+
+        with transaction.atomic():
+            self.source.route_set.all().delete()
 
             with zipfile.ZipFile(archive_name) as archive:
+
                 self.set_service_descriptions(archive)
 
                 for filename in archive.namelist():
@@ -207,6 +206,9 @@ class Command(BaseCommand):
                             self.handle_file(open_file, filename)
 
             correct_services()
+
+            old_services = self.source.service_set.filter(current=True).exclude(service_code__in=self.service_codes)
+            old_services.update(current=False)
 
             self.source.save(update_fields=['datetime'])
 
@@ -316,6 +318,8 @@ class Command(BaseCommand):
         net, service_code, line_ver = infer_from_filename(filename)
         if service_code is None:
             service_code = transxchange.service_code
+
+        self.service_codes.add(service_code)
 
         defaults = {
             'line_name': line_name,
