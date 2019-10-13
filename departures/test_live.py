@@ -99,8 +99,8 @@ class LiveDeparturesTest(TestCase):
         calendar_2 = Calendar.objects.create(mon=False, tue=True, wed=False, thu=False, fri=False, sat=False, sun=False,
                                              start_date='2017-03-28', end_date='2017-03-28')
         route = Route.objects.create(service=cls.stagecoach_service, start_date='2017-03-04', source=source)
-        trip_1 = Trip.objects.create(calendar=calendar_1, route=route, destination=cls.cardiff_stop)
-        trip_2 = Trip.objects.create(calendar=calendar_2, route=route, destination=cls.cardiff_stop)
+        trip_1 = Trip.objects.create(calendar=calendar_1, route=route, destination=cls.cardiff_stop, start='0', end='0')
+        trip_2 = Trip.objects.create(calendar=calendar_2, route=route, destination=cls.cardiff_stop, start='0', end='0')
         StopTime.objects.bulk_create(
             StopTime(trip=trip, sequence=0, arrival=when, departure=when, stop_code='64801092')
             for trip, when in (
@@ -114,7 +114,7 @@ class LiveDeparturesTest(TestCase):
 
         calendar = Calendar.objects.create(mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
                                            start_date='2019-02-09', end_date='2019-02-09')
-        trip = Trip.objects.create(calendar=calendar, route=route, destination=cls.worcester_stop)
+        trip = Trip.objects.create(calendar=calendar, route=route, destination=cls.worcester_stop, start='0', end='0')
         StopTime.objects.create(trip=trip, sequence=0, arrival='10:54', departure='10:54',
                                 stop_code=cls.worcester_stop.pk)
 

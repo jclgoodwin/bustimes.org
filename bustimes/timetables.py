@@ -1,7 +1,6 @@
 import datetime
 from difflib import Differ
 # from functools import cmp_to_key
-from django.db.models import Min
 from .models import Calendar, Trip
 
 differ = Differ(charjunk=lambda _: True)
