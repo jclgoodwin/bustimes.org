@@ -5,7 +5,6 @@ Base classes for import_* commands
 from io import open
 import csv
 from django.core.management.base import BaseCommand
-from django.db import transaction
 
 
 class ImportFromCSVCommand(BaseCommand):
@@ -34,7 +33,6 @@ class ImportFromCSVCommand(BaseCommand):
     def process_rows(rows):
         return rows
 
-    @transaction.atomic
     def handle(self, *args, **options):
         """
         Runs when the command is executed
