@@ -1,7 +1,7 @@
 import zipfile
 from datetime import date, timedelta
 from django.core.management.base import BaseCommand
-from django.contrib.gis.geos import LineString, MultiLineString
+from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.utils import timezone
 from busstops.models import Service, DataSource, StopPoint, StopUsage
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
@@ -32,6 +32,7 @@ class Command(BaseCommand):
         self.trip = None
         self.routes = {}
         self.calendars = {}
+        self.stops = {}
         self.stop_times = []
         self.notes = []
         if 'ulb' in archive_name.lower():
@@ -49,29 +50,38 @@ class Command(BaseCommand):
 
         assert self.stop_times == []
 
+        existing_stops = StopPoint.objects.in_bulk(self.stops.keys())
+        stops_to_update = []
+        new_stops = []
+        for stop_code in self.stops:
+            if stop_code in existing_stops:
+                stops_to_update.append(self.stops[stop_code])
+            else:
+                new_stops.append(self.stops[stop_code])
+        StopPoint.objects.bulk_update(new_stops, fields=['common_name', 'latlong'])
+        StopPoint.objects.bulk_create(new_stops)
+
         for route in self.routes.values():
             groupings = get_stop_usages(route.trip_set.all())
-            stops = [stop for grouping in groupings for stop in grouping]
-            stops = StopPoint.objects.in_bulk(stops)
 
             route.service.stops.clear()
             stop_usages = [
                 StopUsage(service_id=route.service_id, stop_id=stop, direction='outbound', order=i)
-                for i, stop in enumerate(groupings[0]) if stop in stops
+                for i, stop in enumerate(groupings[0])
             ] + [
                 StopUsage(service_id=route.service_id, stop_id=stop, direction='inbound', order=i)
-                for i, stop in enumerate(groupings[1]) if stop in stops
+                for i, stop in enumerate(groupings[1])
             ]
             StopUsage.objects.bulk_create(stop_usages)
 
+            # self.stops doesn't contain all stops, and has latlongs in the Irish Grid projection
+            stops = StopPoint.objects.in_bulk(stop_code for grouping in groupings for stop_code in grouping)
             line_strings = []
             for pattern in get_journey_patterns(route.trip_set.all()):
-                pattern = (stops[stop] for stop in pattern if stop in stops)
-                points = [stop.latlong for stop in pattern if stop.latlong]
-                if len(points) > 1:
-                    line_strings.append(LineString(points))
+                line_strings.append(LineString(*(stops[stop_code].latlong for stop_code in pattern)))
             route.service.geometry = MultiLineString(*line_strings)
-            route.service.save(update_fields=['geometry'])
+
+        Service.objects.bulk_update((route.service for service in self.routes.values()), fields=['geometry'])
 
         self.source.route_set.exclude(code__in=self.routes.keys()).delete()
         self.source.service_set.filter(current=True).exclude(service_code__in=self.routes.keys()).update(current=False)
@@ -154,7 +164,7 @@ class Command(BaseCommand):
         elif identity == b'QE':
             self.exceptions.append(line)
 
-        elif identity == b'QO':
+        elif identity == b'QO':  # origin stop
             if self.route:
                 calendar = self.get_calendar()
                 self.trip = Trip(
@@ -175,7 +185,7 @@ class Command(BaseCommand):
                 )
                 self.trip.start = departure
 
-        elif identity == b'QI':
+        elif identity == b'QI':  # intermediate stop
             if self.trip:
                 self.sequence += 1
                 timing_status = line[26:28]
@@ -195,7 +205,7 @@ class Command(BaseCommand):
                     )
                 )
 
-        elif identity == b'QT':
+        elif identity == b'QT':  # destination stop
             if self.trip:
                 arrival = parse_time(line[14:18])
                 self.sequence += 1
@@ -222,7 +232,7 @@ class Command(BaseCommand):
                 StopTime.objects.bulk_create(self.stop_times)
                 self.stop_times = []
 
-        elif identity == b'QN':
+        elif identity == b'QN':  # note
             previous_identity = previous_line[:2]
             note = line[7:].decode().strip()
             if previous_identity == b'QO' or previous_identity == b'QI' or previous_identity == b'QT':
@@ -242,11 +252,23 @@ class Command(BaseCommand):
             else:
                 print(previous_identity[:2], line)
 
-        # # QI - Journey Intermediate
-        # # QT - Journey Destination
-        # elif record_identity in ('QO', 'QI', 'QT'):
-        #     cls.handle_stop(line)
-        # elif record_identity == 'QL':
-        #     cls.handle_location(line)
-        # elif record_identity == 'QB':
-        #     cls.handle_location_additional(line)
+        elif identity == b'QL':
+            stop_code = line[3:15].decode().strip()
+            name = line[15:].strip()
+            if name and stop_code not in self.stops:
+                try:
+                    name = name.decode()
+                except UnicodeDecodeError:
+                    print(line)
+                    pass
+                self.stops[stop_code] = StopPoint(atco_code=stop_code, common_name=name, active=True)
+
+        elif identity == b'QB':
+            stop_code = line[3:15].decode().strip()
+            easting = line[15:23].strip()
+            if easting:
+                self.stops[stop_code].latlong = Point(
+                    int(easting),
+                    int(line[23:].strip()),
+                    srid=29902  # Irish Grid
+                )

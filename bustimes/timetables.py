@@ -24,15 +24,16 @@ def get_journey_patterns(trips):
 
 
 def get_stop_usages(trips):
-    groupings = ([], [])
+    groupings = [[], []]
 
     trips = trips.prefetch_related('stoptime_set')
 
     for trip in trips:
         if trip.inbound:
-            rows = groupings[1]
+            grouping = 1
         else:
-            rows = groupings[0]
+            grouping = 0
+        rows = groupings[grouping]
 
         new_rows = [stoptime.stop_code for stoptime in trip.stoptime_set.all()]
         diff = differ.compare(rows, new_rows)
@@ -62,7 +63,7 @@ def get_stop_usages(trips):
                 if not existing_row:
                     rows.append(stoptime.stop_code)
                 else:
-                    rows = rows[:y] + [stoptime.stop_code] + rows[y:]
+                    rows = groupings[grouping] = rows[:y] + [stoptime.stop_code] + rows[y:]
                 existing_row = stoptime.stop_code
             else:
                 assert instruction[2:] == existing_row

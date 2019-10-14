@@ -50,11 +50,12 @@ class ImportAtcoCifTest(TestCase):
         write_files_to_zipfile(zipfile_path, ['218 219.cif'])
         with freeze_time('2019-10-09'):
             call_command('import_atco_cif', zipfile_path)
+            call_command('import_atco_cif', zipfile_path)
         clean_up()
 
         self.assertEqual(5, Route.objects.count())
         self.assertEqual(5, Service.objects.count())
-        self.assertEqual(28, StopUsage.objects.count())
+        self.assertEqual(106, StopUsage.objects.count())
 
         with freeze_time('2019-10-01'):
             with self.assertNumQueries(12):
