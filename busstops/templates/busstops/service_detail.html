@@ -46,7 +46,9 @@
 
     {% for grouping in timetable.groupings %}
 
-        {% if forloop.first != forloop.last %}<h2>{{ grouping }} {{ timetable.operating_period }}</h2>{% endif %}
+        {% if forloop.first != forloop.last %}
+            <h2>{% if grouping.inbound is False %}{{ service.outbound_description }}{% elif grouping.inbound is True %}{{ service.inbound_description }}{% else %}{{ grouping }} {{ timetable.operating_period }}{% endif %}</h2>
+        {% endif %}
 
         <div class="timetable-wrapper-wrapper">
             {% if grouping.has_minor_stops %}

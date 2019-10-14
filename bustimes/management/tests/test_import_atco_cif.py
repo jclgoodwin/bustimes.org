@@ -57,6 +57,11 @@ class ImportAtcoCifTest(TestCase):
         self.assertEqual(5, Service.objects.count())
         self.assertEqual(106, StopUsage.objects.count())
 
+        service = Service.objects.get(pk='219A_GLE')
+        self.assertEqual('Belfast, Europa Buscentre - Antrim, Buscentre', service.description)
+        self.assertEqual('Belfast, Europa Buscentre - Antrim, Buscentre', service.outbound_description)
+        self.assertEqual('Antrim, Buscentre - Belfast, Europa Buscentre', service.inbound_description)
+
         with freeze_time('2019-10-01'):
             with self.assertNumQueries(12):
                 response = self.client.get('/services/219a-belfast-europa-buscentre-antrim-buscentre?date=2019-10-01')

@@ -81,7 +81,8 @@ class Command(BaseCommand):
                 line_strings.append(LineString(*(stops[stop_code].latlong for stop_code in pattern)))
             route.service.geometry = MultiLineString(*line_strings)
 
-        Service.objects.bulk_update((route.service for route in self.routes.values()), fields=['geometry'])
+        Service.objects.bulk_update((route.service for route in self.routes.values()),
+                                    fields=['geometry', 'description', 'outbound_description', 'inbound_description'])
 
         self.source.route_set.exclude(code__in=self.routes.keys()).delete()
         self.source.service_set.filter(current=True).exclude(service_code__in=self.routes.keys()).update(current=False)
@@ -128,21 +129,31 @@ class Command(BaseCommand):
             operator = line[3:7].decode().strip()
             line_name = line[7:11].decode().strip()
             key = f'{line_name}_{operator}'.upper()
+            direction = line[11:12]
+            description = line[12:].decode().strip()
             if key in self.routes:
                 self.route = self.routes[key]
+                if direction == b'O':
+                    self.routes[key].service.description = description
+                    self.routes[key].service.outbound_description = description
+                else:
+                    self.routes[key].service.inbound_description = description
             else:
-                description = line[12:].decode().strip()
-                service, _ = Service.objects.update_or_create(
-                    {
-                        'line_name': line_name,
-                        'description': description,
-                        'date': self.source.datetime.date(),
-                        'current': True,
-                        'show_timetable': True,
-                        'source': self.source,
-                        'region_id': 'NI'
-                    }, service_code=key
-                )
+                defaults = {
+                    'line_name': line_name,
+                    'description': description,
+                    'date': self.source.datetime.date(),
+                    'current': True,
+                    'show_timetable': True,
+                    'source': self.source,
+                    'region_id': 'NI'
+                }
+                if direction == b'O':
+                    defaults['description'] = description
+                    defaults['outbound_description'] = description
+                else:
+                    defaults['inbound_description'] = description
+                service, _ = Service.objects.update_or_create(defaults, service_code=key)
                 if operator:
                     service.operator.add(operator)
                 self.route, created = Route.objects.update_or_create(
