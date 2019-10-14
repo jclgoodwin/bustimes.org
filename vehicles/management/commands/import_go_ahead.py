@@ -7,7 +7,7 @@ from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models import Extent
 from django.db.models import Q
 from django.utils import timezone
-from busstops.models import Service
+from busstops.models import Service, Locality
 from bustimes.models import Trip, Calendar
 from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -116,7 +116,11 @@ class Command(ImportLiveVehiclesCommand):
         journey = VehicleJourney()
 
         journey.code = str(item['datedVehicleJourney'])
-        journey.destination = item['destination']['name']
+
+        try:
+            journey.destination = str(Locality.objects.get(stoppoint=item['destination']['ref']))
+        except Locality.DoesNotExist:
+            journey.destination = item['destination']['name']
         journey.route_name = item['lineRef']
 
         operator, fleet_number = item['vehicleRef'].split('-', 1)
