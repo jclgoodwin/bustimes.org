@@ -81,7 +81,7 @@ class Command(BaseCommand):
                 line_strings.append(LineString(*(stops[stop_code].latlong for stop_code in pattern)))
             route.service.geometry = MultiLineString(*line_strings)
 
-        Service.objects.bulk_update((route.service for service in self.routes.values()), fields=['geometry'])
+        Service.objects.bulk_update((route.service for route in self.routes.values()), fields=['geometry'])
 
         self.source.route_set.exclude(code__in=self.routes.keys()).delete()
         self.source.service_set.filter(current=True).exclude(service_code__in=self.routes.keys()).update(current=False)
