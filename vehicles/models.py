@@ -140,6 +140,7 @@ class Vehicle(models.Model):
     latest_location = models.ForeignKey('VehicleLocation', models.SET_NULL, null=True, blank=True,
                                         related_name='latest_vehicle', editable=False)
     features = models.ManyToManyField(VehicleFeature, blank=True)
+    # withdrawn = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('code', 'operator')

@@ -58,7 +58,7 @@ class Command(BaseCommand):
                 stops_to_update.append(self.stops[stop_code])
             else:
                 new_stops.append(self.stops[stop_code])
-        StopPoint.objects.bulk_update(new_stops, fields=['common_name', 'latlong'])
+        StopPoint.objects.bulk_update(stops_to_update, fields=['common_name', 'latlong'])
         StopPoint.objects.bulk_create(new_stops)
 
         for route in self.routes.values():
