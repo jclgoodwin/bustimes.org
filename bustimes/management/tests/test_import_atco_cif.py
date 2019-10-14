@@ -4,7 +4,7 @@ from freezegun import freeze_time
 from django.test import TestCase
 from django.core.management import call_command
 from django.contrib.gis.geos import Point
-from busstops.models import Region, Operator, Service, StopPoint
+from busstops.models import Region, Operator, Service, StopPoint, StopUsage
 from ...models import Route
 
 
@@ -54,6 +54,7 @@ class ImportAtcoCifTest(TestCase):
 
         self.assertEqual(5, Route.objects.count())
         self.assertEqual(5, Service.objects.count())
+        self.assertEqual(28, StopUsage.objects.count())
 
         with freeze_time('2019-10-01'):
             with self.assertNumQueries(12):

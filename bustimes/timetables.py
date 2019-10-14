@@ -7,6 +7,71 @@ from .models import Calendar, Trip
 differ = Differ(charjunk=lambda _: True)
 
 
+def get_journey_patterns(trips):
+    trips = trips.prefetch_related('stoptime_set')
+
+    patterns = []
+    pattern_hashes = set()
+
+    for trip in trips:
+        pattern = [stoptime.stop_code for stoptime in trip.stoptime_set.all()]
+        pattern_hash = str(pattern)
+        if pattern_hash not in pattern_hashes:
+            patterns.append(pattern)
+            pattern_hashes.add(pattern_hash)
+
+    return patterns
+
+
+def get_stop_usages(trips):
+    groupings = ([], [])
+
+    trips = trips.prefetch_related('stoptime_set')
+
+    for trip in trips:
+        if trip.inbound:
+            rows = groupings[1]
+        else:
+            rows = groupings[0]
+
+        new_rows = [stoptime.stop_code for stoptime in trip.stoptime_set.all()]
+        diff = differ.compare(rows, new_rows)
+
+        y = 0  # how many rows down we are
+
+        for stoptime in trip.stoptime_set.all():
+            if y < len(rows):
+                existing_row = rows[y]
+            else:
+                existing_row = None
+
+            instruction = next(diff)
+
+            while instruction[0] in '-?':
+                if instruction[0] == '-':
+                    y += 1
+                    if y < len(rows):
+                        existing_row = rows[y]
+                    else:
+                        existing_row = None
+                instruction = next(diff)
+
+            assert instruction[2:] == stoptime.stop_code
+
+            if instruction[0] == '+':
+                if not existing_row:
+                    rows.append(stoptime.stop_code)
+                else:
+                    rows = rows[:y] + [stoptime.stop_code] + rows[y:]
+                existing_row = stoptime.stop_code
+            else:
+                assert instruction[2:] == existing_row
+
+            y += 1
+
+    return groupings
+
+
 class Timetable:
     def __init__(self, routes, date):
         self.routes = routes
@@ -202,7 +267,9 @@ class Cell:
         self.activity = stoptime.activity
 
     def __str__(self):
-        string = str(self.arrival)[:-3]
+        arrival = self.arrival
+        string = str(arrival)[:-3]
+        string = string.replace('1 day, ', '', 1)
         if len(string) == 4:
             return '0' + string
         return string

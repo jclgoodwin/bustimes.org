@@ -1,10 +1,11 @@
 import zipfile
 from datetime import date, timedelta
 from django.core.management.base import BaseCommand
-# from django.contrib.gis.geos import LineString, MultiLineString
+from django.contrib.gis.geos import LineString, MultiLineString
 from django.utils import timezone
-from busstops.models import Service, DataSource
+from busstops.models import Service, DataSource, StopPoint, StopUsage
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
+from ...timetables import get_journey_patterns, get_stop_usages
 
 
 def parse_date(string):
@@ -47,6 +48,30 @@ class Command(BaseCommand):
                         self.handle_file(open_file)
 
         assert self.stop_times == []
+
+        for route in self.routes.values():
+            groupings = get_stop_usages(route.trip_set.all())
+            stops = [stop for grouping in groupings for stop in grouping]
+            stops = StopPoint.objects.in_bulk(stops)
+
+            route.service.stops.clear()
+            stop_usages = [
+                StopUsage(service_id=route.service_id, stop_id=stop, direction='outbound', order=i)
+                for i, stop in enumerate(groupings[0]) if stop in stops
+            ] + [
+                StopUsage(service_id=route.service_id, stop_id=stop, direction='inbound', order=i)
+                for i, stop in enumerate(groupings[1]) if stop in stops
+            ]
+            StopUsage.objects.bulk_create(stop_usages)
+
+            line_strings = []
+            for pattern in get_journey_patterns(route.trip_set.all()):
+                pattern = (stops[stop] for stop in pattern if stop in stops)
+                points = [stop.latlong for stop in pattern if stop.latlong]
+                if len(points) > 1:
+                    line_strings.append(LineString(points))
+            route.service.geometry = MultiLineString(*line_strings)
+            route.service.save(update_fields=['geometry'])
 
         self.source.route_set.exclude(code__in=self.routes.keys()).delete()
         self.source.service_set.filter(current=True).exclude(service_code__in=self.routes.keys()).update(current=False)
@@ -198,21 +223,24 @@ class Command(BaseCommand):
                 self.stop_times = []
 
         elif identity == b'QN':
-            if previous_line[:2] == b'QI':
-                note = line[7:].decode().strip().lower()
+            previous_identity = previous_line[:2]
+            note = line[7:].decode().strip()
+            if previous_identity == b'QO' or previous_identity == b'QI' or previous_identity == b'QT':
+                note = note.lower()
                 if note == 'pick up only' or note == 'pick up  only':
-                    self.stop_times[-1].activity = 'pickUp'
+                    if previous_identity != b'QT':
+                        self.stop_times[-1].activity = 'pickUp'
                 elif note == 'set down only' or note == '.set down only':
-                    self.stop_times[-1].activity = 'setDown'
+                    if previous_identity != b'QT':
+                        self.stop_times[-1].activity = 'setDown'
                 else:
                     print(note)
-            elif previous_line[:2] == b'QS':
+            elif previous_identity == b'QS' or previous_identity == b'QE' or previous_identity == b'QN':
                 code = line[2:7].decode().strip()
-                note = line[7:].decode().strip()
                 note, _ = Note.objects.get_or_create(code=code, text=note)
                 self.notes.append(note)
             else:
-                print(previous_line[:2], line)
+                print(previous_identity[:2], line)
 
         # # QI - Journey Intermediate
         # # QT - Journey Destination
