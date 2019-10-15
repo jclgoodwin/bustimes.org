@@ -320,8 +320,11 @@ class Command(BaseCommand):
             'source': self.source,
             'show_timetable': True
         }
-        if transxchange.description:
-            defaults['description'] = transxchange.description
+        description = transxchange.description
+        if description:
+            if self.region_id == 'NE':
+                description = sanitize_description(description)
+            defaults['description'] = description
 
         # stops:
         stops = StopPoint.objects.in_bulk(transxchange.stops.keys())
@@ -398,17 +401,17 @@ class Command(BaseCommand):
 
         # timetable data:
 
-        defaults = {
+        route_defaults = {
             'line_name': line_name,
             'line_brand': line_brand,
             'start_date': transxchange.operating_period.start,
             'end_date': transxchange.operating_period.end,
             'service': service,
         }
-        if transxchange.description:
-            defaults['description'] = transxchange.description
+        if 'description' in defaults:
+            route_defaults['description'] = description
 
-        route, route_created = Route.objects.get_or_create(defaults, source=self.source, code=filename)
+        route, route_created = Route.objects.get_or_create(route_defaults, source=self.source, code=filename)
 
         default_calendar = None
 
