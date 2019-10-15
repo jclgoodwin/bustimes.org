@@ -409,7 +409,7 @@ class Command(BaseCommand):
             'service': service,
         }
         if 'description' in defaults:
-            route_defaults['description'] = description
+            route_defaults['description'] = defaults['description']
 
         route, route_created = Route.objects.get_or_create(route_defaults, source=self.source, code=filename)
 
