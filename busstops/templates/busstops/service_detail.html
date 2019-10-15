@@ -85,21 +85,21 @@
                                 {% if cell.colspan %}
                                     <td{% if grouping.heads or grouping.column_feet %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}">{{ cell }}</td>
                                 {% else %}
-                                    <td>{% if not row.has_waittimes or cell.stopusage.wait_time or cell.last %}{{ cell }}{% if not cell.last and cell.stopusage.activity == 'setDown' %}<abbr title="sets down only">s</abbr>{% endif %}{% endif %}</td>
+                                    <td>{% if not row.has_waittimes or cell.wait_time or cell.last %}{{ cell }}{% if not cell.last and cell.stopusage.activity == 'setDown' %}<abbr title="sets down only">s</abbr>{% endif %}{% endif %}</td>
                                 {% endif %}
                             {% endfor %}
                             </tr>
                             {% if row.has_waittimes %}
                                 <tr>
                                     <th>
-                                        {% if row.part.stop.stop %}
-                                            <a href="{{ row.part.stop.stop.get_absolute_url }}">{{ row.part.stop.stop.get_qualified_name }}</a>
+                                        {% if row.stop.pk %}
+                                                <a href="{{ row.part.stop.stop.get_absolute_url }}">{{ row.stop.get_qualified_name }}</a>
                                         {% else %}
-                                            {{ row.part.stop }}
+                                            {{ row.stop }}
                                         {% endif %}
                                     </th>
                                     {% for cell in row.times %}
-                                        <td>{% if cell.stopusage.wait_time or not cell.last %}{{ cell.departure_time }}{% endif %}</td>
+                                        <td>{% if cell.stopusage.wait_time or not cell.last %}{{ cell.departure_time }}{% if not cell.last and cell.stopusage.activity == 'setDown' %}<abbr title="sets down only">s</abbr>{% endif %}{% endif %}</td>
                                     {% endfor %}
                                 </tr>
                             {% endif %}
