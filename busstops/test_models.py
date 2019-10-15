@@ -118,10 +118,6 @@ class ServiceTests(TestCase):
         service = Service(service_code='foo', region_id='NE')
         self.assertEqual(['foo.xml'], service.get_filenames(None))
 
-    def test_get_timetable(self):
-        service = Service(service_code='foo', region_id='NI')
-        self.assertIsNone(service.get_timetable())
-
 
 class StopPointTests(TestCase):
     @classmethod

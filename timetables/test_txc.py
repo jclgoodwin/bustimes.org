@@ -84,7 +84,10 @@ class TimetableTest(TestCase):
         )
         # Test abbreviations (check the colspan and rowspan attributes of Cells)
         self.assertEqual(timetable_ne.groupings[1].rows[0].times[3].colspan, 6)
-        self.assertEqual(timetable_ne.groupings[1].rows[0].times[3].rowspan, 103)
+        self.assertEqual(timetable_ne.groupings[1].rows[0].times[3].rowspan, 104)
+        self.assertFalse(timetable_ne.groupings[1].rows[43].has_waittimes)
+        self.assertTrue(timetable_ne.groupings[1].rows[44].has_waittimes)
+        self.assertFalse(timetable_ne.groupings[1].rows[45].has_waittimes)
         self.assertEqual(timetable_ne.groupings[0].rows[0].times[:7],
                          [time(5, 20), time(6, 20), time(7, 15), time(8, 10), time(9, 10), time(10, 10), time(11, 10)])
 

@@ -6,9 +6,8 @@ from datetime import date, time, datetime
 from django.test import TestCase
 from django.shortcuts import render
 from freezegun import freeze_time
-from busstops.models import (
-    StopPoint, Service, Region, Operator, StopUsage, Journey, StopUsageUsage, AdminArea, SIRISource
-)
+from busstops.models import StopPoint, Service, Region, Operator, StopUsage, AdminArea, DataSource, SIRISource
+from bustimes.models import Route, Trip, Calendar, StopTime
 from vehicles.models import VehicleJourney
 from . import live
 
@@ -64,6 +63,7 @@ class LiveDeparturesTest(TestCase):
             url='http://worcestershire-rt-http.trapezenovus.co.uk:8080',
             requestor_ref='Traveline_To_Trapeze',
         )
+        source = DataSource.objects.create()
         siri_source.admin_areas.add(admin_area)
         cls.worcester_stop = StopPoint.objects.create(
             pk='2000G000106',
@@ -94,19 +94,29 @@ class LiveDeparturesTest(TestCase):
         translink_metro_service.operator.add(translink_metro_operator)
         StopUsage.objects.create(stop=cls.translink_metro_stop, service=translink_metro_service, order=0)
 
-        stagecoach_journey = Journey.objects.create(datetime='2017-03-14T20:23:00Z', service=cls.stagecoach_service,
-                                                    destination=cls.cardiff_stop)
-        StopUsageUsage.objects.bulk_create([
-            StopUsageUsage(journey=stagecoach_journey, order=0, datetime=datetime, stop=cls.stagecoach_stop)
-            for datetime in ['2017-03-14T20:23:00Z', '2017-03-14T21:23:00Z', '2017-03-28 18:53:00+01:00']
-        ])
+        calendar_1 = Calendar.objects.create(mon=False, tue=True, wed=False, thu=False, fri=False, sat=False, sun=False,
+                                             start_date='2017-03-14', end_date='2017-03-14')
+        calendar_2 = Calendar.objects.create(mon=False, tue=True, wed=False, thu=False, fri=False, sat=False, sun=False,
+                                             start_date='2017-03-28', end_date='2017-03-28')
+        route = Route.objects.create(service=cls.stagecoach_service, start_date='2017-03-04', source=source)
+        trip_1 = Trip.objects.create(calendar=calendar_1, route=route, destination=cls.cardiff_stop, start='0', end='0')
+        trip_2 = Trip.objects.create(calendar=calendar_2, route=route, destination=cls.cardiff_stop, start='0', end='0')
+        StopTime.objects.bulk_create(
+            StopTime(trip=trip, sequence=0, arrival=when, departure=when, stop_code='64801092')
+            for trip, when in (
+                (trip_1, '20:23'),
+                (trip_1, '21:23'),
+                (trip_2, '18:53')
+            )
+        )
 
         cls.jersey_stop = StopPoint.objects.create(atco_code='je-2734', active=True, locality_centre=False)
 
-        worcester_journey = Journey.objects.create(datetime='2019-02-09T10:06:00Z', destination=cls.worcester_stop,
-                                                   service=cls.stagecoach_service)
-        StopUsageUsage.objects.create(journey=worcester_journey, order=0, datetime='2019-02-09T10:54:00Z',
-                                      stop=cls.worcester_stop)
+        calendar = Calendar.objects.create(mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
+                                           start_date='2019-02-09', end_date='2019-02-09')
+        trip = Trip.objects.create(calendar=calendar, route=route, destination=cls.worcester_stop, start='0', end='0')
+        StopTime.objects.create(trip=trip, sequence=0, arrival='10:54', departure='10:54',
+                                stop_code=cls.worcester_stop.pk)
 
     def test_abstract(self):
         departures = live.Departures(None, ())
@@ -183,18 +193,20 @@ class LiveDeparturesTest(TestCase):
                 res = self.client.get('/stops/64801092')
         self.assertContains(res, '<td><a href=/services/15>15</a></td>', html=True)
         self.assertContains(res, '<td>Hillend</td>')
+        self.assertEqual(3, len(res.context_data['departures']))
         self.assertEqual(res.context_data['departures'][0]['service'], self.stagecoach_service)
         self.assertEqual(res.context_data['departures'][0]['live'].time(), time(20, 37, 51))
         self.assertEqual(res.context_data['departures'][1]['service'], self.stagecoach_service)
         self.assertEqual(res.context_data['departures'][1]['live'].time(), time(21, 38, 21))
-        self.assertEqual(res.context_data['departures'][3]['service'], '7')
-        self.assertEqual(res.context_data['departures'][3]['live'].time(), time(21, 17, 28))
+        self.assertEqual(res.context_data['departures'][2]['service'], '7')
+        self.assertEqual(res.context_data['departures'][2]['live'].time(), time(21, 17, 28))
 
     @freeze_time('28 Mar 2017 17:00')
     def test_stagecoach_timezone(self):
         with vcr.use_cassette('data/vcr/stagecoach_timezone.yaml'):
             with self.assertNumQueries(5):
                 res = self.client.get('/stops/64801092')
+        self.assertEqual(6, len(res.context_data['departures']))
         self.assertEqual(res.context_data['departures'][0]['destination'].common_name, 'Wood Street')
         self.assertEqual(res.context_data['departures'][1]['destination'], 'Hillend')
         self.assertEqual(res.context_data['departures'][2]['destination'], 'Hillend')

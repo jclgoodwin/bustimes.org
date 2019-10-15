@@ -160,7 +160,18 @@ class Command(ImportLiveVehiclesCommand):
 
     def create_vehicle_location(self, item):
         bearing = item['hg']
+
+        aimed = item.get('an') or item.get('ax')
+        expected = item.get('en') or item.get('ex')
+        if aimed and expected:
+            aimed = datetime.fromtimestamp(int(aimed) / 1000, timezone.utc)
+            expected = datetime.fromtimestamp(int(expected) / 1000, timezone.utc)
+            early = (aimed - expected).total_seconds() / 60
+        else:
+            early = None
+
         return VehicleLocation(
             latlong=get_latlong(item),
-            heading=bearing
+            heading=bearing,
+            early=early
         )

@@ -36,9 +36,7 @@
     };
 
     function setUpMap() {
-        map = L.map(container, {
-            minZoom: 9
-        }),
+        map = L.map(container),
         map.attributionControl.setPrefix('');
         L.tileLayer('https://maps.bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png', {
             attribution: '<a href="https://www.maptiler.com/copyright/">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'

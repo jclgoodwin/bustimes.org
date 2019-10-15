@@ -812,14 +812,18 @@ class Row(object):
     """
     def __init__(self, part):
         self.part = part
+        self.stop = part.stop
         part.row = self
         self.times = []
+
+    def timing_status(self):
+        return self.part.timingstatus
 
     def is_minor(self):
         return self.part.timingstatus == 'OTH' or self.part.timingstatus == 'TIP'
 
     def __repr__(self):
-        return str(self.part.stop)
+        return str(self.stop)
 
 
 class Cell(object):
@@ -829,6 +833,7 @@ class Cell(object):
         self.stopusage = stopusage
         self.arrival_time = arrival_time
         self.departure_time = departure_time
+        self.wait_time = arrival_time and departure_time and arrival_time != departure_time
 
     def __str__(self):
         return self.arrival_time.strftime('%H:%M')
@@ -1099,7 +1104,7 @@ class Timetable(object):
             for journey in grouping.journeys:
                 journey.add_times()
             for row in grouping.rows:
-                row.has_waittimes = any(type(cell) is Cell and cell.stopusage.wait_time for cell in row.times)
+                row.has_waittimes = any(type(cell) is Cell and cell.wait_time for cell in row.times)
             grouping.do_heads_and_feet()
 
         if all(len(g.journeys) for g in self.groupings):

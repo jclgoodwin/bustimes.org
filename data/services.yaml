@@ -159,3 +159,18 @@ swe_47-58B-_-y10:
     current: false
 swe_47-67-_-y10:
     description: Trowbridge - Frome
+em_11-Y1-_-y08:
+    current: false
+em_11-Y5-_-y08:
+    current: false
+em_11-Y59-_-y08:
+    line_name: 59
+    operator:
+        - NDTR
+em_11-11-A-y08:
+    operator:
+        - LTLS
+        - HULS
+em_11-114-_-y08:
+    operator:
+        - HIPK

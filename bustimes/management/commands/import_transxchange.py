@@ -17,10 +17,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.utils import timezone
-from busstops.models import (Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, Journey, ServiceDate,
-                             Region)
-from busstops.management.commands.generate_departures import handle_region as generate_departures
-from busstops.management.commands.generate_service_dates import handle_services as generate_service_dates
+from busstops.models import (Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode)
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
 from timetables.txc import TransXChange, Grouping, sanitize_description_part
 
@@ -67,20 +64,6 @@ def infer_from_filename(filename):
     return ('', None, None)
 
 
-def correct_services():
-    with open(os.path.join(settings.DATA_DIR, 'services.yaml')) as open_file:
-        records = yaml.load(open_file, Loader=yaml.FullLoader)
-        for service_code in records:
-            services = Service.objects.filter(service_code=service_code)
-            if 'operator' in records[service_code]:
-                if services.exists():
-                    services.get().operator.set(records[service_code]['operator'])
-                    del records[service_code]['operator']
-                else:
-                    continue
-            services.update(**records[service_code])
-
-
 def get_operator_code(operator_element, element_name):
     element = operator_element.find('txc:{}'.format(element_name), NS)
     if element is not None:
@@ -104,11 +87,11 @@ def get_operator_by(scheme, code):
 def line_string_from_journeypattern(journeypattern, stops):
     points = []
     stop = stops.get(journeypattern.sections[0].timinglinks[0].origin.stop.atco_code)
-    if stop:
+    if stop and stop.latlong:
         points.append(stop.latlong)
     for timinglink in journeypattern.get_timinglinks():
         stop = stops.get(timinglink.destination.stop.atco_code)
-        if stop:
+        if stop and stop.latlong:
             points.append(stop.latlong)
     try:
         linestring = LineString(points)
@@ -131,10 +114,6 @@ class Command(BaseCommand):
         self.region_id, _ = os.path.splitext(os.path.basename(archive_name))
 
         self.source, created = DataSource.objects.get_or_create(name=self.region_id)
-
-        if not created:
-            self.source.service_set.filter(current=True).update(current=False)
-            self.source.route_set.all().delete()
 
         if self.region_id == 'NCSD':
             self.region_id = 'GB'
@@ -196,20 +175,25 @@ class Command(BaseCommand):
     def handle_archive(self, archive_name):
         self.service_codes = set()
 
-        with transaction.atomic():
-            self.set_region(archive_name)
+        self.set_region(archive_name)
 
-            self.source.datetime = timezone.now()
+        self.source.datetime = timezone.now()
 
-            with zipfile.ZipFile(archive_name) as archive:
-                self.set_service_descriptions(archive)
+        with open(os.path.join(settings.DATA_DIR, 'services.yaml')) as open_file:
+            self.corrections = yaml.load(open_file, Loader=yaml.FullLoader)
 
-                for filename in archive.namelist():
-                    if filename.endswith('.xml'):
-                        with archive.open(filename) as open_file:
+        with zipfile.ZipFile(archive_name) as archive:
+
+            self.set_service_descriptions(archive)
+
+            for filename in archive.namelist():
+                if filename.endswith('.xml'):
+                    with archive.open(filename) as open_file:
+                        with transaction.atomic():
                             self.handle_file(open_file, filename)
 
-            correct_services()
+            old_services = self.source.service_set.filter(current=True).exclude(service_code__in=self.service_codes)
+            old_services.update(current=False)
 
             self.source.save(update_fields=['datetime'])
 
@@ -217,15 +201,6 @@ class Command(BaseCommand):
             shutil.copy(archive_name, settings.TNDS_DIR)
         except shutil.SameFileError:
             pass
-
-        if self.region_id != 'L':
-            with transaction.atomic():
-                Journey.objects.filter(service__region=self.region_id).delete()
-                generate_departures(Region.objects.get(id=self.region_id))
-
-            with transaction.atomic():
-                ServiceDate.objects.filter(service__region=self.region_id).delete()
-                generate_service_dates(Service.objects.filter(region=self.region_id))
 
         StopPoint.objects.filter(active=False, service__current=True).update(active=True)
         StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
@@ -329,6 +304,10 @@ class Command(BaseCommand):
         if service_code is None:
             service_code = transxchange.service_code
 
+        if service_code not in self.service_codes:
+            self.service_codes.add(service_code)
+            self.source.route_set.filter(service=service_code).delete()
+
         defaults = {
             'line_name': line_name,
             'line_brand': line_brand,
@@ -341,8 +320,11 @@ class Command(BaseCommand):
             'source': self.source,
             'show_timetable': True
         }
-        if transxchange.description:
-            defaults['description'] = transxchange.description
+        description = transxchange.description
+        if description:
+            if self.region_id == 'NE':
+                description = sanitize_description(description)
+            defaults['description'] = description
 
         # stops:
         stops = StopPoint.objects.in_bulk(transxchange.stops.keys())
@@ -419,17 +401,17 @@ class Command(BaseCommand):
 
         # timetable data:
 
-        defaults = {
+        route_defaults = {
             'line_name': line_name,
             'line_brand': line_brand,
             'start_date': transxchange.operating_period.start,
             'end_date': transxchange.operating_period.end,
             'service': service,
         }
-        if transxchange.description:
-            defaults['description'] = transxchange.description
+        if 'description' in defaults:
+            route_defaults['description'] = defaults['description']
 
-        route, route_created = Route.objects.get_or_create(defaults, source=self.source, code=filename)
+        route, route_created = Route.objects.get_or_create(route_defaults, source=self.source, code=filename)
 
         default_calendar = None
 
@@ -450,11 +432,6 @@ class Command(BaseCommand):
                 route=route,
                 journey_pattern=journey.journey_pattern.id,
             )
-            trip.save()
-
-            for note in journey.notes:
-                note, _ = Note.objects.get_or_create(code=note, text=journey.notes[note])
-                trip.notes.add(note)
 
             stop_times = [
                 StopTime(
@@ -468,4 +445,34 @@ class Command(BaseCommand):
                 ) for i, cell in enumerate(journey.get_times())
             ]
 
+            trip.start = stop_times[0].arrival or stop_times[0].departure
+            trip.end = stop_times[-1].departure or stop_times[-1].arrival
+
+            if stop_times[-1].stop_code in stops:
+                trip.destination_id = stop_times[-1].stop_code
+                trip.save()
+            else:
+                print(stop_times[-1].stop_code, service)
+                if stop_times[-2].stop_code in stops:
+                    trip.destination_id = stop_times[-2].stop_code
+                    trip.save()
+                else:
+                    print(stop_times[-2].stop_code, service)
+                    return
+
+            for note in journey.notes:
+                note, _ = Note.objects.get_or_create(code=note, text=journey.notes[note])
+                trip.notes.add(note)
+
+            for stop_time in stop_times:
+                stop_time.trip = stop_time.trip  # set trip_id
             StopTime.objects.bulk_create(stop_times)
+
+        if service_code in self.corrections:
+            corrections = {}
+            for field in self.corrections[service_code]:
+                if field == 'operator':
+                    service.operator.set(self.corrections[service_code][field])
+                else:
+                    corrections[field] = self.corrections[service_code][field]
+            Service.objects.filter(service_code=service_code).update(**corrections)

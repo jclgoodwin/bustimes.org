@@ -2,15 +2,12 @@ import os
 import xml.etree.cElementTree as ET
 import zipfile
 import warnings
-from datetime import date, time
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
 from django.core.management import call_command
 from bustimes.management.commands import import_transxchange
-from ...models import (Operator, DataSource, OperatorCode, Service, Region, StopPoint, Journey, StopUsageUsage,
-                       ServiceDate, ServiceLink)
-from ..commands import generate_departures
+from ...models import Operator, DataSource, OperatorCode, Service, Region, StopPoint, ServiceLink
 
 
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
@@ -52,20 +49,53 @@ class ImportServicesTest(TestCase):
         OperatorCode.objects.create(operator=cls.megabus, source=nocs, code='MEGA')
         OperatorCode.objects.create(operator=cls.fabd, source=nocs, code='FABD')
 
-        for atco_code, common_name, indicator, lat, lng in (
-                ('639004572', 'Bulls Head', 'adj', -2.5042125060, 53.7423055225),
-                ('639004562', 'Markham Road', 'by"', -2.5083672338, 53.7398252112),
-                ('639004554', 'Witton Park', 'opp', -2.5108434749, 53.7389877672),
-                ('639004552', 'The Griffin', 'adj', -2.4989239373, 53.7425523688),
-                ('049004705400', 'Kingston District Centre', 'o/s', 0, 0),
-                ('4200F156472', 'Asda', 'opp', 0, 0),
-                ('2900A1820', 'Leys Lane', 'adj', 0, 0),
-                ('1000DDDV4248', 'Dinting Value Works', '', 0, 0),
-        ):
-            StopPoint.objects.create(
+        StopPoint.objects.bulk_create(
+            StopPoint(
                 atco_code=atco_code, locality_centre=False, active=True, common_name=common_name,
                 indicator=indicator, latlong=Point(lng, lat, srid=4326)
+            ) for atco_code, common_name, indicator, lat, lng in (
+                    ('639004572', 'Bulls Head', 'adj', -2.5042125060, 53.7423055225),
+                    ('639004562', 'Markham Road', 'by"', -2.5083672338, 53.7398252112),
+                    ('639004554', 'Witton Park', 'opp', -2.5108434749, 53.7389877672),
+                    ('639004552', 'The Griffin', 'adj', -2.4989239373, 53.7425523688),
+                    ('049004705400', 'Kingston District Centre', 'o/s', 0, 0),
+                    ('4200F156472', 'Asda', 'opp', 0, 0),
+                    ('2900A1820', 'Leys Lane', 'adj', 0, 0),
+                    ('1000DDDV4248', 'Dinting Value Works', '', 0, 0),
             )
+        )
+
+        StopPoint.objects.bulk_create(
+            StopPoint(atco_code, active=True) for atco_code in (
+                '639006355',
+                '639004802',
+                '1800EB00011',
+                '1800SB08951',
+                '1800BNIN001',
+                '1800TCBS001',
+                '1000DGHS0900',
+                '1800ANBS001',
+                '1000DGSD4386',
+                '1000DGHS1150',
+                '490016736W',
+                '1800SHIC0G1',
+                '2800S42098F',
+                '450030220',
+                '41000008NC67',
+                '4100024PARWS',
+                '450017207',
+                '3390BB01',
+                '1100DEB10368',
+                '1100DEC10085',
+                '1100DEC10720',
+                '1100DEB10354',
+                '5230WDB25331',
+                '2900A181',
+                '2900S367',
+                '2900N12106',
+                # '0500HSTIV002'
+            )
+        )
 
         # simulate an East Anglia zipfile:
         cls.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml'])
@@ -94,14 +124,6 @@ class ImportServicesTest(TestCase):
 
         # test re-importing a previously imported service again
         call_command(cls.command, ncsd_zipfile_path)
-
-        with freeze_time('2000-01-01'):
-            call_command('generate_departures', 'GB')
-        with freeze_time('2016-12-31'):
-            call_command('generate_departures', 'GB')
-        with freeze_time('2017-01-01'):
-            call_command('generate_departures', 'GB')
-            call_command('generate_departures', 'GB')
 
         cls.gb_m11a = Service.objects.get(pk='M11A_MEGA')
         cls.gb_m12 = Service.objects.get(pk='M12_MEGA')
@@ -215,7 +237,7 @@ class ImportServicesTest(TestCase):
         service = Service.objects.get(service_code='NW_04_GMN_2_1')
         self.assertEqual(service.description, 'intu Trafford Centre - Eccles - Swinton - Bolton')
 
-        self.assertEqual(0, service.stopusage_set.all().count())
+        self.assertEqual(2, service.stopusage_set.all().count())
 
     def test_service_nw_2(self):
         # Stagecoach Manchester 237
@@ -241,22 +263,8 @@ class ImportServicesTest(TestCase):
         self.assertEqual(27, len(res.context_data['timetable'].groupings[0].journeys))
         self.assertEqual(30, len(res.context_data['timetable'].groupings[1].journeys))
 
-        self.assertEqual(0, service.stopusage_set.all().count())
-        self.assertEqual(1, duplicate.stopusage_set.all().count())
-
-    @freeze_time('30 December 2016')
-    def test_service_dates(self):
-        self.assertEqual(14, ServiceDate.objects.count())
-
-        # speed up
-        self.ea_service.current = False
-        self.ea_service.save()
-
-        call_command('generate_service_dates')
-        self.assertEqual(28, ServiceDate.objects.count())
-
-        call_command('generate_service_dates')
-        self.assertEqual(28, ServiceDate.objects.count())
+        self.assertEqual(1, service.stopusage_set.all().count())
+        self.assertEqual(6, duplicate.stopusage_set.all().count())
 
     @freeze_time('3 October 2016')
     def test_do_service_ea(self):
@@ -333,11 +341,10 @@ class ImportServicesTest(TestCase):
         self.assertContains(res, '/js/timetable.min.js')
 
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
-    @freeze_time('1 Dec 2016')
+    @freeze_time('1 Jan 2017')
     def test_do_service_m12(self):
         res = self.client.get(self.gb_m12.get_absolute_url())
 
-        # The date of the next StopUsageUsage should be used, even though today is 1 Dec 2016
         self.assertContains(res, '<option selected value="2017-01-01">Sunday 1 January 2017</option>')
 
         groupings = res.context_data['timetable'].groupings
@@ -429,30 +436,12 @@ class ImportServicesTest(TestCase):
             'text': 'Timetable on the Traveline Cymru website'
         }])
 
-    def test_departures(self):
-        self.assertEqual(6, Journey.objects.filter(service='M12_MEGA').count())
-        self.assertEqual(9, StopUsageUsage.objects.filter(journey__service='M12_MEGA').count())
-
-        # Megabus services have been imported twice, but there should only be one of each StopUsage
-        self.assertEqual(1, StopPoint.objects.filter(service='M12_MEGA').count())
-
-        # This should be the first journey (some earlier journeys should have been deleted)
-        journey = Journey.objects.first()
-        self.assertEqual('M12 - Shudehill - Victoria 2017-01-01 01:00:00+00:00', str(journey))
-
-        stop_usage_usage = StopUsageUsage.objects.first()
-        self.assertEqual('2017-01-01 02:20:00+00:00', str(stop_usage_usage.datetime))
-        self.assertEqual('Kingston District Centre (o/s) 2017-01-01 02:20:00+00:00', str(stop_usage_usage))
-
-        self.assertEqual(0, Journey.objects.filter(service__region='S').count())
-        self.assertEqual(0, Journey.objects.filter(service__region='EA').count())
-
-    def test_combine_date_time(self):
-        combine_date_time = generate_departures.combine_date_time
-        self.assertEqual(str(combine_date_time(date(2017, 3, 26), time(0, 10))), '2017-03-26 00:10:00+00:00')
-        # Clocks go forward 1 hour at 1am. Not sure what buses *actually* do, but pretending
-        self.assertEqual(str(combine_date_time(date(2017, 3, 26), time(1, 10))), '2017-03-26 02:10:00+01:00')
-        self.assertEqual(str(combine_date_time(date(2017, 3, 27), time(0, 10))), '2017-03-27 00:10:00+01:00')
+    # def test_combine_date_time(self):
+    #     combine_date_time = generate_departures.combine_date_time
+    #     self.assertEqual(str(combine_date_time(date(2017, 3, 26), time(0, 10))), '2017-03-26 00:10:00+00:00')
+    #     # Clocks go forward 1 hour at 1am. Not sure what buses *actually* do, but pretending
+    #     self.assertEqual(str(combine_date_time(date(2017, 3, 26), time(1, 10))), '2017-03-26 02:10:00+01:00')
+    #     self.assertEqual(str(combine_date_time(date(2017, 3, 27), time(0, 10))), '2017-03-27 00:10:00+01:00')
 
     @classmethod
     def tearDownClass(cls):
