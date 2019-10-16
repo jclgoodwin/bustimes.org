@@ -2,8 +2,47 @@ import datetime
 import difflib
 from django.db.models import Min, Q, Prefetch
 from multigtfs.models import Trip, StopTime
-from .northern_ireland import Grouping, Timetable, Row
 from .txc import Cell
+
+
+class Timetable(object):
+    def __init__(self):
+        self.groupings = []
+
+    def date_options(self):
+        start_date = min(self.date, datetime.date.today())
+        end_date = start_date + datetime.timedelta(weeks=2)
+        while start_date <= end_date:
+            yield start_date
+            start_date += datetime.timedelta(days=1)
+        if self.date >= start_date:
+            yield self.date
+
+
+class Grouping(object):
+    def __init__(self):
+        self.name = ''
+        self.rows = []
+
+    def __str__(self):
+        return self.name
+
+
+class Stop(object):
+    def __init__(self, atco_code):
+        self.atco_code = atco_code
+
+    def __str__(self):
+        if hasattr(self, 'name'):
+            return self.name
+        return self.atco_code
+
+
+class Row(object):
+    def __init__(self, stop, times):
+        self.next = None
+        self.stop = Stop(stop)
+        self.times = times
 
 
 class StopUsage(object):
@@ -16,8 +55,8 @@ def get_grouping_name_part(stop_name):
 
 
 def get_grouping_name(grouping):
-    return '{} - {}'.format(get_grouping_name_part(grouping.rows[0].part.stop.name),
-                            get_grouping_name_part(grouping.rows[-1].part.stop.name))
+    return '{} - {}'.format(get_grouping_name_part(grouping.rows[0].stop.name),
+                            get_grouping_name_part(grouping.rows[-1].stop.name))
 
 
 def get_stop_id(stop_id):
@@ -40,7 +79,7 @@ def handle_trips(trips, day):
     rows = []
 
     for x, trip in enumerate(trips):
-        previous_list = [row.part.stop.atco_code for row in rows]
+        previous_list = [row.stop.atco_code for row in rows]
         current_list = [get_stop_id(stop.stop.stop_id) for stop in trip.stoptime_set.all()]
         diff = differ.compare(previous_list, current_list)
 
@@ -69,7 +108,7 @@ def handle_trips(trips, day):
 
             if instruction[0] == '+':
                 row = Row(stop_id, ['     '] * x)
-                row.part.stop.name = stop.stop.name
+                row.stop.name = stop.stop.name
                 if not existing_row:
                     rows.append(row)
                 else:
@@ -77,7 +116,7 @@ def handle_trips(trips, day):
                 existing_row = row
             else:
                 row = existing_row
-                assert instruction[2:] == existing_row.part.stop.atco_code
+                assert instruction[2:] == existing_row.stop.atco_code
 
             if stop.arrival_time:
                 arrival_time = (midnight + datetime.timedelta(seconds=stop.arrival_time.seconds)).time()
@@ -95,7 +134,6 @@ def handle_trips(trips, day):
                 stop_usage = StopUsage(row.has_waittimes)
 
             row.times.append(Cell(stop_usage, arrival_time or departure_time, departure_time))
-            row.part.timingstatus = None
 
             y += 1
 

@@ -126,7 +126,7 @@ class Command(BaseCommand):
             stops = []
             for grouping in timetable.groupings:
                 for i, row in enumerate(grouping.rows):
-                    stop_id = row.part.stop.atco_code
+                    stop_id = row.stop.atco_code
                     if StopPoint.objects.filter(atco_code=stop_id).exists():
                         stops.append(
                             StopUsage(

@@ -1,6 +1,7 @@
 import os
 import zipfile
 import vcr
+from freezegun import freeze_time
 from datetime import date, time
 from django.test import TestCase, override_settings
 from django.conf import settings
@@ -73,9 +74,9 @@ class GTFSTest(TestCase):
         self.assertEqual(Operator.objects.count(), 2)
 
     def test_small_timetable(self):
-        service = Service.objects.get(service_code='mortons-165')
-        timetable = service.get_timetable(date(2017, 6, 7))
-        timetable.groupings.sort(key=lambda g: str(g), reverse=True)
+        with freeze_time('2017-06-07'):
+            response = self.client.get('/services/165-merrion-citywest')
+        timetable = response.context_data['timetable']
         self.assertEqual(str(timetable.groupings[0]), 'Merrion - Citywest')
         self.assertEqual(str(timetable.groupings[1]), 'Citywest - Ballsbridge')
         self.assertEqual(timetable.groupings[0].rows[0].times, [time(7, 45)])
@@ -88,8 +89,10 @@ class GTFSTest(TestCase):
         self.assertEqual(len(timetable.groupings[1].rows), 14)
 
         for day in (date(2017, 6, 11), date(2017, 12, 25), date(2015, 12, 3), date(2020, 12, 3)):
-            timetable = service.get_timetable(day)
-            self.assertEqual(timetable.groupings, [])
+            with freeze_time(day):
+                response = self.client.get('/services/165-merrion-citywest')
+                timetable = response.context_data['timetable']
+                self.assertEqual(timetable.groupings, [])
 
     def test_big_timetable(self):
         service = Service.objects.get(service_code='seamusdoherty-963-1')
