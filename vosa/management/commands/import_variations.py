@@ -98,4 +98,6 @@ class Command(ImportFromCSVCommand):
 
         self.handle_variation(row)
 
+        assert self.licence.licence_number in self.registration.registration_number
+
         self.previous_row = row
