@@ -1,7 +1,7 @@
 from datetime import timedelta
 from requests import Session, exceptions
 from ciso8601 import parse_datetime
-from django.db.models import Exists, OuterRef, Prefetch, Subquery
+from django.db.models import Exists, OuterRef, Prefetch, Subquery, Q
 from django.core.cache import cache
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse, Http404
@@ -12,6 +12,7 @@ from django.utils import timezone
 from multidb.pinning import use_primary_db
 from busstops.views import get_bounding_box
 from busstops.models import Operator, Service, ServiceCode, SIRISource, DataSource, Journey
+from bustimes.models import Trip, Calendar
 from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, Call
 from .forms import EditVehiclesForm, EditVehicleForm
 from .management.commands import import_sirivm
@@ -163,9 +164,18 @@ def siri_one_shot(code, now):
     fifteen_minutes_ago = now - timedelta(minutes=15)
     locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, journey__service=code.service_id,
                                                datetime__gte=fifteen_minutes_ago, current=True)
-    scheduled_journeys = Journey.objects.filter(service=code.service_id, datetime__lt=now + timedelta(minutes=10),
-                                                stopusageusage__datetime__gt=now - timedelta(minutes=10))
-    if not scheduled_journeys.exists():
+    trips = Trip.objects.filter(Q(calendar__end_date__gte=now) | Q(calendar__end_date=None),
+                                calendar__start_date__lte=now,
+                                **{'calendar__' + now.strftime('%a').lower(): True},
+                                route__service=code.service_id)
+    exclusions = Calendar.objects.filter(Q(calendardate__end_date__gte=now) | Q(calendardate__end_date=None),
+                                         calendardate__start_date__lte=now,
+                                         calendardate__operation=False)
+    time_since_midnight = timedelta(hours=now.hour, minutes=now.minute, seconds=now.second,
+                                    microseconds=now.microsecond)
+    trips = trips.exclude(calendar__in=exclusions).filter(start__lte=time_since_midnight + timedelta(minutes=10),
+                                                          end__gte=time_since_midnight - timedelta(minutes=10))
+    if not trips.exists():
         if not locations.filter(journey__source__name=source).exists():
             # no journeys currently scheduled, and no vehicles online recently
             cache.set(service_cache_key, 'nothing scheduled', 300)  # back off for 5 minutes
@@ -199,7 +209,7 @@ def vehicles_last_modified(request):
 
     if 'service' in request.GET:
         service_id = request.GET['service']
-        now = timezone.now()
+        now = timezone.localtime()
 
         last_modified = cache.get(f'{service_id}:vehicles_last_modified')
         if last_modified and (now - last_modified).total_seconds() < 40:
