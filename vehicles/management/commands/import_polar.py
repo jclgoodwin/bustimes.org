@@ -26,7 +26,10 @@ class Command(ImportLiveVehiclesCommand):
         else:
             operator = item['_embedded']['transmodel:line']['id'].split(':')[0]
 
-        operator = self.operators[operator]
+        if len(self.operators) == 1:
+            operator = list(self.operators.values())[0]
+        else:
+            operator = self.operators[operator]
 
         fleet_number = code
 
@@ -64,8 +67,15 @@ class Command(ImportLiveVehiclesCommand):
         journey = VehicleJourney()
         journey.route_name = item['properties']['line']
 
-        operator = item['_embedded']['transmodel:line']['id'].split(':')[0]
-        operator = self.operators[operator]
+        if len(self.operators) == 1:
+            operator = list(self.operators.values())[0]
+        else:
+            operator = item['_embedded']['transmodel:line']['id'].split(':')[0]
+            try:
+                operator = self.operators[operator]
+            except KeyError as e:
+                print(e, item)
+                return journey
 
         line_name = item['properties']['line']
         if operator == 'BLAC' and line_name == 'PRM':

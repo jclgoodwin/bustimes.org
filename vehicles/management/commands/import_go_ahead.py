@@ -8,7 +8,7 @@ from django.contrib.gis.db.models import Extent
 from django.utils import timezone
 from busstops.models import Service, Locality
 from bustimes.models import get_calendars, Trip
-from ...models import VehicleLocation, VehicleJourney
+from ...models import Vehicle, VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
@@ -59,10 +59,13 @@ class Command(ImportLiveVehiclesCommand):
         if fleet_number.isdigit():
             defaults['fleet_number'] = fleet_number
 
-        if operator == 'PC':
-            return self.vehicles.get_or_create(defaults, code=fleet_number, operator_id='PLYC')
-
-        return self.vehicles.get_or_create(defaults, code=vehicle)
+        try:
+            if operator == 'PC':
+                return self.vehicles.get_or_create(defaults, code=fleet_number, operator_id='PLYC')
+            return self.vehicles.get_or_create(defaults, code=vehicle)
+        except Vehicle.MultipleObjectsReturned as e:
+            print(e)
+            return None, None
 
     def get_points(self):
         now = self.source.datetime

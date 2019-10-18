@@ -4,7 +4,6 @@ from datetime import timedelta
 from random import shuffle
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models import Extent
-from busstops.models import StopPoint
 from bustimes.models import get_calendars, Trip
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import VehicleLocation, VehicleJourney, Service
