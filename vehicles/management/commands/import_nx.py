@@ -1,9 +1,11 @@
 from time import sleep
+from datetime import timedelta
 from ciso8601 import parse_datetime
 from requests import RequestException
 from django.contrib.gis.geos import Point
 from django.utils import timezone
 from busstops.models import Service
+from bustimes.models import get_calendars, Trip
 from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
@@ -19,10 +21,14 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_items(self):
         url = 'https://coachtracker.nationalexpress.com/api/eta/routes/{}/{}'
-        now = timezone.now()
-        services = Service.objects.filter(journey__datetime__lte=now, journey__stopusageusage__datetime__gte=now,
-                                          operator__in=self.operators).distinct().values('line_name')
-        for service in services:
+        now = self.source.datetime
+        time_since_midnight = timedelta(hours=now.hour, minutes=now.minute, seconds=now.second,
+                                        microseconds=now.microsecond)
+        trips = Trip.objects.filter(calendar__in=get_calendars(now),
+                                    start__lte=time_since_midnight + timedelta(minutes=5),
+                                    end__gte=time_since_midnight - timedelta(minutes=30))
+        services = Service.objects.filter(operator__in=self.operators, route__trip__in=trips).distinct()
+        for service in services.values('line_name'):
             for direction in 'OI':
                 try:
                     res = self.session.get(url.format(service['line_name'], direction), timeout=5)

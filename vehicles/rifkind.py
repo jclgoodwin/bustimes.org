@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from requests import Session
 from django.contrib.gis.geos import Point
 from django.db.models import Q
@@ -6,7 +6,8 @@ from django.core.cache import cache
 from django.db import transaction
 from django.utils import timezone
 from multidb.pinning import use_primary_db
-from busstops.models import DataSource, Journey, Service
+from busstops.models import DataSource, Service
+from bustimes.models import get_calendars, Trip
 from .models import Vehicle, VehicleLocation, VehicleJourney
 from .management.import_live_vehicles import calculate_bearing
 
@@ -26,7 +27,7 @@ def register_user(source):
     source.save()
 
 
-def handle_item(source, stop, item):
+def handle_item(source, item):
     if not (item['vehicle_number']):
         return
 
@@ -143,13 +144,13 @@ def handle_item(source, stop, item):
     vehicle.update_last_modified()
 
 
-def get_stop_departures(source, stop):
+def get_stop_departures(source, stop_code):
     parts = source.url.split()
     if len(parts) < 3:
         register_user(source)
         parts = source.url.split()
 
-    cache_key = f'{parts[0]}:{stop.atco_code}'
+    cache_key = f'{parts[0]}:{stop_code}'
     if cache.get(cache_key):
         return
     cache.set(cache_key, True, 69)
@@ -158,7 +159,7 @@ def get_stop_departures(source, stop):
         "apiKey": parts[1],
         "function": "get_realtime_full",
         "token": parts[2],
-        "atcoCode": stop.atco_code
+        "atcoCode": stop_code
     }, timeout=2)
     return response.json()['data']
 
@@ -166,15 +167,18 @@ def get_stop_departures(source, stop):
 @use_primary_db
 def rifkind(service_id):
     source = DataSource.objects.get(name='Rifkind')
-
-    now = timezone.now()
-    journeys = Journey.objects.filter(service=service_id, datetime__lt=now, stopusageusage__datetime__gt=now).distinct()
+    now = timezone.localtime()
+    time_since_midnight = timedelta(hours=now.hour, minutes=now.minute, seconds=now.second,
+                                    microseconds=now.microsecond)
+    trips = Trip.objects.filter(route__service=service_id, calendar__in=get_calendars(now),
+                                start__lte=time_since_midnight - timedelta(minutes=5),
+                                end__gte=time_since_midnight + timedelta(minutes=10))
     source.datetime = now
     stops = set()
-    for journey in journeys:
-        stops.add(journey.stopusageusage_set.last().stop)
-    for stop in stops:
-        items = get_stop_departures(source, stop)
+    for trip in trips:
+        stops.add(trip.stoptime_set.exclude(activity='setDown').last().stop_code)
+    for stop_code in stops:
+        items = get_stop_departures(source, stop_code)
         if items:
             for item in items:
-                handle_item(source, stop, item)
+                handle_item(source, item)

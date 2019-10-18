@@ -5,6 +5,7 @@ from random import shuffle
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models import Extent
 from busstops.models import StopPoint
+from bustimes.models import get_calendars, Trip
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import VehicleLocation, VehicleJourney, Service
 
@@ -51,20 +52,24 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_points(self):
         points = []
-        stops = StopPoint.objects.filter(service__operator__in=['MET', 'GDR'], service__current=True)
-        extent = stops.aggregate(Extent('latlong'))['latlong__extent']
+        now = self.source.datetime
+        services = Service.objects.filter(current=True, operator__in=['MET', 'GDR'])
+        extent = services.aggregate(Extent('geometry'))['geometry__extent']
         if extent:
             longitude = extent[0]
-            stops = stops.filter(stopusageusage__datetime__lt=self.source.datetime + timedelta(minutes=5),
-                                 stopusageusage__datetime__gt=self.source.datetime - timedelta(hours=1))
-
+            time_since_midnight = timedelta(hours=now.hour, minutes=now.minute, seconds=now.second,
+                                            microseconds=now.microsecond)
+            trips = Trip.objects.filter(calendar__in=get_calendars(now),
+                                        start__lte=time_since_midnight + timedelta(minutes=5),
+                                        end__gte=time_since_midnight - timedelta(minutes=30))
+            services = services.filter(route__trip__in=trips)
             while longitude <= extent[2]:
                 latitute = extent[1]
                 while latitute <= extent[3]:
                     bbox = Polygon.from_bbox(
                         (longitude - 0.05, latitute - 0.05, longitude + 0.05, latitute + 0.05)
                     )
-                    if stops.filter(latlong__within=bbox).exists():
+                    if services.filter(geometry__bboverlaps=bbox).exists():
                         points.append((latitute, longitude))
                     latitute += 0.1
                 longitude += 0.1

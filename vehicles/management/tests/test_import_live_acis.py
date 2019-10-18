@@ -2,7 +2,7 @@ import os
 from mock import patch
 from vcr import use_cassette
 from django.test import TestCase
-from busstops.models import Region, Operator
+from busstops.models import Region, Operator, DataSource
 from ...models import VehicleLocation
 from ..commands import import_live_acis
 
@@ -42,4 +42,5 @@ class ACISImportTest(TestCase):
 
     def test_get_items(self):
         command = import_live_acis.Command()
+        command.source = DataSource()
         self.assertEqual([], list(command.get_items()))

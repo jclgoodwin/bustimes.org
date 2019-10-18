@@ -76,12 +76,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 return filtered_queryset.get()
             except queryset.model.MultipleObjectsReturned:
                 continue
-            except queryset.model.DoesNotExist:
-                break
-
-        now = timezone.now()
-        return queryset.filter(journey__datetime__lte=now,
-                               journey__stopusageusage__datetime__gte=now).distinct().get()
 
     def handle_item(self, item, now, service_code=None):
         datetime = self.get_datetime(item)
