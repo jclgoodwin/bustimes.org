@@ -12,7 +12,7 @@ from django.core.cache import cache
 from django.db.models import Q
 from django.utils import timezone
 from busstops.models import Service, ServiceCode, DataSource, SIRISource
-from bustimes.models import CalendarDate, StopTime
+from bustimes.models import CalendarDate, Calendar, StopTime
 from vehicles.models import Vehicle, VehicleJourney, JourneyCode
 
 
@@ -546,7 +546,8 @@ class TimetableDepartures(Departures):
 
         times = get_stop_times(self.now, self.stop.atco_code)
         times = times.select_related('trip__route__service',
-                                     'trip__destination__locality').defer('trip__route__service__geometry')
+                                     'trip__destination__locality').defer('trip__route__service__geometry',
+                                                                          'trip__destination__locality__latlong')
         return [self.get_row(time) for time in times.order_by('departure')[:10]]
 
 
@@ -852,15 +853,14 @@ def blend(departures, live_rows, stop=None):
 def get_stop_times(when, stop):
     time_since_midnight = datetime.timedelta(hours=when.hour, minutes=when.minute, seconds=when.second,
                                              microseconds=when.microsecond)
-    exclusions = CalendarDate.objects.filter(Q(end_date__gte=when) | Q(end_date=None),
-                                             operation=False, start_date__lte=when)
-    times = StopTime.objects.filter(stop_code=stop, departure__gte=time_since_midnight)
-    times = times.filter(Q(trip__calendar__end_date__gte=when) | Q(trip__calendar__end_date=None),
-                         trip__calendar__start_date__lte=when,
-                         **{'trip__calendar__' + when.strftime('%a').lower(): True},
-                         trip__end__gte=time_since_midnight)
-    times = times.exclude(trip__calendar__calendardate__in=exclusions).exclude(activity='setDown')
-    return times
+    exclusions = CalendarDate.objects.filter(Q(end_date__gte=when) | Q(end_date=None), operation=False,
+                                             start_date__lte=when)
+    calendars = Calendar.objects.filter(Q(end_date__gte=when) | Q(end_date=None),
+                                        ~Q(calendardate__in=exclusions),
+                                        start_date__lte=when,
+                                        **{when.strftime('%a').lower(): True})
+    return StopTime.objects.filter(~Q(activity='setDown'), stop_code=stop, departure__gte=time_since_midnight,
+                                   trip__calendar__in=calendars)
 
 
 def get_departures(stop, services):
