@@ -11,7 +11,7 @@
 <ul class="bulleted">
 {% for trip in trips %}
 <li>
-    {{ trip.departure_time }}<br>
+    {{ trip.start }} – {{ trip.end }}<br>
     {{ trip.calendar.start_date }} – {{ trip.calendar.end_date }}:<br>
     {% if trip.calendar.mon %}mon{% endif %}
     {% if trip.calendar.tue %}tue{% endif %}

@@ -1,8 +1,7 @@
 import datetime
 from difflib import Differ
-from django.db.models import Q
 # from functools import cmp_to_key
-from .models import Calendar, Trip
+from .models import get_calendars, Calendar, Trip
 
 differ = Differ(charjunk=lambda _: True)
 
@@ -92,14 +91,8 @@ class Timetable:
         if not self.date:
             return
 
-        exclusions = Calendar.objects.filter(Q(calendardate__end_date__gte=self.date) | Q(calendardate__end_date=None),
-                                             calendardate__start_date__lte=self.date,
-                                             calendardate__operation=False)
-        trips = Trip.objects.filter(Q(calendar__end_date__gte=self.date) | Q(calendar__end_date=None),
-                                    route__in=routes,
-                                    calendar__start_date__lte=self.date,
-                                    **{'calendar__' + self.date.strftime('%a').lower(): True})
-        trips = trips.exclude(calendar__in=exclusions).order_by('start').prefetch_related('notes')
+        trips = Trip.objects.filter(calendar__in=get_calendars(self.date),
+                                    route__in=routes).order_by('start').prefetch_related('notes')
 
         trips = list(trips.prefetch_related('stoptime_set'))
         # trips.sort(key=cmp_to_key(Trip.cmp))

@@ -1,5 +1,16 @@
+from django.db.models import Q
 from django.contrib.gis.db import models
 from django.urls import reverse
+
+
+def get_calendars(when):
+    exclusions = CalendarDate.objects.filter(Q(end_date__gte=when) | Q(end_date=None),
+                                             start_date__lte=when,
+                                             operation=False)
+    return Calendar.objects.filter(Q(end_date__gte=when) | Q(end_date=None),
+                                   ~Q(calendardate__in=exclusions),
+                                   start_date__lte=when,
+                                   **{when.strftime('%a').lower(): True})
 
 
 class Route(models.Model):

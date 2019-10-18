@@ -12,7 +12,7 @@ from django.core.cache import cache
 from django.db.models import Q
 from django.utils import timezone
 from busstops.models import Service, ServiceCode, DataSource, SIRISource
-from bustimes.models import CalendarDate, Calendar, StopTime
+from bustimes.models import get_calendars, StopTime
 from vehicles.models import Vehicle, VehicleJourney, JourneyCode
 
 
@@ -853,14 +853,8 @@ def blend(departures, live_rows, stop=None):
 def get_stop_times(when, stop):
     time_since_midnight = datetime.timedelta(hours=when.hour, minutes=when.minute, seconds=when.second,
                                              microseconds=when.microsecond)
-    exclusions = CalendarDate.objects.filter(Q(end_date__gte=when) | Q(end_date=None), operation=False,
-                                             start_date__lte=when)
-    calendars = Calendar.objects.filter(Q(end_date__gte=when) | Q(end_date=None),
-                                        ~Q(calendardate__in=exclusions),
-                                        start_date__lte=when,
-                                        **{when.strftime('%a').lower(): True})
     return StopTime.objects.filter(~Q(activity='setDown'), stop_code=stop, departure__gte=time_since_midnight,
-                                   trip__calendar__in=calendars)
+                                   trip__calendar__in=get_calendars(when))
 
 
 def get_departures(stop, services):
