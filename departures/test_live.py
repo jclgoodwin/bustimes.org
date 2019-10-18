@@ -116,7 +116,8 @@ class LiveDeparturesTest(TestCase):
 
         calendar = Calendar.objects.create(mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
                                            start_date='2019-02-09', end_date='2019-02-09')
-        trip = Trip.objects.create(calendar=calendar, route=route, destination=cls.worcester_stop, start='0', end='11:00')
+        trip = Trip.objects.create(calendar=calendar, route=route, destination=cls.worcester_stop,
+                                   start='0', end='11:00')
         StopTime.objects.create(trip=trip, sequence=0, arrival='10:54', departure='10:54',
                                 stop_code=cls.worcester_stop.pk)
 

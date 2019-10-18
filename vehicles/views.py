@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.utils import timezone
 from multidb.pinning import use_primary_db
 from busstops.views import get_bounding_box
-from busstops.models import Operator, Service, ServiceCode, SIRISource, DataSource, Journey
+from busstops.models import Operator, Service, ServiceCode, SIRISource, DataSource
 from bustimes.models import Trip, Calendar
 from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, Call
 from .forms import EditVehiclesForm, EditVehicleForm
