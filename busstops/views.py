@@ -17,7 +17,7 @@ from django.core.mail import EmailMessage
 from haystack.query import SearchQuerySet
 from departures import live
 from .utils import format_gbp
-from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Journey, Place
+from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Place
 from .forms import ContactForm
 
 
@@ -672,12 +672,13 @@ def journey(request):
     else:
         to_options = None
 
-    if origin and destination:
-        journeys = Journey.objects.filter(
-            stopusageusage__stop__locality=origin
-        ).filter(stopusageusage__stop__locality=destination)
-    else:
-        journeys = None
+    journeys = None
+    # if origin and destination:
+    #     journeys = Journey.objects.filter(
+    #         stopusageusage__stop__locality=origin
+    #     ).filter(stopusageusage__stop__locality=destination)
+    # else:
+    #     journeys = None
 
     return render(request, 'journey.html', {
         'from': origin,

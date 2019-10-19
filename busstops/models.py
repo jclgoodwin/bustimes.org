@@ -448,35 +448,6 @@ class StopUsage(models.Model):
         return self.timing_status == 'OTH' or self.timing_status == 'TIP'
 
 
-class Journey(models.Model):
-    service = models.ForeignKey('Service', models.CASCADE)
-    datetime = models.DateTimeField()
-    destination = models.ForeignKey(StopPoint, models.CASCADE)
-
-    class Meta():
-        ordering = ('datetime',)
-
-    def __str__(self):
-        return '{} {}'.format(self.service, self.datetime)
-
-
-class StopUsageUsage(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    journey = models.ForeignKey(Journey, models.CASCADE)
-    stop = models.ForeignKey(StopPoint, models.CASCADE)
-    datetime = models.DateTimeField()
-    order = models.PositiveIntegerField()
-
-    class Meta():
-        ordering = ('datetime',)
-        index_together = (
-            ('stop', 'datetime'),
-        )
-
-    def __str__(self):
-        return '{} {}'.format(self.stop, self.datetime)
-
-
 class Service(models.Model):
     """A bus service"""
     service_code = models.CharField(max_length=24, primary_key=True)

@@ -5,7 +5,7 @@ from django.db.models import Count, Q
 from django.contrib.gis.db.models import PointField
 from .models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, StopCode, Operator, Service, ServiceLink,
-    Note, Journey, StopUsageUsage, ServiceCode, OperatorCode, DataSource, Place, SIRISource, PaymentMethod
+    Note, ServiceCode, OperatorCode, DataSource, Place, SIRISource, PaymentMethod
 )
 
 
@@ -126,20 +126,6 @@ class NoteAdmin(admin.ModelAdmin):
     raw_id_fields = ('operators', 'services')
 
 
-class JourneyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'service', 'datetime')
-    list_filter = ('service__region',)
-    raw_id_fields = ('service', 'destination')
-    ordering = ('id',)
-
-
-class StopUsageUsageAdmin(admin.ModelAdmin):
-    show_full_result_count = False
-    list_display = ('id', 'datetime')
-    raw_id_fields = ('journey', 'stop')
-    ordering = ('id',)
-
-
 class OperatorCodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'operator', 'source', 'code')
     list_filter = [
@@ -192,8 +178,6 @@ admin.site.register(Operator, OperatorAdmin)
 admin.site.register(Service, ServiceAdmin)
 admin.site.register(ServiceLink, ServiceLinkAdmin)
 admin.site.register(Note, NoteAdmin)
-admin.site.register(Journey, JourneyAdmin)
-admin.site.register(StopUsageUsage, StopUsageUsageAdmin)
 admin.site.register(OperatorCode, OperatorCodeAdmin)
 admin.site.register(ServiceCode, ServiceCodeAdmin)
 admin.site.register(DataSource, DataSourceAdmin)
