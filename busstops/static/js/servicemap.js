@@ -322,10 +322,9 @@
         }
     };
 
+    load();
     if (window.location.hash === '#map') {
         openMap();
-    } else {
-        load();
     }
 
 })();
