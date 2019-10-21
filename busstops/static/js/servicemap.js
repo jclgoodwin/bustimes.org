@@ -20,7 +20,7 @@
         busesOnline = document.getElementById('buses-online'),
         button = busesOnline.getElementsByTagName('button')[0];
 
-    button.onclick = function() {
+    function openMap() {
         container.className += ' expanded';
         document.body.style.overflow = 'hidden';
 
@@ -33,7 +33,9 @@
                 load();
             }
         }
-    };
+    }
+
+    button.onclick = openMap;
 
     function setUpMap() {
         map = L.map(container),
@@ -301,6 +303,7 @@
     function closeMap() {
         container.className = container.className.replace(' expanded', '');
         document.body.style.overflow = '';
+        window.location.hash = '';
 
         return false;
     }
@@ -311,5 +314,18 @@
         }
     };
 
-    load();
+    window.onhashchange = function(event) {
+        if (event.target.location.hash === '#map') {
+            openMap();
+        } else {
+            closeMap();
+        }
+    };
+
+    if (window.location.hash === '#map') {
+        openMap();
+    } else {
+        load();
+    }
+
 })();
