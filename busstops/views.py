@@ -504,10 +504,6 @@ class ServiceDetailView(DetailView):
                 date = self.object.servicedate_set.filter(date__gte=today).first()
                 if date:
                     date = date.date
-            if not date:
-                next_usage = self.object.journey_set.filter(datetime__date__gte=today).values('datetime__date').first()
-                if next_usage:
-                    date = next_usage['datetime__date']
             if context['related']:
                 parallel = list(Service.objects.filter(
                     Q(link_from__to_service=self.object, link_from__how='parallel')

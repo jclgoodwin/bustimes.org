@@ -426,5 +426,5 @@ class ViewsTests(TestCase):
             response = self.client.get('/journey?to_q=melton')
         self.assertContains(response, 'melton-constable')
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(6):
             response = self.client.get('/journey?from_q=melton&to_q=constable')
