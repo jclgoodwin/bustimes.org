@@ -192,8 +192,12 @@ class Vehicle(models.Model):
         return reverse('vehicle_detail', args=(self.id,))
 
     def fleet_number_mismatch(self):
-        if self.code.isdigit() and self.fleet_number and int(self.code) != self.fleet_number:
-            return True
+        if self.code.isdigit():
+            if self.fleet_number and self.fleet_number != int(self.code):
+                return True
+        elif self.reg and self.reg not in self.code.replace('-', '').replace('_', '').replace(' ', ''):
+            if not self.fleet_number or str(self.fleet_number) not in self.code:
+                return True
 
     def get_flickr_url(self):
         if self.reg:
