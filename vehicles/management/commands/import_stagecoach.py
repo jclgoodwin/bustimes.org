@@ -152,8 +152,8 @@ class Command(ImportLiveVehiclesCommand):
             services = services.filter(Q(line_name__iexact=service) | Q(service_code__icontains=f'-{service}-'))
             services = services.filter(stops__locality__stoppoint=item['or']).distinct()
             try:
-                journey.service = services.get()
-            except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+                journey.service = self.get_service(services, get_latlong(item))
+            except Service.DoesNotExist as e:
                 print(e, item['or'], service)
 
         return journey
