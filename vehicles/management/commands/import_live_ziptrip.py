@@ -207,6 +207,10 @@ class Command(ImportLiveVehiclesCommand):
                 services = services.filter(operator=operator_id)
             try:
                 journey.service = self.get_service(services, get_latlong(item))
+            except Service.DoesNotExist:
+                pass
+
+            if journey.service:
                 if operator_id[0] == 'SESX' or operator_id[0] == 'CUBU':
                     try:
                         operator = journey.service.operator.get()
@@ -215,10 +219,9 @@ class Command(ImportLiveVehiclesCommand):
                             vehicle.save()
                     except Operator.MultipleObjectsReturned:
                         pass
-            except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-                if route_name.lower() not in self.ignorable_route_names:
-                    if operator_id[0] != 'bus-vannin' and not (operator_id[0] == 'RBUS' and route_name[0] == 'V'):
-                        print(e, operator_id, route_name)
+            elif route_name.lower() not in self.ignorable_route_names:
+                if operator_id[0] != 'bus-vannin' and not (operator_id[0] == 'RBUS' and route_name[0] == 'V'):
+                    print(operator_id, route_name)
 
         return journey
 

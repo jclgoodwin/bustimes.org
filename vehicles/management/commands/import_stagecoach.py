@@ -153,6 +153,8 @@ class Command(ImportLiveVehiclesCommand):
             services = services.filter(stops__locality__stoppoint=item['or']).distinct()
             try:
                 journey.service = self.get_service(services, get_latlong(item))
+                if not journey.service:
+                    print(service)
             except Service.DoesNotExist as e:
                 print(e, item['or'], service)
 

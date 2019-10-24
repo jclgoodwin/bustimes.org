@@ -95,8 +95,10 @@ class Command(ImportLiveVehiclesCommand):
 
             try:
                 journey.service = self.get_service(services, Point(item['geometry']['coordinates']))
-            except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-                print(operator, line_name, e)
+            except Service.DoesNotExist:
+                pass
+            if not journey.service:
+                print(operator, line_name)
 
         return journey
 

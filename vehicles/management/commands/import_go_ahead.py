@@ -140,9 +140,8 @@ class Command(ImportLiveVehiclesCommand):
                 services = Service.objects.filter(operator__in=operators, line_name__iexact=item['lineRef'],
                                                   current=True)
                 try:
-                    try:
-                        journey.service = self.get_service(services, get_latlong(item))
-                    except Service.MultipleObjectsReturned:
+                    journey.service = self.get_service(services, get_latlong(item))
+                    if not journey.service:
                         destination = item['destination']['ref']
                         journey.service = services.filter(stops__locality__stoppoint=destination).distinct().get()
                 except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:

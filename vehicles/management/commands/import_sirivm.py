@@ -252,32 +252,36 @@ class Command(ImportLiveVehiclesCommand):
 
         latlong = get_latlong(mvj)
 
-        try:
-            if operator_ref != 'OFJ':  # not a Gatwick Airport shuttle
-                journey.service = self.get_service(services, latlong)
-        except (Service.MultipleObjectsReturned, Service.DoesNotExist):
-            origin_ref = mvj.find('siri:OriginRef', NS)
-            destination_ref = mvj.find('siri:DestinationRef', NS)
-            if origin_ref is not None:
-                origin_ref = origin_ref.text
-            if destination_ref is not None:
-                destination_ref = destination_ref.text
+        if operator_ref != 'OFJ':  # not a Gatwick Airport shuttle
 
-            if origin_ref:
-                for queryset in (
-                    services.filter(stops=origin_ref).filter(route__trip__destination=destination_ref),
-                    services.filter(stops=origin_ref).filter(stops=destination_ref),
-                    services.filter(Q(stops=origin_ref) | Q(stops=destination_ref)),
-                ):
-                    if queryset.exists():
-                        services = queryset.distinct()
-                        break
             try:
                 journey.service = self.get_service(services, latlong)
-            except Service.MultipleObjectsReturned:
-                journey.service = services.first()
-            except Service.DoesNotExist as e:
-                print(e, operator, service)
+            except Service.DoesNotExist:
+                pass
+
+            if not journey.service:
+                origin_ref = mvj.find('siri:OriginRef', NS)
+                destination_ref = mvj.find('siri:DestinationRef', NS)
+                if origin_ref is not None:
+                    origin_ref = origin_ref.text
+                if destination_ref is not None:
+                    destination_ref = destination_ref.text
+
+                if origin_ref and destination_ref:
+                    for queryset in (
+                        services.filter(stops=origin_ref).filter(route__trip__destination=destination_ref),
+                        services.filter(stops=origin_ref).filter(stops=destination_ref),
+                        services.filter(Q(stops=origin_ref) | Q(stops=destination_ref)),
+                    ):
+                        if queryset.exists():
+                            services = queryset.distinct()
+                            break
+                try:
+                    journey.service = self.get_service(services, latlong)
+                    if not journey.service:
+                        journey.service = services.first()
+                except Service.DoesNotExist as e:
+                    print(e, operator, service)
 
         if not journey.destination and journey.code and journey.service:
             try:
