@@ -93,7 +93,7 @@
                                 <tr>
                                     <th>
                                         {% if row.stop.pk %}
-                                                <a href="{{ row.stop.stop.get_absolute_url }}">{{ row.stop.get_qualified_name }}</a>
+                                                <a href="{{ row.stop.get_absolute_url }}">{{ row.stop.get_qualified_name }}</a>
                                         {% else %}
                                             {{ row.stop }}
                                         {% endif %}
