@@ -217,6 +217,9 @@ class JourneyPatternStopUsage(object):
         self.wait_time = element.find('txc:WaitTime', NS)
         if self.wait_time is not None:
             self.wait_time = parse_duration(self.wait_time.text)
+            if self.wait_time.total_seconds() > 10000:
+                print(self.wait_time)
+                self.wait_time = None
 
         self.row = None
         self.parent = None
