@@ -1,0 +1,22 @@
+{% extends 'page.html' %}
+
+{% block title %}{{ object }} – Bus Times{% endblock %}
+
+{% block content %}
+
+<h1>{{ object }}</h1>
+
+<h2>Service codes</h2>
+
+<table>
+    <thead>
+        <tr><th>Scheme</th><th>Code</th><th>siri_one_shot</th></tr>
+    </thead>
+    <tbody>
+        {% for code in codes %}
+            <tr><td>{{ code.scheme }}</td><td>{{ code.code }}</td><td>{{ code.siri_one_shot }}</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

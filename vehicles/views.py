@@ -10,7 +10,7 @@ from django.views.generic.detail import DetailView
 from django.urls import reverse
 from django.utils import timezone
 from multidb.pinning import use_primary_db
-from busstops.views import get_bounding_box
+from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service, ServiceCode, SIRISource, DataSource
 from bustimes.models import get_calendars, Trip
 from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, Call

@@ -10,13 +10,12 @@ from django.utils import timezone
 from django.views.decorators.cache import cache_control
 from django.views.generic.detail import DetailView
 from django.conf import settings
-from django.contrib.gis.geos import Polygon
 from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from haystack.query import SearchQuerySet
 from departures import live
-from .utils import format_gbp
+from .utils import format_gbp, get_bounding_box
 from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Place
 from .forms import ContactForm
 
@@ -108,12 +107,6 @@ def data(request):
 def map(request):
     """The full-page slippy map"""
     return render(request, 'map.html')
-
-
-def get_bounding_box(request):
-    return Polygon.from_bbox(
-        [request.GET[key] for key in ('xmin', 'ymin', 'xmax', 'ymax')]
-    )
 
 
 def stops(request):
