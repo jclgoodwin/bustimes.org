@@ -7,6 +7,7 @@ import pytz
 import dateutil.parser
 import logging
 import xml.etree.cElementTree as ET
+from pytz.exceptions import AmbiguousTimeError
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
@@ -515,10 +516,18 @@ class NorfokDepartures(Departures):
         res = res.json()['r']
         for i in range(0, int(len(res[1]) / 11)):
             item = (res[1][i * 11: (i + 1) * 11])
-            time = timezone.make_aware(datetime.datetime.fromtimestamp(int(item[3])))
+            time = datetime.datetime.fromtimestamp(int(item[3]))
+            try:
+                time = timezone.make_aware(time)
+            except AmbiguousTimeError:
+                time = timezone.make_aware(time, is_dst=True)
             live = item[4]
             if live:
-                live = timezone.make_aware(datetime.datetime.fromtimestamp(int(live)))
+                live = datetime.datetime.fromtimestamp(int(live))
+                try:
+                    live = timezone.make_aware(live)
+                except AmbiguousTimeError:
+                    live = timezone.make_aware(live, is_dst=True)
             if not live or time < self.now and live < self.now:
                 continue
             departures.append({
