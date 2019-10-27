@@ -47,6 +47,8 @@ class Command(BaseCommand):
         if type(operator) is Operator:
             return self.vehicles.get_or_create(defaults, operator=operator, code=vehicle)
         defaults = {'operator_id': operator[0]}
+        if operator[0] == 'SCCM':
+            return self.vehicles.get_or_create(defaults, operator__name__startswith='Stagecoach ', code=vehicle)
         return self.vehicles.get_or_create(defaults, operator__in=operator, code=vehicle)
 
     def get_service(self, operator, item):
