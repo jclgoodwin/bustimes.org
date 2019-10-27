@@ -1,4 +1,5 @@
 import requests
+from django.core.cache import cache
 from datetime import timedelta
 from requests_toolbelt.adapters.source import SourceAddressAdapter
 from django.utils import timezone
@@ -26,7 +27,7 @@ class Command(BaseCommand):
         self.source = DataSource.objects.get(name='Arriva')
 
         if not options['terminate']:
-            if self.source.datetime and (timezone.now() - self.source.datetime) < timedelta(minutes=4):
+            if cache.get('Arriva heartbeat') and cache.get('Arriva data'):
                 return  # received a heartbeat recently, no need to resubscribe
 
         now = timezone.localtime()

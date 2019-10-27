@@ -415,10 +415,9 @@ def siri(request):
     if not body:
         return HttpResponse()
     if 'HeartbeatNotification>' in body:
-        source = DataSource.objects.get(name='Arriva')
-        source.datetime = timezone.now()
-        source.save(update_fields=['datetime'])
+        cache.set('Arriva heartbeat', True, 300)  # 5 minutes
     else:
+        cache.set('Arriva data', True, 600)  # 10 minutes
         handle_siri_et.delay(body)
     return HttpResponse(f"""<?xml version="1.0" ?>
 <Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
