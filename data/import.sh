@@ -82,7 +82,7 @@ ulb_old=$(shasum ulb.zip)
 wget -qN https://www.opendatani.gov.uk/dataset/c1acee5b-a400-46bd-a795-9bf7637ff879/resource/291cbb54-7bb3-4df7-8599-0c8f49a20be6/download/ulb.zip
 ulb_new=$(shasum ulb.zip)
 if [[ "$ulb_old" != "$ulb_new" ]]; then
-    ../manage.py import_atco_cif metro_glider.zip
+    ../manage.py import_atco_cif ulb.zip
 fi
 
 
