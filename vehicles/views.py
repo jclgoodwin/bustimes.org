@@ -415,9 +415,9 @@ def siri(request):
     if not body:
         return HttpResponse()
     if 'HeartbeatNotification>' in body:
-        cache.set('Arriva heartbeat', True, 300)  # 5 minutes
+        cache.set('ArrivaHeartbeat', True, 300)  # 5 minutes
     else:
-        cache.set('Arriva data', True, 600)  # 10 minutes
+        cache.set('ArrivaData', True, 600)  # 10 minutes
         handle_siri_et.delay(body)
     return HttpResponse(f"""<?xml version="1.0" ?>
 <Siri xmlns="http://www.siri.org.uk/siri" version="1.3">

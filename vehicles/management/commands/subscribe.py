@@ -27,7 +27,7 @@ class Command(BaseCommand):
         self.source = DataSource.objects.get(name='Arriva')
 
         if not options['terminate']:
-            if cache.get('Arriva heartbeat') and cache.get('Arriva data'):
+            if cache.get('ArrivaHeartbeat') and cache.get('ArrivaData'):
                 return  # received a heartbeat recently, no need to resubscribe
 
         now = timezone.localtime()
