@@ -176,7 +176,7 @@ def siri_one_shot(code, now):
             cache.set(service_cache_key, 'nothing scheduled', 300)  # back off for 5 minutes
             return 'nothing scheduled'
     # from a different source
-    if locations.exclude(journey__source__name=source).exists():
+    if locations.exclude(journey__source__name=source).exclude(journey__source__name='Stagecoach').exists():
         cache.set(service_cache_key, 'different source', 3600)  # back off for for 1 hour
         return 'deferring to a different source'
     cache.set(line_name_cache_key, 'line name', 40)  # cache for 40 seconds
