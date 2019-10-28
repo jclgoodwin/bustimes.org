@@ -1,5 +1,6 @@
 from time import sleep
 from datetime import timedelta
+from pytz.exceptions import AmbiguousTimeError
 from ciso8601 import parse_datetime
 from requests import RequestException
 from django.contrib.gis.geos import Point
@@ -17,7 +18,10 @@ class Command(ImportLiveVehiclesCommand):
 
     @staticmethod
     def get_datetime(item):
-        return timezone.make_aware(parse_datetime(item['live']['timestamp']['dateTime']))
+        try:
+            return timezone.make_aware(parse_datetime(item['live']['timestamp']['dateTime']))
+        except AmbiguousTimeError:
+            return timezone.make_aware(parse_datetime(item['live']['timestamp']['dateTime']), is_dst=True)
 
     def get_items(self):
         url = 'https://coachtracker.nationalexpress.com/api/eta/routes/{}/{}'
@@ -54,7 +58,10 @@ class Command(ImportLiveVehiclesCommand):
         journey.route_name = item['route']
         journey.destination = item['arrival']
         journey.code = item['journeyId']
-        journey.datetime = timezone.make_aware(parse_datetime(item['startTime']['dateTime']))
+        try:
+            journey.datetime = timezone.make_aware(parse_datetime(item['startTime']['dateTime']))
+        except AmbiguousTimeError:
+            journey.datetime = timezone.make_aware(parse_datetime(item['startTime']['dateTime']), is_dst=True)
 
         latest_location = vehicle.latest_location
         if latest_location and journey.route_name == latest_location.journey.route_name:
