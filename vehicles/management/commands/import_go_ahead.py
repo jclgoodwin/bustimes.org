@@ -133,10 +133,12 @@ class Command(ImportLiveVehiclesCommand):
             ):
                 journey.service = latest_location.journey.service
             else:
-                if item['lineRef'] == 'CSR' and operators[0] == 'BHBC':
+                if operators[0] == 'BHBC' and item['lineRef'] == 'CSR':
                     item['lineRef'] = 'CSS'
-                if operators[0] == 'BLUS' and item['lineRef'] == 'QC':
+                elif operators[0] == 'BLUS' and item['lineRef'] == 'QC':
                     item['lineRef'] = 'QuayConnect'
+                elif item['lineRef'] == 'W2N':
+                    item['lineRef'] = 'W2'
                 services = Service.objects.filter(operator__in=operators, line_name__iexact=item['lineRef'],
                                                   current=True)
                 try:
