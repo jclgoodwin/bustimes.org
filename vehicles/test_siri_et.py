@@ -1,5 +1,6 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
+from django.core.cache import cache
 from busstops.models import DataSource, Region, Operator, StopPoint
 from .models import VehicleLocation, Call
 from .siri_et import siri_et
@@ -20,12 +21,14 @@ class SiriETTest(TestCase):
     def test_get(self):
         self.assertFalse(self.client.get('/siri').content)
 
+    @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_heartbeat(self):
         self.assertIsNone(DataSource.objects.get(name='Arriva').datetime)
+        self.assertIsNone(cache.get('ArrivaHeartbeat'))
 
         response = self.client.post('/siri', 'HeartbeatNotification>', content_type='text/xml')
         self.assertTrue(response.content)
-        self.assertTrue(DataSource.objects.get(name='Arriva').datetime)
+        self.assertTrue(cache.get('ArrivaHeartbeat'))
 
     def test_siri_et(self):
         xml = """<?xml version="1.0" encoding="utf-8" ?>
