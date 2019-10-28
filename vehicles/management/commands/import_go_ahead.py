@@ -137,7 +137,7 @@ class Command(ImportLiveVehiclesCommand):
                     item['lineRef'] = 'CSS'
                 elif operators[0] == 'BLUS' and item['lineRef'] == 'QC':
                     item['lineRef'] = 'QuayConnect'
-                elif operators[0] == 'GNE' and item['lineRef'][-1] == 'E':
+                elif operators[0] == 'GNEL' and item['lineRef'][-1] in 'NE':
                     item['lineRef'] = item['lineRef'][:-1]
                 services = Service.objects.filter(operator__in=operators, line_name__iexact=item['lineRef'],
                                                   current=True)
