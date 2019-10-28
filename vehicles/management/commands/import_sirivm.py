@@ -142,6 +142,9 @@ class Command(ImportLiveVehiclesCommand):
                     return None, None
                 if not (vehicle_code.isdigit() or vehicle_code.isalpha()) and vehicle_code.isupper():
                     operator_options = ('ABUS',)
+            elif operator_ref == 'AMD' or operator_ref == 'AMN':
+                # Arriva Midlands and Midlands North share fleet numbering scheme, but are distinct codes for routes
+                operator_options = ('AMNO', 'AMID', 'AFCL')
 
         defaults = {
             'source': self.source,
@@ -156,7 +159,7 @@ class Command(ImportLiveVehiclesCommand):
             if len(parts) == 2 and parts[0].isalpha() and parts[0].isupper() and parts[1].isdigit():
                 defaults['fleet_number'] = parts[1]
 
-            if parts[0] in {'GOEA', 'CSLB'}:
+            if parts[0] == 'GOEA' or parts[0] == 'CSLB':
                 return self.vehicles.get_or_create(
                     defaults,
                     code=vehicle_code,
@@ -175,7 +178,7 @@ class Command(ImportLiveVehiclesCommand):
                     operator__name__startswith='Stagecoach ',
                     code=vehicle_code,
                 )
-            if operator_ref == 'ATS' and vehicle_code.isdigit():
+            if (operator_ref == 'ATS' or operator_ref == 'AMD') and vehicle_code.isdigit():
                 defaults['code'] = vehicle_code
                 return self.vehicles.get_or_create(
                     defaults,
