@@ -93,6 +93,8 @@ class Livery(models.Model):
                 for angle in re.findall(r'\((\d+)deg,', css):
                     replacement = 360 - int(angle)
                     css = css.replace(f'({angle}deg,', f'({replacement}deg,', 1)
+                    # doesn't work with e.g. angles {a, b} where a = 360 - b
+                css = css.replace('left', 'right')
             return css
         if self.colours:
             return get_css(self.colours.split(), direction, self.horizontal, self.angle)
