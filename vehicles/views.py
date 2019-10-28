@@ -226,15 +226,6 @@ def vehicles_last_modified(request):
             request.nothing = True
         return last_modified
 
-    locations = get_locations(request)
-    try:
-        location = locations.values('datetime').latest('datetime')
-        request.nothing = False
-        return location['datetime']
-    except VehicleLocation.DoesNotExist:
-        request.nothing = True
-        return
-
 
 @last_modified(vehicles_last_modified)
 def vehicles_json(request):
