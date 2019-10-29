@@ -211,17 +211,17 @@ class VehiclesTests(TestCase):
             self.assertEqual({'type': 'FeatureCollection', 'features': []}, response.json())
             self.assertIsNone(response.get('last-modified'))
 
-            with self.assertNumQueries(2):
+            with self.assertNumQueries(1):
                 response = self.client.get('/vehicles.json')
             features = response.json()['features']
             self.assertEqual(features[0]['properties']['vehicle']['name'], '1 - FD54\xa0JYA')
             self.assertEqual(features[0]['properties']['service'],
                              {'line_name': '', 'url': '/services/spixworth-hunworth-happisburgh'})
 
-            self.assertEqual(response.get('last-modified'), 'Tue, 25 Dec 2018 19:47:00 GMT')
+            # self.assertEqual(response.get('last-modified'), 'Tue, 25 Dec 2018 19:47:00 GMT')
 
             VehicleJourney.objects.update(service=None)
-            with self.assertNumQueries(2):
+            with self.assertNumQueries(1):
                 response = self.client.get('/vehicles.json')
             features = response.json()['features']
             self.assertEqual(features[0]['properties']['vehicle']['name'], '1 - FD54\xa0JYA')
