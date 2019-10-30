@@ -202,27 +202,29 @@ class Grouping:
                 return True
 
     def do_heads_and_feet(self):
-        # previous_trip = None
+        previous_notes = None
 
         for i, trip in enumerate(self.trips):
-            for note in trip.notes.all():
-                # print(note)
-                # if note.code in self.column_feet:
-                #     if note in previous_trip.notes.all():
-                #         self.column_feet[note.code][-1].span += 1
-                #     else:
-                #         self.column_feet[note.code].append(ColumnFoot(note))
-                if i:
-                    self.column_feet[note.code] = [ColumnFoot(None, i), ColumnFoot(note)]
+            notes = trip.notes.all()
+            for note in notes:
+                if note.id in self.column_feet:
+                    if note in previous_notes:
+                        self.column_feet[note.id][-1].span += 1
+                    else:
+                        self.column_feet[note.id].append(ColumnFoot(note))
+                elif i:
+                    self.column_feet[note.id] = [ColumnFoot(None, i), ColumnFoot(note)]
                 else:
-                    self.column_feet[note.code] = [ColumnFoot(note)]
-            # for key in self.column_feet:
-            #     if key not in trip.notes:
-            #         if not self.column_feet[key][-1].notes:
-            #             self.column_feet[key][-1].span += 1
-            #         else:
-            #             self.column_feet[key].append(ColumnFoot(None, 1))
-            # previous_trip = trip
+                    self.column_feet[note.id] = [ColumnFoot(note)]
+            for key in self.column_feet:
+                if not any(key == note.id for note in notes):
+                    if not self.column_feet[key][-1].notes:
+                        # expand existing empty cell
+                        self.column_feet[key][-1].span += 1
+                    else:
+                        # new empty cell
+                        self.column_feet[key].append(ColumnFoot(None, 1))
+            previous_notes = notes
 
 
 class ColumnHead(object):
