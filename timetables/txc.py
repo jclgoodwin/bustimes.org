@@ -1011,7 +1011,6 @@ class Grouping(object):
                     in_a_row = 0
 
             prev_difference = difference
-            difference = None
             prev_journey = journey
 
         if self.heads or (prev_journey and prev_journey.service != self.parent.service):

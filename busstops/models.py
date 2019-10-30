@@ -558,7 +558,7 @@ class Service(models.Model):
                 or any(o.pk in {'MEGA', 'MBGD', 'SCMG'} for o in self.operator.all()))
 
     def get_megabus_url(self):
-        # Using a tuple of tuples, instead of a dict, because the order of dicts is nondeterministic
+        # Using a tuple of tuples, instead of a dict, because the order is important for tests
         query = (
             ('mid', 2678),
             ('id', 242611),
@@ -679,30 +679,21 @@ class Service(models.Model):
                 routes += service_code.get_routes()
             return gtfs.get_timetable(routes, day)
 
-        if len(self.route_set.all()) > 1 and self.route_set.all()[1].operating_period.start > day:
-            self.timetable_change = self.route_set.all()[1].transxchanges[1].operating_period.start
+        routes = list(self.route_set.all())
+        for service in related:
+            routes += service.route_set.all()
 
-        timetable = Timetable(self.route_set.all(), day)
-        return timetable
+        timetable = Timetable(routes, day)
 
-        # if timetable:
-        #     timetable.set_date(day)
-        # elif timetable is None:
-        #     xml_files = [(self, file) for file in self.get_files_from_zipfile()]
-        #     if xml_files and xml_files[0][1]:
-        #         for service in related:
-        #             xml_files += [(service, file) for file in service.get_files_from_zipfile()]
-        #         timetable = txc.Timetable(xml_files, day)
-        #         for transxchange in timetable.transxchanges:
-        #             del transxchange.stops
-        #             del transxchange.element
-        #     cache.set(cache_key, timetable or False)
-        # if not timetable:
-        #     return
+        for route in routes:
+            if route.start_date > timetable.date:
+                self.timetable_change = route.start_date
+                break
 
         # timetable.service = self
-        # # timetable.set_description(self.description)
+        # timetable.set_description(self.description)
         # timetable.groupings = [g for g in timetable.groupings if g.rows and g.rows[0].times]
+
         return timetable
 
 

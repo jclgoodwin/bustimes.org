@@ -248,20 +248,21 @@ class ImportServicesTest(TestCase):
         self.assertEqual(service.description, 'Glossop - Stalybridge - Ashton')
 
         with freeze_time('1 September 2017'):
-            res = self.client.get(service.get_absolute_url())
+            res = self.client.get(service.get_absolute_url() + '?date=2017-09-01')
+        self.assertEqual(str(res.context_data['timetable'].date), '2017-09-01')
         self.assertContains(res, 'Timetable changes from Sunday 3 September 2017')
 
         with freeze_time('1 October 2017'):
-            res = self.client.get(service.get_absolute_url())
-
+            res = self.client.get(service.get_absolute_url())  # + '?date=2017-10-01')
+        self.assertEqual(str(res.context_data['timetable'].date), '2017-10-01')
         self.assertNotContains(res, 'Timetable changes from Sunday 3 September 2017')
-
-        self.assertEqual(18, len(res.context_data['timetable'].groupings[0].journeys))
+        self.assertEqual(18, len(res.context_data['timetable'].groupings[0].trips))
 
         with freeze_time('1 October 2017'):
             res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
-        self.assertEqual(27, len(res.context_data['timetable'].groupings[0].journeys))
-        self.assertEqual(30, len(res.context_data['timetable'].groupings[1].journeys))
+        self.assertEqual(str(res.context_data['timetable'].date), '2017-10-03')
+        self.assertEqual(27, len(res.context_data['timetable'].groupings[1].trips))
+        self.assertEqual(30, len(res.context_data['timetable'].groupings[0].trips))
 
         self.assertEqual(1, service.stopusage_set.all().count())
         self.assertEqual(6, duplicate.stopusage_set.all().count())

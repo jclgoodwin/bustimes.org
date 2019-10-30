@@ -184,8 +184,52 @@ class Timetable:
             yield self.date
 
 
+class Repetition(object):
+    """Represents a special cell in a timetable, spanning multiple rows and columns,
+    with some text like 'then every 5 minutes until'.
+    """
+    def __init__(self, colspan, rowspan, duration):
+        self.colspan = colspan
+        self.rowspan = self.min_height = rowspan
+        self.duration = duration
+
+    def __str__(self):
+        # cleverly add non-breaking spaces if there aren't many rows
+        if self.duration.seconds == 3600:
+            if self.min_height < 3:
+                return 'then\u00A0hourly until'
+            return 'then hourly until'
+        if self.duration.seconds % 3600 == 0:
+            duration = '{} hours'.format(int(self.duration.seconds / 3600))
+        else:
+            duration = '{} minutes'.format(int(self.duration.seconds / 60))
+        if self.min_height < 3:
+            return 'then\u00A0every {}\u00A0until'.format(duration.replace(' ', '\u00A0'))
+        if self.min_height < 4:
+            return 'then every\u00A0{} until'.format(duration.replace(' ', '\u00A0'))
+        return 'then every {} until'.format(duration)
+
+
+def abbreviate(grouping, i, in_a_row, difference):
+    """Given a Grouping, and a timedelta, modify each row and..."""
+    seconds = difference.total_seconds()
+    if not seconds or (seconds != 3600 and seconds > 1800):  # neither hourly nor more than every 30 minutes
+        return
+    # repetition = Repetition(in_a_row + 1, sum(2 if row.has_waittimes else 1 for row in grouping.rows), difference)
+    # repetition.min_height = sum(2 if row.has_waittimes else 1 for row in grouping.rows if not row.is_minor())
+    repetition = Repetition(in_a_row + 1, len(grouping.rows), difference)
+    # repetition.min_height = sum(2 if row.has_waittimes else 1 for row in grouping.rows if not row.is_minor())
+    grouping.rows[0].times[i - in_a_row - 2] = repetition
+    for j in range(i - in_a_row - 1, i - 1):
+        grouping.rows[0].times[j] = None
+    for j in range(i - in_a_row - 2, i - 1):
+        for row in grouping.rows[1:]:
+            row.times[j] = None
+
+
 class Grouping:
     def __init__(self, inbound=False):
+        self.heads = []
         self.rows = []
         self.trips = []
         self.inbound = inbound
@@ -202,7 +246,11 @@ class Grouping:
                 return True
 
     def do_heads_and_feet(self):
+        previous_trip = None
         previous_notes = None
+        in_a_row = 0
+        prev_difference = None
+        difference = None
 
         for i, trip in enumerate(self.trips):
             notes = trip.notes.all()
@@ -224,7 +272,45 @@ class Grouping:
                     else:
                         # new empty cell
                         self.column_feet[key].append(ColumnFoot(None, 1))
+
+            if previous_trip:
+                if previous_trip.route_id != trip.route_id:
+                    if self.heads:
+                        self.heads.append(ColumnHead(previous_trip.route, i - sum(head.span for head in self.heads)))
+                    else:
+                        self.heads.append(ColumnHead(previous_trip.route, i))
+
+                if not previous_trip.notes.all() != trip.notes.all():
+                    if in_a_row > 1:
+                        abbreviate(self, i, in_a_row - 1, prev_difference)
+                    in_a_row = 0
+                elif trip.journey_pattern and previous_trip.journey_pattern == trip.journey_pattern:
+                    difference = trip.start - previous_trip.start
+                    if difference == prev_difference:
+                        in_a_row += 1
+                    else:
+                        if in_a_row > 1:
+                            abbreviate(self, i, in_a_row - 1, prev_difference)
+                        in_a_row = 0
+                else:
+                    if in_a_row > 1:
+                        abbreviate(self, i, in_a_row - 1, prev_difference)
+                    in_a_row = 0
+
+            prev_difference = difference
+            previous_trip = trip
             previous_notes = notes
+
+        if self.heads:  # or (previous_trip and previous_trip.route_id != self.parent.route_id):
+            self.heads.append(ColumnHead(previous_trip.route.service,
+                                         len(self.trips) - sum(head.span for head in self.heads)))
+
+        if in_a_row > 1:
+            abbreviate(self, len(self.trips), in_a_row - 1, prev_difference)
+        for row in self.rows:
+            # remove 'None' cells created during the abbreviation process
+            # (actual empty cells will contain an empty string '')
+            row.times = [time for time in row.times if time is not None]
 
 
 class ColumnHead(object):
