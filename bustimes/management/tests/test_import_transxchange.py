@@ -83,18 +83,20 @@ class ImportTransXChangeTest(TestCase):
         res = self.client.get(service.get_absolute_url() + '?date=2016-10-16')
         timetable = res.context_data['timetable']
 
-        # self.assertEqual('Attleborough - Wymondham - Norwich', str(timetable.groupings[0]))
-
-        # self.assertTrue(timetable.groupings[0].has_minor_stops())
-        self.assertEqual(91, len(timetable.groupings[0].rows))
-        # self.assertEqual('Leys Lane', timetable.groupings[0].rows[0].stop)
+        self.assertEqual('Inbound', str(timetable.groupings[0]))
 
         self.assertTrue(timetable.groupings[0].has_minor_stops())
-        # self.assertEqual(5, len(timetable.groupings[1].rows[0].times))
+        self.assertTrue(timetable.groupings[1].has_minor_stops())
+
+        self.assertEqual(87, len(timetable.groupings[0].rows))
+        self.assertEqual(91, len(timetable.groupings[1].rows))
+
+        self.assertEqual(4, len(timetable.groupings[0].rows[0].times))
+        self.assertEqual(4, len(timetable.groupings[1].rows[0].times))
+
         self.assertEqual('', timetable.groupings[0].rows[0].times[-1])
 
-        self.assertEqual(87, len(timetable.groupings[1].rows))
-        self.assertEqual(['', '', '', '', '', '', '', ''], timetable.groupings[1].rows[0].times[-8:])
+        # self.assertEqual(['', '', '', '', '', '', '', ''], timetable.groupings[1].rows[0].times[-8:])
 
         service = Route.objects.get(line_name='12')
 

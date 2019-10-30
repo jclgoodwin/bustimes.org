@@ -16,7 +16,7 @@ from django.core.cache import cache
 from django.urls import reverse
 from django.utils.text import slugify
 from multigtfs.models import Feed
-from timetables import txc, gtfs
+from timetables import gtfs
 from bustimes.timetables import Timetable
 
 

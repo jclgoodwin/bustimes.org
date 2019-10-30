@@ -75,7 +75,7 @@ def get_stop_usages(trips):
 class Timetable:
     def __init__(self, routes, date):
         self.routes = routes
-        self.groupings = (Grouping(), Grouping(True))
+        self.groupings = [Grouping(), Grouping(True)]
 
         self.date = date
 
@@ -102,6 +102,9 @@ class Timetable:
 
         for grouping in self.groupings:
             grouping.do_heads_and_feet()
+
+        if all(g.trips for g in self.groupings):
+            self.groupings.sort(key=Grouping.get_order)
 
     def handle_trip(self, trip):
         if trip.inbound:
@@ -244,6 +247,10 @@ class Grouping:
         for row in self.rows:
             if row.timing_status == 'OTH':
                 return True
+
+    def get_order(self):
+        if self.trips:
+            return self.trips[0].start
 
     def do_heads_and_feet(self):
         previous_trip = None

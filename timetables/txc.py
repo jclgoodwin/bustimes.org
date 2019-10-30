@@ -1012,6 +1012,7 @@ class Grouping(object):
 
             prev_difference = difference
             prev_journey = journey
+            difference = None  # wtf
 
         if self.heads or (prev_journey and prev_journey.service != self.parent.service):
             self.heads.append(ColumnHead(prev_journey.service,
