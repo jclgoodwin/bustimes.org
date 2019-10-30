@@ -98,73 +98,24 @@ class Timetable:
         # trips.sort(key=cmp_to_key(Trip.cmp))
 
         for trip in trips:
-            self.handle_trip(trip)
+            if trip.inbound:
+                grouping = self.groupings[1]
+            else:
+                grouping = self.groupings[0]
+            grouping.trips.append(trip)
 
         for grouping in self.groupings:
-            grouping.do_heads_and_feet()
+            # grouping.trips.sort(key=cmp_to_key(Trip.cmp))
+            for trip in grouping.trips:
+                grouping.handle_trip(trip)
 
         if all(g.trips for g in self.groupings):
             self.groupings.sort(key=Grouping.get_order)
 
-    def handle_trip(self, trip):
-        if trip.inbound:
-            grouping = self.groupings[1]
-        else:
-            grouping = self.groupings[0]
-        grouping.trips.append(trip)
-        rows = grouping.rows
-        if rows:
-            x = len(rows[0].times)
-        else:
-            x = 0
-        previous_list = [row.stop.atco_code for row in rows]
-        current_list = [stoptime.stop_code for stoptime in trip.stoptime_set.all()]
-        diff = differ.compare(previous_list, current_list)
-
-        y = 0  # how many rows along we are
-
-        for stoptime in trip.stoptime_set.all():
-            if y < len(rows):
-                existing_row = rows[y]
-            else:
-                existing_row = None
-
-            instruction = next(diff)
-
-            while instruction[0] in '-?':
-                if instruction[0] == '-':
-                    y += 1
-                    if y < len(rows):
-                        existing_row = rows[y]
-                    else:
-                        existing_row = None
-                instruction = next(diff)
-
-            assert instruction[2:] == stoptime.stop_code
-
-            if instruction[0] == '+':
-                row = Row(Stop(stoptime.stop_code), [''] * x)
-                row.timing_status = stoptime.timing_status
-                if not existing_row:
-                    rows.append(row)
-                else:
-                    rows = grouping.rows = rows[:y] + [row] + rows[y:]
-                existing_row = row
-            else:
-                row = existing_row
-                assert instruction[2:] == existing_row.stop.atco_code
-
-            cell = Cell(stoptime, stoptime.arrival, stoptime.departure)
-            row.times.append(cell)
-
-            y += 1
-
-        cell.last = True
-
-        if x:
-            for row in rows:
-                if len(row.times) == x:
-                    row.times.append('')
+        for grouping in self.groupings:
+            for row in grouping.rows:
+                row.has_waittimes = any(type(cell) is Cell and cell.arrival != cell.departure for cell in row.times)
+            grouping.do_heads_and_feet()
 
     def date_options(self):
         date = datetime.date.today()
@@ -218,9 +169,7 @@ def abbreviate(grouping, i, in_a_row, difference):
     seconds = difference.total_seconds()
     if not seconds or (seconds != 3600 and seconds > 1800):  # neither hourly nor more than every 30 minutes
         return
-    # repetition = Repetition(in_a_row + 1, sum(2 if row.has_waittimes else 1 for row in grouping.rows), difference)
-    # repetition.min_height = sum(2 if row.has_waittimes else 1 for row in grouping.rows if not row.is_minor())
-    repetition = Repetition(in_a_row + 1, len(grouping.rows), difference)
+    repetition = Repetition(in_a_row + 1, sum(2 if row.has_waittimes else 1 for row in grouping.rows), difference)
     # repetition.min_height = sum(2 if row.has_waittimes else 1 for row in grouping.rows if not row.is_minor())
     grouping.rows[0].times[i - in_a_row - 2] = repetition
     for j in range(i - in_a_row - 1, i - 1):
@@ -251,6 +200,61 @@ class Grouping:
     def get_order(self):
         if self.trips:
             return self.trips[0].start
+
+    def handle_trip(self, trip):
+        rows = self.rows
+        if rows:
+            x = len(rows[0].times)
+        else:
+            x = 0
+        previous_list = [row.stop.atco_code for row in rows]
+        current_list = [stoptime.stop_code for stoptime in trip.stoptime_set.all()]
+        diff = differ.compare(previous_list, current_list)
+
+        y = 0  # how many rows along we are
+
+        for stoptime in trip.stoptime_set.all():
+            if y < len(rows):
+                existing_row = rows[y]
+            else:
+                existing_row = None
+
+            instruction = next(diff)
+
+            while instruction[0] in '-?':
+                if instruction[0] == '-':
+                    y += 1
+                    if y < len(rows):
+                        existing_row = rows[y]
+                    else:
+                        existing_row = None
+                instruction = next(diff)
+
+            assert instruction[2:] == stoptime.stop_code
+
+            if instruction[0] == '+':
+                row = Row(Stop(stoptime.stop_code), [''] * x)
+                row.timing_status = stoptime.timing_status
+                if not existing_row:
+                    rows.append(row)
+                else:
+                    rows = self.rows = rows[:y] + [row] + rows[y:]
+                existing_row = row
+            else:
+                row = existing_row
+                assert instruction[2:] == existing_row.stop.atco_code
+
+            cell = Cell(stoptime, stoptime.arrival, stoptime.departure)
+            row.times.append(cell)
+
+            y += 1
+
+        cell.last = True
+
+        if x:
+            for row in rows:
+                if len(row.times) == x:
+                    row.times.append('')
 
     def do_heads_and_feet(self):
         previous_trip = None
