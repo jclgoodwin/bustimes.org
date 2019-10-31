@@ -36,6 +36,13 @@ def calculate_bearing(a, b):
     return bearing_degrees
 
 
+def calculate_speed(a, b):
+    time = b.datetime - a.datetime
+    if time:
+        distance = a.latlong.distance(b.latlong) * 69  # approximate miles
+        return distance / time.total_seconds() * 60 * 60
+
+
 def same_journey(latest_location, journey, datetime):
     if not latest_location:
         return False
@@ -167,12 +174,16 @@ class ImportLiveVehiclesCommand(BaseCommand):
         vehicle.update_last_modified()
 
         if latest:
-            distance = latest.latlong.distance(location.latlong) * 69
-            time = location.datetime - latest.datetime
-            if time:
-                speed = distance / time.total_seconds() * 60 * 60
+            speed = calculate_speed(latest, location)
+            if speed:
                 if speed > 90:
                     print('{} mph\t{}'.format(speed, journey.vehicle.get_absolute_url()))
+                elif speed < 3:
+                    last_three = list(location.journey.vehiclelocation_set.order_by('-id')[:3])
+                    if len(last_three) == 3:
+                        speed = calculate_speed(last_three[2], last_three[0])
+                        if speed < 3:
+                            print(last_three[1].delete())
 
     def update(self):
         now = timezone.localtime()
