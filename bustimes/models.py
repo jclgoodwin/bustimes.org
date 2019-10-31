@@ -1,6 +1,5 @@
 from django.db.models import Q
 from django.contrib.gis.db import models
-from django.urls import reverse
 
 
 def get_calendars(when):
@@ -28,9 +27,6 @@ class Route(models.Model):
 
     def __str__(self):
         return ' – '.join(part for part in (self.line_name, self.line_brand, self.description) if part)
-
-    def get_absolute_url(self):
-        return reverse('route_detail', args=(self.id,))
 
 
 class Calendar(models.Model):

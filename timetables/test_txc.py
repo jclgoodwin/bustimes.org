@@ -24,23 +24,6 @@ class TimetableTest(TestCase):
         none = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-', date(2017, 1, 21))
         self.assertIsNone(none)
 
-    def test_timetable_ea(self):
-        """Test a timetable from the East Anglia region"""
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-1.xml', date(2016, 10, 16))
-
-        self.assertEqual('Attleborough - Wymondham - Norwich', str(timetable.groupings[0]))
-
-        self.assertTrue(timetable.groupings[0].has_minor_stops())
-        self.assertEqual(87, len(timetable.groupings[0].rows))
-        self.assertEqual(5, len(timetable.groupings[0].rows[0].times))
-        self.assertEqual('', timetable.groupings[0].rows[0].times[-1])
-        self.assertEqual('Leys Lane', timetable.groupings[0].rows[0].part.stop.common_name)
-
-        self.assertEqual('Norwich - Wymondham - Attleborough', str(timetable.groupings[1]))
-        self.assertEqual(91, len(timetable.groupings[1].rows))
-        self.assertEqual(4, len(timetable.groupings[1].rows[0].times))
-        self.assertEqual('', timetable.groupings[1].rows[0].times[-1])
-
     @freeze_time('1 April 2017')
     def test_timetable_ea_2(self):
         """Test a timetable with a single OperatingProfile (no per-VehicleJourney ones)"""
@@ -159,18 +142,6 @@ class TimetableTest(TestCase):
         self.assertEqual(rows[-4].times, [time(8, 33, 10), '', '', '', time(15, 30, 10), ''])
         self.assertEqual(rows[-5].times, [time(8, 33), '', '', '', time(15, 30), ''])
         self.assertEqual(rows[-6].times, [time(8, 32, 18), '', '', '', time(15, 29, 18), ''])
-
-    def test_timetable_welsh_servicedorg(self):
-        """Test a timetable from Wales (with SequenceNumbers on Journeys),
-        with a university ServicedOrganisation
-        """
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'CGAO305.xml', date(2017, 1, 23))
-        self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
-
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'CGAO305.xml', None)
-        self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
-
-        # self.assertEqual('305MFMWA1', timetable.private_code)
 
     def test_timetable_holidays_only(self):
         """Test a service with a HolidaysOnly operating profile

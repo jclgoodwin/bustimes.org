@@ -101,7 +101,7 @@ class ImportServicesTest(TestCase):
         cls.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml'])
 
         # simulate a Scotland zipfile:
-        cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml', 'CGAO305.xml'])
+        cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml'])
 
         # simulate a North West zipfile:
         cls.write_files_to_zipfile_and_import('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml',
@@ -387,24 +387,6 @@ class ImportServicesTest(TestCase):
                 <a href="/stops/639004554">Witton Park (opp)</a>
             </li>
         """, html=True)
-
-    @freeze_time('25 June 2016')
-    def test_do_service_wales(self):
-        service = Service.objects.get(service_code='CGAO305')
-        service_code = service.servicecode_set.first()
-
-        self.assertEqual(service_code.scheme, 'Traveline Cymru')
-        self.assertEqual(service_code.code, '305MFMWA1')
-
-        service.region = self.w
-        service.source = None
-        service.save()
-
-        response = self.client.get(service.get_absolute_url())
-        self.assertEqual(response.context_data['links'], [{
-            'url': 'https://www.traveline.cymru/timetables/?routeNum=305&direction_id=0&timetable_key=305MFMWA1',
-            'text': 'Timetable on the Traveline Cymru website'
-        }])
 
     # def test_combine_date_time(self):
     #     combine_date_time = generate_departures.combine_date_time
