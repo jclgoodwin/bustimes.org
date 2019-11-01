@@ -5,7 +5,7 @@ from freezegun import freeze_time
 from django.test import TestCase, override_settings
 from django.core.management import call_command
 from django.contrib.gis.geos import Point
-from busstops.models import Region, StopPoint, Service
+from busstops.models import Region, StopPoint, Service, Operator, OperatorCode, DataSource
 from ...models import Route, Trip, Calendar, CalendarDate
 
 
@@ -18,6 +18,10 @@ class ImportTransXChangeTest(TestCase):
     def setUpTestData(cls):
         cls.ea = Region.objects.create(pk='EA', name='East Anglia')
         cls.w = Region.objects.create(pk='W', name='Wales')
+        cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
+
+        source = DataSource.objects.create(name='EA')
+        OperatorCode.objects.create(operator=cls.fecs, source=source, code='FECS')
 
         StopPoint.objects.bulk_create(
             StopPoint(atco_code, latlong=Point(0, 0), active=True) for atco_code in (
@@ -50,48 +54,7 @@ class ImportTransXChangeTest(TestCase):
     @freeze_time('3 October 2016')
     def test_east_anglia(self):
         # with self.assertNumQueries(186):
-        self.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml', 'ea_20-12-_-y08-1.xml'])
-
-        route = Route.objects.get(line_name='13B', line_brand='Turquoise Line')
-
-        self.assertEqual(32, Trip.objects.count())
-        self.assertEqual(6, Calendar.objects.count())
-        self.assertEqual(8, CalendarDate.objects.count())
-
-        self.assertEqual(str(route), '13B – Turquoise Line – Norwich - Wymondham - Attleborough')
-        self.assertEqual(route.line_name, '13B')
-        self.assertEqual(route.line_brand, 'Turquoise Line')
-        self.assertEqual(route.start_date, date(2016, 4, 18))
-        self.assertEqual(route.end_date, date(2016, 10, 21))
-
-        res = self.client.get(route.service.get_absolute_url())
-        self.assertContains(res, '<option selected value="2016-10-03">Monday 3 October 2016</option>')
-        self.assertContains(res, """
-            <tr class="OTH">
-                <th>2900N12348</th>
-                <td>19:47</td>
-                <td>22:55</td>
-            </tr>
-        """, html=True)
-
-        res = self.client.get(route.service.get_absolute_url() + '?date=2016-10-16')
-        timetable = res.context_data['timetable']
-
-        self.assertEqual('Inbound', str(timetable.groupings[0]))
-
-        self.assertTrue(timetable.groupings[0].has_minor_stops())
-        self.assertTrue(timetable.groupings[1].has_minor_stops())
-
-        self.assertEqual(87, len(timetable.groupings[0].rows))
-        self.assertEqual(91, len(timetable.groupings[1].rows))
-
-        # self.assertEqual(5, len(timetable.groupings[0].rows[0].times))
-        self.assertEqual(4, len(timetable.groupings[0].rows[0].times))
-        self.assertEqual(4, len(timetable.groupings[1].rows[0].times))
-
-        self.assertEqual('', timetable.groupings[0].rows[0].times[-1])
-
-        # self.assertEqual(['', '', '', '', '', '', '', ''], timetable.groupings[1].rows[0].times[-8:])
+        self.write_files_to_zipfile_and_import('EA.zip', ['ea_20-12-_-y08-1.xml', 'ea_21-13B-B-y08-1.xml'])
 
         route = Route.objects.get(line_name='12')
         self.assertEqual('12', route.service.line_name)
@@ -115,6 +78,91 @@ class ImportTransXChangeTest(TestCase):
         res = self.client.get(route.service.get_absolute_url() + '?date=2016-12-28')
         timetable = res.context_data['timetable']
         self.assertEqual(0, len(timetable.groupings))
+
+        #    __     _____     ______
+        #   /  |   / ___ \   | ___  \
+        #  /_  |   \/   \ \  | |  \  |
+        #    | |       _/ /  | |__/  /
+        #    | |      |_  |  | ___  |
+        #    | |        \ \  | |  \  \
+        #    | |   /\___/ /  | |__/  |
+        #   /___\  \_____/   |______/
+
+        route = Route.objects.get(line_name='13B', line_brand='Turquoise Line')
+
+        self.assertEqual(32, Trip.objects.count())
+        self.assertEqual(6, Calendar.objects.count())
+        self.assertEqual(8, CalendarDate.objects.count())
+
+        self.assertEqual(str(route), '13B – Turquoise Line – Norwich - Wymondham - Attleborough')
+        self.assertEqual(route.line_name, '13B')
+        self.assertEqual(route.line_brand, 'Turquoise Line')
+        self.assertEqual(route.start_date, date(2016, 4, 18))
+        self.assertEqual(route.end_date, date(2016, 10, 21))
+
+        service = route.service
+
+        self.assertEqual(str(service), '13B - Turquoise Line - Norwich - Wymondham - Attleborough')
+        self.assertEqual(service.line_name, '13B')
+        self.assertEqual(service.line_brand, 'Turquoise Line')
+        self.assertTrue(service.show_timetable)
+        self.assertTrue(service.current)
+        self.assertEqual(service.outbound_description, 'Norwich - Wymondham - Attleborough')
+        self.assertEqual(service.inbound_description, 'Attleborough - Wymondham - Norwich')
+        self.assertEqual(service.operator.first(), self.fecs)
+        self.assertEqual(
+            service.get_traveline_link()[0],
+            'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST' +
+            '?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0'
+        )
+
+        res = self.client.get(service.get_absolute_url())
+        self.assertEqual(res.context_data['breadcrumb'], [self.ea, self.fecs])
+        self.assertContains(res, """
+            <tr class="OTH">
+                <th>2900N12345</th><td>19:48</td><td>22:56</td>
+            </tr>
+        """, html=True)
+        self.assertContains(res, '<option selected value="2016-10-03">Monday 3 October 2016</option>')
+
+        res = self.client.get(service.get_absolute_url())
+        self.assertContains(res, '<option selected value="2016-10-03">Monday 3 October 2016</option>')
+        self.assertContains(res, """
+            <tr class="OTH">
+                <th>2900N12348</th>
+                <td>19:47</td>
+                <td>22:55</td>
+            </tr>
+        """, html=True)
+
+        res = self.client.get(service.get_absolute_url() + '?date=2016-10-16')
+        timetable = res.context_data['timetable']
+
+        self.assertEqual('Inbound', str(timetable.groupings[0]))
+
+        self.assertTrue(timetable.groupings[0].has_minor_stops())
+        self.assertTrue(timetable.groupings[1].has_minor_stops())
+
+        self.assertEqual(87, len(timetable.groupings[0].rows))
+        self.assertEqual(91, len(timetable.groupings[1].rows))
+
+        # self.assertEqual(5, len(timetable.groupings[0].rows[0].times))
+        self.assertEqual(4, len(timetable.groupings[0].rows[0].times))
+        self.assertEqual(4, len(timetable.groupings[1].rows[0].times))
+
+        self.assertEqual('', timetable.groupings[0].rows[0].times[-1])
+
+        # self.assertEqual(['', '', '', '', '', '', '', ''], timetable.groupings[1].rows[0].times[-8:])
+
+        # Test the fallback version without a timetable (just a list of stops)
+        service.show_timetable = False
+        service.save(update_fields=['show_timetable'])
+        res = self.client.get(service.get_absolute_url())
+        self.assertContains(res, """<li class="PTP">
+            <a href="/stops/2900A181"></a>
+        </li>""")
+        self.assertContains(res, 'Norwich - Wymondham - Attleborough')
+        self.assertContains(res, 'Attleborough - Wymondham - Norwich')
 
     @freeze_time('30 October 2017')
     def test_service_with_no_description_and_empty_pattern(self):

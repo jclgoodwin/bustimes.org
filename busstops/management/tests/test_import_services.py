@@ -32,20 +32,16 @@ class ImportServicesTest(TestCase):
     def setUpTestData(cls):
         clean_up()
 
-        cls.ea = Region.objects.create(pk='EA', name='East Anglia')
         cls.gb = Region.objects.create(pk='GB', name='Großbritannien')
         cls.sc = Region.objects.create(pk='S', name='Scotland')
         cls.nw = Region.objects.create(pk='NW', name='North West')
         cls.w = Region.objects.create(pk='W', name='Wales')
         cls.london = Region.objects.create(pk='L', name='London')
 
-        cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
         cls.megabus = Operator.objects.create(pk='MEGA', region_id='GB', name='Megabus')
         cls.fabd = Operator.objects.create(pk='FABD', region_id='S', name='First Aberdeen')
 
         nocs = DataSource.objects.create(name='National Operator Codes', datetime='2018-02-01 00:00+00:00')
-        east_anglia = DataSource.objects.create(name='EA', datetime='2018-02-01 00:00+00:00')
-        OperatorCode.objects.create(operator=cls.fecs, source=east_anglia, code='FECS')
         OperatorCode.objects.create(operator=cls.megabus, source=nocs, code='MEGA')
         OperatorCode.objects.create(operator=cls.fabd, source=nocs, code='FABD')
 
@@ -59,8 +55,6 @@ class ImportServicesTest(TestCase):
                     ('639004554', 'Witton Park', 'opp', -2.5108434749, 53.7389877672),
                     ('639004552', 'The Griffin', 'adj', -2.4989239373, 53.7425523688),
                     ('049004705400', 'Kingston District Centre', 'o/s', 0, 0),
-                    ('4200F156472', 'Asda', 'opp', 0, 0),
-                    ('2900A1820', 'Leys Lane', 'adj', 0, 0),
                     ('1000DDDV4248', 'Dinting Value Works', '', 0, 0),
             )
         )
@@ -97,9 +91,6 @@ class ImportServicesTest(TestCase):
             )
         )
 
-        # simulate an East Anglia zipfile:
-        cls.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml'])
-
         # simulate a Scotland zipfile:
         cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml'])
 
@@ -107,7 +98,6 @@ class ImportServicesTest(TestCase):
         cls.write_files_to_zipfile_and_import('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml',
                                                          'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
 
-        cls.ea_service = Service.objects.get(pk='ea_21-13B-B-y08')
         cls.sc_service = Service.objects.get(pk='ABBN017')
 
         # simulate a National Coach Service Database zip file
@@ -266,47 +256,6 @@ class ImportServicesTest(TestCase):
 
         self.assertEqual(1, service.stopusage_set.all().count())
         self.assertEqual(6, duplicate.stopusage_set.all().count())
-
-    @freeze_time('3 October 2016')
-    def test_do_service_ea(self):
-        service = self.ea_service
-
-        self.assertEqual(str(service), '13B - Turquoise Line - Norwich - Wymondham - Attleborough')
-        self.assertEqual(service.line_name, '13B')
-        self.assertEqual(service.line_brand, 'Turquoise Line')
-        self.assertTrue(service.show_timetable)
-        self.assertTrue(service.current)
-        self.assertEqual(service.outbound_description, 'Norwich - Wymondham - Attleborough')
-        self.assertEqual(service.inbound_description, 'Attleborough - Wymondham - Norwich')
-        self.assertEqual(service.operator.first(), self.fecs)
-        self.assertEqual(
-            service.get_traveline_link()[0],
-            'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST' +
-            '?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0'
-        )
-
-        res = self.client.get(service.get_absolute_url())
-        self.assertEqual(res.context_data['breadcrumb'], [self.ea, self.fecs])
-        self.assertContains(res, """
-            <tr class="OTH">
-                <th>2900N12345</th><td>19:48</td><td>22:56</td>
-            </tr>
-        """, html=True)
-        self.assertContains(res, '<option selected value="2016-10-03">Monday 3 October 2016</option>')
-
-        # Test the fallback version without a timetable (just a list of stops)
-        service.show_timetable = False
-        service.save()
-        res = self.client.get(service.get_absolute_url())
-        self.assertContains(res, 'Leys Lane (adj)')
-        self.assertContains(res, 'Norwich - Wymondham - Attleborough')
-        self.assertContains(res, 'Attleborough - Wymondham - Norwich')
-
-        # Re-import the service, now that the operating period has passed
-        with freeze_time('2016-10-30'):
-            call_command(self.command, os.path.join(FIXTURES_DIR, 'EA.zip'))
-        service.refresh_from_db()
-        self.assertFalse(service.current)
 
     @freeze_time('22 January 2017')
     def test_do_service_m11a(self):
