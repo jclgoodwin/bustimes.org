@@ -41,6 +41,7 @@ def calculate_speed(a, b):
     if time:
         distance = a.latlong.distance(b.latlong) * 69  # approximate miles
         return distance / time.total_seconds() * 60 * 60
+    return 0
 
 
 def same_journey(latest_location, journey, datetime):
@@ -174,16 +175,15 @@ class ImportLiveVehiclesCommand(BaseCommand):
         vehicle.update_last_modified()
 
         if latest:
-            speed = calculate_speed(latest, location)
-            if speed:
-                if speed > 90:
-                    print('{} mph\t{}'.format(speed, journey.vehicle.get_absolute_url()))
-                elif speed < 3:
-                    last_three = list(location.journey.vehiclelocation_set.order_by('-id')[:3])
-                    if len(last_three) == 3:
-                        speed = calculate_speed(last_three[2], last_three[0])
-                        if speed < 3:
-                            print(last_three[1].delete())
+            speed = calculate_speed(latest, location) or 0
+            if speed > 90:
+                print('{} mph\t{}'.format(speed, journey.vehicle.get_absolute_url()))
+            elif speed < 3:
+                last_three = list(location.journey.vehiclelocation_set.order_by('-id')[:3])
+                if len(last_three) == 3:
+                    speed = calculate_speed(last_three[2], last_three[0])
+                    if speed < 3:
+                        print(last_three[1].delete())
 
     def update(self):
         now = timezone.localtime()
