@@ -175,7 +175,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         vehicle.update_last_modified()
 
         if latest:
-            speed = calculate_speed(latest, location) or 0
+            speed = calculate_speed(latest, location)
             if speed > 90:
                 print('{} mph\t{}'.format(speed, journey.vehicle.get_absolute_url()))
             elif speed < 3:
