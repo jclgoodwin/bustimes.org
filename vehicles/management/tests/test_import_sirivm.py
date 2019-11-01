@@ -53,8 +53,14 @@ class SiriVMImportTest(TestCase):
 
         # different datetime - should create new vehicle location
         item.find('siri:RecordedAtTime', import_sirivm.NS).text = '2018-08-06T21:45:32+01:00'
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             self.command.handle_item(item, None)
+
+        # another different datetime - should create new vehicle location, and delete previous one (because speed == 0)
+        item.find('siri:RecordedAtTime', import_sirivm.NS).text = '2018-08-06T21:46:32+01:00'
+        with self.assertNumQueries(9):
+            self.command.handle_item(item, None)
+
         self.assertEqual(2, locations.count())
         last_location = locations.last()
         self.assertIsNone(last_location.heading)

@@ -183,7 +183,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 if len(last_three) == 3:
                     speed = calculate_speed(last_three[2], last_three[0])
                     if speed < 3:
-                        print(last_three[1].delete())
+                        last_three[1].delete()
 
     def update(self):
         now = timezone.localtime()

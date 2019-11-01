@@ -42,7 +42,7 @@ class EdinburghImportTest(TestCase):
         self.assertFalse(created)
 
         item['last_gps_fix'] += 200
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             self.command.handle_item(item, None)
 
     def test_vehicle_location(self):
