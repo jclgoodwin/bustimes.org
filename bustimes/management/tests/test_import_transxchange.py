@@ -28,7 +28,9 @@ class ImportTransXChangeTest(TestCase):
                 '2900A181',
                 '2900S367',
                 '2900N12106',
-                '0500HSTIV002'
+                '0500HSTIV002',
+                '5230WDB25331',
+                '5230AWD71095',
             )
         )
 
@@ -145,10 +147,11 @@ class ImportTransXChangeTest(TestCase):
             'text': 'Timetable on the Traveline Cymru website'
         }])
 
-        response = self.client.get(service.get_absolute_url() + '?date=2017-03-20')
-        timetable = response.context_data['timetable']
-        self.assertEqual('2017-03-20', str(timetable.date))
-        self.assertEqual(0, len(timetable.groupings))
-
         response = self.client.get(service.get_absolute_url() + '/debug')
-        print(response.content.decode())
+        self.assertContains(response, 'Wednesday 12 April 2017 - Tuesday 30 May 2017: True')
+
+        response = self.client.get(service.get_absolute_url() + '?date=2017-04-20')
+        timetable = response.context_data['timetable']
+        self.assertEqual('2017-04-20', str(timetable.date))
+        self.assertEqual(1, len(timetable.groupings))
+        self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
