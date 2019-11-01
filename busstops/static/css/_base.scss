@@ -524,6 +524,29 @@ table {
     }
 }
 
+#journey-overlay {
+    background: #fff;
+    bottom: 0;
+    display: none;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+
+    #map {
+        position: absolute;
+        top: 7em;
+    }
+}
+
+#details {
+    padding: 1em;
+
+    p {
+        margin-top: 0;
+    }
+}
+
 .service-map {
     display: none;
 
@@ -546,9 +569,10 @@ table {
 .leaflet-marker-icon {
     &.just-arrow {
         .arrow {
-            border: 8px solid transparent;
-            border-bottom: 12px solid $black;
-            border-top: 0;
+            border: 2px solid $black;
+            border-width: 0 2px 2px 0;
+            height: 8px;
+            width: 8px;
         }
     }
 
