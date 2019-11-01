@@ -341,6 +341,11 @@ class ImportServicesTest(TestCase):
         )
         self.assertContains(res, '/js/timetable.min.js')
 
+        timetable = res.context_data['timetable']
+        self.assertFalse(timetable.groupings[0].has_minor_stops())
+        self.assertFalse(timetable.groupings[1].has_minor_stops())
+        self.assertEqual(str(timetable.groupings[1].rows[0].times), '[13:00, 15:00, 16:00, 16:30, 18:00, 20:00, 23:45]')
+
     @freeze_time('1 Jan 2017')
     def test_do_service_m12(self):
         res = self.client.get(self.gb_m12.get_absolute_url())

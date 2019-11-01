@@ -359,7 +359,7 @@ class Cell:
         self.departure = departure
         self.activity = stoptime.activity
 
-    def __str__(self):
+    def __repr__(self):
         arrival = self.arrival
         string = str(arrival)[:-3]
         string = string.replace('1 day, ', '', 1)
@@ -369,5 +369,5 @@ class Cell:
 
     def __eq__(self, other):
         if type(other) == datetime.time:
-            return self.stoptime.arrival == other or self.stoptime.departure == other
-        return self.stoptime.arrival == other.stoptime.arrival and self.stoptime.departure == other.stoptime.departure
+            return self.arrival == other or self.departure == other
+        return self.arrival == other.arrival and self.departure == other.departure

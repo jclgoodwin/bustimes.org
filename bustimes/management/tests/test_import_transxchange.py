@@ -94,11 +94,17 @@ class ImportTransXChangeTest(TestCase):
         # self.assertEqual(['', '', '', '', '', '', '', ''], timetable.groupings[1].rows[0].times[-8:])
 
         route = Route.objects.get(line_name='12')
+        self.assertEqual('12', route.service.line_name)
 
         res = self.client.get(route.service.get_absolute_url())
         timetable = res.context_data['timetable']
         self.assertEqual(1, len(timetable.groupings))
         self.assertEqual(21, len(timetable.groupings[0].rows))
+        self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
+        self.assertEqual(3, timetable.groupings[0].rows[0].times[1].colspan)
+        self.assertEqual(21, timetable.groupings[0].rows[0].times[1].rowspan)
+        self.assertEqual(2, len(timetable.groupings[0].rows[1].times))
+        self.assertEqual(2, len(timetable.groupings[0].rows[20].times))
 
         # Test operating profile days of non operation
         res = self.client.get(route.service.get_absolute_url() + '?date=2016-12-28')

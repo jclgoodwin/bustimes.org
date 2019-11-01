@@ -24,40 +24,6 @@ class TimetableTest(TestCase):
         none = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-', date(2017, 1, 21))
         self.assertIsNone(none)
 
-    @freeze_time('1 April 2017')
-    def test_timetable_ea_2(self):
-        """Test a timetable with a single OperatingProfile (no per-VehicleJourney ones)"""
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_20-12-_-y08-1.xml', date(2016, 12, 2))
-
-        self.assertEqual('Outbound', str(timetable.groupings[0]))
-        self.assertEqual(21, len(timetable.groupings[0].rows))
-
-        self.assertEqual('St Ives (Cambs) Bus Station', str(timetable.groupings[0].rows[0])[:29])
-        self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
-        self.assertEqual(3, timetable.groupings[0].rows[0].times[1].colspan)
-        self.assertEqual(21, timetable.groupings[0].rows[0].times[1].rowspan)
-        self.assertEqual(2, len(timetable.groupings[0].rows[1].times))
-        self.assertEqual(2, len(timetable.groupings[0].rows[20].times))
-
-        self.assertEqual(0, len(timetable.groupings[1].rows))
-
-        # Test operating profile days of non operation
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_20-12-_-y08-1.xml', date(2016, 12, 28))
-        self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
-
-        # Test bank holiday non operation (Boxing Day)
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'ea_20-12-_-y08-1.xml', date(2016, 12, 26))
-        self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
-
-    def test_timetable_megabus(self):
-        """Test a timetable from the National Coach Services Database"""
-        megabus = txc.timetable_from_filename(FIXTURES_DIR, 'NCSD_TXC/Megabus_Megabus14032016 163144_MEGA_M11A.xml',
-                                              date(2016, 12, 2))
-        self.assertFalse(megabus.groupings[0].has_minor_stops())
-        self.assertFalse(megabus.groupings[1].has_minor_stops())
-        self.assertEqual(megabus.groupings[1].rows[0].times,
-                         [time(13, 0), time(15, 0), time(16, 0), time(16, 30), time(18, 0), time(20, 0), time(23, 45)])
-
     def test_timetable_ne(self):
         """Test timetable with some abbreviations"""
         timetable_ne = txc.timetable_from_filename(FIXTURES_DIR, 'NE_03_SCC_X6_1.xml', date(2016, 12, 15))
