@@ -68,6 +68,7 @@ summary {
 .autocomplete__hint,
 .autocomplete__input {
     border: 1px solid $border-color;
+    margin: 0;  // for Safari
 }
 
 .autocomplete__menu {
