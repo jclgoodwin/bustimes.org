@@ -59,6 +59,49 @@ summary {
     margin: 1em 0;
 }
 
+@import '../js/accessible-autocomplete/accessible-autocomplete.min.css';
+
+.autocomplete__hint {
+    font: inherit;
+}
+
+.autocomplete__hint,
+.autocomplete__input {
+    border: 1px solid $border-color;
+}
+
+.autocomplete__menu {
+    border: 1px solid $border-color;
+    border-top: 0;
+    width: calc(100% - 2px);
+}
+
+.autocomplete__input--focused {
+    box-shadow: none;
+}
+
+.autocomplete__hint,
+.autocomplete__input,
+.autocomplete__option {
+    font-size: 1em;
+    padding: 4px;
+}
+
+.autocomplete__option {
+    border-color: $border-color;
+}
+
+.autocomplete__option--odd {
+    background: none;
+}
+
+.autocomplete__option--focused,
+.autocomplete__option:hover {
+    background: $brand-color;
+    border-color: $brand-color-darker;
+    color: $text-color;
+}
+
 #id_colours {
     li {
         margin: 1em 0;
@@ -68,99 +111,6 @@ summary {
         display: inline-block;
         margin: 0 .5em;
         vertical-align: middle;
-    }
-}
-
-.autocomplete__wrapper {
-    position: relative;
-}
-
-.autocomplete__hint,
-.autocomplete__input {
-    -webkit-appearance: none;
-    border: 1px solid;
-    border-radius: 0; /* Safari 10 on iOS adds implicit border rounding. */
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    font-size: 1em;
-    line-height: 1.5;
-    margin-bottom: 0; /* BUG: Safari 10 on macOS seems to add an implicit margin. */
-    padding: .25em;
-    width: 100%;
-}
-
-.autocomplete__input {
-    background-color: transparent;
-    position: relative;
-}
-
-.autocomplete__hint {
-    color: #BFC1C3;
-    position: absolute;
-}
-
-.autocomplete__input--default{
-    padding: 4px;
-}
-
-.autocomplete__menu {
-    background-color: #fff;
-    border: 1px solid $brand-color;
-    border-top: 0;
-    margin: 0;
-    max-height: 342px;
-    overflow-x: hidden;
-    padding: 0;
-    width: 100%;
-    width: calc(100% - 2px);
-
-    &--visible {
-        display: block;
-    }
-
-    &--hidden {
-        display: none;
-    }
-
-    &--overlay {
-        left: 0;
-        position: absolute;
-        top: 100%;
-        z-index: 100;
-    }
-
-    &--inline {
-        position: relative;
-    }
-}
-
-
-.autocomplete__option {
-    border-bottom: solid $brand-color;
-    border-width: 1px 0;
-    cursor: pointer;
-    display: block;
-    padding: .25em;
-    position: relative;
-
-    > * {
-        pointer-events: none;
-    }
-
-    &:first-of-type {
-        border-top-width: 0;
-    }
-
-    &:last-of-type {
-        border-bottom-width: 0;
-    }
-
-    &--focused,
-    &:hover {
-        background-color: $brand-color;
-        border-color: $brand-color-darker;
-        outline: none;
     }
 }
 
