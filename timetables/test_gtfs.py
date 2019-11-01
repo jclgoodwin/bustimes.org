@@ -13,6 +13,7 @@ FIXTURES_DIR = os.path.join(settings.BASE_DIR, 'busstops', 'management', 'tests'
 
 
 @override_settings(DATA_DIR=FIXTURES_DIR, IE_COLLECTIONS=['mortons', 'seamusdoherty'])
+@freeze_time('2019-08-30')
 class GTFSTest(TestCase):
     @classmethod
     def setUpTestData(cls):
