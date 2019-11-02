@@ -17,7 +17,7 @@
         direction = (direction || 0) - 135;
         return L.marker(latlng, {
             icon: L.divIcon({
-                iconSize: [10, 10],
+                iconSize: [20, 20],
                 html: '<div class="arrow" style="-ms-transform: rotate(' + direction + 'deg);-webkit-transform: rotate(' + direction + 'deg);-moz-transform: rotate(' + direction + 'deg);-o-transform: rotate(' + direction + 'deg);transform: rotate(' + direction + 'deg)"></div>',
                 className: 'just-arrow'
             })
@@ -138,7 +138,12 @@
                 getMarker(coordinates, locations[i].direction).bindPopup(popup).addTo(layerGroup);
                 line.push(coordinates);
             }
-            line = L.polyline(line);
+            line = L.polyline(line, {
+                style: {
+                    weight: 3,
+                    color: '#87f'
+                }
+            });
             line.addTo(layerGroup);
             bounds = line.getBounds();
             map.fitBounds(bounds);
