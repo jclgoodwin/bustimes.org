@@ -327,6 +327,12 @@ class ImportServicesTest(TestCase):
         self.assertTemplateUsed(res, 'busstops/service_detail.html')
         self.assertContains(res, '<td rowspan="63">then every 30 minutes until</td>', html=True)
 
+        timetable = res.context_data['timetable']
+        self.assertEqual('2016-06-25', str(timetable.date))
+        self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
+        self.assertEqual(3, len(timetable.groupings[1].rows[0].times))
+        self.assertEqual(timetable.groupings[0].column_feet, {})
+
         # Within operating period, but with no journeys
         res = self.client.get(service.get_absolute_url() + '?date=2026-04-18')
         self.assertContains(res, 'Sorry, no journeys found for Saturday 18 April 2026')

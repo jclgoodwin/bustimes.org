@@ -57,11 +57,6 @@ class TimetableTest(TestCase):
         self.assertEqual(str(timetable.groupings[0]), 'Southend On Sea - South Benfleet - Basildon via Hadleigh')
         self.assertEqual(str(timetable.groupings[1]), 'Basildon - South Benfleet - Southend On Sea via Hadleigh')
 
-    def test_timetable_scotland(self):
-        """Test a Scotch timetable with no foot"""
-        timetable_scotland = txc.timetable_from_filename(FIXTURES_DIR, 'SVRABBN017.xml', date(2017, 1, 28))
-        self.assertEqual(timetable_scotland.groupings[0].column_feet, {})
-
     def test_timetable_derby_alvaston_circular(self):
         """Test a weird timetable where 'Wilmorton Ascot Drive' is visited twice consecutively on on one journey"""
         timetable = txc.timetable_from_filename(FIXTURES_DIR, 'em_11-1-J-y08-1.xml', date(2017, 12, 10))
