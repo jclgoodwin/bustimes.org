@@ -211,7 +211,9 @@ class Vehicle(models.Model):
             else:
                 search = str(self).replace('/', ' ')
             if self.operator:
-                name = str(self.operator).replace(' Buses', '', 1).replace(' Coaches', '', 1)
+                name = str(self.operator).split(' (', 1)[0]
+                if 'Yellow' not in name:
+                    name = str(self.operator).replace(' Buses', '', 1).replace(' Coaches', '', 1)
                 if name.startswith('First ') or name.startswith('Stagecoach ') or name.startswith('Arriva '):
                     name = name.split()[0]
                 search = f'{name} {search}'

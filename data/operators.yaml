@@ -345,6 +345,7 @@ EOSB:
     address: ""
     phone: ""
 KCTB:
+    aka: konect konnect bus
     url: https://www.konectbus.co.uk/
     phone: 03300 539358
     address: |
@@ -379,3 +380,10 @@ EYMS:
     url: https://www.eastyorkshirebuses.co.uk/
 FSCE:
     url: https://www.firstgroup.com/south-east-and-central-scotland
+MCGL:
+    name: McGill’s
+BHBC:
+    name: Brighton & Hove
+CT4N:
+    name: CT4N
+    aka: Nottingham Community Transport
