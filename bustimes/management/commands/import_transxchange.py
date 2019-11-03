@@ -192,10 +192,10 @@ class Command(BaseCommand):
                         with transaction.atomic():
                             self.handle_file(open_file, filename)
 
-            old_services = self.source.service_set.filter(current=True).exclude(service_code__in=self.service_codes)
-            old_services.update(current=False)
+        old_services = self.source.service_set.filter(current=True).exclude(service_code__in=self.service_codes)
+        old_services.update(current=False)
 
-            self.source.save(update_fields=['datetime'])
+        self.source.save(update_fields=['datetime'])
 
         try:
             shutil.copy(archive_name, settings.TNDS_DIR)
@@ -204,7 +204,7 @@ class Command(BaseCommand):
 
         StopPoint.objects.filter(active=False, service__current=True).update(active=True)
         StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
-
+        self.source.route_set.filter(service__current=False).delete()
         Service.objects.filter(region=self.region_id, current=False, geometry__isnull=False).update(geometry=None)
 
     def get_calendar(self, operating_profile, operating_period):

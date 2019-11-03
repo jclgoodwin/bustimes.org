@@ -685,10 +685,11 @@ class Service(models.Model):
 
         timetable = Timetable(routes, day)
 
-        for route in routes:
-            if route.start_date > timetable.date:
-                self.timetable_change = route.start_date
-                break
+        if timetable.date:
+            for route in routes:
+                if route.start_date > timetable.date:
+                    self.timetable_change = route.start_date
+                    break
 
         # timetable.service = self
         # timetable.set_description(self.description)
