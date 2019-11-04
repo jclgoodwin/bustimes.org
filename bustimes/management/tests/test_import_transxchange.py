@@ -18,6 +18,7 @@ class ImportTransXChangeTest(TestCase):
     def setUpTestData(cls):
         cls.ea = Region.objects.create(pk='EA', name='East Anglia')
         cls.w = Region.objects.create(pk='W', name='Wales')
+        Region.objects.create(pk='NE', name='North East')
         cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
 
         source = DataSource.objects.create(name='EA')
@@ -120,7 +121,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(res.context_data['breadcrumb'], [self.ea, self.fecs])
         self.assertContains(res, """
             <tr class="OTH">
-                <th>2900N12345</th><td>19:48</td><td>22:56</td>
+                <th><a href="/stops/2900N12345">Norwich Brunswick Road</a></th><td>19:48</td><td>22:56</td>
             </tr>
         """, html=True)
         self.assertContains(res, '<option selected value="2016-10-03">Monday 3 October 2016</option>')
@@ -129,7 +130,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(res, '<option selected value="2016-10-03">Monday 3 October 2016</option>')
         self.assertContains(res, """
             <tr class="OTH">
-                <th>2900N12348</th>
+                <th><a href="/stops/2900N12348">Norwich Eagle Walk</a></th>
                 <td>19:47</td>
                 <td>22:55</td>
             </tr>
@@ -209,3 +210,26 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual('2017-04-20', str(timetable.date))
         self.assertEqual(1, len(timetable.groupings))
         self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
+
+    @freeze_time('2016-12-15')
+    def test_timetable_ne(self):
+        """Test timetable with some abbreviations"""
+        self.write_files_to_zipfile_and_import('NE.zip', ['NE_03_SCC_X6_1.xml'])
+        service = Service.objects.get()
+        response = self.client.get(service.get_absolute_url())
+        timetable = response.context_data['timetable']
+
+        self.assertContains(response, 'Kendal - Barrow-in-Furness')
+
+        self.assertEqual('2016-12-15', str(timetable.date))
+
+        self.assertEqual(str(timetable.groupings[0].rows[0].times[:3]), '[05:20, 06:20, 07:15]')
+        self.assertEqual(str(timetable.groupings[1].rows[0].times[:3]), '[07:00, 08:00, 09:00]')
+
+        # Test abbreviations (check the colspan and rowspan attributes of Cells)
+        self.assertEqual(timetable.groupings[1].rows[0].times[3].colspan, 6)
+        # self.assertEqual(timetable.groupings[1].rows[0].times[3].rowspan, 104)
+        self.assertFalse(timetable.groupings[1].rows[43].has_waittimes)
+        # self.assertTrue(timetable.groupings[1].rows[44].has_waittimes)
+        # self.assertFalse(timetable.groupings[1].rows[45].has_waittimes)
+        self.assertEqual(str(timetable.groupings[0].rows[0].times[:6]), '[05:20, 06:20, 07:15, 08:10, 09:10, 10:10]'),

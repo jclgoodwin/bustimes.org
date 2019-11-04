@@ -227,7 +227,7 @@ class ImportServicesTest(TestCase):
         service = Service.objects.get(service_code='NW_04_GMN_2_1')
         self.assertEqual(service.description, 'intu Trafford Centre - Eccles - Swinton - Bolton')
 
-        self.assertEqual(2, service.stopusage_set.all().count())
+        self.assertEqual(23, service.stopusage_set.all().count())
 
     def test_service_nw_2(self):
         # Stagecoach Manchester 237
@@ -254,8 +254,8 @@ class ImportServicesTest(TestCase):
         self.assertEqual(27, len(res.context_data['timetable'].groupings[0].trips))
         self.assertEqual(30, len(res.context_data['timetable'].groupings[1].trips))
 
-        self.assertEqual(1, service.stopusage_set.all().count())
-        self.assertEqual(6, duplicate.stopusage_set.all().count())
+        self.assertEqual(87, service.stopusage_set.all().count())
+        self.assertEqual(121, duplicate.stopusage_set.all().count())
 
     @freeze_time('22 January 2017')
     def test_do_service_m11a(self):

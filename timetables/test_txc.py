@@ -24,22 +24,6 @@ class TimetableTest(TestCase):
         none = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-', date(2017, 1, 21))
         self.assertIsNone(none)
 
-    def test_timetable_ne(self):
-        """Test timetable with some abbreviations"""
-        timetable_ne = txc.timetable_from_filename(FIXTURES_DIR, 'NE_03_SCC_X6_1.xml', date(2016, 12, 15))
-        self.assertEqual('Kendal - Barrow-in-Furness', str(timetable_ne.groupings[1]))
-        self.assertEqual(
-            timetable_ne.groupings[1].rows[0].times[:3], [time(7, 0), time(8, 0), time(9, 0)]
-        )
-        # Test abbreviations (check the colspan and rowspan attributes of Cells)
-        self.assertEqual(timetable_ne.groupings[1].rows[0].times[3].colspan, 6)
-        self.assertEqual(timetable_ne.groupings[1].rows[0].times[3].rowspan, 104)
-        self.assertFalse(timetable_ne.groupings[1].rows[43].has_waittimes)
-        self.assertTrue(timetable_ne.groupings[1].rows[44].has_waittimes)
-        self.assertFalse(timetable_ne.groupings[1].rows[45].has_waittimes)
-        self.assertEqual(timetable_ne.groupings[0].rows[0].times[:7],
-                         [time(5, 20), time(6, 20), time(7, 15), time(8, 10), time(9, 10), time(10, 10), time(11, 10)])
-
     def test_timetable_abbreviations_notes(self):
         """Test a timetable with a note which should determine the bounds of an abbreviation"""
         timetable = txc.Timetable(join(FIXTURES_DIR, 'set_5-28-A-y08.xml'), date(2017, 8, 29))
