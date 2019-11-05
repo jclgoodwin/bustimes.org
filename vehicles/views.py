@@ -398,7 +398,7 @@ def journey_json(request, pk):
         'delta': location.early,
         'direction': location.heading,
         'datetime': location.datetime,
-    } for location in VehicleLocation.objects.filter(journey=pk)], safe=False)
+    } for location in VehicleLocation.objects.filter(journey=pk).order_by('datetime')], safe=False)
 
 
 def siri(request):

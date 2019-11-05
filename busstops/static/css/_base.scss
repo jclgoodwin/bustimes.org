@@ -537,6 +537,10 @@ table {
         position: absolute;
         top: 7em;
     }
+
+    .leaflet-popup-content {
+        margin: 10px;
+    }
 }
 
 #details {
@@ -572,9 +576,9 @@ table {
             border: 2px solid #000;
             border-left-color: transparent;
             border-top-color: transparent;
-            height: 8px;
-            transform-origin: 10px 10px;
-            width: 8px;
+            height: 6px;
+            transform-origin: 8px 8px;
+            width: 6px;
         }
     }
 
