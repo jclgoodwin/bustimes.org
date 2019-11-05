@@ -26,7 +26,7 @@
         </tr>
         <tr>
             <th scope="row">Supported by subsidy?</th>
-            <td>{{ object.subsidies_description }} {{ object.subsidies_details }} </td>
+            <td>{{ object.subsidies_description }}<br>{{ object.subsidies_details }} </td>
         </tr>
         <tr>
             <th scope="row">Status</th>
@@ -53,7 +53,7 @@
                 <td>{% firstof variation.date_received|date:"j M y" '' %}</td>
                 <td>{% firstof variation.effective_date|date:"j M y" '' %}</td>
                 <td>{{ variation.registration_status }}</td>
-                <td>{{ variation.service_type_other_details }}</td>
+                <td>{{ variation.service_type_other_details|linebreaksbr }}</td>
                 <td>{{ variation.publication_text|linebreaksbr }}</td>
             </tr>
         {% endfor %}

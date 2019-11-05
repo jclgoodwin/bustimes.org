@@ -52,15 +52,12 @@ class Command(ImportFromCSVCommand):
         }
 
     def handle_registration(self, row):
+        defaults = self.get_registration_defaults(row)
+
         if not self.registration or self.registration.registration_number != row['Reg_No']:
-
-            # the previous row contains the latest status for the previous registration
-            if self.previous_row:
-                defaults = self.get_registration_defaults(self.previous_row)
-                maybe_update(self.registration, defaults)
-
-            defaults = self.get_registration_defaults(row)
             self.registration, _ = Registration.objects.get_or_create(defaults, registration_number=row['Reg_No'])
+
+        maybe_update(self.registration, defaults)
 
     def handle_variation(self, row):
         defaults = {
