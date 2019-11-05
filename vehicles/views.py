@@ -393,12 +393,18 @@ class JourneyDetailView(DetailView):
 
 
 def journey_json(request, pk):
-    return JsonResponse([{
-        'coordinates': tuple(location.latlong),
-        'delta': location.early,
-        'direction': location.heading,
-        'datetime': location.datetime,
-    } for location in VehicleLocation.objects.filter(journey=pk)], safe=False)
+    previous = None
+    locations = []
+    for location in VehicleLocation.objects.filter(journey=pk):
+        locations.append({
+            'coordinates': tuple(location.latlong),
+            'delta': location.early,
+            'direction': location.heading,
+            'datetime': location.datetime,
+            'speed': previous.calculate_speed(location) if previous else 0
+        })
+        previous = location
+    return JsonResponse(locations, safe=False)
 
 
 def siri(request):
