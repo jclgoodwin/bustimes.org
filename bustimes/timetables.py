@@ -366,8 +366,3 @@ class Cell:
         if len(string) == 4:
             return '0' + string
         return string
-
-    def __eq__(self, other):
-        if type(other) == datetime.time:
-            return self.arrival == other or self.departure == other
-        return self.arrival == other.arrival and self.departure == other.departure

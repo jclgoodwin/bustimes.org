@@ -24,29 +24,6 @@ class TimetableTest(TestCase):
         none = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-', date(2017, 1, 21))
         self.assertIsNone(none)
 
-    def test_timetable_abbreviations_notes(self):
-        """Test a timetable with a note which should determine the bounds of an abbreviation"""
-        timetable = txc.Timetable(join(FIXTURES_DIR, 'set_5-28-A-y08.xml'), date(2017, 8, 29))
-        self.assertEqual(str(timetable.groupings[0].rows[0].times[17]), 'then every 20 minutes until')
-        self.assertEqual(timetable.groupings[0].rows[11].times[15], time(9, 8))
-        self.assertEqual(timetable.groupings[0].rows[11].times[16], time(9, 34))
-        self.assertEqual(timetable.groupings[0].rows[11].times[17], time(15, 34))
-        self.assertEqual(timetable.groupings[0].rows[11].times[18], time(15, 54))
-        self.assertEqual(timetable.groupings[0].column_feet['NSch'][0].span, 9)
-        self.assertEqual(timetable.groupings[0].column_feet['NSch'][1].span, 2)
-        self.assertEqual(timetable.groupings[0].column_feet['NSch'][2].span, 24)
-        self.assertEqual(timetable.groupings[0].column_feet['NSch'][3].span, 1)
-        self.assertEqual(timetable.groupings[0].column_feet['NSch'][4].span, 10)
-
-        self.assertEqual(str(timetable.groupings[0]), 'Southend On Sea - South Benfleet - Basildon via Hadleigh')
-        self.assertEqual(str(timetable.groupings[1]), 'Basildon - South Benfleet - Southend On Sea via Hadleigh')
-
-    def test_timetable_derby_alvaston_circular(self):
-        """Test a weird timetable where 'Wilmorton Ascot Drive' is visited twice consecutively on on one journey"""
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'em_11-1-J-y08-1.xml', date(2017, 12, 10))
-        self.assertEqual([], timetable.groupings[0].rows)
-        self.assertEqual(60, len(timetable.groupings[1].rows))
-
     def test_timetable_deadruns(self):
         """Test a timetable with some dead runs which should be respected"""
         deadruns = txc.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml', None)

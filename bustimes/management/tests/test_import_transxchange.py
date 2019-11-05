@@ -233,3 +233,38 @@ class ImportTransXChangeTest(TestCase):
         # self.assertTrue(timetable.groupings[1].rows[44].has_waittimes)
         # self.assertFalse(timetable.groupings[1].rows[45].has_waittimes)
         self.assertEqual(str(timetable.groupings[0].rows[0].times[:6]), '[05:20, 06:20, 07:15, 08:10, 09:10, 10:10]'),
+
+    @freeze_time('2017-08-29')
+    def test_timetable_abbreviations_notes(self):
+        """Test a timetable with a note which should determine the bounds of an abbreviation"""
+
+        self.write_files_to_zipfile_and_import('EA.zip', ['set_5-28-A-y08.xml'])
+        service = Service.objects.get()
+        response = self.client.get(service.get_absolute_url())
+        timetable = response.context_data['timetable']
+
+        self.assertEqual(str(timetable.groupings[0].rows[0].times[17]), 'then every 20 minutes until')
+        # self.assertEqual(timetable.groupings[0].rows[11].times[15], time(9, 8))
+        # self.assertEqual(timetable.groupings[0].rows[11].times[16], time(9, 34))
+        # self.assertEqual(timetable.groupings[0].rows[11].times[17], time(15, 34))
+        # self.assertEqual(timetable.groupings[0].rows[11].times[18], time(15, 54))
+        feet = list(timetable.groupings[0].column_feet.values())[0]
+        self.assertEqual(feet[0].span, 9)
+        self.assertEqual(feet[1].span, 2)
+        self.assertEqual(feet[2].span, 24)
+        self.assertEqual(feet[3].span, 1)
+        self.assertEqual(feet[4].span, 10)
+
+        self.assertEqual(service.outbound_description, 'Basildon - South Benfleet - Southend On Sea via Hadleigh')
+        self.assertEqual(service.inbound_description, 'Southend On Sea - South Benfleet - Basildon via Hadleigh')
+
+    @freeze_time('2017-12-10')
+    def test_timetable_derby_alvaston_circular(self):
+        """Test a weird timetable where 'Wilmorton Ascot Drive' is visited twice consecutively on on one journey"""
+
+        self.write_files_to_zipfile_and_import('EA.zip', ['em_11-1-J-y08-1.xml'])
+        service = Service.objects.get()
+        response = self.client.get(service.get_absolute_url())
+        timetable = response.context_data['timetable']
+
+        self.assertEqual(60, len(timetable.groupings[0].rows))
