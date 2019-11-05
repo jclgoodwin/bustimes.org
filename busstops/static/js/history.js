@@ -134,7 +134,9 @@
             }
 
             var j,
-                minutes;
+                minutes,
+                latSpeed,
+                lngSpeed;
 
             for (var i = locations.length - 1; i >= 0; i -= 1) {
                 dateTime = new Date(locations[i].datetime);
@@ -159,18 +161,20 @@
                 }
                 coordinates = L.latLng(locations[i].coordinates[1], locations[i].coordinates[0]);
                 getMarker(coordinates, locations[i].direction).bindPopup(popup).addTo(layerGroup);
-                if (previousCoordinates) {
 
+                if (previousCoordinates) {
                     latDistance = previousCoordinates.lat - coordinates.lat;
                     lngDistance = previousCoordinates.lng - coordinates.lng;
                     timeDistance = previousTime.getTime() - dateTime.getTime();
-
                     minutes = timeDistance / 60000;
-                    for (j = minutes; j > 0; j -= 1) {
+                    latSpeed = latDistance/minutes;
+                    lngSpeed = lngDistance/minutes;
+                    for (j = minutes; j >= 0; j -= 1) {
                         L.circleMarker(
                             L.latLng(
-                                previousCoordinates.lat - latDistance/minutes,
-                                previousCoordinates.lng - lngDistance/minutes),
+                                previousCoordinates.lat - latSpeed * j,
+                                previousCoordinates.lng - lngSpeed * j
+                            ),
                             timeMarkerOptions
                         ).addTo(layerGroup);
                     }
