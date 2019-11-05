@@ -174,3 +174,9 @@ em_11-11-A-y08:
 em_11-114-_-y08:
     operator:
         - HIPK
+VCAPS01:
+    current: false
+VCAEAI0:
+    current: false
+PXAO011:
+    current: false
