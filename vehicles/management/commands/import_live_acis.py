@@ -81,6 +81,9 @@ class Command(ImportLiveVehiclesCommand):
                 yield item
             sleep(1)
 
+    def get_old_locations(self):
+        return super().get_old_locations().filter(datetime__lt=self.source.datetime - timedelta(minutes=10))
+
     def get_vehicle(self, item):
         operator = item.find('a:VehicleOperatorName', NS).text
 

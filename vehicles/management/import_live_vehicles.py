@@ -64,6 +64,11 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if response.ok:
             return response.json()
 
+    def get_old_locations(self):
+        return VehicleLocation.objects.filter(
+            current=True, journey__source=self.source, latest_vehicle__isnull=False
+        ).exclude(id__in=self.current_location_ids)
+
     @staticmethod
     def get_service(queryset, latlong):
         for filtered_queryset in (
@@ -186,17 +191,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         self.current_location_ids = set()
 
-        current_locations = VehicleLocation.objects.filter(journey__source=self.source, current=True,
-                                                           latest_vehicle__isnull=False)
-
         try:
             items = self.get_items()
             if items:
                 for item in items:
                     self.handle_item(item, now)
                 # mark any vehicles that have gone offline as not current
-                old_locations = current_locations.exclude(id__in=self.current_location_ids)
-                print(old_locations.update(current=False), end='\t', flush=True)
+                print(self.get_old_locations().update(current=False), end='\t', flush=True)
             else:
                 return 300  # no items - wait five minutes
         except (requests.exceptions.RequestException, IntegrityError, TypeError, ValueError) as e:

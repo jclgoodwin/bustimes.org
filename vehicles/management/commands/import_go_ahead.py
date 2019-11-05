@@ -109,6 +109,9 @@ class Command(ImportLiveVehiclesCommand):
                     continue
                 sleep(1)
 
+    def get_old_locations(self):
+        return super().get_old_locations().filter(datetime__lt=self.source.datetime - timedelta(minutes=10))
+
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
 
