@@ -5,7 +5,7 @@
         browser: true
     */
     /*global
-        L, reqwest, d3
+        L, reqwest
     */
 
     var map,
@@ -22,49 +22,6 @@
                 className: 'just-arrow'
             })
         });
-    }
-
-    function doGraph(locations) {
-        var svg = d3.select('#details').append('svg').attr('width', 400).attr('height', 150);
-
-        // var minSpeed = 0;
-        var maxSpeed = 0;
-
-        var data = locations.map(function(location) {
-            // if (location.speed < minSpeed) {
-            //     minSpeed = location.speed;
-            // }
-            if (location.speed > maxSpeed) {
-                maxSpeed = location.speed;
-            }
-            return {
-                datetime: new Date(location.datetime),
-                speed: location.speed
-            };
-        });
-
-        var timeScale = d3.scaleTime().domain([
-            data[0].datetime,
-            data[data.length-1].datetime
-        ]).range([0, 380]);
-        var timeAxis = d3.axisBottom(timeScale);
-        svg.append('g').attr('transform', 'translate(20,130)').call(timeAxis.tickFormat(d3.timeFormat('%H:%M')));
-
-        var speedScale = d3.scaleLinear().domain([
-            maxSpeed,
-            0
-        ]).range([0, 130]);
-        var speedAxis = d3.axisLeft(speedScale);
-        svg.append('g').attr('transform', 'translate(20,0)').call(speedAxis);
-
-
-        var line = d3.line().x(function(d) {
-            return timeScale(d.datetime);
-        }).y(function(d) {
-            return speedScale(d.speed);
-        });
-
-        svg.append('path').attr('transform', 'translate(20,0)').attr('fill', 'none').attr('stroke', '#000').datum(data).attr('d', line);
     }
 
     function closeMap() {
@@ -96,6 +53,33 @@
             mapContainer.style.display = 'block';
 
             details.innerHTML = '<p>' + row.children[0].innerHTML + ' – ' + row.children[1].innerHTML + ' to ' + row.children[2].innerHTML + '</p>';
+
+            if (previous) {
+                var previousButton = document.createElement('a');
+                previousButton.href = '#';
+                previousButton.innerHTML = '← ' + previous.children[1].innerHTML;
+                previousButton.onclick = function() {
+                    previous.children[3].children[0].click();
+                    return false;
+                };
+                var previousP = document.createElement('p');
+                previousP.className = 'previous';
+                previousP.appendChild(previousButton);
+                details.appendChild(previousP);
+            }
+            if (next) {
+                var nextButton = document.createElement('a');
+                nextButton.href = '#';
+                nextButton.innerHTML = next.children[1].innerHTML + ' →';
+                nextButton.onclick = function() {
+                    next.children[3].children[0].click();
+                    return false;
+                };
+                var nextP = document.createElement('p');
+                nextP.className = 'next';
+                nextP.appendChild(nextButton);
+                details.appendChild(nextP);
+            }
 
             if (map) {
                 layerGroup.clearLayers();
@@ -164,35 +148,6 @@
             bounds = line.getBounds();
             map.fitBounds(bounds);
             map.setMaxBounds(bounds.pad(.5));
-
-            doGraph(locations);
-
-            if (previous && previous.children[3].children[0]) {
-                var previousButton = document.createElement('a');
-                previousButton.href = '#';
-                previousButton.innerHTML = '← ' + previous.children[1].innerHTML;
-                previousButton.onclick = function() {
-                    previous.children[3].children[0].click();
-                    return false;
-                };
-                var previousP = document.createElement('p');
-                previousP.className = 'previous';
-                previousP.appendChild(previousButton);
-                details.appendChild(previousP);
-            }
-            if (next && next.children[3].children[0]) {
-                var nextButton = document.createElement('a');
-                nextButton.href = '#';
-                nextButton.innerHTML = next.children[1].innerHTML + ' →';
-                nextButton.onclick = function() {
-                    next.children[3].children[0].click();
-                    return false;
-                };
-                var nextP = document.createElement('p');
-                nextP.className = 'next';
-                nextP.appendChild(nextButton);
-                details.appendChild(nextP);
-            }
         });
     }
 

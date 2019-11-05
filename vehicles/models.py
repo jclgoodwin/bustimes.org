@@ -415,10 +415,3 @@ class VehicleLocation(models.Model):
                 json['properties']['vehicle']['coach'] = vehicle.vehicle_type.coach
                 json['properties']['vehicle']['decker'] = vehicle.vehicle_type.double_decker
         return json
-
-    def calculate_speed(a, b):
-        time = b.datetime - a.datetime
-        if time:
-            distance = a.latlong.distance(b.latlong) * 69  # approximate miles
-            return distance / time.total_seconds() * 60 * 60
-        return 0
