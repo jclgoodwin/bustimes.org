@@ -64,18 +64,7 @@
         var row = event.target.parentElement.parentElement,
             previous = row.previousElementSibling,
             next = row.nextElementSibling,
-            details = document.getElementById('details'),
-            dateTime,
-            popup,
-            delta,
-            coordinates,
-            line = [],
-            bounds,
-            latDistance,
-            lngDistance,
-            timeDistance,
-            previousTime,
-            previousCoordinates;
+            details = document.getElementById('details');
 
         mapContainer.style.display = 'block';
 
@@ -134,9 +123,21 @@
             }
 
             var j,
+                dateTime,
+                popup,
+                delta,
+                coordinates,
+                line = [],
+                bounds,
+                latDistance,
+                lngDistance,
+                timeDistance,
+                previousCoordinates,
                 minutes,
+                previousTimestamp,
                 latSpeed,
                 lngSpeed;
+
 
             for (var i = locations.length - 1; i >= 0; i -= 1) {
                 dateTime = new Date(locations[i].datetime);
@@ -165,22 +166,20 @@
                 if (previousCoordinates) {
                     latDistance = previousCoordinates.lat - coordinates.lat;
                     lngDistance = previousCoordinates.lng - coordinates.lng;
-                    timeDistance = previousTime.getTime() - dateTime.getTime();
-                    minutes = timeDistance / 60000;
-                    latSpeed = latDistance/minutes;
-                    lngSpeed = lngDistance/minutes;
-                    for (j = minutes; j >= 0; j -= 1) {
-                        L.circleMarker(
-                            L.latLng(
-                                previousCoordinates.lat - latSpeed * j,
-                                previousCoordinates.lng - lngSpeed * j
-                            ),
-                            timeMarkerOptions
-                        ).addTo(layerGroup);
+                    minutes = Math.floor(previousTimestamp / 60000) * 60000;
+                    timeDistance = previousTimestamp - dateTime.getTime();
+                    latSpeed = latDistance / timeDistance;
+                    lngSpeed = lngDistance / timeDistance;
+
+                    for (j = previousTimestamp - minutes; j <= timeDistance; j += 60000) {
+                        L.circleMarker(L.latLng(
+                            previousCoordinates.lat - latSpeed * j,
+                            previousCoordinates.lng - lngSpeed * j
+                        ), timeMarkerOptions).addTo(layerGroup);
                     }
                 }
                 line.push(coordinates);
-                previousTime = dateTime;
+                previousTimestamp = dateTime.getTime();
                 previousCoordinates = coordinates;
             }
             line = L.polyline(line, {
