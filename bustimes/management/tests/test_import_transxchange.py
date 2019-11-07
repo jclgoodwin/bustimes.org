@@ -242,6 +242,7 @@ class ImportTransXChangeTest(TestCase):
         service = Service.objects.get()
         response = self.client.get(service.get_absolute_url())
         timetable = response.context_data['timetable']
+        self.assertEqual('2017-08-29', str(timetable.date))
 
         self.assertEqual(str(timetable.groupings[0].rows[0].times[17]), 'then every 20 minutes until')
         # self.assertEqual(timetable.groupings[0].rows[11].times[15], time(9, 8))
@@ -266,5 +267,151 @@ class ImportTransXChangeTest(TestCase):
         service = Service.objects.get()
         response = self.client.get(service.get_absolute_url())
         timetable = response.context_data['timetable']
+        self.assertEqual('2017-12-10', str(timetable.date))
 
         self.assertEqual(60, len(timetable.groupings[0].rows))
+
+    @freeze_time('2017-04-13')
+    def test_timetable_deadruns(self):
+        """Test a timetable with some dead runs which should be respected"""
+
+        self.write_files_to_zipfile_and_import('NE.zip', ['SVRLABO024A.xml'])
+        service = Service.objects.get()
+        response = self.client.get(service.get_absolute_url())
+        timetable = response.context_data['timetable']
+        self.assertEqual('2017-04-13', str(timetable.date))
+
+        self.assertEqual(len(timetable.groupings[0].rows), 49)
+        self.assertEqual(len(timetable.groupings[1].rows), 29)
+
+        self.assertEqual(str(timetable.groupings[0].rows[0].times), "[19:12, '', '']")
+        self.assertEqual(str(timetable.groupings[0].rows[-25].times), '[19:32, 21:02, 22:32]')
+        self.assertEqual(str(timetable.groupings[0].rows[-24].times), '[19:33, 21:03, 22:33]')
+        self.assertEqual(str(timetable.groupings[0].rows[-12].times), '[19:42, 21:12, 22:42]')
+        self.assertEqual(str(timetable.groupings[0].rows[-8].times), '[19:47, 21:17, 22:47]')
+        self.assertEqual(str(timetable.groupings[0].rows[-7].times), '[19:48, 21:18, 22:48]')
+        self.assertEqual(str(timetable.groupings[0].rows[-1].times), '[19:53, 21:23, 22:53]')
+
+        self.assertEqual(str(timetable.groupings[1].rows[0].times), '[20:35, 22:05, 23:30]')
+        self.assertEqual(str(timetable.groupings[1].rows[-25].times), '[20:38, 22:08, 23:33]')
+        self.assertEqual(str(timetable.groupings[1].rows[-24].times), '[20:39, 22:09, 23:34]')
+        self.assertEqual(str(timetable.groupings[1].rows[-12].times), '[20:52, 22:22, 23:47]')
+        self.assertEqual(str(timetable.groupings[1].rows[-8].times), '[20:55, 22:25, 23:50]')
+        self.assertEqual(str(timetable.groupings[1].rows[-7].times), '[20:55, 22:25, 23:50]')
+        self.assertEqual(str(timetable.groupings[1].rows[-1].times), '[20:58, 22:28, 23:53]')
+
+        self.assertEqual(str(timetable.groupings[0].rows[-3].stop), 'Eldon Street')
+        self.assertEqual(str(timetable.groupings[0].rows[-2].stop), 'Railway Station')
+        self.assertEqual(str(timetable.groupings[0].rows[-1].stop), 'Bus Station')
+        self.assertEqual(str(timetable.groupings[1].rows[-3].stop), 'Twist Moor Lane')
+        self.assertEqual(str(timetable.groupings[1].rows[-2].stop), 'Gladstone Terrace')
+        self.assertEqual(str(timetable.groupings[1].rows[-1].stop), 'Hare and Hounds')
+
+        response = self.client.get(service.get_absolute_url() + '?date=2017-04-16')
+        timetable = response.context_data['timetable']
+        self.assertEqual('2017-04-16', str(timetable.date))
+        self.assertEqual(str(timetable.groupings[0].rows[0].times[2:]), '[15:28, 16:27, 17:28, 18:28, 19:28]')
+        self.assertEqual(str(timetable.groupings[0].rows[-26].times[-1]), '19:50')
+        self.assertEqual(str(timetable.groupings[0].rows[-25].times[-1]), '19:51')
+        self.assertEqual(str(timetable.groupings[0].rows[-24].times[-1]), '')
+        self.assertEqual(str(timetable.groupings[0].rows[-23].times[-1]), '')
+        self.assertEqual(str(timetable.groupings[0].rows[-6].times[-1]), '')
+        self.assertEqual(str(timetable.groupings[0].rows[-5].times[-1]), '')
+        self.assertEqual(str(timetable.groupings[0].rows[-4].times[-1]), '')
+        self.assertEqual(str(timetable.groupings[0].rows[-3].times[2:]), "[17:04, 18:05, 19:05, '']")
+        self.assertEqual(str(timetable.groupings[0].rows[-2].times[2:]), "[17:04, 18:05, 19:05, '']")
+        self.assertEqual(str(timetable.groupings[0].rows[-1].times[2:]), "[17:06, 18:07, 19:07, '']")
+
+        # Several journeys a day on bank holidays
+        # deadruns = txc.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml', date(2017, 4, 14))
+        # self.assertEqual(7, len(deadruns.groupings[0].rows[0].times))
+
+    @freeze_time('2017-08-30')
+    def test_timetable_servicedorg(self):
+        """Test a timetable with a ServicedOrganisation"""
+
+        self.write_files_to_zipfile_and_import('EA.zip', ['swe_34-95-A-y10.xml'])
+        service = Service.objects.get()
+
+        # Doesn't stop at Budehaven School during holidays
+        response = self.client.get(service.get_absolute_url())
+        self.assertEqual('2017-08-30', str(response.context_data['timetable'].date))
+        self.assertNotContains(response, 'Budehaven School')
+
+        # Does stop at Budehaven School twice a day on school days
+        response = self.client.get(service.get_absolute_url() + '?date=2017-09-13')
+        timetable = response.context_data['timetable']
+        self.assertEqual('2017-09-13', str(timetable.date))
+        self.assertContains(response, 'Budehaven School')
+        # rows = timetable.groupings[1].rows
+        # self.assertEqual(rows[-4].times, [time(8, 33, 10), '', '', '', time(15, 30, 10), ''])
+        # self.assertEqual(rows[-5].times, [time(8, 33), '', '', '', time(15, 30), ''])
+        # self.assertEqual(rows[-6].times, [time(8, 32, 18), '', '', '', time(15, 29, 18), ''])
+
+    @freeze_time('2017-01-23')
+    def test_timetable_holidays_only(self):
+        """Test a service with a HolidaysOnly operating profile
+        """
+        self.write_files_to_zipfile_and_import('EA.zip', ['twm_6-14B-_-y11-1.xml'])
+        service = Service.objects.get()
+
+        timetable = self.client.get(service.get_absolute_url()).context_data['timetable']
+        self.assertIsNone(timetable.date)
+        # self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
+        # self.assertEqual(0, len(timetable.groupings[1].rows[0].times))
+
+        # Has some journeys that operate on 1 May 2017
+        # timetable = txc.timetable_from_filename(FIXTURES_DIR, 'twm_6-14B-_-y11-1.xml', date(2017, 5, 1))
+        # self.assertEqual(8, len(timetable.groupings[0].rows[0].times))
+        # self.assertEqual(8, len(timetable.groupings[1].rows[0].times))
+
+    @freeze_time('2012-06-27')
+    def test_timetable_goole(self):
+        self.write_files_to_zipfile_and_import('W.zip', ['SVRYEAGT00.xml'])
+        service = Service.objects.get()
+
+        # try date outside of operating period
+        response = self.client.get(service.get_absolute_url() + '?date=2007-06-27')
+        timetable = response.context_data['timetable']
+        # during a DaysOfNonOperation
+        self.assertEqual('2012-06-27', str(timetable.date))
+        self.assertEqual([], timetable.groupings)
+
+        response = self.client.get(service.get_absolute_url() + '?date=2017-01-27')
+        timetable = response.context_data['timetable']
+        self.assertEqual('2017-01-27', str(timetable.date))
+        self.assertEqual(str(timetable.groupings[0].rows[0].times),
+                         "['', '', 09:48, 10:28, 11:08, 11:48, 12:28, 13:08, 13:48, 14:28, 15:08, '', '']")
+
+        with freeze_time('21 Feb 2016'):  # Sunday
+            date_options = list(timetable.date_options())
+            self.assertEqual(date_options[0], date(2016, 2, 22))  # Monday
+            self.assertEqual(date_options[-1], date(2017, 1, 27))
+
+    @freeze_time('2017-01-01')
+    def test_cardiff_airport(self):
+        """Should be able to distinguish between Cardiff and Cardiff Airport as start and end of a route"""
+        self.write_files_to_zipfile_and_import('W.zip', ['TCAT009.xml'])
+        service = Service.objects.get()
+        self.assertEqual(service.inbound_description, 'Cardiff   - Cardiff Airport')
+        self.assertEqual(service.outbound_description, 'Cardiff Airport - Cardiff  ')
+
+    @freeze_time('2018-09-24')
+    def test_timetable_plymouth(self):
+        self.write_files_to_zipfile_and_import('EA.zip', ['20-plymouth-city-centre-plympton.xml'])
+        service = Service.objects.get()
+        response = self.client.get(service.get_absolute_url())
+        timetable = response.context_data['timetable']
+
+        self.assertEqual(str(timetable.groupings[1].rows[0].stop), "Plympton Mudge Way")
+        # self.assertEqual(str(timetable.groupings[1].rows[1].stop), "Plympton St Mary's Bridge")
+        self.assertEqual(str(timetable.groupings[1].rows[1].stop), "Underwood (Plymouth) Old Priory Junior School")
+        # self.assertEqual(str(timetable.groupings[1].rows[2].stop), "Plympton Priory Junior School")
+        self.assertEqual(str(timetable.groupings[1].rows[2].stop), "Plympton St Mary's Church")
+        # self.assertEqual(str(timetable.groupings[1].rows[3].stop), "Plympton Dark Street Lane")
+        self.assertEqual(str(timetable.groupings[1].rows[3].stop), "Plympton Colebrook Tunnel")
+        self.assertEqual(str(timetable.groupings[1].rows[4].stop), "Plympton Glenside Surgey")
+        self.assertFalse(timetable.groupings[1].rows[3].has_waittimes)
+        # self.assertTrue(timetable.groupings[1].rows[4].has_waittimes)
+        self.assertFalse(timetable.groupings[1].rows[5].has_waittimes)
+        self.assertFalse(timetable.groupings[1].rows[6].has_waittimes)

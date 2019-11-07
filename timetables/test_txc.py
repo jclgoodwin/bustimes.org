@@ -1,7 +1,6 @@
 """Tests for timetables and date ranges"""
 import xml.etree.cElementTree as ET
-from os.path import join
-from datetime import time, timedelta, date
+from datetime import timedelta, date
 from freezegun import freeze_time
 from django.test import TestCase
 from . import txc
@@ -23,98 +22,6 @@ class TimetableTest(TestCase):
         """timetable_from_filename should return None if there is an error"""
         none = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-', date(2017, 1, 21))
         self.assertIsNone(none)
-
-    def test_timetable_deadruns(self):
-        """Test a timetable with some dead runs which should be respected"""
-        deadruns = txc.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml', None)
-        rows = deadruns.groupings[0].rows
-        self.assertEqual(rows[-25].times[-3:], [time(22, 28), time(23, 53), time(23, 53)])
-        self.assertEqual(rows[-24].times[-9:], [time(18, 51), '', '', '', '', '', '', '', ''])
-        self.assertEqual(rows[-12].times[-9:], [time(19, 0), '', '', '', '', '', '', '', ''])
-        self.assertEqual(rows[-8].times[-9:], [time(19, 2), '', '', '', '', '', '', '', ''])
-        self.assertEqual(rows[-7].times[-9:], [time(19, 3), '', '', '', '', '', '', '', ''])
-        self.assertEqual(rows[-5].times[-9:], [time(19, 4), '', '', '', '', '', '', '', ''])
-        self.assertEqual(rows[-4].times[-9:], [time(19, 4), '', '', '', '', '', '', '', ''])
-        self.assertEqual(rows[-3].times[-9:], [time(19, 5), '', '', '', '', '', '', '', ''])
-        self.assertEqual(rows[-2].times[-8:], ['', '', '', '', '', '', '', ''])
-        self.assertEqual(rows[-1].times[-8:], ['', '', '', '', '', '', '', ''])
-
-        self.assertEqual(str(deadruns.groupings[0].rows[-2]), 'Debenhams')
-
-        # Three journeys a day on weekdays
-        deadruns = txc.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml', date(2017, 4, 13))
-        self.assertEqual(3, len(deadruns.groupings[0].rows[0].times))
-
-        # Several journeys a day on bank holidays
-        deadruns = txc.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml', date(2017, 4, 14))
-        self.assertEqual(7, len(deadruns.groupings[0].rows[0].times))
-
-    def test_timetable_servicedorg(self):
-        """Test a timetable with a ServicedOrganisation"""
-
-        # Doesn't stop at Budehaven School during holidays
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'swe_34-95-A-y10.xml', date(2017, 8, 30))
-        self.assertEqual(timetable.groupings[1].rows[-4].times, ['', '', '', '', '', ''])
-        self.assertEqual(timetable.groupings[1].rows[-5].times, ['', '', '', '', '', ''])
-        self.assertEqual(timetable.groupings[1].rows[-6].times, ['', '', '', '', '', ''])
-
-        # Does stop at Budehaven School twice a day on school days
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'swe_34-95-A-y10.xml', date(2017, 9, 13))
-        rows = timetable.groupings[1].rows
-        self.assertEqual(rows[-4].times, [time(8, 33, 10), '', '', '', time(15, 30, 10), ''])
-        self.assertEqual(rows[-5].times, [time(8, 33), '', '', '', time(15, 30), ''])
-        self.assertEqual(rows[-6].times, [time(8, 32, 18), '', '', '', time(15, 29, 18), ''])
-
-    def test_timetable_holidays_only(self):
-        """Test a service with a HolidaysOnly operating profile
-        """
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'twm_6-14B-_-y11-1.xml', date(2017, 1, 23))
-        self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
-        self.assertEqual(0, len(timetable.groupings[1].rows[0].times))
-
-        # Has some journeys that operate on 1 May 2017
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'twm_6-14B-_-y11-1.xml', date(2017, 5, 1))
-        self.assertEqual(8, len(timetable.groupings[0].rows[0].times))
-        self.assertEqual(8, len(timetable.groupings[1].rows[0].times))
-
-    def test_timetable_goole(self):
-        # outside of operating period
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'SVRYEAGT00.xml', date(2007, 6, 27))
-
-        # during a DaysOfNonOperation
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'SVRYEAGT00.xml', date(2012, 6, 27))
-        self.assertEqual([], timetable.groupings[0].rows[0].times)
-
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'SVRYEAGT00.xml', date(2017, 1, 27))
-        self.assertEqual(timetable.groupings[0].rows[0].times,
-                         ['', '', time(9, 48), time(10, 28), time(11, 8), time(11, 48), time(12, 28), time(13, 8),
-                          time(13, 48), time(14, 28), time(15, 8), '', ''])
-
-        with freeze_time('21 Feb 2016'):
-            date_options = list(timetable.date_options())
-            self.assertEqual(date_options[0], date(2016, 2, 21))
-            self.assertEqual(date_options[-1], date(2017, 1, 27))
-
-    def test_timetable_cardiff_airport(self):
-        """Should be able to distinguish between Cardiff and Cardiff Airport as start and end of a route"""
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, 'TCAT009.xml', None)
-        self.assertEqual(str(timetable.groupings[0]), 'Cardiff   - Cardiff Airport')
-        self.assertEqual(str(timetable.groupings[1]), 'Cardiff Airport - Cardiff  ')
-
-    def test_timetable_plymouth(self):
-        timetable = txc.timetable_from_filename(FIXTURES_DIR, '20-plymouth-city-centre-plympton.xml', date(2018, 9, 24))
-        self.assertEqual(str(timetable.groupings[1].rows[0]), "Plympton Mudge Way")
-        self.assertEqual(str(timetable.groupings[1].rows[1]), "Plympton St Mary's Bridge")
-        self.assertEqual(str(timetable.groupings[1].rows[2]), "Underwood (Plymouth) Old Priory Junior School")
-        self.assertEqual(str(timetable.groupings[1].rows[3]), "Plympton Priory Junior School")
-        self.assertEqual(str(timetable.groupings[1].rows[4]), "Plympton St Mary's Church")
-        self.assertEqual(str(timetable.groupings[1].rows[5]), "Plympton Dark Street Lane")
-        self.assertEqual(str(timetable.groupings[1].rows[6]), "Plympton Colebrook Tunnel")
-        self.assertEqual(str(timetable.groupings[1].rows[7]), "Plympton Ridgeway School")
-        self.assertFalse(timetable.groupings[1].rows[3].has_waittimes)
-        # self.assertTrue(timetable.groupings[1].rows[4].has_waittimes)
-        self.assertFalse(timetable.groupings[1].rows[5].has_waittimes)
-        self.assertFalse(timetable.groupings[1].rows[6].has_waittimes)
 
 
 class RepetitionTest(TestCase):

@@ -107,6 +107,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.calendar_cache = {}
+        self.notes = {}
         for archive_name in options['filenames']:
             self.handle_archive(archive_name)
 
@@ -466,7 +467,12 @@ class Command(BaseCommand):
                     return
 
             for note in journey.notes:
-                note, _ = Note.objects.get_or_create(code=note, text=journey.notes[note])
+                note_cache_key = f'{note}:{journey.notes[note]}'
+                if note_cache_key in self.notes:
+                    note = self.notes[note_cache_key]
+                else:
+                    note, _ = Note.objects.get_or_create(code=note, text=journey.notes[note])
+                    self.notes[note_cache_key] = note
                 trip.notes.add(note)
 
             for stop_time in stop_times:
