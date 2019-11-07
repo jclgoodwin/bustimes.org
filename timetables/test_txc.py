@@ -15,15 +15,6 @@ class DescriptionTest(TestCase):
         self.assertEqual(txc.correct_description('Sutton Benger- Swindon'), 'Sutton Benger - Swindon')
 
 
-class TimetableTest(TestCase):
-    """Tests some timetables generated directly from XML files"""
-
-    def test_timetable_none(self):
-        """timetable_from_filename should return None if there is an error"""
-        none = txc.timetable_from_filename(FIXTURES_DIR, 'ea_21-13B-B-y08-', date(2017, 1, 21))
-        self.assertIsNone(none)
-
-
 class RepetitionTest(TestCase):
     def test_repetition(self):
         self.assertEqual(str(txc.Repetition(1, 1, timedelta(minutes=20))), 'then\u00A0every 20\u00A0minutes\u00A0until')

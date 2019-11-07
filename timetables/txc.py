@@ -1,14 +1,12 @@
 """Represent TransXChange concepts, and generate a matrix timetable from
 TransXChange documents
 """
-import os
 import re
 import xml.etree.cElementTree as ET
 import calendar
 import datetime
 import ciso8601
 import difflib
-from functools import cmp_to_key
 from django.utils.text import slugify
 from django.utils.dateparse import parse_duration
 from titlecase import titlecase
@@ -385,94 +383,6 @@ class VehicleJourney(object):
 
         if not deadrun:
             yield Cell(timinglink.destination, time, time)
-
-    def add_times(self):
-        # width before adding this journey column
-        initial_width = len(self.journey_pattern.grouping.rows[0].times)
-
-        for cell in self.get_times():
-            cell.stopusage.row.times.append(cell)
-        cell.last = True
-
-        rows = self.journey_pattern.grouping.rows
-
-        previous_row = None
-        for row in rows:
-
-            if previous_row:
-                if len(row.times) > initial_width + 1:
-                    if row.part.stop.atco_code == previous_row.part.stop.atco_code:
-                        assert previous_row.times[-1] == ''
-                        previous_row.times[-1] = row.times[-2]
-                        row.times = row.times[:-2] + row.times[-1:]
-
-                if len(previous_row.times) > initial_width + 1:
-                    if len(row.times) == initial_width:
-                        row.times.append(previous_row.times.pop())
-                    else:
-                        index = rows.index(previous_row) - 1
-                        while index >= 0:
-                            previous_previous_row = rows[index]
-                            if previous_previous_row.part.stop.atco_code == previous_row.part.stop.atco_code:
-                                assert previous_previous_row.times[-1] == ''
-                                previous_previous_row.times[-1] = previous_row.times[-2]
-                                previous_row.times = previous_row.times[:-2] + previous_row.times[-1:]
-                                break
-                            index -= 1
-
-                assert len(previous_row.times) == initial_width + 1
-
-            if len(row.times) == initial_width:
-                row.times.append('')
-
-            previous_row = row
-
-    def cmp(x, y):
-        """Compare two journeys"""
-        if x.sequencenumber is not None and y.sequencenumber is not None:
-            if x.sequencenumber > y.sequencenumber:
-                return 1
-            if x.sequencenumber < y.sequencenumber:
-                return -1
-            return 0
-        x_time = x.departure_time
-        y_time = y.departure_time
-        if (
-            x.journey_pattern.sections[0].timinglinks[0].origin.stop.atco_code
-            != y.journey_pattern.sections[0].timinglinks[0].origin.stop.atco_code
-        ):
-            times = {cell.stopusage.stop.atco_code: cell.arrival_time for cell in x.get_times()}
-            for cell in y.get_times():
-                if cell.stopusage.stop.atco_code in times:
-                    if cell.arrival_time >= y.departure_time:
-                        if times[cell.stopusage.stop.atco_code] >= x.departure_time:
-                            x_time = times[cell.stopusage.stop.atco_code]
-                            y_time = cell.arrival_time
-                    break
-        if x_time > y_time:
-            return 1
-        if x_time < y_time:
-            return -1
-        return 0
-
-    def should_show(self, date, transxchange=None):
-        if not date:
-            return True
-        if transxchange and transxchange.service:
-            region_id = transxchange.service.region_id
-            if transxchange.service.service_code == 'twm_5-501-A-y11':
-                if self.departure_time == datetime.time(14, 15):
-                    self.departure_time = datetime.time(14, 10)
-                elif self.departure_time == datetime.time(15, 18):
-                    self.departure_time = datetime.time(15, 48)
-                elif (self.departure_time == datetime.time(8, 33) or self.departure_time == datetime.time(15, 5)
-                      or self.departure_time == datetime.time(8, 20)):
-                    return False
-        else:
-            region_id = None
-        if not self.operating_profile:
-            return transxchange and transxchange.operating_profile.should_show(date, region_id)
-        return self.operating_profile.should_show(date, region_id)
 
 
 class ServicedOrganisation(object):
@@ -942,88 +852,11 @@ class Grouping(object):
 
         existing_row.last = True  # row is the last row of this pattern
 
-    def get_order(self):
-        if len(self.journeys):
-            return self.journeys[0].departure_time
-        return datetime.time()
-
-    def has_minor_stops(self):
-        for row in self.rows:
-            if row.is_minor():
-                return True
-        return False
-
-    def is_wide(self):
-        return len(self.rows[0].times) > 3
-
     def starts_at(self, locality_name):
         return self.rows and self.rows[0].part.stop.is_at(locality_name)
 
     def ends_at(self, locality_name):
         return self.rows and self.rows[-1].part.stop.is_at(locality_name)
-
-    def do_heads_and_feet(self):
-        prev_journey = None
-        in_a_row = 0
-        prev_difference = None
-        difference = None
-
-        for i, journey in enumerate(self.journeys):
-            for key in journey.notes:
-                if key in self.column_feet:
-                    if key in prev_journey.notes and prev_journey.notes[key] == journey.notes[key]:
-                        self.column_feet[key][-1].span += 1
-                    else:
-                        self.column_feet[key].append(ColumnFoot(journey.notes[key], 1))
-                else:
-                    if i:
-                        self.column_feet[key] = [ColumnFoot(None, i), ColumnFoot(journey.notes[key], 1)]
-                    else:
-                        self.column_feet[key] = [ColumnFoot(journey.notes[key], 1)]
-            for key in self.column_feet:
-                if key not in journey.notes:
-                    if not self.column_feet[key][-1].notes:
-                        self.column_feet[key][-1].span += 1
-                    else:
-                        self.column_feet[key].append(ColumnFoot(None, 1))
-
-            if prev_journey:
-                if prev_journey.service != journey.service:
-                    if self.heads:
-                        self.heads.append(ColumnHead(prev_journey.service, i - sum(head.span for head in self.heads)))
-                    else:
-                        self.heads.append(ColumnHead(prev_journey.service, i))
-                if prev_journey.notes != journey.notes:
-                    if in_a_row > 1:
-                        abbreviate(self, i, in_a_row - 1, prev_difference)
-                    in_a_row = 0
-                elif prev_journey.journey_pattern.id == journey.journey_pattern.id:
-                    difference = time_between(journey.departure_time, prev_journey.departure_time)
-                    if difference == prev_difference:
-                        in_a_row += 1
-                    else:
-                        if in_a_row > 1:
-                            abbreviate(self, i, in_a_row - 1, prev_difference)
-                        in_a_row = 0
-                else:
-                    if in_a_row > 1:
-                        abbreviate(self, i, in_a_row - 1, prev_difference)
-                    in_a_row = 0
-
-            prev_difference = difference
-            prev_journey = journey
-            difference = None  # wtf
-
-        if self.heads or (prev_journey and prev_journey.service != self.parent.service):
-            self.heads.append(ColumnHead(prev_journey.service,
-                                         len(self.journeys) - sum(head.span for head in self.heads)))
-
-        if in_a_row > 1:
-            abbreviate(self, len(self.journeys), in_a_row - 1, prev_difference)
-        for row in self.rows:
-            # remove 'None' cells created during the abbreviation process
-            # (actual empty cells will contain an empty string '')
-            row.times = [time for time in row.times if time is not None]
 
     def __str__(self):
         parts = self.description_parts or self.parent.description_parts
@@ -1051,126 +884,3 @@ class Grouping(object):
             return getattr(self.parent.service, self.direction + '_description')
 
         return self.direction.capitalize()
-
-
-class ColumnHead(object):
-    def __init__(self, service, span):
-        self.service = service
-        self.span = span
-
-
-class ColumnFoot(object):
-    def __init__(self, notes, span):
-        self.notes = notes
-        self.span = span
-
-
-class Timetable(object):
-    service = None
-#     description = None
-    description_parts = None
-
-    def date_options(self):
-        start_date = min(self.date, datetime.date.today())
-        end_date = start_date + datetime.timedelta(weeks=4)
-        while start_date <= end_date:
-            yield start_date
-            start_date += datetime.timedelta(days=1)
-        if self.date >= start_date:
-            yield self.date
-
-    def set_date(self, date):
-        if date and not isinstance(date, datetime.date):
-            date = ciso8601.parse_datetime(date).date()
-
-        if hasattr(self, 'date'):
-            if date == self.date:
-                return
-            for grouping in self.groupings:
-                for row in grouping.rows:
-                    row.times.clear()
-                grouping.heads.clear()
-                grouping.column_feet.clear()
-                grouping.journeys.clear()
-
-        self.date = date
-
-        for transxchange in self.transxchanges:
-            if not date or transxchange.operating_period.contains(date):
-                for journey in transxchange.journeys:
-                    if journey.should_show(date, transxchange):
-                        journey.journey_pattern.grouping.journeys.append(journey)
-                        journey.service = transxchange.service
-
-        for grouping in self.groupings:
-            grouping.journeys.sort(key=cmp_to_key(VehicleJourney.cmp))
-            for journey in grouping.journeys:
-                journey.add_times()
-            for row in grouping.rows:
-                row.has_waittimes = any(type(cell) is Cell and cell.wait_time for cell in row.times)
-            grouping.do_heads_and_feet()
-
-        if all(len(g.journeys) for g in self.groupings):
-            self.groupings.sort(key=Grouping.get_order)
-
-    def has_set_down_only(self):
-        for grouping in self.groupings:
-            for row in grouping.rows[:-1]:
-                for cell in row.times:
-                    if type(cell) is Cell and not cell.last and cell.stopusage.activity == 'setDown':
-                        return True
-
-    def __init__(self, open_files, date=None, service=None):
-        self.service = service
-
-        groupings = {
-            'outbound': Grouping('outbound', self),
-            'inbound': Grouping('inbound', self)
-        }
-
-        if type(open_files) is list:
-            self.transxchanges = [TransXChange(pair[1]) for pair in open_files]
-            self.service = open_files[0][0]
-        else:
-            self.transxchanges = [TransXChange(open_files)]
-
-        for i, transxchange in enumerate(self.transxchanges):
-            if i:
-                transxchange.service = open_files[i][0]
-            else:
-                transxchange.service = self.service
-            for journey_pattern in transxchange.journey_patterns.values():
-                if journey_pattern.direction == 'inbound':
-                    grouping = groupings['inbound']
-                else:
-                    grouping = groupings['outbound']
-                grouping.add_journey_pattern(journey_pattern)
-                journey_pattern.grouping = grouping
-            self.description_parts = transxchange.description_parts
-            self.via = transxchange.via
-
-        self.groupings = list(groupings.values())
-
-        self.set_date(date)
-
-
-def abbreviate(grouping, i, in_a_row, difference):
-    """Given a Grouping, and a timedelta, modify each row and..."""
-    seconds = difference.total_seconds()
-    if not seconds or (seconds != 3600 and seconds > 1800):  # neither hourly nor more than every 30 minutes
-        return
-    repetition = Repetition(in_a_row + 1, sum(2 if row.has_waittimes else 1 for row in grouping.rows), difference)
-    repetition.min_height = sum(2 if row.has_waittimes else 1 for row in grouping.rows if not row.is_minor())
-    grouping.rows[0].times[i - in_a_row - 2] = repetition
-    for j in range(i - in_a_row - 1, i - 1):
-        grouping.rows[0].times[j] = None
-    for j in range(i - in_a_row - 2, i - 1):
-        for row in grouping.rows[1:]:
-            row.times[j] = None
-
-
-def timetable_from_filename(path, filename, day):
-    """Given a path and filename, join them, and return a Timetable."""
-    if filename[-4:] == '.xml':
-        with open(os.path.join(path, filename)) as xmlfile:
-            return Timetable(xmlfile, day)
