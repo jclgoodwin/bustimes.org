@@ -107,6 +107,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.calendar_cache = {}
+        self.notes = {}
         for archive_name in options['filenames']:
             self.handle_archive(archive_name)
 
@@ -192,10 +193,10 @@ class Command(BaseCommand):
                         with transaction.atomic():
                             self.handle_file(open_file, filename)
 
-            old_services = self.source.service_set.filter(current=True).exclude(service_code__in=self.service_codes)
-            old_services.update(current=False)
+        old_services = self.source.service_set.filter(current=True).exclude(service_code__in=self.service_codes)
+        old_services.update(current=False)
 
-            self.source.save(update_fields=['datetime'])
+        self.source.save(update_fields=['datetime'])
 
         try:
             shutil.copy(archive_name, settings.TNDS_DIR)
@@ -204,7 +205,7 @@ class Command(BaseCommand):
 
         StopPoint.objects.filter(active=False, service__current=True).update(active=True)
         StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
-
+        self.source.route_set.filter(service__current=False).delete()
         Service.objects.filter(region=self.region_id, current=False, geometry__isnull=False).update(geometry=None)
 
     def get_calendar(self, operating_profile, operating_period):
@@ -328,6 +329,11 @@ class Command(BaseCommand):
 
         # stops:
         stops = StopPoint.objects.in_bulk(transxchange.stops.keys())
+        stops_to_create = {atco_code: StopPoint(atco_code=atco_code, common_name=str(stop), active=True)
+                           for atco_code, stop in transxchange.stops.items() if atco_code not in stops}
+        if stops_to_create:
+            StopPoint.objects.bulk_create(stops_to_create.values())
+            stops = {**stops, **stops_to_create}
 
         groupings = {
             'outbound': Grouping('outbound', transxchange),
@@ -461,7 +467,12 @@ class Command(BaseCommand):
                     return
 
             for note in journey.notes:
-                note, _ = Note.objects.get_or_create(code=note, text=journey.notes[note])
+                note_cache_key = f'{note}:{journey.notes[note]}'
+                if note_cache_key in self.notes:
+                    note = self.notes[note_cache_key]
+                else:
+                    note, _ = Note.objects.get_or_create(code=note, text=journey.notes[note])
+                    self.notes[note_cache_key] = note
                 trip.notes.add(note)
 
             for stop_time in stop_times:

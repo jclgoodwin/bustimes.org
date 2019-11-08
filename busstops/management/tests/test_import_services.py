@@ -32,20 +32,16 @@ class ImportServicesTest(TestCase):
     def setUpTestData(cls):
         clean_up()
 
-        cls.ea = Region.objects.create(pk='EA', name='East Anglia')
         cls.gb = Region.objects.create(pk='GB', name='Großbritannien')
         cls.sc = Region.objects.create(pk='S', name='Scotland')
         cls.nw = Region.objects.create(pk='NW', name='North West')
         cls.w = Region.objects.create(pk='W', name='Wales')
         cls.london = Region.objects.create(pk='L', name='London')
 
-        cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
         cls.megabus = Operator.objects.create(pk='MEGA', region_id='GB', name='Megabus')
         cls.fabd = Operator.objects.create(pk='FABD', region_id='S', name='First Aberdeen')
 
         nocs = DataSource.objects.create(name='National Operator Codes', datetime='2018-02-01 00:00+00:00')
-        east_anglia = DataSource.objects.create(name='EA', datetime='2018-02-01 00:00+00:00')
-        OperatorCode.objects.create(operator=cls.fecs, source=east_anglia, code='FECS')
         OperatorCode.objects.create(operator=cls.megabus, source=nocs, code='MEGA')
         OperatorCode.objects.create(operator=cls.fabd, source=nocs, code='FABD')
 
@@ -59,8 +55,6 @@ class ImportServicesTest(TestCase):
                     ('639004554', 'Witton Park', 'opp', -2.5108434749, 53.7389877672),
                     ('639004552', 'The Griffin', 'adj', -2.4989239373, 53.7425523688),
                     ('049004705400', 'Kingston District Centre', 'o/s', 0, 0),
-                    ('4200F156472', 'Asda', 'opp', 0, 0),
-                    ('2900A1820', 'Leys Lane', 'adj', 0, 0),
                     ('1000DDDV4248', 'Dinting Value Works', '', 0, 0),
             )
         )
@@ -97,17 +91,13 @@ class ImportServicesTest(TestCase):
             )
         )
 
-        # simulate an East Anglia zipfile:
-        cls.write_files_to_zipfile_and_import('EA.zip', ['ea_21-13B-B-y08-1.xml'])
-
         # simulate a Scotland zipfile:
-        cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml', 'CGAO305.xml'])
+        cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml'])
 
         # simulate a North West zipfile:
         cls.write_files_to_zipfile_and_import('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml',
                                                          'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
 
-        cls.ea_service = Service.objects.get(pk='ea_21-13B-B-y08')
         cls.sc_service = Service.objects.get(pk='ABBN017')
 
         # simulate a National Coach Service Database zip file
@@ -223,21 +213,12 @@ class ImportServicesTest(TestCase):
         """A file with some wrong references should be silently ignored"""
         self.do_service('NW_05_PBT_6_1', 'GB')
 
-    @freeze_time('30 October 2017')
-    def test_do_service_with_empty_pattern(self):
-        """A file with a JourneyPattern with no JourneyPatternSections should be imported"""
-        with warnings.catch_warnings(record=True) as caught_warnings:
-            self.do_service('swe_33-9A-A-y10-2', 'GB')
-            # self.assertEqual(len(caught_warnings), 2)
-            print(caught_warnings)
-        self.assertTrue(Service.objects.filter(service_code='swe_33-9A-A-y10').exists())
-
     def test_service_nw(self):
         # 2
         service = Service.objects.get(service_code='NW_04_GMN_2_1')
         self.assertEqual(service.description, 'intu Trafford Centre - Eccles - Swinton - Bolton')
 
-        self.assertEqual(2, service.stopusage_set.all().count())
+        self.assertEqual(23, service.stopusage_set.all().count())
 
     def test_service_nw_2(self):
         # Stagecoach Manchester 237
@@ -248,64 +229,24 @@ class ImportServicesTest(TestCase):
         self.assertEqual(service.description, 'Glossop - Stalybridge - Ashton')
 
         with freeze_time('1 September 2017'):
-            res = self.client.get(service.get_absolute_url())
+            res = self.client.get(service.get_absolute_url() + '?date=2017-09-01')
+        self.assertEqual(str(res.context_data['timetable'].date), '2017-09-01')
         self.assertContains(res, 'Timetable changes from Sunday 3 September 2017')
 
         with freeze_time('1 October 2017'):
-            res = self.client.get(service.get_absolute_url())
-
+            res = self.client.get(service.get_absolute_url())  # + '?date=2017-10-01')
+        self.assertEqual(str(res.context_data['timetable'].date), '2017-10-01')
         self.assertNotContains(res, 'Timetable changes from Sunday 3 September 2017')
-
-        self.assertEqual(18, len(res.context_data['timetable'].groupings[0].journeys))
+        self.assertEqual(18, len(res.context_data['timetable'].groupings[0].trips))
 
         with freeze_time('1 October 2017'):
             res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
-        self.assertEqual(27, len(res.context_data['timetable'].groupings[0].journeys))
-        self.assertEqual(30, len(res.context_data['timetable'].groupings[1].journeys))
+        self.assertEqual(str(res.context_data['timetable'].date), '2017-10-03')
+        self.assertEqual(27, len(res.context_data['timetable'].groupings[0].trips))
+        self.assertEqual(30, len(res.context_data['timetable'].groupings[1].trips))
 
-        self.assertEqual(1, service.stopusage_set.all().count())
-        self.assertEqual(6, duplicate.stopusage_set.all().count())
-
-    @freeze_time('3 October 2016')
-    def test_do_service_ea(self):
-        service = self.ea_service
-
-        self.assertEqual(str(service), '13B - Turquoise Line - Norwich - Wymondham - Attleborough')
-        self.assertEqual(service.line_name, '13B')
-        self.assertEqual(service.line_brand, 'Turquoise Line')
-        self.assertTrue(service.show_timetable)
-        self.assertTrue(service.current)
-        self.assertEqual(service.outbound_description, 'Norwich - Wymondham - Attleborough')
-        self.assertEqual(service.inbound_description, 'Attleborough - Wymondham - Norwich')
-        self.assertEqual(service.operator.first(), self.fecs)
-        self.assertEqual(
-            service.get_traveline_link()[0],
-            'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST' +
-            '?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0'
-        )
-
-        res = self.client.get(service.get_absolute_url())
-        self.assertEqual(res.context_data['breadcrumb'], [self.ea, self.fecs])
-        self.assertContains(res, """
-            <tr class="OTH">
-                <th>Norwich Brunswick Road</th><td>19:48</td><td>22:56</td>
-            </tr>
-        """, html=True)
-        self.assertContains(res, '<option selected value="2016-10-03">Monday 3 October 2016</option>')
-
-        # Test the fallback version without a timetable (just a list of stops)
-        service.show_timetable = False
-        service.save()
-        res = self.client.get(service.get_absolute_url())
-        self.assertContains(res, 'Leys Lane (adj)')
-        self.assertContains(res, 'Norwich - Wymondham - Attleborough')
-        self.assertContains(res, 'Attleborough - Wymondham - Norwich')
-
-        # Re-import the service, now that the operating period has passed
-        with freeze_time('2016-10-30'):
-            call_command(self.command, os.path.join(FIXTURES_DIR, 'EA.zip'))
-        service.refresh_from_db()
-        self.assertFalse(service.current)
+        self.assertEqual(87, service.stopusage_set.all().count())
+        self.assertEqual(121, duplicate.stopusage_set.all().count())
 
     @freeze_time('22 January 2017')
     def test_do_service_m11a(self):
@@ -340,7 +281,11 @@ class ImportServicesTest(TestCase):
         )
         self.assertContains(res, '/js/timetable.min.js')
 
-    @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
+        timetable = res.context_data['timetable']
+        self.assertFalse(timetable.groupings[0].has_minor_stops())
+        self.assertFalse(timetable.groupings[1].has_minor_stops())
+        self.assertEqual(str(timetable.groupings[1].rows[0].times), '[13:00, 15:00, 16:00, 16:30, 18:00, 20:00, 23:45]')
+
     @freeze_time('1 Jan 2017')
     def test_do_service_m12(self):
         res = self.client.get(self.gb_m12.get_absolute_url())
@@ -348,38 +293,8 @@ class ImportServicesTest(TestCase):
         self.assertContains(res, '<option selected value="2017-01-01">Sunday 1 January 2017</option>')
 
         groupings = res.context_data['timetable'].groupings
-        outbound_stops = [str(row.part.stop) for row in groupings[0].rows]
-        inbound_stops = [str(row.part.stop) for row in groupings[1].rows]
-        self.assertEqual(outbound_stops, [
-            'Belgravia Victoria Coach Station', '049004705400', 'Rugby ASDA', 'Fosse Park ASDA',
-            'Loughborough Holywell Way', 'Nottingham Broad Marsh Bus Station', 'Meadowhall Interchange',
-            'Leeds City Centre York Street', 'Bradford City Centre Hall Ings',
-            'Huddersfield Town Centre Market Street', 'Leeds City Centre Bus Stn',
-            'Shudehill Interchange', 'Middlesbrough Bus Station Express Lounge', 'Sunderland Interchange',
-            'Newcastle upon Tyne John Dobson Street',
-        ])
-        self.assertEqual(inbound_stops, [
-            'Huddersfield Town Centre Market Street', 'Bradford City Centre Interchange',
-            'Newcastle upon Tyne John Dobson Street', 'Sunderland Interchange',
-            'Middlesbrough Bus Station Express Lounge',  'Leeds City Centre Bus Stn',
-            'Shudehill Interchange', 'Leeds City Centre York Street', 'Meadowhall Interchange',
-            'Nottingham Broad Marsh Bus Station', 'Loughborough Holywell Way', 'Fosse Park ASDA',
-            'Rugby ASDA', '049004705400', 'Victoria Coach Station Arrivals'
-        ])
-
-        with override_settings(TNDS_DIR='this is not a directory'):
-            # should not be cached (because dummy cache)
-            with override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}}):
-                res = self.client.get(self.gb_m12.get_absolute_url())
-            self.assertIsNone(res.context_data['timetable'])
-
-            # should be cached
-            res = self.client.get(self.gb_m12.get_absolute_url())
-            self.assertEqual('2017-01-01', str(res.context_data['timetable'].date))
-
-            # should be cached (even though different date)
-            res = self.client.get(self.gb_m12.get_absolute_url() + '?date=2017-01-02')
-            self.assertEqual('2017-01-02', str(res.context_data['timetable'].date))
+        self.assertEqual(len(groupings[0].rows), 15)
+        self.assertEqual(len(groupings[1].rows), 15)
 
     @freeze_time('25 June 2016')
     def test_do_service_scotland(self):
@@ -403,6 +318,12 @@ class ImportServicesTest(TestCase):
         self.assertTemplateUsed(res, 'busstops/service_detail.html')
         self.assertContains(res, '<td rowspan="63">then every 30 minutes until</td>', html=True)
 
+        timetable = res.context_data['timetable']
+        self.assertEqual('2016-06-25', str(timetable.date))
+        self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
+        self.assertEqual(3, len(timetable.groupings[1].rows[0].times))
+        self.assertEqual(timetable.groupings[0].column_feet, {})
+
         # Within operating period, but with no journeys
         res = self.client.get(service.get_absolute_url() + '?date=2026-04-18')
         self.assertContains(res, 'Sorry, no journeys found for Saturday 18 April 2026')
@@ -417,24 +338,6 @@ class ImportServicesTest(TestCase):
                 <a href="/stops/639004554">Witton Park (opp)</a>
             </li>
         """, html=True)
-
-    @freeze_time('25 June 2016')
-    def test_do_service_wales(self):
-        service = Service.objects.get(service_code='CGAO305')
-        service_code = service.servicecode_set.first()
-
-        self.assertEqual(service_code.scheme, 'Traveline Cymru')
-        self.assertEqual(service_code.code, '305MFMWA1')
-
-        service.region = self.w
-        service.source = None
-        service.save()
-
-        response = self.client.get(service.get_absolute_url())
-        self.assertEqual(response.context_data['links'], [{
-            'url': 'https://www.traveline.cymru/timetables/?routeNum=305&direction_id=0&timetable_key=305MFMWA1',
-            'text': 'Timetable on the Traveline Cymru website'
-        }])
 
     # def test_combine_date_time(self):
     #     combine_date_time = generate_departures.combine_date_time

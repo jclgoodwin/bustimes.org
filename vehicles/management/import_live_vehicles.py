@@ -183,11 +183,11 @@ class ImportLiveVehiclesCommand(BaseCommand):
             speed = calculate_speed(latest, location)
             if speed > 90:
                 print('{} mph\t{}'.format(speed, journey.vehicle.get_absolute_url()))
-            elif speed < 3:
+            elif speed < 1.5:
                 last_three = list(location.journey.vehiclelocation_set.order_by('-id')[:3])
                 if len(last_three) == 3:
                     speed = calculate_speed(last_three[2], last_three[0])
-                    if speed < 3:
+                    if speed < 1.5:
                         last_three[1].delete()
 
     def update(self):

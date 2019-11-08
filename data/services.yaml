@@ -27,59 +27,6 @@ sro-288:
     current: false
 expressbus-787:
     current: false
-# Shiel Buses
-HIAN041:
-    timetable_wrong: true
-HIAN044:
-    timetable_wrong: true
-HIAN046:
-    timetable_wrong: true
-HIAN047:
-    timetable_wrong: true
-HIAO411:
-    timetable_wrong: true
-HIAO500:
-    timetable_wrong: true
-HIAO501:
-    timetable_wrong: true
-HIAO501A:
-    timetable_wrong: true
-HIAO502:
-    timetable_wrong: true
-HIAO503:
-    timetable_wrong: true
-HIAO506:
-    timetable_wrong: true
-HIAO507:
-    timetable_wrong: true
-HIAO510:
-    timetable_wrong: true
-HIAO512B:
-    timetable_wrong: true
-HIAO513:
-    timetable_wrong: true
-HIAO515:
-    timetable_wrong: true
-HIAO517:
-    timetable_wrong: true
-HIAO517A:
-    timetable_wrong: true
-HIAO518:
-    timetable_wrong: true
-HIAO522A:
-    timetable_wrong: true
-HIAO522B:
-    timetable_wrong: true
-HIAO950:
-    timetable_wrong: true
-HIAO951:
-    timetable_wrong: true
-HIBO408:
-    timetable_wrong: true
-HICO522:
-    timetable_wrong: true
-bed_5-19-_-y08:
-    timetable_wrong: true
 em_12-40-A-y08:
     description: Leicester Outer Circle
     inbound_description: Clockwise

@@ -16,7 +16,7 @@ from django.core.cache import cache
 from django.urls import reverse
 from django.utils.text import slugify
 from multigtfs.models import Feed
-from timetables import txc, gtfs
+from timetables import gtfs
 from bustimes.timetables import Timetable
 
 
@@ -558,7 +558,7 @@ class Service(models.Model):
                 or any(o.pk in {'MEGA', 'MBGD', 'SCMG'} for o in self.operator.all()))
 
     def get_megabus_url(self):
-        # Using a tuple of tuples, instead of a dict, because the order of dicts is nondeterministic
+        # Using a tuple of tuples, instead of a dict, because the order is important for tests
         query = (
             ('mid', 2678),
             ('id', 242611),
@@ -669,40 +669,32 @@ class Service(models.Model):
         if self.region_id == 'NI':
             return Timetable(self.route_set.all(), day)
 
-        if day is None:
-            day = date.today()
-
         if self.source and self.source.name.endswith(' GTFS'):
+            if day is None:
+                day = date.today()
+
             service_codes = self.servicecode_set.filter(scheme__endswith=' GTFS')
             routes = []
             for service_code in service_codes:
                 routes += service_code.get_routes()
             return gtfs.get_timetable(routes, day)
 
-        cache_key = self.get_timetable_cache_key()
-        timetable = cache.get(cache_key)
+        routes = list(self.route_set.all())
+        for service in related:
+            routes += service.route_set.all()
 
-        if timetable:
-            timetable.set_date(day)
-        elif timetable is None:
-            xml_files = [(self, file) for file in self.get_files_from_zipfile()]
-            if xml_files and xml_files[0][1]:
-                for service in related:
-                    xml_files += [(service, file) for file in service.get_files_from_zipfile()]
-                timetable = txc.Timetable(xml_files, day)
-                for transxchange in timetable.transxchanges:
-                    del transxchange.stops
-                    del transxchange.element
-            cache.set(cache_key, timetable or False)
-        if not timetable:
-            return
+        timetable = Timetable(routes, day)
 
-        if len(timetable.transxchanges) > 1 and timetable.transxchanges[1].operating_period.start > day:
-            self.timetable_change = timetable.transxchanges[1].operating_period.start
+        if timetable.date:
+            for route in routes:
+                if route.start_date > timetable.date:
+                    self.timetable_change = route.start_date
+                    break
 
         # timetable.service = self
-        # # timetable.set_description(self.description)
+        # timetable.set_description(self.description)
         # timetable.groupings = [g for g in timetable.groupings if g.rows and g.rows[0].times]
+
         return timetable
 
 

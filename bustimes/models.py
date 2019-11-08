@@ -1,16 +1,19 @@
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef
 from django.contrib.gis.db import models
-from django.urls import reverse
 
 
 def get_calendars(when):
-    exclusions = CalendarDate.objects.filter(Q(end_date__gte=when) | Q(end_date=None),
-                                             start_date__lte=when,
-                                             operation=False)
-    return Calendar.objects.filter(Q(end_date__gte=when) | Q(end_date=None),
-                                   ~Q(calendardate__in=exclusions),
-                                   start_date__lte=when,
-                                   **{when.strftime('%a').lower(): True})
+    calendar_dates = CalendarDate.objects.filter(Q(end_date__gte=when) | Q(end_date=None),
+                                                 start_date__lte=when)
+    exclusions = calendar_dates.filter(operation=False)
+    inclusions = calendar_dates.filter(operation=True)
+    calendars = Calendar.objects.annotate(special=Exists(CalendarDate.objects.filter(calendar=OuterRef('pk'),
+                                                                                     operation=True)))
+    return calendars.filter(Q(end_date__gte=when) | Q(end_date=None),
+                            ~Q(calendardate__in=exclusions),
+                            Q(calendardate__in=inclusions) | Q(special=False),
+                            start_date__lte=when,
+                            **{when.strftime('%a').lower(): True})
 
 
 class Route(models.Model):
@@ -28,9 +31,6 @@ class Route(models.Model):
 
     def __str__(self):
         return ' – '.join(part for part in (self.line_name, self.line_brand, self.description) if part)
-
-    def get_absolute_url(self):
-        return reverse('route_detail', args=(self.id,))
 
 
 class Calendar(models.Model):
@@ -76,30 +76,35 @@ class Trip(models.Model):
             ('route', 'start', 'end'),
         )
 
-    def cmp(a, b):
+    def __cmp__(a, b):
         """Compare two journeys"""
-        # if x.sequencenumber is not None and y.sequencenumber is not None:
-        #     if x.sequencenumber > y.sequencenumber:
-        #         return 1
-        #     if x.sequencenumber < y.sequencenumber:
-        #         return -1
-        #     return 0
-        a_times = a.stoptime_set.all()
-        b_times = b.stoptime_set.all()
-        a_time = a_times[0].arrival
-        b_time = b_times[0].arrival
-        if a_times[0].stop_code != b_times[0].stop_code:
-            times = {time.stop_code: time.arrival for time in a_times}
-            for time in b_times:
-                if time.stop_code in times:
-                    if time.arrival >= b_time:
-                        if times[time.stop_code] >= a_time:
+        if a.sequence is not None and a.sequence is not None:
+            a.time = a.sequence
+            b.time = b.sequence
+        else:
+            a_time = a.start
+            b_time = b.start
+            a_times = a.stoptime_set.all()
+            b_times = b.stoptime_set.all()
+            if a_times[0].stop_code != b_times[0].stop_code:
+                if a.destination_id == b.destination_id:
+                    a_time = a.end
+                    b_time = b.end
+                else:
+                    times = {time.stop_code: time.arrival or time.departure for time in a_times}
+                    for time in b_times:
+                        if time.stop_code in times:
                             a_time = times[time.stop_code]
-                            b_time = time.arrival
-        #             break
+                            b_time = time.arrival or time.departure
+                            break
+                        # if cell.arrival_time >= y.departure_time:
+                        #     if times[cell.stopusage.stop.atco_code] >= x.departure_time:
+                        #         x_time = times[cell.stopusage.stop.atco_code]
+                        #         y_time = cell.arrival_time
+                        # break
         if a_time > b_time:
             return 1
-        if b_time < a_time:
+        if a_time < b_time:
             return -1
         return 0
 

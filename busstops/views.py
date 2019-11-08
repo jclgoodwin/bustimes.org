@@ -521,7 +521,7 @@ class ServiceDetailView(DetailView):
             stop_codes = (row.stop.atco_code for grouping in context['timetable'].groupings for row in grouping.rows)
             stops = stops.in_bulk(stop_codes)
             for grouping in context['timetable'].groupings:
-                grouping.rows = [row for row in grouping.rows if any(row.times)]
+                # grouping.rows = [row for row in grouping.rows if any(row.times)]
                 for row in grouping.rows:
                     row.stop = stops.get(row.stop.atco_code, row.stop)
         try:

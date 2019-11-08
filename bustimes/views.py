@@ -1,49 +1,12 @@
-from ciso8601 import parse_datetime
 from django.views.generic.detail import DetailView
 from django.utils import timezone
-from busstops.models import StopPoint
 from busstops.views import Service
 from vehicles.views import siri_one_shot
-from .timetables import Timetable
-from .models import Route
-
-
-class RouteDetailView(DetailView):
-    model = Route
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context['trips'] = self.object.trip_set.prefetch_related('calendar__calendardate_set')
-
-        date = self.request.GET.get('date')
-        today = timezone.localtime().date()
-        if date:
-            try:
-                date = parse_datetime(date).date()
-                if date < today:
-                    date = today
-            except ValueError:
-                date = None
-        if not date:
-            date = None
-
-        timetable = Timetable([self.object], date)
-        timetable.groupings = [grouping for grouping in timetable.groupings if grouping.rows]
-
-        stops = [row.stop for grouping in timetable.groupings for row in grouping.rows]
-        stops = StopPoint.objects.select_related('locality').in_bulk(stops)
-        for grouping in timetable.groupings:
-            for row in grouping.rows:
-                row.stop = stops.get(row.stop.atco_code, row.stop)
-
-        context['timetable'] = timetable
-
-        return context
 
 
 class ServiceDebugView(DetailView):
     model = Service
+    queryset = model.objects.prefetch_related('route_set__trip_set__calendar__calendardate_set')
     template_name = 'service_debug.html'
 
     def get_context_data(self, **kwargs):
