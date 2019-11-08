@@ -113,7 +113,7 @@ class Timetable:
 
         for grouping in self.groupings:
             for row in grouping.rows:
-                row.has_waittimes = any(type(cell) is Cell and cell.arrival != cell.departure for cell in row.times)
+                row.has_waittimes = any(type(cell) is Cell and cell.wait_time for cell in row.times)
             grouping.do_heads_and_feet()
 
     def date_options(self):
@@ -135,6 +135,13 @@ class Timetable:
             date += datetime.timedelta(days=1)
         if self.date and self.date > end_date:
             yield self.date
+
+    def has_set_down_only(self):
+        for grouping in self.groupings:
+            for row in grouping.rows:
+                for cell in row.times:
+                    if type(cell) is Cell and cell.stoptime.activity == 'setDown':
+                        return True
 
 
 class Repetition:
@@ -364,10 +371,7 @@ class Cell:
         self.stoptime = stoptime
         self.arrival = arrival
         self.departure = departure
-        self.activity = stoptime.activity
-
-    def wait_time(self):
-        return self.arrival and self.departure and self.departure != self.departure
+        self.wait_time = arrival and departure and arrival != departure
 
     def __repr__(self):
         return format_timedelta(self.arrival)

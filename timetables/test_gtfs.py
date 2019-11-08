@@ -80,12 +80,12 @@ class GTFSTest(TestCase):
         timetable = response.context_data['timetable']
         self.assertEqual(str(timetable.groupings[0]), 'Merrion - Citywest')
         self.assertEqual(str(timetable.groupings[1]), 'Citywest - Ballsbridge')
-        self.assertEqual(timetable.groupings[0].rows[0].times, [time(7, 45)])
-        self.assertEqual(timetable.groupings[0].rows[4].times, [time(7, 52)])
-        self.assertEqual(timetable.groupings[0].rows[6].times, [time(8, 1)])
-        self.assertEqual(timetable.groupings[1].rows[0].times, [time(17, 20)])
-        self.assertEqual(timetable.groupings[1].rows[6].times, [time(17, 45)])
-        self.assertEqual(timetable.groupings[1].rows[-1].times, [time(18, 25)])
+        self.assertEqual(str(timetable.groupings[0].rows[0].times), '[07:45]')
+        self.assertEqual(str(timetable.groupings[0].rows[4].times), '[07:52]')
+        self.assertEqual(str(timetable.groupings[0].rows[6].times), '[08:01]')
+        self.assertEqual(str(timetable.groupings[1].rows[0].times), '[17:20]')
+        self.assertEqual(str(timetable.groupings[1].rows[6].times), '[17:45]')
+        self.assertEqual(str(timetable.groupings[1].rows[-1].times), '[18:25]')
         self.assertEqual(len(timetable.groupings[0].rows), 18)
         self.assertEqual(len(timetable.groupings[1].rows), 14)
 
@@ -98,12 +98,9 @@ class GTFSTest(TestCase):
     def test_big_timetable(self):
         service = Service.objects.get(service_code='seamusdoherty-963-1')
         timetable = service.get_timetable(date(2017, 6, 7))
-        self.assertEqual(timetable.groupings[0].rows[0].times,
-                         ['     ', time(10, 15), '     ', time(14, 15), time(17, 45)])
-        self.assertEqual(timetable.groupings[0].rows[1].times,
-                         ['     ', time(10, 20), '     ', time(14, 20), time(17, 50)])
-        self.assertEqual(timetable.groupings[0].rows[2].times,
-                         ['     ', time(10, 22), '     ', time(14, 22), time(17, 52)])
+        self.assertEqual(str(timetable.groupings[0].rows[0].times), "['', 10:15, '', 14:15, 17:45]")
+        self.assertEqual(str(timetable.groupings[0].rows[1].times), "['', 10:20, '', 14:20, 17:50]")
+        self.assertEqual(str(timetable.groupings[0].rows[2].times), "['', 10:22, '', 14:22, 17:52]")
 
     def test_admin_area(self):
         res = self.client.get(self.dublin.get_absolute_url())

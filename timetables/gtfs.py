@@ -2,7 +2,7 @@ import datetime
 import difflib
 from django.db.models import Min, Q, Prefetch
 from multigtfs.models import Trip, StopTime
-from .txc import Cell
+from bustimes.timetables import Row, Cell
 
 
 class Timetable(object):
@@ -28,26 +28,13 @@ class Grouping(object):
         return self.name
 
 
-class Stop(object):
-    def __init__(self, atco_code):
+class Stop:
+    def __init__(self, atco_code, name):
         self.atco_code = atco_code
+        self.name = name
 
     def __str__(self):
-        if hasattr(self, 'name'):
-            return self.name
-        return self.atco_code
-
-
-class Row(object):
-    def __init__(self, stop, times):
-        self.next = None
-        self.stop = Stop(stop)
-        self.times = times
-
-
-class StopUsage(object):
-    def __init__(self, wait_time):
-        self.wait_time = wait_time
+        return self.name or self.atco_code
 
 
 def get_grouping_name_part(stop_name):
@@ -72,7 +59,6 @@ differ = difflib.Differ(charjunk=lambda _: True)
 def handle_trips(trips, day):
     if not day:
         day = datetime.date.today()
-    midnight = datetime.datetime.combine(day, datetime.time())
 
     previous_list = []
 
@@ -107,8 +93,7 @@ def handle_trips(trips, day):
             assert instruction[2:] == stop_id
 
             if instruction[0] == '+':
-                row = Row(stop_id, ['     '] * x)
-                row.stop.name = stop.stop.name
+                row = Row(Stop(stop_id, stop.stop.name), [''] * x)
                 if not existing_row:
                     rows.append(row)
                 else:
@@ -118,29 +103,17 @@ def handle_trips(trips, day):
                 row = existing_row
                 assert instruction[2:] == existing_row.stop.atco_code
 
-            if stop.arrival_time:
-                arrival_time = (midnight + datetime.timedelta(seconds=stop.arrival_time.seconds)).time()
-            else:
-                arrival_time = None
-
-            if stop.departure_time and stop.departure_time != stop.arrival_time:
-                departure_time = (midnight + datetime.timedelta(seconds=stop.departure_time.seconds)).time()
-            else:
-                departure_time = None
-
-            stop_usage = None
-            if arrival_time and departure_time:
-                row.has_waittimes = True
-                stop_usage = StopUsage(row.has_waittimes)
-
-            row.times.append(Cell(stop_usage, arrival_time or departure_time, departure_time))
+            row.times.append(Cell(None, stop.arrival_time, stop.departure_time))
 
             y += 1
 
         if x:
             for row in rows:
                 if len(row.times) == x:
-                    row.times.append('     ')
+                    row.times.append('')
+
+    for row in rows:
+        row.has_waittimes = any(cell.wait_time for cell in row.times if type(cell) is Cell)
 
     grouping = Grouping()
     grouping.rows = rows
