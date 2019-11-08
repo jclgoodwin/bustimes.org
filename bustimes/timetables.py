@@ -1,6 +1,6 @@
 import datetime
 from difflib import Differ
-# from functools import cmp_to_key
+from functools import cmp_to_key
 from .models import get_calendars, Calendar, Trip
 
 differ = Differ(charjunk=lambda _: True)
@@ -95,7 +95,6 @@ class Timetable:
                                     route__in=routes).order_by('start').prefetch_related('notes')
 
         trips = list(trips.prefetch_related('stoptime_set'))
-        # trips.sort(key=cmp_to_key(Trip.cmp))
 
         for trip in trips:
             if trip.inbound:
@@ -105,7 +104,7 @@ class Timetable:
             grouping.trips.append(trip)
 
         for grouping in self.groupings:
-            # grouping.trips.sort(key=cmp_to_key(Trip.cmp))
+            grouping.trips.sort(key=cmp_to_key(Trip.__cmp__))
             for trip in grouping.trips:
                 grouping.handle_trip(trip)
 
