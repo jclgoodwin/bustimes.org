@@ -295,6 +295,12 @@ class ImportServicesTest(TestCase):
         groupings = res.context_data['timetable'].groupings
         self.assertEqual(len(groupings[0].rows), 15)
         self.assertEqual(len(groupings[1].rows), 15)
+        self.assertContains(res, """
+            <tr>
+                <th><a href="/stops/450030220"></a></th>
+                <td></td><td>02:45</td><td>06:20</td><td>09:20</td><td>10:20</td><td>11:30</td><td>12:30</td><td>13:45</td><td>16:20</td><td>18:40</td>
+            </tr>
+        """, html=True)
 
     @freeze_time('25 June 2016')
     def test_do_service_scotland(self):

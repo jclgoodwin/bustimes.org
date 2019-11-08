@@ -349,6 +349,14 @@ class Stop:
         return self.atco_code
 
 
+def format_timedelta(timedelta):
+    timedelta = str(timedelta)[:-3]
+    timedelta = timedelta.replace('1 day, ', '', 1)
+    if len(timedelta) == 4:
+        return '0' + timedelta
+    return timedelta
+
+
 class Cell:
     last = False
 
@@ -359,9 +367,7 @@ class Cell:
         self.activity = stoptime.activity
 
     def __repr__(self):
-        arrival = self.arrival
-        string = str(arrival)[:-3]
-        string = string.replace('1 day, ', '', 1)
-        if len(string) == 4:
-            return '0' + string
-        return string
+        return format_timedelta(self.arrival)
+
+    def departure_time(self):
+        return format_timedelta(self.departure)
