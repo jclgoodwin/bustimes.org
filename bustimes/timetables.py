@@ -137,7 +137,7 @@ class Timetable:
             yield self.date
 
 
-class Repetition(object):
+class Repetition:
     """Represents a special cell in a timetable, spanning multiple rows and columns,
     with some text like 'then every 5 minutes until'.
     """
@@ -323,13 +323,13 @@ class Grouping:
             row.times = [time for time in row.times if time is not None]
 
 
-class ColumnHead(object):
+class ColumnHead:
     def __init__(self, service, span):
         self.service = service
         self.span = span
 
 
-class ColumnFoot(object):
+class ColumnFoot:
     def __init__(self, note, span=1):
         self.notes = note and note.text
         self.span = span
@@ -365,6 +365,9 @@ class Cell:
         self.arrival = arrival
         self.departure = departure
         self.activity = stoptime.activity
+
+    def wait_time(self):
+        return self.arrival and self.departure and self.departure != self.departure
 
     def __repr__(self):
         return format_timedelta(self.arrival)
