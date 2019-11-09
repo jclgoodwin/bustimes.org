@@ -23,26 +23,49 @@
 
 {% for route in service.route_set.all %}
 <h3>{{ route.code }}</h3>
-<ul class="bulleted">
+
+<table>
+    <thead>
+        <tr>
+            <th scope="col">jp</th>
+            <th scope="col">dest</th>
+            <th scope="col">start</th>
+            <th scope="col">end</th>
+            <th scope="col">start</th>
+            <th scope="col">end</th>
+            <th scope="col">days</th>
+            <th scope="col">dates</th>
+        </tr>
+    </thead>
+    <tbody>
 {% for trip in route.trip_set.all %}
-<li>
-    {{ trip.start }} – {{ trip.end }}<br>
-    {{ trip.calendar.start_date }} – {{ trip.calendar.end_date }}:<br>
-    {% if trip.calendar.mon %}mon{% endif %}
-    {% if trip.calendar.tue %}tue{% endif %}
-    {% if trip.calendar.wed %}wed{% endif %}
-    {% if trip.calendar.thu %}thu{% endif %}
-    {% if trip.calendar.fri %}fri{% endif %}
-    {% if trip.calendar.sat %}sat{% endif %}
-    {% if trip.calendar.sun %}sun{% endif %}
-    <ul class="bulleted">
-    {% for d in trip.calendar.calendardate_set.all %}
-        <li>{{ d.start_date }} - {{ d.end_date }}: {{ d.operation }}</li>
-    {% endfor %}
-    </ul>
-</li>
+<tr>
+    <td>{{ trip.journey_pattern }}</td>
+    <td>{{ trip.destination_id }}</td>
+    <td>{{ trip.start }}</td>
+    <td>{{ trip.end }}</td>
+    <td>{{ trip.calendar.start_date }}</td>
+    <td>{{ trip.calendar.end_date }}</td>
+    <td>
+        {% if trip.calendar.mon %}mon{% endif %}
+        {% if trip.calendar.tue %}tue{% endif %}
+        {% if trip.calendar.wed %}wed{% endif %}
+        {% if trip.calendar.thu %}thu{% endif %}
+        {% if trip.calendar.fri %}fri{% endif %}
+        {% if trip.calendar.sat %}sat{% endif %}
+        {% if trip.calendar.sun %}sun{% endif %}
+    </td>
+    <td>
+        <ul class="bulleted">
+        {% for d in trip.calendar.calendardate_set.all %}
+            <li>{{ d.start_date }} - {{ d.end_date }}: {{ d.operation }}</li>
+        {% endfor %}
+        </ul>
+    </td>
+</tr>
 {% endfor %}
-</ul>
+</tbody>
+</table>
 {% endfor %}
 
 {% endblock %}

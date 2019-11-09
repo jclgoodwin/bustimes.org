@@ -105,6 +105,9 @@ class Trip(models.Model):
             return -1
         return 0
 
+    def __repr__(self):
+        return str(self.start)
+
 
 class StopTime(models.Model):
     trip = models.ForeignKey(Trip, models.CASCADE)

@@ -265,12 +265,14 @@ class Grouping:
     def do_heads_and_feet(self):
         previous_trip = None
         previous_notes = None
+        previous_note_ids = None
         in_a_row = 0
         prev_difference = None
 
         for i, trip in enumerate(self.trips):
             difference = None
             notes = trip.notes.all()
+            note_ids = {note.id for note in notes}
             for note in notes:
                 if note.id in self.column_feet:
                     if note in previous_notes:
@@ -297,7 +299,7 @@ class Grouping:
                     else:
                         self.heads.append(ColumnHead(previous_trip.route, i))
 
-                if not previous_trip.notes.all() != trip.notes.all():
+                if previous_note_ids != note_ids:
                     if in_a_row > 1:
                         abbreviate(self, i, in_a_row - 1, prev_difference)
                     in_a_row = 0
@@ -317,6 +319,7 @@ class Grouping:
             prev_difference = difference
             previous_trip = trip
             previous_notes = notes
+            previous_note_ids = note_ids
 
         if self.heads:  # or (previous_trip and previous_trip.route_id != self.parent.route_id):
             self.heads.append(ColumnHead(previous_trip.route.service,
@@ -324,6 +327,7 @@ class Grouping:
 
         if in_a_row > 1:
             abbreviate(self, len(self.trips), in_a_row - 1, prev_difference)
+
         for row in self.rows:
             # remove 'None' cells created during the abbreviation process
             # (actual empty cells will contain an empty string '')
