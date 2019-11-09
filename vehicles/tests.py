@@ -133,6 +133,56 @@ class VehiclesTests(TestCase):
             })
         self.assertFalse(response.context['form'].has_changed())
 
+        with self.assertNumQueries(8):
+            response = self.client.post(url, {
+                'fleet_number': '',
+                'reg': 'FD54JYA',
+                'vehicle_type': self.vehicle_1.vehicle_type_id,
+                'colours': '#FFFF00',
+                'notes': 'Trent Barton',
+            })
+        self.assertTrue(response.context['form'].has_changed())
+        self.assertContains(response, 'Select a valid choice. #FFFF00 is not one of the available choices')
+
+        with self.assertNumQueries(7):
+            response = self.client.post(url, {
+                'fleet_number': '',
+                'reg': 'FD54JYA',
+                'vehicle_type': self.vehicle_1.vehicle_type_id,
+                'colours': '#FF0000',
+                'notes': 'Trent Barton',
+            })
+
+        with self.assertNumQueries(7):
+            response = self.client.post(url, {
+                'fleet_number': '1',
+                'reg': 'K292JVF',
+                'vehicle_type': self.vehicle_1.vehicle_type_id,
+                'colours': '#FF0000',
+                'notes': 'Trent Barton',
+            })
+        self.assertTrue(response.context['form'].has_changed())
+
+        with self.assertNumQueries(7):
+            response = self.client.post(url, {
+                'fleet_number': '1',
+                'reg': 'K292JVF',
+                'vehicle_type': self.vehicle_1.vehicle_type_id,
+                'colours': '#FF0000',
+                'notes': 'Trent Barton',
+                'name': 'Colin',
+            })
+        self.assertTrue(response.context['form'].has_changed())
+
+        self.assertEqual(3, VehicleEdit.objects.filter(approved=False).count())
+        with self.assertNumQueries(7):
+            admin.apply_edits(VehicleEdit.objects.select_related('vehicle'))
+        self.assertEqual(0, VehicleEdit.objects.filter(approved=False).count())
+        vehicle = Vehicle.objects.get(notes='Trent Barton')
+        self.assertEqual(vehicle.reg, 'K292JVF')
+        self.assertEqual(vehicle.name, 'Colin')
+        self.assertIsNone(vehicle.fleet_number)
+
     def test_vehicle_edit_2(self):
         url = self.vehicle_2.get_absolute_url() + '/edit'
 

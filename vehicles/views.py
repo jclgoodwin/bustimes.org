@@ -45,6 +45,8 @@ def get_vehicle_edit(vehicle, fields):
         if field in fields and str(fields[field]) != str(getattr(vehicle, field)):
             if fields[field]:
                 setattr(edit, field, fields[field])
+            elif field == 'fleet_number':
+                edit.fleet_number = 0
             else:
                 setattr(edit, field, f'-{getattr(vehicle, field)}')
 
@@ -90,9 +92,8 @@ def operator_vehicles(request, slug):
         if request.POST and form.is_valid():
             ticked_vehicles = (vehicle for vehicle in vehicles if str(vehicle.id) in request.POST.getlist('vehicle'))
             data = {key: form.cleaned_data[key] for key in form.changed_data}
-            submitted = len(VehicleEdit.objects.bulk_create(
-                get_vehicle_edit(vehicle, data) for vehicle in ticked_vehicles
-            ))
+            edits = (get_vehicle_edit(vehicle, data) for vehicle in ticked_vehicles)
+            submitted = len(VehicleEdit.objects.bulk_create(edit for edit in edits if edit))
             if form.cleaned_data.get('operator') and form.cleaned_data['operator'] != operator:
                 Vehicle.objects.filter(id__in=request.POST.getlist('vehicle')).update(operator=operator)
     else:
@@ -337,6 +338,7 @@ def edit_vehicle(request, vehicle_id):
             form.add_error(None, 'You haven\'t changed anything')
         elif form.is_valid():
             edit = get_vehicle_edit(vehicle, {key: form.cleaned_data[key] for key in form.changed_data})
+            assert edit
             edit.save()
             if form.cleaned_data.get('operator') and form.cleaned_data['operator'] != vehicle.operator:
                 vehicle.operator = form.cleaned_data['operator']

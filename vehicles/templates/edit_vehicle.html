@@ -23,11 +23,11 @@
     <p>(You can also <a href="{{ vehicle.operator.get_absolute_url }}/vehicles/edit">edit several {{ vehicle.operator }} vehicles at once</a>)</p>
 
     <form action="/vehicles/{{ vehicle.id }}/edit" method="POST">
-        {% if not form.fields.fleet_number.disabled %}
-            <p>Code:<br>
-            {{ vehicle.code }}</p>
-        {% endif %}
+        <p>Code:<br>
+        {{ vehicle.code }}</p>
+
         {{ form.as_p }}
+
         <input type="submit" value="Save changes" />
     </form>
 

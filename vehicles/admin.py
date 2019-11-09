@@ -97,6 +97,50 @@ name.admin_order_field = 'name'
 notes.admin_order_field = 'notes'
 
 
+def apply_edits(queryset):
+    for edit in queryset:
+        ok = True
+        vehicle = edit.vehicle
+        if edit.withdrawn:
+            vehicle.delete()
+            continue
+        update_fields = []
+        if edit.fleet_number is not None:
+            if edit.fleet_number:
+                vehicle.fleet_number = edit.fleet_number
+            else:
+                vehicle.fleet_number = None
+            update_fields.append('fleet_number')
+        if edit.reg:
+            vehicle.reg = edit.reg
+            update_fields.append('reg')
+        for field in ('branding', 'name', 'notes'):
+            if getattr(edit, field):
+                if getattr(edit, field) == f'-{getattr(vehicle, field)}':
+                    setattr(vehicle, field, '')
+                else:
+                    setattr(vehicle, field, getattr(edit, field))
+                update_fields.append(field)
+        if edit.vehicle_type:
+            try:
+                vehicle.vehicle_type = VehicleType.objects.get(name__iexact=edit.vehicle_type)
+                update_fields.append('vehicle_type')
+            except VehicleType.DoesNotExist:
+                ok = False
+        if edit.livery_id:
+            vehicle.livery_id = edit.livery_id
+            vehicle.colours = ''
+            update_fields.append('livery', 'colours')
+        elif edit.colours and edit.colours != 'Other':
+            vehicle.livery = None
+            vehicle.colours = edit.colours
+            update_fields.append('livery', 'colours')
+        vehicle.save(update_fields=update_fields)
+        if ok:
+            edit.approved = True
+            edit.save(update_fields=['approved'])
+
+
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['id', 'datetime', vehicle, fleet_number, reg, vehicle_type, branding, name, 'current', 'suggested',
                     notes, 'withdrawn', 'last_seen', 'flickr']
@@ -110,46 +154,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
     actions = ['apply_edits', 'delete_vehicles']
 
     def apply_edits(self, request, queryset):
-        for edit in queryset:
-            ok = True
-            vehicle = edit.vehicle
-            if edit.withdrawn:
-                vehicle.delete()
-                continue
-            if edit.fleet_number:
-                vehicle.fleet_number = edit.fleet_number
-            if edit.reg:
-                vehicle.reg = edit.reg
-            if edit.branding:
-                if edit.branding == f'-{vehicle.branding}':
-                    vehicle.branding = ''
-                else:
-                    vehicle.branding = edit.branding
-            if edit.name:
-                if edit.name == f'-{vehicle.name}':
-                    vehicle.name = ''
-                else:
-                    vehicle.name = edit.name
-            if edit.notes:
-                if edit.notes == f'-{vehicle.notes}':
-                    vehicle.notes = ''
-                else:
-                    vehicle.notes = edit.notes
-            if edit.vehicle_type:
-                try:
-                    vehicle.vehicle_type = VehicleType.objects.get(name__iexact=edit.vehicle_type)
-                except VehicleType.DoesNotExist:
-                    ok = False
-            if edit.livery_id:
-                vehicle.livery_id = edit.livery_id
-                vehicle.colours = ''
-            elif edit.colours and edit.colours != 'Other':
-                vehicle.livery = None
-                vehicle.colours = edit.colours
-            vehicle.save()
-            if ok:
-                edit.approved = True
-                edit.save(update_fields=['approved'])
+        apply_edits(queryset)
         self.message_user(request, 'Applied edits.')
 
     def delete_vehicles(self, request, queryset):
