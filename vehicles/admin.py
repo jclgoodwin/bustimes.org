@@ -130,11 +130,13 @@ def apply_edits(queryset):
         if edit.livery_id:
             vehicle.livery_id = edit.livery_id
             vehicle.colours = ''
-            update_fields.append('livery', 'colours')
+            update_fields.append('livery')
+            update_fields.append('colours')
         elif edit.colours and edit.colours != 'Other':
             vehicle.livery = None
             vehicle.colours = edit.colours
-            update_fields.append('livery', 'colours')
+            update_fields.append('livery')
+            update_fields.append('colours')
         vehicle.save(update_fields=update_fields)
         if ok:
             edit.approved = True
