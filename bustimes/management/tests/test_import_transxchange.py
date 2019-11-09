@@ -147,8 +147,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(87, len(timetable.groupings[0].rows))
         self.assertEqual(91, len(timetable.groupings[1].rows))
 
-        # self.assertEqual(5, len(timetable.groupings[0].rows[0].times))
-        self.assertEqual(4, len(timetable.groupings[0].rows[0].times))
+        self.assertEqual(5, len(timetable.groupings[0].rows[0].times))
         self.assertEqual(4, len(timetable.groupings[1].rows[0].times))
 
         self.assertEqual('', timetable.groupings[0].rows[0].times[-1])

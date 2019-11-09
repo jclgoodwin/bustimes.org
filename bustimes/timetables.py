@@ -267,9 +267,9 @@ class Grouping:
         previous_notes = None
         in_a_row = 0
         prev_difference = None
-        difference = None
 
         for i, trip in enumerate(self.trips):
+            difference = None
             notes = trip.notes.all()
             for note in notes:
                 if note.id in self.column_feet:
