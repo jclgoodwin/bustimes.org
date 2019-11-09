@@ -1,4 +1,4 @@
-from django.db.models import Q, Exists, OuterRef
+from django.db.models import Q
 from django.contrib.gis.db import models
 
 
@@ -7,13 +7,10 @@ def get_calendars(when):
                                                  start_date__lte=when)
     exclusions = calendar_dates.filter(operation=False)
     inclusions = calendar_dates.filter(operation=True)
-    calendars = Calendar.objects.annotate(special=Exists(CalendarDate.objects.filter(calendar=OuterRef('pk'),
-                                                                                     operation=True)))
+    calendars = Calendar.objects.filter(start_date__lte=when)
     return calendars.filter(Q(end_date__gte=when) | Q(end_date=None),
                             ~Q(calendardate__in=exclusions),
-                            Q(calendardate__in=inclusions) | Q(special=False),
-                            start_date__lte=when,
-                            **{when.strftime('%a').lower(): True})
+                            Q(calendardate__in=inclusions) | Q(**{when.strftime('%a').lower(): True}))
 
 
 class Route(models.Model):
