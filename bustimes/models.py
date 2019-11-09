@@ -9,8 +9,8 @@ def get_calendars(when):
     inclusions = calendar_dates.filter(operation=True)
     calendars = Calendar.objects.filter(start_date__lte=when)
     return calendars.filter(Q(end_date__gte=when) | Q(end_date=None),
-                            ~Q(calendardate__in=exclusions),
-                            Q(calendardate__in=inclusions) | Q(**{when.strftime('%a').lower(): True}))
+                            ~Q(calendardate__in=exclusions) | Q(calendardate__in=inclusions),
+                            **{when.strftime('%a').lower(): True})
 
 
 class Route(models.Model):
