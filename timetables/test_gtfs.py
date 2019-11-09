@@ -2,7 +2,7 @@ import os
 import zipfile
 import vcr
 from freezegun import freeze_time
-from datetime import date, time
+from datetime import date
 from django.test import TestCase, override_settings
 from django.conf import settings
 from django.core.management import call_command
