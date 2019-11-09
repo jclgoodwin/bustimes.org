@@ -493,10 +493,6 @@ class ServiceDetailView(DetailView):
                         date = None
                 except ValueError:
                     date = None
-            if not date:
-                date = self.object.servicedate_set.filter(date__gte=today).first()
-                if date:
-                    date = date.date
             if context['related']:
                 parallel = list(Service.objects.filter(
                     Q(link_from__to_service=self.object, link_from__how='parallel')

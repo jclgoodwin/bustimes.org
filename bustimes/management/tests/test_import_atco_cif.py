@@ -91,13 +91,13 @@ class ImportAtcoCifTest(TestCase):
 
         # no journeys on this date - CalendarDate with operation = False
         with freeze_time('2019-07-20'):
-            with self.assertNumQueries(12):
+            with self.assertNumQueries(11):
                 response = self.client.get('/services/219-belfast-europa-buscentre-ballymena-buscentre')
                 self.assertEqual('2019-07-20', str(response.context_data['timetable'].date))
                 self.assertEqual(0, len(response.context_data['timetable'].groupings))
 
         with freeze_time('2019-07-27'):
-            with self.assertNumQueries(15):
+            with self.assertNumQueries(14):
                 response = self.client.get('/services/219-belfast-europa-buscentre-ballymena-buscentre')
                 self.assertEqual('2019-07-27', str(response.context_data['timetable'].date))
                 self.assertEqual(1, len(response.context_data['timetable'].groupings))

@@ -714,15 +714,6 @@ class ServiceCode(models.Model):
         return feed.route_set.filter(feed=feed, route_id=self.code)
 
 
-class ServiceDate(models.Model):
-    service = models.ForeignKey('Service', models.CASCADE)
-    date = models.DateField()
-    end = models.DateTimeField(null=True)
-
-    class Meta():
-        unique_together = ('service', 'date')
-
-
 class ServiceLink(models.Model):
     from_service = models.ForeignKey(Service, models.CASCADE, 'link_from')
     to_service = models.ForeignKey(Service, models.CASCADE, 'link_to')
