@@ -50,8 +50,8 @@ def get_vehicle_edit(vehicle, fields):
             else:
                 setattr(edit, field, f'-{getattr(vehicle, field)}')
 
-    if not edit.vehicle_type:
-        edit.vehicle_type = ''
+    edit.user = fields.get('user', '')
+    edit.url = fields.get('url', '')
 
     if fields.get('colours'):
         if fields['colours'].isdigit():

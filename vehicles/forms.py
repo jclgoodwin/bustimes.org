@@ -25,9 +25,10 @@ class EditVehiclesForm(forms.Form):
     operator = forms.ModelChoiceField(queryset=None, label='Operator', required=False)
     vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False)
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
-    branding = forms.CharField(required=False)
-    notes = forms.CharField(required=False)
+    branding = forms.CharField(required=False, max_length=255)
+    notes = forms.CharField(required=False, max_length=255)
     withdrawn = forms.BooleanField(required=False)
+    user = forms.CharField(label='Your name', help_text='Feel free to remain anonymous', required=False, max_length=255)
 
     def __init__(self, *args, **kwargs):
         operator = kwargs.pop('operator', None)
@@ -45,10 +46,10 @@ class EditVehiclesForm(forms.Form):
 
 class EditVehicleForm(EditVehiclesForm):
     fleet_number = forms.IntegerField(required=False, min_value=0)
-    reg = forms.CharField(label='Registration', required=False)
-    name = forms.CharField(label='Name', required=False)
-
-    field_order = ['operator', 'fleet_number', 'reg', 'vehicle_type', 'colours', 'branding', 'name', 'notes']
+    reg = forms.CharField(label='Registration', required=False, max_length=24)
+    name = forms.CharField(label='Name', required=False, max_length=255)
+    url = forms.URLField(label='URL', help_text='A photo (helpful for verifying recent repaints)', required=False)
+    field_order = ['operator', 'fleet_number', 'reg', 'vehicle_type', 'colours', 'branding', 'name', 'notes', 'url']
 
     def __init__(self, *args, **kwargs):
         vehicle = kwargs.pop('vehicle', None)
