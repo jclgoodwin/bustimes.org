@@ -140,7 +140,7 @@ class Timetable:
         for grouping in self.groupings:
             for row in grouping.rows:
                 for cell in row.times:
-                    if type(cell) is Cell and cell.stoptime.activity == 'setDown':
+                    if type(cell) is Cell and not cell.last and cell.stoptime.activity == 'setDown':
                         return True
 
 
