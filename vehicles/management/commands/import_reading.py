@@ -32,13 +32,20 @@ class Command(ImportLiveVehiclesCommand):
         journey = VehicleJourney()
         journey.route_name = item['service']
 
-        if vehicle.latest_location and vehicle.latest_location.journey.route_name == journey.route_name:
-            journey.service = vehicle.latest_location.journey.service
-        else:
+        latest_journey = vehicle.latest_location and vehicle.latest_location.journey
+        if latest_journey and latest_journey.service and latest_journey.route_name == journey.route_name:
+            journey.service = latest_journey.service
+        elif journey.route_name:
             try:
-                journey.service = self.services.get(line_name=item['service'])
-            except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-                print(e, item['service'])
+                journey.service = self.get_service(
+                    self.services.filter(line_name__iexact=journey.route_name),
+                    Point(float(item['longitude']), float(item['latitude']))
+                )
+            except Service.DoesNotExist:
+                pass
+
+            if not journey.service:
+                print(item)
 
         return journey
 
