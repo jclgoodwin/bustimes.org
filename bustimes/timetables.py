@@ -91,8 +91,8 @@ class Timetable:
         if not self.date:
             return
 
-        trips = Trip.objects.filter(calendar__in=get_calendars(self.date),
-                                    route__in=routes).order_by('start').prefetch_related('notes')
+        trips = Trip.objects.filter(calendar__in=get_calendars(self.date), route__in=routes).order_by('start')
+        trips = trips.prefetch_related('notes').select_related('route__service')
 
         trips = list(trips.prefetch_related('stoptime_set'))
 

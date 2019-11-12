@@ -17,6 +17,7 @@ from django.urls import reverse
 from django.utils.text import slugify
 from multigtfs.models import Feed
 from timetables import gtfs
+from bustimes.models import Route
 from bustimes.timetables import Timetable
 
 
@@ -679,10 +680,7 @@ class Service(models.Model):
                 routes += service_code.get_routes()
             return gtfs.get_timetable(routes, day)
 
-        routes = list(self.route_set.all())
-        for service in related:
-            routes += service.route_set.all()
-
+        routes = Route.objects.filter(service__in=[self] + related)
         timetable = Timetable(routes, day)
 
         if timetable.date:
