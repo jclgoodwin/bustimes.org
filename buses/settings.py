@@ -80,9 +80,12 @@ DATABASES = {
 }
 
 if os.environ.get('READ_ONLY_DB_HOST'):
-    DATABASES['read-only'] = DATABASES['default'].copy()
-    DATABASES['read-only']['HOST'] = os.environ.get('READ_ONLY_DB_HOST')
-    REPLICA_DATABASES = ['read-only']
+    REPLICA_DATABASES = []
+    for i, host in enumerate(os.environ['READ_ONLY_DB_HOST'].split()):
+        key = f'read-only-{i}'
+        DATABASES[key] = DATABASES['default'].copy()
+        DATABASES[key]['HOST'] = os.environ.get('READ_ONLY_DB_HOST')
+        REPLICA_DATABASES.append(key)
     DATABASE_ROUTERS = ['multidb.PinningReplicaRouter']
     MIDDLEWARE.append('busstops.middleware.admin_db_middleware')
 
