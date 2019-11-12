@@ -2,12 +2,14 @@ from django.db.models import Q
 from django.contrib.gis.db import models
 
 
-def get_calendars(when):
+def get_calendars(when, calendars=None):
     calendar_dates = CalendarDate.objects.filter(Q(end_date__gte=when) | Q(end_date=None),
                                                  start_date__lte=when)
     exclusions = calendar_dates.filter(operation=False)
     inclusions = calendar_dates.filter(operation=True)
-    calendars = Calendar.objects.filter(start_date__lte=when)
+    if calendars is None:
+        calendars = Calendar.objects
+    calendars = calendars.filter(start_date__lte=when)
     return calendars.filter(Q(end_date__gte=when) | Q(end_date=None),
                             ~Q(calendardate__in=exclusions) | Q(calendardate__in=inclusions),
                             **{when.strftime('%a').lower(): True})
