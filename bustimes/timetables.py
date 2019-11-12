@@ -294,10 +294,8 @@ class Grouping:
 
             if previous_trip:
                 if previous_trip.route_id != trip.route_id:
-                    if self.heads:
-                        self.heads.append(ColumnHead(previous_trip.route, i - sum(head.span for head in self.heads)))
-                    else:
-                        self.heads.append(ColumnHead(previous_trip.route, i))
+                    self.heads.append(
+                        ColumnHead(previous_trip.route.service, i - sum(head.span for head in self.heads)))
 
                 if previous_note_ids != note_ids:
                     if in_a_row > 1:
