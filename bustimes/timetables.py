@@ -92,7 +92,8 @@ class Timetable:
         if not self.date:
             return
 
-        cache_key = f'groupings:{":".join(route.id for route in self.routes)}:{self.date}'
+        cache_key = (f'{route.id}:{route.start_date}:{route.end_date}' for route in self.routes)
+        cache_key = f'groupings:{":".join(cache_key)}:{self.date}'
         cached_groupings = cache.get(cache_key)
         if cached_groupings is not None:
             self.groupings = cached_groupings
