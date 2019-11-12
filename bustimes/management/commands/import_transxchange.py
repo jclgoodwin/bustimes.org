@@ -305,10 +305,6 @@ class Command(BaseCommand):
         if service_code is None:
             service_code = transxchange.service_code
 
-        if service_code not in self.service_codes:
-            self.service_codes.add(service_code)
-            self.source.route_set.filter(service=service_code).delete()
-
         defaults = {
             'line_name': line_name,
             'line_brand': line_brand,
@@ -387,12 +383,15 @@ class Command(BaseCommand):
 
         if service_created:
             service.operator.add(*operators)
+            self.service_codes.add(service_code)
         else:
             if service.slug == service_code.lower():
                 service.slug = ''
                 service.save()
             service.operator.set(operators)
             if service_code not in self.service_codes:
+                self.service_codes.add(service_code)
+                self.source.route_set.filter(service=service_code).delete()
                 service.stops.clear()
         StopUsage.objects.bulk_create(stop_usages)
 

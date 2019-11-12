@@ -299,6 +299,9 @@ class ImportServicesTest(TestCase):
         self.assertFalse(timetable.groupings[1].has_minor_stops())
         self.assertEqual(str(timetable.groupings[1].rows[0].times), '[13:00, 15:00, 16:00, 16:30, 18:00, 20:00, 23:45]')
 
+        # should only be 6, despite running 'import_services' twice
+        self.assertEqual(6, service.stopusage_set.count())
+
     @freeze_time('1 Jan 2017')
     def test_do_service_m12(self):
         res = self.client.get(self.gb_m12.get_absolute_url())
