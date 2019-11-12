@@ -1,5 +1,4 @@
 import datetime
-from hashlib import sha256
 from difflib import Differ
 from functools import cmp_to_key
 from django.core.cache import cache
@@ -93,15 +92,15 @@ class Timetable:
         if not self.date:
             return
 
-        trips = Trip.objects.filter(calendar__in=get_calendars(self.date), route__in=self.routes).order_by('start')
-        trips = trips.defer('route__service__geometry').select_related('route__service')
-        trips = trips.prefetch_related('notes', 'stoptime_set')
-
-        cache_key = f'groupings:{sha256(b":".join(bytes(trip.id) for trip in trips)).hexdigest()}'
+        cache_key = f'groupings:{":".join(route.id for route in self.routes)}:{self.date}'
         cached_groupings = cache.get(cache_key)
         if cached_groupings is not None:
             self.groupings = cached_groupings
             return
+
+        trips = Trip.objects.filter(calendar__in=get_calendars(self.date), route__in=self.routes).order_by('start')
+        trips = trips.defer('route__service__geometry').select_related('route__service')
+        trips = trips.prefetch_related('notes', 'stoptime_set')
 
         for trip in trips:
             if trip.inbound:
