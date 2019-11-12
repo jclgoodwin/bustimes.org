@@ -1,6 +1,8 @@
 import datetime
+from hashlib import sha256
 from difflib import Differ
 from functools import cmp_to_key
+from django.core.cache import cache
 from .models import get_calendars, Calendar, Trip
 
 differ = Differ(charjunk=lambda _: True)
@@ -92,9 +94,14 @@ class Timetable:
             return
 
         trips = Trip.objects.filter(calendar__in=get_calendars(self.date), route__in=self.routes).order_by('start')
-        trips = trips.prefetch_related('notes').select_related('route__service').defer('route__service__geometry')
+        trips = trips.defer('route__service__geometry').select_related('route__service')
+        trips = trips.prefetch_related('notes', 'stoptime_set')
 
-        trips = list(trips.prefetch_related('stoptime_set'))
+        cache_key = f'groupings:{sha256(b":".join(bytes(trip.id) for trip in trips)).hexdigest()}'
+        cached_groupings = cache.get(cache_key)
+        if cached_groupings is not None:
+            self.groupings = cached_groupings
+            return
 
         for trip in trips:
             if trip.inbound:
@@ -102,6 +109,8 @@ class Timetable:
             else:
                 grouping = self.groupings[0]
             grouping.trips.append(trip)
+
+        del trips
 
         for grouping in self.groupings:
             grouping.trips.sort(key=cmp_to_key(Trip.__cmp__))
@@ -115,6 +124,10 @@ class Timetable:
             for row in grouping.rows:
                 row.has_waittimes = any(type(cell) is Cell and cell.wait_time for cell in row.times)
             grouping.do_heads_and_feet()
+
+            # del grouping.trips
+
+        cache.set(cache_key, self.groupings)
 
     def date_options(self):
         date = datetime.date.today()
