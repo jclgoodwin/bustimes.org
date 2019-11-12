@@ -13,6 +13,7 @@ from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.search import SearchVectorField
 from django.core.cache import cache
+from django.db.models import Q
 from django.urls import reverse
 from django.utils.text import slugify
 from multigtfs.models import Feed
@@ -661,8 +662,35 @@ class Service(models.Model):
             logger.error(e, exc_info=True)
             return []
 
-    def get_timetable_cache_key(self):
-        return '{}:{}'.format(quote(self.service_code), self.date)
+    def get_linked_services_cache_key(self):
+        return f'{quote(self.service_code)}linked_services{self.date}'
+
+    def get_similar_services_cache_key(self):
+        return f'{quote(self.service_code)}similar_services{self.date}'
+
+    def get_linked_services(self):
+        key = self.get_linked_services_cache_key()
+        services = cache.get(key)
+        if services is None:
+            services = list(Service.objects.filter(
+                Q(link_from__to_service=self, link_from__how='parallel')
+                | Q(link_to__from_service=self, link_to__how='parallel')
+            ).order_by().defer('geometry'))
+            cache.set(key, services)
+        return services
+
+    def get_similar_services(self):
+        key = self.get_similar_services_cache_key()
+        services = cache.get(key)
+        if services is None:
+            q = Q(link_from__to_service=self) | Q(link_to__from_service=self)
+            if self.description and self.line_name:
+                q |= Q(description=self.description)
+                q |= Q(line_name=self.line_name, operator__in=self.operator.all())
+            services = Service.objects.filter(~Q(pk=self.pk), q, current=True).order_by().defer('geometry')
+            services = sorted(services.distinct().prefetch_related('operator'), key=Service.get_order)
+            cache.set(key, services)
+        return services
 
     def get_timetable(self, day=None, related=()):
         """Given a Service, return a Timetable"""

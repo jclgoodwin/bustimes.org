@@ -476,12 +476,7 @@ class ServiceDetailView(DetailView):
                                                | Q(services=None, operators=None))
         context['links'] = []
 
-        related_q = Q(link_from__to_service=self.object) | Q(link_to__from_service=self.object)
-        if self.object.description and self.object.line_name:
-            related_q |= Q(description=self.object.description)
-            related_q |= Q(line_name=self.object.line_name, operator__in=context['operators'])
-        related = Service.objects.filter(related_q, current=True).exclude(pk=self.object.pk).defer('geometry')
-        context['related'] = sorted(related.distinct().prefetch_related('operator'), key=Service.get_order)
+        context['related'] = self.object.get_similar_services()
 
         if self.object.show_timetable and not self.object.timetable_wrong:
             date = self.request.GET.get('date')
@@ -494,10 +489,7 @@ class ServiceDetailView(DetailView):
                 except ValueError:
                     date = None
             if context['related']:
-                parallel = list(Service.objects.filter(
-                    Q(link_from__to_service=self.object, link_from__how='parallel')
-                    | Q(link_to__from_service=self.object, link_to__how='parallel')
-                ).order_by().defer('geometry'))
+                parallel = self.object.get_linked_services()
             else:
                 parallel = []
             context['timetable'] = self.object.get_timetable(date, parallel)

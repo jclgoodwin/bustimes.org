@@ -74,14 +74,14 @@ def get_stop_usages(trips):
 
 class Timetable:
     def __init__(self, routes, date):
-        self.routes = routes
+        self.routes = list(routes)
         self.groupings = [Grouping(), Grouping(True)]
 
         self.date = date
 
-        self.calendars = Calendar.objects.filter(trip__route__in=routes).distinct()
+        self.calendars = Calendar.objects.filter(trip__route__in=self.routes).distinct()
 
-        if not routes:
+        if not self.routes:
             return
 
         if not self.date:
@@ -91,8 +91,8 @@ class Timetable:
         if not self.date:
             return
 
-        trips = Trip.objects.filter(calendar__in=get_calendars(self.date), route__in=routes).order_by('start')
-        trips = trips.prefetch_related('notes').select_related('route__service')
+        trips = Trip.objects.filter(calendar__in=get_calendars(self.date), route__in=self.routes).order_by('start')
+        trips = trips.prefetch_related('notes').select_related('route__service').defer('route__service__geometry')
 
         trips = list(trips.prefetch_related('stoptime_set'))
 
