@@ -84,7 +84,7 @@ if os.environ.get('READ_ONLY_DB_HOST'):
     for i, host in enumerate(os.environ['READ_ONLY_DB_HOST'].split()):
         key = f'read-only-{i}'
         DATABASES[key] = DATABASES['default'].copy()
-        DATABASES[key]['HOST'] = os.environ.get('READ_ONLY_DB_HOST')
+        DATABASES[key]['HOST'] = host
         REPLICA_DATABASES.append(key)
     DATABASE_ROUTERS = ['multidb.PinningReplicaRouter']
     MIDDLEWARE.append('busstops.middleware.admin_db_middleware')
