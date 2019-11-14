@@ -774,24 +774,6 @@ class SiriEtDepartures(Departures):
         return [self.get_row(call) for call in calls]
 
 
-def get_max_age(departures, now):
-    """Given a list of departures and the current datetime, returns an
-    appropriate max_age in seconds (for use in a cache-control header)
-    (for costly Transport API departures)
-    """
-    if departures is not None:
-        if len(departures) > 0:
-            expiry = departures[0]['time']
-            if now < expiry:
-                return (expiry - now).seconds + 60
-            return 60
-        midnight = datetime.datetime.combine(
-            now.date() + datetime.timedelta(days=1), datetime.time(0)
-        )
-        return (midnight - now).seconds
-    return 3600
-
-
 def services_match(a, b):
     if type(a) == Service:
         a = a.line_name

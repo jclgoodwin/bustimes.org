@@ -360,29 +360,6 @@ class LiveDeparturesTest(TestCase):
             'live': datetime(2017, 4, 21, 20, 5)
         }])
 
-    def test_max_age(self):
-        """Test the get_max_age() method
-        """
-        # Empty departures list should be cached until midnight
-        self.assertEqual(live.get_max_age((), datetime(2016, 6, 10, 22, 47)), 4380)
-
-        # Error should be cached for 3600 seconds
-        self.assertEqual(live.get_max_age(None, 'chutney'), 3600)
-
-        # If the first departure is in the past, cache for 60 seconds
-        self.assertEqual(live.get_max_age(({
-            'destination': 'Sheringham',
-            'service': '44A',
-            'time': datetime(2016, 6, 10, 22, 47)
-        },), datetime(2016, 6, 10, 22, 59)), 60)
-
-        # If the first departure is 43030 seconds in the future, cache for 43030 seconds
-        self.assertEqual(live.get_max_age(({
-            'destination': 'Sheringham',
-            'service': '44A',
-            'time': datetime(2016, 6, 10, 22, 47)
-        },), datetime(2016, 6, 10, 10, 50, 50)), 43030)
-
     def test_render(self):
         response = render(None, 'departures.html', {
             'departures': [
