@@ -549,6 +549,10 @@ class TimetableDepartures(Departures):
         }
 
     def get_departures(self):
+        key = f'TimetableDepartures:{self.stop.atco_code}'
+        times = cache.get(key)
+        if times is not None:
+            return times
         time_since_midnight = datetime.timedelta(hours=self.now.hour, minutes=self.now.minute, seconds=self.now.second,
                                                  microseconds=self.now.microsecond)
         self.midnight = self.now - time_since_midnight
@@ -557,7 +561,11 @@ class TimetableDepartures(Departures):
         times = times.select_related('trip__route__service',
                                      'trip__destination__locality').defer('trip__route__service__geometry',
                                                                           'trip__destination__locality__latlong')
-        return [self.get_row(time) for time in times.order_by('departure')[:10]]
+        times = [self.get_row(time) for time in times.order_by('departure')[:10]]
+        if times:
+            max_age = (times[0]['time'] - self.now).seconds + 60
+            cache.set(key, times, max_age)
+        return times
 
 
 def parse_datetime(string):
