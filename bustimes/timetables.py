@@ -99,7 +99,8 @@ class Timetable:
             self.groupings = cached_groupings
             return
 
-        trips = Trip.objects.filter(calendar__in=get_calendars(self.date, self.calendars), route__in=self.routes)
+        calendar_ids = [calendar.id for calendar in self.calendars]
+        trips = Trip.objects.filter(calendar__in=get_calendars(self.date, calendar_ids), route__in=self.routes)
         trips = trips.order_by('start').defer('route__service__geometry').select_related('route__service')
         trips = trips.prefetch_related('notes', 'stoptime_set')
 
