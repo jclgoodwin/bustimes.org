@@ -13,7 +13,7 @@ from django.core.cache import cache
 from django.db.models import Q
 from django.utils import timezone
 from busstops.models import Service, ServiceCode, DataSource, SIRISource
-from bustimes.models import get_calendars, StopTime, Calendar
+from bustimes.models import get_calendars, StopTime
 from vehicles.models import Vehicle, VehicleJourney, JourneyCode
 
 
