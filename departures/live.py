@@ -13,7 +13,7 @@ from django.core.cache import cache
 from django.db.models import Q
 from django.utils import timezone
 from busstops.models import Service, ServiceCode, DataSource, SIRISource
-from bustimes.models import get_calendars, StopTime
+from bustimes.models import get_calendars, StopTime, Calendar
 from vehicles.models import Vehicle, VehicleJourney, JourneyCode
 
 
@@ -28,6 +28,7 @@ class Departures(object):
     def __init__(self, stop, services, now=None):
         self.stop = stop
         self.now = now
+        self.services = services
         self.services_by_name = {}
         self.services_by_alternative_name = {}
         duplicate_names = set()
@@ -557,7 +558,7 @@ class TimetableDepartures(Departures):
                                                  microseconds=self.now.microsecond)
         self.midnight = self.now - time_since_midnight
 
-        times = get_stop_times(self.now, self.stop.atco_code)
+        times = get_stop_times(self.now, self.stop.atco_code, self.services)
         times = times.select_related('trip__route__service',
                                      'trip__destination__locality').defer('trip__route__service__geometry',
                                                                           'trip__destination__locality__latlong')
@@ -867,7 +868,7 @@ def blend(departures, live_rows, stop=None):
         departures.sort(key=get_departure_order)
 
 
-def get_stop_times(when, stop):
+def get_stop_times(when, stop, services):
     time_since_midnight = datetime.timedelta(hours=when.hour, minutes=when.minute, seconds=when.second,
                                              microseconds=when.microsecond)
     return StopTime.objects.filter(~Q(activity='setDown'), stop_code=stop, departure__gte=time_since_midnight,
@@ -915,7 +916,7 @@ def get_departures(stop, services):
     departures = departures.get_departures()
 
     one_hour = datetime.timedelta(hours=1)
-    times_one_hour_ago = get_stop_times(now - one_hour, stop.atco_code)
+    times_one_hour_ago = get_stop_times(now - one_hour, stop.atco_code, services)
 
     if not departures or (departures[0]['time'] - now) < one_hour or times_one_hour_ago.exists():
 
