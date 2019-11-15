@@ -1,5 +1,6 @@
 import datetime
 import difflib
+from functools import cmp_to_key
 from django.db.models import Min, Q, Prefetch
 from multigtfs.models import Trip, StopTime
 from bustimes.timetables import Row, Cell
@@ -56,9 +57,30 @@ def get_stop_id(stop_id):
 differ = difflib.Differ(charjunk=lambda _: True)
 
 
+def cmp_trips(a, b):
+    a_time = a.departure_time
+    b_time = b.departure_time
+    a_times = a.stoptime_set.all()
+    b_times = b.stoptime_set.all()
+    if a_times[0].stop_id != b_times[0].stop_id:
+        times = {time.stop_id: time.arrival_time or time.departure_time for time in a_times}
+        for time in b_times:
+            if time.stop_id in times:
+                a_time = times[time.stop_id]
+                b_time = time.arrival_time or time.departure_time
+                break
+    if a_time > b_time:
+        return 1
+    if a_time < b_time:
+        return -1
+    return 0
+
+
 def handle_trips(trips, day):
     if not day:
         day = datetime.date.today()
+
+    trips.sort(key=cmp_to_key(cmp_trips))
 
     previous_list = []
 

@@ -80,8 +80,8 @@ class Trip(models.Model):
     def __cmp__(a, b):
         """Compare two journeys"""
         if a.sequence is not None and a.sequence is not None:
-            a.time = a.sequence
-            b.time = b.sequence
+            a_time = a.sequence
+            b_time = b.sequence
         else:
             a_time = a.start
             b_time = b.start
