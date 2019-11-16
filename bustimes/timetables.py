@@ -134,7 +134,7 @@ class Timetable:
         date = datetime.date.today()
         start_dates = [route.start_date for route in self.routes if route.start_date]
         if start_dates:
-            date = max(date, max(start_dates))
+            date = max(date, min(start_dates))
 
         end_date = date + datetime.timedelta(days=21)
         end_dates = [route.end_date for route in self.routes if route.end_date]
