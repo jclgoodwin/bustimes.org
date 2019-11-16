@@ -708,7 +708,7 @@ class Service(models.Model):
                 routes += service_code.get_routes()
             return gtfs.get_timetable(routes, day)
 
-        routes = Route.objects.filter(service__in=[self] + related)
+        routes = Route.objects.filter(service__in=[self] + related).order_by('start_date')
         timetable = Timetable(routes, day)
 
         if timetable.date:
