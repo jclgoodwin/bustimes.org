@@ -648,7 +648,10 @@ class SiriSmDepartures(Departures):
                     scheme += ' SIRI'
                     line_ref = line_ref.text
                     if line_ref and line_ref not in self.line_refs and operator != 'TD':
-                        ServiceCode.objects.update_or_create({'code': line_ref}, service=service, scheme=scheme)
+                        try:
+                            ServiceCode.objects.update_or_create({'code': line_ref}, service=service, scheme=scheme)
+                        except DatabaseError:
+                            pass
                         self.line_refs.add(line_ref)
 
             # Create a "journey code", which can be used to work out the destination of a vehicle.
