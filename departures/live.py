@@ -10,6 +10,7 @@ import xml.etree.cElementTree as ET
 from pytz.exceptions import AmbiguousTimeError
 from django.conf import settings
 from django.core.cache import cache
+from django.db import DatabaseError
 from django.db.models import Q
 from django.utils import timezone
 from busstops.models import Service, ServiceCode, DataSource, SIRISource
@@ -635,7 +636,7 @@ class SiriSmDepartures(Departures):
                 if not ('sslink' in url or 'jmwrti' in url or scheme in {'Reading', 'Surrey'}):
                     try:
                         self.log_vehicle_journey(element, operator, vehicle, service, journey_ref, destination)
-                    except (Vehicle.MultipleObjectsReturned, VehicleJourney.MultipleObjectsReturned):
+                    except (Vehicle.MultipleObjectsReturned, VehicleJourney.MultipleObjectsReturned, DatabaseError):
                         pass
 
             # Create a "service code",
@@ -656,7 +657,7 @@ class SiriSmDepartures(Departures):
                     JourneyCode.objects.update_or_create({
                         'destination': destination
                     }, service=service, code=journey_ref, siri_source=self.source)
-                except JourneyCode.MultipleObjectsReturned:
+                except (JourneyCode.MultipleObjectsReturned, DatabaseError):
                     pass
 
         return {
