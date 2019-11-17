@@ -1,0 +1,80 @@
+interactions:
+- request:
+    body: '{"operatingSystem": "iOS", "function": "register_user", "apiKey": "apikey"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '89'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.22.0
+    method: POST
+    uri: https://rifkind.co.uk/api.php
+  response:
+    body:
+      string: '{"debug_message":"Success","customer_message":"You have been successfully
+        registered with the hugo servers.","data":{"message":"User created successfully","user_token":"token"}}'
+    headers:
+      Content-Length:
+      - '246'
+      Content-Type:
+      - text/html; charset=UTF-8
+      Date:
+      - Sun, 17 Nov 2019 12:18:26 GMT
+      Server:
+      - Microsoft-IIS/8.5
+      X-Powered-By:
+      - PHP/7.0.3
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"apiKey": "apikey", "function": "get_realtime_full", "token": "token",
+      "atcoCode": "1000DCMP4529"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '181'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.22.0
+    method: POST
+    uri: https://rifkind.co.uk/api.php
+  response:
+    body:
+      string: '{"debug_message":"Success","customer_message":"","data":[{"status":true,"stop_ref":"1000DCMP4529","service_name":"rainbow
+        one","service_colour":"#004a98","journey_origin":"Victoria Bus Station","journey_destination":"Ripley","vehicle_location_lat":53.017367,"vehicle_location_lng":-1.3114,"origin_departure_time":1573990200,"destination_arrival_time":1573994220,"in_congestion":false,"at_stop":false,"scheduled_departure_time":1573993680,"actual_departure_time":1573994245,"prediction_display":"19
+        mins","prediction_in_seconds":1138,"cancelled_service":false,"cancelled_reason":"Running
+        Normally","driver_name":"Unknown","vehicle_colour":"#004A98","vehicle_number":"200850","has_wifi":1,"has_usb":1,"has_mango":1},{"status":true,"stop_ref":"1000DCMP4529","service_name":"rainbow
+        one","service_colour":"#004a98","journey_origin":"Victoria Bus Station","journey_destination":"Ripley","vehicle_location_lat":52.981517,"vehicle_location_lng":-1.195083,"origin_departure_time":1573992000,"destination_arrival_time":1573996020,"in_congestion":false,"at_stop":false,"scheduled_departure_time":1573995480,"actual_departure_time":1573995836,"prediction_display":"45
+        mins","prediction_in_seconds":2729,"cancelled_service":false,"cancelled_reason":"Running
+        Normally","driver_name":"Unknown","vehicle_colour":"#004A98","vehicle_number":"200839","has_wifi":1,"has_usb":1,"has_mango":1}]}'
+    headers:
+      Content-Length:
+      - '1374'
+      Content-Type:
+      - text/html; charset=UTF-8
+      Date:
+      - Sun, 17 Nov 2019 12:18:27 GMT
+      Server:
+      - Microsoft-IIS/8.5
+      X-Powered-By:
+      - PHP/7.0.3
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+version: 1

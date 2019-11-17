@@ -47,9 +47,11 @@ def handle_item(source, item):
 
     defaults = {
         'source': source,
-        'destination': item['journey_destination'],
         'route_name': service_name
     }
+    origin_departure_time = timezone.make_aware(datetime.fromtimestamp(item['origin_departure_time']))
+    if origin_departure_time < source.datetime:
+        defaults['destination'] = item['journey_destination']
 
     if service_name in {'two', 'mickleover', 'allestree', 'comet', 'harlequin'}:
         service_name = 'the ' + service_name
@@ -93,19 +95,19 @@ def handle_item(source, item):
         except (Service.DoesNotExist, Service.MultipleObjectsReturned):
             continue
 
-    vehicle, _ = Vehicle.objects.update_or_create({
+    vehicle, _ = Vehicle.objects.select_related('latest_location').get_or_create({
         'source': source,
         'fleet_number': vehicle,
     }, code=vehicle, operator_id=operator)
 
     if not (vehicle.colours or vehicle.livery_id):
         vehicle.colours = item['vehicle_colour']
-        vehicle.save()
+        vehicle.save(update_fields=['colours'])
 
     journey, journey_created = VehicleJourney.objects.get_or_create(
         defaults,
         vehicle=vehicle,
-        datetime=timezone.make_aware(datetime.fromtimestamp(item['origin_departure_time']))
+        datetime=origin_departure_time
     )
 
     if not (item['vehicle_location_lng'] and item['vehicle_location_lat']):
@@ -171,8 +173,8 @@ def rifkind(service_id):
     time_since_midnight = timedelta(hours=now.hour, minutes=now.minute, seconds=now.second,
                                     microseconds=now.microsecond)
     trips = Trip.objects.filter(route__service=service_id, calendar__in=get_calendars(now),
-                                start__lte=time_since_midnight - timedelta(minutes=5),
-                                end__gte=time_since_midnight + timedelta(minutes=10))
+                                start__lte=time_since_midnight + timedelta(minutes=5),
+                                end__gte=time_since_midnight - timedelta(minutes=10))
     source.datetime = now
     stops = set()
     for trip in trips:
