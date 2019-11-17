@@ -3,7 +3,7 @@ from mock import patch
 from freezegun import freeze_time
 from django.test import TestCase
 from django.utils import timezone
-from busstops.models import DataSource
+from busstops.models import DataSource, Region, Operator, Service
 from ..commands.import_stagecoach import Command
 
 
@@ -15,10 +15,24 @@ class NatExpTest(TestCase):
         cls.command = Command()
         cls.command.source = source
 
+        r = Region.objects.create(pk='SE')
+        o = Operator.objects.create(pk='SCOX', name='Stagecoach Oxford', vehicle_mode='bus', region=r)
+        s = Service.objects.create(line_name='Oxford Tube', date='2019-01-01',
+                                   geometry='MULTILINESTRING((-0.1475818977 51.4928233539,-0.1460401487 51.496737716))')
+        s.operator.add(o)
+
     @patch('vehicles.management.commands.import_stagecoach.sleep')
     def test_get_items(self, sleep):
-        with vcr.use_cassette('data/vcr/nx.yaml'):
-            with self.assertRaises(TypeError):
+        with vcr.use_cassette('data/vcr/stagecoach_vehicles.yaml'):
+            with self.assertNumQueries(2):
                 items = list(self.command.get_items())
-                self.assertEqual(len(items), 0)
-        self.assertFalse(sleep.called)
+        self.assertEqual(len(items), 12)
+        self.assertTrue(sleep.called)
+
+        with self.assertNumQueries(22):
+            for item in items:
+                self.command.handle_item(item, self.command.source.datetime)
+
+        with self.assertNumQueries(12):
+            for item in items:
+                self.command.handle_item(item, self.command.source.datetime)

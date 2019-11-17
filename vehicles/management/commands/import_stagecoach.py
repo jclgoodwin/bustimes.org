@@ -84,11 +84,11 @@ class Command(ImportLiveVehiclesCommand):
         return datetime.fromtimestamp(int(item['ut']) / 1000, timezone.utc)
 
     def get_vehicle(self, item):
-        vehicle = item['fn']
-        if len(vehicle) > 5:
+        vehicle_code = item['fn']
+        if len(vehicle_code) > 5:
             return None, None
-        if vehicle in self.vehicles_ids:
-            vehicle = self.vehicles.get(id=self.vehicles_ids[vehicle])
+        if vehicle_code in self.vehicles_ids:
+            vehicle = self.vehicles.get(id=self.vehicles_ids[vehicle_code])
             created = False
         else:
             operator_id = self.operator_ids.get(item['oc'], item['oc'])
@@ -101,16 +101,18 @@ class Command(ImportLiveVehiclesCommand):
                 defaults = {
                     'source': self.source
                 }
-            if vehicle.isdigit():
-                defaults['fleet_number'] = vehicle
+            if vehicle_code.isdigit():
+                defaults['fleet_number'] = vehicle_code
             operator_condition = Q(operator__name__startswith='Stagecoach ')
             if operator:
                 defaults['operator'] = operator
                 if not operator.name.startswith('Stagecoach '):
                     operator_condition |= Q(operator=operator)  # Scottish Citylink
-                vehicle, created = self.vehicles.filter(operator_condition).get_or_create(defaults, code=vehicle)
+                vehicle, created = self.vehicles.filter(operator_condition).get_or_create(defaults, code=vehicle_code)
 
-        self.vehicles_ids[item['fn']] = vehicle.id
+                self.vehicles_ids[vehicle_code] = vehicle.id
+            else:
+                return None, None
 
         latest_location = vehicle.latest_location
         if latest_location and latest_location.journey.source_id != self.source.id and latest_location.current:

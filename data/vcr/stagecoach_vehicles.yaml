@@ -1,0 +1,128 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.22.0
+    method: GET
+    uri: https://api.stagecoach-technology.net/vehicle-tracking/v1/vehicles?latne=52.4928233539&lngne=1.3524181023&latsw=51.4928233539&lngsw=-0.1475818977
+  response:
+    body:
+      string: '{"header": {"requestId": "","returnedItemCount":
+        "12","subscription_id": ""},"services":
+        [{"fn":
+        "19617","ut": "1573965060545","oc": "SCCM","sn": "12","dn": "OUTBOUND","sd":
+        "XEAO012.O","so": "CA","sr": "Cambridge - Ely","cd": "False","vc": "False","la":
+        "52.384655","lo": "0.2262839","hg": "0","cg": "","dd": "","or": "0500CCITY274","on":
+        "Drummer St Bay 9","nr": "","nn": "","fr": "0500EELYY039","fs": "Market St
+        Stop D","ao": "1573922100000","eo": "","an": "","en": "","ax": "","ex": "","af":
+        "","ef": "","ku": "https://tis-kml-stagecoach.s3.amazonaws.com/kml/1c439dc8-87da-4cb1-961c-be195c6b9d86.kml","td":
+        "18940","pr": "0500EELYY037","cs": "","ns": "0500EELYY127","jc": "True"},{"fn":
+        "19618","ut": "1573999189302","oc": "SCCM","sn": "3","dn": "INBOUND","sd":
+        "XEAO003.I","so": "CA","sr": "Fulbourn - Fison Road","cd": "False","vc": "False","la":
+        "52.189003","lo": "0.1381378","hg": "0","cg": "","dd": "Fison Rd","or": "0500SFULB008","on":
+        "Superstore","nr": "0500CCITY216","nn": "Clifton Road","fr": "0500CCITY137","fs":
+        "Berghott Close","ao": "1573998420000","eo": "1573998420000","an": "1573999260000","en":
+        "1573999154000","ax": "1573999260000","ex": "1573999278000","af": "1574001300000","ef":
+        "1574001423000","ku": "https://tis-kml-stagecoach.s3.amazonaws.com/kml/e3d9a56d-23d9-434a-85f2-0a9fcf06ab21.kml","td":
+        "22072","pr": "0500CCITY251","cs": "","ns": "0500CCITY216","jc": "False"},{"fn":
+        "19619","ut": "1573999194858","oc": "SCCM","sn": "5","dn": "OUTBOUND","sd":
+        "XEEO005.O","so": "CA","sr": "Cambridge - Fenstanton","cd": "False","vc":
+        "False","la": "52.2493858","lo": "0.04434","hg": "288","cg": "","dd": "Bar
+        Hill","or": "0500CCITY490","on": "Emmanuel St Stop E4","nr": "0500SBARH008","nn":
+        "Menzies Hotel","fr": "0500SBARH011","fs": "Tesco","ao": "1573998000000","eo":
+        "1573998000000","an": "1573999200000","en": "1573999295000","ax": "1573999200000","ex":
+        "1573999387000","af": "1573999260000","ef": "1573999461000","ku": "https://tis-kml-stagecoach.s3.amazonaws.com/kml/b088ef5e-69bb-4890-aeca-99ecf0606188.kml","td":
+        "23729","pr": "0500SGIRT010","cs": "","ns": "0500SBARH008","jc": "False"},{"fn":
+        "19620","ut": "1573999183710","oc": "SCCM","sn": "8","dn": "OUTBOUND","sd":
+        "XEAO008.O","so": "CA","sr": "Cambridge - Chatteris","cd": "False","vc": "False","la":
+        "52.2668304","lo": "0.1115028","hg": "30","cg": "","dd": "Cottenham","or":
+        "0500CCITY487","on": "Emmanuel St Stop E1","nr": "0500SHIST002","nn": "Bromlea","fr":
+        "0500SCOTT033","fs": "Victory Way","ao": "1573997400000","eo": "1573997400000","an":
+        "1573999200000","en": "1573999196000","ax": "1573999200000","ex": "1573999226000","af":
+        "1573999560000","ef": "1573999684000","ku": "https://tis-kml-stagecoach.s3.amazonaws.com/kml/39e1ab3a-9b39-4e6b-86b0-e138a0d52c85.kml","td":
+        "25928","pr": "0500SHIST019","cs": "","ns": "0500SHIST002","jc": "False"},{"fn":
+        "27847","ut": "1573988133876","oc": "SCCM","sn": "3","dn": "OUTBOUND","sd":
+        "XEAO003.O","so": "CA","sr": "Fison Road - Fulbourn","cd": "False","vc": "False","la":
+        "52.2305069","lo": "0.15943","hg": "0","cg": "","dd": "","or": "0500CCITY237","on":
+        "Stanesfield Road","nr": "","nn": "","fr": "0500SFULB008","fs": "Superstore","ao":
+        "1574016480000","eo": "","an": "","en": "","ax": "","ex": "","af": "","ef":
+        "","ku": "https://tis-kml-stagecoach.s3.amazonaws.com/kml/da0245d0-279d-464c-b0b2-c843cec591eb.kml","td":
+        "21902","pr": "0500CCITY132","cs": "","ns": "0500CCITY158","jc": "True"},{"fn":
+        "27848","ut": "1573999200533","oc": "SCCM","sn": "2","dn": "OUTBOUND","sd":
+        "XEBO002.O","so": "CA","sr": "Ely - Queen Ediths Wulfstan Way","cd": "False","vc":
+        "False","la": "52.2300339","lo": "0.1591628","hg": "0","cg": "","dd": "","or":
+        "0500CCITY541","on": "Cambridge North Rai","nr": "","nn": "","fr": "0500CCITY279","fs":
+        "Queen Edith Chapel","ao": "1574015640000","eo": "","an": "","en": "","ax":
+        "","ex": "","af": "","ef": "","ku": "https://tis-kml-stagecoach.s3.amazonaws.com/kml/ce8edaff-2164-4500-b268-6265b4732d14.kml","td":
+        "20721","pr": "0500CCITY538","cs": "","ns": "0500CCITY307","jc": "False"},{"fn":
+        "27851","ut": "1573998439107","oc": "SCCM","sn": "2","dn": "INBOUND","sd":
+        "XEBO002.I","so": "CA","sr": "Queen Ediths Wulfstan Way - Ely","cd": "False","vc":
+        "False","la": "52.2053833","lo": "0.1242389","hg": "330","cg": "","dd": "","or":
+        "0500CCITY039","on": "Sainsbury''s","nr": "","nn": "","fr": "0500CCITY541","fs":
+        "Cambridge North Rai","ao": "1574013960000","eo": "","an": "","en": "","ax":
+        "","ex": "","af": "","ef": "","ku": "https://tis-kml-stagecoach.s3.amazonaws.com/kml/2f1c7472-ba79-4e52-8636-5c6dfa61c962.kml","td":
+        "20470","pr": "0500CCITY539","cs": "","ns": "0500CCITY541","jc": "False"},{"fn":
+        "50275","ut": "1573999200531","oc": "SCOX","sn": "TUBE","dn": "INBOUND","sd":
+        "XOATUBE.I","so": "SOX","sr": "London - Oxford","cd": "False","vc": "False","la":
+        "51.4945984","lo": "-0.146625","hg": "12","cg": "","dd": "Oxford","or": "49000748010","on":
+        "Green Line Coach St","nr": "490007544N1","nn": "Victoria Station Ox","fr":
+        "34000000003","fs": "Gloucester Green Bu","ao": "1573998900000","eo": "1573998900000","an":
+        "1573999200000","en": "1573999200000","ax": "1573999200000","ex": "1573999200000","af":
+        "1574005500000","ef": "1574005625000","ku": "https://tis-kml-stagecoach.s3.amazonaws.com/kml/ff99a3e9-bbb2-41f4-8966-a05acdc5b839.kml","td":
+        "159562","pr": "49000748010","cs": "","ns": "490007544N1","jc": "False"},{"fn":
+        "53703","ut": "1573999198014","oc": "SCEK","sn": "M2","dn": "INBOUND","sd":
+        "XFAM002.I","so": "EK","sr": "North Greenwich - Canterbury","cd": "False","vc":
+        "False","la": "51.4995918","lo": "0.0025719","hg": "180","cg": "","dd": "","or":
+        "490010374F","on": "North Greenwich Sta","nr": "","nn": "","fr": "2400A039640A","fs":
+        "Bus Station","ao": "1573999500000","eo": "","an": "","en": "","ax": "","ex":
+        "","af": "","ef": "","ku": "https://tis-kml-stagecoach.s3.amazonaws.com/kml/f100dc97-9a22-43dc-aa69-e67e6f939db9.kml","td":
+        "42159","pr": "490010374F","cs": "","ns": "249000000120","jc": "False"},{"fn":
+        "54301","ut": "1573999189169","oc": "SCCM","sn": "X5","dn": "OUTBOUND","sd":
+        "XEAX005.O","so": "STB","sr": "Cambridge - St Neots","cd": "False","vc": "False","la":
+        "52.2197647","lo": "-0.0360389","hg": "270","cg": "","dd": "Oxford","or":
+        "0500CCITY476","on": "Parkside Bay 16","nr": "0500HSTNS114","nn": "Loves Way","fr":
+        "0500HSTNS064","fs": "Market Sq Stop D","ao": "1573998000000","eo": "1573998000000","an":
+        "1573999800000","en": "1573999959000","ax": "1573999800000","ex": "1573999959000","af":
+        "1574000400000","ef": "1574000210000","ku": "https://tis-kml-stagecoach.s3.amazonaws.com/kml/8f45d39c-af67-46fc-843d-ead793edbff6.kml","td":
+        "29403","pr": "0500CCITY084","cs": "","ns": "0500HSTNS114","jc": "False"},{"fn":
+        "54308","ut": "1573999194951","oc": "SCCM","sn": "X5","dn": "OUTBOUND","sd":
+        "XEAX005.O","so": "STB","sr": "Cambridge - St Neots","cd": "False","vc": "False","la":
+        "52.2030907","lo": "0.1298378","hg": "306","cg": "0","dd": "Oxford","or":
+        "0500CCITY476","on": "Parkside Bay 16","nr": "0500CCITY476","nn": "Parkside
+        Bay 16","fr": "0500HSTNS064","fs": "Market Sq Stop D","ao": "1573999800000","eo":
+        "1573999800000","an": "","en": "","ax": "1573999800000","ex": "1573999800000","af":
+        "1574002200000","ef": "1574001935000","ku": "https://tis-kml-stagecoach.s3.amazonaws.com/kml/88e467e1-5ba2-46bc-8d46-931d8aaaa743.kml","td":
+        "29404","pr": "","cs": "","ns": "0500CCITY476","jc": "False"},{"fn": "54314","ut":
+        "1573999172770","oc": "SCCM","sn": "X5","dn": "INBOUND","sd": "XECX005.I","so":
+        "STB","sr": "Milton Keynes - St Neots","cd": "False","vc": "False","la": "52.2155342","lo":
+        "0.0545528","hg": "78","cg": "0","dd": "Cambridge","or": "0500HSTNS015","on":
+        "Market Sq Stop E","nr": "0500CCITY084","nn": "Madingley Rd Park-a","fr":
+        "0500CCITY476","fs": "Parkside Bay 16","ao": "1573997220000","eo": "","an":
+        "1573998780000","en": "1573999271000","ax": "1573998780000","ex": "1573999271000","af":
+        "1573999800000","ef": "1574001020000","ku": "https://tis-kml-stagecoach.s3.amazonaws.com/kml/3283aed1-70a7-46aa-9fc4-1cccc057358a.kml","td":
+        "29748","pr": "049000000801","cs": "","ns": "020035035","jc": "False"}],"futureServices":
+        []}'
+    headers:
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '57359'
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 17 Nov 2019 14:00:00 GMT
+    status:
+      code: 200
+      message: OK
+version: 1
