@@ -48,7 +48,8 @@ class EditVehicleForm(EditVehiclesForm):
     fleet_number = forms.IntegerField(required=False, min_value=0)
     reg = forms.CharField(label='Registration', required=False, max_length=24)
     name = forms.CharField(label='Name', required=False, max_length=255)
-    url = forms.URLField(label='URL', help_text='A photo (helpful for verifying recent repaints)', required=False)
+    url = forms.URLField(label='URL', help_text='A photo (helpful for verifying recent repaints)', required=False,
+                         max_length=200)
     field_order = ['operator', 'fleet_number', 'reg', 'vehicle_type', 'colours', 'branding', 'name', 'notes', 'url']
 
     def __init__(self, *args, **kwargs):
