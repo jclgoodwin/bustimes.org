@@ -100,24 +100,23 @@
         },
         "ddtrace": {
             "hashes": [
-                "sha256:13ae3bfd92fbe56e239c590d5ce1f2d2f6278d12f770dbccbc13a48619205e69",
-                "sha256:13dbc020e66495687c1fd3a3c253eb5f05862896d126f86d2741f21ff13db0eb",
-                "sha256:27edba62eb8cc994ba1003523281e454ca7a904a91d7dfe40d73c54a5db414bc",
-                "sha256:28c8619d01b1e29e30c36ff142a76504279e73e453867c15cf57575207209ed1",
-                "sha256:290df282b9ebb9347c5b7c0e4d13a05705e6fcad03047dd728b846bbf80f0076",
-                "sha256:3eeaf9ff893ed2053f8400d923dc24242d75df2b39cb172357c60d8c1e9d53d7",
-                "sha256:6c06097e80303742ced667ce85b735ba5501c272964aa29029bb62f215e969d3",
-                "sha256:9a6084c74696ab2ff5ff03faaddbc01312ac8834455283e66d153a9936fcb48e",
-                "sha256:a9a0531f744f33b440eadc098d9a2e615f3e6553801c213835050434546fdfee",
-                "sha256:add05d150912ef8b16343c895710b9b0e6d5857e336bc9814c84cd6d60fb6164",
-                "sha256:b7ed30a56c8d44b6b0f024b2a319a309fb84db76cad6c62998a77e8d6c7e737c",
-                "sha256:bbc2e2daa78f0106b4e1dece0483d67a576aa807f50e29edada259bd9c929a0c",
-                "sha256:c1d0c05b6e4f786d87915dfe44d40c41610d9a0044d7fc1c234fe61d32ae919b",
-                "sha256:e004da9a6ce74babc3c99a356efdeb05942ea18cc8a2b979ba4e8d3067aa6b11",
-                "sha256:ea70e7ed26ca47acbba57f3f9fc7d2488ad46e45265d9600cfd5aaeddb969640"
+                "sha256:1fd534cfa052c1b71ed449566710a13279361a73dac62b86f2523cdd443d031e",
+                "sha256:349715121853fdc5b7a14fb2d990d7b62440e02aae595c052566a0c09538e8e2",
+                "sha256:3a09af1a43bcdcf0f3400273a8914ca2e277d9054ff6441db0813ccff22be2d0",
+                "sha256:3b51ffff19aa8cb0c642fbbe60e66c64fe3a3b20ff1d50f64173d9c45ac16f25",
+                "sha256:418c3e61e2d228fa9fc4b9041d27602a905ab1a7d26d49cd9d5eeca73fd7aaa5",
+                "sha256:542a45d69951a86d48d7af528b3d5a6d11a9f958b5e858db3c33c903205e3284",
+                "sha256:6cc292aa4bf2cb92581173e978afe43ab2c222bc547973168c4b44fcad499847",
+                "sha256:7112231d5d396f379f985e9d14e8277f017307830a097b0cdd0b7b2bf9336d19",
+                "sha256:7561e1bf2eed4b8ccfca2e4ac3ec7059ae5d7275de65ffef8fadd4280153a067",
+                "sha256:874cd4ba32a780309cc49d39d1843584042089a0eb73d0105c231ee601471876",
+                "sha256:9018e327a5be92e39e56e5a8615a6cf9a0c918a7ecd7c79861bfcc1423121a37",
+                "sha256:92c93ff43e6af532d2113659b0536789f58e0d9c3f3a77b0df3e2aeade30035b",
+                "sha256:a1e4eed39fd40a24990916326ee7dc51625a39eb9a7cec773975d79317009ac6",
+                "sha256:c2f20ddfe1da43c2ab625866f7fc7b011b963ecfd36f69f1c72be8d2421490b7"
             ],
             "index": "pypi",
-            "version": "==0.30.2"
+            "version": "==0.31.0"
         },
         "django": {
             "hashes": [
