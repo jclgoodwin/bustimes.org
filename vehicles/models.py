@@ -5,6 +5,7 @@ from webcolors import html5_parse_simple_color
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.gis.db import models
+from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db.models import Index, Q
@@ -130,6 +131,7 @@ class VehicleFeature(models.Model):
 class Vehicle(models.Model):
     code = models.CharField(max_length=255)
     fleet_number = models.PositiveIntegerField(null=True, blank=True)
+    fleet_code = models.CharField(max_length=24, blank=True)
     reg = models.CharField(max_length=24, blank=True)
     source = models.ForeignKey(DataSource, models.CASCADE, null=True, blank=True)
     operator = models.ForeignKey(Operator, models.SET_NULL, null=True, blank=True)
@@ -142,7 +144,8 @@ class Vehicle(models.Model):
     latest_location = models.ForeignKey('VehicleLocation', models.SET_NULL, null=True, blank=True,
                                         related_name='latest_vehicle', editable=False)
     features = models.ManyToManyField(VehicleFeature, blank=True)
-    # withdrawn = models.BooleanField(default=False)
+    withdrawn = models.BooleanField(default=False)
+    data = JSONField(null=True, blank=True)
 
     class Meta:
         unique_together = ('code', 'operator')
@@ -252,6 +255,7 @@ class VehicleEdit(models.Model):
     notes = models.CharField(max_length=255, blank=True)
     features = models.ManyToManyField(VehicleFeature, blank=True)
     withdrawn = models.BooleanField(default=False)
+    changes = JSONField(null=True, blank=True)
     url = models.URLField(blank=True)
     approved = models.BooleanField(default=False)
     datetime = models.DateTimeField(null=True, blank=True)
@@ -362,8 +366,9 @@ class VehicleLocation(models.Model):
     datetime = models.DateTimeField()
     latlong = models.PointField()
     journey = models.ForeignKey(VehicleJourney, models.CASCADE)
-    heading = models.PositiveIntegerField(null=True, blank=True)
-    early = models.IntegerField(null=True, blank=True)
+    heading = models.PositiveSmallIntegerField(null=True, blank=True)
+    early = models.SmallIntegerField(null=True, blank=True)
+    delay = models.SmallIntegerField(null=True, blank=True)
     current = models.BooleanField(default=False)
 
     class Meta:
