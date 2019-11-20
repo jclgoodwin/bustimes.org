@@ -81,6 +81,17 @@ class ServiceTests(TestCase):
         self.london_service.line_name = ''
         self.assertEqual(str(self.london_service), 'tfl_8-N41-_-y05')
 
+        service = Service(line_name='C', description='Coasthopper - Filey')
+        self.assertEqual(str(service), 'C - Coasthopper - Filey')
+
+        service.line_name = 'Coast Hopper'
+        service.description = 'Coast Hopper'
+        self.assertEqual(str(service), 'Coast Hopper')
+
+        service.line_name = 'Coast Hopper'
+        service.description = 'Coast Hopper – Brighton - Filey'
+        self.assertEqual(str(service), 'Coast Hopper – Brighton - Filey')
+
     def test_get_a_mode(self):
         self.assertEqual(self.london_service.get_a_mode(), 'A ')
 

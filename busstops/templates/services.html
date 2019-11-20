@@ -2,10 +2,12 @@
 {% for service in services %}
     <li>
         <a href="{{ service.get_absolute_url }}">
-            {% if service.line_name and service.line_name != service.description %}
-                <span class="name{% if not service.has_long_line_name %} is-short{% endif %}">
-                    {{ service.line_name }}
-                </span>
+            {% if service.line_name %}
+                {% if ' ' not in service.line_name or service.line_name not in service.description %}
+                    <span class="name{% if not service.has_long_line_name %} is-short{% endif %}">
+                        {{ service.line_name }}
+                    </span>
+                {% endif %}
             {% endif %}
             {% if service.line_brand %}
                 <span class="name">{{ service.line_brand }}</span>
