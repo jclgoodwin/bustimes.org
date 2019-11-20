@@ -85,7 +85,9 @@ def operator_vehicles(request, slug):
 
     edit = request.path.endswith('/edit')
     submitted = False
+    breadcrumb = [operator.region, operator]
     if edit:
+        breadcrumb.append(Vehicles(operator))
         form = EditVehiclesForm(request.POST, operator=operator, initial={
             'operator': operator
         })
@@ -117,7 +119,7 @@ def operator_vehicles(request, slug):
         vehicles = sorted(vehicles, key=lambda v: v.notes or 'z')
 
     return render(request, 'operator_vehicles.html', {
-        'breadcrumb': [operator.region, operator],
+        'breadcrumb': breadcrumb,
         'object': operator,
         'today': timezone.localtime().date(),
         'vehicles': vehicles,
@@ -276,7 +278,7 @@ def service_vehicles_history(request, slug=None, operator=None, route=None):
     if slug:
         operator = service.operator.select_related('region').first()
     return render(request, 'vehicles/vehicle_detail.html', {
-        'breadcrumb': [operator.region, operator, service or Vehicles(operator)],
+        'breadcrumb': [operator, service or Vehicles(operator)],
         'date': date,
         'dates': dates,
         'object': service or route,
