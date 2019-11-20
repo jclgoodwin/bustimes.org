@@ -25,7 +25,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.gis',
-    'django.contrib.sites',
     'django.contrib.sitemaps',
     'haystack',
     'busstops',
@@ -267,5 +266,3 @@ IE_COLLECTIONS = (
     'lallycoach', 'halpenny', 'eurobus', 'donnellys', 'cmadigan', 'bkavanagh',
     'ptkkenneally', 'farragher', 'fedateoranta', 'ashbourneconnect'
 )
-
-SITE_ID = 1
