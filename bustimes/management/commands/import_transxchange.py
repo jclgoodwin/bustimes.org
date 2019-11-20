@@ -424,12 +424,13 @@ class Command(BaseCommand):
             calendar = None
             if journey.operating_profile:
                 calendar = self.get_calendar(journey.operating_profile, transxchange.operating_period)
-                if not calendar:
-                    continue
             else:
                 if not default_calendar:
                     default_calendar = self.get_calendar(transxchange.operating_profile, transxchange.operating_period)
                 calendar = default_calendar
+
+            if not calendar:
+                continue
 
             trip = Trip(
                 inbound=journey.journey_pattern.direction == 'inbound',
