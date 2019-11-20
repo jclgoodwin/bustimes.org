@@ -26,6 +26,7 @@ class VehicleAdmin(admin.ModelAdmin):
     list_display = ('code', 'fleet_number', 'reg', 'operator', 'vehicle_type', 'get_flickr_link', 'last_seen',
                     'livery', 'colours', 'branding', 'name', 'notes')
     list_filter = (
+        'withdrawn',
         ('source', admin.RelatedOnlyFieldListFilter),
         ('operator', admin.RelatedOnlyFieldListFilter),
         'livery',
@@ -101,10 +102,10 @@ def apply_edits(queryset):
     for edit in queryset:
         ok = True
         vehicle = edit.vehicle
-        if edit.withdrawn:
-            vehicle.delete()
-            continue
         update_fields = []
+        if edit.withdrawn:
+            vehicle.withdrawn = True
+            update_fields.append('withdrawn')
         if edit.fleet_number is not None:
             if edit.fleet_number:
                 vehicle.fleet_number = edit.fleet_number
@@ -150,6 +151,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
                            'livery']
     list_filter = [
         'approved',
+        'withdrawn',
         ('vehicle__operator', admin.RelatedOnlyFieldListFilter),
     ]
     raw_id_fields = ['vehicle', 'livery']

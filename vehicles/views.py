@@ -71,7 +71,7 @@ def operator_vehicles(request, slug):
         operator = get_object_or_404(operators, slug=slug)
     except Http404:
         operator = get_object_or_404(operators, operatorcode__code=slug, operatorcode__source__name='slug')
-    vehicles = operator.vehicle_set
+    vehicles = operator.vehicle_set.filter(withdrawn=False)
     latest_journeys = Subquery(VehicleJourney.objects.filter(
         vehicle=OuterRef('pk')
     ).order_by('-datetime').values('pk')[:1])
