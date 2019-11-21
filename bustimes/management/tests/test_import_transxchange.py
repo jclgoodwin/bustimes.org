@@ -392,8 +392,8 @@ class ImportTransXChangeTest(TestCase):
         """Should be able to distinguish between Cardiff and Cardiff Airport as start and end of a route"""
         self.write_files_to_zipfile_and_import('W.zip', ['TCAT009.xml'])
         service = Service.objects.get()
-        self.assertEqual(service.inbound_description, 'Cardiff   - Cardiff Airport')
-        self.assertEqual(service.outbound_description, 'Cardiff Airport - Cardiff  ')
+        self.assertEqual(service.inbound_description, 'Cardiff  - Cardiff Airport')
+        self.assertEqual(service.outbound_description, 'Cardiff Airport - Cardiff ')
 
     @freeze_time('2018-09-24')
     def test_timetable_plymouth(self):

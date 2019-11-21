@@ -85,8 +85,6 @@ NE_410_PB1954_1:
     line_brand: Coaster
 NE_410_PB1954_1A:
     line_brand: Coaster
-tfl_87-LWB-_-y05:
-    timetable_wrong: true
 swe_41-633-_-y10:  # Hatch Green Coaches
     current: false
 # typo
