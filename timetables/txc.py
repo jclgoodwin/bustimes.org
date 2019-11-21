@@ -109,11 +109,11 @@ def correct_description(description):
             ('Greenstead Green', 'Greensted Green'),
             ('Tinagel', 'Tintagel'),
             ('Plymouh City Cerntre', 'Plymouth City Centre'),
-            ('Winterbourn', 'Winterbourne'),
+            ('Winterbourn ', 'Winterbourne'),
+            ('Exetedr', 'Exeter'),
             ('- ', ' - '),
             (' -', ' - '),
-            ('  -', ' -'),
-            ('-  ', '- '),
+            ('  ', ' '),
     ):
         description = description.replace(old, new)
     return description
