@@ -109,6 +109,10 @@ def operator_vehicles(request, slug):
     if operator.name == 'National Express':
         vehicles = sorted(vehicles, key=lambda v: v.notes)
 
+    columns = set(key for vehicle in vehicles if vehicle.data for key in vehicle.data)
+    for vehicle in vehicles:
+        vehicle.column_values = [vehicle.data and vehicle.data.get(key) for key in columns]
+
     return render(request, 'operator_vehicles.html', {
         'breadcrumb': breadcrumb,
         'object': operator,
@@ -118,6 +122,7 @@ def operator_vehicles(request, slug):
         'branding_column': any(vehicle.branding for vehicle in vehicles),
         'name_column': any(vehicle.name for vehicle in vehicles),
         'notes_column': any(vehicle.notes for vehicle in vehicles),
+        'columns': columns,
         'edit_url': reverse('admin:vehicles_vehicle_changelist'),
         'edit': edit,
         'submitted': submitted,

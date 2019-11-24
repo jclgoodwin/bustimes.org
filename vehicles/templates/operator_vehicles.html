@@ -48,6 +48,7 @@
             {% if branding_column %}<th scope="col">Branding</th>{% endif %}
             {% if name_column %}<th scope="col">Name</th>{% endif %}
             {% if notes_column %}<th scope="col">Notes</th>{% endif %}
+            {% for col in columns %}<th scope="col">{{ col }}</th>{% endfor %}
         </tr>
     </thead>
     <tbody>
@@ -103,9 +104,8 @@
                         {% endfor %}
                     {% endif %}
                 </td>
-                <td>{% if vehicle.vehicle_type %}{{ vehicle.vehicle_type }}{% endif %}</td>
+                <td>{{ vehicle.vehicle_type|default:"" }}</td>
                 <td{% if vehicle.colours or vehicle.livery %} class="livery-cell">
-
                         <div class="livery" style="background:{{ vehicle.get_livery }}"></div>
                         {% if vehicle.livery %}
                             {{ vehicle.livery }}
@@ -115,6 +115,7 @@
                 {% if branding_column %}<td>{{ vehicle.branding }}</td>{% endif %}
                 {% if name_column %}<td>{{ vehicle.name }}</td>{% endif %}
                 {% if notes_column %}<td>{{ vehicle.notes }}</td>{% endif %}
+                {% for value in vehicle.column_values %}<td>{{ value|default:"" }}</td>{% endfor %}
                 <td>{{ vehicle.get_flickr_link }}</td>
                 {% if not edit %}
                     <td>
