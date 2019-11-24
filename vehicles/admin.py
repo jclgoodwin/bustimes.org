@@ -15,7 +15,7 @@ class VehicleAdminForm(forms.ModelForm):
     class Meta:
         widgets = {
             'reg': forms.TextInput(attrs={'style': 'width: 8em'}),
-            'fleet_number': forms.TextInput(attrs={'style': 'width: 4em'}),
+            'fleet_code': forms.TextInput(attrs={'style': 'width: 4em'}),
             'operator': forms.TextInput(attrs={'style': 'width: 4em'}),
             'branding': forms.TextInput(attrs={'style': 'width: 8em'}),
             'name': forms.TextInput(attrs={'style': 'width: 8em'}),

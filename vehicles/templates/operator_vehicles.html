@@ -67,7 +67,7 @@
                     {% endif %}
                 </td>
                 <td class="tabular">
-                    <a href="{{ vehicle.get_absolute_url }}">{% if vehicle.reg %}{{ vehicle.get_reg }}{% elif not vehicle.fleet_number %}{{ vehicle }}{% endif %}</a>
+                    <a href="{{ vehicle.get_absolute_url }}">{% if vehicle.reg %}{{ vehicle.get_reg }}{% elif not vehicle.fleet_number and not vehicle.fleet_code %}{{ vehicle }}{% endif %}</a>
                 </td>
                 <td>
                     {% if vehicle.latest_location %}

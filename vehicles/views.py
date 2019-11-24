@@ -80,7 +80,7 @@ def operator_vehicles(request, slug):
     prefetch = Prefetch('vehiclejourney_set',
                         queryset=latest_journeys.select_related('service'), to_attr='latest_journeys')
     vehicles = vehicles.prefetch_related(prefetch)
-    vehicles = vehicles.order_by('fleet_number', 'reg', 'code')
+    vehicles = vehicles.order_by('fleet_number', 'fleet_code', 'reg', 'code')
     vehicles = vehicles.select_related('vehicle_type', 'livery', 'latest_location__journey__service')
 
     edit = request.path.endswith('/edit')
@@ -107,16 +107,7 @@ def operator_vehicles(request, slug):
         raise Http404()
 
     if operator.name == 'National Express':
-        for v in vehicles:
-            parts = v.notes.split()
-            if parts and parts[-1][-1].isdigit():
-                v.fleet_number = parts[-1]
-                if v.fleet_number.isdigit():
-                    v.fleet_number = int(v.fleet_number)
-                v.notes = ' '.join(parts[:-1])
-        vehicles = sorted(vehicles, key=lambda v: v.fleet_number if type(v.fleet_number) is int else 0)
-        vehicles = sorted(vehicles, key=lambda v: str(v.fleet_number))
-        vehicles = sorted(vehicles, key=lambda v: v.notes or 'z')
+        vehicles = sorted(vehicles, key=lambda v: v.notes)
 
     return render(request, 'operator_vehicles.html', {
         'breadcrumb': breadcrumb,
