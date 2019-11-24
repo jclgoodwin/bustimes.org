@@ -37,9 +37,14 @@ class EditVehiclesForm(forms.Form):
         if operator:
             self.fields['colours'].choices = get_livery_choices(operator)
 
-        if operator and operator.name.startswith('Stagecoach '):
-            queryset = Operator.objects.filter(name__startswith='Stagecoach ', service__current=True)
-            self.fields['operator'].queryset = queryset.order_by('name').distinct()
+        operators = None
+        if operator:
+            if operator.name.startswith('Stagecoach '):
+                operators = Operator.objects.filter(name__startswith='Stagecoach ', service__current=True)
+            elif operator.parent:
+                operators = Operator.objects.filter(parent=operator.parent)
+        if operators:
+            self.fields['operator'].queryset = operators.order_by('name').distinct()
         else:
             del(self.fields['operator'])
 
