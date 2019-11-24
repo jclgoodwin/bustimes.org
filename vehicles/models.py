@@ -245,7 +245,6 @@ class Vehicle(models.Model):
 
 class VehicleEdit(models.Model):
     vehicle = models.ForeignKey(Vehicle, models.CASCADE)
-
     fleet_number = models.PositiveIntegerField(null=True, blank=True)
     reg = models.CharField(max_length=24, blank=True)
     vehicle_type = models.CharField(max_length=255, blank=True)
@@ -261,6 +260,11 @@ class VehicleEdit(models.Model):
     approved = models.BooleanField(default=False)
     datetime = models.DateTimeField(null=True, blank=True)
     user = models.CharField(max_length=255, blank=True)
+
+    def save(self, force_insert=False, force_update=False, **kwargs):
+        if self.fleet_code.isdigit():
+            self.fleet_number = int(self.fleet_code)
+        super().save(force_insert, force_update, **kwargs)
 
     def get_changes(self):
         changes = {}

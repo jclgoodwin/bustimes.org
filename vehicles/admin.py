@@ -23,7 +23,7 @@ class VehicleAdminForm(forms.ModelForm):
 
 
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ('code', 'fleet_number', 'reg', 'operator', 'vehicle_type', 'get_flickr_link', 'last_seen',
+    list_display = ('code', 'fleet_code', 'reg', 'operator', 'vehicle_type', 'get_flickr_link', 'last_seen',
                     'livery', 'colours', 'branding', 'name', 'notes')
     list_filter = (
         'withdrawn',
