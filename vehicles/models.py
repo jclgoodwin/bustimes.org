@@ -147,6 +147,11 @@ class Vehicle(models.Model):
     withdrawn = models.BooleanField(default=False)
     data = JSONField(null=True, blank=True)
 
+    def save(self, force_insert=False, force_update=False, **kwargs):
+        if self.fleet_code.isdigit():
+            self.fleet_number = int(self.fleet_code)
+        super().save(force_insert, force_update, **kwargs)
+
     class Meta:
         unique_together = ('code', 'operator')
 
@@ -260,11 +265,6 @@ class VehicleEdit(models.Model):
     approved = models.BooleanField(default=False)
     datetime = models.DateTimeField(null=True, blank=True)
     user = models.CharField(max_length=255, blank=True)
-
-    def save(self, force_insert=False, force_update=False, **kwargs):
-        if self.fleet_code.isdigit():
-            self.fleet_number = int(self.fleet_code)
-        super().save(force_insert, force_update, **kwargs)
 
     def get_changes(self):
         changes = {}
