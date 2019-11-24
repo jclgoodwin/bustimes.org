@@ -207,7 +207,8 @@ class Vehicle(models.Model):
             if self.fleet_number and self.fleet_number != int(self.code):
                 return True
         elif self.reg and self.reg not in self.code.replace('-', '').replace('_', '').replace(' ', ''):
-            if not self.fleet_number or str(self.fleet_number) not in self.code:
+            fleet_code = self.fleet_code or self.fleet_number
+            if not fleet_code or str(fleet_code) not in self.code:
                 return True
 
     def get_flickr_url(self):

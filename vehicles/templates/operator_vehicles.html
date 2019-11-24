@@ -62,8 +62,8 @@
                     <td>{% if vehicle.fleet_number_mismatch %}{{ vehicle.code }}{% endif %}</td>
                 {% endif %}
                 <td class="tabular">
-                    {% if vehicle.fleet_number %}
-                        <a href="{{ vehicle.get_absolute_url }}">{{ vehicle.fleet_number }}</a>
+                    {% if vehicle.fleet_code or vehicle.fleet_number %}
+                        <a href="{{ vehicle.get_absolute_url }}">{% firstof vehicle.fleet_code vehicle.fleet_number %}</a>
                     {% endif %}
                 </td>
                 <td class="tabular">
