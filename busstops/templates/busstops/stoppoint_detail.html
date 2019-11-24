@@ -1,5 +1,7 @@
 {% extends 'page.html' %}
 
+{% block canonical %}<meta name="robots" content="noindex" />{% endblock %}
+
 {% block content %}
 
 <h1>{{ stoppoint.get_long_name }}</h1>

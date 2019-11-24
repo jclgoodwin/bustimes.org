@@ -1,14 +1,10 @@
 {% extends 'page.html' %}
 
-{% block title %}{% if not vehicle %}Vehicles – {% endif %}{{ object }} – Bus Times{% endblock %}
+{% block title %}{% if not vehicle %}Vehicles – {% endif %}{{ object }}{% if vehicle.operator %} – {{ vehicle.operator }}{% endif %} – Bus Times{% endblock %}
+
+{% block canonical %}<meta name="robots" content="noindex" />{% endblock %}
 
 {% block bodyclass %}narrow{% endblock %}
-
-{% block canonical %}
-    {% if object.get_absolute_url %}
-        <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}{% if not vehicle %}/vehicles{% endif %}" />
-    {% endif %}
-{% endblock %}
 
 {% block content %}
 
@@ -86,7 +82,26 @@
                             {% if journey.calls %}
                                 <a href="{{ journey.get_absolute_url }}">Times</a>
                             {% elif journey.locations %}
-                                <button data-journey-id="{{ journey.id }}">Map</button>
+                                <a href="#journeys/{{ journey.id }}">Map</a>
+                                <div class="journey" id="journeys/{{ journey.id }}">
+                                    <div class="map"></div>
+                                    <div class="details">
+                                        <a class="button next" href="#" class="next">Close</a>
+                                        <p>
+                                            {% if not vehicle %}
+                                                {{ journey.vehicle }}{% else %}{% firstof journey.service.get_line_name_and_brand journey.route_name %}
+                                            {% endif %}
+                                            – {{ journey.datetime|time }}
+                                            {% if journey.destination %} to {{ journey.destination }}{% endif %}
+                                        </p>
+                                        {% if journey.previous %}
+                                            <p class="previous"><a href="#journeys/{{ journey.previous.id }}">&larr; {{ journey.previous.datetime|time }}</a></p>
+                                        {% endif %}
+                                        {% if journey.next %}
+                                            <p class="next"><a href="#journeys/{{ journey.next.id }}">{{ journey.next.datetime|time }} &rarr;</a></p>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             {% endif %}
                         </td>
                     </tr>
@@ -99,11 +114,6 @@
         <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
         <script src="{% static 'js/reqwest.min.js' %}"></script>
         <script async src="{% static 'js/history.js' %}"></script>
-
-        <div id="journey-overlay">
-            <div id="map"></div>
-            <div id="details"></div>
-        </div>
     {% endif %}
 
 {% endif %}

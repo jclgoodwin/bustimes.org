@@ -272,8 +272,14 @@ def service_vehicles_history(request, slug=None, operator=None, route=None):
             raise Http404()
     calls = Call.objects.filter(journey=OuterRef('pk'))
     locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
-    journeys = journeys.filter(datetime__date=date).select_related('vehicle').annotate(calls=Exists(calls),
-                                                                                       locations=Exists(locations))
+    journeys = journeys.filter(datetime__date=date).select_related('vehicle')
+    journeys = journeys.annotate(calls=Exists(calls), locations=Exists(locations)).order_by('datetime')
+    previous = None
+    for journey in journeys:
+        if previous:
+            previous.next = journey
+            journey.previous = previous
+        previous = journey
 
     if slug:
         operator = service.operator.select_related('region').first()
@@ -282,7 +288,7 @@ def service_vehicles_history(request, slug=None, operator=None, route=None):
         'date': date,
         'dates': dates,
         'object': service or route,
-        'journeys': journeys.order_by('datetime'),
+        'journeys': journeys,
     })
 
 
@@ -312,11 +318,19 @@ class VehicleDetailView(DetailView):
             if not date:
                 date = context['dates'][-1]
             context['date'] = date
+
             journeys = journeys.filter(datetime__date=date).order_by('datetime')
             calls = Call.objects.filter(journey=OuterRef('pk'))
             locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
             journeys = journeys.select_related('service').annotate(calls=Exists(calls), locations=Exists(locations))
+            previous = None
+            for journey in journeys:
+                if previous:
+                    previous.next = journey
+                    journey.previous = previous
+                previous = journey
             context['journeys'] = journeys
+
         return context
 
 

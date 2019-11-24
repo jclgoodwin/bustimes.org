@@ -151,13 +151,14 @@ class Vehicle(models.Model):
         unique_together = ('code', 'operator')
 
     def __str__(self):
+        fleet_code = self.fleet_number or self.fleet_code
         if len(self.reg) > 3:
             reg = self.get_reg()
-            if self.fleet_number:
-                return '{} - {}'.format(self.fleet_number, reg)
+            if fleet_code:
+                return '{} - {}'.format(fleet_code, reg)
             return reg
-        if self.fleet_number:
-            return str(self.fleet_number)
+        if fleet_code:
+            return str(fleet_code)
         return self.code.replace('_', ' ')
 
     def get_previous(self):

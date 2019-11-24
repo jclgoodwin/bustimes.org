@@ -528,7 +528,7 @@ table {
     }
 }
 
-#journey-overlay {
+.journey {
     background: #fff;
     bottom: 0;
     display: none;
@@ -537,21 +537,28 @@ table {
     right: 0;
     top: 0;
 
-    #map {
+    &:target {
+        display: block;
+    }
+
+    .map {
+        bottom: 0;
+        left: 0;
         position: absolute;
+        right: 0;
         top: 7em;
     }
 
     .leaflet-popup-content {
         margin: 10px;
     }
-}
 
-#details {
-    padding: 1em;
+    .details {
+        padding: 1em;
 
-    p {
-        margin-top: 0;
+        p {
+            margin-top: 0;
+        }
     }
 }
 
