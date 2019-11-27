@@ -71,8 +71,10 @@ class Command(ImportLiveVehiclesCommand):
         return vehicle
 
     def get_journey(self, item, vehicle):
-        journey = VehicleJourney()
-        journey.route_name = item['properties']['line']
+        journey = VehicleJourney(
+            route_name=item['properties']['line'],
+            direction=item['properties']['direction']
+        )
 
         if len(self.operators) == 1:
             operator = list(self.operators.values())[0]

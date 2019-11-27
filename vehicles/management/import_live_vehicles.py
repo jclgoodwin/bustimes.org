@@ -54,6 +54,8 @@ def same_journey(latest_location, journey, datetime):
     if same_route:
         if latest_location.journey.code and journey.code:
             return str(latest_location.journey.code) == str(journey.code)
+        if latest_location.journey.direction and journey.direction:
+            return latest_location.journey.direction == journey.direction
         return datetime - latest_location.datetime < timedelta(minutes=15)
     return False
 
