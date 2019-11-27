@@ -31,6 +31,13 @@ class Command(ImportLiveVehiclesCommand):
         else:
             operator = self.operators[operator]
 
+        if operator == 'NCTR' and len(code) == 6:
+            if code[:2] == '21':
+                operator = 'KBUS'
+            elif code[:2] == '20':
+                operator = 'TBTN'
+            code = code[2:]
+
         fleet_number = code
 
         if '_-_' in code:

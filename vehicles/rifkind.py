@@ -43,7 +43,7 @@ def handle_item(source, item):
             operator = 'NOCT'
         vehicle = int(vehicle[2:])
     else:
-        operator = 'NCTR'
+        return
 
     defaults = {
         'source': source,
@@ -73,8 +73,6 @@ def handle_item(source, item):
         operator = 'TBTN'
     elif service_name == 'pronto':
         operator = 'TBTN'
-    elif operator == 'NCTR':
-        service_name = service_name.split()[-1]
 
     services = Service.objects.filter(current=True)
     if operator == 'KBUS' or operator == 'TBTN':
