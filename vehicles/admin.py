@@ -23,7 +23,7 @@ class VehicleAdminForm(forms.ModelForm):
 
 
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ('code', 'fleet_code', 'reg', 'operator', 'vehicle_type', 'get_flickr_link', 'last_seen',
+    list_display = ('code', 'fleet_number', 'fleet_code', 'reg', 'operator', 'vehicle_type', 'get_flickr_link', 'last_seen',
                     'livery', 'colours', 'branding', 'name', 'notes')
     list_filter = (
         'withdrawn',
@@ -33,7 +33,7 @@ class VehicleAdmin(admin.ModelAdmin):
         'vehicle_type',
     )
     list_select_related = ['operator', 'livery', 'vehicle_type', 'latest_location']
-    list_editable = ('fleet_code', 'reg', 'operator', 'vehicle_type',
+    list_editable = ('reg', 'operator', 'vehicle_type',
                      'livery', 'colours', 'branding', 'name', 'notes')
     autocomplete_fields = ('vehicle_type', 'livery')
     raw_id_fields = ('operator', 'source')
