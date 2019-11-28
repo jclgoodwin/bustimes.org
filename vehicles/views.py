@@ -65,13 +65,21 @@ def get_vehicle_edit(vehicle, fields):
     return edit
 
 
-def operator_vehicles(request, slug):
+def operator_vehicles(request, slug=None, parent=None):
     operators = Operator.objects.select_related('region')
-    try:
-        operator = get_object_or_404(operators, slug=slug)
-    except Http404:
-        operator = get_object_or_404(operators, operatorcode__code=slug, operatorcode__source__name='slug')
-    vehicles = operator.vehicle_set.filter(withdrawn=False)
+    if slug:
+        try:
+            operator = get_object_or_404(operators, slug=slug.lower())
+        except Http404:
+            operator = get_object_or_404(operators, operatorcode__code=slug, operatorcode__source__name='slug')
+        vehicles = operator.vehicle_set.filter(withdrawn=False)
+    elif parent:
+        vehicles = Vehicle.objects.filter(operator__parent=parent, withdrawn=False).select_related('operator')
+        operators = list(operators.filter(parent=parent))
+        if not operators:
+            raise Http404
+        operator = operators[0]
+
     latest_journeys = Subquery(VehicleJourney.objects.filter(
         vehicle=OuterRef('pk')
     ).order_by('-datetime').values('pk')[:1])
@@ -104,7 +112,7 @@ def operator_vehicles(request, slug):
         vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
 
     if not vehicles:
-        raise Http404()
+        raise Http404
 
     if operator.name == 'National Express':
         vehicles = sorted(vehicles, key=lambda v: v.notes)
@@ -115,6 +123,8 @@ def operator_vehicles(request, slug):
 
     return render(request, 'operator_vehicles.html', {
         'breadcrumb': breadcrumb,
+        'parent': parent,
+        'operators': parent and operators,
         'object': operator,
         'today': timezone.localtime().date(),
         'vehicles': vehicles,

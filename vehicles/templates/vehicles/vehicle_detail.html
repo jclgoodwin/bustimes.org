@@ -91,11 +91,9 @@
                                     <div class="map"></div>
                                     <div class="details">
                                         <a class="button next" href="#" class="next">Close</a>
-                                        <p>
-                                            {% if not vehicle %}
+                                        <p>{% if not vehicle %}
                                                 {{ journey.vehicle }}{% else %}{% firstof journey.service.get_line_name_and_brand journey.route_name %}
-                                            {% endif %}
-                                            – {{ journey.datetime|time }}
+                                            {% endif %} – {{ journey.datetime|time }}
                                             {% if journey.destination %} to {{ journey.destination }}{% endif %}
                                         </p>
                                         {% if journey.previous %}

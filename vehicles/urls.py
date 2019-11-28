@@ -3,6 +3,7 @@ from . import views
 
 
 urlpatterns = [
+    path('groups/<parent>/vehicles', views.operator_vehicles, name='operator_vehicles'),
     path('operators/<slug>/vehicles', views.operator_vehicles, name='operator_vehicles'),
     path('operators/<slug>/vehicles/edit', views.operator_vehicles),
     path('operators/<operator>/services/<route>/vehicles', views.service_vehicles_history),

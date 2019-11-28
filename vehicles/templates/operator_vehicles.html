@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}Fleet list – {{ object }} – Bus Times{% endblock %}
+{% block title %}Fleet list – {% firstof parent object %} – Bus Times{% endblock %}
 
 {% block canonical %}
     <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}/vehicles" />
@@ -8,7 +8,7 @@
 
 {% block content %}
 
-<h1>{{ object }}</h1>
+<h1>{% firstof parent object %}</h1>
 
 {% if edit %}
     {% if submitted %}
@@ -18,8 +18,10 @@
 
     <p>Select vehicles to update:</p>
 {% else %}
-    <p>This is an unofficial and probably incomplete fleet list for {{ object }}.
-    It only lists vehicles that have ever appeared in the live bus tracking system.</p>
+    <p>This is an unofficial and probably incomplete fleet list for {% firstof parent object %}
+    {% if parent %}({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %}){% endif %}.</p>
+
+    <p>It only lists vehicles that have ever appeared in the live bus tracking system.</p>
 
     <p>Thanks to the marvels of modern technology,
     you can see where a particular vehicle has been recently,
@@ -27,11 +29,14 @@
     This isn’t always accurate,
     e.g. when ticket machines/tracking equipment are swapped between vehicles.</p>
 
+    {% if not parent and object.parent %}
+        <p>There’s also <a href="/groups/{{ object.parent}}/vehicles">a list of all {{ object.parent }} vehicles</a>.</p>
+    {% endif %}
+
     {% if user.is_authenticated %}
         <p><a href="{{ edit_url }}?o=2&amp;operator__id__exact={{ object.id }}">Edit</a></p>
     {% endif %}
 {% endif %}
-
 
 {% if edit %}
     <form action="{{ object.get_absolute_url }}/vehicles/edit" method="POST">
@@ -49,6 +54,7 @@
             {% if name_column %}<th scope="col">Name</th>{% endif %}
             {% if notes_column %}<th scope="col">Notes</th>{% endif %}
             {% for col in columns %}<th scope="col">{{ col }}</th>{% endfor %}
+            {% if parent %}<th>Operator</th>{% endif %}
         </tr>
     </thead>
     <tbody>
@@ -116,6 +122,7 @@
                 {% if name_column %}<td>{{ vehicle.name }}</td>{% endif %}
                 {% if notes_column %}<td>{{ vehicle.notes }}</td>{% endif %}
                 {% for value in vehicle.column_values %}<td>{{ value|default:"" }}</td>{% endfor %}
+                {% if parent %}<td>{{ vehicle.operator }}</td>{% endif %}
                 <td>{{ vehicle.get_flickr_link }}</td>
                 {% if not edit %}
                     <td>
