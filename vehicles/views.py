@@ -227,7 +227,7 @@ def vehicles_last_modified(request):
             except (SIRISource.DoesNotExist, Poorly, exceptions.RequestException):
                 continue
 
-        if Operator.objects.filter(id__in=('KBUS', 'NCTR', 'TBTN', 'NOCT'), service=service_id).exists():
+        if Operator.objects.filter(id__in=('KBUS', 'TBTN', 'NOCT'), service=service_id).exists():
             rifkind(service_id)
 
         last_modified = cache.get(f'{service_id}:vehicles_last_modified')
