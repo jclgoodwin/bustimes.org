@@ -2,6 +2,8 @@ from django import forms
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.db.models import Count
+from busstops.models import Operator
 from .models import VehicleType, VehicleFeature, Vehicle, VehicleEdit, VehicleJourney, Livery, JourneyCode
 
 
@@ -145,6 +147,22 @@ def apply_edits(queryset):
             edit.save(update_fields=['approved'])
 
 
+class VehicleEditOperatorListFilter(admin.SimpleListFilter):
+    title = 'Operator'
+    parameter_name = 'operator'
+
+    def lookups(self, request, model_admin):
+        operators = Operator.objects.filter(vehicle__vehicleedit__approved=False)
+        operators = operators.annotate(count=Count('vehicle__vehicleedit')).order_by('-count')
+        return [
+            (operator.pk, f'{operator} ({operator.count})')
+            for operator in operators
+        ]
+
+    def queryset(self, request, queryset):
+        return queryset.filter(vehicle__operator=self.value())
+
+
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['id', 'datetime', vehicle, fleet_number, reg, vehicle_type, branding, name, 'current', 'suggested',
                     notes, 'withdrawn', 'last_seen', 'flickr', 'user', 'url']
@@ -153,7 +171,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
     list_filter = [
         'approved',
         'withdrawn',
-        ('vehicle__operator', admin.RelatedOnlyFieldListFilter),
+        VehicleEditOperatorListFilter
     ]
     raw_id_fields = ['vehicle', 'livery']
     actions = ['apply_edits', 'delete_vehicles']
