@@ -103,13 +103,15 @@ def line_string_from_journeypattern(journeypattern, stops):
 class Command(BaseCommand):
     @staticmethod
     def add_arguments(parser):
-        parser.add_argument('filenames', nargs='+', type=str)
+        parser.add_argument('archives', nargs=1, type=str)
+        parser.add_argument('files', nargs='*', type=str)
 
     def handle(self, *args, **options):
         self.calendar_cache = {}
         self.notes = {}
         for archive_name in options['filenames']:
-            self.handle_archive(archive_name)
+        for archive_name in options['archives']:
+            self.handle_archive(archive_name, options['files'])
 
     def set_region(self, archive_name):
         self.region_id, _ = os.path.splitext(os.path.basename(archive_name))
@@ -173,7 +175,7 @@ class Command(BaseCommand):
         inbound = self.service_descriptions.get(f'{key}I', '')
         return outbound, inbound
 
-    def handle_archive(self, archive_name):
+    def handle_archive(self, archive_name, filenames):
         self.service_codes = set()
 
         self.set_region(archive_name)
@@ -187,7 +189,7 @@ class Command(BaseCommand):
 
             self.set_service_descriptions(archive)
 
-            for filename in archive.namelist():
+            for filename in filenames or archive.namelist():
                 if filename.endswith('.xml'):
                     with archive.open(filename) as open_file:
                         with transaction.atomic():
