@@ -19,4 +19,6 @@ class ServiceDebugView(DetailView):
             if code.scheme.endswith(' SIRI'):
                 code.siri_one_shot = siri_one_shot(code, now)
 
+        context['breadcrumb'] = [self.object]
+
         return context
