@@ -354,8 +354,7 @@ class ImportTransXChangeTest(TestCase):
         self.write_files_to_zipfile_and_import('EA.zip', ['twm_6-14B-_-y11-1.xml'])
         service = Service.objects.get()
 
-        timetable = self.client.get(service.get_absolute_url()).context_data['timetable']
-        self.assertIsNone(timetable.date)
+        self.assertNotIn('timetable', self.client.get(service.get_absolute_url()).context_data)
         # self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
         # self.assertEqual(0, len(timetable.groupings[1].rows[0].times))
 

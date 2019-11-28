@@ -480,11 +480,10 @@ class ServiceDetailView(DetailView):
 
         if self.object.show_timetable and not self.object.timetable_wrong:
             date = self.request.GET.get('date')
-            today = timezone.localtime().date()
             if date:
                 try:
                     date = ciso8601.parse_datetime(date).date()
-                    if date < today:
+                    if date < timezone.localtime().date():
                         date = None
                 except ValueError:
                     date = None
@@ -493,6 +492,8 @@ class ServiceDetailView(DetailView):
             else:
                 parallel = []
             context['timetable'] = self.object.get_timetable(date, parallel)
+            if not context['timetable'].date:
+                del context['timetable']
         else:
             date = None
 
