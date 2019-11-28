@@ -42,7 +42,7 @@ function import_csv {
     fi
 }
 
-mkdir -p NPTG/previous NaPTAN TNDS/tmp variations
+mkdir -p NPTG/previous NaPTAN TNDS variations
 
 cd NPTG
 nptg_old=$(shasum nptg.ashx\?format=csv)
@@ -153,7 +153,7 @@ fi
 
 date=$(date +%Y-%m-%d)
 
-cd TNDS/tmp
+cd TNDS
 for region in "${REGIONS[@]}"; do
     region_old=$(ls -l "$region.zip")
     wget -qN --user="$USERNAME" --password="$PASSWORD" "ftp://ftp.tnds.basemap.co.uk/$region.zip"
@@ -161,15 +161,15 @@ for region in "${REGIONS[@]}"; do
     wait
     if [[ $region_old != $region_new ]]; then
         updated_services=1
-        nice -n 10 ../../../manage.py import_transxchange "$region.zip" &
+        nice -n 10 ../../manage.py import_transxchange "$region.zip" &
         if [[ $region_id == "L" ]]; then
             wait
-            ../../../manage.py import_tfl
+            ../../manage.py import_tfl
         fi
     fi
 done
 wait
-cd ../..
+cd ..
 [ $updated_services ] && ../manage.py update_index
 [ $updated_services ] && ../manage.py update_search_indexes
 

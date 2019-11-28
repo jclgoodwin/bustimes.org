@@ -7,7 +7,6 @@ Usage:
 import logging
 import warnings
 import os
-import shutil
 import csv
 import yaml
 import zipfile
@@ -199,11 +198,6 @@ class Command(BaseCommand):
         old_services.update(current=False)
 
         self.source.save(update_fields=['datetime'])
-
-        try:
-            shutil.copy(archive_name, settings.TNDS_DIR)
-        except shutil.SameFileError:
-            pass
 
         StopPoint.objects.filter(active=False, service__current=True).update(active=True)
         StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
