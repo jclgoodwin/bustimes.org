@@ -160,7 +160,9 @@ class VehicleEditOperatorListFilter(admin.SimpleListFilter):
         ]
 
     def queryset(self, request, queryset):
-        return queryset.filter(vehicle__operator=self.value())
+        if self.value():
+            return queryset.filter(vehicle__operator=self.value())
+        return queryset
 
 
 class VehicleEditAdmin(admin.ModelAdmin):
