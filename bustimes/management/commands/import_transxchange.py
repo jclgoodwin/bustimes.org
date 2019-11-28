@@ -108,7 +108,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.calendar_cache = {}
         self.notes = {}
-        for archive_name in options['filenames']:
         for archive_name in options['archives']:
             self.handle_archive(archive_name, options['files'])
 
