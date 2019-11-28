@@ -171,13 +171,13 @@ class Vehicle(models.Model):
 
     def get_previous(self):
         if self.fleet_number and self.operator:
-            vehicles = self.operator.vehicle_set
-            return vehicles.filter(fleet_number__lt=self.fleet_number).order_by('-fleet_number').first()
+            vehicles = self.operator.vehicle_set.filter(withdrawn=False, fleet_number__lt=self.fleet_number)
+            return vehicles.order_by('-fleet_number').first()
 
     def get_next(self):
         if self.fleet_number and self.operator:
-            vehicles = self.operator.vehicle_set
-            return vehicles.filter(fleet_number__gt=self.fleet_number).order_by('fleet_number').first()
+            vehicles = self.operator.vehicle_set.filter(withdrawn=False, fleet_number__gt=self.fleet_number)
+            return vehicles.order_by('fleet_number').first()
 
     def get_reg(self):
         if self.reg[-3:].isalpha():
