@@ -14,8 +14,9 @@ class VehicleTypeAdmin(admin.ModelAdmin):
 class VehicleAdminForm(forms.ModelForm):
     class Meta:
         widgets = {
-            'reg': forms.TextInput(attrs={'style': 'width: 8em'}),
+            'fleet_number': forms.TextInput(attrs={'style': 'width: 4em'}),
             'fleet_code': forms.TextInput(attrs={'style': 'width: 4em'}),
+            'reg': forms.TextInput(attrs={'style': 'width: 8em'}),
             'operator': forms.TextInput(attrs={'style': 'width: 4em'}),
             'branding': forms.TextInput(attrs={'style': 'width: 8em'}),
             'name': forms.TextInput(attrs={'style': 'width: 8em'}),
@@ -33,7 +34,7 @@ class VehicleAdmin(admin.ModelAdmin):
         'vehicle_type',
     )
     list_select_related = ['operator', 'livery', 'vehicle_type', 'latest_location']
-    list_editable = ('reg', 'operator', 'vehicle_type',
+    list_editable = ('fleet_number', 'fleet_code', 'reg', 'operator', 'vehicle_type',
                      'livery', 'colours', 'branding', 'name', 'notes')
     autocomplete_fields = ('vehicle_type', 'livery')
     raw_id_fields = ('operator', 'source')
