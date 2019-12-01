@@ -96,16 +96,20 @@ def operator_vehicles(request, slug=None, parent=None):
     breadcrumb = [operator.region, operator]
     if edit:
         breadcrumb.append(Vehicles(operator))
-        form = EditVehiclesForm(request.POST, operator=operator, initial={
+        initial = {
             'operator': operator
-        })
-        if request.POST and form.is_valid():
-            ticked_vehicles = (vehicle for vehicle in vehicles if str(vehicle.id) in request.POST.getlist('vehicle'))
-            data = {key: form.cleaned_data[key] for key in form.changed_data}
-            edits = (get_vehicle_edit(vehicle, data) for vehicle in ticked_vehicles)
-            submitted = len(VehicleEdit.objects.bulk_create(edit for edit in edits if edit))
-            if form.cleaned_data.get('operator') and form.cleaned_data['operator'] != operator:
-                Vehicle.objects.filter(id__in=request.POST.getlist('vehicle')).update(operator=operator)
+        }
+        if request.method == 'POST':
+            form = EditVehiclesForm(request.POST, initial=initial, operator=operator)
+            if form.is_valid():
+                ticked_vehicles = (vehicle for vehicle in vehicles if str(vehicle.id) in request.POST.getlist('vehicle'))
+                data = {key: form.cleaned_data[key] for key in form.changed_data}
+                edits = (get_vehicle_edit(vehicle, data) for vehicle in ticked_vehicles)
+                submitted = len(VehicleEdit.objects.bulk_create(edit for edit in edits if edit))
+                if form.cleaned_data.get('operator') and form.cleaned_data['operator'] != operator:
+                    Vehicle.objects.filter(id__in=request.POST.getlist('vehicle')).update(operator=operator)
+        else:
+            form = EditVehiclesForm(initial=initial, operator=operator)
     else:
         form = None
         pending_edits = VehicleEdit.objects.filter(approved=False, vehicle=OuterRef('id'))

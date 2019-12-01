@@ -38,12 +38,8 @@ class EditVehiclesForm(forms.Form):
             self.fields['colours'].choices = get_livery_choices(operator)
 
         operators = None
-        if operator:
-            if operator.name.startswith('Stagecoach '):
-                operators = Operator.objects.filter(name__startswith='Stagecoach ', service__current=True)
-            elif operator.parent:
-                operators = Operator.objects.filter(parent=operator.parent)
-        if operators:
+        if operator and operator.parent:
+            operators = Operator.objects.filter(parent=operator.parent)
             self.fields['operator'].queryset = operators.order_by('name').distinct()
         else:
             del(self.fields['operator'])
