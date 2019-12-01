@@ -102,7 +102,7 @@ def operator_vehicles(request, slug=None, parent=None):
         if request.method == 'POST':
             form = EditVehiclesForm(request.POST, initial=initial, operator=operator)
             if form.is_valid():
-                ticked_vehicles = (vehicle for vehicle in vehicles if str(vehicle.id) in request.POST.getlist('vehicle'))
+                ticked_vehicles = (v for v in vehicles if str(v.id) in request.POST.getlist('vehicle'))
                 data = {key: form.cleaned_data[key] for key in form.changed_data}
                 edits = (get_vehicle_edit(vehicle, data) for vehicle in ticked_vehicles)
                 submitted = len(VehicleEdit.objects.bulk_create(edit for edit in edits if edit))
