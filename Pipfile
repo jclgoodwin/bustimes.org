@@ -11,7 +11,7 @@ name = "piwheels"
 [packages]
 "beautifulsoup4" = "*"
 "ciso8601" = "*"
-django = "*"
+django = ">=2.2.7,<3.0.0"
 django-email-obfuscator = "*"
 django-haystack = "*"
 django-pipeline = "*"
@@ -42,6 +42,7 @@ python-socketio = {extras = ["client"],version = "*"}
 celery = {extras = ["redis"],version = "*"}
 requests-toolbelt = "*"
 pyyaml = "*"
+asgiref = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
