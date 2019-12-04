@@ -16,21 +16,23 @@ class VehiclesTests(TestCase):
 
         ea = Region.objects.create(id='EA', name='East Anglia')
 
-        Operator.objects.create(region=ea, name='Bova and Over', id='BOVA', slug='bova-and-over')
-        lynx = Operator.objects.create(region=ea, name='Lynx', id='LYNX', slug='lynx')
+        cls.bova = Operator.objects.create(region=ea, name='Bova and Over', id='BOVA', slug='bova-and-over',
+                                           parent='Madrigal Electromotive')
+        cls.lynx = Operator.objects.create(region=ea, name='Lynx', id='LYNX', slug='lynx',
+                                           parent='Madrigal Electromotive')
 
         tempo = VehicleType.objects.create(name='Optare Tempo', coach=False, double_decker=False)
         spectra = VehicleType.objects.create(name='Optare Spectra', coach=False, double_decker=True)
 
         service = Service.objects.create(service_code='49', region=ea, date='2018-12-25', tracking=True,
                                          description='Spixworth - Hunworth - Happisburgh')
-        service.operator.add(lynx)
+        service.operator.add(cls.lynx)
 
         cls.vehicle_1 = Vehicle.objects.create(code='2', fleet_number=1, reg='FD54JYA', vehicle_type=tempo,
-                                               colours='#FF0000', notes='Trent Barton', operator=lynx)
+                                               colours='#FF0000', notes='Trent Barton', operator=cls.lynx)
         livery = Livery.objects.create(colours='#FF0000 #0000FF')
         cls.vehicle_2 = Vehicle.objects.create(code='50', fleet_number=50, reg='UWW2X', livery=livery,
-                                               vehicle_type=spectra, operator=lynx)
+                                               vehicle_type=spectra, operator=cls.lynx)
 
         journey = VehicleJourney.objects.create(vehicle=cls.vehicle_1, datetime=cls.datetime, source=source,
                                                 service=service, route_name='2')
@@ -39,6 +41,12 @@ class VehiclesTests(TestCase):
                                                   journey=journey, current=True)
         cls.vehicle_1.latest_location = location
         cls.vehicle_1.save()
+
+    def test_parent(self):
+        response = self.client.get('/groups/Madrigal Electromotive/vehicles')
+        self.assertContains(response, 'Lynx')
+        self.assertContains(response, 'Madrigal Electromotive')
+        self.assertContains(response, 'Optare')
 
     def test_vehicle(self):
         vehicle = Vehicle(reg='3990ME')
@@ -119,16 +127,17 @@ class VehiclesTests(TestCase):
     def test_vehicle_edit_1(self):
         url = self.vehicle_1.get_absolute_url() + '/edit'
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.get(url)
         self.assertNotContains(response, 'already')
 
         # edit nothing
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(10):
             response = self.client.post(url, {
                 'fleet_number': '1',
                 'reg': 'FD54JYA',
                 'vehicle_type': self.vehicle_1.vehicle_type_id,
+                'operator': self.lynx.id,
                 'colours': '#FF0000',
                 'notes': 'Trent Barton',
             })
@@ -136,35 +145,42 @@ class VehiclesTests(TestCase):
         self.assertNotContains(response, 'already')
 
         # edit fleet number
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.post(url, {
-                'fleet_number': '',
+                'fleet_number': '2',
                 'reg': 'FD54JYA',
                 'vehicle_type': self.vehicle_1.vehicle_type_id,
+                'operator': self.lynx.id,
                 'colours': '#FF0000',
                 'notes': 'Trent Barton',
             })
         self.assertTrue(response.context['form'].has_changed())
         self.assertContains(response, 'Thank you')
 
+        self.assertEqual(1, VehicleEdit.objects.filter(approved=False).count())
+
         # edit reg
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.post(url, {
                 'fleet_number': '1',
                 'reg': 'K292JVF',
                 'vehicle_type': self.vehicle_1.vehicle_type_id,
+                'operator': self.lynx.id,
                 'colours': '#FF0000',
                 'notes': 'Trent Barton',
             })
         self.assertTrue(response.context['form'].has_changed())
         self.assertContains(response, 'Thank you')
 
+        self.assertEqual(2, VehicleEdit.objects.filter(approved=False).count())
+
         # edit type, livery and name
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(9):
             response = self.client.post(url, {
                 'fleet_number': '1',
                 'reg': 'FD54JYA',
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
+                'operator': self.lynx.id,
                 'colours': self.vehicle_2.livery_id,
                 'notes': 'Trent Barton',
                 'name': 'Colin',
@@ -173,11 +189,12 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Thank you')
 
         # should not create an edit
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(10):
             response = self.client.post(url, {
                 'fleet_number': '',
                 'reg': 'FD54JYA',
                 'vehicle_type': self.vehicle_1.vehicle_type_id,
+                'operator': self.lynx.id,
                 'colours': '#FFFF00',
                 'notes': 'Trent Barton',
             })
@@ -186,6 +203,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'already')
 
         self.assertEqual(3, VehicleEdit.objects.filter(approved=False).count())
+
         with self.assertNumQueries(8):
             admin.apply_edits(VehicleEdit.objects.select_related('vehicle'))
         self.assertEqual(0, VehicleEdit.objects.filter(approved=False).count())
@@ -193,16 +211,17 @@ class VehiclesTests(TestCase):
         self.assertEqual(vehicle.reg, 'K292JVF')
         self.assertEqual(vehicle.name, 'Colin')
         self.assertEqual(str(vehicle.vehicle_type), 'Optare Spectra')
-        self.assertIsNone(vehicle.fleet_number)
+        self.assertEqual(vehicle.fleet_number, 2)
 
     def test_vehicle_edit_2(self):
         url = self.vehicle_2.get_absolute_url() + '/edit'
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(10):
             response = self.client.post(url, {
                 'fleet_number': '50',
                 'reg': 'UWW2X',
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
+                'operator': self.lynx.id,
                 'colours': self.vehicle_2.livery_id,
                 'notes': '',
             })
@@ -212,11 +231,12 @@ class VehiclesTests(TestCase):
 
         self.assertEqual(0, VehicleEdit.objects.count())
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.post(url, {
                 'fleet_number': '50',
                 'reg': '',
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
+                'operator': self.lynx.id,
                 'colours': self.vehicle_2.livery_id,
                 'notes': 'Ex Ipswich Buses',
                 'name': 'Luther Blisset',
@@ -225,7 +245,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Thank you')
         self.assertTrue(response.context['form'].has_changed())
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.get(url)
 
         self.assertContains(response, 'already')
@@ -249,14 +269,15 @@ class VehiclesTests(TestCase):
         self.assertEqual(admin.vehicle_type(edit), '<ins>Ford Transit</ins>')
 
     def test_vehicles_edit(self):
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             response = self.client.post('/operators/lynx/vehicles/edit')
         self.assertContains(response, 'Select vehicles to update')
         self.assertFalse(VehicleEdit.objects.all())
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(9):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
+                'operator': self.lynx.id,
                 'notes': 'foo'
             })
         self.assertContains(response, 'Thank you')

@@ -365,11 +365,12 @@ def edit_vehicle(request, vehicle_id):
         if not form.has_changed():
             form.add_error(None, 'You haven\'t changed anything')
         elif form.is_valid():
-            edit = get_vehicle_edit(vehicle, {key: form.cleaned_data[key] for key in form.changed_data})
-            assert edit
-            edit.save()
-            if form.cleaned_data.get('operator') and form.cleaned_data['operator'] != vehicle.operator:
-                vehicle.operator = form.cleaned_data['operator']
+            data = {key: form.cleaned_data[key] for key in form.changed_data}
+            edit = get_vehicle_edit(vehicle, data)
+            if edit.get_changes():
+                edit.save()
+            if 'operator' in data:
+                vehicle.operator = data['operator']
                 vehicle.save()
             submitted = True
     else:
