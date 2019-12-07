@@ -50,6 +50,14 @@ def get_vehicle_edit(vehicle, fields):
             else:
                 setattr(edit, field, f'-{getattr(vehicle, field)}')
 
+    changes = {}
+    if 'depot' in fields:
+        changes['Depot'] = fields['depot']
+    if 'previous_reg' in fields:
+        changes['Previous reg'] = fields['previous_reg']
+    if changes:
+        edit.changes = changes
+
     edit.user = fields.get('user', '')
     edit.url = fields.get('url', '')
 
@@ -357,6 +365,8 @@ def edit_vehicle(request, vehicle_id):
         'colours': str(vehicle.livery_id or vehicle.colours),
         'branding': vehicle.branding,
         'name': vehicle.name,
+        'previous_reg': vehicle.data and vehicle.data.get('Previous reg'),
+        'depot': vehicle.data and vehicle.data.get('Depot'),
         'notes': vehicle.notes,
     }
 
@@ -366,12 +376,13 @@ def edit_vehicle(request, vehicle_id):
             form.add_error(None, 'You haven\'t changed anything')
         elif form.is_valid():
             data = {key: form.cleaned_data[key] for key in form.changed_data}
-            edit = get_vehicle_edit(vehicle, data)
-            if edit.get_changes():
-                edit.save()
             if 'operator' in data:
                 vehicle.operator = data['operator']
                 vehicle.save()
+                del data['operator']
+            if data:
+                edit = get_vehicle_edit(vehicle, data)
+                edit.save()
             submitted = True
     else:
         form = EditVehicleForm(initial=initial, operator=vehicle.operator, vehicle=vehicle)

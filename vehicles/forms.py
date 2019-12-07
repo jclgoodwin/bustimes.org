@@ -27,6 +27,7 @@ class EditVehiclesForm(forms.Form):
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
     branding = forms.CharField(required=False, max_length=255)
     notes = forms.CharField(required=False, max_length=255)
+    depot = forms.CharField(required=False, max_length=255)
     withdrawn = forms.BooleanField(required=False)
     user = forms.CharField(label='Your name', help_text='Feel free to remain anonymous', required=False, max_length=255)
 
@@ -49,9 +50,12 @@ class EditVehicleForm(EditVehiclesForm):
     fleet_number = forms.IntegerField(required=False, min_value=0)
     reg = forms.CharField(label='Registration', required=False, max_length=24)
     name = forms.CharField(label='Name', required=False, max_length=255)
-    url = forms.URLField(label='URL', help_text='A photo (helpful for verifying recent repaints)', required=False,
-                         max_length=200)
-    field_order = ['operator', 'fleet_number', 'reg', 'vehicle_type', 'colours', 'branding', 'name', 'notes', 'url']
+    previous_reg = forms.CharField(required=False, max_length=255)
+    url = forms.URLField(label='URL', help_text='A photo (helpful for verifying recent repaints)',
+                         required=False, max_length=200)
+    field_order = ['operator', 'fleet_number', 'reg', 'vehicle_type',
+                   'colours', 'branding', 'name', 'previous_reg', 'depot',
+                   'notes', 'url']
 
     def __init__(self, *args, **kwargs):
         vehicle = kwargs.pop('vehicle', None)

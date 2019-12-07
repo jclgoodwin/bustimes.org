@@ -27,7 +27,7 @@ class VehicleAdminForm(forms.ModelForm):
 
 class VehicleAdmin(admin.ModelAdmin):
     list_display = ('code', 'fleet_number', 'fleet_code', 'reg', 'operator', 'vehicle_type',
-                    'get_flickr_link', 'last_seen', 'livery', 'colours', 'branding', 'name', 'notes')
+                    'get_flickr_link', 'last_seen', 'livery', 'colours', 'branding', 'name', 'notes', 'data')
     list_filter = (
         'withdrawn',
         ('source', admin.RelatedOnlyFieldListFilter),
@@ -167,7 +167,7 @@ class VehicleEditOperatorListFilter(admin.SimpleListFilter):
 
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['id', 'datetime', vehicle, fleet_number, reg, vehicle_type, branding, name, 'current', 'suggested',
-                    notes, 'withdrawn', 'last_seen', 'flickr', 'user', 'url']
+                    notes, 'withdrawn', 'changes', 'last_seen', 'flickr', 'user', 'url']
     list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'vehicle__latest_location',
                            'livery']
     list_filter = [

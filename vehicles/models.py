@@ -282,6 +282,8 @@ class VehicleEdit(models.Model):
                     changes[field] = edit
         if self.withdrawn:
             changes['withdrawn'] = self.withdrawn
+        if self.changes:
+            changes = {**self.changes, **changes}
         return changes
 
     def get_diff(self, field):

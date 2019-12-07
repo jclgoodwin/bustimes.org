@@ -175,7 +175,7 @@ class VehiclesTests(TestCase):
         self.assertEqual(2, VehicleEdit.objects.filter(approved=False).count())
 
         # edit type, livery and name
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(8):
             response = self.client.post(url, {
                 'fleet_number': '1',
                 'reg': 'FD54JYA',
@@ -239,6 +239,7 @@ class VehiclesTests(TestCase):
                 'operator': self.lynx.id,
                 'colours': self.vehicle_2.livery_id,
                 'notes': 'Ex Ipswich Buses',
+                'depot': 'Holt',
                 'name': 'Luther Blisset',
                 'branding': 'Coastliner',
             })
@@ -251,7 +252,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'already')
 
         edit = VehicleEdit.objects.get()
-        self.assertEqual(edit.get_changes(), {'branding': 'Coastliner', 'name': 'Luther Blisset',
+        self.assertEqual(edit.get_changes(), {'Depot': 'Holt', 'branding': 'Coastliner', 'name': 'Luther Blisset',
                                               'notes': 'Ex Ipswich Buses', 'reg': '-UWW2X'})
 
         self.assertEqual('50 - UWW\xa02X', str(edit))
