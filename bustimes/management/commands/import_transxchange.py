@@ -25,6 +25,11 @@ logger = logging.getLogger(__name__)
 
 
 NS = {'txc': 'http://www.transxchange.org.uk/'}
+BANK_HOLIDAYS = {
+    'ChristmasDay': '2019-12-25',
+    'BoxingDay':  '2019-12-26',
+    'NewYearsDay':  '2020-01-01',
+}
 
 
 def sanitize_description(name):
@@ -212,6 +217,21 @@ class Command(BaseCommand):
             CalendarDate(start_date=date_range.start, end_date=date_range.end, operation=True)
             for date_range in operating_profile.operation_days
         ]
+
+        for holiday in operating_profile.operation_bank_holidays:
+            if holiday in BANK_HOLIDAYS:
+                calendar_dates.append(
+                    CalendarDate(start_date=BANK_HOLIDAYS[holiday], end_date=BANK_HOLIDAYS[holiday], operation=True)
+                )
+            else:
+                print(holiday)
+        for holiday in operating_profile.nonoperation_bank_holidays:
+            if holiday in BANK_HOLIDAYS:
+                calendar_dates.append(
+                    CalendarDate(start_date=BANK_HOLIDAYS[holiday], end_date=BANK_HOLIDAYS[holiday], operation=False)
+                )
+            else:
+                print(holiday)
 
         if operating_profile.servicedorganisation:
             org = operating_profile.servicedorganisation
