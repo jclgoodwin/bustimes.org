@@ -3,7 +3,6 @@
 *.pyc
 config/gunicorn.py
 data/TNDS/*.zip
-data/TNDS/tmp/*.zip
 data/*.zip
 data/*.xml
 data/*.csv
