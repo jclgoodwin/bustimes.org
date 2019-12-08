@@ -115,6 +115,11 @@ summary {
     }
 }
 
+#id_reg,
+#id_previous_reg {
+    text-transform: uppercase;
+}
+
 header {
     background: $brand-color;
     overflow: hidden;
