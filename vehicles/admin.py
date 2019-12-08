@@ -118,6 +118,14 @@ def apply_edits(queryset):
         if edit.reg:
             vehicle.reg = edit.reg
             update_fields.append('reg')
+        if edit.changes:
+            if vehicle.data:
+                vehicle.data = {
+                    **vehicle.data, **edit.changes
+                }
+            else:
+                vehicle.data = edit.changes
+            update_fields.append('data')
         for field in ('branding', 'name', 'notes'):
             if getattr(edit, field):
                 if getattr(edit, field) == f'-{getattr(vehicle, field)}':
