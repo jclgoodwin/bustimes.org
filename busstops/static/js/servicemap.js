@@ -22,6 +22,9 @@
 
     function openMap() {
         container.className += ' expanded';
+        if (document.body.style.paddingTop) {
+            container.top = document.body.style.paddingTop;
+        }
         document.body.style.overflow = 'hidden';
 
         if (map) {

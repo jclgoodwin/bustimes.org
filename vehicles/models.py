@@ -280,9 +280,9 @@ class VehicleEdit(models.Model):
                 vehicle = str(getattr(self.vehicle, field) or '')
                 if edit != vehicle:
                     changes[field] = edit
-        if self.withdrawn:
-            changes['withdrawn'] = self.withdrawn
-        if self.changes:
+        if self.withdrawn and not self.vehicle.withdrawn:
+            changes['withdrawn'] = True
+        if self.changes and self.changes != self.vehicle.data:
             changes = {**self.changes, **changes}
         return changes
 
