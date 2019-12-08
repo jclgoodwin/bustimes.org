@@ -156,11 +156,11 @@ def apply_edits(queryset):
 
 
 class VehicleEditOperatorListFilter(admin.SimpleListFilter):
-    title = 'Operator'
+    title = 'operator'
     parameter_name = 'operator'
 
     def lookups(self, request, model_admin):
-        operators = Operator.objects.filter(vehicle__vehicleedit__approved=False)
+        operators = Operator.objects.filter(vehicle__vehicleedit__approved=False).using('read-only-0')
         operators = operators.annotate(count=Count('vehicle__vehicleedit')).order_by('-count')
         return [
             (operator.pk, f'{operator} ({operator.count})')
