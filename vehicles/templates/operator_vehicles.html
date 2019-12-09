@@ -42,6 +42,8 @@
 
 {% if edit %}
     <form action="{{ object.get_absolute_url }}/vehicles/edit" method="POST">
+{% else %}
+    <p><a class="button" href="{{ object.get_absolute_url }}/vehicles/edit">Edit</a></p>
 {% endif %}
 
 <table class="fleet">

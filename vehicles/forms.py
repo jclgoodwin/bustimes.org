@@ -22,8 +22,8 @@ def get_livery_choices(operator):
 
 
 class EditVehiclesForm(forms.Form):
-    operator = forms.ModelChoiceField(queryset=None, label='Operator')
-    vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False)
+    operator = forms.ModelChoiceField(queryset=None, label='Operator', empty_label='')
+    vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False, empty_label='')
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
     branding = forms.CharField(required=False, max_length=255)
     notes = forms.CharField(required=False, max_length=255)
