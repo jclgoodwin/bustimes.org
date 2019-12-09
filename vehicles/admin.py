@@ -100,7 +100,7 @@ def changes(obj):
             if not obj.vehicle.data or key not in obj.vehicle.data:
                 changes.append(f'{key}: <ins>{value}</ins>')
             elif value != obj.vehicle.data[key]:
-                changes.append(f'{key}: <ins>{obj.vehicle.data[key]}</del> <ins>{value}</ins>')
+                changes.append(f'{key}: <del>{obj.vehicle.data[key]}</del> <ins>{value}</ins>')
         return mark_safe('<br>'.join(changes))
 
 
