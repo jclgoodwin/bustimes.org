@@ -114,9 +114,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.calendar_cache = {}
+        self.undefined_holidays = set()
         self.notes = {}
         for archive_name in options['archives']:
             self.handle_archive(archive_name, options['files'])
+        if self.undefined_holidays:
+            print(self.undefined_holidays)
 
     def set_region(self, archive_name):
         self.region_id, _ = os.path.splitext(os.path.basename(archive_name))
@@ -212,28 +215,30 @@ class Command(BaseCommand):
 
     def get_calendar(self, operating_profile, operating_period):
         calendar_dates = [
-            CalendarDate(start_date=date_range.start, end_date=date_range.end, operation=False)
-            for date_range in operating_profile.nonoperation_days
+            CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(), operation=False
+                         ) for date_range in operating_profile.nonoperation_days
         ]
         calendar_dates += [
-            CalendarDate(start_date=date_range.start, end_date=date_range.end, operation=True)
-            for date_range in operating_profile.operation_days
+            CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(), operation=True
+                         ) for date_range in operating_profile.operation_days
         ]
 
         for holiday in operating_profile.operation_bank_holidays:
             if holiday in BANK_HOLIDAYS:
                 calendar_dates.append(
-                    CalendarDate(start_date=BANK_HOLIDAYS[holiday], end_date=BANK_HOLIDAYS[holiday], operation=True)
+                    CalendarDate(start_date=BANK_HOLIDAYS[holiday], end_date=BANK_HOLIDAYS[holiday],
+                                 dates=(BANK_HOLIDAYS[holiday], BANK_HOLIDAYS[holiday]), operation=True)
                 )
             else:
-                print(holiday)
+                self.undefined_holidays.add(holiday)
         for holiday in operating_profile.nonoperation_bank_holidays:
             if holiday in BANK_HOLIDAYS:
                 calendar_dates.append(
-                    CalendarDate(start_date=BANK_HOLIDAYS[holiday], end_date=BANK_HOLIDAYS[holiday], operation=False)
+                    CalendarDate(start_date=BANK_HOLIDAYS[holiday], end_date=BANK_HOLIDAYS[holiday],
+                                 dates=(BANK_HOLIDAYS[holiday], BANK_HOLIDAYS[holiday]), operation=False)
                 )
             else:
-                print(holiday)
+                self.undefined_holidays.add(holiday)
 
         if operating_profile.servicedorganisation:
             org = operating_profile.servicedorganisation
@@ -242,7 +247,8 @@ class Command(BaseCommand):
                                  org.nonoperation_holidays and org.nonoperation_holidays.holidays)
             if nonoperation_days:
                 calendar_dates += [
-                    CalendarDate(start_date=date_range.start, end_date=date_range.end, operation=False)
+                    CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
+                                 operation=False)
                     for date_range in nonoperation_days
                 ]
 
@@ -250,15 +256,16 @@ class Command(BaseCommand):
                               org.operation_holidays and org.operation_holidays.holidays)
             if operation_days:
                 calendar_dates += [
-                    CalendarDate(start_date=date_range.start, end_date=date_range.end, operation=True)
+                    CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
+                                 operation=True)
                     for date_range in operation_days
                 ]
 
         if not calendar_dates and not operating_profile.regular_days:
             return
 
-        calendar_hash = f'{operating_profile.regular_days}{operating_period.start}{operating_period.end}'
-        calendar_hash += ''.join(f'{date.start_date}{date.end_date}{date.operation}' for date in calendar_dates)
+        calendar_hash = f'{operating_profile.regular_days}{operating_period.dates()}'
+        calendar_hash += ''.join(f'{date.dates}{date.operation}{date.special}' for date in calendar_dates)
 
         if calendar_hash in self.calendar_cache:
             return self.calendar_cache[calendar_hash]
@@ -272,7 +279,8 @@ class Command(BaseCommand):
             sat=False,
             sun=False,
             start_date=operating_period.start,
-            end_date=operating_period.end
+            end_date=operating_period.end,
+            dates=operating_period.dates()
         )
 
         for day in operating_profile.regular_days:
@@ -428,6 +436,7 @@ class Command(BaseCommand):
             'line_brand': line_brand,
             'start_date': transxchange.operating_period.start,
             'end_date': transxchange.operating_period.end,
+            'dates': transxchange.operating_period.dates(),
             'service': service,
         }
         if 'description' in defaults:
