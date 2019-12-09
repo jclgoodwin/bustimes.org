@@ -314,10 +314,11 @@ class VehicleJourney(models.Model):
     service = models.ForeignKey(Service, models.SET_NULL, null=True, blank=True)
     route_name = models.CharField(max_length=64, blank=True)
     source = models.ForeignKey(DataSource, models.CASCADE)
-    vehicle = models.ForeignKey(Vehicle, models.CASCADE)
+    vehicle = models.ForeignKey(Vehicle, models.CASCADE, null=True, blank=True)
     code = models.CharField(max_length=255, blank=True)
     destination = models.CharField(max_length=255, blank=True)
     direction = models.CharField(max_length=8, blank=True)
+    trip = models.ForeignKey('bustimes.Trip', models.SET_NULL, null=True, blank=True)
 
     def get_absolute_url(self):
         return reverse('journey_detail', args=(self.id,))
