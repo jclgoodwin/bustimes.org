@@ -215,19 +215,19 @@ class Command(BaseCommand):
 
     def get_calendar(self, operating_profile, operating_period):
         calendar_dates = [
-            CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(), operation=False
-                         ) for date_range in operating_profile.nonoperation_days
+            CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(), special=True,
+                         operation=False) for date_range in operating_profile.nonoperation_days
         ]
         calendar_dates += [
-            CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(), operation=True
-                         ) for date_range in operating_profile.operation_days
+            CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(), special=True,
+                         operation=True) for date_range in operating_profile.operation_days
         ]
 
         for holiday in operating_profile.operation_bank_holidays:
             if holiday in BANK_HOLIDAYS:
                 calendar_dates.append(
                     CalendarDate(start_date=BANK_HOLIDAYS[holiday], end_date=BANK_HOLIDAYS[holiday],
-                                 dates=(BANK_HOLIDAYS[holiday], BANK_HOLIDAYS[holiday]), operation=True)
+                                 dates=(BANK_HOLIDAYS[holiday], BANK_HOLIDAYS[holiday]), special=True, operation=True)
                 )
             else:
                 self.undefined_holidays.add(holiday)
@@ -235,7 +235,7 @@ class Command(BaseCommand):
             if holiday in BANK_HOLIDAYS:
                 calendar_dates.append(
                     CalendarDate(start_date=BANK_HOLIDAYS[holiday], end_date=BANK_HOLIDAYS[holiday],
-                                 dates=(BANK_HOLIDAYS[holiday], BANK_HOLIDAYS[holiday]), operation=False)
+                                 dates=(BANK_HOLIDAYS[holiday], BANK_HOLIDAYS[holiday]), special=True, operation=False)
                 )
             else:
                 self.undefined_holidays.add(holiday)
