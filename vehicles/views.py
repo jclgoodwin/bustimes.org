@@ -3,6 +3,7 @@ from requests import Session, exceptions
 from ciso8601 import parse_datetime
 from django.db.models import Exists, OuterRef, Prefetch, Subquery
 from django.core.cache import cache
+from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse, Http404
 from django.views.decorators.http import last_modified
@@ -129,6 +130,10 @@ def operator_vehicles(request, slug=None, parent=None):
     if operator.name == 'National Express':
         vehicles = sorted(vehicles, key=lambda v: v.notes)
 
+    paginator = Paginator(vehicles, 500)
+    page = request.GET.get('page')
+    vehicles = paginator.get_page(page)
+
     columns = set(key for vehicle in vehicles if vehicle.data for key in vehicle.data)
     for vehicle in vehicles:
         vehicle.column_values = [vehicle.data and vehicle.data.get(key) for key in columns]
@@ -140,6 +145,7 @@ def operator_vehicles(request, slug=None, parent=None):
         'object': operator,
         'today': timezone.localtime().date(),
         'vehicles': vehicles,
+        'paginator': paginator,
         'code_column': any(v.fleet_number_mismatch() for v in vehicles),
         'branding_column': any(vehicle.branding for vehicle in vehicles),
         'name_column': any(vehicle.name for vehicle in vehicles),
