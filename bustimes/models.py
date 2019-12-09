@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.contrib.gis.db import models
+from django.contrib.postgres.fields import DateRangeField
 
 
 def get_calendars(when, calendar_ids=None):
@@ -20,11 +21,12 @@ def get_calendars(when, calendar_ids=None):
 class Route(models.Model):
     source = models.ForeignKey('busstops.DataSource', models.CASCADE)
     code = models.CharField(max_length=255)
-    line_brand = models.CharField(max_length=255)
+    line_brand = models.CharField(max_length=255, blank=True)
     line_name = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
+    dates = DateRangeField(null=True, blank=True)
     service = models.ForeignKey('busstops.Service', models.CASCADE)
 
     class Meta:
@@ -44,13 +46,19 @@ class Calendar(models.Model):
     sun = models.BooleanField()
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
+    dates = DateRangeField(null=True)
+
+    def __str__(self):
+        return f'{self.start_date} to {self.end_date}'
 
 
 class CalendarDate(models.Model):
     calendar = models.ForeignKey(Calendar, models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
+    dates = DateRangeField(null=True)
     operation = models.BooleanField()
+    special = models.BooleanField(default=False)
 
 
 class Note(models.Model):
