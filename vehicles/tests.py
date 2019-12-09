@@ -295,7 +295,7 @@ class VehiclesTests(TestCase):
             self.assertEqual({'type': 'FeatureCollection', 'features': []}, response.json())
             self.assertIsNone(response.get('last-modified'))
 
-            with self.assertNumQueries(1):
+            with self.assertNumQueries(2):
                 response = self.client.get('/vehicles.json')
             features = response.json()['features']
             self.assertEqual(features[0]['properties']['vehicle']['name'], '1 - FD54\xa0JYA')
@@ -305,7 +305,7 @@ class VehiclesTests(TestCase):
             # self.assertEqual(response.get('last-modified'), 'Tue, 25 Dec 2018 19:47:00 GMT')
 
             VehicleJourney.objects.update(service=None)
-            with self.assertNumQueries(1):
+            with self.assertNumQueries(2):
                 response = self.client.get('/vehicles.json')
             features = response.json()['features']
             self.assertEqual(features[0]['properties']['vehicle']['name'], '1 - FD54\xa0JYA')
@@ -326,9 +326,8 @@ class VehiclesTests(TestCase):
 
         properties = location.get_json(True)['properties']
         vehicle = properties['vehicle']
-        self.assertEqual(vehicle['type'], 'Optare Spectra')
-        self.assertNotIn('decker', vehicle)
-        self.assertNotIn('coach', vehicle)
+        self.assertTrue(vehicle['decker'])
+        self.assertFalse(vehicle['coach'])
         self.assertNotIn('operator', vehicle)
         self.assertEqual(properties['operator'], 'Lynx')
 

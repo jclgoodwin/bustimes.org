@@ -159,12 +159,30 @@
         }
 
         if (props.vehicle) {
-            popup += '<a href="' + props.vehicle.url + '">' + props.vehicle.name + '</a>';
-            if (props.vehicle.type) {
-                popup += ' - ' + props.vehicle.type;
-            }
-            popup += '<br>';
+            popup += '<a href="' + props.vehicle.url + '">' + props.vehicle.name + '</a><br>';
         }
+
+        if (props.vehicle.decker) {
+            var features = 'Double-decker';
+            if (props.vehicle.coach) {
+                features += ' coach';
+            }
+        } else if (props.vehicle.coach) {
+            features = 'Coach';
+        }
+
+        if (props.vehicle.features && props.vehicle.features.length) {
+            if (features) {
+                features += '<br>';
+            }
+            features += props.vehicle.features.join(', ');
+        }
+
+        if (features) {
+            popup += features + '<br>';
+        }
+
+
 
         if (props.delta === 0) {
             popup += 'On time<br>';

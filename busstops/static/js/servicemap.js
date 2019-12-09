@@ -176,53 +176,67 @@
         }
         marker.datetime = props.datetime;
 
-        var popup = '';
+
+        if (props.destination) {
+            var popup = props.destination;
+            if (props.destination.indexOf(' to ') === -1) {
+                popup = 'To ' + popup;
+            }
+        } else {
+            popup = '';
+        }
+
+
+        popup += '<a href="' + props.vehicle.url + '">' + props.vehicle.name + '</a>';
+
+
+        if (props.vehicle.decker) {
+            var features = 'Double-decker';
+            if (props.vehicle.coach) {
+                features += ' coach';
+            }
+        } else if (props.vehicle.coach) {
+            features = 'Coach';
+        }
+
+        if (props.vehicle.features && props.vehicle.features.length) {
+            if (features) {
+                features += '<br>';
+            }
+            features += props.vehicle.features.join(', ');
+        }
+
+        if (features) {
+            popup += features + '<br>';
+        }
+
 
         if (props.delta === 0) {
-            popup += 'On time';
+            var delay = 'On time';
         } else if (props.delta) {
-            popup += 'About ';
+            delay = 'About ';
             if (props.delta > 0) {
-                popup += props.delta;
+                delay += props.delta;
             } else {
-                popup += props.delta * -1;
+                delay += props.delta * -1;
             }
-            popup += ' minute';
+            delay += ' minute';
             if (props.delta !== 1 && props.delta !== -1) {
-                popup += 's';
+                delay += 's';
             }
             if (props.delta > 0) {
-                popup += ' early';
+                delay += ' early';
             } else {
-                popup += ' late';
+                delay += ' late';
             }
         }
 
-        if (popup) {
-            popup += '<br>';
+        if (delay) {
+            popup += delay + '<br>';
         }
 
         var dateTime = new Date(props.datetime);
         popup += 'Updated at ' + dateTime.toTimeString().slice(0, 5);
-
-        if (props.vehicle.decker) {
-            var vehicleFeatures = 'Double-decker';
-            if (props.vehicle.coach) {
-                vehicleFeatures += ' coach';
-            }
-            popup = vehicleFeatures + '<br>' + popup;
-        } else if (props.vehicle.coach) {
-            popup = 'Coach' + '<br>' + popup;
-        }
-
-        popup = props.vehicle.name + '<br>' + popup;
-
-        if (props.destination) {
-            popup = props.destination + '<br>' + popup;
-            if (props.destination.indexOf(' to ') === -1) {
-                popup = 'To ' + popup;
-            }
-        }
 
         marker.bindPopup(popup);
     }

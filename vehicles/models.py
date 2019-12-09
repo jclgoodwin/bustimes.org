@@ -125,6 +125,8 @@ class VehicleFeature(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
+        if self.name[1:].islower():
+            return self.name.lower()
         return self.name
 
 
@@ -405,6 +407,7 @@ class VehicleLocation(models.Model):
                     'name': str(vehicle),
                     'text_colour': vehicle.get_text_colour(),
                     'livery': vehicle.get_livery(self.heading),
+                    'features': [str(feature) for feature in vehicle.features.all()]
                 },
                 'delta': self.early,
                 'direction': self.heading,
@@ -413,9 +416,10 @@ class VehicleLocation(models.Model):
                 'source': journey.source_id
             }
         }
+        if vehicle.vehicle_type:
+            json['properties']['vehicle']['coach'] = vehicle.vehicle_type.coach
+            json['properties']['vehicle']['decker'] = vehicle.vehicle_type.double_decker
         if extended:
-            if vehicle.vehicle_type:
-                json['properties']['vehicle']['type'] = str(vehicle.vehicle_type)
             if journey.service:
                 json['properties']['service'] = {
                     'line_name': journey.service.line_name,
@@ -427,8 +431,4 @@ class VehicleLocation(models.Model):
                 }
             if vehicle.operator:
                 json['properties']['operator'] = str(vehicle.operator)
-        else:
-            if vehicle.vehicle_type:
-                json['properties']['vehicle']['coach'] = vehicle.vehicle_type.coach
-                json['properties']['vehicle']['decker'] = vehicle.vehicle_type.double_decker
         return json

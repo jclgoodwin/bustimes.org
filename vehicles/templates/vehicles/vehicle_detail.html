@@ -21,11 +21,11 @@
     {% endif %}
 
     {% if vehicle.branding %}
-        <p>{{ vehicle.branding }}</p>
+        <p>Branding: {{ vehicle.branding }}</p>
     {% endif %}
 
     {% if vehicle.name %}
-        <p>{{ vehicle.name }}</p>
+        <p>Name: {{ vehicle.name }}</p>
     {% endif %}
 
     {% if vehicle.notes %}
@@ -36,9 +36,9 @@
         <p>{{ key }}: {{ value }}</p>
     {% endfor %}
 
-    {% for feature in vehicle.features.all %}
-        <p>{{ feature }}</p>
-    {% endfor %}
+    {% if vehicle.features.all %}
+        <p>Features: {{ vehicle.features.all|join:", " }}</p>
+    {% endif %}
 
     <p><a class="button" href="{{ vehicle.get_absolute_url }}/edit">Edit</a>{% if pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}</p>
 

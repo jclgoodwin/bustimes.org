@@ -30,9 +30,9 @@ class RifkindTest(TestCase):
                     self.client.get('/vehicles.json?service=skylink')
 
             with freeze_time('2019-11-17 12:20+00:00'):
-                with self.assertNumQueries(37):
+                with self.assertNumQueries(38):
                     self.client.get('/vehicles.json?service=skylink')
-                with self.assertNumQueries(1):
+                with self.assertNumQueries(2):
                     res = self.client.get('/vehicles.json?service=skylink')
 
         json = res.json()

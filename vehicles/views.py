@@ -253,7 +253,7 @@ def vehicles_json(request):
     if request.nothing:
         locations = ()
     else:
-        locations = get_locations(request).order_by()
+        locations = get_locations(request).order_by().prefetch_related('journey__vehicle__features')
         locations = locations.select_related('journey__vehicle__livery', 'journey__vehicle__vehicle_type')
 
         if 'service' in request.GET:
