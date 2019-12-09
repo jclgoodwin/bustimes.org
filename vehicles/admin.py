@@ -93,6 +93,17 @@ def notes(obj):
     return obj.get_diff('notes')
 
 
+def changes(obj):
+    changes = []
+    if obj.changes:
+        for key, value in obj.changes.items():
+            if not obj.vehicle.data or key not in obj.vehicle.data:
+                changes.append(f'{key}: <ins>{value}</ins>')
+            elif value != obj.vehicle.data[key]:
+                changes.append(f'{key}: <ins>{obj.vehicle.data[key]}</del> <ins>{value}</ins>')
+        return mark_safe('<br>'.join(changes))
+
+
 vehicle.admin_order_field = 'vehicle'
 reg.admin_order_field = 'reg'
 vehicle_type.admin_order_field = 'vehicle_type'
@@ -175,7 +186,7 @@ class VehicleEditOperatorListFilter(admin.SimpleListFilter):
 
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['id', 'datetime', vehicle, fleet_number, reg, vehicle_type, branding, name, 'current', 'suggested',
-                    notes, 'withdrawn', 'changes', 'last_seen', 'flickr', 'user', 'url']
+                    notes, 'withdrawn', changes, 'last_seen', 'flickr', 'user', 'url']
     list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'vehicle__latest_location',
                            'livery']
     list_filter = [
