@@ -132,11 +132,10 @@ class Command(ImportLiveVehiclesCommand):
         operator, operator_options = self.get_operator(operator_ref)
 
         if operator:
-            if operator.id == 'THVB':
-                operator.id = 'RBUS'
+            if operator.id == 'THVB' or operator.id == 'RBUS' or operator.id == 'CTNY':
                 operator_options = ('RBUS', 'CTNY')
-            elif operator.id == 'RBUS' or operator.id == 'CTNY':
-                operator_options = ('RBUS', 'CTNY')
+                if operator.id == 'THVB':
+                    operator = Operator.objects.get(id='RBUS')
             elif operator.id == 'SESX':
                 operator_options = ('SESX', 'NIBS', 'GECL')
             elif operator.id == 'FBRI':
