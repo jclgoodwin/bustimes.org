@@ -209,8 +209,13 @@
         agoTimeout;
 
     function updatePopupContent() {
-        openPopupMarker.getPopup().setContent(getPopupContent(openPopupMarker.props));
-        agoTimeout = setTimeout(updatePopupContent, 30000);
+        if (agoTimeout) {
+            clearTimeout(agoTimeout);
+        }
+        if (openPopupMarker.isPopupOpen()) {
+            openPopupMarker.getPopup().setContent(getPopupContent(openPopupMarker.props));
+            agoTimeout = setTimeout(updatePopupContent, 30000);
+        }
     }
 
     function handleVehicleClick(event) {
@@ -223,10 +228,6 @@
             agoTimeout = setTimeout(updatePopupContent, 30000);
         }
     }
-
-    map.on('popupclose', function() {
-        clearTimeout(agoTimeout);
-    });
 
     function handleVehicle(data) {
         var props = data.properties;
@@ -294,6 +295,9 @@
             oldVehicles = newVehicles;
             newVehicles = {};
             statusBar.getContainer().innerHTML = '';
+        }
+        if (openPopupMarker) {
+            updatePopupContent();
         }
     }
 
