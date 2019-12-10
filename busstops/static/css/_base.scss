@@ -50,6 +50,13 @@ abbr {
     text-decoration: none;
 }
 
+kbd {
+    border: 1px solid #ccc;
+    border-radius: .5em;
+    padding: .25em;
+    font: inherit;
+}
+
 label {
     cursor: pointer;
 }

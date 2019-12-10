@@ -19,6 +19,8 @@
     {% endif %}
 
     <p>Select vehicles to update:</p>
+
+    <p><kbd>Shift</kbd> + click to select multiple consecutive vehicles</p>
 {% else %}
     <p>This is an unofficial and probably incomplete fleet list for {% firstof parent object %}
     {% if parent %}({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %}){% endif %}.</p>
@@ -168,6 +170,30 @@
             window.addEventListener('DOMContentLoaded', function() {
                 accessibleAutocomplete.enhanceSelectElement({
                     selectElement: document.getElementById('id_vehicle_type')
+                });
+
+                var lastInput;
+
+                function handleBoxCheck(event) {
+                    if (event.shiftKey && lastInput) {
+                        var from = event.target.parentNode.parentNode.rowIndex - 1,
+                            to = lastInput.parentNode.parentNode.rowIndex - 1,
+                            min = Math.min(from, to),
+                            max = Math.max(from, to),
+                            checkboxes = document.querySelectorAll('.fleet input');
+                        checkboxes.forEach(function(checkbox, i) {
+                            if (i > min && i < max) {
+                                checkbox.checked = lastInput.checked;
+                                checkbox.parentNode.parentNode.style.background = checkbox.checked ? '#ef9' : '';
+                            }
+                        });
+                    }
+                    lastInput = event.target;
+                    lastInput.parentNode.parentNode.style.background = lastInput.checked ? '#ef9' : '';
+                }
+
+                document.querySelectorAll('.fleet input').forEach(function(input) {
+                    input.addEventListener('click', handleBoxCheck);
                 });
             });
         </script>
