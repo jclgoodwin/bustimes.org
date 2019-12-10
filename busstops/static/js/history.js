@@ -19,8 +19,6 @@
                 html: '<div class="arrow" style="-ms-transform: rotate(' + direction + 'deg);-webkit-transform: rotate(' + direction + 'deg);-moz-transform: rotate(' + direction + 'deg);-o-transform: rotate(' + direction + 'deg);transform: rotate(' + direction + 'deg)"></div>',
                 className: 'just-arrow'
             })
-        }).on('mouseover', function () {
-            this.openPopup();
         });
     }
 
@@ -114,7 +112,7 @@
                     }
                 }
                 coordinates = L.latLng(locations[i].coordinates[1], locations[i].coordinates[0]);
-                getMarker(coordinates, locations[i].direction).bindPopup(popup).addTo(layerGroup);
+                getMarker(coordinates, locations[i].direction).bindTooltip(popup).addTo(layerGroup);
 
                 if (previousCoordinates) {
                     latDistance = previousCoordinates.lat - coordinates.lat;
