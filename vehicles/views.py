@@ -59,7 +59,6 @@ def get_vehicle_edit(vehicle, fields):
     if changes:
         edit.changes = changes
 
-    edit.user = fields.get('user', '')
     edit.url = fields.get('url', '')
 
     if fields.get('colours'):
@@ -106,7 +105,8 @@ def operator_vehicles(request, slug=None, parent=None):
     if edit:
         breadcrumb.append(Vehicles(operator))
         initial = {
-            'operator': operator
+            'operator': operator,
+            'user': request.COOKIES.get('username')
         }
         if request.method == 'POST':
             form = EditVehiclesForm(request.POST, initial=initial, operator=operator)
@@ -118,7 +118,9 @@ def operator_vehicles(request, slug=None, parent=None):
                     submitted = vehicles.update(operator=operator)
                     del data['operator']
                 if data:
-                    edits = (get_vehicle_edit(vehicle, data) for vehicle in ticked_vehicles)
+                    edits = [get_vehicle_edit(vehicle, data) for vehicle in ticked_vehicles]
+                    for edit in edits:
+                        edit.user = form.cleaned_data.get('user', '')
                     edits = VehicleEdit.objects.bulk_create(edit for edit in edits if edit)
                     submitted = len(edits)
                     if 'features' in data:
@@ -145,7 +147,7 @@ def operator_vehicles(request, slug=None, parent=None):
     for vehicle in vehicles:
         vehicle.column_values = [vehicle.data and vehicle.data.get(key) for key in columns]
 
-    return render(request, 'operator_vehicles.html', {
+    response = render(request, 'operator_vehicles.html', {
         'breadcrumb': breadcrumb,
         'parent': parent,
         'operators': parent and operators,
@@ -163,6 +165,11 @@ def operator_vehicles(request, slug=None, parent=None):
         'submitted': submitted,
         'form': form,
     })
+
+    if form and form.is_valid() and form.cleaned_data['user'] != request.COOKIES.get('username', ''):
+        response.set_cookie('username', form.cleaned_data['user'], 60 * 60 * 24 * 31, httponly=True, samesite='Strict')
+
+    return response
 
 
 def get_locations(request):
@@ -381,6 +388,7 @@ def edit_vehicle(request, vehicle_id):
         'previous_reg': vehicle.data and vehicle.data.get('Previous reg'),
         'depot': vehicle.data and vehicle.data.get('Depot'),
         'notes': vehicle.notes,
+        'user': request.COOKIES.get('username')
     }
 
     if request.method == 'POST':
@@ -395,6 +403,7 @@ def edit_vehicle(request, vehicle_id):
                 del data['operator']
             if data:
                 edit = get_vehicle_edit(vehicle, data)
+                edit.user = form.cleaned_data.get('user')
                 edit.save()
                 if 'features' in data:
                     edit.features.set(data['features'])
@@ -407,7 +416,7 @@ def edit_vehicle(request, vehicle_id):
     else:
         breadcrumb = [vehicle]
 
-    return render(request, 'edit_vehicle.html', {
+    response = render(request, 'edit_vehicle.html', {
         'breadcrumb': breadcrumb,
         'form': form,
         'object': vehicle,
@@ -417,6 +426,11 @@ def edit_vehicle(request, vehicle_id):
         'submitted': submitted,
         'pending_edits': not submitted and vehicle.vehicleedit_set.filter(approved=False).exists()
     })
+
+    if form and form.is_valid() and form.cleaned_data['user'] != request.COOKIES.get('username', ''):
+        response.set_cookie('username', form.cleaned_data['user'], 60 * 60 * 24 * 31, httponly=True, samesite='Strict')
+
+    return response
 
 
 def tracking_report(request):
