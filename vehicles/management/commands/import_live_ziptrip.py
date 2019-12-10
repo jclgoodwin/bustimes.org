@@ -27,7 +27,7 @@ class Command(ImportLiveVehiclesCommand):
         'CUBU': ('CUBU', 'RSTY'),
         'SOG': 'guernsey',
         'IOM': ('bus-vannin', 'IMHR'),
-        'Rtl': ('RBUS', 'GLRB', 'KENN', 'NADS', 'THVB'),
+        'Rtl': ('RBUS', 'GLRB', 'KENN', 'NADS', 'THVB', 'CTNY'),
     }
     operators = {}
     source_name = 'ZipTrip'
