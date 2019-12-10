@@ -109,33 +109,7 @@
         });
     }
 
-    function handleVehicle(data) {
-        var props = data.properties;
-
-        if (props.vehicle.url in oldVehicles) {
-            var marker = oldVehicles[props.vehicle.url];
-            newVehicles[props.vehicle.url] = marker;
-            if (marker.datetime === props.datetime) {
-                return;
-            }
-        }
-
-        var icon = getBusIcon(props.service, props.direction, props.vehicle.livery, props.vehicle.text_colour),
-            latLng = L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
-
-        if (marker) {
-            marker.setLatLng(latLng);
-            marker.setIcon(icon);
-        } else {
-            marker = L.marker(latLng, {
-                icon: icon,
-                zIndexOffset: 1000
-            });
-            marker.addTo(vehiclesGroup);
-            newVehicles[props.vehicle.url] = marker;
-        }
-        marker.datetime = props.datetime;
-
+    function getPopupContent(props) {
         var popup = '';
         if (props.service) {
             if (props.service.url) {
@@ -205,14 +179,82 @@
             popup += '<br>';
         }
 
-        var dateTime = new Date(props.datetime);
-        popup += 'Updated at ' + dateTime.toTimeString().slice(0, 5);
+        var then = new Date(props.datetime);
+        var now = new Date();
+        var ago = Math.round((now.getTime() - then.getTime()) / 1000);
+        var minutes = Math.round(ago / 60);
+
+        if (minutes) {
+            if (minutes === 1) {
+                popup += '1 minute ago';
+            } else {
+                popup += minutes + ' minutes ago';
+            }
+        } else {
+            if (ago === 1) {
+                popup += '1 second ago';
+            } else {
+                popup += ago + ' seconds ago';
+            }
+        }
 
         if ((props.source === 75 || props.source === 79 || props.source === 86) && props.service && props.service.url) {
             popup += '<br>(Updates if someone views<br><a href="' + props.service.url + '">the ' + props.service.line_name + ' page</a>)';
         }
 
-        marker.bindPopup(popup);
+        return popup;
+    }
+
+    var openPopupMarker,
+        agoTimeout;
+
+    function updatePopupContent() {
+        openPopupMarker.getPopup().setContent(getPopupContent(openPopupMarker.props));
+        agoTimeout = setTimeout(updatePopupContent, 30000);
+    }
+
+    function handleVehicleClick(event) {
+        openPopupMarker = event.target;
+        var popup = openPopupMarker.getPopup();
+        if (popup) {
+            updatePopupContent();
+        } else {
+            openPopupMarker.bindPopup(getPopupContent(openPopupMarker.props)).openPopup();
+            agoTimeout = setTimeout(updatePopupContent, 30000);
+        }
+    }
+
+    map.on('popupclose', function() {
+        clearTimeout(agoTimeout);
+    });
+
+    function handleVehicle(data) {
+        var props = data.properties;
+
+        if (props.vehicle.url in oldVehicles) {
+            var marker = oldVehicles[props.vehicle.url];
+            newVehicles[props.vehicle.url] = marker;
+            if (marker.props.datetime === props.datetime) {
+                return;
+            }
+        }
+
+        var icon = getBusIcon(props.service, props.direction, props.vehicle.livery, props.vehicle.text_colour),
+            latLng = L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
+
+        if (marker) {
+            marker.setLatLng(latLng);
+            marker.setIcon(icon);
+        } else {
+            marker = L.marker(latLng, {
+                icon: icon,
+                zIndexOffset: 1000
+            });
+            marker.addTo(vehiclesGroup);
+            newVehicles[props.vehicle.url] = marker;
+        }
+        marker.props = props;
+        marker.on('click', handleVehicleClick);
     }
 
     function handleStop(data) {
