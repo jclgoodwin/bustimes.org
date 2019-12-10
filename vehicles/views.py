@@ -119,7 +119,8 @@ def operator_vehicles(request, slug=None, parent=None):
                     del data['operator']
                 if data:
                     edits = (get_vehicle_edit(vehicle, data) for vehicle in ticked_vehicles)
-                    submitted = len(VehicleEdit.objects.bulk_create(edit for edit in edits if edit))
+                    edits = VehicleEdit.objects.bulk_create(edit for edit in edits if edit)
+                    submitted = len(edits)
                     if 'features' in data:
                         for edit in edits:
                             edit.features.set(data['features'])
