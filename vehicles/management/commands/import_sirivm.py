@@ -41,8 +41,7 @@ class Command(ImportLiveVehiclesCommand):
 
     operators_options = {
         'SQ': ('BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TDTR', 'TOUR', 'WDBC'),
-        'RB': ('RBUS', 'GLRB', 'CTNY'),
-        'CTNY': ('RBUS', 'GLRB', 'CTNY'),
+        'RB': ('RBUS', 'GLRB'),
         'SCHI': ('SINV', 'SCOR'),
         'SCFI': ('SCFI', 'SSPH', 'SSTY'),
         'SCSO': ('SCHM', 'SCCO', 'SMSO', 'SCHW'),
@@ -135,7 +134,9 @@ class Command(ImportLiveVehiclesCommand):
         if operator:
             if operator.id == 'THVB':
                 operator.id = 'RBUS'
-                operator_options = ('RBUS',)
+                operator_options = ('RBUS', 'CTNY')
+            elif operator.id == 'RBUS' or operator.id == 'CTNY':
+                operator_options = ('RBUS', 'CTNY')
             elif operator.id == 'SESX':
                 operator_options = ('SESX', 'NIBS', 'GECL')
             elif operator.id == 'FBRI':
