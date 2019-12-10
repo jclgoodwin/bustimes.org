@@ -242,7 +242,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
 class VehicleJourneyAdmin(admin.ModelAdmin):
     list_display = ('datetime', 'vehicle', 'service', 'route_name', 'code', 'destination')
     list_select_related = ('vehicle', 'service')
-    raw_id_fields = ('vehicle', 'service')
+    raw_id_fields = ('vehicle', 'service', 'trip')
     list_filter = (
         ('service', admin.BooleanFieldListFilter),
         ('source', admin.RelatedOnlyFieldListFilter),
