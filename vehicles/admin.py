@@ -118,7 +118,7 @@ changes.admin_order_field = 'changes'
 
 
 def apply_edits(queryset):
-    for edit in queryset:
+    for edit in queryset.prefetch_related('features', 'vehicle__features'):
         ok = True
         vehicle = edit.vehicle
         update_fields = []
@@ -166,6 +166,8 @@ def apply_edits(queryset):
             update_fields.append('livery')
             update_fields.append('colours')
         vehicle.save(update_fields=update_fields)
+        if edit.features.all():
+            vehicle.features.set(edit.features.all())
         if ok:
             edit.approved = True
             edit.save(update_fields=['approved'])

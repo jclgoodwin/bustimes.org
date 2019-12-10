@@ -204,7 +204,7 @@ class VehiclesTests(TestCase):
 
         self.assertEqual(3, VehicleEdit.objects.filter(approved=False).count())
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(10):
             admin.apply_edits(VehicleEdit.objects.select_related('vehicle'))
         self.assertEqual(0, VehicleEdit.objects.filter(approved=False).count())
         vehicle = Vehicle.objects.get(notes='Trent Barton')
