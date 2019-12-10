@@ -113,10 +113,16 @@ def operator_vehicles(request, slug=None, parent=None):
             if form.is_valid():
                 ticked_vehicles = (v for v in vehicles if str(v.id) in request.POST.getlist('vehicle'))
                 data = {key: form.cleaned_data[key] for key in form.changed_data}
-                edits = (get_vehicle_edit(vehicle, data) for vehicle in ticked_vehicles)
-                submitted = len(VehicleEdit.objects.bulk_create(edit for edit in edits if edit))
-                if form.cleaned_data.get('operator') and form.cleaned_data['operator'] != operator:
-                    Vehicle.objects.filter(id__in=request.POST.getlist('vehicle')).update(operator=operator)
+                if 'operator' in data:
+                    vehicles = Vehicle.objects.filter(id__in=request.POST.getlist('vehicle'))
+                    submitted = vehicles.update(operator=operator)
+                    del data['operator']
+                if data:
+                    edits = (get_vehicle_edit(vehicle, data) for vehicle in ticked_vehicles)
+                    submitted = len(VehicleEdit.objects.bulk_create(edit for edit in edits if edit))
+                    if 'features' in data:
+                        for edit in edits:
+                            edit.features.set(data['features'])
         else:
             form = EditVehiclesForm(initial=initial, operator=operator)
     else:
@@ -389,6 +395,8 @@ def edit_vehicle(request, vehicle_id):
             if data:
                 edit = get_vehicle_edit(vehicle, data)
                 edit.save()
+                if 'features' in data:
+                    edit.features.set(data['features'])
             submitted = True
     else:
         form = EditVehicleForm(initial=initial, operator=vehicle.operator, vehicle=vehicle)

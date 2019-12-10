@@ -127,12 +127,12 @@ class VehiclesTests(TestCase):
     def test_vehicle_edit_1(self):
         url = self.vehicle_1.get_absolute_url() + '/edit'
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.get(url)
         self.assertNotContains(response, 'already')
 
         # edit nothing
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             response = self.client.post(url, {
                 'fleet_number': '1',
                 'reg': 'FD54JYA',
@@ -189,7 +189,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Thank you')
 
         # should not create an edit
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             response = self.client.post(url, {
                 'fleet_number': '',
                 'reg': 'FD54JYA',
@@ -216,7 +216,7 @@ class VehiclesTests(TestCase):
     def test_vehicle_edit_2(self):
         url = self.vehicle_2.get_absolute_url() + '/edit'
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             response = self.client.post(url, {
                 'fleet_number': '50',
                 'reg': 'UWW2X',
@@ -246,7 +246,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Thank you')
         self.assertTrue(response.context['form'].has_changed())
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.get(url)
 
         self.assertContains(response, 'already')
@@ -270,12 +270,12 @@ class VehiclesTests(TestCase):
         self.assertEqual(admin.vehicle_type(edit), '<ins>Ford Transit</ins>')
 
     def test_vehicles_edit(self):
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.post('/operators/lynx/vehicles/edit')
         self.assertContains(response, 'Select vehicles to update')
         self.assertFalse(VehicleEdit.objects.all())
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
                 'operator': self.lynx.id,

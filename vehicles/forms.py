@@ -1,7 +1,7 @@
 from django import forms
 from django.db.models import Count
 from busstops.models import Operator
-from .models import VehicleType, Livery
+from .models import VehicleType, VehicleFeature, Livery
 
 
 def get_livery_choices(operator):
@@ -27,6 +27,7 @@ class EditVehiclesForm(forms.Form):
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
     branding = forms.CharField(required=False, max_length=255)
     notes = forms.CharField(required=False, max_length=255)
+    features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features', required=False)
     depot = forms.CharField(required=False, max_length=255)
     withdrawn = forms.BooleanField(required=False)
     user = forms.CharField(label='Your name', help_text='Feel free to remain anonymous', required=False, max_length=255)
@@ -47,6 +48,8 @@ class EditVehiclesForm(forms.Form):
 
 
 class EditVehicleForm(EditVehiclesForm):
+    """With some extra fields, only applicable to editing a single vehicle
+    """
     fleet_number = forms.IntegerField(required=False, min_value=0)
     reg = forms.CharField(label='Registration', required=False, max_length=14)
     name = forms.CharField(label='Name', required=False, max_length=255)

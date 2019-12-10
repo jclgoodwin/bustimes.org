@@ -104,12 +104,17 @@ def changes(obj):
         return mark_safe('<br>'.join(changes))
 
 
+def features(obj):
+    return ', '.join(str(feature) for feature in obj.features.all())
+
+
 vehicle.admin_order_field = 'vehicle'
 reg.admin_order_field = 'reg'
 vehicle_type.admin_order_field = 'vehicle_type'
 branding.admin_order_field = 'branding'
 name.admin_order_field = 'name'
 notes.admin_order_field = 'notes'
+changes.admin_order_field = 'changes'
 
 
 def apply_edits(queryset):
@@ -186,7 +191,7 @@ class VehicleEditOperatorListFilter(admin.SimpleListFilter):
 
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['id', 'datetime', vehicle, fleet_number, reg, vehicle_type, branding, name, 'current', 'suggested',
-                    notes, 'withdrawn', changes, 'last_seen', 'flickr', 'user', 'url']
+                    notes, 'withdrawn', features, changes, 'last_seen', 'flickr', 'user', 'url']
     list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'vehicle__latest_location',
                            'livery']
     list_filter = [
@@ -196,6 +201,9 @@ class VehicleEditAdmin(admin.ModelAdmin):
     ]
     raw_id_fields = ['vehicle', 'livery']
     actions = ['apply_edits', 'delete_vehicles']
+
+    def get_queryset(self, _):
+        return VehicleEdit.objects.all().prefetch_related('features')
 
     def apply_edits(self, request, queryset):
         apply_edits(queryset)

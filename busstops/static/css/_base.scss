@@ -323,6 +323,11 @@ form p select {
     width: 100%;
 }
 
+select[multiple] {
+    box-sizing: border-box;
+    height: auto;
+}
+
 .helptext {
     font-size: .875em;
 }
