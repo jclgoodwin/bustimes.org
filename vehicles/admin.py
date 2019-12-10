@@ -246,7 +246,7 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
     list_filter = (
         ('service', admin.BooleanFieldListFilter),
         ('source', admin.RelatedOnlyFieldListFilter),
-        'vehicle__operator',
+        ('vehicle__operator', admin.RelatedOnlyFieldListFilter),
     )
     ordering = ('-id',)
 
