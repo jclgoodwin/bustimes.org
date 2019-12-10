@@ -28,8 +28,8 @@ class EditVehiclesForm(forms.Form):
     branding = forms.CharField(required=False, max_length=255)
     notes = forms.CharField(required=False, max_length=255)
     features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features', required=False)
-    depot = forms.CharField(required=False, max_length=255)
-    withdrawn = forms.BooleanField(required=False)
+    depot = forms.CharField(help_text='If there’s more than one', required=False, max_length=255)
+    withdrawn = forms.BooleanField(help_text='Permanently', required=False)
     user = forms.CharField(label='Your name', help_text='Feel free to remain anonymous', required=False, max_length=255)
 
     def __init__(self, *args, **kwargs):
@@ -54,7 +54,7 @@ class EditVehicleForm(EditVehiclesForm):
     reg = forms.CharField(label='Registration', required=False, max_length=14)
     name = forms.CharField(label='Name', required=False, max_length=255)
     previous_reg = forms.CharField(required=False, max_length=14)
-    url = forms.URLField(label='URL', help_text='A photo (helpful for verifying recent repaints)',
+    url = forms.URLField(label='URL', help_text='E.g. a photo (helpful for verifying recent repaints)',
                          required=False, max_length=200)
     field_order = ['operator', 'fleet_number', 'reg', 'vehicle_type',
                    'colours', 'branding', 'name', 'previous_reg', 'depot',
