@@ -1,17 +1,17 @@
 {
   "devDependencies": {
-    "autoprefixer": "^9.7.1",
-    "eslint": "^6.6.0",
+    "autoprefixer": "^9.7.3",
+    "eslint": "^6.7.2",
     "postcss-cli": "^6.1.3",
-    "sass": "^1.23.3",
+    "sass": "^1.23.7",
     "sass-lint": "^1.13.1",
     "yuglify": "^2.0.0"
   },
   "dependencies": {
     "accessible-autocomplete": "^2.0.1",
     "html5shiv": "^3.7.3",
-    "leaflet": "^1.5.1",
-    "loadjs": "^4.0.1",
+    "leaflet": "^1.6.0",
+    "loadjs": "^4.2.0",
     "reqwest": "^2.0.5"
   }
 }
