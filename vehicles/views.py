@@ -237,7 +237,8 @@ def siri_one_shot(code, now):
 
 schemes = ('Cornwall SIRI', 'Devon SIRI', 'Highland SIRI', 'Dundee SIRI', 'Bristol SIRI',
            'Leicestershire SIRI', 'Dorset SIRI', 'Hampshire SIRI', 'West Sussex SIRI', 'Bucks SIRI',
-           'Peterborough SIRI')  # , 'Essex SIRI', 'Southampton SIRI', 'Slough SIRI', 'Staffordshire SIRI')
+           'Peterborough SIRI', 'Bracknell Siri')
+# ('Essex SIRI', 'Southampton SIRI', 'Slough SIRI', 'Staffordshire SIRI')
 
 
 def vehicles_last_modified(request):

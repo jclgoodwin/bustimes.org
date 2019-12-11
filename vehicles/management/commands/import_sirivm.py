@@ -125,14 +125,14 @@ class Command(ImportLiveVehiclesCommand):
         vehicle_code = mvj.find('siri:VehicleRef', NS).text
         operator_ref = mvj.find('siri:OperatorRef', NS).text
         while operator_ref and vehicle_code.startswith(operator_ref + '-'):
-            if operator_ref == 'SQ' and not vehicle_code.startswith('SQ-SQ-') or operator_ref == 'CSLB':
+            if operator_ref == 'SQ' and not vehicle_code.startswith('SQ-SQ-') or operator_ref in {'CSLB', 'CTNY'}:
                 break
             vehicle_code = vehicle_code[len(operator_ref) + 1:]
 
         operator, operator_options = self.get_operator(operator_ref)
 
         if operator:
-            if operator.id == 'THVB' or operator.id == 'RBUS' or operator.id == 'CTNY':
+            if operator.id in {'THVB', 'RBUS', 'CTNY'}:
                 operator_options = ('RBUS', 'CTNY')
                 if operator.id == 'THVB':
                     operator = Operator.objects.get(id='RBUS')
@@ -143,7 +143,7 @@ class Command(ImportLiveVehiclesCommand):
                     return None, None
                 if not (vehicle_code.isdigit() or vehicle_code.isalpha()) and vehicle_code.isupper():
                     operator_options = ('ABUS',)
-            elif operator_ref == 'AMD' or operator_ref == 'AMN':
+            elif operator_ref in {'AMD', 'AMN'}:
                 # Arriva Midlands and Midlands North share fleet numbering scheme, but are distinct codes for routes
                 operator_options = ('AMNO', 'AMID', 'AFCL')
 
@@ -179,7 +179,7 @@ class Command(ImportLiveVehiclesCommand):
                     operator__name__startswith='Stagecoach ',
                     code=vehicle_code,
                 )
-            if (operator_ref == 'ATS' or operator_ref == 'AMD') and vehicle_code.isdigit():
+            if operator_ref in {'ATS', 'AMD'} and vehicle_code.isdigit():
                 defaults['code'] = vehicle_code
                 return self.vehicles.get_or_create(
                     defaults,
