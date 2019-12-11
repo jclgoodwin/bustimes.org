@@ -22,7 +22,7 @@
 
     <p><kbd>Shift</kbd> + click to select multiple consecutive vehicles</p>
 {% else %}
-    <p>This is an unofficial and probably incomplete fleet list for {% firstof parent object %}
+    <p>This is an <strong>unofficial</strong> and probably incomplete fleet list for {% firstof parent object %}
     {% if parent %}({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %}){% endif %}.</p>
 
     <p>It only lists vehicles that have ever appeared in the live bus tracking system.</p>
@@ -30,7 +30,7 @@
     <p>Thanks to the marvels of modern technology,
     you can see where a particular vehicle has been recently,
     and which vehicles have operated a particular service.
-    This isn’t always accurate,
+    <strong>This is sometimes inaccurate</strong>,
     e.g. when ticket machines/tracking equipment are swapped between vehicles.</p>
 
     {% if not parent and object.parent %}
