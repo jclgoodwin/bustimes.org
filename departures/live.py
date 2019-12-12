@@ -130,7 +130,8 @@ class Departures(object):
             'source': self.data_source
         }
         if operator_ref and vehicle.startswith(operator_ref + '-'):
-            vehicle = vehicle[len(operator_ref) + 1:]
+            if operator_ref != 'CTNY':
+                vehicle = vehicle[len(operator_ref) + 1:]
         elif operator_ref == 'FAB' and vehicle.startswith('111-'):  # Aberdeen
             vehicle = vehicle[4:]
         elif vehicle.startswith('ASES-'):  # Milton Keynes
