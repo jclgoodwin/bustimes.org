@@ -282,6 +282,8 @@ class VehicleEdit(models.Model):
                 vehicle = str(getattr(self.vehicle, field) or '')
                 if edit != vehicle:
                     changes[field] = edit
+        if self.features.all():
+            changes['features'] = self.features.all()
         if self.withdrawn and not self.vehicle.withdrawn:
             changes['withdrawn'] = True
         if self.changes and self.changes != self.vehicle.data:
