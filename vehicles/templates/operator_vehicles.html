@@ -60,6 +60,7 @@
             {% if name_column %}<th scope="col">Name</th>{% endif %}
             {% if notes_column %}<th scope="col">Notes</th>{% endif %}
             {% for col in columns %}<th scope="col">{{ col }}</th>{% endfor %}
+            {% if features_column %}<th scope="col">Special features</th>{% endif %}
             {% if parent %}<th>Operator</th>{% endif %}
         </tr>
     </thead>
@@ -128,6 +129,7 @@
                 {% if name_column %}<td>{{ vehicle.name }}</td>{% endif %}
                 {% if notes_column %}<td>{{ vehicle.notes }}</td>{% endif %}
                 {% for value in vehicle.column_values %}<td>{{ value|default:"" }}</td>{% endfor %}
+                {% if features_column %}<td>{{ vehicle.features.all|join:", " }}</td>{% endif %}
                 {% if parent %}<td>{{ vehicle.operator }}</td>{% endif %}
                 <td>{{ vehicle.get_flickr_link }}</td>
                 {% if not edit %}

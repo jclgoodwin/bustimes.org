@@ -95,7 +95,7 @@ def operator_vehicles(request, slug=None, parent=None):
     latest_journeys = VehicleJourney.objects.filter(id__in=latest_journeys.values('latest_journey'))
     prefetch = Prefetch('vehiclejourney_set',
                         queryset=latest_journeys.select_related('service'), to_attr='latest_journeys')
-    vehicles = vehicles.prefetch_related(prefetch)
+    vehicles = vehicles.prefetch_related(prefetch, 'features')
     vehicles = vehicles.order_by('fleet_number', 'fleet_code', 'reg', 'code')
     vehicles = vehicles.select_related('vehicle_type', 'livery', 'latest_location__journey__service')
 
@@ -159,6 +159,7 @@ def operator_vehicles(request, slug=None, parent=None):
         'branding_column': any(vehicle.branding for vehicle in vehicles),
         'name_column': any(vehicle.name for vehicle in vehicles),
         'notes_column': any(vehicle.notes for vehicle in vehicles),
+        'features_column': any(vehicle.features.all() for vehicle in vehicles),
         'columns': columns,
         'edit_url': reverse('admin:vehicles_vehicle_changelist'),
         'edit': edit,

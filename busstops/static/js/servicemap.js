@@ -197,6 +197,8 @@
             }
         } else if (props.vehicle.coach) {
             features = 'Coach';
+        } else {
+            features = '';
         }
 
         if (props.vehicle.features && props.vehicle.features.length) {
