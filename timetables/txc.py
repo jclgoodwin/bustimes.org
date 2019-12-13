@@ -584,7 +584,7 @@ class DateRange(object):
         return self.start <= date and (not self.end or self.end >= date)
 
     def dates(self):
-        return (self.start, self.end)
+        return (self.start, self.end, '[]')
 
 
 class OperatingPeriod(DateRange):
