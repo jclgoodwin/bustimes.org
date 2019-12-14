@@ -93,6 +93,19 @@ def notes(obj):
     return obj.get_diff('notes')
 
 
+def features(obj):
+    features = []
+    for feature in obj.features.all():
+        if feature in obj.vehicle.features.all():
+            features.append(str(feature))
+        else:
+            features.append(f'<ins>{feature}</ins>')
+    for feature in obj.vehicle.features.all():
+        if feature not in obj.features.all():
+            features.append(f'<del>{feature}</del>')
+    return mark_safe(', '.join(features))
+
+
 def changes(obj):
     changes = []
     if obj.changes:
@@ -104,8 +117,9 @@ def changes(obj):
         return mark_safe('<br>'.join(changes))
 
 
-def features(obj):
-    return ', '.join(str(feature) for feature in obj.features.all())
+def url(obj):
+    if obj.url:
+        return mark_safe(f'<a href="{obj.url}" target="_blank" rel="noopener">{obj.url}</a>')
 
 
 vehicle.admin_order_field = 'vehicle'
@@ -205,7 +219,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
     actions = ['apply_edits', 'delete_vehicles']
 
     def get_queryset(self, _):
-        return VehicleEdit.objects.all().prefetch_related('features')
+        return VehicleEdit.objects.all().prefetch_related('features', 'vehicle__features')
 
     def apply_edits(self, request, queryset):
         apply_edits(queryset)
