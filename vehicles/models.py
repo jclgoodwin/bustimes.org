@@ -161,7 +161,7 @@ class Vehicle(models.Model):
         unique_together = ('code', 'operator')
 
     def __str__(self):
-        fleet_code = self.fleet_number or self.fleet_code
+        fleet_code = self.fleet_code or self.fleet_number
         if len(self.reg) > 3:
             reg = self.get_reg()
             if fleet_code:

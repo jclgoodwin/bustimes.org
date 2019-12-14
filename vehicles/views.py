@@ -55,7 +55,7 @@ def get_vehicle_edit(vehicle, fields):
     if 'depot' in fields:
         changes['Depot'] = fields['depot']
     if 'previous_reg' in fields:
-        changes['Previous reg'] = fields['previous_reg']
+        changes['Previous reg'] = fields['previous_reg'].upper()
     if changes:
         edit.changes = changes
 
