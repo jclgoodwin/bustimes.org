@@ -71,7 +71,7 @@ class VehiclesTests(TestCase):
         self.assertEqual(404, response.status_code)
         self.assertFalse(str(response.context['exception']))
 
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             response = self.client.get('/operators/lynx/vehicles')
         self.assertTrue(response.context['code_column'])
         self.assertContains(response, '<td>2</td>')
@@ -270,12 +270,12 @@ class VehiclesTests(TestCase):
         self.assertEqual(admin.vehicle_type(edit), '<ins>Ford Transit</ins>')
 
     def test_vehicles_edit(self):
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.post('/operators/lynx/vehicles/edit')
         self.assertContains(response, 'Select vehicles to update')
         self.assertFalse(VehicleEdit.objects.all())
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
                 'operator': self.lynx.id,
