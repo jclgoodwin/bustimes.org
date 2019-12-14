@@ -139,7 +139,7 @@ def operator_vehicles(request, slug=None, parent=None):
     if operator.name == 'National Express':
         vehicles = sorted(vehicles, key=lambda v: v.notes)
 
-    paginator = Paginator(vehicles, 500)
+    paginator = Paginator(vehicles, 1000)
     page = request.GET.get('page')
     vehicles = paginator.get_page(page)
 
