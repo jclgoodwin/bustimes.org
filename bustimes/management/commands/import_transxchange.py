@@ -261,6 +261,8 @@ class Command(BaseCommand):
                     for date_range in operation_days
                 ]
 
+        calendar_dates = [dates for dates in calendar_dates if not dates.end_date or dates.end_date >= dates.start_date]
+
         if not calendar_dates and not operating_profile.regular_days:
             return
 
