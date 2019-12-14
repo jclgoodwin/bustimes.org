@@ -384,6 +384,7 @@ def edit_vehicle(request, vehicle_id):
         'fleet_number': vehicle.fleet_number,
         'reg': vehicle.reg,
         'vehicle_type': vehicle.vehicle_type,
+        'features': vehicle.features.all(),
         'colours': str(vehicle.livery_id or vehicle.colours),
         'branding': vehicle.branding,
         'name': vehicle.name,

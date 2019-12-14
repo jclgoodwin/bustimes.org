@@ -27,9 +27,10 @@ class EditVehiclesForm(forms.Form):
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
     branding = forms.CharField(required=False, max_length=255)
     notes = forms.CharField(required=False, max_length=255)
-    features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features', required=False)
+    features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features',
+                                              widget=forms.CheckboxSelectMultiple, required=False)
     depot = forms.CharField(help_text='If there’s more than one', required=False, max_length=255)
-    withdrawn = forms.BooleanField(help_text='Permanently', required=False)
+    withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False)
     user = forms.CharField(label='Your name', help_text='Feel free to remain anonymous', required=False, max_length=255)
 
     def __init__(self, *args, **kwargs):

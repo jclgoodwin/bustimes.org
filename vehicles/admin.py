@@ -95,15 +95,16 @@ def notes(obj):
 
 def features(obj):
     features = []
-    for feature in obj.features.all():
-        if feature in obj.vehicle.features.all():
-            features.append(str(feature))
-        else:
-            features.append(f'<ins>{feature}</ins>')
-    for feature in obj.vehicle.features.all():
-        if feature not in obj.features.all():
-            features.append(f'<del>{feature}</del>')
-    return mark_safe(', '.join(features))
+    if obj.features.all():
+        for feature in obj.features.all():
+            if feature in obj.vehicle.features.all():
+                features.append(str(feature))
+            else:
+                features.append(f'<ins>{feature}</ins>')
+        for feature in obj.vehicle.features.all():
+            if feature not in obj.features.all():
+                features.append(f'<del>{feature}</del>')
+        return mark_safe(', '.join(features))
 
 
 def changes(obj):

@@ -53,8 +53,8 @@ abbr {
 kbd {
     border: 1px solid #ccc;
     border-radius: .5em;
-    padding: .25em;
     font: inherit;
+    padding: .25em;
 }
 
 label {
@@ -110,15 +110,25 @@ summary {
     color: $text-color;
 }
 
+form ul {
+    margin-top: -1em;
+}
+
 #id_colours {
+    margin-top: -.5em;
+
     li {
-        margin: 1em 0;
+        margin: .5em 0;
     }
 
     div {
         display: inline-block;
-        margin: 0 .5em;
+        margin-right: .25em;
         vertical-align: middle;
+    }
+
+    input {
+        margin-right: .75em;
     }
 }
 
