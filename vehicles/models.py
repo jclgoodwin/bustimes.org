@@ -283,7 +283,10 @@ class VehicleEdit(models.Model):
                 if edit != vehicle:
                     changes[field] = edit
         if self.features.all():
-            changes['features'] = self.features.all()
+            features = [feature for feature in self.features.all() if feature not in self.vehicle.features.all()]
+            features += [feature for feature in self.vehicle.features.all() if feature not in self.features.all()]
+            if features:
+                changes['features'] = features
         if self.withdrawn and not self.vehicle.withdrawn:
             changes['withdrawn'] = True
         if self.changes and self.changes != self.vehicle.data:
