@@ -208,7 +208,7 @@ class VehicleEditOperatorListFilter(admin.SimpleListFilter):
 
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['id', 'datetime', vehicle, fleet_number, reg, vehicle_type, branding, name, 'current', 'suggested',
-                    notes, 'withdrawn', features, changes, 'last_seen', 'flickr', 'user', 'url']
+                    notes, 'withdrawn', features, changes, 'last_seen', 'flickr', 'user', url]
     list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'vehicle__latest_location',
                            'livery']
     list_filter = [
