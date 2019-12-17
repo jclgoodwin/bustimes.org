@@ -106,9 +106,9 @@ class Livery(models.Model):
             return
         div = f'<div style="height:1.5em;width:2.25em;background:{background}"'
         if name:
-            return format_html('{}></div> {}', div, self.name)
+            return format_html(div + '></div> {}', self.name)
         else:
-            return format_html('{} title="{}"></div>', self.name, div)
+            return format_html(div + ' title="{}"></div>', self.name)
 
     def clean(self):
         if self.colours:
