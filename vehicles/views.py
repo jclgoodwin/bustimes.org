@@ -99,23 +99,45 @@ def operator_vehicles(request, slug=None, parent=None):
     vehicles = vehicles.order_by('fleet_number', 'fleet_code', 'reg', 'code')
     vehicles = vehicles.select_related('vehicle_type', 'livery', 'latest_location__journey__service')
 
-    edit = request.path.endswith('/edit')
     submitted = False
     breadcrumb = [operator.region, operator]
-    if edit:
+
+    form = request.path.endswith('/edit')
+
+    if not form:
+        pending_edits = VehicleEdit.objects.filter(approved=False, vehicle=OuterRef('id'))
+        vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
+
+    if operator.name == 'National Express':
+        vehicles = sorted(vehicles, key=lambda v: v.notes)
+
+    if not vehicles:
+        raise Http404
+
+    paginator = Paginator(vehicles, 1000)
+    page = request.GET.get('page')
+    vehicles = paginator.get_page(page)
+
+    features_column = any(vehicle.features.all() for vehicle in vehicles)
+
+    columns = set(key for vehicle in vehicles if vehicle.data for key in vehicle.data)
+    for vehicle in vehicles:
+        vehicle.column_values = [vehicle.data and vehicle.data.get(key) for key in columns]
+
+    if form:
         breadcrumb.append(Vehicles(operator))
         initial = {
             'operator': operator,
             'user': request.COOKIES.get('username')
         }
         if request.method == 'POST':
-            form = EditVehiclesForm(request.POST, initial=initial, operator=operator)
+            form = EditVehiclesForm(request.POST, initial=initial, operator=operator, features_column=features_column,
+                                    columns=columns)
             if form.is_valid():
                 ticked_vehicles = (v for v in vehicles if str(v.id) in request.POST.getlist('vehicle'))
                 data = {key: form.cleaned_data[key] for key in form.changed_data}
                 if 'operator' in data:
-                    vehicles = Vehicle.objects.filter(id__in=request.POST.getlist('vehicle'))
-                    submitted = vehicles.update(operator=operator)
+                    submitted = Vehicle.objects.filter(id__in=request.POST.getlist('vehicle')).update(operator=operator)
                     del data['operator']
                 if data:
                     edits = [get_vehicle_edit(vehicle, data) for vehicle in ticked_vehicles]
@@ -127,25 +149,8 @@ def operator_vehicles(request, slug=None, parent=None):
                         for edit in edits:
                             edit.features.set(data['features'])
         else:
-            form = EditVehiclesForm(initial=initial, operator=operator)
-    else:
-        form = None
-        pending_edits = VehicleEdit.objects.filter(approved=False, vehicle=OuterRef('id'))
-        vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
-
-    if not vehicles:
-        raise Http404
-
-    if operator.name == 'National Express':
-        vehicles = sorted(vehicles, key=lambda v: v.notes)
-
-    paginator = Paginator(vehicles, 1000)
-    page = request.GET.get('page')
-    vehicles = paginator.get_page(page)
-
-    columns = set(key for vehicle in vehicles if vehicle.data for key in vehicle.data)
-    for vehicle in vehicles:
-        vehicle.column_values = [vehicle.data and vehicle.data.get(key) for key in columns]
+            form = EditVehiclesForm(initial=initial, operator=operator, features_column=features_column,
+                                    columns=columns)
 
     response = render(request, 'operator_vehicles.html', {
         'breadcrumb': breadcrumb,
@@ -159,16 +164,16 @@ def operator_vehicles(request, slug=None, parent=None):
         'branding_column': any(vehicle.branding for vehicle in vehicles),
         'name_column': any(vehicle.name for vehicle in vehicles),
         'notes_column': any(vehicle.notes for vehicle in vehicles),
-        'features_column': any(vehicle.features.all() for vehicle in vehicles),
+        'features_column': features_column,
         'columns': columns,
         'edit_url': reverse('admin:vehicles_vehicle_changelist'),
-        'edit': edit,
         'submitted': submitted,
         'form': form,
     })
 
     if form and form.is_valid() and form.cleaned_data['user'] != request.COOKIES.get('username', ''):
-        response.set_cookie('username', form.cleaned_data['user'], 60 * 60 * 24 * 31, httponly=True, samesite='Strict')
+        response.set_cookie('username', form.cleaned_data['user'], 60 * 60 * 24 * 31, httponly=True,
+                            samesite='Strict')
 
     return response
 

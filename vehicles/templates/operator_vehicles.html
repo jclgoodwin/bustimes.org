@@ -12,7 +12,7 @@
 
 <h1>{% firstof parent object %}</h1>
 
-{% if edit %}
+{% if form %}
     {% if submitted %}
 
         <p class="message">Thank you. I’ll update those details ({{ submitted }} vehicle{{ submitted|pluralize }}) shortly</p>
@@ -42,7 +42,7 @@
     {% endif %}
 {% endif %}
 
-{% if edit %}
+{% if form %}
     <form action="{{ object.get_absolute_url }}/vehicles/edit" method="POST">
 {% else %}
     <p><a class="button" href="{{ object.get_absolute_url }}/vehicles/edit">Edit</a></p>
@@ -51,7 +51,7 @@
 <table class="fleet">
     <thead>
         <tr>
-            {% if edit %}<th></th>{% endif %}
+            {% if form %}<th></th>{% endif %}
             <th scope="col" colspan="{% if code_column %}3{% else %}2{% endif %}"></th>
             <th scope="col" colspan="2">Last seen</th>
             <th scope="col">Type</th>
@@ -67,7 +67,7 @@
     <tbody>
         {% for vehicle in vehicles %}
             <tr>
-                {% if edit %}
+                {% if form %}
                     <td>
                         <input type="checkbox" name="vehicle" value="{{ vehicle.id }}" />
                     </td>
@@ -132,7 +132,7 @@
                 {% if features_column %}<td>{{ vehicle.features.all|join:", " }}</td>{% endif %}
                 {% if parent %}<td>{{ vehicle.operator }}</td>{% endif %}
                 <td>{{ vehicle.get_flickr_link }}</td>
-                {% if not edit %}
+                {% if not form %}
                     <td>
                         <a href="{{ vehicle.get_absolute_url }}/edit">Edit</a>{% if vehicle.pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}
                     </td>
@@ -150,7 +150,7 @@
     <p class="next"><a href="?page={{ vehicles.next_page_number }}" rel="next">Page {{ vehicles.next_page_number }} &rarr;</a>
 {% endif %}
 
-{% if edit %}
+{% if form %}
 
     {{ form.as_p }}
 
@@ -165,7 +165,7 @@
 {% block ad %}{% endblock %}
 
 {% block foot %}
-    {% if edit %}
+    {% if form %}
         {% load static %}
         <script src="{% static 'js/accessible-autocomplete/accessible-autocomplete.min.js' %}"></script>
         <script>
