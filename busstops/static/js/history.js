@@ -5,29 +5,12 @@
         browser: true
     */
     /*global
-        L, reqwest
+        mapboxgl, reqwest
     */
 
-    var map,
-        tileURL = 'https://maps.bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png';
+    mapboxgl.accessToken = 'pk.eyJ1Ijoiamdvb2R3aW4iLCJhIjoiY2pzN3J0bzU5MGp6bzQ5b2txZ3R5anlvOSJ9.X0lgWVi-7yqAEivmYDiDPA';
 
-    function getMarker(latLng, direction) {
-        direction = (direction || 0) - 135;
-        return L.marker(latLng, {
-            icon: L.divIcon({
-                iconSize: [16, 16],
-                html: '<div class="arrow" style="-ms-transform: rotate(' + direction + 'deg);-webkit-transform: rotate(' + direction + 'deg);-moz-transform: rotate(' + direction + 'deg);-o-transform: rotate(' + direction + 'deg);transform: rotate(' + direction + 'deg)"></div>',
-                className: 'just-arrow'
-            })
-        });
-    }
-
-    var timeMarkerOptions = {
-        radius: 3,
-        fillColor: '#000',
-        fillOpacity: 1,
-        weight: 0,
-    };
+    var map;
 
     function closeMap() {
         window.location.hash = '';
@@ -61,39 +44,43 @@
         reqwest('/' + journey + '.json', function(locations) {
 
             var mapContainer = element.getElementsByClassName('map')[0],
-                layerGroup = L.layerGroup();
+                bounds = locations.reduce(function(bounds, location) {
+                    return bounds.extend(location.coordinates);
+                }, new mapboxgl.LngLatBounds());
 
-            map =  L.map(mapContainer);
+            map = new mapboxgl.Map({
+                container: mapContainer,
+                style: 'mapbox://styles/mapbox/light-v10',
+                bounds: bounds,
+                fitBoundsOptions: {
+                    padding: 50
+                }
+            });
 
-            layerGroup.addTo(map);
+            var line = {
+                type: 'Feature',
+                geometry: {
+                    type: 'LineString',
+                    coordinates: locations.map(function(location) {
+                        return location.coordinates;
+                    })
+                }
+            };
 
-            map.attributionControl.setPrefix('');
+            var minuteMarks = {
+                type: 'FeatureCollection',
+                features: []
+            };
 
-            L.tileLayer(tileURL, {
-                attribution: '<a href="https://www.maptiler.com/copyright/">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
-            }).addTo(map);
+            var previousCoordinates,
+                previousTimestamp;
 
-            var j,
-                dateTime,
-                popup,
-                delta,
-                coordinates,
-                line = [],
-                bounds,
-                latDistance,
-                lngDistance,
-                timeDistance,
-                previousCoordinates,
-                minutes,
-                previousTimestamp,
-                latSpeed,
-                lngSpeed;
+            locations.forEach(function(location) {
+                var dateTime = new Date(location.datetime),
+                    coordinates = new mapboxgl.LngLat(location.coordinates[0], location.coordinates[1]),
+                    delta = location.delta,
+                    popup = dateTime.toTimeString().slice(0, 8);
 
-
-            for (var i = locations.length - 1; i >= 0; i -= 1) {
-                dateTime = new Date(locations[i].datetime);
-                popup = dateTime.toTimeString().slice(0, 8);
-                delta = locations[i].delta;
                 if (delta) {
                     popup += '<br>About ';
                     if (delta > 0) {
@@ -111,39 +98,75 @@
                         popup += ' late';
                     }
                 }
-                coordinates = L.latLng(locations[i].coordinates[1], locations[i].coordinates[0]);
-                getMarker(coordinates, locations[i].direction).bindTooltip(popup).addTo(layerGroup);
+
+                popup = new mapboxgl.Popup({
+                    closeButton: false,
+                    offset: [2, -4]
+                }).setHTML(popup);
+
+                var marker = document.createElement('div');
+                marker.className = 'just-arrow';
+
+                new mapboxgl.Marker({
+                    element: marker,
+                    rotation: (location.direction || 0) - 135,
+                }).setLngLat(coordinates).setPopup(popup).addTo(map);
 
                 if (previousCoordinates) {
-                    latDistance = previousCoordinates.lat - coordinates.lat;
-                    lngDistance = previousCoordinates.lng - coordinates.lng;
-                    minutes = Math.floor(previousTimestamp / 60000) * 60000;
-                    timeDistance = previousTimestamp - dateTime.getTime();
-                    latSpeed = latDistance / timeDistance;
-                    lngSpeed = lngDistance / timeDistance;
+                    var latDistance = coordinates.lat - previousCoordinates.lat,
+                        lngDistance = coordinates.lng - previousCoordinates.lng,
+                        minutes = Math.floor(previousTimestamp / 60000) * 60000,
+                        timeDistance = dateTime.getTime() - previousTimestamp,
+                        latSpeed = latDistance / timeDistance,
+                        lngSpeed = lngDistance / timeDistance,
+                        j;
 
                     for (j = previousTimestamp - minutes; j <= timeDistance; j += 60000) {
-                        L.circleMarker(L.latLng(
-                            previousCoordinates.lat - latSpeed * j,
-                            previousCoordinates.lng - lngSpeed * j
-                        ), timeMarkerOptions).addTo(layerGroup);
+                        minuteMarks.features.push({
+                            type: 'Feature',
+                            geometry: {
+                                type: 'Point',
+                                coordinates: [
+                                    previousCoordinates.lng + lngSpeed * j,
+                                    previousCoordinates.lat + latSpeed * j
+                                ]
+                            }
+                        });
                     }
                 }
-                line.push(coordinates);
                 previousTimestamp = dateTime.getTime();
                 previousCoordinates = coordinates;
-            }
-            line = L.polyline(line, {
-                style: {
-                    weight: 3,
-                    color: '#87f'
-                }
             });
-            line.addTo(layerGroup);
-            bounds = line.getBounds();
-            map.fitBounds(bounds);
-            map.setMaxBounds(bounds.pad(.5));
-            line.bringToBack();
+
+            map.on('load', function() {
+                map.addLayer({
+                    id: 'line',
+                    type: 'line',
+                    source: {
+                        type: 'geojson',
+                        data: line,
+                    },
+                    layout: {
+                        'line-cap': 'round',
+                        'line-join': 'round'
+                    },
+                    paint: {
+                        'line-color': '#87f',
+                        'line-width': 3,
+                    }
+                });
+                map.addLayer({
+                    id: 'minutes',
+                    type: 'circle',
+                    source: {
+                        type: 'geojson',
+                        data: minuteMarks,
+                    },
+                    paint: {
+                        'circle-radius': 3
+                    }
+                });
+            });
         });
     }
 

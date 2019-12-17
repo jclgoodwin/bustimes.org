@@ -12,6 +12,7 @@
     "html5shiv": "^3.7.3",
     "leaflet": "^1.6.0",
     "loadjs": "^4.2.0",
+    "mapbox-gl": "^1.6.0",
     "reqwest": "^2.0.5"
   }
 }

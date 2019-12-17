@@ -574,11 +574,11 @@ table {
         left: 0;
         position: absolute;
         right: 0;
-        top: 7em;
+        top: 8em;
     }
 
-    .leaflet-popup-content {
-        margin: 10px;
+    .mapboxgl-popup-content {
+        padding: 6px 8px;
     }
 
     .details {
@@ -609,18 +609,15 @@ table {
     width: 2.25em;
 }
 
-.leaflet-marker-icon {
-    &.just-arrow {
-        .arrow {
-            border: 2px solid #000;
-            border-left-color: transparent;
-            border-top-color: transparent;
-            height: 6px;
-            transform-origin: 8px 8px;
-            width: 6px;
-        }
-    }
+.just-arrow {
+    border: 6px solid #000;
+    border-left-color: transparent;
+    border-top-color: transparent;
+    cursor: pointer;
+}
 
+
+.leaflet-marker-icon {
     &.leaflet-div-icon {
         background: none;
         border: 0;
@@ -644,12 +641,10 @@ table {
 
         .coloured {
             border-color: $white;
-            // text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
         }
 
         .white-text {
             color: $white;
-            // text-shadow: -1px -1px 0 #444, 1px -1px 0 #444, -1px 1px 0 #444, 1px 1px 0 #444;
         }
 
         .stop {
