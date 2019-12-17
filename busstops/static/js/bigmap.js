@@ -89,7 +89,7 @@
         if (indicator) {
             var indicatorParts = indicator.split(' ');
             var firstPart = indicatorParts[0].toLowerCase();
-            if (indicatorParts.length === 2 && (firstPart === 'stop' || firstPart === 'bay' || firstPart === 'stand' || firstPart === 'stance')) {
+            if (indicatorParts.length === 2 && (firstPart === 'stop' || firstPart === 'bay' || firstPart === 'stand' || firstPart === 'stance' || firstPart === 'gate')) {
                 indicator = indicatorParts[1];
             } else {
                 indicator = indicator.slice(0, 3);
