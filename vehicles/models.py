@@ -10,7 +10,7 @@ from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.db.models import Index, Q
 from django.urls import reverse
-from django.utils.safestring import mark_safe
+from django.utils.html import escape, format_html
 from busstops.models import Operator, Service, StopPoint, DataSource, SIRISource
 
 
@@ -96,7 +96,7 @@ class Livery(models.Model):
                     css = css.replace(f'({angle}deg,', f'({replacement}deg,', 1)
                     # doesn't work with e.g. angles {a, b} where a = 360 - b
                 css = css.replace('left', 'right')
-            return css
+            return escape(css)
         if self.colours:
             return get_css(self.colours.split(), direction, self.horizontal, self.angle)
 
@@ -106,10 +106,9 @@ class Livery(models.Model):
             return
         div = f'<div style="height:1.5em;width:2.25em;background:{background}"'
         if name:
-            div = f'{div}></div> {self.name}'
+            return format_html('{}></div> {}', div, self.name)
         else:
-            div = f'{div} title="{self.name}"></div>'
-        return mark_safe(div)
+            return format_html('{} title="{}"></div>', self.name, div)
 
     def clean(self):
         if self.colours:
@@ -237,7 +236,7 @@ class Vehicle(models.Model):
         return f'https://www.flickr.com/search/?text={quote(search)}&sort=date-taken-desc'
 
     def get_flickr_link(self):
-        return mark_safe(f'<a href="{self.get_flickr_url()}" target="_blank" rel="noopener">Flickr</a>')
+        return format_html('<a href="{}" target="_blank" rel="noopener">Flickr</a>', self.get_flickr_url())
 
     get_flickr_link.short_description = 'Flickr'
 
@@ -304,11 +303,11 @@ class VehicleEdit(models.Model):
             if edit:
                 if vehicle:
                     if edit == f'-{vehicle}':
-                        return mark_safe(f'<del>{vehicle}</del>')
+                        return format_html('<del>{}</del>', vehicle)
                     else:
-                        return mark_safe(f'<del>{vehicle}</del><br><ins>{edit}</ins>')
+                        return format_html('<del>{}</del><br><ins>{}</ins>', vehicle, edit)
                 else:
-                    return mark_safe(f'<ins>{edit}</ins>')
+                    return format_html('<ins>{}</ins>', edit)
         return vehicle
 
     def get_absolute_url(self):
