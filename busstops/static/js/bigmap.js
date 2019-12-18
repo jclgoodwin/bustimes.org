@@ -382,17 +382,25 @@
 
     var loadOnMoveEnd = debounce(load, 700);
 
-    var updateLocation = debounce(function(event) {
+    function updateLocation(event) {
         var latLng = event.target.getCenter(),
             string = event.target.getZoom() + '/' + Math.round(latLng.lat * 10000) / 10000 + '/' + Math.round(latLng.lng * 10000) / 10000;
 
         if (history.replaceState) {
-            history.replaceState(null, null, location.pathname + '#' + string);
+            try {
+                history.replaceState(null, null, location.pathname + '#' + string);
+            } catch (error) {
+                // probably SecurityError (document is not fully active)
+            }
         }
         if (window.localStorage) {
-            localStorage.setItem('vehicleMap', string);
+            try {
+                localStorage.setItem('vehicleMap', string);
+            } catch (error) {
+                // never mind
+            }
         }
-    }, 2000);
+    }
 
     function debounce(func, wait, immediate) {
         var timeout;
@@ -426,7 +434,7 @@
     var parts;
     if (location.hash) {
         parts = location.hash.substring(1).split('/');
-    } else if (localStorage.vehicleMap) {
+    } else if (localStorage && localStorage.vehicleMap) {
         parts = localStorage.vehicleMap.split('/');
     }
     if (parts) {
