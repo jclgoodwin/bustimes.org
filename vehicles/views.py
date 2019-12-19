@@ -409,6 +409,9 @@ def edit_vehicle(request, vehicle_id):
                 vehicle.operator = data['operator']
                 vehicle.save()
                 del data['operator']
+            if 'features' in data and not data['features']:
+                vehicle.features.clear()
+                del data['features']
             if data:
                 edit = get_vehicle_edit(vehicle, data)
                 edit.user = form.cleaned_data.get('user')
