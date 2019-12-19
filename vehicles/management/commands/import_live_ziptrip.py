@@ -2,17 +2,46 @@ from time import sleep
 from datetime import timedelta
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
+# from django.db.models import F
 from django.utils import timezone
 from requests.exceptions import RequestException
 from django.contrib.gis.db.models import Extent
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from busstops.models import Operator, Service, StopPoint
+from bustimes.models import get_calendars, Trip
 from ...models import VehicleLocation, VehicleJourney
 
 
 def get_latlong(item):
     position = item['position']
     return Point(position['longitude'], position['latitude'])
+
+
+def get_trip(journey, item):
+    if not journey.service:
+        return
+    when = Command.get_datetime(item)
+    time_since_midnight = timedelta(hours=when.hour, minutes=when.minute, seconds=when.second)
+    if journey.trip and journey.trip.end > time_since_midnight:
+        return
+    trips = Trip.objects.filter(route__service=journey.service, calendar__in=get_calendars(when))
+    try:
+        trip = trips.get(start__lte=time_since_midnight + timedelta(minutes=5),
+                         end__gte=time_since_midnight - timedelta(minutes=10))
+        journey.destination = str(trip.destination.locality or trip.destination.town or trip.destination)
+        journey.datetime = when - time_since_midnight + trip.start
+        journey.trip = trip
+    except Trip.DoesNotExist:
+        return
+    except Trip.MultipleObjectsReturned:
+        return
+        # try:
+        #     return trips.annotate(
+        #         get(start__lte=time_since_midnight + timedelta(minutes=5),
+        #                      start__gte=time_since_midnight - timedelta(minutes=10)
+        #                      )
+        # except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+        #     return
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -222,6 +251,8 @@ class Command(ImportLiveVehiclesCommand):
             elif route_name.lower() not in self.ignorable_route_names:
                 if operator_id[0] != 'bus-vannin' and not (operator_id[0] == 'RBUS' and route_name[0] == 'V'):
                     print(operator_id, route_name)
+
+        get_trip(journey, item)
 
         return journey
 
