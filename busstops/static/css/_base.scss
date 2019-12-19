@@ -574,11 +574,11 @@ table {
         left: 0;
         position: absolute;
         right: 0;
-        top: 8em;
+        top: 7em;
     }
 
-    .mapboxgl-popup-content {
-        padding: 6px 8px;
+    .leaflet-popup-content {
+        margin: 10px;
     }
 
     .details {
@@ -609,15 +609,18 @@ table {
     width: 2.25em;
 }
 
-.just-arrow {
-    border: 6px solid #000;
-    border-left-color: transparent;
-    border-top-color: transparent;
-    cursor: pointer;
-}
-
-
 .leaflet-marker-icon {
+    &.just-arrow {
+        .arrow {
+            border: 2px solid #000;
+            border-left-color: transparent;
+            border-top-color: transparent;
+            height: 6px;
+            transform-origin: 8px 8px;
+            width: 6px;
+        }
+    }
+
     &.leaflet-div-icon {
         background: none;
         border: 0;
