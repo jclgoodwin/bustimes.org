@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from django.db.models import Count
+from django.db.models import Count, Max
 from django.db.utils import ConnectionDoesNotExist
 from busstops.models import Operator
 from .models import VehicleType, VehicleFeature, Vehicle, VehicleEdit, VehicleJourney, Livery, JourneyCode
@@ -225,7 +225,8 @@ class VehicleEditAdmin(admin.ModelAdmin):
     actions = ['apply_edits', 'delete_vehicles']
 
     def get_queryset(self, _):
-        return VehicleEdit.objects.all().prefetch_related('features', 'vehicle__features')
+        vehicles = VehicleEdit.objects.annotate(latest_journey=Max('vehicle__vehiclejourney__datetime'))
+        return vehicles.prefetch_related('features', 'vehicle__features')
 
     def apply_edits(self, request, queryset):
         apply_edits(queryset)
@@ -256,6 +257,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
     def last_seen(self, obj):
         if obj.vehicle.latest_location:
             return obj.vehicle.latest_location.datetime
+        return obj.latest_journey
     last_seen.admin_order_field = 'vehicle__latest_location__datetime'
 
 
