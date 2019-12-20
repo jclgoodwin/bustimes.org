@@ -734,10 +734,6 @@ table {
     border-collapse: collapse;
 }
 
-.tabular {
-    font-variant-numeric: tabular-nums;
-}
-
 .fleet {
     font-size: .875em;
 
@@ -760,6 +756,14 @@ table {
         max-width: 12em;
         overflow: hidden;
         vertical-align: top;
+    }
+
+    .number {
+        text-align: right;
+    }
+
+    .last-seen {
+        max-width: 5em;
     }
 
     tbody {

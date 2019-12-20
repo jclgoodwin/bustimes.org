@@ -73,17 +73,17 @@
                     </td>
                 {% endif %}
                 {% if code_column %}
-                    <td>{% if vehicle.fleet_number_mismatch %}{{ vehicle.code }}{% endif %}</td>
+                    <td class="number">{% if vehicle.fleet_number_mismatch %}{{ vehicle.code }}{% endif %}</td>
                 {% endif %}
-                <td class="tabular">
+                <td class="number">
                     {% if vehicle.fleet_code or vehicle.fleet_number %}
                         <a href="{{ vehicle.get_absolute_url }}">{% firstof vehicle.fleet_code vehicle.fleet_number %}</a>
                     {% endif %}
                 </td>
-                <td class="tabular">
+                <td>
                     <a href="{{ vehicle.get_absolute_url }}">{% if vehicle.reg %}{{ vehicle.get_reg }}{% elif not vehicle.fleet_number and not vehicle.fleet_code %}{{ vehicle }}{% endif %}</a>
                 </td>
-                <td>
+                <td class="last-seen">
                     {% if vehicle.latest_location %}
                         {% if vehicle.latest_location.journey.service %}
                             {{ vehicle.latest_location.journey.service.get_line_name_and_brand }}
@@ -100,7 +100,7 @@
                         {% endfor %}
                     {% endif %}
                 </td>
-                <td class="tabular">
+                <td class="last-seen">
                     {% if vehicle.latest_location %}
                         {% if vehicle.latest_location.datetime.date == today %}
                             {{ vehicle.latest_location.datetime | time }}
