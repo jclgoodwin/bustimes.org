@@ -757,7 +757,13 @@ table {
     }
 
     td {
+        max-width: 12em;
+        overflow: hidden;
         vertical-align: top;
+    }
+
+    tbody {
+        white-space: nowrap;
     }
 }
 
