@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.db.models import Count
+from django.db.utils import ConnectionDoesNotExist
 from busstops.models import Operator
 from .models import VehicleType, VehicleFeature, Vehicle, VehicleEdit, VehicleJourney, Livery, JourneyCode
 
@@ -193,8 +194,12 @@ class VehicleEditOperatorListFilter(admin.SimpleListFilter):
     parameter_name = 'operator'
 
     def lookups(self, request, model_admin):
-        operators = Operator.objects.filter(vehicle__vehicleedit__approved=False).using('read-only-0')
+        operators = Operator.objects.filter(vehicle__vehicleedit__approved=False)
         operators = operators.annotate(count=Count('vehicle__vehicleedit')).order_by('-count')
+        try:
+            operators = list(operators.using('read-only-0'))
+        except ConnectionDoesNotExist:
+            pass
         return [
             (operator.pk, f'{operator} ({operator.count})')
             for operator in operators
