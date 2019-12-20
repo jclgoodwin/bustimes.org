@@ -125,6 +125,7 @@ class Trip(models.Model):
 class StopTime(models.Model):
     trip = models.ForeignKey(Trip, models.CASCADE)
     stop_code = models.CharField(max_length=255)
+    stop = models.ForeignKey('busstops.StopPoint', models.SET_NULL, null=True, blank=True)
     arrival = models.DurationField()
     departure = models.DurationField()
     sequence = models.PositiveSmallIntegerField()
