@@ -74,7 +74,7 @@ class VehiclesTests(TestCase):
         with self.assertNumQueries(4):
             response = self.client.get('/operators/lynx/vehicles')
         self.assertTrue(response.context['code_column'])
-        self.assertContains(response, '<td>2</td>')
+        self.assertContains(response, '<td class="number">2</td>')
 
         with self.assertNumQueries(7):
             response = self.client.get(self.vehicle_1.get_absolute_url() + '?date=poop')
