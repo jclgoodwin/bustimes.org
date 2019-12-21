@@ -470,6 +470,7 @@ class Command(BaseCommand):
             stop_times = [
                 StopTime(
                     stop_code=cell.stopusage.stop.atco_code,
+                    stop_id=cell.stopusage.stop.atco_code,
                     trip=trip,
                     arrival=cell.arrival_time,
                     departure=cell.departure_time,
