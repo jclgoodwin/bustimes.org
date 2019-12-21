@@ -21,18 +21,22 @@ if (navigator.serviceWorker && location.protocol === 'https:') {
         document.cookie = 'seen_cookie_message=yes; max-age=31536000; path=/';
     }
 
-    var ads = document.getElementsByClassName('banner-ad');
+    var ads = document.getElementsByClassName('banner-ad'),
+        script;
     window.adsbygoogle = (window.adsbygoogle || []);
     window.adsbygoogle.requestNonPersonalizedAds = 1;
+
 
     if (window.IntersectionObserver) {
         var observer = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
                 if (entry.isIntersecting && !entry.target.querySelector('.adsbygoogle').innerHTML) {
-                    var script = document.createElement('script');
-                    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
                     window.adsbygoogle.push({});
-                    document.body.appendChild(script);
+                    if (!script) {
+                        script = document.createElement('script');
+                        script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+                        document.body.appendChild(script);
+                    }
                 }
             });
         });
@@ -47,7 +51,7 @@ if (navigator.serviceWorker && location.protocol === 'https:') {
     }
 
     if (!observer) {
-        var script = document.createElement('script');
+        script = document.createElement('script');
         script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
         document.body.appendChild(script);
     }
