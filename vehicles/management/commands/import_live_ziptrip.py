@@ -1,7 +1,7 @@
 from time import sleep
 from datetime import timedelta
 from ciso8601 import parse_datetime
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, Polygon
 # from django.db.models import F
 from django.utils import timezone
 from requests.exceptions import RequestException
@@ -26,22 +26,22 @@ def get_trip(journey, item):
         return
     trips = Trip.objects.filter(route__service=journey.service, calendar__in=get_calendars(when))
     try:
-        trip = trips.get(start__lte=time_since_midnight + timedelta(minutes=5),
-                         end__gte=time_since_midnight - timedelta(minutes=10))
+        lat = item['position']['latitude']
+        lng = item['position']['longitude']
+        bbox = Polygon.from_bbox(
+            (lng - 0.05, lat - 0.05, lng + 0.05, lat + 0.05)
+        )
+        trip = trips.get(
+            start__lte=time_since_midnight + timedelta(minutes=5),
+            start__gte=time_since_midnight - timedelta(minutes=10),
+            stoptime__sequence=0,
+            stoptime__stop__latlong__bboverlaps=bbox
+        )
         journey.destination = str(trip.destination.locality or trip.destination.town or trip.destination)
         journey.datetime = when - time_since_midnight + trip.start
         journey.trip = trip
-    except Trip.DoesNotExist:
+    except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
         return
-    except Trip.MultipleObjectsReturned:
-        return
-        # try:
-        #     return trips.annotate(
-        #         get(start__lte=time_since_midnight + timedelta(minutes=5),
-        #                      start__gte=time_since_midnight - timedelta(minutes=10)
-        #                      )
-        # except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-        #     return
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -223,6 +223,8 @@ class Command(ImportLiveVehiclesCommand):
         latest = vehicle.latest_location
         if latest and latest.journey.route_name == journey.route_name and latest.journey.service:
             journey.service = latest.journey.service
+            if not latest.current or latest.journey.trip:
+                get_trip(journey, item)
         elif route_name:
             services = Service.objects.filter(current=True)
             if operator_id[0] == 'SESX' and route_name == '1':
@@ -240,6 +242,7 @@ class Command(ImportLiveVehiclesCommand):
                 pass
 
             if journey.service:
+                get_trip(journey, item)
                 if operator_id[0] == 'SESX' or operator_id[0] == 'CUBU':
                     try:
                         operator = journey.service.operator.get()
@@ -251,8 +254,6 @@ class Command(ImportLiveVehiclesCommand):
             elif route_name.lower() not in self.ignorable_route_names:
                 if operator_id[0] != 'bus-vannin' and not (operator_id[0] == 'RBUS' and route_name[0] == 'V'):
                     print(operator_id, route_name)
-
-        get_trip(journey, item)
 
         return journey
 
