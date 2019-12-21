@@ -9,7 +9,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 class Command(ImportLiveVehiclesCommand):
     url = 'http://rtl2.ods-live.co.uk/api/vehiclePositions'
     source_name = 'Reading'
-    services = Service.objects.filter(operator__in=('RBUS', 'GLRB', 'KENN', 'NADS', 'THVB'), current=True)
+    services = Service.objects.filter(operator__in=('RBUS', 'GLRB', 'KENN', 'NADS', 'THVB', 'CTNY'), current=True)
 
     @staticmethod
     def get_datetime(item):
@@ -18,13 +18,14 @@ class Command(ImportLiveVehiclesCommand):
     def get_vehicle(self, item):
         vehicle = item['vehicle']
         defaults = {
-            'source': self.source
+            'source': self.source,
+            'operator_id': 'RBUS'
         }
         if vehicle.isdigit():
             defaults['fleet_number'] = vehicle
         return self.vehicles.get_or_create(
             defaults,
-            operator_id='RBUS',
+            operator_id__in=('RBUS', 'CTNY'),
             code=vehicle
         )
 
