@@ -190,7 +190,7 @@ class Command(BaseCommand):
                 asyncio.get_event_loop().run_until_complete(self.sock_it())
             except (
                 websockets.exceptions.ConnectionClosed,
-                asyncio.base_futures.InvalidStateError,
+                asyncio.InvalidStateError,
                 pyppeteer.errors.TimeoutError
             ) as e:
                 print(e)
