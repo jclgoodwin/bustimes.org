@@ -54,6 +54,8 @@ class RegistrationView(DetailView):
 
 
 class LicenceFeed(Feed):
+    description_template = 'rss_description.html'
+
     def get_object(self, request, licence_number):
         return Licence.objects.get(licence_number=licence_number)
 
@@ -70,9 +72,6 @@ class LicenceFeed(Feed):
     def item_pubdate(self, item):
         date = item.date_received
         return datetime(date.year, date.month, date.day)
-
-    def item_description(self, item):
-        return f'From {item.effective_date}\n\n{item.service_type_other_details}\n\n{item.publication_text}'
 
 
 class AreaFeed(Feed):

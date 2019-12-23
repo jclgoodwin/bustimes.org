@@ -64,4 +64,6 @@ class Variation(models.Model):
         return str(self.registration)
 
     def get_absolute_url(self):
-        return reverse('registration_detail', args=(self.registration.registration_number,))
+        url = reverse('registration_detail', args=(self.registration.registration_number,))
+        url = f'{url}#{self.variation_number}'
+        return url

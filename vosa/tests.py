@@ -67,6 +67,10 @@ Other details: Daily Service Every Twenty Minutes""",
         self.assertEqual(2, len(response.context_data['registrations']))
         self.assertEqual(10, len(response.context_data['cancelled']))
 
+    def test_licence_rss(self):
+        response = self.client.get('/licences/PH1020951/rss')
+        self.assertEqual(response.status_code, 200)
+
     def test_licence_404(self):
         response = self.client.get('/licences/PH102095')
         self.assertEqual(response.status_code, 404)
