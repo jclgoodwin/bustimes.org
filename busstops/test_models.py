@@ -125,10 +125,6 @@ class ServiceTests(TestCase):
         self.assertEqual('20', self.london_service.get_operator_number('WAIR'))
         self.assertEqual('18', self.london_service.get_operator_number('TVSN'))
 
-    def test_get_filenames(self):
-        service = Service(service_code='foo', region_id='NE')
-        self.assertEqual(['foo.xml'], service.get_filenames(None))
-
 
 class StopPointTests(TestCase):
     @classmethod

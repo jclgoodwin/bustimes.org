@@ -31,7 +31,8 @@
 <h2>Routes</h2>
 
 {% for route in service.route_set.all %}
-<h3>{{ route.code }}</h3>
+
+<h3><a href="/services/{{ route.source }}/{{ route.code }}">{{ route.code }}</a></h3>
 
 <table>
     <thead>

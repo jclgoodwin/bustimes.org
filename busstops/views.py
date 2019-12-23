@@ -1,6 +1,5 @@
 # coding=utf-8
 """View definitions."""
-import os
 import json
 import ciso8601
 from django.shortcuts import render, get_object_or_404, redirect
@@ -9,7 +8,6 @@ from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequ
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
 from django.views.generic.detail import DetailView
-from django.conf import settings
 from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
@@ -590,20 +588,6 @@ def service_map_data(request, pk):
     if service.geometry:
         data['geometry'] = json.loads(service.geometry.simplify().json)
     return JsonResponse(data)
-
-
-def service_xml(request, pk):
-    try:
-        service = Service.objects.get(slug=pk)
-    except Service.DoesNotExist:
-        service = get_object_or_404(Service, pk=pk)
-    if service.region_id == 'NI':
-        path = os.path.join(settings.DATA_DIR, 'NI', service.pk + '.json')
-        with open(path) as open_file:
-            bodies = open_file.read()
-    else:
-        bodies = (xml_file.read().decode() for xml_file in service.get_files_from_zipfile())
-    return HttpResponse(bodies, content_type='text/plain')
 
 
 class OperatorSitemap(Sitemap):

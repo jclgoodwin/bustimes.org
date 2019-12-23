@@ -1,14 +1,11 @@
 "Model definitions"
 
 import re
-import os
-import zipfile
 import time
 import logging
 from urllib.parse import urlencode, quote
 from datetime import date
 from autoslug import AutoSlugField
-from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.search import SearchVectorField
@@ -621,49 +618,6 @@ class Service(models.Model):
             return '%s/XSLT_TTB_REQUEST?%s' % (base_url, urlencode(query)), 'Traveline'
 
         return None, None
-
-    def get_filenames(self, archive):
-        if self.region_id == 'NE':
-            return ['{}.xml'.format(self.pk)]
-        if self.region_id in ('S', 'Y'):
-            return ['SVR{}.xml'.format(self.pk)]
-
-        namelist = archive.namelist()
-
-        if self.region_id == 'NW':
-            return [name for name in namelist if name == f'{self.pk}.xml' or name.startswith(f'{self.pk}_')]
-
-        if self.net:
-            return [name for name in namelist if name.startswith('{}-'.format(self.pk))]
-
-        if self.region_id == 'GB':
-            parts = self.pk.split('_')
-            suffix = '_{}_{}.xml'.format(parts[1], parts[0])
-        else:
-            suffix = '_{}.xml'.format(self.pk)  # Wales
-        return [name for name in namelist if name.endswith(suffix)]
-
-    def get_files_from_zipfile(self):
-        """Given a Service,
-        return an iterable of open files from the relevant zipfile.
-        """
-        service_code = self.service_code
-        if self.region_id == 'GB':
-            archive_name = 'NCSD'
-            parts = service_code.split('_')
-            service_code = '_%s_%s' % (parts[-1], parts[-2])
-        else:
-            archive_name = self.region_id
-
-        archive_path = os.path.join(settings.TNDS_DIR, archive_name + '.zip')
-
-        try:
-            with zipfile.ZipFile(archive_path) as archive:
-                filenames = self.get_filenames(archive)
-                return [archive.open(filename) for filename in filenames]
-        except (zipfile.BadZipfile, IOError, KeyError) as e:
-            logger.error(e, exc_info=True)
-            return []
 
     def get_linked_services_cache_key(self):
         return f'{quote(self.service_code)}linked_services{self.date}'

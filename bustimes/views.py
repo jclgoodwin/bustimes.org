@@ -1,4 +1,8 @@
+import os
+import zipfile
+from django.conf import settings
 from django.views.generic.detail import DetailView
+from django.http import FileResponse
 from django.utils import timezone
 from busstops.views import Service
 from vehicles.views import siri_one_shot
@@ -22,3 +26,9 @@ class ServiceDebugView(DetailView):
         context['breadcrumb'] = [self.object]
 
         return context
+
+
+def service_xml(request, region, code):
+    path = os.path.join(settings.TNDS_DIR, f'{region}.zip')
+    with zipfile.ZipFile(path) as archive:
+        return FileResponse(archive.open(f'{code}.xml'), content_type='text/xml')
