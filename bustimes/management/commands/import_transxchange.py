@@ -29,6 +29,7 @@ BANK_HOLIDAYS = {
     'ChristmasDay': '2019-12-25',
     'BoxingDay':  '2019-12-26',
     'NewYearsDay':  '2020-01-01',
+    'AllBankHolidays': '2020-01-01',
     'GoodFriday': '2020-04-10',
     'EasterMonday': '2020-04-13',
 }
