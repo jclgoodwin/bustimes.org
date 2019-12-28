@@ -13,7 +13,7 @@ import zipfile
 import xml.etree.cElementTree as ET
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.utils import timezone
 from busstops.models import (Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode)
@@ -201,8 +201,11 @@ class Command(BaseCommand):
             for filename in filenames or archive.namelist():
                 if filename.endswith('.xml'):
                     with archive.open(filename) as open_file:
-                        with transaction.atomic():
-                            self.handle_file(open_file, filename)
+                        try:
+                            with transaction.atomic():
+                                self.handle_file(open_file, filename)
+                        except IntegrityError as error:
+                            logger.error(error, exc_info=True)
 
         old_services = self.source.service_set.filter(current=True).exclude(service_code__in=self.service_codes)
         old_services.update(current=False)
