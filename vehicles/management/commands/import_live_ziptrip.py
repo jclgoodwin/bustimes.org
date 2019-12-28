@@ -16,13 +16,17 @@ def get_latlong(item):
     return Point(position['longitude'], position['latitude'])
 
 
-def get_trip(journey, item):
+def get_trip(latest_location, journey, item):
     if not journey.service:
         return
     when = Command.get_datetime(item)
     time_since_midnight = timedelta(hours=when.hour, minutes=when.minute, seconds=when.second)
-    if journey.trip and journey.trip.end > time_since_midnight:
-        return
+    if journey.trip:
+        if journey.trip.end > time_since_midnight:
+            return
+    elif latest_location and latest_location.current and latest_location.journey.service == journey.service:
+        if not (latest_location.datetime.minutes % 10 < 5 and when.minutes % 10 >= 5):
+            return
     trips = Trip.objects.filter(route__service=journey.service, calendar__in=get_calendars(when))
     try:
         lat = item['position']['latitude']
@@ -222,8 +226,7 @@ class Command(ImportLiveVehiclesCommand):
         latest = vehicle.latest_location
         if latest and latest.journey.route_name == journey.route_name and latest.journey.service:
             journey.service = latest.journey.service
-            if not latest.current or latest.journey.trip:
-                get_trip(journey, item)
+            get_trip(latest, journey, item)
         elif route_name:
             services = Service.objects.filter(current=True)
             if operator_id[0] == 'SESX' and route_name == '1':
@@ -241,7 +244,7 @@ class Command(ImportLiveVehiclesCommand):
                 pass
 
             if journey.service:
-                get_trip(journey, item)
+                get_trip(latest, journey, item)
                 if operator_id[0] == 'SESX' or operator_id[0] == 'CUBU':
                     try:
                         operator = journey.service.operator.get()
