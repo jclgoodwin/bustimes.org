@@ -28,7 +28,7 @@ def get_trip(latest_location, journey, item):
         if not (latest_location.datetime.minute % 10 < 5 and when.minute % 10 >= 5):
             return
     trips = Trip.objects.filter(route__service=journey.service,
-                               calendar__in=get_calendars(when)).select_related('destination__locality')
+                                calendar__in=get_calendars(when)).select_related('destination__locality')
     try:
         lat = item['position']['latitude']
         lng = item['position']['longitude']

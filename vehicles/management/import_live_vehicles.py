@@ -56,7 +56,9 @@ def same_journey(latest_location, journey, when):
             return str(latest_location.journey.code) == str(journey.code)
         if latest_location.journey.direction and journey.direction:
             return latest_location.journey.direction == journey.direction
-        if latest_location.journey.trip:
+        if latest_location.journey.trip_id:
+            if journey.trip_id:
+                return latest_location.journey.trip_id == journey.trip_id
             return latest_location.journey.trip.end > timedelta(hours=when.hour, minutes=when.minute,
                                                                 seconds=when.second)
         return when - latest_location.datetime < timedelta(minutes=15)
