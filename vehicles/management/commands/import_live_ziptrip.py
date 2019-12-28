@@ -2,7 +2,6 @@ from time import sleep
 from datetime import timedelta
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point, Polygon
-# from django.db.models import F
 from django.utils import timezone
 from requests.exceptions import RequestException
 from django.contrib.gis.db.models import Extent

@@ -44,7 +44,7 @@ def calculate_speed(a, b):
     return 0
 
 
-def same_journey(latest_location, journey, datetime):
+def same_journey(latest_location, journey, when):
     if not latest_location:
         return False
     if latest_location.journey.route_name and journey.route_name:
@@ -56,7 +56,9 @@ def same_journey(latest_location, journey, datetime):
             return str(latest_location.journey.code) == str(journey.code)
         if latest_location.journey.direction and journey.direction:
             return latest_location.journey.direction == journey.direction
-        return datetime - latest_location.datetime < timedelta(minutes=15)
+        if journey.trip:
+            return journey.trip.end > timedelta(hours=when.hour, minutes=when.minute, seconds=when.second)
+        return when - latest_location.datetime < timedelta(minutes=15)
     return False
 
 
