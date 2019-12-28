@@ -25,18 +25,19 @@ def get_trip(latest_location, journey, item):
         if journey.trip.end > time_since_midnight:
             return
     elif latest_location and latest_location.current and latest_location.journey.service == journey.service:
-        if not (latest_location.datetime.minutes % 10 < 5 and when.minutes % 10 >= 5):
+        if not (latest_location.datetime.minute % 10 < 5 and when.minute % 10 >= 5):
             return
-    trips = Trip.objects.filter(route__service=journey.service, calendar__in=get_calendars(when))
+    trips = Trip.objects.filter(route__service=journey.service,
+                               calendar__in=get_calendars(when)).select_related('destination__locality')
     try:
         lat = item['position']['latitude']
         lng = item['position']['longitude']
         bbox = Polygon.from_bbox(
-            (lng - 0.05, lat - 0.05, lng + 0.05, lat + 0.05)
+            (lng - 0.02, lat - 0.02, lng + 0.02, lat + 0.02)
         )
         trip = trips.get(
-            start__lte=time_since_midnight + timedelta(minutes=5),
-            start__gte=time_since_midnight - timedelta(minutes=10),
+            start__lte=time_since_midnight + timedelta(minutes=7),
+            start__gte=time_since_midnight - timedelta(minutes=7),
             stoptime__sequence=0,
             stoptime__stop__latlong__bboverlaps=bbox
         )
@@ -75,7 +76,7 @@ class Command(ImportLiveVehiclesCommand):
             'SBAY',
             'CBUS',
             'CUBU',
-            'ECWY',
+            'RSTY',
             'FALC',
             'GECL',
             'GAHL',
@@ -99,7 +100,7 @@ class Command(ImportLiveVehiclesCommand):
             stops = StopPoint.objects.filter(service__operator=operator, service__current=True)
             extent = stops.aggregate(Extent('latlong'))['latlong__extent']
             if not extent:
-                print(operator)
+                print(f'{operator} has no services')
                 continue
             yield {
                 'maxLat': extent[3] + 0.1,
@@ -129,7 +130,7 @@ class Command(ImportLiveVehiclesCommand):
                             any_items = True
                             yield item
                 if not any_items:
-                    print(response.url)
+                    print(f'no items: {response.url}')
             except (RequestException, KeyError):
                 continue
             sleep(1)
