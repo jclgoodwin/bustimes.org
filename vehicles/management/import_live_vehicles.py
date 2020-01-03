@@ -12,7 +12,7 @@ from busstops.models import DataSource, ServiceCode
 from ..models import Vehicle, VehicleLocation
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(sys.argv[1])
 
 
 def calculate_bearing(a, b):
