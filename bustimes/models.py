@@ -135,5 +135,5 @@ class StopTime(models.Model):
     class Meta:
         ordering = ('sequence',)
         index_together = (
-            ('stop_code', 'departure'),
+            ('stop', 'departure'),
         )
