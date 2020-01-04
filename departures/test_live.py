@@ -104,7 +104,7 @@ class LiveDeparturesTest(TestCase):
         trip_2 = Trip.objects.create(calendar=calendar_2, route=route, destination=cls.cardiff_stop,
                                      start='0', end='20:00')
         StopTime.objects.bulk_create(
-            StopTime(trip=trip, sequence=0, arrival=when, departure=when, stop_code='64801092')
+            StopTime(trip=trip, sequence=0, arrival=when, departure=when, stop_id='64801092')
             for trip, when in (
                 (trip_1, '20:23'),
                 (trip_1, '21:23'),
@@ -119,7 +119,7 @@ class LiveDeparturesTest(TestCase):
         trip = Trip.objects.create(calendar=calendar, route=route, destination=cls.worcester_stop,
                                    start='0', end='11:00')
         StopTime.objects.create(trip=trip, sequence=0, arrival='10:54', departure='10:54',
-                                stop_code=cls.worcester_stop.pk)
+                                stop_id=cls.worcester_stop.pk)
 
     def test_abstract(self):
         departures = live.Departures(None, ())

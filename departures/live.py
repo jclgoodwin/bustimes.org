@@ -856,7 +856,7 @@ def blend(departures, live_rows, stop=None):
 def get_stop_times(when, stop, services):
     time_since_midnight = datetime.timedelta(hours=when.hour, minutes=when.minute, seconds=when.second,
                                              microseconds=when.microsecond)
-    return StopTime.objects.filter(~Q(activity='setDown'), stop_code=stop, departure__gte=time_since_midnight,
+    return StopTime.objects.filter(~Q(activity='setDown'), stop_id=stop, departure__gte=time_since_midnight,
                                    trip__calendar__in=get_calendars(when))
 
 
