@@ -13,8 +13,8 @@ import zipfile
 import xml.etree.cElementTree as ET
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db import transaction, IntegrityError
 from django.contrib.gis.geos import LineString, MultiLineString
+from django.db import transaction
 from django.utils import timezone
 from busstops.models import (Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode)
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
@@ -201,11 +201,8 @@ class Command(BaseCommand):
             for filename in filenames or archive.namelist():
                 if filename.endswith('.xml'):
                     with archive.open(filename) as open_file:
-                        try:
-                            with transaction.atomic():
-                                self.handle_file(open_file, filename)
-                        except IntegrityError as error:
-                            logger.error(error, exc_info=True)
+                        with transaction.atomic():
+                            self.handle_file(open_file, filename)
 
         old_services = self.source.service_set.filter(current=True).exclude(service_code__in=self.service_codes)
         old_services.update(current=False)
@@ -471,33 +468,26 @@ class Command(BaseCommand):
                 journey_pattern=journey.journey_pattern.id,
             )
 
-            stop_times = [
-                StopTime(
+            stop_times = []
+            for i, cell in enumerate(journey.get_times()):
+                stop_time = StopTime(
                     stop_code=cell.stopusage.stop.atco_code,
-                    stop_id=cell.stopusage.stop.atco_code,
                     trip=trip,
                     arrival=cell.arrival_time,
                     departure=cell.departure_time,
                     sequence=i,
                     timing_status=cell.stopusage.timingstatus,
                     activity=cell.stopusage.activity or ''
-                ) for i, cell in enumerate(journey.get_times())
-            ]
+                )
+                if i == 0:
+                    trip.start = stop_time.arrival or stop_time.departure
+                if stop_time.stop_code in stops:
+                    stop_time.stop_id = stop_time.stop_code
+                    trip.destination_id = stop_time.stop_code
+                stop_times.append(stop_time)
 
-            trip.start = stop_times[0].arrival or stop_times[0].departure
-            trip.end = stop_times[-1].departure or stop_times[-1].arrival
-
-            if stop_times[-1].stop_code in stops:
-                trip.destination_id = stop_times[-1].stop_code
-                trip.save()
-            else:
-                print(stop_times[-1].stop_code, service)
-                if stop_times[-2].stop_code in stops:
-                    trip.destination_id = stop_times[-2].stop_code
-                    trip.save()
-                else:
-                    print(stop_times[-2].stop_code, service)
-                    return
+            trip.end = stop_time.departure or stop_time.arrival
+            trip.save()
 
             for note in journey.notes:
                 note_cache_key = f'{note}:{journey.notes[note]}'
