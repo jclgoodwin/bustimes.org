@@ -137,8 +137,8 @@ class Timetable:
             date = max(date, min(start_dates))
 
         end_date = date + datetime.timedelta(days=21)
-        end_dates = [route.end_date for route in self.routes if route.end_date]
-        if end_dates:
+        end_dates = [route.end_date for route in self.routes]
+        if end_dates and all(end_dates):
             end_date = min(end_date, max(end_dates))
 
         if self.date and self.date < date:
