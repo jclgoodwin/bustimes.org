@@ -24,17 +24,13 @@ def get_latlong(mvj):
 
 def items_from_response(response):
     try:
-        if type(response) is str:
-            text = response
-        else:
-            text = response.text
-        iterator = ET.iterparse(StringIO(text))
+        iterator = ET.iterparse(StringIO(response.text))
     except ET.ParseError as e:
         logger.error(e, exc_info=True)
         print(response)
         return ()
     for _, element in iterator:
-        if element.tag[29:] == 'VehicleActivity':
+        if element.tag[-15:] == 'VehicleActivity':
             yield element
             element.clear()
 
