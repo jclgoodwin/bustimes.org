@@ -46,8 +46,6 @@ def get_vehicle_edit(vehicle, fields):
         if field in fields and str(fields[field]) != str(getattr(vehicle, field)):
             if fields[field]:
                 setattr(edit, field, fields[field])
-            elif field == 'fleet_number':
-                edit.fleet_number = 0
             else:
                 setattr(edit, field, f'-{getattr(vehicle, field)}')
 

@@ -141,12 +141,12 @@ def apply_edits(queryset):
         if edit.withdrawn:
             vehicle.withdrawn = True
             update_fields.append('withdrawn')
-        if edit.fleet_number is not None:
-            if edit.fleet_number:
+        if edit.fleet_number:
+            vehicle.fleet_code = edit.fleet_number
+            update_fields.append('fleet_code')
+            if edit.fleet_number.isdigit():
                 vehicle.fleet_number = edit.fleet_number
-            else:
-                vehicle.fleet_number = None
-            update_fields.append('fleet_number')
+                update_fields.append('fleet_number')
         if edit.reg:
             vehicle.reg = edit.reg
             update_fields.append('reg')
@@ -158,7 +158,7 @@ def apply_edits(queryset):
             else:
                 vehicle.data = edit.changes
             update_fields.append('data')
-        for field in ('branding', 'name', 'notes'):
+        for field in ('branding', 'name', 'notes', 'fleet_number'):
             if getattr(edit, field):
                 if getattr(edit, field) == f'-{getattr(vehicle, field)}':
                     setattr(vehicle, field, '')

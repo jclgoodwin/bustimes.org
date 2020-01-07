@@ -257,7 +257,7 @@ class Vehicle(models.Model):
 
 class VehicleEdit(models.Model):
     vehicle = models.ForeignKey(Vehicle, models.CASCADE)
-    fleet_number = models.PositiveIntegerField(null=True, blank=True)
+    fleet_number = models.CharField(max_length=24, blank=True)
     reg = models.CharField(max_length=24, blank=True)
     vehicle_type = models.CharField(max_length=255, blank=True)
     colours = models.CharField(max_length=255, blank=True)
