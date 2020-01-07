@@ -1,5 +1,6 @@
 from celery import shared_task
-from .management.commands import import_sirivm, DataSource
+from busstops.models import DataSource
+from .management.commands import import_sirivm
 from .siri_et import siri_et
 
 
