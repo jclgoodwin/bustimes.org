@@ -24,7 +24,11 @@ def get_latlong(mvj):
 
 def items_from_response(response):
     try:
-        iterator = ET.iterparse(StringIO(response.text))
+        if type(response) is str:
+            text = response
+        else:
+            text = response.text
+        iterator = ET.iterparse(StringIO(text))
     except ET.ParseError as e:
         logger.error(e, exc_info=True)
         print(response)
