@@ -11,10 +11,12 @@ import csv
 import yaml
 import zipfile
 import xml.etree.cElementTree as ET
+from datetime import timedelta
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.db import transaction
+from django.db.models import F
 from django.utils import timezone
 from busstops.models import (Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode)
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
@@ -510,3 +512,13 @@ class Command(BaseCommand):
                 else:
                     corrections[field] = self.corrections[service_code][field]
             Service.objects.filter(service_code=service_code).update(**corrections)
+
+        if service_code == 'twm_5-501-A-y11':
+            StopTime.objects.filter(trip__route__service='twm_5-501-A-y11', trip__start='14:15').update(
+                arrival=F('arrival') - timedelta(minutes=5),
+                departure=F('departure') - timedelta(minutes=5)
+            )
+            Trip.objects.filter(route__service='twm_5-501-A-y11', start='14:15').update(
+                start=F('start') - timedelta(minutes=5),
+                end=F('end') - timedelta(minutes=5)
+            )
