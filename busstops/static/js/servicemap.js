@@ -293,11 +293,11 @@
                 }
 
                 if (data.features.length === 0) {
-                    busesOnlineCount.innerHTML = 'No buses online';
+                    busesOnlineCount.innerHTML = '';
                 } else if (data.features.length === 1) {
-                    busesOnlineCount.innerHTML = '1 bus online';
+                    busesOnlineCount.innerHTML = 'Tracking 1 bus';
                 } else {
-                    busesOnlineCount.innerHTML = data.features.length + ' buses online';
+                    busesOnlineCount.innerHTML = 'Tracking ' + data.features.length + ' buses';
                 }
                 if (map) {
                     processData(data);
