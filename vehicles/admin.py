@@ -189,7 +189,7 @@ def apply_edits(queryset):
             edit.save(update_fields=['approved'])
 
 
-class VehicleEditOperatorListFilter(admin.SimpleListFilter):
+class OperatorFilter(admin.SimpleListFilter):
     title = 'operator'
     parameter_name = 'operator'
 
@@ -200,14 +200,37 @@ class VehicleEditOperatorListFilter(admin.SimpleListFilter):
             operators = list(operators.using('read-only-0'))
         except ConnectionDoesNotExist:
             pass
-        return [
-            (operator.pk, f'{operator} ({operator.count})')
-            for operator in operators
-        ]
+        for operator in operators:
+            yield (operator.pk, f'{operator} ({operator.count})')
 
     def queryset(self, request, queryset):
         if self.value():
             return queryset.filter(vehicle__operator=self.value())
+        return queryset
+
+
+class UrlFilter(admin.SimpleListFilter):
+    title = 'URL'
+    parameter_name = 'url'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('1', 'Yes'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.exclude(url='')
+        return queryset
+
+
+class UserFilter(UrlFilter):
+    title = 'user'
+    parameter_name = 'user'
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.exclude(user='')
         return queryset
 
 
@@ -218,8 +241,10 @@ class VehicleEditAdmin(admin.ModelAdmin):
                            'livery']
     list_filter = [
         'approved',
+        UrlFilter,
+        UserFilter,
         'withdrawn',
-        VehicleEditOperatorListFilter
+        OperatorFilter
     ]
     raw_id_fields = ['vehicle', 'livery']
     actions = ['apply_edits', 'delete_vehicles']
@@ -259,14 +284,30 @@ class VehicleEditAdmin(admin.ModelAdmin):
     last_seen.admin_order_field = 'vehicle__latest_location__datetime'
 
 
+class ServiceIsNullFilter(admin.SimpleListFilter):
+    title = 'service is null'
+    parameter_name = 'service__isnull'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('1', 'Yes'),
+            ('0', 'No'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(service__isnull=self.value() == '1')
+        return queryset
+
+
 class VehicleJourneyAdmin(admin.ModelAdmin):
     list_display = ('datetime', 'vehicle', 'service', 'route_name', 'code', 'destination')
     list_select_related = ('vehicle', 'service')
     raw_id_fields = ('vehicle', 'service', 'trip')
     list_filter = (
-        ('service', admin.BooleanFieldListFilter),
-        ('source', admin.RelatedOnlyFieldListFilter),
-        ('vehicle__operator', admin.RelatedOnlyFieldListFilter),
+        ServiceIsNullFilter,
+        'source',
+        'vehicle__operator',
     )
     ordering = ('-id',)
 
