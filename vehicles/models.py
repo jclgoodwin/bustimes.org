@@ -149,11 +149,8 @@ class Vehicle(models.Model):
     data = JSONField(null=True, blank=True)
 
     def save(self, force_insert=False, force_update=False, **kwargs):
-        if self.fleet_code:
-            if self.fleet_code.isdigit():
-                self.fleet_number = int(self.fleet_code)
-        elif self.fleet_number:
-            self.fleet_code = str(self.fleet_code)
+        if self.fleet_number and not self.fleet_code:
+            self.fleet_code = str(self.fleet_number)
         super().save(force_insert, force_update, **kwargs)
 
     class Meta:
