@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.db.utils import ConnectionDoesNotExist
 from busstops.models import Operator
 from .models import VehicleType, VehicleFeature, Vehicle, VehicleEdit, VehicleJourney, Livery, JourneyCode
@@ -224,13 +224,21 @@ class UrlFilter(admin.SimpleListFilter):
         return queryset
 
 
-class UserFilter(UrlFilter):
+class UserFilter(admin.SimpleListFilter):
     title = 'user'
     parameter_name = 'user'
 
+    def lookups(self, request, model_admin):
+        yield ('1', 'Not blank')
+        edits = VehicleEdit.objects.filter(~Q(user=''), approved=False)
+        for edit in edits.values('user').annotate(count=Count('user')).order_by('-count'):
+            yield (edit['user'], f"{edit['user']} ({edit['count']})")
+
     def queryset(self, request, queryset):
         if self.value():
-            return queryset.exclude(user='')
+            if self.value() == '1':
+                return queryset.exclude(user='')
+            return queryset.filter(user=self.value())
         return queryset
 
 
