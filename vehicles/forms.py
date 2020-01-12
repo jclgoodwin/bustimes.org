@@ -31,7 +31,8 @@ class EditVehiclesForm(forms.Form):
                                               widget=forms.CheckboxSelectMultiple, required=False)
     depot = forms.CharField(help_text='If there’s more than one', required=False, max_length=255)
     withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False)
-    user = forms.CharField(label='Your name', help_text='If left blank, your IP address will be logged instead', required=False, max_length=255)
+    user = forms.CharField(label='Your name', help_text='If left blank, your IP address will be logged instead',
+                           required=False, max_length=255)
 
     def __init__(self, *args, **kwargs):
         features_column = kwargs.pop('features_column', None)
