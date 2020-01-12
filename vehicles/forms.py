@@ -61,7 +61,7 @@ class EditVehiclesForm(forms.Form):
 class EditVehicleForm(EditVehiclesForm):
     """With some extra fields, only applicable to editing a single vehicle
     """
-    fleet_number = forms.IntegerField(required=False, min_value=0)
+    fleet_number = forms.CharField(required=False, max_length=14)
     reg = forms.CharField(label='Registration', required=False, max_length=14)
     name = forms.CharField(label='Name', required=False, max_length=255)
     previous_reg = forms.CharField(required=False, max_length=14)
