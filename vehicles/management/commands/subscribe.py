@@ -27,7 +27,7 @@ class Command(BaseCommand):
         self.source = DataSource.objects.get(name='Arriva')
 
         if not options['terminate']:
-            if cache.get('ArrivaHeartbeat') and cache.get('ArrivaData'):
+            if cache.get('ArrivaHeartbeat'):  # and cache.get('ArrivaData'):
                 return  # received a heartbeat recently, no need to resubscribe
 
         now = timezone.localtime()
@@ -37,8 +37,11 @@ class Command(BaseCommand):
         timestamp = now.isoformat()
         requestor_ref = 'HAConToBusTimesET'
 
+        # Access to the subscription endpoint is restricted to certain IP addresses,
+        # so use a Digital Ocean floating IP address
         self.session.mount('http://', SourceAddressAdapter('10.16.0.6'))
 
+        # # test address adapter
         # response = self.session.get('http://icanhazip.com/')
         # print(response.text)
 
