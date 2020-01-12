@@ -140,7 +140,7 @@ def operator_vehicles(request, slug=None, parent=None):
                 if data:
                     edits = [get_vehicle_edit(vehicle, data) for vehicle in ticked_vehicles]
                     for edit in edits:
-                        edit.user = form.cleaned_data.get('user', '')
+                        edit.user = form.cleaned_data.get('user') or request.META['REMOTE_ADDR']
                     edits = VehicleEdit.objects.bulk_create(edit for edit in edits if edit)
                     submitted = len(edits)
                     if 'features' in data:
@@ -412,7 +412,7 @@ def edit_vehicle(request, vehicle_id):
                 del data['features']
             if data:
                 edit = get_vehicle_edit(vehicle, data)
-                edit.user = form.cleaned_data.get('user')
+                edit.user = form.cleaned_data.get('user') or request.META['REMOTE_ADDR']
                 edit.save()
                 if 'features' in data:
                     edit.features.set(data['features'])
