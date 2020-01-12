@@ -4,7 +4,7 @@ body {
     // http://blog.55minutes.com/2012/04/iphone-text-resizing/
     -webkit-text-size-adjust: 100%;
     color: $text-color;
-    font-family: 'Helvetica Neue', "Segoe UI", Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 1.5;
     margin: 0;
@@ -25,7 +25,6 @@ footer {
 }
 
 main {
-    background: $background-color;
     padding: 0 1em;
 }
 
