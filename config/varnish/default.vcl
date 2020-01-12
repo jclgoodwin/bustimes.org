@@ -32,7 +32,7 @@ sub vcl_backend_response {
     # Here you clean the response headers, removing silly Set-Cookie headers
     # and other mistakes your backend does.
 
-    if (bereq.url !~ "^/(admin/|contact|edit)") {
+    if (bereq.url !~ "^/(admin/|contact)" || req.url !~ "/edit") {
         unset beresp.http.set-cookie;
 
         if (beresp.status >= 200 && beresp.status < 400) {
