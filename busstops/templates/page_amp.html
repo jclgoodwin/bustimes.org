@@ -15,9 +15,19 @@
 <body class="wide">
 
 <header>
-<div>
-<a href="/" class="site-name">Bus Times</a>
-</div>
+    <div>
+        <a href="/" class="site-name">Bus Times</a>
+        <ul>
+            <li><a href="/map">Map</a></li>
+        </ul>
+        <form method="GET" action="/search" class="search">
+            <label>
+                Search
+                <input name="q" placeholder="Search" type="search" required />
+            </label>
+            <input type="submit" value="Search" />
+        </form>
+    </div>
 </header>
 
 <main>
