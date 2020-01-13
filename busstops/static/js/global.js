@@ -21,22 +21,23 @@ if (navigator.serviceWorker && location.protocol === 'https:') {
         document.cookie = 'seen_cookie_message=yes; max-age=31536000; path=/';
     }
 
-    var ads = document.getElementsByClassName('banner-ad'),
-        script;
+    var ads = document.getElementsByClassName('banner-ad');
+    if (!ads.length) {
+       return;
+    }
     window.adsbygoogle = (window.adsbygoogle || []);
     window.adsbygoogle.requestNonPersonalizedAds = 1;
-
+    var script = document.createElement('script');
+    script.dataset['ad-client'] = 'ca-pub-4420219114164200';
+    script.async = 'async';
+    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+    document.body.appendChild(script);
 
     if (window.IntersectionObserver) {
         var observer = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
                 if (entry.isIntersecting && !entry.target.querySelector('.adsbygoogle').innerHTML) {
                     window.adsbygoogle.push({});
-                    if (!script) {
-                        script = document.createElement('script');
-                        script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
-                        document.body.appendChild(script);
-                    }
                 }
             });
         });
@@ -48,11 +49,5 @@ if (navigator.serviceWorker && location.protocol === 'https:') {
         } else {
             window.adsbygoogle.push({});
         }
-    }
-
-    if (!observer) {
-        script = document.createElement('script');
-        script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
-        document.body.appendChild(script);
     }
 })();
