@@ -2,7 +2,7 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8" />
-<title>{% block title %}{% if object %}{% firstof object.get_long_name object.get_qualified_name object %} – {% endif %}Bus Times{% endblock %}</title>
+<title>{% block title %}{% if object %}{% firstof object.get_long_name object.get_qualified_name object %} – {% endif %}bustimes.org{% endblock %}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#ef9" />
 <link rel="preconnect" href="https://browser.sentry-cdn.com" />
@@ -37,7 +37,7 @@
 {% block header %}
 <header>
     <div>
-        <a href="/" class="site-name{% if object.mode == 'ferry' %} ferry{% endif %}">{% if object.mode == 'ferry' %}Ferry{% else %}Bus{% endif %} Times</a>
+        <a href="/" class="site-name{% if object.mode == 'ferry' %} ferry{% endif %}">{% if object.mode == 'ferry' %}Ferry Times{% else %}bustimes.org{% endif %}</a>
         <ul>
             <li><a href="/map{% if object.latlong %}#16/{{ object.latlong.y|floatformat:4 }}/{{ object.latlong.x|floatformat:4 }}{% endif %}">Map</a></li>
         </ul>

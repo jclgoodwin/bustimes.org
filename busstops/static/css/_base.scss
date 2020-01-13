@@ -158,6 +158,12 @@ header {
         font-size: 1.5em;
     }
 
+    div {
+        .site-name {
+            position: absolute;
+        }
+    }
+
     ul {
         float: right;
         margin: 0;
