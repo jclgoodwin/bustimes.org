@@ -384,7 +384,6 @@ def edit_vehicle(request, vehicle_id):
     submitted = False
     initial = {
         'operator': vehicle.operator,
-        'fleet_number': vehicle.fleet_number,
         'reg': vehicle.reg,
         'vehicle_type': vehicle.vehicle_type,
         'features': vehicle.features.all(),
@@ -396,6 +395,10 @@ def edit_vehicle(request, vehicle_id):
         'notes': vehicle.notes,
         'user': request.COOKIES.get('username')
     }
+    if vehicle.fleet_code:
+        initial['fleet_number'] = vehicle.fleet_code
+    elif vehicle.fleet_number is not None:
+        initial['fleet_number'] = str(vehicle.fleet_number)
 
     if request.method == 'POST':
         form = EditVehicleForm(request.POST, initial=initial, operator=vehicle.operator, vehicle=vehicle)
