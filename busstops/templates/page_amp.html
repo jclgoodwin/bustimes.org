@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1" />
-<title>{% block title %}{% if object %}{{ object }} – {% endif %}Bus Times{% endblock %}</title>
+<title>{% block title %}{% if object %}{{ object }} – {% endif %}bustimes.org{% endblock %}</title>
 <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}" />
 {% load inline_style %}
 {% amp_inline_stylesheet 'main' %}
@@ -16,7 +16,7 @@
 
 <header>
     <div>
-        <a href="/" class="site-name">Bus Times</a>
+        <a href="/" class="site-name">bustimes.org</a>
         <ul>
             <li><a href="/map">Map</a></li>
         </ul>
