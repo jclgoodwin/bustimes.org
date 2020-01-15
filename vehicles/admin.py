@@ -158,7 +158,7 @@ def apply_edits(queryset):
             else:
                 vehicle.data = edit.changes
             update_fields.append('data')
-        for field in ('branding', 'name', 'notes', 'fleet_number'):
+        for field in ('branding', 'name', 'notes'):
             if getattr(edit, field):
                 if getattr(edit, field) == f'-{getattr(vehicle, field)}':
                     setattr(vehicle, field, '')
