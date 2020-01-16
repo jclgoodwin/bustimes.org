@@ -17,7 +17,10 @@ class Command(ImportLiveVehiclesCommand):
             when = parse_datetime(item['RecordedAtTime'])
         except ValueError:
             when = datetime.strptime(item['RecordedAtTime'], '%d/%m/%Y %H:%M:%S')
-        return timezone.make_aware(when)
+        try:
+            return timezone.make_aware(when)
+        except ValueError:
+            return when
 
     def get_vehicle(self, item):
         code = item['VehicleRef']
