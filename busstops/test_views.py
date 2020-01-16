@@ -288,20 +288,17 @@ class ViewsTests(TestCase):
         """The normal and Accelerated Mobile pages versions should be mostly the same
         (but slightly different)
         """
-        for url in ('/operators/ains', '/operators/ainsleys-chariots', '/operators/AINS?amp'):
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, 200)
-            self.assertContains(response, 'An airline operator in')
-            self.assertContains(response, 'Contact Ainsley&#39;s Chariots')
-            self.assertContains(response, '10 King Road<br />Ipswich', html=True)
-            self.assertContains(response, '&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#97;&#105;' +
-                                '&#110;&#115;&#108;&#101;&#121;&#64;&#101;&#120;&#97;&#109;' +
-                                '&#112;&#108;&#101;&#46;&#99;&#111;&#109;')
-            self.assertContains(response, 'http://www.ouibus.com')
-            self.assertContains(response, '@dril on Twitter')
-            self.assertContains(response, 'Mind your head')  # Note
-
-        self.assertContains(response, '<style amp-custom>')
+        response = self.client.get('/operators/ains')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'An airline operator in')
+        self.assertContains(response, 'Contact Ainsley&#39;s Chariots')
+        self.assertContains(response, '10 King Road<br />Ipswich', html=True)
+        self.assertContains(response, '&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#97;&#105;' +
+                            '&#110;&#115;&#108;&#101;&#121;&#64;&#101;&#120;&#97;&#109;' +
+                            '&#112;&#108;&#101;&#46;&#99;&#111;&#109;')
+        self.assertContains(response, 'http://www.ouibus.com')
+        self.assertContains(response, '@dril on Twitter')
+        self.assertContains(response, 'Mind your head')  # Note
 
     def test_operator_not_found(self):
         """An operator with no services, or that doesn't exist, should should return a 404 response"""
