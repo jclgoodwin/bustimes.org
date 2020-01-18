@@ -209,6 +209,28 @@ class OperatorFilter(admin.SimpleListFilter):
         return queryset
 
 
+class ChangeFilter(admin.SimpleListFilter):
+    title = 'changed field'
+    parameter_name = 'change'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('reg', 'reg'),
+            ('fleet_number', 'fleet number'),
+            ('colours', 'colours'),
+            ('branding', 'branding'),
+            ('name', 'name'),
+            ('notes', 'notes'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value():
+            if self.value() == 'colours':
+                return queryset.filter(~Q(colours='') | Q(livery__isnull=False))
+            return queryset.filter(~Q(**{self.value(): ''}))
+        return queryset
+
+
 class UrlFilter(admin.SimpleListFilter):
     title = 'URL'
     parameter_name = 'url'
@@ -250,9 +272,10 @@ class VehicleEditAdmin(admin.ModelAdmin):
     list_filter = [
         'approved',
         UrlFilter,
-        UserFilter,
         'withdrawn',
-        OperatorFilter
+        ChangeFilter,
+        OperatorFilter,
+        UserFilter,
     ]
     raw_id_fields = ['vehicle', 'livery']
     actions = ['apply_edits', 'delete_vehicles']
