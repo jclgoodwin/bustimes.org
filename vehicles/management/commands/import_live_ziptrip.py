@@ -61,6 +61,7 @@ class Command(ImportLiveVehiclesCommand):
         'SOG': 'guernsey',
         'IOM': ('bus-vannin', 'IMHR'),
         'Rtl': ('RBUS', 'GLRB', 'KENN', 'NADS', 'THVB', 'CTNY'),
+        'ROST': ('ROST', 'LNUD')
     }
     operators = {}
     source_name = 'ZipTrip'
@@ -95,7 +96,7 @@ class Command(ImportLiveVehiclesCommand):
             'UNOE',
             'WHTL',
             'TRDU',
-            # 'ROST',
+            'ROST',
         ):
             stops = StopPoint.objects.filter(service__operator=operator, service__current=True)
             extent = stops.aggregate(Extent('latlong'))['latlong__extent']
@@ -157,7 +158,7 @@ class Command(ImportLiveVehiclesCommand):
                 defaults['operator_id'] = operator_id[0]
                 return self.vehicles.get_or_create(defaults, operator_id__in=operator_id, code=vehicle)
 
-            # services may have multiple operators, but vehicles all have the same operator
+            # services may have multiple operators, not vehicles
             operator_id = operator_id[0]
 
         try:
