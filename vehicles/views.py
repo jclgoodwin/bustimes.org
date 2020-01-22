@@ -317,16 +317,17 @@ def service_vehicles_history(request, slug=None, operator=None, route=None):
         date = dates.last()
         if not date:
             raise Http404()
-    calls = Call.objects.filter(journey=OuterRef('pk'))
-    locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
-    journeys = journeys.filter(datetime__date=date).select_related('vehicle')
-    journeys = journeys.annotate(calls=Exists(calls), locations=Exists(locations)).order_by('datetime')
+    # calls = Call.objects.filter(journey=OuterRef('pk'))
+    # journeys = journeys.annotate(calls=Exists(calls))
+    journeys = journeys.filter(datetime__date=date).select_related('vehicle').order_by('datetime')
     previous = None
     for journey in journeys:
-        if previous:
-            previous.next = journey
-            journey.previous = previous
-        previous = journey
+        journey.locations = r.exists(f'journey {journey.id}')
+        if journey.locations:
+            if previous:
+                previous.next = journey
+                journey.previous = previous
+            previous = journey
 
     if slug:
         operator = service.operator.select_related('region').first()
@@ -369,15 +370,17 @@ class VehicleDetailView(DetailView):
             context['date'] = date
 
             journeys = journeys.filter(datetime__date=date).order_by('datetime')
-            calls = Call.objects.filter(journey=OuterRef('pk'))
-            locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
-            journeys = journeys.select_related('service').annotate(calls=Exists(calls), locations=Exists(locations))
+            # calls = Call.objects.filter(journey=OuterRef('pk'))
+            # locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
+            journeys = journeys.select_related('service')
             previous = None
             for journey in journeys:
-                if previous:
-                    previous.next = journey
-                    journey.previous = previous
-                previous = journey
+                journey.locations = r.exists(f'journey {journey.id}')
+                if journey.locations:
+                    if previous:
+                        previous.next = journey
+                        journey.previous = previous
+                    previous = journey
             context['journeys'] = journeys
 
         return context
