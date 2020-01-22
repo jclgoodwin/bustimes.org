@@ -175,16 +175,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
                             ServiceCode.objects.create(scheme=self.source.name, service=journey.service,
                                                        code=journey.route_name)
             location.journey = journey
-        with transaction.atomic():
-            # save new location
-            location.current = True
-            location.save()
+        if latest:
+            location.id = latest.id
+        location.current = True
+        location.save()
+        if not latest:
             journey.vehicle.latest_location = location
             journey.vehicle.save(update_fields=['latest_location'])
-            if latest:
-                # mark old location as not current
-                latest.current = False
-                latest.save(update_fields=['current'])
         self.current_location_ids.add(location.id)
         vehicle.update_last_modified()
 

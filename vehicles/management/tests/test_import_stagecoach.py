@@ -8,7 +8,7 @@ from ..commands.import_stagecoach import Command
 
 
 @freeze_time('2019-11-17T16:17:49.000Z')
-class NatExpTest(TestCase):
+class StagecoachTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         source = DataSource.objects.create(name='Stagecoach', datetime=timezone.now())
@@ -29,7 +29,7 @@ class NatExpTest(TestCase):
         self.assertEqual(len(items), 12)
         self.assertTrue(sleep.called)
 
-        with self.assertNumQueries(22):
+        with self.assertNumQueries(20):
             for item in items:
                 self.command.handle_item(item, self.command.source.datetime)
 

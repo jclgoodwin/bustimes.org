@@ -60,7 +60,7 @@ class BusHubTest(TestCase):
             "Destination": None
         }
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(10):
             command.handle_item(item, self.source.datetime)
 
         with self.assertNumQueries(1):
@@ -74,7 +74,7 @@ class BusHubTest(TestCase):
 
         item['OperatorRef'] = 'WNGS'
         item['Bearing'] = '-1'
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(5):
             command.handle_item(item, self.source.datetime)
         self.assertEqual(2, Vehicle.objects.count())
         self.vehicle.refresh_from_db()
@@ -83,5 +83,5 @@ class BusHubTest(TestCase):
         self.assertEqual('44', self.vehicle.latest_location.journey.service_id)
 
         item["RecordedAtTime"] = "31/08/2018 23:10:33"
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(3):
             command.handle_item(item, self.source.datetime)
