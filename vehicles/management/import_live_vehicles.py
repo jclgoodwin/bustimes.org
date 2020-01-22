@@ -2,11 +2,15 @@ import math
 import requests
 import logging
 import sys
+import redis
+import json
 from datetime import timedelta
 from setproctitle import setproctitle
 from time import sleep
-from django.db import Error, IntegrityError, InterfaceError, transaction
+from django.db import Error, IntegrityError, InterfaceError
 from django.core.management.base import BaseCommand
+from django.core.serializers.json import DjangoJSONEncoder
+from django.conf import settings
 from django.utils import timezone
 from busstops.models import DataSource, ServiceCode
 from ..models import Vehicle, VehicleLocation
@@ -33,7 +37,7 @@ def calculate_bearing(a, b):
     if bearing_degrees < 0:
         bearing_degrees += 360
 
-    return bearing_degrees
+    return int(round(bearing_degrees))
 
 
 def calculate_speed(a, b):
@@ -183,6 +187,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
             journey.vehicle.latest_location = location
             journey.vehicle.save(update_fields=['latest_location'])
         self.current_location_ids.add(location.id)
+
+        appendage = [location.datetime, tuple(location.latlong), location.heading, location.delay]
+        try:
+            self.redis.append(f'journey {location.journey.id}', json.dumps(appendage, cls=DjangoJSONEncoder) + ';')
+        except AttributeError:
+            pass
+
         vehicle.update_last_modified()
 
         if latest:
@@ -227,6 +238,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     def handle(self, *args, **options):
         setproctitle(sys.argv[1].replace('import_', '', 1).replace('live_', '', 1))
+        self.redis = redis.from_url(settings.CELERY_BROKER_URL)
         while True:
             try:
                 wait = self.update()

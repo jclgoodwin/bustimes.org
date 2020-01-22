@@ -1,9 +1,12 @@
+import redis
+import json
 from datetime import timedelta
 from requests import Session, exceptions
 from ciso8601 import parse_datetime
 from django.db.models import Exists, OuterRef, Prefetch, Subquery
 from django.core.cache import cache
 from django.core.paginator import Paginator
+from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse, Http404
 from django.views.decorators.http import last_modified
@@ -22,6 +25,7 @@ from .tasks import handle_siri_vm, handle_siri_et
 
 
 session = Session()
+r = redis.from_url(settings.CELERY_BROKER_URL)
 
 
 class Poorly(Exception):
@@ -476,12 +480,17 @@ class JourneyDetailView(DetailView):
 
 
 def journey_json(request, pk):
+    locations = r.get(f'journey {pk}')
+    if locations:
+        locations = [json.loads(location) for location in locations.split(b';') if location]
+    else:
+        locations = ()
     return JsonResponse([{
-        'coordinates': tuple(location.latlong),
-        'delta': location.early,
-        'direction': location.heading,
-        'datetime': location.datetime,
-    } for location in VehicleLocation.objects.filter(journey=pk).order_by('datetime')], safe=False)
+        'coordinates': location[1],
+        'delta': location[3],
+        'direction': location[2],
+        'datetime': location[0]
+    } for location in locations], safe=False)
 
 
 def siri(request):

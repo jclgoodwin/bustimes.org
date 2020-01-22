@@ -86,7 +86,7 @@ class VehiclesTests(TestCase):
             response = self.client.get(self.vehicle_2.get_absolute_url())
         self.assertEqual(200, response.status_code)
 
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(0):
             response = self.client.get('/journeys/1.json')
         self.assertEqual([], response.json())
 
