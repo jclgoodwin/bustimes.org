@@ -1,8 +1,9 @@
 from celery import shared_task
-from busstops.models import DataSource
+from busstops.models import DataSource, ServiceCode
 import xml.etree.cElementTree as ET
 from io import StringIO
 from .management.commands import import_sirivm
+from .models import JourneyCode
 from .siri_et import siri_et
 
 
@@ -22,3 +23,15 @@ def handle_siri_vm(request_body):
         if element.tag[-15:] == 'VehicleActivity':
             command.handle_item(element, None)
             element.clear()
+
+
+@shared_task
+def create_service_code(line_ref, service_id, scheme):
+    ServiceCode.objects.update_or_create({'code': line_ref}, service_id=service_id, scheme=scheme)
+
+
+@shared_task
+def create_journey_code(destination, service_id, journey_ref, source_id):
+    JourneyCode.objects.update_or_create({
+        'destination': destination
+    }, service=service_id, code=journey_ref, siri_source_id=source_id)

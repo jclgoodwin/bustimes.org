@@ -15,7 +15,8 @@ from django.db.models import Q
 from django.utils import timezone
 from busstops.models import Service, ServiceCode, DataSource, SIRISource
 from bustimes.models import get_calendars, StopTime
-from vehicles.models import Vehicle, VehicleJourney, JourneyCode
+from vehicles.models import Vehicle, VehicleJourney
+from vehicles.tasks import create_service_code, create_journey_code
 
 
 logger = logging.getLogger(__name__)
@@ -649,20 +650,12 @@ class SiriSmDepartures(Departures):
                     scheme += ' SIRI'
                     line_ref = line_ref.text
                     if line_ref and line_ref not in self.line_refs and operator != 'TD':
-                        try:
-                            ServiceCode.objects.update_or_create({'code': line_ref}, service=service, scheme=scheme)
-                        except DatabaseError:
-                            pass
+                        create_service_code.delay(line_ref, service.id, scheme)
                         self.line_refs.add(line_ref)
 
             # Create a "journey code", which can be used to work out the destination of a vehicle.
             if 'jmwrti' in url and destination and journey_ref:
-                try:
-                    JourneyCode.objects.update_or_create({
-                        'destination': destination
-                    }, service=service, code=journey_ref, siri_source=self.source)
-                except (JourneyCode.MultipleObjectsReturned, DatabaseError):
-                    pass
+                create_journey_code.delay(destination, service.id, journey_ref, self.source.id)
 
         return {
             'time': aimed_time,
