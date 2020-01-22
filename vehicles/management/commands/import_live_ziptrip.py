@@ -169,13 +169,19 @@ class Command(ImportLiveVehiclesCommand):
             if 'fleet_number' in defaults and operator_id in {'IPSW', 'ROST', 'LYNX'}:
                 # vehicle codes differ between sources, so use fleet number
                 defaults['code'] = vehicle
-                if operator_id in {'ROST', 'LYNX'}:
+
+                if operator_id == 'ROST':
                     defaults['operator_id'] = 'ROST'
                     # query all Transdev Blazefield operators
                     operator_ids = ('LNUD', 'BPTR', 'HRGT', 'KDTR', 'ROST', 'YCST')
                     return self.vehicles.get_or_create(defaults, operator_id__in=operator_ids,
                                                        fleet_number=defaults['fleet_number'])
-                return self.vehicles.get_or_create(defaults, operator_id=operator_id, fleet_number=fleet_number)
+
+                values = self.vehicles.get_or_create(defaults, operator_id=operator_id, fleet_number=fleet_number)
+                if operator_id == 'LYNX' and values[0].code != vehicle:
+                    values[0].code = vehicle
+                    values[0].save(update_fields=['code'])
+                return values
 
             return self.vehicles.get_or_create(defaults, operator_id=operator_id, code=vehicle)
         except Operator.DoesNotExist as e:
