@@ -650,12 +650,12 @@ class SiriSmDepartures(Departures):
                     scheme += ' SIRI'
                     line_ref = line_ref.text
                     if line_ref and line_ref not in self.line_refs and operator != 'TD':
-                        create_service_code.delay(line_ref, service.id, scheme)
+                        create_service_code.delay(line_ref, service.pk, scheme)
                         self.line_refs.add(line_ref)
 
             # Create a "journey code", which can be used to work out the destination of a vehicle.
             if 'jmwrti' in url and destination and journey_ref:
-                create_journey_code.delay(destination, service.id, journey_ref, self.source.id)
+                create_journey_code.delay(destination, service.pk, journey_ref, self.source.id)
 
         return {
             'time': aimed_time,
