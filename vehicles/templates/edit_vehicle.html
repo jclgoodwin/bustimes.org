@@ -25,7 +25,7 @@
     <p>(You can also <a href="{{ vehicle.operator.get_absolute_url }}/vehicles/edit">edit several {{ vehicle.operator }} vehicles at once</a>)</p>
 
     <form action="/vehicles/{{ vehicle.id }}/edit" method="POST">
-        <p>Code:<br>
+        <p>Ticket machine code:<br>
         {{ vehicle.code }}</p>
 
         {{ form.as_p }}
