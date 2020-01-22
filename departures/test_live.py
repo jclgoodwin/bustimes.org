@@ -116,10 +116,12 @@ class LiveDeparturesTest(TestCase):
 
         calendar = Calendar.objects.create(mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
                                            start_date='2019-02-09', end_date='2019-02-09')
-        trip = Trip.objects.create(calendar=calendar, route=route, destination=cls.worcester_stop,
+        worcester_route = Route.objects.create(service=worcester_44, start_date='2017-03-04', source=source, code='44')
+        trip = Trip.objects.create(calendar=calendar, route=worcester_route, destination=cls.worcester_stop,
                                    start='0', end='11:00')
         StopTime.objects.create(trip=trip, sequence=0, arrival='10:54', departure='10:54',
                                 stop_id=cls.worcester_stop.pk)
+        StopUsage.objects.create(stop_id=cls.worcester_stop.pk, service=worcester_44, order=1)
 
     def test_abstract(self):
         departures = live.Departures(None, ())
@@ -408,7 +410,7 @@ class LiveDeparturesTest(TestCase):
         self.assertContains(response, """
             <tr>
                 <td>
-                    <a href=/services/15>15</a>
+                    <a href=/services/44>44</a>
                 </td>
                 <td>Crowngate Bus Station</td>
                 <td>10:54</td>

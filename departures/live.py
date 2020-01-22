@@ -857,7 +857,7 @@ def get_stop_times(when, stop, services):
     time_since_midnight = datetime.timedelta(hours=when.hour, minutes=when.minute, seconds=when.second,
                                              microseconds=when.microsecond)
     return StopTime.objects.filter(~Q(activity='setDown'), stop_id=stop, departure__gte=time_since_midnight,
-                                   trip__calendar__in=get_calendars(when))
+                                   trip__route__service__in=services, trip__calendar__in=get_calendars(when))
 
 
 def get_departures(stop, services):
