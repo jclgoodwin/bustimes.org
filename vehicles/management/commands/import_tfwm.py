@@ -67,6 +67,8 @@ class Command(ImportLiveVehiclesCommand):
             try:
                 vehicle, created = self.vehicles.get_or_create(defaults, operator__in=['DIAM', 'FSMR'],
                                                                code=vehicle_code)
+                if not vehicle.operator_id:
+                    print(item)
                 if vehicle.operator_id == 'DIAM':
                     return None, None
                 return vehicle, created
