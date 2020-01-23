@@ -10,7 +10,6 @@ from time import sleep
 from django.db import Error, IntegrityError, InterfaceError
 from django.core.management.base import BaseCommand
 from django.core.serializers.json import DjangoJSONEncoder
-from django.core.cache import cache
 from django.conf import settings
 from django.utils import timezone
 from busstops.models import DataSource, ServiceCode
@@ -162,6 +161,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 changed = True
             if changed:
                 latest.journey.save()
+                journey.set_trip()
             location.journey = latest.journey
             if location.heading is None:
                 location.heading = calculate_bearing(latest.latlong, location.latlong)
@@ -170,6 +170,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if not journey.datetime:
                 journey.datetime = location.datetime
             journey.save()
+            journey.set_trip()
             if journey.service and not journey.service.tracking:
                 journey.service.tracking = True
                 journey.service.save(update_fields=['tracking'])
