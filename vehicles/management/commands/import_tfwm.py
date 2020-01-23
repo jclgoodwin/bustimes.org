@@ -13,6 +13,7 @@ class Command(ImportLiveVehiclesCommand):
     source_name = 'TfWM'
     url = 'http://api.tfwm.org.uk/gtfs/vehicle_positions'
     routes = {}
+    landflight = set()
     select_bus_services = set()
 
     @staticmethod
@@ -27,6 +28,8 @@ class Command(ImportLiveVehiclesCommand):
                 self.routes[route['Id']] = route
                 if route['Operators']['Operator'][0]['Name'] == 'Select Bus Services':
                     self.select_bus_services.add(route['Name'])
+                if route['Operators']['Operator'][0]['Name'] == 'LandFlight':
+                    self.landflight.add(route['Name'])
 
         response = self.session.get(self.url, params=settings.TFWM, timeout=10)
         feed = gtfs_realtime_pb2.FeedMessage()
@@ -53,7 +56,7 @@ class Command(ImportLiveVehiclesCommand):
                 elif operator == 'First Worcestershire':
                     operator = 'FSMR'
                 else:
-                    print(vehicle_code, operator)
+                    print(item, vehicle_code, operator)
                     return None, None
 
                 if vehicle_code.isdigit():
@@ -74,6 +77,7 @@ class Command(ImportLiveVehiclesCommand):
                 return vehicle, created
             except Vehicle.MultipleObjectsReturned as e:
                 print(e)
+
         elif vehicle_code.startswith('BUS_'):
             for line_name in self.select_bus_services:
                 if vehicle_code.endswith(line_name) and not vehicle_code.endswith('_' + line_name):
@@ -81,7 +85,13 @@ class Command(ImportLiveVehiclesCommand):
                     defaults['fleet_number'] = vehicle_code.split('_')[-1]
                     return self.vehicles.get_or_create(defaults, operator_id='SLBS', code=vehicle_code)
 
-        print(vehicle_code)
+        elif vehicle_code.startswith('Y'):
+            for line_name in self.landflight:
+                if vehicle_code.lower().endswith(line_name.lower()):
+                    vehicle_code = vehicle_code[:-len(line_name)]
+                    return self.vehicles.get_or_create(defaults, operator_id='SLVL', code=vehicle_code)
+
+        print(vehicle_code, item)
         return None, None
 
     def get_journey(self, item, vehicle):
@@ -100,8 +110,8 @@ class Command(ImportLiveVehiclesCommand):
             if trip:
                 journey.destination = trip.headsign
 
-        if vehicle.operator_id and (len(vehicle.code) == 5 or vehicle.code.startswith('BUS_')):
-            vehicle_code = item.vehicle.vehicle.id
+        vehicle_code = item.vehicle.vehicle.id
+        if vehicle_code.startswith(vehicle.code) and len(vehicle.code) < len(vehicle_code):
             journey.route_name = vehicle_code[len(vehicle.code):]
 
         if item.vehicle.HasField('trip'):
