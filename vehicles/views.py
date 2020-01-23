@@ -322,7 +322,10 @@ def service_vehicles_history(request, slug=None, operator=None, route=None):
     journeys = journeys.filter(datetime__date=date).select_related('vehicle').order_by('datetime')
     previous = None
     for journey in journeys:
-        journey.locations = r.exists(f'journey {journey.id}')
+        try:
+            journey.locations = r.exists(f'journey {journey.id}')
+        except redis.exceptions.ConnectionError:
+            journey.locations = False
         if journey.locations:
             if previous:
                 previous.next = journey
@@ -375,7 +378,10 @@ class VehicleDetailView(DetailView):
             journeys = journeys.select_related('service')
             previous = None
             for journey in journeys:
-                journey.locations = r.exists(f'journey {journey.id}')
+                try:
+                    journey.locations = r.exists(f'journey {journey.id}')
+                except redis.exceptions.ConnectionError:
+                    journey.locations = False
                 if journey.locations:
                     if previous:
                         previous.next = journey
@@ -483,10 +489,13 @@ class JourneyDetailView(DetailView):
 
 
 def journey_json(request, pk):
-    locations = r.get(f'journey {pk}')
-    if locations:
-        locations = [json.loads(location) for location in locations.split(b';') if location]
-    else:
+    try:
+        locations = r.get(f'journey {pk}')
+        if locations:
+            locations = [json.loads(location) for location in locations.split(b';') if location]
+        else:
+            locations = ()
+    except redis.exceptions.ConnectionError:
         locations = ()
     return JsonResponse([{
         'coordinates': location[1],

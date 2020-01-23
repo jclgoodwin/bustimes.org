@@ -17,6 +17,7 @@ from ..models import Vehicle, VehicleLocation
 
 
 logger = logging.getLogger(sys.argv[1])
+r = redis.from_url(settings.CELERY_BROKER_URL)
 
 
 def calculate_bearing(a, b):
@@ -190,8 +191,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         appendage = [location.datetime, tuple(location.latlong), location.heading, location.delay]
         try:
-            self.redis.append(f'journey {location.journey.id}', json.dumps(appendage, cls=DjangoJSONEncoder) + ';')
-        except AttributeError:
+            r.append(f'journey {location.journey.id}', json.dumps(appendage, cls=DjangoJSONEncoder) + ';')
+        except redis.exceptions.ConnectionError:
             pass
 
         vehicle.update_last_modified()
@@ -238,7 +239,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     def handle(self, *args, **options):
         setproctitle(sys.argv[1].replace('import_', '', 1).replace('live_', '', 1))
-        self.redis = redis.from_url(settings.CELERY_BROKER_URL)
         while True:
             try:
                 wait = self.update()
