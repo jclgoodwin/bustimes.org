@@ -666,8 +666,10 @@ class Service(models.Model):
             return gtfs.get_timetable(routes, day)
 
         routes = Route.objects.filter(service__in=[self] + related).order_by('start_date')
-        timetable = Timetable(routes, day)
-
+        try:
+            timetable = Timetable(routes, day)
+        except (IndexError, UnboundLocalError):
+            return
         if timetable.date:
             for route in routes:
                 if route.start_date > timetable.date:
