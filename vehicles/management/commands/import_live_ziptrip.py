@@ -3,6 +3,7 @@ from datetime import timedelta
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point, Polygon
 from django.utils import timezone
+from django.core.cache import cache
 from requests.exceptions import RequestException
 from django.contrib.gis.db.models import Extent
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -21,8 +22,9 @@ def get_trip(latest_location, journey, item):
         return
     when = Command.get_datetime(item)
     time_since_midnight = timedelta(hours=when.hour, minutes=when.minute, seconds=when.second)
-    if journey.trip:
-        if journey.trip.end > time_since_midnight:
+    trip = cache.get(f'journey{journey.id}trip')
+    if trip:
+        if trip.end > time_since_midnight:
             return
     elif latest_location and latest_location.current and latest_location.journey.service == journey.service:
         if not (latest_location.datetime.minute % 10 < 5 and when.minute % 10 >= 5):
@@ -43,7 +45,7 @@ def get_trip(latest_location, journey, item):
         )
         journey.destination = str(trip.destination.locality or trip.destination.town or trip.destination)
         journey.datetime = when - time_since_midnight + trip.start
-        journey.trip = trip
+        cache.set(f'journey{journey.id}trip', trip)
     except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
         return
 

@@ -334,7 +334,7 @@ class ServiceIsNullFilter(admin.SimpleListFilter):
 class VehicleJourneyAdmin(admin.ModelAdmin):
     list_display = ('datetime', 'vehicle', 'service', 'route_name', 'code', 'destination')
     list_select_related = ('vehicle', 'service')
-    raw_id_fields = ('vehicle', 'service', 'trip')
+    raw_id_fields = ('vehicle', 'service')
     list_filter = (
         ServiceIsNullFilter,
         'source',
