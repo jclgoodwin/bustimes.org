@@ -10,6 +10,7 @@ from time import sleep
 from django.db import Error, IntegrityError, InterfaceError
 from django.core.management.base import BaseCommand
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.cache import cache
 from django.conf import settings
 from django.utils import timezone
 from busstops.models import DataSource, ServiceCode
@@ -61,13 +62,16 @@ def same_journey(latest_location, journey, when):
             return str(latest_location.journey.code) == str(journey.code)
         elif latest_location.journey.direction and journey.direction:
             return latest_location.journey.direction == journey.direction
-        elif latest_location.journey.trip_id:
-            if journey.trip_id:
-                return latest_location.journey.trip_id == journey.trip_id
-            return latest_location.journey.trip.end > timedelta(hours=when.hour, minutes=when.minute,
-                                                                seconds=when.second)
-        elif journey.trip_id:
-            return False
+        else:
+            latest_trip = latest_location.journey.get_trip()
+            trip = journey.get_trip()
+            if latest_trip:
+                if trip:
+                    return latest_trip == trip
+                return latest_trip.end > timedelta(hours=when.hour, minutes=when.minute,
+                                                   seconds=when.second)
+            elif trip:  # start of a new trip
+                return False
         return when - latest_location.datetime < timedelta(minutes=15)
     return False
 
