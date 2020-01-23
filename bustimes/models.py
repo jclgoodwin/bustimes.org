@@ -32,6 +32,9 @@ class Route(models.Model):
 
     class Meta:
         unique_together = ('source', 'code')
+        index_together = (
+            ('start_date', 'end_date'),
+        )
 
     def __str__(self):
         return ' – '.join(part for part in (self.line_name, self.line_brand, self.description) if part)
@@ -49,17 +52,22 @@ class Calendar(models.Model):
     end_date = models.DateField(null=True, blank=True)
     dates = DateRangeField(null=True)
 
+    class Meta:
+        index_together = (
+            ('start_date', 'end_date'),
+        )
+
     def __str__(self):
         return f'{self.start_date} to {self.end_date}'
 
 
 class CalendarDate(models.Model):
     calendar = models.ForeignKey(Calendar, models.CASCADE)
-    start_date = models.DateField()
-    end_date = models.DateField(null=True, blank=True)
+    start_date = models.DateField(db_index=True)
+    end_date = models.DateField(null=True, blank=True, db_index=True)
     dates = DateRangeField(null=True)
-    operation = models.BooleanField()
-    special = models.BooleanField(default=False)
+    operation = models.BooleanField(db_index=True)
+    special = models.BooleanField(default=False, db_index=True)
 
 
 class Note(models.Model):
