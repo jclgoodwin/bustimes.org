@@ -219,8 +219,8 @@ def siri_one_shot(code, now):
     trips = Trip.objects.filter(calendar__in=get_calendars(now), route__service=code.service_id,
                                 start__lte=time_since_midnight + timedelta(minutes=10),
                                 end__gte=time_since_midnight - timedelta(minutes=10))
-    if not trips.exists():
-        if not locations.filter(journey__source__name=source).exists():
+    if not locations.filter(journey__source__name=source).exists():
+        if not trips.exists():
             # no journeys currently scheduled, and no vehicles online recently
             cache.set(service_cache_key, 'nothing scheduled', 300)  # back off for 5 minutes
             return 'nothing scheduled'
