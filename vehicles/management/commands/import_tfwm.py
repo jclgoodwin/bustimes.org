@@ -13,8 +13,11 @@ class Command(ImportLiveVehiclesCommand):
     source_name = 'TfWM'
     url = 'http://api.tfwm.org.uk/gtfs/vehicle_positions'
     routes = {}
-    landflight = set()
-    select_bus_services = set()
+    routes_by_operator = {
+        'Select Bus Services': set(),
+        'LandFlight': set(),
+        'Johnson\'s Excelbus': set(),
+    }
 
     @staticmethod
     def get_datetime(item):
@@ -26,10 +29,9 @@ class Command(ImportLiveVehiclesCommand):
                                                                                      'formatter': 'json'}, timeout=10)
             for route in response.json()['ArrayOfLine']['Line']:
                 self.routes[route['Id']] = route
-                if route['Operators']['Operator'][0]['Name'] == 'Select Bus Services':
-                    self.select_bus_services.add(route['Name'])
-                if route['Operators']['Operator'][0]['Name'] == 'LandFlight':
-                    self.landflight.add(route['Name'])
+                operator = route['Operators']['Operator'][0]['Name']
+                if operator in self.routes_by_operator:
+                    self.routes_by_operator[operator].add(route['Name'])
 
         response = self.session.get(self.url, params=settings.TFWM, timeout=10)
         feed = gtfs_realtime_pb2.FeedMessage()
@@ -79,17 +81,21 @@ class Command(ImportLiveVehiclesCommand):
                 print(e)
 
         elif vehicle_code.startswith('BUS_'):
-            for line_name in self.select_bus_services:
+            for line_name in self.routes_by_operator['Select Bus Services']:
                 if vehicle_code.endswith(line_name) and not vehicle_code.endswith('_' + line_name):
                     vehicle_code = vehicle_code[:-len(line_name)]
                     defaults['fleet_number'] = vehicle_code.split('_')[-1]
                     return self.vehicles.get_or_create(defaults, operator_id='SLBS', code=vehicle_code)
 
-        elif vehicle_code.startswith('Y'):
-            for line_name in self.landflight:
+        elif vehicle_code[:2].isalpha() and vehicle_code[2:4].isdigit():
+            for line_name in self.routes_by_operator['LandFlight']:
                 if vehicle_code.lower().endswith(line_name.lower()):
                     vehicle_code = vehicle_code[:-len(line_name)]
                     return self.vehicles.get_or_create(defaults, operator_id='SLVL', code=vehicle_code)
+            for line_name in self.routes_by_operator['Johnson\'s Excelbus']:
+                if vehicle_code.lower().endswith(line_name.lower()):
+                    vehicle_code = vehicle_code[:-len(line_name)]
+                    return self.vehicles.get_or_create(defaults, operator_id='JOHS', code=vehicle_code)
 
         print(vehicle_code, item)
         return None, None
