@@ -44,7 +44,7 @@ def get_trip(latest_location, journey, item):
         )
         journey.destination = str(trip.destination.locality or trip.destination.town or trip.destination)
         journey.datetime = when - time_since_midnight + trip.start
-        journey.trip = trip
+        journey.set_trip(trip)
     except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
         return
 
