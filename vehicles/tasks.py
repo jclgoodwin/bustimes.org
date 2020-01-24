@@ -34,4 +34,4 @@ def create_service_code(line_ref, service_id, scheme):
 def create_journey_code(destination, service_id, journey_ref, source_id):
     JourneyCode.objects.update_or_create({
         'destination': destination
-    }, service=service_id, code=journey_ref, siri_source_id=source_id)
+    }, service_id=service_id, code=journey_ref, siri_source_id=source_id)
