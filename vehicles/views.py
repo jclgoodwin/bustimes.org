@@ -320,17 +320,21 @@ def service_vehicles_history(request, slug=None, operator=None, route=None):
     # calls = Call.objects.filter(journey=OuterRef('pk'))
     # journeys = journeys.annotate(calls=Exists(calls))
     journeys = journeys.filter(datetime__date=date).select_related('vehicle').order_by('datetime')
-    previous = None
-    for journey in journeys:
-        try:
-            journey.locations = r.exists(f'journey {journey.id}')
-        except redis.exceptions.ConnectionError:
-            journey.locations = False
-        if journey.locations:
-            if previous:
-                previous.next = journey
-                journey.previous = previous
-            previous = journey
+    try:
+        pipe = r.pipeline()
+        for journey in journeys:
+            pipe.exists(f'journey {journey.id}')
+        locations = pipe.execute()
+        previous = None
+        for i, journey in enumerate(journeys):
+            journey.locations = locations[i]
+            if journey.locations:
+                if previous:
+                    previous.next = journey
+                    journey.previous = previous
+                previous = journey
+    except redis.exceptions.ConnectionError:
+        pass
 
     if slug:
         operator = service.operator.select_related('region').first()
@@ -376,17 +380,23 @@ class VehicleDetailView(DetailView):
             # calls = Call.objects.filter(journey=OuterRef('pk'))
             # locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
             journeys = journeys.select_related('service')
-            previous = None
-            for journey in journeys:
-                try:
-                    journey.locations = r.exists(f'journey {journey.id}')
-                except redis.exceptions.ConnectionError:
-                    journey.locations = False
-                if journey.locations:
-                    if previous:
-                        previous.next = journey
-                        journey.previous = previous
-                    previous = journey
+
+            try:
+                pipe = r.pipeline()
+                for journey in journeys:
+                    pipe.exists(f'journey {journey.id}')
+                locations = pipe.execute()
+                previous = None
+                for i, journey in enumerate(journeys):
+                    journey.locations = locations[i]
+                    if journey.locations:
+                        if previous:
+                            previous.next = journey
+                            journey.previous = previous
+                        previous = journey
+            except redis.exceptions.ConnectionError:
+                pass
+
             context['journeys'] = journeys
 
         return context
