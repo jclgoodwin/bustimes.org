@@ -271,9 +271,9 @@ class ImportServicesTest(TestCase):
         self.assertTrue(service.show_timetable)
         self.assertEqual(service.operator.first(), self.megabus)
         self.assertEqual(
-            service.get_traveline_link()[0],
-            'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST' +
-            '?line=11M11&sup=A&net=nrc&project=y08&command=direct&outputFormat=0'
+            list(service.get_traveline_links()),
+            [('http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST' +
+             '?line=11M11&sup=A&net=nrc&project=y08&command=direct&outputFormat=0', 'Traveline')]
         )
 
         self.assertEqual(res.context_data['breadcrumb'], [self.gb, self.megabus])
@@ -326,9 +326,9 @@ class ImportServicesTest(TestCase):
         self.assertTrue(service.show_timetable)
         self.assertEqual(service.operator.first(), self.fabd)
         self.assertEqual(
-            service.get_traveline_link()[0],
-            'http://www.travelinescotland.com/lts/#/timetables?' +
-            'timetableId=ABBN017&direction=OUTBOUND&queryDate=&queryTime='
+            list(service.get_traveline_links()),
+            [('http://www.travelinescotland.com/lts/#/timetables?' +
+             'timetableId=ABBN017&direction=OUTBOUND&queryDate=&queryTime=', 'Traveline Scotland')]
         )
         self.assertEqual(service.geometry.coords, ((
             (53.7423055225, -2.504212506), (53.7398252112, -2.5083672338),

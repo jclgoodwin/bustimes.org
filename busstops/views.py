@@ -531,11 +531,10 @@ class ServiceDetailView(DetailView):
                         'text': 'Buy tickets at nationalexpress.com'
                     })
 
-        traveline_url, traveline_text = self.object.get_traveline_link(date)
-        if traveline_url:
+        for url, text in self.object.get_traveline_links(date):
             context['links'].append({
-                'url': traveline_url,
-                'text': 'Timetable on the %s website' % traveline_text
+                'url': url,
+                'text': f'Timetable on the {text} website'
             })
 
         return context

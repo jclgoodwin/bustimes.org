@@ -112,9 +112,9 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(service.inbound_description, 'Attleborough - Wymondham - Norwich')
         self.assertEqual(service.operator.first(), self.fecs)
         self.assertEqual(
-            service.get_traveline_link()[0],
-            'http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST' +
-            '?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0'
+            list(service.get_traveline_links()),
+            [('http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST' +
+             '?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0', 'Traveline')]
         )
 
         res = self.client.get(service.get_absolute_url())

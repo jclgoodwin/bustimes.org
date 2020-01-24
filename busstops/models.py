@@ -532,7 +532,7 @@ class Service(models.Model):
         }.get(code)
 
     def get_tfl_url(self):
-        return 'https://tfl.gov.uk/bus/timetable/%s/' % self.line_name
+        return f'https://tfl.gov.uk/bus/timetable/{self.line_name}/'
 
     def get_trapeze_link(self, date):
         if self.source.name == 'Y':
@@ -551,7 +551,7 @@ class Service(models.Model):
             ('queryDate', date),
             ('queryTime', date)
         )
-        return 'http://www.{}/lts/#/timetables?{}'.format(domain, urlencode(query)), name
+        return f'http://www.{domain}/lts/#/timetables?{urlencode(query)}', name
 
     def is_megabus(self):
         return (self.line_name in {'FALCON', 'Oxford Tube'}
@@ -570,9 +570,10 @@ class Service(models.Model):
         )
         return 'https://www.awin1.com/awclick.php?' + urlencode(query)
 
-    def get_traveline_link(self, date=None):
+    def get_traveline_links(self, date=None):
         if self.source_id and self.source.name in ('Y', 'S'):
-            return self.get_trapeze_link(date)
+            yield self.get_trapeze_link(date)
+            return
 
         if self.region_id == 'W':
             for service_code in self.servicecode_set.filter(scheme='Traveline Cymru'):
@@ -582,28 +583,13 @@ class Service(models.Model):
                     ('timetable_key', service_code.code)
                 )
                 url = 'https://www.traveline.cymru/timetables/?' + urlencode(query)
-                return url, 'Traveline Cymru'
+                yield (url, 'Traveline Cymru')
+            return
 
-        query = None
+        base_url = 'http://www.travelinesoutheast.org.uk/se'
+        base_query = [('command', 'direct'), ('outputFormat', 0)]
 
-        if self.net:
-            if self.servicecode_set.filter(scheme='TfL').exists():
-                return self.get_tfl_url(), 'Transport for London'
-            elif self.net == 'tfl':
-                return None, None
-
-            parts = self.service_code.split('-')
-            line = parts[0].split('_')[-1].zfill(2) + parts[1].zfill(3)
-            line_ver = self.line_ver or parts[4]
-
-            query = [('line', line),
-                     ('lineVer', line_ver),
-                     ('net', self.net),
-                     ('project', parts[3])]
-            if parts[2] != '_':
-                query.append(('sup', parts[2]))
-
-        elif self.region_id == 'GB':
+        if self.region_id == 'GB':
             parts = self.service_code.split('_')
             operator_number = self.get_operator_number(parts[1])
             if operator_number is not None:
@@ -611,13 +597,39 @@ class Service(models.Model):
                          ('sup', parts[0][3:]),
                          ('net', 'nrc'),
                          ('project', 'y08')]
+                yield (
+                    f'{base_url}/XSLT_TTB_REQUEST?{urlencode(query + base_query)}',
+                    'Traveline'
+                )
 
-        if query is not None:
-            query += [('command', 'direct'), ('outputFormat', 0)]
-            base_url = 'http://www.travelinesoutheast.org.uk/se'
-            return '%s/XSLT_TTB_REQUEST?%s' % (base_url, urlencode(query)), 'Traveline'
+        elif '-' in self.service_code and '_' in self.service_code[2:4]:
+            if self.servicecode_set.filter(scheme='TfL').exists():
+                yield (self.get_tfl_url(), 'Transport for London')
+                return
 
-        return None, None
+            if self.service_code.startswith('tfl_'):
+                return
+
+            try:
+                for route in self.route_set.all():
+                    parts = route.code.split('-')
+                    net, line = parts[0].split('_')
+                    line_ver = parts[4][:-4]
+                    line = line.zfill(2) + parts[1].zfill(3)
+
+                    query = [('line', line),
+                             ('lineVer', line_ver),
+                             ('net', net),
+                             ('project', parts[3])]
+                    if parts[2] != '_':
+                        query.append(('sup', parts[2]))
+
+                    yield (
+                        f'{base_url}/XSLT_TTB_REQUEST?{urlencode(query + base_query)}',
+                        'Traveline'
+                    )
+            except ValueError:
+                pass
 
     def get_linked_services_cache_key(self):
         return f'{quote(self.service_code)}linked_services{self.date}'

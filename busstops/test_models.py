@@ -71,7 +71,7 @@ class ServiceTests(TestCase):
     def setUpTestData(cls):
         cls.region = Region.objects.create(id='L', name='London')
         cls.london_service = Service.objects.create(
-            service_code='tfl_8-N41-_-y05', net='tfl', line_name='N41',
+            service_code='tfl_8-N41-_-y05', line_name='N41',
             date='2000-1-1', region_id='L'
         )
 
@@ -80,6 +80,7 @@ class ServiceTests(TestCase):
 
         self.london_service.line_name = ''
         self.assertEqual(str(self.london_service), 'tfl_8-N41-_-y05')
+        self.london_service.line_name = 'N41'
 
         service = Service(line_name='C', description='Coasthopper - Filey')
         self.assertEqual(str(service), 'C - Coasthopper - Filey')
@@ -98,17 +99,22 @@ class ServiceTests(TestCase):
         self.london_service.mode = 'Underground'
         self.assertEqual(self.london_service.get_a_mode(), 'An Underground')
 
-    def test_get_traveline_link(self):
-        self.assertIsNone(self.london_service.get_traveline_link()[0])
+    def test_traveline_links(self):
+        # none
+        self.assertEqual([], list(self.london_service.get_traveline_links()))
 
-        self.london_service.mode = 'bus'
-        self.assertEqual(self.london_service.get_traveline_link(), (None, None))
+        # TfL
         ServiceCode.objects.create(service=self.london_service, code='N41', scheme='TfL')
-        self.assertEqual(self.london_service.get_traveline_link(),
-                         ('https://tfl.gov.uk/bus/timetable/N41/', 'Transport for London'))
+        self.assertEqual(list(self.london_service.get_traveline_links()),
+                         [('https://tfl.gov.uk/bus/timetable/N41/', 'Transport for London')])
 
+        # Yorkshire
         self.london_service.source = DataSource.objects.create(name='Y')
-        self.assertEqual(self.london_service.get_traveline_link()[0][:35], 'http://www.yorkshiretravel.net/lts/')
+        self.assertEqual(
+            list(self.london_service.get_traveline_links()),
+            [('http://www.yorkshiretravel.net/lts/#/timetables?timetableId='
+              + 'tfl_8-N41-_-y05&direction=OUTBOUND&queryDate=&queryTime=', 'Yorkshire Travel')]
+        )
 
     def test_get_operator_number(self):
         self.assertIsNone(self.london_service.get_operator_number('MGBD'))
