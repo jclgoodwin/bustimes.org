@@ -119,14 +119,16 @@
                     lngDistance = previousCoordinates.lng - coordinates.lng;
                     minutes = Math.floor(previousTimestamp / 60000) * 60000;
                     timeDistance = previousTimestamp - dateTime.getTime();
-                    latSpeed = latDistance / timeDistance;
-                    lngSpeed = lngDistance / timeDistance;
+                    if (timeDistance) {
+                        latSpeed = latDistance / timeDistance;
+                        lngSpeed = lngDistance / timeDistance;
 
-                    for (j = previousTimestamp - minutes; j <= timeDistance; j += 60000) {
-                        L.circleMarker(L.latLng(
-                            previousCoordinates.lat - latSpeed * j,
-                            previousCoordinates.lng - lngSpeed * j
-                        ), timeMarkerOptions).addTo(layerGroup);
+                        for (j = previousTimestamp - minutes; j <= timeDistance; j += 60000) {
+                            L.circleMarker(L.latLng(
+                                previousCoordinates.lat - latSpeed * j,
+                                previousCoordinates.lng - lngSpeed * j
+                            ), timeMarkerOptions).addTo(layerGroup);
+                        }
                     }
                 }
                 line.push(coordinates);
