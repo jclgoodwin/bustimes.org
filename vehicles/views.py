@@ -323,7 +323,7 @@ def service_vehicles_history(request, slug=None, operator=None, route=None):
     try:
         pipe = r.pipeline()
         for journey in journeys:
-            pipe.exists(f'journey {journey.id}')
+            pipe.exists(f'journey{journey.id}')
         locations = pipe.execute()
         previous = None
         for i, journey in enumerate(journeys):
@@ -384,7 +384,7 @@ class VehicleDetailView(DetailView):
             try:
                 pipe = r.pipeline()
                 for journey in journeys:
-                    pipe.exists(f'journey {journey.id}')
+                    pipe.exists(f'journey{journey.id}')
                 locations = pipe.execute()
                 previous = None
                 for i, journey in enumerate(journeys):
@@ -500,9 +500,9 @@ class JourneyDetailView(DetailView):
 
 def journey_json(request, pk):
     try:
-        locations = r.get(f'journey {pk}')
+        locations = r.lrange(f'journey{pk}', 0, -1)
         if locations:
-            locations = [json.loads(location) for location in locations.split(b';') if location]
+            locations = [json.loads(location) for location in locations]
         else:
             locations = ()
     except redis.exceptions.ConnectionError:

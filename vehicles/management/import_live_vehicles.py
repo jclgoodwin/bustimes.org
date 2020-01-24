@@ -198,7 +198,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         appendage = [location.datetime, tuple(location.latlong), location.heading, location.delay]
         try:
-            r.append(f'journey {location.journey.id}', json.dumps(appendage, cls=DjangoJSONEncoder) + ';')
+            r.rpush(f'journey{location.journey.id}', json.dumps(appendage, cls=DjangoJSONEncoder))
         except redis.exceptions.ConnectionError:
             pass
 
