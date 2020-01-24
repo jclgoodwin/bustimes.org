@@ -113,6 +113,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         vehicle, vehicle_created = self.get_vehicle(item)
         if not vehicle:
             return
+
         if vehicle_created:
             latest = None
         else:
@@ -127,6 +128,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     if location.latlong.equals_exact(latest.latlong, 0.001):
                         self.current_location_ids.add(latest.id)
                         return
+
         journey = self.get_journey(item, vehicle)
         journey.vehicle = vehicle
         if not journey:
@@ -161,7 +163,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 changed = True
             if changed:
                 latest.journey.save()
-                journey.set_trip()
+                latest.journey.set_trip()
             location.journey = latest.journey
             if location.heading is None:
                 location.heading = calculate_bearing(latest.latlong, location.latlong)
@@ -206,12 +208,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
             speed = calculate_speed(latest, location)
             if speed > 90:
                 print('{} mph\t{}'.format(speed, journey.vehicle.get_absolute_url()))
-            elif speed < 1.5:
-                last_three = list(location.journey.vehiclelocation_set.order_by('-id')[:3])
-                if len(last_three) == 3:
-                    speed = calculate_speed(last_three[2], last_three[0])
-                    if speed < 1.5:
-                        last_three[1].delete()
 
     def update(self):
         now = timezone.localtime()
