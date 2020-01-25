@@ -7,20 +7,24 @@ from ...models import Vehicle, VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
+def get_datetime(string):
+    try:
+        when = parse_datetime(string)
+    except ValueError:
+        when = datetime.strptime(string, '%d/%m/%Y %H:%M:%S')
+    try:
+        return timezone.make_aware(when)
+    except ValueError:
+        return when
+
+
 class Command(ImportLiveVehiclesCommand):
     source_name = 'BusHub'
     url = 'http://portal.diamondbuses.com/api/buses/nearby?latitude&longitude'
 
     @staticmethod
     def get_datetime(item):
-        try:
-            when = parse_datetime(item['RecordedAtTime'])
-        except ValueError:
-            when = datetime.strptime(item['RecordedAtTime'], '%d/%m/%Y %H:%M:%S')
-        try:
-            return timezone.make_aware(when)
-        except ValueError:
-            return when
+        return get_datetime(item['RecordedAtTime'])
 
     def get_vehicle(self, item):
         code = item['VehicleRef']
@@ -65,6 +69,7 @@ class Command(ImportLiveVehiclesCommand):
 
         journey.route_name = item['PublishedLineName']
         journey.code = item['JourneyCode']
+        journey.datetime = get_datetime(item['DepartureTime'])
         latest_location = vehicle.latest_location
         if (
             latest_location and latest_location.journey.code == journey.code and
