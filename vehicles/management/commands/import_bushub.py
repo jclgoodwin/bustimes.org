@@ -8,14 +8,15 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 def get_datetime(string):
-    try:
-        when = parse_datetime(string)
-    except ValueError:
-        when = datetime.strptime(string, '%d/%m/%Y %H:%M:%S')
-    try:
-        return timezone.make_aware(when)
-    except ValueError:
-        return when
+    if string:
+        try:
+            when = parse_datetime(string)
+        except ValueError:
+            when = datetime.strptime(string, '%d/%m/%Y %H:%M:%S')
+        try:
+            return timezone.make_aware(when)
+        except ValueError:
+            return when
 
 
 class Command(ImportLiveVehiclesCommand):
