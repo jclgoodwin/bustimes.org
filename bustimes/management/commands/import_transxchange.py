@@ -58,19 +58,16 @@ def get_line_name_and_brand(service_element):
     return line_name, line_brand
 
 
-def infer_from_filename(filename):
+def get_service_code(filename):
     """
     Given a filename like 'ea_21-45A-_-y08-1.xml',
-    returns a (net, service_code, line_ver) tuple like ('ea', 'ea_21-45A-_-y08', '1')
-
-    Given any other sort of filename, returns ('', None, None)
+    returns a service_code like 'ea_21-45A-_-y08'
     """
     parts = filename.split('-')  # ['ea_21', '3', '_', '1']
     if len(parts) == 5:
         net = parts[0].split('_')[0]
         if len(net) <= 3 and net.islower():
-            return (net, '-'.join(parts[:-1]), parts[-1][:-4])
-    return ('', None, None)
+            return '-'.join(parts[:-1])
 
 
 def get_operator_code(operator_element, element_name):
@@ -331,7 +328,7 @@ class Command(BaseCommand):
 
         line_name, line_brand = get_line_name_and_brand(service_element)
 
-        net, service_code, line_ver = infer_from_filename(filename)
+        service_code = get_service_code(filename)
         if service_code is None:
             service_code = transxchange.service_code
 
@@ -339,8 +336,6 @@ class Command(BaseCommand):
             'line_name': line_name,
             'line_brand': line_brand,
             'mode': transxchange.mode,
-            'net': net,
-            'line_ver': line_ver,
             'region_id': self.region_id,
             'date': today,
             'current': True,

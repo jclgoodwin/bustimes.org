@@ -145,28 +145,20 @@ class ImportServicesTest(TestCase):
     #     for inp, outp in testcases:
     #         self.assertEqual(self.command.sanitize_description(inp), outp)
 
-    def test_infer_from_filename(self):
-        """
-        Given a filename string
-        get_net() should return a (net, service_code, line_ver) tuple if appropriate,
-        or ('', None, None) otherwise.
-        """
-        data = (
-            ('ea_21-2-_-y08-1.xml', ('ea', 'ea_21-2-_-y08', '1')),
-            ('ea_21-27-D-y08-1.xml', ('ea', 'ea_21-27-D-y08', '1')),
-            ('tfl_52-FL2-_-y08-1.xml', ('tfl', 'tfl_52-FL2-_-y08', '1')),
-            ('suf_56-FRY-1-y08-15.xml', ('suf', 'suf_56-FRY-1-y08', '15')),
-            ('NATX_330.xml', ('', None, None)),
-            ('NE_130_PB2717_21A.xml', ('', None, None)),
-            ('SVRABAN007-20150620-9.xml', ('', None, None)),
-            ('SVRWLCO021-20121121-13693.xml', ('', None, None)),
-            ('National Express_NX_atco_NATX_T61.xml', ('', None, None)),
-            ('SnapshotNewportBus_TXC_2015714-0317_NTAO155.xml', ('', None, None)),
-            ('ArrivaCymru51S-Rhyl-StBrigid`s-Denbigh1_TXC_2016108-0319_DGAO051S.xml', ('', None, None)),
+    def test_get_service_code(self):
+        self.assertEqual(import_transxchange.get_service_code('ea_21-2-_-y08-1.xml'),     'ea_21-2-_-y08')
+        self.assertEqual(import_transxchange.get_service_code('ea_21-27-D-y08-1.xml'),    'ea_21-27-D-y08')
+        self.assertEqual(import_transxchange.get_service_code('tfl_52-FL2-_-y08-1.xml'),  'tfl_52-FL2-_-y08')
+        self.assertEqual(import_transxchange.get_service_code('suf_56-FRY-1-y08-15.xml'), 'suf_56-FRY-1-y08')
+        self.assertIsNone(import_transxchange.get_service_code('NATX_330.xml'))
+        self.assertIsNone(import_transxchange.get_service_code('NE_130_PB2717_21A.xml'))
+        self.assertIsNone(import_transxchange.get_service_code('SVRABAN007-20150620-9.xml'))
+        self.assertIsNone(import_transxchange.get_service_code('SVRWLCO021-20121121-13693.xml'))
+        self.assertIsNone(import_transxchange.get_service_code('National Express_NX_atco_NATX_T61.xml'))
+        self.assertIsNone(import_transxchange.get_service_code('SnapshotNewportBus_TXC_2015714-0317_NTAO155.xml'))
+        self.assertIsNone(import_transxchange.get_service_code(
+            'ArrivaCymru51S-Rhyl-StBrigid`s-Denbigh1_TXC_2016108-0319_DGAO051S.xml')
         )
-
-        for filename, parts in data:
-            self.assertEqual(import_transxchange.infer_from_filename(filename), parts)
 
     def test_get_operator_name(self):
         blue_triangle_element = ET.fromstring("""

@@ -458,8 +458,6 @@ class Service(models.Model):
     slug = AutoSlugField(populate_from=str, editable=True, unique=True)
     mode = models.CharField(max_length=11)
     operator = models.ManyToManyField(Operator, blank=True)
-    net = models.CharField(max_length=3, blank=True)
-    line_ver = models.PositiveIntegerField(null=True, blank=True)
     region = models.ForeignKey(Region, models.CASCADE, null=True)
     stops = models.ManyToManyField(StopPoint, editable=False,
                                    through=StopUsage)
