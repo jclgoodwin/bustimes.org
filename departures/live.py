@@ -43,7 +43,7 @@ class Departures(object):
             else:
                 self.services_by_name[line_name] = service
 
-            if service.net:
+            if '_' in service.service_code[2:4] and service.service_code[:3].islower():
                 # there's sometimes an alternative abbreviated line name hidden in the service code
                 parts = service.service_code.split('-')
                 part = parts[1].lower()

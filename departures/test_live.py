@@ -33,7 +33,7 @@ class LiveDeparturesTest(TestCase):
             locality_centre=False,
             active=True
         )
-        cls.london_service = Service.objects.create(net='tfl', service_code='tfl_60-8-_-y05', line_name='8',
+        cls.london_service = Service.objects.create(service_code='tfl_60-8-_-y05', line_name='8',
                                                     region_id='W', date='2017-01-01')
         StopUsage.objects.create(stop=cls.london_stop, service=cls.london_service, order=1)
 
