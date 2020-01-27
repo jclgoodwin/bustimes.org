@@ -247,8 +247,12 @@ class Command(ImportLiveVehiclesCommand):
                 journey.destination = destination_name.text
 
         services = Service.objects.filter(current=True)
-        services = services.filter(Q(line_name__iexact=service) | Q(servicecode__scheme__endswith=' SIRI',
-                                                                    servicecode__code=service))
+
+        if operator_ref == 'GOCH':
+            services = services.filter(Q(line_name__iexact=service) | Q(servicecode__icontains=f'-{service}-'))
+        else:
+            services = services.filter(Q(line_name__iexact=service)
+                                       | Q(servicecode__scheme__endswith=' SIRI', servicecode__code=service))
 
         operator, operator_options = self.get_operator(operator_ref)
         if operator_options:
