@@ -87,18 +87,24 @@ class Command(ImportLiveVehiclesCommand):
                     defaults['fleet_number'] = vehicle_code.split('_')[-1]
                     return self.vehicles.get_or_create(defaults, operator_id='SLBS', code=vehicle_code)
 
-        elif vehicle_code[:2].isalpha() and vehicle_code[2:4].isdigit():
-            for line_name in self.routes_by_operator['LandFlight']:
-                if vehicle_code.lower().endswith(line_name.lower()):
-                    vehicle_code = vehicle_code[:-len(line_name)]
-                    return self.vehicles.get_or_create(defaults, operator_id='SLVL', code=vehicle_code)
-            for line_name in self.routes_by_operator['Johnson\'s Excelbus']:
-                if vehicle_code.lower().endswith(line_name.lower()):
-                    vehicle_code = vehicle_code[:-len(line_name)]
-                    return self.vehicles.get_or_create(defaults, operator_id='JOHS', code=vehicle_code)
+        else:
+            reg = vehicle_code.replace('_', '')
+            if len(reg) > 7:
+                route = reg[7:]
+                reg = reg[:7]
+                defaults['reg'] = reg
+                vehicle_code = vehicle_code[:-len(route)]
+
+                for line_name in self.routes_by_operator['LandFlight']:
+                    if route.lower() == line_name.lower():
+                        return self.vehicles.get_or_create(defaults, operator_id='SLVL', code=vehicle_code)
+                for line_name in self.routes_by_operator['Johnson\'s Excelbus']:
+                    if route.lower() == line_name.lower():
+                        return self.vehicles.get_or_create(defaults, operator_id='JOHS', code=vehicle_code)
 
         print(vehicle_code, item)
-        return None, None
+
+        return self.vehicles.get_or_create(defaults, code=vehicle_code)
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
