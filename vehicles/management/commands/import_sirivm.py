@@ -249,7 +249,7 @@ class Command(ImportLiveVehiclesCommand):
         services = Service.objects.filter(current=True)
 
         if operator_ref == 'GOCH':
-            services = services.filter(Q(line_name__iexact=service) | Q(servicecode__icontains=f'-{service}-'))
+            services = services.filter(Q(line_name__iexact=service) | Q(service_code__icontains=f'-{service}-'))
         else:
             services = services.filter(Q(line_name__iexact=service)
                                        | Q(servicecode__scheme__endswith=' SIRI', servicecode__code=service))
