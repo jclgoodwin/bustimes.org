@@ -128,6 +128,8 @@ class Command(BaseCommand):
 
         if self.region_id == 'NCSD':
             self.region_id = 'GB'
+        elif self.region_id == 'IOM':
+            self.region_id = 'IM'
 
     def get_operator(self, operator_element):
         "Given an Operator element, returns an operator code for an operator that exists."
@@ -151,7 +153,12 @@ class Command(BaseCommand):
             if operator:
                 return operator
 
-        if get_operator_name(operator_element) not in {'Replacement Service', 'UNKWN'}:
+        name = get_operator_name(operator_element)
+
+        if name == 'Bus Vannin':
+            return Operator.objects.get(name=name)
+
+        if name not in {'Replacement Service', 'UNKWN'}:
             warnings.warn('Operator not found:\n{}'.format(ET.tostring(operator_element).decode()))
 
     def get_operators(self, transxchange):
