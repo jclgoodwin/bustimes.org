@@ -429,12 +429,13 @@ class Command(BaseCommand):
 
         # a code used in Traveline Cymru URLs:
 
-        if transxchange.journeys and transxchange.journeys[0].private_code:
-            private_code = transxchange.journeys[0].private_code
-            if ':' in private_code:
-                ServiceCode.objects.update_or_create({
-                    'code': private_code.split(':', 1)[0]
-                }, service=service, scheme='Traveline Cymru')
+        if self.region_id == 'W':
+            if transxchange.journeys and transxchange.journeys[0].private_code:
+                private_code = transxchange.journeys[0].private_code
+                if ':' in private_code:
+                    ServiceCode.objects.update_or_create({
+                        'code': private_code.split(':', 1)[0]
+                    }, service=service, scheme='Traveline Cymru')
 
         # timetable data:
 
