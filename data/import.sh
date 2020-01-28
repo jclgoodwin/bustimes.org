@@ -22,7 +22,7 @@ trap finish EXIT SIGINT SIGTERM
 
 USERNAME=$1
 PASSWORD=$2
-REGIONS=(NCSD W EM Y NW S WM SW SE EA NE L) # roughly in ascending size order. SE before EA in case any more Norfolk services are reclassified (!)
+REGIONS=(IOM NCSD W EM Y NW S WM SW SE EA NE L) # roughly in ascending size order. SE before EA in case any more Norfolk services are reclassified (!)
 
 function import_csv {
     # name of a zip archive:
@@ -49,7 +49,7 @@ nptg_old=$(shasum nptg.ashx\?format=csv)
 wget -qN http://naptan.app.dft.gov.uk/datarequest/nptg.ashx?format=csv
 nptg_new=$(shasum nptg.ashx\?format=csv)
 
-if [[ $nptg_old != $nptg_new ]]; then
+if [[ $nptg_old != "$nptg_new" ]]; then
     echo "NPTG"
     echo "  Importing regions"
     import_csv nptg.ashx\?format=csv regions Regions.csv
@@ -156,7 +156,11 @@ date=$(date +%Y-%m-%d)
 cd TNDS
 for region in "${REGIONS[@]}"; do
     region_old=$(ls -l "$region.zip")
-    wget -qN --user="$USERNAME" --password="$PASSWORD" "ftp://ftp.tnds.basemap.co.uk/$region.zip"
+    if [[ $region == "IOM" ]]; then
+       wget -qN --user="$USERNAME" --password="$PASSWORD" "ftp://ftp.tnds.basemap.co.uk/TNDSV2.5/$region.zip"
+    else
+       wget -qN --user="$USERNAME" --password="$PASSWORD" "ftp://ftp.tnds.basemap.co.uk/$region.zip"
+    fi
     region_new=$(ls -l "$region.zip")
     wait
     if [[ $region_old != $region_new ]]; then
