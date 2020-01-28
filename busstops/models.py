@@ -672,7 +672,10 @@ class Service(models.Model):
             service_codes = self.servicecode_set.filter(scheme__endswith=' GTFS')
             routes = []
             for service_code in service_codes:
-                routes += service_code.get_routes()
+                try:
+                    routes += service_code.get_routes()
+                except Feed.DoesNotExist:
+                    continue
             return gtfs.get_timetable(routes, day)
 
         routes = Route.objects.filter(service__in=[self] + related).order_by('start_date')
