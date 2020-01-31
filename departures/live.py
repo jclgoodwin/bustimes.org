@@ -831,7 +831,7 @@ def blend(departures, live_rows, stop=None):
         replaced = False
         for row in departures:
             if services_match(row['service'], live_row['service']) and row['time'] and live_row['time']:
-                if abs(row['time'] - live_row['time']) < datetime.timedelta(minutes=1):
+                if abs(row['time'] - live_row['time']) <= datetime.timedelta(minutes=2):
                     if live_row.get('live'):
                         row['live'] = live_row['live']
                     if 'vehicle' in live_row:
