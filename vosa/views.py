@@ -2,7 +2,6 @@ from datetime import datetime
 from django.views.generic.detail import DetailView
 from django.contrib.syndication.views import Feed
 from django.db.models import Max
-from busstops.models import Operator
 from .models import Licence, Registration, Variation
 
 
