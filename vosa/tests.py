@@ -50,7 +50,6 @@ Other details: Daily Service Every Twenty Minutes""",
             'reg_code': '284'
         }
         command.handle_row(data)
-        command.handle_row(data)
         Region.objects.create(id='SW', name='South West')
         operator = Operator.objects.create(region_id='SW', id='AINS', name="Ainsley's Chariots")
         operator.licences.add(Licence.objects.get())
@@ -69,7 +68,15 @@ Other details: Daily Service Every Twenty Minutes""",
 
         with self.assertNumQueries(296):
             command.handle()
+
         with self.assertNumQueries(142):
+            command.handle()
+
+        command.licence = None
+        command.registration = None
+        command.previous_row = None
+
+        with self.assertNumQueries(144):
             command.handle()
 
         response = self.client.get('/licences/PF0000003')
