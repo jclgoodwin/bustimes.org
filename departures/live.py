@@ -27,6 +27,8 @@ SESSION = requests.Session()
 
 class Departures(object):
     """Abstract class for getting departures from a source"""
+    request_url = None
+
     def __init__(self, stop, services, now=None):
         self.stop = stop
         self.now = now
@@ -59,7 +61,7 @@ class Departures(object):
 
     def get_request_url(self):
         """Return a URL string to pass to get_response"""
-        raise NotImplementedError
+        return self.request_url
 
     def get_request_params(self):
         """Return a dictionary of HTTP GET parameters"""
@@ -112,17 +114,31 @@ class Departures(object):
         """
         raise NotImplementedError
 
+    def get_poorly_key(self):
+        return '{}:poorly'.format(self.request_url)
+
+    def get_poorly(self):
+        return cache.get(self.get_poorly_key())
+
+    def set_poorly(self, age):
+        key = self.get_poorly_key()
+        if key:
+            return cache.set(key, True, age)
+
     def get_departures(self):
-        """Returns a list of departures"""
         try:
             response = self.get_response()
         except requests.exceptions.ReadTimeout:
+            self.set_poorly(60)  # back off for 1 minute
             return
         except requests.exceptions.RequestException as e:
+            self.set_poorly(60)  # back off for 1 minute
             logger.error(e, exc_info=True)
             return
-        if response and response.ok:
+        if response.ok:
             return self.departures_from_response(response)
+        self.set_poorly(1800)  # back off for 30 minutes
+
 
     def log_vehicle_journey(self, operator_ref, vehicle, service, journey_ref, destination, departure_time):
         if not self.data_source:
@@ -222,7 +238,7 @@ class TflDepartures(Departures):
         return settings.TFL
 
     def get_request_url(self):
-        return 'https://api.tfl.gov.uk/StopPoint/%s/arrivals' % self.stop.pk
+        return f'https://api.tfl.gov.uk/StopPoint/{self.stop.pk}/arrivals'
 
     def departures_from_response(self, res):
         rows = res.json()
@@ -249,7 +265,7 @@ class WestMidlandsDepartures(Departures):
         }
 
     def get_request_url(self):
-        return 'http://api.tfwm.org.uk/stoppoint/%s/arrivals' % self.stop.pk
+        return f'http://api.tfwm.org.uk/stoppoint/{self.stop.pk}/arrivals'
 
     def departures_from_response(self, res):
         return sorted([{
@@ -334,7 +350,7 @@ class PolarBearDepartures(Departures):
 
 class AcisHorizonDepartures(Departures):
     """Departures from a SOAP endpoint (lol)"""
-    url = 'http://belfastapp.acishorizon.com/DataService.asmx'
+    request_url = 'http://belfastapp.acishorizon.com/DataService.asmx'
     headers = {
         'content-type': 'application/soap+xml'
     }
@@ -356,7 +372,7 @@ class AcisHorizonDepartures(Departures):
                 </s:Body>
             </s:Envelope>
         """.format(self.stop.pk)
-        return SESSION.post(self.url, headers=self.headers, data=data, timeout=2)
+        return SESSION.post(self.request_url, headers=self.headers, data=data, timeout=2)
 
     def departures_from_response(self, res):
         items = ET.fromstring(res.text)
@@ -474,8 +490,7 @@ class UKTrainDepartures(Departures):
 
 
 class WestDepartures(Departures):
-    def get_request_url(self):
-        return 'https://journeyplanner.travelwest.info/api/idox/'
+    request_url = 'https://journeyplanner.travelwest.info/api/idox/'
 
     def get_request_params(self):
         return {
@@ -506,8 +521,7 @@ class WestDepartures(Departures):
 
 
 class NorfokDepartures(Departures):
-    def get_request_url(self):
-        return 'https://ldb.norfolkbus.info/public/displays/ncc1/transitdb/querylegacytable/timetable'
+    request_url = 'https://ldb.norfolkbus.info/public/displays/ncc1/transitdb/querylegacytable/timetable'
 
     def get_request_params(self):
         return {
@@ -664,19 +678,12 @@ class SiriSmDepartures(Departures):
             'destination': destination,
         }
 
-    def get_departures(self):
-        try:
-            response = self.get_response()
-        except requests.exceptions.RequestException:
-            cache.set(self.source.get_poorly_key(), True, 60)  # back off for 1 minute
-            return
-        if response.ok:
-            return self.departures_from_response(response)
-        cache.set(self.source.get_poorly_key(), True, 1800)  # back off for 30 minutes
+    def get_poorly_key(self):
+        return self.source.get_poorly_key()
 
     def departures_from_response(self, response):
         if not response.text or 'Client.AUTHENTICATION_FAILED' in response.text:
-            cache.set(self.source.get_poorly_key(), True, 1800)  # back off for 30 minutes
+            cache.set(self.get_poorly_key(), True, 1800)  # back off for 30 minutes
             return
         try:
             tree = ET.fromstring(response.text).find('s:ServiceDelivery', self.ns)

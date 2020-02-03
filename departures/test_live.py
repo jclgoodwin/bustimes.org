@@ -125,7 +125,7 @@ class LiveDeparturesTest(TestCase):
 
     def test_abstract(self):
         departures = live.Departures(None, ())
-        self.assertRaises(NotImplementedError, departures.get_request_url)
+        self.assertIsNone(departures.get_request_url())
         self.assertRaises(NotImplementedError, departures.departures_from_response, None)
 
     def test_tfl(self):
