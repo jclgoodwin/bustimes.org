@@ -139,7 +139,6 @@ class Departures(object):
             return self.departures_from_response(response)
         self.set_poorly(1800)  # back off for 30 minutes
 
-
     def log_vehicle_journey(self, operator_ref, vehicle, service, journey_ref, destination, departure_time):
         if not self.data_source:
             self.data_source, _ = DataSource.objects.get_or_create({'url': self.source.url}, name=self.source.name)
