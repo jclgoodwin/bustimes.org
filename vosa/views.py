@@ -39,10 +39,9 @@ class RegistrationView(DetailView):
 
         context['variations'] = self.object.variation_set.all()
 
-        operator = Operator.objects.filter(operatorcode__code=self.object.licence.licence_number,
-                                           operatorcode__source__name='Licence')
-        context['operator'] = operator.select_related('region').first()
         context['breadcrumb'] = [self.object.licence]
+
+        context['operator'] = self.object.licence.operator_set.select_related('region').first()
 
         if context['operator']:
             context['breadcrumb'] = [

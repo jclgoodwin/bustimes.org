@@ -95,7 +95,4 @@ class Command(ImportFromCSVCommand):
 
         self.handle_variation(row)
 
-        if self.licence.licence_number.lower() not in self.registration.registration_number.lower():
-            print(self.licence.licence_number.lower(), self.registration.registration_number.lower())
-
         self.previous_row = row

@@ -32,7 +32,7 @@ class Registration(models.Model):
     traffic_area_office_covered_by_area = models.CharField(max_length=100)
 
     def __str__(self):
-        string = '{} - {} - {}'.format(self.service_number, self.start_point, self.finish_point)
+        string = '{} - {} to {}'.format(self.service_number, self.start_point, self.finish_point)
         if self.via:
             string = '{} via {}'.format(string, self.via)
         return string

@@ -1,5 +1,7 @@
 import os
 from django.test import TestCase
+from busstops.models import Region, Operator
+from .models import Licence
 from .management.commands import import_variations
 
 
@@ -25,7 +27,7 @@ class VariationsTest(TestCase):
             'Address': 'Matford Park Depot, Stagecoach South West, Matford Park Road, Exeter, EX2 8FD, GB',
             'start_point': 'St Marychurch',
             'finish_point': 'Paignton Zoo',
-            'via': '',
+            'via': 'Shilbottle',
             'effective_date': '29/04/17',
             'received_date': '03/03/17',
             'end_date': '',
@@ -48,10 +50,17 @@ Other details: Daily Service Every Twenty Minutes""",
             'reg_code': '284'
         }
         command.handle_row(data)
+        command.handle_row(data)
+        Region.objects.create(id='SW', name='South West')
+        operator = Operator.objects.create(region_id='SW', id='AINS', name="Ainsley's Chariots")
+        operator.licences.add(Licence.objects.get())
 
     def test_licence_view(self):
-        response = self.client.get('/licences/PH1020951')
+        with self.assertNumQueries(4):
+            response = self.client.get('/licences/PH1020951')
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'South West')
+        self.assertContains(response, "Ainsley&#39;s Chariots")
         self.assertContains(response, '<a href="/registrations/PH1020951/284">')
 
     def test_beestons(self):
@@ -70,14 +79,19 @@ Other details: Daily Service Every Twenty Minutes""",
     def test_licence_rss(self):
         response = self.client.get('/licences/PH1020951/rss')
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'STAGECOACH DEVON')
+        self.assertContains(response, '122 - St Marychurch to Paignton Zoo via Shilbottle')
 
     def test_licence_404(self):
         response = self.client.get('/licences/PH102095')
         self.assertEqual(response.status_code, 404)
 
     def test_registration_view(self):
-        response = self.client.get('/registrations/PH1020951/284')
+        with self.assertNumQueries(3):
+            response = self.client.get('/registrations/PH1020951/284')
         self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'South West')
+        self.assertContains(response, "Ainsley&#39;s Chariots")
 
     def test_registration_404(self):
         response = self.client.get('/registrations/PH1020951/d')
