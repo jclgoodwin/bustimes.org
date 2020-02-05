@@ -831,6 +831,7 @@ thead {
 
 .timetable-wrapper {
     margin-right: -1.14em;
+    margin-right: calc(env(safe-area-inset-left) * -1 - 1.14em);
     margin-top: 1em;
     overflow: auto;
 }
@@ -854,6 +855,7 @@ input:not(:checked) + label {
     border-spacing: 0;
     font-variant-numeric: tabular-nums;
     padding-right: 1.14em;
+    padding-right: calc(env(safe-area-inset-left) + 1.14em);
     table-layout: fixed;
 
     td {
