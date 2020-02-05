@@ -8,6 +8,7 @@ body {
     font-size: 16px;
     line-height: 1.5;
     margin: 0;
+    margin-bottom: env(safe-area-inset-bottom);
 }
 
 
@@ -25,7 +26,10 @@ footer {
 }
 
 main {
+    margin: 0 auto;
     padding: 0 1em;
+    padding-left: calc(env(safe-area-inset-left) + 1em);
+    padding-right: calc(env(safe-area-inset-right) + 1em);
 }
 
 a {
@@ -140,6 +144,8 @@ form ul {
 header {
     background: $brand-color;
     overflow: hidden;
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
     position: relative;
 
     a {
@@ -159,6 +165,8 @@ header {
     }
 
     div {
+        margin: 0 auto;
+
         .site-name {
             position: absolute;
         }
@@ -734,6 +742,14 @@ body {
         font-size: .75em;
         margin-right: .5em;
     }
+}
+
+.leaflet-left {
+    margin-left: env(safe-area-inset-left);
+}
+
+.leaflet-right {
+    margin-right: env(safe-area-inset-right);
 }
 
 table {

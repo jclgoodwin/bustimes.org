@@ -1,21 +1,21 @@
 <!doctype html>
 <html lang="en-GB">
 <head>
-<meta charset="utf-8" />
+<meta charset="utf-8">
 <title>{% block title %}{% if object %}{% firstof object.get_long_name object.get_qualified_name object %} – {% endif %}bustimes.org{% endblock %}</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="theme-color" content="#ef9" />
-<link rel="preconnect" href="https://browser.sentry-cdn.com" />
-<link rel="preconnect" href="https://www.google-analytics.com" />
-<link rel="preconnect" href="https://pagead2.googlesyndication.com" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ef9">
+<link rel="preconnect" href="https://browser.sentry-cdn.com">
+<link rel="preconnect" href="https://www.google-analytics.com">
+<link rel="preconnect" href="https://pagead2.googlesyndication.com">
 {% block canonical %}
     {% if object.get_absolute_url %}
-        <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}" />
+        <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}">
     {% endif %}
 {% endblock %}
 <script type="application/ld+json">{"@context":"http://schema.org","@type":"WebSite","url":"https://bustimes.org","name":"bustimes.org","potentialAction":{"@type":"SearchAction","target":"https://bustimes.org/search?q={q}","query-input":"required name=q"}}</script>
 {% load static %}
-<link rel="manifest" href="{% static 'manifest.webmanifest' %}" />
+<link rel="manifest" href="{% static 'manifest.webmanifest' %}">
 <!--[if gte IE 9]><!-->
     {% load pipeline %}
     {% stylesheet 'main' %}
@@ -44,9 +44,9 @@
         <form method="GET" action="/search" class="search">
             <label>
                 Search
-                <input name="q" placeholder="Search" type="search" value="{{ query }}" required />
+                <input name="q" placeholder="Search" type="search" value="{{ query }}" required>
             </label>
-            <input type="submit" value="Search" />
+            <input type="submit" value="Search">
         </form>
     </div>
 </header>
