@@ -416,7 +416,8 @@ def edit_vehicle(request, vehicle_id):
         'previous_reg': vehicle.data and vehicle.data.get('Previous reg') or None,
         'depot': vehicle.data and vehicle.data.get('Depot') or None,
         'notes': vehicle.notes,
-        'user': request.COOKIES.get('username')
+        'user': request.COOKIES.get('username'),
+        'withdrawn': vehicle.withdrawn
     }
     if vehicle.fleet_code:
         initial['fleet_number'] = vehicle.fleet_code
