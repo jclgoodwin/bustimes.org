@@ -2,22 +2,17 @@ import math
 import requests
 import logging
 import sys
-import redis
-import json
 from datetime import timedelta
 from setproctitle import setproctitle
 from time import sleep
 from django.db import Error, IntegrityError, InterfaceError
 from django.core.management.base import BaseCommand
-from django.core.serializers.json import DjangoJSONEncoder
-from django.conf import settings
 from django.utils import timezone
 from busstops.models import DataSource, ServiceCode
 from ..models import Vehicle, VehicleLocation
 
 
 logger = logging.getLogger(sys.argv[1])
-r = redis.from_url(settings.CELERY_BROKER_URL)
 
 
 def calculate_bearing(a, b):
@@ -196,11 +191,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             journey.vehicle.save(update_fields=['latest_location'])
         self.current_location_ids.add(location.id)
 
-        appendage = [location.datetime, tuple(location.latlong), location.heading, location.delay]
-        try:
-            r.rpush(f'journey{location.journey.id}', json.dumps(appendage, cls=DjangoJSONEncoder))
-        except redis.exceptions.ConnectionError:
-            pass
+        location.redis_append()
 
         vehicle.update_last_modified()
 

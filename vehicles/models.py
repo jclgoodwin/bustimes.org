@@ -1,17 +1,24 @@
 import re
+import redis
 from math import ceil
 from urllib.parse import quote
 from webcolors import html5_parse_simple_color
 from datetime import timedelta
 from django.utils import timezone
+from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
+from django.core.serializers.json import DjangoJSONEncoder
 from django.core.exceptions import ValidationError
 from django.db.models import Index, Q
 from django.urls import reverse
 from django.utils.html import escape, format_html
 from busstops.models import Operator, Service, StopPoint, DataSource, SIRISource
+import json
+
+
+r = redis.from_url(settings.CELERY_BROKER_URL)
 
 
 def get_css(colours, direction=None, horizontal=False, angle=None):
@@ -404,6 +411,13 @@ class VehicleLocation(models.Model):
             Index(name='datetime', fields=('datetime',), condition=Q(current=True)),
             Index(name='datetime_latlong', fields=('datetime', 'latlong'), condition=Q(current=True)),
         )
+
+    def redis_append(self):
+        appendage = [self.datetime, tuple(self.latlong), self.heading, self.delay]
+        try:
+            r.rpush(f'journey{self.journey_id}', json.dumps(appendage, cls=DjangoJSONEncoder))
+        except redis.exceptions.ConnectionError:
+            pass
 
     def get_json(self, extended=False):
         journey = self.journey
