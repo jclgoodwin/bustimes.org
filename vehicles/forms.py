@@ -9,13 +9,8 @@ def get_livery_choices(operator):
     liveries = Livery.objects.filter(vehicle__operator=operator).annotate(popularity=Count('vehicle'))
     for livery in liveries.order_by('-popularity').distinct():
         choices[livery.id] = livery
-    for vehicle in operator.vehicle_set.exclude(colours='').distinct('colours', 'notes', 'branding'):
-        notes = vehicle.branding or vehicle.notes
-        if vehicle.colours in choices:
-            if choices[vehicle.colours].name != notes:
-                choices[vehicle.colours].name = ''
-        else:
-            choices[vehicle.colours] = Livery(colours=vehicle.colours, name=notes)
+    for vehicle in operator.vehicle_set.exclude(colours='').distinct('colours'):
+        choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'Like {vehicle}')
     choices = [(key, livery.preview(name=True)) for key, livery in choices.items()]
     choices.append(('Other', 'Other'))
     return choices
@@ -29,7 +24,8 @@ class EditVehiclesForm(forms.Form):
     notes = forms.CharField(required=False, max_length=255)
     features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features',
                                               widget=forms.CheckboxSelectMultiple, required=False)
-    depot = forms.CharField(help_text='If there’s more than one', required=False, max_length=255)
+    depot = forms.CharField(help_text="""Probably best left blank, especially if there\'s only one depot, or buses regularly move
+                                         between depots""", required=False, max_length=255)
     withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False)
     user = forms.CharField(label='Your name', help_text='If left blank, your IP address will be logged instead',
                            required=False, max_length=255)
