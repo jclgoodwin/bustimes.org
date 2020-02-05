@@ -4,14 +4,14 @@
             <a itemprop="item" href="/">
                 <span itemprop="name">Home</span>
             </a>
-            <meta itemprop="position" content="0" />
+            <meta itemprop="position" content="0">
         </li>
         {% for item in breadcrumb %}
             <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
                 <a itemprop="item" href="{{ item.get_absolute_url }}">
                     <span itemprop="name">{% firstof item.get_line_name_and_brand item %}</span>
                 </a>
-                <meta itemprop="position" content="{{ forloop.counter }}" />
+                <meta itemprop="position" content="{{ forloop.counter }}">
             </li>
         {% endfor %}
     </ol>

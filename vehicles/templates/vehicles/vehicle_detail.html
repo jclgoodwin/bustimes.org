@@ -2,7 +2,7 @@
 
 {% block title %}{% if not vehicle %}Vehicles – {% endif %}{{ object }}{% if vehicle.operator %} – {{ vehicle.operator }}{% endif %} – bustimes.org{% endblock %}
 
-{% block canonical %}<meta name="robots" content="noindex" />{% endblock %}
+{% block canonical %}<meta name="robots" content="noindex">{% endblock %}
 
 {% block bodyclass %}narrow{% endblock %}
 
@@ -54,7 +54,7 @@
                     <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
                 {% endfor %}
             </select>
-            <noscript><input type="submit" /></noscript>
+            <noscript><input type="submit"></noscript>
         </form>
     </p>
 
@@ -112,7 +112,7 @@
         </table>
 
         {% load static %}
-        <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}" />
+        <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
         <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
         <script src="{% static 'js/reqwest.min.js' %}"></script>
         <script async src="{% static 'js/history.js' %}"></script>

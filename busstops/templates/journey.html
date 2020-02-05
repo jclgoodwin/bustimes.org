@@ -15,9 +15,9 @@
 </h1>
 
 <form method="GET" action="/journey">
-    <label>From <input name="from_q" value="{{ from_q }}" /></label>
+    <label>From <input name="from_q" value="{{ from_q }}"></label>
     {% if from %}
-        <input name="from" value="{{ from.slug }}" type="hidden" />
+        <input name="from" value="{{ from.slug }}" type="hidden">
     {% elif from_options %}
         <ul>
             {% for option in from_options %}
@@ -25,9 +25,9 @@
             {% endfor %}
         </ul>
     {% endif %}
-    <label>to <input name="to_q" value="{{ to_q }}" /></label>
+    <label>to <input name="to_q" value="{{ to_q }}"></label>
     {% if to %}
-        <input name="to" value="{{ to.slug }}" type="hidden" />
+        <input name="to" value="{{ to.slug }}" type="hidden">
     {% elif to_options %}
         <ul>
             {% for option in to_options %}

@@ -3,7 +3,7 @@
 {% block title %}Fleet list – {% firstof parent object %} – bustimes.org{% endblock %}
 
 {% block canonical %}
-    <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}/vehicles" />
+    <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}/vehicles">
 {% endblock %}
 
 {% block bodyclass %}{% endblock %}
@@ -69,7 +69,7 @@
             <tr>
                 {% if form %}
                     <td>
-                        <input type="checkbox" name="vehicle" value="{{ vehicle.id }}" />
+                        <input type="checkbox" name="vehicle" value="{{ vehicle.id }}">
                     </td>
                 {% endif %}
                 {% if code_column %}
@@ -154,7 +154,7 @@
 
     {{ form.as_p }}
 
-    <input type="submit" value="Save changes" />
+    <input type="submit" value="Save changes">
 
     </form>
 

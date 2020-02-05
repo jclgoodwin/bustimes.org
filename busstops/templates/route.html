@@ -9,7 +9,7 @@
             {% else %}{{ stopusage.direction.capitalize }}{% endif %}
         </h2>
         {% if has_minor_stops %}
-            <input type="checkbox" id="show-all-stops-{{ forloop.counter }}" />
+            <input type="checkbox" id="show-all-stops-{{ forloop.counter }}">
             <label for="show-all-stops-{{ forloop.counter }}">Show all stops</label>
         {% endif %}
         <ul class="route">
