@@ -12,7 +12,8 @@ class SiriETTest(TestCase):
         Region.objects.create(id='EA', name='East Anglia')
         DataSource.objects.create(name='Arriva')
         DataSource.objects.create(name='TransMach')
-        Operator.objects.create(region_id='EA', id='ANWE')
+        Operator.objects.create(region_id='EA', id='ANWE', name='Arrivederci')
+        Operator.objects.create(region_id='EA', id='GOCH', name='Go-Coach')
         StopPoint.objects.bulk_create([
             StopPoint(pk='069000023592', active=True, latlong=Point(0, 0)),
             StopPoint(pk='0690WNA02877', active=True, latlong=Point(0, 0)),
@@ -218,5 +219,5 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.3">
         </Siri>
         """
 
-        with self.assertNumQueries(23):
+        with self.assertNumQueries(21):
             handle_siri_vm(xml)
