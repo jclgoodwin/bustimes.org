@@ -270,12 +270,13 @@ class VehicleEdit(models.Model):
     branding = models.CharField(max_length=255, blank=True)
     notes = models.CharField(max_length=255, blank=True)
     features = models.ManyToManyField(VehicleFeature, blank=True)
-    withdrawn = models.BooleanField(default=False)
+    withdrawn = models.BooleanField(null=False)
     changes = JSONField(null=True, blank=True)
     url = models.URLField(blank=True)
-    approved = models.BooleanField(default=False)
+    approved = models.BooleanField(null=True)
     datetime = models.DateTimeField(null=True, blank=True)
-    user = models.CharField(max_length=255, blank=True)
+    username = models.CharField(max_length=255, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True)
 
     def get_changes(self):
         changes = {}

@@ -248,13 +248,13 @@ class UrlFilter(admin.SimpleListFilter):
 
 class UserFilter(admin.SimpleListFilter):
     title = 'user'
-    parameter_name = 'user'
+    parameter_name = 'username'
 
     def lookups(self, request, model_admin):
         yield ('1', 'Not blank')
-        edits = VehicleEdit.objects.filter(~Q(user=''), approved=False)
-        for edit in edits.values('user').annotate(count=Count('user')).order_by('-count'):
-            yield (edit['user'], f"{edit['user']} ({edit['count']})")
+        edits = VehicleEdit.objects.filter(~Q(username=''), approved=False)
+        for edit in edits.values('username').annotate(count=Count('user')).order_by('-count'):
+            yield (edit['username'], f"{edit['username']} ({edit['count']})")
 
     def queryset(self, request, queryset):
         if self.value():
@@ -266,7 +266,7 @@ class UserFilter(admin.SimpleListFilter):
 
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['id', 'datetime', vehicle, fleet_number, reg, vehicle_type, branding, name, 'current', 'suggested',
-                    notes, 'withdrawn', features, changes, 'last_seen', 'flickr', 'user', url]
+                    notes, 'withdrawn', features, changes, 'last_seen', 'flickr', 'username', url]
     list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'vehicle__latest_location',
                            'livery']
     list_filter = [
