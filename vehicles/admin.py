@@ -194,7 +194,7 @@ class OperatorFilter(admin.SimpleListFilter):
     parameter_name = 'operator'
 
     def lookups(self, request, model_admin):
-        operators = Operator.objects.filter(vehicle__vehicleedit__approved=False)
+        operators = Operator.objects.filter(vehicle__vehicleedit__approved=None)
         operators = operators.annotate(count=Count('vehicle__vehicleedit')).order_by('-count')
         try:
             operators = list(operators.using('read-only-0'))
@@ -252,7 +252,7 @@ class UserFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         yield ('1', 'Not blank')
-        edits = VehicleEdit.objects.filter(~Q(username=''), approved=False)
+        edits = VehicleEdit.objects.filter(~Q(username=''), approved=None)
         for edit in edits.values('username').annotate(count=Count('user')).order_by('-count'):
             yield (edit['username'], f"{edit['username']} ({edit['count']})")
 
@@ -278,7 +278,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
         UserFilter,
     ]
     raw_id_fields = ['vehicle', 'livery']
-    actions = ['apply_edits', 'delete_vehicles']
+    actions = ['apply_edits', 'disapprove', 'delete_vehicles']
 
     def get_queryset(self, _):
         return VehicleEdit.objects.all().prefetch_related('features', 'vehicle__features')
@@ -286,6 +286,10 @@ class VehicleEditAdmin(admin.ModelAdmin):
     def apply_edits(self, request, queryset):
         apply_edits(queryset)
         self.message_user(request, 'Applied edits.')
+
+    def disapprove(self, request, queryset):
+        count = queryset.update(approved=False)
+        self.message_user(request, f'Disapproved {count} edits.')
 
     def delete_vehicles(self, request, queryset):
         Vehicle.objects.filter(vehicleedit__in=queryset).delete()

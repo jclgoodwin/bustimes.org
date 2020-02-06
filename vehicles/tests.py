@@ -157,7 +157,7 @@ class VehiclesTests(TestCase):
         self.assertTrue(response.context['form'].has_changed())
         self.assertContains(response, 'Thank you')
 
-        self.assertEqual(1, VehicleEdit.objects.filter(approved=False).count())
+        self.assertEqual(1, VehicleEdit.objects.filter(approved=None).count())
 
         # edit reg
         with self.assertNumQueries(9):
@@ -172,7 +172,7 @@ class VehiclesTests(TestCase):
         self.assertTrue(response.context['form'].has_changed())
         self.assertContains(response, 'Thank you')
 
-        self.assertEqual(2, VehicleEdit.objects.filter(approved=False).count())
+        self.assertEqual(2, VehicleEdit.objects.filter(approved=None).count())
 
         # edit type, livery and name
         with self.assertNumQueries(9):
@@ -202,11 +202,11 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Select a valid choice. #FFFF00 is not one of the available choices')
         self.assertContains(response, 'already')
 
-        self.assertEqual(3, VehicleEdit.objects.filter(approved=False).count())
+        self.assertEqual(3, VehicleEdit.objects.filter(approved=None).count())
 
         with self.assertNumQueries(10):
             admin.apply_edits(VehicleEdit.objects.select_related('vehicle'))
-        self.assertEqual(0, VehicleEdit.objects.filter(approved=False).count())
+        self.assertEqual(0, VehicleEdit.objects.filter(approved=None).count())
         vehicle = Vehicle.objects.get(notes='Trent Barton')
         self.assertEqual(vehicle.reg, 'K292JVF')
         self.assertEqual(vehicle.name, 'Colin')

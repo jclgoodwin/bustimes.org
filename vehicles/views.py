@@ -69,8 +69,7 @@ def get_vehicle_edit(vehicle, fields):
         elif fields['colours']:
             edit.colours = fields['colours']
 
-    if fields.get('withdrawn'):
-        edit.withdrawn = True
+    edit.withdrawn = fields.get('withdrawn')
 
     return edit
 
@@ -107,7 +106,7 @@ def operator_vehicles(request, slug=None, parent=None):
     form = request.path.endswith('/edit')
 
     if not form:
-        pending_edits = VehicleEdit.objects.filter(approved=False, vehicle=OuterRef('id'))
+        pending_edits = VehicleEdit.objects.filter(approved=None, vehicle=OuterRef('id'))
         vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
 
     if operator.name == 'National Express':
@@ -356,7 +355,7 @@ class VehicleDetailView(DetailView):
         if self.object.withdrawn:
             raise Http404()
         journeys = self.object.vehiclejourney_set
-        context['pending_edits'] = self.object.vehicleedit_set.filter(approved=False).exists()
+        context['pending_edits'] = self.object.vehicleedit_set.filter(approved=None).exists()
         dates = list(journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date'))
         if self.object.operator:
             context['breadcrumb'] = [self.object.operator, Vehicles(self.object.operator)]
@@ -460,7 +459,7 @@ def edit_vehicle(request, vehicle_id):
         'previous': vehicle.get_previous(),
         'next': vehicle.get_next(),
         'submitted': submitted,
-        'pending_edits': not submitted and vehicle.vehicleedit_set.filter(approved=False).exists()
+        'pending_edits': not submitted and vehicle.vehicleedit_set.filter(approved=None).exists()
     })
 
     if form and form.is_valid() and form.cleaned_data['user'] != request.COOKIES.get('username', ''):
