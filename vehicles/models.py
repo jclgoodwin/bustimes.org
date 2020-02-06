@@ -70,8 +70,8 @@ def get_text_colour(colours):
 
 class VehicleType(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    double_decker = models.NullBooleanField()
-    coach = models.NullBooleanField()
+    double_decker = models.BooleanField(null=True)
+    coach = models.BooleanField(null=True)
 
     class Meta:
         ordering = ('name',)
@@ -270,7 +270,7 @@ class VehicleEdit(models.Model):
     branding = models.CharField(max_length=255, blank=True)
     notes = models.CharField(max_length=255, blank=True)
     features = models.ManyToManyField(VehicleFeature, blank=True)
-    withdrawn = models.BooleanField(null=False)
+    withdrawn = models.BooleanField(null=True)
     changes = JSONField(null=True, blank=True)
     url = models.URLField(blank=True)
     approved = models.BooleanField(null=True)
