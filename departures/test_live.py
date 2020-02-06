@@ -161,7 +161,7 @@ class LiveDeparturesTest(TestCase):
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church</td><td>18:44⚡</td></tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church</td><td>18:49⚡</td></tr>
                 </tbody></table>
-                <p class="credit">⚡ denotes ‘live’ times predicted using actual locations of buses</p>
+                <p class="credit">⚡ denotes ‘live’ times guessed (sometimes badly) from buses’ actual locations </p>
             </div>
         """, html=True)
 
