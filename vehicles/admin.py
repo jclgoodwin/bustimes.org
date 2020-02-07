@@ -194,7 +194,8 @@ class OperatorFilter(admin.SimpleListFilter):
     parameter_name = 'operator'
 
     def lookups(self, request, model_admin):
-        operators = Operator.objects.filter(vehicle__vehicleedit__approved=None)
+        operators = Operator.objects.filter(vehicle__vehicleedit__isnull=False,
+                                            vehicle__vehicleedit__approved=None)
         operators = operators.annotate(count=Count('vehicle__vehicleedit')).order_by('-count')
         try:
             operators = list(operators.using('read-only-0'))

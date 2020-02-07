@@ -43,6 +43,8 @@ class VehiclesTests(TestCase):
         cls.vehicle_1.latest_location = location
         cls.vehicle_1.save()
 
+        cls.user = User.objects.create(username='josh', is_staff=True, is_superuser=True)
+
     def test_parent(self):
         response = self.client.get('/groups/Madrigal Electromotive/vehicles')
         self.assertContains(response, 'Lynx')
@@ -126,6 +128,8 @@ class VehiclesTests(TestCase):
         self.assertEqual(livery.get_css(181), 'linear-gradient(45deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
 
     def test_vehicle_edit_1(self):
+        self.client.force_login(self.user)
+
         url = self.vehicle_1.get_absolute_url() + '/edit'
 
         with self.assertNumQueries(9):
@@ -175,6 +179,10 @@ class VehiclesTests(TestCase):
 
         self.assertEqual(2, VehicleEdit.objects.filter(approved=None).count())
 
+        response = self.client.get('/admin/vehicles/vehicleedit/')
+        self.assertContains(response, 'Lynx (2)')
+        self.assertContains(response, '127.0.0.1 (2)')
+
         # edit type, livery and name
         with self.assertNumQueries(9):
             response = self.client.post(url, {
@@ -214,12 +222,8 @@ class VehiclesTests(TestCase):
         self.assertEqual(str(vehicle.vehicle_type), 'Optare Spectra')
         self.assertEqual(vehicle.fleet_number, 2)
 
-        self.client.force_login(User.objects.create(username='josh', is_staff=True, is_superuser=True))
-        response = self.client.get('/admin/vehicles/vehicleedit/')
-        self.assertContains(response, 'Bova and Over (0)')
-
         response = self.client.get('/admin/vehicles/vehicleedit/?username=1')
-        self.assertContains(response, 'Bova and Over (0)')
+        self.assertNotContains(response, 'Lynx')
 
     def test_vehicle_edit_2(self):
         url = self.vehicle_2.get_absolute_url() + '/edit'
