@@ -1,5 +1,6 @@
 from freezegun import freeze_time
 from django.test import TestCase
+from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
 from busstops.models import DataSource, Region, Operator, Service
@@ -212,6 +213,13 @@ class VehiclesTests(TestCase):
         self.assertEqual(vehicle.name, 'Colin')
         self.assertEqual(str(vehicle.vehicle_type), 'Optare Spectra')
         self.assertEqual(vehicle.fleet_number, 2)
+
+        self.client.force_login(User.objects.create(username='josh', is_staff=True, is_superuser=True))
+        response = self.client.get('/admin/vehicles/vehicleedit/')
+        self.assertContains(response, 'Bova and Over (0)')
+
+        response = self.client.get('/admin/vehicles/vehicleedit/?username=1')
+        self.assertContains(response, 'Bova and Over (0)')
 
     def test_vehicle_edit_2(self):
         url = self.vehicle_2.get_absolute_url() + '/edit'

@@ -253,14 +253,14 @@ class UserFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         yield ('1', 'Not blank')
         edits = VehicleEdit.objects.filter(~Q(username=''), approved=None)
-        for edit in edits.values('username').annotate(count=Count('user')).order_by('-count'):
+        for edit in edits.values('username').annotate(count=Count('username')).order_by('-count'):
             yield (edit['username'], f"{edit['username']} ({edit['count']})")
 
     def queryset(self, request, queryset):
         if self.value():
             if self.value() == '1':
-                return queryset.exclude(user='')
-            return queryset.filter(user=self.value())
+                return queryset.exclude(username='')
+            return queryset.filter(username=self.value())
         return queryset
 
 
