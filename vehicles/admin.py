@@ -70,6 +70,11 @@ def vehicle(obj):
     return mark_safe(f'<a href="{url}">{obj.vehicle}</a>')
 
 
+def username(obj):
+    url = reverse('admin:vehicles_vehicleedit_changelist')
+    return mark_safe(f'<a href="{url}?username={obj.username}">{obj.username}</a>')
+
+
 def fleet_number(obj):
     return obj.get_diff('fleet_number')
 
@@ -267,7 +272,7 @@ class UserFilter(admin.SimpleListFilter):
 
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['id', 'datetime', vehicle, fleet_number, reg, vehicle_type, branding, name, 'current', 'suggested',
-                    notes, 'withdrawn', features, changes, 'last_seen', 'flickr', 'username', url]
+                    notes, 'withdrawn', features, changes, 'last_seen', 'flickr', username, url]
     list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'vehicle__latest_location',
                            'livery']
     list_filter = [
