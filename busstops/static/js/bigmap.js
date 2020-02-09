@@ -85,27 +85,24 @@
     }
 
     function getStopIcon(indicator, bearing) {
-        var className = 'leaflet-div-icon';
+        var html = '';
         if (indicator) {
             var indicatorParts = indicator.split(' ');
             var firstPart = indicatorParts[0].toLowerCase();
             if (indicatorParts.length === 2 && (firstPart === 'stop' || firstPart === 'bay' || firstPart === 'stand' || firstPart === 'stance' || firstPart === 'gate')) {
-                indicator = indicatorParts[1];
-            } else {
-                indicator = indicator.slice(0, 3);
+                html = indicatorParts[1];
             }
-        } else {
-            indicator = '';
         }
-        indicator = '<div class="stop">' + indicator + '</div>';
         if (bearing !== null) {
-            indicator += '<div class="arrow" style="' + getRotation(bearing) + '"></div>';
+            html += '<div class="stop-arrow" style="' + getRotation(bearing + 45) + '"></div>';
+        } else {
+            html += '<div class="stop-arrow no-direction" style="></div>';
         }
         return L.divIcon({
-            iconSize: [18, 18],
-            html: indicator,
-            popupAnchor: [0, -6],
-            className: className
+            iconSize: [14, 14],
+            html: html,
+            popupAnchor: [0, -7],
+            className: 'stop'
         });
     }
 

@@ -626,6 +626,7 @@ table {
 }
 
 .leaflet-marker-icon {
+    // journey history
     &.just-arrow {
         .arrow {
             border: 2px solid #000;
@@ -645,17 +646,13 @@ table {
         text-align: center;
         white-space: nowrap;
 
-        .bus,
-        .stop {
-            border: 1px solid rgba(0, 0, 0, .2);
-            overflow: hidden;
-        }
-
         .bus {
             background: $white;
+            border: 1px solid rgba(0, 0, 0, .2);
             height: 12px;
             line-height: 12px;
             margin-top: 3px;
+            overflow: hidden;
         }
 
         .coloured {
@@ -666,26 +663,35 @@ table {
             color: $white;
         }
 
-        .stop {
-            background: $brand-color;
-            border-radius: 10px;
-            height: 16px;
-            line-height: 14px;
-        }
-
         .arrow {
             border: 4px solid transparent;
             border-bottom: 5px solid $black;
             border-top: 0;
-            left: 5px;
+            left: 6px;
             position: absolute;
             top: -6px;
-            transform-origin: 4px 15px;
+            transform-origin: 4px 16px;
+        }
+    }
+
+    &.stop {
+        color: #fff;
+        font-size: 8px;
+        line-height: 14px;
+        text-align: center;
+
+        .stop-arrow {
+            background: $black;
+            border-radius: 0 7px 7px;
+            height: 14px;
+            position: absolute;
+            top: 0;
+            width: 14px;
+            z-index: -1;
         }
 
-        .bus + .arrow {
-            left: 6px;
-            transform-origin: 4px 16px;
+        .no-direction {
+            border-radius: 7px;
         }
     }
 }
