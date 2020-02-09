@@ -293,7 +293,7 @@
             }
             oldVehicles = newVehicles;
             newVehicles = {};
-            if (map.getZoom() < 15)
+            if (map.getZoom() < 15) {
                 statusBar.getContainer().innerHTML = 'Zoom in to see stops';
             } else {
                 statusBar.getContainer().innerHTML = '';
