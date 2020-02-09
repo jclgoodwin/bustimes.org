@@ -293,7 +293,11 @@
             }
             oldVehicles = newVehicles;
             newVehicles = {};
-            statusBar.getContainer().innerHTML = '';
+            if (map.getZoom() < 15)
+                statusBar.getContainer().innerHTML = 'Zoom in to see stops';
+            } else {
+                statusBar.getContainer().innerHTML = '';
+            }
         }
         if (openPopupMarker) {
             updatePopupContent();
