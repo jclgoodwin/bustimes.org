@@ -1,4 +1,6 @@
+import requests
 from django import forms
+from django.core.exceptions import ValidationError
 from django.db.models import Count
 from busstops.models import Operator
 from .models import VehicleType, VehicleFeature, Livery
@@ -29,6 +31,12 @@ class EditVehiclesForm(forms.Form):
     withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False)
     user = forms.CharField(label='Your name', help_text='If left blank, your IP address will be logged instead',
                            required=False, max_length=255)
+
+    def clean_url(self):
+        if self.cleaned_data['url']:
+            response = requests.get(self.cleaned_data['url'])
+            if not response.ok:
+                raise ValidationError('That URL doesn’t work for me. Maybe it’s too long, or Facebook')
 
     def __init__(self, *args, **kwargs):
         features_column = kwargs.pop('features_column', None)
