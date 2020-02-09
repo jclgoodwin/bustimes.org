@@ -22,8 +22,8 @@
 
     <p><kbd>Shift</kbd> + click to select multiple consecutive vehicles</p>
 {% else %}
-    <p>This is an <strong>unofficial</strong> and probably incomplete fleet list for {% firstof parent object %} 
-    {% if parent %}({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %}){% endif %}.</p>
+    <p>This is an <strong>unofficial</strong> and probably incomplete fleet list for {% firstof parent object %}
+    {% if parent %} ({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %}){% endif %}.</p>
 
     <p>It only lists vehicles that have ever appeared in the live bus tracking system.</p>
 
