@@ -99,9 +99,9 @@
             html += '<div class="stop-arrow no-direction"></div>';
         }
         return L.divIcon({
-            iconSize: [14, 14],
+            iconSize: [16, 16],
             html: html,
-            popupAnchor: [0, -7],
+            popupAnchor: [0, -8],
             className: 'stop'
         });
     }
