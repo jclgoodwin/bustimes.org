@@ -93,6 +93,7 @@
                 html = indicatorParts[1];
             }
         }
+        var className = 'stop stop-' + html.length;
         if (bearing !== null) {
             html += '<div class="stop-arrow" style="' + getRotation(bearing + 45) + '"></div>';
         } else {
@@ -101,8 +102,8 @@
         return L.divIcon({
             iconSize: [16, 16],
             html: html,
-            popupAnchor: [0, -8],
-            className: 'stop'
+            popupAnchor: [0, -4],
+            className: className
         });
     }
 

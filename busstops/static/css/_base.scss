@@ -676,7 +676,7 @@ table {
 
     &.stop {
         color: #fff;
-        font-size: 10px;
+        font-size: 9px;
         line-height: 16px;
         text-align: center;
 
@@ -695,6 +695,20 @@ table {
             border-radius: 8px;
         }
     }
+
+    &.stop-0 {
+        .stop-arrow {
+            height: 13px;
+            left: 1px;
+            top: 1px;
+            width: 13px;
+        }
+    }
+
+    &.stop-1 {
+        font-size: 11px;
+    }
+
 }
 
 .leaflet-bar {
