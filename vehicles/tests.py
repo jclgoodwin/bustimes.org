@@ -183,6 +183,21 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Lynx (2)')
         self.assertContains(response, '127.0.0.1 (2)')
 
+        # edit type, livery and name with bad URL
+        with self.assertNumQueries(11):
+            response = self.client.post(url, {
+                'fleet_number': '1',
+                'reg': 'FD54JYA',
+                'vehicle_type': self.vehicle_2.vehicle_type_id,
+                'operator': self.lynx.id,
+                'colours': self.vehicle_2.livery_id,
+                'notes': 'Trent Barton',
+                'name': 'Colin',
+                'url': 'http://localhost'
+            })
+        self.assertTrue(response.context['form'].has_changed())
+        self.assertContains(response, 'That URL does')
+
         # edit type, livery and name
         with self.assertNumQueries(9):
             response = self.client.post(url, {
@@ -193,9 +208,12 @@ class VehiclesTests(TestCase):
                 'colours': self.vehicle_2.livery_id,
                 'notes': 'Trent Barton',
                 'name': 'Colin',
+                'url': 'https://bustimes.org'
             })
         self.assertTrue(response.context['form'].has_changed())
         self.assertContains(response, 'Thank you')
+        edit = VehicleEdit.objects.last()
+        self.assertEqual(edit.url, 'https://bustimes.org')
 
         # should not create an edit
         with self.assertNumQueries(11):

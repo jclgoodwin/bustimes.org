@@ -34,9 +34,13 @@ class EditVehiclesForm(forms.Form):
 
     def clean_url(self):
         if self.cleaned_data['url']:
-            response = requests.get(self.cleaned_data['url'])
-            if not response.ok:
-                raise ValidationError('That URL doesn’t work for me. Maybe it’s too long, or Facebook')
+            try:
+                response = requests.get(self.cleaned_data['url'])
+                if response.ok:
+                    return self.cleaned_data['url']
+            except requests.ConnectionError:
+                pass
+            raise ValidationError('That URL doesn’t work for me. Maybe it’s too long, or Facebook')
 
     def __init__(self, *args, **kwargs):
         features_column = kwargs.pop('features_column', None)
