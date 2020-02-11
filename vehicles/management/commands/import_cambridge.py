@@ -129,13 +129,13 @@ class Command(BaseCommand):
         location.current = True
         location.early = -round(dateparse.parse_duration(item['Delay']).total_seconds()/60)
 
-        if vehicle.latest_location_id:
-            location.id = vehicle.latest_location_id
+        if vehicle.latest_location:
+            location.id = vehicle.latest_location.id
 
         location.save()
         location.redis_append()
 
-        if not vehicle.latest_location_id:
+        if not vehicle.latest_location:
             vehicle.latest_location = location
             vehicle.save(update_fields=['latest_location'])
 
