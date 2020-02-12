@@ -7,7 +7,7 @@ from django.contrib.gis.db.models import Extent, Q
 from django.utils import timezone
 from busstops.models import Operator, Service
 from ...models import VehicleLocation, VehicleJourney
-from ..import_live_vehicles import ImportLiveVehiclesCommand
+from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
 
 
 def get_latlong(item):
@@ -97,7 +97,9 @@ class Command(ImportLiveVehiclesCommand):
                 try:
                     operator = Operator.objects.get(id=operator_id)
                 except Operator.DoesNotExist as e:
-                    print(operator_id, e)
+                    logger.error(e, exc_info=True, extra={
+                        'operator': operator_id
+                    })
                 defaults = {
                     'source': self.source
                 }

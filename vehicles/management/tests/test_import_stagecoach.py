@@ -30,9 +30,11 @@ class StagecoachTest(TestCase):
         self.assertTrue(sleep.called)
 
         with self.assertNumQueries(20):
-            for item in items:
-                self.command.handle_item(item, self.command.source.datetime)
+            with self.assertLogs(level='ERROR'):
+                for item in items:
+                    self.command.handle_item(item, self.command.source.datetime)
 
         with self.assertNumQueries(12):
-            for item in items:
-                self.command.handle_item(item, self.command.source.datetime)
+            with self.assertLogs(level='ERROR'):
+                for item in items:
+                    self.command.handle_item(item, self.command.source.datetime)
