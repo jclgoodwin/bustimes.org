@@ -725,7 +725,7 @@ class TransXChange(object):
             elif tag == 'VehicleJourneys':
                 try:
                     self.journeys = self.__get_journeys(element, serviced_organisations)
-                except AttributeError as e:
+                except (AttributeError, KeyError) as e:
                     logger.error(e, exc_info=True)
                     return
                 element.clear()

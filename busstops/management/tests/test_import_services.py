@@ -203,7 +203,8 @@ class ImportServicesTest(TestCase):
 
     def test_do_service_invalid(self):
         """A file with some wrong references should be silently ignored"""
-        self.do_service('NW_05_PBT_6_1', 'GB')
+        with self.assertLogs(level='ERROR'):
+            self.do_service('NW_05_PBT_6_1', 'GB')
 
     def test_service_nw(self):
         # 2
