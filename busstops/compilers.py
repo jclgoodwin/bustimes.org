@@ -3,7 +3,7 @@ from django.conf import settings
 from pipeline.compilers import sass
 
 
-class AutoprefixerMixin(object):
+class AutoprefixerMixin:
     def compile_file(self, infile, outfile, **kwargs):
         super().compile_file(infile, outfile, **kwargs)
         command = (

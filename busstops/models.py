@@ -31,7 +31,7 @@ TIMING_STATUS_CHOICES = (
 SERVICE_ORDER_REGEX = re.compile(r'(\D*)(\d*)(\D*)')
 
 
-class ValidateOnSaveMixin(object):
+class ValidateOnSaveMixin:
     """https://www.xormedia.com/django-model-validation-on-save/"""
     def save(self, force_insert=False, force_update=False, **kwargs):
         if not (force_insert or force_update):
@@ -411,7 +411,7 @@ class StopCode(models.Model):
     source = models.ForeignKey(DataSource, models.CASCADE)
     code = models.CharField(max_length=100)
 
-    class Meta(object):
+    class Meta:
         unique_together = ('code', 'source')
 
     def __str__(self):
@@ -423,7 +423,7 @@ class OperatorCode(models.Model):
     source = models.ForeignKey(DataSource, models.CASCADE)
     code = models.CharField(max_length=100, db_index=True)
 
-    class Meta(object):
+    class Meta:
         unique_together = ('operator', 'code', 'source')
 
     def __str__(self):

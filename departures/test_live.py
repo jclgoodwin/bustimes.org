@@ -12,7 +12,7 @@ from vehicles.models import VehicleJourney
 from . import live
 
 
-class DummyResponse(object):
+class DummyResponse:
     def __init__(self, data):
         self.data = data
 

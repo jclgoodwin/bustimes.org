@@ -142,7 +142,7 @@ def stops(request):
     })
 
 
-class UppercasePrimaryKeyMixin(object):
+class UppercasePrimaryKeyMixin:
     """Normalises the primary key argument to uppercase"""
     def get_object(self, queryset=None):
         """Given a pk argument like 'ea' or 'sndr',

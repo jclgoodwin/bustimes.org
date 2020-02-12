@@ -25,7 +25,7 @@ LOCAL_TIMEZONE = pytz.timezone('Europe/London')
 SESSION = requests.Session()
 
 
-class Departures(object):
+class Departures:
     """Abstract class for getting departures from a source"""
     request_url = None
 

@@ -124,7 +124,7 @@ def correct_description(description):
     return description
 
 
-class Stop(object):
+class Stop:
     """A TransXChange StopPoint."""
     stop = None
     locality = None
@@ -166,7 +166,7 @@ class Stop(object):
         return False
 
 
-class JourneyPattern(object):
+class JourneyPattern:
     """A collection of JourneyPatternSections, in order."""
     def __init__(self, element, sections):
         self.id = element.attrib.get('id')
@@ -188,7 +188,7 @@ class JourneyPattern(object):
                 yield timinglink
 
 
-class JourneyPatternSection(object):
+class JourneyPatternSection:
     """A collection of JourneyPatternStopUsages, in order."""
     def __init__(self, element, stops):
         self.id = element.get('id')
@@ -198,7 +198,7 @@ class JourneyPatternSection(object):
         ]
 
 
-class JourneyPatternStopUsage(object):
+class JourneyPatternStopUsage:
     """Either a 'From' or 'To' element in TransXChange."""
     def __init__(self, element, stops):
         self.activity = element.find('txc:Activity', NS)
@@ -228,7 +228,7 @@ class JourneyPatternStopUsage(object):
         self.parent = None
 
 
-class JourneyPatternTimingLink(object):
+class JourneyPatternTimingLink:
     def __init__(self, element, stops):
         self.origin = JourneyPatternStopUsage(element.find('txc:From', NS), stops)
         self.destination = JourneyPatternStopUsage(element.find('txc:To', NS), stops)
@@ -392,7 +392,7 @@ class VehicleJourney:
             yield Cell(timinglink.destination, time, time)
 
 
-class ServicedOrganisation(object):
+class ServicedOrganisation:
     def __init__(self, element):
         self.code = element.find('txc:OrganisationCode', NS).text
         self.name = element.find('txc:Name', NS)
@@ -420,7 +420,7 @@ class ServicedOrganisation(object):
             """)))
 
 
-class ServicedOrganisationDayType(object):
+class ServicedOrganisationDayType:
     def __init__(self, element, servicedorgs):
         self.nonoperation_holidays = None
         self.nonoperation_workingdays = None
@@ -452,7 +452,7 @@ class ServicedOrganisationDayType(object):
                 self.operation_workingdays = servicedorgs[op_workingdays_element.text]
 
 
-class DayOfWeek(object):
+class DayOfWeek:
     def __init__(self, day):
         if isinstance(day, int):
             self.day = day
@@ -468,7 +468,7 @@ class DayOfWeek(object):
         return calendar.day_name[self.day]
 
 
-class OperatingProfile(object):
+class OperatingProfile:
     servicedorganisation = None
     nonoperation_days = ()
     operation_days = ()
@@ -574,7 +574,7 @@ class OperatingProfile(object):
         return True
 
 
-class DateRange(object):
+class DateRange:
     def __init__(self, element):
         self.start = ciso8601.parse_datetime(element.find('txc:StartDate', NS).text).date()
         self.end = element.find('txc:EndDate', NS)
@@ -618,7 +618,7 @@ class OperatingPeriod(DateRange):
         return ''
 
 
-class Service(object):
+class Service:
     description = None
     description_parts = None
     via = None
@@ -666,7 +666,7 @@ class Service(object):
         }
 
 
-class TransXChange(object):
+class TransXChange:
     service = None
 
     def __get_journeys(self, journeys_element, serviced_organisations):
@@ -740,7 +740,7 @@ class TransXChange(object):
         )[:10]
 
 
-class Row(object):
+class Row:
     """A row in a grouping in a timetable.
     Each row is associated with a Stop, and a list of times.
     """
@@ -760,7 +760,7 @@ class Row(object):
         return str(self.stop)
 
 
-class Cell(object):
+class Cell:
     last = False
 
     def __init__(self, stopusage, arrival_time, departure_time):
@@ -778,7 +778,7 @@ class Cell(object):
         return self.arrival_time == other.arrival_time and self.departure_time == other.departure_time
 
 
-class Repetition(object):
+class Repetition:
     """Represents a special cell in a timetable, spanning multiple rows and columns,
     with some text like 'then every 5 minutes until'.
     """
@@ -804,7 +804,7 @@ class Repetition(object):
         return 'then every {} until'.format(duration)
 
 
-class Grouping(object):
+class Grouping:
     """Probably either 'outbound' or 'inbound'.
     """
     differ = difflib.Differ(charjunk=lambda _: True)

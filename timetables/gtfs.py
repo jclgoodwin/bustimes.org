@@ -6,7 +6,7 @@ from multigtfs.models import Trip, StopTime
 from bustimes.timetables import Row, Cell
 
 
-class Timetable(object):
+class Timetable:
     def __init__(self):
         self.groupings = []
 
@@ -20,7 +20,7 @@ class Timetable(object):
             yield self.date
 
 
-class Grouping(object):
+class Grouping:
     def __init__(self):
         self.name = ''
         self.rows = []
