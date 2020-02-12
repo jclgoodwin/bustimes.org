@@ -459,7 +459,8 @@ class Command(BaseCommand):
             defaults['geometry'] = multi_line_string
 
             if self.service_descriptions:
-                defaults['outbound_description'], defaults['inbound_description'] = self.get_service_descriptions(filename)
+                defaults['outbound_description'], defaults['inbound_description'] = self.get_service_descriptions(
+                    filename)
                 defaults['description'] = defaults['outbound_description'] or defaults['inbound_description']
 
             service, service_created = Service.objects.update_or_create(service_code=service_code, defaults=defaults)
