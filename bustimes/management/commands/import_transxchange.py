@@ -317,12 +317,14 @@ class Command(BaseCommand):
 
         return calendar
 
-    def handle_journeys(self, route, stops, transxchange):
+    def handle_journeys(self, route, stops, transxchange, service):
         default_calendar = None
 
         for journey in transxchange.journeys:
+            if journey.service_ref != service.service_code:
+                continue
+
             calendar = None
-            service = transxchange.services[journey.service_ref]
             if journey.operating_profile:
                 calendar = self.get_calendar(journey.operating_profile, service.operating_period)
             else:
@@ -503,9 +505,14 @@ class Command(BaseCommand):
             if 'description' in defaults:
                 route_defaults['description'] = defaults['description']
 
-            route, route_created = Route.objects.get_or_create(route_defaults, source=self.source, code=filename)
+            if len(transxchange.services) > 1:
+                route_code = service_code
+            else:
+                route_code = filename
 
-            self.handle_journeys(route, stops, transxchange)
+            route, route_created = Route.objects.get_or_create(route_defaults, source=self.source, code=route_code)
+
+            self.handle_journeys(route, stops, transxchange, txc_service)
 
             if service_code in self.corrections:
                 corrections = {}
