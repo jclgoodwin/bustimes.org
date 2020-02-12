@@ -241,10 +241,10 @@
         },
         "jsonfield": {
             "hashes": [
-                "sha256:a0a7fdee736ff049059409752b045281a225610fecbda9b9bd588ba976493c12",
-                "sha256:beb1cd4850d6d6351c32daefcb826c01757744e9c863228a642f87a1a4acb834"
+                "sha256:11fd69f83a7f44de749f91beea0d41871a893178cdb8ff5564cfeb3e12d7ff9e",
+                "sha256:cded15ff4ae9b77cceb93a6662ecef8fb2baa66f2756ca0e0e02a96fdd527344"
             ],
-            "version": "==2.0.2"
+            "version": "==2.1.0"
         },
         "kombu": {
             "hashes": [
@@ -712,11 +712,11 @@
         },
         "coveralls": {
             "hashes": [
-                "sha256:2da39aeaef986757653f0a442ba2bef22a8ec602c8bacbc69d39f468dfae12ec",
-                "sha256:906e07a12b2ac04b8ad782d06173975fe5ff815fe9df3bfedd2c099bc5791aec"
+                "sha256:0a102a9326933e23213f29103b08f148c97fc3128292c3aa24fae1e773940650",
+                "sha256:b4b21b15f4a5297794b5393cc40f720ef70c50f20772325d26965d96000ce0ca"
             ],
             "index": "pypi",
-            "version": "==1.10.0"
+            "version": "==1.11.0"
         },
         "decorator": {
             "hashes": [
