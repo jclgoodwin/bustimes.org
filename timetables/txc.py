@@ -7,9 +7,14 @@ import calendar
 import datetime
 import ciso8601
 import difflib
+import logging
 from django.utils.text import slugify
 from django.utils.dateparse import parse_duration
 from titlecase import titlecase
+
+
+logger = logging.getLogger(__name__)
+
 
 NS = {
     'txc': 'http://www.transxchange.org.uk/'
@@ -268,7 +273,7 @@ def get_deadrun_ref(deadrun_element):
         return deadrun_element.find('txc:ShortWorking/txc:JourneyPatternTimingLinkRef', NS).text
 
 
-class VehicleJourney(object):
+class VehicleJourney:
     """A journey represents a scheduled journey that happens at most once per
     day. A sort of "instance" of a JourneyPattern, made distinct by having its
     own start time (and possibly operating profile and dead run).
@@ -280,15 +285,17 @@ class VehicleJourney(object):
     def __str__(self):
         return str(self.departure_time)
 
-    def __init__(self, element, journey_patterns, serviced_organisations):
+    def __init__(self, element, services, serviced_organisations):
         self.code = element.find('txc:VehicleJourneyCode', NS).text
         self.private_code = element.find('txc:PrivateCode', NS)
         if self.private_code is not None:
             self.private_code = self.private_code.text
 
+        self.service_ref = element.find('txc:ServiceRef', NS).text
+
         journeypatternref_element = element.find('txc:JourneyPatternRef', NS)
         if journeypatternref_element is not None:
-            self.journey_pattern = journey_patterns.get(journeypatternref_element.text)
+            self.journey_pattern = services[self.service_ref].journey_patterns.get(journeypatternref_element.text)
         else:
             # Journey has no direct reference to a JourneyPattern.
             # Instead, it has a reference to another journey...
@@ -611,16 +618,62 @@ class OperatingPeriod(DateRange):
         return ''
 
 
-class TransXChange(object):
+class Service(object):
     description = None
     description_parts = None
     via = None
+
+    def set_description(self, description):
+        if description.isupper():
+            description = titlecase(description)
+        self.description = correct_description(description)
+
+        self.via = None
+        self.description_parts = list(map(sanitize_description_part, self.description.split(' - ')))
+        if ' via ' in self.description_parts[-1]:
+            self.description_parts[-1], self.via = self.description_parts[-1].split(' via ', 1)
+
+    def __init__(self, element, serviced_organisations, journey_pattern_sections):
+        self.element = element
+
+        mode_element = element.find('txc:Mode', NS)
+        if mode_element is not None:
+            self.mode = mode_element.text
+        else:
+            self.mode = ''
+
+        self.operator = element.find('txc:RegisteredOperatorRef', NS)
+        if self.operator is not None:
+            self.operator = self.operator.text
+
+        operatingprofile_element = element.find('txc:OperatingProfile', NS)
+        if operatingprofile_element is not None:
+            self.operating_profile = OperatingProfile(operatingprofile_element, serviced_organisations)
+
+        self.operating_period = OperatingPeriod(element.find('txc:OperatingPeriod', NS))
+
+        self.service_code = element.find('txc:ServiceCode', NS).text
+
+        description_element = element.find('txc:Description', NS)
+        if description_element is not None:
+            self.set_description(description_element.text)
+
+        self.journey_patterns = {
+            journey_pattern.id: journey_pattern for journey_pattern in (
+               JourneyPattern(journey_pattern, journey_pattern_sections)
+               for journey_pattern in element.findall('txc:StandardService/txc:JourneyPattern', NS)
+            ) if journey_pattern.sections
+        }
+
+
+class TransXChange(object):
     service = None
+    services = {}
 
     def __get_journeys(self, journeys_element, serviced_organisations):
         journeys = {
             journey.code: journey for journey in (
-                VehicleJourney(element, self.journey_patterns, serviced_organisations)
+                VehicleJourney(element, self.services, serviced_organisations)
                 for element in journeys_element
             )
         }
@@ -632,16 +685,6 @@ class TransXChange(object):
                 journey.journey_pattern = journeys[journey.journey_ref].journey_pattern
 
         return [journey for journey in journeys.values() if journey.journey_pattern]
-
-    def set_description(self, description):
-        if description.isupper():
-            description = titlecase(description)
-        self.description = correct_description(description)
-
-        self.via = None
-        self.description_parts = list(map(sanitize_description_part, self.description.split(' - ')))
-        if ' via ' in self.description_parts[-1]:
-            self.description_parts[-1], self.via = self.description_parts[-1].split(' via ', 1)
 
     def __init__(self, open_file):
         iterator = ET.iterparse(open_file)
@@ -682,38 +725,12 @@ class TransXChange(object):
                 try:
                     self.journeys = self.__get_journeys(element, serviced_organisations)
                 except AttributeError as e:
-                    print(e)
+                    logger.error(e, exc_info=True)
                     return
                 element.clear()
             elif tag == 'Service':
-                mode_element = element.find('txc:Mode', NS)
-                if mode_element is not None:
-                    self.mode = mode_element.text
-                else:
-                    self.mode = ''
-
-                self.operator = element.find('txc:RegisteredOperatorRef', NS)
-                if self.operator is not None:
-                    self.operator = self.operator.text
-
-                operatingprofile_element = element.find('txc:OperatingProfile', NS)
-                if operatingprofile_element is not None:
-                    self.operating_profile = OperatingProfile(operatingprofile_element, serviced_organisations)
-
-                self.operating_period = OperatingPeriod(element.find('txc:OperatingPeriod', NS))
-
-                self.service_code = element.find('txc:ServiceCode', NS).text
-
-                description_element = element.find('txc:Description', NS)
-                if description_element is not None:
-                    self.set_description(description_element.text)
-
-                self.journey_patterns = {
-                    journey_pattern.id: journey_pattern for journey_pattern in (
-                       JourneyPattern(journey_pattern, journey_pattern_sections)
-                       for journey_pattern in element.findall('txc:StandardService/txc:JourneyPattern', NS)
-                    ) if journey_pattern.sections
-                }
+                service = Service(element, serviced_organisations, journey_pattern_sections)
+                self.services[service.service_code] = service
 
         self.element = element
 
@@ -883,7 +900,7 @@ class Grouping(object):
                     description += ' via ' + self.parent.via
                 return description
 
-        if self.parent.service:
-            return getattr(self.parent.service, self.direction + '_description')
+        # if self.parent.service:
+        #     return getattr(self.parent.service, self.direction + '_description')
 
         return self.direction.capitalize()
