@@ -668,7 +668,6 @@ class Service(object):
 
 class TransXChange(object):
     service = None
-    services = {}
 
     def __get_journeys(self, journeys_element, serviced_organisations):
         journeys = {
@@ -688,6 +687,8 @@ class TransXChange(object):
 
     def __init__(self, open_file):
         iterator = ET.iterparse(open_file)
+
+        self.services = {}
 
         # element = None
         serviced_organisations = None
