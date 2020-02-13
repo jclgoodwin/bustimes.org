@@ -42,6 +42,9 @@ class Command(ImportLiveVehiclesCommand):
             if parts[0].isdigit():
                 fleet_number = parts[0]
 
+        if operator == 'CTNY':
+            code = code.replace('_', '')
+
         defaults = {
             'source': self.source,
             'operator_id': operator,
