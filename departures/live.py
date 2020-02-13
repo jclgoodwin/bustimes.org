@@ -149,7 +149,7 @@ class Departures:
             vehicle = vehicle[len(operator_ref) + 1:]
         elif operator_ref == 'FAB' and vehicle.startswith('111-'):  # Aberdeen
             vehicle = vehicle[4:]
-        elif vehicle.startswith('ASES-'):  # Milton Keynes
+        elif vehicle[:5] in {'ASES-', 'CTNY-'}:
             vehicle = vehicle[5:]
         operator = service.operator.all()[0]
         for operator in service.operator.all():
