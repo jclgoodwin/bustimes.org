@@ -125,7 +125,7 @@ class Command(ImportLiveVehiclesCommand):
         vehicle_code = mvj.find('siri:VehicleRef', NS).text
         operator_ref = mvj.find('siri:OperatorRef', NS).text
         while operator_ref and vehicle_code.startswith(operator_ref + '-'):
-            if operator_ref == 'SQ' and vehicle_code[:6] != 'SQ-SQ-' or operator_ref in {'CSLB', 'CTNY'}:
+            if operator_ref == 'SQ' and vehicle_code[:6] != 'SQ-SQ-' or operator_ref == 'CSLB':
                 break
             vehicle_code = vehicle_code[len(operator_ref) + 1:]
 
