@@ -131,6 +131,8 @@ class Command(ImportLiveVehiclesCommand):
 
         if vehicle_code[:4] == 'ASC-' and vehicle_code[4:].isdigit():
             vehicle_code = vehicle_code[4:]
+        if vehicle_code[:5] == 'CTNY-':
+            vehicle_code = vehicle_code[5:]
 
         operator, operator_options = self.get_operator(operator_ref)
 
