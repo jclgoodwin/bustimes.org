@@ -95,6 +95,8 @@ class Command(ImportLiveVehiclesCommand):
             services = Service.objects.filter(current=True, line_name=line_name)
             if operator == 'BORD':
                 services = services.filter(operator__in=('BORD', 'PERY'))
+            elif operator == 'CTNY':
+                services = services.filter(operator__in=('CTNY', 'THVB'))
             else:
                 services = services.filter(operator=operator)
 
