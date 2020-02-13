@@ -116,10 +116,6 @@ class Command(ImportLiveVehiclesCommand):
             else:
                 return None, None
 
-        latest_location = vehicle.latest_location
-        if latest_location and latest_location.journey.source_id != self.source.id and latest_location.current:
-            return None, None
-
         return vehicle, created
 
     def get_journey(self, item, vehicle):
