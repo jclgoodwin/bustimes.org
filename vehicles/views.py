@@ -259,16 +259,19 @@ def vehicles_last_modified(request):
         if last_modified and (now - last_modified).total_seconds() < 40:
             return last_modified
 
-        codes = ServiceCode.objects.filter(scheme__in=schemes, service=service_id)
-        for code in codes:
-            try:
-                siri_one_shot(code, now)
-                break
-            except (SIRISource.DoesNotExist, Poorly, exceptions.RequestException):
-                continue
+        operators = Operator.objects.filter(service=service_id)
+        if not any(operator.id in {'CTNY', 'SCBD'} for operator in operators):
+            codes = ServiceCode.objects.filter(scheme__in=schemes, service=service_id)
 
-        if Operator.objects.filter(id__in=('KBUS', 'TBTN', 'NOCT'), service=service_id).exists():
-            rifkind(service_id)
+            for code in codes:
+                try:
+                    siri_one_shot(code, now)
+                    break
+                except (SIRISource.DoesNotExist, Poorly, exceptions.RequestException):
+                    continue
+
+            if any(operator.id in {'KBUS', 'TBTN', 'NOCT'} for operator in operators):
+                rifkind(service_id)
 
         last_modified = cache.get(f'{service_id}:vehicles_last_modified')
         if not last_modified or (now - last_modified).total_seconds() > 900:  # older than 15 minutes
