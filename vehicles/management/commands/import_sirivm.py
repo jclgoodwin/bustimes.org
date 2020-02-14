@@ -160,6 +160,8 @@ class Command(ImportLiveVehiclesCommand):
             defaults['fleet_number'] = vehicle_code
             if operator_ref == 'ATS' and int(vehicle_code) > 8000:
                 return None, None
+            if operator_ref == 'CTNY':
+                return None, None
         elif '-' in vehicle_code:
             parts = vehicle_code.split('-')
             if len(parts) == 2 and parts[0].isalpha() and parts[0].isupper() and parts[1].isdigit():
