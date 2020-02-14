@@ -284,7 +284,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
         UserFilter,
     ]
     raw_id_fields = ['vehicle', 'livery']
-    actions = ['apply_edits', 'disapprove', 'delete_vehicles']
+    actions = ['apply_edits', 'approve', 'disapprove', 'make_livery', 'delete_vehicles']
 
     def get_queryset(self, _):
         return VehicleEdit.objects.all().prefetch_related('features', 'vehicle__features')
@@ -293,9 +293,20 @@ class VehicleEditAdmin(admin.ModelAdmin):
         apply_edits(queryset)
         self.message_user(request, 'Applied edits.')
 
+    def approve(self, request, queryset):
+        count = queryset.update(approved=True)
+        self.message_user(request, f'Approved {count} edits.')
+
     def disapprove(self, request, queryset):
         count = queryset.update(approved=False)
         self.message_user(request, f'Disapproved {count} edits.')
+
+    def make_livery(self, request, queryset):
+        vehicle = queryset.first().vehicle
+        assert not vehicle.livery
+        livery = Livery.objects.create(name=vehicle.branding or vehicle.notes, colours=vehicle.colours)
+        count = queryset.update(colours='', branding='', livery=livery)
+        self.message_user(request, f'Updated {count} vehicles.')
 
     def delete_vehicles(self, request, queryset):
         Vehicle.objects.filter(vehicleedit__in=queryset).delete()
