@@ -110,6 +110,8 @@
                     } else {
                         popup += ' late';
                     }
+                } else if (delta === 0) {
+                    popup += '<br>On time';
                 }
                 coordinates = L.latLng(locations[i].coordinates[1], locations[i].coordinates[0]);
                 getMarker(coordinates, locations[i].direction).bindTooltip(popup).addTo(layerGroup);
