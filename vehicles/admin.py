@@ -302,11 +302,12 @@ class VehicleEditAdmin(admin.ModelAdmin):
         self.message_user(request, f'Disapproved {count} edits.')
 
     def make_livery(self, request, queryset):
-        vehicle = queryset.first().vehicle
+        edit = queryset.first()
+        vehicle = edit.vehicle
         assert not vehicle.livery
         livery = Livery.objects.create(name=vehicle.branding or vehicle.notes, colours=vehicle.colours)
-        count = queryset.update(colours='', branding='', livery=livery)
-        self.message_user(request, f'Updated {count} vehicles.')
+        count = queryset.update(colours='', branding=f'-{vehicle.branding}', livery=livery)
+        self.message_user(request, f'Updated {count} edits.')
 
     def delete_vehicles(self, request, queryset):
         Vehicle.objects.filter(vehicleedit__in=queryset).delete()
