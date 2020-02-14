@@ -38,7 +38,7 @@
     {% endif %}
 
     {% if user.is_authenticated %}
-        <p><a href="{{ edit_url }}?o=2&amp;operator__id__exact={{ object.id }}">Edit</a></p>
+        <p><a href="{% url 'admin:vehicles_vehicle_changelist' %}?o=2&amp;operator__id__exact={{ object.id }}">Edit</a></p>
     {% endif %}
 {% endif %}
 

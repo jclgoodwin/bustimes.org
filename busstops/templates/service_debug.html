@@ -6,14 +6,9 @@
 
 <h1>{{ object }}</h1>
 
-<pre><code>{{ object.pk }}:
-    line_name: {{ object.line_name }}
-    line_brand: {{ object.line_brand }}
-    description: {{ object.description }}
-    outbound_description: {{ object.outbound_description }}
-    inbound_description: {{ object.inbound_description }}
-    current: {{ object.current }}
-    show_timetable: {{ object.show_timetable }}</code></pre>
+<p><a href="{% url 'admin:busstops_service_change' object.pk %}">Edit</a></p>
+
+<pre>{{ object.yaml }}</pre>
 
 <h2>Service codes</h2>
 
@@ -34,6 +29,10 @@
 
 <h3><a href="/services/{{ route.source }}/{{ route.code }}">{{ route.code }}</a></h3>
 
+<p><a href="{% url 'admin:bustimes_route_change' route.id %}">Edit</a></p>
+
+{{ route.dates }}
+
 <table>
     <thead>
         <tr>
@@ -41,8 +40,7 @@
             <th scope="col">dest</th>
             <th scope="col">start</th>
             <th scope="col">end</th>
-            <th scope="col">start</th>
-            <th scope="col">end</th>
+            <th scope="col">dates</th>
             <th scope="col">days</th>
             <th scope="col">dates</th>
         </tr>
@@ -54,8 +52,7 @@
     <td>{{ trip.destination_id }}</td>
     <td>{{ trip.start }}</td>
     <td>{{ trip.end }}</td>
-    <td>{{ trip.calendar.start_date }}</td>
-    <td>{{ trip.calendar.end_date }}</td>
+    <td>{{ trip.calendar.dates }}</td>
     <td>
         {% if trip.calendar.mon %}mon{% endif %}
         {% if trip.calendar.tue %}tue{% endif %}

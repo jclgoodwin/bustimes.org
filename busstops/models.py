@@ -3,6 +3,7 @@
 import re
 import time
 import logging
+import yaml
 from urllib.parse import urlencode, quote
 from datetime import date
 from autoslug import AutoSlugField
@@ -494,6 +495,19 @@ class Service(models.Model):
             parts = (line_name, self.line_brand, description)
             return ' - '.join(part for part in parts if part)
         return self.service_code
+
+    def yaml(self):
+        return yaml.dump({
+            self.pk: {
+                'line_name': self.line_name,
+                'line_brand': self.line_brand,
+                'description': self.description,
+                'outbound_description': self.outbound_description,
+                'inbound_description': self.inbound_description,
+                'current': self.current,
+                'show_timetable': self.show_timetable,
+            }
+        })
 
     def get_line_name_and_brand(self):
         if self.line_brand:

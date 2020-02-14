@@ -167,7 +167,6 @@ def operator_vehicles(request, slug=None, parent=None):
         'notes_column': any(vehicle.notes for vehicle in vehicles),
         'features_column': features_column,
         'columns': columns,
-        'edit_url': reverse('admin:vehicles_vehicle_changelist'),
         'submitted': submitted,
         'form': form,
     })
