@@ -478,8 +478,7 @@ def tracking_report(request):
     services = Service.objects.filter(current=True).annotate(full_tracking=Exists(full_tracking)).defer('geometry')
     prefetch = Prefetch('service_set', queryset=services)
     operators = Operator.objects.filter(
-        service__current=True,
-        service__tracking=True
+        Q(service__tracking=True, service__current=True) | Q(name__startswith='Arriva ', service__current=True)
     ).prefetch_related(prefetch).distinct()
 
     return render(request, 'vehicles/dashboard.html', {
