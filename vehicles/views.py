@@ -3,7 +3,7 @@ import json
 from datetime import timedelta
 from requests import Session, exceptions
 from ciso8601 import parse_datetime
-from django.db.models import Exists, OuterRef, Prefetch, Subquery
+from django.db.models import Exists, OuterRef, Prefetch, Subquery, Q
 from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.conf import settings
