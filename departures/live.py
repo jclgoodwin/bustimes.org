@@ -650,7 +650,9 @@ class SiriSmDepartures(Departures):
                 if not ('sslink' in url or 'jmwrti' in url or scheme in {'Reading', 'Surrey'}):
                     try:
                         self.log_vehicle_journey(element, operator, vehicle, service, journey_ref, destination)
-                    except (Vehicle.MultipleObjectsReturned, VehicleJourney.MultipleObjectsReturned, DatabaseError, IndexError):
+                    except (Vehicle.MultipleObjectsReturned,
+                            VehicleJourney.MultipleObjectsReturned,
+                            DatabaseError, IndexError):
                         pass
 
             # Create a "service code",
