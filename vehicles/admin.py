@@ -371,7 +371,16 @@ class JourneyCodeAdmin(admin.ModelAdmin):
     raw_id_fields = ['service']
 
 
+class LiveryAdminForm(forms.ModelForm):
+    class Meta:
+        widgets = {
+            'colours': forms.Textarea,
+            'css': forms.Textarea,
+        }
+
+
 class LiveryAdmin(admin.ModelAdmin):
+    form = LiveryAdminForm
     search_fields = ['name']
     list_display = ['name', 'preview']
 

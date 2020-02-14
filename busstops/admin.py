@@ -123,7 +123,7 @@ class LocalityAdmin(admin.ModelAdmin):
 
 
 class NoteAdmin(admin.ModelAdmin):
-    raw_id_fields = ('operators', 'services')
+    autocomplete_fields = ('operators', 'services')
 
 
 class OperatorCodeAdmin(admin.ModelAdmin):
