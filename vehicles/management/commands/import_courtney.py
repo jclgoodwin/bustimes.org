@@ -6,4 +6,5 @@ class Command(ImportLiveVehiclesCommand):
     url = 'https://courtney.arcticapi.com/network/vehicles'
     operators = {
         'CTNY': 'CTNY',
+        'RB': 'RBUS',
     }
