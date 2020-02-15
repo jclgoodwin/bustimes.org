@@ -133,8 +133,12 @@ class Command(ImportLiveVehiclesCommand):
                             yield item
                 if not any_items:
                     print(f'no items: {response.url}')
-            except (RequestException, KeyError):
-                continue
+            except KeyError:
+                print(response.url, response.json())
+                sleep(120)
+            except RequestException:
+                print(response.url, response)
+                sleep(120)
             sleep(1)
 
     def get_vehicle(self, item):
