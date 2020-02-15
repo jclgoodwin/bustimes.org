@@ -329,13 +329,17 @@ class Command(ImportLiveVehiclesCommand):
         if (delay is not None) and delay.text:
             try:
                 delay = parse_duration(delay.text)
-                early = -round(delay.total_seconds()/60)
+                delay = round(delay.total_seconds()/60)
+                early = -delay
             except ValueError:
+                delay = None
                 early = None
         else:
+            delay = None
             early = None
         return VehicleLocation(
             latlong=latlong,
             heading=heading,
+            delay=delay,
             early=early
         )

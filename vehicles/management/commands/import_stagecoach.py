@@ -169,11 +169,15 @@ class Command(ImportLiveVehiclesCommand):
             aimed = datetime.fromtimestamp(int(aimed) / 1000, timezone.utc)
             expected = datetime.fromtimestamp(int(expected) / 1000, timezone.utc)
             early = (aimed - expected).total_seconds() / 60
+            early = round(early)
+            delay = -early
         else:
+            delay = None
             early = None
 
         return VehicleLocation(
             latlong=get_latlong(item),
             heading=bearing,
+            delay=delay,
             early=early
         )

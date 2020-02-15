@@ -127,7 +127,8 @@ class Command(BaseCommand):
         location.latlong = Point(float(item['Longitude']), float(item['Latitude']))
         location.heading = item['Bearing']
         location.current = True
-        location.early = -round(dateparse.parse_duration(item['Delay']).total_seconds()/60)
+        location.delay = round(dateparse.parse_duration(item['Delay']).total_seconds()/60)
+        location.early = -location.delay
 
         if vehicle.latest_location:
             location.id = vehicle.latest_location.id
