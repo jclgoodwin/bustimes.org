@@ -860,8 +860,7 @@ thead {
 input:not(:checked) + label {
     + .timetable-wrapper,
     + .route {
-        .OTH,
-        .TIP {
+        .minor {
             display: none;
         }
 
@@ -961,10 +960,18 @@ input:not(:checked) + label {
         }
     }
 
-    .OTH,
-    .TIP {
-        th a {
-            padding-left: 1em;
+    .minor {
+        th {
+            a {
+                padding-left: 1em;
+            }
+        }
+
+        + .minor {
+            th,
+            td {
+                border-top: 0;
+            }
         }
     }
 }
@@ -980,8 +987,7 @@ input:not(:checked) + label {
 }
 
 .route {
-    .OTH,
-    .TIP {
+    .minor {
         a {
             padding-left: 1em;
         }

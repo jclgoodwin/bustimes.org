@@ -213,9 +213,7 @@ class Grouping:
         return 'Outbound'
 
     def has_minor_stops(self):
-        for row in self.rows:
-            if row.timing_status == 'OTH':
-                return True
+        return any(row.is_minor() for row in self.rows)
 
     def get_order(self):
         if self.trips:
@@ -362,6 +360,9 @@ class Row:
     def __init__(self, stop, times=[]):
         self.stop = stop
         self.times = times
+
+    def is_minor(self):
+        return self.timing_status == 'OTH' or self.timing_status == 'TIP'
 
 
 class Stop:

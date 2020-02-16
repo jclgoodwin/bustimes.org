@@ -15,7 +15,7 @@
         <ul class="route">
     {% endifchanged %}
     {% ifchanged stopusage.stop %}
-        <li class="{{ stopusage.timing_status }}">
+        <li{% if stopusage.is_minor %} class="minor"{% endif %}>
             <a href="{{ stopusage.stop.get_absolute_url }}">{{ stopusage.stop.get_qualified_name }}</a>
         </li>
     {% endifchanged %}
