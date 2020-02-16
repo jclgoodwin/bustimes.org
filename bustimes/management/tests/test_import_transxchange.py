@@ -120,7 +120,7 @@ class ImportTransXChangeTest(TestCase):
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data['breadcrumb'], [self.ea, self.fecs])
         self.assertContains(res, """
-            <tr class="OTH">
+            <tr class="minor">
                 <th><a href="/stops/2900N12345">Norwich Brunswick Road</a></th><td>19:48</td><td>22:56</td>
             </tr>
         """, html=True)
@@ -129,7 +129,7 @@ class ImportTransXChangeTest(TestCase):
         res = self.client.get(service.get_absolute_url())
         self.assertContains(res, '<option selected value="2016-10-03">Monday 3 October 2016</option>')
         self.assertContains(res, """
-            <tr class="OTH">
+            <tr class="minor">
                 <th><a href="/stops/2900N12348">Norwich Eagle Walk</a></th>
                 <td>19:47</td>
                 <td>22:55</td>
@@ -158,7 +158,7 @@ class ImportTransXChangeTest(TestCase):
         service.show_timetable = False
         service.save(update_fields=['show_timetable'])
         res = self.client.get(service.get_absolute_url())
-        self.assertContains(res, """<li class="PTP">
+        self.assertContains(res, """<li>
             <a href="/stops/2900A181"></a>
         </li>""")
         self.assertContains(res, 'Norwich - Wymondham - Attleborough')

@@ -349,7 +349,7 @@ class ImportServicesTest(TestCase):
         res = self.client.get(service.get_absolute_url())
         self.assertContains(res, 'Outbound')
         self.assertContains(res, """
-            <li class="OTH">
+            <li class="minor">
                 <a href="/stops/639004554">Witton Park (opp)</a>
             </li>
         """, html=True)

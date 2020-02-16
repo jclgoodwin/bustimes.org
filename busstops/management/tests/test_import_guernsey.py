@@ -42,12 +42,12 @@ class ImportGuernseyTest(TestCase):
         response = self.client.get(service.get_absolute_url())
         self.assertContains(response, 'Guernsey Buses')
         self.assertContains(response, """
-            <li class="OTH">
+            <li class="minor">
                 <a href="/stops/gg-890000560">Glategny Esplanade (N-bound)</a>
             </li>
         """, html=True)
         self.assertContains(response, """
-            <li class="PTP" >
+            <li>
                 <a href="/stops/gg-890000487">Town Terminus</a>
             </li>
         """, html=True)
