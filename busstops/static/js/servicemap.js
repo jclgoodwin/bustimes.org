@@ -20,12 +20,24 @@
         busesOnline = document.getElementById('buses-online'),
         button = busesOnline.getElementsByTagName('button')[0];
 
+    function setLocationHash(hash) {
+        if (history.replaceState) {
+            try {
+                history.replaceState(null, null, location.pathName + hash);
+            } catch (error) {
+                // probably SecurityError (document is not fully active)
+            }
+        }
+    }
+
     function openMap() {
         container.className += ' expanded';
         if (document.body.style.paddingTop) {
             container.style.top = document.body.style.paddingTop;
         }
         document.body.style.overflow = 'hidden';
+
+        setLocationHash('#map');
 
         if (map) {
             map.invalidateSize();
@@ -322,7 +334,7 @@
     function closeMap() {
         container.className = container.className.replace(' expanded', '');
         document.body.style.overflow = '';
-        window.location.hash = '';
+        setLocationHash('');
 
         return false;
     }
