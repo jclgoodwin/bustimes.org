@@ -23,7 +23,7 @@
     function setLocationHash(hash) {
         if (history.replaceState) {
             try {
-                history.replaceState(null, null, location.pathName + hash);
+                history.replaceState(null, null, location.pathname + hash);
             } catch (error) {
                 // probably SecurityError (document is not fully active)
             }
