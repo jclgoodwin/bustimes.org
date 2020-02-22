@@ -156,10 +156,10 @@ date=$(date +%Y-%m-%d)
 cd TNDS
 for region in "${REGIONS[@]}"; do
     region_old=$(ls -l "$region.zip")
-    if [[ $region == "IOM" ]]; then
-       wget -qN --user="$USERNAME" --password="$PASSWORD" "ftp://ftp.tnds.basemap.co.uk/TNDSV2.5/$region.zip"
-    else
+    if [[ $region == "NCSD" ]]; then
        wget -qN --user="$USERNAME" --password="$PASSWORD" "ftp://ftp.tnds.basemap.co.uk/$region.zip"
+    else
+       wget -qN --user="$USERNAME" --password="$PASSWORD" "ftp://ftp.tnds.basemap.co.uk/TNDSV2.5/$region.zip"
     fi
     region_new=$(ls -l "$region.zip")
     wait
