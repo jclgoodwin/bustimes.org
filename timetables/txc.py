@@ -25,29 +25,6 @@ DESCRIPTION_REGEX = re.compile(r'.+,([^ ].+)$')
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}
 
 
-def not_scotland(bank_holiday):
-    if bank_holiday.endswith('NotScotland'):
-        return True
-    if bank_holiday == 'EasterMonday':
-        return True
-    return False
-
-
-def only_scotland(bank_holiday):
-    if not_scotland(bank_holiday):
-        return False
-    if bank_holiday.endswith('Scotland'):
-        return True
-    if bank_holiday == 'StAndrewsDay':
-        return True
-    return False
-
-
-def time_between(end, start):
-    """Return the timedelta between two times (by converting them to datetimes)."""
-    return datetime.datetime.combine(DUMMY_DATE, end) - datetime.datetime.combine(DUMMY_DATE, start)
-
-
 def add_time(time, delta):
     """Add a timededelta the delta between two times (by naively converting them to datetimes)."""
     return (datetime.datetime.combine(DUMMY_DATE, time) + delta).time()
@@ -667,15 +644,6 @@ class Row:
         part.row = self
         self.times = []
 
-    def timing_status(self):
-        return self.part.timingstatus
-
-    def is_minor(self):
-        return self.part.timingstatus == 'OTH' or self.part.timingstatus == 'TIP'
-
-    def __repr__(self):
-        return str(self.stop)
-
 
 class Cell:
     last = False
@@ -685,14 +653,6 @@ class Cell:
         self.arrival_time = arrival_time
         self.departure_time = departure_time
         self.wait_time = arrival_time and departure_time and arrival_time != departure_time
-
-    def __str__(self):
-        return self.arrival_time.strftime('%H:%M')
-
-    def __eq__(self, other):
-        if type(other) == datetime.time:
-            return self.arrival_time == other or self.departure_time == other
-        return self.arrival_time == other.arrival_time and self.departure_time == other.departure_time
 
 
 class Repetition:
