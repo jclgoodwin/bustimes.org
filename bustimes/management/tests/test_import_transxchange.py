@@ -420,15 +420,17 @@ class ImportTransXChangeTest(TestCase):
         service = Service.objects.get()
         self.assertTrue(service.current)
 
-        service.slug = 'svrabao421'
+        service.slug = 'abao421'
         service.save(update_fields=['slug'])
+
+        self.assertEqual(service.slug, 'abao421')
 
         # after operating period
         with freeze_time('2022-02-22'):
             self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
         service = Service.objects.get()
         self.assertFalse(service.current)
-        self.assertEqual(service.slug, 'svrabao421')
+        self.assertEqual(service.slug, 'abao421')
 
         # back within operating period - should update slug
         with freeze_time('2020-02-22'):

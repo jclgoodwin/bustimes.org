@@ -475,7 +475,7 @@ class Command(BaseCommand):
             else:
                 if service.slug == service_code.lower():
                     service.slug = ''
-                    service.save()
+                    service.save(update_fields=['slug'])
                 service.operator.set(operators)
                 if service_code not in self.service_codes:
                     self.service_codes.add(service_code)
