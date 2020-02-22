@@ -21,6 +21,8 @@ class ImportTransXChangeTest(TestCase):
         Region.objects.create(pk='NE', name='North East')
         cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
 
+        Operator.objects.create(id='bus-vannin', region_id='EA', name='Bus Vannin')
+
         source = DataSource.objects.create(name='EA')
         OperatorCode.objects.create(operator=cls.fecs, source=source, code='FECS')
 
@@ -438,3 +440,13 @@ class ImportTransXChangeTest(TestCase):
         service = Service.objects.get()
         self.assertTrue(service.current)
         self.assertEqual(service.slug, '421-inverurie-alford')
+
+    def test_multiple_services(self):
+        with freeze_time('2020-02-22'):
+            self.write_files_to_zipfile_and_import('EA.zip', ['Ser 16 16A 16B.xml'])
+        services = Service.objects.all()
+        self.assertEqual(3, len(services))
+
+        self.assertEqual(1, Trip.objects.filter(route__service=services[0]).count())
+        self.assertEqual(1, Trip.objects.filter(route__service=services[1]).count())
+        self.assertEqual(2, Trip.objects.filter(route__service=services[2]).count())
