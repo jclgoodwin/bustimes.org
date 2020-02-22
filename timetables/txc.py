@@ -23,43 +23,6 @@ NS = {
 DUMMY_DATE = datetime.date(2016, 4, 5)
 DESCRIPTION_REGEX = re.compile(r'.+,([^ ].+)$')
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}
-BANK_HOLIDAYS = {
-    datetime.date(2016, 12, 26): ('BoxingDay',),
-    datetime.date(2017, 4, 14): ('GoodFriday',),
-    datetime.date(2017, 4, 17): ('EasterMonday', 'HolidayMondays'),
-    # datetime.date(2017, 5, 1): ('MayDay', 'HolidayMondays'),
-    datetime.date(2017, 5, 29): ('SpringBank', 'HolidayMondays'),
-    # datetime.date(2017, 8, 7): ('AugustBankHolidayScotland',),
-    # datetime.date(2017, 8, 28): ('LateSummerBankHolidayNotScotland', 'HolidayMondays'),
-    # datetime.date(2017, 12, 24): ('ChristmasEve',),
-    # datetime.date(2017, 12, 25): ('ChristmasDay', 'ChristmasDayHoliday'),
-    # datetime.date(2017, 12, 26): ('BoxingDay', 'BoxingDayHoliday'),
-    # datetime.date(2017, 12, 31): ('NewYearsEve',),
-    # datetime.date(2018, 1, 1): ('NewYearsDay', 'NewYearsDayHoliday', 'HolidayMondays'),
-    # datetime.date(2018, 3, 30): ('GoodFriday',),
-    # datetime.date(2018, 4, 2): ('EasterMonday', 'HolidayMondays'),
-    # datetime.date(2018, 5, 7): ('MayDay', 'HolidayMondays'),
-    datetime.date(2018, 5, 28): ('SpringBank', 'HolidayMondays'),
-    datetime.date(2018, 8, 6): ('AugustBankHolidayScotland',),
-    datetime.date(2018, 8, 27): ('LateSummerBankHolidayNotScotland',),
-    datetime.date(2018, 12, 24): ('ChristmasEve',),
-    datetime.date(2018, 12, 25): ('ChristmasDay', 'ChristmasDayHoliday'),
-    datetime.date(2018, 12, 26): ('BoxingDay', 'BoxingDayHoliday',),
-    datetime.date(2018, 12, 31): ('NewYearsEve',),
-    datetime.date(2019, 1, 1): ('NewYearsDay', 'NewYearsDayHoliday'),
-    datetime.date(2019, 1, 2): ('Jan2ndScotland',),
-    datetime.date(2019, 4, 19): ('GoodFriday',),
-    datetime.date(2019, 4, 22): ('EasterMonday', 'HolidayMondays'),  # not in Scotland
-    datetime.date(2019, 5, 6): ('MayDay', 'HolidayMondays'),
-    datetime.date(2019, 5, 27): ('SpringBank', 'HolidayMondays'),
-    datetime.date(2019, 8, 5): ('AugustBankHolidayScotland',),
-    datetime.date(2019, 8, 26): ('LateSummerBankHolidayNotScotland', 'HolidayMondays'),
-    datetime.date(2019, 12, 2): ('StAndrewsDay',),
-    datetime.date(2019, 12, 24): ('ChristmasEve',),  # Not actually a bank holiday?
-    datetime.date(2019, 12, 25): ('ChristmasDay',),
-    datetime.date(2019, 12, 26): ('BoxingDay',),
-    datetime.date(2019, 12, 31): ('NewYearsEve',),  # Not actually a bank holiday?
-}
 
 
 def not_scotland(bank_holiday):
@@ -526,52 +489,6 @@ class OperatingProfile:
             self.nonoperation_bank_holidays = [e.tag[33:] for e in bank_holidays_nonoperation_element]
         else:
             self.nonoperation_bank_holidays = []
-
-    def should_show(self, date, region_id=None):
-        for daterange in self.nonoperation_days:
-            if daterange.contains(date):
-                return False
-
-        for daterange in self.operation_days:
-            if daterange.contains(date):
-                return True
-
-        if date in BANK_HOLIDAYS:
-            if not (
-                region_id == 'S' and any(not_scotland(bank_holiday) for bank_holiday in BANK_HOLIDAYS[date])
-                or region_id != 'S' and any(only_scotland(bank_holiday) for bank_holiday in BANK_HOLIDAYS[date])
-            ):
-                if 'AllBankHolidays' in self.operation_bank_holidays:
-                    return True
-                if 'AllBankHolidays' in self.nonoperation_bank_holidays:
-                    return False
-            for bank_holiday in BANK_HOLIDAYS[date]:
-                if bank_holiday in self.operation_bank_holidays:
-                    return True
-                if bank_holiday in self.nonoperation_bank_holidays:
-                    return False
-
-        if self.regular_days:
-            if date.weekday() not in self.regular_days:
-                return False
-
-        if not self.regular_days:
-            return False
-
-        if self.servicedorganisation:
-            org = self.servicedorganisation
-
-            nonoperation_days = (org.nonoperation_workingdays and org.nonoperation_workingdays.working_days or
-                                 org.nonoperation_holidays and org.nonoperation_holidays.holidays)
-            if nonoperation_days:
-                return not any(daterange.contains(date) for daterange in nonoperation_days)
-
-            operation_days = (org.operation_workingdays and org.operation_workingdays.working_days or
-                              org.operation_holidays and org.operation_holidays.holidays)
-            if operation_days:
-                return any(daterange.contains(date) for daterange in operation_days)
-
-        return True
 
 
 class DateRange:
