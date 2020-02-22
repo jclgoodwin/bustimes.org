@@ -1,0 +1,5492 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TransXChange xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.transxchange.org.uk/ http://www.transxchange.org.uk/schema/2.5/TransXChange_general.xsd" CreationDateTime="2020-02-17T13:37:00-00:00" ModificationDateTime="2020-02-17T13:37:00-00:00" Modification="new" RevisionNumber="0" FileName="SVRABAO421.xml" SchemaVersion="2.5" RegistrationDocument="true" xmlns="http://www.transxchange.org.uk/">
+  <StopPoints>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030262</StopPointRef>
+      <CommonName>Town Hall</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030252</StopPointRef>
+      <CommonName>Nursery Lane</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030242</StopPointRef>
+      <CommonName>George Square</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030232</StopPointRef>
+      <CommonName>Beverley Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030222</StopPointRef>
+      <CommonName>St James's Place</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030212</StopPointRef>
+      <CommonName>Prospect Terrace</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030202</StopPointRef>
+      <CommonName>Leslie Place</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030191</StopPointRef>
+      <CommonName>Ladeside Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630060383</StopPointRef>
+      <CommonName>Forbesfield Cottage</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630031902</StopPointRef>
+      <CommonName>Fyfe Park</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630031911</StopPointRef>
+      <CommonName>Parkhill</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630031921</StopPointRef>
+      <CommonName>Bogbeth Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630032001</StopPointRef>
+      <CommonName>High Street</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630031941</StopPointRef>
+      <CommonName>Kendal Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630031951</StopPointRef>
+      <CommonName>Minto Circle</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630031961</StopPointRef>
+      <CommonName>Alehousewells</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630031971</StopPointRef>
+      <CommonName>Kemnay Academy</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630031981</StopPointRef>
+      <CommonName>Springfield Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630031991</StopPointRef>
+      <CommonName>Fraser Place</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630031942</StopPointRef>
+      <CommonName>Kendal Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630031932</StopPointRef>
+      <CommonName>Littlewood Court</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630031892</StopPointRef>
+      <CommonName>Milton Drive</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630060378</StopPointRef>
+      <CommonName>Road End</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630032481</StopPointRef>
+      <CommonName>The Square</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630060681</StopPointRef>
+      <CommonName>Road End</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630060691</StopPointRef>
+      <CommonName>Road End</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630032021</StopPointRef>
+      <CommonName>Road End</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630060701</StopPointRef>
+      <CommonName>Jubilee Well</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630032321</StopPointRef>
+      <CommonName>Bridge of Bents</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630032291</StopPointRef>
+      <CommonName>Castle Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630032031</StopPointRef>
+      <CommonName>Stewart Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630032042</StopPointRef>
+      <CommonName>Kingsford Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630032052</StopPointRef>
+      <CommonName>Bank Brae</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630032061</StopPointRef>
+      <CommonName>David McLean Drive</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630063131</StopPointRef>
+      <CommonName>Old Mart</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630060312</StopPointRef>
+      <CommonName>Community Campus</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630060661</StopPointRef>
+      <CommonName>Aquithie</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630032041</StopPointRef>
+      <CommonName>Kingsford Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630035251</StopPointRef>
+      <CommonName>Aberdeen Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630032301</StopPointRef>
+      <CommonName>Aberdeen Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630032322</StopPointRef>
+      <CommonName>Bridge of Bents</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630060702</StopPointRef>
+      <CommonName>Jubilee Well</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630060366</StopPointRef>
+      <CommonName>Road End</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630060692</StopPointRef>
+      <CommonName>Road End</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630032011</StopPointRef>
+      <CommonName>Road End</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630060376</StopPointRef>
+      <CommonName>Nether Mains</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630060377</StopPointRef>
+      <CommonName>Road End</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630031891</StopPointRef>
+      <CommonName>Milton Drive</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630031922</StopPointRef>
+      <CommonName>Bogbeth Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630031912</StopPointRef>
+      <CommonName>Parkhill</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630031901</StopPointRef>
+      <CommonName>Fyfe Park</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630060379</StopPointRef>
+      <CommonName>Forbesfield Cottage</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030192</StopPointRef>
+      <CommonName>Ladeside Gardens</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030201</StopPointRef>
+      <CommonName>Leslie Place</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030211</StopPointRef>
+      <CommonName>Prospect Terrace</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030221</StopPointRef>
+      <CommonName>St James's Place</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030231</StopPointRef>
+      <CommonName>Beverley Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030241</StopPointRef>
+      <CommonName>George Square</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030251</StopPointRef>
+      <CommonName>Nursery Lane</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030261</StopPointRef>
+      <CommonName>Market Place</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030371</StopPointRef>
+      <CommonName>Middlemuir Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030381</StopPointRef>
+      <CommonName>Davah Court</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030391</StopPointRef>
+      <CommonName>Gordon House</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630032621</StopPointRef>
+      <CommonName>Burghmuir Circle</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030401</StopPointRef>
+      <CommonName>Old Chapel Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030411</StopPointRef>
+      <CommonName>Gordon Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030421</StopPointRef>
+      <CommonName>Brandsbutt</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030362</StopPointRef>
+      <CommonName>Harlaw Business Centre</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030351</StopPointRef>
+      <CommonName>Harlaw Way</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030341</StopPointRef>
+      <CommonName>Queen Street</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030332</StopPointRef>
+      <CommonName>Garioch Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630030322</StopPointRef>
+      <CommonName>Health Centre</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630032062</StopPointRef>
+      <CommonName>David McLean Drive</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630032051</StopPointRef>
+      <CommonName>Bank Brae</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630060651</StopPointRef>
+      <CommonName>Aquithie Road</CommonName>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>630060662</StopPointRef>
+      <CommonName>Aquithie</CommonName>
+    </AnnotatedStopPointRef>
+  </StopPoints>
+  <RouteSections>
+    <RouteSection id="ABAO421_031">
+      <RouteLink id="ABAO421_031_20352">
+        <From>
+          <StopPointRef>630030262</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030252</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20353">
+        <From>
+          <StopPointRef>630030252</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030242</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20354">
+        <From>
+          <StopPointRef>630030242</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030232</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20355">
+        <From>
+          <StopPointRef>630030232</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030222</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20356">
+        <From>
+          <StopPointRef>630030222</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030212</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20357">
+        <From>
+          <StopPointRef>630030212</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030202</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20358">
+        <From>
+          <StopPointRef>630030202</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030191</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20359">
+        <From>
+          <StopPointRef>630030191</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060383</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20360">
+        <From>
+          <StopPointRef>630060383</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031902</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20361">
+        <From>
+          <StopPointRef>630031902</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031911</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20362">
+        <From>
+          <StopPointRef>630031911</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031921</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20363">
+        <From>
+          <StopPointRef>630031921</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032001</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20364">
+        <From>
+          <StopPointRef>630032001</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031941</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20365">
+        <From>
+          <StopPointRef>630031941</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031951</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20366">
+        <From>
+          <StopPointRef>630031951</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031961</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20367">
+        <From>
+          <StopPointRef>630031961</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031971</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20368">
+        <From>
+          <StopPointRef>630031971</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031981</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20369">
+        <From>
+          <StopPointRef>630031981</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031991</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20370">
+        <From>
+          <StopPointRef>630031991</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031942</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20371">
+        <From>
+          <StopPointRef>630031942</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031932</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20372">
+        <From>
+          <StopPointRef>630031932</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031892</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20373">
+        <From>
+          <StopPointRef>630031892</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060378</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20374">
+        <From>
+          <StopPointRef>630060378</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032481</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20375">
+        <From>
+          <StopPointRef>630032481</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060681</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20376">
+        <From>
+          <StopPointRef>630060681</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060691</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20377">
+        <From>
+          <StopPointRef>630060691</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032021</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20378">
+        <From>
+          <StopPointRef>630032021</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060701</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20379">
+        <From>
+          <StopPointRef>630060701</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032321</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20380">
+        <From>
+          <StopPointRef>630032321</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032291</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20381">
+        <From>
+          <StopPointRef>630032291</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032031</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20382">
+        <From>
+          <StopPointRef>630032031</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032042</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20383">
+        <From>
+          <StopPointRef>630032042</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032052</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20384">
+        <From>
+          <StopPointRef>630032052</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032061</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20385">
+        <From>
+          <StopPointRef>630032061</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630063131</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_031_20386">
+        <From>
+          <StopPointRef>630063131</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060312</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="ABAO421_005">
+      <RouteLink id="ABAO421_005_20388">
+        <From>
+          <StopPointRef>630030262</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030252</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20389">
+        <From>
+          <StopPointRef>630030252</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030242</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20390">
+        <From>
+          <StopPointRef>630030242</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030232</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20391">
+        <From>
+          <StopPointRef>630030232</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030222</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20392">
+        <From>
+          <StopPointRef>630030222</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030212</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20393">
+        <From>
+          <StopPointRef>630030212</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030202</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20394">
+        <From>
+          <StopPointRef>630030202</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030191</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20395">
+        <From>
+          <StopPointRef>630030191</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060383</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20396">
+        <From>
+          <StopPointRef>630060383</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031902</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20397">
+        <From>
+          <StopPointRef>630031902</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031911</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20398">
+        <From>
+          <StopPointRef>630031911</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031921</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20399">
+        <From>
+          <StopPointRef>630031921</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032001</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20400">
+        <From>
+          <StopPointRef>630032001</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031941</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20401">
+        <From>
+          <StopPointRef>630031941</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031951</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20402">
+        <From>
+          <StopPointRef>630031951</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031961</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20403">
+        <From>
+          <StopPointRef>630031961</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031971</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20404">
+        <From>
+          <StopPointRef>630031971</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031981</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20405">
+        <From>
+          <StopPointRef>630031981</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031991</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_005_20406">
+        <From>
+          <StopPointRef>630031991</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031942</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="ABAO421_006">
+      <RouteLink id="ABAO421_006_20408">
+        <From>
+          <StopPointRef>630030262</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030252</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20409">
+        <From>
+          <StopPointRef>630030252</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030242</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20410">
+        <From>
+          <StopPointRef>630030242</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030232</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20411">
+        <From>
+          <StopPointRef>630030232</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030222</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20412">
+        <From>
+          <StopPointRef>630030222</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030212</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20413">
+        <From>
+          <StopPointRef>630030212</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030202</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20414">
+        <From>
+          <StopPointRef>630030202</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030191</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20415">
+        <From>
+          <StopPointRef>630030191</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060661</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20416">
+        <From>
+          <StopPointRef>630060661</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031991</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20417">
+        <From>
+          <StopPointRef>630031991</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031942</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20418">
+        <From>
+          <StopPointRef>630031942</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031932</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20419">
+        <From>
+          <StopPointRef>630031932</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032001</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20420">
+        <From>
+          <StopPointRef>630032001</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031941</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20421">
+        <From>
+          <StopPointRef>630031941</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031951</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20422">
+        <From>
+          <StopPointRef>630031951</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031961</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20423">
+        <From>
+          <StopPointRef>630031961</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031971</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20424">
+        <From>
+          <StopPointRef>630031971</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031981</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20425">
+        <From>
+          <StopPointRef>630031981</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031991</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_006_20426">
+        <From>
+          <StopPointRef>630031991</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031942</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="ABAO421_015">
+      <RouteLink id="ABAO421_015_20235">
+        <From>
+          <StopPointRef>630032041</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630035251</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20236">
+        <From>
+          <StopPointRef>630035251</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032301</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20237">
+        <From>
+          <StopPointRef>630032301</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032322</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20238">
+        <From>
+          <StopPointRef>630032322</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060702</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20239">
+        <From>
+          <StopPointRef>630060702</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060366</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20240">
+        <From>
+          <StopPointRef>630060366</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060692</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20241">
+        <From>
+          <StopPointRef>630060692</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032011</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20242">
+        <From>
+          <StopPointRef>630032011</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032481</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20243">
+        <From>
+          <StopPointRef>630032481</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060376</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20244">
+        <From>
+          <StopPointRef>630060376</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060377</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20245">
+        <From>
+          <StopPointRef>630060377</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031891</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20246">
+        <From>
+          <StopPointRef>630031891</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032001</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20247">
+        <From>
+          <StopPointRef>630032001</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031941</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20248">
+        <From>
+          <StopPointRef>630031941</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031951</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20249">
+        <From>
+          <StopPointRef>630031951</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031961</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20250">
+        <From>
+          <StopPointRef>630031961</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031971</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20251">
+        <From>
+          <StopPointRef>630031971</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031981</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20252">
+        <From>
+          <StopPointRef>630031981</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031991</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20253">
+        <From>
+          <StopPointRef>630031991</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031942</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20254">
+        <From>
+          <StopPointRef>630031942</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031932</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20255">
+        <From>
+          <StopPointRef>630031932</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031922</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20256">
+        <From>
+          <StopPointRef>630031922</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031912</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20257">
+        <From>
+          <StopPointRef>630031912</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031901</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20258">
+        <From>
+          <StopPointRef>630031901</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060379</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20259">
+        <From>
+          <StopPointRef>630060379</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030192</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20260">
+        <From>
+          <StopPointRef>630030192</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030201</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20261">
+        <From>
+          <StopPointRef>630030201</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030211</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20262">
+        <From>
+          <StopPointRef>630030211</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030221</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20263">
+        <From>
+          <StopPointRef>630030221</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030231</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20264">
+        <From>
+          <StopPointRef>630030231</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030241</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20265">
+        <From>
+          <StopPointRef>630030241</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030251</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20266">
+        <From>
+          <StopPointRef>630030251</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030261</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20267">
+        <From>
+          <StopPointRef>630030261</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030371</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20268">
+        <From>
+          <StopPointRef>630030371</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030381</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20269">
+        <From>
+          <StopPointRef>630030381</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030391</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20270">
+        <From>
+          <StopPointRef>630030391</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032621</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20271">
+        <From>
+          <StopPointRef>630032621</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030401</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20272">
+        <From>
+          <StopPointRef>630030401</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030411</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20273">
+        <From>
+          <StopPointRef>630030411</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030421</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20274">
+        <From>
+          <StopPointRef>630030421</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030362</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20275">
+        <From>
+          <StopPointRef>630030362</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030351</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20276">
+        <From>
+          <StopPointRef>630030351</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030341</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20277">
+        <From>
+          <StopPointRef>630030341</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030332</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20278">
+        <From>
+          <StopPointRef>630030332</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030322</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_015_20279">
+        <From>
+          <StopPointRef>630030322</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030262</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="ABAO421_025">
+      <RouteLink id="ABAO421_025_20281">
+        <From>
+          <StopPointRef>630060312</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032062</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20282">
+        <From>
+          <StopPointRef>630032062</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032051</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20283">
+        <From>
+          <StopPointRef>630032051</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032041</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20284">
+        <From>
+          <StopPointRef>630032041</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630035251</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20285">
+        <From>
+          <StopPointRef>630035251</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032301</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20286">
+        <From>
+          <StopPointRef>630032301</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032322</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20287">
+        <From>
+          <StopPointRef>630032322</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060702</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20288">
+        <From>
+          <StopPointRef>630060702</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060366</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20289">
+        <From>
+          <StopPointRef>630060366</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060692</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20290">
+        <From>
+          <StopPointRef>630060692</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032011</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20291">
+        <From>
+          <StopPointRef>630032011</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032481</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20292">
+        <From>
+          <StopPointRef>630032481</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060376</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20293">
+        <From>
+          <StopPointRef>630060376</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060377</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20294">
+        <From>
+          <StopPointRef>630060377</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031891</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20295">
+        <From>
+          <StopPointRef>630031891</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032001</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20296">
+        <From>
+          <StopPointRef>630032001</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031941</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20297">
+        <From>
+          <StopPointRef>630031941</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031951</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20298">
+        <From>
+          <StopPointRef>630031951</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031961</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20299">
+        <From>
+          <StopPointRef>630031961</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031971</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20300">
+        <From>
+          <StopPointRef>630031971</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031981</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20301">
+        <From>
+          <StopPointRef>630031981</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060651</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20302">
+        <From>
+          <StopPointRef>630060651</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060662</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20303">
+        <From>
+          <StopPointRef>630060662</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030192</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20304">
+        <From>
+          <StopPointRef>630030192</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030201</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20305">
+        <From>
+          <StopPointRef>630030201</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030211</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20306">
+        <From>
+          <StopPointRef>630030211</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030221</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20307">
+        <From>
+          <StopPointRef>630030221</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030231</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20308">
+        <From>
+          <StopPointRef>630030231</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030241</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20309">
+        <From>
+          <StopPointRef>630030241</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030251</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20310">
+        <From>
+          <StopPointRef>630030251</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030261</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20311">
+        <From>
+          <StopPointRef>630030261</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030371</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20312">
+        <From>
+          <StopPointRef>630030371</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030381</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20313">
+        <From>
+          <StopPointRef>630030381</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030391</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20314">
+        <From>
+          <StopPointRef>630030391</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032621</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20315">
+        <From>
+          <StopPointRef>630032621</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030401</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20316">
+        <From>
+          <StopPointRef>630030401</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030411</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20317">
+        <From>
+          <StopPointRef>630030411</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030421</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20318">
+        <From>
+          <StopPointRef>630030421</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030362</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20319">
+        <From>
+          <StopPointRef>630030362</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030351</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20320">
+        <From>
+          <StopPointRef>630030351</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030341</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20321">
+        <From>
+          <StopPointRef>630030341</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030332</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20322">
+        <From>
+          <StopPointRef>630030332</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030322</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_025_20323">
+        <From>
+          <StopPointRef>630030322</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030262</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="ABAO421_018">
+      <RouteLink id="ABAO421_018_20325">
+        <From>
+          <StopPointRef>630031942</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031932</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20326">
+        <From>
+          <StopPointRef>630031932</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031922</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20327">
+        <From>
+          <StopPointRef>630031922</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031912</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20328">
+        <From>
+          <StopPointRef>630031912</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031901</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20329">
+        <From>
+          <StopPointRef>630031901</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060379</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20330">
+        <From>
+          <StopPointRef>630060379</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030192</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20331">
+        <From>
+          <StopPointRef>630030192</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030201</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20332">
+        <From>
+          <StopPointRef>630030201</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030211</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20333">
+        <From>
+          <StopPointRef>630030211</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030221</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20334">
+        <From>
+          <StopPointRef>630030221</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030231</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20335">
+        <From>
+          <StopPointRef>630030231</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030241</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20336">
+        <From>
+          <StopPointRef>630030241</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030251</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20337">
+        <From>
+          <StopPointRef>630030251</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030261</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20338">
+        <From>
+          <StopPointRef>630030261</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030371</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20339">
+        <From>
+          <StopPointRef>630030371</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030381</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20340">
+        <From>
+          <StopPointRef>630030381</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030391</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20341">
+        <From>
+          <StopPointRef>630030391</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032621</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20342">
+        <From>
+          <StopPointRef>630032621</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030401</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20343">
+        <From>
+          <StopPointRef>630030401</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030411</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20344">
+        <From>
+          <StopPointRef>630030411</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030421</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20345">
+        <From>
+          <StopPointRef>630030421</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030362</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20346">
+        <From>
+          <StopPointRef>630030362</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030351</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20347">
+        <From>
+          <StopPointRef>630030351</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030341</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20348">
+        <From>
+          <StopPointRef>630030341</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030332</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20349">
+        <From>
+          <StopPointRef>630030332</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030322</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_018_20350">
+        <From>
+          <StopPointRef>630030322</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030262</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="ABAO421_032">
+      <RouteLink id="ABAO421_032_20428">
+        <From>
+          <StopPointRef>630030262</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030252</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20429">
+        <From>
+          <StopPointRef>630030252</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030242</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20430">
+        <From>
+          <StopPointRef>630030242</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030232</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20431">
+        <From>
+          <StopPointRef>630030232</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030222</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20432">
+        <From>
+          <StopPointRef>630030222</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030212</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20433">
+        <From>
+          <StopPointRef>630030212</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030202</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20434">
+        <From>
+          <StopPointRef>630030202</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630030191</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20435">
+        <From>
+          <StopPointRef>630030191</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060661</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20436">
+        <From>
+          <StopPointRef>630060661</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031902</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20437">
+        <From>
+          <StopPointRef>630031902</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031911</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20438">
+        <From>
+          <StopPointRef>630031911</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031921</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20439">
+        <From>
+          <StopPointRef>630031921</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032001</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20440">
+        <From>
+          <StopPointRef>630032001</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031941</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20441">
+        <From>
+          <StopPointRef>630031941</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031951</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20442">
+        <From>
+          <StopPointRef>630031951</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031961</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20443">
+        <From>
+          <StopPointRef>630031961</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031971</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20444">
+        <From>
+          <StopPointRef>630031971</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031981</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20445">
+        <From>
+          <StopPointRef>630031981</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031991</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20446">
+        <From>
+          <StopPointRef>630031991</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031942</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20447">
+        <From>
+          <StopPointRef>630031942</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031932</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20448">
+        <From>
+          <StopPointRef>630031932</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630031892</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20449">
+        <From>
+          <StopPointRef>630031892</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060378</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20450">
+        <From>
+          <StopPointRef>630060378</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032481</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20451">
+        <From>
+          <StopPointRef>630032481</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060681</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20452">
+        <From>
+          <StopPointRef>630060681</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060691</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20453">
+        <From>
+          <StopPointRef>630060691</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032021</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20454">
+        <From>
+          <StopPointRef>630032021</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630060701</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20455">
+        <From>
+          <StopPointRef>630060701</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032321</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20456">
+        <From>
+          <StopPointRef>630032321</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032291</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20457">
+        <From>
+          <StopPointRef>630032291</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032031</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="ABAO421_032_20458">
+        <From>
+          <StopPointRef>630032031</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>630032042</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+  </RouteSections>
+  <Routes>
+    <Route id="ABAO421_031">
+      <Description>Inverurie - Alford
+</Description>
+      <RouteSectionRef>ABAO421_031</RouteSectionRef>
+    </Route>
+    <Route id="ABAO421_005">
+      <Description>Inverurie - Alford
+</Description>
+      <RouteSectionRef>ABAO421_005</RouteSectionRef>
+    </Route>
+    <Route id="ABAO421_006">
+      <Description>Inverurie - Alford
+</Description>
+      <RouteSectionRef>ABAO421_006</RouteSectionRef>
+    </Route>
+    <Route id="ABAO421_015">
+      <Description>Alford - Inverurie
+</Description>
+      <RouteSectionRef>ABAO421_015</RouteSectionRef>
+    </Route>
+    <Route id="ABAO421_025">
+      <Description>Alford - Inverurie
+</Description>
+      <RouteSectionRef>ABAO421_025</RouteSectionRef>
+    </Route>
+    <Route id="ABAO421_018">
+      <Description>Alford - Inverurie
+</Description>
+      <RouteSectionRef>ABAO421_018</RouteSectionRef>
+    </Route>
+    <Route id="ABAO421_032">
+      <Description>Inverurie - Alford
+</Description>
+      <RouteSectionRef>ABAO421_032</RouteSectionRef>
+    </Route>
+  </Routes>
+  <JourneyPatternSections>
+    <JourneyPatternSection id="JPS_ABAO421-8">
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20352">
+        <From>
+          <StopPointRef>630030262</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030252</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20352</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20353">
+        <From>
+          <StopPointRef>630030252</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030242</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20353</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20354">
+        <From>
+          <StopPointRef>630030242</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030232</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20354</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20355">
+        <From>
+          <StopPointRef>630030232</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030222</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20355</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20356">
+        <From>
+          <StopPointRef>630030222</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030212</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20356</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20357">
+        <From>
+          <StopPointRef>630030212</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030202</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20357</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20358">
+        <From>
+          <StopPointRef>630030202</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030191</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20358</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20359">
+        <From>
+          <StopPointRef>630030191</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060383</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20359</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT480S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20360">
+        <From>
+          <StopPointRef>630060383</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031902</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20360</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20361">
+        <From>
+          <StopPointRef>630031902</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031911</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20361</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20362">
+        <From>
+          <StopPointRef>630031911</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031921</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20362</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20363">
+        <From>
+          <StopPointRef>630031921</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20363</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20364">
+        <From>
+          <StopPointRef>630032001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031941</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20364</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20365">
+        <From>
+          <StopPointRef>630031941</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20365</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20366">
+        <From>
+          <StopPointRef>630031951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031961</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20366</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20367">
+        <From>
+          <StopPointRef>630031961</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031971</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20367</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20368">
+        <From>
+          <StopPointRef>630031971</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031981</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20368</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20369">
+        <From>
+          <StopPointRef>630031981</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031991</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20369</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20370">
+        <From>
+          <StopPointRef>630031991</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031942</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20370</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20371">
+        <From>
+          <StopPointRef>630031942</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031932</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20371</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20372">
+        <From>
+          <StopPointRef>630031932</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031892</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20372</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20373">
+        <From>
+          <StopPointRef>630031892</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060378</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20373</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20374">
+        <From>
+          <StopPointRef>630060378</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032481</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20374</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT420S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20375">
+        <From>
+          <StopPointRef>630032481</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060681</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20375</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20376">
+        <From>
+          <StopPointRef>630060681</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060691</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20376</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT300S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20377">
+        <From>
+          <StopPointRef>630060691</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032021</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20377</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20378">
+        <From>
+          <StopPointRef>630032021</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060701</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20378</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT180S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20379">
+        <From>
+          <StopPointRef>630060701</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032321</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20379</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20380">
+        <From>
+          <StopPointRef>630032321</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032291</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20380</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT180S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20381">
+        <From>
+          <StopPointRef>630032291</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032031</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20381</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20382">
+        <From>
+          <StopPointRef>630032031</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032042</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20382</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20383">
+        <From>
+          <StopPointRef>630032042</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032052</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20383</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20384">
+        <From>
+          <StopPointRef>630032052</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032061</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20384</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20385">
+        <From>
+          <StopPointRef>630032061</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630063131</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20385</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-8_20386">
+        <From>
+          <StopPointRef>630063131</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060312</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_031_20386</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT240S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPS_ABAO421-9">
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20388">
+        <From>
+          <StopPointRef>630030262</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030252</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20388</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20389">
+        <From>
+          <StopPointRef>630030252</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030242</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20389</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20390">
+        <From>
+          <StopPointRef>630030242</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030232</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20390</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20391">
+        <From>
+          <StopPointRef>630030232</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030222</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20391</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20392">
+        <From>
+          <StopPointRef>630030222</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030212</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20392</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20393">
+        <From>
+          <StopPointRef>630030212</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030202</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20393</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20394">
+        <From>
+          <StopPointRef>630030202</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030191</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20394</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20395">
+        <From>
+          <StopPointRef>630030191</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060383</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20395</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT480S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20396">
+        <From>
+          <StopPointRef>630060383</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031902</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20396</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20397">
+        <From>
+          <StopPointRef>630031902</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031911</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20397</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20398">
+        <From>
+          <StopPointRef>630031911</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031921</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20398</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20399">
+        <From>
+          <StopPointRef>630031921</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20399</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20400">
+        <From>
+          <StopPointRef>630032001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031941</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20400</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20401">
+        <From>
+          <StopPointRef>630031941</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20401</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20402">
+        <From>
+          <StopPointRef>630031951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031961</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20402</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20403">
+        <From>
+          <StopPointRef>630031961</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031971</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20403</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20404">
+        <From>
+          <StopPointRef>630031971</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031981</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20404</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20405">
+        <From>
+          <StopPointRef>630031981</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031991</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20405</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-9_20406">
+        <From>
+          <StopPointRef>630031991</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031942</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_005_20406</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPS_ABAO421-10">
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20408">
+        <From>
+          <StopPointRef>630030262</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030252</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20408</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20409">
+        <From>
+          <StopPointRef>630030252</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030242</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20409</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20410">
+        <From>
+          <StopPointRef>630030242</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030232</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20410</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20411">
+        <From>
+          <StopPointRef>630030232</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030222</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20411</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20412">
+        <From>
+          <StopPointRef>630030222</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030212</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20412</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20413">
+        <From>
+          <StopPointRef>630030212</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030202</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20413</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20414">
+        <From>
+          <StopPointRef>630030202</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030191</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20414</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20415">
+        <From>
+          <StopPointRef>630030191</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060661</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20415</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT420S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20416">
+        <From>
+          <StopPointRef>630060661</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031991</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20416</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT180S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20417">
+        <From>
+          <StopPointRef>630031991</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031942</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20417</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20418">
+        <From>
+          <StopPointRef>630031942</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031932</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20418</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20419">
+        <From>
+          <StopPointRef>630031932</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20419</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20420">
+        <From>
+          <StopPointRef>630032001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031941</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20420</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20421">
+        <From>
+          <StopPointRef>630031941</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20421</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20422">
+        <From>
+          <StopPointRef>630031951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031961</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20422</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20423">
+        <From>
+          <StopPointRef>630031961</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031971</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20423</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20424">
+        <From>
+          <StopPointRef>630031971</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031981</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20424</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20425">
+        <From>
+          <StopPointRef>630031981</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031991</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20425</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-10_20426">
+        <From>
+          <StopPointRef>630031991</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031942</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_006_20426</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPS_ABAO421-11">
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20235">
+        <From>
+          <StopPointRef>630032041</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630035251</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20235</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20236">
+        <From>
+          <StopPointRef>630035251</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032301</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20236</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20237">
+        <From>
+          <StopPointRef>630032301</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032322</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20237</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20238">
+        <From>
+          <StopPointRef>630032322</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060702</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20238</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20239">
+        <From>
+          <StopPointRef>630060702</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060366</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20239</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20240">
+        <From>
+          <StopPointRef>630060366</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060692</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20240</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT180S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20241">
+        <From>
+          <StopPointRef>630060692</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032011</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20241</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT240S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20242">
+        <From>
+          <StopPointRef>630032011</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032481</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20242</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20243">
+        <From>
+          <StopPointRef>630032481</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060376</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20243</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT180S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20244">
+        <From>
+          <StopPointRef>630060376</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060377</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20244</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT180S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20245">
+        <From>
+          <StopPointRef>630060377</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031891</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20245</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20246">
+        <From>
+          <StopPointRef>630031891</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20246</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20247">
+        <From>
+          <StopPointRef>630032001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031941</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20247</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20248">
+        <From>
+          <StopPointRef>630031941</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20248</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20249">
+        <From>
+          <StopPointRef>630031951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031961</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20249</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20250">
+        <From>
+          <StopPointRef>630031961</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031971</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20250</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20251">
+        <From>
+          <StopPointRef>630031971</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031981</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20251</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20252">
+        <From>
+          <StopPointRef>630031981</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031991</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20252</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20253">
+        <From>
+          <StopPointRef>630031991</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031942</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20253</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20254">
+        <From>
+          <StopPointRef>630031942</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031932</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20254</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20255">
+        <From>
+          <StopPointRef>630031932</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031922</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20255</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20256">
+        <From>
+          <StopPointRef>630031922</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031912</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20256</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20257">
+        <From>
+          <StopPointRef>630031912</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031901</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20257</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20258">
+        <From>
+          <StopPointRef>630031901</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060379</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20258</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20259">
+        <From>
+          <StopPointRef>630060379</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030192</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20259</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT420S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20260">
+        <From>
+          <StopPointRef>630030192</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20260</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20261">
+        <From>
+          <StopPointRef>630030201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030211</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20261</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20262">
+        <From>
+          <StopPointRef>630030211</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030221</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20262</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20263">
+        <From>
+          <StopPointRef>630030221</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030231</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20263</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20264">
+        <From>
+          <StopPointRef>630030231</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030241</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20264</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20265">
+        <From>
+          <StopPointRef>630030241</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030251</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20265</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20266">
+        <From>
+          <StopPointRef>630030251</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030261</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20266</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20267">
+        <From>
+          <StopPointRef>630030261</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030371</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20267</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20268">
+        <From>
+          <StopPointRef>630030371</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030381</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20268</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20269">
+        <From>
+          <StopPointRef>630030381</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030391</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20269</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20270">
+        <From>
+          <StopPointRef>630030391</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032621</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20270</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20271">
+        <From>
+          <StopPointRef>630032621</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030401</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20271</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20272">
+        <From>
+          <StopPointRef>630030401</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030411</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20272</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20273">
+        <From>
+          <StopPointRef>630030411</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030421</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20273</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20274">
+        <From>
+          <StopPointRef>630030421</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030362</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20274</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20275">
+        <From>
+          <StopPointRef>630030362</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030351</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20275</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20276">
+        <From>
+          <StopPointRef>630030351</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030341</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20276</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20277">
+        <From>
+          <StopPointRef>630030341</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030332</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20277</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20278">
+        <From>
+          <StopPointRef>630030332</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030322</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20278</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-11_20279">
+        <From>
+          <StopPointRef>630030322</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030262</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_015_20279</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPS_ABAO421-12">
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20281">
+        <From>
+          <StopPointRef>630060312</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032062</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20281</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT180S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20282">
+        <From>
+          <StopPointRef>630032062</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032051</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20282</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20283">
+        <From>
+          <StopPointRef>630032051</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032041</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20283</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20284">
+        <From>
+          <StopPointRef>630032041</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630035251</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20284</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20285">
+        <From>
+          <StopPointRef>630035251</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032301</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20285</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20286">
+        <From>
+          <StopPointRef>630032301</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032322</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20286</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20287">
+        <From>
+          <StopPointRef>630032322</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060702</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20287</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20288">
+        <From>
+          <StopPointRef>630060702</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060366</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20288</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20289">
+        <From>
+          <StopPointRef>630060366</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060692</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20289</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT180S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20290">
+        <From>
+          <StopPointRef>630060692</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032011</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20290</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT240S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20291">
+        <From>
+          <StopPointRef>630032011</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032481</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20291</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20292">
+        <From>
+          <StopPointRef>630032481</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060376</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20292</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT180S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20293">
+        <From>
+          <StopPointRef>630060376</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060377</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20293</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT180S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20294">
+        <From>
+          <StopPointRef>630060377</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031891</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20294</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20295">
+        <From>
+          <StopPointRef>630031891</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20295</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20296">
+        <From>
+          <StopPointRef>630032001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031941</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20296</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20297">
+        <From>
+          <StopPointRef>630031941</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20297</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20298">
+        <From>
+          <StopPointRef>630031951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031961</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20298</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20299">
+        <From>
+          <StopPointRef>630031961</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031971</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20299</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20300">
+        <From>
+          <StopPointRef>630031971</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031981</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20300</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20301">
+        <From>
+          <StopPointRef>630031981</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060651</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20301</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20302">
+        <From>
+          <StopPointRef>630060651</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060662</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20302</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT180S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20303">
+        <From>
+          <StopPointRef>630060662</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030192</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20303</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT360S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20304">
+        <From>
+          <StopPointRef>630030192</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20304</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20305">
+        <From>
+          <StopPointRef>630030201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030211</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20305</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20306">
+        <From>
+          <StopPointRef>630030211</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030221</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20306</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20307">
+        <From>
+          <StopPointRef>630030221</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030231</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20307</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20308">
+        <From>
+          <StopPointRef>630030231</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030241</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20308</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20309">
+        <From>
+          <StopPointRef>630030241</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030251</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20309</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20310">
+        <From>
+          <StopPointRef>630030251</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030261</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20310</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20311">
+        <From>
+          <StopPointRef>630030261</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030371</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20311</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20312">
+        <From>
+          <StopPointRef>630030371</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030381</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20312</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20313">
+        <From>
+          <StopPointRef>630030381</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030391</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20313</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20314">
+        <From>
+          <StopPointRef>630030391</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032621</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20314</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20315">
+        <From>
+          <StopPointRef>630032621</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030401</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20315</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20316">
+        <From>
+          <StopPointRef>630030401</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030411</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20316</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20317">
+        <From>
+          <StopPointRef>630030411</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030421</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20317</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20318">
+        <From>
+          <StopPointRef>630030421</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030362</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20318</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20319">
+        <From>
+          <StopPointRef>630030362</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030351</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20319</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20320">
+        <From>
+          <StopPointRef>630030351</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030341</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20320</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20321">
+        <From>
+          <StopPointRef>630030341</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030332</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20321</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20322">
+        <From>
+          <StopPointRef>630030332</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030322</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20322</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-12_20323">
+        <From>
+          <StopPointRef>630030322</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030262</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_025_20323</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPS_ABAO421-13">
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20325">
+        <From>
+          <StopPointRef>630031942</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031932</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20325</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20326">
+        <From>
+          <StopPointRef>630031932</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031922</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20326</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20327">
+        <From>
+          <StopPointRef>630031922</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031912</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20327</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20328">
+        <From>
+          <StopPointRef>630031912</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031901</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20328</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20329">
+        <From>
+          <StopPointRef>630031901</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060379</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20329</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20330">
+        <From>
+          <StopPointRef>630060379</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030192</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20330</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT420S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20331">
+        <From>
+          <StopPointRef>630030192</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20331</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20332">
+        <From>
+          <StopPointRef>630030201</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030211</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20332</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20333">
+        <From>
+          <StopPointRef>630030211</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030221</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20333</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20334">
+        <From>
+          <StopPointRef>630030221</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030231</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20334</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20335">
+        <From>
+          <StopPointRef>630030231</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030241</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20335</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20336">
+        <From>
+          <StopPointRef>630030241</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030251</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20336</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20337">
+        <From>
+          <StopPointRef>630030251</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030261</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20337</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20338">
+        <From>
+          <StopPointRef>630030261</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030371</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20338</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20339">
+        <From>
+          <StopPointRef>630030371</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030381</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20339</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20340">
+        <From>
+          <StopPointRef>630030381</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030391</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20340</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20341">
+        <From>
+          <StopPointRef>630030391</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032621</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20341</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20342">
+        <From>
+          <StopPointRef>630032621</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030401</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20342</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20343">
+        <From>
+          <StopPointRef>630030401</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030411</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20343</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20344">
+        <From>
+          <StopPointRef>630030411</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030421</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20344</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20345">
+        <From>
+          <StopPointRef>630030421</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030362</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20345</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20346">
+        <From>
+          <StopPointRef>630030362</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030351</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20346</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20347">
+        <From>
+          <StopPointRef>630030351</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030341</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20347</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20348">
+        <From>
+          <StopPointRef>630030341</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030332</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20348</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20349">
+        <From>
+          <StopPointRef>630030332</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030322</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20349</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-13_20350">
+        <From>
+          <StopPointRef>630030322</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030262</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_018_20350</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JPS_ABAO421-14">
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20428">
+        <From>
+          <StopPointRef>630030262</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030252</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20428</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20429">
+        <From>
+          <StopPointRef>630030252</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030242</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20429</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20430">
+        <From>
+          <StopPointRef>630030242</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030232</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20430</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20431">
+        <From>
+          <StopPointRef>630030232</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030222</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20431</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20432">
+        <From>
+          <StopPointRef>630030222</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030212</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20432</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20433">
+        <From>
+          <StopPointRef>630030212</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030202</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20433</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20434">
+        <From>
+          <StopPointRef>630030202</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630030191</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20434</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20435">
+        <From>
+          <StopPointRef>630030191</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060661</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20435</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT420S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20436">
+        <From>
+          <StopPointRef>630060661</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031902</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20436</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT180S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20437">
+        <From>
+          <StopPointRef>630031902</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031911</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20437</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20438">
+        <From>
+          <StopPointRef>630031911</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031921</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20438</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20439">
+        <From>
+          <StopPointRef>630031921</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20439</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20440">
+        <From>
+          <StopPointRef>630032001</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031941</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20440</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20441">
+        <From>
+          <StopPointRef>630031941</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20441</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20442">
+        <From>
+          <StopPointRef>630031951</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031961</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20442</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20443">
+        <From>
+          <StopPointRef>630031961</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031971</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20443</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20444">
+        <From>
+          <StopPointRef>630031971</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031981</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20444</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20445">
+        <From>
+          <StopPointRef>630031981</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031991</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20445</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20446">
+        <From>
+          <StopPointRef>630031991</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031942</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20446</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20447">
+        <From>
+          <StopPointRef>630031942</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031932</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20447</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20448">
+        <From>
+          <StopPointRef>630031932</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630031892</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20448</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20449">
+        <From>
+          <StopPointRef>630031892</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060378</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20449</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20450">
+        <From>
+          <StopPointRef>630060378</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032481</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20450</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT420S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20451">
+        <From>
+          <StopPointRef>630032481</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060681</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20451</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20452">
+        <From>
+          <StopPointRef>630060681</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060691</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20452</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT300S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20453">
+        <From>
+          <StopPointRef>630060691</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032021</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20453</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT120S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20454">
+        <From>
+          <StopPointRef>630032021</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630060701</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20454</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT180S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20455">
+        <From>
+          <StopPointRef>630060701</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032321</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20455</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20456">
+        <From>
+          <StopPointRef>630032321</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032291</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20456</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT180S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20457">
+        <From>
+          <StopPointRef>630032291</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032031</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20457</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JPS_ABAO421-14_20458">
+        <From>
+          <StopPointRef>630032031</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <StopPointRef>630032042</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>ABAO421_032_20458</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT60S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+  </JourneyPatternSections>
+  <Operators>
+    <Operator id="BLB">
+      <NationalOperatorCode>SBLB</NationalOperatorCode>
+      <OperatorCode>BLB</OperatorCode>
+      <OperatorShortName>Stagecoach North Scotlan</OperatorShortName>
+    </Operator>
+    <Operator id="BAI">
+      <NationalOperatorCode>BAIN</NationalOperatorCode>
+      <OperatorCode>BAI</OperatorCode>
+      <OperatorShortName>Bains Coaches</OperatorShortName>
+    </Operator>
+  </Operators>
+  <Services>
+    <Service>
+      <ServiceCode>ABAO421</ServiceCode>
+      <Lines>
+        <Line id="0">
+          <LineName>421</LineName>
+        </Line>
+      </Lines>
+      <OperatingPeriod>
+        <StartDate>2019-08-19</StartDate>
+        <EndDate>2021-08-19</EndDate>
+      </OperatingPeriod>
+      <VehicleType>
+        <VehicleEquipment>
+          <AccessVehicleEquipment>
+            <LowFloor>true</LowFloor>
+            <Ramp>true</Ramp>
+          </AccessVehicleEquipment>
+          <WheelchairVehicleEquipment>
+            <SuitableFor>wheelchair</SuitableFor>
+          </WheelchairVehicleEquipment>
+        </VehicleEquipment>
+        <WheelchairAccessible>true</WheelchairAccessible>
+      </VehicleType>
+      <RegisteredOperatorRef>BLB</RegisteredOperatorRef>
+      <StopRequirements>
+        <NoNewStopsRequired />
+      </StopRequirements>
+      <Mode>bus</Mode>
+      <Description>Inverurie - Alford</Description>
+      <StandardService>
+        <Origin>Inverurie</Origin>
+        <Destination>Alford</Destination>
+        <JourneyPattern id="JPS_ABAO421-8">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPS_ABAO421-8</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JPS_ABAO421-9">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPS_ABAO421-9</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JPS_ABAO421-10">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPS_ABAO421-10</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JPS_ABAO421-11">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPS_ABAO421-11</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JPS_ABAO421-12">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPS_ABAO421-12</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JPS_ABAO421-13">
+          <Direction>inbound</Direction>
+          <JourneyPatternSectionRefs>JPS_ABAO421-13</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JPS_ABAO421-14">
+          <Direction>outbound</Direction>
+          <JourneyPatternSectionRefs>JPS_ABAO421-14</JourneyPatternSectionRefs>
+        </JourneyPattern>
+      </StandardService>
+    </Service>
+  </Services>
+  <VehicleJourneys>
+    <VehicleJourney>
+      <OperatorRef>BLB</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>7600</VehicleJourneyCode>
+      <ServiceRef>ABAO421</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_ABAO421-8</JourneyPatternRef>
+      <DepartureTime>08:45:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>BLB</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>7601</VehicleJourneyCode>
+      <ServiceRef>ABAO421</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_ABAO421-9</JourneyPatternRef>
+      <DepartureTime>10:45:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>BLB</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>7602</VehicleJourneyCode>
+      <ServiceRef>ABAO421</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_ABAO421-9</JourneyPatternRef>
+      <DepartureTime>12:45:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>BLB</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>7603</VehicleJourneyCode>
+      <ServiceRef>ABAO421</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_ABAO421-10</JourneyPatternRef>
+      <DepartureTime>11:45:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>BLB</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>7604</VehicleJourneyCode>
+      <ServiceRef>ABAO421</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_ABAO421-10</JourneyPatternRef>
+      <DepartureTime>13:45:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>BLB</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>7605</VehicleJourneyCode>
+      <ServiceRef>ABAO421</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_ABAO421-10</JourneyPatternRef>
+      <DepartureTime>15:45:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>BLB</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>7606</VehicleJourneyCode>
+      <ServiceRef>ABAO421</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_ABAO421-10</JourneyPatternRef>
+      <DepartureTime>16:45:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>BLB</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>7592</VehicleJourneyCode>
+      <ServiceRef>ABAO421</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_ABAO421-11</JourneyPatternRef>
+      <DepartureTime>07:45:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>BLB</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>7593</VehicleJourneyCode>
+      <ServiceRef>ABAO421</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_ABAO421-12</JourneyPatternRef>
+      <DepartureTime>09:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>BLB</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>7594</VehicleJourneyCode>
+      <ServiceRef>ABAO421</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_ABAO421-12</JourneyPatternRef>
+      <DepartureTime>14:40:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>BLB</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>7595</VehicleJourneyCode>
+      <ServiceRef>ABAO421</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_ABAO421-13</JourneyPatternRef>
+      <DepartureTime>11:08:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>BLB</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>7596</VehicleJourneyCode>
+      <ServiceRef>ABAO421</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_ABAO421-13</JourneyPatternRef>
+      <DepartureTime>12:08:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>BLB</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>7597</VehicleJourneyCode>
+      <ServiceRef>ABAO421</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_ABAO421-13</JourneyPatternRef>
+      <DepartureTime>13:08:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>BLB</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>7598</VehicleJourneyCode>
+      <ServiceRef>ABAO421</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_ABAO421-13</JourneyPatternRef>
+      <DepartureTime>16:08:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>BLB</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>7599</VehicleJourneyCode>
+      <ServiceRef>ABAO421</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_ABAO421-13</JourneyPatternRef>
+      <DepartureTime>17:08:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatorRef>BLB</OperatorRef>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Saturday />
+          </DaysOfWeek>
+        </RegularDayType>
+      </OperatingProfile>
+      <VehicleJourneyCode>7607</VehicleJourneyCode>
+      <ServiceRef>ABAO421</ServiceRef>
+      <LineRef>0</LineRef>
+      <JourneyPatternRef>JPS_ABAO421-14</JourneyPatternRef>
+      <DepartureTime>17:55:00</DepartureTime>
+    </VehicleJourney>
+  </VehicleJourneys>
+</TransXChange>

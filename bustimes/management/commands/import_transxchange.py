@@ -161,11 +161,11 @@ class Command(BaseCommand):
         if name not in {'Replacement Service', 'UNKWN'}:
             warnings.warn('Operator not found:\n{}'.format(ET.tostring(operator_element).decode()))
 
-    def get_operators(self, transxchange):
+    def get_operators(self, transxchange, service):
         operators = transxchange.operators
         if len(operators) > 1:
             journey_operators = {journey.operator for journey in transxchange.journeys}
-            journey_operators.add(transxchange.operator)
+            journey_operators.add(service.operator)
             operators = [operator for operator in operators if operator.get('id') in journey_operators]
         operators = (self.get_operator(operator) for operator in operators)
         return [operator for operator in operators if operator]
@@ -467,7 +467,7 @@ class Command(BaseCommand):
 
             service, service_created = Service.objects.update_or_create(service_code=service_code, defaults=defaults)
 
-            operators = self.get_operators(transxchange)
+            operators = self.get_operators(transxchange, service)
 
             if service_created:
                 service.operator.add(*operators)
