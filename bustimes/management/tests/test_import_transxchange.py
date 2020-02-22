@@ -414,8 +414,14 @@ class ImportTransXChangeTest(TestCase):
         self.assertFalse(timetable.groupings[1].rows[5].has_waittimes)
         self.assertFalse(timetable.groupings[1].rows[6].has_waittimes)
 
-    @freeze_time('2020-02-22')
     def test_multiple_operators(self):
-        self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
+        with freeze_time('2020-02-22'):
+            self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
         service = Service.objects.get()
         self.assertTrue(service.current)
+
+        # after operating period
+        with freeze_time('2022-02-22'):
+            self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
+        service = Service.objects.get()
+        self.assertFalse(service.current)
