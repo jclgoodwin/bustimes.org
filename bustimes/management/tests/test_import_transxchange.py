@@ -19,6 +19,7 @@ class ImportTransXChangeTest(TestCase):
         cls.ea = Region.objects.create(pk='EA', name='East Anglia')
         cls.w = Region.objects.create(pk='W', name='Wales')
         Region.objects.create(pk='NE', name='North East')
+        Region.objects.create(pk='IM', name='Isle of Man')
         cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
 
         Operator.objects.create(id='bus-vannin', region_id='EA', name='Bus Vannin')
@@ -443,8 +444,8 @@ class ImportTransXChangeTest(TestCase):
 
     def test_multiple_services(self):
         with freeze_time('2020-02-22'):
-            self.write_files_to_zipfile_and_import('EA.zip', ['Ser 16 16A 16B.xml'])
-        services = Service.objects.all()
+            self.write_files_to_zipfile_and_import('IOM.zip', ['Ser 16 16A 16B.xml'])
+        services = Service.objects.filter(region='IM')
         self.assertEqual(3, len(services))
 
         self.assertEqual(1, Trip.objects.filter(route__service=services[0]).count())
