@@ -20,14 +20,8 @@ NS = {
     'txc': 'http://www.transxchange.org.uk/'
 }
 # A safe date, far from any daylight savings changes or leap seconds
-DUMMY_DATE = datetime.date(2016, 4, 5)
 DESCRIPTION_REGEX = re.compile(r'.+,([^ ].+)$')
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}
-
-
-def add_time(time, delta):
-    """Add a timededelta the delta between two times (by naively converting them to datetimes)."""
-    return (datetime.datetime.combine(DUMMY_DATE, time) + delta).time()
 
 
 def sanitize_description_part(part):
@@ -245,9 +239,12 @@ class VehicleJourney:
         if operatingprofile_element is not None:
             self.operating_profile = OperatingProfile(operatingprofile_element, serviced_organisations)
 
-        self.departure_time = datetime.datetime.strptime(
+        departure_time = datetime.datetime.strptime(
             element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
-        ).time()
+        )
+        self.departure_time = datetime.timedelta(hours=departure_time.hour,
+                                                 minutes=departure_time.minute,
+                                                 seconds=departure_time.second)
 
         self.start_deadrun, self.end_deadrun = get_deadruns(element)
 
@@ -311,14 +308,14 @@ class VehicleJourney:
                     stopusage.stop.common_name = 'Redenhall Rd/Station Rd'
 
                 if stopusage.wait_time or wait_time:
-                    next_time = add_time(time, stopusage.wait_time or wait_time)
+                    next_time = time + (stopusage.wait_time or wait_time)
                     yield Cell(stopusage, time, next_time)
                     time = next_time
                 else:
                     yield Cell(stopusage, time, time)
 
             if timinglink.runtime:
-                time = add_time(time, timinglink.runtime)
+                time += timinglink.runtime
 
             if deadrun_next:
                 deadrun = True

@@ -65,13 +65,15 @@ class Command(ImportLiveVehiclesCommand):
 
         latest_location = vehicle.latest_location
         if latest_location and journey.route_name == latest_location.journey.route_name:
-            journey.service = vehicle.latest_location.journey.service
-        else:
-            try:
-                journey.service = Service.objects.get(operator__in=self.operators, line_name=journey.route_name,
-                                                      current=True)
-            except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-                print(e)
+            if latest_location.journey.service:
+                journey.service = vehicle.latest_location.journey.service
+                return journey
+
+        try:
+            journey.service = Service.objects.get(operator__in=self.operators, line_name=journey.route_name,
+                                                  current=True)
+        except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+            print(journey.route_name, e)
 
         return journey
 
