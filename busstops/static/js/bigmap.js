@@ -86,10 +86,14 @@
     function getStopIcon(indicator, bearing) {
         var html = '';
         if (indicator) {
-            var indicatorParts = indicator.split(' ');
-            var firstPart = indicatorParts[0].toLowerCase();
-            if (indicatorParts.length === 2 && (firstPart === 'stop' || firstPart === 'bay' || firstPart === 'stand' || firstPart === 'stance' || firstPart === 'gate')) {
-                html = indicatorParts[1];
+            var parts = indicator.split(' ');
+            if (parts.length === 2) {
+                var firstPart = parts[0].toLowerCase();
+                if (firstPart === 'stop' || firstPart === 'bay' || firstPart === 'stand' || firstPart === 'stance' || firstPart === 'gate') {
+                    html = parts[1];
+                }
+            } else if (parts.length === 0 || indicator.length < 3) {
+                html = indicator;
             }
         }
         var className = 'stop stop-' + html.length;
