@@ -307,7 +307,7 @@ class ImportServicesTest(TestCase):
         self.assertContains(res, """
             <tr>
                 <th><a href="/stops/450030220"></a></th>
-                <td></td><td>02:45</td><td>06:20</td><td>09:20</td><td>10:20</td><td>11:30</td><td>12:30</td><td>13:45</td><td>16:20</td><td>18:40</td>
+                <td>02:45</td><td>06:20</td><td>09:20</td><td>10:20</td><td>11:30</td><td>12:30</td><td>13:45</td><td>16:20</td><td>18:40</td><td></td>
             </tr>
         """, html=True)
 
