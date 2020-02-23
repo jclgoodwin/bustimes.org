@@ -600,7 +600,7 @@ class SiriSmDepartures(Departures):
         super().__init__(stop, services)
 
     def log_vehicle_journey(self, element, operator_ref, vehicle, service, journey_ref, destination):
-        if operator_ref == 'UNIB':
+        if operator_ref == 'UNIB' or operator_ref == 'GCB':
             return
         origin_aimed_departure_time = element.find('s:OriginAimedDepartureTime', self.ns)
         if origin_aimed_departure_time is None:
