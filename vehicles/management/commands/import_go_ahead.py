@@ -131,7 +131,7 @@ class Command(ImportLiveVehiclesCommand):
         if operators:
             latest_location = vehicle.latest_location
             if (
-                latest_location and latest_location.journey.code == journey.code and
+                latest_location and latest_location.current and latest_location.journey.code == journey.code and
                 latest_location.journey.route_name == journey.route_name and latest_location.journey.service
             ):
                 journey.service = latest_location.journey.service

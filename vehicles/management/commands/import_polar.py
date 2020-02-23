@@ -86,11 +86,13 @@ class Command(ImportLiveVehiclesCommand):
                 print(e, item)
                 return journey
 
-        line_name = item['properties']['line']
+        line_name = journey.route_name
         if operator == 'BLAC' and line_name == 'PRM':
             line_name = '1'
-        if vehicle.latest_location and vehicle.latest_location.journey.route_name == journey.route_name:
-            journey.service = vehicle.latest_location.journey.service
+
+        latest_location = vehicle.latest_location
+        if latest_location and latest_location.current and latest_location.journey.route_name == journey.route_name:
+            journey.service = latest_location.journey.service
         else:
             services = Service.objects.filter(current=True, line_name=line_name)
             if operator == 'BORD':
