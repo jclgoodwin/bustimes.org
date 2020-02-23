@@ -8,8 +8,7 @@
         L, reqwest
     */
 
-    var map,
-        tileURL = 'https://maps.bustimes.org/styles/klokantech-basic/{z}/{x}/{y}' + (L.Browser.retina ? '@2x' : '') + '.png';
+    var map;
 
     function getMarker(latLng, direction) {
         direction = (direction || 0) - 135;
@@ -69,8 +68,8 @@
 
             map.attributionControl.setPrefix('');
 
-            L.tileLayer(tileURL, {
-                attribution: '<a href="https://www.maptiler.com/copyright/">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>'
+            L.tileLayer('https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png', {
+                attribution: '<a href="https://stadiamaps.com/">© Stadia Maps</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/about/">© OpenStreetMap contributors</a>',
             }).addTo(map);
 
             var j,
