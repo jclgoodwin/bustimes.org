@@ -268,7 +268,7 @@ class VehicleJourney:
             return True
 
         # Shiel Buses ferry terminal
-        if stopusage.stop.atco_code == '670088829' and time.hour == 11:
+        if stopusage.stop.atco_code == '670088829' and time.hours == 11:
             return True
 
         # Sanders 45, 45A Briston loop
