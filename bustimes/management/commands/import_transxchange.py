@@ -361,7 +361,6 @@ class Command(BaseCommand):
                 stop_times.append(stop_time)
 
             trip.end = stop_time.departure or stop_time.arrival
-            assert trip.start < trip.end
             trip.save()
 
             for note in journey.notes:
