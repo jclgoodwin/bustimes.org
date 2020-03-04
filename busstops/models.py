@@ -5,7 +5,7 @@ import time
 import logging
 import yaml
 from urllib.parse import urlencode, quote
-from datetime import date
+# from datetime import date
 from autoslug import AutoSlugField
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
@@ -15,7 +15,7 @@ from django.db.models import Q
 from django.urls import reverse
 from django.utils.text import slugify
 from multigtfs.models import Feed
-from timetables import gtfs
+# from timetables import gtfs
 from bustimes.models import Route
 from bustimes.timetables import Timetable
 
@@ -676,21 +676,8 @@ class Service(models.Model):
     def get_timetable(self, day=None, related=()):
         """Given a Service, return a Timetable"""
 
-        if self.region_id == 'NI':
+        if self.region_id == 'NI' or self.source and self.source.name.endswith(' GTFS'):
             return Timetable(self.route_set.all(), day)
-
-        if self.source and self.source.name.endswith(' GTFS'):
-            if day is None:
-                day = date.today()
-
-            service_codes = self.servicecode_set.filter(scheme__endswith=' GTFS')
-            routes = []
-            for service_code in service_codes:
-                try:
-                    routes += service_code.get_routes()
-                except Feed.DoesNotExist:
-                    continue
-            return gtfs.get_timetable(routes, day)
 
         routes = Route.objects.filter(service__in=[self] + related).order_by('start_date')
         try:

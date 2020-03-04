@@ -2,11 +2,14 @@ import os
 import zipfile
 import vcr
 from freezegun import freeze_time
+from mock import patch
 from datetime import date
 from django.test import TestCase, override_settings
 from django.conf import settings
 from django.core.management import call_command
 from busstops.models import Region, AdminArea, StopPoint, Service, Operator
+from ...models import Route
+from ..commands import import_gtfs
 
 
 FIXTURES_DIR = os.path.join(settings.BASE_DIR, 'busstops', 'management', 'tests', 'fixtures')
@@ -55,10 +58,10 @@ class GTFSTest(TestCase):
                     open_zipfile.write(os.path.join(dir_path, item), item)
 
         with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'google_transit_ie') + '.yaml'):
-            call_command('import_ie_gtfs', '--force', '-v2')
+            call_command('import_gtfs', '--force', '-v2')
         with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'google_transit_ie') + '.yaml'):
             # import a second time - test that it's OK if stuff already exists
-            call_command('import_ie_gtfs', '--force')
+            call_command('import_gtfs', '--force')
 
         for collection in settings.IE_COLLECTIONS:
             dir_path = os.path.join(FIXTURES_DIR, 'google_transit_' + collection)
@@ -106,3 +109,27 @@ class GTFSTest(TestCase):
         res = self.client.get(self.dublin.get_absolute_url())
         self.assertContains(res, 'Bus services in Dublin', html=True)
         self.assertContains(res, '/services/165')
+
+    def test_download_if_modified(self):
+        path = 'download_if_modified.txt'
+        url = 'https://bustimes.org.uk/static/js/global.js'
+
+        self.assertFalse(os.path.exists(path))
+
+        with vcr.use_cassette('data/vcr/download_if_modified.yaml'):
+            self.assertTrue(import_gtfs.download_if_modified(path, url))
+            self.assertFalse(import_gtfs.download_if_modified(path, url))
+
+        self.assertTrue(os.path.exists(path))
+
+        os.remove(path)
+
+    def test_handle(self):
+        with patch('bustimes.management.commands.import_gtfs.download_if_modified', return_value=False):
+            call_command('import_gtfs')
+        self.assertFalse(Route.objects.all())
+
+        with patch('bustimes.management.commands.import_gtfs.download_if_modified', return_value=True):
+            with self.assertRaises(FileNotFoundError):
+                call_command('import_gtfs')
+        self.assertFalse(Route.objects.all())
