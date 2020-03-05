@@ -10,11 +10,13 @@ from chardet.universaldetector import UniversalDetector
 from email.utils import parsedate
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.db.models import Count
 from django.contrib.gis.geos import Point
 # from django.contrib.gis.geos import LineString, MultiLineString
 from django.utils import timezone
-from busstops.models import DataSource, StopPoint, Service
+from busstops.models import Region, DataSource, StopPoint, Service, StopUsage, Operator
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime
+from ...timetables import get_stop_usages
 
 
 logger = logging.getLogger(__name__)
@@ -112,6 +114,16 @@ def handle_zipfile(path, collection):
                 shapes[shape_id] = []
             shapes[shape_id].append(Point(float(line['shape_pt_lon']), float(line['shape_pt_lat'])))
 
+        operators = {}
+        for line in read_file(archive, 'agency.txt'):
+            operator, created = Operator.objects.get_or_create({
+                'name': line['agency_name'],
+                'region_id': 'LE'
+            }, id=line['agency_id'], region__in=['CO', 'UL', 'MU', 'LE', 'NI'])
+            if not created and operator.name != line['agency_name']:
+                print(operator, line)
+            operators[line['agency_id']] = operator
+
         routes = {}
         for line in read_file(archive, 'routes.txt'):
             if line['route_short_name'] and len(line['route_short_name']) <= 8:
@@ -191,7 +203,6 @@ def handle_zipfile(path, collection):
         for line in read_file(archive, 'stop_times.txt'):
             if trip_id != line['trip_id']:
                 if trip:
-                    trip.destination = stop_times[-1].stop
                     trip.start = stop_times[0].departure
                     trip.end = stop_times[-1].arrival
                     trip.save()
@@ -202,7 +213,9 @@ def handle_zipfile(path, collection):
                 trip = Trip()
             trip_id = line['trip_id']
             trip = trips[trip_id]
-            stop = stops[line['stop_id']]
+            stop = stops.get(line['stop_id'])
+            if stop:
+                trip.destination = stop
             stop_times.append(
                 StopTime(
                     stop_code=line['stop_id'],
@@ -212,13 +225,39 @@ def handle_zipfile(path, collection):
                     sequence=line['stop_sequence'],
                 )
             )
-        trip.destination = stop_times[-1].stop
         trip.start = stop_times[0].departure
         trip.end = stop_times[-1].arrival
         trip.save()
         for stop_time in stop_times:
             stop_time.trip = trip
         StopTime.objects.bulk_create(stop_times)
+
+        for route in routes.values():
+            groupings = get_stop_usages(route.trip_set.all())
+
+            route.service.stops.clear()
+            stop_usages = [
+                StopUsage(service=route.service, stop_id=stop_id, direction='outbound', order=i)
+                for i, stop_id in enumerate(groupings[0]) if stop_id[0] in '78'
+            ] + [
+                StopUsage(service=route.service, stop_id=stop_id, direction='inbound', order=i)
+                for i, stop_id in enumerate(groupings[1]) if stop_id[0] in '78'
+            ]
+            StopUsage.objects.bulk_create(stop_usages)
+
+        for service in Service.objects.all():
+            service.region = Region.objects.filter(adminarea__stoppoint__service=service).annotate(
+                Count('adminarea__stoppoint__service')
+            ).order_by('-adminarea__stoppoint__service__count').first()
+            if service.region:
+                service.save()
+
+        for operator in Operator.objects.all():
+            operator.region = Region.objects.filter(adminarea__stoppoint__service__operator=operator).annotate(
+                Count('adminarea__stoppoint__service__operator')
+            ).order_by('-adminarea__stoppoint__service__operator__count').first()
+            if operator.region_id:
+                operator.save()
 
 
 class Command(BaseCommand):
@@ -232,4 +271,5 @@ class Command(BaseCommand):
             downloaded = download_if_modified(path, url)
             if not downloaded and not options['force']:
                 continue
+            print(collection)
             handle_zipfile(path, collection)
