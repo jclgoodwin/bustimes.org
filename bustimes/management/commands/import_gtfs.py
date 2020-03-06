@@ -105,16 +105,18 @@ def do_stops(archive):
 def handle_zipfile(path, collection):
     source = DataSource.objects.update_or_create({'datetime': timezone.now()}, name=f'{collection} GTFS')[0]
 
+    shapes = {}
+    operators = {}
+    routes = {}
+
     with zipfile.ZipFile(path) as archive:
 
-        shapes = {}
         for line in read_file(archive, 'shapes.txt'):
             shape_id = line['shape_id']
             if shape_id not in shapes:
                 shapes[shape_id] = []
             shapes[shape_id].append(Point(float(line['shape_pt_lon']), float(line['shape_pt_lat'])))
 
-        operators = {}
         for line in read_file(archive, 'agency.txt'):
             operator, created = Operator.objects.get_or_create({
                 'name': line['agency_name'],
@@ -124,7 +126,6 @@ def handle_zipfile(path, collection):
                 print(operator, line)
             operators[line['agency_id']] = operator
 
-        routes = {}
         for line in read_file(archive, 'routes.txt'):
             if line['route_short_name'] and len(line['route_short_name']) <= 8:
                 route_id = line['route_short_name']
@@ -225,47 +226,52 @@ def handle_zipfile(path, collection):
                     sequence=line['stop_sequence'],
                 )
             )
-        trip.start = stop_times[0].departure
-        trip.end = stop_times[-1].arrival
-        trip.save()
-        for stop_time in stop_times:
-            stop_time.trip = trip
-        StopTime.objects.bulk_create(stop_times)
+    trip.start = stop_times[0].departure
+    trip.end = stop_times[-1].arrival
+    trip.save()
+    for stop_time in stop_times:
+        stop_time.trip = trip
+    StopTime.objects.bulk_create(stop_times)
 
-        for route in routes.values():
-            groupings = get_stop_usages(route.trip_set.all())
+    for route in routes.values():
+        groupings = get_stop_usages(route.trip_set.all())
 
-            route.service.stops.clear()
-            stop_usages = [
-                StopUsage(service=route.service, stop_id=stop_id, direction='outbound', order=i)
-                for i, stop_id in enumerate(groupings[0]) if stop_id[0] in '78'
-            ] + [
-                StopUsage(service=route.service, stop_id=stop_id, direction='inbound', order=i)
-                for i, stop_id in enumerate(groupings[1]) if stop_id[0] in '78'
-            ]
-            StopUsage.objects.bulk_create(stop_usages)
+        route.service.stops.clear()
+        stop_usages = [
+            StopUsage(service=route.service, stop_id=stop_id, direction='outbound', order=i)
+            for i, stop_id in enumerate(groupings[0]) if stop_id[0] in '78'
+        ] + [
+            StopUsage(service=route.service, stop_id=stop_id, direction='inbound', order=i)
+            for i, stop_id in enumerate(groupings[1]) if stop_id[0] in '78'
+        ]
+        StopUsage.objects.bulk_create(stop_usages)
 
-        for service in Service.objects.all():
-            service.region = Region.objects.filter(adminarea__stoppoint__service=service).annotate(
-                Count('adminarea__stoppoint__service')
-            ).order_by('-adminarea__stoppoint__service__count').first()
-            if service.region:
-                service.save()
+        route.service.region = Region.objects.filter(adminarea__stoppoint__service=service).annotate(
+            Count('adminarea__stoppoint__service')
+        ).order_by('-adminarea__stoppoint__service__count').first()
+        if route.service.region:
+            route.service.save()
 
-        for operator in Operator.objects.all():
-            operator.region = Region.objects.filter(adminarea__stoppoint__service__operator=operator).annotate(
-                Count('adminarea__stoppoint__service__operator')
-            ).order_by('-adminarea__stoppoint__service__operator__count').first()
-            if operator.region_id:
-                operator.save()
+    for operator in operators.values():
+        operator.region = Region.objects.filter(adminarea__stoppoint__service__operator=operator).annotate(
+            Count('adminarea__stoppoint__service__operator')
+        ).order_by('-adminarea__stoppoint__service__operator__count').first()
+        if operator.region_id:
+            operator.save()
+
+    print(source.service_set.filter(current=True).exclude(route__in=routes.values()).update(current=False))
+    print(source.route_set.exclude(id__in=(route.id for route in routes.values())).delete())
+    StopPoint.objects.filter(active=False, service__current=True).update(active=True)
+    StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
 
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--force', action='store_true', help="Import data even if the GTFS feeds haven't changed")
+        parser.add_argument('collections', nargs='*', type=str)
 
     def handle(self, *args, **options):
-        for collection in settings.IE_COLLECTIONS:
+        for collection in options['collections'] or settings.IE_COLLECTIONS:
             path = os.path.join(settings.DATA_DIR, f'google_transit_{collection}.zip')
             url = f'https://www.transportforireland.ie/transitData/google_transit_{collection}.zip'
             downloaded = download_if_modified(path, url)

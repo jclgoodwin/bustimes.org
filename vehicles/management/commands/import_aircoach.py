@@ -1,4 +1,4 @@
-from multigtfs.models import Route
+from busstops.models import Service
 from .import_nx import sleep, RequestException, Command as NatExpCommand
 
 
@@ -9,10 +9,10 @@ class Command(NatExpCommand):
     def get_items(self):
         url = 'https://tracker.aircoach.ie/api/eta/routes/{}/{}'
 
-        for route in Route.objects.filter(agency__name='Aircoach'):
+        for service in Service.objects.filter(current=True, operator__name='Aircoach'):
             for direction in 'OI':
                 try:
-                    res = self.session.get(url.format(route.short_name.replace('-x', 'X'), direction), timeout=5,
+                    res = self.session.get(url.format(service.line_name.replace('-x', 'X'), direction), timeout=5,
                                            verify=0)
                 except RequestException as e:
                     print(e)

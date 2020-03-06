@@ -5,7 +5,6 @@ import time
 import logging
 import yaml
 from urllib.parse import urlencode, quote
-# from datetime import date
 from autoslug import AutoSlugField
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
@@ -14,8 +13,6 @@ from django.core.cache import cache
 from django.db.models import Q
 from django.urls import reverse
 from django.utils.text import slugify
-from multigtfs.models import Feed
-# from timetables import gtfs
 from bustimes.models import Route
 from bustimes.timetables import Timetable
 
@@ -707,10 +704,6 @@ class ServiceCode(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.scheme, self.code)
-
-    def get_routes(self):
-        feed = Feed.objects.filter(name=self.scheme.split()[0]).latest('created')
-        return feed.route_set.filter(feed=feed, route_id=self.code)
 
 
 class ServiceDate(models.Model):

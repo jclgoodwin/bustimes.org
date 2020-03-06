@@ -3,7 +3,6 @@ from datetime import datetime
 from django.contrib.gis.geos import Point
 from django.conf import settings
 from django.utils import timezone
-from multigtfs.models import Trip
 from busstops.models import Service
 from ...models import Vehicle, VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -117,10 +116,6 @@ class Command(ImportLiveVehiclesCommand):
             journey.datetime = timezone.make_aware(
                 datetime.strptime(item.vehicle.trip.start_date + item.vehicle.trip.start_time, '%Y%m%d%H:%M:%S')
             )
-            trips = Trip.objects.filter(route__feed__name='tfwm', trip_id=journey.code)
-            trip = trips.first()
-            if trip:
-                journey.destination = trip.headsign
 
         vehicle_code = item.vehicle.vehicle.id
         if vehicle_code.startswith(vehicle.code) and len(vehicle.code) < len(vehicle_code):

@@ -31,7 +31,6 @@ INSTALLED_APPS = [
     'bustimes',
     'vehicles',
     'vosa',
-    'multigtfs',
     'pipeline',
     'antispam',
     'email_obfuscator',
