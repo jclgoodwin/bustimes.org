@@ -96,11 +96,11 @@ class GTFSTest(TestCase):
 
         for day in (date(2017, 6, 11), date(2017, 12, 25), date(2015, 12, 3), date(2020, 12, 3)):
             with freeze_time(day):
-                # response = self.client.get('/services/165-merrion-citywest')
-                response = self.client.get('/services/165')
+                with self.assertNumQueries(8):
+                    response = self.client.get(f'/services/165?date={day}')
                 timetable = response.context_data['timetable']
-                self.assertEqual(timetable.groupings[0].rows[0].times, [])
-                # self.assertEqual(timetable.groupings, [])
+                self.assertEqual(day, timetable.date)
+                self.assertEqual(timetable.groupings, [])
 
     def test_big_timetable(self):
         service = Service.objects.get(service_code='seamusdoherty-963-1')
