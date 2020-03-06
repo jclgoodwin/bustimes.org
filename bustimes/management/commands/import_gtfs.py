@@ -108,6 +108,7 @@ def handle_zipfile(path, collection):
     shapes = {}
     operators = {}
     routes = {}
+    services = set()
 
     with zipfile.ZipFile(path) as archive:
 
@@ -145,7 +146,7 @@ def handle_zipfile(path, collection):
                 'line_name': line['route_short_name'],
                 'description': line['route_long_name'],
                 'date': time.strftime('%Y-%m-%d'),
-                'mode': MODES.get(line['route_type'], ''),
+                'mode': MODES.get(int(line['route_type']), ''),
                 'current': True,
                 'show_timetable': True
             }
@@ -154,6 +155,7 @@ def handle_zipfile(path, collection):
                 service_code=service_code,
                 source=source
             )
+            services.add(service)
 
             route, created = Route.objects.update_or_create(
                 source=source,
@@ -233,24 +235,24 @@ def handle_zipfile(path, collection):
         stop_time.trip = trip
     StopTime.objects.bulk_create(stop_times)
 
-    for route in routes.values():
-        groupings = get_stop_usages(route.trip_set.all())
+    for service in services:
+        groupings = get_stop_usages(Trip.objects.filter(route__service=service))
 
-        route.service.stops.clear()
+        service.stops.clear()
         stop_usages = [
-            StopUsage(service=route.service, stop_id=stop_id, direction='outbound', order=i)
+            StopUsage(service=service, stop_id=stop_id, direction='outbound', order=i)
             for i, stop_id in enumerate(groupings[0]) if stop_id[0] in '78'
         ] + [
-            StopUsage(service=route.service, stop_id=stop_id, direction='inbound', order=i)
+            StopUsage(service=service, stop_id=stop_id, direction='inbound', order=i)
             for i, stop_id in enumerate(groupings[1]) if stop_id[0] in '78'
         ]
         StopUsage.objects.bulk_create(stop_usages)
 
-        route.service.region = Region.objects.filter(adminarea__stoppoint__service=service).annotate(
+        service.region = Region.objects.filter(adminarea__stoppoint__service=service).annotate(
             Count('adminarea__stoppoint__service')
         ).order_by('-adminarea__stoppoint__service__count').first()
-        if route.service.region:
-            route.service.save()
+        if service.region:
+            service.save()
 
     for operator in operators.values():
         operator.region = Region.objects.filter(adminarea__stoppoint__service__operator=operator).annotate(
