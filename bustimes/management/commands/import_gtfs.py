@@ -109,6 +109,7 @@ def handle_zipfile(path, collection):
     operators = {}
     routes = {}
     services = set()
+    headsigns = {}
 
     with zipfile.ZipFile(path) as archive:
 
@@ -158,6 +159,10 @@ def handle_zipfile(path, collection):
             services.add(service)
 
             route, created = Route.objects.update_or_create(
+                {
+                    'line_name': line['route_short_name'],
+                    'description': line['route_long_name'],
+                },
                 source=source,
                 code=line['route_id'],
                 service=service,
@@ -199,6 +204,25 @@ def handle_zipfile(path, collection):
                 calendar=calendars[line['service_id']],
                 inbound=line['direction_id'] == '1'
             )
+            if line['trip_headsign']:
+                if line['route_id'] not in headsigns:
+                    headsigns[line['route_id']] = {
+                        '0': set(),
+                        '1': set(),
+                    }
+                headsigns[line['route_id']][line['direction_id']].add(line['trip_headsign'])
+        for route_id in headsigns:
+            if not routes[route_id].description:
+                if len(headsigns[route_id]['0']) == 1 and len(headsigns[route_id]['1']) == 1:
+                    origin = list(headsigns[route_id]['1'])[0]
+                    destination = list(headsigns[route_id]['0'])[0]
+                    route.description = f'{origin} - {destination}'
+                    route.save(update_fields=['description'])
+
+                    route.service.description = route.description
+                    route.service.outbound_description = route.description
+                    route.service.inbound_description = f'{destination} - {origin}'
+                    route.service.save(update_fields=['description', 'inbound_description', 'outbound_description'])
 
         stop_times = []
         trip_id = None
@@ -252,14 +276,14 @@ def handle_zipfile(path, collection):
             Count('adminarea__stoppoint__service')
         ).order_by('-adminarea__stoppoint__service__count').first()
         if service.region:
-            service.save()
+            service.save(update_fields=['region'])
 
     for operator in operators.values():
         operator.region = Region.objects.filter(adminarea__stoppoint__service__operator=operator).annotate(
             Count('adminarea__stoppoint__service__operator')
         ).order_by('-adminarea__stoppoint__service__operator__count').first()
         if operator.region_id:
-            operator.save()
+            operator.save(update_fields=['region'])
 
     print(source.service_set.filter(current=True).exclude(route__in=routes.values()).update(current=False))
     print(source.route_set.exclude(id__in=(route.id for route in routes.values())).delete())

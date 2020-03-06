@@ -197,12 +197,6 @@ for region in F B C M K G D H; do
     fi
 done
 
-cd ..
-
-../manage.py import_gtfs
-
-cd ..
-
-./manage.py import_ie_gtfs
+../../manage.py import_gtfs
 
 finish
