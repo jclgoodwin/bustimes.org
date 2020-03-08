@@ -44,16 +44,12 @@ class EditVehiclesForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         features_column = kwargs.pop('features_column', None)
-        columns = kwargs.pop('columns', None)
         operator = kwargs.pop('operator', None)
 
         super().__init__(*args, **kwargs)
 
         if not features_column:
             del self.fields['features']
-
-        if 'Depot' not in columns:
-            del self.fields['depot']
 
         if operator:
             self.fields['colours'].choices = get_livery_choices(operator)
@@ -82,8 +78,7 @@ class EditVehicleForm(EditVehiclesForm):
     def __init__(self, *args, **kwargs):
         vehicle = kwargs.pop('vehicle', None)
 
-        super().__init__(*args, **kwargs, features_column=vehicle.features.all(),
-                         columns=vehicle.data and vehicle.data.keys() or ())
+        super().__init__(*args, **kwargs, features_column=vehicle.features.all())
 
         if str(vehicle.fleet_number) in vehicle.code:
             self.fields['fleet_number'].disabled = True

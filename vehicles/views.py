@@ -132,8 +132,7 @@ def operator_vehicles(request, slug=None, parent=None):
             'user': request.COOKIES.get('username')
         }
         if request.method == 'POST':
-            form = EditVehiclesForm(request.POST, initial=initial, operator=operator, features_column=features_column,
-                                    columns=columns)
+            form = EditVehiclesForm(request.POST, initial=initial, operator=operator, features_column=features_column)
             if form.is_valid():
                 ticked_vehicles = (v for v in vehicles if str(v.id) in request.POST.getlist('vehicle'))
                 data = {key: form.cleaned_data[key] for key in form.changed_data}
@@ -150,8 +149,7 @@ def operator_vehicles(request, slug=None, parent=None):
                         for edit in edits:
                             edit.features.set(data['features'])
         else:
-            form = EditVehiclesForm(initial=initial, operator=operator, features_column=features_column,
-                                    columns=columns)
+            form = EditVehiclesForm(initial=initial, operator=operator, features_column=features_column)
 
     response = render(request, 'operator_vehicles.html', {
         'breadcrumb': breadcrumb,
