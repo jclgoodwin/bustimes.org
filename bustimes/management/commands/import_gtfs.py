@@ -156,6 +156,15 @@ def handle_zipfile(path, collection):
                 service_code=service_code,
                 source=source
             )
+
+            try:
+                operator = operators[line['agency_id']]
+                if service in services:
+                    service.operator.add(operator)
+                else:
+                    service.operator.set([operator])
+            except KeyError:
+                pass
             services.add(service)
 
             route, created = Route.objects.update_or_create(

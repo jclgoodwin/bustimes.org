@@ -76,6 +76,7 @@ class GTFSTest(TestCase):
 
     def test_operator(self):
         self.assertEqual(Operator.objects.count(), 2)
+        self.assertEqual(Operator.objects.filter(service__current=True).distinct().count(), 2)
 
     def test_small_timetable(self):
         with freeze_time('2017-06-07'):
@@ -96,7 +97,7 @@ class GTFSTest(TestCase):
 
         for day in (date(2017, 6, 11), date(2017, 12, 25), date(2015, 12, 3), date(2020, 12, 3)):
             with freeze_time(day):
-                with self.assertNumQueries(8):
+                with self.assertNumQueries(9):
                     response = self.client.get(f'/services/165?date={day}')
                 timetable = response.context_data['timetable']
                 self.assertEqual(day, timetable.date)
