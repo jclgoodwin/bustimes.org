@@ -136,10 +136,7 @@ def handle_zipfile(path, collection):
             else:
                 route_id = line['route_id'].split()[0]
 
-            if collection == 'eurobus':
-                service_code = 'dublincoach' + '-' + route_id
-            else:
-                service_code = collection + '-' + route_id
+            service_code = collection + '-' + route_id
             assert len(service_code) <= 24
 
             defaults = {
