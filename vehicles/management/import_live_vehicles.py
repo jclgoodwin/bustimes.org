@@ -113,6 +113,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if not vehicle:
             return
 
+        if vehicle.withdrawn:
+            vehicle.withdrawn = False
+            vehicle.save(update_fields=['withdrawn'])
+
         if vehicle_created:
             latest = None
         else:
