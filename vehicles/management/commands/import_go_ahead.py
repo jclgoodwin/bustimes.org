@@ -59,13 +59,9 @@ class Command(ImportLiveVehiclesCommand):
         if fleet_number.isdigit():
             defaults['fleet_number'] = fleet_number
 
-        try:
-            if operator == 'PC':
-                return self.vehicles.get_or_create(defaults, code=fleet_number, operator_id='PLYC')
-            return self.vehicles.get_or_create(defaults, code=vehicle)
-        except Vehicle.MultipleObjectsReturned as e:
-            print(e)
-            return None, None
+        if operator == 'PC':
+            return self.vehicles.get_or_create(defaults, code=fleet_number, operator_id='PLYC')
+        return self.vehicles.get_or_create(defaults, code=vehicle)
 
     def get_points(self):
         now = self.source.datetime

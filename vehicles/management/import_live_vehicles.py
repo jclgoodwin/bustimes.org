@@ -105,7 +105,11 @@ class ImportLiveVehiclesCommand(BaseCommand):
     def handle_item(self, item, now, service_code=None):
         datetime = self.get_datetime(item)
         location = None
-        vehicle, vehicle_created = self.get_vehicle(item)
+        try:
+            vehicle, vehicle_created = self.get_vehicle(item)
+        except Vehicle.MultipleObjectsReturned as e:
+            logger.error(e, exc_info=True)
+            return
         if not vehicle:
             return
 
