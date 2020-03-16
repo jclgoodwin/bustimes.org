@@ -524,11 +524,5 @@ class Command(BaseCommand):
                 Service.objects.filter(service_code=service_code).update(**corrections)
 
             if service_code == 'twm_5-501-A-y11':
-                StopTime.objects.filter(trip__route__service='twm_5-501-A-y11', trip__start='14:15').update(
-                    arrival=F('arrival') - timedelta(minutes=5),
-                    departure=F('departure') - timedelta(minutes=5)
-                )
-                Trip.objects.filter(route__service='twm_5-501-A-y11', start='14:15').update(
-                    start=F('start') - timedelta(minutes=5),
-                    end=F('end') - timedelta(minutes=5)
-                )
+                Trip.objects.filter(route__service='twm_5-501-A-y11', start='15:05').delete()
+                Trip.objects.filter(route__service='twm_5-501-A-y11', start='15:30').delete()
