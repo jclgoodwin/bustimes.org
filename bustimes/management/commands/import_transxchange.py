@@ -11,12 +11,10 @@ import csv
 import yaml
 import zipfile
 import xml.etree.cElementTree as ET
-from datetime import timedelta
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.db import transaction
-from django.db.models import F
 from django.utils import timezone
 from busstops.models import (Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode)
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
