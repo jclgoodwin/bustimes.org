@@ -81,7 +81,7 @@ class VehicleType(models.Model):
 
 
 class Livery(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255, db_index=True)
     colours = models.CharField(max_length=255, blank=True)
     css = models.CharField(max_length=255, blank=True)
     horizontal = models.BooleanField(default=False)
