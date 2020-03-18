@@ -327,7 +327,6 @@ class ViewsTests(TestCase):
         self.assertContains(response, 'Mind your head')  # Note
         self.assertEqual(self.note.get_absolute_url(), '/operators/ainsleys-chariots')
 
-
     def test_service_redirect(self):
         """An inactive service should redirect to a current service with the same description"""
         response = self.client.get('/services/45B')
