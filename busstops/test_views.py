@@ -327,28 +327,6 @@ class ViewsTests(TestCase):
         self.assertContains(response, 'Mind your head')  # Note
         self.assertEqual(self.note.get_absolute_url(), '/operators/ainsleys-chariots')
 
-    def test_national_express_service(self):
-        self.chariots.name = 'Hotel Hoppa'
-        self.chariots.url = 'http://nationalexpress.com'
-        self.chariots.save()
-
-        response = self.client.get(self.service.get_absolute_url())
-        self.assertEqual(response.context_data['links'][0], {
-            'text': 'Buy tickets at nationalexpress.com',
-            'url': 'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&a=3022528&g=24233768'
-        })
-
-        self.chariots.name = 'National Express Airport'
-        self.assertEqual(self.chariots.get_national_express_url()[-10:], 'g=24233764')
-
-        self.chariots.name = 'National Express Shuttle'
-        self.assertEqual(self.chariots.get_national_express_url()[-10:], 'g=21039402')
-
-        response = self.client.get(self.chariots.get_absolute_url())
-        self.assertContains(
-            response,
-            'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&amp;a=3022528&amp;g=21039402'
-        )
 
     def test_service_redirect(self):
         """An inactive service should redirect to a current service with the same description"""
