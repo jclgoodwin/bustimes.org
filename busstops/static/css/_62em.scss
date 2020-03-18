@@ -4,8 +4,12 @@ header {
     }
 }
 
+.bunting,
 main {
-    padding: 0 2em;
+    padding-left: 2em;
+    padding-left: calc(env(safe-area-inset-left) + 2em);
+    padding-right: 2em;
+    padding-right: calc(env(safe-area-inset-right) + 2em);
 }
 
 .breadcrumb {
