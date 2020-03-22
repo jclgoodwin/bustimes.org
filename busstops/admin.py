@@ -64,6 +64,14 @@ class OperatorAdmin(admin.ModelAdmin):
         return Operator.objects.annotate(service_count=service_count).prefetch_related('operatorcode_set',
                                                                                        'payment_methods')
 
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+
+        if request.path.endswith('/autocomplete/'):
+            queryset = queryset.filter(service__current=True)
+
+        return queryset, use_distinct
+
     @staticmethod
     def service_count(obj):
         return obj.service_count

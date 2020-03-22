@@ -746,7 +746,7 @@ class Contact(models.Model):
 
 class Note(models.Model):
     """A note about an error in the timetable, the operator going bust, or something"""
-    operators = models.ManyToManyField(Operator, blank=True, limit_choices_to={'service__current': True})
+    operators = models.ManyToManyField(Operator, blank=True)
     services = models.ManyToManyField(Service, blank=True)
     text = models.TextField()
 
