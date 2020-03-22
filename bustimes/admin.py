@@ -11,12 +11,16 @@ class RouteAdmin(admin.ModelAdmin):
     search_fields = ['line_name', 'line_brand', 'description']
 
 
+class TripAdmin(admin.ModelAdmin):
+    raw_id_fields = ['route', 'destination', 'calendar', 'notes']
+
+
 class NoteAdmin(admin.ModelAdmin):
     list_display = ['code', 'text']
     search_fields = ['code', 'text']
 
 
 admin.site.register(Route, RouteAdmin)
-admin.site.register(Trip)
+admin.site.register(Trip, TripAdmin)
 admin.site.register(Calendar)
 admin.site.register(Note, NoteAdmin)

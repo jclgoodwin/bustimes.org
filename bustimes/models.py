@@ -89,6 +89,9 @@ class Trip(models.Model):
     start = models.DurationField()
     end = models.DurationField()
 
+    def __str__(self):
+        return f'{self.start}'
+
     class Meta:
         index_together = (
             ('route', 'start', 'end'),
