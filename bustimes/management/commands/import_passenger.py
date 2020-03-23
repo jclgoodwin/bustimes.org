@@ -67,6 +67,6 @@ class Command(BaseCommand):
 
             routes = Route.objects.filter(service__operator__in=operators.values())
             print(routes.exclude(source=command.source).delete())
-            print(self.source.route_set.filter(service__current=False).delete())
+            print(command.source.route_set.filter(service__current=False).delete())
             services = Service.objects.filter(operator__in=operators.values(), current=True)
             print(services.exclude(service_code__in=command.service_codes).update(current=False))
