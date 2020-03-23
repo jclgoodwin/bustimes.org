@@ -18,7 +18,7 @@
         oldVehicles = {},
         newVehicles = {},
         busesOnline = document.getElementById('buses-online'),
-        button = busesOnline.getElementsByTagName('button')[0];
+        button = busesOnline.getElementsByTagName('a')[0];
 
     function setLocationHash(hash) {
         if (history.replaceState) {

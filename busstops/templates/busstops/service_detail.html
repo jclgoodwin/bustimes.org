@@ -24,7 +24,7 @@
 </p>
 
 {% if object.geometry %}
-    <p id="buses-online"><button>Map</button></p>
+    <p id="buses-online"><a class="button" href="#map">Map</a></p>
     <div class="service-map" id="map" data-service="{{ object.service_code }}"></div>
 {% endif %}
 
