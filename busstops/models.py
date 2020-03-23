@@ -679,7 +679,8 @@ class Service(models.Model):
         routes = Route.objects.filter(service__in=[self] + related).order_by('start_date')
         try:
             timetable = Timetable(routes, day)
-        except (IndexError, UnboundLocalError):
+        except (IndexError, UnboundLocalError) as e:
+            logger.error(e, exc_info=True)
             return
         if timetable.date:
             for route in routes:

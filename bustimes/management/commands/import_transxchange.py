@@ -145,6 +145,8 @@ class Command(BaseCommand):
         # Get by regional operator code
         operator_code = get_operator_code(operator_element, 'OperatorCode')
         if operator_code:
+            if not self.source.name.isupper():
+                operator_code = self.operators.get(operator_code, operator_code)
             operator = get_operator_by(self.region_id, operator_code)
             if not operator:
                 operator = get_operator_by('National Operator Codes', operator_code)
@@ -399,6 +401,20 @@ class Command(BaseCommand):
             service_code = get_service_code(filename)
             if service_code is None:
                 service_code = txc_service.service_code
+
+            if not self.source.name.isupper():
+                # not a TNDS source (slightly dodgy heuristic)
+                try:
+                    services = Service.objects.filter(current=True, operator__in=self.operators.values())
+                    existing = services.defer('geometry').get(line_name=line_name)
+                    service_code = existing.service_code
+                    if not line_brand:
+                        line_brand = existing.line_brand
+                    if not txc_service.mode:
+                        txc_service.mode = existing.mode
+
+                except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                    service_code = f'{self.source.id}-{service_code}'
 
             defaults = {
                 'line_name': line_name,
