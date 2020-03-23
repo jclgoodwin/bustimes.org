@@ -16,10 +16,23 @@ logger = logging.getLogger(__name__)
 
 
 sources = (
-    # ('Borders Buses', 'https://www.bordersbuses.co.uk/open-data', 'S'),
+    # ('Nottingham City Transport', 'https://www.nctx.co.uk/open-data', 'EM', {
+    #     'NCT': 'NCTR'
+    # }),
+    ('Borders Buses', 'https://www.bordersbuses.co.uk/open-data', 'S', {
+        'BB': 'BORD',
+    }),
+    ('morebus', 'https://www.morebus.co.uk/open-data', 'SW', {
+        'SQ': 'WDBC',
+        'DAM': 'DAMY',
+    }),
+    ('Bluestar', 'https://www.bluestarbus.co.uk/open-data', 'SW', {
+        'SQ': 'BLUS',
+        'UNIL': 'UNIL',
+    }),
     ('Reading Buses', 'https://www.reading-buses.co.uk/open-data', 'SE', {
         'RB': 'RBUS',
-        'GLRB': 'GLRB'
+        'GLRB': 'GLRB',
     }),
 )
 
