@@ -526,10 +526,9 @@ class Command(BaseCommand):
             if 'description' in defaults:
                 route_defaults['description'] = defaults['description']
 
+            route_code = filename
             if len(transxchange.services) > 1:
-                route_code = service_code
-            else:
-                route_code = filename
+                route_code = f'{route_code}#{service_code}'
 
             route, route_created = Route.objects.get_or_create(route_defaults, source=self.source, code=route_code)
 
