@@ -4,6 +4,7 @@
 import logging
 import zipfile
 from requests_html import HTMLSession
+from django.conf.settings import PASSENGER_OPERATORS
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from busstops.models import DataSource, Service
@@ -13,28 +14,6 @@ from ...models import Route
 
 
 logger = logging.getLogger(__name__)
-
-
-sources = (
-    # ('Nottingham City Transport', 'https://www.nctx.co.uk/open-data', 'EM', {
-    #     'NCT': 'NCTR'
-    # }),
-    ('Borders Buses', 'https://www.bordersbuses.co.uk/open-data', 'S', {
-        'BB': 'BORD',
-    }),
-    ('morebus', 'https://www.morebus.co.uk/open-data', 'SW', {
-        'SQ': 'WDBC',
-        'DAM': 'DAMY',
-    }),
-    ('Bluestar', 'https://www.bluestarbus.co.uk/open-data', 'SW', {
-        'SQ': 'BLUS',
-        'UNIL': 'UNIL',
-    }),
-    ('Reading Buses', 'https://www.reading-buses.co.uk/open-data', 'SE', {
-        'RB': 'RBUS',
-        'GLRB': 'GLRB',
-    }),
-)
 
 
 class Command(BaseCommand):
@@ -47,7 +26,7 @@ class Command(BaseCommand):
         command.notes = {}
         command.corrections = {}
 
-        for name, url, region_id, operators in sources:
+        for name, url, region_id, operators in PASSENGER_OPERATORS:
             command.source, _ = DataSource.objects.get_or_create({'url': url}, name=name)
             command.source.datetime = timezone.now()
             command.operators = operators

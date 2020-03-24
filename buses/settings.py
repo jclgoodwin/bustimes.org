@@ -266,3 +266,34 @@ IE_COLLECTIONS = (
     'lallycoach', 'halpenny', 'eurobus', 'donnellys', 'cmadigan', 'bkavanagh',
     'ptkkenneally', 'farragher', 'fedateoranta', 'ashbourneconnect'
 )
+PASSENGER_OPERATORS = (
+    # ('Nottingham City Transport', 'https://www.nctx.co.uk/open-data', 'EM', {
+    #     'NCT': 'NCTR'
+    # }),
+    ('Borders Buses', 'https://www.bordersbuses.co.uk/open-data', 'S', {
+        'BB': 'BORD',
+    }),
+    ('morebus', 'https://www.morebus.co.uk/open-data', 'SW', {
+        'SQ': 'WDBC',
+        'DAM': 'DAMY',
+    }),
+    ('Bluestar', 'https://www.bluestarbus.co.uk/open-data', 'SW', {
+        'SQ': 'BLUS',
+        'UNIL': 'UNIL',
+    }),
+    ('Reading Buses', 'https://www.reading-buses.co.uk/open-data', 'SE', {
+        'RB': 'RBUS',
+        'GLRB': 'GLRB',
+    }),
+    ('West Coast Motors', 'https://www.westcoastmotors.co.uk/open-data', 'S', {
+        'WCM': 'WCMO',
+        'GCB': 'GCTB',
+    }),
+    ('Cardiff Bus', 'https://www.cardiffbus.com/open-data', 'W', {
+        'CB': 'CBUS',
+        # 'NB': '',
+    }),
+    ('Yellow Buses', 'https://www.yellowbuses.co.uk/open-data', 'SW', {
+        'YELL': 'YELL',
+    }),
+)

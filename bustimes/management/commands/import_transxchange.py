@@ -114,6 +114,10 @@ class Command(BaseCommand):
         self.calendar_cache = {}
         self.undefined_holidays = set()
         self.notes = {}
+        self.passenger_operators = []
+        for _, _, _, operators in settings.PASSENGER_OPERATORS:
+            self.passenger_operators += operators.values()
+        self.passenger_operators = set(self.passenger_operators)
         for archive_name in options['archives']:
             self.handle_archive(archive_name, options['files'])
         if self.undefined_holidays:
@@ -396,13 +400,18 @@ class Command(BaseCommand):
             if txc_service.operating_period.end and txc_service.operating_period.end < today:
                 continue
 
-            line_name, line_brand = get_line_name_and_brand(txc_service.element)
-
             service_code = get_service_code(filename)
             if service_code is None:
                 service_code = txc_service.service_code
 
-            if not self.source.name.isupper():
+            line_name, line_brand = get_line_name_and_brand(txc_service.element)
+
+            operators = self.get_operators(transxchange, txc_service)
+
+            if self.source.name.isupper():
+                if operators and all(operator.id in self.passenger_operators for operator in operators):
+                    continue
+            else:
                 # not a TNDS source (slightly dodgy heuristic)
                 try:
                     services = Service.objects.filter(current=True, operator__in=self.operators.values())
@@ -480,8 +489,6 @@ class Command(BaseCommand):
                 defaults['description'] = defaults['outbound_description'] or defaults['inbound_description']
 
             service, service_created = Service.objects.update_or_create(service_code=service_code, defaults=defaults)
-
-            operators = self.get_operators(transxchange, service)
 
             if service_created:
                 service.operator.add(*operators)
