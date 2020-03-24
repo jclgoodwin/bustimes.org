@@ -505,7 +505,7 @@ class Command(BaseCommand):
             StopUsage.objects.bulk_create(stop_usages)
 
             # a code used in Traveline Cymru URLs:
-            if self.region_id == 'W':
+            if self.source.name == 'W':
                 if transxchange.journeys and transxchange.journeys[0].private_code:
                     private_code = transxchange.journeys[0].private_code
                     if ':' in private_code:
