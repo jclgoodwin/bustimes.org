@@ -124,6 +124,11 @@ class Command(ImportLiveVehiclesCommand):
         for params in self.get_extents():
             try:
                 response = self.session.get(self.url, params=params, timeout=5)
+            except RequestException as e:
+                print(e)
+                sleep(120)
+                continue
+            try:
                 items = response.json()['items']
                 any_items = False
                 if items:
@@ -133,11 +138,8 @@ class Command(ImportLiveVehiclesCommand):
                             yield item
                 if not any_items:
                     print(f'no items: {response.url}')
-            except KeyError:
-                print(response.url, response.json())
-                sleep(120)
-            except RequestException:
-                print(response.url, response)
+            except KeyError as e:
+                print(e, response.url, response.json())
                 sleep(120)
             sleep(1)
 
