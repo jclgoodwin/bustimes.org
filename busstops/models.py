@@ -637,7 +637,7 @@ class Service(models.Model):
                         f'{base_url}/XSLT_TTB_REQUEST?{urlencode(query + base_query)}',
                         'Traveline'
                     )
-            except ValueError:
+            except (ValueError, IndexError):
                 pass
 
     def get_linked_services_cache_key(self):

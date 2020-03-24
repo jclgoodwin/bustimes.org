@@ -4,7 +4,7 @@
 import logging
 import zipfile
 from requests_html import HTMLSession
-from django.conf.settings import PASSENGER_OPERATORS
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from busstops.models import DataSource, Service
@@ -26,7 +26,7 @@ class Command(BaseCommand):
         command.notes = {}
         command.corrections = {}
 
-        for name, url, region_id, operators in PASSENGER_OPERATORS:
+        for name, url, region_id, operators in settings.PASSENGER_OPERATORS:
             command.source, _ = DataSource.objects.get_or_create({'url': url}, name=name)
             command.source.datetime = timezone.now()
             command.operators = operators
