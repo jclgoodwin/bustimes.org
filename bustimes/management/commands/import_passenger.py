@@ -61,14 +61,13 @@ class Command(BaseCommand):
                 for path, modified, dates in versions:
                     # the downloaded file might be plain XML, or a zipped archive - we just don't know yet
                     try:
-                        with open(path) as open_file:
-                            command.handle_file(open_file, path)
-                    except UnicodeDecodeError:
                         with zipfile.ZipFile(path) as archive:
                             for filename in archive.namelist():
                                 with archive.open(filename) as open_file:
                                     command.handle_file(open_file, os.path.join(path, filename))
-
+                    except zipfile.BadZipFile:
+                        with open(path) as open_file:
+                            command.handle_file(open_file, path)
                     start_date = dateparse.parse_date(dates[0])
                     if previous_date:
                         routes = command.source.route_set.filter(start_date=start_date)

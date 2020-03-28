@@ -10,6 +10,7 @@ import difflib
 import logging
 from django.utils.text import slugify
 from django.utils.dateparse import parse_duration
+from chardet.universaldetector import UniversalDetector
 from titlecase import titlecase
 
 
@@ -577,7 +578,20 @@ class TransXChange:
         return [journey for journey in journeys.values() if journey.journey_pattern]
 
     def __init__(self, open_file):
-        iterator = ET.iterparse(open_file)
+        try:
+            detector = UniversalDetector()
+
+            for line in open_file:
+                detector.feed(line)
+                if detector.done:
+                    break
+            detector.close()
+            parser = ET.XMLParser(encoding=detector.result['encoding'])
+        except TypeError:
+            parser = None
+
+        open_file.seek(0)
+        iterator = ET.iterparse(open_file, parser=parser)
 
         self.services = {}
 
