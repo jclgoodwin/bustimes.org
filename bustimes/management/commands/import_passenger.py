@@ -27,6 +27,8 @@ class Command(BaseCommand):
 
         session = HTMLSession()
 
+        sources = [source[0] for source in settings.PASSENGER_OPERATORS]
+
         for name, url, region_id, operators in settings.PASSENGER_OPERATORS:
 
             command.source, _ = DataSource.objects.get_or_create({'url': url}, name=name)
@@ -56,9 +58,10 @@ class Command(BaseCommand):
                             break
 
             if any(modified for path, modified, dates in versions):
-                print(versions)
                 previous_date = None
                 for path, modified, dates in versions:
+                    print(path, modified, dates)
+
                     # the downloaded file might be plain XML, or a zipped archive - we just don't know yet
                     try:
                         with zipfile.ZipFile(path) as archive:
@@ -76,13 +79,15 @@ class Command(BaseCommand):
                         print(routes.update(end_date=new_end_date))
                     previous_date = start_date
 
-                # delete route data from other sources
+                # delete route data from TNDS
                 routes = Route.objects.filter(service__operator__in=operators.values())
-                print(routes.exclude(source=command.source).delete())
+                print(routes.exclude(source__name__in=sources).delete())
+
+                services = Service.objects.filter(operator__in=operators.values(), current=True, route=None)
+                print(services.filter(route=None).update(current=False))
 
                 # mark old services as not current
-                services = Service.objects.filter(operator__in=operators.values(), current=True)
-                print(services.exclude(service_code__in=command.service_codes).update(current=False))
+                print(command.source.service_set.exclude(service_code__in=command.service_codes).update(current=False))
 
                 # delete route data from old services
                 print(command.source.route_set.filter(service__current=False).delete())

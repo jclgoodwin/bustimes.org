@@ -149,7 +149,7 @@ class Command(BaseCommand):
         # Get by regional operator code
         operator_code = get_operator_code(operator_element, 'OperatorCode')
         if operator_code:
-            if not self.source.name.isupper():
+            if len(self.source.name) > 4:  # not a TNDS source
                 operator_code = self.operators.get(operator_code, operator_code)
             operator = get_operator_by(self.region_id, operator_code)
             if not operator:
@@ -408,14 +408,17 @@ class Command(BaseCommand):
 
             operators = self.get_operators(transxchange, txc_service)
 
-            if self.source.name.isupper():
+            if len(self.source.name) <= 4:  # TNDS
                 if operators and all(operator.id in self.passenger_operators for operator in operators):
                     continue
-            else:
-                # not a TNDS source (slightly dodgy heuristic)
+            else:  # not a TNDS source (slightly dodgy heuristic)
                 try:
-                    services = Service.objects.filter(current=True, operator__in=self.operators.values())
-                    existing = services.defer('geometry').get(line_name=line_name)
+                    services = Service.objects.filter(operator__in=self.operators.values(), line_name__iexact=line_name)
+                    services = services.defer('geometry')
+                    try:
+                        existing = services.get(current=True)
+                    except Service.DoesNotExist:
+                        existing = services.get()
                     service_code = existing.service_code
                     if not line_brand:
                         line_brand = existing.line_brand

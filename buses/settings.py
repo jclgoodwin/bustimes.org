@@ -277,13 +277,30 @@ PASSENGER_OPERATORS = (
         'SQ': 'WDBC',
         'DAM': 'DAMY',
     }),
+    ('UNIBUS', 'https://www.unibuses.co.uk/open-data', 'SW', {
+        'SQ': 'WDBC',
+    }),
     ('Bluestar', 'https://www.bluestarbus.co.uk/open-data', 'SW', {
         'SQ': 'BLUS',
         'UNIL': 'UNIL',
     }),
+    ('Unilink', 'https://www.unilinkbus.co.uk/open-data', 'SW', {
+        'SQ': 'UNIL',
+    }),
+    ('Salisbury Reds', 'https://www.salisburyreds.co.uk/open-data', 'SW', {
+        'SQ': 'SWWD',
+        'DAM': 'DAMY',
+    }),
+    ('Southern Vectis', 'https://www.islandbuses.info/open-data', 'SW', {
+        'SQ': 'SVCT',
+        'DAM': 'DAMY',
+    }),
     ('Reading Buses', 'https://www.reading-buses.co.uk/open-data', 'SE', {
         'RB': 'RBUS',
         'GLRB': 'GLRB',
+    }),
+    ('Courtney Buses', 'https://www.courtneybuses.com/open-data', 'SE', {
+        'CTNY': 'CTNY',
     }),
     ('West Coast Motors', 'https://www.westcoastmotors.co.uk/open-data', 'S', {
         'WCM': 'WCMO',
@@ -295,5 +312,17 @@ PASSENGER_OPERATORS = (
     }),
     ('Yellow Buses', 'https://www.yellowbuses.co.uk/open-data', 'SW', {
         'YELL': 'YELL',
+    }),
+    ('Swindon’s Bus Company', 'https://www.swindonbus.co.uk/open-data', 'SW', {
+        'TT': 'TDTR',
+    }),
+    # ('Brighton & Hove Buses', 'https://www.buses.co.uk/open-data', 'SE', {
+    #     'BH': 'BHBC',
+    # }),
+    # ('East Yorkshire', 'https://www.eastyorkshirebuses.co.uk/open-data', 'Y', {
+    #     'EY': 'EYMS',
+    # }),
+    ('Blackpool Transport', 'https://www.blackpooltransport.com/open-data', 'NW', {
+        'RR': 'BLAC',
     }),
 )
