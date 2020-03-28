@@ -60,16 +60,20 @@ def download_if_modified(path, url):
 
 
 def read_file(archive, name):
-    with archive.open(name) as open_file:
-        detector = UniversalDetector()
-        for line in open_file:
-            detector.feed(line)
-            if detector.done:
-                break
-        detector.close()
-        open_file.seek(0)
-        for line in csv.DictReader(io.TextIOWrapper(open_file, encoding=detector.result['encoding'])):
-            yield(line)
+    try:
+        with archive.open(name) as open_file:
+            detector = UniversalDetector()
+            for line in open_file:
+                detector.feed(line)
+                if detector.done:
+                    break
+            detector.close()
+            open_file.seek(0)
+            for line in csv.DictReader(io.TextIOWrapper(open_file, encoding=detector.result['encoding'])):
+                yield(line)
+    except KeyError:
+        # file doesn't exist
+        return
 
 
 def get_stop_id(stop_id):
