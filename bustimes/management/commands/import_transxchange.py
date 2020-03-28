@@ -546,8 +546,3 @@ class Command(BaseCommand):
             if service_code == 'twm_5-501-A-y11':  # Lakeside Coaches
                 Trip.objects.filter(route__service=service_code, start='15:05').delete()
                 Trip.objects.filter(route__service=service_code, start='15:30').delete()
-
-            elif service_code == 'suf_26-146-_-y08':  # https://www.border-bus.co.uk/coronavirus-info/
-                Trip.objects.filter(route__service=service_code, start='09:03').delete()
-                Trip.objects.filter(route__service=service_code, start='10:05').delete()
-                Trip.objects.filter(route__service=service_code, start='11:40').delete()
