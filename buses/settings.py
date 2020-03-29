@@ -229,11 +229,7 @@ if not DEBUG and 'test' not in sys.argv and 'collectstatic' not in sys.argv:
         integrations=[DjangoIntegration(), RedisIntegration(), CeleryIntegration()]
     )
 
-    INSTALLED_APPS.append('ddtrace.contrib.django')
-    DATADOG_TRACE = {
-        'DEFAULT_SERVICE': 'bustimes',
-        'TAGS': {'env': 'production'},
-    }
+     MIDDLEWARE.append('beeline.middleware.django.HoneyMiddleware')
 
 TRANSPORTAPI = {
    'app_id': os.environ.get('TRANSPORTAPI_APP_ID'),

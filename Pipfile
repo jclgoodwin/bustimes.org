@@ -42,6 +42,7 @@ celery = {extras = ["redis"],version = "*"}
 requests-toolbelt = "*"
 pyyaml = "*"
 asgiref = "*"
+honeycomb-beeline = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
