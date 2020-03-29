@@ -229,7 +229,7 @@ if not DEBUG and 'test' not in sys.argv and 'collectstatic' not in sys.argv:
         integrations=[DjangoIntegration(), RedisIntegration(), CeleryIntegration()]
     )
 
-     MIDDLEWARE.append('beeline.middleware.django.HoneyMiddleware')
+    MIDDLEWARE.append('beeline.middleware.django.HoneyMiddleware')
 
 TRANSPORTAPI = {
    'app_id': os.environ.get('TRANSPORTAPI_APP_ID'),
