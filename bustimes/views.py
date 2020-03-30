@@ -39,7 +39,7 @@ def service_xml(request, source, code):
     path = os.path.join(settings.TNDS_DIR, f'{source}.zip')
     try:
         with zipfile.ZipFile(path) as archive:
-            return FileResponse(archive.open(f'{code}.xml'), content_type='text/xml')
+            return FileResponse(archive.open(code), content_type='text/xml')
     except FileNotFoundError:
         path = code.split('/')[0]
         with zipfile.ZipFile(path) as archive:
