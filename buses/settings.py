@@ -282,6 +282,7 @@ PASSENGER_OPERATORS = (
     }),
     ('Unilink', 'https://www.unilinkbus.co.uk/open-data', 'SW', {
         'SQ': 'UNIL',
+        'BLUS': 'BLUS',
     }),
     ('Salisbury Reds', 'https://www.salisburyreds.co.uk/open-data', 'SW', {
         'SQ': 'SWWD',
@@ -311,6 +312,7 @@ PASSENGER_OPERATORS = (
     }),
     ('Swindon’s Bus Company', 'https://www.swindonbus.co.uk/open-data', 'SW', {
         'TT': 'TDTR',
+        'NATI': 'TDTR'
     }),
     # ('Brighton & Hove Buses', 'https://www.buses.co.uk/open-data', 'SE', {
     #     'BH': 'BHBC',
