@@ -59,7 +59,8 @@ class Command(BaseCommand):
 
             if any(modified for path, modified, dates in versions):
                 previous_date = None
-                for path, modified, dates in versions:
+
+                for path, modified, dates in versions:  # newest first
                     print(path, modified, dates)
 
                     # the downloaded file might be plain XML, or a zipped archive - we just don't know yet
@@ -72,8 +73,11 @@ class Command(BaseCommand):
                         with open(path) as open_file:
                             command.handle_file(open_file, path)
                     start_date = dateparse.parse_date(dates[0])
-                    if previous_date:
-                        routes = command.source.route_set.filter(start_date=start_date)
+
+                    routes = command.source.route_set.filter(code__startswith=path)
+                    print(routes.filter(start_date__lt=start_date).update(start_date=start_date))
+
+                    if previous_date:  # if there is a newer dataset, set end date
                         new_end_date = previous_date - timedelta(days=1)
                         print(Calendar.objects.filter(trip__route__in=routes).update(end_date=new_end_date))
                         print(routes.update(end_date=new_end_date))
