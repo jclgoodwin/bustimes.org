@@ -2,10 +2,11 @@ import os
 import zipfile
 from django.conf import settings
 from django.views.generic.detail import DetailView
-from django.http import FileResponse
+from django.http import FileResponse, Http404
 from django.utils import timezone
 from busstops.views import Service
 from vehicles.views import siri_one_shot
+from .models import Route
 
 
 class ServiceDebugView(DetailView):
@@ -28,7 +29,19 @@ class ServiceDebugView(DetailView):
         return context
 
 
-def service_xml(request, region, code):
-    path = os.path.join(settings.TNDS_DIR, f'{region}.zip')
-    with zipfile.ZipFile(path) as archive:
-        return FileResponse(archive.open(f'{code}.xml'), content_type='text/xml')
+def service_xml(request, source, code):
+    try:
+        Route.objects.get(source__name=source, code__startswith=code)
+    except Route.MultipleObjectsReturned:
+        pass
+    except Route.DoesNotExist:
+        raise Http404
+    path = os.path.join(settings.TNDS_DIR, f'{source}.zip')
+    try:
+        with zipfile.ZipFile(path) as archive:
+            return FileResponse(archive.open(f'{code}.xml'), content_type='text/xml')
+    except FileNotFoundError:
+        path = code.split('/')[0]
+        with zipfile.ZipFile(path) as archive:
+            code = code[len(path) + 1:]
+            return FileResponse(archive.open(code), content_type='text/xml')
