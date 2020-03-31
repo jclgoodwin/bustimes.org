@@ -17,7 +17,7 @@ def get_latlong(item):
 
 
 class Command(ImportLiveVehiclesCommand):
-    url = 'http://api.otrl-bus.io/api/bus/nearby'
+    url = 'https://apiv2.otrl-bus.io/api/bus/nearby'
     source_name = 'Go-Ahead'
     operators = {
         'GOEA': ('KCTB', 'CHAM', 'HEDO'),
@@ -25,7 +25,7 @@ class Command(ImportLiveVehiclesCommand):
         'BH': ('BHBC',),
         'SQ': ('BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TOUR', 'WDBC'),
         'TT': ('TDTR',),
-        'PC': ('PLYC',),
+        'PC': ('PLYC', 'PC2'),
         'GONW': ('GONW',),
     }
 
@@ -38,6 +38,7 @@ class Command(ImportLiveVehiclesCommand):
         'bluestar': ('BLUS', 'UNIL'),
         'salisburyreds': ('SWWD',),
         'plymouth': ('PLYC',),
+        'cornwall': ('PC2',),
         'gonorthwest': ('GONW',),
     }
 
@@ -147,7 +148,7 @@ class Command(ImportLiveVehiclesCommand):
                 if journey.service:
                     try:
                         operator = journey.service.operator.get()
-                        if vehicle.operator_id != operator.id:
+                        if vehicle.operator_id != operator.id and operator.id != 'PC2':
                             vehicle.operator_id = operator.id
                             vehicle.save()
                     except journey.service.operator.model.MultipleObjectsReturned:
