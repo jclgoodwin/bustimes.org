@@ -226,7 +226,8 @@ USE_I18N = False
 if not DEBUG and 'test' not in sys.argv and 'collectstatic' not in sys.argv:
     sentry_sdk.init(
         dsn=os.environ.get('SENTRY_DSN'),
-        integrations=[DjangoIntegration(), RedisIntegration(), CeleryIntegration()]
+        integrations=[DjangoIntegration(), RedisIntegration(), CeleryIntegration()],
+        ignore_errors=[KeyboardInterrupt]
     )
 
     MIDDLEWARE.append('beeline.middleware.django.HoneyMiddleware')
