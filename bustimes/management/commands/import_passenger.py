@@ -2,7 +2,6 @@
 """
 
 import os
-import logging
 import zipfile
 from datetime import timedelta
 from requests_html import HTMLSession
@@ -13,9 +12,6 @@ from busstops.models import DataSource, Service
 from .import_gtfs import download_if_modified
 from .import_transxchange import Command as TransXChangeCommand
 from ...models import Route, Calendar
-
-
-logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
