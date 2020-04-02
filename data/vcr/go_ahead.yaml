@@ -8,7 +8,7 @@ interactions:
       User-Agent: [python-requests/2.21.0]
       opco: [eastangliabuses]
     method: GET
-    uri: http://api.otrl-bus.io/api/bus/nearby?lat=52.6&lng=1.3
+    uri: https://apiv2.otrl-bus.io/api/bus/nearby?lat=52.6&lng=1.3
   response:
     body: {string: '{"success":true,"statusCode":200,"data":[{"ref":"R09FQS02MzB8NTQy","vehicleRef":"GOEA-630","datedVehicleJourney":542,"geo":{"distance":1.55,"longitude":1.2768639,"latitude":52.6174583,"bearing":240},"lineRef":"501","direction":"inbound","destination":{"name":"Park
         & Ride","ref":"2900H2258"},"vehicleMake":"","stopProgress":0.05,"recordedTime":"2019-03-17T16:24:20.000Z","updatedAtUTC":"2019-03-17T16:24:27.000Z"},{"ref":"R09FQS02MTF8MzA4","vehicleRef":"GOEA-611","datedVehicleJourney":308,"geo":{"distance":1.7,"longitude":1.2911969,"latitude":52.6239471,"bearing":138},"lineRef":"3","direction":"inbound","destination":{"name":"Norwich

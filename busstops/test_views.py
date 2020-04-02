@@ -339,8 +339,8 @@ class ViewsTests(TestCase):
 
     def test_service_xml(self):
         """I can view the TransXChange XML for a service"""
-        with self.assertRaises(FileNotFoundError):
-            self.client.get('/services/foo/ea_21-45-A-y08.xml')
+        response = self.client.get('/services/foo/ea_21-45-A-y08.xml')
+        self.assertEqual(response.status_code, 404)
 
     def test_service_map_data(self):
         with self.assertNumQueries(2):
