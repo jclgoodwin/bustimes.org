@@ -114,10 +114,10 @@ class Command(BaseCommand):
         self.calendar_cache = {}
         self.undefined_holidays = set()
         self.notes = {}
-        self.passenger_operators = []
+        open_data_operators = [operator for operator, _ in settings.BOD_OPERATORS]
         for _, _, _, operators in settings.PASSENGER_OPERATORS:
-            self.passenger_operators += operators.values()
-        self.passenger_operators = set(self.passenger_operators)
+            open_data_operators += operators.values()
+        self.open_data_operators = set(open_data_operators)
         for archive_name in options['archives']:
             self.handle_archive(archive_name, options['files'])
         if self.undefined_holidays:
@@ -414,7 +414,7 @@ class Command(BaseCommand):
             operators = self.get_operators(transxchange, txc_service)
 
             if len(self.source.name) <= 4:  # TNDS
-                if operators and all(operator.id in self.passenger_operators for operator in operators):
+                if operators and all(operator.id in self.open_data_operators for operator in operators):
                     continue
             else:  # not a TNDS source (slightly dodgy heuristic)
                 try:

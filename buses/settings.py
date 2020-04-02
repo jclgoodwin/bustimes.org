@@ -325,3 +325,6 @@ PASSENGER_OPERATORS = (
         'RR': 'BLAC',
     }),
 )
+BOD_OPERATORS = (
+    ('LYNX', 'EA'),
+)
