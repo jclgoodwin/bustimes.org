@@ -444,7 +444,7 @@ class Command(BaseCommand):
                 'show_timetable': True
             }
             description = txc_service.description
-            if description and 'COVID-19 timetable' not in description.lower():
+            if description and 'covid-19 timetable' not in description.lower():
                 if self.region_id == 'NE':
                     description = sanitize_description(description)
                 defaults['description'] = description
