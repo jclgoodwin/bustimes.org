@@ -348,13 +348,18 @@ class Command(BaseCommand):
 
             stop_times = []
             for i, cell in enumerate(journey.get_times()):
+                timing_status = cell.stopusage.timingstatus
+                if timing_status == 'otherPoint':
+                    timing_status = 'OTH'
+                elif timing_status == 'principleTimingPoint':
+                    timing_status = 'PTP'
                 stop_time = StopTime(
                     stop_code=cell.stopusage.stop.atco_code,
                     trip=trip,
                     arrival=cell.arrival_time,
                     departure=cell.departure_time,
                     sequence=i,
-                    timing_status=cell.stopusage.timingstatus,
+                    timing_status=timing_status,
                     activity=cell.stopusage.activity or ''
                 )
                 if i == 0:
@@ -439,7 +444,7 @@ class Command(BaseCommand):
                 'show_timetable': True
             }
             description = txc_service.description
-            if description:
+            if description and 'COVID-19 timetable' not in description:
                 if self.region_id == 'NE':
                     description = sanitize_description(description)
                 defaults['description'] = description
@@ -460,13 +465,22 @@ class Command(BaseCommand):
                 stop_usages = []
                 for grouping in groupings.values():
                     if grouping.rows:
-                        stop_usages += [
-                            StopUsage(
-                                service_id=service_code, stop_id=row.part.stop.atco_code,
-                                direction=grouping.direction, order=i, timing_status=row.part.timingstatus
-                            )
-                            for i, row in enumerate(grouping.rows) if row.part.stop.atco_code in stops
-                        ]
+                        for i, row in enumerate(grouping.rows):
+                            if row.part.stop.atco_code in stops:
+                                timing_status = row.part.timingstatus
+                                if timing_status == 'otherPoint':
+                                    timing_status = 'OTH'
+                                elif timing_status == 'principleTimingPoint':
+                                    timing_status = 'PTP'
+                                stop_usages.append(
+                                    StopUsage(
+                                        service_id=service_code,
+                                        stop_id=row.part.stop.atco_code,
+                                        direction=grouping.direction,
+                                        order=i,
+                                        timing_status=timing_status
+                                    )
+                                )
                         if grouping.direction == 'outbound' or grouping.direction == 'inbound':
                             # grouping.description_parts = transxchange.description_parts
                             defaults[grouping.direction + '_description'] = str(grouping)
