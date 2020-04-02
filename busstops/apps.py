@@ -14,4 +14,3 @@ class BusTimesConfig(AppConfig):
             dataset='bustimes',
             service_name='bustimes'
         )
-
