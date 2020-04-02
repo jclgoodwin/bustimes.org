@@ -145,14 +145,7 @@
         <p>Times marked <strong>s</strong> – “sets down only” – the {{ object.mode }} will only stop to drop passengers off</p>
     {% endif %}
 
-    {% if 'tnds' in service.source.url %}
-        <p class="credit">Timetable data from <a href="https://www.travelinedata.org.uk/">the Traveline National Dataset</a></p>
-    {% elif 'transportforireland' in service.source.url %}
-        <p class="credit">Timetable data from <a href="https://www.transportforireland.ie/transitData/PT_Data.html">Transport for Ireland</a></p>
-    {% elif 'open-data' in service.source.url or 'arcticapi' in service.source.url %}
-        <p class="credit">Timetable data from {{ service.source }}</p>
-    {% endif %}
-
+    {{ service.source.credit }}
 {% else %}
     {% include 'route.html' %}
 {% endif %}

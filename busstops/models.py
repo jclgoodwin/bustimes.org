@@ -12,6 +12,7 @@ from django.contrib.postgres.search import SearchVectorField
 from django.core.cache import cache
 from django.db.models import Q
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from bustimes.models import Route
 from bustimes.timetables import Timetable
@@ -167,6 +168,32 @@ class DataSource(models.Model):
 
     def __str__(self):
         return self.name
+
+    def credit(self):
+        url = None
+        text = None
+
+        if 'tnds' in self.url:
+            url = 'https://www.travelinedata.org.uk/'
+            text = 'the Traveline National Dataset'
+        elif 'transportforireland' in self.url:
+            url = 'https://www.transportforireland.ie/transitData/PT_Data.html'
+            text = 'Transport for Ireland'
+        elif 'open-data' in self.url:
+            url = self.url
+            text = self.name
+        elif 'arcticapi' in self.url:
+            text = self.name
+        elif self.url.startswith('https://data.bus-data.dft.gov.uk'):
+            url = self.url.replace('download/', '')
+            text = self.name.split('_')[0]
+
+        if text:
+            if url:
+                text = f'<a href="{url}">{text}</a>'
+            return mark_safe(f'<p class="credit">Timetable data from {text}</p>')
+
+        return ''
 
 
 class Place(models.Model):
