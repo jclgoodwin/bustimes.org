@@ -518,6 +518,10 @@ class Service:
     def set_description(self, description):
         if description.isupper():
             description = titlecase(description)
+        elif ' via ' in description and description[:description.find(' via ')].isupper():
+            parts = description.split(' via ')
+            parts[0] = titlecase(parts[0])
+            description = ' via '.join(parts)
         self.description = correct_description(description)
 
         self.via = None
