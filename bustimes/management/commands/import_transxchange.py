@@ -368,7 +368,9 @@ class Command(BaseCommand):
                     stop_time.stop_id = stop_time.stop_code
                     trip.destination_id = stop_time.stop_code
                 stop_times.append(stop_time)
-
+            if not trip.destination_id:
+                print(stop_times)
+                continue
             trip.end = stop_time.departure or stop_time.arrival
             trip.save()
 
