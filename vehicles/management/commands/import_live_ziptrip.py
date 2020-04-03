@@ -121,15 +121,19 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_items(self):
         fifteen_minutes_ago = timezone.now() - timedelta(minutes=15)
+        backoff = 1
         for params in self.get_extents():
             try:
                 response = self.session.get(self.url, params=params, timeout=5)
             except RequestException as e:
                 print(e)
-                sleep(120)
+                if backoff < 70:
+                    backoff *= 2
+                sleep(backoff)
                 continue
             try:
                 items = response.json()['items']
+                backoff = 1
                 any_items = False
                 if items:
                     for item in items:
@@ -138,10 +142,12 @@ class Command(ImportLiveVehiclesCommand):
                             yield item
                 if not any_items:
                     print(f'no items: {response.url}')
+                sleep(1)
             except KeyError as e:
                 print(e, response.url, response.json())
-                sleep(120)
-            sleep(1)
+                if backoff < 70:
+                    backoff *= 2
+                sleep(backoff)
 
     def get_vehicle(self, item):
         operator_id, vehicle = item['vehicleCode'].split('_', 1)
