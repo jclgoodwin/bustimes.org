@@ -2,6 +2,7 @@
 """
 
 import os
+import logging
 import zipfile
 from datetime import timedelta
 from requests_html import HTMLSession
@@ -12,6 +13,9 @@ from busstops.models import DataSource, Service
 from .import_gtfs import download_if_modified
 from .import_transxchange import Command as TransXChangeCommand
 from ...models import Route, Calendar
+
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -64,7 +68,10 @@ class Command(BaseCommand):
                         with zipfile.ZipFile(path) as archive:
                             for filename in archive.namelist():
                                 with archive.open(filename) as open_file:
-                                    command.handle_file(open_file, os.path.join(path, filename))
+                                    try:
+                                        command.handle_file(open_file, os.path.join(path, filename))
+                                    except ValueError as e:
+                                        logger.error(e, exc_info=True)
                     except zipfile.BadZipFile:
                         with open(path) as open_file:
                             command.handle_file(open_file, path)

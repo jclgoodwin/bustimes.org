@@ -295,14 +295,14 @@ PASSENGER_OPERATORS = (
     }),
     ('Reading Buses', 'https://www.reading-buses.co.uk/open-data', 'SE', {
         'RB': 'RBUS',
-        'GLRB': 'GLRB',
+        'GLRB': 'GLRB',  # Green Line
     }),
     ('Courtney Buses', 'https://www.courtneybuses.com/open-data', 'SE', {
         'CTNY': 'CTNY',
     }),
     ('West Coast Motors', 'https://www.westcoastmotors.co.uk/open-data', 'S', {
         'WCM': 'WCMO',
-        'GCB': 'GCTB',
+        'GCB': 'GCTB',  # Glasgow Citybus
     }),
     ('Cardiff Bus', 'https://www.cardiffbus.com/open-data', 'W', {
         'CB': 'CBUS',
@@ -313,7 +313,8 @@ PASSENGER_OPERATORS = (
     }),
     ('Swindon’s Bus Company', 'https://www.swindonbus.co.uk/open-data', 'SW', {
         'TT': 'TDTR',
-        'NATI': 'TDTR'
+        'SBCR': 'TDTR',  # rural
+        'NATI': 'TDTR',  # Nationwide Building Society
     }),
     # ('Brighton & Hove Buses', 'https://www.buses.co.uk/open-data', 'SE', {
     #     'BH': 'BHBC',
