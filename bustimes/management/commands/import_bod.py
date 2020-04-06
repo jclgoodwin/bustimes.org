@@ -44,21 +44,27 @@ class Command(BaseCommand):
                     filename = result['name']
                     url = result['url']
                     path = os.path.join(settings.DATA_DIR, filename)
-                    modified = download_if_modified(path, url)
-                    print(modified, path)
+
+                    modified = parse_datetime(result['modified'])
 
                     command.source, created = DataSource.objects.get_or_create({'name': filename}, url=url)
-                    print(command.source.datetime)
-                    if not created:
-                        command.source.name = filename
-                    command.source.datetime = parse_datetime(result['modified'])
+
+                    if command.source.datetime != modified:
+                        print(result)
+                        command.source.datetime = modified
+                        download_if_modified(path, url)
+                        handle_file(command, filename)
+
+                        if not created:
+                            command.source.name = filename
+                        command.source.save(update_fields=['name', 'datetime'])
+
                     sources.append(command.source)
 
-                    handle_file(command, filename)
-                    print(result)
-
-                    command.source.save(update_fields=['name', 'datetime'])
-
+            print(sources)
+            print(operators.values())
+            print(Route.objects.filter(service__operator__in=operators.values()))
+            print(Route.objects.filter(service__operator__in=operators.values()).exclude(source__in=sources))
             print(Route.objects.filter(service__operator__in=operators.values()).exclude(source__in=sources).delete())
             print(Service.objects.filter(operator__in=operators.values(), current=True,
                                          route=None).update(current=False))
