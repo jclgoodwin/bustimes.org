@@ -325,5 +325,11 @@ PASSENGER_OPERATORS = (
     }),
 )
 BOD_OPERATORS = (
-    ('LYNX', 'EA'),
+    ('LYNX', 'EA', {
+        'CO': 'LYNX',
+    }),
+    ('TBTN', 'EM', {
+        '574T': 'TBTN',
+        'KN': 'KBUS',
+    }),
 )

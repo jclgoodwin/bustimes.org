@@ -114,7 +114,9 @@ class Command(BaseCommand):
         self.calendar_cache = {}
         self.undefined_holidays = set()
         self.notes = {}
-        open_data_operators = [operator for operator, _ in settings.BOD_OPERATORS]
+        open_data_operators = []
+        for _, _, operators in settings.BOD_OPERATORS:
+            open_data_operators += operators.values()
         for _, _, _, operators in settings.PASSENGER_OPERATORS:
             open_data_operators += operators.values()
         self.open_data_operators = set(open_data_operators)

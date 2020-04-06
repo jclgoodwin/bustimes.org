@@ -18,6 +18,20 @@ from ...models import Route, Calendar
 logger = logging.getLogger(__name__)
 
 
+def handle_file(command, path):
+    try:
+        with zipfile.ZipFile(os.path.join(settings.DATA_DIR, path)) as archive:
+            for filename in archive.namelist():
+                with archive.open(filename) as open_file:
+                    try:
+                        command.handle_file(open_file, os.path.join(path, filename))
+                    except ValueError as e:
+                        logger.error(e, exc_info=True)
+    except zipfile.BadZipFile:
+        with open(os.path.join(settings.DATA_DIR, path)) as open_file:
+            command.handle_file(open_file, path)
+
+
 class Command(BaseCommand):
     def handle(self, *args, **options):
         command = TransXChangeCommand()
@@ -48,33 +62,25 @@ class Command(BaseCommand):
                     url = element.attrs['href']
                     if '/txc/' in url:
                         url = element.attrs['href']
-                        path = url.split('/')[-1]
+                        filename = url.split('/')[-1]
+                        path = os.path.join(settings.DATA_DIR, filename)
                         modified = download_if_modified(path, url)
                         dates = heading.split(' to ')
                         versions.append(
-                            (path, modified, dates)
+                            (filename, modified, dates)
                         )
                         if dates[0] <= str(command.source.datetime.date()):
                             break
 
-            if any(modified for path, modified, dates in versions):
+            if any(modified for _, modified, _ in versions):
                 previous_date = None
 
                 for path, modified, dates in versions:  # newest first
                     print(path, modified, dates)
-
                     # the downloaded file might be plain XML, or a zipped archive - we just don't know yet
-                    try:
-                        with zipfile.ZipFile(path) as archive:
-                            for filename in archive.namelist():
-                                with archive.open(filename) as open_file:
-                                    try:
-                                        command.handle_file(open_file, os.path.join(path, filename))
-                                    except ValueError as e:
-                                        logger.error(e, exc_info=True)
-                    except zipfile.BadZipFile:
-                        with open(path) as open_file:
-                            command.handle_file(open_file, path)
+
+                    handle_file(command, path)
+
                     start_date = dateparse.parse_date(dates[0])
 
                     routes = command.source.route_set.filter(code__startswith=path)
