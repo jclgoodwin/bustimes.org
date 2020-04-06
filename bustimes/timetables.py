@@ -199,6 +199,14 @@ def abbreviate(grouping, i, in_a_row, difference):
             row.times[j] = None
 
 
+def journey_patterns_match(trip_a, trip_b):
+    if trip_a.journey_pattern:
+        if trip_a.journey_pattern == trip_b.journey_pattern:
+            if trip_a.destination == trip_b.destination:
+                return True
+    return False
+
+
 class Grouping:
     def __init__(self, inbound=False):
         self.heads = []
@@ -313,7 +321,7 @@ class Grouping:
                     if in_a_row > 1:
                         abbreviate(self, i, in_a_row - 1, prev_difference)
                     in_a_row = 0
-                elif trip.journey_pattern and previous_trip.journey_pattern == trip.journey_pattern:
+                elif journey_patterns_match(previous_trip, trip):
                     difference = trip.start - previous_trip.start
                     if difference == prev_difference:
                         in_a_row += 1
