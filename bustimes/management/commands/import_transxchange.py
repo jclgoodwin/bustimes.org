@@ -448,7 +448,12 @@ class Command(BaseCommand):
                 'show_timetable': True
             }
             description = txc_service.description
-            if description and 'covid-19 timetable' not in description.lower():
+            if not description or 'covid-19 timetable' in description.lower():
+                description = f'{txc_service.origin} - {txc_service.destination}'
+                if txc_service.vias:
+                    description = f"{description} via {', '.join(txc_service.vias)}"
+                print(description)
+            if description:
                 if self.region_id == 'NE':
                     description = sanitize_description(description)
                 defaults['description'] = description

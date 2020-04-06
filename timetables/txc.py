@@ -557,6 +557,12 @@ class Service:
         if description_element is not None:
             self.set_description(description_element.text)
 
+        self.origin = element.find('txc:StandardService/txc:Origin', NS).text
+        self.destination = element.find('txc:StandardService/txc:Destination', NS).text
+        self.vias = element.find('txc:StandardService/txc:Vias', NS)
+        if self.vias:
+            self.vias = [via.text for via in self.vias]
+
         self.journey_patterns = {
             journey_pattern.id: journey_pattern for journey_pattern in (
                JourneyPattern(journey_pattern, journey_pattern_sections)
