@@ -230,8 +230,6 @@ if not DEBUG and 'test' not in sys.argv and 'collectstatic' not in sys.argv:
         ignore_errors=[KeyboardInterrupt]
     )
 
-    MIDDLEWARE.append('beeline.middleware.django.HoneyMiddleware')
-
 TRANSPORTAPI = {
    'app_id': os.environ.get('TRANSPORTAPI_APP_ID'),
    'app_key': os.environ.get('TRANSPORTAPI_APP_KEY')
