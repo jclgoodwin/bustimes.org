@@ -42,6 +42,6 @@ def service_xml(request, source, code):
             return FileResponse(archive.open(code), content_type='text/xml')
     except FileNotFoundError:
         path = code.split('/')[0]
-        with zipfile.ZipFile(path) as archive:
+        with zipfile.ZipFile(os.path.join(settings.DATA_DIR, path)) as archive:
             code = code[len(path) + 1:]
             return FileResponse(archive.open(code), content_type='text/xml')
