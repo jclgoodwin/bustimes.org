@@ -973,17 +973,18 @@ input:not(:checked) + label {
         }
     }
 
+    .dep,
+    .minor + .minor {
+        th,
+        td {
+            border-top: 0;
+        }
+    }
+
     .minor {
         th {
             a {
                 padding-left: 1em;
-            }
-        }
-
-        + .minor {
-            th,
-            td {
-                border-top: 0;
             }
         }
     }
