@@ -42,6 +42,7 @@ celery = {extras = ["redis"],version = "*"}
 requests-toolbelt = "*"
 pyyaml = "*"
 asgiref = "*"
+importlib-metadata = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
