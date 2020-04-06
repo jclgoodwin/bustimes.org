@@ -262,9 +262,9 @@ IE_COLLECTIONS = (
     'ptkkenneally', 'farragher', 'fedateoranta', 'ashbourneconnect'
 )
 PASSENGER_OPERATORS = (
-    # ('Nottingham City Transport', 'https://www.nctx.co.uk/open-data', 'EM', {
-    #     'NCT': 'NCTR'
-    # }),
+    ('Nottingham City Transport', 'https://www.nctx.co.uk/open-data', 'EM', {
+        'NCT': 'NCTR'
+    }),
     ('Borders Buses', 'https://www.bordersbuses.co.uk/open-data', 'S', {
         'BB': 'BORD',
     }),
