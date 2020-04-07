@@ -4,6 +4,7 @@
 import os
 import logging
 import zipfile
+import xml.etree.cElementTree as ET
 from datetime import timedelta
 from requests_html import HTMLSession
 from django.conf import settings
@@ -26,7 +27,8 @@ def handle_file(command, path):
                 with archive.open(filename) as open_file:
                     try:
                         command.handle_file(open_file, os.path.join(path, filename))
-                    except ValueError as e:
+                    except (ET.ParseError, ValueError) as e:
+                        print(filename)
                         logger.error(e, exc_info=True)
     except zipfile.BadZipFile:
         with open(os.path.join(settings.DATA_DIR, path)) as open_file:

@@ -271,6 +271,7 @@ PASSENGER_OPERATORS = (
     ('morebus', 'https://www.morebus.co.uk/open-data', 'SW', {
         'SQ': 'WDBC',
         'DAM': 'DAMY',
+        'BLU': 'BLUS',
     }),
     ('UNIBUS', 'https://www.unibuses.co.uk/open-data', 'SW', {
         'SQ': 'WDBC',
@@ -297,6 +298,7 @@ PASSENGER_OPERATORS = (
     }),
     ('Courtney Buses', 'https://www.courtneybuses.com/open-data', 'SE', {
         'CTNY': 'CTNY',
+        'RB': 'RBUS',
     }),
     ('West Coast Motors', 'https://www.westcoastmotors.co.uk/open-data', 'S', {
         'WCM': 'WCMO',
@@ -314,12 +316,12 @@ PASSENGER_OPERATORS = (
         'SBCR': 'TDTR',  # rural
         'NATI': 'TDTR',  # Nationwide Building Society
     }),
-    # ('Brighton & Hove Buses', 'https://www.buses.co.uk/open-data', 'SE', {
-    #     'BH': 'BHBC',
-    # }),
-    # ('East Yorkshire', 'https://www.eastyorkshirebuses.co.uk/open-data', 'Y', {
-    #     'EY': 'EYMS',
-    # }),
+    ('Brighton & Hove Buses', 'https://www.buses.co.uk/open-data', 'SE', {
+        'BH': 'BHBC',
+    }),
+    ('East Yorkshire', 'https://www.eastyorkshirebuses.co.uk/open-data', 'Y', {
+        'EY': 'EYMS',
+    }),
     ('Blackpool Transport', 'https://www.blackpooltransport.com/open-data', 'NW', {
         'RR': 'BLAC',
     }),
@@ -332,6 +334,9 @@ BOD_OPERATORS = (
         '574T': 'TBTN',
         'KN': 'KBUS',
     }),
+    # ('ANEA', 'NE', {
+    #     'ANEA': 'ANEA',
+    # }),
 )
 FIRST_OPERATORS = [
     ('FirstYork', 'Y', {
