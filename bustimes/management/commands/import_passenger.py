@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 def handle_file(command, path):
+    # the downloaded file might be plain XML, or a zipped archive - we just don't know yet
     try:
         with zipfile.ZipFile(os.path.join(settings.DATA_DIR, path)) as archive:
             for filename in archive.namelist():
@@ -51,7 +52,6 @@ class Command(BaseCommand):
             command.region_id = region_id
             command.service_descriptions = {}
             command.service_codes = set()
-            command.calendar_cache = {}
 
             versions = []
             response = session.get(url)
@@ -77,8 +77,8 @@ class Command(BaseCommand):
 
                 for path, modified, dates in versions:  # newest first
                     print(path, modified, dates)
-                    # the downloaded file might be plain XML, or a zipped archive - we just don't know yet
 
+                    command.calendar_cache = {}
                     handle_file(command, path)
 
                     start_date = dateparse.parse_date(dates[0])
