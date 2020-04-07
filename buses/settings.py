@@ -333,3 +333,11 @@ BOD_OPERATORS = (
         'KN': 'KBUS',
     }),
 )
+FIRST_OPERATORS = [
+    ('FirstYork', 'Y', {
+        'FYOR': 'FYOR'
+    }),
+    # ('FirstEasternCounties', 'EA', {
+    #     'FECS': 'FECS'
+    # })
+]
