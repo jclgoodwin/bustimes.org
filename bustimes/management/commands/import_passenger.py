@@ -84,11 +84,13 @@ class Command(BaseCommand):
                     start_date = dateparse.parse_date(dates[0])
 
                     routes = command.source.route_set.filter(code__startswith=path)
+                    calendars = Calendar.objects.filter(trip__route__in=routes)
+                    print(calendars.filter(start_date__lt=start_date).update(start_date=start_date))
                     print(routes.filter(start_date__lt=start_date).update(start_date=start_date))
 
                     if previous_date:  # if there is a newer dataset, set end date
                         new_end_date = previous_date - timedelta(days=1)
-                        print(Calendar.objects.filter(trip__route__in=routes).update(end_date=new_end_date))
+                        print(calendars.update(end_date=new_end_date))
                         print(routes.update(end_date=new_end_date))
                     previous_date = start_date
 
