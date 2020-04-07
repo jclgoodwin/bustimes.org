@@ -168,12 +168,12 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(res, 'Attleborough - Wymondham - Norwich')
 
     @freeze_time('30 October 2017')
-    def test_service_with_no_description_and_empty_pattern(self):
+    def test_service_with_empty_pattern(self):
         # with self.assertNumQueries(346):
         self.write_files_to_zipfile_and_import('EA.zip', ['swe_33-9A-A-y10-2.xml'])
 
         route = Route.objects.get(line_name='9A')
-        self.assertEqual('9A', str(route))
+        self.assertEqual('9A – Sidwell Street - Marine Place', str(route))
 
         res = self.client.get(route.service.get_absolute_url() + '?date=2016-12-28')
         timetable = res.context_data['timetable']

@@ -305,7 +305,7 @@ class ImportServicesTest(TestCase):
         self.assertEqual(len(groupings[0].rows), 15)
         self.assertEqual(len(groupings[1].rows), 15)
         self.assertContains(res, """
-            <tr>
+            <tr class="dep">
                 <th><a href="/stops/450030220"></a></th>
                 <td>02:45</td><td>06:20</td><td>09:20</td><td>10:20</td><td>11:30</td><td>12:30</td><td>13:45</td><td>16:20</td><td>18:40</td><td></td>
             </tr>
