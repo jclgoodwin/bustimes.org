@@ -10,12 +10,13 @@ from busstops.models import DataSource, Service
 from .import_gtfs import download_if_modified
 from .import_transxchange import Command as TransXChangeCommand
 from .import_passenger import handle_file
-from ...models import Route
+from ...models import Route, Calendar
 
 
 def clean_up(operators, sources):
-    print(Route.objects.filter(service__operator__in=operators).exclude(source__in=sources).delete())
-    print(Service.objects.filter(operator__in=operators, current=True, route=None).update(current=False))
+    Route.objects.filter(service__operator__in=operators).exclude(source__in=sources).delete()
+    Service.objects.filter(operator__in=operators, current=True, route=None).update(current=False)
+    Calendar.objects.filter(trip=None).delete()
 
 
 def get_command():
@@ -43,7 +44,6 @@ def bus_open_data(api_key):
             'noc': operator_id,
             'status': 'published'
         })
-        print(response.url)
 
         sources = []
 
@@ -69,10 +69,6 @@ def bus_open_data(api_key):
 
                 sources.append(command.source)
 
-        # print(sources)
-        # print(operators.values())
-        # print(Route.objects.filter(service__operator__in=operators.values()))
-        # print(Route.objects.filter(service__operator__in=operators.values()).exclude(source__in=sources))
         clean_up(operators.values(), sources)
 
 
