@@ -205,7 +205,7 @@ class ImportTransXChangeTest(TestCase):
         }])
 
         response = self.client.get(service.get_absolute_url() + '/debug')
-        self.assertContains(response, 'Wednesday 12 April 2017 - Tuesday 30 May 2017: True')
+        self.assertContains(response, 'Wednesday 12 April 2017–Tuesday 30 May 2017: True')
 
         response = self.client.get(service.get_absolute_url() + '?date=2017-04-20')
         timetable = response.context_data['timetable']
