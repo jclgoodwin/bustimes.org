@@ -80,8 +80,9 @@ class Command(BaseCommand):
                 for path, modified, dates in versions:  # newest first
                     print(path, modified, dates)
 
-                    command.calendar_cache = {}
-                    handle_file(command, path)
+                    if modified:
+                        command.calendar_cache = {}
+                        handle_file(command, path)
 
                     start_date = dateparse.parse_date(dates[0])
 
@@ -104,10 +105,15 @@ class Command(BaseCommand):
                 print(routes.exclude(source__name__in=sources).delete())
 
                 services = Service.objects.filter(operator__in=operators.values(), current=True, route=None)
-                print(services.filter(route=None).update(current=False))
+                print(services.update(current=False))
+
+                # delete route data from old versions
+                routes = command.source.route_set
+                for prefix, _, _ in versions:
+                    routes = routes.exclude(code__startswith=prefix)
+                    if dates[0] <= str(command.source.datetime.date()):
+                        break
+                print(routes.delete())
 
                 # mark old services as not current
-                print(command.source.service_set.exclude(service_code__in=command.service_codes).update(current=False))
-
-                # delete route data from old services
-                print(command.source.route_set.filter(service__current=False).delete())
+                print(command.source.service_set.filter(current=True, route=None).update(current=False))
