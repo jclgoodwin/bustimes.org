@@ -71,8 +71,8 @@ class Command(BaseCommand):
                         versions.append(
                             (filename, modified, dates)
                         )
-                        if dates[0] <= str(command.source.datetime.date()):
-                            break
+
+            versions.sort(key=lambda t: (t[2][0], t[0]), reverse=True)
 
             if any(modified for _, modified, _ in versions):
                 previous_date = None
@@ -95,6 +95,9 @@ class Command(BaseCommand):
                         print(calendars.update(end_date=new_end_date))
                         print(routes.update(end_date=new_end_date))
                     previous_date = start_date
+
+                    if dates[0] <= str(command.source.datetime.date()):
+                        break
 
                 # delete route data from TNDS
                 routes = Route.objects.filter(service__operator__in=operators.values())
