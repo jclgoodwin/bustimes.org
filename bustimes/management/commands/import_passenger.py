@@ -109,7 +109,7 @@ class Command(BaseCommand):
 
                 # delete route data from old versions
                 routes = command.source.route_set
-                for prefix, _, _ in versions:
+                for prefix, _, dates in versions:
                     routes = routes.exclude(code__startswith=prefix)
                     if dates[0] <= str(command.source.datetime.date()):
                         break
