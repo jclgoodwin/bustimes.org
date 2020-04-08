@@ -299,6 +299,7 @@ PASSENGER_OPERATORS = (
     ('Courtney Buses', 'https://www.courtneybuses.com/open-data', 'SE', {
         'CTNY': 'CTNY',
         'RB': 'RBUS',
+        'THVB': 'THVB'
     }),
     ('West Coast Motors', 'https://www.westcoastmotors.co.uk/open-data', 'S', {
         'WCM': 'WCMO',
@@ -324,6 +325,14 @@ PASSENGER_OPERATORS = (
     }),
     ('Blackpool Transport', 'https://www.blackpooltransport.com/open-data', 'NW', {
         'RR': 'BLAC',
+    }),
+    ('Transdev Blazefield', 'https://www.transdevbus.co.uk/open-data', 'NW', {
+        'LUI': 'LNUD',
+        'ROS': 'ROST',
+        'BPT': 'BPTR',
+        'KDT': 'KDTR',
+        'HDT': 'HRGT',
+        'YCD': 'YCST',
     }),
 )
 BOD_OPERATORS = (
