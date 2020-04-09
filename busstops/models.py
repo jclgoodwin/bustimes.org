@@ -709,7 +709,7 @@ class Service(models.Model):
         except (IndexError, UnboundLocalError) as e:
             logger.error(e, exc_info=True)
             return
-        if timetable.date:
+        if timetable.date and not self.source.url.endswith('/open-data'):
             for route in routes:
                 if route.start_date > timetable.date:
                     self.timetable_change = route.start_date
