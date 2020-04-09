@@ -42,32 +42,32 @@ def bus_open_data(api_key):
         response = session.get('https://data.bus-data.dft.gov.uk/api/v1/dataset/', params={
             'api_key': api_key,
             'noc': operator_id,
-            'status': 'published'
+            'status': ['published', 'expiring']
         })
 
         sources = []
 
         for result in response.json()['results']:
-            if result['status'] == 'published':
-                filename = result['name']
-                url = result['url']
-                path = os.path.join(settings.DATA_DIR, filename)
+            filename = result['name']
+            url = result['url']
+            path = os.path.join(settings.DATA_DIR, filename)
 
-                modified = parse_datetime(result['modified'])
+            modified = parse_datetime(result['modified'])
 
-                command.source, created = DataSource.objects.get_or_create({'name': filename}, url=url)
+            command.source, created = DataSource.objects.get_or_create({'name': filename}, url=url)
 
-                if command.source.datetime != modified:
-                    print(result)
-                    command.source.datetime = modified
-                    download_if_modified(path, url)
-                    handle_file(command, filename)
+            if command.source.datetime != modified:
+                print(response.url)
+                print(result)
+                command.source.datetime = modified
+                download_if_modified(path, url)
+                handle_file(command, filename)
 
-                    if not created:
-                        command.source.name = filename
-                    command.source.save(update_fields=['name', 'datetime'])
+                if not created:
+                    command.source.name = filename
+                command.source.save(update_fields=['name', 'datetime'])
 
-                sources.append(command.source)
+            sources.append(command.source)
 
         clean_up(operators.values(), sources)
 
