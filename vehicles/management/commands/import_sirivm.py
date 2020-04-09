@@ -176,14 +176,14 @@ class Command(ImportLiveVehiclesCommand):
         if not operator_options:
             operator_options = (operator,)
         try:
-            if operator and operator.name.startswith('Stagecoach '):
+            if operator and operator.parent:
                 if '-' in vehicle_code:
                     vehicle_code = vehicle_code.split('-', 1)[-1]
                     if vehicle_code.isdigit():
                         defaults['fleet_number'] = vehicle_code
                 return self.vehicles.get_or_create(
                     defaults,
-                    operator__name__startswith='Stagecoach ',
+                    operator__parent=operator.parent,
                     code=vehicle_code,
                 )
             if operator_ref in {'ATS', 'AMD'} and vehicle_code.isdigit():
