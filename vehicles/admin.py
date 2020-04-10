@@ -26,6 +26,13 @@ class VehicleAdminForm(forms.ModelForm):
         }
 
 
+class VehicleEditInline(admin.TabularInline):
+    model = VehicleEdit
+    fields = ['approved', 'datetime', 'fleet_number', 'reg', 'vehicle_type', 'livery', 'colours', 'branding', 'notes',
+              'changes', 'username']
+    readonly_fields = fields[1:]
+
+
 class VehicleAdmin(admin.ModelAdmin):
     list_display = ('code', 'fleet_number', 'fleet_code', 'reg', 'operator', 'vehicle_type',
                     'get_flickr_link', 'last_seen', 'livery', 'colours', 'branding', 'name', 'notes', 'data')
@@ -44,6 +51,7 @@ class VehicleAdmin(admin.ModelAdmin):
     search_fields = ('code', 'fleet_number', 'reg', 'notes')
     ordering = ('-id',)
     actions = ('copy_livery', 'copy_type')
+    inlines = [VehicleEditInline]
 
     def copy_livery(self, request, queryset):
         livery = Livery.objects.filter(vehicle__in=queryset).first()

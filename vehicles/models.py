@@ -276,7 +276,7 @@ class VehicleEdit(models.Model):
     approved = models.BooleanField(null=True, db_index=True)
     datetime = models.DateTimeField(null=True, blank=True)
     username = models.CharField(max_length=255, blank=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True)
 
     def get_changes(self):
         changes = {}
@@ -319,7 +319,7 @@ class VehicleEdit(models.Model):
         return self.vehicle.get_absolute_url()
 
     def __str__(self):
-        return str(self.vehicle)
+        return str(self.id)
 
 
 class VehicleJourney(models.Model):
