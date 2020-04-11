@@ -286,7 +286,7 @@ class VehiclesTests(TestCase):
         self.assertEqual(edit.get_changes(), {'Depot': 'Holt', 'branding': 'Coastliner', 'name': 'Luther Blisset',
                                               'notes': 'Ex Ipswich Buses', 'reg': '-UWW2X'})
 
-        self.assertEqual('50 - UWW\xa02X', str(edit))
+        self.assertEqual('4', str(edit))
         self.assertEqual(self.vehicle_2.get_absolute_url(), edit.get_absolute_url())
 
         self.assertTrue(admin.VehicleEditAdmin.flickr(None, edit))
