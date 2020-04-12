@@ -3,6 +3,7 @@
 """
 import vcr
 from datetime import date, time, datetime
+from unittest.mock import patch
 from django.test import TestCase
 from django.shortcuts import render
 from freezegun import freeze_time
@@ -399,10 +400,11 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(response.context_data['departures'][0]['service'], '16')
         self.assertEqual(str(response.context_data['departures'][0]['destination']), 'St Helier')
 
-    def test_worcestershire(self):
+    @patch('vehicles.tasks.log_vehicle_journey.delay')
+    def test_worcestershire(self, log_vehicle_journey):
         with freeze_time('Sat Feb 09 10:45:45 GMT 2019'):
             with vcr.use_cassette('data/vcr/worcester.yaml'):
-                with self.assertNumQueries(35):
+                with self.assertNumQueries(7):
                     response = self.client.get(self.worcester_stop.get_absolute_url())
             with vcr.use_cassette('data/vcr/worcester.yaml'):
                 with self.assertNumQueries(3):
@@ -418,6 +420,10 @@ class LiveDeparturesTest(TestCase):
         """, html=True)
         self.assertContains(response, 'EVESHAM Bus Station')
         self.assertNotContains(response, 'WORCESTER')
-        self.assertEqual(4, VehicleJourney.objects.count())
+        log_vehicle_journey.assert_called_with(
+            'FMR', 'FMR-35159', '44', '', '311_3907_128', 'WORCESTER Bus Stn', 'Worcestershire',
+            'http://worcestershire-rt-http.trapezenovus.co.uk:8080'
+        )
+        self.assertEqual(0, VehicleJourney.objects.count())
 
         self.assertEqual(xml_response['Content-Type'], 'text/xml')

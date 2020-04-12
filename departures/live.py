@@ -10,13 +10,12 @@ import xml.etree.cElementTree as ET
 from pytz.exceptions import AmbiguousTimeError
 from django.conf import settings
 from django.core.cache import cache
-from django.db import DatabaseError
 from django.db.models import Q
 from django.utils import timezone
 from busstops.models import Service, ServiceCode, DataSource, SIRISource
 from bustimes.models import get_calendars, StopTime
 from vehicles.models import Vehicle, VehicleJourney
-from vehicles.tasks import create_service_code, create_journey_code
+from vehicles.tasks import create_service_code, create_journey_code, log_vehicle_journey
 
 
 logger = logging.getLogger(__name__)
@@ -138,58 +137,6 @@ class Departures:
         if response.ok:
             return self.departures_from_response(response)
         self.set_poorly(1800)  # back off for 30 minutes
-
-    def log_vehicle_journey(self, operator_ref, vehicle, service, journey_ref, destination, departure_time):
-        if not self.data_source:
-            self.data_source, _ = DataSource.objects.get_or_create({'url': self.source.url}, name=self.source.name)
-        defaults = {
-            'source': self.data_source
-        }
-        if operator_ref and vehicle.startswith(operator_ref + '-'):
-            vehicle = vehicle[len(operator_ref) + 1:]
-        elif operator_ref == 'FAB' and vehicle.startswith('111-'):  # Aberdeen
-            vehicle = vehicle[4:]
-        elif vehicle[:5] in {'ASES-', 'CTNY-'}:
-            vehicle = vehicle[5:]
-        operator = service.operator.all()[0]
-        for operator in service.operator.all():
-            if operator.name[:11] == 'Stagecoach ':
-                return
-        if not vehicle or vehicle == '-':
-            return
-        if vehicle.isdigit():
-            defaults['code'] = vehicle
-            vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, fleet_number=vehicle)
-        else:
-            vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
-
-        if journey_ref and journey_ref.startswith('Unknown'):
-            journey_ref = ''
-
-        if not (departure_time or journey_ref):
-            return
-
-        destination = destination or ''
-        if journey_ref:
-            try:
-                existing_journey = VehicleJourney.objects.get(vehicle=vehicle, service=service, code=journey_ref,
-                                                              datetime__date=departure_time.date())
-                if existing_journey.datetime != departure_time:
-                    existing_journey.datetime = departure_time
-                    existing_journey.save()
-            except VehicleJourney.DoesNotExist:
-                VehicleJourney.objects.create(vehicle=vehicle, service=service, code=journey_ref,
-                                              datetime=departure_time,
-                                              source=self.data_source, destination=destination)
-            except VehicleJourney.MultipleObjectsReturned:
-                pass
-        else:
-            defaults = {
-                'destination': destination,
-                'source': self.data_source
-            }
-            VehicleJourney.objects.get_or_create(defaults, vehicle=vehicle, service=service,
-                                                 datetime=departure_time)
 
 
 class DublinDepartures(Departures):
@@ -599,16 +546,6 @@ class SiriSmDepartures(Departures):
         self.line_refs = set()
         super().__init__(stop, services)
 
-    def log_vehicle_journey(self, element, operator_ref, vehicle, service, journey_ref, destination):
-        if operator_ref == 'UNIB' or operator_ref == 'GCB':
-            return
-        origin_aimed_departure_time = element.find('s:OriginAimedDepartureTime', self.ns)
-        if origin_aimed_departure_time is None:
-            return
-        origin_aimed_departure_time = parse_datetime(origin_aimed_departure_time.text)
-        super().log_vehicle_journey(operator_ref, vehicle, service, journey_ref, destination,
-                                    origin_aimed_departure_time)
-
     def get_row(self, element):
         aimed_time = element.find('s:MonitoredCall/s:AimedDepartureTime', self.ns)
         expected_time = element.find('s:MonitoredCall/s:ExpectedDepartureTime', self.ns)
@@ -648,12 +585,11 @@ class SiriSmDepartures(Departures):
             # because the source doesn't support vehicle locations
             if vehicle:
                 if not ('sslink' in url or 'jmwrti' in url or scheme in {'Reading', 'Surrey'}):
-                    try:
-                        self.log_vehicle_journey(element, operator, vehicle, service, journey_ref, destination)
-                    except (Vehicle.MultipleObjectsReturned,
-                            VehicleJourney.MultipleObjectsReturned,
-                            DatabaseError, IndexError):
-                        pass
+                    origin_aimed_departure_time = element.find('s:OriginAimedDepartureTime', self.ns)
+                    if origin_aimed_departure_time is not None:
+                        origin_aimed_departure_time = parse_datetime(origin_aimed_departure_time.text)
+                        log_vehicle_journey.delay(operator, vehicle, service.pk, origin_aimed_departure_time,
+                                                  journey_ref, destination, scheme, url)
 
             # Create a "service code",
             # because the source supports vehicle locations.
