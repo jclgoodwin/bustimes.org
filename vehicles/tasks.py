@@ -1,6 +1,7 @@
+import xml.etree.cElementTree as ET
+from ciso8601 import parse_datetime
 from celery import shared_task
 from busstops.models import DataSource, ServiceCode, Operator
-import xml.etree.cElementTree as ET
 from io import StringIO
 from .management.commands import import_sirivm
 from .models import JourneyCode, Vehicle, VehicleJourney
@@ -38,7 +39,7 @@ def create_journey_code(destination, service_id, journey_ref, source_id):
 
 
 @shared_task
-def log_vehicle_journey(operator_ref, vehicle, service, time, journey_ref, destination, source_url, source_name):
+def log_vehicle_journey(operator_ref, vehicle, service, time, journey_ref, destination, source_name, source_url):
     if operator_ref == 'UNIB' or operator_ref == 'GCB':
         return
     if not (time or journey_ref):
@@ -79,6 +80,8 @@ def log_vehicle_journey(operator_ref, vehicle, service, time, journey_ref, desti
 
     if journey_ref and journey_ref.startswith('Unknown'):
         journey_ref = ''
+
+    time = parse_datetime(time)
 
     destination = destination or ''
     if journey_ref:

@@ -587,8 +587,7 @@ class SiriSmDepartures(Departures):
                 if not ('sslink' in url or 'jmwrti' in url or scheme in {'Reading', 'Surrey'}):
                     origin_aimed_departure_time = element.find('s:OriginAimedDepartureTime', self.ns)
                     if origin_aimed_departure_time is not None:
-                        origin_aimed_departure_time = parse_datetime(origin_aimed_departure_time.text)
-                        log_vehicle_journey.delay(operator, vehicle, service.pk, origin_aimed_departure_time,
+                        log_vehicle_journey.delay(operator, vehicle, service.pk, origin_aimed_departure_time.text,
                                                   journey_ref, destination, scheme, url)
 
             # Create a "service code",
