@@ -421,7 +421,7 @@ class LiveDeparturesTest(TestCase):
         self.assertContains(response, 'EVESHAM Bus Station')
         self.assertNotContains(response, 'WORCESTER')
         log_vehicle_journey.assert_called_with(
-            'FMR', 'FMR-35159', '44', '', '311_3907_128', 'WORCESTER Bus Stn', 'Worcestershire',
+            'FMR', 'FMR-35159', '44', '2019-02-09T11:06:00Z', '311_3907_128', 'WORCESTER Bus Stn', 'Worcestershire',
             'http://worcestershire-rt-http.trapezenovus.co.uk:8080'
         )
         self.assertEqual(0, VehicleJourney.objects.count())
