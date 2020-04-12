@@ -572,24 +572,26 @@ class SiriSmDepartures(Departures):
             vehicle = vehicle.text
         service = self.get_service(line_name)
 
+        scheme = self.source.name
+        url = self.source.url
+
+        journey_ref = element.find('s:FramedVehicleJourneyRef/s:DatedVehicleJourneyRef', self.ns)
+        if journey_ref is not None:
+            journey_ref = journey_ref.text
+
+        # Record some information about the vehicle and journey,
+        # for enthusiasts,
+        # because the source doesn't support vehicle locations
+        if vehicle:
+            if not ('sslink' in url or 'jmwrti' in url or scheme in {'Reading', 'Surrey'}):
+                origin_aimed_departure_time = element.find('s:OriginAimedDepartureTime', self.ns)
+                if origin_aimed_departure_time is not None:
+                    log_vehicle_journey.delay(operator, vehicle,
+                                              service if type(service) is Service else None, line_name,
+                                              origin_aimed_departure_time.text,
+                                              journey_ref, destination, scheme, url)
+
         if type(service) is Service:
-            journey_ref = element.find('s:FramedVehicleJourneyRef/s:DatedVehicleJourneyRef', self.ns)
-            if journey_ref is not None:
-                journey_ref = journey_ref.text
-
-            scheme = self.source.name
-            url = self.source.url
-
-            # Record some information about the vehicle and journey,
-            # for enthusiasts,
-            # because the source doesn't support vehicle locations
-            if vehicle:
-                if not ('sslink' in url or 'jmwrti' in url or scheme in {'Reading', 'Surrey'}):
-                    origin_aimed_departure_time = element.find('s:OriginAimedDepartureTime', self.ns)
-                    if origin_aimed_departure_time is not None:
-                        log_vehicle_journey.delay(operator, vehicle, service.pk, origin_aimed_departure_time.text,
-                                                  journey_ref, destination, scheme, url)
-
             # Create a "service code",
             # because the source supports vehicle locations.
             # For Norfolk, the code is useful for deciphering out what route a vehicle is on.

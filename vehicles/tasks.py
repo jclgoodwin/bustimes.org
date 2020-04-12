@@ -39,7 +39,7 @@ def create_journey_code(destination, service_id, journey_ref, source_id):
 
 
 @shared_task
-def log_vehicle_journey(operator_ref, vehicle, service, time, journey_ref, destination, source_name, source_url):
+def log_vehicle_journey(operator_ref, vehicle, service, route_name, time, journey_ref, destination, source_name, url):
     if operator_ref == 'UNIB' or operator_ref == 'GCB':
         return
     if not (time or journey_ref):
@@ -58,6 +58,8 @@ def log_vehicle_journey(operator_ref, vehicle, service, time, journey_ref, desti
     try:
         operator = Operator.objects.get(id=operator_ref)
     except Operator.DoesNotExist:
+        if not service:
+            return
         try:
             operator = Operator.objects.get(service=service)
         except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
@@ -66,7 +68,7 @@ def log_vehicle_journey(operator_ref, vehicle, service, time, journey_ref, desti
     if operator.name.startswith('Stagecoach'):
         return
 
-    data_source, _ = DataSource.objects.get_or_create({'url': source_url}, name=source_name)
+    data_source, _ = DataSource.objects.get_or_create({'url': url}, name=source_name)
 
     defaults = {
         'source': data_source
@@ -86,21 +88,16 @@ def log_vehicle_journey(operator_ref, vehicle, service, time, journey_ref, desti
     destination = destination or ''
     if journey_ref:
         try:
-            existing_journey = VehicleJourney.objects.get(vehicle=vehicle, service_id=service, code=journey_ref,
+            existing_journey = VehicleJourney.objects.get(vehicle=vehicle, route_name=route_name, code=journey_ref,
                                                           datetime__date=time.date())
             if existing_journey.datetime != time:
                 existing_journey.datetime = time
                 existing_journey.save(update_fields=['datetime'])
         except VehicleJourney.DoesNotExist:
-            VehicleJourney.objects.create(vehicle=vehicle, service_id=service, code=journey_ref,
-                                          datetime=time,
-                                          source=data_source, destination=destination)
+            VehicleJourney.objects.create(vehicle=vehicle, service_id=service, route_name=route_name,
+                                          code=journey_ref, datetime=time, source=data_source, destination=destination)
         except VehicleJourney.MultipleObjectsReturned:
-            pass
-    else:
-        defaults = {
-            'destination': destination,
-            'source': data_source
-        }
-        VehicleJourney.objects.get_or_create(defaults, vehicle=vehicle, service=service,
-                                             datetime=time)
+            return
+    elif not VehicleJourney.objects.filter(vehicle=vehicle, route_name=route_name, datetime=time).exists():
+        VehicleJourney.objects.create(vehicle=vehicle, service_id=service, route_name=route_name,
+                                      datetime=time, source=data_source, destination=destination)
