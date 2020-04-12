@@ -587,7 +587,7 @@ class SiriSmDepartures(Departures):
                 origin_aimed_departure_time = element.find('s:OriginAimedDepartureTime', self.ns)
                 if origin_aimed_departure_time is not None:
                     log_vehicle_journey.delay(operator, vehicle,
-                                              service if type(service) is Service else None, line_name,
+                                              service.pk if type(service) is Service else None, line_name,
                                               origin_aimed_departure_time.text,
                                               journey_ref, destination, scheme, url)
 
