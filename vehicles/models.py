@@ -295,8 +295,10 @@ class VehicleEdit(models.Model):
                 changes['features'] = features
         if self.withdrawn and not self.vehicle.withdrawn:
             changes['withdrawn'] = True
-        if self.changes and self.changes != self.vehicle.data:
-            changes = {**self.changes, **changes}
+        if self.changes:
+            for key in self.changes:
+                if key not in self.vehicle.data or self.changes[key] != self.vehicle.data[key]:
+                    changes[key] = self.changes[key]
         return changes
 
     def get_diff(self, field):
