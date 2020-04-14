@@ -177,10 +177,11 @@ class Command(ImportLiveVehiclesCommand):
             operator_options = (operator,)
         try:
             if operator and operator.parent:
-                if '-' in vehicle_code and operator.parent != 'Go South Coast':
-                    vehicle_code = vehicle_code.split('-', 1)[-1]
-                    if vehicle_code.isdigit():
-                        defaults['fleet_number'] = vehicle_code
+                if '-' in vehicle_code:
+                    if operator.parent != 'Go South Coast' and not operator.parent.startswith('Arriva'):
+                        vehicle_code = vehicle_code.split('-', 1)[-1]
+                        if vehicle_code.isdigit():
+                            defaults['fleet_number'] = vehicle_code
                 return self.vehicles.get_or_create(
                     defaults,
                     operator__parent=operator.parent,
