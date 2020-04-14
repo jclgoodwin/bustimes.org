@@ -1102,11 +1102,11 @@ main {
         top: 1em;
         width: 10em;
 
-        .adsbygoogle {
-            height: 100%;
-            position: absolute;
-            width: 100%;
-        }
+        // .adsbygoogle {
+        //     height: 100%;
+        //     position: absolute;
+        //     width: 100%;
+        // }
 
         &.left {
             left: -12em;
@@ -1117,6 +1117,22 @@ main {
         }
     }
 }
+
+
+@media (min-width: 92.5em) {
+    .side-ad {
+        width: 12.5em;
+
+        &.left {
+            left: -14.5em;
+        }
+
+        &.right {
+            right: -14.5em;
+        }
+    }
+}
+
 
 .adsbygoogle {
     display: block;
