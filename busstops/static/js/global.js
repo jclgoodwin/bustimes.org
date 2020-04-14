@@ -33,21 +33,21 @@ if (navigator.serviceWorker && location.protocol === 'https:') {
     script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
     document.body.appendChild(script);
 
-    if (window.IntersectionObserver) {
-        var observer = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting && !entry.target.innerHTML) {
-                    window.adsbygoogle.push({});
-                }
-            });
-        });
-    }
+    // if (window.IntersectionObserver) {
+    //     var observer = new IntersectionObserver(function(entries) {
+    //         entries.forEach(function(entry) {
+    //             if (entry.isIntersecting && !entry.target.innerHTML) {
+    //                 window.adsbygoogle.push({});
+    //             }
+    //         });
+    //     });
+    // }
 
     for (var i = ads.length - 1; i >= 0; i -= 1) {
-        if (observer) {
-            observer.observe(ads[i]);
-        } else {
-            window.adsbygoogle.push({});
-        }
+        // if (observer) {
+        //     observer.observe(ads[i]);
+        // } else {
+        window.adsbygoogle.push({});
+        // }
     }
 })();

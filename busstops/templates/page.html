@@ -54,6 +54,18 @@
 {% endblock %}
 <main>
     {% block breadcrumb %}{% include 'breadcrumb.html' %}{% endblock %}
+    {% if not regions %}
+        <div class="side-ad left">
+            <!--[if gte IE 9]><!-->
+                <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+            <!--<![endif]-->
+        </div>
+        <div class="side-ad right">
+            <!--[if gte IE 9]><!-->
+                <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+            <!--<![endif]-->
+        </div>
+    {% endif %}
     {% block content %}{% endblock %}
 </main>
 

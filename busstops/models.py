@@ -186,7 +186,7 @@ class DataSource(models.Model):
             text = self.name
         elif self.url.startswith('https://data.bus-data.dft.gov.uk'):
             url = self.url.replace('download/', '')
-            text = self.name.split('_')[0]
+            text = self.name.split('_')[0] + '/Bus Open Data Service'
 
         if text:
             if url:

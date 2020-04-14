@@ -1086,6 +1086,32 @@ input:not(:checked) + label {
     margin: 1em auto;
 }
 
+main {
+    position: relative;
+}
+
+.side-ad {
+    display: none;
+}
+
+@media (min-width: 90em) {
+    .side-ad {
+        bottom: 1em;
+        display: block;
+        position: absolute;
+        top: 1em;
+        width: 10em;
+
+        &.left {
+            left: -12em;
+        }
+
+        &.right {
+            right: -12em;
+        }
+    }
+}
+
 .adsbygoogle {
     display: block;
     margin: 0 auto;
