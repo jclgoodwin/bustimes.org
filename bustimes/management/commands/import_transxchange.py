@@ -64,7 +64,7 @@ def get_service_code(filename):
     parts = filename.split('-')  # ['ea_21', '3', '_', '1']
     if len(parts) == 5:
         net = parts[0].split('_')[0]
-        if len(net) <= 3 and net.islower():
+        if len(net) <= 3 and net.isalpha() and net.islower():
             return '-'.join(parts[:-1])
 
 
@@ -448,7 +448,9 @@ class Command(BaseCommand):
                 'show_timetable': True
             }
             description = txc_service.description
-            if not description or 'timetable' in description.lower():
+            if 'imetable' in description.lower() or 'Database Refresh' in description:
+                description = None
+            if not description:
                 if not (txc_service.origin == 'Origin' and txc_service.destination == 'Destination'):
                     description = f'{txc_service.origin} - {txc_service.destination}'
                     vias = txc_service.vias
