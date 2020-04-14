@@ -879,7 +879,7 @@ def get_departures(stop, services):
                     live_rows = WestDepartures(stop, services).get_departures()
                 else:
                     live_rows = SiriSmDepartures(source, stop, services).get_departures()
-            elif any(operator.id in {'FSCE', 'FCYM'} for operator in operators):
+            elif any(operator.id in {'FSCE', 'FCYM', 'FESX', 'FECS'} for operator in operators):
                 live_rows = TransportApiDepartures(stop, services, now.date()).get_departures()
             elif stop.atco_code[:3] == '430':
                 live_rows = WestMidlandsDepartures(stop, services).get_departures()
