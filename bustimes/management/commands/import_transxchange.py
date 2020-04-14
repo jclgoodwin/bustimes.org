@@ -448,7 +448,7 @@ class Command(BaseCommand):
                 'show_timetable': True
             }
             description = txc_service.description
-            if description and 'imetable' in description.lower() or 'Database Refresh' in description:
+            if description and ('timetable' in description.lower() or 'Database Refresh' in description):
                 description = None
             if not description:
                 if not (txc_service.origin == 'Origin' and txc_service.destination == 'Destination'):
