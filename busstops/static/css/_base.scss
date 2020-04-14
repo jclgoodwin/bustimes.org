@@ -1102,6 +1102,12 @@ main {
         top: 1em;
         width: 10em;
 
+        .adsbygoogle {
+            height: 100%;
+            position: absolute;
+            width: 100%;
+        }
+
         &.left {
             left: -12em;
         }
