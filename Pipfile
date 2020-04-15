@@ -3,11 +3,6 @@ url = "https://pypi.python.org/simple"
 name = "pypi"
 verify_ssl = true
 
-[[source]]
-url = "https://www.piwheels.org/simple"
-verify_ssl = true
-name = "piwheels"
-
 [packages]
 "beautifulsoup4" = "*"
 "ciso8601" = "*"
@@ -43,6 +38,7 @@ requests-toolbelt = "*"
 pyyaml = "*"
 asgiref = "*"
 importlib-metadata = "*"
+python-pidfile = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

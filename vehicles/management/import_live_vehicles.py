@@ -2,6 +2,7 @@ import math
 import requests
 import logging
 import sys
+import pidfile
 from datetime import timedelta
 from setproctitle import setproctitle
 from time import sleep
@@ -238,13 +239,19 @@ class ImportLiveVehiclesCommand(BaseCommand):
         return 0
 
     def handle(self, *args, **options):
-        setproctitle(sys.argv[1].replace('import_', '', 1).replace('live_', '', 1))
-        while True:
-            try:
-                wait = self.update()
-            except Error as e:
-                logger.error(e, exc_info=True)
-                if type(e) is InterfaceError:
-                    sys.exit()
-                wait = 30
-            sleep(wait)
+        try:
+            with pidfile.PIDFile():
+                title = sys.argv[1].replace('import_', '', 1).replace('live_', '', 1)
+                setproctitle(title)
+                while True:
+                    try:
+                        wait = self.update()
+                    except Error as e:
+                        print(e)
+                        logger.error(e, exc_info=True)
+                        if type(e) is InterfaceError:
+                            sys.exit()
+                        wait = 30
+                    sleep(wait)
+        except pidfile.AlreadyRunningError:
+            return
