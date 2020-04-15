@@ -1,5 +1,5 @@
 from freezegun import freeze_time
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
@@ -8,6 +8,7 @@ from .models import Vehicle, VehicleType, VehicleFeature, Livery, VehicleJourney
 from . import admin
 
 
+@override_settings(CELERY_BROKER_URL='redis://localhost:69')
 class VehiclesTests(TestCase):
     @classmethod
     def setUpTestData(cls):

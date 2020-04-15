@@ -25,7 +25,6 @@ from .tasks import handle_siri_vm, handle_siri_et
 
 
 session = Session()
-r = redis.from_url(settings.CELERY_BROKER_URL)
 
 
 class Poorly(Exception):
@@ -320,6 +319,7 @@ def service_vehicles_history(request, slug=None, operator=None, route=None):
     # journeys = journeys.annotate(calls=Exists(calls))
     journeys = journeys.filter(datetime__date=date).select_related('vehicle').order_by('datetime')
     try:
+        r = redis.from_url(settings.CELERY_BROKER_URL)
         pipe = r.pipeline()
         for journey in journeys:
             pipe.exists(f'journey{journey.id}')
@@ -381,6 +381,7 @@ class VehicleDetailView(DetailView):
             journeys = journeys.select_related('service')
 
             try:
+                r = redis.from_url(settings.CELERY_BROKER_URL)
                 pipe = r.pipeline()
                 for journey in journeys:
                     pipe.exists(f'journey{journey.id}')
@@ -499,6 +500,7 @@ class JourneyDetailView(DetailView):
 
 def journey_json(request, pk):
     try:
+        r = redis.from_url(settings.CELERY_BROKER_URL)
         locations = r.lrange(f'journey{pk}', 0, -1)
         if locations:
             locations = [json.loads(location) for location in locations]
