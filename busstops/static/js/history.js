@@ -150,5 +150,5 @@
         });
     }
 
-    maybeOpenMap();
+    window.addEventListener('DOMContentLoaded', maybeOpenMap);
 })();
