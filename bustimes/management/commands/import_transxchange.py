@@ -11,6 +11,7 @@ import csv
 import yaml
 import zipfile
 import xml.etree.cElementTree as ET
+from datetime import date
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import LineString, MultiLineString
@@ -53,10 +54,10 @@ ________________________________________________________________________________
 """
 
 BANK_HOLIDAYS = {
-    'AllBankHolidays': '2020-05-08',
-    'HolidayMondays': '2020-05-08',
-    'MayDay': '2020-05-08',
-    'SpringBank': '2020-05-25',
+    'AllBankHolidays': date(2020, 5, 8),
+    'HolidayMondays': date(2020, 5, 8),
+    'MayDay': date(2020, 5, 8),
+    'SpringBank': date(2020, 5, 25),
 }
 
 
@@ -263,18 +264,20 @@ class Command(BaseCommand):
 
         for holiday in operating_profile.operation_bank_holidays:
             if holiday in BANK_HOLIDAYS:
-                calendar_dates.append(
-                    CalendarDate(start_date=BANK_HOLIDAYS[holiday], end_date=BANK_HOLIDAYS[holiday],
-                                 dates=(BANK_HOLIDAYS[holiday], BANK_HOLIDAYS[holiday]), special=True, operation=True)
-                )
+                date = BANK_HOLIDAYS[holiday]
+                if operating_period.contains(date):
+                    calendar_dates.append(
+                        CalendarDate(start_date=date, end_date=date, dates=(date, date), special=True, operation=True)
+                    )
             else:
                 self.undefined_holidays.add(holiday)
         for holiday in operating_profile.nonoperation_bank_holidays:
             if holiday in BANK_HOLIDAYS:
-                calendar_dates.append(
-                    CalendarDate(start_date=BANK_HOLIDAYS[holiday], end_date=BANK_HOLIDAYS[holiday],
-                                 dates=(BANK_HOLIDAYS[holiday], BANK_HOLIDAYS[holiday]), special=True, operation=False)
-                )
+                date = BANK_HOLIDAYS[holiday]
+                if operating_period.contains(date):
+                    calendar_dates.append(
+                        CalendarDate(start_date=date, end_date=date, dates=(date, date), special=True, operation=False)
+                    )
             else:
                 self.undefined_holidays.add(holiday)
 
@@ -299,6 +302,7 @@ class Command(BaseCommand):
                     for date_range in operation_days
                 ]
 
+        # remove date ranges which end before they start?!
         calendar_dates = [dates for dates in calendar_dates if not dates.end_date or dates.end_date >= dates.start_date]
 
         if not calendar_dates and not operating_profile.regular_days:
