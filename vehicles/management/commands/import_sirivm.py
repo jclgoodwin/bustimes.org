@@ -124,10 +124,11 @@ class Command(ImportLiveVehiclesCommand):
         mvj = item.find('siri:MonitoredVehicleJourney', NS)
         vehicle_code = mvj.find('siri:VehicleRef', NS).text
         operator_ref = mvj.find('siri:OperatorRef', NS).text
-        while operator_ref and vehicle_code.startswith(operator_ref + '-'):
-            if operator_ref == 'SQ' and vehicle_code[:6] != 'SQ-SQ-' or operator_ref == 'CSLB':
-                break
-            vehicle_code = vehicle_code[len(operator_ref) + 1:]
+        if operator_ref and operator_ref != 'CSLB' and operator_ref != 'AMD':
+            while vehicle_code.startswith(operator_ref + '-'):
+                if operator_ref == 'SQ' and vehicle_code[:6] != 'SQ-SQ-':
+                    break
+                vehicle_code = vehicle_code[len(operator_ref) + 1:]
 
         if vehicle_code[:4] == 'ASC-' and vehicle_code[4:].isdigit():
             vehicle_code = vehicle_code[4:]
