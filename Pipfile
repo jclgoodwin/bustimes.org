@@ -6,9 +6,8 @@ verify_ssl = true
 [packages]
 "beautifulsoup4" = "*"
 "ciso8601" = "*"
-django = ">=2.2.7,<3.0.0"
+django = "*"
 django-email-obfuscator = "*"
-django-haystack = "*"
 django-pipeline = "*"
 lxml = "*"
 ddtrace = "*"

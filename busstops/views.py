@@ -3,19 +3,20 @@
 import json
 import ciso8601
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import Q, Prefetch, F
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
 from django.views.generic.detail import DetailView
+from django.core.paginator import Paginator
 from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
-from haystack.query import SearchQuerySet
 from departures import live
 from .utils import format_gbp, get_bounding_box
 from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Place
-from .forms import ContactForm
+from .forms import ContactForm, SearchForm
 
 
 prefetch_stop_services = Prefetch(
@@ -597,6 +598,26 @@ class ServiceSitemap(Sitemap):
         return Service.objects.filter(current=True).defer('geometry')
 
 
+def search(request):
+    query_text = request.GET.get('q')
+
+    query = SearchQuery(query_text)
+
+    rank = SearchRank(F('search_vector'), query)
+
+    results = Operator.objects.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+
+    paginator = Paginator(results, 50)
+
+    context = {
+        'query': query_text or '',
+        'form': SearchForm(),
+        'paginator': paginator,
+        'page': paginator.get_page(request.GET.get('page'))
+    }
+    return render(request, 'search.html', context)
+
+
 def journey(request):
     origin = request.GET.get('from')
     from_q = request.GET.get('from_q')
@@ -605,27 +626,27 @@ def journey(request):
 
     if origin:
         origin = get_object_or_404(Locality, slug=origin)
-    if from_q:
-        from_options = SearchQuerySet().models(Locality).filter(content=from_q).load_all()
-        if from_options.count() == 1:
-            origin = from_options[0].object
-            from_options = None
-        elif origin not in from_options:
-            origin = None
-    else:
-        from_options = None
+    # if from_q:
+    #     from_options = SearchQuerySet().models(Locality).filter(content=from_q).load_all()
+    #     if from_options.count() == 1:
+    #         origin = from_options[0].object
+    #         from_options = None
+    #     elif origin not in from_options:
+    #         origin = None
+    # else:
+    #     from_options = None
 
     if destination:
         destination = get_object_or_404(Locality, slug=destination)
-    if to_q:
-        to_options = SearchQuerySet().models(Locality).filter(content=to_q).load_all()
-        if to_options.count() == 1:
-            destination = to_options[0].object
-            to_options = None
-        elif destination not in to_options:
-            destination = None
-    else:
-        to_options = None
+    # if to_q:
+    #     to_options = SearchQuerySet().models(Locality).filter(content=to_q).load_all()
+    #     if to_options.count() == 1:
+    #         destination = to_options[0].object
+    #         to_options = None
+    #     elif destination not in to_options:
+    #         destination = None
+    # else:
+    #     to_options = None
 
     journeys = None
     # if origin and destination:
@@ -638,9 +659,9 @@ def journey(request):
     return render(request, 'journey.html', {
         'from': origin,
         'from_q': from_q or origin or '',
-        'from_options': from_options,
+        # 'from_options': from_options,
         'to': destination,
         'to_q': to_q or destination or '',
-        'to_options': to_options,
+        # 'to_options': to_options,
         'journeys': journeys
     })

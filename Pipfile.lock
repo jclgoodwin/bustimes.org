@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "57be3e383557a0e1f02f460f27a980bba1389cb000ac8a82298c47263ccd7185"
+            "sha256": "4e5499eaa1c83f213ef2723a43142b6396996185972680e99871e00ac391029f"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -118,11 +118,11 @@
         },
         "django": {
             "hashes": [
-                "sha256:69897097095f336d5aeef45b4103dceae51c00afa6d3ae198a2a18e519791b7a",
-                "sha256:6ecd229e1815d4fc5240fc98f1cca78c41e7a8cd3e3f2eefadc4735031077916"
+                "sha256:642d8eceab321ca743ae71e0f985ff8fdca59f07aab3a9fb362c617d23e33a76",
+                "sha256:d4666c2edefa38c5ede0ec1655424c56dc47ceb04b6d8d62a7eac09db89545c1"
             ],
             "index": "pypi",
-            "version": "==2.2.12"
+            "version": "==3.0.5"
         },
         "django-antispam": {
             "editable": true,
@@ -143,13 +143,6 @@
             ],
             "index": "pypi",
             "version": "==0.1.5"
-        },
-        "django-haystack": {
-            "hashes": [
-                "sha256:8b54bcc926596765d0a3383d693bcdd76109c7abb6b2323b3984a39e3576028c"
-            ],
-            "index": "pypi",
-            "version": "==2.8.1"
         },
         "django-multidb-router": {
             "hashes": [
@@ -724,11 +717,11 @@
         },
         "django": {
             "hashes": [
-                "sha256:69897097095f336d5aeef45b4103dceae51c00afa6d3ae198a2a18e519791b7a",
-                "sha256:6ecd229e1815d4fc5240fc98f1cca78c41e7a8cd3e3f2eefadc4735031077916"
+                "sha256:642d8eceab321ca743ae71e0f985ff8fdca59f07aab3a9fb362c617d23e33a76",
+                "sha256:d4666c2edefa38c5ede0ec1655424c56dc47ceb04b6d8d62a7eac09db89545c1"
             ],
             "index": "pypi",
-            "version": "==2.2.12"
+            "version": "==3.0.5"
         },
         "django-coverage-plugin": {
             "hashes": [
