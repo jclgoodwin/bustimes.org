@@ -25,13 +25,38 @@ logger = logging.getLogger(__name__)
 
 
 NS = {'txc': 'http://www.transxchange.org.uk/'}
+"""
+_________________________________________________________________________________________________
+| AllBankHolidays | AllHolidaysExceptChristmas | Holidays             | NewYearsDay              |
+|                 |                            |                      | 🏴󠁧󠁢󠁳󠁣󠁴󠁿 Jan2ndScotland        |
+|                 |                            |                      | GoodFriday               |
+|                 |                            |                      | 🏴󠁧󠁢󠁳󠁣󠁴󠁿 StAndrewsDay          |
+|                 |                            |______________________|__________________________|
+|                 |                            | HolidayMondays       | EasterMonday             |
+|                 |                            |                      | MayDay                   |
+|                 |                            |                      | SpringBank               |________
+|                 |                            |                      | LateSummerBankHolidayNotScotland  |
+|                 |                            |                      | AugustBankHolidayScotland   ______|
+|                 |____________________________|______________________|____________________________|
+|                 | Christmas            | ChristmasDay               |
+|                 |                      | BoxingDay                  |
+|                 |______________________|____________________________|
+|                 | DisplacementHolidays | ChristmasDayHoliday        |
+|                 |                      | BoxingDayHoliday           |
+|                 |                      | NewYearsDayHoliday         |
+|                 |                      | 🏴󠁧󠁢󠁳󠁣󠁴󠁿 Jan2ndScotlandHoliday   |
+|                 |                      | 🏴󠁧󠁢󠁳󠁣󠁴󠁿 StAndrewsDayHoliday     |
+|_________________|______________________|____________________________|
+| EarlyRunOff     | ChristmasEve |
+|                 | NewYearsEve  |
+|_________________|______________|
+"""
+
 BANK_HOLIDAYS = {
-    'ChristmasDay': '2019-12-25',
-    'BoxingDay':  '2019-12-26',
-    'NewYearsDay':  '2020-01-01',
-    'AllBankHolidays': '2020-01-01',
-    'GoodFriday': '2020-04-10',
-    'EasterMonday': '2020-04-13',
+    'AllBankHolidays': '2020-05-08',
+    'HolidayMondays': '2020-05-08',
+    'MayDay': '2020-05-08',
+    'SpringBank': '2020-05-25',
 }
 
 
