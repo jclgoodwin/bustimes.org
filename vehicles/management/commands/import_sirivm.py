@@ -179,7 +179,7 @@ class Command(ImportLiveVehiclesCommand):
         try:
             if operator and operator.parent:
                 if '-' in vehicle_code:
-                    if operator.parent != 'Go South Coast' and not operator.parent.startswith('Arriva'):
+                    if operator.parent == 'Stagecoach':
                         vehicle_code = vehicle_code.split('-', 1)[-1]
                         if vehicle_code.isdigit():
                             defaults['fleet_number'] = vehicle_code
