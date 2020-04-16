@@ -194,6 +194,8 @@ class ViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_search(self):
+        self.melton_constable.update_search_vector()
+
         response = self.client.get('/search?q=melton')
         self.assertContains(response, '1 result found for')
         self.assertContains(response, 'Melton Constable')
@@ -207,7 +209,7 @@ class ViewsTests(TestCase):
         response = self.client.get('/search?q=')
         self.assertNotContains(response, 'found for')
 
-        response = render(None, 'search/search.html', {
+        response = render(None, 'search.html', {
             'query': True,
             'suggestion': 'bordeaux'
         })

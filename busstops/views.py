@@ -605,13 +605,13 @@ def search(request):
 
     rank = SearchRank(F('search_vector'), query)
 
-    results = Operator.objects.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+    results = Locality.objects.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
 
     paginator = Paginator(results, 50)
 
     context = {
         'query': query_text or '',
-        'form': SearchForm(),
+        'form': SearchForm(request.GET),
         'paginator': paginator,
         'page': paginator.get_page(request.GET.get('page'))
     }

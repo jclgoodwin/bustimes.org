@@ -29,9 +29,9 @@
                 <ul class="has-smalls">
                     {% for result in page.object_list %}
                         <li>
-                            <a href="{{ result.object.get_absolute_url }}">
-                                <span>{% firstof result.object.get_qualified_name result.object %}</span>
-                                {% if result.object.operator %}<small>{{ result.object.operator.all|join:", " }}</small>{% endif %}
+                            <a href="{{ result.get_absolute_url }}">
+                                <span>{% firstof result.get_qualified_name result %}</span>
+                                {% if result.operator %}<small>{{ result.operator.all|join:", " }}</small>{% endif %}
                             </a>
                         </li>
                     {% endfor %}

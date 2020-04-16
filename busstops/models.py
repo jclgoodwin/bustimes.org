@@ -8,7 +8,8 @@ from urllib.parse import urlencode, quote
 from autoslug import AutoSlugField
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
-from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.search import SearchVector, SearchVectorField
+# from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
 from django.db.models import Q
 from django.urls import reverse
@@ -28,6 +29,18 @@ TIMING_STATUS_CHOICES = (
     ('OTH', 'Other bus stop'),
 )
 SERVICE_ORDER_REGEX = re.compile(r'(\D*)(\d*)(\D*)')
+
+
+class SearchMixin:
+    def update_search_vector(self):
+        instance = self._meta.default_manager.with_documents().get(pk=self.pk)
+        instance.search_vector = instance.document
+        instance.save(update_fields=['search_vector'])
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if 'update_fields' not in kwargs or 'search_vector' not in kwargs['update_fields']:
+            self.update_search_vector()
 
 
 class ValidateOnSaveMixin:
@@ -100,7 +113,13 @@ class District(models.Model):
         return reverse('district_detail', args=(self.id,))
 
 
-class Locality(models.Model):
+class LocalityManager(models.Manager):
+    def with_documents(self):
+        vector = SearchVector('name', weight='A') + SearchVector('qualifier_name', weight='B')
+        return self.get_queryset().annotate(document=vector)
+
+
+class Locality(models.Model, SearchMixin):
     """A locality within an administrative area,
     and possibly within a district.
 
@@ -117,6 +136,8 @@ class Locality(models.Model):
     latlong = models.PointField(null=True, blank=True)
     adjacent = models.ManyToManyField('Locality', related_name='neighbour', blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
+
+    objects = LocalityManager()
 
     class Meta():
         ordering = ('name',)
