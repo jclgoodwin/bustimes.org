@@ -23,11 +23,40 @@
             </ul>
         {% endif %}
         {% if not postcode or page.object_list %}
-            <h2>{{ paginator.count }} result{{ paginator.count|pluralize }} found for ‘{{ query }}’</h2>
 
-            {% if page.object_list %}
+            <h2>{{ localities.paginator.count }} place{{ localities.paginator.count|pluralize }}</h2>
+
+            {% if localities %}
                 <ul class="has-smalls">
-                    {% for result in page.object_list %}
+                    {% for result in localities %}
+                        <li>
+                            <a href="{{ result.get_absolute_url }}">
+                                {{ result.get_qualified_name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <h2>{{ operators.paginator.count }} operator{{ operators.paginator.count|pluralize }}</h2>
+
+            {% if operators %}
+                <ul class="has-smalls">
+                    {% for result in operators %}
+                        <li>
+                            <a href="{{ result.get_absolute_url }}">
+                                {{ result }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <h2>{{ services.paginator.count }} service{{ services.paginator.count|pluralize }}</h2>
+
+            {% if services %}
+                <ul class="has-smalls">
+                    {% for result in services %}
                         <li>
                             <a href="{{ result.get_absolute_url }}">
                                 <span>{% firstof result.get_qualified_name result %}</span>
@@ -36,9 +65,8 @@
                         </li>
                     {% endfor %}
                 </ul>
-            {% elif suggestion and suggestion.lower != query.lower %}
-                <p>Did you mean <a href="/search?q={{ suggestion }}">{{ suggestion }}</a>?</p>
             {% endif %}
+
         {% endif %}
     {% endwith %}
 {% endif %}

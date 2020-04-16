@@ -605,15 +605,24 @@ def search(request):
 
     rank = SearchRank(F('search_vector'), query)
 
-    results = Locality.objects.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+    localities = Locality.objects.filter()
+    operators = Operator.objects.filter(service__current=True)
+    services = Service.objects.filter(current=True)
 
-    paginator = Paginator(results, 50)
+    localities = localities.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+    operators = operators.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+    services = services.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+
+    localities = Paginator(localities, 20)
+    operators = Paginator(operators, 20)
+    services = Paginator(services, 20)
 
     context = {
         'query': query_text or '',
         'form': SearchForm(request.GET),
-        'paginator': paginator,
-        'page': paginator.get_page(request.GET.get('page'))
+        'localities': localities.get_page(request.GET.get('page')),
+        'operators': operators.get_page(request.GET.get('page')),
+        'services': services.get_page(request.GET.get('page')),
     }
     return render(request, 'search.html', context)
 
@@ -626,27 +635,31 @@ def journey(request):
 
     if origin:
         origin = get_object_or_404(Locality, slug=origin)
-    # if from_q:
-    #     from_options = SearchQuerySet().models(Locality).filter(content=from_q).load_all()
-    #     if from_options.count() == 1:
-    #         origin = from_options[0].object
-    #         from_options = None
-    #     elif origin not in from_options:
-    #         origin = None
-    # else:
-    #     from_options = None
+    if from_q:
+        query = SearchQuery(from_q)
+        rank = SearchRank(F('search_vector'), query)
+        from_options = Locality.objects.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+        if len(from_options) == 1:
+            origin = from_options[0]
+            from_options = None
+        elif origin not in from_options:
+            origin = None
+    else:
+        from_options = None
 
     if destination:
         destination = get_object_or_404(Locality, slug=destination)
-    # if to_q:
-    #     to_options = SearchQuerySet().models(Locality).filter(content=to_q).load_all()
-    #     if to_options.count() == 1:
-    #         destination = to_options[0].object
-    #         to_options = None
-    #     elif destination not in to_options:
-    #         destination = None
-    # else:
-    #     to_options = None
+    if to_q:
+        query = SearchQuery(to_q)
+        rank = SearchRank(F('search_vector'), query)
+        to_options = Locality.objects.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+        if len(to_options) == 1:
+            destination = to_options[0]
+            to_options = None
+        elif destination not in to_options:
+            destination = None
+    else:
+        to_options = None
 
     journeys = None
     # if origin and destination:
@@ -659,9 +672,9 @@ def journey(request):
     return render(request, 'journey.html', {
         'from': origin,
         'from_q': from_q or origin or '',
-        # 'from_options': from_options,
+        'from_options': from_options,
         'to': destination,
         'to_q': to_q or destination or '',
-        # 'to_options': to_options,
+        'to_options': to_options,
         'journeys': journeys
     })

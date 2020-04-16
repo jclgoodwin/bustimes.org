@@ -393,13 +393,13 @@ class ViewsTests(TestCase):
         with self.assertNumQueries(0):
             response = self.client.get('/journey')
 
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(1):
             response = self.client.get('/journey?from_q=melton')
         self.assertContains(response, 'melton-constable')
 
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(1):
             response = self.client.get('/journey?to_q=melton')
         self.assertContains(response, 'melton-constable')
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(2):
             response = self.client.get('/journey?from_q=melton&to_q=constable')
