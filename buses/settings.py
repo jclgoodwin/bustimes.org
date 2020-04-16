@@ -334,6 +334,9 @@ PASSENGER_OPERATORS = (
         'HDT': 'HRGT',
         'YCD': 'YCST',
     }),
+    ('Go North East', 'https://www.gonortheast.co.uk/open-data', 'NE', {
+        'GNE': 'GNEL',
+    }),
 )
 BOD_OPERATORS = (
     ('LYNX', 'EA', {
