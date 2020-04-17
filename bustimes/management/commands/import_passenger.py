@@ -73,9 +73,8 @@ class Command(BaseCommand):
                         )
 
             versions.sort(key=lambda t: (t[2][0], t[0]), reverse=True)
-            print(versions)
 
-            if any(not command.source.route_set.filter(code__startswith=path).exists() for path, _, _ in versions):
+            if any(modified for _, modified, _ in versions):
                 previous_date = None
 
                 for path, modified, dates in versions:  # newest first
@@ -88,13 +87,13 @@ class Command(BaseCommand):
 
                     routes = command.source.route_set.filter(code__startswith=path)
                     calendars = Calendar.objects.filter(trip__route__in=routes)
-                    print(calendars.filter(start_date__lt=start_date).update(start_date=start_date))
-                    print(routes.filter(start_date__lt=start_date).update(start_date=start_date))
+                    calendars.filter(start_date__lt=start_date).update(start_date=start_date)
+                    routes.filter(start_date__lt=start_date).update(start_date=start_date)
 
                     if previous_date:  # if there is a newer dataset, set end date
                         new_end_date = previous_date - timedelta(days=1)
-                        print(calendars.update(end_date=new_end_date))
-                        print(routes.update(end_date=new_end_date))
+                        calendars.update(end_date=new_end_date)
+                        routes.update(end_date=new_end_date)
                     previous_date = start_date
 
                     if dates[0] <= str(command.source.datetime.date()):
@@ -102,19 +101,19 @@ class Command(BaseCommand):
 
                 # delete route data from TNDS
                 routes = Route.objects.filter(service__operator__in=operators.values())
-                print(routes.exclude(source__name__in=sources).delete())
+                print('other source routes:', routes.exclude(source__name__in=sources).delete())
 
                 services = Service.objects.filter(operator__in=operators.values(), current=True, route=None)
-                print(services.update(current=False))
+                print('other source services:', services.update(current=False))
 
                 # delete route data from old versions
                 routes = command.source.route_set
                 for prefix, _, dates in versions:
-                    print(prefix)
                     routes = routes.exclude(code__startswith=prefix)
                     if dates[0] <= str(command.source.datetime.date()):
                         break
-                print(routes.delete())
+                print('old routes:', routes.delete())
 
                 # mark old services as not current
-                print(command.source.service_set.filter(current=True, route=None).update(current=False))
+                print('old services:',
+                      command.source.service_set.filter(current=True, route=None).update(current=False))
