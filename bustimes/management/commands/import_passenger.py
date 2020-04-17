@@ -81,9 +81,8 @@ class Command(BaseCommand):
                 for path, modified, dates in versions:  # newest first
                     print(path, modified, dates)
 
-                    if not command.source.route_set.filter(code__startswith=path).exists():
-                        command.calendar_cache = {}
-                        handle_file(command, path)
+                    command.calendar_cache = {}
+                    handle_file(command, path)
 
                     start_date = dateparse.parse_date(dates[0])
 
