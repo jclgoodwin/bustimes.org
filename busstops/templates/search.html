@@ -6,6 +6,8 @@
 
 <h1>Search</h1>
 
+<p>Search for places, operators, services or full UK postcodes</p>
+
 <form method="get" action="/search" class="search">
 
 <p>{{ form.q }} <input type="submit" value="Search"></p>
@@ -21,52 +23,30 @@
                     <li><a href="{{ locality.get_absolute_url }}">{{ locality.get_qualified_name }}</a></li>
                 {% endfor %}
             </ul>
-        {% endif %}
-        {% if not postcode or page.object_list %}
+        {% else %}
 
             <h2>{{ localities.paginator.count }} place{{ localities.paginator.count|pluralize }}</h2>
 
             {% if localities %}
-                <ul class="has-smalls">
+                <ul>
                     {% for result in localities %}
-                        <li>
-                            <a href="{{ result.get_absolute_url }}">
-                                {{ result.get_qualified_name }}
-                            </a>
-                        </li>
+                        <li><a href="{{ result.get_absolute_url }}">{{ result.get_qualified_name }}</a></li>
                     {% endfor %}
                 </ul>
-                {% if localities.has_previous %}
-                    <p class="previous"><a href="?q={{ query }}&amp;page={{ localities.previous_page_number }}" rel="prev">&larr; Page {{ localities.previous_page_number }}</a>
-                {% endif %}
 
-                {% if localities.paginator.has_next %}
-                    <p class="next"><a href="?q={{ query }}&amp;page={{ localities.next_page_number }}" rel="next">Page {{ localities.next_page_number }} &rarr;</a>
-                {% endif %}
-
+                {% include 'pagination.html' with page=localities %}
             {% endif %}
 
             <h2>{{ operators.paginator.count }} operator{{ operators.paginator.count|pluralize }}</h2>
 
             {% if operators %}
-                <ul class="has-smalls">
+                <ul>
                     {% for result in operators %}
-                        <li>
-                            <a href="{{ result.get_absolute_url }}">
-                                {{ result }}
-                            </a>
-                        </li>
+                        <li><a href="{{ result.get_absolute_url }}">{{ result }}</a></li>
                     {% endfor %}
                 </ul>
 
-                {% if operators.has_previous %}
-                    <p class="previous"><a href="?q={{ query }}&amp;page={{ operators.previous_page_number }}" rel="prev">&larr; Page {{ operators.previous_page_number }}</a>
-                {% endif %}
-
-                {% if operators.has_next %}
-                    <p class="next"><a href="?q={{ query }}&amp;page={{ operators.next_page_number }}" rel="next">Page {{ operators.next_page_number }} &rarr;</a>
-                {% endif %}
-
+                {% include 'pagination.html' with page=operators %}
             {% endif %}
 
             <h2>{{ services.paginator.count }} service{{ services.paginator.count|pluralize }}</h2>
@@ -83,13 +63,7 @@
                     {% endfor %}
                 </ul>
 
-                {% if services.has_previous %}
-                    <p class="previous"><a href="?q={{ query }}&amp;page={{ services.previous_page_number }}" rel="prev">&larr; Page {{ services.previous_page_number }}</a>
-                {% endif %}
-
-                {% if services.has_next %}
-                    <p class="next"><a href="?q={{ query }}&amp;page={{ services.next_page_number }}" rel="next">Page {{ services.next_page_number }} &rarr;</a>
-                {% endif %}
+                {% include 'pagination.html' with page=services %}
             {% endif %}
 
         {% endif %}

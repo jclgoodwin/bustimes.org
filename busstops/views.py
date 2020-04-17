@@ -601,31 +601,32 @@ class ServiceSitemap(Sitemap):
 def search(request):
     query_text = request.GET.get('q')
 
-    query = SearchQuery(query_text)
-
-    rank = SearchRank(F('search_vector'), query)
-
-    localities = Locality.objects.filter()
-    operators = Operator.objects.filter(service__current=True).distinct()
-    services = Service.objects.filter(current=True)
-
-    localities = localities.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
-    operators = operators.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
-    services = services.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
-
-    services = services.prefetch_related('operator')
-
-    localities = Paginator(localities, 20)
-    operators = Paginator(operators, 20)
-    services = Paginator(services, 20)
+    form = SearchForm(request.GET)
 
     context = {
-        'query': query_text or '',
-        'form': SearchForm(request.GET),
-        'localities': localities.get_page(request.GET.get('page')),
-        'operators': operators.get_page(request.GET.get('page')),
-        'services': services.get_page(request.GET.get('page')),
+        'form': form,
+        'query': query_text or ''
     }
+
+    if form.is_valid():
+        query = SearchQuery(query_text)
+
+        rank = SearchRank(F('search_vector'), query)
+
+        localities = Locality.objects.filter()
+        operators = Operator.objects.filter(service__current=True).distinct()
+        services = Service.objects.filter(current=True)
+
+        localities = localities.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+        operators = operators.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+        services = services.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+
+        services = services.prefetch_related('operator')
+
+        context['localities'] = Paginator(localities, 20).get_page(request.GET.get('page'))
+        context['operators'] = Paginator(operators, 20).get_page(request.GET.get('page'))
+        context['services'] = Paginator(services, 20).get_page(request.GET.get('page'))
+
     return render(request, 'search.html', context)
 
 

@@ -5,14 +5,14 @@ from ...models import Locality, Operator, Service
 class Command(BaseCommand):
     def handle(self, *args, **options):
 
-        for locality in Locality.objects.filter(search_vector=None):
+        for locality in Locality.objects.all():
             locality.update_search_vector()
             print(locality)
 
-        for operator in Operator.objects.filter(search_vector=None):
+        for operator in Operator.objects.filter(service__current=True).distinct():
             operator.update_search_vector()
             print(operator)
 
-        for service in Service.objects.filter(current=True, search_vector=None):
+        for service in Service.objects.filter(current=True):
             service.update_search_vector()
             print(service)

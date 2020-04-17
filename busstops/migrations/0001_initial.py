@@ -73,7 +73,6 @@ class Migration(migrations.Migration):
                 ('phone', models.CharField(blank=True, max_length=128)),
                 ('twitter', models.CharField(blank=True, max_length=15)),
             ],
-            bases=(busstops.models.ValidateOnSaveMixin, models.Model),
         ),
         migrations.CreateModel(
             name='Region',

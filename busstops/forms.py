@@ -1,13 +1,13 @@
 import requests
 from django import forms
-# from django.db.models import Q
-# from django.contrib.gis.db.models.functions import Distance
-# from django.contrib.gis.geos import Point, Polygon
+from django.db.models import Q
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.geos import Point, Polygon
 from django.core.exceptions import ValidationError
-# from ukpostcodeutils import validation
+from ukpostcodeutils import validation
 from antispam.honeypot.forms import HoneypotField
 from antispam import akismet
-# from .models import Locality
+from .models import Locality
 
 
 session = requests.Session()
@@ -43,23 +43,20 @@ class ContactForm(forms.Form):
 class SearchForm(forms.Form):
     q = forms.CharField(widget=forms.TextInput(attrs={"type": "search"}))
 
-
-# class CustomSearchForm(SearchForm):
-#     """https://django-haystack.readthedocs.io/en/master/boost.html#field-boost"""
-#     def get_postcode(self):
-#         q = self.cleaned_data['q']
-#         q = ''.join(q.split()).upper()
-#         if validation.is_valid_postcode(q):
-#             res = session.get('https://api.postcodes.io/postcodes/' + q, timeout=2)
-#             if not res.ok:
-#                 return ''
-#             result = res.json()['result']
-#             point = Point(result['longitude'], result['latitude'], srid=4326)
-#             bbox = Polygon.from_bbox((point.x - .05, point.y - .05, point.x + .05, point.y + .05))
-#             return Locality.objects.filter(
-#                 latlong__within=bbox
-#             ).filter(
-#                 Q(stoppoint__active=True) | Q(locality__stoppoint__active=True)
-#             ).distinct().annotate(
-#                 distance=Distance('latlong', point)
-#             ).order_by('distance').defer('latlong')[:2]
+    def get_postcode(self):
+        q = self.cleaned_data['q']
+        q = ''.join(q.split()).upper()
+        if validation.is_valid_postcode(q):
+            res = session.get('https://api.postcodes.io/postcodes/' + q, timeout=2)
+            if not res.ok:
+                return ''
+            result = res.json()['result']
+            point = Point(result['longitude'], result['latitude'], srid=4326)
+            bbox = Polygon.from_bbox((point.x - .05, point.y - .05, point.x + .05, point.y + .05))
+            return Locality.objects.filter(
+                latlong__within=bbox
+            ).filter(
+                Q(stoppoint__active=True) | Q(locality__stoppoint__active=True)
+            ).distinct().annotate(
+                distance=Distance('latlong', point)
+            ).order_by('distance').defer('latlong')[:2]

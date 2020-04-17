@@ -40,16 +40,10 @@ class SearchMixin:
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        if 'update_fields' not in kwargs or 'search_vector' not in kwargs['update_fields']:
-            self.update_search_vector()
-
-
-class ValidateOnSaveMixin:
-    """https://www.xormedia.com/django-model-validation-on-save/"""
-    def save(self, force_insert=False, force_update=False, **kwargs):
-        if not (force_insert or force_update):
-            self.full_clean()
-        super().save(force_insert, force_update, **kwargs)
+        if 'update_fields' in kwargs:
+            if 'search_vector' in kwargs['update_fields'] or kwargs['update_fields'] == ['tracking']:
+                return
+        self.update_search_vector()
 
 
 class Region(models.Model):
@@ -396,7 +390,7 @@ class OperatorManager(models.Manager):
         return self.get_queryset().annotate(document=vector)
 
 
-class Operator(ValidateOnSaveMixin, SearchMixin, models.Model):
+class Operator(SearchMixin, models.Model):
     """An entity that operates public transport services"""
 
     id = models.CharField(max_length=10, primary_key=True)  # e.g. 'YCST'

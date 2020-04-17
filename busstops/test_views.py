@@ -194,10 +194,8 @@ class ViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_search(self):
-        self.melton_constable.update_search_vector()
-
         response = self.client.get('/search?q=melton')
-        self.assertContains(response, '1 result found for')
+        self.assertContains(response, '1 place')
         self.assertContains(response, 'Melton Constable')
         self.assertContains(response, '/localities/melton-constable')
 
@@ -209,12 +207,6 @@ class ViewsTests(TestCase):
         response = self.client.get('/search?q=')
         self.assertNotContains(response, 'found for')
 
-        response = render(None, 'search.html', {
-            'query': True,
-            'suggestion': 'bordeaux'
-        })
-        self.assertContains(response, '<p>Did you mean <a href="/search?q=bordeaux">bordeaux</a>?</p>')
-
     def test_postcode(self):
         with vcr.use_cassette(os.path.join(DIR, '..', 'data', 'vcr', 'postcode.yaml')):
             # postcode sufficiently near to fake locality
@@ -225,7 +217,7 @@ class ViewsTests(TestCase):
 
             # postcode looks valid but doesn't exist
             response = self.client.get('/search?q=w1a 1aj')
-            self.assertContains(response, '0 results found for')
+            self.assertContains(response, '0 places')
 
     def test_admin_area(self):
         """Admin area containing just one child should redirect to that child"""
