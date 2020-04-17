@@ -74,8 +74,8 @@
                                 <a href="{{ journey.vehicle.get_absolute_url }}?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.vehicle }}</a>
                             {% elif journey.service %}
                                 <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.service.get_line_name_and_brand }}</a>
-                            {% elif journey.route_name  %}
-                                <a href="{{ vehicle.operator.get_absolute_url }}/services/{{ journey.route_name }}/vehicles?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.route_name }}</a>
+                            {% else %}
+                                {{ journey.route_name }}
                             {% endif %}
                         </td>
                         <td>{{ journey.datetime|time }}</td>
