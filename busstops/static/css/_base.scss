@@ -1143,7 +1143,27 @@ main {
     max-width: 60.5em;
 }
 
+.horizontal {
+    li {
+        display: inline;
+
+        a {
+            display: inline;
+        }
+
+        &:before {
+            color: $brand-color-darker;
+            content: '  \2022  ';
+        }
+
+        &:first-child::before {
+            display: none;
+        }
+    }
+}
+
 footer {
+    @extend .horizontal;
     clear: both;
     margin-top: 1.5em;
     text-align: center;
@@ -1164,18 +1184,6 @@ footer {
         }
     }
 
-    li {
-        display: inline;
-
-        &:before {
-            color: $brand-color-darker;
-            content: '  \2022  ';
-        }
-
-        &:first-child::before {
-            display: none;
-        }
-    }
 }
 
 @media print {
