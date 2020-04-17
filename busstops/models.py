@@ -9,7 +9,7 @@ from autoslug import AutoSlugField
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.search import SearchVector, SearchVectorField
-# from django.contrib.postgres.aggregates import StringAgg
+from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.indexes import GinIndex
 from django.core.cache import cache
 from django.db.models import Q
@@ -508,7 +508,17 @@ class StopUsage(models.Model):
         return self.timing_status == 'OTH' or self.timing_status == 'TIP'
 
 
-class Service(models.Model):
+class ServiceManager(models.Manager):
+    def with_documents(self):
+        vector = SearchVector('line_name', weight='A') + SearchVector('line_brand', weight='A')
+        vector += SearchVector('description', weight='B')
+        vector += SearchVector(StringAgg('operator__name', delimiter=' '), weight='B')
+        vector += SearchVector(StringAgg('stops__locality__name', delimiter=' '), weight='C')
+        vector += SearchVector(StringAgg('stops__common_name', delimiter=' '), weight='D')
+        return self.get_queryset().annotate(document=vector)
+
+
+class Service(SearchMixin, models.Model):
     """A bus service"""
     service_code = models.CharField(max_length=24, primary_key=True)
     line_name = models.CharField(max_length=64, blank=True)
@@ -536,6 +546,8 @@ class Service(models.Model):
     tracking = models.NullBooleanField()
     payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
+
+    objects = ServiceManager()
 
     class Meta:
         ordering = ['service_code']

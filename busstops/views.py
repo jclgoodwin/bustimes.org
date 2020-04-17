@@ -606,12 +606,14 @@ def search(request):
     rank = SearchRank(F('search_vector'), query)
 
     localities = Locality.objects.filter()
-    operators = Operator.objects.filter(service__current=True)
+    operators = Operator.objects.filter(service__current=True).distinct()
     services = Service.objects.filter(current=True)
 
     localities = localities.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
     operators = operators.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
     services = services.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+
+    services = services.prefetch_related('operator')
 
     localities = Paginator(localities, 20)
     operators = Paginator(operators, 20)

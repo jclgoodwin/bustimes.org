@@ -36,6 +36,14 @@
                         </li>
                     {% endfor %}
                 </ul>
+                {% if localities.has_previous %}
+                    <p class="previous"><a href="?q={{ query }}&amp;page={{ localities.previous_page_number }}" rel="prev">&larr; Page {{ localities.previous_page_number }}</a>
+                {% endif %}
+
+                {% if localities.paginator.has_next %}
+                    <p class="next"><a href="?q={{ query }}&amp;page={{ localities.next_page_number }}" rel="next">Page {{ localities.next_page_number }} &rarr;</a>
+                {% endif %}
+
             {% endif %}
 
             <h2>{{ operators.paginator.count }} operator{{ operators.paginator.count|pluralize }}</h2>
@@ -50,6 +58,15 @@
                         </li>
                     {% endfor %}
                 </ul>
+
+                {% if operators.has_previous %}
+                    <p class="previous"><a href="?q={{ query }}&amp;page={{ operators.previous_page_number }}" rel="prev">&larr; Page {{ operators.previous_page_number }}</a>
+                {% endif %}
+
+                {% if operators.has_next %}
+                    <p class="next"><a href="?q={{ query }}&amp;page={{ operators.next_page_number }}" rel="next">Page {{ operators.next_page_number }} &rarr;</a>
+                {% endif %}
+
             {% endif %}
 
             <h2>{{ services.paginator.count }} service{{ services.paginator.count|pluralize }}</h2>
@@ -65,6 +82,14 @@
                         </li>
                     {% endfor %}
                 </ul>
+
+                {% if services.has_previous %}
+                    <p class="previous"><a href="?q={{ query }}&amp;page={{ services.previous_page_number }}" rel="prev">&larr; Page {{ services.previous_page_number }}</a>
+                {% endif %}
+
+                {% if services.has_next %}
+                    <p class="next"><a href="?q={{ query }}&amp;page={{ services.next_page_number }}" rel="next">Page {{ services.next_page_number }} &rarr;</a>
+                {% endif %}
             {% endif %}
 
         {% endif %}
