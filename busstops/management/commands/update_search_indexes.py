@@ -7,12 +7,9 @@ class Command(BaseCommand):
 
         for locality in Locality.objects.all():
             locality.update_search_vector()
-            print(locality)
 
         for operator in Operator.objects.filter(service__current=True).distinct():
             operator.update_search_vector()
-            print(operator)
 
         for service in Service.objects.filter(current=True):
             service.update_search_vector()
-            print(service)

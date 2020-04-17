@@ -63,7 +63,6 @@ if [[ $nptg_old != "$nptg_new" ]]; then
     import_csv nptg.ashx\?format=csv adjacent_localities AdjacentLocality.csv
     echo "  Importing adjacent localities"
     import_csv nptg.ashx\?format=csv locality_hierarchy LocalityHierarchy.csv
-    # ../../manage.py update_index busstops.Locality --remove
 fi
 
 
@@ -143,7 +142,6 @@ if [[ $noc_old != $noc_new ]]; then
     ../manage.py import_operator_contacts < nocrecords.xml
     ../manage.py import_scotch_operator_contacts < NOC_DB.csv
     ../manage.py correct_operators
-#    ../manage.py update_index busstops.Operator --remove
 fi
 
 if [[ $USERNAME == '' || $PASSWORD == '' ]]; then
@@ -174,7 +172,7 @@ for region in "${REGIONS[@]}"; do
 done
 wait
 cd ..
-[ $updated_services ] && ../manage.py update_index
+
 [ $updated_services ] && ../manage.py update_search_indexes
 
 accessibility_old=$(ls -l accessibility-data.zip)
