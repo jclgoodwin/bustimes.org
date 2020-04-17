@@ -73,14 +73,15 @@ class Command(BaseCommand):
                         )
 
             versions.sort(key=lambda t: (t[2][0], t[0]), reverse=True)
+            print(versions)
 
-            if any(modified for _, modified, _ in versions):
+            if any(not command.source.route_set.filter(code__startswith=path).exists() for path, _, _ in versions):
                 previous_date = None
 
                 for path, modified, dates in versions:  # newest first
                     print(path, modified, dates)
 
-                    if modified:
+                    if not command.source.route_set.filter(code__startswith=path).exists():
                         command.calendar_cache = {}
                         handle_file(command, path)
 
@@ -110,6 +111,7 @@ class Command(BaseCommand):
                 # delete route data from old versions
                 routes = command.source.route_set
                 for prefix, _, dates in versions:
+                    print(prefix)
                     routes = routes.exclude(code__startswith=prefix)
                     if dates[0] <= str(command.source.datetime.date()):
                         break
