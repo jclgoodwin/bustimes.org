@@ -59,7 +59,7 @@ Other details: Daily Service Every Twenty Minutes""",
             response = self.client.get('/licences/PH1020951')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'South West')
-        self.assertContains(response, "Ainsley&#39;s Chariots")
+        self.assertContains(response, "Ainsley&#x27;s Chariots")
         self.assertContains(response, '<a href="/registrations/PH1020951/284">')
 
     def test_beestons(self):
@@ -98,7 +98,7 @@ Other details: Daily Service Every Twenty Minutes""",
             response = self.client.get('/registrations/PH1020951/284')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'South West')
-        self.assertContains(response, "Ainsley&#39;s Chariots")
+        self.assertContains(response, "Ainsley&#x27;s Chariots")
 
     def test_registration_404(self):
         response = self.client.get('/registrations/PH1020951/d')
