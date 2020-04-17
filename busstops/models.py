@@ -8,7 +8,9 @@ from urllib.parse import urlencode, quote
 from autoslug import AutoSlugField
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
-from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.search import SearchVector, SearchVectorField
+from django.contrib.postgres.aggregates import StringAgg
+from django.contrib.postgres.indexes import GinIndex
 from django.core.cache import cache
 from django.db.models import Q
 from django.urls import reverse
@@ -30,12 +32,18 @@ TIMING_STATUS_CHOICES = (
 SERVICE_ORDER_REGEX = re.compile(r'(\D*)(\d*)(\D*)')
 
 
-class ValidateOnSaveMixin:
-    """https://www.xormedia.com/django-model-validation-on-save/"""
-    def save(self, force_insert=False, force_update=False, **kwargs):
-        if not (force_insert or force_update):
-            self.full_clean()
-        super().save(force_insert, force_update, **kwargs)
+class SearchMixin:
+    def update_search_vector(self):
+        instance = self._meta.default_manager.with_documents().get(pk=self.pk)
+        instance.search_vector = instance.document
+        instance.save(update_fields=['search_vector'])
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if 'update_fields' in kwargs:
+            if 'search_vector' in kwargs['update_fields'] or kwargs['update_fields'] == ['tracking']:
+                return
+        self.update_search_vector()
 
 
 class Region(models.Model):
@@ -43,8 +51,8 @@ class Region(models.Model):
     id = models.CharField(max_length=2, primary_key=True)
     name = models.CharField(max_length=48)
 
-    class Meta():
-        ordering = ('name',)
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -72,7 +80,7 @@ class AdminArea(models.Model):
     country = models.CharField(max_length=3, blank=True)
     region = models.ForeignKey(Region, models.CASCADE)
 
-    class Meta():
+    class Meta:
         ordering = ('name',)
 
     def __str__(self):
@@ -90,7 +98,7 @@ class District(models.Model):
     name = models.CharField(max_length=48)
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
 
-    class Meta():
+    class Meta:
         ordering = ('name',)
 
     def __str__(self):
@@ -100,7 +108,13 @@ class District(models.Model):
         return reverse('district_detail', args=(self.id,))
 
 
-class Locality(models.Model):
+class LocalityManager(models.Manager):
+    def with_documents(self):
+        vector = SearchVector('name', weight='A') + SearchVector('qualifier_name', weight='B')
+        return self.get_queryset().annotate(document=vector)
+
+
+class Locality(SearchMixin, models.Model):
     """A locality within an administrative area,
     and possibly within a district.
 
@@ -118,8 +132,13 @@ class Locality(models.Model):
     adjacent = models.ManyToManyField('Locality', related_name='neighbour', blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
 
-    class Meta():
+    objects = LocalityManager()
+
+    class Meta:
         ordering = ('name',)
+        indexes = [
+            GinIndex(fields=['search_vector'])
+        ]
 
     def __str__(self):
         return self.name or self.id
@@ -205,7 +224,7 @@ class Place(models.Model):
     parent = models.ForeignKey('Place', models.SET_NULL, null=True, editable=False)
     search_vector = SearchVectorField(null=True, blank=True)
 
-    class Meta():
+    class Meta:
         unique_together = ('source', 'code')
 
     def __str__(self):
@@ -287,7 +306,7 @@ class StopPoint(models.Model):
 
     osm = JSONField(null=True, blank=True)
 
-    class Meta():
+    class Meta:
         ordering = ('common_name', 'atco_code')
 
     def __str__(self):
@@ -365,7 +384,13 @@ class StopPoint(models.Model):
         return [service.line_name for service in sorted(self.current_services, key=Service.get_order)]
 
 
-class Operator(ValidateOnSaveMixin, models.Model):
+class OperatorManager(models.Manager):
+    def with_documents(self):
+        vector = SearchVector('name', weight='A') + SearchVector('aka', weight='B')
+        return self.get_queryset().annotate(document=vector)
+
+
+class Operator(SearchMixin, models.Model):
     """An entity that operates public transport services"""
 
     id = models.CharField(max_length=10, primary_key=True)  # e.g. 'YCST'
@@ -386,8 +411,13 @@ class Operator(ValidateOnSaveMixin, models.Model):
     payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
 
-    class Meta():
+    objects = OperatorManager()
+
+    class Meta:
         ordering = ('name',)
+        indexes = [
+            GinIndex(fields=['search_vector'])
+        ]
 
     def __str__(self):
         return str(self.name or self.id)
@@ -465,14 +495,24 @@ class StopUsage(models.Model):
     timing_status = models.CharField(max_length=3,
                                      choices=TIMING_STATUS_CHOICES)
 
-    class Meta():
+    class Meta:
         ordering = ('direction', 'order')
 
     def is_minor(self):
         return self.timing_status == 'OTH' or self.timing_status == 'TIP'
 
 
-class Service(models.Model):
+class ServiceManager(models.Manager):
+    def with_documents(self):
+        vector = SearchVector('line_name', weight='A') + SearchVector('line_brand', weight='A')
+        vector += SearchVector('description', weight='B')
+        vector += SearchVector(StringAgg('operator__name', delimiter=' '), weight='B')
+        vector += SearchVector(StringAgg('stops__locality__name', delimiter=' '), weight='C')
+        vector += SearchVector(StringAgg('stops__common_name', delimiter=' '), weight='D')
+        return self.get_queryset().annotate(document=vector)
+
+
+class Service(SearchMixin, models.Model):
     """A bus service"""
     service_code = models.CharField(max_length=24, primary_key=True)
     line_name = models.CharField(max_length=64, blank=True)
@@ -501,8 +541,13 @@ class Service(models.Model):
     payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
 
-    class Meta():
-        ordering = ('service_code',)
+    objects = ServiceManager()
+
+    class Meta:
+        ordering = ['service_code']
+        indexes = [
+            GinIndex(fields=['search_vector'])
+        ]
 
     def __str__(self):
         line_name = self.line_name
@@ -727,7 +772,7 @@ class ServiceCode(models.Model):
     scheme = models.CharField(max_length=255)
     code = models.CharField(max_length=255)
 
-    class Meta():
+    class Meta:
         unique_together = ('service', 'scheme', 'code')
 
     def __str__(self):
@@ -739,7 +784,7 @@ class ServiceDate(models.Model):
     date = models.DateField()
     end = models.DateTimeField(null=True)
 
-    class Meta():
+    class Meta:
         unique_together = ('service', 'date')
 
 

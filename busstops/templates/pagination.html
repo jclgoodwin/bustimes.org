@@ -1,0 +1,9 @@
+<nav>
+    {% if page.has_previous %}
+        <p class="previous"><a href="?q={{ query }}&amp;page={{ page.previous_page_number }}" rel="prev">&larr; Page {{ page.previous_page_number }}</a>
+    {% endif %}
+
+    {% if page.has_next %}
+        <p class="next"><a href="?q={{ query }}&amp;page={{ page.next_page_number }}" rel="next">Page {{ page.next_page_number }} &rarr;</a>
+    {% endif %}
+</nav>

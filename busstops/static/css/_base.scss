@@ -1082,6 +1082,10 @@ input:not(:checked) + label {
     float: right;
 }
 
+nav {
+    overflow: hidden;
+}
+
 .ad {
     margin: 1em auto;
 }

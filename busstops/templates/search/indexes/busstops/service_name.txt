@@ -1,1 +1,0 @@
-{{ object.line_name }} {{ object.line_brand }}

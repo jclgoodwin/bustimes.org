@@ -219,7 +219,7 @@ class ImportNaptanTest(TestCase):
                 <ul class="has-smalls">
                     <li>
                         <a href="/stops/5820AWN26438">
-                            <span>Ty&#39;n y Twr Club (NE-bound)</span>
+                            <span>Ty&#x27;n y Twr Club (NE-bound)</span>
                             <small>44</small>
                         </a>
                     </li>

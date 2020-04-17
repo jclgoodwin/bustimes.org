@@ -104,11 +104,11 @@ class Command(BaseCommand):
                         operator.twitter = twitter
 
                 try:
-                    operator.save()
+                    operator.full_clean()
                 except ValidationError as errors:
                     errors = dict(errors)
                     if 'email' in errors:
                         operator.email = ''
                     if 'url' in errors:
                         operator.url = ''
-                    operator.save()
+                operator.save()

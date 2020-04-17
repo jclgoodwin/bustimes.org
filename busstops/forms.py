@@ -4,8 +4,6 @@ from django.db.models import Q
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point, Polygon
 from django.core.exceptions import ValidationError
-from haystack.forms import SearchForm
-from haystack.query import SQ, AutoQuery
 from ukpostcodeutils import validation
 from antispam.honeypot.forms import HoneypotField
 from antispam import akismet
@@ -42,8 +40,9 @@ class ContactForm(forms.Form):
             raise ValidationError('Spam detected', code='spam-protection')
 
 
-class CustomSearchForm(SearchForm):
-    """https://django-haystack.readthedocs.io/en/master/boost.html#field-boost"""
+class SearchForm(forms.Form):
+    q = forms.CharField(widget=forms.TextInput(attrs={"type": "search"}))
+
     def get_postcode(self):
         q = self.cleaned_data['q']
         q = ''.join(q.split()).upper()
@@ -61,18 +60,3 @@ class CustomSearchForm(SearchForm):
             ).distinct().annotate(
                 distance=Distance('latlong', point)
             ).order_by('distance').defer('latlong')[:2]
-
-    def search(self):
-        if not self.is_valid():
-            return self.no_query_found()
-
-        if not self.cleaned_data.get('q'):
-            return self.no_query_found()
-
-        q = self.cleaned_data['q']
-        sqs = self.searchqueryset.filter(SQ(name=AutoQuery(q)) | SQ(text=AutoQuery(q)))
-
-        if self.load_all:
-            sqs = sqs.load_all()
-
-        return sqs.highlight()

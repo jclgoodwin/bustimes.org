@@ -26,7 +26,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'django.contrib.sitemaps',
-    'haystack',
     'busstops',
     'bustimes',
     'vehicles',
@@ -55,18 +54,6 @@ if DEBUG and 'runserver' in sys.argv:
     ]
 
 ROOT_URLCONF = 'buses.urls'
-
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
-    } if DEBUG else {
-        'ENGINE': 'haystack.backends.elasticsearch2_backend.Elasticsearch2SearchEngine',
-        'URL': 'http://127.0.0.1:9200/',
-        'INDEX_NAME': 'haystack',
-        'INCLUDE_SPELLING': True,
-    },
-}
-HAYSTACK_IDENTIFIER_METHOD = 'buses.utils.get_identifier'
 
 DATABASES = {
     'default': {

@@ -195,7 +195,7 @@ class ViewsTests(TestCase):
 
     def test_search(self):
         response = self.client.get('/search?q=melton')
-        self.assertContains(response, '1 result found for')
+        self.assertContains(response, '1 place')
         self.assertContains(response, 'Melton Constable')
         self.assertContains(response, '/localities/melton-constable')
 
@@ -207,12 +207,6 @@ class ViewsTests(TestCase):
         response = self.client.get('/search?q=')
         self.assertNotContains(response, 'found for')
 
-        response = render(None, 'search/search.html', {
-            'query': True,
-            'suggestion': 'bordeaux'
-        })
-        self.assertContains(response, '<p>Did you mean <a href="/search?q=bordeaux">bordeaux</a>?</p>')
-
     def test_postcode(self):
         with vcr.use_cassette(os.path.join(DIR, '..', 'data', 'vcr', 'postcode.yaml')):
             # postcode sufficiently near to fake locality
@@ -223,7 +217,7 @@ class ViewsTests(TestCase):
 
             # postcode looks valid but doesn't exist
             response = self.client.get('/search?q=w1a 1aj')
-            self.assertContains(response, '0 results found for')
+            self.assertContains(response, '0 places')
 
     def test_admin_area(self):
         """Admin area containing just one child should redirect to that child"""
@@ -291,7 +285,7 @@ class ViewsTests(TestCase):
         response = self.client.get('/operators/ains')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'An airline operator in')
-        self.assertContains(response, 'Contact Ainsley&#39;s Chariots')
+        self.assertContains(response, 'Contact Ainsley&#x27;s Chariots')
         self.assertContains(response, '10 King Road<br />Ipswich', html=True)
         self.assertContains(response, '&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#97;&#105;' +
                             '&#110;&#115;&#108;&#101;&#121;&#64;&#101;&#120;&#97;&#109;' +
@@ -391,13 +385,13 @@ class ViewsTests(TestCase):
         with self.assertNumQueries(0):
             response = self.client.get('/journey')
 
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(1):
             response = self.client.get('/journey?from_q=melton')
         self.assertContains(response, 'melton-constable')
 
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(1):
             response = self.client.get('/journey?to_q=melton')
         self.assertContains(response, 'melton-constable')
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(2):
             response = self.client.get('/journey?from_q=melton&to_q=constable')

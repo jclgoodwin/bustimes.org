@@ -3,19 +3,20 @@
 import json
 import ciso8601
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import Q, Prefetch, F
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
 from django.views.generic.detail import DetailView
+from django.core.paginator import Paginator
 from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
-from haystack.query import SearchQuerySet
 from departures import live
 from .utils import format_gbp, get_bounding_box
 from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Place
-from .forms import ContactForm
+from .forms import ContactForm, SearchForm
 
 
 prefetch_stop_services = Prefetch(
@@ -597,6 +598,38 @@ class ServiceSitemap(Sitemap):
         return Service.objects.filter(current=True).defer('geometry')
 
 
+def search(request):
+    query_text = request.GET.get('q')
+
+    form = SearchForm(request.GET)
+
+    context = {
+        'form': form,
+        'query': query_text or ''
+    }
+
+    if form.is_valid():
+        query = SearchQuery(query_text)
+
+        rank = SearchRank(F('search_vector'), query)
+
+        localities = Locality.objects.filter()
+        operators = Operator.objects.filter(service__current=True).distinct()
+        services = Service.objects.filter(current=True)
+
+        localities = localities.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+        operators = operators.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+        services = services.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+
+        services = services.prefetch_related('operator')
+
+        context['localities'] = Paginator(localities, 20).get_page(request.GET.get('page'))
+        context['operators'] = Paginator(operators, 20).get_page(request.GET.get('page'))
+        context['services'] = Paginator(services, 20).get_page(request.GET.get('page'))
+
+    return render(request, 'search.html', context)
+
+
 def journey(request):
     origin = request.GET.get('from')
     from_q = request.GET.get('from_q')
@@ -606,9 +639,11 @@ def journey(request):
     if origin:
         origin = get_object_or_404(Locality, slug=origin)
     if from_q:
-        from_options = SearchQuerySet().models(Locality).filter(content=from_q).load_all()
-        if from_options.count() == 1:
-            origin = from_options[0].object
+        query = SearchQuery(from_q)
+        rank = SearchRank(F('search_vector'), query)
+        from_options = Locality.objects.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+        if len(from_options) == 1:
+            origin = from_options[0]
             from_options = None
         elif origin not in from_options:
             origin = None
@@ -618,9 +653,11 @@ def journey(request):
     if destination:
         destination = get_object_or_404(Locality, slug=destination)
     if to_q:
-        to_options = SearchQuerySet().models(Locality).filter(content=to_q).load_all()
-        if to_options.count() == 1:
-            destination = to_options[0].object
+        query = SearchQuery(to_q)
+        rank = SearchRank(F('search_vector'), query)
+        to_options = Locality.objects.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+        if len(to_options) == 1:
+            destination = to_options[0]
             to_options = None
         elif destination not in to_options:
             destination = None

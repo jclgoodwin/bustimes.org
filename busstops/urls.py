@@ -3,11 +3,9 @@ from django.conf.urls import include, url, static
 from django.urls import path
 from django.contrib import staticfiles
 from django.contrib.sitemaps.views import sitemap, index
-from haystack.views import SearchView
 from bustimes.urls import urlpatterns as bustimes_views
 from vehicles.urls import urlpatterns as vehicles_urls
 from vosa.urls import urlpatterns as vosa_urls
-from .forms import CustomSearchForm
 from . import views
 
 sitemaps = {
@@ -42,7 +40,7 @@ urlpatterns = [
     path('sitemap.xml', index, {'sitemaps': sitemaps}),
     path('sitemap-<section>.xml', sitemap, {'sitemaps': sitemaps},
          name='django.contrib.sitemaps.views.sitemap'),
-    path('search', SearchView(form_class=CustomSearchForm)),
+    path('search', views.search),
     path('journey', views.journey),
 ] + bustimes_views + vehicles_urls + vosa_urls
 

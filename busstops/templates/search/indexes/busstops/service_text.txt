@@ -1,7 +1,0 @@
-{% for operator in object.operator.all %}
-    {{ operator }} {{ operator.aka }}
-{% endfor %}
-{{ object }}
-{% for stop in object.stops.all %}
-    {{ stop.get_long_name }}
-{% endfor %}

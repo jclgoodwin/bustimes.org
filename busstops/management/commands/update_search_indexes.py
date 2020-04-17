@@ -1,10 +1,18 @@
 from django.core.management.base import BaseCommand
-from ...search_indexes import ServiceIndex
-from ...models import Service
+from ...models import Locality, Operator, Service
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        service_index = ServiceIndex()
-        for service in Service.objects.filter(current=False):
-            service_index.remove_object(service)
+
+        for locality in Locality.objects.all():
+            locality.update_search_vector()
+            print(locality)
+
+        for operator in Operator.objects.filter(service__current=True).distinct():
+            operator.update_search_vector()
+            print(operator)
+
+        for service in Service.objects.filter(current=True):
+            service.update_search_vector()
+            print(service)
