@@ -17,7 +17,7 @@
 {% if stoppoint.latlong %}
     <ul class="horizontal">
         <li><a href="/map#16/{{ object.latlong.y|floatformat:4 }}/{{ object.latlong.x|floatformat:4 }}">Map</a></li>
-        <li><a href="https://www.google.com/maps?layer=c&cbll={{ object.latlong.y|floatformat:7 }},{{ object.latlong.x|floatformat:7 }}">Street View</a></li>
+        <li><a href="https://www.google.com/maps?layer=c&cbll={{ object.latlong.y|floatformat:7 }},{{ object.latlong.x|floatformat:7 }}{% if object.heading or object.bearing %}&cbp=0,{{ object.get_heading|add:'-90' }},,,{% endif %}">Street View</a></li>
     </ul>
 {% endif %}
 
