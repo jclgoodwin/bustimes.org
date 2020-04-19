@@ -1,4 +1,5 @@
 from django.test import TestCase
+from bustimes.models import Route
 from .models import (
     Region, AdminArea, DataSource, District, Locality, Operator, Service, StopPoint, ServiceCode
 )
@@ -100,7 +101,11 @@ class ServiceTests(TestCase):
         self.assertEqual(self.london_service.get_a_mode(), 'An Underground')
 
     def test_traveline_links(self):
-        # none
+        source = DataSource.objects.create(name='Y')
+        # this will cause an IndexError that needs to be caught
+        Route.objects.create(service=self.london_service, source=source,
+                             code='swindonbus_1587119026.zip/Swindon-17042020_SER14.xml')
+
         self.assertEqual([], list(self.london_service.get_traveline_links()))
 
         # TfL
@@ -109,7 +114,7 @@ class ServiceTests(TestCase):
                          [('https://tfl.gov.uk/bus/timetable/N41/', 'Transport for London')])
 
         # Yorkshire
-        self.london_service.source = DataSource.objects.create(name='Y')
+        self.london_service.source = source
         self.assertEqual(
             list(self.london_service.get_traveline_links()),
             [('http://www.yorkshiretravel.net/lts/#/timetables?timetableId='

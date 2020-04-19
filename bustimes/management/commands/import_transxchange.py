@@ -152,9 +152,15 @@ class Command(BaseCommand):
             print(self.undefined_holidays)
 
     def set_region(self, archive_name):
-        self.region_id, _ = os.path.splitext(os.path.basename(archive_name))
+        archive_name = os.path.basename(archive_name)
+        self.region_id, _ = os.path.splitext(archive_name)
 
-        self.source, created = DataSource.objects.get_or_create(name=self.region_id)
+        self.source, created = DataSource.objects.get_or_create(
+            {
+                'url': 'ftp://ftp.tnds.basemap.co.uk/' + archive_name
+            },
+            name=self.region_id
+        )
 
         if self.region_id == 'NCSD':
             self.region_id = 'GB'

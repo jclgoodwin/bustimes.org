@@ -95,6 +95,11 @@ class GTFSTest(TestCase):
         self.assertEqual(len(timetable.groupings[0].rows), 18)
         self.assertEqual(len(timetable.groupings[1].rows), 14)
 
+        self.assertContains(
+            response,
+            '<a href="https://www.transportforireland.ie/transitData/PT_Data.html">Transport for Ireland</a>'
+        )
+
         for day in (date(2017, 6, 11), date(2017, 12, 25), date(2015, 12, 3), date(2020, 12, 3)):
             with freeze_time(day):
                 with self.assertNumQueries(9):

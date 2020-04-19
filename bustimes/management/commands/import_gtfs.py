@@ -103,8 +103,13 @@ def do_stops(archive):
     return StopPoint.objects.in_bulk(stops)
 
 
-def handle_zipfile(path, collection):
-    source = DataSource.objects.update_or_create({'datetime': timezone.now()}, name=f'{collection} GTFS')[0]
+def handle_zipfile(path, collection, url):
+    source = DataSource.objects.update_or_create(
+        {
+            'url': url,
+            'datetime': timezone.now()
+        }, name=f'{collection} GTFS'
+    )[0]
 
     shapes = {}
     operators = {}
@@ -311,4 +316,4 @@ class Command(BaseCommand):
             if not downloaded and not options['force']:
                 continue
             print(collection)
-            handle_zipfile(path, collection)
+            handle_zipfile(path, collection, url)

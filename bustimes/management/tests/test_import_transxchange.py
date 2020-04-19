@@ -24,7 +24,7 @@ class ImportTransXChangeTest(TestCase):
 
         Operator.objects.create(id='bus-vannin', region_id='EA', name='Bus Vannin')
 
-        source = DataSource.objects.create(name='EA')
+        source = DataSource.objects.create(name='EA', url='https://www.example.co.uk/open-data')
         OperatorCode.objects.create(operator=cls.fecs, source=source, code='FECS')
 
         StopPoint.objects.bulk_create(
@@ -157,6 +157,8 @@ class ImportTransXChangeTest(TestCase):
 
         # self.assertEqual(['', '', '', '', '', '', '', ''], timetable.groupings[1].rows[0].times[-8:])
 
+        self.assertContains(res, 'data from <a href="https://www.example.co.uk/open-data">EA</a>')
+
         # Test the fallback version without a timetable (just a list of stops)
         service.show_timetable = False
         service.save(update_fields=['show_timetable'])
@@ -212,6 +214,11 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual('2017-04-20', str(timetable.date))
         self.assertEqual(1, len(timetable.groupings))
         self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
+
+        self.assertContains(
+            response,
+            'data from <a href="https://www.travelinedata.org.uk/">the Traveline National Dataset</a>'
+        )
 
     @freeze_time('2016-12-15')
     def test_timetable_ne(self):
