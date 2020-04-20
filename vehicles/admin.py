@@ -278,7 +278,6 @@ class UserFilter(admin.SimpleListFilter):
         return queryset
 
 
-
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['id', 'datetime', vehicle, fleet_number, reg, vehicle_type, branding, name, 'current', 'suggested',
                     notes, 'withdrawn', features, changes, 'edit_count', 'last_seen', 'flickr', username, url]
