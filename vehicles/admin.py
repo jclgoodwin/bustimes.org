@@ -278,9 +278,10 @@ class UserFilter(admin.SimpleListFilter):
         return queryset
 
 
+
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['id', 'datetime', vehicle, fleet_number, reg, vehicle_type, branding, name, 'current', 'suggested',
-                    notes, 'withdrawn', features, changes, 'last_seen', 'flickr', username, url]
+                    notes, 'withdrawn', features, changes, 'edit_count', 'last_seen', 'flickr', username, url]
     list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'vehicle__latest_location',
                            'livery']
     list_filter = [
@@ -295,7 +296,8 @@ class VehicleEditAdmin(admin.ModelAdmin):
     actions = ['apply_edits', 'approve', 'disapprove', 'make_livery', 'delete_vehicles']
 
     def get_queryset(self, _):
-        return VehicleEdit.objects.all().prefetch_related('features', 'vehicle__features')
+        edit_count = Count('vehicle__vehicleedit', filter=Q(approved=None))
+        return VehicleEdit.objects.annotate(edit_count=edit_count).prefetch_related('features', 'vehicle__features')
 
     def apply_edits(self, request, queryset):
         apply_edits(queryset)
@@ -338,6 +340,10 @@ class VehicleEditAdmin(admin.ModelAdmin):
 
     def flickr(self, obj):
         return obj.vehicle.get_flickr_link()
+
+    def edit_count(self, obj):
+        return obj.edit_count
+    edit_count.admin_order_field = 'edit_count'
 
     def last_seen(self, obj):
         if obj.vehicle.latest_location:
