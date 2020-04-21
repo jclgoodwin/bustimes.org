@@ -295,7 +295,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
     actions = ['apply_edits', 'approve', 'disapprove', 'make_livery', 'delete_vehicles']
 
     def get_queryset(self, _):
-        edit_count = Count('vehicle__vehicleedit', filter=Q(approved=None))
+        edit_count = Count('vehicle__vehicleedit', filter=Q(vehicle__vehicleedit__approved=None))
         return VehicleEdit.objects.annotate(edit_count=edit_count).prefetch_related('features', 'vehicle__features')
 
     def apply_edits(self, request, queryset):
