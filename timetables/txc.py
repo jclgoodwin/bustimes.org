@@ -201,14 +201,14 @@ def get_deadruns(journey_element):
 
 
 def get_deadrun_ref(deadrun_element):
-    """Given a StartDeadRun or EndDeadRun element,
+    """Given a StartDeadRun or EndDeadRun element with a ShortWorking,
     return the ID of a JourneyPetternTimingLink.
     """
     if deadrun_element is not None:
         element = deadrun_element.find('txc:ShortWorking/txc:JourneyPatternTimingLinkRef', NS)
         if element is not None:
-            return deadrun_element.find('txc:ShortWorking/txc:JourneyPatternTimingLinkRef', NS).text
-        print(ET.tostring(deadrun_element))
+            return element.text
+        # ignore PositioningLinks
 
 
 class VehicleJourney:
