@@ -24,6 +24,8 @@ def handle_file(command, path):
     try:
         with zipfile.ZipFile(os.path.join(settings.DATA_DIR, path)) as archive:
             for filename in archive.namelist():
+                if filename.endswith('.csv'):
+                    continue
                 with archive.open(filename) as open_file:
                     try:
                         command.handle_file(open_file, os.path.join(path, filename))
