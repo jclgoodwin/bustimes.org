@@ -133,12 +133,13 @@ def operator_vehicles(request, slug=None, parent=None):
         if request.method == 'POST':
             form = EditVehiclesForm(request.POST, initial=initial, operator=operator, features_column=features_column)
             if form.is_valid():
-                ticked_vehicles = (v for v in vehicles if str(v.id) in request.POST.getlist('vehicle'))
                 data = {key: form.cleaned_data[key] for key in form.changed_data}
                 if 'operator' in data:
-                    submitted = Vehicle.objects.filter(id__in=request.POST.getlist('vehicle')).update(operator=operator)
+                    ticked_vehicles = Vehicle.objects.filter(id__in=request.POST.getlist('vehicle'))
+                    submitted = ticked_vehicles.update(operator=data['operator'])
                     del data['operator']
                 if data:
+                    ticked_vehicles = (v for v in vehicles if str(v.id) in request.POST.getlist('vehicle'))
                     edits = [get_vehicle_edit(vehicle, data) for vehicle in ticked_vehicles]
                     for edit in edits:
                         edit.username = form.cleaned_data.get('user') or request.META['REMOTE_ADDR']
