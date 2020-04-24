@@ -424,6 +424,12 @@ class ImportTransXChangeTest(TestCase):
         self.assertFalse(timetable.groupings[1].rows[5].has_waittimes)
         self.assertFalse(timetable.groupings[1].rows[6].has_waittimes)
 
+        response = self.client.get(service.get_absolute_url() + '/debug')
+        self.assertContains(response, '/services/EA/20-plymouth-city-centre-plympton.xml')
+
+        with self.assertRaises(FileNotFoundError):
+            self.client.get('/services/EA/20-plymouth-city-centre-plympton.xml')
+
     def test_multiple_operators(self):
         with freeze_time('2020-02-22'):
             self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
