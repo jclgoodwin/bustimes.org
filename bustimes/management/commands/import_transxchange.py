@@ -560,14 +560,16 @@ class Command(BaseCommand):
             service, service_created = Service.objects.update_or_create(service_code=service_code, defaults=defaults)
 
             if service_created:
-                service.operator.add(*operators)
+                service.operator.set(operators)
                 self.service_codes.add(service_code)
             else:
                 if service.slug == service_code.lower():
                     service.slug = ''
                     service.save(update_fields=['slug'])
-                service.operator.set(operators)
-                if service_code not in self.service_codes:
+                if service_code in self.service_codes:
+                    service.operator.add(*operators)
+                else:
+                    service.operator.set(operators)
                     self.service_codes.add(service_code)
                     self.source.route_set.filter(service=service_code).delete()
                     service.stops.clear()
