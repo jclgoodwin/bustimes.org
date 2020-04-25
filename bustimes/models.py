@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import DateRangeField
+from django.urls import reverse
 
 
 def get_calendars(when, calendar_ids=None):
@@ -38,6 +39,9 @@ class Route(models.Model):
 
     def __str__(self):
         return ' – '.join(part for part in (self.line_name, self.line_brand, self.description) if part)
+
+    def get_absolute_url(self):
+        return reverse('route_xml', args=(self.source_id, self.code,))
 
 
 class Calendar(models.Model):

@@ -29,9 +29,9 @@ class ServiceDebugView(DetailView):
         return context
 
 
-def service_xml(request, source, code):
+def route_xml(request, source, code):
     try:
-        Route.objects.get(source__name=source, code__startswith=code)
+        Route.objects.get(source=source, code__startswith=code)
     except Route.MultipleObjectsReturned:
         pass
     except Route.DoesNotExist:

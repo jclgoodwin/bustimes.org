@@ -27,7 +27,7 @@
 
 {% for route in service.route_set.all %}
 
-<h3><a href="/services/{{ route.source }}/{{ route.code }}">{{ route.code }}</a></h3>
+<h3><a href="{{ route.get_absolute_url }}">{{ route.code }}</a></h3>
 
 <p><a href="{% url 'admin:bustimes_route_change' route.id %}">Edit</a></p>
 

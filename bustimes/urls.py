@@ -4,5 +4,5 @@ from . import views
 
 urlpatterns = [
     path('services/<slug>/debug', views.ServiceDebugView.as_view()),
-    re_path(r'^services/(?P<source>[\w ]+)/(?P<code>.+)', views.service_xml),
+    re_path(r'^sources/(?P<source>\d+)/routes/(?P<code>.+)', views.route_xml, name='route_xml'),
 ]

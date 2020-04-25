@@ -424,11 +424,13 @@ class ImportTransXChangeTest(TestCase):
         self.assertFalse(timetable.groupings[1].rows[5].has_waittimes)
         self.assertFalse(timetable.groupings[1].rows[6].has_waittimes)
 
+        route = service.route_set.get()
+
         response = self.client.get(service.get_absolute_url() + '/debug')
-        self.assertContains(response, '/services/EA/20-plymouth-city-centre-plympton.xml')
+        self.assertContains(response, route.get_absolute_url())
 
         with self.assertRaises(FileNotFoundError):
-            self.client.get('/services/EA/20-plymouth-city-centre-plympton.xml')
+            self.client.get(route.get_absolute_url())
 
     def test_multiple_operators(self):
         with freeze_time('2020-02-22'):
