@@ -43,13 +43,9 @@ class EditVehiclesForm(forms.Form):
             raise ValidationError('That URL doesn’t work for me. Maybe it’s too long, or Facebook')
 
     def __init__(self, *args, **kwargs):
-        features_column = kwargs.pop('features_column', None)
         operator = kwargs.pop('operator', None)
 
         super().__init__(*args, **kwargs)
-
-        if not features_column:
-            del self.fields['features']
 
         if operator:
             self.fields['colours'].choices = get_livery_choices(operator)
@@ -78,7 +74,7 @@ class EditVehicleForm(EditVehiclesForm):
     def __init__(self, *args, **kwargs):
         vehicle = kwargs.pop('vehicle', None)
 
-        super().__init__(*args, **kwargs, features_column=vehicle.features.all())
+        super().__init__(*args, **kwargs)
 
         if str(vehicle.fleet_number) in vehicle.code:
             self.fields['fleet_number'].disabled = True
