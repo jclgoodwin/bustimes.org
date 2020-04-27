@@ -307,7 +307,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Select vehicles to update')
         self.assertFalse(VehicleEdit.objects.all())
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(13):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
                 'operator': self.lynx.id,
