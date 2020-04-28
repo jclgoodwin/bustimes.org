@@ -779,15 +779,6 @@ class ServiceCode(models.Model):
         return '{} {}'.format(self.scheme, self.code)
 
 
-class ServiceDate(models.Model):
-    service = models.ForeignKey('Service', models.CASCADE)
-    date = models.DateField()
-    end = models.DateTimeField(null=True)
-
-    class Meta:
-        unique_together = ('service', 'date')
-
-
 class ServiceLink(models.Model):
     from_service = models.ForeignKey(Service, models.CASCADE, 'link_from')
     to_service = models.ForeignKey(Service, models.CASCADE, 'link_to')

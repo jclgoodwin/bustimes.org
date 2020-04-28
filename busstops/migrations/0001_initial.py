@@ -294,18 +294,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='ServiceDate',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateField()),
-                ('end', models.DateTimeField(null=True)),
-                ('service', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='busstops.Service')),
-            ],
-            options={
-                'unique_together': {('service', 'date')},
-            },
-        ),
-        migrations.CreateModel(
             name='ServiceCode',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
