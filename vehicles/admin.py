@@ -118,7 +118,11 @@ def features(obj):
         for feature in obj.vehicle.features.all():
             if feature not in obj.features.all():
                 features.append(f'<del>{feature}</del>')
-        return mark_safe(', '.join(features))
+    else:
+        for feature in obj.vehicle.features.all():
+            features.append(str(feature))
+
+    return mark_safe(', '.join(features))
 
 
 def changes(obj):
