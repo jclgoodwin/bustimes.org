@@ -335,10 +335,10 @@
 
     // load vehicles, and possibly stops
     function load(map, statusBar, stops) {
-        if (map.getZoom() < 10) {
-            statusBar.getContainer().innerHTML = 'Zoom in to see buses and stops';
-            return;
-        }
+        // if (map.getZoom() < 10) {
+        //     statusBar.getContainer().innerHTML = 'Zoom in to see buses and stops';
+        //     return;
+        // }
         statusBar.getContainer().innerHTML = 'Loading\u2026';
         var bounds = map.getBounds();
         var params = '?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest();
