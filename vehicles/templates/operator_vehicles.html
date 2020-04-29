@@ -172,7 +172,8 @@
                     selectElement: document.getElementById('id_vehicle_type')
                 });
 
-                var lastInput;
+                var lastInput,
+                    checkboxes = document.querySelectorAll('.fleet input');
 
                 function handleBoxCheck(event) {
                     if (event.shiftKey && lastInput) {
@@ -180,7 +181,6 @@
                             to = lastInput.parentNode.parentNode.rowIndex - 1,
                             min = Math.min(from, to),
                             max = Math.max(from, to),
-                            checkboxes = document.querySelectorAll('.fleet input');
                         checkboxes.forEach(function(checkbox, i) {
                             if (i > min && i < max) {
                                 checkbox.checked = lastInput.checked;
@@ -192,8 +192,11 @@
                     lastInput.parentNode.parentNode.style.background = lastInput.checked ? '#ef9' : '';
                 }
 
-                document.querySelectorAll('.fleet input').forEach(function(input) {
-                    input.addEventListener('click', handleBoxCheck);
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.addEventListener('click', handleBoxCheck);
+                    if (checkbox.checked) {
+                        checkbox.parentNode.parentNode.style.background = '#ef9';
+                    }
                 });
             });
         </script>
