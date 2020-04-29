@@ -295,6 +295,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
         'approved',
         UrlFilter,
         'withdrawn',
+        'vehicle__withdrawn',
         ChangeFilter,
         OperatorFilter,
         UserFilter,
