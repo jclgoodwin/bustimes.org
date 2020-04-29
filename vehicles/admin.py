@@ -312,11 +312,11 @@ class VehicleEditAdmin(admin.ModelAdmin):
         self.message_user(request, 'Applied edits.')
 
     def approve(self, request, queryset):
-        count = queryset.update(approved=True)
+        count = queryset.order_by().update(approved=True)
         self.message_user(request, f'Approved {count} edits.')
 
     def disapprove(self, request, queryset):
-        count = queryset.update(approved=False)
+        count = queryset.order_by().update(approved=False)
         self.message_user(request, f'Disapproved {count} edits.')
 
     def make_livery(self, request, queryset):
