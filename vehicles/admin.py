@@ -133,7 +133,11 @@ def changes(obj):
                 changes.append(f'{key}: <ins>{value}</ins>')
             elif value != obj.vehicle.data[key]:
                 changes.append(f'{key}: <del>{obj.vehicle.data[key]}</del> <ins>{value}</ins>')
-        return mark_safe('<br>'.join(changes))
+    if obj.vehicle.data:
+        for key, value in obj.vehicle.data.items():
+            if not obj.changes or key not in obj.changes:
+                changes.append(f'{key}: {value}')
+    return mark_safe('<br>'.join(changes))
 
 
 def url(obj):
