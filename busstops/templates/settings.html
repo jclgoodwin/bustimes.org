@@ -1,0 +1,35 @@
+{% extends 'page.html' %}
+
+{% block bodyclass %}narrow{% endblock %}
+
+{% block content %}
+
+<h1>Settings</h1>
+
+<label><input type="checkbox" id="show-adverts"> Show adverts</label>
+
+<script>
+(function () {
+    var input = document.getElementById('show-adverts');
+    if (localStorage && localStorage.hideAds) {
+        input.checked = false;
+    } else {
+        input.checked = true;
+    }
+
+    function handleBoxCheck(event) {
+        if (event.target.checked) {
+            localStorage.removeItem('hideAds');
+        } else {
+            localStorage.setItem('hideAds', '1');
+        }
+    }
+
+    input.addEventListener('click', handleBoxCheck);
+})();
+
+</script>
+
+{% endblock %}
+
+{% block ad %}{% endblock %}

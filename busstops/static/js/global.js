@@ -21,6 +21,10 @@ if (navigator.serviceWorker && location.protocol === 'https:') {
         document.cookie = 'seen_cookie_message=yes; max-age=31536000; path=/';
     }
 
+    if (localStorage && localStorage.hideAds) {
+        return;
+    }
+
     var ads = document.getElementsByClassName('adsbygoogle');
     if (!ads.length) {
         return;

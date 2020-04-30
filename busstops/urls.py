@@ -17,6 +17,7 @@ urlpatterns = [
     path('', views.index),
     path('offline', views.offline),
     path('contact', views.contact),
+    path('settings', views.settings),
     path('awin-transaction', views.awin_transaction),
     path('cookies', views.cookies),
     path('data', views.data),
