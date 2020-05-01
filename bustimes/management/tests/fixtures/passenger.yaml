@@ -1,0 +1,341 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/603.3.8 (KHTML,
+        like Gecko) Version/10.1.2 Safari/603.3.8
+    method: GET
+    uri: https://www.unilinkbus.co.uk/open-data
+  response:
+    body:
+      string: "<!DOCTYPE html>\n<html class=\"no-js\">\n    <head>\n        <title>Our
+        Data</title>\n\n        <!-- _31C926B6_ -->\n<meta charset=\"UTF-8\" /><script
+        type=\"text/javascript\">(window.NREUM||(NREUM={})).loader_config={licenseKey:\"b9a63eed5e\",applicationID:\"143057620\"};window.NREUM||(NREUM={}),__nr_require=function(e,n,t){function
+        r(t){if(!n[t]){var i=n[t]={exports:{}};e[t][0].call(i.exports,function(n){var
+        i=e[t][1][n];return r(i||n)},i,i.exports)}return n[t].exports}if(\"function\"==typeof
+        __nr_require)return __nr_require;for(var i=0;i<t.length;i++)r(t[i]);return
+        r}({1:[function(e,n,t){function r(){}function i(e,n,t){return function(){return
+        o(e,[u.now()].concat(f(arguments)),n?null:this,t),n?void 0:this}}var o=e(\"handle\"),a=e(4),f=e(5),c=e(\"ee\").get(\"tracer\"),u=e(\"loader\"),s=NREUM;\"undefined\"==typeof
+        window.newrelic&&(newrelic=s);var p=[\"setPageViewName\",\"setCustomAttribute\",\"setErrorHandler\",\"finished\",\"addToTrace\",\"inlineHit\",\"addRelease\"],l=\"api-\",d=l+\"ixn-\";a(p,function(e,n){s[n]=i(l+n,!0,\"api\")}),s.addPageAction=i(l+\"addPageAction\",!0),s.setCurrentRouteName=i(l+\"routeName\",!0),n.exports=newrelic,s.interaction=function(){return(new
+        r).get()};var m=r.prototype={createTracer:function(e,n){var t={},r=this,i=\"function\"==typeof
+        n;return o(d+\"tracer\",[u.now(),e,t],r),function(){if(c.emit((i?\"\":\"no-\")+\"fn-start\",[u.now(),r,i],t),i)try{return
+        n.apply(this,arguments)}catch(e){throw c.emit(\"fn-err\",[arguments,this,e],t),e}finally{c.emit(\"fn-end\",[u.now()],t)}}}};a(\"actionText,setName,setAttribute,save,ignore,onEnd,getContext,end,get\".split(\",\"),function(e,n){m[n]=i(d+n)}),newrelic.noticeError=function(e,n){\"string\"==typeof
+        e&&(e=new Error(e)),o(\"err\",[e,u.now(),!1,n])}},{}],2:[function(e,n,t){function
+        r(e,n){var t=e.getEntries();t.forEach(function(e){\"first-paint\"===e.name?c(\"timing\",[\"fp\",Math.floor(e.startTime)]):\"first-contentful-paint\"===e.name&&c(\"timing\",[\"fcp\",Math.floor(e.startTime)])})}function
+        i(e,n){var t=e.getEntries();t.length>0&&c(\"lcp\",[t[t.length-1]])}function
+        o(e){if(e instanceof s&&!l){var n,t=Math.round(e.timeStamp);n=t>1e12?Date.now()-t:u.now()-t,l=!0,c(\"timing\",[\"fi\",t,{type:e.type,fid:n}])}}if(!(\"init\"in
+        NREUM&&\"page_view_timing\"in NREUM.init&&\"enabled\"in NREUM.init.page_view_timing&&NREUM.init.page_view_timing.enabled===!1)){var
+        a,f,c=e(\"handle\"),u=e(\"loader\"),s=NREUM.o.EV;if(\"PerformanceObserver\"in
+        window&&\"function\"==typeof window.PerformanceObserver){a=new PerformanceObserver(r),f=new
+        PerformanceObserver(i);try{a.observe({entryTypes:[\"paint\"]}),f.observe({entryTypes:[\"largest-contentful-paint\"]})}catch(p){}}if(\"addEventListener\"in
+        document){var l=!1,d=[\"click\",\"keydown\",\"mousedown\",\"pointerdown\",\"touchstart\"];d.forEach(function(e){document.addEventListener(e,o,!1)})}}},{}],3:[function(e,n,t){function
+        r(e,n){if(!i)return!1;if(e!==i)return!1;if(!n)return!0;if(!o)return!1;for(var
+        t=o.split(\".\"),r=n.split(\".\"),a=0;a<r.length;a++)if(r[a]!==t[a])return!1;return!0}var
+        i=null,o=null,a=/Version\\/(\\S+)\\s+Safari/;if(navigator.userAgent){var f=navigator.userAgent,c=f.match(a);c&&f.indexOf(\"Chrome\")===-1&&f.indexOf(\"Chromium\")===-1&&(i=\"Safari\",o=c[1])}n.exports={agent:i,version:o,match:r}},{}],4:[function(e,n,t){function
+        r(e,n){var t=[],r=\"\",o=0;for(r in e)i.call(e,r)&&(t[o]=n(r,e[r]),o+=1);return
+        t}var i=Object.prototype.hasOwnProperty;n.exports=r},{}],5:[function(e,n,t){function
+        r(e,n,t){n||(n=0),\"undefined\"==typeof t&&(t=e?e.length:0);for(var r=-1,i=t-n||0,o=Array(i<0?0:i);++r<i;)o[r]=e[n+r];return
+        o}n.exports=r},{}],6:[function(e,n,t){n.exports={exists:\"undefined\"!=typeof
+        window.performance&&window.performance.timing&&\"undefined\"!=typeof window.performance.timing.navigationStart}},{}],ee:[function(e,n,t){function
+        r(){}function i(e){function n(e){return e&&e instanceof r?e:e?c(e,f,o):o()}function
+        t(t,r,i,o){if(!l.aborted||o){e&&e(t,r,i);for(var a=n(i),f=v(t),c=f.length,u=0;u<c;u++)f[u].apply(a,r);var
+        p=s[y[t]];return p&&p.push([b,t,r,a]),a}}function d(e,n){h[e]=v(e).concat(n)}function
+        m(e,n){var t=h[e];if(t)for(var r=0;r<t.length;r++)t[r]===n&&t.splice(r,1)}function
+        v(e){return h[e]||[]}function g(e){return p[e]=p[e]||i(t)}function w(e,n){u(e,function(e,t){n=n||\"feature\",y[t]=n,n
+        in s||(s[n]=[])})}var h={},y={},b={on:d,addEventListener:d,removeEventListener:m,emit:t,get:g,listeners:v,context:n,buffer:w,abort:a,aborted:!1};return
+        b}function o(){return new r}function a(){(s.api||s.feature)&&(l.aborted=!0,s=l.backlog={})}var
+        f=\"nr@context\",c=e(\"gos\"),u=e(4),s={},p={},l=n.exports=i();l.backlog=s},{}],gos:[function(e,n,t){function
+        r(e,n,t){if(i.call(e,n))return e[n];var r=t();if(Object.defineProperty&&Object.keys)try{return
+        Object.defineProperty(e,n,{value:r,writable:!0,enumerable:!1}),r}catch(o){}return
+        e[n]=r,r}var i=Object.prototype.hasOwnProperty;n.exports=r},{}],handle:[function(e,n,t){function
+        r(e,n,t,r){i.buffer([e],r),i.emit(e,n,t)}var i=e(\"ee\").get(\"handle\");n.exports=r,r.ee=i},{}],id:[function(e,n,t){function
+        r(e){var n=typeof e;return!e||\"object\"!==n&&\"function\"!==n?-1:e===window?0:a(e,o,function(){return
+        i++})}var i=1,o=\"nr@id\",a=e(\"gos\");n.exports=r},{}],loader:[function(e,n,t){function
+        r(){if(!x++){var e=E.info=NREUM.info,n=d.getElementsByTagName(\"script\")[0];if(setTimeout(s.abort,3e4),!(e&&e.licenseKey&&e.applicationID&&n))return
+        s.abort();u(y,function(n,t){e[n]||(e[n]=t)}),c(\"mark\",[\"onload\",a()+E.offset],null,\"api\");var
+        t=d.createElement(\"script\");t.src=\"https://\"+e.agent,n.parentNode.insertBefore(t,n)}}function
+        i(){\"complete\"===d.readyState&&o()}function o(){c(\"mark\",[\"domContent\",a()+E.offset],null,\"api\")}function
+        a(){return O.exists&&performance.now?Math.round(performance.now()):(f=Math.max((new
+        Date).getTime(),f))-E.offset}var f=(new Date).getTime(),c=e(\"handle\"),u=e(4),s=e(\"ee\"),p=e(3),l=window,d=l.document,m=\"addEventListener\",v=\"attachEvent\",g=l.XMLHttpRequest,w=g&&g.prototype;NREUM.o={ST:setTimeout,SI:l.setImmediate,CT:clearTimeout,XHR:g,REQ:l.Request,EV:l.Event,PR:l.Promise,MO:l.MutationObserver};var
+        h=\"\"+location,y={beacon:\"bam.nr-data.net\",errorBeacon:\"bam.nr-data.net\",agent:\"js-agent.newrelic.com/nr-1167.min.js\"},b=g&&w&&w[m]&&!/CriOS/.test(navigator.userAgent),E=n.exports={offset:f,now:a,origin:h,features:{},xhrWrappable:b,userAgent:p};e(1),e(2),d[m]?(d[m](\"DOMContentLoaded\",o,!1),l[m](\"load\",r,!1)):(d[v](\"onreadystatechange\",i),l[v](\"onload\",r)),c(\"mark\",[\"firstbyte\",f],null,\"api\");var
+        x=0,O=e(6)},{}],\"wrap-function\":[function(e,n,t){function r(e){return!(e&&e
+        instanceof Function&&e.apply&&!e[a])}var i=e(\"ee\"),o=e(5),a=\"nr@original\",f=Object.prototype.hasOwnProperty,c=!1;n.exports=function(e,n){function
+        t(e,n,t,i){function nrWrapper(){var r,a,f,c;try{a=this,r=o(arguments),f=\"function\"==typeof
+        t?t(r,a):t||{}}catch(u){l([u,\"\",[r,a,i],f])}s(n+\"start\",[r,a,i],f);try{return
+        c=e.apply(a,r)}catch(p){throw s(n+\"err\",[r,a,p],f),p}finally{s(n+\"end\",[r,a,c],f)}}return
+        r(e)?e:(n||(n=\"\"),nrWrapper[a]=e,p(e,nrWrapper),nrWrapper)}function u(e,n,i,o){i||(i=\"\");var
+        a,f,c,u=\"-\"===i.charAt(0);for(c=0;c<n.length;c++)f=n[c],a=e[f],r(a)||(e[f]=t(a,u?f+i:i,o,f))}function
+        s(t,r,i){if(!c||n){var o=c;c=!0;try{e.emit(t,r,i,n)}catch(a){l([a,t,r,i])}c=o}}function
+        p(e,n){if(Object.defineProperty&&Object.keys)try{var t=Object.keys(e);return
+        t.forEach(function(t){Object.defineProperty(n,t,{get:function(){return e[t]},set:function(n){return
+        e[t]=n,n}})}),n}catch(r){l([r])}for(var i in e)f.call(e,i)&&(n[i]=e[i]);return
+        n}function l(n){try{e.emit(\"internal-error\",n)}catch(t){}}return e||(e=i),t.inPlace=u,t.flag=a,t}},{}]},{},[\"loader\"]);</script>\n<meta
+        name=\"viewport\" content=\"width=device-width, user-scalable=no, initial-scale=1.0,
+        maximum-scale=1.0, minimum-scale=1.0\">\n\n<script>document.documentElement.className
+        = document.documentElement.className.replace(\"no-js\",\"js\");</script>\n\n<link
+        rel=\"stylesheet\" href=\"/build/2.6fc723a1.css\" integrity=\"sha384-MDnLdR+zVNcA3I/qgqojJtdIEuShJWJNx48XBrnG+W/yf8G0BEARAZhb66+k2J5+\"><link
+        rel=\"stylesheet\" href=\"/build/app.b204b5be.css\" integrity=\"sha384-ZVwC8ngpGC6Pgfer3kX8PVMPe4zaS16MsTDLBq61xFPq1GdTUCSPhUV1AydJP/0s\">\n\n\n\n
+        \       <link rel=\"icon\" href=\"/build/images/favicon/favicon.46f43f68.png\">\n
+        \       <meta name=\"theme-color\" content=\"#4fc6e0\">\n\n            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\n
+        \   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\n
+        \   j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n
+        \   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);\n
+        \   })(window,document,'script','dataLayer','GTM-T46JNKZ');</script>\n\n            </head>\n
+        \   <body class=\"\">\n                    <!-- Google Tag Manager (noscript)
+        -->\n            <noscript><iframe src=\"https://www.googletagmanager.com/ns.html?id=GTM-T46JNKZ\"\n
+        \           height=\"0\" width=\"0\" style=\"display:none;visibility:hidden\"></iframe></noscript>\n
+        \           <!-- End Google Tag Manager (noscript) -->\n        \n        <a
+        href=\"#main-content\" class=\"c-skip-navigation\">Skip to content</a>\n\n
+        \   <div class=\"alert alert-warning alert--network\" data-contributes-to-screen-height>\n
+        \       <div class=\"container\">\n            <div class=\"alert--network__contents\">\n
+        \                                                           <p>\n                            Coronavirus
+        \u2013 buses are running to emergency timetables, please check before travelling\n
+        \                       </p>\n                                                    <a
+        href=\"https://www.unilinkbus.co.uk/further-reduction-services-sunday-5-april\">Show
+        details</a>\n                                                                        </div>\n
+        \       </div>\n    </div>\n\n\n\n\n<div class=\"s-header\" id=\"header\">\n
+        \   <div class=\"account-bar\">\n    <div class=\"container\">\n        <div
+        class=\"row\">\n            <div class=\"col-xs-12\">\n                <ul
+        class=\"list-inline\">\n                    <li>\n                        <a
+        href=\"#\" data-action=\"reciteme\" title=\"Enable the Recite Me toolbar\">\n
+        \                           Recite Me\n                        </a>\n                    </li>\n
+        \                   <li>\n                        <a href=\"/favourites\">Favourites</a>\n
+        \                   </li>\n                </ul>\n            </div>\n        </div>\n
+        \   </div>\n</div>\n\n    <div class=\"s-header__decoration\">\n        <!--
+        Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In  -->\n<svg version=\"1.1\"\n\t
+        xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"
+        xmlns:a=\"http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/\"\n\t x=\"0px\"
+        y=\"0px\" width=\"518.6px\" height=\"140px\" viewBox=\"0 0 518.6 140\" style=\"enable-background:new
+        0 0 518.6 140;\"\n\t xml:space=\"preserve\">\n<defs>\n</defs>\n<polygon style=\"fill:#3EB397;\"
+        points=\"462.3,0 518.6,140 518.6,0 \"/>\n<polygon style=\"fill:#C7D300;\"
+        points=\"463.7,0 406.2,0 518.6,140 \"/>\n<polygon style=\"fill:#ED700E;\"
+        points=\"406.8,0 345,0 518.6,140 \"/>\n<polygon style=\"fill:#E6333F;\" points=\"345.6,0
+        0,0 518.6,140 \"/>\n</svg>    </div>\n\n    <div class=\"container\">\n        <div
+        class=\"row\">\n            <div class=\"navbar navbar-default c-navigation\">\n
+        \               \n<div class=\"navbar-header s-header__branding\">\n        <button
+        type=\"button\" class=\"navbar-toggle collapsed\" data-toggle=\"collapse\"
+        data-target=\"#navbar-collapse\" aria-expanded=\"false\">\n        <span class=\"sr-only\">Toggle
+        navigation</span>\n        <span class=\"icon-label icon-label--closed\">Menu</span>\n
+        \       <span class=\"icon-label icon-label--open\">Close</span>\n    </button>\n
+        \   \n            <a class=\"navbar-brand s-header__logo\" href=\"/\" style=\"background-image:
+        url('/build/images/header-logo.43646d71.svg');\">\n            Unilink Bus\n
+        \       </a>\n    </div>\n\n                <div class=\"collapse navbar-collapse\"
+        id=\"navbar-collapse\">\n                                        <ul class=\"nav
+        navbar-nav c-nav navbar-right\" id=\"global-navigation\">\n                        \n
+        \     \n  <li class=\"c-nav__item c-nav__item--level-0   c-nav__item--id-0\">\n
+        \         <a href=\"/plan-your-journey\" class=\"c-nav__link\">\n    Plan
+        your journey\n  </a>\n      </li>\n      \n  <li class=\"c-nav__item c-nav__item--level-0
+        \  c-nav__item--id-1\">\n          <a href=\"/fares-and-tickets\" class=\"c-nav__link\">\n
+        \   Fares &amp; tickets\n  </a>\n      </li>\n      \n  <li class=\"c-nav__item
+        c-nav__item--level-0   c-nav__item--id-2\">\n          <a href=\"/customer-support\"
+        class=\"c-nav__link\">\n    Customer support\n  </a>\n      </li>\n      \n
+        \ <li class=\"c-nav__item c-nav__item--level-0   c-nav__item--id-3\">\n          <a
+        href=\"/about-us\" class=\"c-nav__link\">\n    About us\n  </a>\n      </li>\n
+        \     \n  <li class=\"c-nav__item c-nav__item--level-0   c-nav__item--id-4\">\n
+        \         <a href=\"/news\" class=\"c-nav__link\">\n    News\n  </a>\n      </li>\n
+        \     \n  <li class=\"c-nav__item c-nav__item--level-0   c-nav__item--id-5\">\n
+        \         <a href=\"https://key.unilinkbus.co.uk/smart-card/\" class=\"c-nav__link\">\n
+        \   theKey\n  </a>\n      </li>\n  \n                        <li class=\"visible-md
+        visible-lg c-nav__item c-nav__item--level-0\">\n                            <a
+        href=\"/search\" class=\"c-nav__link\" data-search=\"toggle\" title=\"Show
+        Search Bar\">\n                                Search                            </a>\n
+        \                       </li>\n                        <li class=\"visible-xs
+        visible-sm pl1 mt1 pr1 s-header__search--mobile\">\n                            \n<form
+        action=\"/search\">\n    <div class=\"form__input-wrap\">\n        <div>\n
+        \           <label class=\"sr-only\" for=\"search_input\">Search Query</label>\n\n
+        \           <input id=\"search_input\" type=\"text\" name=\"query\" class=\"form-control\"
+        placeholder=\"Search Fares, News and About us...\" value=\"\"/>\n        </div>\n\n
+        \       <div>\n            <button class=\"btn btn-dark\">Search</button>\n
+        \       </div>\n    </div>\n</form>\n                        </li>\n                    </ul>\n
+        \                                   </div>\n            </div>\n        </div>\n
+        \   </div>\n\n    <div class=\"s-header__gap\"></div>\n</div>\n\n\n<noscript>\n<div
+        class=\"js-warning-banner\">\n    <div class=\"container js-warning text-center\">\n
+        \       <div class=\"row\">\n            <div class=\"col-xs-12\">\n                <p>You
+        have Javascript disabled. Your experience using this site will be limited
+        and you may not be able to access information about services. <a href=\"http://www.enable-javascript.com/\"
+        target=\"_blank\" rel=\"nofollow noopener\">Learn how to enable Javascript</a>.</p>\n
+        \               <p>If you're unable to turn Javascript on, why not try our
+        smartphone app?</p>\n            </div>\n            <div class=\"col-xs-12
+        col-sm-6 col-sm-offset-3\">\n                <div class=\"c-grid c-grid--wrap
+        c-app-download-buttons\">\n            <div class=\"c-grid__cell mb1\">\n
+        \           <a href=\"https://play.google.com/store/apps/details?id=com.gosouthcoast.bus\"
+        data-role=\"appstore-download-button\" class=\"c-app-download-buttons__button
+        c-app-download-buttons__button--google\" target=\"_blank\">\n                                    <img
+        src=\"/build/images/store-google.e2b9351b.png\" class=\"c-app-download-buttons__img\"
+        alt=\"Download the app from the Google Play Store\" />\n                            </a>\n
+        \       </div>\n            <div class=\"c-grid__cell mb1\">\n            <a
+        href=\"https://itunes.apple.com/gb/app/clickit2ride/id1302435532?mt=8\" data-role=\"appstore-download-button\"
+        class=\"c-app-download-buttons__button c-app-download-buttons__button--apple\"
+        target=\"_blank\">\n                                    <img src=\"/build/images/store-apple.635fefeb.png\"
+        class=\"c-app-download-buttons__img\" alt=\"Download the app from the iOS
+        App Store\" />\n                            </a>\n        </div>\n    </div>\n\n
+        \           </div>\n        </div>\n    </div>\n</div>\n</noscript>\n\n\n
+        \       <div id=\"main-content\">\n            \n            <div class=\"container
+        mt2 s-main-container\">\n    <div class=\"row\">\n        <div class=\"col-xs-12\">\n
+        \                   </div>\n    </div>\n    <div class=\"row\">\n        <div
+        class=\"col-xs-12 col-md-8 s-content\">\n                <h1 class=\"t-page-title\">Our
+        Data</h1>\n\n    <div class=\"s-prose\">\n        <h2 class=\"h3\">Network
+        Data</h2>\n\n        <ul>\n            <li>Describes our network in terms
+        of stops, lines, journeys, and schedules.</li>\n            <li>Used to generate
+        timetable information, and used in journey planning.</li>\n            <li>Available
+        in two different formats, TXC (xml or zip) and GTFS.</li>\n        </ul>\n\n
+        \       <h3 class=\"h5\">Current Data</h3>\n\n        <p>\n            <a
+        class=\"btn btn-primary m-mb2\" href=\"/open-data/network/current\">Download
+        TransXChange</a>\n            <a class=\"btn btn-primary m-mb2\" href=\"/open-data/network/current?format=gtfs\">Download
+        GTFS</a>\n        </p>\n\n                    <h3 class=\"h5\">2020-05-10
+        to 2020-06-01</h3>\n\n            <p>\n                <a class=\"btn btn-primary
+        m-mb2\" href=\"https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1586941265.zip\">Download
+        TransXChange</a>\n                <a class=\"btn btn-primary m-mb2\" href=\"https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/gtfs/unilink_1586941265.zip\">Download
+        GTFS</a>\n            </p>\n                    <h3 class=\"h5\">2020-04-19
+        to 2020-05-10</h3>\n\n            <p>\n                <a class=\"btn btn-primary
+        m-mb2\" href=\"https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1586941252.zip\">Download
+        TransXChange</a>\n                <a class=\"btn btn-primary m-mb2\" href=\"https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/gtfs/unilink_1586941252.zip\">Download
+        GTFS</a>\n            </p>\n        \n        \n        <hr class=\"mt4 mb4\"/>\n
+        \       <h2 class=\"h3\">Open Street Map</h2>\n\n        <ul>\n            <li>A
+        slice of Open Street Map data surrounding our network.</li>\n            <li>Converted
+        to XML from the original PBF format.</li>\n            <li>Used in places
+        search and journey planning.</li>\n        </ul>\n\n        <a class=\"btn
+        btn-primary\" href=\"https://s3-eu-west-1.amazonaws.com/passenger-osm/search/unilink.xml.gz\">Download
+        XML</a>\n        <a class=\"btn btn-primary\" href=\"https://s3-eu-west-1.amazonaws.com/passenger-osm/plans/unilink.pbf\">Download
+        PBF</a>\n\n        <hr class=\"mt4 mb4\"/>\n        <h2 class=\"h3\">Stop
+        Data</h2>\n\n        <ul>\n            <li>Taken from the <a href=\"https://www.gov.uk/government/publications/national-public-transport-access-node-schema\">NaPTAN
+        dataset</a></li>\n            <li>We use <a href=\"https://www.busstopchecker.com\">Bus
+        Stop Checker</a> to improve the NaPTAN dataset</li>\n            <li>Used
+        in our map views</li>\n        </ul>\n\n        <hr class=\"mt4 mb4\"/>\n\n
+        \       <p>\n            <small>\n                Network data, mobile products
+        data, and stop data are licensed under the <a href=\"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/\">Open
+        Government License Version 3.0</a>.<br>\n                Open Street Map data
+        are subject to the <a href=\"https://www.openstreetmap.org/copyright\">Open
+        Street Map copyright and license terms</a>.\n            </small>\n        </p>\n
+        \   </div>\n\n        </div>\n        <div class=\"col-xs-12 col-md-4 s-sidebar\">\n
+        \               <div class=\"o-highlight-box s-prose\">\n        <h2 class=\"h4\">Background</h2>\n
+        \       <p>Welcome to our open data portal, where you can download the source
+        data that we use in our digital services.</p>\n        <p>'Open data' is data
+        that has been made available to the public, for personal, educational or commercial
+        use.</p>\n        <p>Open data has been shown to stimulate innovation and
+        economic growth. As a forward thinking company we understand the vital role
+        the transport network plays in our community, now and in the future.</p>\n
+        \       <p>The data on the portal is updated automatically when we update
+        our digital services, for example when we make a change to our timetables
+        or network. Downloads are currently available as either .CSV or .XML files.</p>\n
+        \       <p>If you need to get in touch about our data, please contact our
+        <a href=\"/contact\">customer service team</a>.</p>\n    </div>\n        </div>\n
+        \   </div>\n</div>\n\n                            <div class=\"s-footer-spacer\"></div>\n
+        \                   </div>\n\n                    <div class=\"s-footer s-footer--main\">\n
+        \   <div class=\"container\">\n        <div class=\"row\">\n            <div
+        class=\"col-xs-12 col-md-3\">\n                <p>\n    <a class=\"s-footer__title\"
+        href=\"/contact\">Get in Touch</a>\n</p>\n<div class=\"row\">\n    <div class=\"col-xs-12\">\n
+        \                   <p>\n                <strong>Highfield Campus</strong><br/>\n
+        \               <span class=\"text-truncate\"><a href=\"tel:023 8059 5974\">023
+        8059 5974</a></span>\n            </p>\n                    <p>\n                <strong>Key
+        &amp; App Support</strong><br/>\n                <span class=\"text-truncate\"><a
+        href=\"tel:01202 678100\">01202 678100</a></span>\n            </p>\n            </div>\n</div>\n
+        \           </div>\n            <div class=\"col-xs-12 col-md-3\">\n                <p
+        class=\"s-footer__title\">Follow us</p>\n<ul class=\"list-inline mt2 mb2\">\n
+        \           <li>\n            <a class=\"s-footer__social\" href=\"https://www.facebook.com/unilinkbus?ref=hl\"
+        title=\"Facebook\">\n                <span class=\"sr-only\">Follow us on
+        Facebook</span>\n                <span class=\"svg-wrapper\">\n                                            <svg
+        xmlns=\"http://www.w3.org/2000/svg\" width=\"408.8\" height=\"408.8\" viewBox=\"0
+        0 408.8 408.8\"><path d=\"M353.7 0H55.1C24.7 0 0 24.7 0 55.1v298.6c0 30.4
+        24.7 55.1 55.1 55.1h147.3l.3-146.1h-38c-4.9 0-8.9-4-9-8.9l-.2-47.1c0-5 4-9
+        9-9h37.9v-45.5c0-52.8 32.2-81.6 79.3-81.6h38.6c4.9 0 9 4 9 9v39.7c0 4.9-4
+        9-9 9h-23.7c-25.6 0-30.6 12.2-30.6 30v39.4h56.3c5.4 0 9.5 4.7 8.9 10l-5.6
+        47.1c-.5 4.5-4.4 7.9-8.9 7.9h-50.5l-.3 146.1h87.6c30.4 0 55.1-24.7 55.1-55.1V55.1C408.8
+        24.7 384.1 0 353.7 0z\" fill=\"currentColor\"/></svg>\n                                    </span>\n
+        \           </a>\n        </li>\n            <li>\n            <a class=\"s-footer__social\"
+        href=\"https://twitter.com/unilinkbus\" title=\"Twitter\">\n                <span
+        class=\"sr-only\">Follow us on Twitter</span>\n                <span class=\"svg-wrapper\">\n
+        \                                           <svg xmlns=\"http://www.w3.org/2000/svg\"
+        width=\"410.2\" height=\"341.2\" viewBox=\"0 0 410.2 341.2\"><path d=\"M403.6
+        39.7c-9.1 4-18.6 7.2-28.3 9.5C386 39 394 26.3 398.6 12.1c1.3-4.1-3.1-7.6-6.8-5.4-13.5
+        8-28 14-43.2 17.9-.9.2-1.8.3-2.7.3-2.8 0-5.5-1-7.6-2.9-16.1-14.2-36.9-22-58.5-22-9.3
+        0-18.8 1.5-28 4.3-28.6 8.9-50.8 32.6-57.7 61.7-2.6 10.9-3.3 21.9-2.1 32.6.1
+        1.2-.4 2.1-.8 2.5-.6.7-1.5 1.1-2.4 1.1h-.3C125.7 96.4 69.1 66.1 29.1 17c-2-2.5-6-2.2-7.6.6-7.8
+        13.4-12 28.8-12 44.5 0 24 9.6 46.6 26.4 63-7-1.7-13.8-4.3-20.2-7.8-3.1-1.7-6.8.5-6.9
+        4-.4 35.6 20.4 67.3 51.6 81.6h-1.9c-5 0-10-.5-14.9-1.4-3.4-.7-6.3 2.6-5.3
+        6 10.1 31.7 37.4 55 70 60.3-27.1 18.2-58.6 27.8-91.4 27.8H6.7c-3.2 0-5.8 2.1-6.6
+        5.1-.8 3 .7 6.2 3.4 7.7 37 21.5 79.1 32.9 122 32.9 37.5 0 72.5-7.4 104.2-22.1
+        29-13.4 54.7-32.7 76.3-57.1 20.1-22.8 35.8-49.1 46.7-78.2 10.4-27.7 15.9-57.3
+        15.9-85.6V97c0-4.5 2.1-8.8 5.6-11.7 13.6-11 25.4-24 35.2-38.6 2.5-4.1-1.5-8.9-5.8-7z\"
+        fill=\"currentColor\"/></svg>\n                                    </span>\n
+        \           </a>\n        </li>\n    </ul>\n            </div>\n            <div
+        class=\"col-xs-12 col-md-3\">\n                <p class=\"s-footer__title\">Download
+        the Unilink Bus app</p>\n\n<div class=\"c-grid c-grid--wrap c-app-download-buttons\">\n
+        \           <div class=\"c-grid__cell mb1\">\n            <a href=\"https://play.google.com/store/apps/details?id=com.gosouthcoast.bus\"
+        data-role=\"appstore-download-button\" class=\"c-app-download-buttons__button
+        c-app-download-buttons__button--google\" target=\"_blank\">\n                                    <img
+        src=\"/build/images/store-google.e2b9351b.png\" class=\"c-app-download-buttons__img\"
+        alt=\"Download the app from the Google Play Store\" />\n                            </a>\n
+        \       </div>\n            <div class=\"c-grid__cell mb1\">\n            <a
+        href=\"https://itunes.apple.com/gb/app/clickit2ride/id1302435532?mt=8\" data-role=\"appstore-download-button\"
+        class=\"c-app-download-buttons__button c-app-download-buttons__button--apple\"
+        target=\"_blank\">\n                                    <img src=\"/build/images/store-apple.635fefeb.png\"
+        class=\"c-app-download-buttons__img\" alt=\"Download the app from the iOS
+        App Store\" />\n                            </a>\n        </div>\n    </div>\n\n\n\n<div
+        class=\"mb2\"></div>\n            </div>\n            <div class=\"col-xs-12
+        col-md-3 s-footer--branding\">\n                <ul class=\"list-unstyled\">\n
+        \                   <li>\n                        <img src=\"/build/images/bluestar.7922d8d2.svg\"
+        alt=\"\" class=\"img-responsive mb2\" style=\"max-width: 150px;\">\n                    </li>\n
+        \                   <li>\n                        <img src=\"/build/images/go-ahead-stacked.9f82a467.svg\"
+        alt=\"\" class=\"img-responsive mb2\" style=\"max-width: 150px;\">\n                    </li>\n
+        \                   <li>\n                        <img src=\"/build/images/university-southampton.0edf4b49.svg\"
+        alt=\"\" class=\"img-responsive mb2\" style=\"max-width: 150px;\">\n                    </li>\n
+        \               </ul>\n            </div>\n        </div>\n    </div>\n</div>\n\n<div
+        class=\"s-footer s-footer--copyright pt2 pb2\">\n    <div class=\"container\">\n
+        \       <div class=\"row\">\n            <div class=\"col-xs-12 col-md-5\">\n
+        \               <p class=\"mt0 mb0 m-mb1\">\n                    &copy; Go
+        South Coast Ltd 2020 (registered in England & Wales 03949597)<br/>\n                    Registered
+        Office: 41-51 Grey Street, Newcastle Upon Tyne, NE1 6EE\n                </p>\n
+        \           </div>\n            <div class=\"col-xs-12 col-md-7\">\n                <ul
+        class=\"list-inline mb0 s-footer__links\">\n                    <li>\n                        <a
+        href=\"#\" data-action=\"reciteme\" title=\"Enable the Recite Me toolbar\">\n
+        \                           Recite Me\n                        </a>\n                    </li>\n
+        \                   <li>\n                        <a href=\"javascript: Cookiebot.renew()\">\n
+        \                           Cookie Preferences\n                        </a>\n
+        \                   </li>\n                                            <li><a
+        href=\"/open-data\" rel=\"nofollow\">Our data</a></li>\n                                            <li><a
+        href=\"/policies\" rel=\"nofollow\">All policies and statements</a></li>\n
+        \                                   </ul>\n            </div>\n        </div>\n
+        \   </div>\n</div>\n\n        \n        <script src=\"/build/runtime.e9dea5e6.js\"
+        integrity=\"sha384-/Zh0hTCgqMfXwZfeMIiueZzsKiHkvtqEOzKpZAuznIbgqg1DQpUQAwwNlO/9ToVH\"></script><script
+        src=\"/build/0.ba6ce985.js\" integrity=\"sha384-YQ0S/kqqYNu84le9LI+xmRwjvY3PK6TM4cPCdweLSP0gfYAmYjRpGdmzLbKMJr8R\"></script><script
+        src=\"/build/2.2449f073.js\" integrity=\"sha384-gEpvU+Fss84cpc9Ka0tU8yLP0YTH0/rTNwWcWGZy1CvTX4gPq6wztZvINF8ZpOZ1\"></script><script
+        src=\"/build/app.4300cf68.js\" integrity=\"sha384-XAq7GSIBPCLcgG2qCPQobiuavvgm7LE9ufRYjKk1mnIDNoBPFf5otFApMQomY9gh\"></script>\n\n
+        \               <script src=\"https://api.reciteme.com/asset/js?key=78f673de5c4fdcbe01dd71823a10a1bb4a50f28a\"></script>\n
+        \       <script>\n            Recite.load({\n                enableButton:
+        '[data-action=\"reciteme\"]'\n            });\n        </script>\n    <script
+        type=\"text/javascript\">window.NREUM||(NREUM={});NREUM.info={\"beacon\":\"bam.nr-data.net\",\"licenseKey\":\"b9a63eed5e\",\"applicationID\":\"143057620,164591128\",\"transactionName\":\"YlMAYUBZXktVVkcIXVsZI1ZGUV9WG3RBAkZcVTVQUEtZTFF3Rg9WWVNYdEJIdFdDW18OU1FFWFFdT15UW1RXI0dBQg1bQQ==\",\"queueTime\":0,\"applicationTime\":161,\"atts\":\"ThQDFwhDTUU=\",\"errorBeacon\":\"bam.nr-data.net\",\"agent\":\"\"}</script></body>\n</html>\n"
+    headers:
+      Cache-Control:
+      - no-cache, private
+      Content-Type:
+      - text/html; charset=UTF-8
+      Date:
+      - Fri, 01 May 2020 14:20:49 GMT
+      Server:
+      - nginx/1.10.3 (Ubuntu)
+      Set-Cookie:
+      - passenger-favourites-0=%7B%22device%22%3A%22d2bfdc46c9bb6b062b17298349a6233f%22%2C%22user%22%3Anull%2C%22lastSync%22%3Anull%2C%22favourites%22%3A%5B%5D%7D;
+        expires=Sat, 01-May-2021 14:20:49 GMT; Max-Age=31536000; path=/
+      - passenger-favourites-1=deleted; expires=Thu, 02-May-2019 14:20:48 GMT; Max-Age=0;
+        path=/; httponly
+      - lb_session_coookie=node-163450534|XqwwR|XqwwR; path=/
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      X-Served-By:
+      - www02.unilinkbus.co.uk
+      content-length:
+      - '27489'
+    status:
+      code: 200
+      message: OK
+version: 1
