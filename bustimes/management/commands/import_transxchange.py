@@ -416,7 +416,7 @@ class Command(BaseCommand):
                 if note_cache_key in self.notes:
                     note = self.notes[note_cache_key]
                 else:
-                    note, _ = Note.objects.get_or_create(code=note, text=journey.notes[note])
+                    note, _ = Note.objects.get_or_create(code=note or '', text=journey.notes[note])
                     self.notes[note_cache_key] = note
                 trip.notes.add(note)
 
