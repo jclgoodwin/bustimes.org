@@ -458,16 +458,18 @@ class Command(BaseCommand):
             else:  # not a TNDS source (slightly dodgy heuristic)
                 try:
                     services = Service.objects.filter(operator__in=operators, line_name__iexact=line_name)
-                    services = services.defer('geometry')
+                    services = services.select_related('source').defer('geometry')
                     try:
                         existing = services.get(current=True)
                     except Service.DoesNotExist:
                         existing = services.get()
-                    service_code = existing.service_code
-                    if not line_brand:
-                        line_brand = existing.line_brand
-                    if not txc_service.mode:
-                        txc_service.mode = existing.mode
+                    if existing.source == self.source or len(existing.source.name) <= 4:
+                        # from same source, or TNDS
+                        service_code = existing.service_code
+                        if not line_brand:
+                            line_brand = existing.line_brand
+                        if not txc_service.mode:
+                            txc_service.mode = existing.mode
 
                 except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                     operator_code = '-'.join(operator.id for operator in operators)
