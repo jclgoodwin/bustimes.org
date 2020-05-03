@@ -1,6 +1,6 @@
 from django.conf import settings
-from django.conf.urls import include, url, static
-from django.urls import path
+from django.conf.urls import static
+from django.urls import include, path, re_path
 from django.contrib import staticfiles
 from django.contrib.sitemaps.views import sitemap, index
 from bustimes.urls import urlpatterns as bustimes_views
@@ -26,15 +26,15 @@ urlpatterns = [
     path('stops.json', views.stops),
     path('regions/<pk>', views.RegionDetailView.as_view(), name='region_detail'),
     path('places/<int:pk>', views.PlaceDetailView.as_view(), name='place_detail'),
-    url(r'^(admin-)?areas/(?P<pk>\d+)', views.AdminAreaDetailView.as_view(), name='adminarea_detail'),
+    re_path(r'^(admin-)?areas/(?P<pk>\d+)', views.AdminAreaDetailView.as_view(), name='adminarea_detail'),
     path('districts/<int:pk>', views.DistrictDetailView.as_view(), name='district_detail'),
-    url(r'^localities/(?P<pk>[ENen][Ss]?[0-9]+)', views.LocalityDetailView.as_view()),
+    re_path(r'^localities/(?P<pk>[ENen][Ss]?[0-9]+)', views.LocalityDetailView.as_view()),
     path('localities/<slug>', views.LocalityDetailView.as_view(), name='locality_detail'),
     path('stops/<pk>.json', views.stop_json),
     path('stops/<pk>.xml', views.stop_xml),
     path('stops/<pk>.txt', views.stop_gtfs),
     path('stops/<pk>', views.StopPointDetailView.as_view(), name='stoppoint_detail'),
-    url(r'^operators/(?P<pk>[A-Z]+)$', views.OperatorDetailView.as_view()),
+    re_path(r'^operators/(?P<pk>[A-Z]+)$', views.OperatorDetailView.as_view()),
     path('operators/<slug>', views.OperatorDetailView.as_view(), name='operator_detail'),
     path('services/<pk>.json', views.service_map_data),
     path('services/<slug>', views.ServiceDetailView.as_view(), name='service_detail'),
@@ -50,8 +50,6 @@ if settings.DEBUG and hasattr(staticfiles, 'views'):
     import debug_toolbar
 
     urlpatterns += [
-        url(r'^__debug__/', include(debug_toolbar.urls))
-    ] + (
-        static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-        + static.static('/', document_root=settings.STATIC_ROOT)
-    )
+        path('__debug__', include(debug_toolbar.urls)),
+    ] + static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \
+      + static.static('/', document_root=settings.STATIC_ROOT)
