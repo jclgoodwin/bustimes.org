@@ -331,14 +331,23 @@ BOD_OPERATORS = (
         '574T': 'TBTN',
         'KN': 'KBUS',
     }),
-    # ('ANEA', 'NE', {
-    #     'ANEA': 'ANEA',
-    # }),
+    ('ANEA', 'NE', {
+        'ACYM': 'ACYM',
+        'AMID': 'AMID',
+        'AMNO': 'AMNO',
+        'AMSY': 'AMSY',
+        'ANEA': 'ANEA',
+        'ANUM': 'ANUM',
+        'ANWE': 'ANWE',
+        'ASES': 'ASES',
+        'WRAY': 'WRAY',
+        'YTIG': 'YTIG',
+    }),
 )
 FIRST_OPERATORS = [
-    ('FirstYork', 'Y', {
-        'FYOR': 'FYOR'
-    }),
+    # ('FirstYork', 'Y', {
+    #     'FYOR': 'FYOR'
+    # }),
     # ('FirstEasternCounties', 'EA', {
     #     'FECS': 'FECS'
     # })
