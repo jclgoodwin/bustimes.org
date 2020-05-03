@@ -33,5 +33,4 @@ script:
   - node_modules/.bin/sass-lint 'busstops/static/css/*' -v
   - node_modules/.bin/eslint 'busstops/static/js/*.js'
 after_success:
-  - coveralls
-  - git status
+  - bash <(curl -s https://codecov.io/bash)
