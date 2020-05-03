@@ -6,7 +6,7 @@ from ciso8601 import parse_datetime
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.utils import timezone
-from busstops.models import DataSource, Service
+from busstops.models import DataSource, Service, Operator
 from .import_gtfs import download_if_modified
 from .import_transxchange import Command as TransXChangeCommand
 from .import_passenger import handle_file
@@ -39,35 +39,45 @@ def bus_open_data(api_key):
         command.service_codes = set()
         command.calendar_cache = {}
 
-        response = session.get('https://data.bus-data.dft.gov.uk/api/v1/dataset/', params={
+        sources = []
+
+        url = 'https://data.bus-data.dft.gov.uk/api/v1/dataset/'
+        params = {
             'api_key': api_key,
             'noc': operator_id,
             'status': ['published', 'expiring']
-        })
+        }
 
-        sources = []
+        while url:
+            response = session.get(url, params=params)
+            print(response.url)
+            json = response.json()
 
-        for result in response.json()['results']:
-            filename = result['name']
-            url = result['url']
-            path = os.path.join(settings.DATA_DIR, filename)
+            for result in json['results']:
+                filename = result['name']
+                url = result['url']
+                path = os.path.join(settings.DATA_DIR, filename)
 
-            modified = parse_datetime(result['modified'])
+                modified = parse_datetime(result['modified'])
 
-            command.source, created = DataSource.objects.get_or_create({'name': filename}, url=url)
+                command.source, created = DataSource.objects.get_or_create({'name': filename}, url=url)
 
-            if command.source.datetime != modified:
-                print(response.url)
-                print(result)
-                command.source.datetime = modified
-                download_if_modified(path, url)
-                handle_file(command, filename)
+                if command.source.datetime != modified:
+                    print(response.url, filename)
+                    command.source.datetime = modified
+                    download_if_modified(path, url)
+                    handle_file(command, filename)
 
-                if not created:
-                    command.source.name = filename
-                command.source.save(update_fields=['name', 'datetime'])
+                    if not created:
+                        command.source.name = filename
+                    command.source.save(update_fields=['name', 'datetime'])
 
-            sources.append(command.source)
+                    print(Operator.objects.filter(service__source=command.source).distinct().values_list('id'))
+
+                sources.append(command.source)
+
+            url = json['next']
+            params = None
 
         clean_up(operators.values(), sources)
 
