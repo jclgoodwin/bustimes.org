@@ -203,7 +203,8 @@ def journey_patterns_match(trip_a, trip_b):
     if trip_a.journey_pattern:
         if trip_a.journey_pattern == trip_b.journey_pattern:
             if trip_a.destination_id == trip_b.destination_id:
-                return True
+                if trip_a.end - trip_a.start == trip_b.end - trip_b.start:
+                    return True
     return False
 
 
