@@ -486,6 +486,8 @@ class Command(BaseCommand):
             description = txc_service.description
             if description and ('timetable' in description.lower() or 'Database Refresh' in description):
                 description = None
+            elif self.source.name.startswith('Arriva'):
+                description = None
             if not description:
                 if not (txc_service.origin == 'Origin' and txc_service.destination == 'Destination'):
                     description = f'{txc_service.origin} - {txc_service.destination}'
