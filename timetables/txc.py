@@ -211,6 +211,15 @@ def get_deadrun_ref(deadrun_element):
         # ignore PositioningLinks
 
 
+class VehicleJourneyTimingLink:
+    def __init__(self, element):
+        self.id = element.attrib['id']
+        self.journeypatterntiminglinkref = element.find('txc:JourneyPatternTimingLinkRef', NS).text
+        self.run_time = element.find('txc:RunTime', NS)
+        if self.run_time is not None:
+            self.run_time = parse_duration(self.run_time.text)
+
+
 class VehicleJourney:
     """A journey represents a scheduled journey that happens at most once per
     day. A sort of "instance" of a JourneyPattern, made distinct by having its
@@ -259,6 +268,9 @@ class VehicleJourney:
         sequencenumber = element.get('SequenceNumber')
         self.sequencenumber = sequencenumber and int(sequencenumber)
 
+        timing_links = element.findall('txc:VehicleJourneyTimingLink', NS)
+        self.timing_links = [VehicleJourneyTimingLink(timing_link) for timing_link in timing_links]
+
         note_elements = element.findall('txc:Note', NS)
         if note_elements is not None:
             self.notes = {
@@ -286,13 +298,24 @@ class VehicleJourney:
 
         return False
 
+    def get_timinglinks(self):
+        pattern_links = self.journey_pattern.get_timinglinks()
+        if self.timing_links:
+            for link in self.timing_links:
+                pattern_link = next(pattern_links)
+                assert link.journeypatterntiminglinkref == pattern_link.id
+                yield pattern_link, link
+        else:
+            for link in pattern_links:
+                yield link, None
+
     def get_times(self):
         stopusage = None
         time = self.departure_time
         deadrun = self.start_deadrun is not None
         deadrun_next = False
 
-        for timinglink in self.journey_pattern.get_timinglinks():
+        for timinglink, journey_timinglink in self.get_timinglinks():
             if stopusage and stopusage.wait_time:
                 wait_time = stopusage.wait_time
             else:
@@ -318,8 +341,12 @@ class VehicleJourney:
                 else:
                     yield Cell(stopusage, time, time)
 
-            if timinglink.runtime:
-                time += timinglink.runtime
+            if journey_timinglink:
+                run_time = journey_timinglink.run_time
+            else:
+                run_time = timinglink.runtime
+            if run_time:
+                time += run_time
 
             if deadrun_next:
                 deadrun = True
