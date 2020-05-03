@@ -178,21 +178,19 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'OPTIONS': {
-            'debug': DEBUG,
-            'loaders': (
-                'django.template.loaders.app_directories.Loader' if DEBUG else (
-                    'django.template.loaders.cached.Loader', (
-                        'template_minifier.template.loaders.app_directories.Loader',
-                    )
-                ),
-            ),
-            'context_processors': (
+            'context_processors': [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-            )
+            ]
         }
     }
 ]
+if DEBUG:
+    TEMPLATES[0]['OPTIONS']['loaders'] = ['django.template.loaders.app_directories.Loader']
+else:
+    TEMPLATES[0]['OPTIONS']['loaders'] = [('django.template.loaders.cached.Loader', [
+        'template_minifier.template.loaders.app_directories.Loader',
+    ])]
 
 CACHES = {
     'default': {
