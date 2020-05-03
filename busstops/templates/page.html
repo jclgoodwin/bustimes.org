@@ -28,6 +28,7 @@
 {% endblock %}
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}">
+    <a href="#content" class="skip">Skip to main content</a>
 {% block cookies %}
     <p id="cookie-message">
         This site uses cookies.
@@ -54,6 +55,7 @@
 {% endblock %}
 <main>
     {% block breadcrumb %}{% include 'breadcrumb.html' %}{% endblock %}
+    <div id="content"></div>
     {% block content %}{% endblock %}
 </main>
 

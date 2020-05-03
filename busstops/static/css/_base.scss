@@ -11,6 +11,16 @@ body {
     margin-bottom: env(safe-area-inset-bottom);
 }
 
+.skip {
+    display: block;
+    height: 0;
+    overflow: hidden;
+    text-align: center;
+}
+
+.skip:focus {
+    height: auto;
+}
 
 header,
 main,
