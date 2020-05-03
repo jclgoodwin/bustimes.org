@@ -72,12 +72,12 @@ def bus_open_data(api_key):
                         command.source.name = filename
                     command.source.save(update_fields=['name', 'datetime'])
 
-                    print(Operator.objects.filter(service__source=command.source).distinct().values_list('id', flat=True))
-
                 sources.append(command.source)
 
             url = json['next']
             params = None
+
+        print(Operator.objects.filter(service__source__in=sources).distinct().values_list('id', flat=True))
 
         clean_up(operators.values(), sources)
 
