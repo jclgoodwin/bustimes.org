@@ -50,7 +50,6 @@ def bus_open_data(api_key):
 
         while url:
             response = session.get(url, params=params)
-            print(response.url)
             json = response.json()
 
             for result in json['results']:
@@ -77,7 +76,7 @@ def bus_open_data(api_key):
             url = json['next']
             params = None
 
-        print(Operator.objects.filter(service__source__in=sources).distinct().values_list('id', flat=True))
+        # print(Operator.objects.filter(service__source__in=sources).distinct().values_list('id', flat=True))
 
         clean_up(operators.values(), sources)
 
