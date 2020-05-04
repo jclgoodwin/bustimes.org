@@ -13,7 +13,7 @@ operator_refs = {
     'ANW': ('ANWE', 'AMSY', 'ACYM'),
     'AYK': ('WRAY',),
     'YTG': ('YTIG',),
-    'ATS': ('ARBB', 'GLAR'),
+    'ATS': ('ASES', 'ARBB', 'GLAR'),
     'ASC': ('ARHE', 'AKSS', 'AMTM'),
     'AMD': ('AMNO', 'AMID', 'AFCL'),
 }

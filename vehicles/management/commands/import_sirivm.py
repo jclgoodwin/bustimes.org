@@ -50,7 +50,7 @@ class Command(ImportLiveVehiclesCommand):
         'CSLB': ('CSLB', 'OXBC'),
         'RED': ('RRTR', 'RLNE', 'REDE'),
         'SCCM': ('SCCM', 'SCPB', 'SCHU', 'SCBD'),
-        'ATS': ('ARBB', 'GLAR'),
+        'ATS': ('ASES', 'ARBB', 'GLAR'),
         'ASC': ('ARHE', 'GLAR'),
         'NXB': ('TNXB', 'TCVW'),
     }

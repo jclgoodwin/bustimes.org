@@ -333,12 +333,17 @@ BOD_OPERATORS = (
     }),
     ('ANEA', 'NE', {
         'ACYM': 'ACYM',
+        'AFCL': 'AFCL',  # (code not used in data)
+        # 'AKSS': 'AKSS',  # no data yet
         'AMID': 'AMID',
         'AMNO': 'AMNO',
         'AMSY': 'AMSY',
+        # 'AMTM': 'AMTM',  # no data yet
         'ANEA': 'ANEA',
         'ANUM': 'ANUM',
         'ANWE': 'ANWE',
+        'ARBB': 'ARBB',  # (code not used in data)
+        # 'ARHE': 'ARHE',  # no data yet
         'ASES': 'ASES',
         'WRAY': 'WRAY',
         'YTIG': 'YTIG',

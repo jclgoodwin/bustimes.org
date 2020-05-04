@@ -228,6 +228,8 @@ CBBH:
     name: Centrebus (South)
 CBNL:
     name: Centrebus (North)
+ASES:
+    name: Arriva the Shires
 AMTM:
     name: Arriva Kent Thameside
 GPWS:
