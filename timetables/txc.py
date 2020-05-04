@@ -301,10 +301,17 @@ class VehicleJourney:
     def get_timinglinks(self):
         pattern_links = self.journey_pattern.get_timinglinks()
         if self.timing_links:
-            for link in self.timing_links:
-                pattern_link = next(pattern_links)
-                assert link.journeypatterntiminglinkref == pattern_link.id
-                yield pattern_link, link
+            timing_links = iter(self.timing_links)
+            journey_link = next(timing_links)
+            for link in pattern_links:
+                if link.id == journey_link.journeypatterntiminglinkref:
+                    yield link, journey_link
+                    try:
+                        journey_link = next(timing_links)
+                    except StopIteration:
+                        pass
+                else:
+                    yield link, None
         else:
             for link in pattern_links:
                 yield link, None
