@@ -350,10 +350,10 @@ BOD_OPERATORS = (
     }),
 )
 FIRST_OPERATORS = [
-    # ('FirstYork', 'Y', {
-    #     'FYOR': 'FYOR'
-    # }),
-    # ('FirstEasternCounties', 'EA', {
-    #     'FECS': 'FECS'
-    # })
+    ('FirstYork', 'Y', {
+        'FYOR': 'FYOR'
+    }),
+    ('FirstEasternCounties', 'EA', {
+        'FECS': 'FECS'
+    })
 ]
