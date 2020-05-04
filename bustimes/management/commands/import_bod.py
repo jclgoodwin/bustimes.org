@@ -6,7 +6,7 @@ from ciso8601 import parse_datetime
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.utils import timezone
-from busstops.models import DataSource, Service, Operator
+from busstops.models import DataSource, Service
 from .import_gtfs import download_if_modified
 from .import_transxchange import Command as TransXChangeCommand
 from .import_passenger import handle_file
@@ -75,8 +75,6 @@ def bus_open_data(api_key):
 
             url = json['next']
             params = None
-
-        # print(Operator.objects.filter(service__source__in=sources).distinct().values_list('id', flat=True))
 
         clean_up(operators.values(), sources)
 
