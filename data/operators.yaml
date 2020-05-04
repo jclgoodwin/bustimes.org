@@ -236,8 +236,9 @@ GPWS:
     name: Whites Coaches (Shetland)
 AMNO:
     name: Arriva Midlands North
-AFCL:
-    name: Arriva Fox County
+    url: https://www.arrivabus.co.uk/midlands/
+AMSY:
+    url: https://www.arrivabus.co.uk/north-west/
 ANEA:
     name: Arriva Durham County
 ANUM:
