@@ -456,6 +456,9 @@ class Command(BaseCommand):
                 if operators and all(operator.id in self.open_data_operators for operator in operators):
                     continue
             else:  # not a TNDS source (slightly dodgy heuristic)
+                operator_code = '-'.join(operator.id for operator in operators)
+                service_code = f'{self.source.id}-{operator_code}-{service_code}'
+
                 try:
                     services = Service.objects.filter(operator__in=operators, line_name__iexact=line_name)
                     services = services.select_related('source').defer('geometry')
@@ -470,10 +473,8 @@ class Command(BaseCommand):
                             line_brand = existing.line_brand
                         if not txc_service.mode:
                             txc_service.mode = existing.mode
-
                 except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-                    operator_code = '-'.join(operator.id for operator in operators)
-                    service_code = f'{self.source.id}-{operator_code}-{service_code}'
+                    pass
 
             defaults = {
                 'line_name': line_name,
