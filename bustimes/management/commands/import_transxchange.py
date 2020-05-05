@@ -145,6 +145,8 @@ class Command(BaseCommand):
             open_data_operators += operators.values()
         for _, _, _, operators in settings.PASSENGER_OPERATORS:
             open_data_operators += operators.values()
+        for _, _, operators in settings.FIRST_OPERATORS:
+            open_data_operators += operators.values()
         self.open_data_operators = set(open_data_operators)
         for archive_name in options['archives']:
             self.handle_archive(archive_name, options['files'])
