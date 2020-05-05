@@ -41,7 +41,7 @@ class Route(models.Model):
         return ' – '.join(part for part in (self.line_name, self.line_brand, self.description) if part)
 
     def get_absolute_url(self):
-        return reverse('route_xml', args=(self.source_id, self.code,))
+        return reverse('route_xml', args=(self.source_id, self.code.split('#')[0]))
 
 
 class Calendar(models.Model):
