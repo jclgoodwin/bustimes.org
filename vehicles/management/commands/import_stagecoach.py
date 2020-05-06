@@ -143,20 +143,29 @@ class Command(ImportLiveVehiclesCommand):
                 'SPRI': 'spring',
                 'PRO': 'pronto',
                 'SA': 'The Sherwood Arrow',
-                'Yo-Y': 'YOYO',
+                'YO-Y': 'YOYO',
                 'TRIA': 'Triangle',
             }
             if service in alternatives:
                 service = alternatives[service]
             services = Service.objects.filter(current=True, operator__name__startswith='Stagecoach ')
-            services = services.filter(Q(line_name__iexact=service) | Q(service_code__icontains=f'-{service}-'))
             services = services.filter(stops__locality__stoppoint=item['or']).distinct()
+            latlong = get_latlong(item)
             try:
-                journey.service = self.get_service(services, get_latlong(item))
-                if not journey.service:
-                    print(service)
-            except Service.DoesNotExist as e:
-                print(e, item['or'], service)
+                journey.service = self.get_service(services.filter(line_name__iexact=service), latlong)
+                if journey.service:
+                    return journey
+            except Service.DoesNotExist:
+                pass
+            try:
+                journey.service = self.get_service(services.filter(service_code__icontains=f'-{service}-'), latlong)
+                if journey.service:
+                    return journey
+            except Service.DoesNotExist:
+                pass
+
+            if not journey.service:
+                print(service, item['or'], vehicle.get_absolute_url())
 
         return journey
 
