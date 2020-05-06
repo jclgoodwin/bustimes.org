@@ -27,7 +27,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_boxes(self):
         geojson = {"type": "FeatureCollection", "features": []}
         i = 0
-        operators = Operator.objects.filter(name__startswith='Stagecoach', service__current=True, vehicle_mode='bus')
+        operators = Operator.objects.filter(parent='Stagecoach', service__current=True, vehicle_mode='bus')
         operators = operators.exclude(service__servicecode__scheme__endswith=' SIRI',
                                       service__tracking=True)
         services = Service.objects.filter(operator__in=operators)
@@ -105,13 +105,10 @@ class Command(ImportLiveVehiclesCommand):
                 }
             if vehicle_code.isdigit():
                 defaults['fleet_number'] = vehicle_code
-            operator_condition = Q(operator__name__startswith='Stagecoach ')
             if operator:
                 defaults['operator'] = operator
-                if not operator.name.startswith('Stagecoach '):
-                    operator_condition |= Q(operator=operator)  # Scottish Citylink
-                vehicle, created = self.vehicles.filter(operator_condition).get_or_create(defaults, code=vehicle_code)
-
+                vehicles = self.vehicles.filter(operator__parent='Stagecoach')
+                vehicle, created = vehicles.get_or_create(defaults, code=vehicle_code)
                 self.vehicles_ids[vehicle_code] = vehicle.id
             else:
                 return None, None
@@ -148,7 +145,7 @@ class Command(ImportLiveVehiclesCommand):
             }
             if service in alternatives:
                 service = alternatives[service]
-            services = Service.objects.filter(current=True, operator__name__startswith='Stagecoach ')
+            services = Service.objects.filter(current=True, operator__parent='Stagecoach')
             services = services.filter(stops__locality__stoppoint=item['or']).distinct()
             latlong = get_latlong(item)
             try:

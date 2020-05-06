@@ -16,7 +16,7 @@ class StagecoachTest(TestCase):
         cls.command.source = source
 
         r = Region.objects.create(pk='SE')
-        o = Operator.objects.create(pk='SCOX', name='Stagecoach Oxford', vehicle_mode='bus', region=r)
+        o = Operator.objects.create(pk='SCOX', name='Stagecoach Oxford', parent='Stagecoach', vehicle_mode='bus', region=r)
         s = Service.objects.create(line_name='Oxford Tube', date='2019-01-01',
                                    geometry='MULTILINESTRING((-0.1475818977 51.4928233539,-0.1460401487 51.496737716))')
         s.operator.add(o)
@@ -29,7 +29,7 @@ class StagecoachTest(TestCase):
         self.assertEqual(len(items), 12)
         self.assertTrue(sleep.called)
 
-        with self.assertNumQueries(20):
+        with self.assertNumQueries(21):
             with self.assertLogs(level='ERROR'):
                 for item in items:
                     self.command.handle_item(item, self.command.source.datetime)
