@@ -443,7 +443,7 @@ class Command(BaseCommand):
             # if service.mode == 'underground':
             #     continue
 
-            if filename.startswith('First'):
+            if self.source.name.startswith('First'):
                 print(filename, txc_service.operating_period.end)
                 if txc_service.operating_period.end == date(2020, 5, 2):
                     txc_service.operating_period.end = None
