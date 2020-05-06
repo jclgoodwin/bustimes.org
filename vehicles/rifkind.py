@@ -53,26 +53,9 @@ def handle_item(source, item):
     if origin_departure_time < source.datetime:
         defaults['destination'] = item['journey_destination']
 
-    if service_name in {'two', 'mickleover', 'allestree', 'comet', 'harlequin'}:
-        service_name = 'the ' + service_name
-        operator = 'TBTN'
-    elif service_name == 'calverton connection':
-        service_name = 'the calverton'
-        operator = 'TBTN'
-    elif service_name == 'royal derby':
-        service_name = 'the royal'
-        operator = 'TBTN'
-    elif service_name == 'ECO':
+    if service_name == 'ECO':
         service_name = 'Ecolink'
         operator = 'NOCT'
-    elif service_name == 'skylink Derby':
-        service_name = 'Skylink Leicester Derby'
-        operator = 'KBUS'
-    elif service_name == 'skylink express':
-        service_name = 'Skylink Clifton'
-        operator = 'TBTN'
-    elif service_name == 'pronto':
-        operator = 'TBTN'
 
     services = Service.objects.filter(current=True)
     if operator == 'KBUS' or operator == 'TBTN':
