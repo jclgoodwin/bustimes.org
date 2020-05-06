@@ -12,7 +12,10 @@ from ...models import Route, Trip, Calendar, CalendarDate
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
 
 
-@override_settings(TNDS_DIR=FIXTURES_DIR)
+@override_settings(
+    TNDS_DIR=FIXTURES_DIR,
+    FIRST_OPERATORS=()
+)
 class ImportTransXChangeTest(TestCase):
     @classmethod
     def setUpTestData(cls):
