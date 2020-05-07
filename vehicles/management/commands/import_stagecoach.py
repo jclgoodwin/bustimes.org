@@ -3,7 +3,7 @@ from time import sleep
 from datetime import datetime
 from requests.exceptions import RequestException
 from django.contrib.gis.geos import Point, Polygon
-from django.contrib.gis.db.models import Extent, Q
+from django.contrib.gis.db.models import Extent
 from django.utils import timezone
 from busstops.models import Operator, Service
 from ...models import VehicleLocation, VehicleJourney
