@@ -237,19 +237,25 @@ class ChangeFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         return (
-            ('reg', 'reg'),
             ('fleet_number', 'fleet number'),
+            ('reg', 'reg'),
+            ('vehicle_type', 'type'),
             ('colours', 'colours'),
             ('branding', 'branding'),
             ('name', 'name'),
             ('notes', 'notes'),
+            ('changes__Depot', 'depot'),
+            ('changes__Previous reg', 'previous reg'),
         )
 
     def queryset(self, request, queryset):
-        if self.value():
-            if self.value() == 'colours':
+        value = self.value()
+        if value:
+            if value == 'colours':
                 return queryset.filter(~Q(colours='') | Q(livery__isnull=False))
-            return queryset.filter(~Q(**{self.value(): ''}))
+            if value.startswith('changes__'):
+                return queryset.filter(**{f'{value}__isnull': False})
+            return queryset.filter(~Q(**{value: ''}))
         return queryset
 
 
