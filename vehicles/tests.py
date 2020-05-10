@@ -263,12 +263,14 @@ class VehiclesTests(TestCase):
 
         self.assertEqual(0, VehicleEdit.objects.count())
 
-        with self.assertNumQueries(9):
+        self.assertNotContains(response, '/operators/bova-and-over')
+
+        with self.assertNumQueries(10):
             response = self.client.post(url, {
                 'fleet_number': '50',
                 'reg': '',
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
-                'operator': self.lynx.id,
+                'operator': self.bova.id,
                 'colours': self.vehicle_2.livery_id,
                 'notes': 'Ex Ipswich Buses',
                 'depot': 'Holt',
@@ -282,6 +284,9 @@ class VehiclesTests(TestCase):
             response = self.client.get(url)
 
         self.assertContains(response, 'already')
+
+        # check vehicle operator has been changed
+        self.assertContains(response, '/operators/bova-and-over')
 
         edit = VehicleEdit.objects.get()
         self.assertEqual(edit.get_changes(), {'Depot': 'Holt', 'branding': 'Coastliner', 'name': 'Luther Blisset',

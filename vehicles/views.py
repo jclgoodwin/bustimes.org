@@ -434,7 +434,7 @@ def edit_vehicle(request, vehicle_id):
             data = {key: form.cleaned_data[key] for key in form.changed_data}
             if 'operator' in data:
                 vehicle.operator = data['operator']
-                vehicle.save()
+                vehicle.save(update_fields=['operator'])
                 del data['operator']
             if 'features' in data and not data['features']:
                 vehicle.features.clear()
