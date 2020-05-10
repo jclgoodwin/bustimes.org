@@ -59,7 +59,8 @@ class Command(ImportLiveVehiclesCommand):
             defaults['fleet_number'] = fleet_number
 
         if operator == 'PC':
-            return self.vehicles.get_or_create(defaults, code=fleet_number, operator_id='PLYC')
+            defaults['operator_id'] = 'PLYC'
+            return self.vehicles.get_or_create(defaults, code=fleet_number, operator__parent='Plymouth Citybus')
         return self.vehicles.get_or_create(defaults, code=vehicle)
 
     def get_points(self):
