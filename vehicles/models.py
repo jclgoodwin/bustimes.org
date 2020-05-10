@@ -259,6 +259,12 @@ class Vehicle(models.Model):
             cache.set(f'{self.latest_location.journey.service_id}:vehicles_last_modified', timezone.now())
 
 
+class VehicleEditFeature(models.Model):
+    feature = models.ForeignKey(VehicleFeature, models.CASCADE)
+    edit = models.ForeignKey('VehicleEdit', models.CASCADE)
+    add = models.BooleanField(default=True)
+
+
 class VehicleEdit(models.Model):
     vehicle = models.ForeignKey(Vehicle, models.CASCADE)
     fleet_number = models.CharField(max_length=24, blank=True)
@@ -269,7 +275,7 @@ class VehicleEdit(models.Model):
     name = models.CharField(max_length=255, blank=True)
     branding = models.CharField(max_length=255, blank=True)
     notes = models.CharField(max_length=255, blank=True)
-    features = models.ManyToManyField(VehicleFeature, blank=True)
+    features = models.ManyToManyField(VehicleFeature, blank=True, through=VehicleEditFeature)
     withdrawn = models.BooleanField(null=True)
     changes = JSONField(null=True, blank=True)
     url = models.URLField(blank=True, max_length=255)
@@ -333,6 +339,7 @@ class VehicleJourney(models.Model):
     code = models.CharField(max_length=255, blank=True)
     destination = models.CharField(max_length=255, blank=True)
     direction = models.CharField(max_length=8, blank=True)
+    text = models.TextField()
 
     def get_absolute_url(self):
         return reverse('journey_detail', args=(self.id,))
