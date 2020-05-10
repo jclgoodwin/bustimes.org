@@ -4,7 +4,7 @@ from django.conf import settings
 from django.views.generic.detail import DetailView
 from django.http import FileResponse, Http404
 from django.utils import timezone
-from busstops.views import Service
+from busstops.models import Service
 from vehicles.views import siri_one_shot
 from .models import Route
 
@@ -30,18 +30,21 @@ class ServiceDebugView(DetailView):
 
 
 def route_xml(request, source, code):
-    try:
-        Route.objects.get(source=source, code__startswith=code)
-    except Route.MultipleObjectsReturned:
-        pass
-    except Route.DoesNotExist:
+    route = Route.objects.filter(source=source, code__startswith=code).select_related('source').first()
+    if not route:
         raise Http404
-    path = os.path.join(settings.TNDS_DIR, f'{source}.zip')
-    try:
+
+    if 'tnds' in route.source.url:
+        path = os.path.join(settings.TNDS_DIR, f'{route.source}.zip')
         with zipfile.ZipFile(path) as archive:
             return FileResponse(archive.open(code), content_type='text/xml')
-    except FileNotFoundError:
+
+    if '/' in code:
         path = code.split('/')[0]
         with zipfile.ZipFile(os.path.join(settings.DATA_DIR, path)) as archive:
             code = code[len(path) + 1:]
             return FileResponse(archive.open(code), content_type='text/xml')
+
+    path = os.path.join(settings.DATA_DIR, code)
+    print(path)
+    return FileResponse(open(path, 'rb'), content_type='text/xml')
