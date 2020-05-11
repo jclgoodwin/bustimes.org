@@ -120,7 +120,7 @@ def features(edit):
         elif feature.feature in vehicle.features.all():
             features.append(f'<del>{feature.feature}</del>')
     for feature in vehicle.features.all():
-        if not any (feature.id == edit_feature.feature_id for edit_feature in changed_features):
+        if not any(feature.id == edit_feature.feature_id for edit_feature in changed_features):
             features.append(str(feature))
 
     return mark_safe(', '.join(features))
