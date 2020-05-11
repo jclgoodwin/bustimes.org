@@ -190,6 +190,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '127.0.0.1 (2)')
         self.assertContains(response, 'Wi-Fi')
         self.assertNotContains(response, '<del>Wi-Fi</del>')
+        self.assertNotContains(response, 'USB')
 
         # edit type, livery and name with bad URL
         with self.assertNumQueries(13):
@@ -208,11 +209,12 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'That URL does')
 
         # edit type, livery, name and feature
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(14):
             response = self.client.post(url, {
                 'fleet_number': '1',
                 'reg': 'FD54JYA',
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
+                'features': self.usb.id,
                 'operator': self.lynx.id,
                 'colours': self.vehicle_2.livery_id,
                 'notes': 'Trent Barton',
@@ -223,6 +225,11 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Thank you')
         edit = VehicleEdit.objects.last()
         self.assertEqual(edit.url, 'https://bustimes.org')
+        self.assertEqual(edit.get_changes(), {
+            'name': 'Colin',
+            'vehicle_type': 'Optare Spectra',
+            'features': [self.usb]
+        })
 
         response = self.client.get('/admin/vehicles/vehicleedit/')
         self.assertContains(response, '<del>Wi-Fi</del>')
@@ -244,18 +251,29 @@ class VehiclesTests(TestCase):
 
         self.assertEqual(3, VehicleEdit.objects.filter(approved=None).count())
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             admin.apply_edits(VehicleEdit.objects.select_related('vehicle'))
         self.assertEqual(0, VehicleEdit.objects.filter(approved=None).count())
         vehicle = Vehicle.objects.get(notes='Trent Barton')
         self.assertEqual(vehicle.reg, 'K292JVF')
         self.assertEqual(vehicle.name, 'Colin')
-        self.assertFalse(vehicle.features.all())
+        self.assertEqual(self.usb, vehicle.features.get())
         self.assertEqual(str(vehicle.vehicle_type), 'Optare Spectra')
         self.assertEqual(vehicle.fleet_number, 2)
 
-        response = self.client.get('/admin/vehicles/vehicleedit/?username=1')
+        with self.assertNumQueries(13):
+            response = self.client.get('/admin/vehicles/vehicleedit/?username=1')
         self.assertNotContains(response, 'Lynx')
+        self.assertEqual(3, response.context_data['cl'].result_count)
+
+        response = self.client.get('/admin/vehicles/vehicleedit/?change=colours')
+        self.assertEqual(2, response.context_data['cl'].result_count)
+
+        response = self.client.get('/admin/vehicles/vehicleedit/?change=changes__Depot')
+        self.assertEqual(0, response.context_data['cl'].result_count)
+
+        response = self.client.get('/admin/vehicles/vehicleedit/?change=reg')
+        self.assertEqual(1, response.context_data['cl'].result_count)
 
     def test_vehicle_edit_2(self):
         url = self.vehicle_2.get_absolute_url() + '/edit'

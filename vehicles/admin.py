@@ -314,7 +314,8 @@ class VehicleEditAdmin(admin.ModelAdmin):
 
     def get_queryset(self, _):
         edit_count = Count('vehicle__vehicleedit', filter=Q(vehicle__vehicleedit__approved=None))
-        return VehicleEdit.objects.annotate(edit_count=edit_count).prefetch_related('features', 'vehicle__features')
+        edits = VehicleEdit.objects.annotate(edit_count=edit_count)
+        return edits.prefetch_related('vehicleeditfeature_set__feature', 'vehicle__features')
 
     def apply_edits(self, request, queryset):
         apply_edits(queryset)
