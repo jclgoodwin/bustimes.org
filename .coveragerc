@@ -6,6 +6,7 @@ source =
     busstops
     bustimes
     departures
+    disruptions
     timetables
     vehicles
     vosa

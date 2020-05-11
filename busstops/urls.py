@@ -4,6 +4,7 @@ from django.urls import include, path, re_path
 from django.contrib import staticfiles
 from django.contrib.sitemaps.views import sitemap, index
 from bustimes.urls import urlpatterns as bustimes_views
+from disruptions.urls import urlpatterns as disruptions_urls
 from vehicles.urls import urlpatterns as vehicles_urls
 from vosa.urls import urlpatterns as vosa_urls
 from . import views
@@ -43,7 +44,7 @@ urlpatterns = [
          name='django.contrib.sitemaps.views.sitemap'),
     path('search', views.search),
     path('journey', views.journey),
-] + bustimes_views + vehicles_urls + vosa_urls
+] + bustimes_views + disruptions_urls + vehicles_urls + vosa_urls
 
 
 if settings.DEBUG and hasattr(staticfiles, 'views'):
