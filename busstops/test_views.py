@@ -199,24 +199,25 @@ class ViewsTests(TestCase):
         self.assertContains(response, 'Melton Constable')
         self.assertContains(response, '/localities/melton-constable')
 
-        # CustomSearchForm.is_valid
         response = self.client.get('/search')
         self.assertNotContains(response, 'found for')
 
-        # CustomSearchForm.cleaned_data.get
-        response = self.client.get('/search?q=')
+        response = self.client.get('/search?q=+')
         self.assertNotContains(response, 'found for')
 
     def test_postcode(self):
         with vcr.use_cassette(os.path.join(DIR, '..', 'data', 'vcr', 'postcode.yaml')):
             # postcode sufficiently near to fake locality
-            response = self.client.get('/search?q=w1a 1aa')
+            with self.assertNumQueries(2):
+                response = self.client.get('/search?q=w1a 1aa')
+
             self.assertContains(response, 'Melton Constable')
             self.assertContains(response, '/localities/melton-constable')
             self.assertNotContains(response, 'results found for')
 
             # postcode looks valid but doesn't exist
-            response = self.client.get('/search?q=w1a 1aj')
+            with self.assertNumQueries(3):
+                response = self.client.get('/search?q=w1a 1aj')
             self.assertContains(response, '0 places')
 
     def test_admin_area(self):

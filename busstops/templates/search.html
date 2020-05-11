@@ -14,60 +14,57 @@
 
 </form>
 
-{% if query %}
-    {% with postcode=form.get_postcode %}
-        {% if postcode %}
-            <h2>Postcode {{ query.upper }}</h2>
+{% if form.is_valid %}
+    {% if postcode %}
+        <h2>Postcode {{ query.upper }}</h2>
+        <ul>
+            {% for locality in postcode %}
+                <li><a href="{{ locality.get_absolute_url }}">{{ locality.get_qualified_name }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+
+        <h2>{{ localities.paginator.count }} place{{ localities.paginator.count|pluralize }}</h2>
+
+        {% if localities %}
             <ul>
-                {% for locality in postcode %}
-                    <li><a href="{{ locality.get_absolute_url }}">{{ locality.get_qualified_name }}</a></li>
+                {% for result in localities %}
+                    <li><a href="{{ result.get_absolute_url }}">{{ result.get_qualified_name }}</a></li>
                 {% endfor %}
             </ul>
-        {% else %}
 
-            <h2>{{ localities.paginator.count }} place{{ localities.paginator.count|pluralize }}</h2>
-
-            {% if localities %}
-                <ul>
-                    {% for result in localities %}
-                        <li><a href="{{ result.get_absolute_url }}">{{ result.get_qualified_name }}</a></li>
-                    {% endfor %}
-                </ul>
-
-                {% include 'pagination.html' with page=localities %}
-            {% endif %}
-
-            <h2>{{ operators.paginator.count }} operator{{ operators.paginator.count|pluralize }}</h2>
-
-            {% if operators %}
-                <ul>
-                    {% for result in operators %}
-                        <li><a href="{{ result.get_absolute_url }}">{{ result }}</a></li>
-                    {% endfor %}
-                </ul>
-
-                {% include 'pagination.html' with page=operators %}
-            {% endif %}
-
-            <h2>{{ services.paginator.count }} service{{ services.paginator.count|pluralize }}</h2>
-
-            {% if services %}
-                <ul class="has-smalls">
-                    {% for result in services %}
-                        <li>
-                            <a href="{{ result.get_absolute_url }}">
-                                <span>{% firstof result.get_qualified_name result %}</span>
-                                {% if result.operator %}<small>{{ result.operator.all|join:", " }}</small>{% endif %}
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-
-                {% include 'pagination.html' with page=services %}
-            {% endif %}
-
+            {% include 'pagination.html' with page=localities %}
         {% endif %}
-    {% endwith %}
+
+        <h2>{{ operators.paginator.count }} operator{{ operators.paginator.count|pluralize }}</h2>
+
+        {% if operators %}
+            <ul>
+                {% for result in operators %}
+                    <li><a href="{{ result.get_absolute_url }}">{{ result }}</a></li>
+                {% endfor %}
+            </ul>
+
+            {% include 'pagination.html' with page=operators %}
+        {% endif %}
+
+        <h2>{{ services.paginator.count }} service{{ services.paginator.count|pluralize }}</h2>
+
+        {% if services %}
+            <ul class="has-smalls">
+                {% for result in services %}
+                    <li>
+                        <a href="{{ result.get_absolute_url }}">
+                            <span>{% firstof result.get_qualified_name result %}</span>
+                            {% if result.operator %}<small>{{ result.operator.all|join:", " }}</small>{% endif %}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            {% include 'pagination.html' with page=services %}
+        {% endif %}
+    {% endif %}
 {% endif %}
 
 

@@ -2,8 +2,12 @@
 """View definitions."""
 import json
 import ciso8601
+import requests
+from ukpostcodeutils import validation
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.postgres.search import SearchQuery, SearchRank
+from django.contrib.gis.geos import Point, Polygon
+from django.contrib.gis.db.models.functions import Distance
 from django.db.models import Q, Prefetch, F
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.utils import timezone
@@ -603,33 +607,50 @@ class ServiceSitemap(Sitemap):
 
 
 def search(request):
-    query_text = request.GET.get('q')
-
     form = SearchForm(request.GET)
 
     context = {
         'form': form,
-        'query': query_text or ''
     }
 
     if form.is_valid():
-        query = SearchQuery(query_text)
+        query_text = form.cleaned_data['q']
+        context['query'] = query_text
 
-        rank = SearchRank(F('search_vector'), query)
+        postcode = ''.join(query_text.split()).upper()
+        if validation.is_valid_postcode(postcode):
+            res = requests.get('https://api.postcodes.io/postcodes/' + postcode, timeout=1)
+            if res.ok:
+                result = res.json()['result']
+                point = Point(result['longitude'], result['latitude'], srid=4326)
+                bbox = Polygon.from_bbox((point.x - .05, point.y - .05, point.x + .05, point.y + .05))
 
-        localities = Locality.objects.filter()
-        operators = Operator.objects.filter(service__current=True).distinct()
-        services = Service.objects.filter(current=True)
+                context['postcode'] = Locality.objects.filter(
+                    latlong__within=bbox
+                ).filter(
+                    Q(stoppoint__active=True) | Q(locality__stoppoint__active=True)
+                ).distinct().annotate(
+                    distance=Distance('latlong', point)
+                ).order_by('distance').defer('latlong')[:2]
 
-        localities = localities.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
-        operators = operators.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
-        services = services.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+        if 'postcode' not in context:
+            query = SearchQuery(query_text)
 
-        services = services.prefetch_related('operator')
+            rank = SearchRank(F('search_vector'), query)
 
-        context['localities'] = Paginator(localities, 20).get_page(request.GET.get('page'))
-        context['operators'] = Paginator(operators, 20).get_page(request.GET.get('page'))
-        context['services'] = Paginator(services, 20).get_page(request.GET.get('page'))
+            localities = Locality.objects.filter()
+            operators = Operator.objects.filter(service__current=True).distinct()
+            services = Service.objects.filter(current=True)
+
+            localities = localities.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+            operators = operators.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+            services = services.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+
+            services = services.prefetch_related('operator')
+
+            context['localities'] = Paginator(localities, 20).get_page(request.GET.get('page'))
+            context['operators'] = Paginator(operators, 20).get_page(request.GET.get('page'))
+            context['services'] = Paginator(services, 20).get_page(request.GET.get('page'))
 
     return render(request, 'search.html', context)
 
