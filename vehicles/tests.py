@@ -261,7 +261,7 @@ class VehiclesTests(TestCase):
         self.assertEqual(str(vehicle.vehicle_type), 'Optare Spectra')
         self.assertEqual(vehicle.fleet_number, 2)
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(10):
             response = self.client.get('/admin/vehicles/vehicleedit/?username=1')
         self.assertNotContains(response, 'Lynx')
         self.assertEqual(3, response.context_data['cl'].result_count)

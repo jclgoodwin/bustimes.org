@@ -110,7 +110,8 @@ def notes(obj):
 def features(edit):
     features = []
     vehicle = edit.vehicle
-    for feature in edit.vehicleeditfeature_set.all():
+    changed_features = edit.vehicleeditfeature_set.all()
+    for feature in changed_features:
         if feature.add:
             if feature.feature in vehicle.features.all():
                 features.append(str(feature.feature))
@@ -119,7 +120,7 @@ def features(edit):
         elif feature.feature in vehicle.features.all():
             features.append(f'<del>{feature.feature}</del>')
     for feature in vehicle.features.all():
-        if feature not in edit.features.all():
+        if not any (feature.id == edit_feature.feature_id for edit_feature in changed_features):
             features.append(str(feature))
 
     return mark_safe(', '.join(features))
