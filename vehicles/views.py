@@ -17,7 +17,7 @@ from multidb.pinning import use_primary_db
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service, ServiceCode, SIRISource, DataSource
 from bustimes.models import get_calendars, Trip
-from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit
+from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, VehicleEditFeature
 from .forms import EditVehiclesForm, EditVehicleForm
 from .management.commands import import_sirivm
 from .rifkind import rifkind
@@ -350,7 +350,8 @@ def service_vehicles_history(request, slug=None, operator=None, route=None):
 
 class VehicleDetailView(DetailView):
     model = Vehicle
-    queryset = model.objects.select_related('operator', 'operator__region', 'vehicle_type', 'livery')
+    queryset = model.objects.select_related('operator', 'operator__region',
+                                            'vehicle_type', 'livery').prefetch_related('features')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -436,15 +437,20 @@ def edit_vehicle(request, vehicle_id):
                 vehicle.operator = data['operator']
                 vehicle.save(update_fields=['operator'])
                 del data['operator']
-            if 'features' in data and not data['features']:
-                vehicle.features.clear()
-                del data['features']
             if data:
                 edit = get_vehicle_edit(vehicle, data)
                 edit.username = form.cleaned_data.get('user') or request.META['REMOTE_ADDR']
                 edit.save()
                 if 'features' in data:
-                    edit.features.set(data['features'])
+                    for feature in vehicle.features.all():
+                        if feature not in data['features']:
+                            VehicleEditFeature.objects.create(
+                                edit=edit,
+                                feature=feature,
+                                add=False
+                            )
+                    for feature in data['features']:
+                        edit.features.add(feature)
             submitted = True
     else:
         form = EditVehicleForm(initial=initial, operator=vehicle.operator, vehicle=vehicle)

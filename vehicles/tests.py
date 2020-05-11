@@ -18,6 +18,9 @@ class VehiclesTests(TestCase):
 
         ea = Region.objects.create(id='EA', name='East Anglia')
 
+        cls.wifi = VehicleFeature.objects.create(name='Wi-Fi')
+        cls.usb = VehicleFeature.objects.create(name='USB')
+
         cls.bova = Operator.objects.create(region=ea, name='Bova and Over', id='BOVA', slug='bova-and-over',
                                            parent='Madrigal Electromotive')
         cls.lynx = Operator.objects.create(region=ea, name='Lynx', id='LYNX', slug='lynx',
@@ -43,6 +46,8 @@ class VehiclesTests(TestCase):
                                                   journey=journey, current=True)
         cls.vehicle_1.latest_location = location
         cls.vehicle_1.save()
+
+        cls.vehicle_1.features.set([cls.wifi])
 
         cls.user = User.objects.create(username='josh', is_staff=True, is_superuser=True)
 
@@ -94,9 +99,6 @@ class VehiclesTests(TestCase):
             response = self.client.get('/journeys/1.json')
         self.assertEqual([], response.json())
 
-    def test_feature(self):
-        self.assertEqual('Wi-Fi', str(VehicleFeature(name='Wi-Fi')))
-
     def test_livery(self):
         livery = Livery(name='Go-Coach')
         self.assertEqual('Go-Coach', str(livery))
@@ -138,11 +140,12 @@ class VehiclesTests(TestCase):
         self.assertNotContains(response, 'already')
 
         # edit nothing
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             response = self.client.post(url, {
                 'fleet_number': '1',
                 'reg': 'FD54JYA',
                 'vehicle_type': self.vehicle_1.vehicle_type_id,
+                'features': self.wifi.id,
                 'operator': self.lynx.id,
                 'colours': '#FF0000',
                 'notes': 'Trent Barton',
@@ -151,11 +154,12 @@ class VehiclesTests(TestCase):
         self.assertNotContains(response, 'already')
 
         # edit fleet number
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             response = self.client.post(url, {
                 'fleet_number': '2',
                 'reg': 'FD54JYA',
                 'vehicle_type': self.vehicle_1.vehicle_type_id,
+                'features': self.wifi.id,
                 'operator': self.lynx.id,
                 'colours': '#FF0000',
                 'notes': 'Trent Barton',
@@ -165,14 +169,15 @@ class VehiclesTests(TestCase):
 
         self.assertEqual(1, VehicleEdit.objects.filter(approved=None).count())
 
-        # edit reg
-        with self.assertNumQueries(9):
+        # edit reg, colour
+        with self.assertNumQueries(10):
             response = self.client.post(url, {
                 'fleet_number': '1',
                 'reg': 'K292JVF',
                 'vehicle_type': self.vehicle_1.vehicle_type_id,
+                'features': self.wifi.id,
                 'operator': self.lynx.id,
-                'colours': '#FF0000',
+                'colours': 'Other',
                 'notes': 'Trent Barton',
             })
         self.assertTrue(response.context['form'].has_changed())
@@ -183,13 +188,16 @@ class VehiclesTests(TestCase):
         response = self.client.get('/admin/vehicles/vehicleedit/')
         self.assertContains(response, 'Lynx (2)')
         self.assertContains(response, '127.0.0.1 (2)')
+        self.assertContains(response, 'Wi-Fi')
+        self.assertNotContains(response, '<del>Wi-Fi</del>')
 
         # edit type, livery and name with bad URL
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             response = self.client.post(url, {
                 'fleet_number': '1',
                 'reg': 'FD54JYA',
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
+                'features': self.wifi.id,
                 'operator': self.lynx.id,
                 'colours': self.vehicle_2.livery_id,
                 'notes': 'Trent Barton',
@@ -199,8 +207,8 @@ class VehiclesTests(TestCase):
         self.assertTrue(response.context['form'].has_changed())
         self.assertContains(response, 'That URL does')
 
-        # edit type, livery and name
-        with self.assertNumQueries(9):
+        # edit type, livery, name and feature
+        with self.assertNumQueries(11):
             response = self.client.post(url, {
                 'fleet_number': '1',
                 'reg': 'FD54JYA',
@@ -216,12 +224,16 @@ class VehiclesTests(TestCase):
         edit = VehicleEdit.objects.last()
         self.assertEqual(edit.url, 'https://bustimes.org')
 
+        response = self.client.get('/admin/vehicles/vehicleedit/')
+        self.assertContains(response, '<del>Wi-Fi</del>')
+
         # should not create an edit
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             response = self.client.post(url, {
                 'fleet_number': '',
                 'reg': 'FD54JYA',
                 'vehicle_type': self.vehicle_1.vehicle_type_id,
+                'features': self.wifi.id,
                 'operator': self.lynx.id,
                 'colours': '#FFFF00',
                 'notes': 'Trent Barton',
@@ -232,12 +244,13 @@ class VehiclesTests(TestCase):
 
         self.assertEqual(3, VehicleEdit.objects.filter(approved=None).count())
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(12):
             admin.apply_edits(VehicleEdit.objects.select_related('vehicle'))
         self.assertEqual(0, VehicleEdit.objects.filter(approved=None).count())
         vehicle = Vehicle.objects.get(notes='Trent Barton')
         self.assertEqual(vehicle.reg, 'K292JVF')
         self.assertEqual(vehicle.name, 'Colin')
+        self.assertFalse(vehicle.features.all())
         self.assertEqual(str(vehicle.vehicle_type), 'Optare Spectra')
         self.assertEqual(vehicle.fleet_number, 2)
 

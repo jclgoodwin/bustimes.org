@@ -107,19 +107,19 @@ def notes(obj):
     return obj.get_diff('notes')
 
 
-def features(obj):
+def features(edit):
     features = []
-    if obj.features.all():
-        for feature in obj.features.all():
-            if feature in obj.vehicle.features.all():
-                features.append(str(feature))
+    vehicle = edit.vehicle
+    for feature in edit.vehicleeditfeature_set.all():
+        if feature.add:
+            if feature.feature in vehicle.features.all():
+                features.append(str(feature.feature))
             else:
-                features.append(f'<ins>{feature}</ins>')
-        for feature in obj.vehicle.features.all():
-            if feature not in obj.features.all():
-                features.append(f'<del>{feature}</del>')
-    else:
-        for feature in obj.vehicle.features.all():
+                features.append(f'<ins>{feature.feature}</ins>')
+        elif feature.feature in vehicle.features.all():
+            features.append(f'<del>{feature.feature}</del>')
+    for feature in vehicle.features.all():
+        if feature not in edit.features.all():
             features.append(str(feature))
 
     return mark_safe(', '.join(features))
@@ -155,7 +155,7 @@ changes.admin_order_field = 'changes'
 
 
 def apply_edits(queryset):
-    for edit in queryset.prefetch_related('features', 'vehicle__features'):
+    for edit in queryset.prefetch_related('vehicleeditfeature_set__feature', 'vehicle__features'):
         ok = True
         vehicle = edit.vehicle
         update_fields = []
@@ -203,8 +203,11 @@ def apply_edits(queryset):
             update_fields.append('livery')
             update_fields.append('colours')
         vehicle.save(update_fields=update_fields)
-        if edit.features.all():
-            vehicle.features.set(edit.features.all())
+        for feature in edit.vehicleeditfeature_set.all():
+            if feature.add:
+                vehicle.features.add(feature.feature)
+            else:
+                vehicle.features.remove(feature.feature)
         if ok:
             edit.approved = True
             edit.save(update_fields=['approved'])
