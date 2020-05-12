@@ -3,8 +3,51 @@ import requests
 import xml.etree.cElementTree as ET
 from base64 import b64encode
 from django.core.management.base import BaseCommand
+from psycopg2.extras import DateTimeTZRange
 from busstops.models import DataSource
-from ...models import Disruption
+from ...models import Situation
+
+
+def get_period(element):
+    start = element.find('StartTime').text
+    end = element.find('EndTime')
+    if end is not None:
+        end = end.text
+    return DateTimeTZRange(start, end, '[]')
+
+
+def handle_item(item, source):
+    situation_number = item.find('SituationNumber').text
+    xml = ET.tostring(item).decode()
+
+    # print(xml)
+
+    try:
+        situation = Situation.objects.get(source=source, situation_number=situation_number)
+    except Situation.DoesNotExist:
+        situation = Situation(
+            source=source,
+            situation_number=situation_number,
+            data=xml,
+            created=item.find('CreationTime').text,
+            publication_window=get_period(item.find('PublicationWindow')),
+            validity_period=get_period(item.find('ValidityPeriod')),
+        )
+
+    reason = item.find('MiscellaneousReason')
+    if reason is not None:
+        situation.reason = reason.text
+
+    situation.summary = item.find('Summary').text
+    situation.text = item.find('Description').text
+    print(situation.summary)
+
+    situation.save()
+
+    # # print(situation)
+
+    # for thing in item:
+    #     print(thing.tag, thing.text)
 
 
 class Command(BaseCommand):
@@ -12,27 +55,11 @@ class Command(BaseCommand):
         parser.add_argument('app_id', type=str)
         parser.add_argument('app_key', type=str)
 
-    def handle_item(self, item, source):
-        # situation_number = item.find('SituationNumber').text
-        xml = ET.tostring(item).decode()
-
-        try:
-            disruption = Disruption.objects.get(text=xml)
-            # disruption.save(update_fields=['text'])
-        except Disruption.DoesNotExist:
-            disruption = Disruption.objects.create(text=xml, source=source)
-
-        print(disruption)
-
-        for thing in item:
-            print(thing.tag, thing.text)
-
     def fetch(self, app_id, app_key):
         url = 'http://api.transportforthenorth.com/siri/sx'
 
         source, _ = DataSource.objects.get_or_create(name='Transport for the North', url=url)
         authorization = b64encode(f'{app_id}:{app_key}'.encode()).decode()
-        print(authorization)
 
         response = requests.post(
             url,
@@ -57,7 +84,7 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
                 element.tag = element.tag[29:]
 
             if element.tag.endswith('PtSituationElement'):
-                self.handle_item(element, source)
+                handle_item(element, source)
                 element.clear()
 
     # def subscribe(self):

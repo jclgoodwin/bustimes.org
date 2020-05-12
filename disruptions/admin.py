@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Mode, Disruption
+from .models import Situation
 
 
-class DisruptionAdmin(admin.ModelAdmin):
+class SituationAdmin(admin.ModelAdmin):
     # list_display = ('code', 'fleet_number', 'fleet_code', 'reg', 'operator', 'vehicle_type',
     #                 'get_flickr_link', 'last_seen', 'livery', 'colours', 'branding', 'name', 'notes', 'data')
     # list_filter = (
@@ -19,5 +19,4 @@ class DisruptionAdmin(admin.ModelAdmin):
     autocomplete_fields = ['stops', 'services', 'operator']
 
 
-admin.site.register(Mode)
-admin.site.register(Disruption, DisruptionAdmin)
+admin.site.register(Situation, SituationAdmin)

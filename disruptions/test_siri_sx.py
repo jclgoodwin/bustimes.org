@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.conf import settings
 from django.core.management import call_command
 from busstops.models import Region
-from .models import Disruption
+from .models import Situation
 
 
 class SiriSXTest(TestCase):
@@ -26,7 +26,16 @@ class SiriSXTest(TestCase):
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
             call_command('import_siri_sx', 'hen hom', 'roger poultry')
 
-        disruption = Disruption.objects.first()
-        response = self.client.get(disruption.get_absolute_url())
+        situation = Situation.objects.first()
 
+        self.assertEqual(situation.situation_number, 'RGlzcnVwdGlvbk5vZGU6MTA3NjM=')
+        self.assertEqual(situation.reason, 'roadworks')
+        self.assertEqual(situation.summary, 'East Didsbury bus service changes Monday 11th May until Thursday 14th \
+May. ')
+        self.assertEqual(situation.text, 'Due to resurfacing works there will be bus service diversions and bus stop \
+closures from Monday 11th May until Thursday 14th may. ')
+        self.assertEqual(situation.reason, 'roadworks')
+        self.assertEqual(situation.reason, 'roadworks')
+
+        response = self.client.get(situation.get_absolute_url())
         print(response.content.decode())

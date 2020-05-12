@@ -3,5 +3,5 @@ from . import views
 
 
 urlpatterns = [
-    path('disruptions/<int:id>', views.disruption, name='disruption'),
+    path('situations/<int:id>', views.situation, name='situation'),
 ]
