@@ -14,11 +14,8 @@ from django.urls import reverse
 class Situation(models.Model):
     source = models.ForeignKey('busstops.DataSource', models.CASCADE)
     situation_number = models.CharField(max_length=36)
-    stops = models.ManyToManyField('busstops.StopPoint')
-    services = models.ManyToManyField('busstops.Service')
-    operator = models.ManyToManyField('busstops.Operator')
-    summary = models.CharField(max_length=255)
     reason = models.CharField(max_length=25)
+    summary = models.CharField(max_length=255)
     text = models.TextField()
     data = models.TextField()
     created = models.DateTimeField()
@@ -43,3 +40,21 @@ class Link(models.Model):
         return self.url
 
     get_absolute_url = __str__
+
+
+class Consequence(models.Model):
+    situation = models.ForeignKey(Situation, models.CASCADE)
+    stops = models.ManyToManyField('busstops.StopPoint')
+    services = models.ManyToManyField('busstops.Service')
+    operators = models.ManyToManyField('busstops.Operator')
+    text = models.TextField()
+    data = models.TextField()
+
+    def __str__(self):
+        return self.text
+
+    def get_absolute_url(self):
+        service = self.services.first()
+        if service:
+            return service.get_absolute_url()
+        return ''

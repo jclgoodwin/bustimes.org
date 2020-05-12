@@ -4,8 +4,8 @@ import xml.etree.cElementTree as ET
 from base64 import b64encode
 from django.core.management.base import BaseCommand
 from psycopg2.extras import DateTimeTZRange
-from busstops.models import DataSource
-from ...models import Situation
+from busstops.models import DataSource, Service
+from ...models import Situation, Consequence
 
 
 def get_period(element):
@@ -20,10 +20,9 @@ def handle_item(item, source):
     situation_number = item.find('SituationNumber').text
     xml = ET.tostring(item).decode()
 
-    # print(xml)
-
     try:
         situation = Situation.objects.get(source=source, situation_number=situation_number)
+        created = False
     except Situation.DoesNotExist:
         situation = Situation(
             source=source,
@@ -33,6 +32,7 @@ def handle_item(item, source):
             publication_window=get_period(item.find('PublicationWindow')),
             validity_period=get_period(item.find('ValidityPeriod')),
         )
+        created = True
 
     reason = item.find('MiscellaneousReason')
     if reason is not None:
@@ -40,14 +40,31 @@ def handle_item(item, source):
 
     situation.summary = item.find('Summary').text
     situation.text = item.find('Description').text
-    print(situation.summary)
-
     situation.save()
 
-    # # print(situation)
+    for i, consequence_element in enumerate(item.find('Consequences')):
+        consequence = Consequence(situation=situation)
+        if not created and i == 0:
+            try:
+                consequence = situation.consequence_set.get()
+            except Consequence.MultipleObjectsReturned:
+                situation.consequence_set.all().delete()
+            except Consequence.DoesNotExist:
+                pass
 
-    # for thing in item:
-    #     print(thing.tag, thing.text)
+        consequence.text = consequence_element.find('Advice/Details').text
+        consequence.data = ET.tostring(consequence_element).decode()
+        consequence.save()
+
+        for line in consequence_element.findall('Affects/Networks/AffectedNetwork/AffectedLine'):
+            line_name = line.find('PublishedLineName').text
+            for operator in line.findall('AffectedOperator'):
+                operator_ref = operator.find('OperatorRef').text
+                try:
+                    service = Service.objects.get(current=True, line_name__iexact=line_name, operator=operator_ref)
+                    consequence.services.add(service)
+                except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
+                    print(e, ET.tostring(line).decode())
 
 
 class Command(BaseCommand):

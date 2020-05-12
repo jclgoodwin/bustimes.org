@@ -39,3 +39,9 @@ closures from Monday 11th May until Thursday 14th may. ')
 
         response = self.client.get(situation.get_absolute_url())
         print(response.content.decode())
+
+        consequence = situation.consequence_set.get()
+        print(consequence.text)
+        self.assertEqual(consequence.text, """Towards East Didsbury terminus customers should alight opposite East \
+Didsbury Rail Station as this will be the last stop. From here its a short walk to the terminus. \n
+Towards Manchester the 142 service will begin outside Didsbury Cricket club . """)

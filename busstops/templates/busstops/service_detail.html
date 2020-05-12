@@ -23,6 +23,32 @@
     {% endif %}
 </p>
 
+{% for situation in situations %}
+    <div class="situation" tabindex="0">
+        <div class="summary">
+            {% if situation.reason %}
+                <div class="reason">
+                    {% if situation.reason == 'roadClosed' %}Road closed{% elif situation.reason == 'routeDiversion' %}Diversion{% else %}{{ situation.reason|title }}{% endif %}
+                </div>
+            {% endif %}
+        <h2>{{ situation.summary }}</h2>
+        {% if situation.validity_period.lower %}
+            {% if situation.validity_period.upper %}
+                <p class="dates">{{ situation.validity_period.lower|date }} – {{ situation.validity_period.upper|date }}</p>
+            {% else %}
+                <p class="dates">From {{ situation.validity_period.lower|date }}</p>
+            {% endif %}
+        {% elif situation.validity_period.upper %}
+            <p class="dates">Until {{ situation.validity_period.upper|date }}</p>
+        {% endif %}
+    </div>
+    {{ situation.text|linebreaks }}
+    {% for consequence in situation.consequences %}
+        {{ consequence.text|linebreaks }}
+    {% endfor %}
+    </div>
+{% endfor %}
+
 {% if object.geometry %}
     <p id="buses-online"><a class="button" href="#map">Map</a></p>
     <div class="service-map" id="map" data-service="{{ object.service_code }}"></div>
