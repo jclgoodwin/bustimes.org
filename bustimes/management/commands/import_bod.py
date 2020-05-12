@@ -105,7 +105,7 @@ def first():
 class Command(BaseCommand):
     @staticmethod
     def add_arguments(parser):
-        parser.add_argument('api_key', nargs=1, type=str)
+        parser.add_argument('api_key', type=str)
 
     def handle(self, api_key, **options):
 
