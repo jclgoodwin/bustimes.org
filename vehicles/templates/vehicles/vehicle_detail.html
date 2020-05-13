@@ -62,7 +62,7 @@
             <thead>
                 <tr>
                     <th scope="col">{% if not vehicle %}Vehicle{% else %}Service{% endif %}</th>
-                    <th scope="col">Journey</th>
+                    <th scope="col" colspan="2">Journey</th>
                     <th scope="col">To</th>
                     <th scope="col"></th>
                 </tr>
@@ -80,6 +80,7 @@
                             {% endif %}
                         </td>
                         <td>{{ journey.datetime|time }}</td>
+                        <td>{{ journey.code }}</td>
                         <td>{{ journey.destination }}</td>
                         <td>
                             {% if journey.calls %}
