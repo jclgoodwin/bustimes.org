@@ -213,7 +213,7 @@ def get_deadrun_ref(deadrun_element):
 
 class VehicleJourneyTimingLink:
     def __init__(self, element):
-        self.id = element.attrib['id']
+        self.id = element.attrib.get('id')
         self.journeypatterntiminglinkref = element.find('txc:JourneyPatternTimingLinkRef', NS).text
         self.run_time = element.find('txc:RunTime', NS)
         if self.run_time is not None:
