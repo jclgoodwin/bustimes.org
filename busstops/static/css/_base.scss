@@ -1011,9 +1011,34 @@ input:not(:checked) + label {
 }
 
 .route {
+    a {
+        margin-left: 1em;
+    }
+
+    li:before {
+        border: 2px solid $border-color;
+        border-width: 2px 0 0 2px;
+        content: " ";
+        display: block;
+        position: absolute;
+        margin-top: .85em;
+        height: 1.75em;
+        width: .5em;
+    }
+
+    li:last-child:before {
+        height: 0;
+    }
+
     .minor {
         a {
-            padding-left: 1em;
+            font-size: .875em;
+            margin-left: 2em;
+        }
+
+        &:before {
+            border-top-width: 1px;
+            width: 1em;
         }
     }
 }
