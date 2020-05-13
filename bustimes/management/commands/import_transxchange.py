@@ -473,13 +473,14 @@ class Command(BaseCommand):
                         existing = services.get(current=True)
                     except Service.DoesNotExist:
                         existing = services.get()
-                    if existing.source == self.source or len(existing.source.name) <= 4:
+                    if not existing.source or existing.source == self.source or len(existing.source.name) <= 4:
                         # from same source, or TNDS
                         service_code = existing.service_code
-                        if not line_brand:
-                            line_brand = existing.line_brand
-                        if not txc_service.mode:
-                            txc_service.mode = existing.mode
+                        if existing.source:
+                            if not line_brand:
+                                line_brand = existing.line_brand
+                            if not txc_service.mode:
+                                txc_service.mode = existing.mode
                 except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                     pass
 
