@@ -1,6 +1,7 @@
 import xml.etree.cElementTree as ET
 from io import StringIO
 from ciso8601 import parse_datetime
+from django.db.models import Q
 from busstops.models import Service, DataSource
 from .models import Vehicle, VehicleLocation, VehicleJourney, Call
 
@@ -32,16 +33,15 @@ def handle_journey(element, source, when):
         fleet_number = None
     if operator_ref in operator_refs:
         operator = operator_refs[operator_ref]
-        if operator_ref[:2] == 'AN' or operator_ref == 'AMD' or not fleet_number:
-            vehicle, vehicle_created = vehicles.get_or_create(
-                {'source': source, 'operator_id': operator[0]},
-                code=vehicle.text, fleet_number=fleet_number, operator_id__in=operator
-            )
-        else:
-            vehicle, vehicle_created = vehicles.get_or_create(
-                {'source': source, 'operator_id': operator[0], 'code': vehicle.text},
-                fleet_number=fleet_number, operator_id=operator
-            )
+        vehicle, vehicle_created = vehicles.filter(
+            Q(code=fleet_number) | Q(code=vehicle.text),
+            operator__in=operator
+        ).get_or_create({
+            'source': source,
+            'operator_id': operator[0],
+            'code': vehicle.text,
+            'fleet_number': fleet_number
+        })
     else:
         vehicle, vehicle_created = vehicles.get_or_create({'source': source}, code=vehicle.text,
                                                           fleet_number=fleet_number)

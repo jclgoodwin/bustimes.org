@@ -179,7 +179,7 @@ class Command(ImportLiveVehiclesCommand):
         try:
             if operator and operator.parent:
                 if '-' in vehicle_code:
-                    if operator.parent == 'Stagecoach':
+                    if operator.parent == 'Stagecoach' or operator.parent == 'Plymouth Citybus':
                         vehicle_code = vehicle_code.split('-', 1)[-1]
                         if vehicle_code.isdigit():
                             defaults['fleet_number'] = vehicle_code
@@ -209,6 +209,8 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
+
+        journey.text = ET.tostring(item)
 
         mvj = item.find('siri:MonitoredVehicleJourney', NS)
         operator_ref = mvj.find('siri:OperatorRef', NS).text

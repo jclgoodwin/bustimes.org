@@ -118,6 +118,8 @@ class Command(ImportLiveVehiclesCommand):
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
 
+        journey.text = item
+
         journey.code = item.get('td', '')
         journey.destination = item.get('dd', '')
         journey.route_name = item.get('sn', '')
