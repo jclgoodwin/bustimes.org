@@ -31,16 +31,22 @@
                     {% if situation.reason == 'roadClosed' %}Road closed{% elif situation.reason == 'routeDiversion' %}Diversion{% else %}{{ situation.reason|title }}{% endif %}
                 </div>
             {% endif %}
-        <h2>{{ situation.summary }}</h2>
         {% if situation.validity_period.lower %}
             {% if situation.validity_period.upper %}
-                <p class="dates">{{ situation.validity_period.lower|date }} – {{ situation.validity_period.upper|date }}</p>
+                <p class="dates">
+                    {% if situation.validity_period.lower|date == situation.validity_period.upper|date %}
+                        {{ situation.validity_period.lower|date:"l j M" }}
+                    {% else %}
+                        {{ situation.validity_period.lower|date:"l j M" }} – {{ situation.validity_period.upper|date:"l j M" }}
+                    {% endif %}
+                </p>
             {% else %}
-                <p class="dates">From {{ situation.validity_period.lower|date }}</p>
+                <p class="dates">From {{ situation.validity_period.lower|date:"l j M" }}</p>
             {% endif %}
         {% elif situation.validity_period.upper %}
-            <p class="dates">Until {{ situation.validity_period.upper|date }}</p>
+            <p class="dates">Until {{ situation.validity_period.upper|date:"l j M" }}</p>
         {% endif %}
+        <h2>{{ situation.summary }}</h2>
     </div>
     {{ situation.text|linebreaks }}
     {% for consequence in situation.consequences %}

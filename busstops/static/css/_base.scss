@@ -1113,6 +1113,12 @@ input:not(:checked) + label {
         display: inline;
     }
 
+    .dates {
+        float: left;
+        margin: 0;
+        margin-right: 1em;
+    }
+
     p:last-child {
         margin-bottom: 0;
     }
