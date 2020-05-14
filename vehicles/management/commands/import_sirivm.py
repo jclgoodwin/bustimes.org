@@ -179,16 +179,17 @@ class Command(ImportLiveVehiclesCommand):
         try:
             if operator and operator.parent:
                 if '-' in vehicle_code:
-                    if operator.parent == 'Stagecoach' or operator.parent == 'Plymouth Citybus':
-                        vehicle_code = vehicle_code.split('-', 1)[-1]
-                        if vehicle_code.isdigit():
-                            defaults['fleet_number'] = vehicle_code
-                return self.vehicles.get_or_create(
-                    defaults,
-                    operator__parent=operator.parent,
-                    code=vehicle_code,
-                )
-            if operator_ref in {'ATS', 'AMD'} and vehicle_code.isdigit():
+                    fleet_number = vehicle_code.split('-', 1)[-1]
+                    if fleet_number.isdigit():
+                        defaults['fleet_number'] = fleet_number
+                        if operator.parent in {'Stagecoach', 'Plymouth Citybus'}:
+                            vehicle_code = fleet_number
+                        return self.vehicles.filter(
+                            Q(code=vehicle_code) | Q(code=fleet_number),
+                            operator__parent=operator.parent
+                        ).get_or_create(defaults)
+
+            if operator_ref == 'ATS' and vehicle_code.isdigit():
                 defaults['code'] = vehicle_code
                 return self.vehicles.get_or_create(
                     defaults,
