@@ -20,26 +20,26 @@ class Command(ImportLiveVehiclesCommand):
     url = 'https://apiv2.otrl-bus.io/api/bus/nearby'
     source_name = 'Go-Ahead'
     operators = {
-        'GOEA': ('KCTB', 'CHAM', 'HEDO'),
-        'CSLB': ('OXBC', 'CSLB', 'THTR'),
-        'BH': ('BHBC',),
-        'SQ': ('BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TOUR', 'WDBC'),
-        'TT': ('TDTR',),
-        'PC': ('PLYC', 'PC2'),
-        'GONW': ('GONW',),
+        'GOEA': ['KCTB', 'CHAM', 'HEDO'],
+        'CSLB': ['OXBC', 'CSLB', 'THTR'],
+        'BH': ['BHBC'],
+        'SQ': ['BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TOUR', 'WDBC'],
+        'TT': ['TDTR'],
+        'PC': ['PLYC', 'PC2'],
+        'GONW': ['GONW'],
     }
 
     opcos = {
-        'eastangliabuses': ('KCTB', 'CHAM', 'HEDO'),
-        'oxford': ('OXBC', 'CSLB', 'THTR'),
-        'brightonhove': ('BHBC',),
-        'swindon': ('TDTR',),
-        'more': ('WDBC',),
-        'bluestar': ('BLUS', 'UNIL'),
-        'salisburyreds': ('SWWD',),
-        'plymouth': ('PLYC',),
-        'cornwall': ('PC2',),
-        'gonorthwest': ('GONW',),
+        'eastangliabuses': ['KCTB', 'CHAM', 'HEDO'],
+        'oxford': ['OXBC', 'CSLB', 'THTR'],
+        'brightonhove': ['BHBC'],
+        'swindon': ['TDTR'],
+        'more': ['WDBC'],
+        'bluestar': ['BLUS', 'UNIL'],
+        'salisburyreds': ['SWWD'],
+        'plymouth': ['PLYC'],
+        'cornwall': ['PC2'],
+        'gonorthwest': ['GONW'],
     }
 
     @staticmethod

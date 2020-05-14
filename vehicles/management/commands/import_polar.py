@@ -34,6 +34,10 @@ class Command(ImportLiveVehiclesCommand):
         if operator == 'NCTR' and len(code) == 6:
             # Trent Barton vehicles
             return None, None
+        elif operator == 'MCGL' and len(code) >= 7:
+            # Borders Buses vehicles
+            print(code)
+            return None, None
 
         fleet_number = code
 
@@ -63,6 +67,9 @@ class Command(ImportLiveVehiclesCommand):
                 code=code,
                 operator__in=self.operators.values()
             )
+
+        if vehicle[0].operator_id == 'METR':
+            return None, None
 
         if vehicle[0].code.isdigit() and not code.isdigit():
             vehicle[0].code = code

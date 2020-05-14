@@ -42,6 +42,7 @@ class Command(ImportLiveVehiclesCommand):
     operators_options = {
         'SQ': ('BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TDTR', 'TOUR', 'WDBC'),
         'RB': ('RBUS', 'GLRB'),
+        'TV': ('THVB', 'CTNY'),
         'SCHI': ('SINV', 'SCOR'),
         'SCFI': ('SCFI', 'SSPH', 'SSTY'),
         'SCSO': ('SCHM', 'SCCO', 'SMSO', 'SCHW'),
@@ -124,7 +125,7 @@ class Command(ImportLiveVehiclesCommand):
         mvj = item.find('siri:MonitoredVehicleJourney', NS)
         vehicle_code = mvj.find('siri:VehicleRef', NS).text
         operator_ref = mvj.find('siri:OperatorRef', NS).text
-        if operator_ref and operator_ref != 'CSLB' and operator_ref != 'AMD':
+        if operator_ref and operator_ref != 'CSLB':
             while vehicle_code.startswith(operator_ref + '-'):
                 if operator_ref == 'SQ' and vehicle_code[:6] != 'SQ-SQ-':
                     break
