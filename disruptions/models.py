@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import DateTimeRangeField
 from django.urls import reverse
+from django.utils.timezone import localdate
 
 
 class Situation(models.Model):
@@ -37,6 +38,19 @@ class Link(models.Model):
 class ValidityPeriod(models.Model):
     situation = models.ForeignKey(Situation, models.CASCADE)
     period = DateTimeRangeField()
+
+    def __str__(self):
+        lower = self.period.lower and localdate(self.period.lower)
+        upper = self.period.upper and localdate(self.period.upper)
+        if lower:
+            if upper:
+                if lower == upper:
+                    return lower.strftime('%A %-d %B')
+                return lower.strftime('%A %-d %B') + ' – ' + upper.strftime('%A %-d %B')
+            return 'From ' + lower.strftime('%A %-d %B')
+        if upper:
+            return 'Until ' + upper.strftime('%A %-d %B')
+        return ''
 
 
 class Consequence(models.Model):
