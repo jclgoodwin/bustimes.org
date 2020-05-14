@@ -150,9 +150,6 @@ class Command(ImportLiveVehiclesCommand):
                     return None, None
                 if not (vehicle_code.isdigit() or vehicle_code.isalpha()) and vehicle_code.isupper():
                     operator_options = ('ABUS',)
-            elif operator_ref in {'AMD', 'AMN'}:
-                # Arriva Midlands and Midlands North share fleet numbering scheme, but are distinct codes for routes
-                operator_options = ('AMNO', 'AMID', 'AFCL')
 
         defaults = {
             'source': self.source,
