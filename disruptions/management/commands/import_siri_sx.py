@@ -43,7 +43,7 @@ def handle_item(item, source):
     situation.text = item.find('Description').text
     situation.save()
 
-    for i, link_element in enumerate(item.findall('InfoLink')):
+    for i, link_element in enumerate(item.findall('InfoLinks/InfoLink/Uri')):
         link = Link(situation=situation)
         if not created and i == 0:
             try:
@@ -52,16 +52,17 @@ def handle_item(item, source):
                 situation.link_set.all().delete()
             except Link.DoesNotExist:
                 pass
-        link.url = link_element.text
-        link.save()
+        if link_element.text:
+            link.url = link_element.text
+            link.save()
 
     for i, period_element in enumerate(item.findall('ValidityPeriod')):
         period = ValidityPeriod(situation=situation)
         if not created and i == 0:
             try:
-                period = situation.period_set.get()
+                period = situation.validityperiod_set.get()
             except ValidityPeriod.MultipleObjectsReturned:
-                situation.period_set.all().delete()
+                situation.validityperiod_set.all().delete()
             except ValidityPeriod.DoesNotExist:
                 pass
         period.period = get_period(period_element)
@@ -85,11 +86,11 @@ def handle_item(item, source):
             line_name = line.find('PublishedLineName').text
             for operator in line.findall('AffectedOperator'):
                 operator_ref = operator.find('OperatorRef').text
-                try:
-                    service = Service.objects.get(current=True, line_name__iexact=line_name, operator=operator_ref)
+                services = Service.objects.filter(current=True, line_name__iexact=line_name, operator=operator_ref)
+                for service in services:
                     consequence.services.add(service)
-                except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-                    print(e, ET.tostring(line).decode())
+
+    return situation.id
 
 
 class Command(BaseCommand):
@@ -102,6 +103,8 @@ class Command(BaseCommand):
 
         source, _ = DataSource.objects.get_or_create(name='Transport for the North', url=url)
         authorization = b64encode(f'{app_id}:{app_key}'.encode()).decode()
+
+        situations = []
 
         response = requests.post(
             url,
@@ -126,8 +129,10 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
                 element.tag = element.tag[29:]
 
             if element.tag.endswith('PtSituationElement'):
-                handle_item(element, source)
+                situations.append(handle_item(element, source))
                 element.clear()
+
+        Situation.objects.filter(source=source, current=True).exclude(id__in=situations).update(current=False)
 
     # def subscribe(self):
     #     subscription_id = str(uuid.uuid4())

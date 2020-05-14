@@ -19,6 +19,8 @@ class SiriSXTest(TestCase):
     def test_siri_sx(self):
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
             call_command('import_siri_sx', 'hen hom', 'roger poultry')
+        with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
+            call_command('import_siri_sx', 'hen hom', 'roger poultry')
 
         situation = Situation.objects.first()
 
@@ -38,10 +40,14 @@ closures from Monday 11th May until Thursday 14th may. ')
 Didsbury Rail Station as this will be the last stop. From here its a short walk to the terminus. \n
 Towards Manchester the 142 service will begin outside Didsbury Cricket club . """)
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             response = self.client.get('/services/156')
+
         self.assertContains(response, "<p>East Lancashire Road will be subjected to restrictions, at Liverpool Road,\
  from Monday 17 February 2020 for approximately 7 months.</p>")
         self.assertContains(response, "<p>Route 156 will travel as normal from St Helens to Haydock Lane, then u-turn \
 at Moore Park Way roundabout, Haydock Lane, Millfield Lane, Tithebarn Road, then as normal route to Garswood (omitting \
 East Lancashire Road and Liverpool Road).</p>""")
+
+        self.assertContains(response, '<a href="https://www.merseytravel.gov.uk/travel-updates/east-lancashire-road-(haydock)/" \
+rel="nofollow">www.merseytravel.gov.uk/travel-updates/east-lancashire-road-(haydock)</a>')

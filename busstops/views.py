@@ -546,8 +546,12 @@ class ServiceDetailView(DetailView):
         consequences = Consequence.objects.filter(services=self.object)
         context['situations'] = Situation.objects.filter(
             publication_window__contains=now,
-            consequence__services=self.object
-        ).prefetch_related(Prefetch('consequence_set', queryset=consequences, to_attr='consequences'))
+            consequence__services=self.object,
+            current=True
+        ).prefetch_related(
+            Prefetch('consequence_set', queryset=consequences, to_attr='consequences'),
+            'link_set'
+        )
 
         return context
 

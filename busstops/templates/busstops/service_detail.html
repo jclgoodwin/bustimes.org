@@ -37,6 +37,9 @@
         {% for consequence in situation.consequences %}
             {{ consequence.text|linebreaks }}
         {% endfor %}
+        {% for link in situation.link_set.all %}
+            {{ link.url|urlise }}
+        {% endfor %}
     </div>
 {% endfor %}
 

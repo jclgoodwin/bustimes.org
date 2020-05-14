@@ -1083,11 +1083,12 @@ input:not(:checked) + label {
 .situation {
     border: 1px solid $border-color;
     border-radius: .5em;
+    cursor: pointer;
+    margin: 1em 0;
     max-height: 2.5em;
     overflow: hidden;
     padding: 1em;
     padding-top: .5em;
-    cursor: pointer;
 
     &:hover {
         border-color: none;

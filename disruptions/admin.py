@@ -18,8 +18,8 @@ class LinkInline(admin.TabularInline):
 class SituationAdmin(admin.ModelAdmin):
     raw_id_fields = ['source']
     inlines = [ValidityPeriodInline, LinkInline, ConsequenceInline]
-    list_display = ['summary', 'reason', 'source']
-    list_filter = ['reason', 'source']
+    list_display = ['summary', 'reason', 'source', 'current']
+    list_filter = ['reason', 'source', 'current']
 
 
 admin.site.register(Situation, SituationAdmin)
