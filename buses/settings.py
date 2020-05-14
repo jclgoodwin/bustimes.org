@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'busstops',
     'bustimes',
+    'disruptions',
     'vehicles',
     'vosa',
     'pipeline',
