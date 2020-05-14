@@ -274,6 +274,8 @@ class Grouping:
                 assert instruction[2:] == existing_row.stop.atco_code
 
             cell = Cell(stoptime, stoptime.arrival, stoptime.departure)
+            if y == 0:
+                cell.first = True
             row.times.append(cell)
 
             y += 1
@@ -393,6 +395,7 @@ def format_timedelta(timedelta):
 
 
 class Cell:
+    first = False
     last = False
 
     def __init__(self, stoptime, arrival, departure):
