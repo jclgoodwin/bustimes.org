@@ -1,23 +1,25 @@
 from django.contrib import admin
-from .models import Mode, Disruption
+from .models import Situation, Consequence, Link, ValidityPeriod
 
 
-class DisruptionAdmin(admin.ModelAdmin):
-    # list_display = ('code', 'fleet_number', 'fleet_code', 'reg', 'operator', 'vehicle_type',
-    #                 'get_flickr_link', 'last_seen', 'livery', 'colours', 'branding', 'name', 'notes', 'data')
-    # list_filter = (
-    #     'withdrawn',
-    #     ('source', admin.RelatedOnlyFieldListFilter),
-    #     ('operator', admin.RelatedOnlyFieldListFilter),
-    #     'livery',
-    #     'vehicle_type',
-    # )
-    # list_select_related = ['operator', 'livery', 'vehicle_type', 'latest_location']
-    # list_editable = ('fleet_number', 'fleet_code', 'reg', 'operator', 'vehicle_type',
-    #                  'livery', 'colours', 'branding', 'name', 'notes')
+class ConsequenceInline(admin.StackedInline):
+    model = Consequence
+    autocomplete_fields = ['stops', 'services', 'operators']
+
+
+class ValidityPeriodInline(admin.TabularInline):
+    model = ValidityPeriod
+
+
+class LinkInline(admin.TabularInline):
+    model = Link
+
+
+class SituationAdmin(admin.ModelAdmin):
     raw_id_fields = ['source']
-    autocomplete_fields = ['stops', 'services', 'operator']
+    inlines = [ValidityPeriodInline, LinkInline, ConsequenceInline]
+    list_display = ['summary', 'reason', 'source', 'current']
+    list_filter = ['reason', 'source', 'current']
 
 
-admin.site.register(Mode)
-admin.site.register(Disruption, DisruptionAdmin)
+admin.site.register(Situation, SituationAdmin)

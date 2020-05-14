@@ -1104,8 +1104,53 @@ input:not(:checked) + label {
 }
 
 .message {
-    border: 1px solid $brand-color;
+    border: 1px solid $border-color;
     padding: 1em;
+}
+
+.situation {
+    border: 1px solid $border-color;
+    border-radius: .5em;
+    cursor: pointer;
+    margin: 1em 0;
+    max-height: 2.5em;
+    overflow: hidden;
+    padding: 1em;
+    padding-top: .5em;
+
+    &:hover {
+        border-color: none;
+    }
+
+    &:focus {
+        max-height: none;
+        cursor: auto;
+    }
+
+    .reason {
+        background: $brand-color;
+        border-radius: .5em 0 .5em 0;
+        float: left;
+        margin: -1em 1em 0 -1em;
+        padding: 1em;
+        padding-bottom: .5em;
+    }
+
+    h2,
+    .dates {
+        font-size: 1em;
+        display: inline;
+    }
+
+    .dates {
+        float: left;
+        margin: 0;
+        margin-right: 1em;
+    }
+
+    p:last-child {
+        margin-bottom: 0;
+    }
 }
 
 .contact-details {

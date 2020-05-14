@@ -18,6 +18,7 @@ from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from departures import live
+from disruptions.models import Situation, Consequence
 from .utils import format_gbp, get_bounding_box
 from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Place
 from .forms import ContactForm, SearchForm
@@ -485,12 +486,14 @@ class ServiceDetailView(DetailView):
 
         context['related'] = self.object.get_similar_services()
 
+        now = timezone.localtime()
+
         if self.object.show_timetable and not self.object.timetable_wrong:
             date = self.request.GET.get('date')
             if date:
                 try:
                     date = ciso8601.parse_datetime(date).date()
-                    if date < timezone.localtime().date():
+                    if date < now.date():
                         date = None
                 except ValueError:
                     date = None
@@ -539,6 +542,16 @@ class ServiceDetailView(DetailView):
                 'url': url,
                 'text': f'Timetable on the {text} website'
             })
+
+        consequences = Consequence.objects.filter(services=self.object)
+        context['situations'] = Situation.objects.filter(
+            publication_window__contains=now,
+            consequence__services=self.object,
+            current=True
+        ).prefetch_related(
+            Prefetch('consequence_set', queryset=consequences, to_attr='consequences'),
+            'link_set'
+        )
 
         return context
 

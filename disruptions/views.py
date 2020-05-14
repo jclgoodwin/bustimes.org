@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from .models import Disruption
+from .models import Situation
 
 
-def disruption(request, id):
-    disruption = get_object_or_404(Disruption, id=id)
-    return HttpResponse(disruption.text, content_type='text/xml')
+def situation(request, id):
+    situation = get_object_or_404(Situation, id=id)
+    return HttpResponse(situation.data, content_type='text/xml')
