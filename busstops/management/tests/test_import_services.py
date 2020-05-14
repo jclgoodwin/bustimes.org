@@ -222,13 +222,13 @@ class ImportServicesTest(TestCase):
         self.assertEqual(service.description, 'Glossop - Stalybridge - Ashton')
 
         with freeze_time('1 September 2017'):
-            with self.assertNumQueries(10):
+            with self.assertNumQueries(11):
                 res = self.client.get(service.get_absolute_url() + '?date=2017-09-01')
         self.assertEqual(str(res.context_data['timetable'].date), '2017-09-01')
         self.assertContains(res, 'Timetable changes from Sunday 3 September 2017')
 
         with freeze_time('1 October 2017'):
-            with self.assertNumQueries(13):
+            with self.assertNumQueries(14):
                 res = self.client.get(service.get_absolute_url())  # + '?date=2017-10-01')
         self.assertContains(res, """
                 <thead>
@@ -244,7 +244,7 @@ class ImportServicesTest(TestCase):
         self.assertEqual(18, len(res.context_data['timetable'].groupings[0].trips))
 
         with freeze_time('1 October 2017'):
-            with self.assertNumQueries(13):
+            with self.assertNumQueries(14):
                 res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
         self.assertNotContains(res, 'thead')
         self.assertEqual(str(res.context_data['timetable'].date), '2017-10-03')

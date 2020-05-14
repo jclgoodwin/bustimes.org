@@ -1,11 +1,11 @@
 import requests
-# import uuid
 import xml.etree.cElementTree as ET
+from ciso8601 import parse_datetime
 from base64 import b64encode
 from django.core.management.base import BaseCommand
 from psycopg2.extras import DateTimeTZRange
 from busstops.models import DataSource, Service
-from ...models import Situation, Consequence
+from ...models import Situation, Consequence, ValidityPeriod, Link
 
 
 def get_period(element):
@@ -20,6 +20,8 @@ def handle_item(item, source):
     situation_number = item.find('SituationNumber').text
     xml = ET.tostring(item).decode()
 
+    created_time = parse_datetime(item.find('CreationTime').text)
+
     try:
         situation = Situation.objects.get(source=source, situation_number=situation_number)
         created = False
@@ -28,9 +30,8 @@ def handle_item(item, source):
             source=source,
             situation_number=situation_number,
             data=xml,
-            created=item.find('CreationTime').text,
+            created=created_time,
             publication_window=get_period(item.find('PublicationWindow')),
-            validity_period=get_period(item.find('ValidityPeriod')),
         )
         created = True
 
@@ -41,6 +42,30 @@ def handle_item(item, source):
     situation.summary = item.find('Summary').text
     situation.text = item.find('Description').text
     situation.save()
+
+    for i, link_element in enumerate(item.findall('InfoLink')):
+        link = Link(situation=situation)
+        if not created and i == 0:
+            try:
+                link = situation.link_set.get()
+            except Link.MultipleObjectsReturned:
+                situation.link_set.all().delete()
+            except Link.DoesNotExist:
+                pass
+        link.url = link_element.text
+        link.save()
+
+    for i, period_element in enumerate(item.findall('ValidityPeriod')):
+        period = ValidityPeriod(situation=situation)
+        if not created and i == 0:
+            try:
+                period = situation.period_set.get()
+            except ValidityPeriod.MultipleObjectsReturned:
+                situation.period_set.all().delete()
+            except ValidityPeriod.DoesNotExist:
+                pass
+        period.period = get_period(period_element)
+        period.save()
 
     for i, consequence_element in enumerate(item.find('Consequences')):
         consequence = Consequence(situation=situation)

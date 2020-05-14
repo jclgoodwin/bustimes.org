@@ -4,23 +4,17 @@ from django.test import TestCase
 # from django.contrib.gis.geos import Point
 from django.conf import settings
 from django.core.management import call_command
-from busstops.models import Region
+from busstops.models import Region, Operator, Service
 from .models import Situation
 
 
 class SiriSXTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        Region.objects.create(id='EA', name='East Anglia')
-        # DataSource.objects.create(name='Arriva')
-        # DataSource.objects.create(name='TransMach')
-        # Operator.objects.create(region_id='EA', id='ANWE', name='Arrivederci')
-        # Operator.objects.create(region_id='EA', id='GOCH', name='Go-Coach')
-        # StopPoint.objects.bulk_create([
-        #     StopPoint(pk='069000023592', active=True, latlong=Point(0, 0)),
-        #     StopPoint(pk='0690WNA02877', active=True, latlong=Point(0, 0)),
-        #     StopPoint(pk='0690WNA02861', active=True, latlong=Point(0, 0)),
-        # ])
+        region = Region.objects.create(id='NW', name='North West')
+        operator = Operator.objects.create(region=region, id='HATT', name='Hattons of Huyton')
+        service = Service.objects.create(line_name='156', service_code='156', date='2020-01-01', current=True)
+        service.operator.add(operator)
 
     def test_siri_sx(self):
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
@@ -35,13 +29,19 @@ May. ')
         self.assertEqual(situation.text, 'Due to resurfacing works there will be bus service diversions and bus stop \
 closures from Monday 11th May until Thursday 14th may. ')
         self.assertEqual(situation.reason, 'roadworks')
-        self.assertEqual(situation.reason, 'roadworks')
 
         response = self.client.get(situation.get_absolute_url())
-        print(response.content.decode())
+        self.assertContains(response, '2020-05-10T23:01:00Z')
 
         consequence = situation.consequence_set.get()
-        print(consequence.text)
         self.assertEqual(consequence.text, """Towards East Didsbury terminus customers should alight opposite East \
 Didsbury Rail Station as this will be the last stop. From here its a short walk to the terminus. \n
 Towards Manchester the 142 service will begin outside Didsbury Cricket club . """)
+
+        with self.assertNumQueries(9):
+            response = self.client.get('/services/156')
+        self.assertContains(response, "<p>East Lancashire Road will be subjected to restrictions, at Liverpool Road,\
+ from Monday 17 February 2020 for approximately 7 months.</p>")
+        self.assertContains(response, "<p>Route 156 will travel as normal from St Helens to Haydock Lane, then u-turn \
+at Moore Park Way roundabout, Haydock Lane, Millfield Lane, Tithebarn Road, then as normal route to Garswood (omitting \
+East Lancashire Road and Liverpool Road).</p>""")
