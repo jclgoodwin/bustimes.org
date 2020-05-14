@@ -94,10 +94,11 @@ class Timetable:
 
         cache_key = (f'{route.id}:{route.start_date}:{route.end_date}' for route in self.routes)
         cache_key = f'groupings:{":".join(cache_key)}:{self.date}'
-        cached_groupings = cache.get(cache_key)
-        if cached_groupings is not None:
-            self.groupings = cached_groupings
-            return
+        if len(cache_key) <= 250:
+            cached_groupings = cache.get(cache_key)
+            if cached_groupings is not None:
+                self.groupings = cached_groupings
+                return
 
         calendar_ids = [calendar.id for calendar in self.calendars]
         trips = Trip.objects.filter(calendar__in=get_calendars(self.date, calendar_ids), route__in=self.routes)
@@ -128,7 +129,8 @@ class Timetable:
 
             # del grouping.trips
 
-        cache.set(cache_key, self.groupings)
+        if len(cache_key) <= 250:
+            cache.set(cache_key, self.groupings)
 
     def date_options(self):
         date = datetime.date.today()
