@@ -48,7 +48,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_vehicle(self, item):
         vehicle = item['vehicleRef']
-        operator, fleet_number = item['vehicleRef'].split('-', 1)
+        operator, fleet_number = vehicle.split('-', 1)
         operators = self.operators.get(operator)
         if not operators:
             print(operator)
