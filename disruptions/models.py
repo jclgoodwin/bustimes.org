@@ -1,14 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import DateTimeRangeField
 from django.urls import reverse
-# from busstops.models import DataSource Operator, Service, StopPoint
-
-
-# class Mode(models.Model):
-#     name = models.CharField(max_length=24)
-
-#     def __str__(self):
-#         return self.name
 
 
 class Situation(models.Model):
@@ -20,7 +12,7 @@ class Situation(models.Model):
     data = models.TextField()
     created = models.DateTimeField()
     publication_window = DateTimeRangeField()
-    validity_period = DateTimeRangeField()
+    current = models.BooleanField(default=True)
 
     def __str__(self):
         return self.summary
@@ -40,6 +32,11 @@ class Link(models.Model):
         return self.url
 
     get_absolute_url = __str__
+
+
+class ValidityPeriod(models.Model):
+    situation = models.ForeignKey(Situation, models.CASCADE)
+    period = DateTimeRangeField()
 
 
 class Consequence(models.Model):
