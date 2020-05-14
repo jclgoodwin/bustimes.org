@@ -183,9 +183,8 @@ class Command(ImportLiveVehiclesCommand):
                         if operator.parent in {'Stagecoach', 'Plymouth Citybus'}:
                             vehicle_code = fleet_number
                         return self.vehicles.filter(
-                            Q(code=vehicle_code) | Q(code=fleet_number),
                             operator__parent=operator.parent
-                        ).get_or_create(defaults)
+                        ).get_or_create(defaults, fleet_number=fleet_number)
 
             if operator_ref == 'ATS' and vehicle_code.isdigit():
                 defaults['code'] = vehicle_code
