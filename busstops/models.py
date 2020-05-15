@@ -191,6 +191,7 @@ class DataSource(models.Model):
     def credit(self):
         url = None
         text = None
+        date = None
 
         if 'tnds' in self.url:
             url = 'https://www.travelinedata.org.uk/'
@@ -201,15 +202,21 @@ class DataSource(models.Model):
         elif 'open-data' in self.url:
             url = self.url
             text = self.name
+            date = self.datetime
         elif 'arcticapi' in self.url:
             text = self.name
+            date = self.datetime
         elif self.url.startswith('https://data.bus-data.dft.gov.uk'):
             url = self.url.replace('download/', '')
             text = self.name.split('_')[0] + '/Bus Open Data Service'
+            date = self.datetime
 
         if text:
             if url:
                 text = f'<a href="{url}">{text}</a>'
+            if date:
+                date = date.strftime('%-d %B %Y')
+                text = f'{text}, {date}'
             return mark_safe(f'<p class="credit">Timetable data from {text}</p>')
 
         return ''
