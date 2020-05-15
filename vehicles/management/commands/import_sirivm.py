@@ -186,6 +186,10 @@ class Command(ImportLiveVehiclesCommand):
                             operator__parent=operator.parent
                         ).get_or_create(defaults, fleet_number=fleet_number)
 
+                return self.vehicles.filter(
+                    operator__parent=operator.parent
+                ).get_or_create(defaults, code=vehicle_code)
+
             if operator_ref == 'ATS' and vehicle_code.isdigit():
                 defaults['code'] = vehicle_code
                 return self.vehicles.get_or_create(
