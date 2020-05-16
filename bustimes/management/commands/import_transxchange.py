@@ -464,25 +464,29 @@ class Command(BaseCommand):
                     continue
             else:  # not a TNDS source (slightly dodgy heuristic)
                 operator_code = '-'.join(operator.id for operator in operators)
+                if operator_code == 'TDTR' and 'Swindon-Rural' in filename:
+                    operator_code = 'SBCR'
+
                 service_code = f'{self.source.id}-{operator_code}-{service_code}'
 
-                try:
-                    services = Service.objects.filter(operator__in=operators, line_name__iexact=line_name)
-                    services = services.select_related('source').defer('geometry')
+                if operator_code != 'SBCR':
                     try:
-                        existing = services.get(current=True)
-                    except Service.DoesNotExist:
-                        existing = services.get()
-                    if not existing.source or existing.source == self.source or len(existing.source.name) <= 4:
-                        # from same source, or TNDS
-                        service_code = existing.service_code
-                        if existing.source:
-                            if not line_brand:
-                                line_brand = existing.line_brand
-                            if not txc_service.mode:
-                                txc_service.mode = existing.mode
-                except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-                    pass
+                        services = Service.objects.filter(operator__in=operators, line_name__iexact=line_name)
+                        services = services.select_related('source').defer('geometry')
+                        try:
+                            existing = services.get(current=True)
+                        except Service.DoesNotExist:
+                            existing = services.get()
+                        if not existing.source or existing.source == self.source or len(existing.source.name) <= 4:
+                            # from same source, or TNDS
+                            service_code = existing.service_code
+                            if existing.source:
+                                if not line_brand:
+                                    line_brand = existing.line_brand
+                                if not txc_service.mode:
+                                    txc_service.mode = existing.mode
+                    except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                        pass
 
             defaults = {
                 'line_name': line_name,

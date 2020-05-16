@@ -241,6 +241,7 @@ class Grouping:
         diff = differ.compare(previous_list, current_list)
 
         y = 0  # how many rows along we are
+        first = True
 
         for stoptime in trip.stoptime_set.all():
             if y < len(rows):
@@ -274,8 +275,9 @@ class Grouping:
                 assert instruction[2:] == existing_row.stop.atco_code
 
             cell = Cell(stoptime, stoptime.arrival, stoptime.departure)
-            if y == 0:
+            if first:
                 cell.first = True
+                first = False
             row.times.append(cell)
 
             y += 1
