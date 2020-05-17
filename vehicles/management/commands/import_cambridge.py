@@ -4,6 +4,7 @@ import ciso8601
 import json
 import html
 import pyppeteer
+from asgiref.sync import sync_to_async
 from datetime import timedelta
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
@@ -142,6 +143,7 @@ class Command(BaseCommand):
 
         vehicle.update_last_modified()
 
+    @sync_to_async
     def handle_data(self, data):
         for item in data['request_data']:
             self.handle_siri_vm_vehicle(item)
@@ -183,7 +185,7 @@ class Command(BaseCommand):
             while True:
                 response = await websocket.recv()
                 try:
-                    self.handle_data(json.loads(response))
+                    await self.handle_data(json.loads(response))
                 except (Error, ValueError) as e:
                     print(e)
 
