@@ -205,7 +205,6 @@ class DataSource(models.Model):
             date = self.datetime
         elif 'arcticapi' in self.url:
             text = self.name
-            date = self.datetime
         elif self.url.startswith('https://data.bus-data.dft.gov.uk'):
             url = self.url.replace('download/', '')
             text = self.name.split('_')[0] + '/Bus Open Data Service'
