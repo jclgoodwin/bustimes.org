@@ -166,7 +166,7 @@ class Command(ImportLiveVehiclesCommand):
 
         defaults['source'] = self.source
         if type(operator_id) is tuple:
-            if operator_id[0] == 'SESX' or operator_id[0] == 'CUBU' or operator_id == 'RBUS':
+            if operator_id[0] in {'SESX', 'CUBU', 'RBUS'}:
                 # vehicles may have multiple operators
                 defaults['operator_id'] = operator_id[0]
                 return self.vehicles.get_or_create(defaults, operator_id__in=operator_id, code=vehicle)
