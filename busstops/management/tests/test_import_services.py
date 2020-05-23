@@ -59,38 +59,6 @@ class ImportServicesTest(TestCase):
             )
         )
 
-        StopPoint.objects.bulk_create(
-            StopPoint(atco_code, active=True) for atco_code in (
-                '639006355',
-                '639004802',
-                '1800EB00011',
-                '1800SB08951',
-                '1800BNIN001',
-                '1800TCBS001',
-                '1000DGHS0900',
-                '1800ANBS001',
-                '1000DGSD4386',
-                '1000DGHS1150',
-                '490016736W',
-                '1800SHIC0G1',
-                '2800S42098F',
-                '450030220',
-                '41000008NC67',
-                '4100024PARWS',
-                '450017207',
-                '3390BB01',
-                '1100DEB10368',
-                '1100DEC10085',
-                '1100DEC10720',
-                '1100DEB10354',
-                '5230WDB25331',
-                '2900A181',
-                '2900S367',
-                '2900N12106',
-                # '0500HSTIV002'
-            )
-        )
-
         # simulate a Scotland zipfile:
         cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml'])
 
@@ -305,17 +273,16 @@ class ImportServicesTest(TestCase):
         self.assertEqual(len(groupings[0].rows), 15)
         self.assertEqual(len(groupings[1].rows), 15)
         self.assertContains(res, """
-            <tr class="dep">
-                <th><a href="/stops/450030220"></a></th>
-                <td>02:45</td><td>06:20</td>
+            <tr>
+                <th><a href="/stops/450030220">Leeds City Centre Bus Stn</a></th>
+                <td></td><td>06:15</td><td rowspan="2">09:20</td><td rowspan="2">10:20</td><td></td><td></td><td></td><td></td>
+                <td></td><td rowspan="2"></td>
             </tr>
         """, html=True)
         self.assertContains(res, """
-            <tr>
-                <th><a href="/stops/450030220"></a></th>
-<td></td><td>06:15</td><td rowspan="2">09:20</td><td rowspan="2">10:20</td><td rowspan="2">11:30</td>\
-<td rowspan="2">12:30</td><td rowspan="2">13:45</td><td rowspan="2">16:20</td><td rowspan="2">18:40</td>\
-<td rowspan="2"></td>
+            <tr class="dep">
+                <th><a href="/stops/450030220">Leeds City Centre Bus Stn</a></th>
+                <td>02:45</td><td>06:20</td><td>11:30</td><td>12:30</td><td>13:45</td><td>16:20</td><td>18:40</td>
             </tr>
         """, html=True)
 
