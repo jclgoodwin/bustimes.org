@@ -143,7 +143,6 @@ class Command(BaseCommand):
 
         vehicle.update_last_modified()
 
-    @sync_to_async
     def handle_data(self, data):
         for item in data['request_data']:
             self.handle_siri_vm_vehicle(item)
@@ -185,7 +184,7 @@ class Command(BaseCommand):
             while True:
                 response = await websocket.recv()
                 try:
-                    await self.handle_data(json.loads(response))
+                    await sync_to_async(self.handle_data)(json.loads(response))
                 except (Error, ValueError) as e:
                     print(e)
 
