@@ -62,7 +62,7 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME', 'bustimes'),
         'DISABLE_SERVER_SIDE_CURSORS': True,
         'OPTIONS': {
-            'application_name': os.environ.get('APPLICATION_NAME', ' '.join(sys.argv))[:64],
+            'application_name': os.environ.get('APPLICATION_NAME') or ' '.join(sys.argv)[:63],
             'connect_timeout': 3
         }
     }
