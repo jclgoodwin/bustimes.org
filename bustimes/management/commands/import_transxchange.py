@@ -54,10 +54,10 @@ ________________________________________________________________________________
 """
 
 BANK_HOLIDAYS = {
-    'AllBankHolidays': date(2020, 5, 8),
-    'HolidayMondays': date(2020, 5, 8),
-    'MayDay': date(2020, 5, 8),
+    'AllBankHolidays': date(2020, 5, 25),
+    # 'MayDay': date(2020, 5, 8),
     'SpringBank': date(2020, 5, 25),
+    'HolidayMondays': date(2020, 5, 25),
 }
 
 
