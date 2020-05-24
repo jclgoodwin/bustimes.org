@@ -264,6 +264,13 @@ class VehicleEditFeature(models.Model):
     edit = models.ForeignKey('VehicleEdit', models.CASCADE)
     add = models.BooleanField(default=True)
 
+    def __str__(self):
+        if self.add:
+            fmt = '<ins>{}</ins>'
+        else:
+            fmt = '<del>{}</del>'
+        return format_html(fmt, self.feature)
+
 
 class VehicleEdit(models.Model):
     vehicle = models.ForeignKey(Vehicle, models.CASCADE)
@@ -294,9 +301,15 @@ class VehicleEdit(models.Model):
                 vehicle = str(getattr(self.vehicle, field) or '')
                 if edit != vehicle:
                     changes[field] = edit
-        if self.features.all():
-            features = [feature for feature in self.features.all() if feature not in self.vehicle.features.all()]
-            features += [feature for feature in self.vehicle.features.all() if feature not in self.features.all()]
+        changed_features = self.vehicleeditfeature_set.all()
+        if changed_features:
+            features = []
+            for feature in changed_features:
+                if feature.add:
+                    if feature.feature not in self.vehicle.features.all():
+                        features.append(feature)
+                elif feature.feature in self.vehicle.features.all():
+                    features.append(feature)
             if features:
                 changes['features'] = features
         if self.withdrawn and not self.vehicle.withdrawn:

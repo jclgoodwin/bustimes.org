@@ -225,11 +225,8 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Thank you')
         edit = VehicleEdit.objects.last()
         self.assertEqual(edit.url, 'https://bustimes.org')
-        self.assertEqual(edit.get_changes(), {
-            'name': 'Colin',
-            'vehicle_type': 'Optare Spectra',
-            'features': [self.usb]
-        })
+        self.assertEqual(str(edit.get_changes()), "{'vehicle_type': 'Optare Spectra', 'name': 'Colin', 'features': \
+[<VehicleEditFeature: <del>Wi-Fi</del>>, <VehicleEditFeature: <ins>USB</ins>>]}")
 
         response = self.client.get('/admin/vehicles/vehicleedit/')
         self.assertContains(response, '<del>Wi-Fi</del>')

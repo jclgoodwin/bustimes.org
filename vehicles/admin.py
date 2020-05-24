@@ -114,11 +114,11 @@ def features(edit):
     for feature in changed_features:
         if feature.add:
             if feature.feature in vehicle.features.all():
-                features.append(str(feature.feature))
+                features.append(str(feature.feature))  # vehicle already has feature
             else:
-                features.append(f'<ins>{feature.feature}</ins>')
+                features.append(str(feature))
         elif feature.feature in vehicle.features.all():
-            features.append(f'<del>{feature.feature}</del>')
+            features.append(str(feature))
     for feature in vehicle.features.all():
         if not any(feature.id == edit_feature.feature_id for edit_feature in changed_features):
             features.append(str(feature))
