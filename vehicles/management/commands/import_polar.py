@@ -61,6 +61,12 @@ class Command(ImportLiveVehiclesCommand):
                 fleet_number=fleet_number,
                 operator__in=self.operators.values()
             )
+        elif fleet_number.isupper() and operator == 'GNEL':
+            vehicle = self.vehicles.get_or_create(
+                defaults,
+                reg=code.replace('_', ''),
+                operator__in=self.operators.values()
+            )
         else:
             vehicle = self.vehicles.get_or_create(
                 defaults,
@@ -68,7 +74,7 @@ class Command(ImportLiveVehiclesCommand):
                 operator__in=self.operators.values()
             )
 
-        if vehicle[0].operator_id == 'METR':
+        if vehicle[0].operator_id == 'METR':  # ignore Metrobus vehicles in Brighton & Hove feed
             return None, None
 
         if vehicle[0].code.isdigit() and not code.isdigit():
