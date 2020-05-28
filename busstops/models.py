@@ -318,6 +318,8 @@ class StopPoint(models.Model):
     def __str__(self):
         if self.indicator:
             return '%s (%s)' % (self.common_name, self.indicator)
+        if self.atco_code[:3] == '940':
+            return self.common_name.replace(' Underground Station', '')
         return self.common_name
 
     def get_heading(self):
