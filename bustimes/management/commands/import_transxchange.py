@@ -248,7 +248,10 @@ class Command(BaseCommand):
                 if filename.endswith('.xml'):
                     with archive.open(filename) as open_file:
                         with transaction.atomic():
-                            self.handle_file(open_file, filename)
+                            try:
+                                self.handle_file(open_file, filename)
+                            except AttributeError as error:
+                                logger.error(error, exc_info=True)
 
         old_services = self.source.service_set.filter(current=True).exclude(service_code__in=self.service_codes)
         old_services.update(current=False)
