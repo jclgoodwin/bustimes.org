@@ -65,20 +65,27 @@ def log_vehicle_journey(operator_ref, vehicle, service, route_name, time, journe
         except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
             return
 
-    if operator.name.startswith('Stagecoach'):
+    if operator.parent == 'Stagecoach':
         return
 
     data_source, _ = DataSource.objects.get_or_create({'url': url}, name=source_name)
 
     defaults = {
-        'source': data_source
+        'source': data_source,
+        'operator': operator
     }
+
+    vehicles = Vehicle.objects
+    if operator.parent == 'First':
+        vehicles = Vehicle.objects.filter(operator__parent='First')
+    else:
+        vehicles = operator.vehicle_set
 
     if vehicle.isdigit():
         defaults['code'] = vehicle
-        vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, fleet_number=vehicle)
+        vehicle, created = vehicles.get_or_create(defaults, fleet_number=vehicle)
     else:
-        vehicle, created = Vehicle.objects.get_or_create(defaults, operator=operator, code=vehicle)
+        vehicle, created = vehicles.get_or_create(defaults, code=vehicle)
 
     if journey_ref and journey_ref.startswith('Unknown'):
         journey_ref = ''
