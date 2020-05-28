@@ -9,6 +9,7 @@ from datetime import timedelta
 from requests_html import HTMLSession
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.db import transaction
 from django.utils import timezone, dateparse
 from busstops.models import DataSource, Service
 from .import_gtfs import download_if_modified
@@ -49,7 +50,6 @@ class Command(BaseCommand):
         sources = [source[0] for source in settings.PASSENGER_OPERATORS]
 
         for name, url, region_id, operators in settings.PASSENGER_OPERATORS:
-
             command.source, _ = DataSource.objects.get_or_create({'url': url}, name=name)
             command.source.datetime = timezone.now()
             command.operators = operators
@@ -79,43 +79,45 @@ class Command(BaseCommand):
             if any(modified for _, modified, _ in versions):
                 previous_date = None
 
-                for path, modified, dates in versions:  # newest first
-                    print(path, modified, dates)
+                with transaction.atomic():
 
-                    command.calendar_cache = {}
-                    handle_file(command, path)
+                    for path, modified, dates in versions:  # newest first
+                        print(path, modified, dates)
 
-                    start_date = dateparse.parse_date(dates[0])
+                        command.calendar_cache = {}
+                        handle_file(command, path)
 
-                    routes = command.source.route_set.filter(code__startswith=path)
-                    calendars = Calendar.objects.filter(trip__route__in=routes)
-                    calendars.filter(start_date__lt=start_date).update(start_date=start_date)
-                    routes.filter(start_date__lt=start_date).update(start_date=start_date)
+                        start_date = dateparse.parse_date(dates[0])
 
-                    if previous_date:  # if there is a newer dataset, set end date
-                        new_end_date = previous_date - timedelta(days=1)
-                        calendars.update(end_date=new_end_date)
-                        routes.update(end_date=new_end_date)
-                    previous_date = start_date
+                        routes = command.source.route_set.filter(code__startswith=path)
+                        calendars = Calendar.objects.filter(trip__route__in=routes)
+                        calendars.filter(start_date__lt=start_date).update(start_date=start_date)
+                        routes.filter(start_date__lt=start_date).update(start_date=start_date)
 
-                    if dates[0] <= str(command.source.datetime.date()):
-                        break
+                        if previous_date:  # if there is a newer dataset, set end date
+                            new_end_date = previous_date - timedelta(days=1)
+                            calendars.update(end_date=new_end_date)
+                            routes.update(end_date=new_end_date)
+                        previous_date = start_date
 
-                # delete route data from TNDS
-                routes = Route.objects.filter(service__operator__in=operators.values())
-                print('other source routes:', routes.exclude(source__name__in=sources).delete())
+                        if dates[0] <= str(command.source.datetime.date()):
+                            break
 
-                services = Service.objects.filter(operator__in=operators.values(), current=True, route=None)
-                print('other source services:', services.update(current=False))
+                    # delete route data from TNDS
+                    routes = Route.objects.filter(service__operator__in=operators.values())
+                    print('other source routes:', routes.exclude(source__name__in=sources).delete())
 
-                # delete route data from old versions
-                routes = command.source.route_set
-                for prefix, _, dates in versions:
-                    routes = routes.exclude(code__startswith=prefix)
-                    if dates[0] <= str(command.source.datetime.date()):
-                        break
-                print('old routes:', routes.delete())
+                    services = Service.objects.filter(operator__in=operators.values(), current=True, route=None)
+                    print('other source services:', services.update(current=False))
 
-                # mark old services as not current
-                print('old services:',
-                      command.source.service_set.filter(current=True, route=None).update(current=False))
+                    # delete route data from old versions
+                    routes = command.source.route_set
+                    for prefix, _, dates in versions:
+                        routes = routes.exclude(code__startswith=prefix)
+                        if dates[0] <= str(command.source.datetime.date()):
+                            break
+                    print('old routes:', routes.delete())
+
+                    # mark old services as not current
+                    print('old services:',
+                          command.source.service_set.filter(current=True, route=None).update(current=False))
