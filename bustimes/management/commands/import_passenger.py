@@ -8,6 +8,7 @@ import xml.etree.cElementTree as ET
 from time import sleep
 from datetime import timedelta
 from requests_html import HTMLSession
+from requests import RequestException
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -61,7 +62,7 @@ class Command(BaseCommand):
             versions = []
             try:
                 response = session.get(url, timeout=5)
-            except ConnectionError as e:
+            except RequestException as e:
                 print(url, e)
                 sleep(5)
                 continue
