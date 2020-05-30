@@ -353,10 +353,38 @@ BOD_OPERATORS = (
     }),
 )
 FIRST_OPERATORS = [
-    ('FirstYork', 'Y', {
-        'FYOR': 'FYOR'
+    ('FirstBerkshire', 'SE', {'FTVA': 'FTVA'}),
+    ('FirstBristol', 'SW', {'FBRI': 'FBRI'}),
+    ('FirstEssex', 'SE', {'FESX': 'FESX'}),
+    ('FirstGlasgow', 'S', {'FGLA': 'FGLA'}),
+    ('FirstManchester', 'NW', {'FMAN': 'FMAN'}),
+    ('FirstDevonAndCornwall', 'SW', {
+        'FCWL': 'FCWL',
+        'FBOS': 'FBOS',
+        'FDOR': 'FDOR'
     }),
-    ('FirstEasternCounties', 'EA', {
-        'FECS': 'FECS'
-    })
+    ('FirstWestYorkshire', 'Y', {
+        'FHAL': 'FHAL',
+        'FHUD': 'FHUD',
+        'FLDS': 'FLDS',
+        'FWYO': 'FWYO'
+    }),
+    ('FirstLeicester', 'EM', {'FLEI': 'FLEI'}),
+    ('FirstEasternCounties', 'EA', {'FECS': 'FECS'}),
+    ('FirstHampshireAndDorset', 'SW', {
+        'FHAM': 'FHAM',
+        'FDOR': 'FDOR'
+    }),
+    ('FirstPotteries', 'WM', {'FPOT': 'FPOT'}),
+    ('FirstScotlandEast', 'S', {'FSCE': 'FSCE'}),
+    ('FirstCymru', 'W', {'FCYM': 'FCYM'}),
+    ('FirstSouthYorkshire', 'Y', {'FSYO': 'FSYO'}),
+    ('FirstWestYorkshire', 'Y', {
+        'FHAL': 'FHAL',
+        'FHUD': 'FHUD',
+        'FLDS': 'FLDS',
+        'FWYO': 'FWYO'
+    }),
+    ('FirstMidlandRed', 'WM', {'FSMR': 'FSMR'}),
+    ('FirstYork', 'Y', {'FYOR': 'FYOR'}),
 ]
