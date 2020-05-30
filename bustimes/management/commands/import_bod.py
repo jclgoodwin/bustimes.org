@@ -6,7 +6,7 @@ from ciso8601 import parse_datetime
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.utils import timezone
-from busstops.models import DataSource, Service
+from busstops.models import DataSource, Service, Operator
 from .import_gtfs import download_if_modified
 from .import_transxchange import Command as TransXChangeCommand
 from .import_passenger import handle_file
@@ -88,6 +88,8 @@ def first():
         modified = download_if_modified(os.path.join(settings.DATA_DIR, filename), url)
 
         if modified:
+            print(operator)
+
             command.operators = operators
             command.region_id = region_id
             command.service_descriptions = {}
@@ -100,6 +102,9 @@ def first():
             handle_file(command, filename)
 
             clean_up(operators.values(), [command.source])
+
+            print(' ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
+            print(' ', Operator.objects.filter(service__route__source=command.source).distinct().values('id'))
 
 
 class Command(BaseCommand):
