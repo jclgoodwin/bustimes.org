@@ -103,6 +103,8 @@ def first():
 
             clean_up(operators.values(), [command.source])
 
+            command.source.save(update_fields=['datetime'])
+
             print(' ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
             print(' ', Operator.objects.filter(service__route__source=command.source).distinct().values('id'))
 
