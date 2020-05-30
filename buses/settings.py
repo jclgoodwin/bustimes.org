@@ -363,17 +363,11 @@ FIRST_OPERATORS = [
         'FBOS': 'FBOS',
         'FDOR': 'FDOR'
     }),
-    ('FirstWestYorkshire', 'Y', {
-        'FHAL': 'FHAL',
-        'FHUD': 'FHUD',
-        'FLDS': 'FLDS',
-        'FWYO': 'FWYO'
-    }),
     ('FirstLeicester', 'EM', {'FLEI': 'FLEI'}),
     ('FirstEasternCounties', 'EA', {'FECS': 'FECS'}),
     ('FirstHampshireAndDorset', 'SW', {
         'FHAM': 'FHAM',
-        'FDOR': 'FDOR'
+        'FHDO': 'FHDO',
     }),
     ('FirstPotteries', 'WM', {'FPOT': 'FPOT'}),
     ('FirstScotlandEast', 'S', {'FSCE': 'FSCE'}),
