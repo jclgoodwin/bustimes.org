@@ -5,6 +5,7 @@ import os
 import logging
 import zipfile
 import xml.etree.cElementTree as ET
+from time import sleep
 from datetime import timedelta
 from requests_html import HTMLSession
 from django.conf import settings
@@ -58,7 +59,16 @@ class Command(BaseCommand):
             command.service_codes = set()
 
             versions = []
-            response = session.get(url)
+            try:
+                response = session.get(url, timeout=5)
+            except ConnectionError as e:
+                print(url, e)
+                sleep(5)
+                continue
+            if not response.ok:
+                print(url, response)
+                sleep(5)
+                continue
             for element in response.html.find():
                 if element.tag == 'h3':
                     heading = element.text
@@ -121,3 +131,5 @@ class Command(BaseCommand):
                     # mark old services as not current
                     print('old services:',
                           command.source.service_set.filter(current=True, route=None).update(current=False))
+            else:
+                sleep(5)
