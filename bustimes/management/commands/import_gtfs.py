@@ -50,13 +50,17 @@ def download_if_modified(path, url):
         response = SESSION.head(url, headers=headers, timeout=5, allow_redirects=True)
         if not response.ok:
             response = SESSION.get(url, headers=headers, timeout=5, stream=True)
+            if not response.ok:
+                print(response)
+                return
         if response.status_code == 304:
             return False  # not modified
         if 'last-modified' in response.headers and parsedate(response.headers['last-modified']) <= last_modified:
             return False
     response = SESSION.get(url, stream=True)
-    write_zip_file(path, response)
-    return True
+    if response.ok:
+        write_zip_file(path, response)
+        return True
 
 
 def read_file(archive, name):
