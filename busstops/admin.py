@@ -161,7 +161,11 @@ class PlaceAdmin(admin.ModelAdmin):
 
 
 class DataSourceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'url', 'datetime')
+    list_display = ('name', 'url', 'datetime', 'operators')
+
+    @staticmethod
+    def operators(obj):
+        return ', '.join(o.pk for o in Operator.objects.filter(service__route__source=obj).distinct())
 
 
 class SIRISourceAdmin(admin.ModelAdmin):
