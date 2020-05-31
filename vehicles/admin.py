@@ -415,7 +415,13 @@ class LiveryAdminForm(forms.ModelForm):
 class LiveryAdmin(admin.ModelAdmin):
     form = LiveryAdminForm
     search_fields = ['name']
-    list_display = ['name', 'preview']
+    list_display = ['name', 'preview', 'vehicles']
+
+    def vehicles(self, obj):
+        return obj.vehicles
+
+    def get_queryset(self, _):
+        return Livery.objects.annotate(vehicles=Count('vehicle'))
 
 
 admin.site.register(VehicleType, VehicleTypeAdmin)
