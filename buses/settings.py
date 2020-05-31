@@ -325,6 +325,9 @@ PASSENGER_OPERATORS = (
     ('Go North East', 'https://www.gonortheast.co.uk/open-data', 'NE', {
         'GNE': 'GNEL',
     }),
+    ('McGill\'s', 'https://data.discoverpassenger.com/operator/mcgills', 'S', {
+        'MCG': 'MCGL',
+    }),
 )
 BOD_OPERATORS = (
     ('LYNX', 'EA', {
@@ -333,6 +336,9 @@ BOD_OPERATORS = (
     ('TBTN', 'EM', {
         '574T': 'TBTN',
         'KN': 'KBUS',
+    }),
+    ('WBTR', 'EM', {
+        'NW': 'WBTR',
     }),
     ('ANEA', 'NE', {
         'ACYM': 'ACYM',
