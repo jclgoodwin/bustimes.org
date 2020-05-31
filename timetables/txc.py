@@ -836,7 +836,4 @@ class Grouping:
                     description += ' via ' + self.parent.via
                 return description
 
-        # if self.parent.service:
-        #     return getattr(self.parent.service, self.direction + '_description')
-
-        return self.direction.capitalize()
+        return ''

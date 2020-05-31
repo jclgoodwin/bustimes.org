@@ -505,6 +505,7 @@ class Command(BaseCommand):
                 description = None
             if not description:
                 if not (txc_service.origin == 'Origin' and txc_service.destination == 'Destination'):
+                    txc_service.description_parts = [txc_service.origin, txc_service.destination]
                     description = f'{txc_service.origin} - {txc_service.destination}'
                     vias = txc_service.vias
                     if vias:
