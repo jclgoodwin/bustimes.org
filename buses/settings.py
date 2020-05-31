@@ -380,6 +380,7 @@ FIRST_OPERATORS = [
     ('FirstCymru', 'W', {'FCYM': 'FCYM'}),
     ('FirstSouthYorkshire', 'Y', {'FSYO': 'FSYO'}),
     ('FirstWestYorkshire', 'Y', {
+        'FBRA': 'FBRA',
         'FHAL': 'FHAL',
         'FHUD': 'FHUD',
         'FLDS': 'FLDS',
