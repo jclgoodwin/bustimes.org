@@ -358,6 +358,77 @@ BOD_OPERATORS = (
         'YTIG': 'YTIG',
     }),
 )
+STAGECOACH_OPERATORS = [
+    ('S', 'sblb', 'Stagecoach Bluebird', {'SBLB': 'SBLB'}),
+    ('S', 'scfi', 'Stagecoach East Scotland', {
+        'SCPE': 'SCPE',
+        'STSY': 'STSY',
+        'SCFI': 'SCFI',
+    }),
+    ('S', 'schi', 'Stagecoach Highlands', {
+        'SCHI': 'SCHI',
+        'SCOR': 'SCOR'
+    }),
+    ('NE', 'scne', 'Stagecoach North East', {
+        'SCNE': 'SCNE',
+        'SCSS': 'SCSS',
+        'SCSU': 'SCSU',
+        'SCTE': 'SCTE',
+        'SCHA': 'SCHA'
+    }),
+    ('S', 'stws', 'Stagecoach West Scotland', {
+        'SCGS': 'SCGS',
+        'STWS': 'STWS'
+    }),
+    ('EM', 'scem', 'Stagecoach East Midlands', {
+        'SCGH': 'SCGH',
+        'SCLI': 'SCLI',
+        'NFKG': 'NFKG'
+    }),
+    ('SE', 'scso', 'Stagecoach South', {
+        'SCPY': 'SCPY',
+        'SCHM': 'SCHM',
+        'SCCO': 'SCCO'
+    }),
+    ('SE', 'scek', 'Stagecoach South East', {
+        'SCEK': 'SCEK',
+        'SCEB': 'SCEB',
+        'SCHT': 'SCHT'
+    }),
+    ('Y', 'syrk', 'Stagecoach Yorkshire', {
+        'SYRK': 'SYRK',
+        'YSYC': 'YSYC'
+    }),
+    ('NW', 'sccu', 'Stagecoach Cumbria', {
+        # 'ANEA': 'ANEA',
+        'SCMB': 'SCMB'
+    }),
+    ('NW', 'scmn', 'Stagecoach Manchester', {
+        'SCMN': 'SCMN',
+        'SWIG': 'SWIG'
+    }),
+    ('NW', 'scmy', 'Stagecoach Merseyside', {
+        'SCMY': 'SCMY'
+    }),
+    ('SW', 'sdvn', 'Stagecoach South West', {'SDVN': 'SDVN'}),
+    ('SE', 'sccm', 'Stagecoach East', {
+        'SCBD': 'SCBD',
+        'SCCM': 'SCCM',
+        'SCPB': 'SCPB',
+        'SCHU': 'SCHU'
+    }),
+    ('EM', 'scnh', 'Stagecoach Midlands', {
+        'SCNH': 'SCNH',
+        'SCWW': 'SCWW'
+    }),
+    ('SE', 'scox', 'Stagecoach Oxfordshire', {'SCOX': 'SCOX'}),
+    ('SW', 'scgl', 'Stagecoach West', {
+        'SSWN': 'SSWN',
+        'SCGL': 'SCGL'
+    }),
+    ('W', 'sswl', 'Stagecoach South Wales', {'SSWL': 'SSWL'}),
+    ('Y', 'tram', 'Stagecoach Supertram', {'SCST': 'SCST'}),
+]
 FIRST_OPERATORS = [
     ('FirstBerkshire', 'SE', {'FTVA': 'FTVA'}),
     ('FirstBristol', 'SW', {'FBRI': 'FBRI'}),

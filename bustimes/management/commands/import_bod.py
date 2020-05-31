@@ -1,16 +1,21 @@
 """Import timetable data "fresh from the cow"
 """
 import os
-from requests import Session
+import requests
+import time
 from ciso8601 import parse_datetime
+from email.utils import parsedate_to_datetime
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.utils import timezone
 from busstops.models import DataSource, Service, Operator
-from .import_gtfs import download_if_modified
+from .import_gtfs import download_if_modified, write_zip_file
 from .import_transxchange import Command as TransXChangeCommand
 from .import_passenger import handle_file
 from ...models import Route, Calendar
+
+
+session = requests.Session()
 
 
 def clean_up(operators, sources):
@@ -28,8 +33,35 @@ def get_command():
     return command
 
 
+# like download_if_modified but different...
+def download_if_changed(path, url):
+    headers = {}
+    modified = True
+    if os.path.exists(path):
+        last_modified = time.localtime(os.path.getmtime(path))
+        headers['if-modified-since'] = time.asctime(last_modified)
+
+        response = session.head(url, headers=headers)
+        if response.status_code == 304:
+            modified = False
+
+    if modified:
+        response = session.get(url, headers=headers, stream=True)
+
+        if response.status_code == 304:
+            modified = False
+        else:
+            write_zip_file(path, response)
+
+    if 'x-amz-meta-cb-modifiedtime' in response.headers:
+        last_modified = response.headers['x-amz-meta-cb-modifiedtime']
+    elif 'last-modified' in response.headers:
+        last_modified = response.headers['last-modified']
+
+    return modified, last_modified
+
+
 def bus_open_data(api_key):
-    session = Session()
     command = get_command()
 
     for operator_id, region_id, operators in settings.BOD_OPERATORS:
@@ -111,12 +143,50 @@ def first():
             print(' ', Operator.objects.filter(service__route__source=command.source).distinct().values('id'))
 
 
+def stagecoach():
+    command = get_command()
+
+    for region_id, noc, operator, operators in settings.STAGECOACH_OPERATORS:
+        filename = f'stagecoach-{noc}-route-schedule-data-transxchange.zip'
+        url = f'https://opendata.stagecoachbus.com/{filename}'
+        path = os.path.join(settings.DATA_DIR, filename)
+
+        command.source, created = DataSource.objects.get_or_create({'name': operator}, url=url)
+
+        modified, last_modified = download_if_changed(path, url)
+
+        if modified:
+            print(operator)
+
+            command.operators = operators
+            command.region_id = region_id
+            command.service_descriptions = {}
+            command.service_codes = set()
+            command.calendar_cache = {}
+
+            # avoid importing old data
+            command.source.datetime = timezone.now()
+
+            handle_file(command, filename)
+
+            clean_up(command.operators.values(), [command.source])
+
+            command.source.datetime = parsedate_to_datetime(last_modified)
+            command.source.save(update_fields=['datetime'])
+
+            print(' ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
+            print(' ', {o['id']: o['id'] for o in
+                  Operator.objects.filter(service__route__source=command.source).distinct().values('id')})
+
+
 class Command(BaseCommand):
     @staticmethod
     def add_arguments(parser):
         parser.add_argument('api_key', type=str)
 
     def handle(self, api_key, **options):
+
+        stagecoach()
 
         bus_open_data(api_key)
 

@@ -147,6 +147,8 @@ class Command(BaseCommand):
             open_data_operators += operators.values()
         for _, _, operators in settings.FIRST_OPERATORS:
             open_data_operators += operators.values()
+        for _, _, _, operators in settings.STAGECOACH_OPERATORS:
+            open_data_operators += operators.values()
         self.open_data_operators = set(open_data_operators)
         for archive_name in options['archives']:
             self.handle_archive(archive_name, options['files'])
@@ -499,7 +501,7 @@ class Command(BaseCommand):
             description = txc_service.description
             if description and ('timetable' in description.lower() or 'Database Refresh' in description):
                 description = None
-            elif self.source.name.startswith('Arriva'):
+            elif self.source.name.startswith('Arriva') or self.source.name.startswith('Stagecoach'):
                 description = None
             if not description:
                 if not (txc_service.origin == 'Origin' and txc_service.destination == 'Destination'):
