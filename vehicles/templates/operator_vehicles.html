@@ -180,7 +180,7 @@
                         var from = event.target.parentNode.parentNode.rowIndex - 1,
                             to = lastInput.parentNode.parentNode.rowIndex - 1,
                             min = Math.min(from, to),
-                            max = Math.max(from, to),
+                            max = Math.max(from, to);
                         checkboxes.forEach(function(checkbox, i) {
                             if (i > min && i < max) {
                                 checkbox.checked = lastInput.checked;
