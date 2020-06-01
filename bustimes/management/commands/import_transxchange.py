@@ -477,7 +477,7 @@ class Command(BaseCommand):
                             existing = services.get(current=True)
                         except Service.DoesNotExist:
                             existing = services.get()
-                        if not existing.source or existing.source == self.source or len(existing.source.name) <= 4:
+                        if not existing.source or len(existing.source.name) <= 4:
                             # from same source, or TNDS
                             service_code = existing.service_code
                             if existing.source:
