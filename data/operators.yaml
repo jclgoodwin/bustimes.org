@@ -196,9 +196,9 @@ SCBL:
     name: Stagecoach Bassetlaw
 CLTL:
     name: Stagecoach Hull
-SSTY:
+STSY:
     name: Stagecoach Strathtay
-SSPH:
+SCPE:
     name: Stagecoach Perth
 SCFI:
     name: Stagecoach Fife
