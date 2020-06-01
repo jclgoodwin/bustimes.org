@@ -596,7 +596,7 @@ class Command(BaseCommand):
                         filename)
                     defaults['description'] = defaults['outbound_description'] or defaults['inbound_description']
 
-                service, service_created = Service.objects.update_or_create(service_code=service_code, defaults=defaults)
+                service, service_created = Service.objects.update_or_create(defaults, service_code=service_code)
 
                 if service_created:
                     service.operator.set(operators)
