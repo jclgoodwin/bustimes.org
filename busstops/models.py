@@ -209,8 +209,6 @@ class DataSource(models.Model):
             url = self.url.replace('download/', '')
             text = self.name.split('_')[0] + '/Bus Open Data Service'
             date = self.datetime
-        elif '/first/' in self.url:
-            text = 'First'
         elif 'stagecoach' in self.url:
             url = 'https://www.stagecoachbus.com/open-data'
             text = self.name

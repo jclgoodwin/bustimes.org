@@ -362,12 +362,15 @@ STAGECOACH_OPERATORS = [
     ('S', 'sblb', 'Stagecoach Bluebird', {'SBLB': 'SBLB'}),
     ('S', 'scfi', 'Stagecoach East Scotland', {
         'SCPE': 'SCPE',
+        'SSPH': 'SSPH',  # (code not used in data)
         'STSY': 'STSY',
+        'SSTY': 'SSTY',  # (code not used in data)
         'SCFI': 'SCFI',
     }),
     ('S', 'schi', 'Stagecoach Highlands', {
         'SCHI': 'SCHI',
-        'SCOR': 'SCOR'
+        'SCOR': 'SCOR',
+        'SINV': 'SINV',  # (code not used in data)
     }),
     ('NE', 'scne', 'Stagecoach North East', {
         'SCNE': 'SCNE',
@@ -378,17 +381,21 @@ STAGECOACH_OPERATORS = [
     }),
     ('S', 'stws', 'Stagecoach West Scotland', {
         'SCGS': 'SCGS',
+        'STGS': 'STGS',  # (code not used in data)
         'STWS': 'STWS'
     }),
     ('EM', 'scem', 'Stagecoach East Midlands', {
         'SCGH': 'SCGH',
+        'SCGR': 'SCGR',  # (code not used in data)
         'SCLI': 'SCLI',
         'NFKG': 'NFKG'
     }),
     ('SE', 'scso', 'Stagecoach South', {
         'SCPY': 'SCPY',
         'SCHM': 'SCHM',
-        'SCCO': 'SCCO'
+        'SCHW': 'SCHW',  # (code not used in data)
+        'SCCO': 'SCCO',
+        'SMSO': 'SMSO',  # (code not used in data)
     }),
     ('SE', 'scek', 'Stagecoach South East', {
         'SCEK': 'SCEK',
@@ -397,11 +404,13 @@ STAGECOACH_OPERATORS = [
     }),
     ('Y', 'syrk', 'Stagecoach Yorkshire', {
         'SYRK': 'SYRK',
-        'YSYC': 'YSYC'
+        'YSYC': 'YSYC',
+        'CLTL': 'CLTL',  # (code not used in data)
     }),
     ('NW', 'sccu', 'Stagecoach Cumbria', {
         # 'ANEA': 'ANEA',
-        'SCMB': 'SCMB'
+        'SCMB': 'SCMB',
+        'SCCU': 'SCCU',  # (code not used in data)
     }),
     ('NW', 'scmn', 'Stagecoach Manchester', {
         'SCMN': 'SCMN',
