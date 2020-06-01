@@ -233,15 +233,14 @@ header {
 }
 
 @media (min-width: 22em) {
-    .site-name:after {
-        content: url('/static/svg/bus.svg');
-        display: inline-block;
-        margin-left: .66667em;
+    .site-name {
+        background: url('/static/svg/bus.svg') no-repeat;
+        background-position: right .666em center;
+        padding-right: 3.208em;
     }
 
-    .ferry:after {
-        content: url('/static/svg/boat.svg');
-        margin-top: -1em;
+    .ferry {
+        background-image: url('/static/svg/boat.svg');
     }
 }
 
