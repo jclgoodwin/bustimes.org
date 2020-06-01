@@ -92,12 +92,12 @@ class Departures:
                 return self.services_by_alternative_name[line_name_lower]
             alternatives = {
                 'Puls': 'pulse',
-                'FLCN': 'falcon',
+                # 'FLCN': 'falcon',
                 'TUBE': 'oxford tube',
                 'SPRI': 'spring',
                 'PRO': 'pronto',
                 'SA': 'the sherwood arrow',
-                'Yo-Y': 'yoyo',
+                'Yo-Y': 'yo-yo',
                 'Port': 'portway park and ride',
                 'Bris': 'brislington park and ride',
                 'sp': 'sprint',

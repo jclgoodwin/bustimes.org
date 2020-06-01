@@ -137,12 +137,9 @@ class Command(ImportLiveVehiclesCommand):
             service = journey.route_name
             alternatives = {
                 'PULS': 'Pulse',
-                'FLCN': 'Falcon',
-                'TUBE': 'Oxford Tube',
-                'SPRI': 'spring',
-                'PRO': 'pronto',
-                'SA': 'The Sherwood Arrow',
-                'YO-Y': 'YOYO',
+                # 'TUBE': 'Oxford Tube',
+                'SPRI': 'SPRING',
+                'YO-Y': 'Yo-Yo',
                 'TRIA': 'Triangle',
             }
             if service in alternatives:
