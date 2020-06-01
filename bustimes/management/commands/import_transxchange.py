@@ -73,13 +73,17 @@ def sanitize_description(name):
     return ' - '.join(parts)
 
 
-def get_line_name_and_brand(service_element):
-    line_name = service_element.find('txc:Lines', NS)[0][0].text
-    if '|' in line_name:
-        line_name, line_brand = line_name.split('|', 1)
-    else:
-        line_brand = ''
-    return line_name, line_brand
+def get_lines(service_element):
+    lines = []
+    for line_element in service_element.find('txc:Lines', NS):
+        line_id = line_element.attrib['id']
+        line_name = line_element.find('txc:LineName', NS).text
+        if '|' in line_name:
+            line_name, line_brand = line_name.split('|', 1)
+        else:
+            line_brand = ''
+        lines.append((line_id, line_name, line_brand))
+    return lines
 
 
 def get_service_code(filename):
@@ -369,11 +373,13 @@ class Command(BaseCommand):
 
         return calendar
 
-    def handle_journeys(self, route, stops, transxchange, service):
+    def handle_journeys(self, route, stops, transxchange, service, line_id):
         default_calendar = None
 
         for journey in transxchange.journeys:
             if journey.service_ref != service.service_code:
+                continue
+            if journey.line_ref != line_id:
                 continue
 
             calendar = None
@@ -455,193 +461,200 @@ class Command(BaseCommand):
             if txc_service.operating_period.end and txc_service.operating_period.end < today:
                 continue
 
-            service_code = get_service_code(filename)
-            if service_code is None:
-                service_code = txc_service.service_code
-
-            line_name, line_brand = get_line_name_and_brand(txc_service.element)
-
             operators = self.get_operators(transxchange, txc_service)
 
-            if len(self.source.name) <= 4:  # TNDS
-                if operators and all(operator.id in self.open_data_operators for operator in operators):
-                    continue
-            else:  # not a TNDS source (slightly dodgy heuristic)
-                operator_code = '-'.join(operator.id for operator in operators)
-                if operator_code == 'TDTR' and 'Swindon-Rural' in filename:
-                    operator_code = 'SBCR'
+            lines = get_lines(txc_service.element)
 
-                service_code_prefix = f'{self.source.id}-{operator_code}-'
-                service_code = f'{service_code_prefix}{service_code}'
+            for line_id, line_name, line_brand in lines:
 
-                if operator_code != 'SBCR':
-                    try:
-                        services = Service.objects.filter(operator__in=operators, line_name__iexact=line_name)
-                        services = services.select_related('source').defer('geometry')
+                service_code = get_service_code(filename)
+                if service_code is None:
+                    service_code = txc_service.service_code
+
+                if len(self.source.name) <= 4:  # TNDS
+                    if operators and all(operator.id in self.open_data_operators for operator in operators):
+                        continue
+                else:  # not a TNDS source (slightly dodgy heuristic)
+                    operator_code = '-'.join(operator.id for operator in operators)
+                    if operator_code == 'TDTR' and 'Swindon-Rural' in filename:
+                        operator_code = 'SBCR'
+
+                    service_code_prefix = f'{self.source.id}-{operator_code}-'
+                    service_code = f'{service_code_prefix}{service_code}'
+
+                    if len(lines) > 1:
+                        service_code = f'{service_code}-{line_id}'
+
+                    if operator_code != 'SBCR':
                         try:
-                            existing = services.get(current=True)
-                        except Service.DoesNotExist:
-                            existing = services.get()
-                        if not existing.source or existing.source == self.source or len(existing.source.name) <= 4:
+                            services = Service.objects.filter(operator__in=operators, line_name__iexact=line_name)
+                            services = services.select_related('source').defer('geometry')
+                            try:
+                                existing = services.get(current=True)
+                            except Service.DoesNotExist:
+                                existing = services.get()
+                            if not existing.source or existing.source == self.source or len(existing.source.name) <= 4:
 
-                            if existing.source == self.source:
-                                if existing.service_code.startswith(service_code_prefix):
-                                    raise NotTndsServiceCode
+                                if existing.source == self.source:
+                                    if existing.service_code.startswith(service_code_prefix):
+                                        raise NotTndsServiceCode
 
-                            # from same source, or TNDS
-                            service_code = existing.service_code
-                            if existing.source:
-                                if not line_brand:
-                                    line_brand = existing.line_brand
-                                if not txc_service.mode:
-                                    txc_service.mode = existing.mode
-                    except (Service.DoesNotExist, Service.MultipleObjectsReturned, NotTndsServiceCode):
-                        pass
+                                # from same source, or TNDS
+                                service_code = existing.service_code
+                                if existing.source:
+                                    if not line_brand:
+                                        line_brand = existing.line_brand
+                                    if not txc_service.mode:
+                                        txc_service.mode = existing.mode
+                        except (Service.DoesNotExist, Service.MultipleObjectsReturned, NotTndsServiceCode):
+                            pass
 
-            defaults = {
-                'line_name': line_name,
-                'line_brand': line_brand,
-                'mode': txc_service.mode,
-                'region_id': self.region_id,
-                'date': today,
-                'current': True,
-                'source': self.source,
-                'show_timetable': True
-            }
-            description = txc_service.description
-            if description and ('timetable' in description.lower() or 'Database Refresh' in description):
-                description = None
-            elif self.source.name.startswith('Arriva') or self.source.name.startswith('Stagecoach'):
-                description = None
-            if not description:
-                if not (txc_service.origin == 'Origin' and txc_service.destination == 'Destination'):
-                    txc_service.description_parts = [txc_service.origin, txc_service.destination]
-                    description = f'{txc_service.origin} - {txc_service.destination}'
-                    vias = txc_service.vias
-                    if vias:
-                        if len(txc_service.vias) == 1 and (',' in vias[0] or ' and ' in vias[0]):
-                            description = f"{description} via {', '.join(vias)}"
-                        else:
-                            description = [txc_service.origin] + vias + [txc_service.destination]
-                            description = ' - '.join(description)
-            if description:
-                if self.region_id == 'NE':
-                    description = sanitize_description(description)
-                defaults['description'] = description
+                defaults = {
+                    'line_name': line_name,
+                    'line_brand': line_brand,
+                    'mode': txc_service.mode,
+                    'region_id': self.region_id,
+                    'date': today,
+                    'current': True,
+                    'source': self.source,
+                    'show_timetable': True
+                }
+                description = txc_service.description
+                if description and ('timetable' in description.lower() or 'Database Refresh' in description):
+                    description = None
+                elif self.source.name.startswith('Arriva') or self.source.name.startswith('Stagecoach'):
+                    description = None
+                if not description:
+                    if not (txc_service.origin == 'Origin' and txc_service.destination == 'Destination'):
+                        txc_service.description_parts = [txc_service.origin, txc_service.destination]
+                        description = f'{txc_service.origin} - {txc_service.destination}'
+                        vias = txc_service.vias
+                        if vias:
+                            if len(txc_service.vias) == 1 and (',' in vias[0] or ' and ' in vias[0]):
+                                description = f"{description} via {', '.join(vias)}"
+                            else:
+                                description = [txc_service.origin] + vias + [txc_service.destination]
+                                description = ' - '.join(description)
+                if description:
+                    if self.region_id == 'NE':
+                        description = sanitize_description(description)
+                    defaults['description'] = description
 
-            groupings = {
-                'outbound': Grouping('outbound', txc_service),
-                'inbound': Grouping('inbound', txc_service)
-            }
+                groupings = {
+                    'outbound': Grouping('outbound', txc_service),
+                    'inbound': Grouping('inbound', txc_service)
+                }
 
-            for journey_pattern in txc_service.journey_patterns.values():
-                if journey_pattern.direction == 'inbound':
-                    grouping = groupings['inbound']
-                else:
-                    grouping = groupings['outbound']
-                grouping.add_journey_pattern(journey_pattern)
+                for journey_pattern in txc_service.journey_patterns.values():
+                    if journey_pattern.direction == 'inbound':
+                        grouping = groupings['inbound']
+                    else:
+                        grouping = groupings['outbound']
+                    grouping.add_journey_pattern(journey_pattern)
 
-            try:
-                stop_usages = []
-                for grouping in groupings.values():
-                    if grouping.rows:
-                        for i, row in enumerate(grouping.rows):
-                            if row.part.stop.atco_code in stops:
-                                timing_status = row.part.timingstatus
-                                if timing_status == 'otherPoint':
-                                    timing_status = 'OTH'
-                                elif timing_status == 'principleTimingPoint':
-                                    timing_status = 'PTP'
-                                stop_usages.append(
-                                    StopUsage(
-                                        service_id=service_code,
-                                        stop_id=row.part.stop.atco_code,
-                                        direction=grouping.direction,
-                                        order=i,
-                                        timing_status=timing_status
+                try:
+                    stop_usages = []
+                    for grouping in groupings.values():
+                        if grouping.rows:
+                            for i, row in enumerate(grouping.rows):
+                                if row.part.stop.atco_code in stops:
+                                    timing_status = row.part.timingstatus
+                                    if timing_status == 'otherPoint':
+                                        timing_status = 'OTH'
+                                    elif timing_status == 'principleTimingPoint':
+                                        timing_status = 'PTP'
+                                    stop_usages.append(
+                                        StopUsage(
+                                            service_id=service_code,
+                                            stop_id=row.part.stop.atco_code,
+                                            direction=grouping.direction,
+                                            order=i,
+                                            timing_status=timing_status
+                                        )
                                     )
-                                )
-                        if grouping.direction == 'outbound' or grouping.direction == 'inbound':
-                            # grouping.description_parts = transxchange.description_parts
-                            defaults[grouping.direction + '_description'] = str(grouping)
+                            if grouping.direction == 'outbound' or grouping.direction == 'inbound':
+                                # grouping.description_parts = transxchange.description_parts
+                                defaults[grouping.direction + '_description'] = str(grouping)
 
-                    line_strings = []
-                    for pattern in txc_service.journey_patterns.values():
-                        line_string = line_string_from_journeypattern(pattern, stops)
-                        if line_string not in line_strings:
-                            line_strings.append(line_string)
-                multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
+                        line_strings = []
+                        for pattern in txc_service.journey_patterns.values():
+                            line_string = line_string_from_journeypattern(pattern, stops)
+                            if line_string not in line_strings:
+                                line_strings.append(line_string)
+                    multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
 
-            except (AttributeError, IndexError) as error:
-                logger.error(error, exc_info=True)
-                defaults['show_timetable'] = False
-                stop_usages = [StopUsage(service_id=service_code, stop_id=stop, order=0) for stop in stops]
-                multi_line_string = None
+                except (AttributeError, IndexError) as error:
+                    logger.error(error, exc_info=True)
+                    defaults['show_timetable'] = False
+                    stop_usages = [StopUsage(service_id=service_code, stop_id=stop, order=0) for stop in stops]
+                    multi_line_string = None
 
-            defaults['geometry'] = multi_line_string
+                defaults['geometry'] = multi_line_string
 
-            if self.service_descriptions:
-                defaults['outbound_description'], defaults['inbound_description'] = self.get_service_descriptions(
-                    filename)
-                defaults['description'] = defaults['outbound_description'] or defaults['inbound_description']
+                if self.service_descriptions:
+                    defaults['outbound_description'], defaults['inbound_description'] = self.get_service_descriptions(
+                        filename)
+                    defaults['description'] = defaults['outbound_description'] or defaults['inbound_description']
 
-            service, service_created = Service.objects.update_or_create(service_code=service_code, defaults=defaults)
+                service, service_created = Service.objects.update_or_create(service_code=service_code, defaults=defaults)
 
-            if service_created:
-                service.operator.set(operators)
-                self.service_codes.add(service_code)
-            else:
-                if service.slug == service_code.lower():
-                    service.slug = ''
-                    service.save(update_fields=['slug'])
-                if service_code in self.service_codes:
-                    service.operator.add(*operators)
-                else:
+                if service_created:
                     service.operator.set(operators)
                     self.service_codes.add(service_code)
-                    self.source.route_set.filter(service=service_code).delete()
-                    service.stops.clear()
-            StopUsage.objects.bulk_create(stop_usages)
-
-            # a code used in Traveline Cymru URLs:
-            if self.source.name == 'W':
-                if transxchange.journeys and transxchange.journeys[0].private_code:
-                    private_code = transxchange.journeys[0].private_code
-                    if ':' in private_code:
-                        ServiceCode.objects.update_or_create({
-                            'code': private_code.split(':', 1)[0]
-                        }, service=service, scheme='Traveline Cymru')
-
-            # timetable data:
-
-            route_defaults = {
-                'line_name': line_name,
-                'line_brand': line_brand,
-                'start_date': txc_service.operating_period.start,
-                'end_date': txc_service.operating_period.end,
-                'dates': txc_service.operating_period.dates(),
-                'service': service,
-            }
-            if 'description' in defaults:
-                route_defaults['description'] = defaults['description']
-
-            route_code = filename
-            if len(transxchange.services) > 1:
-                route_code = f'{route_code}#{service_code}'
-
-            route, route_created = Route.objects.get_or_create(route_defaults, source=self.source, code=route_code)
-
-            self.handle_journeys(route, stops, transxchange, txc_service)
-
-            if service_code in self.corrections:
-                corrections = {}
-                for field in self.corrections[service_code]:
-                    if field == 'operator':
-                        service.operator.set(self.corrections[service_code][field])
+                else:
+                    if service.slug == service_code.lower():
+                        service.slug = ''
+                        service.save(update_fields=['slug'])
+                    if service_code in self.service_codes:
+                        service.operator.add(*operators)
                     else:
-                        corrections[field] = self.corrections[service_code][field]
-                Service.objects.filter(service_code=service_code).update(**corrections)
+                        service.operator.set(operators)
+                        self.service_codes.add(service_code)
+                        self.source.route_set.filter(service=service_code).delete()
+                        service.stops.clear()
+                StopUsage.objects.bulk_create(stop_usages)
 
-            if service_code == 'twm_5-501-A-y11':  # Lakeside Coaches
-                Trip.objects.filter(route__service=service_code, start='15:05').delete()
-                Trip.objects.filter(route__service=service_code, start='15:30').delete()
+                # a code used in Traveline Cymru URLs:
+                if self.source.name == 'W':
+                    if transxchange.journeys and transxchange.journeys[0].private_code:
+                        private_code = transxchange.journeys[0].private_code
+                        if ':' in private_code:
+                            ServiceCode.objects.update_or_create({
+                                'code': private_code.split(':', 1)[0]
+                            }, service=service, scheme='Traveline Cymru')
+
+                # timetable data:
+
+                route_defaults = {
+                    'line_name': line_name,
+                    'line_brand': line_brand,
+                    'start_date': txc_service.operating_period.start,
+                    'end_date': txc_service.operating_period.end,
+                    'dates': txc_service.operating_period.dates(),
+                    'service': service,
+                }
+                if 'description' in defaults:
+                    route_defaults['description'] = defaults['description']
+
+                route_code = filename
+                if len(transxchange.services) > 1:
+                    route_code = f'{route_code}#{service_code}'
+                if len(lines) > 1:
+                    route_code = f'{route_code}#{line_id}'
+
+                route, route_created = Route.objects.get_or_create(route_defaults, source=self.source, code=route_code)
+
+                self.handle_journeys(route, stops, transxchange, txc_service, line_id)
+
+                if service_code in self.corrections:
+                    corrections = {}
+                    for field in self.corrections[service_code]:
+                        if field == 'operator':
+                            service.operator.set(self.corrections[service_code][field])
+                        else:
+                            corrections[field] = self.corrections[service_code][field]
+                    Service.objects.filter(service_code=service_code).update(**corrections)
+
+                if service_code == 'twm_5-501-A-y11':  # Lakeside Coaches
+                    Trip.objects.filter(route__service=service_code, start='15:05').delete()
+                    Trip.objects.filter(route__service=service_code, start='15:30').delete()

@@ -239,6 +239,7 @@ class VehicleJourney:
             self.private_code = self.private_code.text
 
         self.service_ref = element.find('txc:ServiceRef', NS).text
+        self.line_ref = element.find('txc:LineRef', NS).text
 
         journeypatternref_element = element.find('txc:JourneyPatternRef', NS)
         if journeypatternref_element is not None:
