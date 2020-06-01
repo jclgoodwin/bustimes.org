@@ -130,6 +130,10 @@ def line_string_from_journeypattern(journeypattern, stops):
         pass
 
 
+class NotTndsServiceCode(Exception):
+    pass
+
+
 class Command(BaseCommand):
     @staticmethod
     def add_arguments(parser):
@@ -467,7 +471,8 @@ class Command(BaseCommand):
                 if operator_code == 'TDTR' and 'Swindon-Rural' in filename:
                     operator_code = 'SBCR'
 
-                service_code = f'{self.source.id}-{operator_code}-{service_code}'
+                service_code_prefix = f'{self.source.id}-{operator_code}-'
+                service_code = f'{service_code_prefix}{service_code}'
 
                 if operator_code != 'SBCR':
                     try:
@@ -477,7 +482,12 @@ class Command(BaseCommand):
                             existing = services.get(current=True)
                         except Service.DoesNotExist:
                             existing = services.get()
-                        if not existing.source or len(existing.source.name) <= 4:
+                        if not existing.source or existing.source == self.source or len(existing.source.name) <= 4:
+
+                            if existing.source == self.source:
+                                if existing.service_code.startswith(service_code_prefix):
+                                    raise NotTndsServiceCode
+
                             # from same source, or TNDS
                             service_code = existing.service_code
                             if existing.source:
@@ -485,7 +495,7 @@ class Command(BaseCommand):
                                     line_brand = existing.line_brand
                                 if not txc_service.mode:
                                     txc_service.mode = existing.mode
-                    except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                    except (Service.DoesNotExist, Service.MultipleObjectsReturned, NotTndsServiceCode):
                         pass
 
             defaults = {
