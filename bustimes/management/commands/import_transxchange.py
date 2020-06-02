@@ -11,6 +11,7 @@ import csv
 import yaml
 import zipfile
 import xml.etree.cElementTree as ET
+from titlecase import titlecase
 from datetime import date
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -531,15 +532,23 @@ class Command(BaseCommand):
                 elif self.source.name.startswith('Arriva') or self.source.name.startswith('Stagecoach'):
                     description = None
                 if not description:
-                    if not (txc_service.origin == 'Origin' and txc_service.destination == 'Destination'):
-                        txc_service.description_parts = [txc_service.origin, txc_service.destination]
-                        description = f'{txc_service.origin} - {txc_service.destination}'
+                    origin = txc_service.origin
+                    destination = txc_service.destination
+                    if not (origin == 'Origin' and destination == 'Destination'):
+                        if origin.isupper() and destination.isupper():
+                            origin = titlecase(origin)
+                            destination = titlecase(destination)
+
+                        # for the outbound and inbound descriptions
+                        txc_service.description_parts = [origin, destination]
+
+                        description = f'{origin} - {destination}'
                         vias = txc_service.vias
                         if vias:
                             if len(txc_service.vias) == 1 and (',' in vias[0] or ' and ' in vias[0]):
                                 description = f"{description} via {', '.join(vias)}"
                             else:
-                                description = [txc_service.origin] + vias + [txc_service.destination]
+                                description = [origin] + vias + [destination]
                                 description = ' - '.join(description)
                 if description:
                     if self.region_id == 'NE':
@@ -603,7 +612,6 @@ class Command(BaseCommand):
                     defaults['description'] = defaults['outbound_description'] or defaults['inbound_description']
 
                 service, service_created = Service.objects.update_or_create(defaults, service_code=service_code)
-
 
                 if service_created:
                     service.operator.set(operators)
