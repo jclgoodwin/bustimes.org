@@ -29,4 +29,6 @@ jobs:
       env:
         SECRET_KEY: wormprovision
         PGHOST: localhost
+        PGUSER: postgres
+        DB_NAME: postgres
       run: pipenv run ./manage.py test
