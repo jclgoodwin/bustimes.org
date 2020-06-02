@@ -51,8 +51,8 @@ class OperatorAdminForm(forms.ModelForm):
 
 class OperatorAdmin(admin.ModelAdmin):
     form = OperatorAdminForm
-    list_display = ('name', 'operator_codes', 'id', 'vehicle_mode', 'parent', 'region', 'service_count', 'twitter',
-                    'payment')
+    list_display = ['name', 'operator_codes', 'id', 'vehicle_mode', 'parent', 'region',
+                    'service_count', 'vehicle_count', 'twitter']
     list_filter = ('region', 'vehicle_mode', 'payment_methods', 'parent')
     search_fields = ('id', 'name')
     inlines = [OperatorCodeInline]
@@ -61,8 +61,16 @@ class OperatorAdmin(admin.ModelAdmin):
 
     def get_queryset(self, _):
         service_count = Count('service', filter=Q(service__current=True))
-        return Operator.objects.annotate(service_count=service_count).prefetch_related('operatorcode_set',
-                                                                                       'payment_methods')
+        return Operator.objects.annotate(
+            service_count=service_count
+        ).prefetch_related('operatorcode_set')
+
+    def service_count(self, obj):
+        return obj.service_count
+    service_count.admin_order_field = 'service_count'
+
+    def vehicle_count(self, obj):
+        return obj.vehicle_set.count()
 
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
@@ -73,18 +81,12 @@ class OperatorAdmin(admin.ModelAdmin):
         return queryset, use_distinct
 
     @staticmethod
-    def service_count(obj):
-        return obj.service_count
-
-    @staticmethod
     def payment(obj):
         return ', '.join(str(code) for code in obj.payment_methods.all())
 
     @staticmethod
     def operator_codes(obj):
         return ', '.join(str(code) for code in obj.operatorcode_set.all())
-
-    service_count.admin_order_field = 'service_count'
 
 
 class ServiceCodeInline(admin.TabularInline):
