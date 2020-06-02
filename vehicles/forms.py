@@ -52,8 +52,8 @@ class EditVehiclesForm(forms.Form):
 
         operators = None
         if operator and operator.parent:
-            operators = Operator.objects.filter(parent=operator.parent)
-            self.fields['operator'].queryset = operators.order_by('name').distinct()
+            operators = Operator.objects.filter(parent=operator.parent, service__current=True)
+            self.fields['operator'].queryset = operators.distinct().order_by('name')
         else:
             del(self.fields['operator'])
 
