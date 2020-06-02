@@ -134,10 +134,6 @@ def line_string_from_journeypattern(journeypattern, stops):
         pass
 
 
-class NotTndsServiceCode(Exception):
-    pass
-
-
 class Command(BaseCommand):
     @staticmethod
     def add_arguments(parser):
@@ -240,6 +236,10 @@ class Command(BaseCommand):
         inbound = self.service_descriptions.get(f'{key}I', '')
         return outbound, inbound
 
+    def mark_old_services_as_not_current(self):
+        old_services = self.source.service_set.filter(current=True).exclude(service_code__in=self.service_codes)
+        old_services.update(current=False)
+
     def handle_archive(self, archive_name, filenames):
         self.service_codes = set()
 
@@ -263,8 +263,7 @@ class Command(BaseCommand):
                             except AttributeError as error:
                                 logger.error(error, exc_info=True)
 
-        old_services = self.source.service_set.filter(current=True).exclude(service_code__in=self.service_codes)
-        old_services.update(current=False)
+        self.mark_old_services_as_not_current()
 
         self.source.save(update_fields=['datetime'])
 
@@ -441,6 +440,27 @@ class Command(BaseCommand):
                 stop_time.trip = stop_time.trip  # set trip_id
             StopTime.objects.bulk_create(stop_times)
 
+    def get_existing_service(self, line_name, operators):
+        services = Service.objects.filter(operator__in=operators, line_name__iexact=line_name)
+        services = services.select_related('source').defer('geometry')
+        try:
+            try:
+                existing = services.get(current=True)
+            except Service.DoesNotExist:
+                existing = services.get()
+        except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+            return
+        if not existing:
+            return
+
+        if len(existing.source.name) <= 4:
+            return existing
+
+        if existing.service_code.startswith(f'{self.source.id}-'):
+            return
+
+        return existing
+
     def handle_file(self, open_file, filename):
         transxchange = TransXChange(open_file)
 
@@ -463,7 +483,13 @@ class Command(BaseCommand):
 
             operators = self.get_operators(transxchange, txc_service)
 
+            if len(self.source.name) <= 4:  # TNDS
+                if operators and all(operator.id in self.open_data_operators for operator in operators):
+                    continue
+
             lines = get_lines(txc_service.element)
+
+            service_codes = set()
 
             for line_id, line_name, line_brand in lines:
 
@@ -471,43 +497,23 @@ class Command(BaseCommand):
                 if service_code is None:
                     service_code = txc_service.service_code
 
-                if len(self.source.name) <= 4:  # TNDS
-                    if operators and all(operator.id in self.open_data_operators for operator in operators):
-                        continue
-                else:  # not a TNDS source (slightly dodgy heuristic)
+                if len(self.source.name) > 4:  # not a TNDS source (slightly dodgy heuristic)
                     operator_code = '-'.join(operator.id for operator in operators)
                     if operator_code == 'TDTR' and 'Swindon-Rural' in filename:
                         operator_code = 'SBCR'
 
-                    service_code_prefix = f'{self.source.id}-{operator_code}-'
-                    service_code = f'{service_code_prefix}{service_code}'
-
+                    service_code = f'{self.source.id}-{operator_code}-{service_code}'
                     if len(lines) > 1:
-                        service_code = f'{service_code}-{line_id}'
+                        service_code += '-' + line_id
 
                     if operator_code != 'SBCR':
-                        try:
-                            services = Service.objects.filter(operator__in=operators, line_name__iexact=line_name)
-                            services = services.select_related('source').defer('geometry')
-                            try:
-                                existing = services.get(current=True)
-                            except Service.DoesNotExist:
-                                existing = services.get()
-                            if not existing.source or existing.source == self.source or len(existing.source.name) <= 4:
-
-                                if existing.source == self.source:
-                                    if existing.service_code.startswith(service_code_prefix):
-                                        raise NotTndsServiceCode
-
-                                # from same source, or TNDS
-                                service_code = existing.service_code
-                                if existing.source:
-                                    if not line_brand:
-                                        line_brand = existing.line_brand
-                                    if not txc_service.mode:
-                                        txc_service.mode = existing.mode
-                        except (Service.DoesNotExist, Service.MultipleObjectsReturned, NotTndsServiceCode):
-                            pass
+                        existing = self.get_existing_service(line_name, operators)
+                        if existing:
+                            service_code = existing.service_code
+                            if not line_brand:
+                                line_brand = existing.line_brand
+                            if not txc_service.mode:
+                                txc_service.mode = existing.mode
 
                 defaults = {
                     'line_name': line_name,
@@ -598,9 +604,9 @@ class Command(BaseCommand):
 
                 service, service_created = Service.objects.update_or_create(defaults, service_code=service_code)
 
+
                 if service_created:
                     service.operator.set(operators)
-                    self.service_codes.add(service_code)
                 else:
                     if service.slug == service_code.lower():
                         service.slug = ''
@@ -609,9 +615,10 @@ class Command(BaseCommand):
                         service.operator.add(*operators)
                     else:
                         service.operator.set(operators)
-                        self.service_codes.add(service_code)
-                        self.source.route_set.filter(service=service_code).delete()
+                        service.route_set.all().delete()
                         service.stops.clear()
+                service_codes.add(service_code)
+                self.service_codes.add(service_code)
                 StopUsage.objects.bulk_create(stop_usages)
 
                 # a code used in Traveline Cymru URLs:
@@ -638,9 +645,9 @@ class Command(BaseCommand):
 
                 route_code = filename
                 if len(transxchange.services) > 1:
-                    route_code = f'{route_code}#{service_code}'
+                    route_code += f'#{service_code}'
                 if len(lines) > 1:
-                    route_code = f'{route_code}#{line_id}'
+                    route_code += f'#{line_id}'
 
                 route, route_created = Route.objects.get_or_create(route_defaults, source=self.source, code=route_code)
 

@@ -41,12 +41,12 @@ def download_if_changed(path, url):
         last_modified = time.localtime(os.path.getmtime(path))
         headers['if-modified-since'] = time.asctime(last_modified)
 
-        response = session.head(url, headers=headers)
+        response = requests.head(url, headers=headers)
         if response.status_code == 304:
             modified = False
 
     if modified:
-        response = session.get(url, headers=headers, stream=True)
+        response = requests.get(url, headers=headers, stream=True)
 
         if response.status_code == 304:
             modified = False
@@ -110,6 +110,8 @@ def bus_open_data(api_key):
             url = json['next']
             params = None
 
+        command.mark_old_services_as_not_current()
+
         clean_up(operators.values(), sources)
 
 
@@ -134,6 +136,8 @@ def first():
             command.source.datetime = timezone.now()
 
             handle_file(command, filename)
+
+            command.mark_old_services_as_not_current()
 
             clean_up(operators.values(), [command.source])
 
@@ -168,6 +172,8 @@ def stagecoach():
             command.source.datetime = timezone.now()
 
             handle_file(command, filename)
+
+            command.mark_old_services_as_not_current()
 
             clean_up(command.operators.values(), [command.source])
 
