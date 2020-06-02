@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - uses: harmon758/postgresql-action@v1
+    - uses: huaxk/postgis-action@v1
       with:
         postgresql version: '11'
     - name: Set up Python 3.7
@@ -28,4 +28,5 @@ jobs:
     - name: Test
       env:
         SECRET_KEY: wormprovision
+        PGHOST: localhost
       run: pipenv run ./manage.py test
