@@ -772,10 +772,6 @@ class Service(SearchMixin, models.Model):
                     self.timetable_change = route.start_date
                     break
 
-        # timetable.service = self
-        # timetable.set_description(self.description)
-        # timetable.groupings = [g for g in timetable.groupings if g.rows and g.rows[0].times]
-
         return timetable
 
 
