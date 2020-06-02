@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       run: |
         pipenv sync --dev &
-        apt-get install binutils libproj-dev gdal-bin &
+        sudo apt-get install binutils libproj-dev gdal-bin &
         wait
     - name: Lint with flake8
       run: |
