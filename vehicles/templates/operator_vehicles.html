@@ -167,7 +167,7 @@
         {% load static %}
         <script src="{% static 'js/accessible-autocomplete/accessible-autocomplete.min.js' %}"></script>
         <script>
-            window.addEventListener('DOMContentLoaded', function() {
+            window.addEventListener('load', function() {
                 accessibleAutocomplete.enhanceSelectElement({
                     selectElement: document.getElementById('id_vehicle_type')
                 });

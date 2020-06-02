@@ -150,5 +150,6 @@
         });
     }
 
-    window.addEventListener('DOMContentLoaded', maybeOpenMap);
+    window.addEventListener('load', maybeOpenMap);
+
 })();
