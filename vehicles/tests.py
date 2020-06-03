@@ -32,6 +32,7 @@ class VehiclesTests(TestCase):
         service = Service.objects.create(service_code='49', region=ea, date='2018-12-25', tracking=True,
                                          description='Spixworth - Hunworth - Happisburgh')
         service.operator.add(cls.lynx)
+        service.operator.add(cls.bova)
 
         cls.vehicle_1 = Vehicle.objects.create(code='2', fleet_number=1, reg='FD54JYA', vehicle_type=tempo,
                                                colours='#FF0000', notes='Trent Barton', operator=cls.lynx)
