@@ -8,10 +8,15 @@ jobs:
     - uses: huaxk/postgis-action@v1
       with:
         postgresql version: '11'
-    - name: Set up Python 3.7
+    - name: Cache virtualenv
+      uses: actions/cache@v2
+      path: |
+        ~/.cache/pip
+        ~/.local/share/virtualenvs
+    - name: Set up Python
       uses: actions/setup-python@v1
       with:
-        python-version: 3.7
+        python-version: 3.8
     - name: Install pipenv
       run: python -m pip install --upgrade pipenv
     - name: Install dependencies
