@@ -25,7 +25,7 @@ class Command(ImportLiveVehiclesCommand):
         'BH': ['BHBC'],
         'SQ': ['BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TOUR', 'WDBC'],
         'TT': ['TDTR'],
-        'PC': ['PLYC', 'PC2'],
+        'PC': ['PLYC', 'TFCN'],
         'GONW': ['GONW'],
     }
 
@@ -38,7 +38,7 @@ class Command(ImportLiveVehiclesCommand):
         'bluestar': ['BLUS', 'UNIL'],
         'salisburyreds': ['SWWD'],
         'plymouth': ['PLYC'],
-        'cornwall': ['PC2'],
+        'cornwall': ['TFCN'],
         'gonorthwest': ['GONW'],
     }
 
@@ -149,7 +149,7 @@ class Command(ImportLiveVehiclesCommand):
                 if journey.service:
                     try:
                         operator = journey.service.operator.get()
-                        if vehicle.operator_id != operator.id and operator.id != 'PC2':
+                        if operator.id != vehicle.operator_id:
                             vehicle.operator_id = operator.id
                             vehicle.save()
                     except journey.service.operator.model.MultipleObjectsReturned:
