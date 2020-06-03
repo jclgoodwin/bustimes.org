@@ -507,6 +507,13 @@ class Command(BaseCommand):
                     if len(lines) > 1:
                         service_code += '-' + line_id
 
+                    if self.source.name.startswith('Stagecoach') and self.source.route_set.filter(
+                        service=service_code
+                    ).exclude(code__startswith=filename[:-12]).exists():
+                        service_code = filename[53:-13]
+                        if len(lines) > 1:
+                            service_code += '-' + line_id
+
                     if operator_code != 'SBCR':
                         existing = self.get_existing_service(line_name, operators)
                         if existing:
