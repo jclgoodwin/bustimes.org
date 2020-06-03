@@ -1,7 +1,6 @@
 # Bus Times
 
-[![Build Status](https://travis-ci.org/jclgoodwin/bustimes.org.svg?branch=master)](https://travis-ci.org/jclgoodwin/bustimes.org)
-[![Coverage Status](https://coveralls.io/repos/github/jclgoodwin/bustimes.org/badge.svg?branch=master)](https://coveralls.io/github/jclgoodwin/bustimes.org?branch=master)
+![Python application](https://github.com/jclgoodwin/bustimes.org/workflows/Python%20application/badge.svg)
 
 ## What's this?
 
