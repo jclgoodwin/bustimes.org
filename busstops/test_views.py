@@ -128,7 +128,7 @@ class ViewsTests(TestCase):
         )
 
         cls.chariots = Operator.objects.create(
-            service_code='AINS',
+            id='AINS',
             name='Ainsley\'s Chariots',
             vehicle_mode='airline',
             region_id='N',
