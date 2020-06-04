@@ -178,6 +178,12 @@ SCHU:
     name: Stagecoach in the Fens
 NFKG:
     name: Stagecoach Norfolk
+SCPY:
+    name: Stagecoach in Portsmouth
+SCSU:
+    name: Stagecoach Sunderland
+SCSS:
+    name: Stagecoach South Shields
 SCCM:
     name: Stagecoach in Cambridge
 SCBD:
@@ -198,6 +204,12 @@ CLTL:
     name: Stagecoach Hull
 STSY:
     name: Stagecoach Strathtay
+SCGS:
+    name: Stagecoach in Glasgow
+SCHI:
+    name: Stagecoach Highlands
+SCHI:
+    name: Stagecoach Bluebird
 SCPE:
     name: Stagecoach Perth
 SCFI:
@@ -212,8 +224,6 @@ SCNH:
     name: Stagecoach Northamptonshire
 SCTE:
     name: Stagecoach Teesside
-SCHW:
-    name: Stagecoach in Hampshire & Winchester
 SCCO:
     name: Stagecoach in Hants & Surrey
 SCHM:
