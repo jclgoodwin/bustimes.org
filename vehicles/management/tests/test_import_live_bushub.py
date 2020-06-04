@@ -10,10 +10,10 @@ class BusHubTest(TestCase):
         Region.objects.create(id='WM')
         Operator.objects.create(id='DIAM', name='Graphite Buses', region_id='WM')
         Operator.objects.create(id='WNGS', name='Paul McCartney & Wings', region_id='WM')
-        cls.service_a = Service.objects.create(service_code='44a', line_name='44', date='2018-08-06', tracking=True)
-        cls.service_b = Service.objects.create(service_code='44b', line_name='44', date='2018-08-06', tracking=True)
-        cls.service_a.operator.add('DIAM')
-        cls.service_b.operator.add('DIAM')
+        service_a = Service.objects.create(service_code='44a', line_name='44', date='2018-08-06', tracking=True)
+        service_b = Service.objects.create(service_code='44b', line_name='44', date='2018-08-06', tracking=True)
+        service_a.operator.add('DIAM')
+        service_b.operator.add('DIAM')
         cls.service_c = Service.objects.create(service_code='44', line_name='44', date='2018-08-06', tracking=True)
         cls.service_c.operator.add('WNGS')
         cls.vehicle = Vehicle.objects.create(code='20052', operator_id='WNGS')
@@ -70,7 +70,7 @@ class BusHubTest(TestCase):
         self.assertEqual('2018-08-31 21:49:33+00:00', str(location.datetime))
         self.assertEqual(143, location.heading)
         self.assertEqual('DIAM', location.journey.vehicle.operator_id)
-        self.assertIsNone(location.journey.service_id)
+        self.assertIsNone(location.journey.service)
 
         item['OperatorRef'] = 'WNGS'
         item['Bearing'] = '-1'
@@ -80,7 +80,7 @@ class BusHubTest(TestCase):
         self.vehicle.refresh_from_db()
         self.assertIsNotNone(self.vehicle.latest_location)
         self.assertIsNone(self.vehicle.latest_location.heading)
-        self.assertEqual(self.service_b, self.vehicle.latest_location.journey.service)
+        self.assertEqual(self.service_c, self.vehicle.latest_location.journey.service)
 
         item["RecordedAtTime"] = "31/08/2018 23:10:33"
         with self.assertNumQueries(2):
