@@ -37,7 +37,7 @@ urlpatterns = [
     path('stops/<pk>', views.StopPointDetailView.as_view(), name='stoppoint_detail'),
     re_path(r'^operators/(?P<pk>[A-Z]+)$', views.OperatorDetailView.as_view()),
     path('operators/<slug>', views.OperatorDetailView.as_view(), name='operator_detail'),
-    path('services/<pk>.json', views.service_map_data),
+    path('services/<service_code>.json', views.service_map_data),
     path('services/<slug>', views.ServiceDetailView.as_view(), name='service_detail'),
     path('sitemap.xml', index, {'sitemaps': sitemaps}),
     path('sitemap-<section>.xml', sitemap, {'sitemaps': sitemaps},

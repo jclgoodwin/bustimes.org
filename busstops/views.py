@@ -476,7 +476,7 @@ class ServiceDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        if not self.object.current or 'pk' in self.kwargs:
+        if not self.object.current or 'service_code' in self.kwargs:
             return context
 
         context['operators'] = self.object.operator.all()
@@ -571,15 +571,15 @@ class ServiceDetailView(DetailView):
 
             raise Http404()
 
-        if 'pk' in self.kwargs:
+        if 'service_code' in self.kwargs:
             return redirect(self.object, permanent=True)
 
         return super().render_to_response(context)
 
 
 @cache_control(max_age=86400)
-def service_map_data(request, pk):
-    service = get_object_or_404(Service.objects.only('geometry'), pk=pk)
+def service_map_data(request, service_code):
+    service = get_object_or_404(Service.objects.only('geometry'), service_code=service_code)
     stops = StopPoint.objects.filter(service=service, latlong__isnull=False)
     stops = stops.distinct().order_by().select_related('locality')
     data = {
