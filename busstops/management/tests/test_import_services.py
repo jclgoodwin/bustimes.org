@@ -66,7 +66,7 @@ class ImportServicesTest(TestCase):
         cls.write_files_to_zipfile_and_import('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml',
                                                          'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
 
-        cls.sc_service = Service.objects.get(pk='ABBN017')
+        cls.sc_service = Service.objects.get(service_code='ABBN017')
 
         # simulate a National Coach Service Database zip file
         ncsd_zipfile_path = os.path.join(FIXTURES_DIR, 'NCSD.zip')
@@ -83,8 +83,8 @@ class ImportServicesTest(TestCase):
         # test re-importing a previously imported service again
         call_command(cls.command, ncsd_zipfile_path)
 
-        cls.gb_m11a = Service.objects.get(pk='M11A_MEGA')
-        cls.gb_m12 = Service.objects.get(pk='M12_MEGA')
+        cls.gb_m11a = Service.objects.get(service_code='M11A_MEGA')
+        cls.gb_m12 = Service.objects.get(service_code='M12_MEGA')
 
     @classmethod
     def write_files_to_zipfile_and_import(cls, zipfile_name, filenames):

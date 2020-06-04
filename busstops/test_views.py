@@ -104,7 +104,7 @@ class ViewsTests(TestCase):
             latlong=Point(52.8566019427, 1.0331935468)
         )
         cls.inactive_service = Service.objects.create(
-            pk='45A',
+            service_code='45A',
             line_name='45A',
             date='1984-01-01',
             region=cls.north,
@@ -112,7 +112,7 @@ class ViewsTests(TestCase):
         )
         StopUsage.objects.create(service=cls.inactive_service, stop=cls.stop, order=0)
         cls.inactive_service_with_alternative = Service.objects.create(
-            pk='45B',
+            service_code='45B',
             line_name='45B',
             description='Holt - Norwich',
             date='1984-01-01',
@@ -120,7 +120,7 @@ class ViewsTests(TestCase):
             current=False
         )
         cls.service = Service.objects.create(
-            pk='ea_21-45-A-y08',
+            service_code='ea_21-45-A-y08',
             line_name='45A',
             description='Holt - Norwich',
             date='1984-01-01',
@@ -128,7 +128,7 @@ class ViewsTests(TestCase):
         )
 
         cls.chariots = Operator.objects.create(
-            pk='AINS',
+            service_code='AINS',
             name='Ainsley\'s Chariots',
             vehicle_mode='airline',
             region_id='N',

@@ -678,5 +678,5 @@ class Command(BaseCommand):
                     Service.objects.filter(service_code=service_code).update(**corrections)
 
                 if service_code == 'twm_5-501-A-y11':  # Lakeside Coaches
-                    Trip.objects.filter(route__service=service_code, start='15:05').delete()
-                    Trip.objects.filter(route__service=service_code, start='15:30').delete()
+                    Trip.objects.filter(route__service=service, start='15:05').delete()
+                    Trip.objects.filter(route__service=service, start='15:30').delete()

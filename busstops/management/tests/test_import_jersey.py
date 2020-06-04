@@ -30,7 +30,7 @@ class ImportJerseyTest(TestCase):
         self.assertAlmostEqual(stop.latlong.x, -2.16813)
 
     def test_import_jersey_services(self):
-        service = Service.objects.get(pk='je-1')
+        service = Service.objects.get(service_code='je-1')
         self.assertEqual(str(service), '1 - Liberation Station -  Gorey Pier')
         self.assertEqual(service.stops.all().count(), 84)
         self.assertEqual(service.stops.filter(stopusage__timing_status='PTP').count(), 20)

@@ -57,7 +57,7 @@ class ImportAtcoCifTest(TestCase):
         self.assertEqual(5, Service.objects.count())
         self.assertEqual(106, StopUsage.objects.count())
 
-        service = Service.objects.get(pk='219A_GLE')
+        service = Service.objects.get(service_code='219A_GLE')
         self.assertEqual('Belfast, Europa Buscentre - Antrim, Buscentre', service.description)
         self.assertEqual('Belfast, Europa Buscentre - Antrim, Buscentre', service.outbound_description)
         self.assertEqual('Antrim, Buscentre - Belfast, Europa Buscentre', service.inbound_description)
@@ -104,7 +104,7 @@ class ImportAtcoCifTest(TestCase):
                 self.assertEqual(1, len(response.context_data['timetable'].groupings))
         self.assertContains(response, 'sets down only')
 
-        service = Service.objects.get(pk='218_GLE')
+        service = Service.objects.get(service_code='218_GLE')
         with freeze_time('2019-10-01'):
             with self.assertNumQueries(13):
                 response = self.client.get(service.get_absolute_url() + '?date=2019-10-01')

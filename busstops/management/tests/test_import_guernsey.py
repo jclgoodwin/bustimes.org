@@ -35,7 +35,7 @@ class ImportGuernseyTest(TestCase):
         self.assertEqual(bordeaux_harbour.bearing, 'S')
 
     def test_import_guernsey_services(self):
-        service = Service.objects.get(pk='gg-11')
+        service = Service.objects.get(service_code='gg-11')
         self.assertEqual(service.line_name, '11')
         self.assertTrue(service.geometry)
 
