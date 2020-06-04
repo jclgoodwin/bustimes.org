@@ -470,7 +470,7 @@ class ServiceDetailView(DetailView):
         try:
             return super().get_object(**kwargs)
         except Http404:
-            self.kwargs['pk'] = self.kwargs['slug']
+            self.kwargs['service_code'] = self.kwargs['slug']
             return super().get_object(**kwargs)
 
     def get_context_data(self, **kwargs):

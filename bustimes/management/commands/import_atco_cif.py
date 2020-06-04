@@ -66,10 +66,10 @@ class Command(BaseCommand):
 
             route.service.stops.clear()
             stop_usages = [
-                StopUsage(service_id=route.service_id, stop_id=stop, direction='outbound', order=i)
+                StopUsage(service=route.service, stop_id=stop, direction='outbound', order=i)
                 for i, stop in enumerate(groupings[0])
             ] + [
-                StopUsage(service_id=route.service_id, stop_id=stop, direction='inbound', order=i)
+                StopUsage(service=route.service, stop_id=stop, direction='inbound', order=i)
                 for i, stop in enumerate(groupings[1])
             ]
             StopUsage.objects.bulk_create(stop_usages)

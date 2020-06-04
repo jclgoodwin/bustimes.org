@@ -587,7 +587,6 @@ class Command(BaseCommand):
                                         timing_status = 'PTP'
                                     stop_usages.append(
                                         StopUsage(
-                                            service_id=service_code,
                                             stop_id=row.part.stop.atco_code,
                                             direction=grouping.direction,
                                             order=i,
@@ -608,7 +607,7 @@ class Command(BaseCommand):
                 except (AttributeError, IndexError) as error:
                     logger.error(error, exc_info=True)
                     defaults['show_timetable'] = False
-                    stop_usages = [StopUsage(service_id=service_code, stop_id=stop, order=0) for stop in stops]
+                    stop_usages = [StopUsage(stop_id=stop, order=0) for stop in stops]
                     multi_line_string = None
 
                 defaults['geometry'] = multi_line_string
@@ -634,6 +633,9 @@ class Command(BaseCommand):
                         service.stops.clear()
                 service_codes.add(service_code)
                 self.service_codes.add(service_code)
+
+                for stop_usage in stop_usages:
+                    stop_usage.service = service
                 StopUsage.objects.bulk_create(stop_usages)
 
                 # a code used in Traveline Cymru URLs:
