@@ -508,7 +508,7 @@ class Command(BaseCommand):
                         service_code += '-' + line_id
 
                     if self.source.name.startswith('Stagecoach') and self.source.route_set.filter(
-                        service=service_code
+                        service__service_code=service_code
                     ).exclude(code__startswith=filename[:-12]).exists():
                         service_code = filename[53:-13]
                         if len(lines) > 1:
