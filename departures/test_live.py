@@ -75,7 +75,7 @@ class LiveDeparturesTest(TestCase):
         )
         worcester_44 = Service.objects.create(service_code='44', line_name='44', region_id='W', date='2017-01-01')
         worcester_44.operator.add(Operator.objects.create(id='FMR', name='First Midland Red', region_id='W'))
-        StopUsage.objects.create(stop=cls.worcester_stop, service_id='44', order=0)
+        StopUsage.objects.create(stop=cls.worcester_stop, service=worcester_44, order=0)
 
         cls.stagecoach_stop = StopPoint.objects.create(atco_code='64801092', active=True,
                                                        locality_centre=False)
@@ -338,13 +338,14 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(departures[2]['live'], 'Cancelled')
 
     def test_blend(self):
+        service = Service(line_name='X98')
         a = [{
             'service': 'X98',
             'time': datetime(2017, 4, 21, 20, 10),
             'live': datetime(2017, 4, 21, 20, 2)
         }]
         b = [{
-            'service': Service(line_name='X98'),
+            'service': service,
             'time': datetime(2017, 4, 21, 20, 10),
             'live': datetime(2017, 4, 21, 20, 5)
         }]
@@ -358,7 +359,7 @@ class LiveDeparturesTest(TestCase):
 
         live.blend(b, a)
         self.assertEqual(b, [{
-            'service': Service(line_name='X98'),
+            'service': service,
             'time': datetime(2017, 4, 21, 20, 10),
             'live': datetime(2017, 4, 21, 20, 5)
         }])

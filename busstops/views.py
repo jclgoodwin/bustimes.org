@@ -470,13 +470,12 @@ class ServiceDetailView(DetailView):
         try:
             return super().get_object(**kwargs)
         except Http404:
-            self.kwargs['service_code'] = self.kwargs['slug']
-            return super().get_object(**kwargs)
+            return get_object_or_404(self.model, service_code=self.kwargs['slug'])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        if not self.object.current or 'service_code' in self.kwargs:
+        if not self.object.current or self.object.slug != self.kwargs['slug']:
             return context
 
         context['operators'] = self.object.operator.all()
@@ -571,7 +570,7 @@ class ServiceDetailView(DetailView):
 
             raise Http404()
 
-        if 'service_code' in self.kwargs:
+        if self.object.slug != self.kwargs['slug']:
             return redirect(self.object, permanent=True)
 
         return super().render_to_response(context)

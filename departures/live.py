@@ -717,9 +717,9 @@ class SiriEtDepartures(Departures):
 
 
 def services_match(a, b):
-    if type(a) == Service:
+    if type(a) is Service:
         a = a.line_name
-    if type(b) == Service:
+    if type(b) is Service:
         b = b.line_name
     return a.lower() == b.lower()
 
