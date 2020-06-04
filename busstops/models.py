@@ -526,7 +526,7 @@ class ServiceManager(models.Manager):
 
 class Service(SearchMixin, models.Model):
     """A bus service"""
-    service_code = models.CharField(max_length=24, primary_key=True)
+    service_code = models.CharField(max_length=24, unique=True)
     line_name = models.CharField(max_length=64, blank=True)
     line_brand = models.CharField(max_length=64, blank=True)
     description = models.CharField(max_length=255, blank=True, db_index=True)
