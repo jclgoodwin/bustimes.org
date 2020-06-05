@@ -152,7 +152,7 @@
             if (features) {
                 features += '<br>';
             }
-            features += props.vehicle.features.join(', ');
+            features += props.vehicle.features.join(' ');
         }
 
         if (features) {

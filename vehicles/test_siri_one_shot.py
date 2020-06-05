@@ -14,15 +14,15 @@ class SIRIOneShotTest(TestCase):
         destination = StopPoint.objects.create(common_name='Plymouth Aerodrome', active=True)
         region = Region.objects.create(id='SW', name='South West')
         operator = Operator.objects.create(id='SDVN', region=region, name='Stagecoach Devonshire')
-        service = Service.objects.create(service_code='swe_33-FLC-_-y10', date='2019-06-08')
-        service.operator.add(operator)
-        route = Route.objects.create(service=service, source=source)
+        cls.service = Service.objects.create(service_code='swe_33-FLC-_-y10', date='2019-06-08')
+        cls.service.operator.add(operator)
+        route = Route.objects.create(service=cls.service, source=source)
         calendar = Calendar.objects.create(start_date='2019-06-08', mon=True, tue=True, wed=True, thu=True, fri=True,
                                            sat=True, sun=True)
         Trip.objects.create(route=route, start='20:40', end='20:50', calendar=calendar, destination=destination)
 
-        cls.code_1 = ServiceCode.objects.create(service=service, code='FLCN', scheme='Devon SIRI')
-        cls.code_2 = ServiceCode.objects.create(service=service, code='FLC', scheme='Bucks SIRI')
+        cls.code_1 = ServiceCode.objects.create(service=cls.service, code='FLCN', scheme='Devon SIRI')
+        cls.code_2 = ServiceCode.objects.create(service=cls.service, code='FLC', scheme='Bucks SIRI')
         cls.siri_source = SIRISource.objects.create(name='Devon', requestor_ref='torbaydevon_siri_traveline',
                                                     url='http://data.icarus.cloudamber.com/StopMonitoringRequest.ashx')
 
@@ -37,17 +37,18 @@ class SIRIOneShotTest(TestCase):
     def test_vehicles_json(self):
         with vcr.use_cassette('data/vcr/icarus.yaml'):
 
+            url = '/vehicles.json?service=swe_33-FLC-_-y10'
+
             with freeze_time('2019-06-08'):
                 with self.assertNumQueries(6):
-                    self.client.get('/vehicles.json?service=swe_33-FLC-_-y10')
-
-                self.assertEqual('nothing scheduled', cache.get('swe_33-FLC-_-y10:Icarus'))
+                    self.client.get(url)
+                self.assertEqual('nothing scheduled', cache.get(f'{self.service.id}:Icarus'))
 
             with freeze_time('2019-06-08 20:37+01:00'):
                 with self.assertNumQueries(49):
-                    self.client.get('/vehicles.json?service=swe_33-FLC-_-y10')
+                    self.client.get(url)
                 with self.assertNumQueries(2):
-                    res = self.client.get('/vehicles.json?service=swe_33-FLC-_-y10')
+                    res = self.client.get(url)
 
                 key = 'http://data.icarus.cloudamber.com/StopMonitoringRequest.ashx:torbaydevon_siri_traveline:FLCN'
                 self.assertEqual('line name', cache.get(key))
