@@ -215,7 +215,8 @@ if not DEBUG and 'test' not in sys.argv and 'collectstatic' not in sys.argv:
     sentry_sdk.init(
         dsn=os.environ.get('SENTRY_DSN'),
         integrations=[DjangoIntegration(), RedisIntegration(), CeleryIntegration()],
-        ignore_errors=[KeyboardInterrupt]
+        ignore_errors=[KeyboardInterrupt],
+        traces_sample_rate = 0.25
     )
 
 TRANSPORTAPI = {
