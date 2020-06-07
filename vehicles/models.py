@@ -262,9 +262,9 @@ class Vehicle(models.Model):
                 self.save(update_fields=['operator'])
 
     def update_last_modified(self):
-        service = self.latest_location.journey.service
-        if service:
-            cache.set(f'{service.service_code}:vehicles_last_modified', timezone.now())
+        service_id = self.latest_location.journey.service_id
+        if service_id:
+            cache.set(f'{service_id}:vehicles_last_modified', timezone.now())
 
 
 class VehicleEditFeature(models.Model):

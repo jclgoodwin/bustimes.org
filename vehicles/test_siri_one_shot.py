@@ -37,7 +37,7 @@ class SIRIOneShotTest(TestCase):
     def test_vehicles_json(self):
         with vcr.use_cassette('data/vcr/icarus.yaml'):
 
-            url = '/vehicles.json?service=swe_33-FLC-_-y10'
+            url = f'/vehicles.json?service={self.service.id}'
 
             with freeze_time('2019-06-08'):
                 with self.assertNumQueries(6):

@@ -13,9 +13,9 @@ class RifkindTest(TestCase):
         destination = StopPoint.objects.create(common_name="Inspector Resnick's house", active=True)
         region = Region.objects.create(id='EM', name='EM')
         operator = Operator.objects.create(id='TBTN', region=region, name='Trent Burton')
-        service = Service.objects.create(service_code='skylink', line_name='rainbow one', date='2019-06-08')
-        service.operator.add(operator)
-        route = Route.objects.create(service=service, source=source)
+        cls.service = Service.objects.create(service_code='skylink', line_name='rainbow one', date='2019-06-08')
+        cls.service.operator.add(operator)
+        route = Route.objects.create(service=cls.service, source=source)
         calendar = Calendar.objects.create(start_date='2019-11-17', mon=False, tue=False, wed=False, thu=False,
                                            fri=False, sat=False, sun=True)
         trip = Trip.objects.create(route=route, start='12:25', end='12:35', calendar=calendar, destination=destination)
@@ -24,16 +24,17 @@ class RifkindTest(TestCase):
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_vehicles_json(self):
         with vcr.use_cassette('data/vcr/rifkind.yaml'):
+            url = f'/vehicles.json?service={self.service.id}'
 
             with freeze_time('2019-11-17'):
                 with self.assertNumQueries(4):
-                    self.client.get('/vehicles.json?service=skylink')
+                    self.client.get(url)
 
             with freeze_time('2019-11-17 12:20+00:00'):
                 with self.assertNumQueries(38):
-                    self.client.get('/vehicles.json?service=skylink')
+                    self.client.get(url)
                 with self.assertNumQueries(2):
-                    res = self.client.get('/vehicles.json?service=skylink')
+                    res = self.client.get(url)
 
         json = res.json()
         self.assertEqual(len(json['features']), 2)

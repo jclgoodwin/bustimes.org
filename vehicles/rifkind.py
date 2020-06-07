@@ -153,7 +153,7 @@ def rifkind(service_id):
     now = timezone.localtime()
     time_since_midnight = timedelta(hours=now.hour, minutes=now.minute, seconds=now.second,
                                     microseconds=now.microsecond)
-    trips = Trip.objects.filter(route__service__service_code=service_id, calendar__in=get_calendars(now),
+    trips = Trip.objects.filter(route__service=service_id, calendar__in=get_calendars(now),
                                 start__lte=time_since_midnight + timedelta(minutes=5),
                                 end__gte=time_since_midnight - timedelta(minutes=10))
     source.datetime = now

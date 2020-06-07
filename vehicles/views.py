@@ -190,7 +190,7 @@ def get_locations(request):
         pass
 
     if 'service' in request.GET:
-        locations = locations.filter(journey__service__service_code=request.GET['service'])
+        locations = locations.filter(journey__service=request.GET['service'])
 
     return locations
 
@@ -257,9 +257,9 @@ def vehicles_last_modified(request):
         if last_modified and (now - last_modified).total_seconds() < 40:
             return last_modified
 
-        operators = Operator.objects.filter(service__service_code=service_id)
+        operators = Operator.objects.filter(service=service_id)
         if not any(operator.id in {'CTNY', 'SCBD'} for operator in operators):
-            codes = ServiceCode.objects.filter(scheme__in=schemes, service__service_code=service_id)
+            codes = ServiceCode.objects.filter(scheme__in=schemes, service=service_id)
 
             for code in codes:
                 try:

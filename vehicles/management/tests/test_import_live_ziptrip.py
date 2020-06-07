@@ -62,12 +62,12 @@ class ZipTripTest(TestCase):
 
         with self.assertNumQueries(2):
             with freeze_time('2018-08-31T21:35:04+00:00'):
-                response = self.client.get('/vehicles.json?service=007').json()
+                response = self.client.get(f'/vehicles.json?service={self.service.id}').json()
         self.assertEqual(2, len(response['features']))
 
         with self.assertNumQueries(1):
             with freeze_time('2018-08-31T22:55:04+00:00'):
-                response = self.client.get('/vehicles.json?service=007').json()
+                response = self.client.get(f'/vehicles.json?service={self.service.id}').json()
         self.assertEqual(0, len(response['features']))
 
         self.service.operator.set(['LGEN', 'GAHL'])
