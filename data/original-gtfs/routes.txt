@@ -1,2 +1,0 @@
-route_id,route_short_name,route_long_name,route_type
-bed_31-X1-_-y08,X1,"Southend Airport - Lakeside - London",3

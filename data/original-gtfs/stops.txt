@@ -1,9 +1,0 @@
-stop_id,stop_name,stop_lat,stop_lon
-15001100701,Southend Airport,51.5699239885,0.70447491867
-1590060113,Lakeside Bus Station (Bay N),51.4904555765,0.28298157163
-490000039A,Canning Town Station (Stop A),51.5145598669,0.00804771895
-490006557C,Embankment (Stop 40B),51.5081158681,-0.1213399685
-490007544N1,London,51.496737716,-0.1460401487
-1590060114,Lakeside Bus Station (Bay P),51.4904072749,0.2826910444
-dundee,Dundee South Union Street (opposite Malmaison),0,0
-6200247619,Edinburgh Airport,0,0
