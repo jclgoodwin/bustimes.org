@@ -15,13 +15,10 @@ class Command(BaseCommand):
         )
 
     def post(self, xml):
-        print(xml)
-
         headers = {
            'Content-Type': 'application/xml'
         }
-        response = self.session.post(self.source.url, data=xml, headers=headers, timeout=15)
-        print(response, response.headers, response.text)
+        self.session.post(self.source.url, data=xml, headers=headers, timeout=5)
 
     def handle(self, *args, **options):
         self.source = DataSource.objects.get(name='Arriva')
@@ -40,10 +37,6 @@ class Command(BaseCommand):
         # Access to the subscription endpoint is restricted to certain IP addresses,
         # so use a Digital Ocean floating IP address
         self.session.mount('http://', SourceAddressAdapter('10.16.0.6'))
-
-        # # test address adapter
-        # response = self.session.get('http://icanhazip.com/')
-        # print(response.text)
 
         # terminate any previous subscription just in case
         self.post(f"""<?xml version="1.0" ?>
