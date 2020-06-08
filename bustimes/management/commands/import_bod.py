@@ -57,6 +57,7 @@ def download_if_changed(path, url):
         last_modified = response.headers['x-amz-meta-cb-modifiedtime']
     elif 'last-modified' in response.headers:
         last_modified = response.headers['last-modified']
+    last_modified = parsedate_to_datetime(last_modified)
 
     return modified, last_modified
 
@@ -159,6 +160,9 @@ def stagecoach():
 
         modified, last_modified = download_if_changed(path, url)
 
+        if modified and command.source.datetime and command.source.datetime >= last_modified:
+            modified = False
+
         if modified:
             print(operator)
 
@@ -177,7 +181,7 @@ def stagecoach():
 
             clean_up(command.operators.values(), [command.source])
 
-            command.source.datetime = parsedate_to_datetime(last_modified)
+            command.source.datetime = last_modified
             command.source.save(update_fields=['datetime'])
 
             print(' ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
