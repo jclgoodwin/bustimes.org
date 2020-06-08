@@ -1,4 +1,5 @@
 import zipfile
+from chardet.universaldetector import UniversalDetector
 from datetime import date, timedelta
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import LineString, MultiLineString, Point
@@ -46,8 +47,16 @@ class Command(BaseCommand):
             for filename in archive.namelist():
                 if filename.endswith('.cif'):
                     with archive.open(filename) as open_file:
-                        self.handle_file(open_file)
+                        detector = UniversalDetector()
+                        for line in open_file:
+                            detector.feed(line)
+                            if detector.done:
+                                break
+                        detector.close()
+                        encoding = detector.result['encoding']
+                        open_file.seek(0)
 
+                        self.handle_file(open_file, encoding)
         assert self.stop_times == []
 
         existing_stops = StopPoint.objects.in_bulk(self.stops.keys())
@@ -88,10 +97,10 @@ class Command(BaseCommand):
         self.source.service_set.filter(current=True).exclude(service_code__in=self.routes.keys()).update(current=False)
         self.source.save(update_fields=['datetime'])
 
-    def handle_file(self, open_file):
+    def handle_file(self, open_file, encoding):
         previous_line = None
         for line in open_file:
-            self.handle_line(line, previous_line)
+            self.handle_line(line, previous_line, encoding)
             previous_line = line
 
     def get_calendar(self):
@@ -122,7 +131,7 @@ class Command(BaseCommand):
         self.calendars[key] = calendar
         return calendar
 
-    def handle_line(self, line, previous_line):
+    def handle_line(self, line, previous_line, encoding):
         identity = line[:2]
 
         if identity == b'QD':
@@ -245,7 +254,7 @@ class Command(BaseCommand):
 
         elif identity == b'QN':  # note
             previous_identity = previous_line[:2]
-            note = line[7:].decode().strip()
+            note = line[7:].decode(encoding).strip()
             if previous_identity == b'QO' or previous_identity == b'QI' or previous_identity == b'QT':
                 note = note.lower()
                 if note == 'pick up only' or note == 'pick up  only':
@@ -257,7 +266,7 @@ class Command(BaseCommand):
                 else:
                     print(note)
             elif previous_identity == b'QS' or previous_identity == b'QE' or previous_identity == b'QN':
-                code = line[2:7].decode().strip()
+                code = line[2:7].decode(encoding).strip()
                 note, _ = Note.objects.get_or_create(code=code, text=note)
                 self.notes.append(note)
             else:
@@ -265,13 +274,9 @@ class Command(BaseCommand):
 
         elif identity == b'QL':
             stop_code = line[3:15].decode().strip()
-            name = line[15:].strip()
+            name = line[15:]
             if name and stop_code not in self.stops:
-                try:
-                    name = name.decode()
-                except UnicodeDecodeError:
-                    print(line)
-                    pass
+                name = name.decode(encoding).strip()
                 self.stops[stop_code] = StopPoint(atco_code=stop_code, common_name=name, active=True)
 
         elif identity == b'QB':
