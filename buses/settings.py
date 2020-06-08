@@ -341,7 +341,7 @@ BOD_OPERATORS = (
     ('WBTR', 'EM', {
         'NW': 'WBTR',
     }),
-    ('ANEA', 'NE', {
+    ('ANEA', None, {
         'ACYM': 'ACYM',
         'AFCL': 'AFCL',  # (code not used in data)
         # 'AKSS': 'AKSS',  # no data yet
