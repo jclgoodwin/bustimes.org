@@ -43,6 +43,8 @@ jobs:
        pipenv run coverage html
     - name: Upload coverage
       uses: idlefingers/do-space-sync-action@0.1.0
+      with:
+        args: --acl public-read
       env:
         SOURCE_DIR: htmlcov
         SPACE_NAME: ${{ secrets.SPACE_NAME }}
