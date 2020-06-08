@@ -38,4 +38,14 @@ jobs:
         PGHOST: localhost
         PGUSER: postgres
         DB_NAME: postgres
-      run: pipenv run ./manage.py test
+      run: |
+       pipenv run coverage run ./manage.py test
+       pipenv run coverage html
+    - name: Upload coverage
+      uses: idlefingers/do-space-sync-action@0.1.0
+      env:
+        SOURCE_DIR: htmlcov
+        SPACE_NAME: ams
+        SPACE_REGION: ${{ secrets.SPACE_REGION}}
+        SPACE_ACCESS_KEY_ID: ${{ secrets.SPACE_ACCESS_KEY_ID }}
+        SPACE_SECRET_ACCESS_KEY: ${{ secrets.SPACE_SECRET_ACCESS_KEY }}
