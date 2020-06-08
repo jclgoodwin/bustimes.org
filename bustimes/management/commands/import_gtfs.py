@@ -51,7 +51,7 @@ def download_if_modified(path, url):
         if not response.ok:
             response = SESSION.get(url, headers=headers, timeout=5, stream=True)
             if not response.ok:
-                print(response)
+                print(response, url)
                 return
         if response.status_code == 304:
             return False  # not modified
