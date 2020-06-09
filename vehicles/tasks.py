@@ -1,8 +1,9 @@
 import xml.etree.cElementTree as ET
+from io import StringIO
 from ciso8601 import parse_datetime
 from celery import shared_task
 from busstops.models import DataSource, ServiceCode, Operator
-from io import StringIO
+from django.db.models import Q
 from .management.commands import import_sirivm
 from .models import JourneyCode, Vehicle, VehicleJourney
 from .siri_et import siri_et
@@ -72,7 +73,8 @@ def log_vehicle_journey(operator_ref, vehicle, service, route_name, time, journe
 
     defaults = {
         'source': data_source,
-        'operator': operator
+        'operator': operator,
+        'code': vehicle
     }
 
     vehicles = Vehicle.objects
@@ -82,10 +84,12 @@ def log_vehicle_journey(operator_ref, vehicle, service, route_name, time, journe
         vehicles = operator.vehicle_set
 
     if vehicle.isdigit():
-        defaults['code'] = vehicle
-        vehicle, created = vehicles.get_or_create(defaults, fleet_number=vehicle)
+        defaults['fleet_number'] = vehicle
+        vehicles = vehicles.filter(Q(code=vehicle) | Q(code__endswith=f'-{vehicle}'))
     else:
-        vehicle, created = vehicles.get_or_create(defaults, code=vehicle)
+        vehicles = vehicles.filter(code=vehicle)
+
+    vehicle, created = vehicles.get_or_create(defaults)
 
     if journey_ref and journey_ref.startswith('Unknown'):
         journey_ref = ''
