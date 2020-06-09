@@ -84,13 +84,15 @@ Other details: Daily Service Every Twenty Minutes""",
         self.assertEqual(10, len(response.context_data['cancelled']))
 
     def test_licence_rss(self):
-        response = self.client.get('/licences/PH1020951/rss')
+        with self.assertNumQueries(3):
+            response = self.client.get('/licences/PH1020951/rss')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'STAGECOACH DEVON')
         self.assertContains(response, '122 - St Marychurch to Paignton Zoo via Shilbottle')
 
     def test_licence_404(self):
-        response = self.client.get('/licences/PH102095')
+        with self.assertNumQueries(1):
+            response = self.client.get('/licences/PH102095')
         self.assertEqual(response.status_code, 404)
 
     def test_registration_view(self):
@@ -101,5 +103,6 @@ Other details: Daily Service Every Twenty Minutes""",
         self.assertContains(response, "Ainsley&#x27;s Chariots")
 
     def test_registration_404(self):
-        response = self.client.get('/registrations/PH1020951/d')
+        with self.assertNumQueries(1):
+            response = self.client.get('/registrations/PH1020951/d')
         self.assertEqual(response.status_code, 404)
