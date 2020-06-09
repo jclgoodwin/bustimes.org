@@ -566,12 +566,12 @@ class ServiceDetailView(DetailView):
             ).defer('geometry').first()
 
             if alternative is not None:
-                return redirect(alternative, permanent=True)
+                return redirect(alternative)
 
             raise Http404()
 
         if self.object.slug != self.kwargs['slug']:
-            return redirect(self.object, permanent=True)
+            return redirect(self.object)
 
         return super().render_to_response(context)
 

@@ -325,7 +325,7 @@ class ViewsTests(TestCase):
     def test_service_redirect(self):
         """An inactive service should redirect to a current service with the same description"""
         response = self.client.get('/services/45B')
-        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response.status_code, 302)
 
     def test_service_not_found(self):
         """An inactive service with no replacement should show a 404 page"""
