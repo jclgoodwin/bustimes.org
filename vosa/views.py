@@ -65,7 +65,7 @@ class LicenceFeed(Feed):
 
     def items(self, obj):
         items = Variation.objects.filter(registration__licence=obj).exclude(date_received=None)
-        return items.order_by('-date_received')[:100]
+        return items.select_related('registration').order_by('-date_received')[:100]
 
     def item_pubdate(self, item):
         date = item.date_received

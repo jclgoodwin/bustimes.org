@@ -84,7 +84,7 @@ Other details: Daily Service Every Twenty Minutes""",
         self.assertEqual(10, len(response.context_data['cancelled']))
 
     def test_licence_rss(self):
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             response = self.client.get('/licences/PH1020951/rss')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'STAGECOACH DEVON')
