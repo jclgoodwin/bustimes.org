@@ -106,14 +106,15 @@ def bus_open_data(api_key):
 
                     print(' ', Operator.objects.filter(service__route__source=command.source).distinct().values('id'))
 
+                    command.mark_old_services_as_not_current()
+
                 sources.append(command.source)
 
             url = json['next']
             params = None
 
-        command.mark_old_services_as_not_current()
-
-        clean_up(operators.values(), sources)
+        if sources:
+            clean_up(operators.values(), sources)
 
 
 def first():
