@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.utils import timezone
 from busstops.models import DataSource, Service, Operator
-from .import_gtfs import download_if_modified, write_zip_file
+from .import_gtfs import write_file
 from .import_transxchange import Command as TransXChangeCommand
 from .import_passenger import handle_file
 from ...models import Route, Calendar
@@ -33,7 +33,11 @@ def get_command():
     return command
 
 
-# like download_if_modified but different...
+def download(path, url):
+    response = requests.get(url, stream=True)
+    write_file(path, response)
+
+
 def download_if_changed(path, url):
     headers = {}
     modified = True
@@ -51,13 +55,15 @@ def download_if_changed(path, url):
         if response.status_code == 304:
             modified = False
         else:
-            write_zip_file(path, response)
+            write_file(path, response)
 
+    last_modified = None
     if 'x-amz-meta-cb-modifiedtime' in response.headers:
         last_modified = response.headers['x-amz-meta-cb-modifiedtime']
     elif 'last-modified' in response.headers:
         last_modified = response.headers['last-modified']
-    last_modified = parsedate_to_datetime(last_modified)
+    if last_modified:
+        last_modified = parsedate_to_datetime(last_modified)
 
     return modified, last_modified
 
@@ -97,7 +103,7 @@ def bus_open_data(api_key):
                 if command.source.datetime != modified:
                     print(response.url, filename)
                     command.source.datetime = modified
-                    download_if_modified(path, url)
+                    download(path, url)
                     handle_file(command, filename)
 
                     if not created:
@@ -123,7 +129,7 @@ def first():
     for operator, region_id, operators in settings.FIRST_OPERATORS:
         filename = operator + '.zip'
         url = 'http://travelinedatahosting.basemap.co.uk/data/first/' + filename
-        modified = download_if_modified(os.path.join(settings.DATA_DIR, filename), url)
+        modified, last_modified = download_if_changed(os.path.join(settings.DATA_DIR, filename), url)
 
         if modified:
             print(operator)
@@ -143,6 +149,7 @@ def first():
 
             clean_up(operators.values(), [command.source])
 
+            command.source.datetime = last_modified
             command.source.save(update_fields=['datetime'])
 
             print(' ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))

@@ -3,7 +3,7 @@ from vcr import use_cassette
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
 from django.core.management import call_command
-from busstops.models import Region, Operator
+from busstops.models import Region, Operator, DataSource, OperatorCode
 
 
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
@@ -18,7 +18,9 @@ class ImportBusOpenDataTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         ea = Region.objects.create(pk='EA', name='East Anglia')
-        Operator.objects.create(id='CO', region=ea, name='Lynx')
+        op = Operator.objects.create(id='LYNX', region=ea, name='Lynx')
+        source = DataSource.objects.create(name='National Operator Codes')
+        OperatorCode.objects.create(operator=op, source=source, code='LYNX')
 
     @freeze_time('2020-05-01')
     @use_cassette(os.path.join(FIXTURES_DIR, 'bod_lynx.yaml'))
@@ -36,3 +38,6 @@ class ImportBusOpenDataTest(TestCase):
                 </th>
                 <td>12:19</td>
             </tr>""", html=True)
+
+        self.assertContains(response, """<p class="credit">Timetable data from <a href="https://data.bus-data.dft.gov.uk/category/dataset/35/">Lynx/\
+Bus Open Data Service</a>, 1 April 2020</p>""")

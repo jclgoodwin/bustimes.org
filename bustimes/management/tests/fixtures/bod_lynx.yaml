@@ -55,44 +55,6 @@ interactions:
       - keep-alive
       User-Agent:
       - python-requests/2.23.0
-      if-modified-since:
-      - Mon Jun  8 10:31:28 2020
-    method: HEAD
-    uri: https://data.bus-data.dft.gov.uk/category/dataset/35/download/
-  response:
-    body:
-      string: ''
-    headers:
-      Connection:
-      - keep-alive
-      Content-Disposition:
-      - attachment; filename="54.xml"
-      Content-Type:
-      - application/xml
-      Date:
-      - Wed, 10 Jun 2020 08:48:10 GMT
-      Server:
-      - gunicorn/20.0.4
-      Strict-Transport-Security:
-      - max-age=31536000
-      Vary:
-      - Cookie
-      X-Frame-Options:
-      - DENY
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.23.0
     method: GET
     uri: https://data.bus-data.dft.gov.uk/category/dataset/35/download/
   response:

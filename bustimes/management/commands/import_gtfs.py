@@ -35,7 +35,7 @@ def parse_date(string):
     return datetime.strptime(string, '%Y%m%d')
 
 
-def write_zip_file(path, response):
+def write_file(path, response):
     with open(path, 'wb') as zip_file:
         for chunk in response.iter_content(chunk_size=102400):
             zip_file.write(chunk)
@@ -59,7 +59,7 @@ def download_if_modified(path, url):
             return False
     response = SESSION.get(url, stream=True)
     if response.ok:
-        write_zip_file(path, response)
+        write_file(path, response)
         return True
 
 
