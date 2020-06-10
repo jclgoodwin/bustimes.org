@@ -526,14 +526,14 @@ class ServiceManager(models.Manager):
 
 class Service(SearchMixin, models.Model):
     """A bus service"""
-    service_code = models.CharField(max_length=24, unique=True)
+    service_code = models.CharField(max_length=64, unique=True)
     line_name = models.CharField(max_length=64, blank=True)
     line_brand = models.CharField(max_length=64, blank=True)
     description = models.CharField(max_length=255, blank=True, db_index=True)
     outbound_description = models.CharField(max_length=255, blank=True)
     inbound_description = models.CharField(max_length=255, blank=True)
     slug = AutoSlugField(populate_from=str, editable=True, unique=True)
-    mode = models.CharField(max_length=11)
+    mode = models.CharField(max_length=11, blank=True)
     operator = models.ManyToManyField(Operator, blank=True)
     region = models.ForeignKey(Region, models.CASCADE, null=True)
     stops = models.ManyToManyField(StopPoint, editable=False,
@@ -544,10 +544,6 @@ class Service(SearchMixin, models.Model):
     timetable_wrong = models.BooleanField(default=False)
     geometry = models.MultiLineStringField(null=True, editable=False)
 
-    wheelchair = models.NullBooleanField()
-    low_floor = models.NullBooleanField()
-    assistance_service = models.NullBooleanField()
-    mobility_scooter = models.NullBooleanField()
     source = models.ForeignKey(DataSource, models.SET_NULL, null=True, blank=True)
     tracking = models.NullBooleanField()
     payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
