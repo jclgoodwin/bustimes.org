@@ -501,7 +501,13 @@ class Command(BaseCommand):
 
             for line_id, line_name, line_brand in lines:
 
-                if len(self.source.name) > 4:  # not a TNDS source (slightly dodgy heuristic)
+                if len(self.source.name) <= 4:  # TNDS source (slightly dodgy heuristic)
+                    service_code = get_service_code(filename)
+                    if service_code is None:
+                        service_code = txc_service.service_code
+                    services = Service.objects.filter(service_code=service_code)
+
+                else:
                     operator_code = '-'.join(operator.id for operator in operators)
                     if operator_code == 'TDTR' and 'Swindon-Rural' in filename:
                         operator_code = 'SBCR'
@@ -512,7 +518,7 @@ class Command(BaseCommand):
                         existing = self.source.service_set.filter(line_name=line_name,
                                                                   route__code__contains=f'/{parts}_').first()
                     else:
-                        service_code = f'{self.source.id}-{operator_code}-{service_code}'
+                        service_code = f'{self.source.id}-{operator_code}-{txc_service.service_code}'
                         if len(lines) > 1:
                             service_code += '-' + line_name
 
@@ -523,11 +529,6 @@ class Command(BaseCommand):
                         services = Service.objects.filter(id=existing.id)
                     else:
                         services = Service.objects.filter(service_code=service_code)
-                else:
-                    service_code = get_service_code(filename)
-                    if service_code is None:
-                        service_code = txc_service.service_code
-                    services = Service.objects.filter(service_code=service_code)
 
                 defaults = {
                     'service_code': service_code,
