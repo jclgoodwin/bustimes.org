@@ -46,5 +46,4 @@ def route_xml(request, source, code):
             return FileResponse(archive.open(code), content_type='text/xml')
 
     path = os.path.join(settings.DATA_DIR, code)
-    print(path)
     return FileResponse(open(path, 'rb'), content_type='text/xml')

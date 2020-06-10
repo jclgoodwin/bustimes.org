@@ -1,19 +1,17 @@
 import os
+import tempfile
 from vcr import use_cassette
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
 from django.core.management import call_command
 from busstops.models import Region, Operator, DataSource, OperatorCode
+from ...models import Route
 
 
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
 
 
-@override_settings(STAGECOACH_OPERATORS=(), FIRST_OPERATORS=(), BOD_OPERATORS=[
-    ('LYNX', 'EA', {
-        'CO': 'LYNX',
-    }),
-])
+@freeze_time('2020-05-01')
 class ImportBusOpenDataTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -24,10 +22,19 @@ class ImportBusOpenDataTest(TestCase):
 
     @freeze_time('2020-05-01')
     @use_cassette(os.path.join(FIXTURES_DIR, 'bod_lynx.yaml'))
-    def test_import(self):
+    @override_settings(STAGECOACH_OPERATORS=(), FIRST_OPERATORS=(), BOD_OPERATORS=[
+        ('LYNX', 'EA', {
+            'CO': 'LYNX',
+        }),
+    ])
+    def test_import_bod(self):
+        with tempfile.TemporaryDirectory() as directory:
+            with override_settings(DATA_DIR=directory):
+                call_command('import_bod', '')
+                call_command('import_bod', '')
 
-        call_command('import_bod', '')
-        call_command('import_bod', '')
+        route = Route.objects.get()
+        self.assertEqual(route.code, 'Lynx_Clenchwarton_54_20200330')
 
         response = self.client.get('/services/54-kings-lynn-the-walpoles-via-clenchwarton')
 
