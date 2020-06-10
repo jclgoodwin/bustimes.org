@@ -61,6 +61,16 @@ class Calendar(models.Model):
             ('start_date', 'end_date'),
         )
 
+    def allows(self, date):
+        if getattr(self, date.strftime('%a').lower()):
+            for special in self.specials:
+                if not special.operation and special.contains(date):
+                    return False
+            return True
+        for special in self.specials:
+            if special.operation and special.contains(date):
+                return True
+
     def __str__(self):
         return f'{self.start_date} to {self.end_date}'
 
@@ -72,6 +82,9 @@ class CalendarDate(models.Model):
     dates = DateRangeField(null=True)
     operation = models.BooleanField(db_index=True)
     special = models.BooleanField(default=False, db_index=True)
+
+    def contains(self, date):
+        return self.start_date <= date and (not self.end_date or self.end_date >= date)
 
 
 class Note(models.Model):

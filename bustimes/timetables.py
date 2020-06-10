@@ -2,7 +2,8 @@ import datetime
 from difflib import Differ
 from functools import cmp_to_key
 from django.core.cache import cache
-from .models import get_calendars, Calendar, Trip
+from django.db.models import Prefetch
+from .models import get_calendars, Calendar, CalendarDate, Trip
 
 differ = Differ(charjunk=lambda _: True)
 
@@ -80,7 +81,8 @@ class Timetable:
 
         self.date = date
 
-        self.calendars = Calendar.objects.filter(trip__route__in=self.routes).distinct()
+        prefetch = Prefetch('calendardate_set', queryset=CalendarDate.objects.filter(special=True), to_attr='specials')
+        self.calendars = Calendar.objects.filter(trip__route__in=self.routes).distinct().prefetch_related(prefetch)
 
         if not self.routes:
             return
@@ -146,7 +148,7 @@ class Timetable:
         if self.date and self.date < date:
             yield self.date
         while date <= end_date:
-            if any(getattr(calendar, date.strftime('%a').lower()) for calendar in self.calendars):
+            if any(calendar.allows(date) for calendar in self.calendars):
                 yield date
             date += datetime.timedelta(days=1)
         if self.date and self.date > end_date:
