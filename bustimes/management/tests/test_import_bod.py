@@ -1,10 +1,12 @@
 import os
-import tempfile
+from tempfile import TemporaryDirectory
+from zipfile import ZipFile
 from vcr import use_cassette
+from mock import patch
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
 from django.core.management import call_command
-from busstops.models import Region, Operator, DataSource, OperatorCode
+from busstops.models import Region, Operator, DataSource, OperatorCode, Service
 from ...models import Route
 
 
@@ -16,9 +18,12 @@ class ImportBusOpenDataTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         ea = Region.objects.create(pk='EA', name='East Anglia')
-        op = Operator.objects.create(id='LYNX', region=ea, name='Lynx')
+        ne = Region.objects.create(pk='NE', name='North East')
+        lynx = Operator.objects.create(id='LYNX', region=ea, name='Lynx')
+        sund = Operator.objects.create(id='SCSU', region=ne, name='Sunderland')
         source = DataSource.objects.create(name='National Operator Codes')
-        OperatorCode.objects.create(operator=op, source=source, code='LYNX')
+        OperatorCode.objects.create(operator=lynx, source=source, code='LYNX')
+        OperatorCode.objects.create(operator=sund, source=source, code='SCSU')
 
     @freeze_time('2020-05-01')
     @use_cassette(os.path.join(FIXTURES_DIR, 'bod_lynx.yaml'))
@@ -28,7 +33,7 @@ class ImportBusOpenDataTest(TestCase):
         }),
     ])
     def test_import_bod(self):
-        with tempfile.TemporaryDirectory() as directory:
+        with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=directory):
                 call_command('import_bod', '')
                 call_command('import_bod', '')
@@ -48,3 +53,29 @@ class ImportBusOpenDataTest(TestCase):
 
         self.assertContains(response, """<p class="credit">Timetable data from <a href="https://data.bus-data.dft.gov.uk/category/dataset/35/">Lynx/\
 Bus Open Data Service</a>, 1 April 2020</p>""")
+
+    @override_settings(STAGECOACH_OPERATORS=[('NE', 'scne', 'Stagecoach North East', {
+        'SCNE': 'SCNE',
+        'SCSS': 'SCSS',
+        'SCSU': 'SCSU',
+        'SCTE': 'SCTE',
+        'SCHA': 'SCHA'
+    })], FIRST_OPERATORS=(), BOD_OPERATORS=())
+    def test_import_stagecoach(self):
+
+        with patch('bustimes.management.commands.import_bod.download_if_changed',
+                   return_value=(True, '2020-05-16T22:49:08+01:00')) as download_if_changed:
+
+            with TemporaryDirectory() as directory:
+                archive_name = 'stagecoach-scne-route-schedule-data-transxchange.zip'
+                path = os.path.join(directory, archive_name)
+
+                with ZipFile(path, 'a') as open_file:
+                    for filename in ('E1_SIS_PB_E1E2_20200531.xml', 'E1_SIS_PB_E1E2_20200614.xml'):
+                        open_file.write(os.path.join(FIXTURES_DIR, filename), filename)
+
+                with override_settings(DATA_DIR=directory):
+                    call_command('import_bod', '')
+                download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
+
+        self.assertEqual(5, Service.objects.count())
