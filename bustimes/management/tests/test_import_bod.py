@@ -72,11 +72,11 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
             with override_settings(DATA_DIR=FIXTURES_DIR):
                 call_command('import_bod', '')
                 download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
-                # with self.assertNumQueries(1):
-                #     call_command('import_bod', '')
-                # DataSource.objects.update(datetime=None)
-                # with self.assertNumQueries(1723):
-                #     call_command('import_bod', '')
+                with self.assertNumQueries(1):
+                    call_command('import_bod', '')
+                DataSource.objects.update(datetime=None)
+                with self.assertNumQueries(1706):
+                    call_command('import_bod', '')
         self.assertEqual(3, Service.objects.count())
         self.assertEqual(6, Route.objects.count())
 

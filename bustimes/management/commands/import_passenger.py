@@ -57,7 +57,7 @@ class Command(BaseCommand):
             command.operators = operators
             command.region_id = region_id
             command.service_descriptions = {}
-            command.service_codes = set()
+            command.service_ids = set()
 
             versions = []
             try:

@@ -75,7 +75,7 @@ def bus_open_data(api_key):
         command.operators = operators
         command.region_id = region_id
         command.service_descriptions = {}
-        command.service_codes = set()
+        command.service_ids = set()
         command.calendar_cache = {}
 
         sources = []
@@ -137,7 +137,7 @@ def first():
             command.operators = operators
             command.region_id = region_id
             command.service_descriptions = {}
-            command.service_codes = set()
+            command.service_ids = set()
             command.calendar_cache = {}
 
             command.source, created = DataSource.objects.get_or_create({'name': operator}, url=url)
@@ -177,7 +177,7 @@ def stagecoach():
             command.operators = operators
             command.region_id = region_id
             command.service_descriptions = {}
-            command.service_codes = set()
+            command.service_ids = set()
             command.calendar_cache = {}
 
             # avoid importing old data

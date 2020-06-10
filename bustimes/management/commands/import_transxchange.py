@@ -238,11 +238,12 @@ class Command(BaseCommand):
         return outbound, inbound
 
     def mark_old_services_as_not_current(self):
-        old_services = self.source.service_set.filter(current=True).exclude(service_code__in=self.service_codes)
+        old_services = self.source.service_set.filter(current=True).exclude(id__in=self.service_ids)
         old_services.update(current=False)
+        self.source.route_set.exclude(service__in=self.service_ids).delete()
 
     def handle_archive(self, archive_name, filenames):
-        self.service_codes = set()
+        self.service.id = set()
 
         self.set_region(archive_name)
 
@@ -270,7 +271,6 @@ class Command(BaseCommand):
 
         StopPoint.objects.filter(active=False, service__current=True).update(active=True)
         StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
-        self.source.route_set.filter(service__current=False).delete()
         self.source.service_set.filter(current=False, geometry__isnull=False).update(geometry=None)
 
     def get_calendar(self, operating_profile, operating_period):
@@ -373,21 +373,21 @@ class Command(BaseCommand):
 
         return calendar
 
-    def handle_journeys(self, route, stops, transxchange, service, line_id):
+    def handle_journeys(self, route, stops, transxchange, txc_service, line_id):
         default_calendar = None
 
         for journey in transxchange.journeys:
-            if journey.service_ref != service.service_code:
+            if journey.service_ref != txc_service.service_code:
                 continue
             if journey.line_ref != line_id:
                 continue
 
             calendar = None
             if journey.operating_profile:
-                calendar = self.get_calendar(journey.operating_profile, service.operating_period)
+                calendar = self.get_calendar(journey.operating_profile, txc_service.operating_period)
             else:
                 if not default_calendar:
-                    default_calendar = self.get_calendar(service.operating_profile, service.operating_period)
+                    default_calendar = self.get_calendar(txc_service.operating_profile, txc_service.operating_period)
                 calendar = default_calendar
 
             if not calendar:
@@ -496,8 +496,6 @@ class Command(BaseCommand):
                     continue
 
             lines = get_lines(txc_service.element)
-
-            service_codes = set()
 
             for line_id, line_name, line_brand in lines:
 
@@ -640,14 +638,13 @@ class Command(BaseCommand):
                     if service.slug == service_code.lower():
                         service.slug = ''
                         service.save(update_fields=['slug'])
-                    if service_code in self.service_codes:
+                    if service.id in self.service_ids:
                         service.operator.add(*operators)
                     else:
                         service.operator.set(operators)
                         service.route_set.all().delete()
                         service.stops.clear()
-                service_codes.add(service_code)
-                self.service_codes.add(service_code)
+                self.service_ids.add(service.id)
 
                 for stop_usage in stop_usages:
                     stop_usage.service = service
@@ -677,11 +674,11 @@ class Command(BaseCommand):
 
                 route_code = filename
                 if len(transxchange.services) > 1:
-                    route_code += f'#{service_code}'
+                    route_code += f'#{txc_service.code}'
                 if len(lines) > 1:
                     route_code += f'#{line_id}'
 
-                route, route_created = Route.objects.get_or_create(route_defaults, source=self.source, code=route_code)
+                route = Route.objects.create(**route_defaults, source=self.source, code=route_code)
 
                 self.handle_journeys(route, stops, transxchange, txc_service, line_id)
 
