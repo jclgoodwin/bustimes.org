@@ -349,7 +349,7 @@ class VehicleJourney:
                 else:
                     yield Cell(stopusage, time, time)
 
-            if journey_timinglink:
+            if journey_timinglink and journey_timinglink.run_time is not None:
                 run_time = journey_timinglink.run_time
             else:
                 run_time = timinglink.runtime
