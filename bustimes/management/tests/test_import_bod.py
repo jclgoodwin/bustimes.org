@@ -1,6 +1,6 @@
 import os
 from tempfile import TemporaryDirectory
-from zipfile import ZipFile
+import zipfile
 from vcr import use_cassette
 from mock import patch
 from freezegun import freeze_time
@@ -25,7 +25,6 @@ class ImportBusOpenDataTest(TestCase):
         OperatorCode.objects.create(operator=lynx, source=source, code='LYNX')
         OperatorCode.objects.create(operator=sund, source=source, code='SCSU')
 
-    @freeze_time('2020-05-01')
     @use_cassette(os.path.join(FIXTURES_DIR, 'bod_lynx.yaml'))
     @override_settings(STAGECOACH_OPERATORS=(), FIRST_OPERATORS=(), BOD_OPERATORS=[
         ('LYNX', 'EA', {
@@ -66,16 +65,14 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
         with patch('bustimes.management.commands.import_bod.download_if_changed',
                    return_value=(True, '2020-05-16T22:49:08+01:00')) as download_if_changed:
 
-            with TemporaryDirectory() as directory:
-                archive_name = 'stagecoach-scne-route-schedule-data-transxchange.zip'
-                path = os.path.join(directory, archive_name)
+            archive_name = 'stagecoach-scne-route-schedule-data-transxchange.zip'
+            path = os.path.join(FIXTURES_DIR, archive_name)
 
-                with ZipFile(path, 'a') as open_file:
-                    for filename in ('E1_SIS_PB_E1E2_20200531.xml', 'E1_SIS_PB_E1E2_20200614.xml'):
-                        open_file.write(os.path.join(FIXTURES_DIR, filename), filename)
+            with override_settings(DATA_DIR=FIXTURES_DIR):
+                call_command('import_bod', '')
+            download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
 
-                with override_settings(DATA_DIR=directory):
-                    call_command('import_bod', '')
-                download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
+        self.assertEqual(3, Service.objects.count())
 
-        self.assertEqual(5, Service.objects.count())
+        response = self.client.get('/services/e1-sunderland-south-shields')
+        self.assertContains(response, 'Timetable changes from Sunday 14 June 2020')

@@ -475,6 +475,13 @@ class Command(BaseCommand):
             StopPoint.objects.bulk_create(stops_to_create.values())
             stops = {**stops, **stops_to_create}
 
+        parts = None
+        if self.source.name.startswith('Arriva') or self.source.name.startswith('Stagecoach'):
+            parts = os.path.basename(filename)[:-4].split('_')
+            assert len(parts[-1]) == 8
+            assert parts[-1].isdigit()
+            parts = '_'.join(parts[:-1])
+
         for txc_service in transxchange.services.values():
             # if service.mode == 'underground':
             #     continue
@@ -494,45 +501,50 @@ class Command(BaseCommand):
 
             for line_id, line_name, line_brand in lines:
 
-                service_code = get_service_code(filename)
-                if service_code is None:
-                    service_code = txc_service.service_code
-
                 if len(self.source.name) > 4:  # not a TNDS source (slightly dodgy heuristic)
                     operator_code = '-'.join(operator.id for operator in operators)
                     if operator_code == 'TDTR' and 'Swindon-Rural' in filename:
                         operator_code = 'SBCR'
 
-                    service_code = f'{self.source.id}-{operator_code}-{service_code}'
-                    if len(lines) > 1:
-                        service_code += '-' + line_id
-
-                    if self.source.name.startswith('Stagecoach') and self.source.route_set.filter(
-                        service__service_code=service_code
-                    ).exclude(code__startswith=filename[:-12]).exists():
-                        service_code = filename[53:-13]
+                    existing = None
+                    if parts:
+                        service_code = f'{self.source.id}-{parts}-{line_name}'
+                        existing = self.source.service_set.filter(line_name=line_name,
+                                                                  route__code__contains=f'/{parts}_').first()
+                    else:
+                        service_code = f'{self.source.id}-{operator_code}-{service_code}'
                         if len(lines) > 1:
-                            service_code += '-' + line_id
+                            service_code += '-' + line_name
 
-                    if operator_code != 'SBCR':
-                        existing = self.get_existing_service(line_name, operators)
-                        if existing:
-                            service_code = existing.service_code
-                            if not line_brand:
-                                line_brand = existing.line_brand
-                            if not txc_service.mode:
-                                txc_service.mode = existing.mode
+                        if operator_code != 'SBCR':
+                            existing = self.get_existing_service(line_name, operators)
+
+                    if existing:
+                        services = Service.objects.filter(id=existing.id)
+                    else:
+                        services = Service.objects.filter(service_code=service_code)
+                else:
+                    service_code = get_service_code(filename)
+                    if service_code is None:
+                        service_code = txc_service.service_code
+                    services = Service.objects.filter(service_code=service_code)
 
                 defaults = {
+                    'service_code': service_code,
                     'line_name': line_name,
-                    'line_brand': line_brand,
-                    'mode': txc_service.mode,
-                    'region_id': self.region_id,
                     'date': today,
                     'current': True,
                     'source': self.source,
                     'show_timetable': True
                 }
+
+                if txc_service.mode:
+                    defaults['mode'] = txc_service.mode
+                if line_brand:
+                    defaults['line_brand'] = line_brand
+                if self.region_id:
+                    defaults['region_id'] = self.region_id
+
                 description = txc_service.description
                 if description and ('timetable' in description.lower() or 'Database Refresh' in description):
                     description = None
@@ -617,7 +629,7 @@ class Command(BaseCommand):
                         filename)
                     defaults['description'] = defaults['outbound_description'] or defaults['inbound_description']
 
-                service, service_created = Service.objects.update_or_create(defaults, service_code=service_code)
+                service, service_created = services.update_or_create(defaults)
 
                 if service_created:
                     service.operator.set(operators)
