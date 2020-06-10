@@ -515,8 +515,10 @@ class Command(BaseCommand):
                     existing = None
                     if parts:
                         service_code = f'{self.source.id}-{parts}-{line_name}'
-                        existing = self.source.service_set.filter(line_name=line_name,
-                                                                  route__code__contains=f'/{parts}_').first()
+                        existing = Service.objects.filter(service_code=service_code).first()
+                        if not existing:
+                            existing = self.source.service_set.filter(line_name=line_name,
+                                                                      route__code__contains=f'/{parts}_').first()
                     else:
                         service_code = f'{self.source.id}-{operator_code}-{txc_service.service_code}'
                         if len(lines) > 1:

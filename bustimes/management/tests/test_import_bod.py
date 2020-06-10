@@ -1,6 +1,6 @@
 import os
+from ciso8601 import parse_datetime
 from tempfile import TemporaryDirectory
-import zipfile
 from vcr import use_cassette
 from mock import patch
 from freezegun import freeze_time
@@ -63,15 +63,19 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
     def test_import_stagecoach(self):
 
         with patch('bustimes.management.commands.import_bod.download_if_changed',
-                   return_value=(True, '2020-05-16T22:49:08+01:00')) as download_if_changed:
+                   return_value=(True, parse_datetime('2020-05-16T22:49:08+01:00'))) as download_if_changed:
 
             archive_name = 'stagecoach-scne-route-schedule-data-transxchange.zip'
             path = os.path.join(FIXTURES_DIR, archive_name)
 
             with override_settings(DATA_DIR=FIXTURES_DIR):
                 call_command('import_bod', '')
-            download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
-
+                download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
+                with self.assertNumQueries(1):
+                    call_command('import_bod', '')
+                DataSource.objects.update(datetime=None)
+                with self.assertNumQueries(1723):
+                    call_command('import_bod', '')
         self.assertEqual(3, Service.objects.count())
 
         response = self.client.get('/services/e1-sunderland-south-shields')
