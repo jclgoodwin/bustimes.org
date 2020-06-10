@@ -328,6 +328,7 @@ PASSENGER_OPERATORS = (
     }),
     ('McGill\'s', 'https://data.discoverpassenger.com/operator/mcgills', 'S', {
         'MCG': 'MCGL',
+        'McG': 'MCGL',
     }),
 )
 BOD_OPERATORS = (
