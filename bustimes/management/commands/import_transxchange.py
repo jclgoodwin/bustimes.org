@@ -674,11 +674,11 @@ class Command(BaseCommand):
 
                 route_code = filename
                 if len(transxchange.services) > 1:
-                    route_code += f'#{txc_service.code}'
+                    route_code += f'#{txc_service.service_code}'
                 if len(lines) > 1:
                     route_code += f'#{line_id}'
 
-                route = Route.objects.create(**route_defaults, source=self.source, code=route_code)
+                route, _ = Route.objects.update_or_create(route_defaults, source=self.source, code=route_code)
 
                 self.handle_journeys(route, stops, transxchange, txc_service, line_id)
 
