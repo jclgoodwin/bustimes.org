@@ -478,7 +478,7 @@ class Command(BaseCommand):
         parts = None
         if self.source.name.startswith('Arriva') or self.source.name.startswith('Stagecoach'):
             parts = os.path.basename(filename)[:-4].split('_')
-            if len(parts[-1]) > 8:
+            if len(parts[-1]) < 8:
                 parts = parts[:-1]
             assert len(parts[-1]) == 8
             assert parts[-1].isdigit()
