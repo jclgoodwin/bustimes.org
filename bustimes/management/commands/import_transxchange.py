@@ -16,7 +16,7 @@ from datetime import date
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import LineString, MultiLineString
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.utils import timezone
 from busstops.models import (Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode)
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
@@ -632,7 +632,11 @@ class Command(BaseCommand):
                         filename)
                     defaults['description'] = defaults['outbound_description'] or defaults['inbound_description']
 
-                service, service_created = services.update_or_create(defaults)
+                try:
+                    service, service_created = services.update_or_create(defaults)
+                except IntegrityError as e:
+                    print(e, service_code)
+                    continue
 
                 if service_created:
                     service.operator.set(operators)
