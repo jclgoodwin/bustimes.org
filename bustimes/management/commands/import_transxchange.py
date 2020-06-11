@@ -376,6 +376,8 @@ class Command(BaseCommand):
     def handle_journeys(self, route, stops, transxchange, txc_service, line_id):
         default_calendar = None
 
+        stop_times = []
+
         for journey in transxchange.journeys:
             if journey.service_ref != txc_service.service_code:
                 continue
@@ -400,7 +402,6 @@ class Command(BaseCommand):
                 journey_pattern=journey.journey_pattern.id,
             )
 
-            stop_times = []
             for i, cell in enumerate(journey.get_times()):
                 timing_status = cell.stopusage.timingstatus
                 if timing_status == 'otherPoint':
@@ -422,9 +423,7 @@ class Command(BaseCommand):
                     stop_time.stop_id = stop_time.stop_code
                     trip.destination_id = stop_time.stop_code
                 stop_times.append(stop_time)
-            if not trip.destination_id:
-                print(stop_times)
-                continue
+
             trip.end = stop_time.departure or stop_time.arrival
             trip.save()
 
@@ -437,9 +436,9 @@ class Command(BaseCommand):
                     self.notes[note_cache_key] = note
                 trip.notes.add(note)
 
-            for stop_time in stop_times:
-                stop_time.trip = stop_time.trip  # set trip_id
-            StopTime.objects.bulk_create(stop_times)
+        for stop_time in stop_times:
+            stop_time.trip = stop_time.trip  # set trip_id
+        StopTime.objects.bulk_create(stop_times)
 
     def get_existing_service(self, line_name, operators):
         services = Service.objects.filter(operator__in=operators, line_name__iexact=line_name)
