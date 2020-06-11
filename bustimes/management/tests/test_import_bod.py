@@ -59,7 +59,7 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
         'SCSU': 'SCSU',
         'SCTE': 'SCTE',
         'SCHA': 'SCHA'
-    })], FIRST_OPERATORS=(), BOD_OPERATORS=())
+    })], FIRST_OPERATORS=(), BOD_OPERATORS=(), DATA_DIR=FIXTURES_DIR)
     @freeze_time('2020-06-10')
     def test_import_stagecoach(self):
 
@@ -69,14 +69,13 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
             archive_name = 'stagecoach-scne-route-schedule-data-transxchange.zip'
             path = os.path.join(FIXTURES_DIR, archive_name)
 
-            with override_settings(DATA_DIR=FIXTURES_DIR):
+            call_command('import_bod', '')
+            download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
+            with self.assertNumQueries(1):
                 call_command('import_bod', '')
-                download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
-                with self.assertNumQueries(1):
-                    call_command('import_bod', '')
-                DataSource.objects.update(datetime=None)
-                with self.assertNumQueries(1736):
-                    call_command('import_bod', '')
+            DataSource.objects.update(datetime=None)
+            with self.assertNumQueries(1736):
+                call_command('import_bod', '')
         self.assertEqual(3, Service.objects.count())
         self.assertEqual(6, Route.objects.count())
 
