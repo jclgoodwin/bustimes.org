@@ -243,7 +243,7 @@ class Command(BaseCommand):
         self.source.route_set.exclude(service__in=self.service_ids).delete()
 
     def handle_archive(self, archive_name, filenames):
-        self.service.id = set()
+        self.service_ids = set()
 
         self.set_region(archive_name)
 
