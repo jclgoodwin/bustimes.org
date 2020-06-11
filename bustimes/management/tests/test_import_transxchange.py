@@ -367,14 +367,16 @@ class ImportTransXChangeTest(TestCase):
         self.write_files_to_zipfile_and_import('EA.zip', ['twm_6-14B-_-y11-1.xml'])
         service = Service.objects.get()
 
-        self.assertNotIn('timetable', self.client.get(service.get_absolute_url()).context_data)
-        # self.assertEqual(0, len(timetable.groupings[0].rows[0].times))
-        # self.assertEqual(0, len(timetable.groupings[1].rows[0].times))
+        response = self.client.get(service.get_absolute_url())
+        self.assertNotIn('timetable', response.context_data)
 
         # Has some journeys that operate on 1 May 2017
-        # timetable = txc.timetable_from_filename(FIXTURES_DIR, 'twm_6-14B-_-y11-1.xml', date(2017, 5, 1))
-        # self.assertEqual(8, len(timetable.groupings[0].rows[0].times))
-        # self.assertEqual(8, len(timetable.groupings[1].rows[0].times))
+        with freeze_time(date(2017, 4, 28)):
+            response = self.client.get(service.get_absolute_url())
+            timetable = response.context_data['timetable']
+            self.assertEqual(timetable.date, date(2017, 5, 1))
+            self.assertEqual(8, len(timetable.groupings[0].rows[0].times))
+            self.assertEqual(8, len(timetable.groupings[1].rows[0].times))
 
     @freeze_time('2012-06-27')
     def test_timetable_goole(self):
@@ -384,9 +386,9 @@ class ImportTransXChangeTest(TestCase):
         # try date outside of operating period
         response = self.client.get(service.get_absolute_url() + '?date=2007-06-27')
         timetable = response.context_data['timetable']
-        # during a DaysOfNonOperation
-        self.assertEqual('2012-06-27', str(timetable.date))
-        self.assertEqual([], timetable.groupings)
+        # next day of operation
+        self.assertEqual('2012-06-30', str(timetable.date))
+        self.assertEqual(1, len(timetable.groupings))
 
         response = self.client.get(service.get_absolute_url() + '?date=2017-01-27')
         timetable = response.context_data['timetable']
