@@ -139,7 +139,6 @@ class Command(ImportLiveVehiclesCommand):
             latest_location and latest_location.journey.code == journey.code and
             latest_location.journey.route_name == journey.route_name and latest_location.journey.service
         ):
-            journey.id = latest_location.journey.service
             journey.service = latest_location.journey.service
         elif journey.route_name:
             service = journey.route_name
