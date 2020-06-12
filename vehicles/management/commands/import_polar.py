@@ -34,8 +34,8 @@ class Command(ImportLiveVehiclesCommand):
         if operator == 'NCTR' and len(code) == 6:
             # Trent Barton vehicles
             return None, None
-        elif operator == 'MCGL' and len(code) >= 7:
-            # Borders Buses vehicles
+        elif operator == 'MCGL' and (len(code) >= 7 or len(code) >= 5 and code.isdigit()):
+            # Borders Buses or First vehicles
             print(code)
             return None, None
 
