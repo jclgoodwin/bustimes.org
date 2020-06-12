@@ -67,7 +67,10 @@ class Command(BaseCommand):
             try:
                 return service.get()
             except Service.MultipleObjectsReturned:
-                return service.filter(Q(stops=item['OriginRef']) | Q(stops=item['DestinationRef'])).distinct().get()
+                try:
+                     return service.filter(Q(stops=item['OriginRef']) | Q(stops=item['DestinationRef'])).distinct().get()
+                except Service.MultipleObjectsReturned:
+                     return service.filter(stops=item['OriginRef']).filter(stops=item['DestinationRef']).distinct().get()
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             if line_name != 'Tour':
                 print(e, item)
