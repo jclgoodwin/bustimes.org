@@ -61,14 +61,7 @@ class Command(BaseCommand):
                 line_name = 'Universal U'
         else:
             service = Service.objects.filter(operator__in=operator)
-            if operator[0] == 'SCCM' and line_name == 'NG1':
-                line_name = 'NG01'
-        service = service.filter(current=True)
-
-        if line_name.startswith('PR'):
-            service = service.filter(pk__contains='-{}-'.format(line_name))
-        else:
-            service = service.filter(line_name=line_name)
+        service = service.filter(current=True, line_name=line_name)
 
         try:
             try:
