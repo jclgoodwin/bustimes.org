@@ -263,12 +263,11 @@ class Command(ImportLiveVehiclesCommand):
 
         operator, operator_options = self.get_operator(operator_ref)
 
-        if operator.id == 'FBRI' and vehicle.operator_id == 'ABUS':
-            operator = vehicle.operator
-
         if operator_options:
             services = services.filter(operator__in=operator_options).distinct()
         elif operator:
+            if operator.id == 'FBRI' and vehicle.operator_id == 'ABUS':
+                operator = vehicle.operator
             services = services.filter(operator=operator)
         else:
             return journey
