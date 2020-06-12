@@ -262,6 +262,10 @@ class Command(ImportLiveVehiclesCommand):
                                    | Q(servicecode__scheme__endswith=' SIRI', servicecode__code=service))
 
         operator, operator_options = self.get_operator(operator_ref)
+
+        if operator.id == 'FBRI' and vehicle.operator_id == 'ABUS':
+            operator = vehicle.operator
+
         if operator_options:
             services = services.filter(operator__in=operator_options).distinct()
         elif operator:
