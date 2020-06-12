@@ -53,8 +53,11 @@ def same_journey(latest_location, journey, when):
     else:
         same_route = latest_location.journey.service_id == journey.service_id
     if same_route:
+        if latest_location.journey.datetime == journey.datetime:
+            return True
         if latest_location.journey.code and journey.code:
-            return str(latest_location.journey.code) == str(journey.code)
+            if str(latest_location.journey.code) == str(journey.code):
+                return True
         elif latest_location.journey.direction and journey.direction:
             return latest_location.journey.direction == journey.direction
         else:
