@@ -56,6 +56,9 @@ def log_vehicle_journey(operator_ref, vehicle, service, route_name, time, journe
     if not vehicle or vehicle == '-':
         return
 
+    if operator_ref == 'FB' and not vehicle.isdigit():
+        operator_ref = 'ABUS'
+
     try:
         operator = Operator.objects.get(id=operator_ref)
     except Operator.DoesNotExist:

@@ -148,8 +148,8 @@ class Command(ImportLiveVehiclesCommand):
             elif operator.id == 'FBRI':
                 if len(vehicle_code) < 4:
                     return None, None
-                if not (vehicle_code.isdigit() or vehicle_code.isalpha()) and vehicle_code.isupper():
-                    operator_options = ('ABUS',)
+                if not vehicle_code.isdigit():
+                    operator = Operator.objects.get(id='ABUS')
 
         defaults = {
             'source': self.source,
