@@ -522,15 +522,24 @@ table {
     }
 
     .name {
-        color: $brand-color-darker-darker;
+        border: 1px solid $border-color;
+        color: $text-color;
         float: left;
         margin-right: 1em;
+        padding: .125em .5em;
+        text-align: center;
 
         &.is-short {
-            font-size: 2.5em;
+            font-size: 2em;
             font-variant-numeric: tabular-nums;
             line-height: 1em;
-            margin-right: .4em;
+            margin-right: .5em;
+            padding: .3125em .25em;
+        }
+
+        + .name {
+            border-left: 0;
+            margin-left: -1em;
         }
     }
 
