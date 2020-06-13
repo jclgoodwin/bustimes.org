@@ -78,7 +78,7 @@ def get_lines(service_element):
     lines = []
     for line_element in service_element.find('txc:Lines', NS):
         line_id = line_element.attrib['id']
-        line_name = line_element.find('txc:LineName', NS).text
+        line_name = line_element.find('txc:LineName', NS).text.strip()
         if '|' in line_name:
             line_name, line_brand = line_name.split('|', 1)
         else:
@@ -461,6 +461,35 @@ class Command(BaseCommand):
 
         return existing
 
+    def get_description(self, txc_service):
+        description = txc_service.description
+        if description and ('timetable' in description.lower() or 'Database Refresh' in description):
+            description = None
+        elif self.source.name.startswith('Arriva') or self.source.name.startswith('Stagecoach'):
+            description = None
+        if not description:
+            origin = txc_service.origin
+            destination = txc_service.destination
+            if not (origin == 'Origin' and destination == 'Destination'):
+                if origin.isupper() and destination.isupper():
+                    origin = titlecase(origin)
+                    destination = titlecase(destination)
+
+                # for the outbound and inbound descriptions
+                txc_service.description_parts = [origin, destination]
+
+                description = f'{origin} - {destination}'
+                vias = txc_service.vias
+                if vias:
+                    if len(txc_service.vias) == 1 and (',' in vias[0] or ' and ' in vias[0]):
+                        description = f"{description} via {', '.join(vias)}"
+                    else:
+                        description = [origin] + vias + [destination]
+                        description = ' - '.join(description)
+        if description and self.region_id == 'NE':
+            description = sanitize_description(description)
+        return description
+
     def handle_file(self, open_file, filename):
         transxchange = TransXChange(open_file)
 
@@ -498,26 +527,33 @@ class Command(BaseCommand):
 
             lines = get_lines(txc_service.element)
 
+            description = self.get_description(txc_service)
+
             for line_id, line_name, line_brand in lines:
+
+                existing = None
+
+                if operators and description and line_name:
+                    existing = Service.objects.filter(operator__in=operators, description=description,
+                                                      line_name=line_name).order_by('-current', 'service_code').first()
 
                 if len(self.source.name) <= 4:  # TNDS source (slightly dodgy heuristic)
                     service_code = get_service_code(filename)
                     if service_code is None:
                         service_code = txc_service.service_code
-                    services = Service.objects.filter(service_code=service_code)
-
                 else:
                     operator_code = '-'.join(operator.id for operator in operators)
                     if operator_code == 'TDTR' and 'Swindon-Rural' in filename:
                         operator_code = 'SBCR'
 
-                    existing = None
                     if parts:
                         service_code = f'{self.source.id}-{parts}-{line_name}'
-                        existing = Service.objects.filter(service_code=service_code).first()
                         if not existing:
-                            existing = self.source.service_set.filter(line_name=line_name,
-                                                                      route__code__contains=f'/{parts}_').first()
+                            existing = Service.objects.filter(service_code=service_code).first()
+                        if not existing:
+                            existing = self.source.service_set.filter(
+                                line_name=line_name, route__code__contains=f'/{parts}_'
+                            ).order_by('-current', 'service_code').first()
                     else:
                         service_code = f'{self.source.id}-{operator_code}-{txc_service.service_code}'
                         if len(lines) > 1:
@@ -526,10 +562,10 @@ class Command(BaseCommand):
                         if operator_code != 'SBCR':
                             existing = self.get_existing_service(line_name, operators)
 
-                    if existing:
-                        services = Service.objects.filter(id=existing.id)
-                    else:
-                        services = Service.objects.filter(service_code=service_code)
+                if existing:
+                    services = Service.objects.filter(id=existing.id)
+                else:
+                    services = Service.objects.filter(service_code=service_code)
 
                 defaults = {
                     'service_code': service_code,
@@ -540,41 +576,15 @@ class Command(BaseCommand):
                     'show_timetable': True
                 }
 
+                if description:
+                    defaults['description'] = description
+
                 if txc_service.mode:
                     defaults['mode'] = txc_service.mode
                 if line_brand:
                     defaults['line_brand'] = line_brand
                 if self.region_id:
                     defaults['region_id'] = self.region_id
-
-                description = txc_service.description
-                if description and ('timetable' in description.lower() or 'Database Refresh' in description):
-                    description = None
-                elif self.source.name.startswith('Arriva') or self.source.name.startswith('Stagecoach'):
-                    description = None
-                if not description:
-                    origin = txc_service.origin
-                    destination = txc_service.destination
-                    if not (origin == 'Origin' and destination == 'Destination'):
-                        if origin.isupper() and destination.isupper():
-                            origin = titlecase(origin)
-                            destination = titlecase(destination)
-
-                        # for the outbound and inbound descriptions
-                        txc_service.description_parts = [origin, destination]
-
-                        description = f'{origin} - {destination}'
-                        vias = txc_service.vias
-                        if vias:
-                            if len(txc_service.vias) == 1 and (',' in vias[0] or ' and ' in vias[0]):
-                                description = f"{description} via {', '.join(vias)}"
-                            else:
-                                description = [origin] + vias + [destination]
-                                description = ' - '.join(description)
-                if description:
-                    if self.region_id == 'NE':
-                        description = sanitize_description(description)
-                    defaults['description'] = description
 
                 groupings = {
                     'outbound': Grouping('outbound', txc_service),
@@ -683,7 +693,10 @@ class Command(BaseCommand):
                 if len(lines) > 1:
                     route_code += f'#{line_id}'
 
-                route, _ = Route.objects.update_or_create(route_defaults, source=self.source, code=route_code)
+                route, route_created = Route.objects.update_or_create(route_defaults,
+                                                                      source=self.source, code=route_code)
+                if not route_created:
+                    route.trip_set.all().delete()
 
                 self.handle_journeys(route, stops, transxchange, txc_service, line_id)
 
