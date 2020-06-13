@@ -568,13 +568,14 @@ class Command(BaseCommand):
                     services = Service.objects.filter(service_code=service_code)
 
                 defaults = {
-                    'service_code': service_code,
                     'line_name': line_name,
                     'date': today,
                     'current': True,
                     'source': self.source,
                     'show_timetable': True
                 }
+                if not existing:
+                    defaults['service_code'] = service_code
 
                 if description:
                     defaults['description'] = description
