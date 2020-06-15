@@ -520,6 +520,9 @@ class ServiceColour(models.Model):
     foreground = models.CharField(max_length=20, blank=True)
     background = models.CharField(max_length=20, blank=True)
 
+    def __str__(self):
+        return self.name
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if self.operator_id and self.name:
