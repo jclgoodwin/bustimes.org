@@ -335,6 +335,9 @@ BOD_OPERATORS = (
     ('LYNX', 'EA', {
         'CO': 'LYNX',
     }),
+    ('UNOE', 'SE', {
+        'UBN': 'UNOE'
+    })
     ('TBTN', 'EM', {
         '574T': 'TBTN',
         'KN': 'KBUS',
