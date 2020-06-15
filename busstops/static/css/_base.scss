@@ -520,33 +520,33 @@ table {
     a:active {
         color: $black;
     }
+}
 
-    .name {
-        border: 1px solid $border-color;
-        color: $text-color;
-        float: left;
-        margin-right: 1em;
-        padding: .125em .5em;
-        text-align: center;
+.name {
+    border: 1px solid $border-color;
+    color: $text-color;
+    float: left;
+    margin-right: 1em;
+    padding: .125em .5em;
+    text-align: center;
 
-        &.is-short {
-            font-size: 2em;
-            font-variant-numeric: tabular-nums;
-            line-height: 1em;
-            margin-right: .5em;
-            padding: .3125em .25em;
-        }
-
-        + .name {
-            border-left: 0;
-            margin-left: -1em;
-        }
+    &.is-short {
+        font-size: 2em;
+        font-variant-numeric: tabular-nums;
+        line-height: 1em;
+        margin-right: .5em;
+        padding: .3125em .25em;
     }
 
-    a:focus .name,
-    a:active .name {
-        color: inherit;
+    + .name {
+        border-left: 0;
+        margin-left: -1em;
     }
+}
+
+a:focus .name,
+a:active .name {
+    color: inherit;
 }
 
 #regions {

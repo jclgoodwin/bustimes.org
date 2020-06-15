@@ -1,16 +1,25 @@
+<style>
+{% for colour in colours %}
+.colour-{{ colour.id }} {
+    background: {{ colour.background }};
+    border-color: {{ colour.foreground }};
+    color: {{ colour.foreground }};
+}
+{% endfor %}
+</style>
 <ul class="services">
 {% for service in services %}
     <li>
         <a href="{{ service.get_absolute_url }}">
             {% if service.line_name %}
                 {% if ' ' not in service.line_name or service.line_name not in service.description %}
-                    <span class="name{% if not service.has_long_line_name %} is-short{% endif %}">
+                    <span class="name{% if not service.has_long_line_name %} is-short{% endif %}{% if service.colour_id %} colour colour-{{ service.colour_id }}{% endif %}">
                         {{ service.line_name }}
                     </span>
                 {% endif %}
             {% endif %}
             {% if service.line_brand %}
-                <span class="name">{{ service.line_brand }}</span>
+                <span class="name{% if service.colour_id %} colour colour-{{ service.colour_id }}{% endif %}">{{ service.line_brand }}</span>
             {% endif %}
             <span class="description">
                 {{ service.description }}

@@ -20,7 +20,7 @@ from django.core.mail import EmailMessage
 from departures import live
 from disruptions.models import Situation, Consequence
 from .utils import format_gbp, get_bounding_box
-from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Place
+from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Place, ServiceColour
 from .forms import ContactForm, SearchForm
 
 
@@ -446,6 +446,11 @@ class OperatorDetailView(DetailView):
             context['notes'] = self.object.note_set.all()
             context['modes'] = {service.mode for service in context['services'] if service.mode}
             context['breadcrumb'] = [self.object.region]
+
+            colours = set(service.colour_id for service in context['services'] if service.colour_id)
+            if colours:
+                context['colours'] = ServiceColour.objects.filter(id__in=colours)
+
         return context
 
     def render_to_response(self, context):

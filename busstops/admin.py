@@ -5,7 +5,7 @@ from django.db.models import Count, Q
 from django.contrib.gis.db.models import PointField
 from .models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, StopCode, Operator, Service, ServiceLink,
-    Note, ServiceCode, OperatorCode, DataSource, Place, SIRISource, PaymentMethod
+    Note, ServiceCode, OperatorCode, DataSource, Place, SIRISource, PaymentMethod, ServiceColour
 )
 
 
@@ -157,6 +157,10 @@ class ServiceCodeAdmin(admin.ModelAdmin):
     raw_id_fields = ('service',)
 
 
+class ServiceColourAdmin(admin.ModelAdmin):
+    list_display = ('id', 'foreground', 'background')
+
+
 class PlaceAdmin(admin.ModelAdmin):
     list_filter = ('source',)
     search_fields = ('name',)
@@ -189,6 +193,7 @@ admin.site.register(StopArea)
 admin.site.register(StopCode, StopCodeAdmin)
 admin.site.register(StopPoint, StopPointAdmin)
 admin.site.register(Operator, OperatorAdmin)
+admin.site.register(ServiceColour, ServiceColourAdmin)
 admin.site.register(Service, ServiceAdmin)
 admin.site.register(ServiceLink, ServiceLinkAdmin)
 admin.site.register(Note, NoteAdmin)
