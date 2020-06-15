@@ -514,6 +514,11 @@ class StopUsage(models.Model):
         return self.timing_status == 'OTH' or self.timing_status == 'TIP'
 
 
+class ServiceColour(models.Model):
+    foreground = models.CharField(max_length=20, blank=True)
+    background = models.CharField(max_length=20, blank=True)
+
+
 class ServiceManager(models.Manager):
     def with_documents(self):
         vector = SearchVector('line_name', weight='A') + SearchVector('line_brand', weight='A')
@@ -535,7 +540,7 @@ class Service(SearchMixin, models.Model):
     slug = AutoSlugField(populate_from=str, editable=True, unique=True)
     mode = models.CharField(max_length=11, blank=True)
     operator = models.ManyToManyField(Operator, blank=True)
-    region = models.ForeignKey(Region, models.CASCADE, null=True)
+    region = models.ForeignKey(Region, models.CASCADE, null=True, blank=True)
     stops = models.ManyToManyField(StopPoint, editable=False,
                                    through=StopUsage)
     date = models.DateField()
@@ -549,8 +554,7 @@ class Service(SearchMixin, models.Model):
     payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
 
-    foreground = models.CharField(max_length=20, blank=True)
-    background = models.CharField(max_length=20, blank=True)
+    colour = models.ForeignKey(ServiceColour, models.SET_NULL, null=True, blank=True)
 
     objects = ServiceManager()
 
