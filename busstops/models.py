@@ -515,8 +515,15 @@ class StopUsage(models.Model):
 
 
 class ServiceColour(models.Model):
+    name = models.CharField(max_length=64)
+    operator = models.ForeignKey(Operator, models.SET_NULL, null=True, blank=True)
     foreground = models.CharField(max_length=20, blank=True)
     background = models.CharField(max_length=20, blank=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.operator_id and self.name:
+            Service.objects.filter(operator=self.operator_id, current=True, line_brand=self.name).update(colour=self)
 
 
 class ServiceManager(models.Manager):
