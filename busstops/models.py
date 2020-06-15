@@ -549,6 +549,9 @@ class Service(SearchMixin, models.Model):
     payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
 
+    foreground = models.CharField(max_length=20, blank=True)
+    background = models.CharField(max_length=20, blank=True)
+
     objects = ServiceManager()
 
     class Meta:
