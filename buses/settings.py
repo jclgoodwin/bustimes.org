@@ -337,7 +337,7 @@ BOD_OPERATORS = (
     }),
     ('UNOE', 'SE', {
         'UBN': 'UNOE'
-    })
+    }),
     ('TBTN', 'EM', {
         '574T': 'TBTN',
         'KN': 'KBUS',
