@@ -41,7 +41,7 @@ def create_journey_code(destination, service_id, journey_ref, source_id):
 
 @shared_task
 def log_vehicle_journey(operator_ref, vehicle, service, route_name, time, journey_ref, destination, source_name, url):
-    if operator_ref in {'UNIB', 'GCB', 'PLYC'}:
+    if operator_ref in {'UNIB', 'GCB', 'PLYC', 'OXBC'}:
         return
     if not (time or journey_ref):
         return
