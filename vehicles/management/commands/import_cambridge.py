@@ -89,26 +89,38 @@ class Command(BaseCommand):
 
         journey = None
 
-        line_name = item['PublishedLineName']
-        journey_code = item['DatedVehicleJourneyRef']
-        departure_time = ciso8601.parse_datetime(item['OriginAimedDepartureTime'])
+        if 'PublishedLineName' in item:
+            line_name = item['PublishedLineName']
+            journey_code = item['DatedVehicleJourneyRef']
+            departure_time = ciso8601.parse_datetime(item['OriginAimedDepartureTime'])
+        else:
+            line_name = ''
+            journey_code = ''
+            departure_time = None
+
         if not created and vehicle.latest_location:
             location = vehicle.latest_location
             latest_journey = location.journey
             if line_name == latest_journey.route_name and journey_code == latest_journey.code:
-                if departure_time == latest_journey.datetime:
+                if departure_time is None or departure_time == latest_journey.datetime:
                     journey = latest_journey
         else:
             location = VehicleLocation()
 
         if not journey:
-            try:
-                destination = Locality.objects.get(stoppoint=item['DestinationRef']).name
-            except Locality.DoesNotExist:
-                destination = html.unescape(item['DestinationName'])
+            if 'DestinationRef' in item:
+                try:
+                    destination = Locality.objects.get(stoppoint=item['DestinationRef']).name
+                except Locality.DoesNotExist:
+                    destination = html.unescape(item['DestinationName'])
+                service = self.get_service(operator_options or operator, item)
+            else:
+                service = None
+                destination = ''
+                departure_time = ciso8601.parse_datetime(item['RecordedAtTime'])
             journey = VehicleJourney.objects.create(
                 vehicle=vehicle,
-                service=self.get_service(operator_options or operator, item),
+                service=service,
                 route_name=line_name,
                 source=self.source,
                 datetime=departure_time,
@@ -141,7 +153,10 @@ class Command(BaseCommand):
 
     def handle_data(self, data):
         for item in data['request_data']:
-            self.handle_siri_vm_vehicle(item)
+            try:
+                self.handle_siri_vm_vehicle(item)
+            except KeyError as e:
+                print(e, item)
 
         now = timezone.now()
         self.source.datetime = now
