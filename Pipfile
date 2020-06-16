@@ -34,8 +34,8 @@ requests-toolbelt = "*"
 pyyaml = "*"
 asgiref = "*"
 importlib-metadata = "*"
-python-pidfile = "*"
 polyline = "*"
+pid = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

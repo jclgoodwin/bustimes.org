@@ -2,9 +2,9 @@ import math
 import requests
 import logging
 import sys
-import pidfile
+import pid
+from random import random
 from datetime import timedelta
-from setproctitle import setproctitle
 from time import sleep
 from django.db import Error, IntegrityError, InterfaceError
 from django.core.management.base import BaseCommand
@@ -241,10 +241,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
         return 0
 
     def handle(self, *args, **options):
+        title = sys.argv[1]
         try:
-            with pidfile.PIDFile():
-                title = sys.argv[1].replace('import_', '', 1).replace('live_', '', 1)
-                setproctitle(title)
+            with pid.PidFile(title):
+                sleep(random() * 15)
                 while True:
                     try:
                         wait = self.update()
@@ -255,5 +255,5 @@ class ImportLiveVehiclesCommand(BaseCommand):
                             sys.exit()
                         wait = 30
                     sleep(wait)
-        except pidfile.AlreadyRunningError:
+        except pid.PidFileError:
             return
