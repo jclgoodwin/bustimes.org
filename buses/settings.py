@@ -336,6 +336,7 @@ BOD_OPERATORS = (
         'CO': 'LYNX',
     }),
     ('UNOE', 'SE', {
+        'UBL': 'UNOE',
         'UBN': 'UNOE'
     }),
     ('TBTN', 'EM', {
