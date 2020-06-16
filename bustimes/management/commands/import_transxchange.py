@@ -484,7 +484,7 @@ class Command(BaseCommand):
                     description = f'{origin} - {destination}'
                     vias = txc_service.vias
                     if vias:
-                        if len(txc_service.vias) == 1 and (',' in vias[0] or ' and ' in vias[0]):
+                        if len(txc_service.vias) == 1 and (',' in vias[0] or ' and ' in vias[0] or '&' in vias[0]):
                             description = f"{description} via {', '.join(vias)}"
                         else:
                             description = [origin] + vias + [destination]
