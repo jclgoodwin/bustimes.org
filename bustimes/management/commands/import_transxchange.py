@@ -78,7 +78,7 @@ def get_lines(service_element):
     lines = []
     for line_element in service_element.find('txc:Lines', NS):
         line_id = line_element.attrib['id']
-        line_name = line_element.find('txc:LineName', NS).text.strip()
+        line_name = (line_element.find('txc:LineName', NS).text or '').strip()
         if '|' in line_name:
             line_name, line_brand = line_name.split('|', 1)
         else:
@@ -489,7 +489,7 @@ class Command(BaseCommand):
                         else:
                             description = [origin] + vias + [destination]
                             description = ' - '.join(description)
-        if description and self.region_id == 'NE':
+        if description and self.source.name == 'NE':
             description = sanitize_description(description)
         return description
 
