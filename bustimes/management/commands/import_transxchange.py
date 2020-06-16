@@ -478,7 +478,7 @@ class Command(BaseCommand):
                 # for the outbound and inbound descriptions
                 txc_service.description_parts = [origin, destination]
 
-                if description and description.startswith('via ') or description.startswith('then '):
+                if description and (description.startswith('via ') or description.startswith('then ')):
                     description = f'{origin} - {destination} {description}'
                 else:
                     description = f'{origin} - {destination}'
@@ -520,7 +520,8 @@ class Command(BaseCommand):
             #     continue
 
             if txc_service.operating_period.end and txc_service.operating_period.end < today:
-                continue
+                if not self.source.name.startswith('First'):
+                    continue
 
             operators = self.get_operators(transxchange, txc_service)
 

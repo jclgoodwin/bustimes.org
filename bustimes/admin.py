@@ -3,7 +3,7 @@ from .models import Route, Trip, Calendar, Note
 
 
 class RouteAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'start_date', 'end_date']
+    list_display = ['__str__', 'code', 'start_date', 'end_date']
     list_filter = [
         ('source', admin.RelatedOnlyFieldListFilter)
     ]
