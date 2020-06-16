@@ -9,7 +9,9 @@ class Command(ImportLiveVehiclesCommand):
     url = 'https://transdevblazefield.arcticapi.com/network/vehicles'
     operators = {
         'YCD': 'YCST',
+        'YCL': 'YCST',
         'LUI': 'LNUD',
+        'LUL': 'LNUD',
         'BPT': 'BPTR',
         'HDT': 'HRGT',
         'KDT': 'KDTR',
@@ -29,7 +31,11 @@ class Command(ImportLiveVehiclesCommand):
         if len(self.operators) == 1:
             operator = list(self.operators.values())[0]
         else:
-            operator = self.operators[operator]
+            try:
+                operator = self.operators[operator]
+            except KeyError as e:
+                print(e, operator)
+                return None, None
 
         if operator == 'NCTR' and len(code) == 6:
             # Trent Barton vehicles
@@ -96,7 +102,7 @@ class Command(ImportLiveVehiclesCommand):
             try:
                 operator = self.operators[operator]
             except KeyError as e:
-                print(e, item)
+                print(e, operator)
                 return journey
 
         line_name = journey.route_name
