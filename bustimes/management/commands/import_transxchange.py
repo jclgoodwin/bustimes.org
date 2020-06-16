@@ -467,7 +467,7 @@ class Command(BaseCommand):
             description = None
         elif self.source.name.startswith('Arriva') or self.source.name.startswith('Stagecoach'):
             description = None
-        if not description:
+        if not description or self.source.name.startswith('Lynx'):
             origin = txc_service.origin
             destination = txc_service.destination
             if not (origin == 'Origin' and destination == 'Destination'):
@@ -478,14 +478,17 @@ class Command(BaseCommand):
                 # for the outbound and inbound descriptions
                 txc_service.description_parts = [origin, destination]
 
-                description = f'{origin} - {destination}'
-                vias = txc_service.vias
-                if vias:
-                    if len(txc_service.vias) == 1 and (',' in vias[0] or ' and ' in vias[0]):
-                        description = f"{description} via {', '.join(vias)}"
-                    else:
-                        description = [origin] + vias + [destination]
-                        description = ' - '.join(description)
+                if description and description.startswith('via ') or description.startswith('then '):
+                    description = f'{origin} - {destination} {description}'
+                else:
+                    description = f'{origin} - {destination}'
+                    vias = txc_service.vias
+                    if vias:
+                        if len(txc_service.vias) == 1 and (',' in vias[0] or ' and ' in vias[0]):
+                            description = f"{description} via {', '.join(vias)}"
+                        else:
+                            description = [origin] + vias + [destination]
+                            description = ' - '.join(description)
         if description and self.region_id == 'NE':
             description = sanitize_description(description)
         return description
