@@ -104,26 +104,6 @@ def operator_vehicles(request, slug=None, parent=None):
 
     form = request.path.endswith('/edit')
 
-    if not form:
-        pending_edits = VehicleEdit.objects.filter(approved=None, vehicle=OuterRef('id'))
-        vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
-
-    if operator.name == 'National Express':
-        vehicles = sorted(vehicles, key=lambda v: v.notes)
-
-    if not vehicles:
-        raise Http404
-
-    paginator = Paginator(vehicles, 1000)
-    page = request.GET.get('page')
-    vehicles = paginator.get_page(page)
-
-    features_column = any(vehicle.features.all() for vehicle in vehicles)
-
-    columns = set(key for vehicle in vehicles if vehicle.data for key in vehicle.data)
-    for vehicle in vehicles:
-        vehicle.column_values = [vehicle.data and vehicle.data.get(key) for key in columns]
-
     if form:
         breadcrumb.append(Vehicles(operator))
         initial = {
@@ -151,6 +131,26 @@ def operator_vehicles(request, slug=None, parent=None):
                 form = EditVehiclesForm(initial=initial, operator=operator)
         else:
             form = EditVehiclesForm(initial=initial, operator=operator)
+
+    if not form:
+        pending_edits = VehicleEdit.objects.filter(approved=None, vehicle=OuterRef('id'))
+        vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
+
+    if operator.name == 'National Express':
+        vehicles = sorted(vehicles, key=lambda v: v.notes)
+
+    if not vehicles:
+        raise Http404
+
+    paginator = Paginator(vehicles, 1000)
+    page = request.GET.get('page')
+    vehicles = paginator.get_page(page)
+
+    features_column = any(vehicle.features.all() for vehicle in vehicles)
+
+    columns = set(key for vehicle in vehicles if vehicle.data for key in vehicle.data)
+    for vehicle in vehicles:
+        vehicle.column_values = [vehicle.data and vehicle.data.get(key) for key in columns]
 
     response = render(request, 'operator_vehicles.html', {
         'breadcrumb': breadcrumb,

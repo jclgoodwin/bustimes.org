@@ -353,12 +353,15 @@ class VehiclesTests(TestCase):
         self.assertEqual(edit.vehicle_type, '')
         self.assertEqual(edit.notes, 'foo')
 
+        self.assertContains(response, 'FD54\xa0JYA')
+
         # just updating operator should not create a VehicleEdit, but update the vehicle immediately
         with self.assertNumQueries(13):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
                 'operator': self.bova.id,
             })
+            self.assertNotContains(response, 'FD54\xa0JYA')
         self.vehicle_1.refresh_from_db()
         self.assertEqual(self.bova, self.vehicle_1.operator)
         self.assertContains(response, '(1 vehicle) shortly')
