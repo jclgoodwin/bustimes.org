@@ -100,6 +100,7 @@ def operator_vehicles(request, slug=None, parent=None):
     vehicles = vehicles.select_related('vehicle_type', 'livery', 'latest_location__journey__service')
 
     submitted = False
+    moved = False
     breadcrumb = [operator.region, operator]
 
     form = request.path.endswith('/edit')
@@ -116,7 +117,8 @@ def operator_vehicles(request, slug=None, parent=None):
                 data = {key: form.cleaned_data[key] for key in form.changed_data}
                 if 'operator' in data:
                     ticked_vehicles = Vehicle.objects.filter(id__in=request.POST.getlist('vehicle'))
-                    submitted = ticked_vehicles.update(operator=data['operator'])
+                    moved = ticked_vehicles.update(operator=data['operator'])
+                    moved_to = data['operator']
                     del data['operator']
                 if data:
                     ticked_vehicles = (v for v in vehicles if str(v.id) in request.POST.getlist('vehicle'))
@@ -166,7 +168,9 @@ def operator_vehicles(request, slug=None, parent=None):
         'notes_column': any(vehicle.notes for vehicle in vehicles),
         'features_column': features_column,
         'columns': columns,
-        'submitted': submitted,
+        'edits': submitted,
+        'moved': moved,
+        'moved_to': moved and moved_to,
         'form': form,
     })
 
@@ -408,6 +412,7 @@ class VehicleDetailView(DetailView):
 def edit_vehicle(request, vehicle_id):
     vehicle = get_object_or_404(Vehicle.objects.select_related('vehicle_type', 'livery', 'operator'), id=vehicle_id)
     submitted = False
+    moved_to = None
     initial = {
         'operator': vehicle.operator,
         'reg': vehicle.reg,
@@ -436,6 +441,7 @@ def edit_vehicle(request, vehicle_id):
             if 'operator' in data:
                 vehicle.operator = data['operator']
                 vehicle.save(update_fields=['operator'])
+                moved_to = data['operator']
                 del data['operator']
             if data:
                 edit = get_vehicle_edit(vehicle, data)
@@ -451,7 +457,7 @@ def edit_vehicle(request, vehicle_id):
                             )
                     for feature in data['features']:
                         edit.features.add(feature)
-            submitted = True
+                submitted = True
     else:
         form = EditVehicleForm(initial=initial, operator=vehicle.operator, vehicle=vehicle)
 
@@ -468,7 +474,8 @@ def edit_vehicle(request, vehicle_id):
         'previous': vehicle.get_previous(),
         'next': vehicle.get_next(),
         'submitted': submitted,
-        'pending_edits': not submitted and vehicle.vehicleedit_set.filter(approved=None).exists()
+        'moved_to': moved_to,
+        'pending_edits': not submitted and not moved_to and vehicle.vehicleedit_set.filter(approved=None).exists()
     })
 
     if form and form.is_valid() and form.cleaned_data['user'] != request.COOKIES.get('username', ''):

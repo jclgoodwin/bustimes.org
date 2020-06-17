@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}Fleet list – {% firstof parent object %} – bustimes.org{% endblock %}
+{% block title %}{% if form %}Edit – {% endif %}Fleet list – {% firstof parent object %} – bustimes.org{% endblock %}
 
 {% block canonical %}
     <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}/vehicles">
@@ -13,9 +13,12 @@
 <h1>{% firstof parent object %}</h1>
 
 {% if form %}
-    {% if submitted %}
+    {% if moved %}
+        <p class="message">{{ moved }} vehicle{{ moved|pluralize }} moved to {{ moved_to }}</p>
+    {% endif %}
 
-        <p class="message">Thank you. I’ll update those details ({{ submitted }} vehicle{{ submitted|pluralize }}) shortly</p>
+    {% if edits %}
+        <p class="message">I’ll update {% if moved %}the other{% else %}those{% endif %} details ({{ edits }} vehicle{{ edits|pluralize }}) shortly</p>
     {% endif %}
 
     <p>Select vehicles to update:</p>
@@ -44,7 +47,7 @@
 
 {% if form %}
     <form action="{{ object.get_absolute_url }}/vehicles/edit" method="POST">
-{% else %}
+{% elif not parent %}
     <p><a class="button" href="{{ object.get_absolute_url }}/vehicles/edit">Edit</a></p>
 {% endif %}
 

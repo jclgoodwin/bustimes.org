@@ -8,11 +8,17 @@
 
 {% block content %}
 
-{% if submitted %}
+{% if submitted or moved_to %}
 
     <h1>Thank you</h1>
 
-    <p>I’ll update those details shortly</p>
+    {% if moved_to %}
+        <p>Vehicle moved to {{ moved_to }}</p>
+    {% endif %}
+
+    {% if submitted %}
+        <p>I’ll update {% if moved_to %}the other{% else %}those{% endif %} details shortly</p>
+    {% endif %}
 
 {% else %}
 

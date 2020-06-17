@@ -166,7 +166,7 @@ class VehiclesTests(TestCase):
                 'notes': 'Trent Barton',
             })
         self.assertTrue(response.context['form'].has_changed())
-        self.assertContains(response, 'Thank you')
+        self.assertContains(response, 'I’ll update those details')
 
         self.assertEqual(1, VehicleEdit.objects.filter(approved=None).count())
 
@@ -182,7 +182,7 @@ class VehiclesTests(TestCase):
                 'notes': 'Trent Barton',
             })
         self.assertTrue(response.context['form'].has_changed())
-        self.assertContains(response, 'Thank you')
+        self.assertContains(response, 'I’ll update those details')
 
         self.assertEqual(2, VehicleEdit.objects.filter(approved=None).count())
 
@@ -223,7 +223,7 @@ class VehiclesTests(TestCase):
                 'url': 'https://bustimes.org'
             })
         self.assertTrue(response.context['form'].has_changed())
-        self.assertContains(response, 'Thank you')
+        self.assertContains(response, 'I’ll update those details')
         edit = VehicleEdit.objects.last()
         self.assertEqual(edit.url, 'https://bustimes.org')
         self.assertEqual(str(edit.get_changes()), "{'vehicle_type': 'Optare Spectra', 'name': 'Colin', 'features': \
@@ -306,16 +306,17 @@ class VehiclesTests(TestCase):
                 'name': 'Luther Blisset',
                 'branding': 'Coastliner',
             })
-        self.assertContains(response, 'Thank you')
         self.assertTrue(response.context['form'].has_changed())
+
+        # check vehicle operator has been changed
+        self.assertContains(response, '/operators/bova-and-over')
+        self.assertContains(response, 'Vehicle moved to Bova and Over')
+        self.assertContains(response, '<p>I’ll update the other details shortly</p>')
 
         with self.assertNumQueries(10):
             response = self.client.get(url)
 
         self.assertContains(response, 'already')
-
-        # check vehicle operator has been changed
-        self.assertContains(response, '/operators/bova-and-over')
 
         edit = VehicleEdit.objects.get()
         self.assertEqual(edit.get_changes(), {'Depot': 'Holt', 'branding': 'Coastliner', 'name': 'Luther Blisset',
@@ -347,8 +348,7 @@ class VehiclesTests(TestCase):
                 'operator': self.lynx.id,
                 'notes': 'foo'
             })
-        self.assertContains(response, 'Thank you')
-        self.assertContains(response, '(1 vehicle) shortly')
+        self.assertContains(response, 'I’ll update those details (1 vehicle) shortly')
         edit = VehicleEdit.objects.get()
         self.assertEqual(edit.vehicle_type, '')
         self.assertEqual(edit.notes, 'foo')
@@ -364,7 +364,7 @@ class VehiclesTests(TestCase):
             self.assertNotContains(response, 'FD54\xa0JYA')
         self.vehicle_1.refresh_from_db()
         self.assertEqual(self.bova, self.vehicle_1.operator)
-        self.assertContains(response, '(1 vehicle) shortly')
+        self.assertContains(response, '1 vehicle moved to Bova and Over')
         self.assertEqual(1, VehicleEdit.objects.count())
 
     def test_vehicles_json(self):
