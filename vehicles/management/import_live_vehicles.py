@@ -3,10 +3,8 @@ import requests
 import logging
 import sys
 import pid
-from random import random
 from datetime import timedelta
 from time import sleep
-from django.db import Error, IntegrityError, InterfaceError
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from busstops.models import DataSource, ServiceCode
@@ -220,22 +218,16 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         self.current_location_ids = set()
 
-        try:
-            items = self.get_items()
-            if items:
-                for item in items:
-                    self.handle_item(item, now)
-                # mark any vehicles that have gone offline as not current
-                print(self.get_old_locations().update(current=False), end='\t', flush=True)
-            else:
-                return 300  # no items - wait five minutes
-        except (requests.exceptions.RequestException, IntegrityError, TypeError, ValueError) as e:
-            print(e)
-            logger.error(e, exc_info=True)
-            return 80
+        items = self.get_items()
+        if items:
+            for item in items:
+                self.handle_item(item, now)
+            # mark any vehicles that have gone offline as not current
+            self.get_old_locations().update(current=False)
+        else:
+            return 300  # no items - wait five minutes
 
         time_taken = (timezone.now() - now).total_seconds()
-        print(time_taken)
         if time_taken < 60:
             return 60 - time_taken
         return 0
@@ -244,16 +236,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
         title = sys.argv[1]
         try:
             with pid.PidFile(title):
-                sleep(random() * 15)
                 while True:
-                    try:
-                        wait = self.update()
-                    except Error as e:
-                        print(e)
-                        logger.error(e, exc_info=True)
-                        if type(e) is InterfaceError:
-                            sys.exit()
-                        wait = 30
+                    wait = self.update()
                     sleep(wait)
         except pid.PidFileError:
             return
