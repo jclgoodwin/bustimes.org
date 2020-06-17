@@ -69,7 +69,7 @@
     {% for grouping in timetable.groupings %}
 
         {% if forloop.first != forloop.last %}
-            <h2>{% if grouping.inbound is False %}{{ service.outbound_description }}{% elif grouping.inbound is True %}{{ service.inbound_description }}{% else %}{{ grouping }} {{ timetable.operating_period }}{% endif %}</h2>
+            <h2>{% if grouping.inbound %}{% firstof service.inbound_description 'Inbound' %}{% else %}{% firstof service.outbound_description 'Outbound' %}{% endif %}</h2>
         {% endif %}
 
         <div class="timetable-wrapper-wrapper">

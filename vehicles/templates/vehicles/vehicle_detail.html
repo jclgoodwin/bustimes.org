@@ -81,7 +81,7 @@
                         </td>
                         <td>{{ journey.datetime|time }}</td>
                         <td>{{ journey.code }}</td>
-                        <td>{{ journey.destination }}</td>
+                        <td>{% firstof journey.destination journey.direction %}</td>
                         <td>
                             {% if journey.calls %}
                                 <a href="{{ journey.get_absolute_url }}">Times</a>
