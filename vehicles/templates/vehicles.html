@@ -1,0 +1,74 @@
+{% extends 'page.html' %}
+
+{% block title %}Vehicles – bustimes.org{% endblock %}
+
+{% block bodyclass %}narrow{% endblock %}
+
+{% block content %}
+
+<script>
+    if (window.location.hash) {
+        window.location.href = '/map' + window.location.hash;
+    }
+</script>
+
+<h1>Vehicles</h1>
+
+<p>bustimes.org is not primarily aimed at enthusiasts, but we do have some unofficial fleet lists and things, powered by user contributions and the live vehicle tracking system.</p>
+
+<h2>Operators</h2>
+
+<ul class="long">
+    {% for operator in operators %}
+        <li><a href="{{ operator.get_absolute_url }}/vehicles">{{ operator }}</a></li>
+    {% endfor %}
+</ul>
+
+<!-- <table>
+    <thead>
+        <tr>
+            <th scope="col">Operator</th>
+            <th scope="col">Number of vehicles</th>
+        </tr>
+    </thead>
+    <tbody>
+</table>
+
+<h2>Liveries</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Livery</th>
+            <th scope="col">Number of vehicles</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for livery in liveries %}
+            <tr>
+                <td><a href="{{ operator.get_absolute_url }}/vehicles">{{ operator }}</a></td>
+            </tr>
+            <tr>
+                
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Vehicle types</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th scope="col">Type</th>
+            <th scope="col">Coach?</th>
+            <th scope="col">Decker?</th>
+            <th scope="col">Number of vehicles</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table> -->
+
+{% endblock %}
