@@ -73,6 +73,12 @@ def get_vehicle_edit(vehicle, fields):
     return edit
 
 
+def vehicles(request):
+    return render(request, 'vehicles.html', {
+        'operators': Operator.objects.filter(vehicle__withdrawn=False).distinct()
+    })
+
+
 def operator_vehicles(request, slug=None, parent=None):
     operators = Operator.objects.select_related('region')
     if slug:
