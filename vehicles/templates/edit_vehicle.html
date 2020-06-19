@@ -64,6 +64,17 @@
                     selectElement: selectElement
                 });
             }
+            var withdrawnElement = document.getElementById('id_withdrawn');
+            function handleWithdrawn() {
+                display = withdrawnElement.checked ? 'none' : '';
+                document.querySelectorAll('main form > *').forEach(function(element) {
+                    if ((element.querySelector('input, label')) && !element.querySelector('#id_withdrawn, #id_url, #id_user')) {
+                        element.style.display = display;
+                    }
+                });
+            }
+            withdrawnElement.addEventListener('change', handleWithdrawn);
+            handleWithdrawn();
         });
     </script>
 {% endblock %}

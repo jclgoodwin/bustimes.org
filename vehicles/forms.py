@@ -65,7 +65,7 @@ class EditVehicleForm(EditVehiclesForm):
     reg = forms.CharField(label='Registration', required=False, max_length=14)
     name = forms.CharField(label='Name', required=False, max_length=255)
     previous_reg = forms.CharField(required=False, max_length=14)
-    url = forms.URLField(label='URL', help_text='E.g. a photo (helpful for verifying recent repaints)',
+    url = forms.URLField(label='URL', help_text='Link to a web page or photo (helpful for verifying recent repaints)',
                          required=False, max_length=255)
     field_order = ['operator', 'fleet_number', 'reg', 'vehicle_type',
                    'colours', 'branding', 'name', 'previous_reg', 'depot',
