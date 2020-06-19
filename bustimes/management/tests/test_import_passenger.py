@@ -29,11 +29,11 @@ class ImportPassengerTest(TestCase):
     @use_cassette(os.path.join(FIXTURES_DIR, 'passenger.yaml'))
     def test_import(self):
 
-        with patch('bustimes.management.commands.import_passenger.download_if_modified',
-                   return_value=False) as download_if_modified:
+        with patch('bustimes.management.commands.import_passenger.download_if_new',
+                   return_value=False) as download_if_new:
             call_command('import_passenger')
 
-            download_if_modified.assert_called_with(
+            download_if_new.assert_called_with(
                 os.path.join(settings.DATA_DIR, 'unilink_1586941252.zip'),
                 'https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1586941252.zip'
             )
