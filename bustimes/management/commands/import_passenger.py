@@ -115,7 +115,6 @@ class Command(BaseCommand):
                     print('old routes:', routes.delete())
 
                     # mark old services as not current
-                    print('old services:',
-                          command.source.service_set.filter(current=True, route=None).update(current=False))
+                    print('old services:', command.mark_old_services_as_not_current())
             else:
-                sleep(5)
+                sleep(2)

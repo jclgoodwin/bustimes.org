@@ -538,8 +538,12 @@ class Command(BaseCommand):
                 existing = None
 
                 if operators and description and line_name:
-                    existing = Service.objects.filter(operator__in=operators, description=description,
-                                                      line_name=line_name).order_by('-current', 'service_code').first()
+                    if all(operator.parent == 'Go South Coast' for operator in operators):
+                        existing = Service.objects.filter(operator__parent='Go South Coast')
+                    else:
+                        existing = Service.objects.filter(operator__in=operators)
+                    existing = existing.filter(description=description, line_name=line_name)
+                    existing = existing.order_by('-current', 'service_code').first()
 
                 if len(self.source.name) <= 4:  # TNDS source (slightly dodgy heuristic)
                     service_code = get_service_code(filename)
@@ -563,7 +567,7 @@ class Command(BaseCommand):
                         if len(lines) > 1:
                             service_code += '-' + line_name
 
-                        if operator_code != 'SBCR':
+                        if not existing and operator_code != 'SBCR':
                             existing = self.get_existing_service(line_name, operators)
 
                 if existing:
@@ -658,10 +662,11 @@ class Command(BaseCommand):
                     if service.slug == service_code.lower():
                         service.slug = ''
                         service.save(update_fields=['slug'])
-                    if service.id in self.service_ids:
+                    if service.id in self.service_ids or all(o.parent == 'Go South Coast' for o in operators):
                         service.operator.add(*operators)
                     else:
                         service.operator.set(operators)
+                    if service.id not in self.service_ids:
                         service.route_set.all().delete()
                         service.stops.clear()
                 self.service_ids.add(service.id)
