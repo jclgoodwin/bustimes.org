@@ -2,42 +2,27 @@
 """
 
 import os
-import logging
-import zipfile
-import xml.etree.cElementTree as ET
+import requests
 from time import sleep
 from datetime import timedelta
 from requests_html import HTMLSession
-from requests import RequestException
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone, dateparse
 from busstops.models import DataSource, Service
-from .import_gtfs import download_if_modified
+from .import_bod import handle_file
 from .import_transxchange import Command as TransXChangeCommand
+from ...utils import write_file
 from ...models import Route, Calendar
 
 
-logger = logging.getLogger(__name__)
-
-
-def handle_file(command, path):
-    # the downloaded file might be plain XML, or a zipped archive - we just don't know yet
-    try:
-        with zipfile.ZipFile(os.path.join(settings.DATA_DIR, path)) as archive:
-            for filename in archive.namelist():
-                if filename.endswith('.csv'):
-                    continue
-                with archive.open(filename) as open_file:
-                    try:
-                        command.handle_file(open_file, os.path.join(path, filename))
-                    except (ET.ParseError, ValueError) as e:
-                        print(filename)
-                        logger.error(e, exc_info=True)
-    except zipfile.BadZipFile:
-        with open(os.path.join(settings.DATA_DIR, path)) as open_file:
-            command.handle_file(open_file, path)
+def download_if_new(path, url):
+    if not os.path.exists(path):
+        response = requests.get(url, stream=True)
+        write_file(path, response)
+        return True
+    return False
 
 
 class Command(BaseCommand):
@@ -62,7 +47,7 @@ class Command(BaseCommand):
             versions = []
             try:
                 response = session.get(url, timeout=5)
-            except RequestException as e:
+            except requests.RequestException as e:
                 print(url, e)
                 sleep(5)
                 continue
@@ -79,7 +64,7 @@ class Command(BaseCommand):
                         url = element.attrs['href']
                         filename = url.split('/')[-1]
                         path = os.path.join(settings.DATA_DIR, filename)
-                        modified = download_if_modified(path, url)
+                        modified = download_if_new(path, url)
                         dates = heading.split(' to ')
                         versions.append(
                             (filename, modified, dates)

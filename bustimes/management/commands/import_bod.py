@@ -1,20 +1,21 @@
 """Import timetable data "fresh from the cow"
 """
 import os
+import logging
 import requests
-import time
+import zipfile
+import xml.etree.cElementTree as ET
 from ciso8601 import parse_datetime
-from email.utils import parsedate_to_datetime
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.utils import timezone
-from busstops.models import DataSource, Service, Operator
-from .import_gtfs import write_file
+from busstops.models import DataSource, Operator, Service
 from .import_transxchange import Command as TransXChangeCommand
-from .import_passenger import handle_file
+from ...utils import download, download_if_changed
 from ...models import Route, Calendar
 
 
+logger = logging.getLogger(__name__)
 session = requests.Session()
 
 
@@ -33,39 +34,22 @@ def get_command():
     return command
 
 
-def download(path, url):
-    response = requests.get(url, stream=True)
-    write_file(path, response)
-
-
-def download_if_changed(path, url):
-    headers = {}
-    modified = True
-    if os.path.exists(path):
-        last_modified = time.localtime(os.path.getmtime(path))
-        headers['if-modified-since'] = time.asctime(last_modified)
-
-        response = requests.head(url, headers=headers)
-        if response.status_code == 304:
-            modified = False
-
-    if modified:
-        response = requests.get(url, headers=headers, stream=True)
-
-        if response.status_code == 304 or not response.ok:
-            modified = False
-        else:
-            write_file(path, response)
-
-    last_modified = None
-    if 'x-amz-meta-cb-modifiedtime' in response.headers:
-        last_modified = response.headers['x-amz-meta-cb-modifiedtime']
-    elif 'last-modified' in response.headers:
-        last_modified = response.headers['last-modified']
-    if last_modified:
-        last_modified = parsedate_to_datetime(last_modified)
-
-    return modified, last_modified
+def handle_file(command, path):
+    # the downloaded file might be plain XML, or a zipped archive - we just don't know yet
+    try:
+        with zipfile.ZipFile(os.path.join(settings.DATA_DIR, path)) as archive:
+            for filename in archive.namelist():
+                if filename.endswith('.csv'):
+                    continue
+                with archive.open(filename) as open_file:
+                    try:
+                        command.handle_file(open_file, os.path.join(path, filename))
+                    except (ET.ParseError, ValueError) as e:
+                        print(filename)
+                        logger.error(e, exc_info=True)
+    except zipfile.BadZipFile:
+        with open(os.path.join(settings.DATA_DIR, path)) as open_file:
+            command.handle_file(open_file, path)
 
 
 def bus_open_data(api_key):
