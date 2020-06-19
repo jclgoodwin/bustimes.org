@@ -31,4 +31,4 @@ It needs a username and password for the Traveline National Dataset step.
 Some "live" data – departure times at stops, and vehicle locations – is/are fetched as and when a user accesses a page.
 
 For the rest, there are some Django management commands that need to be run indefinitely in the background.
-These update [the big map of bus locations](https://bustimes.org/vehicles), etc.
+These update [the big map of bus locations](https://bustimes.org/map), etc.

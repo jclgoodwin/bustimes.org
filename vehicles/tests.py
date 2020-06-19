@@ -421,8 +421,12 @@ class VehiclesTests(TestCase):
 
     def test_big_map(self):
         with self.assertNumQueries(0):
-            response = self.client.get('/vehicles')
+            response = self.client.get('/map')
         self.assertContains(response, 'bigmap.min.js')
+
+    def test_vehicles(self):
+        with self.assertNumQueries(1):
+            self.client.get('/vehicles')
 
     def test_dashboard(self):
         with self.assertNumQueries(2):
