@@ -18,13 +18,11 @@ def download_if_changed(path, url):
         headers['if-modified-since'] = time.asctime(last_modified)
 
         response = requests.head(url, headers=headers)
-        print(response.status_code)
         if response.status_code == 304:
             modified = False
 
     if modified:
         response = requests.get(url, headers=headers, stream=True)
-        print(response.status_code)
 
         if response.status_code == 304 or not response.ok:
             modified = False
