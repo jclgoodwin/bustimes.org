@@ -583,7 +583,7 @@ class SiriSmDepartures(Departures):
         # for enthusiasts,
         # because the source doesn't support vehicle locations
         if vehicle:
-            if not ('sslink' in url or 'jmwrti' in url or scheme in {'Reading', 'Surrey'}):
+            if not ('sslink' in url or 'SIRIHandler' in url or scheme in {'Reading', 'Surrey'}):
                 origin_aimed_departure_time = element.find('s:OriginAimedDepartureTime', self.ns)
                 if origin_aimed_departure_time is not None:
                     log_vehicle_journey.delay(operator, vehicle,
@@ -605,7 +605,7 @@ class SiriSmDepartures(Departures):
                         self.line_refs.add(line_ref)
 
             # Create a "journey code", which can be used to work out the destination of a vehicle.
-            if 'jmwrti' in url and destination and journey_ref:
+            if 'SIRIHandler' in url and destination and journey_ref:
                 create_journey_code.delay(destination, service.pk, journey_ref, self.source.id)
 
         return {
