@@ -358,15 +358,10 @@ select {
 
 form p select {
     border-radius: 0;
-    box-sizing: content-box;
+    box-sizing: border-box;
     display: block;
     height: 2em;
     width: 100%;
-}
-
-select[multiple] {
-    box-sizing: border-box;
-    height: auto;
 }
 
 .helptext {
