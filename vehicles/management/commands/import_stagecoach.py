@@ -14,6 +14,10 @@ def get_latlong(item):
     return Point(float(item['lo']), float(item['la']))
 
 
+def get_datetime(timestamp):
+    datetime.fromtimestamp(int(timestamp) / 1000, timezone.utc)
+
+
 class Command(ImportLiveVehiclesCommand):
     url = 'https://api.stagecoach-technology.net/vehicle-tracking/v1/vehicles'
     source_name = 'Stagecoach'
@@ -81,7 +85,7 @@ class Command(ImportLiveVehiclesCommand):
 
     @staticmethod
     def get_datetime(item):
-        return datetime.fromtimestamp(int(item['ut']) / 1000, timezone.utc)
+        return get_datetime(item['ut'])
 
     def get_vehicle(self, item):
         vehicle_code = item['fn']
@@ -119,7 +123,9 @@ class Command(ImportLiveVehiclesCommand):
 
         code = item.get('td', '')
         if item['ao']:
-            departure_time = datetime.fromtimestamp(int(item['ao']) / 1000, timezone.utc)
+            departure_time = get_datetime(item['ao'])
+        elif item['eo']:
+            departure_time = get_datetime(item['eo'])
         else:
             departure_time = None
 
@@ -178,8 +184,8 @@ class Command(ImportLiveVehiclesCommand):
         aimed = item.get('an') or item.get('ax')
         expected = item.get('en') or item.get('ex')
         if aimed and expected:
-            aimed = datetime.fromtimestamp(int(aimed) / 1000, timezone.utc)
-            expected = datetime.fromtimestamp(int(expected) / 1000, timezone.utc)
+            aimed = get_datetime(aimed)
+            expected = get_datetime(expected)
             early = (aimed - expected).total_seconds() / 60
             early = round(early)
             delay = -early
