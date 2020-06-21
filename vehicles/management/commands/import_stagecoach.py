@@ -15,7 +15,7 @@ def get_latlong(item):
 
 
 def get_datetime(timestamp):
-    datetime.fromtimestamp(int(timestamp) / 1000, timezone.utc)
+    return datetime.fromtimestamp(int(timestamp) / 1000, timezone.utc)
 
 
 class Command(ImportLiveVehiclesCommand):
