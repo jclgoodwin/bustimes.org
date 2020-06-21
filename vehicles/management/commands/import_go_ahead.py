@@ -22,9 +22,7 @@ class Command(ImportLiveVehiclesCommand):
     operators = {
         'GOEA': ['KCTB', 'CHAM', 'HEDO'],
         'CSLB': ['OXBC', 'CSLB', 'THTR'],
-        'BH': ['BHBC'],
         'SQ': ['BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TOUR', 'WDBC'],
-        'TT': ['TDTR'],
         'PC': ['PLYC', 'TFCN'],
         'GONW': ['GONW'],
     }
@@ -32,11 +30,6 @@ class Command(ImportLiveVehiclesCommand):
     opcos = {
         'eastangliabuses': ['KCTB', 'CHAM', 'HEDO'],
         'oxford': ['OXBC', 'CSLB', 'THTR'],
-        'brightonhove': ['BHBC'],
-        'swindon': ['TDTR'],
-        'more': ['WDBC'],
-        'bluestar': ['BLUS', 'UNIL'],
-        'salisburyreds': ['SWWD'],
         'plymouth': ['PLYC'],
         'cornwall': ['TFCN'],
         'gonorthwest': ['GONW'],
