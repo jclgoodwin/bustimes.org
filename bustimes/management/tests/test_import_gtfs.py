@@ -115,6 +115,8 @@ class GTFSTest(TestCase):
         self.assertEqual(str(timetable.groupings[0].rows[1].times), "['', 10:20, '', 14:20, 17:50]")
         self.assertEqual(str(timetable.groupings[0].rows[2].times), "['', 10:22, '', 14:22, 17:52]")
 
+        self.assertTrue(service.geometry)
+
     def test_admin_area(self):
         res = self.client.get(self.dublin.get_absolute_url())
         self.assertContains(res, 'Bus services in Dublin', html=True)

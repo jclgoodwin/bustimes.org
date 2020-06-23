@@ -12,7 +12,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Count
 from django.contrib.gis.geos import Point
-# from django.contrib.gis.geos import LineString, MultiLineString
+from django.contrib.gis.geos import LineString, MultiLineString
 from django.utils import timezone
 from busstops.models import Region, DataSource, StopPoint, Service, StopUsage, Operator
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime
@@ -116,6 +116,7 @@ def handle_zipfile(path, collection, url):
     )[0]
 
     shapes = {}
+    service_shapes = {}
     operators = {}
     routes = {}
     services = set()
@@ -178,10 +179,10 @@ def handle_zipfile(path, collection, url):
                 {
                     'line_name': line['route_short_name'],
                     'description': line['route_long_name'],
+                    'service': service,
                 },
                 source=source,
                 code=line['route_id'],
-                service=service,
             )
             if not created:
                 route.trip_set.all().delete()
@@ -215,11 +216,15 @@ def handle_zipfile(path, collection, url):
 
         trips = {}
         for line in read_file(archive, 'trips.txt'):
+            route = routes[line['route_id']]
             trips[line['trip_id']] = Trip(
-                route=routes[line['route_id']],
+                route=route,
                 calendar=calendars[line['service_id']],
                 inbound=line['direction_id'] == '1'
             )
+            if route.service_id not in service_shapes:
+                service_shapes[route.service_id] = set()
+            service_shapes[route.service_id].add(line['shape_id'])
             if line['trip_headsign']:
                 if line['route_id'] not in headsigns:
                     headsigns[line['route_id']] = {
@@ -276,6 +281,11 @@ def handle_zipfile(path, collection, url):
     StopTime.objects.bulk_create(stop_times)
 
     for service in services:
+        if service.id in service_shapes:
+            linestrings = [LineString(*shapes[shape]) for shape in service_shapes[service.id] if shape in shapes]
+            service.geometry = MultiLineString(*linestrings)
+            service.save(update_fields=['geometry'])
+
         groupings = get_stop_usages(Trip.objects.filter(route__service=service))
 
         service.stops.clear()
