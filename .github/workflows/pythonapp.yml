@@ -14,6 +14,7 @@ jobs:
         path: |
           ~/.cache/pip
           ~/.local/share/virtualenvs
+          ~/.local/share/pyppeteer
         key: ${{ runner.os }}
     - name: Set up Python
       uses: actions/setup-python@v1
