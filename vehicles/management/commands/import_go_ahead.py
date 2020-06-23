@@ -22,7 +22,6 @@ class Command(ImportLiveVehiclesCommand):
     operators = {
         'GOEA': ['KCTB', 'CHAM', 'HEDO'],
         'CSLB': ['OXBC', 'CSLB', 'THTR'],
-        'SQ': ['BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TOUR', 'WDBC'],
         'PC': ['PLYC', 'TFCN'],
         'GONW': ['GONW'],
     }
@@ -125,10 +124,6 @@ class Command(ImportLiveVehiclesCommand):
             ):
                 journey.service = latest_location.journey.service
             else:
-                if operators[0] == 'BHBC' and item['lineRef'] == 'CSR':
-                    item['lineRef'] = 'CSS'
-                elif operators[0] == 'BLUS' and item['lineRef'] == 'QC':
-                    item['lineRef'] = 'QuayConnect'
                 services = Service.objects.filter(operator__in=operators, line_name__iexact=item['lineRef'],
                                                   current=True)
                 try:
@@ -152,8 +147,6 @@ class Command(ImportLiveVehiclesCommand):
 
     def create_vehicle_location(self, item):
         bearing = item['geo']['bearing']
-        if bearing == 0 and item['vehicleRef'].startswith('BH-'):
-            bearing = None
         return VehicleLocation(
             latlong=get_latlong(item),
             heading=bearing
