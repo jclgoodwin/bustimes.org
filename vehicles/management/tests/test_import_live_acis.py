@@ -27,6 +27,7 @@ class ACISImportTest(TestCase):
         )
 
         command = import_live_acis.Command()
+        command.do_source()
 
         with use_cassette(os.path.join('data', 'vcr', 'import_live_acis.yaml'), match_on=['body']):
             command.update()

@@ -5,18 +5,18 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
-    source_name = 'transdevblazefield'
-    url = 'https://transdevblazefield.arcticapi.com/network/vehicles'
-    operators = {
-        'YCD': 'YCST',
-        'YCL': 'YCST',
-        'LUI': 'LNUD',
-        'LUL': 'LNUD',
-        'BPT': 'BPTR',
-        'HDT': 'HRGT',
-        'KDT': 'KDTR',
-        'ROS': 'ROST'
-    }
+    @staticmethod
+    def add_arguments(parser):
+        parser.add_argument('source_name', type=str)
+
+    def handle(self, source_name, **options):
+        self.source_name = source_name
+        super().handle(**options)
+
+    def do_source(self):
+        self.url = f'https://{self.source_name}.arcticapi.com/network/vehicles'
+        super().do_source()
+        self.operators = self.source.settings['operators']
 
     def get_items(self):
         return super().get_items()['features']

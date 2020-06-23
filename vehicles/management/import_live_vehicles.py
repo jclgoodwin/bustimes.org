@@ -69,6 +69,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
     session = requests.Session()
     current_location_ids = set()
     vehicles = Vehicle.objects.select_related('latest_location__journey__service')
+    url = ''
 
     @staticmethod
     def get_datetime(self):
@@ -201,12 +202,18 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if speed > 90:
                 print('{} mph\t{}'.format(speed, journey.vehicle.get_absolute_url()))
 
+    def do_source(self):
+        if self.url:
+            self.source, _ = DataSource.objects.get_or_create(
+                {'name': self.source_name},
+                url=self.url
+            )
+        else:
+            self.source, _ = DataSource.objects.get_or_create(name=self.source_name)
+
     def update(self):
         now = timezone.localtime()
-        self.source, source_created = DataSource.objects.update_or_create(
-            {'url': self.url, 'datetime': now},
-            name=self.source_name
-        )
+        self.source.datetime = now
 
         self.current_location_ids = set()
 
@@ -225,11 +232,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
         return 0
 
     def handle(self, *args, **options):
-        title = sys.argv[1]
+        title = self.source_name
         try:
             with pid.PidFile(title):
+                self.do_source()
                 while True:
                     wait = self.update()
+                    self.source.save(update_fields=['datetime'])
                     sleep(wait)
         except pid.PidFileError:
             return
