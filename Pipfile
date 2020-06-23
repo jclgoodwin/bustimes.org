@@ -28,7 +28,6 @@ webcolors = "*"
 sentry-sdk = "*"
 gtfs-realtime-bindings = "*"
 django-multidb-router = "*"
-python-socketio = {extras = ["client"],version = "*"}
 celery = {extras = ["redis"],version = "*"}
 requests-toolbelt = "*"
 pyyaml = "*"

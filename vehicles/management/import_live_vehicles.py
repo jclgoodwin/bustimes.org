@@ -46,6 +46,9 @@ def calculate_speed(a, b):
 def same_journey(latest_location, journey, when):
     if not latest_location:
         return False
+    time_since_last_location = when - latest_location.datetime
+    if time_since_last_location > timedelta(hours=1):
+        return False
     if latest_location.journey.route_name and journey.route_name:
         same_route = latest_location.journey.route_name == journey.route_name
     else:
@@ -56,18 +59,9 @@ def same_journey(latest_location, journey, when):
         elif latest_location.journey.code and journey.code:
             return str(latest_location.journey.code) == str(journey.code)
         elif latest_location.journey.direction and journey.direction:
-            return latest_location.journey.direction == journey.direction
-        else:
-            latest_trip = latest_location.journey.get_trip()
-            trip = journey.get_trip()
-            if latest_trip:
-                if trip:
-                    return latest_trip == trip
-                return latest_trip.end > timedelta(hours=when.hour, minutes=when.minute,
-                                                   seconds=when.second)
-            elif trip:  # start of a new trip
+            if latest_location.journey.direction != journey.direction:
                 return False
-        return when - latest_location.datetime < timedelta(minutes=15)
+        return time_since_last_location < timedelta(minutes=15)
     return False
 
 
@@ -167,7 +161,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 changed = True
             if changed:
                 latest.journey.save()
-                latest.journey.set_trip()
             location.journey = latest.journey
             if location.heading is None:
                 location.heading = calculate_bearing(latest.latlong, location.latlong)
@@ -176,7 +169,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if not journey.datetime:
                 journey.datetime = location.datetime
             journey.save()
-            journey.set_trip()
             if journey.service and not journey.service.tracking:
                 journey.service.tracking = True
                 journey.service.save(update_fields=['tracking'])

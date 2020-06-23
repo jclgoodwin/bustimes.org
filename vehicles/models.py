@@ -365,17 +365,6 @@ class VehicleJourney(models.Model):
     def get_absolute_url(self):
         return reverse('journey_detail', args=(self.id,))
 
-    def get_trip(self):
-        if hasattr(self, 'trip'):
-            return self.trip
-        return cache.get(f'journey{self.id}trip')
-
-    def set_trip(self, trip=None):
-        if trip:
-            self.trip = trip
-        if self.id and hasattr(self, 'trip'):
-            return cache.set(f'journey{self.id}trip', self.trip)
-
     def __str__(self):
         return f'{self.datetime}'
 
