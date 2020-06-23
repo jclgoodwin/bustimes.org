@@ -233,16 +233,29 @@ def handle_zipfile(path, collection, url):
                     }
                 headsigns[line['route_id']][line['direction_id']].add(line['trip_headsign'])
         for route_id in headsigns:
-            if not routes[route_id].description:
-                if len(headsigns[route_id]['0']) == 1 and len(headsigns[route_id]['1']) == 1:
-                    origin = list(headsigns[route_id]['1'])[0]
-                    destination = list(headsigns[route_id]['0'])[0]
-                    route.description = f'{origin} - {destination}'
-                    route.save(update_fields=['description'])
+            route = routes[route_id]
+            if not route.service.description:
+                origins = headsigns[route_id]['1']
+                destinations = headsigns[route_id]['0']
+                origin = None
+                destination = None
+                if len(origins) <= 1 and len(destinations) <= 1:
+                    if len(origins) == 1:
+                        origin = list(origins)[0]
+                    if len(destinations) == 1:
+                        destination = list(destinations)[0]
 
-                    route.service.description = route.description
-                    route.service.outbound_description = route.description
-                    route.service.inbound_description = f'{destination} - {origin}'
+                    if origin and ' - ' in origin:
+                        route.service.inbound_description = origin
+                        route.service.description = origin
+                    if destination and ' - ' in destination:
+                        route.service.outbound_description = destination
+                        route.service.description = destination
+
+                    if origin and destination and ' - ' not in origin:
+                        route.service.description = route.service.outbound_description = f'{origin} - {destination}'
+                        route.service.inbound_description = f'{destination} - {origin}'
+
                     route.service.save(update_fields=['description', 'inbound_description', 'outbound_description'])
 
         stop_times = []
