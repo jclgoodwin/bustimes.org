@@ -81,8 +81,19 @@ class VehiclesTests(TestCase):
         self.assertEqual(404, response.status_code)
         self.assertFalse(str(response.context['exception']))
 
-        with self.assertNumQueries(4):
-            response = self.client.get('/operators/lynx/vehicles')
+        # last seen today - should only show time
+        with freeze_time('2018-12-25 19:50+00:00'):
+            with self.assertNumQueries(4):
+                response = self.client.get('/operators/lynx/vehicles')
+        self.assertNotContains(response, '25 Dec')
+        self.assertContains(response, '19:47')
+
+        # last seen today - should only show time
+        with freeze_time('2018-12-26 12:00+00:00'):
+            with self.assertNumQueries(4):
+                response = self.client.get('/operators/lynx/vehicles')
+        self.assertContains(response, '25 Dec 19:47')
+
         self.assertTrue(response.context['code_column'])
         self.assertContains(response, '<td class="number">2</td>')
 
@@ -433,3 +444,15 @@ class VehiclesTests(TestCase):
             response = self.client.get('/vehicle-tracking-report')
         self.assertContains(response, 'Vehicle tracking report')
         self.assertContains(response, '<a href="/services/spixworth-hunworth-happisburgh/vehicles">Yes</a>*')
+
+    def test_service_vehicle_history(self):
+        with self.assertNumQueries(5):
+            response = self.client.get('/services/spixworth-hunworth-happisburgh/vehicles?date=poop')
+        self.assertContains(response, 'Vehicles')
+        self.assertContains(response, '/vehicles/')
+        self.assertContains(response, '<option selected value="2018-12-25">Tuesday 25 December 2018</option>')
+        self.assertContains(response, '<a href="/vehicles/45?date=2018-12-25">1 - FD54 JYA</a>')
+
+        with self.assertNumQueries(4):
+            response = self.client.get('/services/spixworth-hunworth-happisburgh/vehicles?date=2004-04-04')
+        self.assertNotContains(response, '<a href="/vehicles/45?date=2018-12-25">1 - FD54 JYA</a>')
