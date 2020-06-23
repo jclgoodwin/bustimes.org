@@ -451,8 +451,8 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Vehicles')
         self.assertContains(response, '/vehicles/')
         self.assertContains(response, '<option selected value="2018-12-25">Tuesday 25 December 2018</option>')
-        self.assertContains(response, '<a href="/vehicles/45?date=2018-12-25">1 - FD54\xa0JYA</a>')
+        self.assertContains(response, '1 - FD54\xa0JYA')
 
         with self.assertNumQueries(4):
             response = self.client.get('/services/spixworth-hunworth-happisburgh/vehicles?date=2004-04-04')
-        self.assertNotContains(response, '<a href="/vehicles/45?date=2018-12-25">1 - FD54\xa0JYA</a>')
+        self.assertNotContains(response, '1 - FD54\xa0JYA')
