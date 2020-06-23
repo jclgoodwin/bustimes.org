@@ -50,7 +50,7 @@ class Departures:
                 part = parts[1].lower()
                 if part in self.services_by_alternative_name:
                     duplicate_alternative_names.add(part)
-                else:
+                elif part not in self.services_by_name:
                     self.services_by_alternative_name[part] = service
 
         for line_name in duplicate_names:
