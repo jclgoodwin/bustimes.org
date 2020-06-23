@@ -61,23 +61,31 @@ class Command(ImportLiveVehiclesCommand):
             'code': code
         }
 
+        if 'meta' in item['properties']:
+            if 'name' in item['properties']['meta']:
+                defaults['name'] = item['properties']['meta']['name']
+            if 'number_plate' in item['properties']['meta']:
+                defaults['reg'] = item['properties']['meta']['number_plate']
+
+        if self.source.name in {'salisburyreds', 'morebus', 'swindonbus', 'bluestar'}:
+            vehicles = self.vehicles.filter(operator__parent='Go South Coast')
+        else:
+            vehicles = self.vehicles.filter(operator__in=self.operators.values())
+
         if fleet_number.isdigit():
-            vehicle = self.vehicles.get_or_create(
+            vehicle = vehicles.get_or_create(
                 defaults,
                 fleet_number=fleet_number,
-                operator__in=self.operators.values()
             )
         elif fleet_number.isupper() and operator == 'GNEL':
-            vehicle = self.vehicles.get_or_create(
+            vehicle = vehicles.get_or_create(
                 defaults,
                 reg=code.replace('_', ''),
-                operator__in=self.operators.values()
             )
         else:
-            vehicle = self.vehicles.get_or_create(
+            vehicle = vehicles.get_or_create(
                 defaults,
                 code=code,
-                operator__in=self.operators.values()
             )
 
         if vehicle[0].operator_id == 'METR':  # ignore Metrobus vehicles in Brighton & Hove feed
@@ -94,6 +102,7 @@ class Command(ImportLiveVehiclesCommand):
             route_name=item['properties']['line'],
             direction=item['properties']['direction'][:8]
         )
+        journey.text = item
 
         if len(self.operators) == 1:
             operator = list(self.operators.values())[0]
@@ -108,29 +117,34 @@ class Command(ImportLiveVehiclesCommand):
         line_name = journey.route_name
         if operator == 'BLAC' and line_name == 'PRM':
             line_name = '1'
+        elif vehicle.operator_id == 'WDBC' and line_name == '1':
+            line_name = 'ONE'
 
         latest_location = vehicle.latest_location
         if latest_location and latest_location.current and latest_location.journey.route_name == journey.route_name:
             journey.service = latest_location.journey.service
         else:
             services = Service.objects.filter(current=True, line_name=line_name)
-            if operator == 'BORD':
-                services = services.filter(operator__in=('BORD', 'PERY'))
-            elif operator == 'CTNY':
-                services = services.filter(operator__in=('CTNY', 'THVB'))
+            if self.source.name in {'salisburyreds', 'morebus', 'swindonbus', 'bluestar'}:
+                services = services.filter(operator=vehicle.operator_id)
             else:
-                services = services.filter(operator=operator)
+                if operator == 'BORD':
+                    services = services.filter(operator__in=('BORD', 'PERY'))
+                elif operator == 'CTNY':
+                    services = services.filter(operator__in=('CTNY', 'THVB'))
+                else:
+                    services = services.filter(operator=operator)
 
-            if vehicle.operator_id != operator:
-                vehicle.operator_id = operator
-                vehicle.save()
+                if vehicle.operator_id != operator:
+                    vehicle.operator_id = operator
+                    vehicle.save()
 
             try:
                 journey.service = self.get_service(services, Point(item['geometry']['coordinates']))
             except Service.DoesNotExist:
                 pass
             if not journey.service:
-                print(operator, line_name)
+                print(operator, vehicle.operator_id, line_name)
 
         return journey
 
