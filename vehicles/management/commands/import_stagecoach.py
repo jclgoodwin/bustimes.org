@@ -1,4 +1,4 @@
-import json
+# import json
 from time import sleep
 from datetime import datetime
 from requests.exceptions import RequestException
@@ -15,7 +15,8 @@ def get_latlong(item):
 
 
 def get_datetime(timestamp):
-    return datetime.fromtimestamp(int(timestamp) / 1000, timezone.utc)
+    if timestamp:
+        return datetime.fromtimestamp(int(timestamp) / 1000, timezone.utc)
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -29,11 +30,9 @@ class Command(ImportLiveVehiclesCommand):
     vehicles_ids = {}
 
     def get_boxes(self):
-        geojson = {"type": "FeatureCollection", "features": []}
+        # geojson = {"type": "FeatureCollection", "features": []}
         i = 0
         operators = Operator.objects.filter(parent='Stagecoach', service__current=True, vehicle_mode='bus')
-        operators = operators.exclude(service__servicecode__scheme__endswith=' SIRI',
-                                      service__tracking=True)
         services = Service.objects.filter(operator__in=operators)
         extent = services.aggregate(Extent('geometry'))['geometry__extent']
 
@@ -50,13 +49,13 @@ class Command(ImportLiveVehiclesCommand):
                 polygon = Polygon.from_bbox(bbox)
                 i += 1
                 if services.filter(geometry__bboverlaps=polygon).exists():
-                    geojson['features'].append({
-                        "type": "Feature",
-                        "geometry": json.loads(polygon.json),
-                        "properties": {
-                            "name": str(i)
-                        }
-                    })
+                    # geojson['features'].append({
+                    #     "type": "Feature",
+                    #     "geometry": json.loads(polygon.json),
+                    #     "properties": {
+                    #         "name": str(i)
+                    #     }
+                    # })
 
                     yield {
                         'latne': bbox[3],
@@ -69,13 +68,13 @@ class Command(ImportLiveVehiclesCommand):
 
                 lat += 1
             lng += 1.5
-        print(json.dumps(geojson))
+        # print(json.dumps(geojson))
 
     def get_items(self):
         for params in self.get_boxes():
             try:
                 response = self.session.get(self.url, params=params, timeout=50)
-                print(response.url)
+                # print(response.url)
                 for item in response.json()['services']:
                     yield item
                 sleep(1)
@@ -124,8 +123,6 @@ class Command(ImportLiveVehiclesCommand):
         code = item.get('td', '')
         if item['ao']:
             departure_time = get_datetime(item['ao'])
-        elif item['eo']:
-            departure_time = get_datetime(item['eo'])
         else:
             departure_time = None
 
