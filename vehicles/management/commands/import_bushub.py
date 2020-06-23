@@ -39,8 +39,8 @@ class Command(ImportLiveVehiclesCommand):
         else:
             fleet_number = None
 
-        if item['OperatorRef'] == 'UNIB':
-            item['OperatorRef'] = 'UNOE'
+        if self.source.settings and 'OperatorRef' in self.source.settings:
+            item['OperatorRef'] = self.source.settings['OperatorRef']
 
         operators = ['NXHH', 'WNGS']
         if item['OperatorRef'] not in operators:
