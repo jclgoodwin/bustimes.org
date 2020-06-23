@@ -200,12 +200,10 @@ class DataSource(models.Model):
         elif 'transportforireland' in self.url:
             url = 'https://www.transportforireland.ie/transitData/PT_Data.html'
             text = 'Transport for Ireland'
-        elif 'open-data' in self.url:
+        elif 'open-data' in self.url or 'data.discover' in self.url:
             url = self.url
             text = self.name
             date = self.datetime
-        elif 'arcticapi' in self.url:
-            text = self.name
         elif self.url.startswith('https://data.bus-data.dft.gov.uk'):
             url = self.url.replace('download/', '')
             text = self.name.split('_')[0] + '/Bus Open Data Service'

@@ -156,7 +156,7 @@ def stagecoach():
             modified = False
 
         if modified:
-            print(operator)
+            print(url)
 
             command.operators = operators
             command.region_id = region_id

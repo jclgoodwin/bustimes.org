@@ -37,7 +37,7 @@ class Command(BaseCommand):
         sources = [source[0] for source in settings.PASSENGER_OPERATORS]
 
         for name, url, region_id, operators in settings.PASSENGER_OPERATORS:
-            command.source, _ = DataSource.objects.get_or_create({'url': url}, name=name)
+            command.source, _ = DataSource.objects.get_or_create({'name': name}, url=url)
             command.source.datetime = timezone.now()
             command.operators = operators
             command.region_id = region_id
