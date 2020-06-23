@@ -116,5 +116,7 @@ class Command(BaseCommand):
 
                     # mark old services as not current
                     print('old services:', command.mark_old_services_as_not_current())
+
+                command.source.save(update_fields=['datetime'])
             else:
                 sleep(2)
