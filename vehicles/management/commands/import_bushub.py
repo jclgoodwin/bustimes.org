@@ -20,8 +20,13 @@ def get_datetime(string):
 
 
 class Command(ImportLiveVehiclesCommand):
-    source_name = 'BusHub'
-    url = 'http://portal.diamondbuses.com/api/buses/nearby?latitude&longitude'
+    @staticmethod
+    def add_arguments(parser):
+        parser.add_argument('source_name', type=str)
+
+    def handle(self, source_name, **options):
+        self.source_name = source_name
+        super().handle(**options)
 
     @staticmethod
     def get_datetime(item):
@@ -33,6 +38,9 @@ class Command(ImportLiveVehiclesCommand):
             fleet_number = code
         else:
             fleet_number = None
+
+        if item['OperatorRef'] == 'UNIB':
+            item['OperatorRef'] = 'UNOE'
 
         operators = ['NXHH', 'WNGS']
         if item['OperatorRef'] not in operators:
