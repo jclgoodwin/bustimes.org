@@ -88,7 +88,8 @@ def log_vehicle_journey(operator_ref, vehicle, service, route_name, time, journe
 
     if vehicle.isdigit():
         defaults['fleet_number'] = vehicle
-        vehicles = vehicles.filter(Q(code=vehicle) | Q(code__endswith=f'-{vehicle}'))
+        vehicles = vehicles.filter(Q(code=vehicle)
+                                   | Q(code__endswith=f'-{vehicle}') | Q(code__startswith=f'{vehicle}_-_'))
     else:
         vehicles = vehicles.filter(code=vehicle)
 
