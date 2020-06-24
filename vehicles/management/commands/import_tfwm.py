@@ -3,7 +3,7 @@ from datetime import datetime
 from django.contrib.gis.geos import Point
 from django.conf import settings
 from django.utils import timezone
-from busstops.models import Service
+from busstops.models import Service, Operator
 from ...models import Vehicle, VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
@@ -15,10 +15,7 @@ class Command(ImportLiveVehiclesCommand):
     routes_by_operator = {
         'Select Bus Services': set(),
         'LandFlight': set(),
-        'Kevs Cars and Coaches': set(),
-        'Walsall Community Transport': set(),
         'Johnson\'s Excelbus': set(),
-        'Evergreen Coaches Ltd': set(),
     }
 
     @staticmethod
@@ -50,29 +47,22 @@ class Command(ImportLiveVehiclesCommand):
         if item.vehicle.HasField('trip'):
             route = self.routes.get(item.vehicle.trip.route_id)
             if route:
-                operator = route['Operators']['Operator'][0]['Name']
-                if operator == 'Midland Classic' or operator == 'Diamond Bus':
+                operator = route['Operators']['Operator'][0]
+                if operator['Name'] == 'Midland Classic' or operator['Name'] == 'Diamond Bus':
                     return None, None
 
                 vehicle_code = vehicle_code[:-len(route['Name'])]
-                if operator == 'Select Bus Services':
-                    operator = 'SLBS'
-                elif operator == 'First Worcestershire':
-                    operator = 'FSMR'
-                elif operator == 'LandFlight':
-                    operator = 'SLVL'
-                elif operator == 'Kevs Cars and Coaches':
-                    operator = 'KEVS'
-                elif operator == 'Walsall Community Transport':
-                    operator = 'WACT'
-                else:
-                    print(item, vehicle_code, operator)
+                try:
+                    operator = Operator.objects.get(operatorcode__code=operator['Code'],
+                                                    operatorcode__source__name='WM')
+                except (Operator.DoesNotExist, Operator.MultipleObjectsReturned) as e:
+                    print(vehicle_code, operator, e)
                     return None, None
 
                 if vehicle_code.isdigit():
                     defaults['fleet_number'] = vehicle_code
 
-                return self.vehicles.get_or_create(defaults, operator_id=operator, code=vehicle_code)
+                return self.vehicles.get_or_create(defaults, operator=operator, code=vehicle_code)
 
         if len(vehicle_code) > 5 and vehicle_code[:5].isdigit():
             vehicle_code = vehicle_code[:5]
@@ -115,7 +105,6 @@ class Command(ImportLiveVehiclesCommand):
                     pass
         return None, None
         print(vehicle_code, item)
-
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
