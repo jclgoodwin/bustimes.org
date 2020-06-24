@@ -15,6 +15,8 @@ class Command(ImportLiveVehiclesCommand):
     routes_by_operator = {
         'Select Bus Services': set(),
         'LandFlight': set(),
+        'Kevs Cars and Coaches': set(),
+        'Walsall Community Transport': set(),
         'Johnson\'s Excelbus': set(),
         'Evergreen Coaches Ltd': set(),
     }
@@ -59,6 +61,10 @@ class Command(ImportLiveVehiclesCommand):
                     operator = 'FSMR'
                 elif operator == 'LandFlight':
                     operator = 'SLVL'
+                elif operator == 'Kevs Cars and Coaches':
+                    operator = 'KEVS'
+                elif operator == 'Walsall Community Transport':
+                    operator = 'WACT'
                 else:
                     print(item, vehicle_code, operator)
                     return None, None
