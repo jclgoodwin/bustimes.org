@@ -210,6 +210,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             )
         else:
             self.source, _ = DataSource.objects.get_or_create(name=self.source_name)
+            self.url = self.source.url
 
     def update(self):
         now = timezone.localtime()
