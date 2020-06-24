@@ -16,6 +16,7 @@ class Command(ImportLiveVehiclesCommand):
         'Select Bus Services': set(),
         'LandFlight': set(),
         'Johnson\'s Excelbus': set(),
+        'Evergreen Coaches Ltd': set(),
     }
 
     @staticmethod
@@ -56,6 +57,8 @@ class Command(ImportLiveVehiclesCommand):
                     operator = 'SLBS'
                 elif operator == 'First Worcestershire':
                     operator = 'FSMR'
+                elif operator == 'LandFlight':
+                    operator = 'SLVL'
                 else:
                     print(item, vehicle_code, operator)
                     return None, None
@@ -100,10 +103,13 @@ class Command(ImportLiveVehiclesCommand):
                 for line_name in self.routes_by_operator['Johnson\'s Excelbus']:
                     if route.lower() == line_name.lower():
                         return self.vehicles.get_or_create(defaults, operator_id='JOHS', code=vehicle_code)
-
+                try:
+                    return self.vehicles.get_or_create(defaults, code=vehicle_code)
+                except Vehicle.MultipleObjectsReturned:
+                    pass
+        return None, None
         print(vehicle_code, item)
 
-        return self.vehicles.get_or_create(defaults, code=vehicle_code)
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
