@@ -24,8 +24,11 @@ def download_if_changed(path, url):
     if modified:
         response = requests.get(url, headers=headers, stream=True)
 
-        if response.status_code == 304 or not response.ok:
+        if response.status_code == 304:
             modified = False
+        elif not response.ok:
+            modified = False
+            print(response, url)
         else:
             write_file(path, response)
 

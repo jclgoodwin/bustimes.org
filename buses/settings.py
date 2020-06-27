@@ -455,7 +455,8 @@ FIRST_OPERATORS = [
         'FDOR': 'FDOR'
     }),
     ('FirstLeicester', 'EM', {'FLEI': 'FLEI'}),
-    ('FirstEasternCounties', 'EA', {'FECS': 'FECS'}),
+    ('FirstNorwich', 'EA', {'FECS': 'FECS'}),
+    ('FirstIpswich', 'EA', {'FECS': 'FECS'}),
     ('FirstHampshireAndDorset', 'SW', {
         'FHAM': 'FHAM',
         'FHDO': 'FHDO',

@@ -110,13 +110,16 @@ def bus_open_data(api_key):
 def first():
     command = get_command()
 
+    url_prefix = 'http://travelinedatahosting.basemap.co.uk/data/first/'
+    sources = DataSource.objects.filter(url__startswith=url_prefix)
+
     for operator, region_id, operators in settings.FIRST_OPERATORS:
         filename = operator + '.zip'
-        url = 'http://travelinedatahosting.basemap.co.uk/data/first/' + filename
+        url = url_prefix + filename
         modified, last_modified = download_if_changed(os.path.join(settings.DATA_DIR, filename), url)
 
         if modified:
-            print(operator)
+            print(url)
 
             command.operators = operators
             command.region_id = region_id
@@ -131,7 +134,7 @@ def first():
 
             command.mark_old_services_as_not_current()
 
-            clean_up(operators.values(), [command.source])
+            clean_up(operators.values(), sources)
 
             command.source.datetime = last_modified
             command.source.save(update_fields=['datetime'])
