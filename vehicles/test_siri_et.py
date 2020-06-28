@@ -130,7 +130,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.3">
 </Siri>
         """
 
-        with self.assertNumQueries(30):
+        with self.assertNumQueries(32):
             handle_siri_et(xml)
 
         with self.assertNumQueries(16):

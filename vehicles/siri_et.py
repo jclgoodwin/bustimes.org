@@ -3,7 +3,7 @@ from io import StringIO
 from ciso8601 import parse_datetime
 from django.db.models import Q
 from busstops.models import Service, DataSource
-from .models import Vehicle, VehicleLocation, VehicleJourney, Call
+from .models import Vehicle, VehicleLocation, Call
 
 
 ns = {
