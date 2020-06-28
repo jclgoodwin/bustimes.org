@@ -85,17 +85,19 @@ def handle_journey(element, source, when):
             except (Service.MultipleObjectsReturned, Service.DoesNotExist):
                 service = None
 
-            defaults = {
-                'code': journey_ref,
-                'route_name': route_name,
-                'destination': destination,
-                'source': source,
-                'service': service
-            }
             journeys = vehicle.vehiclejourney_set
             journey_created = False
             journey = journeys.filter(code=journey_ref, datetime__date=departure_time.date()).first()
             if not journey:
+                defaults = {
+                    'code': journey_ref,
+                    'datetime': departure_time,
+                    'route_name': route_name,
+                    'destination': destination,
+                    'source': source,
+                    'service': service,
+                    'vehicle': vehicle
+                }
                 journey, journey_created = journeys.filter(datetime=departure_time).get_or_create(defaults)
         if not journey:
             return
