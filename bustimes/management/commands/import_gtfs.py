@@ -325,7 +325,7 @@ def handle_zipfile(path, collection, url):
             operator.save(update_fields=['region'])
 
     print(source.service_set.filter(current=True).exclude(route__in=routes.values()).update(current=False))
-    print(source.service_set.filter(current=True).filter(route__trip=None).update(current=False))
+    print(source.service_set.filter(current=True).exclude(route__trip__isnull=False).update(current=False))
     print(source.route_set.exclude(id__in=(route.id for route in routes.values())).delete())
     StopPoint.objects.filter(active=False, service__current=True).update(active=True)
     StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
