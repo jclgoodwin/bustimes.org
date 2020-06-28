@@ -233,13 +233,16 @@ class ImportLiveVehiclesCommand(BaseCommand):
         return 0
 
     def handle(self, *args, **options):
-        title = self.source_name
         try:
-            with pid.PidFile(title):
+            with pid.PidFile(self.source_name):
                 self.do_source()
                 while True:
                     wait = self.update()
                     self.source.save(update_fields=['datetime'])
                     sleep(wait)
+                    if self.source_name == self.source.name:
+                        previous_datetime = self.source.datetime
+                        self.source.refresh_from_db()
+                        assert self.source.datetime == previous_datetime
         except pid.PidFileError:
             return
