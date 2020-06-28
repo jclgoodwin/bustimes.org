@@ -448,7 +448,7 @@ FIRST_OPERATORS = [
     ('FirstBristol', 'SW', {'FBRI': 'FBRI'}),
     ('FirstBasildon', 'SE', {'FESX': 'FESX'}),
     ('FirstEssex', 'SE', {'FESX': 'FESX'}),
-    ('FirstGlasgow', 'S', {'FGLA': 'FGLA'}),
+    ('FirstCaledonia', 'S', {'FGLA': 'FGLA'}),
     ('FirstManchester', 'NW', {'FMAN': 'FMAN'}),
     ('FirstSomerset', 'SW', {'FBOS': 'FBOS'}),
     ('FirstCornwall', 'SW', {'FCWL': 'FCWL'}),
@@ -462,13 +462,12 @@ FIRST_OPERATORS = [
     }),
     ('FirstPotteries', 'WM', {'FPOT': 'FPOT'}),
     ('FirstScotlandEast', 'S', {'FSCE': 'FSCE'}),
-    ('FirstCymru', 'W', {'FCYM': 'FCYM'}),
+    ('FirstSwansea', 'W', {'FCYM': 'FCYM'}),
     ('FirstSheffield', 'Y', {'FSYO': 'FSYO'}),
     ('FirstBradford', 'Y', {'FBRA': 'FBRA'}),
     ('FirstHuddersfield', 'Y', {'FHUD': 'FHUD'}),
     ('FirstHalifax', 'Y', {'FHAL': 'FHAL'}),
     ('FirstWestYorkshire', 'Y', {
-        'FHUD': 'FHUD',
         'FLDS': 'FLDS',
         'FWYO': 'FWYO'
     }),
