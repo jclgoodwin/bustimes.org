@@ -2,7 +2,7 @@ import os
 from freezegun import freeze_time
 from vcr import use_cassette
 from django.test import TestCase, override_settings
-from busstops.models import Region, Operator, DataSource
+from busstops.models import Region, Operator, OperatorCode, DataSource
 from ...models import Vehicle
 from ..commands import import_tfwm
 
@@ -10,10 +10,14 @@ from ..commands import import_tfwm
 class TfWMImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.source = DataSource.objects.create(datetime='2018-08-06T22:41:15+01:00', name='TfWM')
+        cls.source = DataSource.objects.create(datetime='2018-08-06T22:41:15+01:00', name='WM')
         Region.objects.create(id='WM')
-        Operator.objects.create(id='SLBS', region_id='WM', name='Select Bus Services')
-        Operator.objects.create(id='FSMR', region_id='WM', name='First Midland Red')
+
+        first_worcestershire = Operator.objects.create(id='FSMR', region_id='WM', name='First Worcestershire')
+        OperatorCode.objects.create(operator=first_worcestershire, source=cls.source, code='FMR')
+
+        select_bus_services = Operator.objects.create(id='SLBS', region_id='WM', name='Select Bus Services')
+        OperatorCode.objects.create(operator=select_bus_services, source=cls.source, code='SBS')
 
     @use_cassette(os.path.join('data', 'vcr', 'import_tfwm.yaml'), decode_compressed_response=True)
     @freeze_time('2018-08-21 00:00:09')
@@ -28,13 +32,13 @@ class TfWMImportTest(TestCase):
         with self.assertNumQueries(0):
             command.handle_item(items[0], self.source.datetime)
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             command.handle_item(items[217], self.source.datetime)
 
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             command.handle_item(items[217], self.source.datetime)
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             command.handle_item(items[216], self.source.datetime)
 
         self.assertEqual(2, Vehicle.objects.all().count())
