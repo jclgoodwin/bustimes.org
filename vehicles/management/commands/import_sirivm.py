@@ -212,7 +212,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
 
-        journey.text = ET.tostring(item)
+        journey.text = ET.tostring(item).decode()
 
         mvj = item.find('siri:MonitoredVehicleJourney', NS)
         operator_ref = mvj.find('siri:OperatorRef', NS).text
