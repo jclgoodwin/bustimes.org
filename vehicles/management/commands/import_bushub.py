@@ -55,6 +55,8 @@ class Command(ImportLiveVehiclesCommand):
     @classmethod
     def get_service(cls, item):
         line_name = item['PublishedLineName']
+        if not line_name:
+            return
         services = Service.objects.filter(operator=item['OperatorRef'], current=True, line_name=line_name)
         try:
             return services.get()
@@ -85,7 +87,7 @@ class Command(ImportLiveVehiclesCommand):
             latest_location.journey.route_name == journey.route_name and latest_location.journey.service
         ):
             journey.service = latest_location.journey.service
-        elif item['PublishedLineName']:
+        else:
             journey.service = self.get_service(item)
 
         journey.destination = item['DestinationStopLocality']
