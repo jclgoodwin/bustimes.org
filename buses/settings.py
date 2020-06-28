@@ -446,17 +446,16 @@ STAGECOACH_OPERATORS = [
 FIRST_OPERATORS = [
     ('FirstBerkshire', 'SE', {'FTVA': 'FTVA'}),
     ('FirstBristol', 'SW', {'FBRI': 'FBRI'}),
+    ('FirstBasildon', 'SE', {'FESX': 'FESX'}),
     ('FirstEssex', 'SE', {'FESX': 'FESX'}),
     ('FirstGlasgow', 'S', {'FGLA': 'FGLA'}),
     ('FirstManchester', 'NW', {'FMAN': 'FMAN'}),
-    ('FirstDevonAndCornwall', 'SW', {
-        'FCWL': 'FCWL',
-        'FBOS': 'FBOS',
-        'FDOR': 'FDOR'
-    }),
+    ('FirstSomerset', 'SW', {'FBOS': 'FBOS'}),
+    ('FirstCornwall', 'SW', {'FCWL': 'FCWL'}),
     ('FirstLeicester', 'EM', {'FLEI': 'FLEI'}),
     ('FirstNorwich', 'EA', {'FECS': 'FECS'}),
     ('FirstIpswich', 'EA', {'FECS': 'FECS'}),
+    ('FirstDorset', 'SW', {'FDOR': 'FDOR'}),
     ('FirstHampshireAndDorset', 'SW', {
         'FHAM': 'FHAM',
         'FHDO': 'FHDO',
@@ -464,14 +463,15 @@ FIRST_OPERATORS = [
     ('FirstPotteries', 'WM', {'FPOT': 'FPOT'}),
     ('FirstScotlandEast', 'S', {'FSCE': 'FSCE'}),
     ('FirstCymru', 'W', {'FCYM': 'FCYM'}),
-    ('FirstSouthYorkshire', 'Y', {'FSYO': 'FSYO'}),
+    ('FirstSheffield', 'Y', {'FSYO': 'FSYO'}),
+    ('FirstBradford', 'Y', {'FBRA': 'FBRA'}),
+    ('FirstHuddersfield', 'Y', {'FHUD': 'FHUD'}),
+    ('FirstHalifax', 'Y', {'FHAL': 'FHAL'}),
     ('FirstWestYorkshire', 'Y', {
-        'FBRA': 'FBRA',
-        'FHAL': 'FHAL',
         'FHUD': 'FHUD',
         'FLDS': 'FLDS',
         'FWYO': 'FWYO'
     }),
-    ('FirstMidlandRed', 'WM', {'FSMR': 'FSMR'}),
+    ('FirstWorcester', 'WM', {'FSMR': 'FSMR'}),
     ('FirstYork', 'Y', {'FYOR': 'FYOR'}),
 ]
