@@ -444,12 +444,12 @@ STAGECOACH_OPERATORS = [
     ('Y', 'tram', 'Stagecoach Supertram', {'SCST': 'SCST'}),
 ]
 FIRST_OPERATORS = [
-    ('FirstBerkshire', 'SE', {'FTVA': 'FTVA'}),
+    ('FirstSlough', 'SE', {'FTVA': 'FTVA'}),
     ('FirstBristol', 'SW', {'FBRI': 'FBRI'}),
     ('FirstBasildon', 'SE', {'FESX': 'FESX'}),
     ('FirstEssex', 'SE', {'FESX': 'FESX'}),
     ('FirstCaledonia', 'S', {'FGLA': 'FGLA'}),
-    ('FirstManchester', 'NW', {'FMAN': 'FMAN'}),
+    ('FirstOldham', 'NW', {'FMAN': 'FMAN'}),
     ('FirstSomerset', 'SW', {'FBOS': 'FBOS'}),
     ('FirstCornwall', 'SW', {'FCWL': 'FCWL'}),
     ('FirstLeicester', 'EM', {'FLEI': 'FLEI'}),
