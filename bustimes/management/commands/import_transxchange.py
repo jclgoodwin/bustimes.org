@@ -270,7 +270,6 @@ class Command(BaseCommand):
         self.source.save(update_fields=['datetime'])
 
         StopPoint.objects.filter(active=False, service__current=True).update(active=True)
-        StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
         self.source.service_set.filter(current=False, geometry__isnull=False).update(geometry=None)
 
     def get_calendar(self, operating_profile, operating_period):
