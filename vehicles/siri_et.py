@@ -65,7 +65,7 @@ def handle_journey(element, source, when):
             departure_time = call.find('siri:AimedDepartureTime', ns)
             if departure_time is None:
                 return
-            departure_time = departure_time.text
+            departure_time = parse_datetime(departure_time.text)
             route_name = journey_element.find('siri:PublishedLineName', ns).text
             destination = journey_element.find('siri:DirectionName', ns).text
             try:
@@ -92,13 +92,11 @@ def handle_journey(element, source, when):
                 'source': source,
                 'service': service
             }
-            try:
-                journey, journey_created = VehicleJourney.objects.get_or_create(defaults, vehicle=vehicle,
-                                                                                datetime=departure_time)
-            except VehicleJourney.MultipleObjectsReturned:
-                journey, journey_created = VehicleJourney.objects.get_or_create(defaults, vehicle=vehicle,
-                                                                                datetime=departure_time,
-                                                                                code=journey_ref)
+            journeys = vehicle.vehiclejourney_set
+            journey_created = False
+            journey = journeys.filter(code=journey_ref, datetime__date=departure_time.date()).first()
+            if not journey:
+                journey, journey_created = journeys.get_or_create(defaults, datetime=departure_time)
         if not journey:
             return
         aimed_arrival_time = call.find('siri:AimedArrivalTime', ns)
