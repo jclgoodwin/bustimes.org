@@ -96,7 +96,7 @@ def handle_journey(element, source, when):
             journey_created = False
             journey = journeys.filter(code=journey_ref, datetime__date=departure_time.date()).first()
             if not journey:
-                journey, journey_created = journeys.get_or_create(defaults, datetime=departure_time)
+                journey, journey_created = journeys.filter(datetime=departure_time).get_or_create(defaults)
         if not journey:
             return
         aimed_arrival_time = call.find('siri:AimedArrivalTime', ns)
