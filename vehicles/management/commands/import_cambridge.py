@@ -45,12 +45,18 @@ class Command(BaseCommand):
                 defaults['code'] = vehicle
                 return self.vehicles.get_or_create(defaults, operator=operator, fleet_number=vehicle)
             defaults = {'fleet_number': vehicle}
-        if type(operator) is Operator:
-            return self.vehicles.get_or_create(defaults, operator=operator, code=vehicle)
-        defaults = {'operator_id': operator[0]}
-        if operator[0] == 'SCCM':
-            return self.vehicles.get_or_create(defaults, operator__name__startswith='Stagecoach ', code=vehicle)
-        return self.vehicles.get_or_create(defaults, operator__in=operator, code=vehicle)
+
+        vehicles = self.vehicles
+        if type(operator) is tuple:
+            defaults['operator_id'] = operator[0]
+            if operator[0] == 'SCCM':
+                vehicles = vehicles.filter(operator__parent='Stagecoach')
+            else:
+                vehicles = vehicles.filter(operator__in=operator)
+        else:
+            vehicles = vehicles.filter(operator=operator)
+
+        return vehicles.get_or_create(defaults, code=vehicle)
 
     def get_service(self, operator, item):
         line_name = item['PublishedLineName']
@@ -76,11 +82,11 @@ class Command(BaseCommand):
                 print(e, item)
 
     def handle_siri_vm_vehicle(self, item):
+        operator_options = None
         operator = self.get_operator(item['OperatorRef'])
         if not operator:
-            return
-        operator_options = None
-        if operator.pk == 'SCCM':
+            print(item)
+        elif operator.pk == 'SCCM':
             operator_options = ('SCCM', 'SCPB', 'SCHU', 'SCBD')
         elif operator.pk == 'CBBH':
             operator_options = ('CBBH', 'CBNL')
