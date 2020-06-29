@@ -14,7 +14,7 @@ from django.db.models import Count
 from django.contrib.gis.geos import Point
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.utils import timezone
-from busstops.models import Region, DataSource, StopPoint, Service, StopUsage, Operator
+from busstops.models import Region, DataSource, StopPoint, Service, StopUsage, Operator, AdminArea
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime
 from ...timetables import get_stop_usages
 
@@ -89,6 +89,7 @@ def get_stop_id(stop_id):
 
 def do_stops(archive):
     stops = {}
+    admin_areas = {}
     for line in read_file(archive, 'stops.txt'):
         stop_id = get_stop_id(line['stop_id'])
         if stop_id[0] in '78' and len(stop_id) <= 16:
@@ -97,13 +98,21 @@ def do_stops(archive):
                 latlong=Point(float(line['stop_lon']), float(line['stop_lat'])),
                 common_name=line['stop_name'][:48],
                 locality_centre=False,
-                admin_area_id=stop_id[:3],
                 active=True
             )
         else:
             print(stop_id)
     existing_stops = StopPoint.objects.in_bulk(stops)
-    StopPoint.objects.bulk_create(stop for stop in stops.values() if stop.atco_code not in existing_stops)
+    stops_to_create = [stop for stop in stops.values() if stop.atco_code not in existing_stops]
+
+    for stop in stops_to_create:
+        admin_area_id = stop.atco_code[:3]
+        if admin_area_id not in admin_areas:
+            admin_areas[admin_area_id] = AdminArea.objects.filter(id=stop_id[:3]).exists()
+        if admin_areas[admin_area_id]:
+            stop.admin_area_id = admin_area_id
+
+    StopPoint.objects.bulk_create(stops_to_create)
     return StopPoint.objects.in_bulk(stops)
 
 

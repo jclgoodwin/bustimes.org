@@ -29,7 +29,7 @@ class ImportBusOpenDataTest(TestCase):
     @override_settings(STAGECOACH_OPERATORS=(), FIRST_OPERATORS=(), BOD_OPERATORS=[
         ('LYNX', 'EA', {
             'CO': 'LYNX',
-        }),
+        }, False),
     ])
     def test_import_bod(self):
         with TemporaryDirectory() as directory:

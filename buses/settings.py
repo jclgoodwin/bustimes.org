@@ -333,18 +333,18 @@ PASSENGER_OPERATORS = (
 BOD_OPERATORS = (
     ('LYNX', 'EA', {
         'CO': 'LYNX',
-    }),
+    }, True),
     ('UNOE', 'SE', {
         'UBL': 'UNOE',
         'UBN': 'UNOE'
-    }),
+    }, True),
     ('TBTN', 'EM', {
         '574T': 'TBTN',
         'KN': 'KBUS',
-    }),
-    ('WBTR', 'EM', {
+    }, False),
+    ('WBTR', 'NW', {
         'NW': 'WBTR',
-    }),
+    }, False),
     ('ANEA', None, {
         'ACYM': 'ACYM',
         'AFCL': 'AFCL',  # (code not used in data)
@@ -361,7 +361,7 @@ BOD_OPERATORS = (
         'ASES': 'ASES',
         'WRAY': 'WRAY',
         'YTIG': 'YTIG',
-    }),
+    }, False),
 )
 STAGECOACH_OPERATORS = [
     ('S', 'sblb', 'Stagecoach Bluebird', {'SBLB': 'SBLB'}),

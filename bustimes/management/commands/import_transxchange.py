@@ -146,8 +146,12 @@ class Command(BaseCommand):
         self.undefined_holidays = set()
         self.notes = {}
         open_data_operators = []
-        for _, _, operators in settings.BOD_OPERATORS:
-            open_data_operators += operators.values()
+        incomplete_operators = []
+        for _, _, operators, incomplete in settings.BOD_OPERATORS:
+            if incomplete:
+                incomplete_operators.add(operators.values)
+            else:
+                open_data_operators += operators.values()
         for _, _, _, operators in settings.PASSENGER_OPERATORS:
             open_data_operators += operators.values()
         for _, _, operators in settings.FIRST_OPERATORS:
@@ -155,6 +159,7 @@ class Command(BaseCommand):
         for _, _, _, operators in settings.STAGECOACH_OPERATORS:
             open_data_operators += operators.values()
         self.open_data_operators = set(open_data_operators)
+        self.incomplete_operators = set(incomplete_operators)
         for archive_name in options['archives']:
             self.handle_archive(archive_name, options['files'])
         if self.undefined_holidays:
@@ -492,6 +497,9 @@ class Command(BaseCommand):
             description = sanitize_description(description)
         return description
 
+    def is_tnds(self):
+        return len(self.source.name) <= 4
+
     def handle_file(self, open_file, filename):
         transxchange = TransXChange(open_file)
 
@@ -524,9 +532,8 @@ class Command(BaseCommand):
 
             operators = self.get_operators(transxchange, txc_service)
 
-            if len(self.source.name) <= 4:  # TNDS
-                if operators and all(operator.id in self.open_data_operators for operator in operators):
-                    continue
+            if self.is_tnds() and operators and all(operator.id in self.open_data_operators for operator in operators):
+                continue
 
             lines = get_lines(txc_service.element)
 
@@ -544,10 +551,17 @@ class Command(BaseCommand):
                     existing = existing.filter(description=description, line_name=line_name)
                     existing = existing.order_by('-current', 'service_code').first()
 
-                if len(self.source.name) <= 4:  # TNDS source (slightly dodgy heuristic)
+                if self.is_tnds():
+                    if operators and all(operator.id in self.incomplete_operators for operator in operators):
+                        if Service.objects.filter(
+                            operator__in=operators, line_name=line_name, current=True
+                        ).exclude(source=self.source):
+                            continue
+
                     service_code = get_service_code(filename)
                     if service_code is None:
                         service_code = txc_service.service_code
+
                 else:
                     operator_code = '-'.join(operator.id for operator in operators)
                     if operator_code == 'TDTR' and 'Swindon-Rural' in filename:

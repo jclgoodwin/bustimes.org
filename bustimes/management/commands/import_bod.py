@@ -19,8 +19,11 @@ logger = logging.getLogger(__name__)
 session = requests.Session()
 
 
-def clean_up(operators, sources):
-    Route.objects.filter(service__operator__in=operators).exclude(source__in=sources).delete()
+def clean_up(operators, sources, incomplete=False):
+    routes = Route.objects.filter(service__operator__in=operators).exclude(source__in=sources)
+    if incomplete:
+        routes = routes.exclude(source__url__contains='.tnds.')
+    routes.delete()
     Service.objects.filter(operator__in=operators, current=True, route=None).update(current=False)
     Calendar.objects.filter(trip=None).delete()
 
@@ -55,7 +58,7 @@ def handle_file(command, path):
 def bus_open_data(api_key):
     command = get_command()
 
-    for operator_id, region_id, operators in settings.BOD_OPERATORS:
+    for operator_id, region_id, operators, incomplete in settings.BOD_OPERATORS:
         command.operators = operators
         command.region_id = region_id
         command.service_descriptions = {}
@@ -104,7 +107,7 @@ def bus_open_data(api_key):
             params = None
 
         if sources:
-            clean_up(operators.values(), sources)
+            clean_up(operators.values(), sources, incomplete)
 
 
 def first():
