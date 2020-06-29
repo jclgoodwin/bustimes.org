@@ -445,9 +445,11 @@ STAGECOACH_OPERATORS = [
 ]
 FIRST_OPERATORS = [
     ('FirstSlough', 'SE', {'FTVA': 'FTVA'}),
-    ('FirstBristol', 'SW', {'FBRI': 'FBRI'}),
+    # ('FirstBristol', 'SW', {'FBRI': 'FBRI'}),
     ('FirstBasildon', 'SE', {'FESX': 'FESX'}),
-    ('FirstEssex', 'SE', {'FESX': 'FESX'}),
+    ('FirstChelmsford', 'SE', {'FESX': 'FESX'}),
+    ('FirstColchester', 'SE', {'FESX': 'FESX'}),
+    ('FirstHadleigh', 'SE', {'FESX': 'FESX'}),
     ('FirstCaledonia', 'S', {'FGLA': 'FGLA'}),
     ('FirstOldham', 'NW', {'FMAN': 'FMAN'}),
     ('FirstSomerset', 'SW', {'FBOS': 'FBOS'}),
@@ -456,21 +458,30 @@ FIRST_OPERATORS = [
     ('FirstNorwich', 'EA', {'FECS': 'FECS'}),
     ('FirstIpswich', 'EA', {'FECS': 'FECS'}),
     ('FirstDorset', 'SW', {'FDOR': 'FDOR'}),
-    ('FirstHampshireAndDorset', 'SW', {
-        'FHAM': 'FHAM',
-        'FHDO': 'FHDO',
-    }),
+    # ('FirstHampshireAndDorset', 'SW', {
+    #     'FHAM': 'FHAM',
+    #     'FHDO': 'FHDO',
+    # }),
     ('FirstPotteries', 'WM', {'FPOT': 'FPOT'}),
-    ('FirstScotlandEast', 'S', {'FSCE': 'FSCE'}),
+    ('FirstBalfron', 'S', {'FSCE': 'FSCE'}),
+    ('FirstBannockburn', 'S', {'FSCE': 'FSCE'}),
+    ('FirstLarbert', 'S', {'FSCE': 'FSCE'}),
+    ('FirstLivingston', 'S', {'FSCE': 'FSCE'}),
+    ('FirstBridgend', 'W', {'FCYM': 'FCYM'}),
+    ('FirstHaverfordwest', 'W', {'FCYM': 'FCYM'}),
+    ('FirstLlanelli', 'W', {'FCYM': 'FCYM'}),
+    ('FirstPortTalbot', 'W', {'FCYM': 'FCYM'}),
+    ('FirstTycroes', 'W', {'FCYM': 'FCYM'}),
+    ('FirstMaesteg', 'W', {'FCYM': 'FCYM'}),
     ('FirstSwansea', 'W', {'FCYM': 'FCYM'}),
     ('FirstSheffield', 'Y', {'FSYO': 'FSYO'}),
     ('FirstBradford', 'Y', {'FBRA': 'FBRA'}),
     ('FirstHuddersfield', 'Y', {'FHUD': 'FHUD'}),
     ('FirstHalifax', 'Y', {'FHAL': 'FHAL'}),
-    ('FirstWestYorkshire', 'Y', {
-        'FLDS': 'FLDS',
-        'FWYO': 'FWYO'
-    }),
+    # ('FirstWestYorkshire', 'Y', {
+    #     'FLDS': 'FLDS',
+    #     'FWYO': 'FWYO'
+    # }),
     ('FirstWorcester', 'WM', {'FSMR': 'FSMR'}),
     ('FirstYork', 'Y', {'FYOR': 'FYOR'}),
 ]
