@@ -149,7 +149,7 @@ class Command(BaseCommand):
         incomplete_operators = []
         for _, _, operators, incomplete in settings.BOD_OPERATORS:
             if incomplete:
-                incomplete_operators.add(operators.values)
+                incomplete_operators += operators.values()
             else:
                 open_data_operators += operators.values()
         for _, _, _, operators in settings.PASSENGER_OPERATORS:
