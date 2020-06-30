@@ -121,7 +121,7 @@ class ViewsTests(TestCase):
         )
         cls.service = Service.objects.create(
             service_code='ea_21-45-A-y08',
-            line_name='45A',
+            line_name='45C',
             description='Holt - Norwich',
             date='1984-01-01',
             region=cls.north
@@ -324,12 +324,14 @@ class ViewsTests(TestCase):
 
     def test_service_redirect(self):
         """An inactive service should redirect to a current service with the same description"""
-        response = self.client.get('/services/45B')
+        with self.assertNumQueries(5):
+            response = self.client.get('/services/45B')
         self.assertEqual(response.status_code, 302)
 
     def test_service_not_found(self):
         """An inactive service with no replacement should show a 404 page"""
-        response = self.client.get('/services/45A')
+        with self.assertNumQueries(6):
+            response = self.client.get('/services/45A')
         self.assertEqual(response.status_code, 404)
 
     def test_service_xml(self):
@@ -379,7 +381,7 @@ class ViewsTests(TestCase):
     def test_sitemap_services(self):
         with self.assertNumQueries(2):
             response = self.client.get('/sitemap-services.xml')
-        self.assertContains(response, 'https://testserver/services/45a-holt-norwich')
+        self.assertContains(response, 'https://testserver/services/45c-holt-norwich')
 
     def test_journey(self):
         """Journey planner"""

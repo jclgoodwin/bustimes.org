@@ -561,14 +561,14 @@ class ServiceDetailView(DetailView):
 
     def render_to_response(self, context):
         if not self.object.current:
-            alternative = Service.objects.filter(
-                line_name=self.object.line_name,
-                stopusage__stop_id__in=self.object.stopusage_set.values_list('stop_id', flat=True),
-                current=True
-            ).defer('geometry').first() or Service.objects.filter(
-                description=self.object.description,
-                current=True
-            ).defer('geometry').first()
+            alternatives = Service.objects.filter(current=True).only('slug')
+            alternative = alternatives.filter(
+                line_name=self.object.line_name, stopusage__stop__service=self.object
+            ).first() or alternatives.filter(
+                line_name=self.object.line_name, operator__service=self.object
+            ).first() or alternatives.filter(
+                description=self.object.description
+            ).first()
 
             if alternative is not None:
                 return redirect(alternative)
