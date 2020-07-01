@@ -72,34 +72,22 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         now = self.source.datetime
 
-        url = 'http://{}.jmwrti.co.uk:8080/RTI-SIRI-Server/SIRIHandler'
-        data = """<Siri xmlns="http://www.siri.org.uk/siri">
-<ServiceRequest><VehicleMonitoringRequest/></ServiceRequest>
+        for source in DataSource.objects.filter(name__endswith=' SIRI'):
+            if source.settings and source.settings['RequestorRef']:
+                requestor_ref = source.settings['RequestorRef']
+                requestor_ref = f'<RequestorRef>{requestor_ref}</RequestorRef>'
+            else:
+                requestor_ref = ''
+            data = f"""<Siri xmlns="http://www.siri.org.uk/siri">
+<ServiceRequest>{requestor_ref}<VehicleMonitoringRequest/></ServiceRequest>
 </Siri>"""
-        for subdomain in ('essex', 'southampton', 'slough', 'staffordshire'):
-            response = self.get_response(url.format(subdomain), data)
+            response = self.get_response(source.url, data)
             if response and response.text:
-                self.source, _ = DataSource.objects.update_or_create(
-                    {'url': response.url, 'datetime': now},
-                    name=subdomain.title() + ' SIRI'
-                )
+                source.datetime = now
+                self.source = source
                 for item in items_from_response(response):
                     yield item
-
-        url = 'http://data.icarus.cloudamber.com/VehicleMonitoringRequest.ashx'
-        data = """<Siri xmlns="http://www.siri.org.uk/siri">
-<ServiceRequest><RequestorRef>{}</RequestorRef><VehicleMonitoringRequest/>
-</ServiceRequest>
-</Siri>"""
-        requestor_ref = 'gatwick_app'
-        response = self.get_response(url, data.format(requestor_ref))
-        if response and response.text:
-            self.source, _ = DataSource.objects.update_or_create(
-                {'url': response.url, 'datetime': now},
-                name='Gatwick SIRI'
-            )
-            for item in items_from_response(response):
-                yield item
+                source.save(update_fields=['datetime'])
 
     def get_operator(self, operator_ref):
         operator_options = self.operators_options.get(operator_ref)

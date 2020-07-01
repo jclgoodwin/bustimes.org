@@ -16,7 +16,8 @@ class SiriVMImportTest(TestCase):
         cls.service = Service.objects.create(service_code='73', line_name='73', date='2010-01-01', tracking=True)
         cls.service.operator.set(['FESX'])
         cls.command = import_sirivm.Command()
-        cls.command.source = DataSource.objects.create(name='Essex SIRI', datetime='2018-08-06T22:41:15+01:00')
+        cls.command.source = DataSource.objects.create(name='Essex SIRI', datetime='2018-08-06T22:41:15+01:00',
+            url='http://essex.jmwrti.co.uk:8080/RTI-SIRI-Server/SIRIHandler')
         OperatorCode.objects.create(operator=cls.operator, source=cls.command.source, code='FE')
         JourneyCode.objects.create(service=cls.service, code='14', destination='Hundred Acre Wood')
 
