@@ -1,5 +1,6 @@
 import xml.etree.cElementTree as ET
 from io import StringIO
+from datetime import timedelta
 from ciso8601 import parse_datetime
 from django.db.models import Q
 from busstops.models import Service, DataSource
@@ -19,6 +20,7 @@ operator_refs = {
     'AMD': ('AMNO', 'AMID', 'AFCL'),
 }
 vehicles = Vehicle.objects.select_related('latest_location__journey')
+fifteen_minutes = timedelta(minutes=15)
 
 
 def handle_journey(element, source, when):
@@ -47,9 +49,14 @@ def handle_journey(element, source, when):
                                                           fleet_number=fleet_number)
 
     journey_ref = journey_element.find('siri:DatedVehicleJourneyRef', ns).text
-    if vehicle.latest_location and vehicle.latest_location.journey.code == journey_ref:
-        journey = vehicle.latest_location.journey
-        journey_created = False
+    journey = None
+    latest_location = vehicle.latest_location
+    if latest_location:
+        if latest_location.journey.code == journey_ref:
+            journey = latest_location.journey
+            journey_created = False
+        elif latest_location.source_id != source.id and when - latest_location.datetime < fifteen_minutes:
+            return
     else:
         journey = None
 
@@ -143,12 +150,12 @@ def handle_journey(element, source, when):
             previous_time = previous_call.expected_arrival_time or previous_call.expected_departure_time
             time = call.expected_departure_time or call.expected_arrival_time
             if previous_time and time and previous_time <= when and time >= when:
-                if vehicle.latest_location:
-                    vehicle.latest_location.journey = journey
-                    vehicle.latest_location.latlong = previous_call.stop.latlong
-                    vehicle.latest_location.heading = previous_call.stop.get_heading()
-                    vehicle.latest_location.datetime = previous_time
-                    vehicle.latest_location.save()
+                if latest_location:
+                    latest_location.journey = journey
+                    latest_location.latlong = previous_call.stop.latlong
+                    latest_location.heading = previous_call.stop.get_heading()
+                    latest_location.datetime = previous_time
+                    latest_location.save()
                 else:
                     vehicle.latest_location = VehicleLocation.objects.create(
                         journey=journey,
