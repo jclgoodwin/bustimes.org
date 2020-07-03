@@ -1,6 +1,7 @@
 import os
 import time
 import requests
+from django.utils.http import http_date
 from email.utils import parsedate_to_datetime
 from .management.commands.import_gtfs import write_file
 
@@ -13,10 +14,11 @@ def download(path, url):
 def download_if_changed(path, url):
     headers = {}
     modified = True
+    old_last_modified = None
     if os.path.exists(path):
-        last_modified = time.localtime(os.path.getmtime(path))
-        headers['if-modified-since'] = time.asctime(last_modified)
-
+        old_last_modified = os.path.getmtime(path)
+        old_last_modified = http_date(old_last_modified)
+        headers['if-modified-since'] = old_last_modified
         response = requests.head(url, headers=headers)
         if response.status_code == 304:
             modified = False
