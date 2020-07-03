@@ -242,7 +242,7 @@ class Command(ImportLiveVehiclesCommand):
         if not journey.destination:
             destination_name = mvj.find('siri:DestinationName', NS)
             if destination_name is not None:
-                journey.destination = destination_name.text
+                journey.destination = destination_name.text or ''
 
         services = Service.objects.filter(current=True)
 
