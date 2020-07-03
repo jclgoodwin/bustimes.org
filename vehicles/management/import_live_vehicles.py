@@ -80,7 +80,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
     def get_items(self):
         response = self.session.get(self.url, timeout=40)
         if response.ok:
-            return response.json()
+            items = response.json()
+            if type(items) is list:
+                return items
 
     def get_old_locations(self):
         return VehicleLocation.objects.filter(
