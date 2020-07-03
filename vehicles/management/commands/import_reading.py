@@ -15,6 +15,11 @@ class Command(ImportLiveVehiclesCommand):
     def get_datetime(item):
         return make_aware(parse_datetime(item['observed']))
 
+    def get_items(self):
+        items = super().get_items()
+        if type(items) is list:
+            return items
+
     def get_vehicle(self, item):
         vehicle = item['vehicle']
         defaults = {
