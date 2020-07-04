@@ -104,12 +104,15 @@ class Command(BaseCommand):
             journey_code = ''
             departure_time = None
 
+        recorded_at_time = ciso8601.parse_datetime(item['RecordedAtTime'])
+
         if not created and vehicle.latest_location:
             location = vehicle.latest_location
             latest_journey = location.journey
             if line_name == latest_journey.route_name and journey_code == latest_journey.code:
                 if departure_time is None or departure_time == latest_journey.datetime:
-                    journey = latest_journey
+                    if recorded_at_time - location.datetime < timedelta(hours=1):
+                        journey = journey = latest_journey
         else:
             location = VehicleLocation()
 
@@ -123,7 +126,8 @@ class Command(BaseCommand):
             else:
                 service = None
                 destination = ''
-                departure_time = ciso8601.parse_datetime(item['RecordedAtTime'])
+
+                departure_time = recorded_at_time
             journey = VehicleJourney.objects.create(
                 vehicle=vehicle,
                 service=service,
@@ -138,7 +142,7 @@ class Command(BaseCommand):
                 journey.service.save(update_fields=['tracking'])
             location.journey = journey
 
-        location.datetime = ciso8601.parse_datetime(item['RecordedAtTime'])
+        location.datetime = recorded_at_time
         location.latlong = Point(float(item['Longitude']), float(item['Latitude']))
         location.heading = item['Bearing']
         location.current = True
