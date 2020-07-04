@@ -7,7 +7,6 @@ import zipfile
 import requests
 from datetime import datetime
 from chardet.universaldetector import UniversalDetector
-from email.utils import parsedate
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Count
@@ -17,6 +16,7 @@ from django.utils import timezone
 from busstops.models import Region, DataSource, StopPoint, Service, StopUsage, Operator, AdminArea
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime
 from ...timetables import get_stop_usages
+from ...utils import download_if_changed
 
 
 logger = logging.getLogger(__name__)
@@ -33,34 +33,6 @@ SESSION = requests.Session()
 
 def parse_date(string):
     return datetime.strptime(string, '%Y%m%d')
-
-
-def write_file(path, response):
-    with open(path, 'wb') as zip_file:
-        for chunk in response.iter_content(chunk_size=102400):
-            zip_file.write(chunk)
-
-
-def download_if_modified(path, url):
-    if os.path.exists(path):
-        last_modified = time.localtime(os.path.getmtime(path))
-        headers = {
-            'if-modified-since': time.asctime(last_modified)
-        }
-        response = SESSION.head(url, headers=headers, timeout=5, allow_redirects=True)
-        if not response.ok:
-            response = SESSION.get(url, headers=headers, timeout=5, stream=True)
-            if not response.ok:
-                print(response, url)
-                return
-        if response.status_code == 304:
-            return False  # not modified
-        if 'last-modified' in response.headers and parsedate(response.headers['last-modified']) <= last_modified:
-            return False
-    response = SESSION.get(url, stream=True)
-    if response.ok:
-        write_file(path, response)
-        return True
 
 
 def read_file(archive, name):
@@ -349,8 +321,8 @@ class Command(BaseCommand):
         for collection in options['collections'] or settings.IE_COLLECTIONS:
             path = os.path.join(settings.DATA_DIR, f'google_transit_{collection}.zip')
             url = f'https://www.transportforireland.ie/transitData/google_transit_{collection}.zip'
-            downloaded = download_if_modified(path, url)
-            if not downloaded and not options['force']:
+            modifed, _ = download_if_changed(path, url)
+            if not modifed and not options['force']:
                 continue
             print(collection)
             handle_zipfile(path, collection, url)

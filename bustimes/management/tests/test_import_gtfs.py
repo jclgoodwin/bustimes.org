@@ -12,7 +12,7 @@ from ...models import Route
 from ..commands import import_gtfs
 
 
-FIXTURES_DIR = os.path.join(settings.BASE_DIR, 'busstops', 'management', 'tests', 'fixtures')
+FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
 
 
 @override_settings(DATA_DIR=FIXTURES_DIR, IE_COLLECTIONS=['mortons', 'seamusdoherty'])
@@ -123,14 +123,22 @@ class GTFSTest(TestCase):
         self.assertContains(res, '/services/165')
 
     def test_download_if_modified(self):
-        path = 'download_if_modified.txt'
-        url = 'https://bustimes.org.uk/static/js/global.js'
+        path = 'poop.txt'
+        url = 'https://bustimes.org/static/js/global.js'
 
-        self.assertFalse(os.path.exists(path))
+        if os.path.exists(path):
+            os.remove(path)
 
-        with vcr.use_cassette('data/vcr/download_if_modified.yaml'):
-            self.assertTrue(import_gtfs.download_if_modified(path, url))
-            self.assertFalse(import_gtfs.download_if_modified(path, url))
+        cassette = os.path.join(FIXTURES_DIR, 'download_if_modified.yaml')
+
+        with vcr.use_cassette(cassette, match_on=['uri', 'headers']):
+            self.assertEqual(str(import_gtfs.download_if_changed(path, url)),
+                             '(True, FakeDatetime(2020, 6, 2, 7, 35, 34, tzinfo=<UTC>))')
+
+            with patch('os.path.getmtime', return_value=1593870909.0) as getmtime:
+                self.assertEqual(str(import_gtfs.download_if_changed(path, url)),
+                                 '(True, FakeDatetime(2020, 6, 2, 7, 35, 34, tzinfo=<UTC>))')
+                getmtime.assert_called_with('poop.txt')
 
         self.assertTrue(os.path.exists(path))
 
@@ -139,11 +147,11 @@ class GTFSTest(TestCase):
     def test_handle(self):
         Route.objects.all().delete()
 
-        with patch('bustimes.management.commands.import_gtfs.download_if_modified', return_value=False):
+        with patch('bustimes.management.commands.import_gtfs.download_if_changed', return_value=(False, None)):
             call_command('import_gtfs')
         self.assertFalse(Route.objects.all())
 
-        with patch('bustimes.management.commands.import_gtfs.download_if_modified', return_value=True):
+        with patch('bustimes.management.commands.import_gtfs.download_if_changed', return_value=(True, None)):
             with self.assertRaises(FileNotFoundError):
                 call_command('import_gtfs')
         self.assertFalse(Route.objects.all())

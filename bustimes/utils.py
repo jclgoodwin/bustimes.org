@@ -1,9 +1,14 @@
 import os
-import time
 import requests
-from django.utils.http import http_date
-from email.utils import parsedate_to_datetime
-from .management.commands.import_gtfs import write_file
+from datetime import datetime
+from django.utils.timezone import utc
+from django.utils.http import http_date, parse_http_date
+
+
+def write_file(path, response):
+    with open(path, 'wb') as zip_file:
+        for chunk in response.iter_content(chunk_size=102400):
+            zip_file.write(chunk)
 
 
 def download(path, url):
@@ -14,11 +19,8 @@ def download(path, url):
 def download_if_changed(path, url):
     headers = {}
     modified = True
-    old_last_modified = None
     if os.path.exists(path):
-        old_last_modified = os.path.getmtime(path)
-        old_last_modified = http_date(old_last_modified)
-        headers['if-modified-since'] = old_last_modified
+        headers['if-modified-since'] = http_date(os.path.getmtime(path))
         response = requests.head(url, headers=headers)
         if response.status_code == 304:
             modified = False
@@ -40,6 +42,6 @@ def download_if_changed(path, url):
     elif 'last-modified' in response.headers:
         last_modified = response.headers['last-modified']
     if last_modified:
-        last_modified = parsedate_to_datetime(last_modified)
+        last_modified = datetime.fromtimestamp(parse_http_date(last_modified), utc)
 
     return modified, last_modified

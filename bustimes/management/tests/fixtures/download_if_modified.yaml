@@ -1,0 +1,154 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+    method: GET
+    uri: https://bustimes.org/static/js/global.js
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA4VV32/TMBB+719hXkiKqNOOgcSmIsE0CSR+SSDxgBBy41vrzbWD7bYLo/87d7GT
+        pl0HeagSn++7u+++uxZPrr1WJrCZsxsP7owFt4InxWCgrlhuxFrNRbCOo2mtSvhm3Q049vgx07YU
+        QVnDK2eDLa1m0+mUZYsQKn+WDdndgOGzUUbaDRdSXq7BhPfKBzDg8kxbIbOn7GplSkLJWwdy+kdk
+        XloTnNUaXN+DvB7ItefBK+vDB/BezCG/y0q7XAojszOWBaeWF6JcgM+2w/Mmc4LcMtAeUil0QM9D
+        cRzMqTqsrUhkbRqy+LXHQiMdESH++tJWgLGLrItHhu2QI7HlIj9KTQtQFMzAGjuxRIIP/Hv5Nxaq
+        aDsYdICsI3stHCutvVGQWGFTJm25WmKr+BzCpQZ6fVO/kznSRRdHy8hflmiiXu1DoDY6jGjhmCPc
+        frrKMw9gfsbDnwloWiPpw0Y8o0m/p3uo3IdaA5fKV1rUmGY2QwHeZLtaD2LSlQeinbOluB2hBqbP
+        Js+fvRiPx+esEmExLRIckkU8B1f32kaFkub1FxwHdG5noP3mCyXhtfT9EgjFQVg5s8tzG3vCmiaz
+        HJyze1K+39mUDjVLSH+8Rf5NfaGF9x/FEvIMr83qubVzDf0+PcJzrsHMw6KfZT/DmF03tR0MRs2P
+        nP75w77/SEq4b+YOfq3Ah4/WfAbnrRFa/QaJJCHcJFJCVfnSqSr0CysdiABJfiib5kJbSvziUgTh
+        IeBuudAKVYr+WSlG1Wo2Oj09GZ9MXk4mp5MX+DpOfU2OwtempNvNy77Nu8YSt1hRVNhoIU945BL9
+        pEpbD5dHshbXvugRTuMeS+sUObOy5qKqwMiLhdIyj4kgb40WsOMkrsTfO4M7xEOzFT/NaJPsVh3e
+        pIc4s8mEdRjYsGNe3cDnyI5T0EkzwRBUsvAr6y5x/+271K1Keg7kRNmSY82V3wU2cxqJR9EQhMP9
+        gYOPy/7t1w/vH0AitCO6qVZ+kd+1m/ggepRo7/DgXu8zTQ4Wx3IiTSFbuxlgIxQhnr2aMtwAio1Q
+        lG2elBiGoEpbpg9MdKM18fSSI/h31Q5Ewrj3J/LfglvHuCkG22GOUvkLC1tn16kHAAA=
+    headers:
+      Cache-Control:
+      - max-age=2592000
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/javascript
+      Date:
+      - Sat, 04 Jul 2020 14:26:37 GMT
+      ETag:
+      - W/"5ed60146-7a9"
+      Expires:
+      - Mon, 03 Aug 2020 14:26:37 GMT
+      Last-Modified:
+      - Tue, 02 Jun 2020 07:35:34 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      if-modified-since:
+      - Sat, 04 Jul 2020 13:55:09 GMT
+    method: HEAD
+    uri: https://bustimes.org/static/js/global.js
+  response:
+    body:
+      string: ''
+    headers:
+      Cache-Control:
+      - max-age=2592000
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/javascript
+      Date:
+      - Sat, 04 Jul 2020 14:26:38 GMT
+      ETag:
+      - W/"5ed60146-7a9"
+      Expires:
+      - Mon, 03 Aug 2020 14:26:38 GMT
+      Last-Modified:
+      - Tue, 02 Jun 2020 07:35:34 GMT
+      Server:
+      - nginx
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.24.0
+      if-modified-since:
+      - Sat, 04 Jul 2020 13:55:09 GMT
+    method: GET
+    uri: https://bustimes.org/static/js/global.js
+  response:
+    body:
+      string: !!binary |
+        H4sIAAAAAAAAA4VV32/TMBB+719hXkiKqNOOgcSmIsE0CSR+SSDxgBBy41vrzbWD7bYLo/87d7GT
+        pl0HeagSn++7u+++uxZPrr1WJrCZsxsP7owFt4InxWCgrlhuxFrNRbCOo2mtSvhm3Q049vgx07YU
+        QVnDK2eDLa1m0+mUZYsQKn+WDdndgOGzUUbaDRdSXq7BhPfKBzDg8kxbIbOn7GplSkLJWwdy+kdk
+        XloTnNUaXN+DvB7ItefBK+vDB/BezCG/y0q7XAojszOWBaeWF6JcgM+2w/Mmc4LcMtAeUil0QM9D
+        cRzMqTqsrUhkbRqy+LXHQiMdESH++tJWgLGLrItHhu2QI7HlIj9KTQtQFMzAGjuxRIIP/Hv5Nxaq
+        aDsYdICsI3stHCutvVGQWGFTJm25WmKr+BzCpQZ6fVO/kznSRRdHy8hflmiiXu1DoDY6jGjhmCPc
+        frrKMw9gfsbDnwloWiPpw0Y8o0m/p3uo3IdaA5fKV1rUmGY2QwHeZLtaD2LSlQeinbOluB2hBqbP
+        Js+fvRiPx+esEmExLRIckkU8B1f32kaFkub1FxwHdG5noP3mCyXhtfT9EgjFQVg5s8tzG3vCmiaz
+        HJyze1K+39mUDjVLSH+8Rf5NfaGF9x/FEvIMr83qubVzDf0+PcJzrsHMw6KfZT/DmF03tR0MRs2P
+        nP75w77/SEq4b+YOfq3Ah4/WfAbnrRFa/QaJJCHcJFJCVfnSqSr0CysdiABJfiib5kJbSvziUgTh
+        IeBuudAKVYr+WSlG1Wo2Oj09GZ9MXk4mp5MX+DpOfU2OwtempNvNy77Nu8YSt1hRVNhoIU945BL9
+        pEpbD5dHshbXvugRTuMeS+sUObOy5qKqwMiLhdIyj4kgb40WsOMkrsTfO4M7xEOzFT/NaJPsVh3e
+        pIc4s8mEdRjYsGNe3cDnyI5T0EkzwRBUsvAr6y5x/+271K1Keg7kRNmSY82V3wU2cxqJR9EQhMP9
+        gYOPy/7t1w/vH0AitCO6qVZ+kd+1m/ggepRo7/DgXu8zTQ4Wx3IiTSFbuxlgIxQhnr2aMtwAio1Q
+        lG2elBiGoEpbpg9MdKM18fSSI/h31Q5Ewrj3J/LfglvHuCkG22GOUvkLC1tn16kHAAA=
+    headers:
+      Cache-Control:
+      - max-age=2592000
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - gzip
+      Content-Type:
+      - application/javascript
+      Date:
+      - Sat, 04 Jul 2020 14:26:38 GMT
+      ETag:
+      - W/"5ed60146-7a9"
+      Expires:
+      - Mon, 03 Aug 2020 14:26:38 GMT
+      Last-Modified:
+      - Tue, 02 Jun 2020 07:35:34 GMT
+      Server:
+      - nginx
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1
