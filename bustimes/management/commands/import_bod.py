@@ -142,7 +142,19 @@ def first():
             command.source.datetime = last_modified
             command.source.save(update_fields=['datetime'])
 
-            print(' ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
+            routes = command.source.route_set
+            date_ranges = routes.distinct('start_date', 'end_date')
+            date_ranges = date_ranges.values('start_date', 'end_date')
+            print(' ', date_ranges)
+            if len(date_ranges) == 1:
+                update = {
+                    'end_date': None
+                }
+                if date_ranges[0]['start_date'] > last_modified.date():
+                    update['start_date'] = last_modified.date()
+                routes.update(**update)
+                Calendar.objects.filter(trip__route__source=command.source).update(**update)
+
             print(' ', Operator.objects.filter(service__route__source=command.source).distinct().values('id'))
 
 
@@ -162,7 +174,7 @@ def stagecoach():
             modified = False
 
         if modified:
-            print(url)
+            print(url, last_modified)
 
             command.operators = operators
             command.region_id = region_id
