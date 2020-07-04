@@ -503,13 +503,20 @@ class NorfokDepartures(Departures):
 
 
 class TimetableDepartures(Departures):
-    def get_row(self, stop_time):
+    def get_row(self, stop_time, midnight):
         destination = stop_time.trip.destination
         return {
-            'time': self.midnight + stop_time.departure,
+            'time': midnight + stop_time.departure,
             'destination': destination.locality or destination.town or destination,
             'service': stop_time.trip.route.service,
         }
+
+    def get_times(self, when):
+        times = get_stop_times(when, self.stop.atco_code, self.services)
+        times = times.select_related('trip__route__service',
+                                     'trip__destination__locality').defer('trip__route__service__geometry',
+                                                                          'trip__destination__locality__latlong')
+        return times.order_by('departure')
 
     def get_departures(self):
         key = f'TimetableDepartures:{self.stop.atco_code}'
@@ -518,13 +525,13 @@ class TimetableDepartures(Departures):
             return times
         time_since_midnight = datetime.timedelta(hours=self.now.hour, minutes=self.now.minute, seconds=self.now.second,
                                                  microseconds=self.now.microsecond)
-        self.midnight = self.now - time_since_midnight
-
-        times = get_stop_times(self.now, self.stop.atco_code, self.services)
-        times = times.select_related('trip__route__service',
-                                     'trip__destination__locality').defer('trip__route__service__geometry',
-                                                                          'trip__destination__locality__latlong')
-        times = [self.get_row(time) for time in times.order_by('departure')[:10]]
+        midnight = self.now - time_since_midnight
+        times = [self.get_row(stop_time, midnight) for stop_time in self.get_times(self.now)[:10]]
+        i = 0
+        while len(times) < 10 and i < 3:
+            i += 1
+            midnight += datetime.timedelta(1)
+            times += [self.get_row(stop_time, midnight) for stop_time in self.get_times(midnight)[:10-len(times)]]
         if times:
             max_age = (times[0]['time'] - self.now).seconds + 60
             cache.set(key, times, max_age)
