@@ -345,23 +345,23 @@ BOD_OPERATORS = (
     ('WBTR', 'NW', {
         'NW': 'WBTR',
     }, False),
-    ('ANEA', None, {
-        'ACYM': 'ACYM',
-        'AFCL': 'AFCL',  # (code not used in data)
-        # 'AKSS': 'AKSS',  # no data yet
-        'AMID': 'AMID',
-        'AMNO': 'AMNO',
-        'AMSY': 'AMSY',
-        # 'AMTM': 'AMTM',  # no data yet
-        'ANEA': 'ANEA',
-        'ANUM': 'ANUM',
-        'ANWE': 'ANWE',
-        'ARBB': 'ARBB',  # (code not used in data)
-        # 'ARHE': 'ARHE',  # no data yet
-        'ASES': 'ASES',
-        'WRAY': 'WRAY',
-        'YTIG': 'YTIG',
-    }, False),
+    # ('ANEA', None, {
+    #     'ACYM': 'ACYM',
+    #     'AFCL': 'AFCL',  # (code not used in data)
+    #     # 'AKSS': 'AKSS',  # no data yet
+    #     'AMID': 'AMID',
+    #     'AMNO': 'AMNO',
+    #     'AMSY': 'AMSY',
+    #     # 'AMTM': 'AMTM',  # no data yet
+    #     'ANEA': 'ANEA',
+    #     'ANUM': 'ANUM',
+    #     'ANWE': 'ANWE',
+    #     'ARBB': 'ARBB',  # (code not used in data)
+    #     # 'ARHE': 'ARHE',  # no data yet
+    #     'ASES': 'ASES',
+    #     'WRAY': 'WRAY',
+    #     # 'YTIG': 'YTIG',
+    # }, False),
 )
 STAGECOACH_OPERATORS = [
     ('S', 'sblb', 'Stagecoach Bluebird', {'SBLB': 'SBLB'}),
