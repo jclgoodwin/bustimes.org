@@ -13,7 +13,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ['SECRET_KEY']
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split()
 
-DEBUG = bool(os.environ.get('DEBUG', False)) or 'test' in sys.argv
+TEST = 'test' in sys.argv
+DEBUG = bool(os.environ.get('DEBUG', False)) or TEST
 
 SERVER_EMAIL = 'contact@bustimes.org'
 
@@ -64,9 +65,18 @@ DATABASES = {
         'OPTIONS': {
             'application_name': os.environ.get('APPLICATION_NAME') or ' '.join(sys.argv)[:63],
             'connect_timeout': 3
+        },
+        'TEST': {
+            'SERIALIZE': False
         }
     }
 }
+if TEST:
+    DATABASES['default']['CONN_MAX_AGE'] = None
+
+    TEST_RUNNER = 'django_slowtests.testrunner.DiscoverSlowestTestsRunner'
+    NUM_SLOW_TESTS = 10
+
 
 if os.environ.get('READ_ONLY_DB_HOST'):
     REPLICA_DATABASES = []
@@ -198,7 +208,7 @@ else:
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache'
-    } if 'test' in sys.argv else {
+    } if TEST else {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': os.environ.get('MEMCACHED_LOCATION', '127.0.0.1:11211')
     }
@@ -211,7 +221,7 @@ TIME_ZONE = 'Europe/London'
 USE_TZ = True
 USE_I18N = False
 
-if not DEBUG and 'test' not in sys.argv and 'collectstatic' not in sys.argv:
+if not DEBUG and not TEST and 'collectstatic' not in sys.argv:
     sentry_sdk.init(
         dsn=os.environ.get('SENTRY_DSN'),
         integrations=[DjangoIntegration(), RedisIntegration(), CeleryIntegration()],
