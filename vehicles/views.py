@@ -1,5 +1,6 @@
 import redis
 import json
+import xml.etree.cElementTree as ET
 from datetime import timedelta
 from requests import Session, exceptions
 from ciso8601 import parse_datetime
@@ -540,8 +541,11 @@ def siri(request):
     body = request.body.decode()
     if not body:
         return HttpResponse()
-    if 'HeartbeatNotification>' in body:
-        cache.set('ArrivaHeartbeat', True, 300)  # 5 minutes
+    if 'HeartbeatNotification' in body:
+        for _, element in ET.iterparse(request):
+            if element.tag == '{http://www.siri.org.uk/siri}ProducerRef':
+                cache.set(f'Heartbeat:{element.text}', True, 300)  # 5 minutes
+                break
     elif 'VehicleLocation' in body:
         handle_siri_vm.delay(body)
     else:

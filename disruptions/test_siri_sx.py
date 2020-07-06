@@ -1,10 +1,10 @@
 import os
 from vcr import use_cassette
-from django.test import TestCase
-# from django.contrib.gis.geos import Point
+from django.test import TestCase, override_settings
+from django.core.cache import cache
 from django.conf import settings
 from django.core.management import call_command
-from busstops.models import Region, Operator, Service
+from busstops.models import Region, Operator, Service, DataSource
 from .models import Situation
 
 
@@ -15,6 +15,18 @@ class SiriSXTest(TestCase):
         operator = Operator.objects.create(region=region, id='HATT', name='Hattons of Huyton')
         service = Service.objects.create(line_name='156', service_code='156', date='2020-01-01', current=True)
         service.operator.add(operator)
+        DataSource.objects.create(name='Transport for the North')
+        DataSource.objects.create(name='Arriva')
+
+    @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
+    def test_subscribe(self):
+        with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
+            with self.assertRaises(ValueError):
+                call_command('subscribe')
+
+        cache.set('Heartbeat:HAConTest', True)
+        cache.set('Heartbeat:TransportAPI', True)
+        call_command('subscribe')
 
     def test_siri_sx(self):
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):

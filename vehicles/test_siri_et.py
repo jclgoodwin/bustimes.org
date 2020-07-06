@@ -26,11 +26,21 @@ class SiriETTest(TestCase):
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_heartbeat(self):
         self.assertIsNone(DataSource.objects.get(name='Arriva').datetime)
-        self.assertIsNone(cache.get('ArrivaHeartbeat'))
+        self.assertIsNone(cache.get('Heartbeat:HAConTest'))
 
-        response = self.client.post('/siri', 'HeartbeatNotification>', content_type='text/xml')
+        response = self.client.post('/siri', """<?xml version="1.0" ?>
+<Siri xmlns:ns1="http://www.siri.org.uk/siri" xmlns="http://www.siri.org.uk/siri" version="1.3">
+  <HeartbeatNotification>
+    <RequestTimestamp>2020-06-21T12:25:05+01:00</RequestTimestamp>
+    <ProducerRef>HAConTest</ProducerRef>
+    <MessageIdentifier>HAConToBusTimesET</MessageIdentifier>
+    <ValidUntil>2020-06-22T02:25:02+01:00</ValidUntil>
+    <ShortestPossibleCycle>PT10S</ShortestPossibleCycle>
+    <ServiceStartedTime>2020-06-21T02:17:36+01:00</ServiceStartedTime>
+  </HeartbeatNotification>
+</Siri>""", content_type='text/xml')
         self.assertTrue(response.content)
-        self.assertTrue(cache.get('ArrivaHeartbeat'))
+        self.assertTrue(cache.get('Heartbeat:HAConTest'))
 
     def test_siri_et(self):
         xml = """<?xml version="1.0" encoding="utf-8" ?>

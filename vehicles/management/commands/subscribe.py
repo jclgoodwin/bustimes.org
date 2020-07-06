@@ -18,14 +18,60 @@ class Command(BaseCommand):
         headers = {
            'Content-Type': 'application/xml'
         }
-        self.session.post(self.source.url, data=xml, headers=headers, timeout=5)
+        xml = f'<?xml version="1.0" ?><Siri xmlns="http://www.siri.org.uk/siri" version="1.3">{xml}'
+        self.session.post(self.source.url, data=xml.replace('    ', ''), headers=headers, timeout=5)
 
-    def handle(self, *args, **options):
+    def terminate_subscription(self, timestamp, requestor_ref):
+        self.post(f"""
+            <TerminateSubscriptionRequest>
+                <RequestTimestamp>{timestamp}</RequestTimestamp>
+                <RequestorRef>{requestor_ref}</RequestorRef>
+                <All/>
+            </TerminateSubscriptionRequest>
+        """)
+
+    def subscribe(self, timestamp, requestor_ref, consumer_address, xml):
+        self.post(f"""
+            <SubscriptionRequest>
+                <RequestTimestamp>{timestamp}</RequestTimestamp>
+                <RequestorRef>{requestor_ref}</RequestorRef>
+                <ConsumerAddress>{consumer_address}</ConsumerAddress>
+                {xml}
+            </SubscriptionRequest>
+        """)
+
+    def tfn(self, app_id, terminate):
+        self.source = DataSource.objects.get(name='Transport for the North')
+
+        if not terminate and cache.get('Heartbeat:TransportAPI'):
+            return  # received a heartbeat recently, no need to resubscribe
+
+        now = timezone.localtime()
+
+        self.session = requests.Session()
+
+        timestamp = now.isoformat()
+        requestor_ref = app_id
+
+        # terminate any previous subscription just in case
+        self.terminate_subscription(timestamp, requestor_ref)
+
+        termination_time = (now + timedelta(hours=24)).isoformat()
+
+        self.subscribe(timestamp, requestor_ref, 'http://bustimes.org/siri', f"""
+            <SituationExchangeSubscriptionRequest>
+                <SubscriptionIdentifier>{requestor_ref}</SubscriptionIdentifier>
+                <SubscriberRef>{requestor_ref}</SubscriberRef>
+                <InitialTerminationTime>{termination_time}</InitialTerminationTime>
+                <IncrementalUpdates>true</IncrementalUpdates>
+            </SituationExchangeRequest>
+        """)
+
+    def arriva(self, terminate):
         self.source = DataSource.objects.get(name='Arriva')
 
-        if not options['terminate']:
-            if cache.get('ArrivaHeartbeat'):  # and cache.get('ArrivaData'):
-                return  # received a heartbeat recently, no need to resubscribe
+        if not terminate and cache.get('Heartbeat:HAConTest'):
+            return  # received a heartbeat recently, no need to resubscribe
 
         now = timezone.localtime()
 
@@ -39,37 +85,29 @@ class Command(BaseCommand):
         self.session.mount('http://', SourceAddressAdapter('10.16.0.6'))
 
         # terminate any previous subscription just in case
-        self.post(f"""<?xml version="1.0" ?>
-<Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
-  <TerminateSubscriptionRequest>
-    <RequestTimestamp>{timestamp}</RequestTimestamp>
-    <RequestorRef>{requestor_ref}</RequestorRef>
-    <All></All>
-  </TerminateSubscriptionRequest>
-</Siri>""")
+        self.terminate_subscription()
 
         termination_time = (now + timedelta(hours=24)).isoformat()
 
         # (re)subscribe
-        if not options['terminate']:
-            self.post(f"""<?xml version="1.0" ?>
-<Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
-  <SubscriptionRequest>
-    <RequestTimestamp>{timestamp}</RequestTimestamp>
-    <RequestorRef>{requestor_ref}</RequestorRef>
-    <ConsumerAddress>http://68.183.252.225/siri</ConsumerAddress>
-    <SubscriptionContext>
-      <HeartbeatInterval>PT2M</HeartbeatInterval>
-    </SubscriptionContext>
-    <EstimatedTimetableSubscriptionRequest>
-      <SubscriberRef>{requestor_ref}</SubscriberRef>
-      <SubscriptionIdentifier>{requestor_ref}</SubscriptionIdentifier>
-      <InitialTerminationTime>{termination_time}</InitialTerminationTime>
-      <EstimatedTimetableRequest version="1.3">
-        <RequestTimestamp>{timestamp}</RequestTimestamp>
-        <PreviewInterval>PT2H</PreviewInterval>
-      </EstimatedTimetableRequest>
-      <ChangeBeforeUpdates>PT1M</ChangeBeforeUpdates>
-    </EstimatedTimetableSubscriptionRequest>
-  </SubscriptionRequest>
-</Siri>""")
+        if not terminate:
+            self.subscribe(timestamp, requestor_ref, 'http://68.183.252.225/siri', f"""
+                <SubscriptionContext>
+                    <HeartbeatInterval>PT2M</HeartbeatInterval>
+                </SubscriptionContext>
+                <EstimatedTimetableSubscriptionRequest>
+                    <SubscriberRef>{requestor_ref}</SubscriberRef>
+                    <SubscriptionIdentifier>{requestor_ref}</SubscriptionIdentifier>
+                    <InitialTerminationTime>{termination_time}</InitialTerminationTime>
+                    <EstimatedTimetableRequest version="1.3">
+                        <RequestTimestamp>{timestamp}</RequestTimestamp>
+                        <PreviewInterval>PT2H</PreviewInterval>
+                    </EstimatedTimetableRequest>
+                    <ChangeBeforeUpdates>PT1M</ChangeBeforeUpdates>
+                </EstimatedTimetableSubscriptionRequest>
+            """)
+
+    def handle(self, *args, **options):
+        self.tfn('', options['terminate'])
+
+        self.arriva(options['terminate'])
