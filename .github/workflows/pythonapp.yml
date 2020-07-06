@@ -15,7 +15,9 @@ jobs:
           ~/.cache/pip
           ~/.local/share/virtualenvs
           ~/.local/share/pyppeteer
-        key: ${{ runner.os }}
+        key: ${{ runner.os }}-${{ hashFiles('Pipfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
