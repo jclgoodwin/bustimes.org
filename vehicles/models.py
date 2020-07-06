@@ -457,7 +457,6 @@ class VehicleLocation(models.Model):
                     'name': str(vehicle),
                     'text_colour': vehicle.get_text_colour(),
                     'livery': vehicle.get_livery(self.heading),
-                    'features': list(vehicle.get_feature_emojis())
                 },
                 'delta': self.early,
                 'direction': self.heading,
@@ -481,4 +480,6 @@ class VehicleLocation(models.Model):
                 }
             if vehicle.operator:
                 json['properties']['operator'] = str(vehicle.operator)
+        else:
+            json['properties']['vehicle']['features'] = list(vehicle.get_feature_emojis())
         return json

@@ -40,7 +40,7 @@ class SIRIOneShotTest(TestCase):
             url = f'/vehicles.json?service={self.service.id}'
 
             with freeze_time('2019-06-08'):
-                with self.assertNumQueries(6):
+                with self.assertNumQueries(5):
                     self.client.get(url)
                 self.assertEqual('nothing scheduled', cache.get(f'{self.service.id}:Icarus'))
 

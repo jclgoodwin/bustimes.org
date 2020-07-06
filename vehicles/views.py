@@ -292,15 +292,16 @@ def vehicles_json(request):
     if request.nothing:
         locations = ()
     else:
-        locations = get_locations(request).order_by().prefetch_related('journey__vehicle__features')
+        locations = get_locations(request).order_by()
         locations = locations.select_related('journey__vehicle__livery', 'journey__vehicle__vehicle_type')
 
         if 'service' in request.GET:
             extended = False
+            locations = locations.prefetch_related('journey__vehicle__features')
         else:
             extended = True
-            locations = locations.select_related('journey__service', 'journey__vehicle__operator'
-                                                 ).defer('journey__service__geometry')
+            locations = locations.select_related('journey__service', 'journey__vehicle__operator')
+            locations = locations.defer('journey__service__geometry', 'journey__service__search_vector')
 
     return JsonResponse({
         'type': 'FeatureCollection',
