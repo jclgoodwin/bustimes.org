@@ -128,7 +128,8 @@ class Command(ImportLiveVehiclesCommand):
 
         if code and departure_time:
             journey = vehicle.vehiclejourney_set.filter(code=code, datetime=departure_time).first()
-
+        else:
+            journey = None
         if not journey:
             journey = VehicleJourney(
                 code=code,
