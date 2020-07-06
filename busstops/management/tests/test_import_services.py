@@ -2,10 +2,9 @@ import os
 import zipfile
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
-from django.contrib.gis.geos import Point
 from django.core.management import call_command
 from bustimes.management.commands import import_transxchange
-from ...models import Operator, DataSource, OperatorCode, Service, Region, StopPoint
+from ...models import Operator, DataSource, OperatorCode, Service, Region
 
 
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
@@ -31,39 +30,11 @@ class ImportServicesTest(TestCase):
         clean_up()
 
         cls.gb = Region.objects.create(pk='GB', name='Großbritannien')
-        cls.sc = Region.objects.create(pk='S', name='Scotland')
-        cls.nw = Region.objects.create(pk='NW', name='North West')
-        cls.w = Region.objects.create(pk='W', name='Wales')
-        cls.london = Region.objects.create(pk='L', name='London')
 
         cls.megabus = Operator.objects.create(pk='MEGA', region_id='GB', name='Megabus')
-        cls.fabd = Operator.objects.create(pk='FABD', region_id='S', name='First Aberdeen')
 
         nocs = DataSource.objects.create(name='National Operator Codes', datetime='2018-02-01 00:00+00:00')
         OperatorCode.objects.create(operator=cls.megabus, source=nocs, code='MEGA')
-        OperatorCode.objects.create(operator=cls.fabd, source=nocs, code='FABD')
-
-        StopPoint.objects.bulk_create(
-            StopPoint(
-                atco_code=atco_code, locality_centre=False, active=True, common_name=common_name,
-                indicator=indicator, latlong=Point(lng, lat, srid=4326)
-            ) for atco_code, common_name, indicator, lat, lng in (
-                    ('639004572', 'Bulls Head', 'adj', -2.5042125060, 53.7423055225),
-                    ('639004562', 'Markham Road', 'by"', -2.5083672338, 53.7398252112),
-                    ('639004554', 'Witton Park', 'opp', -2.5108434749, 53.7389877672),
-                    ('639004552', 'The Griffin', 'adj', -2.4989239373, 53.7425523688),
-                    ('049004705400', 'Kingston District Centre', 'o/s', 0, 0),
-                    ('1000DDDV4248', 'Dinting Value Works', '', 0, 0),
-            )
-        )
-
-        # simulate a Scotland zipfile:
-        cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml'])
-
-        # simulate a North West zipfile:
-        cls.write_files_to_zipfile_and_import('NW.zip', ['NW_04_GMN_2_2.xml'])
-
-        cls.sc_service = Service.objects.get(service_code='ABBN017')
 
         # simulate a National Coach Service Database zip file
         ncsd_zipfile_path = os.path.join(FIXTURES_DIR, 'NCSD.zip')
@@ -182,49 +153,6 @@ class ImportServicesTest(TestCase):
                 <th><a href="/stops/450030220">Leeds City Centre Bus Stn</a></th>
                 <td>02:45</td><td>06:20</td><td>11:30</td><td>12:30</td><td>13:45</td><td>16:20</td><td>18:40</td>
             </tr>
-        """, html=True)
-
-    @freeze_time('25 June 2016')
-    def test_do_service_scotland(self):
-        service = self.sc_service
-
-        self.assertEqual(str(service), 'N17 - Aberdeen - Dyce')
-        self.assertTrue(service.show_timetable)
-        self.assertEqual(service.operator.first(), self.fabd)
-        self.assertEqual(
-            list(service.get_traveline_links()),
-            [('http://www.travelinescotland.com/lts/#/timetables?' +
-             'timetableId=ABBN017&direction=OUTBOUND&queryDate=&queryTime=', 'Traveline Scotland')]
-        )
-        self.assertEqual(service.geometry.coords, ((
-            (53.7423055225, -2.504212506), (53.7398252112, -2.5083672338),
-            (53.7389877672, -2.5108434749), (53.7425523688, -2.4989239373)
-        ),))
-
-        res = self.client.get(service.get_absolute_url())
-        self.assertEqual(res.context_data['breadcrumb'], [self.sc, self.fabd])
-        self.assertTemplateUsed(res, 'busstops/service_detail.html')
-        self.assertContains(res, '<td rowspan="63">then every 30 minutes until</td>', html=True)
-
-        timetable = res.context_data['timetable']
-        self.assertEqual('2016-06-25', str(timetable.date))
-        self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
-        self.assertEqual(3, len(timetable.groupings[1].rows[0].times))
-        self.assertEqual(timetable.groupings[0].column_feet, {})
-
-        # Within operating period, but with no journeys
-        res = self.client.get(service.get_absolute_url() + '?date=2026-04-18')
-        self.assertContains(res, 'Sorry, no journeys found for Saturday 18 April 2026')
-
-        # Test the fallback version without a timetable (just a list of stops)
-        service.show_timetable = False
-        service.save()
-        res = self.client.get(service.get_absolute_url())
-        self.assertContains(res, 'Outbound')
-        self.assertContains(res, """
-            <li class="minor">
-                <a href="/stops/639004554">Witton Park (opp)</a>
-            </li>
         """, html=True)
 
     # def test_combine_date_time(self):

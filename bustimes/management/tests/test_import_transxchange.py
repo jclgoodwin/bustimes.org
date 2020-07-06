@@ -25,16 +25,39 @@ class ImportTransXChangeTest(TestCase):
     def setUpTestData(cls):
         cls.ea = Region.objects.create(pk='EA', name='East Anglia')
         cls.w = Region.objects.create(pk='W', name='Wales')
-        Region.objects.create(pk='NE', name='North East')
-        Region.objects.create(pk='NW', name='North West')
-        Region.objects.create(pk='IM', name='Isle of Man')
-        cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
+        cls.gb = Region.objects.create(pk='GB', name='Großbritannien')
+        cls.sc = Region.objects.create(pk='S', name='Scotland')
+        Region.objects.bulk_create([
+            Region(pk='NE', name='North East'),
+            Region(pk='NW', name='North West'),
+            Region(pk='IM', name='Isle of Man')
+        ])
 
+        cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
         Operator.objects.create(id='bus-vannin', region_id='EA', name='Bus Vannin')
+        cls.megabus = Operator.objects.create(pk='MEGA', region_id='GB', name='Megabus')
+        cls.fabd = Operator.objects.create(pk='FABD', region_id='S', name='First Aberdeen')
+
+        nocs = DataSource.objects.create(name='National Operator Codes')
+        OperatorCode.objects.create(operator=cls.megabus, source=nocs, code='MEGA')
+        OperatorCode.objects.create(operator=cls.fabd, source=nocs, code='FABD')
 
         source = DataSource.objects.create(name='EA', url='https://www.example.co.uk/open-data')
         OperatorCode.objects.create(operator=cls.fecs, source=source, code='FECS')
 
+        StopPoint.objects.bulk_create(
+            StopPoint(
+                atco_code=atco_code, locality_centre=False, active=True, common_name=common_name,
+                indicator=indicator, latlong=Point(lng, lat, srid=4326)
+            ) for atco_code, common_name, indicator, lat, lng in (
+                    ('639004572', 'Bulls Head', 'adj', -2.5042125060, 53.7423055225),
+                    ('639004562', 'Markham Road', 'by"', -2.5083672338, 53.7398252112),
+                    ('639004554', 'Witton Park', 'opp', -2.5108434749, 53.7389877672),
+                    ('639004552', 'The Griffin', 'adj', -2.4989239373, 53.7425523688),
+                    ('049004705400', 'Kingston District Centre', 'o/s', 0, 0),
+                    ('1000DDDV4248', 'Dinting Value Works', '', 0, 0),
+            )
+        )
         StopPoint.objects.bulk_create(
             StopPoint(atco_code, latlong=Point(0, 0), active=True) for atco_code in (
                 '1100DEB10368',
@@ -546,6 +569,52 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(87, service.stopusage_set.all().count())
         self.assertEqual(121, duplicate.stopusage_set.all().count())
+
+    @freeze_time('25 June 2016')
+    def test_do_service_scotland(self):
+        # simulate a Scotland zipfile:
+        self.handle_files('S.zip', ['SVRABBN017.xml'])
+
+        service = Service.objects.get(service_code='ABBN017')
+
+        self.assertEqual(str(service), 'N17 - Aberdeen - Dyce')
+        self.assertTrue(service.show_timetable)
+        self.assertEqual(service.operator.first(), self.fabd)
+        self.assertEqual(
+            list(service.get_traveline_links()),
+            [('http://www.travelinescotland.com/lts/#/timetables?' +
+             'timetableId=ABBN017&direction=OUTBOUND&queryDate=&queryTime=', 'Traveline Scotland')]
+        )
+        self.assertEqual(service.geometry.coords, ((
+            (53.7423055225, -2.504212506), (53.7398252112, -2.5083672338),
+            (53.7389877672, -2.5108434749), (53.7425523688, -2.4989239373)
+        ),))
+
+        res = self.client.get(service.get_absolute_url())
+        self.assertEqual(res.context_data['breadcrumb'], [self.sc, self.fabd])
+        self.assertTemplateUsed(res, 'busstops/service_detail.html')
+        self.assertContains(res, '<td rowspan="63">then every 30 minutes until</td>', html=True)
+
+        timetable = res.context_data['timetable']
+        self.assertEqual('2016-06-25', str(timetable.date))
+        self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
+        self.assertEqual(3, len(timetable.groupings[1].rows[0].times))
+        self.assertEqual(timetable.groupings[0].column_feet, {})
+
+        # Within operating period, but with no journeys
+        res = self.client.get(service.get_absolute_url() + '?date=2026-04-18')
+        self.assertContains(res, 'Sorry, no journeys found for Saturday 18 April 2026')
+
+        # Test the fallback version without a timetable (just a list of stops)
+        service.show_timetable = False
+        service.save()
+        res = self.client.get(service.get_absolute_url())
+        self.assertContains(res, 'Outbound')
+        self.assertContains(res, """
+            <li class="minor">
+                <a href="/stops/639004554">Witton Park (opp)</a>
+            </li>
+        """, html=True)
 
     def test_get_service_code(self):
         self.assertEqual(import_transxchange.get_service_code('ea_21-2-_-y08-1.xml'),     'ea_21-2-_-y08')
