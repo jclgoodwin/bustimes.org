@@ -1,12 +1,16 @@
 import os
 import zipfile
+import xml.etree.cElementTree as ET
+import warnings
 from datetime import date
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
+from django.utils import timezone
 from django.core.management import call_command
 from django.contrib.gis.geos import Point
-from busstops.models import Region, StopPoint, Service, Operator, OperatorCode, DataSource
+from busstops.models import Region, StopPoint, Service, Operator, OperatorCode, DataSource, ServiceLink
 from ...models import Route, Trip, Calendar, CalendarDate
+from ..commands import import_transxchange
 
 
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
@@ -22,6 +26,7 @@ class ImportTransXChangeTest(TestCase):
         cls.ea = Region.objects.create(pk='EA', name='East Anglia')
         cls.w = Region.objects.create(pk='W', name='Wales')
         Region.objects.create(pk='NE', name='North East')
+        Region.objects.create(pk='NW', name='North West')
         Region.objects.create(pk='IM', name='Isle of Man')
         cls.fecs = Operator.objects.create(pk='FECS', region_id='EA', name='First in Norfolk & Suffolk')
 
@@ -45,6 +50,25 @@ class ImportTransXChangeTest(TestCase):
             )
         )
 
+    @staticmethod
+    def handle_files(archive_name, filenames):
+        command = import_transxchange.Command()
+        command.service_descriptions = {}
+        command.service_ids = set()
+        command.undefined_holidays = set()
+        command.calendar_cache = {}
+        command.corrections = {}
+        command.open_data_operators = set()
+        command.incomplete_operators = set()
+        command.notes = {}
+
+        command.set_region(archive_name)
+        command.source.datetime = timezone.now()
+        for filename in filenames:
+            path = os.path.join(FIXTURES_DIR, filename)
+            with open(path, 'r') as open_file:
+                command.handle_file(open_file, filename)
+
     @classmethod
     def write_files_to_zipfile_and_import(cls, zipfile_name, filenames):
         zipfile_path = os.path.join(FIXTURES_DIR, zipfile_name)
@@ -60,8 +84,7 @@ class ImportTransXChangeTest(TestCase):
 
     @freeze_time('3 October 2016')
     def test_east_anglia(self):
-        # with self.assertNumQueries(186):
-        self.write_files_to_zipfile_and_import('EA.zip', ['ea_20-12-_-y08-1.xml', 'ea_21-13B-B-y08-1.xml'])
+        self.handle_files('EA.zip', ['ea_20-12-_-y08-1.xml', 'ea_21-13B-B-y08-1.xml'])
 
         route = Route.objects.get(line_name='12')
         self.assertEqual('12', route.service.line_name)
@@ -174,8 +197,7 @@ class ImportTransXChangeTest(TestCase):
 
     @freeze_time('30 October 2017')
     def test_service_with_empty_pattern(self):
-        # with self.assertNumQueries(346):
-        self.write_files_to_zipfile_and_import('EA.zip', ['swe_33-9A-A-y10-2.xml'])
+        self.handle_files('EA.zip', ['swe_33-9A-A-y10-2.xml'])
 
         route = Route.objects.get(line_name='9A')
         self.assertEqual('9A – Sidwell Street - Marine Place', str(route))
@@ -190,8 +212,7 @@ class ImportTransXChangeTest(TestCase):
         """Test a timetable from Wales (with SequenceNumbers on Journeys),
         with a university ServicedOrganisation
         """
-        # with self.assertNumQueries(346):
-        self.write_files_to_zipfile_and_import('W.zip', ['CGAO305.xml'])
+        self.handle_files('W.zip', ['CGAO305.xml'])
 
         service = Service.objects.get(service_code='CGAO305')
 
@@ -226,7 +247,7 @@ class ImportTransXChangeTest(TestCase):
     @freeze_time('2016-12-15')
     def test_timetable_ne(self):
         """Test timetable with some abbreviations"""
-        self.write_files_to_zipfile_and_import('NE.zip', ['NE_03_SCC_X6_1.xml'])
+        self.handle_files('NE.zip', ['NE_03_SCC_X6_1.xml'])
         service = Service.objects.get()
         response = self.client.get(service.get_absolute_url())
         timetable = response.context_data['timetable']
@@ -250,7 +271,7 @@ class ImportTransXChangeTest(TestCase):
     def test_timetable_abbreviations_notes(self):
         """Test a timetable with a note which should determine the bounds of an abbreviation"""
 
-        self.write_files_to_zipfile_and_import('EA.zip', ['set_5-28-A-y08.xml'])
+        self.handle_files('EA.zip', ['set_5-28-A-y08.xml'])
         service = Service.objects.get()
         response = self.client.get(service.get_absolute_url())
         timetable = response.context_data['timetable']
@@ -275,7 +296,7 @@ class ImportTransXChangeTest(TestCase):
     def test_timetable_derby_alvaston_circular(self):
         """Test a weird timetable where 'Wilmorton Ascot Drive' is visited twice consecutively on on one journey"""
 
-        self.write_files_to_zipfile_and_import('EA.zip', ['em_11-1-J-y08-1.xml'])
+        self.handle_files('EA.zip', ['em_11-1-J-y08-1.xml'])
         service = Service.objects.get()
         response = self.client.get(service.get_absolute_url())
         timetable = response.context_data['timetable']
@@ -287,7 +308,7 @@ class ImportTransXChangeTest(TestCase):
     def test_timetable_deadruns(self):
         """Test a timetable with some dead runs which should be respected"""
 
-        self.write_files_to_zipfile_and_import('NE.zip', ['SVRLABO024A.xml'])
+        self.handle_files('NE.zip', ['SVRLABO024A.xml'])
         service = Service.objects.get()
         response = self.client.get(service.get_absolute_url())
         timetable = response.context_data['timetable']
@@ -342,7 +363,7 @@ class ImportTransXChangeTest(TestCase):
     def test_timetable_servicedorg(self):
         """Test a timetable with a ServicedOrganisation"""
 
-        self.write_files_to_zipfile_and_import('EA.zip', ['swe_34-95-A-y10.xml'])
+        self.handle_files('EA.zip', ['swe_34-95-A-y10.xml'])
         service = Service.objects.get()
 
         # Doesn't stop at Budehaven School during holidays
@@ -364,7 +385,7 @@ class ImportTransXChangeTest(TestCase):
     def test_timetable_holidays_only(self):
         """Test a service with a HolidaysOnly operating profile
         """
-        self.write_files_to_zipfile_and_import('EA.zip', ['twm_6-14B-_-y11-1.xml'])
+        self.handle_files('EA.zip', ['twm_6-14B-_-y11-1.xml'])
         service = Service.objects.get()
 
         response = self.client.get(service.get_absolute_url())
@@ -380,7 +401,7 @@ class ImportTransXChangeTest(TestCase):
 
     @freeze_time('2012-06-27')
     def test_timetable_goole(self):
-        self.write_files_to_zipfile_and_import('W.zip', ['SVRYEAGT00.xml'])
+        self.handle_files('W.zip', ['SVRYEAGT00.xml'])
         service = Service.objects.get()
 
         # try date outside of operating period
@@ -404,14 +425,14 @@ class ImportTransXChangeTest(TestCase):
     @freeze_time('2017-01-01')
     def test_cardiff_airport(self):
         """Should be able to distinguish between Cardiff and Cardiff Airport as start and end of a route"""
-        self.write_files_to_zipfile_and_import('W.zip', ['TCAT009.xml'])
+        self.handle_files('W.zip', ['TCAT009.xml'])
         service = Service.objects.get()
         self.assertEqual(service.inbound_description, 'Cardiff  - Cardiff Airport')
         self.assertEqual(service.outbound_description, 'Cardiff Airport - Cardiff ')
 
     @freeze_time('2018-09-24')
     def test_timetable_plymouth(self):
-        self.write_files_to_zipfile_and_import('EA.zip', ['20-plymouth-city-centre-plympton.xml'])
+        self.handle_files('EA.zip', ['20-plymouth-city-centre-plympton.xml'])
         service = Service.objects.get()
         response = self.client.get(service.get_absolute_url())
         timetable = response.context_data['timetable']
@@ -464,10 +485,112 @@ class ImportTransXChangeTest(TestCase):
 
     def test_multiple_services(self):
         with freeze_time('2020-02-22'):
-            self.write_files_to_zipfile_and_import('IOM.zip', ['Ser 16 16A 16B.xml'])
+            self.handle_files('IOM.zip', ['Ser 16 16A 16B.xml'])
         services = Service.objects.filter(region='IM')
         self.assertEqual(3, len(services))
 
         self.assertEqual(1, Trip.objects.filter(route__service=services[0]).count())
         self.assertEqual(1, Trip.objects.filter(route__service=services[1]).count())
         self.assertEqual(2, Trip.objects.filter(route__service=services[2]).count())
+
+    def test_service_error(self):
+        """A file with some wrong references should be handled gracefully"""
+        with self.assertLogs(level='ERROR'):
+            self.handle_files('NW.zip', ['NW_05_PBT_6_1.xml'])
+
+    def test_services_nw(self):
+        self.handle_files('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
+
+        # 2
+        service = Service.objects.get(service_code='NW_04_GMN_2_1')
+        self.assertEqual(service.description, 'intu Trafford Centre - Eccles - Swinton - Bolton')
+
+        self.assertEqual(23, service.stopusage_set.all().count())
+
+        # Stagecoach Manchester 237
+        service = Service.objects.get(service_code='NW_04_GMS_237_1')
+        duplicate = Service.objects.get(service_code='NW_04_GMS_237_2')
+        ServiceLink.objects.create(from_service=service, to_service=duplicate, how='parallel')
+
+        self.assertEqual(service.description, 'Glossop - Stalybridge - Ashton')
+
+        with freeze_time('1 September 2017'):
+            with self.assertNumQueries(12):
+                res = self.client.get(service.get_absolute_url() + '?date=2017-09-01')
+        self.assertEqual(str(res.context_data['timetable'].date), '2017-09-01')
+        self.assertContains(res, 'Timetable changes from Sunday 3 September 2017')
+
+        with freeze_time('1 October 2017'):
+            with self.assertNumQueries(15):
+                res = self.client.get(service.get_absolute_url())  # + '?date=2017-10-01')
+        self.assertContains(res, """
+                <thead>
+                    <tr>
+                        <td></td>
+                        <td>237</td>
+                        <td colspan="17"><a href="/services/237-glossop-stalybridge-ashton-2">237</a></td>
+                    </tr>
+                </thead>
+        """, html=True)
+        self.assertEqual(str(res.context_data['timetable'].date), '2017-10-01')
+        self.assertNotContains(res, 'Timetable changes from Sunday 3 September 2017')
+        self.assertEqual(18, len(res.context_data['timetable'].groupings[0].trips))
+
+        with freeze_time('1 October 2017'):
+            with self.assertNumQueries(15):
+                res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
+        self.assertNotContains(res, 'thead')
+        self.assertEqual(str(res.context_data['timetable'].date), '2017-10-03')
+        self.assertEqual(27, len(res.context_data['timetable'].groupings[0].trips))
+        self.assertEqual(30, len(res.context_data['timetable'].groupings[1].trips))
+
+        self.assertEqual(87, service.stopusage_set.all().count())
+        self.assertEqual(121, duplicate.stopusage_set.all().count())
+
+    def test_get_service_code(self):
+        self.assertEqual(import_transxchange.get_service_code('ea_21-2-_-y08-1.xml'),     'ea_21-2-_-y08')
+        self.assertEqual(import_transxchange.get_service_code('ea_21-27-D-y08-1.xml'),    'ea_21-27-D-y08')
+        self.assertEqual(import_transxchange.get_service_code('tfl_52-FL2-_-y08-1.xml'),  'tfl_52-FL2-_-y08')
+        self.assertEqual(import_transxchange.get_service_code('suf_56-FRY-1-y08-15.xml'), 'suf_56-FRY-1-y08')
+        self.assertIsNone(import_transxchange.get_service_code('NATX_330.xml'))
+        self.assertIsNone(import_transxchange.get_service_code('NE_130_PB2717_21A.xml'))
+        self.assertIsNone(import_transxchange.get_service_code('SVRABAN007-20150620-9.xml'))
+        self.assertIsNone(import_transxchange.get_service_code('SVRWLCO021-20121121-13693.xml'))
+        self.assertIsNone(import_transxchange.get_service_code('National Express_NX_atco_NATX_T61.xml'))
+        self.assertIsNone(import_transxchange.get_service_code('SnapshotNewportBus_TXC_2015714-0317_NTAO155.xml'))
+        self.assertIsNone(import_transxchange.get_service_code(
+            'ArrivaCymru51S-Rhyl-StBrigid`s-Denbigh1_TXC_2016108-0319_DGAO051S.xml')
+        )
+
+    def test_get_operator_name(self):
+        blue_triangle_element = ET.fromstring("""
+            <txc:Operator xmlns:txc='http://www.transxchange.org.uk/' id='OId_BE'>
+                <txc:OperatorCode>BE</txc:OperatorCode>
+                <txc:OperatorShortName>BLUE TRIANGLE BUSES LIM</txc:OperatorShortName>
+                <txc:OperatorNameOnLicence>BLUE TRIANGLE BUSES LIMITED</txc:OperatorNameOnLicence>
+                <txc:TradingName>BLUE TRIANGLE BUSES LIMITED</txc:TradingName>
+            </txc:Operator>
+        """)
+        self.assertEqual(import_transxchange.get_operator_name(blue_triangle_element), 'BLUE TRIANGLE BUSES LIMITED')
+
+    def test_get_operator(self):
+        command = import_transxchange.Command()
+        command.set_region('EA.zip')
+        element = ET.fromstring("""
+            <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_RRS">
+                <txc:OperatorCode>RRS</txc:OperatorCode>
+                <txc:OperatorShortName>Replacement Service</txc:OperatorShortName>
+                <txc:OperatorNameOnLicence>Replacement Service</txc:OperatorNameOnLicence>
+                <txc:TradingName>Replacement Service</txc:TradingName>
+            </txc:Operator>
+        """)
+        self.assertIsNone(command.get_operator(element))
+
+        with warnings.catch_warnings(record=True) as caught_warnings:
+            self.assertIsNone(command.get_operator(ET.fromstring("""
+                <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_RRS">
+                    <txc:OperatorCode>BEAN</txc:OperatorCode>
+                    <txc:TradingName>Bakers</txc:TradingName>
+                </txc:Operator>
+            """)))
+            self.assertTrue('Operator not found:' in str(caught_warnings[0].message))

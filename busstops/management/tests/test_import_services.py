@@ -1,13 +1,11 @@
 import os
-import xml.etree.cElementTree as ET
 import zipfile
-import warnings
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
 from django.core.management import call_command
 from bustimes.management.commands import import_transxchange
-from ...models import Operator, DataSource, OperatorCode, Service, Region, StopPoint, ServiceLink
+from ...models import Operator, DataSource, OperatorCode, Service, Region, StopPoint
 
 
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
@@ -63,8 +61,7 @@ class ImportServicesTest(TestCase):
         cls.write_files_to_zipfile_and_import('S.zip', ['SVRABBN017.xml'])
 
         # simulate a North West zipfile:
-        cls.write_files_to_zipfile_and_import('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMN_2_2.xml',
-                                                         'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
+        cls.write_files_to_zipfile_and_import('NW.zip', ['NW_04_GMN_2_2.xml'])
 
         cls.sc_service = Service.objects.get(service_code='ABBN017')
 
@@ -113,52 +110,6 @@ class ImportServicesTest(TestCase):
     #     for inp, outp in testcases:
     #         self.assertEqual(self.command.sanitize_description(inp), outp)
 
-    def test_get_service_code(self):
-        self.assertEqual(import_transxchange.get_service_code('ea_21-2-_-y08-1.xml'),     'ea_21-2-_-y08')
-        self.assertEqual(import_transxchange.get_service_code('ea_21-27-D-y08-1.xml'),    'ea_21-27-D-y08')
-        self.assertEqual(import_transxchange.get_service_code('tfl_52-FL2-_-y08-1.xml'),  'tfl_52-FL2-_-y08')
-        self.assertEqual(import_transxchange.get_service_code('suf_56-FRY-1-y08-15.xml'), 'suf_56-FRY-1-y08')
-        self.assertIsNone(import_transxchange.get_service_code('NATX_330.xml'))
-        self.assertIsNone(import_transxchange.get_service_code('NE_130_PB2717_21A.xml'))
-        self.assertIsNone(import_transxchange.get_service_code('SVRABAN007-20150620-9.xml'))
-        self.assertIsNone(import_transxchange.get_service_code('SVRWLCO021-20121121-13693.xml'))
-        self.assertIsNone(import_transxchange.get_service_code('National Express_NX_atco_NATX_T61.xml'))
-        self.assertIsNone(import_transxchange.get_service_code('SnapshotNewportBus_TXC_2015714-0317_NTAO155.xml'))
-        self.assertIsNone(import_transxchange.get_service_code(
-            'ArrivaCymru51S-Rhyl-StBrigid`s-Denbigh1_TXC_2016108-0319_DGAO051S.xml')
-        )
-
-    def test_get_operator_name(self):
-        blue_triangle_element = ET.fromstring("""
-            <txc:Operator xmlns:txc='http://www.transxchange.org.uk/' id='OId_BE'>
-                <txc:OperatorCode>BE</txc:OperatorCode>
-                <txc:OperatorShortName>BLUE TRIANGLE BUSES LIM</txc:OperatorShortName>
-                <txc:OperatorNameOnLicence>BLUE TRIANGLE BUSES LIMITED</txc:OperatorNameOnLicence>
-                <txc:TradingName>BLUE TRIANGLE BUSES LIMITED</txc:TradingName>
-            </txc:Operator>
-        """)
-        self.assertEqual(import_transxchange.get_operator_name(blue_triangle_element), 'BLUE TRIANGLE BUSES LIMITED')
-
-    def test_get_operator(self):
-        element = ET.fromstring("""
-            <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_RRS">
-                <txc:OperatorCode>RRS</txc:OperatorCode>
-                <txc:OperatorShortName>Replacement Service</txc:OperatorShortName>
-                <txc:OperatorNameOnLicence>Replacement Service</txc:OperatorNameOnLicence>
-                <txc:TradingName>Replacement Service</txc:TradingName>
-            </txc:Operator>
-        """)
-        self.assertIsNone(self.command.get_operator(element))
-
-        with warnings.catch_warnings(record=True) as caught_warnings:
-            self.assertIsNone(self.command.get_operator(ET.fromstring("""
-                <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_RRS">
-                    <txc:OperatorCode>BEAN</txc:OperatorCode>
-                    <txc:TradingName>Bakers</txc:TradingName>
-                </txc:Operator>
-            """)))
-            self.assertTrue('Operator not found:' in str(caught_warnings[0].message))
-
     @classmethod
     def do_service(cls, filename, region_id):
         filename = '%s.xml' % filename
@@ -168,59 +119,6 @@ class ImportServicesTest(TestCase):
         path = os.path.join(FIXTURES_DIR, filename)
         with open(path) as xml_file:
             cls.command.handle_file(xml_file, filename)
-
-    def test_do_service_invalid(self):
-        """A file with some wrong references should be silently ignored"""
-        with self.assertLogs(level='ERROR'):
-            self.do_service('NW_05_PBT_6_1', 'GB')
-
-    def test_service_nw(self):
-        # 2
-        service = Service.objects.get(service_code='NW_04_GMN_2_1')
-        self.assertEqual(service.description, 'intu Trafford Centre - Eccles - Swinton - Bolton')
-
-        self.assertEqual(23, service.stopusage_set.all().count())
-
-    def test_service_nw_2(self):
-        # Stagecoach Manchester 237
-        service = Service.objects.get(service_code='NW_04_GMS_237_1')
-        duplicate = Service.objects.get(service_code='NW_04_GMS_237_2')
-        ServiceLink.objects.create(from_service=service, to_service=duplicate, how='parallel')
-
-        self.assertEqual(service.description, 'Glossop - Stalybridge - Ashton')
-
-        with freeze_time('1 September 2017'):
-            with self.assertNumQueries(12):
-                res = self.client.get(service.get_absolute_url() + '?date=2017-09-01')
-        self.assertEqual(str(res.context_data['timetable'].date), '2017-09-01')
-        self.assertContains(res, 'Timetable changes from Sunday 3 September 2017')
-
-        with freeze_time('1 October 2017'):
-            with self.assertNumQueries(15):
-                res = self.client.get(service.get_absolute_url())  # + '?date=2017-10-01')
-        self.assertContains(res, """
-                <thead>
-                    <tr>
-                        <td></td>
-                        <td>237</td>
-                        <td colspan="17"><a href="/services/237-glossop-stalybridge-ashton-2">237</a></td>
-                    </tr>
-                </thead>
-        """, html=True)
-        self.assertEqual(str(res.context_data['timetable'].date), '2017-10-01')
-        self.assertNotContains(res, 'Timetable changes from Sunday 3 September 2017')
-        self.assertEqual(18, len(res.context_data['timetable'].groupings[0].trips))
-
-        with freeze_time('1 October 2017'):
-            with self.assertNumQueries(15):
-                res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
-        self.assertNotContains(res, 'thead')
-        self.assertEqual(str(res.context_data['timetable'].date), '2017-10-03')
-        self.assertEqual(27, len(res.context_data['timetable'].groupings[0].trips))
-        self.assertEqual(30, len(res.context_data['timetable'].groupings[1].trips))
-
-        self.assertEqual(87, service.stopusage_set.all().count())
-        self.assertEqual(121, duplicate.stopusage_set.all().count())
 
     @freeze_time('22 January 2017')
     def test_do_service_m11a(self):
