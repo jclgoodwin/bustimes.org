@@ -118,7 +118,7 @@ class Livery(models.Model):
             return format_html(div + ' title="{}"></div>', self.name)
 
     def clean(self):
-        if self.colours:
+        if self.colours and self.colours != 'Other':
             try:
                 get_text_colour(self.colours)
             except ValueError as e:
