@@ -2,6 +2,7 @@ import os
 import zipfile
 import xml.etree.cElementTree as ET
 import warnings
+from tempfile import TemporaryDirectory
 from datetime import date
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
@@ -56,20 +57,7 @@ class ImportTransXChangeTest(TestCase):
                     ('639004552', 'The Griffin', 'adj', -2.4989239373, 53.7425523688),
                     ('049004705400', 'Kingston District Centre', 'o/s', 0, 0),
                     ('1000DDDV4248', 'Dinting Value Works', '', 0, 0),
-            )
-        )
-        StopPoint.objects.bulk_create(
-            StopPoint(atco_code, latlong=Point(0, 0), active=True) for atco_code in (
-                '1100DEB10368',
-                '1100DEC10085',
-                '1100DEC10720',
-                '1100DEB10354',
-                '2900A181',
-                '2900S367',
-                '2900N12106',
-                '0500HSTIV002',
-                '5230WDB25331',
-                '5230AWD71095',
+                    ('2900A181', '', '', 0, 0),
             )
         )
 
@@ -94,12 +82,12 @@ class ImportTransXChangeTest(TestCase):
 
     @classmethod
     def write_files_to_zipfile_and_import(cls, zipfile_name, filenames):
-        zipfile_path = os.path.join(FIXTURES_DIR, zipfile_name)
-        with zipfile.ZipFile(zipfile_path, 'a') as open_zipfile:
-            for filename in filenames:
-                cls.write_file_to_zipfile(open_zipfile, filename)
-        call_command('import_transxchange', zipfile_path)
-        os.remove(zipfile_path)
+        with TemporaryDirectory() as directory:
+            zipfile_path = os.path.join(directory, zipfile_name)
+            with zipfile.ZipFile(zipfile_path, 'a') as open_zipfile:
+                for filename in filenames:
+                    cls.write_file_to_zipfile(open_zipfile, filename)
+            call_command('import_transxchange', zipfile_path)
 
     @staticmethod
     def write_file_to_zipfile(open_zipfile, filename):
@@ -614,6 +602,88 @@ class ImportTransXChangeTest(TestCase):
             <li class="minor">
                 <a href="/stops/639004554">Witton Park (opp)</a>
             </li>
+        """, html=True)
+
+    @freeze_time('22 January 2017')
+    def test_megabus(self):
+        # simulate a National Coach Service Database zip file
+        with TemporaryDirectory() as directory:
+            zipfile_path = os.path.join(directory, 'NCSD.zip')
+            with zipfile.ZipFile(zipfile_path, 'a') as open_zipfile:
+                self.write_file_to_zipfile(open_zipfile, os.path.join('NCSD_TXC',
+                                           'Megabus_Megabus14032016 163144_MEGA_M11A.xml'))
+                self.write_file_to_zipfile(open_zipfile, os.path.join('NCSD_TXC',
+                                           'Megabus_Megabus14032016 163144_MEGA_M12.xml'))
+                self.write_file_to_zipfile(open_zipfile, 'IncludedServices.csv')
+            call_command('import_transxchange', zipfile_path)
+            # test re-importing a previously imported service again
+            call_command('import_transxchange', zipfile_path)
+
+        # M11A
+
+        res = self.client.get('/services/m11a-belgravia-liverpool?date=ceci n\'est pas une date')
+
+        service = res.context_data['object']
+
+        self.assertEqual(str(service), 'M11A - Belgravia - Liverpool')
+        self.assertTrue(service.show_timetable)
+        self.assertEqual(service.operator.first(), self.megabus)
+        self.assertEqual(
+            list(service.get_traveline_links()),
+            [('http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST' +
+             '?line=11M11&sup=A&net=nrc&project=y08&command=direct&outputFormat=0', 'Traveline')]
+        )
+
+        self.assertEqual(res.context_data['breadcrumb'], [self.gb, self.megabus])
+        self.assertTemplateUsed(res, 'busstops/service_detail.html')
+        self.assertContains(res, '<h1>M11A - Belgravia - Liverpool</h1>')
+        self.assertContains(res, '<option selected value="2017-01-22">Sunday 22 January 2017</option>')
+        self.assertContains(
+            res,
+            """
+            <td colspan="7">
+            Book at <a
+            href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=urlise&amp;p=https%3A%2F%2Fuk.megabus.com"
+            rel="nofollow">
+            megabus.com</a> or 0900 1600900 (65p/min + network charges)
+            </td>
+            """,
+            html=True
+        )
+        self.assertContains(res, '/js/timetable.min.js')
+
+        timetable = res.context_data['timetable']
+        self.assertFalse(timetable.groupings[0].has_minor_stops())
+        self.assertFalse(timetable.groupings[1].has_minor_stops())
+        self.assertEqual(str(timetable.groupings[1].rows[0].times), '[13:00, 15:00, 16:00, 16:30, 18:00, 20:00, 23:45]')
+
+        # should only be 6, despite running 'import_services' twice
+        self.assertEqual(6, service.stopusage_set.count())
+
+        # M12
+
+        service = Service.objects.get(service_code='M12_MEGA')
+
+        with freeze_time('1 January 2017'):
+            res = self.client.get(service.get_absolute_url())
+
+        self.assertContains(res, '<option selected value="2017-01-01">Sunday 1 January 2017</option>')
+
+        groupings = res.context_data['timetable'].groupings
+        self.assertEqual(len(groupings[0].rows), 15)
+        self.assertEqual(len(groupings[1].rows), 15)
+        self.assertContains(res, """
+            <tr>
+                <th><a href="/stops/450030220">Leeds City Centre Bus Stn</a></th>
+                <td></td><td>06:15</td><td rowspan="2">09:20</td><td rowspan="2">10:20</td><td></td><td></td><td></td>
+                <td></td><td></td><td rowspan="2"></td>
+            </tr>
+        """, html=True)
+        self.assertContains(res, """
+            <tr class="dep">
+                <th><a href="/stops/450030220">Leeds City Centre Bus Stn</a></th>
+                <td>02:45</td><td>06:20</td><td>11:30</td><td>12:30</td><td>13:45</td><td>16:20</td><td>18:40</td>
+            </tr>
         """, html=True)
 
     def test_get_service_code(self):
