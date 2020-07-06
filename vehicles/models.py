@@ -104,7 +104,7 @@ class Livery(models.Model):
                     # doesn't work with e.g. angles {a, b} where a = 360 - b
                 css = css.replace('left', 'right')
             return escape(css)
-        if self.colours:
+        if self.colours and self.colours != 'Other':
             return get_css(self.colours.split(), direction, self.horizontal, self.angle)
 
     def preview(self, name=False):
