@@ -208,7 +208,7 @@ class Command(ImportLiveVehiclesCommand):
 
         journey_code = mvj.find('siri:FramedVehicleJourneyRef/siri:DatedVehicleJourneyRef', NS)
         if operator_ref != 'GOCH':
-            if journey_code is not None:
+            if journey_code is not None and journey_code.text != 'UNKNOWN':
                 journey.code = journey_code.text
 
         departure_time = mvj.find('siri:OriginAimedDepartureTime', NS)
