@@ -53,9 +53,15 @@ class Command(BaseCommand):
                 vehicles = vehicles.filter(operator__parent='Stagecoach')
             else:
                 vehicles = vehicles.filter(operator__in=operator)
-        else:
+        elif operator:
+            defaults['operator'] = operator
             vehicles = vehicles.filter(operator=operator)
+        else:
+            vehicles = vehicles.filter(operator=None)
 
+        if not vehicle.isdigit() and len(vehicle) == 7:
+            defaults['code'] = vehicle
+            return vehicles.get_or_create(defaults, reg=vehicle)
         return vehicles.get_or_create(defaults, code=vehicle)
 
     def get_service(self, operator, item):
@@ -98,6 +104,8 @@ class Command(BaseCommand):
         if 'PublishedLineName' in item:
             line_name = item['PublishedLineName']
             journey_code = item['DatedVehicleJourneyRef']
+            if journey_code == 'UNKNOWN':
+                journey_code = ''
             departure_time = ciso8601.parse_datetime(item['OriginAimedDepartureTime'])
         else:
             line_name = ''
@@ -122,6 +130,9 @@ class Command(BaseCommand):
                     destination = Locality.objects.get(stoppoint=item['DestinationRef']).name
                 except Locality.DoesNotExist:
                     destination = html.unescape(item['DestinationName'])
+            else:
+                destination = ''
+            if line_name:
                 service = self.get_service(operator_options or operator, item)
             else:
                 service = None
@@ -137,6 +148,19 @@ class Command(BaseCommand):
                 destination=destination,
                 code=journey_code
             )
+            if not departure_time:
+                departure_time = ciso8601.parse_datetime(item['RecordedAtTime'])
+            journey_kwargs = {
+                'vehicle': vehicle,
+                'service': service,
+                'route_name': line_name,
+                'datetime': departure_time,
+                'destination': destination,
+                'code': journey_code
+            }
+            journey = VehicleJourney.objects.filter(**journey_kwargs).first()
+            if not journey:
+                journey = VehicleJourney.objects.create(**journey_kwargs, source=self.source)
             if journey.service and not journey.service.tracking:
                 journey.service.tracking = True
                 journey.service.save(update_fields=['tracking'])
