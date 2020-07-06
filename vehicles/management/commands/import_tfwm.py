@@ -48,7 +48,7 @@ class Command(ImportLiveVehiclesCommand):
             route = self.routes.get(item.vehicle.trip.route_id)
             if route:
                 operator = route['Operators']['Operator'][0]
-                if operator['Name'] == 'Midland Classic' or operator['Name'] == 'Diamond Bus':
+                if operator['Name'] == 'Diamond Bus':
                     return None, None
 
                 vehicle_code = vehicle_code[:-len(route['Name'])]
