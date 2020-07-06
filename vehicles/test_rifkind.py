@@ -27,7 +27,7 @@ class RifkindTest(TestCase):
             url = f'/vehicles.json?service={self.service.id}'
 
             with freeze_time('2019-11-17'):
-                with self.assertNumQueries(4):
+                with self.assertNumQueries(5):
                     self.client.get(url)
 
             with freeze_time('2019-11-17 12:20+00:00'):
