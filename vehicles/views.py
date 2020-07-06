@@ -3,7 +3,8 @@ import json
 from datetime import timedelta
 from requests import Session, exceptions
 from ciso8601 import parse_datetime
-from django.db.models import Exists, OuterRef, Prefetch, Subquery, Q
+from django.db.models import Exists, OuterRef, Prefetch, Subquery, Q, Value
+from django.db.models.functions import Replace
 from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.conf import settings
@@ -270,19 +271,22 @@ def vehicles_last_modified(request):
         operators = Operator.objects.filter(service=service_id)
         if not any(operator.id in {'CTNY', 'SCBD'} for operator in operators):
             codes = ServiceCode.objects.filter(scheme__in=schemes, service=service_id)
+            siri_sources = SIRISource.objects.filter(name=OuterRef('source_name'))
+            codes = codes.annotate(source_name=Replace('scheme', Value(' SIRI')), source=Exists(siri_sources))
+            codes = codes.filter(source=True)
 
             for code in codes:
                 try:
                     siri_one_shot(code, now)
                     break
-                except (SIRISource.DoesNotExist, Poorly, exceptions.RequestException):
+                except (Poorly, exceptions.RequestException):
                     continue
 
             if any(operator.id in {'KBUS', 'TBTN', 'NOCT'} for operator in operators):
                 rifkind(service_id)
 
         last_modified = cache.get(f'{service_id}:vehicles_last_modified')
-        if not last_modified or (now - last_modified).total_seconds() > 900:  # older than 15 minutes
+        if last_modified and (now - last_modified).total_seconds() > 900:  # older than 15 minutes
             request.nothing = True
         return last_modified
 
