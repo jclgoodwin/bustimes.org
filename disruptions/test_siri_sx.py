@@ -18,15 +18,37 @@ class SiriSXTest(TestCase):
         DataSource.objects.create(name='Transport for the North')
         DataSource.objects.create(name='Arriva')
 
+    def test_get(self):
+        self.assertFalse(self.client.get('/siri').content)
+
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
-    def test_subscribe(self):
-        with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
+    def test_subscribe_and_hearbeat(self):
+        self.assertIsNone(cache.get('Heartbeat:HAConTest'))
+        self.assertIsNone(cache.get('Heartbeat:TransportAPI'))
+
+        cassette = os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml')
+
+        with use_cassette(cassette, match_on=['body']):
             with self.assertRaises(ValueError):
                 call_command('subscribe')
 
-        cache.set('Heartbeat:HAConTest', True)
+        response = self.client.post('/siri', """<?xml version="1.0" ?>
+<Siri xmlns:ns1="http://www.siri.org.uk/siri" xmlns="http://www.siri.org.uk/siri" version="1.3">
+  <HeartbeatNotification>
+    <RequestTimestamp>2020-06-21T12:25:05+01:00</RequestTimestamp>
+    <ProducerRef>HAConTest</ProducerRef>
+    <MessageIdentifier>HAConToBusTimesET</MessageIdentifier>
+    <ValidUntil>2020-06-22T02:25:02+01:00</ValidUntil>
+    <ShortestPossibleCycle>PT10S</ShortestPossibleCycle>
+    <ServiceStartedTime>2020-06-21T02:17:36+01:00</ServiceStartedTime>
+  </HeartbeatNotification>
+</Siri>""", content_type='text/xml')
+        self.assertTrue(response.content)
+        self.assertTrue(cache.get('Heartbeat:HAConTest'))
+
         cache.set('Heartbeat:TransportAPI', True)
-        call_command('subscribe')
+        with use_cassette(cassette, match_on=['body']):
+            call_command('subscribe')
 
     def test_siri_sx(self):
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
