@@ -313,14 +313,9 @@ def vehicles_json(request):
     })
 
 
-def service_vehicles_history(request, slug=None, operator=None, route=None):
-    if slug:
-        service = get_object_or_404(Service, slug=slug)
-        journeys = service.vehiclejourney_set
-    else:
-        service = None
-        operator = get_object_or_404(Operator, slug=operator)
-        journeys = VehicleJourney.objects.filter(vehicle__operator=operator, route_name=route)
+def service_vehicles_history(request, slug):
+    service = get_object_or_404(Service, slug=slug)
+    journeys = service.vehiclejourney_set
     date = request.GET.get('date')
     if date:
         try:
@@ -352,13 +347,12 @@ def service_vehicles_history(request, slug=None, operator=None, route=None):
     except redis.exceptions.ConnectionError:
         pass
 
-    if slug:
-        operator = service.operator.select_related('region').first()
+    operator = service.operator.select_related('region').first()
     return render(request, 'vehicles/vehicle_detail.html', {
-        'breadcrumb': [operator, service or Vehicles(operator)],
+        'breadcrumb': [operator, service],
         'date': date,
         'dates': dates,
-        'object': service or route,
+        'object': service,
         'journeys': journeys,
     })
 
