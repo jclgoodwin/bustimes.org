@@ -54,6 +54,8 @@ def get_brightness(colour):
 
 
 def get_text_colour(colours):
+    if not colours or colours == 'Other':
+        return
     colours = colours.split()
     colours = [html5_parse_simple_color(colour) for colour in colours]
     brightnesses = [get_brightness(colour) for colour in colours]
@@ -118,13 +120,12 @@ class Livery(models.Model):
             return format_html(div + ' title="{}"></div>', self.name)
 
     def clean(self):
-        if self.colours and self.colours != 'Other':
-            try:
-                get_text_colour(self.colours)
-            except ValueError as e:
-                raise ValidationError({
-                    'colours': str(e)
-                })
+        try:
+            get_text_colour(self.colours)
+        except ValueError as e:
+            raise ValidationError({
+                'colours': str(e)
+            })
 
 
 class VehicleFeature(models.Model):
