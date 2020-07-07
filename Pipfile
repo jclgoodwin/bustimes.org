@@ -35,6 +35,7 @@ asgiref = "*"
 importlib-metadata = "*"
 polyline = "*"
 pid = "*"
+channels = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

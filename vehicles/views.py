@@ -83,6 +83,10 @@ def vehicles(request):
     })
 
 
+def map2(request):
+    return render(request, 'map2.html')
+
+
 def operator_vehicles(request, slug=None, parent=None):
     operators = Operator.objects.select_related('region')
     if slug:

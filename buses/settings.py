@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'pipeline',
     'antispam',
     'email_obfuscator',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +53,8 @@ if DEBUG and 'runserver' in sys.argv:
     ]
 
 ROOT_URLCONF = 'buses.urls'
+
+ASGI_APPLICATION = 'buses.routing.application'
 
 DATABASES = {
     'default': {

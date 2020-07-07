@@ -15,4 +15,5 @@ urlpatterns = [
     path('journeys/<int:pk>', views.JourneyDetailView.as_view(), name='journey_detail'),
     path('journeys/<int:pk>.json', views.journey_json),
     path('siri', views.siri),
+    path('map2', views.map2),
 ]

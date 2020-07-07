@@ -1,0 +1,35 @@
+{% extends 'page.html' %}
+
+{% block content %}
+
+<pre id="map"></pre>
+
+<script>
+(function () {
+    'use strict';
+
+    var foo = new WebSocket('ws://localhost:8000/ws/vehicle_positions/foo');
+
+    var map = document.getElementById('map');
+
+    foo.onopen = function() {
+        map.innerHTML += 'connected 🤗\n';
+        foo.send(JSON.stringify({
+            ymax: 51.97472977494965,
+            xmax: 3.8726806640625004,
+            ymin: 51.6521108615692,
+            xmin: -4.037475585937501
+        }));
+    };
+
+    foo.onclose = function() {
+        map.innerHTML += 'CONNECTION CLOSED 😓\n';
+    };
+
+    foo.onerror = function() {
+        map.innerHTML += 'ERROR ⚠️\n';
+    };
+})();
+</script>
+
+{% endblock %}
