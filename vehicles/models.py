@@ -1,5 +1,7 @@
 import re
 import redis
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from math import ceil
 from urllib.parse import quote
 from webcolors import html5_parse_simple_color
@@ -437,10 +439,17 @@ class VehicleLocation(models.Model):
 
     def redis_append(self):
         appendage = [self.datetime, tuple(self.latlong), self.heading, self.early]
+        appendage = json.dumps(appendage, cls=DjangoJSONEncoder)
         try:
-            r.rpush(f'journey{self.journey_id}', json.dumps(appendage, cls=DjangoJSONEncoder))
+            r.rpush(f'journey{self.journey_id}', appendage)
         except redis.exceptions.ConnectionError:
             pass
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)('vehicle_positions', {
+            'type': 'move_vehicle',
+            'text': appendage
+        })
 
     def get_json(self, extended=False):
         journey = self.journey

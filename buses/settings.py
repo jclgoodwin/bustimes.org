@@ -92,6 +92,16 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379')
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [CELERY_BROKER_URL],
+        }
+    }
+}
+
+
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 
