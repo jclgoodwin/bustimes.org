@@ -55,7 +55,7 @@ def handle_journey(element, source, when):
         if latest_location.journey.code == journey_ref:
             journey = latest_location.journey
             journey_created = False
-        elif latest_location.source_id != source.id and when - latest_location.datetime < fifteen_minutes:
+        elif latest_location.journey.source_id != source.id and when - latest_location.datetime < fifteen_minutes:
             return
     else:
         journey = None

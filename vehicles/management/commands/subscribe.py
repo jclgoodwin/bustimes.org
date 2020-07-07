@@ -1,4 +1,6 @@
 import requests
+import uuid
+from base64 import b64encode
 from django.core.cache import cache
 from datetime import timedelta
 from requests_toolbelt.adapters.source import SourceAddressAdapter
@@ -18,8 +20,18 @@ class Command(BaseCommand):
         headers = {
            'Content-Type': 'application/xml'
         }
-        xml = f'<?xml version="1.0" ?><Siri xmlns="http://www.siri.org.uk/siri" version="1.3">{xml}'
-        self.session.post(self.source.url, data=xml.replace('    ', ''), headers=headers, timeout=5)
+        if self.source.settings:
+            app_id = self.source.settings['app_id']
+            app_key = self.source.settings['app_key']
+            authorization = b64encode(f'{app_id}:{app_key}'.encode()).decode()
+            headers['Authorization'] = f'Basic {authorization}'
+            xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<Siri xmlns="http://www.siri.org.uk/siri" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0"
+xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.0/xsd/siri.xsd">{xml}</Siri>"""
+        else:
+            xml = f'<?xml version="1.0" ?><Siri xmlns="http://www.siri.org.uk/siri" version="1.3">{xml}</Siri>'
+        response = self.session.post(self.source.url, data=xml.replace('    ', ''), headers=headers) #, timeout=30)
+        print(response, response.content)
 
     def terminate_subscription(self, timestamp, requestor_ref):
         self.post(f"""
@@ -40,7 +52,7 @@ class Command(BaseCommand):
             </SubscriptionRequest>
         """)
 
-    def tfn(self, app_id, terminate):
+    def tfn(self, terminate):
         self.source = DataSource.objects.get(name='Transport for the North')
 
         if not terminate and cache.get('Heartbeat:TransportAPI'):
@@ -51,20 +63,23 @@ class Command(BaseCommand):
         self.session = requests.Session()
 
         timestamp = now.isoformat()
-        requestor_ref = app_id
+        requestor_ref = self.source.settings['app_id']
 
         # terminate any previous subscription just in case
-        self.terminate_subscription(timestamp, requestor_ref)
+        # self.terminate_subscription(timestamp, requestor_ref)
 
         termination_time = (now + timedelta(hours=24)).isoformat()
+        subscription_id = str(uuid.uuid4())
 
         self.subscribe(timestamp, requestor_ref, 'http://bustimes.org/siri', f"""
             <SituationExchangeSubscriptionRequest>
-                <SubscriptionIdentifier>{requestor_ref}</SubscriptionIdentifier>
+                <SubscriptionIdentifier>{subscription_id}</SubscriptionIdentifier>
                 <SubscriberRef>{requestor_ref}</SubscriberRef>
                 <InitialTerminationTime>{termination_time}</InitialTerminationTime>
                 <IncrementalUpdates>true</IncrementalUpdates>
-            </SituationExchangeRequest>
+                <SituationExchangeRequest version="2.0">
+                </SituationExchangeRequest>
+            </SituationExchangeSubscriptionRequest>
         """)
 
     def arriva(self, terminate):
@@ -85,7 +100,7 @@ class Command(BaseCommand):
         self.session.mount('http://', SourceAddressAdapter('10.16.0.6'))
 
         # terminate any previous subscription just in case
-        self.terminate_subscription()
+        self.terminate_subscription(timestamp, requestor_ref)
 
         termination_time = (now + timedelta(hours=24)).isoformat()
 
