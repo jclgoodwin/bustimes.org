@@ -5,12 +5,15 @@ from channels.generic.websocket import WebsocketConsumer
 from .models import VehicleLocation
 
 
+def get_vehicle_locations(bounds):
+    return VehicleLocation.objects.filter(latlong__within=bounds, current=True, latest_vehicle__isnull=False)
+
+
 class ChatConsumer(WebsocketConsumer):
     # @database_sync_to_async
-    def get_vehicle_locations(self):
-        return VehicleLocation.objects.filter(latlong__within=self.bounds)
 
     def connect(self):
+        self.bounds = None
         self.accept()
         print('connected')
 
@@ -19,11 +22,17 @@ class ChatConsumer(WebsocketConsumer):
         pass
 
     def receive(self, text_data):
-        bounds = json.loads(text_data)
-        self.bounds = Polygon.from_bbox(bounds)
-        print(self.bounds)
-        locations = self.get_vehicle_locations()
-        print(locations)
-        self.send(text_data=json.dumps(
-            [tuple(location.latlong) for location in locations]
-        ))
+        bounds = json.loads(text_data)  # (xmin, ymin, xmax, ymax)
+        bounds = Polygon.from_bbox(bounds)
+
+        # if not within previous bounds
+        if not (self.bounds and self.bounds.covers(bounds)):
+            locations = get_vehicle_locations(bounds)
+            self.send(text_data=json.dumps(
+                [{
+                    'i': location.id,
+                    'l': tuple(location.latlong)
+                } for location in locations]
+            ))
+
+        self.bounds = bounds

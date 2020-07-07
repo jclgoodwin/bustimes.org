@@ -1,40 +1,177 @@
 {% extends 'page.html' %}
 
+{% block title %}Map – bustimes.org{% endblock %}
+
+{% block head %}
+<style>
+.wide main {
+    bottom: 0;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 3.5em;
+    width: 100%;
+}
+
+body {
+    margin-bottom: 0;
+}
+
+.leaflet-popup-content a {
+    display: inline;
+}
+
+.leaflet-popup-content .stop {
+    display: block;
+}
+</style>
+{% endblock %}
+
+{% block cookies %}{% endblock %}
+
+{% block header %}
+   <header>
+        <a href="/" class="site-name">bustimes.org</a>
+    </header>
+{% endblock %}
+
+{% block breadcrumb %}{% endblock %}
+
 {% block content %}
 
-<pre id="map"></pre>
+<div id="hugemap"></div>
+
+{% endblock %}
+
+{% block footer %}
+
+{% load static %}
+{% load pipeline %}
+<link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
+<script src="{% static 'js/leaflet/leaflet.js' %}"></script>
 
 <script>
 (function () {
     'use strict';
 
-    var foo = new WebSocket('ws://' + window.location.host + '/ws/vehicle_positions/foo');
+    var map = L.map('hugemap');
 
-    var map = document.getElementById('map');
+    map.attributionControl.setPrefix('');
 
-    foo.onopen = function() {
-        map.innerHTML += 'connected 🤗\n';
-        foo.send(JSON.stringify([
-            -4.037475585937501,
-            51.6521108615692,
-            3.8726806640625004,
-            51.97472977494965
+    L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
+        attribution: '<a href="https://stadiamaps.com/">© Stadia Maps</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/about/">© OpenStreetMap contributors</a>',
+    }).addTo(map);
+
+    function getBusIcon(service, direction, livery, textColour) {
+        // if (direction !== null) {
+        //     var arrow = '<div class="arrow" style="' + getRotation(direction) + '"></div>';
+        //     if (direction < 180) {
+        //         direction -= 90;
+        //     } else {
+        //         direction -= 270;
+        //     }
+        // }
+        var className = 'bus';
+        if (livery) {
+            var style = 'background:' + livery;
+            className += ' coloured';
+            if (textColour) {
+                className += ' white-text';
+            }
+            style += ';';
+        } else {
+            style = '';
+        }
+        // style += getRotation(direction);
+        var html = '<div class="' + className + '" style="' + style + '">';
+        if (service) {
+            html += service.line_name;
+        }
+        html += '</div>';
+        // if (arrow) {
+        //     html += arrow;
+        // }
+        return L.divIcon({
+            iconSize: [20, 20],
+            html: html,
+            popupAnchor: [0, -5],
+        });
+    }
+
+    var vehicles = {};
+
+    function handleVehicle(item) {
+        var icon = getBusIcon(),
+            latLng = L.latLng(item.l[1], item.l[0]);
+
+        if (item.i in vehicles) {
+
+        } else {
+            vehicles[item.i] = L.marker(latLng, {
+                icon: getBusIcon(),
+                // zIndexOffset: 1000
+            }).addTo(map);
+        }
+    }
+
+    var socket;
+
+    function connect() {
+        socket = new WebSocket('ws://' + window.location.host + '/ws/vehicle_positions/foo');
+
+        socket.onopen = function() {
+            var bounds = map.getBounds();
+            socket.send(JSON.stringify([
+                bounds.getWest(),
+                bounds.getSouth(),
+                bounds.getEast(),
+                bounds.getNorth()
+            ]));
+        };
+
+        socket.onclose = function() {
+            window.setTimeout(connect, 1000);
+        };
+
+        socket.onerror = function(event) {
+            console.error(event);
+        };
+
+        socket.onmessage = function(event) {
+            var vehicles = JSON.parse(event.data);
+            for (var i = vehicles.length - 1; i >= 0; i--) {
+                handleVehicle(vehicles[i]);
+            }
+        };
+    }
+
+    if (!map._loaded) {
+        map.setView([51.9, 0.9], 9);
+    }
+
+    connect();
+
+    function handleMoveEnd() {
+        var bounds = map.getBounds();
+
+        for (var id in vehicles) {
+            var vehicle = vehicles[id];
+            if (!bounds.contains(vehicle.getLatLng())) {
+                map.removeLayer(vehicle);
+                delete vehicles[id];
+            }
+        }
+
+        socket.send(JSON.stringify([
+            bounds.getWest(),
+            bounds.getSouth(),
+            bounds.getEast(),
+            bounds.getNorth()
         ]));
-    };
+    }
 
-    foo.onclose = function() {
-        map.innerHTML += 'CONNECTION CLOSED 😓\n';
-    };
-
-    foo.onerror = function() {
-        map.innerHTML += 'ERROR ⚠️\n';
-    };
-
-    foo.onmessage = function(event) {
-        // debugger;
-        map.innerHTML += event.data;
-    };
-
+    map.on('moveend', handleMoveEnd);
 })();
 </script>
 
