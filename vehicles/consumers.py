@@ -16,8 +16,12 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
         async_to_sync(self.channel_layer.group_add)('vehicle_positions', self.channel_name)
         self.accept()
 
-    def move_vehicle(self, foo):
-        print(foo)
+    def move_vehicle(self, message):
+        self.send_json([{
+            'i': message['id'],
+            'l': message['latlong'],
+            'h': message['heading']
+        }])
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)('vehicle_positions', self.channel_name)

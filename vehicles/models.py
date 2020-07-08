@@ -439,16 +439,17 @@ class VehicleLocation(models.Model):
 
     def redis_append(self):
         appendage = [self.datetime, tuple(self.latlong), self.heading, self.early]
-        appendage = json.dumps(appendage, cls=DjangoJSONEncoder)
         try:
-            r.rpush(f'journey{self.journey_id}', appendage)
+            r.rpush(f'journey{self.journey_id}', json.dumps(appendage, cls=DjangoJSONEncoder))
         except redis.exceptions.ConnectionError:
             pass
 
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)('vehicle_positions', {
             'type': 'move_vehicle',
-            'text': appendage
+            'id': self.id,
+            'latlong': appendage[1],
+            'heading': appendage[2],
         })
 
     def get_json(self, extended=False):

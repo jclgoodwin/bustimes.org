@@ -50,12 +50,27 @@ body {
 {% load pipeline %}
 <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
 <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
-
+<script src="{% static 'js/leaflet.markercluster/leaflet.markercluster.js' %}"></script>
 <script>
 (function () {
     'use strict';
 
-    var map = L.map('hugemap');
+    var map = L.map('hugemap', {
+            minZoom: 8
+        }),
+        vehiclesGroup = L.layerGroup();
+        // vehiclesGroup = L.markerClusterGroup({
+        //     maxClusterRadius: 20,
+        //     disableClusteringAtZoom: 9,
+        //     iconCreateFunction: function(cluster) {
+        //         return cluster.getAllChildMarkers()[0].getIcon();
+        //     }
+        // });
+
+    // vehiclesGroup.on('clusterclick', function(event) {
+    //     event.layer.getAllChildMarkers()[0].fire('click');
+    // });
+    vehiclesGroup.addTo(map);
 
     map.attributionControl.setPrefix('');
 
@@ -63,15 +78,23 @@ body {
         attribution: '<a href="https://stadiamaps.com/">© Stadia Maps</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/about/">© OpenStreetMap contributors</a>',
     }).addTo(map);
 
-    function getBusIcon(service, direction, livery, textColour) {
-        // if (direction !== null) {
-        //     var arrow = '<div class="arrow" style="' + getRotation(direction) + '"></div>';
-        //     if (direction < 180) {
-        //         direction -= 90;
-        //     } else {
-        //         direction -= 270;
-        //     }
-        // }
+    function getRotation(direction) {
+        if (direction === null) {
+            return '';
+        }
+        var rotation = 'transform: rotate(' + direction + 'deg)';
+        return '-webkit-' + rotation + ';' + rotation;
+    }
+
+    function getBusIcon(service, heading, livery, textColour) {
+        if (heading !== null) {
+            var arrow = '<div class="arrow" style="' + getRotation(heading) + '"></div>';
+            if (heading < 180) {
+                heading -= 90;
+            } else {
+                heading -= 270;
+            }
+        }
         var className = 'bus';
         if (livery) {
             var style = 'background:' + livery;
@@ -83,15 +106,15 @@ body {
         } else {
             style = '';
         }
-        // style += getRotation(direction);
+        style += getRotation(heading);
         var html = '<div class="' + className + '" style="' + style + '">';
         if (service) {
             html += service.line_name;
         }
         html += '</div>';
-        // if (arrow) {
-        //     html += arrow;
-        // }
+        if (arrow) {
+            html += arrow;
+        }
         return L.divIcon({
             iconSize: [20, 20],
             html: html,
@@ -102,20 +125,22 @@ body {
     var vehicles = {};
 
     function handleVehicle(item) {
-        var icon = getBusIcon(),
+        var icon = getBusIcon(null, item.h),
             latLng = L.latLng(item.l[1], item.l[0]);
 
         if (item.i in vehicles) {
-
+            var marker = vehicles[item.i];
+            marker.setLatLng(latLng);
+            marker.setIcon(icon);
         } else {
             vehicles[item.i] = L.marker(latLng, {
-                icon: getBusIcon(),
-                // zIndexOffset: 1000
-            }).addTo(map);
+                icon: getBusIcon(null, item.h)
+            }).addTo(vehiclesGroup);
         }
     }
 
-    var socket;
+    var socket,
+        backoff = 1000;
 
     function connect() {
         socket = new WebSocket('ws://' + window.location.host + '/ws/vehicle_positions/foo');
@@ -128,10 +153,13 @@ body {
                 bounds.getEast(),
                 bounds.getNorth()
             ]));
+
+            backoff = 1000;
         };
 
         socket.onclose = function() {
-            window.setTimeout(connect, 1000);
+            window.setTimeout(connect, backoff);
+            backoff += 500;
         };
 
         socket.onerror = function(event) {
@@ -146,11 +174,52 @@ body {
         };
     }
 
+    var parts;
+    if (location.hash) {
+        parts = location.hash.substring(1).split('/');
+    } else if (localStorage && localStorage.vehicleMap) {
+        parts = localStorage.vehicleMap.split('/');
+    }
+    if (parts) {
+        if (parts.length === 1) {
+            parts = parts[0].split(',');
+        }
+        try {
+            if (parts.length === 3) {
+                map.setView([parts[1], parts[2]], parts[0]);
+            } else {
+                map.setView([parts[0], parts[1]], 15);
+            }
+        } catch (error) {
+            // oh well
+        }
+    }
+
     if (!map._loaded) {
         map.setView([51.9, 0.9], 9);
     }
 
     connect();
+
+    function updateLocation() {
+        var latLng = map.getCenter(),
+            string = map.getZoom() + '/' + Math.round(latLng.lat * 10000) / 10000 + '/' + Math.round(latLng.lng * 10000) / 10000;
+
+        if (history.replaceState) {
+            try {
+                history.replaceState(null, null, location.pathname + '#' + string);
+            } catch (error) {
+                // probably SecurityError (document is not fully active)
+            }
+        }
+        if (window.localStorage) {
+            try {
+                localStorage.setItem('vehicleMap', string);
+            } catch (error) {
+                // never mind
+            }
+        }
+    }
 
     function handleMoveEnd() {
         var bounds = map.getBounds();
@@ -169,6 +238,8 @@ body {
             bounds.getEast(),
             bounds.getNorth()
         ]));
+
+        updateLocation();
     }
 
     map.on('moveend', handleMoveEnd);
