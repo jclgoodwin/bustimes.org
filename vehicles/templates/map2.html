@@ -25,6 +25,46 @@ body {
 .leaflet-popup-content .stop {
     display: block;
 }
+
+#vehicle {
+    height: 0;
+    background: #fff;
+    border-radius: 1em 1em 0 0;
+    bottom: 0;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+    left: 0;
+    position: absolute;
+    right: 0;
+    transition: height .25s;
+    z-index: 1001;
+}
+
+#vehicle.active {
+    height: 100px;
+    padding: 1em;
+}
+
+@media (orientation: landscape) {
+    #vehicle {
+        border-radius: 1em 0 0 1em;
+        bottom: 0;
+        left: auto;
+        right: 0;
+        top: 0;
+        transition: width .25s;
+        width: 0;
+    }
+
+    #vehicle.active {
+        width: 300px;
+    }
+
+    .active + #hugemap {
+        margin-right: 300px;
+    }
+
+}
+
 </style>
 {% endblock %}
 
@@ -40,6 +80,7 @@ body {
 
 {% block content %}
 
+<div id="vehicle"></div>
 <div id="hugemap"></div>
 
 {% endblock %}
@@ -50,7 +91,8 @@ body {
 {% load pipeline %}
 <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
 <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
-<script src="{% static 'js/leaflet.markercluster/leaflet.markercluster.js' %}"></script>
+<script src="{% static 'js/reqwest.min.js' %}"></script>
+<!-- <script src="{% static 'js/leaflet.markercluster/leaflet.markercluster.js' %}"></script> -->
 <script>
 (function () {
     'use strict';
@@ -78,17 +120,21 @@ body {
         attribution: '<a href="https://stadiamaps.com/">© Stadia Maps</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/about/">© OpenStreetMap contributors</a>',
     }).addTo(map);
 
-    function getRotation(direction) {
-        if (direction === null) {
+    function getTransform(heading, scale) {
+        if (heading === null) {
             return '';
         }
-        var rotation = 'transform: rotate(' + direction + 'deg)';
+        var rotation = 'transform: rotate(' + heading + 'deg)';
+        if (scale) {
+            rotation += ' scale(1.5)';
+        }
         return '-webkit-' + rotation + ';' + rotation;
     }
 
-    function getBusIcon(service, heading, livery, textColour) {
+    function getBusIcon(item, big) {
+        var heading = item.h;
         if (heading !== null) {
-            var arrow = '<div class="arrow" style="' + getRotation(heading) + '"></div>';
+            var arrow = '<div class="arrow" style="' + getTransform(heading, big) + '"></div>';
             if (heading < 180) {
                 heading -= 90;
             } else {
@@ -96,20 +142,20 @@ body {
             }
         }
         var className = 'bus';
-        if (livery) {
-            var style = 'background:' + livery;
+        if (item.c) {
+            var style = 'background:' + item.c;
             className += ' coloured';
-            if (textColour) {
+            if (item.textColour) {
                 className += ' white-text';
             }
             style += ';';
         } else {
             style = '';
         }
-        style += getRotation(heading);
+        style += getTransform(heading, big);
         var html = '<div class="' + className + '" style="' + style + '">';
-        if (service) {
-            html += service.line_name;
+        if (item.r) {
+            html += item.r;
         }
         html += '</div>';
         if (arrow) {
@@ -122,20 +168,60 @@ body {
         });
     }
 
+    map.on('click', function(event) {
+        if (clickedMarker) {
+            // deselect previous clicked marker
+            var marker = vehicles[clickedMarker];
+            if (marker) {
+                marker.setIcon(getBusIcon(marker.options.item));
+            }
+        }
+        // var vehiclePane = document.getElementById('vehicle');
+        // vehiclePane.className = '';
+        // vehiclePane.innerHTML = '';
+    });
+
+    var clickedMarker;
+
+    function handleMarkerClick(event) {
+        if (clickedMarker) {
+            // deselect previous clicked marker
+            var marker = vehicles[clickedMarker];
+            if (marker) {
+                marker.setIcon(getBusIcon(marker.options.item));
+            }
+        }
+        marker = event.target;
+        var item = marker.options.item;
+        clickedMarker = item.i;
+        marker.setIcon(getBusIcon(item, true));
+        // var vehiclePane = document.getElementById('vehicle');
+        // vehiclePane.className = 'active';
+
+        reqwest(
+            '/vehicles/locations/' + clickedMarker,
+            function(data) {
+                marker.bindPopup(data).openPopup();
+            }
+        );
+    }
+
     var vehicles = {};
 
     function handleVehicle(item) {
-        var icon = getBusIcon(null, item.h),
+        var icon = getBusIcon(item, item.i === clickedMarker),
             latLng = L.latLng(item.l[1], item.l[0]);
 
         if (item.i in vehicles) {
             var marker = vehicles[item.i];
             marker.setLatLng(latLng);
             marker.setIcon(icon);
+            marker.options.item = item;
         } else {
             vehicles[item.i] = L.marker(latLng, {
-                icon: getBusIcon(null, item.h)
-            }).addTo(vehiclesGroup);
+                icon: icon,
+                item: item
+            }).addTo(vehiclesGroup).on('click', handleMarkerClick);
         }
     }
 
@@ -226,7 +312,7 @@ body {
 
         for (var id in vehicles) {
             var vehicle = vehicles[id];
-            if (!bounds.contains(vehicle.getLatLng())) {
+            if (id != clickedMarker && !bounds.contains(vehicle.getLatLng())) {
                 map.removeLayer(vehicle);
                 delete vehicles[id];
             }

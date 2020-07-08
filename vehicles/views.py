@@ -554,6 +554,13 @@ def journey_json(request, pk):
     } for location in locations], safe=False)
 
 
+def location_detail(request, location_id):
+    location = get_object_or_404(VehicleLocation, id=location_id)
+    return render(request, 'location_detail.html', {
+        'location': location
+    })
+
+
 def siri(request):
     body = request.body.decode()
     if not body:

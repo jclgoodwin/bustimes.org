@@ -6,7 +6,7 @@ from .models import VehicleLocation
 
 def get_vehicle_locations(bounds):
     locations = VehicleLocation.objects.filter(current=True, latest_vehicle__isnull=False)
-    locations = locations.filter(latlong__within=bounds)  # .select_related('journey__vehicle__livery')
+    locations = locations.filter(latlong__within=bounds)
     return locations
 
 
@@ -19,8 +19,11 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
     def move_vehicle(self, message):
         self.send_json([{
             'i': message['id'],
+            'd': message['datetime'],
             'l': message['latlong'],
-            'h': message['heading']
+            'h': message['heading'],
+            'r': message['route'],
+            'c': message['css']
         }])
 
     def disconnect(self, close_code):
@@ -32,12 +35,17 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
         # if not within previous bounds
         if not (self.bounds and self.bounds.covers(bounds)):
             locations = get_vehicle_locations(bounds)
-            self.send_json(
-                [{
-                    'i': location.id,
-                    'l': tuple(location.latlong),
-                    'h': location.heading
-                } for location in locations]
-            )
+            for chunk in (locations[i:i+50] for i in range(0, len(locations), 50)):
+                print
+                self.send_json(
+                    [{
+                        'i': location.id,
+                        'd': str(location.datetime),
+                        'l': tuple(location.latlong),
+                        'h': location.heading,
+                        'r': location.journey.route_name,
+                        'c': location.journey.vehicle.get_livery(location.heading)
+                    } for location in chunk]
+                )
 
         self.bounds = bounds
