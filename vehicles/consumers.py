@@ -34,13 +34,15 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
         async_to_sync(self.channel_layer.group_discard)('vehicle_positions', self.channel_name)
 
     def receive_json(self, content):
-        bounds = Polygon.from_bbox(content)
-
-        # if not within previous bounds
-        if not (self.bounds and self.bounds.covers(bounds)):
+        new_bounds = Polygon.from_bbox(content)
+        bounds = new_bounds
+        if self.bounds:
+            bounds -= self.bounds  # difference between new and old bounds
+        self.bounds = new_bounds
+        if bounds:  # if new bounds not completely covered by old bounds
             locations = get_vehicle_locations(bounds)
+            # send data in batches of 50
             for chunk in (locations[i:i+50] for i in range(0, len(locations), 50)):
-                print
                 self.send_json(
                     [{
                         'i': location.id,
@@ -51,5 +53,3 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
                         'c': location.journey.vehicle.get_livery(location.heading)
                     } for location in chunk]
                 )
-
-        self.bounds = bounds
