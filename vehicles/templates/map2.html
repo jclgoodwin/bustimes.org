@@ -26,7 +26,7 @@ body {
     display: block;
 }
 
-#vehicle {
+/*#vehicle {
     height: 0;
     background: #fff;
     border-radius: 1em 1em 0 0;
@@ -62,8 +62,8 @@ body {
     .active + #hugemap {
         margin-right: 300px;
     }
-
 }
+*/
 
 </style>
 {% endblock %}
@@ -131,10 +131,10 @@ body {
         return '-webkit-' + rotation + ';' + rotation;
     }
 
-    function getBusIcon(item, big) {
+    function getBusIcon(item, active) {
         var heading = item.h;
         if (heading !== null) {
-            var arrow = '<div class="arrow" style="' + getTransform(heading, big) + '"></div>';
+            var arrow = '<div class="arrow" style="' + getTransform(heading, active) + '"></div>';
             if (heading < 180) {
                 heading -= 90;
             } else {
@@ -142,6 +142,9 @@ body {
             }
         }
         var className = 'bus';
+        if (active) {
+            className += ' selected';
+        }
         if (item.c) {
             var style = 'background:' + item.c;
             className += ' coloured';
@@ -152,7 +155,7 @@ body {
         } else {
             style = '';
         }
-        style += getTransform(heading, big);
+        style += getTransform(heading, active);
         var html = '<div class="' + className + '" style="' + style + '">';
         if (item.r) {
             html += item.r;
@@ -198,10 +201,13 @@ body {
         // var vehiclePane = document.getElementById('vehicle');
         // vehiclePane.className = 'active';
 
+        var datetime = new Date(item.d);
+
         reqwest(
             '/vehicles/locations/' + clickedMarker,
-            function(data) {
-                marker.bindPopup(data).openPopup();
+            function(content) {
+                content += 'Updated at ' + datetime.toTimeString().slice(0, 5);
+                marker.bindPopup(content).openPopup();
             }
         );
     }
@@ -229,7 +235,7 @@ body {
         backoff = 1000;
 
     function connect() {
-        socket = new WebSocket('ws://' + window.location.host + '/ws/vehicle_positions/foo');
+        socket = new WebSocket('ws://' + window.location.host + '/ws/vehicle_positions');
 
         socket.onopen = function() {
             var bounds = map.getBounds();

@@ -448,7 +448,7 @@ class VehicleLocation(models.Model):
         async_to_sync(channel_layer.group_send)('vehicle_positions', {
             'type': 'move_vehicle',
             'id': self.id,
-            'datetime': appendage[0],
+            'datetime': str(appendage[0]),
             'latlong': appendage[1],
             'heading': appendage[2],
             'route': self.journey.route_name,

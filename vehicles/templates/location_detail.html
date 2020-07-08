@@ -11,4 +11,7 @@
     <br>
 {% endif %}
 
-<a href="{{ location.journey.vehicle.get_absolute_url }}">{{ location.journey.vehicle }}</a>
+{% if location.journey.vehicle %}
+    <a href="{{ location.journey.vehicle.get_absolute_url }}">{{ location.journey.vehicle }}</a>
+    <br>
+{% endif %}

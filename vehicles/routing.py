@@ -3,5 +3,5 @@ from vehicles import consumers
 
 
 websocket_urlpatterns = [
-    re_path(r'ws/vehicle_positions/(?P<service>\w+)$', consumers.VehicleMapConsumer),
+    re_path(r'ws/vehicle_positions$', consumers.VehicleMapConsumer),
 ]

@@ -1,11 +1,15 @@
+from datetime import timedelta
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.contrib.gis.geos import Polygon
+from django.utils import timezone
 from .models import VehicleLocation
 
 
 def get_vehicle_locations(bounds):
-    locations = VehicleLocation.objects.filter(current=True, latest_vehicle__isnull=False)
+    now = timezone.now()
+    fifteen_minutes_ago = now - timedelta(minutes=15)
+    locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, datetime__gte=fifteen_minutes_ago)
     locations = locations.filter(latlong__within=bounds)
     return locations
 
