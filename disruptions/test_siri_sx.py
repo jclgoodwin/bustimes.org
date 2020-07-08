@@ -15,7 +15,7 @@ class SiriSXTest(TestCase):
         operator = Operator.objects.create(region=region, id='HATT', name='Hattons of Huyton')
         service = Service.objects.create(line_name='156', service_code='156', date='2020-01-01', current=True)
         service.operator.add(operator)
-        DataSource.objects.create(name='Transport for the North')
+        DataSource.objects.create(name='Transport for the North', settings={'app_id': '', 'app_key': ''})
         DataSource.objects.create(name='Arriva')
 
     def test_get(self):

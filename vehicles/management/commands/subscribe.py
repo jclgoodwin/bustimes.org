@@ -123,6 +123,6 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
             """)
 
     def handle(self, *args, **options):
-        self.tfn('', options['terminate'])
+        self.tfn(options['terminate'])
 
         self.arriva(options['terminate'])
