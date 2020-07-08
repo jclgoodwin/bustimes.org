@@ -24,16 +24,15 @@ def handle_item(item, source):
 
     try:
         situation = Situation.objects.get(source=source, situation_number=situation_number)
+        if situation.data == xml:
+            return situation.id
         created = False
     except Situation.DoesNotExist:
-        situation = Situation(
-            source=source,
-            situation_number=situation_number,
-            data=xml,
-            created=created_time,
-            publication_window=get_period(item.find('PublicationWindow')),
-        )
-        created = True
+        situation = Situation(source=source, situation_number=situation_number)
+    situation.data = xml
+    situation.created = created_time
+    situation.publication_window = get_period(item.find('PublicationWindow'))
+    created = True
 
     reason = item.find('MiscellaneousReason')
     if reason is not None:

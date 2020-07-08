@@ -52,9 +52,11 @@ class SiriSXTest(TestCase):
 
     def test_siri_sx(self):
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
-            call_command('import_siri_sx', 'hen hom', 'roger poultry')
+            with self.assertNumQueries(75):
+                call_command('import_siri_sx', 'hen hom', 'roger poultry')
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
-            call_command('import_siri_sx', 'hen hom', 'roger poultry')
+            with self.assertNumQueries(11):
+                call_command('import_siri_sx', 'hen hom', 'roger poultry')
 
         situation = Situation.objects.first()
 
