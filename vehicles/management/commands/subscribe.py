@@ -12,11 +12,13 @@ from busstops.models import DataSource
 class Command(BaseCommand):
     consumer_address = 'http://68.183.252.225/siri'
 
-    def add_arguments(self, parser):
+    @staticmethod
+    def add_arguments(parser):
         parser.add_argument(
             '--terminate',
             action='store_true'
         )
+        parser.add_argument('source', type=str)
 
     def post(self, xml):
         headers = {
@@ -70,6 +72,9 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
         # terminate any previous subscription just in case
         self.terminate_subscription(timestamp, requestor_ref)
 
+        if terminate:
+            return
+
         termination_time = (now + timedelta(hours=24)).isoformat()
         subscription_id = str(uuid.uuid4())
 
@@ -104,10 +109,10 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
         # terminate any previous subscription just in case
         self.terminate_subscription(timestamp, requestor_ref)
 
-        termination_time = (now + timedelta(hours=24)).isoformat()
-
         # (re)subscribe
         if not terminate:
+            termination_time = (now + timedelta(hours=24)).isoformat()
+
             self.subscribe(timestamp, requestor_ref, f"""
                 <SubscriptionContext>
                     <HeartbeatInterval>PT2M</HeartbeatInterval>
@@ -124,7 +129,8 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
                 </EstimatedTimetableSubscriptionRequest>
             """)
 
-    def handle(self, *args, **options):
-        self.tfn(options['terminate'])
-
-        self.arriva(options['terminate'])
+    def handle(self, source, **options):
+        if source == 'tfn':
+            self.tfn(options['terminate'])
+        elif source == 'arriva':
+            self.arriva(options['terminate'])
