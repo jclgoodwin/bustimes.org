@@ -10,6 +10,8 @@ from busstops.models import DataSource
 
 
 class Command(BaseCommand):
+    consumer_address = 'http://68.183.252.225/siri'
+
     def add_arguments(self, parser):
         parser.add_argument(
             '--terminate',
@@ -42,12 +44,12 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
             </TerminateSubscriptionRequest>
         """)
 
-    def subscribe(self, timestamp, requestor_ref, consumer_address, xml):
+    def subscribe(self, timestamp, requestor_ref, xml):
         self.post(f"""
             <SubscriptionRequest>
                 <RequestTimestamp>{timestamp}</RequestTimestamp>
                 <RequestorRef>{requestor_ref}</RequestorRef>
-                <ConsumerAddress>{consumer_address}</ConsumerAddress>
+                <ConsumerAddress>{self.consumer_address}</ConsumerAddress>
                 {xml}
             </SubscriptionRequest>
         """)
@@ -66,12 +68,12 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
         requestor_ref = self.source.settings['app_id']
 
         # terminate any previous subscription just in case
-        # self.terminate_subscription(timestamp, requestor_ref)
+        self.terminate_subscription(timestamp, requestor_ref)
 
         termination_time = (now + timedelta(hours=24)).isoformat()
         subscription_id = str(uuid.uuid4())
 
-        self.subscribe(timestamp, requestor_ref, 'http://bustimes.org/siri', f"""
+        self.subscribe(timestamp, requestor_ref, f"""
             <SituationExchangeSubscriptionRequest>
                 <SubscriptionIdentifier>{subscription_id}</SubscriptionIdentifier>
                 <SubscriberRef>{requestor_ref}</SubscriberRef>
@@ -106,7 +108,7 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
 
         # (re)subscribe
         if not terminate:
-            self.subscribe(timestamp, requestor_ref, 'http://68.183.252.225/siri', f"""
+            self.subscribe(timestamp, requestor_ref, f"""
                 <SubscriptionContext>
                     <HeartbeatInterval>PT2M</HeartbeatInterval>
                 </SubscriptionContext>
