@@ -211,7 +211,7 @@ class Vehicle(models.Model):
             return self.livery.get_css(direction=direction)
         else:
             colours = self.colours
-        if colours:
+        if colours and self.colours != 'Other':
             colours = colours.split()
             return get_css(colours, direction, self.livery and self.livery.horizontal)
 

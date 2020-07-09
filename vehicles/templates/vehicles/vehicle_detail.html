@@ -15,7 +15,7 @@
         <p>{{ vehicle.vehicle_type }}</p>
     {% endif %}
 
-    {% if vehicle.colours or vehicle.livery %}
+    {% if vehicle.colours and vehicle.colours != 'Other' or vehicle.livery %}
         <div class="livery" style="background:{{ vehicle.get_livery }}"></div>
         {% if vehicle.livery %}{{ vehicle.livery }}{% endif %}
     {% endif %}

@@ -121,7 +121,7 @@
                     {% endif %}
                 </td>
                 <td>{{ vehicle.vehicle_type|default:"" }}</td>
-                <td{% if vehicle.colours or vehicle.livery %} class="livery-cell">
+                <td{% if vehicle.colours and vehicle.colours != 'Other' or vehicle.livery %} class="livery-cell">
                         <div class="livery" style="background:{{ vehicle.get_livery }}"></div>
                         {% if vehicle.livery %}
                             {{ vehicle.livery }}
