@@ -32,6 +32,7 @@ def handle_item(item, source):
     situation.data = xml
     situation.created = created_time
     situation.publication_window = get_period(item.find('PublicationWindow'))
+    situation.current = item.find('Progress').text == 'open'
     created = True
 
     reason = item.find('MiscellaneousReason')
