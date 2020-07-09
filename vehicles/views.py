@@ -69,6 +69,8 @@ def get_vehicle_edit(vehicle, fields):
             edit.livery_id = fields['colours']
         elif fields['colours']:
             edit.colours = fields['colours']
+    if fields.get('other_colour'):
+        edit.colours = fields['other_colour']
 
     edit.withdrawn = fields.get('withdrawn')
 
@@ -142,9 +144,12 @@ def operator_vehicles(request, slug=None, parent=None):
         else:
             form = EditVehiclesForm(initial=initial, operator=operator)
 
-    if not form:
+        depots = vehicles.order_by().distinct('data__Depot').values_list('data__Depot', flat=True)
+
+    else:
         pending_edits = VehicleEdit.objects.filter(approved=None, vehicle=OuterRef('id'))
         vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
+        depots = None
 
     if operator.name == 'National Express':
         vehicles = sorted(vehicles, key=lambda v: v.notes)
@@ -180,6 +185,7 @@ def operator_vehicles(request, slug=None, parent=None):
         'moved': moved,
         'moved_to': moved and moved_to,
         'form': form,
+        'depots': depots
     })
 
     if form and form.is_valid() and form.cleaned_data['user'] != request.COOKIES.get('username', ''):
@@ -469,6 +475,11 @@ def edit_vehicle(request, vehicle_id):
         form = EditVehicleForm(initial=initial, operator=vehicle.operator, vehicle=vehicle)
 
     if vehicle.operator:
+        depots = vehicle.operator.vehicle_set.distinct('data__Depot').values_list('data__Depot', flat=True)
+    else:
+        depots = ()
+
+    if vehicle.operator:
         breadcrumb = [vehicle.operator, Vehicles(vehicle.operator), vehicle]
     else:
         breadcrumb = [vehicle]
@@ -476,6 +487,7 @@ def edit_vehicle(request, vehicle_id):
     response = render(request, 'edit_vehicle.html', {
         'breadcrumb': breadcrumb,
         'form': form,
+        'depots': depots,
         'object': vehicle,
         'vehicle': vehicle,
         'previous': vehicle.get_previous(),

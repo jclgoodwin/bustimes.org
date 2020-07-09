@@ -157,6 +157,10 @@
 
     {{ form.as_p }}
 
+    <datalist id="depots">
+        {% for depot in depots %}{% if depot %}<option value="{{ depot }}">{% endif %}{% endfor %}
+    </datalist>
+
     <input type="submit" value="Save changes">
 
     </form>
@@ -171,10 +175,12 @@
         <script src="{% static 'js/accessible-autocomplete/accessible-autocomplete.min.js' %}"></script>
         <script>
             window.addEventListener('load', function() {
+                // vehicle
                 accessibleAutocomplete.enhanceSelectElement({
                     selectElement: document.getElementById('id_vehicle_type')
                 });
 
+                // checkbox ranges of rows
                 var lastInput,
                     checkboxes = document.querySelectorAll('.fleet input');
 
@@ -201,6 +207,17 @@
                         checkbox.parentNode.parentNode.style.background = '#ef9';
                     }
                 });
+
+                // other colour
+                var otherCheckbox = document.querySelector('#id_colours [value="Other"]');
+                function toggleOtherColour() {
+                    var display = otherCheckbox.checked ? '' : 'none';
+                    document.getElementById('id_other_colour').parentNode.style.display = display;
+                }
+                document.querySelectorAll('#id_colours [type="radio"]').forEach(function(radio) {
+                    radio.addEventListener('change', toggleOtherColour);
+                });
+                toggleOtherColour();
             });
         </script>
     {% endif %}

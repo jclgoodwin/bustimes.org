@@ -23,12 +23,14 @@ class EditVehiclesForm(forms.Form):
     operator = forms.ModelChoiceField(queryset=None, label='Operator', empty_label='')
     vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False, empty_label='')
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
+    other_colour = forms.CharField(widget=forms.TextInput(attrs={"type": "color"}), required=False)
     branding = forms.CharField(required=False, max_length=255)
     notes = forms.CharField(required=False, max_length=255)
     features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features',
                                               widget=forms.CheckboxSelectMultiple, required=False)
-    depot = forms.CharField(help_text="""Probably best left blank, especially if there\'s only one depot, or buses regularly move
-                                         between depots""", required=False, max_length=255)
+    depot = forms.CharField(help_text="Best left blank if this changes frequently",
+                            required=False, max_length=255,
+                            widget=forms.TextInput(attrs={"list": "depots"}))
     withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False)
     user = forms.CharField(label='Your name', help_text='If left blank, your IP address will be logged instead',
                            required=False, max_length=255)
@@ -69,7 +71,7 @@ class EditVehicleForm(EditVehiclesForm):
     url = forms.URLField(label='URL', help_text='Link to a web page or photo (helpful for verifying recent repaints)',
                          required=False, max_length=255)
     field_order = ['operator', 'fleet_number', 'reg', 'vehicle_type',
-                   'colours', 'branding', 'name', 'previous_reg', 'depot',
+                   'colours', 'other_colour', 'branding', 'name', 'previous_reg', 'depot',
                    'notes', 'url']
 
     def __init__(self, *args, **kwargs):
