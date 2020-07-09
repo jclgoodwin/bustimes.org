@@ -8,7 +8,6 @@ from django.db.models import Exists, OuterRef, Prefetch, Subquery, Q, Value
 from django.db.models.functions import Replace
 from django.core.cache import cache
 from django.core.paginator import Paginator
-from django.core.mail import EmailMessage
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse, Http404
@@ -24,7 +23,7 @@ from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, Vehic
 from .forms import EditVehiclesForm, EditVehicleForm
 from .management.commands import import_sirivm
 from .rifkind import rifkind
-from .tasks import handle_siri_vm, handle_siri_et
+from .tasks import handle_siri_vm, handle_siri_et, handle_siri_sx
 
 
 session = Session()
@@ -551,13 +550,7 @@ def siri(request):
     elif 'VehicleLocation' in body:
         handle_siri_vm.delay(body)
     elif 'SituationElement' in body:
-        message = EmailMessage(
-            'SIRI-SX',
-            body,
-            'contactform@bustimes.org>',
-            ['contact@bustimes.org'],
-        )
-        message.send()
+        handle_siri_sx.delay(body)
     else:
         handle_siri_et.delay(body)
     return HttpResponse(f"""<?xml version="1.0" ?>

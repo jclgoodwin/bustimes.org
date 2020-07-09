@@ -133,35 +133,5 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
 
         Situation.objects.filter(source=source, current=True).exclude(id__in=situations).update(current=False)
 
-    # def subscribe(self):
-    #     subscription_id = str(uuid.uuid4())
-    #     print(subscription_id)
-    #     callback_url = 'http://bustimes.org/siri'
-    #     foo = requests.post(
-    #         'http://dm-api-tfn.transportapi.com/subscriptions.xml',
-    #         headers={
-    #             'subscription_id': subscription_id,
-    #             'callback_url': callback_url
-    #         }
-    #     )
-    #     print(foo)
-    #     print(foo.text)
-    #     print(foo.headers)
-
-    # def unsubscribe(self):
-    #     subscription_id = 'd2e75ab4-9389-4682-9740-bd6f5b985268'
-    #     foo = requests.delete(
-    #         'http://dm-api-tfn.transportapi.com/subscriptions.xml',
-    #         headers={
-    #             'subscription_id': subscription_id,
-    #         }
-    #     )
-    #     print(foo)
-    #     print(foo.text)
-    #     print(foo.headers)
-
     def handle(self, app_id, app_key, *args, **options):
         self.fetch(app_id, app_key)
-
-        # self.subscribe()
-        # self.unsubscribe()

@@ -4,6 +4,7 @@ from ciso8601 import parse_datetime
 from celery import shared_task
 from busstops.models import DataSource, ServiceCode, Operator
 from django.db.models import Q
+from disruptions.management.commands.import_siri_sx import handle_item as siri_sx
 from .management.commands import import_sirivm
 from .models import JourneyCode, Vehicle, VehicleJourney
 from .siri_et import siri_et
@@ -25,6 +26,18 @@ def handle_siri_vm(request_body):
         if element.tag[-15:] == 'VehicleActivity':
             command.handle_item(element, None)
             element.clear()
+
+
+@shared_task
+def handle_siri_sx(request_body):
+    source = DataSource.objects.get(name='Transport for the North')
+    iterator = ET.iterparse(StringIO(request_body))
+    for _, element in iterator:
+        if element.tag[:29] == '{http://www.siri.org.uk/siri}':
+            element.tag = element.tag[29:]
+            if element.tag == 'PtSituationElement':
+                siri_sx(element, source)
+                element.clear()
 
 
 @shared_task
