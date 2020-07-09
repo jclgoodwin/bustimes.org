@@ -472,43 +472,7 @@
         document.addEventListener('visibilitychange', handleVisibilityChange);
     }
 
-    var locateButton = L.control({
-        position: 'topleft'
-    });
-
-    locateButton.onAdd = function(map) {
-        var div = document.createElement('div');
-        div.className = 'leaflet-bar';
-        var a = document.createElement('a');
-        a.href = '#';
-        a.title = 'Find my location';
-        a.setAttribute('role', 'button');
-        var img = document.createElement('img');
-        img.alt = 'Locate';
-        img.width = 16;
-        img.height = 16;
-        img.src = '/static/locate.png';
-        a.appendChild(img);
-        div.appendChild(a);
-
-        function locate() {
-            img.className = 'working';
-            map.locate({setView: true});
-            return false;
-        }
-
-        function located() {
-            img.className = '';
-        }
-        a.onclick = locate;
-
-        map.on('locationfound', located);
-        map.on('locationerror', located);
-
-        return div;
-    };
-
-    locateButton.addTo(map);
+    L.control.locate().addTo(map);
 
     load(map, statusBar, true);
 })();
