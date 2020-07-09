@@ -101,7 +101,8 @@ body {
     var map = L.map('hugemap', {
             minZoom: 8
         }),
-        vehiclesGroup = L.layerGroup();
+        vehiclesGroup = L.layerGroup(),
+        stopsGroup = L.layerGroup();
         // vehiclesGroup = L.markerClusterGroup({
         //     maxClusterRadius: 20,
         //     disableClusteringAtZoom: 9,
@@ -116,6 +117,71 @@ body {
     vehiclesGroup.addTo(map);
 
     L.control.locate().addTo(map);
+
+    L.control.layers({}, {
+        'Show stops': stopsGroup
+    }).addTo(map);
+
+
+    var lastStopsReq,
+        highWater,
+        first = true,
+        showStops = false;
+
+    stopsGroup.on('add', function(e) {
+        if (map.getZoom() < 15) {
+            map.setZoom(15);
+        }
+        showStops = true;
+        loadStops();
+    }).on('remove', function(e) {
+        showStops = false;
+    });
+
+    function loadStops() {
+        var bounds = map.getBounds();
+        var params = '?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest();
+
+        if (lastStopsReq) {
+            lastStopsReq.abort();
+        }
+        // if (map.getZoom() < 15) {
+        //     // zoomed out too far to show stops
+        //     stopsGroup.clearLayers();
+        //     oldStops = {};
+        //     highWater = null;
+        //         first = false;
+        //         return;
+        //     }
+        //     if (highWater && highWater.contains(bounds)) {
+        //         return;
+        //     }
+        lastStopsReq = reqwest('/stops.json' + params, function(data) {
+            highWater = bounds;
+            if (data && data.features) {
+                for (var i = data.features.length - 1; i >= 0; i -= 1) {
+                    handleStop(data.features[i]);
+                }
+                for (var stop in oldStops) {
+                    if (!(stop in newStops)) {
+                        stopsGroup.removeLayer(oldStops[stop]);
+                    }
+                }
+                if (first) {
+                    if (document.referrer && document.referrer.indexOf('/stops/') > -1) {
+                        stop = '/stops/' + document.referrer.split('/stops/')[1];
+                        stop = newStops[stop];
+                        if (stop) {
+                            stop.openPopup();
+                        }
+                    }
+                    first = false;
+                }
+                oldStops = newStops;
+                newStops = {};
+            }
+        });
+    }
 
     map.attributionControl.setPrefix('');
 
@@ -327,6 +393,14 @@ body {
             }
         }
 
+        if (showStops) {
+            if (map.getZoom() < 15) {
+                stopsGroup.remove();
+            } else {
+                loadStops();
+            }
+        }
+
         socket.send(JSON.stringify([
             bounds.getWest(),
             bounds.getSouth(),
@@ -338,6 +412,61 @@ body {
     }
 
     map.on('moveend', handleMoveEnd);
+
+    function getStopIcon(indicator, bearing) {
+        var html = '';
+        if (indicator) {
+            var parts = indicator.split(' ');
+            if (parts.length === 2) {
+                var firstPart = parts[0].toLowerCase();
+                if (firstPart === 'stop' || firstPart === 'bay' || firstPart === 'stand' || firstPart === 'stance' || firstPart === 'gate') {
+                    html = parts[1];
+                }
+            } else if (parts.length === 0 || indicator.length < 3) {
+                html = indicator;
+            }
+        }
+        var className = 'stop stop-' + html.length;
+        if (bearing !== null) {
+            html += '<div class="stop-arrow" style="' + getTransform(bearing + 45) + '"></div>';
+        } else {
+            html += '<div class="stop-arrow no-direction"></div>';
+        }
+        return L.divIcon({
+            iconSize: [16, 16],
+            html: html,
+            popupAnchor: [0, -4],
+            className: className
+        });
+    }
+
+    var oldStops = {},
+        newStops = {};
+
+    function handleStop(data) {
+        if (data.properties.url in oldStops) {
+            var marker = oldStops[data.properties.url];
+            newStops[data.properties.url] = marker;
+            return;
+        }
+
+        var a = document.createElement('a');
+        marker = L.marker(L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]), {
+            icon: getStopIcon(data.properties.indicator, data.properties.bearing)
+        });
+
+        a.innerHTML = '<span>' + data.properties.name + '</span><small>' + data.properties.services.join('</small><small>') + '</small>';
+        a.href = data.properties.url;
+        a.className = 'stop';
+
+        marker.bindPopup(a.outerHTML, {
+            autoPan: false
+        });
+
+        marker.addTo(stopsGroup);
+        newStops[data.properties.url] = marker;
+    }
+
 })();
 </script>
 
