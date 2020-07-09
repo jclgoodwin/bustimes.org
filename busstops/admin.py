@@ -183,7 +183,7 @@ class SIRISourceAdmin(admin.ModelAdmin):
 
     @staticmethod
     def areas(obj):
-        return ', '.join('{} ({})'.format(area, area.atco_code) for area in obj.admin_areas.all())
+        return ', '.join(f'{area} ({area.atco_code})' for area in obj.admin_areas.all())
 
 
 admin.site.register(Region)

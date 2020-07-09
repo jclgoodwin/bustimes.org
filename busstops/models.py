@@ -146,7 +146,7 @@ class Locality(SearchMixin, models.Model):
     def get_qualified_name(self):
         """Return the name and qualifier (e.g. 'Reepham, Lincs')"""
         if self.qualifier_name:
-            return "%s, %s" % (self.name, self.qualifier_name)
+            return f'{self.name}, {self.qualifier_name}'
         return str(self)
 
     def get_absolute_url(self):
@@ -377,7 +377,7 @@ class StopPoint(models.Model):
                     return '%s, %s %s' % (locality_name, indicator, self.common_name)
                 return '%s %s' % (locality_name, self)
         elif self.town not in self.common_name:
-            return '{} {}'.format(self.town, self)
+            return f'{self.town} {self}'
         return str(self)
 
     def get_long_name(self):
@@ -613,8 +613,8 @@ class Service(SearchMixin, models.Model):
 
     def get_a_mode(self):
         if self.mode and self.mode[0].lower() in 'aeiou':
-            return 'An %s' % self.mode  # 'An underground service'
-        return 'A %s' % self.mode  # 'A bus service' or 'A service'
+            return f'An {self.mode}'  # 'An underground service'
+        return f'A {self.mode}'  # 'A bus service' or 'A service'
 
     def get_absolute_url(self):
         return reverse('service_detail', args=(self.slug,))
@@ -796,7 +796,7 @@ class ServiceCode(models.Model):
         unique_together = ('service', 'scheme', 'code')
 
     def __str__(self):
-        return '{} {}'.format(self.scheme, self.code)
+        return f'{self.scheme} {self.code}'
 
 
 class ServiceLink(models.Model):
@@ -851,7 +851,7 @@ class SIRISource(models.Model):
         return self.name
 
     def get_poorly_key(self):
-        return '{}:{}:poorly'.format(self.url, self.requestor_ref)
+        return f'{self.url}:{self.requestor_ref}:poorly'
 
     def get_poorly(self):
         return cache.get(self.get_poorly_key())

@@ -285,7 +285,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         context['stops'] = context['stops'].prefetch_related(prefetch_stop_services).defer('osm')
 
         if not (context['localities'] or context['stops']):
-            raise Http404('Sorry, it looks like no services currently stop at {}'.format(self.object))
+            raise Http404(f'Sorry, it looks like no services currently stop at {self.object}')
         elif context['stops']:
             context['services'] = sorted(Service.objects.filter(
                 stops__locality=self.object,
@@ -320,7 +320,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         context['services'] = sorted(services.prefetch_related('operator'), key=Service.get_order)
 
         if not (self.object.active or context['services']):
-            raise Http404('Sorry, it looks like no services currently stop at {}'.format(self.object))
+            raise Http404(f'Sorry, it looks like no services currently stop at {self.object}')
 
         departures = cache.get(self.object.atco_code)
         if not departures:

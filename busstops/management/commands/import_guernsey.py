@@ -33,7 +33,7 @@ def get_stop_defaults(name, region):
 
 
 def import_stops(region):
-    with open(os.path.join(settings.DATA_DIR, '{}.json'.format(region.name.lower()))) as open_file:
+    with open(os.path.join(settings.DATA_DIR, f'{region.name.lower()}.json')) as open_file:
         records = json.load(open_file)
     for zoom_level in records:
         for place in zoom_level['places']:
@@ -51,7 +51,7 @@ def import_stops(region):
                 'active': True,
             }
             defaults.update(get_stop_defaults(name, region))
-            StopPoint.objects.update_or_create(defaults, atco_code='{}-{}'.format(region.id.lower(), stop_code))
+            StopPoint.objects.update_or_create(defaults, atco_code=f'{region.id.lower()}-{stop_code}')
 
 
 def import_routes(region, operator, url, session):
@@ -79,13 +79,13 @@ def import_routes(region, operator, url, session):
 
 def import_route_stops(region, service, slug, url, session):
     StopUsage.objects.filter(service=service).delete()
-    res = session.get('{}/{}/FALSE'.format(url, slug))
+    res = session.get(f'{url}/{slug}/FALSE')
     soup = BeautifulSoup(res.text, 'lxml')
     for table in soup.find_all('table', class_='headers'):
         i = 0
         for tr in table.find_all('tr'):
             stop_code = int(BeautifulSoup(tr.th.previous_element.previous_element, 'lxml').text.strip())
-            atco_code = '{}-{}'.format(region.id.lower(), stop_code)
+            atco_code = f'{region.id.lower()}-{stop_code}'
             if not StopPoint.objects.filter(atco_code=atco_code).exists():
                 defaults = {
                     'naptan_code': stop_code,
@@ -112,14 +112,14 @@ def import_route_stops(region, service, slug, url, session):
             )
             i += 1
     # mark major stops as major
-    res = session.get('{}/{}/TRUE'.format(url, slug))
+    res = session.get(f'{url}/{slug}/TRUE')
     soup = BeautifulSoup(res.text, 'lxml')
     stop_ids = set()
     for table in soup.find_all('table', class_='headers'):
         i = 0
         for tr in table.find_all('tr'):
             stop_code = int(BeautifulSoup(tr.th.previous_element.previous_element, 'lxml').text.strip())
-            stop_ids.add('{}-{}'.format(region.id.lower(), stop_code))
+            stop_ids.add(f'{region.id.lower()}-{stop_code}')
     StopUsage.objects.filter(service=service, stop_id__in=stop_ids).update(timing_status='PTP')
 
 

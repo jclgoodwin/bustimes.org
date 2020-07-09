@@ -16,10 +16,10 @@ class Command(BaseCommand):
             if len(regions) == 1 or regions[0].services >= regions[1].services * 2:
                 operator.region = regions[0]
                 operator.save()
-                return 'moved {} to {}'.format(operator, operator.region)
+                return f'moved {operator} to {operator.region}'
             elif operator.region_id != 'GB' and operator.region_id != 'NI':
-                return 'consider moving {} from {} to {}'.format(operator, operator.region,
-                                                                 [(region.id, region.services) for region in regions])
+                regions = [(region.id, region.services) for region in regions]
+                return f'consider moving {operator} from {operator.region} to {regions}'
 
     @staticmethod
     def maybe_print(output):

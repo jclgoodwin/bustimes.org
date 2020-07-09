@@ -4,7 +4,7 @@ from django.contrib.gis.geos import Polygon
 def format_gbp(string):
     amount = float(string)
     if amount < 1:
-        return '{}p'.format(int(amount * 100))
+        return f'{int(amount * 100)}p'
     return '£{:.2f}'.format(amount)
 
 

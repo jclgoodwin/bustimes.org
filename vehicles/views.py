@@ -212,8 +212,8 @@ def get_locations(request):
 def siri_one_shot(code, now):
     source = 'Icarus'
     siri_source = SIRISource.objects.get(name=code.scheme[:-5])
-    line_name_cache_key = '{}:{}:{}'.format(siri_source.url, siri_source.requestor_ref, code.code)
-    service_cache_key = '{}:{}'.format(code.service_id, source)
+    line_name_cache_key = f'{siri_source.url}:{siri_source.requestor_ref}:{code.code}'
+    service_cache_key = f'{code.service_id}:{source}'
     if cache.get(line_name_cache_key):
         return 'cached (line name)'
     cached = cache.get(service_cache_key)
@@ -239,9 +239,10 @@ def siri_one_shot(code, now):
         cache.set(service_cache_key, 'different source', 3600)  # back off for for 1 hour
         return 'deferring to a different source'
     cache.set(line_name_cache_key, 'line name', 40)  # cache for 40 seconds
-    data = """<Siri xmlns="http://www.siri.org.uk/siri" version="1.3"><ServiceRequest><RequestorRef>{}</RequestorRef>
-<VehicleMonitoringRequest version="1.3"><LineRef>{}</LineRef></VehicleMonitoringRequest>
-</ServiceRequest></Siri>""".format(siri_source.requestor_ref, code.code)
+    data = f"""<Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
+<ServiceRequest><RequestorRef>{siri_source.requestor_ref}</RequestorRef>
+<VehicleMonitoringRequest version="1.3"><LineRef>{code.code}</LineRef></VehicleMonitoringRequest>
+</ServiceRequest></Siri>"""
     url = siri_source.url.replace('StopM', 'VehicleM', 1)
     response = session.post(url, data=data, timeout=5)
     if 'Client.AUTHENTICATION_FAILED' in response.text:
