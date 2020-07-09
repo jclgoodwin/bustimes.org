@@ -91,6 +91,7 @@ body {
 {% load pipeline %}
 <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
 <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
+<script src="{% static 'js/leaflet.locatecontrol/L.Control.Locate.min.js' %}"></script>
 <script src="{% static 'js/reqwest.min.js' %}"></script>
 <!-- <script src="{% static 'js/leaflet.markercluster/leaflet.markercluster.js' %}"></script> -->
 <script>
@@ -113,6 +114,8 @@ body {
     //     event.layer.getAllChildMarkers()[0].fire('click');
     // });
     vehiclesGroup.addTo(map);
+
+    L.control.locate().addTo(map);
 
     map.attributionControl.setPrefix('');
 
