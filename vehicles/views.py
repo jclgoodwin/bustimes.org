@@ -8,6 +8,7 @@ from django.db.models import Exists, OuterRef, Prefetch, Subquery, Q, Value
 from django.db.models.functions import Replace
 from django.core.cache import cache
 from django.core.paginator import Paginator
+from django.core.mail import EmailMessage
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse, Http404
@@ -548,8 +549,15 @@ def siri(request):
                 break
     elif 'VehicleLocation' in body:
         handle_siri_vm.delay(body)
+    elif 'SituationElement' in body:
+        message = EmailMessage(
+            'SIRI-SX',
+            body,
+            'contactform@bustimes.org>',
+            ['contact@bustimes.org'],
+        )
+        message.send()
     else:
-        cache.set('ArrivaData', True, 600)  # 10 minutes
         handle_siri_et.delay(body)
     return HttpResponse(f"""<?xml version="1.0" ?>
 <Siri xmlns="http://www.siri.org.uk/siri" version="1.3">

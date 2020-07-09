@@ -30,7 +30,9 @@ class SiriSXTest(TestCase):
 
         with use_cassette(cassette, match_on=['body']):
             with self.assertRaises(ValueError):
-                call_command('subscribe')
+                call_command('subscribe', 'tfn')
+            with self.assertRaises(ValueError):
+                call_command('subscribe', 'arriva')
 
         response = self.client.post('/siri', """<?xml version="1.0" ?>
 <Siri xmlns:ns1="http://www.siri.org.uk/siri" xmlns="http://www.siri.org.uk/siri" version="1.3">
@@ -48,7 +50,8 @@ class SiriSXTest(TestCase):
 
         cache.set('Heartbeat:TransportAPI', True)
         with use_cassette(cassette, match_on=['body']):
-            call_command('subscribe')
+            call_command('subscribe', 'tfn')
+            call_command('subscribe', 'arriva')
 
     def test_siri_sx(self):
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
