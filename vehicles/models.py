@@ -442,7 +442,7 @@ class VehicleLocation(models.Model):
         try:
             r.rpush(f'journey{self.journey_id}', json.dumps(appendage, cls=DjangoJSONEncoder))
         except redis.exceptions.ConnectionError:
-            return
+            pass
 
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)('vehicle_positions', {

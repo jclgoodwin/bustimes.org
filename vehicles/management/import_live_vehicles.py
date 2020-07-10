@@ -195,6 +195,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             journey.vehicle.save(update_fields=['latest_location'])
         self.current_location_ids.add(location.id)
 
+        location.journey.vehicle = vehicle
         location.redis_append()
 
         vehicle.update_last_modified()
