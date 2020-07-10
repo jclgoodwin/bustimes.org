@@ -3,29 +3,29 @@
 {% block title %}Map – bustimes.org{% endblock %}
 
 {% block head %}
-<style>
-.wide main {
-    bottom: 0;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    top: 3.5em;
-    width: 100%;
-}
+    <style>
+    .wide main {
+        bottom: 0;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        top: 3.5em;
+        width: 100%;
+    }
 
-body {
-    margin-bottom: 0;
-}
+    body {
+        margin-bottom: 0;
+    }
 
-.leaflet-popup-content a {
-    display: inline;
-}
+    .leaflet-popup-content a {
+        display: inline;
+    }
 
-.leaflet-popup-content .stop {
-    display: block;
-}
-</style>
+    .leaflet-popup-content .stop {
+        display: block;
+    }
+    </style>
 {% endblock %}
 
 {% block cookies %}{% endblock %}
@@ -39,16 +39,14 @@ body {
 {% block breadcrumb %}{% endblock %}
 
 {% block content %}
-
-<div id="hugemap"></div>
-
-{% load static %}
-{% load pipeline %}
-<link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
-<script src="{% static 'js/leaflet/leaflet.js' %}"></script>
-<script src="{% static 'js/leaflet.locatecontrol/L.Control.Locate.min.js' %}"></script>
-{% javascript 'bigmap' %}
-
+    <div id="hugemap"></div>
 {% endblock %}
 
-{% block footer %}{% endblock %}
+{% block footer %}
+    {% load static %}
+    {% load pipeline %}
+    <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
+    <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
+    <script src="{% static 'js/leaflet.locatecontrol/L.Control.Locate.min.js' %}"></script>
+    {% javascript 'bigmap' %}
+{% endblock %}
