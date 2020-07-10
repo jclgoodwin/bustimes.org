@@ -175,12 +175,14 @@ class VehiclesTests(TestCase):
                 'features': self.wifi.id,
                 'operator': self.lynx.id,
                 'colours': '#FF0000',
+                'other_colour': '#FF0000',
                 'notes': 'Trent Barton',
             })
         self.assertTrue(response.context['form'].has_changed())
         self.assertContains(response, 'I’ll update those details')
 
-        self.assertEqual(1, VehicleEdit.objects.filter(approved=None).count())
+        edit = VehicleEdit.objects.filter(approved=None).get()
+        self.assertEqual(edit.colours, '')
 
         # edit reg, colour
         with self.assertNumQueries(10):

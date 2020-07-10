@@ -45,6 +45,11 @@ class EditVehiclesForm(forms.Form):
                 pass
             raise ValidationError('That URL doesn’t work for me. Maybe it’s too long, or Facebook')
 
+    def clean_other_colour(self):
+        if self.cleaned_data['other_colour']:
+            if self.cleaned_data['colours'] != 'Other':
+                self.cleaned_data['other_colour'] = ''
+
     def __init__(self, *args, **kwargs):
         operator = kwargs.pop('operator', None)
 
