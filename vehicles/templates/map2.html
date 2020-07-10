@@ -103,17 +103,13 @@ body {
         }),
         vehiclesGroup = L.layerGroup(),
         stopsGroup = L.layerGroup();
-        // vehiclesGroup = L.markerClusterGroup({
-        //     maxClusterRadius: 20,
-        //     disableClusteringAtZoom: 9,
-        //     iconCreateFunction: function(cluster) {
-        //         return cluster.getAllChildMarkers()[0].getIcon();
-        //     }
-        // });
 
-    // vehiclesGroup.on('clusterclick', function(event) {
-    //     event.layer.getAllChildMarkers()[0].fire('click');
-    // });
+    map.attributionControl.setPrefix('');
+
+    L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
+        attribution: '<a href="https://stadiamaps.com/">© Stadia Maps</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/about/">© OpenStreetMap contributors</a>',
+    }).addTo(map);
+
     vehiclesGroup.addTo(map);
 
     L.control.locate().addTo(map);
@@ -122,11 +118,9 @@ body {
         'Show stops': stopsGroup
     }).addTo(map);
 
-
     var lastStopsReq,
         highWater,
-        first = true,
-        showStops = false;
+        showStops = true;
 
     stopsGroup.on('add', function(e) {
         if (map.getZoom() < 15) {
@@ -138,7 +132,72 @@ body {
         showStops = false;
     });
 
-    function loadStops() {
+    function getTransform(heading, scale) {
+        if (heading === null) {
+            return '';
+        }
+        var rotation = 'transform: rotate(' + heading + 'deg)';
+        if (scale) {
+            rotation += ' scale(1.5)';
+        }
+        return '-webkit-' + rotation + ';' + rotation;
+    }
+
+    function getStopIcon(indicator, bearing) {
+        var html = '';
+        if (indicator) {
+            var parts = indicator.split(' ');
+            if (parts.length === 2) {
+                var firstPart = parts[0].toLowerCase();
+                if (firstPart === 'stop' || firstPart === 'bay' || firstPart === 'stand' || firstPart === 'stance' || firstPart === 'gate') {
+                    html = parts[1];
+                }
+            } else if (parts.length === 0 || indicator.length < 3) {
+                html = indicator;
+            }
+        }
+        var className = 'stop stop-' + html.length;
+        if (bearing !== null) {
+            html += '<div class="stop-arrow" style="' + getTransform(bearing + 45) + '"></div>';
+        } else {
+            html += '<div class="stop-arrow no-direction"></div>';
+        }
+        return L.divIcon({
+            iconSize: [16, 16],
+            html: html,
+            popupAnchor: [0, -4],
+            className: className
+        });
+    }
+
+    var oldStops = {},
+        newStops = {};
+
+    function handleStop(data) {
+        if (data.properties.url in oldStops) {
+            var marker = oldStops[data.properties.url];
+            newStops[data.properties.url] = marker;
+            return;
+        }
+
+        var a = document.createElement('a');
+        marker = L.marker(L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]), {
+            icon: getStopIcon(data.properties.indicator, data.properties.bearing)
+        });
+
+        a.innerHTML = '<span>' + data.properties.name + '</span><small>' + data.properties.services.join('</small><small>') + '</small>';
+        a.href = data.properties.url;
+        a.className = 'stop';
+
+        marker.bindPopup(a.outerHTML, {
+            autoPan: false
+        });
+
+        marker.addTo(stopsGroup);
+        newStops[data.properties.url] = marker;
+    }
+
+    function loadStops(first) {
         var bounds = map.getBounds();
         var params = '?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest();
 
@@ -158,6 +217,7 @@ body {
         //     }
         lastStopsReq = reqwest('/stops.json' + params, function(data) {
             highWater = bounds;
+            console.log(highWater)
             if (data && data.features) {
                 for (var i = data.features.length - 1; i >= 0; i -= 1) {
                     handleStop(data.features[i]);
@@ -175,29 +235,11 @@ body {
                             stop.openPopup();
                         }
                     }
-                    first = false;
                 }
                 oldStops = newStops;
                 newStops = {};
             }
         });
-    }
-
-    map.attributionControl.setPrefix('');
-
-    L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
-        attribution: '<a href="https://stadiamaps.com/">© Stadia Maps</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/about/">© OpenStreetMap contributors</a>',
-    }).addTo(map);
-
-    function getTransform(heading, scale) {
-        if (heading === null) {
-            return '';
-        }
-        var rotation = 'transform: rotate(' + heading + 'deg)';
-        if (scale) {
-            rotation += ' scale(1.5)';
-        }
-        return '-webkit-' + rotation + ';' + rotation;
     }
 
     function getBusIcon(item, active) {
@@ -300,6 +342,8 @@ body {
         }
     }
 
+    // websocket
+
     var socket,
         backoff = 1000;
 
@@ -335,6 +379,63 @@ body {
         };
     }
 
+    // update window location hash
+    function updateLocation() {
+        var latLng = map.getCenter(),
+            string = map.getZoom() + '/' + Math.round(latLng.lat * 10000) / 10000 + '/' + Math.round(latLng.lng * 10000) / 10000;
+
+        if (history.replaceState) {
+            try {
+                history.replaceState(null, null, location.pathname + '#' + string);
+            } catch (error) {
+                // probably SecurityError (document is not fully active)
+            }
+        }
+        if (window.localStorage) {
+            try {
+                localStorage.setItem('vehicleMap', string);
+            } catch (error) {
+                // never mind
+            }
+        }
+    }
+
+    map.on('moveend', function() {
+        var bounds = map.getBounds();
+
+        for (var id in vehicles) {
+            var vehicle = vehicles[id];
+            if (id != clickedMarker && !bounds.contains(vehicle.getLatLng())) {
+                map.removeLayer(vehicle);
+                delete vehicles[id];
+            }
+        }
+
+        if (socket && socket.readyState === socket.OPEN) {
+            socket.send(JSON.stringify([
+                bounds.getWest(),
+                bounds.getSouth(),
+                bounds.getEast(),
+                bounds.getNorth()
+            ]));
+        }
+
+
+        if (showStops) {
+            if (map.getZoom() < 15) {
+                stopsGroup.remove();
+                showStops = true;
+            } else {
+                stopsGroup.addTo(map);
+                loadStops();
+            }
+        }
+
+        updateLocation();
+    });
+
+    connect();
+
     var parts;
     if (location.hash) {
         parts = location.hash.substring(1).split('/');
@@ -360,113 +461,9 @@ body {
         map.setView([51.9, 0.9], 9);
     }
 
-    connect();
-
-    function updateLocation() {
-        var latLng = map.getCenter(),
-            string = map.getZoom() + '/' + Math.round(latLng.lat * 10000) / 10000 + '/' + Math.round(latLng.lng * 10000) / 10000;
-
-        if (history.replaceState) {
-            try {
-                history.replaceState(null, null, location.pathname + '#' + string);
-            } catch (error) {
-                // probably SecurityError (document is not fully active)
-            }
-        }
-        if (window.localStorage) {
-            try {
-                localStorage.setItem('vehicleMap', string);
-            } catch (error) {
-                // never mind
-            }
-        }
+    if (map.getZoom() >= 15) {
+        loadStops(true);
     }
-
-    function handleMoveEnd() {
-        var bounds = map.getBounds();
-
-        for (var id in vehicles) {
-            var vehicle = vehicles[id];
-            if (id != clickedMarker && !bounds.contains(vehicle.getLatLng())) {
-                map.removeLayer(vehicle);
-                delete vehicles[id];
-            }
-        }
-
-        if (showStops) {
-            if (map.getZoom() < 15) {
-                stopsGroup.remove();
-            } else {
-                loadStops();
-            }
-        }
-
-        socket.send(JSON.stringify([
-            bounds.getWest(),
-            bounds.getSouth(),
-            bounds.getEast(),
-            bounds.getNorth()
-        ]));
-
-        updateLocation();
-    }
-
-    map.on('moveend', handleMoveEnd);
-
-    function getStopIcon(indicator, bearing) {
-        var html = '';
-        if (indicator) {
-            var parts = indicator.split(' ');
-            if (parts.length === 2) {
-                var firstPart = parts[0].toLowerCase();
-                if (firstPart === 'stop' || firstPart === 'bay' || firstPart === 'stand' || firstPart === 'stance' || firstPart === 'gate') {
-                    html = parts[1];
-                }
-            } else if (parts.length === 0 || indicator.length < 3) {
-                html = indicator;
-            }
-        }
-        var className = 'stop stop-' + html.length;
-        if (bearing !== null) {
-            html += '<div class="stop-arrow" style="' + getTransform(bearing + 45) + '"></div>';
-        } else {
-            html += '<div class="stop-arrow no-direction"></div>';
-        }
-        return L.divIcon({
-            iconSize: [16, 16],
-            html: html,
-            popupAnchor: [0, -4],
-            className: className
-        });
-    }
-
-    var oldStops = {},
-        newStops = {};
-
-    function handleStop(data) {
-        if (data.properties.url in oldStops) {
-            var marker = oldStops[data.properties.url];
-            newStops[data.properties.url] = marker;
-            return;
-        }
-
-        var a = document.createElement('a');
-        marker = L.marker(L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]), {
-            icon: getStopIcon(data.properties.indicator, data.properties.bearing)
-        });
-
-        a.innerHTML = '<span>' + data.properties.name + '</span><small>' + data.properties.services.join('</small><small>') + '</small>';
-        a.href = data.properties.url;
-        a.className = 'stop';
-
-        marker.bindPopup(a.outerHTML, {
-            autoPan: false
-        });
-
-        marker.addTo(stopsGroup);
-        newStops[data.properties.url] = marker;
-    }
-
 })();
 </script>
 
