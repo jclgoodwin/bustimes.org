@@ -452,7 +452,8 @@ class VehicleLocation(models.Model):
             'latlong': appendage[1],
             'heading': appendage[2],
             'route': self.journey.route_name,
-            'css': self.journey.vehicle.get_livery(self.heading)
+            'css': self.journey.vehicle.get_livery(self.heading),
+            'text_colour': self.journey.vehicle.get_text_colour()
         })
 
     def get_json(self, extended=False):

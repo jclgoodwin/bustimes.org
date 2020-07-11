@@ -27,7 +27,8 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
             'l': message['latlong'],
             'h': message['heading'],
             'r': message['route'],
-            'c': message['css']
+            'c': message['css'],
+            't': message['text_colour']
         }])
 
     def disconnect(self, close_code):
@@ -50,6 +51,7 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
                         'l': tuple(location.latlong),
                         'h': location.heading,
                         'r': location.journey.route_name,
-                        'c': location.journey.vehicle.get_livery(location.heading)
+                        'c': location.journey.vehicle.get_livery(location.heading),
+                        't': location.journey.vehicle.get_text_colour()
                     } for location in chunk]
                 )

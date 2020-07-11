@@ -157,7 +157,7 @@
         if (item.c) {
             var style = 'background:' + item.c;
             className += ' coloured';
-            if (item.textColour) {
+            if (item.t) {
                 className += ' white-text';
             }
             style += ';';
