@@ -37,14 +37,17 @@
     });
 
     function getTransform(heading, scale) {
-        if (heading === null) {
+        if (heading === null && !scale) {
             return '';
         }
-        var rotation = 'transform: rotate(' + heading + 'deg)';
-        if (scale) {
-            rotation += ' scale(1.5)';
+        var transform = 'transform:'
+        if (heading !== null) {
+            transform += ' rotate(' + heading + 'deg)';
         }
-        return '-webkit-' + rotation + ';' + rotation;
+        if (scale) {
+            transform += ' scale(1.5)';
+        }
+        return '-webkit-' + transform + ';' + transform;
     }
 
     function getStopIcon(indicator, bearing) {
