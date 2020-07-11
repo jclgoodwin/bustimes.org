@@ -246,7 +246,7 @@
         backoff = 1000;
 
     function connect() {
-        socket = new WebSocket('ws://' + window.location.host + '/ws/vehicle_positions');
+        socket = new WebSocket((window.location.protocol === 'http:' ? 'ws' : 'wss') + '://' + window.location.host + '/ws/vehicle_positions');
 
         socket.onopen = function() {
             var bounds = map.getBounds();
