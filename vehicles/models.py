@@ -427,8 +427,6 @@ class VehicleLocation(models.Model):
     early = models.SmallIntegerField(null=True, blank=True)
     delay = models.SmallIntegerField(null=True, blank=True)
     current = models.BooleanField(default=False)
-    occupied = models.PositiveSmallIntegerField(null=True, blank=True)
-    capacity = models.PositiveSmallIntegerField(null=True, blank=True)
 
     class Meta:
         ordering = ('id',)
