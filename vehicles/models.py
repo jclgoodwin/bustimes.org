@@ -451,7 +451,7 @@ class VehicleLocation(models.Model):
             'id': self.id,
             'datetime': str(self.datetime),
             'latlong': tuple(self.latlong),
-            'heading': self.heading,
+            'heading': int(self.heading) if self.heading else None,
             'route': self.journey.route_name,
             'css': vehicle.get_livery(self.heading),
             'text_colour': vehicle.get_text_colour()

@@ -107,7 +107,6 @@ def handle_item(source, item):
             if vehicle.latest_location.journey_id != journey_id:
                 vehicle.latest_location.journey_id = journey_id
                 vehicle.latest_location.save(update_fields=['journey'])
-
             return
 
     location = VehicleLocation(
@@ -121,6 +120,8 @@ def handle_item(source, item):
             location.heading = calculate_bearing(vehicle.latest_location.latlong, latlong)
         location.id = vehicle.latest_location_id
     location.save()
+    location.redis_append()
+    location.channel_send(vehicle)
 
     if not vehicle.latest_location_id:
         vehicle.latest_location = location
