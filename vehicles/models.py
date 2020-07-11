@@ -444,12 +444,14 @@ class VehicleLocation(models.Model):
 
     def channel_send(self, vehicle):
         channel_layer = get_channel_layer()
+        if self.heading:
+            self.heading = int(self.heading)
         async_to_sync(channel_layer.group_send)('vehicle_positions', {
             'type': 'move_vehicle',
             'id': self.id,
             'datetime': str(self.datetime),
             'latlong': tuple(self.latlong),
-            'heading': int(self.heading) if self.heading else None,
+            'heading': self.heading,
             'route': self.journey.route_name,
             'css': vehicle.get_livery(self.heading),
             'text_colour': vehicle.get_text_colour()
