@@ -449,12 +449,13 @@ class VehicleLocation(models.Model):
         async_to_sync(channel_layer.group_send)('vehicle_positions', {
             'type': 'move_vehicle',
             'id': self.id,
-            'datetime': str(self.datetime),
+            'datetime': DjangoJSONEncoder.default(None, self.datetime),
             'latlong': tuple(self.latlong),
             'heading': self.heading,
             'route': self.journey.route_name,
             'css': vehicle.get_livery(self.heading),
-            'text_colour': vehicle.get_text_colour()
+            'text_colour': vehicle.get_text_colour(),
+            'early': self.early
         })
 
     def get_json(self, extended=False):

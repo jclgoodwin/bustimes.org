@@ -1,6 +1,7 @@
 from datetime import timedelta
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
+from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.gis.geos import Polygon
 from django.utils import timezone
 from .models import VehicleLocation
@@ -28,7 +29,8 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
             'h': message['heading'],
             'r': message['route'],
             'c': message['css'],
-            't': message['text_colour']
+            't': message['text_colour'],
+            'e': message['early']
         }])
 
     def disconnect(self, close_code):
@@ -47,11 +49,12 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
                 self.send_json(
                     [{
                         'i': location.id,
-                        'd': str(location.datetime),
+                        'd': DjangoJSONEncoder.default(None, location.datetime),
                         'l': tuple(location.latlong),
                         'h': location.heading,
                         'r': location.journey.route_name,
                         'c': location.journey.vehicle.get_livery(location.heading),
-                        't': location.journey.vehicle.get_text_colour()
+                        't': location.journey.vehicle.get_text_colour(),
+                        'e': location.early
                     } for location in chunk]
                 )

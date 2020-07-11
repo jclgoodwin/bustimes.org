@@ -180,6 +180,8 @@
         });
     }
 
+    var clickedMarker;
+
     map.on('click', function(event) {
         if (clickedMarker) {
             // deselect previous clicked marker
@@ -187,13 +189,37 @@
             if (marker) {
                 marker.setIcon(getBusIcon(marker.options.item));
             }
+            clickedMarker = null;
         }
-        // var vehiclePane = document.getElementById('vehicle');
-        // vehiclePane.className = '';
-        // vehiclePane.innerHTML = '';
     });
 
-    var clickedMarker;
+    function getPopupContent(item) {
+        var delta = '';
+        if (item.e === 0) {
+            delta = 'On time<br>';
+        } else if (item.e) {
+            delta += 'About ';
+            if (item.e > 0) {
+                delta += item.e;
+            } else {
+                delta += item.e * -1;
+            }
+            delta += ' minute';
+            if (item.e !== 1 && item.e !== -1) {
+                delta += 's';
+            }
+            if (item.e > 0) {
+                delta += ' early';
+            } else {
+                delta += ' late';
+            }
+            delta += '<br>';
+        }
+
+        var datetime = new Date(item.d);
+
+        return delta + 'Updated at ' + datetime.toTimeString().slice(0, 5);
+    }
 
     function handleMarkerClick(event) {
         if (clickedMarker) {
@@ -207,16 +233,12 @@
         var item = marker.options.item;
         clickedMarker = item.i;
         marker.setIcon(getBusIcon(item, true));
-        // var vehiclePane = document.getElementById('vehicle');
-        // vehiclePane.className = 'active';
-
-        var datetime = new Date(item.d);
 
         reqwest(
             '/vehicles/locations/' + clickedMarker,
             function(content) {
-                content += 'Updated at ' + datetime.toTimeString().slice(0, 5);
-                marker.bindPopup(content).openPopup();
+                marker.options.popupContent = content;
+                marker.bindPopup(content + getPopupContent(item)).openPopup();
             }
         );
     }
@@ -224,7 +246,8 @@
     var vehicles = {};
 
     function handleVehicle(item) {
-        var icon = getBusIcon(item, item.i === clickedMarker),
+        var isClickedMarker = item.i === clickedMarker,
+            icon = getBusIcon(item, isClickedMarker),
             latLng = L.latLng(item.l[1], item.l[0]);
 
         if (item.i in vehicles) {
@@ -232,6 +255,9 @@
             marker.setLatLng(latLng);
             marker.setIcon(icon);
             marker.options.item = item;
+            if (isClickedMarker) {
+                marker.getPopup().setContent(marker.options.popupContent + getPopupContent(item));
+            }
         } else {
             vehicles[item.i] = L.marker(latLng, {
                 icon: icon,
