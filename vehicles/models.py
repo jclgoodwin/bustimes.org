@@ -444,16 +444,17 @@ class VehicleLocation(models.Model):
         except redis.exceptions.ConnectionError:
             pass
 
+    def channel_send(self, vehicle):
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)('vehicle_positions', {
             'type': 'move_vehicle',
             'id': self.id,
-            'datetime': str(appendage[0]),
-            'latlong': appendage[1],
-            'heading': appendage[2],
+            'datetime': str(self.datetime),
+            'latlong': tuple(self.latlong),
+            'heading': self.heading,
             'route': self.journey.route_name,
-            'css': self.journey.vehicle.get_livery(self.heading),
-            'text_colour': self.journey.vehicle.get_text_colour()
+            'css': vehicle.get_livery(self.heading),
+            'text_colour': vehicle.get_text_colour()
         })
 
     def get_json(self, extended=False):

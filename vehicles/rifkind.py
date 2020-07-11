@@ -3,7 +3,6 @@ from requests import Session
 from django.contrib.gis.geos import Point
 from django.db.models import Q
 from django.core.cache import cache
-from django.db import transaction
 from django.utils import timezone
 from multidb.pinning import use_primary_db
 from busstops.models import DataSource, Service
@@ -102,28 +101,31 @@ def handle_item(source, item):
     journey_id = journey.id
     if vehicle.latest_location:
         if journey.datetime > source.datetime:
+            # journey is in the future – use the vehicle's current journey instead
             journey_id = vehicle.latest_location.journey_id
         elif vehicle.latest_location.latlong == latlong:
             if vehicle.latest_location.journey_id != journey_id:
                 vehicle.latest_location.journey_id = journey_id
                 vehicle.latest_location.save(update_fields=['journey'])
+
             return
 
-    with transaction.atomic():
-        heading = None
-        if vehicle.latest_location:
-            if (source.datetime - vehicle.latest_location.datetime).total_seconds() < 1200:
-                heading = calculate_bearing(vehicle.latest_location.latlong, latlong)
-            vehicle.latest_location.current = False
-            vehicle.latest_location.save(update_fields=['current'])
-        vehicle.latest_location = VehicleLocation.objects.create(
-            journey_id=journey_id,
-            latlong=latlong,
-            datetime=source.datetime,
-            heading=heading,
-            current=True
-        )
+    location = VehicleLocation(
+        journey_id=journey_id,
+        latlong=latlong,
+        datetime=source.datetime,
+        current=True
+    )
+    if vehicle.latest_location_id:
+        if (source.datetime - vehicle.latest_location.datetime).total_seconds() < 1200:
+            location.heading = calculate_bearing(vehicle.latest_location.latlong, latlong)
+        location.id = vehicle.latest_location_id
+    location.save()
+
+    if not vehicle.latest_location_id:
+        vehicle.latest_location = location
         vehicle.save(update_fields=['latest_location'])
+
     vehicle.update_last_modified()
 
 

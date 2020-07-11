@@ -361,5 +361,4 @@
     if (!map._loaded) {
         map.setView([51.9, 0.9], 9);
     }
-
 })();

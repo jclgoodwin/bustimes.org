@@ -31,7 +31,7 @@ class RifkindTest(TestCase):
                     self.client.get(url)
 
             with freeze_time('2019-11-17 12:20+00:00'):
-                with self.assertNumQueries(38):
+                with self.assertNumQueries(34):
                     self.client.get(url)
                 with self.assertNumQueries(2):
                     res = self.client.get(url)

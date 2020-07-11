@@ -178,6 +178,7 @@ class Command(BaseCommand):
 
         location.save()
         location.redis_append()
+        location.channel_send(vehicle)
 
         if not vehicle.latest_location:
             vehicle.latest_location = location
