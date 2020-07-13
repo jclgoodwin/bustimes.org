@@ -1,7 +1,7 @@
 name: Python application
 on: [push]
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -42,7 +42,8 @@ jobs:
         PGUSER: postgres
         DB_NAME: postgres
       run: |
-       pipenv run coverage run ./manage.py test
+       pipenv run coverage run pytest
+       pipenv run coverage run --append ./manage.py test
        pipenv run coverage html
     - name: Upload coverage
       uses: idlefingers/do-space-sync-action@0.1.0
