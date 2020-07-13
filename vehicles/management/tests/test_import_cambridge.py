@@ -60,7 +60,7 @@ class CambridgeImportTest(TestCase):
             ]
         }
 
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(11):
             self.command.handle_data(data)
 
         with self.assertNumQueries(4):
