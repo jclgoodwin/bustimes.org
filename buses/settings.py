@@ -71,8 +71,6 @@ DATABASES = {
     }
 }
 if TEST:
-    DATABASES['default']['CONN_MAX_AGE'] = None
-
     TEST_RUNNER = 'django_slowtests.testrunner.DiscoverSlowestTestsRunner'
     NUM_SLOW_TESTS = 10
 
