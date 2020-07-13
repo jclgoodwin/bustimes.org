@@ -1,6 +1,8 @@
 # Bus Times
 
-![Python application](https://github.com/jclgoodwin/bustimes.org/workflows/Python%20application/badge.svg)
+[![Python application](https://github.com/jclgoodwin/bustimes.org/workflows/Python%20application/badge.svg)](https://github.com/jclgoodwin/bustimes.org/actions)
+
+[Coverage](https://bustimes-coverage.ams3.digitaloceanspaces.com/index.html)
 
 ## What's this?
 
