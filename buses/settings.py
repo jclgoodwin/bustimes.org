@@ -9,7 +9,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ['SECRET_KEY']
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split()
 
-TEST = 'test' in sys.argv or 'pytest' in sys.argv
+TEST = 'test' in sys.argv or 'pytest' in sys.argv[0]
 DEBUG = bool(os.environ.get('DEBUG', False)) or TEST
 
 SERVER_EMAIL = 'contact@bustimes.org'
