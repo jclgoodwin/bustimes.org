@@ -28,8 +28,35 @@ async def test_my_consumer():
     communicator = WebsocketCommunicator(VehicleMapConsumer, "/ws/vehicle_positions")
     connected, subprotocol = await communicator.connect()
     assert connected
+
     await communicator.send_json_to(
         [1.2105560302734377, 52.63129172228801, 1.4577484130859377, 52.66524398541177]
     )
     message = await communicator.receive_json_from()
     assert len(message) == 1
+    message = message[0]
+    assert message['c'] is None
+    assert message['h'] is None
+    assert message['l'] == [1.3, 52.64]
+
+    await communicator.send_json_to(
+        [1.2105560302734377, 50.63129172228801, 1.4577484130859377, 52.66524398541177]
+    )
+
+    await communicator.send_input({
+        'type': 'move_vehicle',
+        'id': 13,
+        'datetime': '3',
+        'latlong': (1.31, 52.644),
+        'heading': 2,
+        'route': '33',
+        'css': '',
+        'text_colour': '',
+        'early': -1
+    })
+    message_b = await communicator.receive_json_from()
+    assert message_b == [
+        {'i': 13, 'd': '3', 'l': [1.31, 52.644], 'h': 2, 'r': '33', 'c': '', 't': '', 'e': -1}
+    ]
+
+    await communicator.disconnect()

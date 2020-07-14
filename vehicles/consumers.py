@@ -2,7 +2,7 @@ from datetime import timedelta
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.gis.geos import Polygon
+from django.contrib.gis.geos import Polygon, Point
 from django.utils import timezone
 from .models import VehicleLocation
 
@@ -11,7 +11,7 @@ def get_vehicle_locations(bounds):
     now = timezone.now()
     fifteen_minutes_ago = now - timedelta(minutes=15)
     locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, datetime__gte=fifteen_minutes_ago)
-    locations = locations.filter(latlong__within=bounds)
+    locations = locations.filter(latlong__within=bounds).select_related('journey__vehicle__livery')
     return locations
 
 
@@ -22,16 +22,17 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
         self.accept()
 
     def move_vehicle(self, message):
-        self.send_json([{
-            'i': message['id'],
-            'd': message['datetime'],
-            'l': message['latlong'],
-            'h': message['heading'],
-            'r': message['route'],
-            'c': message['css'],
-            't': message['text_colour'],
-            'e': message['early']
-        }])
+        if self.bounds.covers(Point(*message['latlong'])):
+            self.send_json([{
+                'i': message['id'],
+                'd': message['datetime'],
+                'l': message['latlong'],
+                'h': message['heading'],
+                'r': message['route'],
+                'c': message['css'],
+                't': message['text_colour'],
+                'e': message['early']
+            }])
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)('vehicle_positions', self.channel_name)
