@@ -14,7 +14,8 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 class Command(ImportLiveVehiclesCommand):
     source_name = 'National coach code'
     operators = ['NATX', 'NXSH', 'NXAP', 'WAIR']
-    url = ''
+    url = 'https://coachtracker.nationalexpress.com/api/eta/routes/{}/{}'
+    sleep = 1.5
 
     @staticmethod
     def get_datetime(item):
@@ -24,7 +25,6 @@ class Command(ImportLiveVehiclesCommand):
             return timezone.make_aware(parse_datetime(item['live']['timestamp']['dateTime']), is_dst=True)
 
     def get_items(self):
-        url = 'https://coachtracker.nationalexpress.com/api/eta/routes/{}/{}'
         now = self.source.datetime
         time_since_midnight = timedelta(hours=now.hour, minutes=now.minute, seconds=now.second,
                                         microseconds=now.microsecond)
@@ -35,19 +35,19 @@ class Command(ImportLiveVehiclesCommand):
         for service in services.values('line_name'):
             for direction in 'OI':
                 try:
-                    res = self.session.get(url.format(service['line_name'], direction), timeout=5)
+                    res = self.session.get(self.url.format(service['line_name'].replace('-x', 'X'), direction), timeout=5)
                 except RequestException as e:
                     print(e)
                     continue
                 if not res.ok:
-                    print(res)
+                    print(res.url, res)
                     continue
                 if direction != res.json()['dir']:
                     print(res.url)
                 for item in res.json()['services']:
                     if item['live']:
                         yield(item)
-            sleep(1.5)
+            sleep(self.sleep)
 
     def get_vehicle(self, item):
         return self.vehicles.get_or_create(source=self.source, operator_id=self.operators[0],
