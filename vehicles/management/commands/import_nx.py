@@ -33,9 +33,10 @@ class Command(ImportLiveVehiclesCommand):
                                     end__gte=time_since_midnight - timedelta(minutes=30))
         services = Service.objects.filter(operator__in=self.operators, route__trip__in=trips).distinct()
         for service in services.values('line_name'):
+            line_name = service['line_name'].replace('-x', 'X')
             for direction in 'OI':
                 try:
-                    res = self.session.get(self.url.format(service['line_name'].replace('-x', 'X'), direction), timeout=5)
+                    res = self.session.get(self.url.format(line_name, direction), timeout=5)
                 except RequestException as e:
                     print(e)
                     continue

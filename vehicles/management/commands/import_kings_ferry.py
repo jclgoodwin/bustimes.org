@@ -1,5 +1,4 @@
-from busstops.models import Service
-from .import_nx import sleep, RequestException, Command as NatExpCommand
+from .import_nx import Command as NatExpCommand
 
 
 class Command(NatExpCommand):

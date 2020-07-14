@@ -34,7 +34,7 @@ class Command(BaseCommand):
 xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.0/xsd/siri.xsd">{xml}</Siri>"""
         else:
             xml = f'<?xml version="1.0" ?><Siri xmlns="http://www.siri.org.uk/siri" version="1.3">{xml}</Siri>'
-        response = self.session.post(self.source.url, data=xml.replace('    ', ''), headers=headers) #, timeout=30)
+        response = self.session.post(self.source.url, data=xml.replace('    ', ''), headers=headers, timeout=30)
         print(response, response.content)
 
     def terminate_subscription(self, timestamp, requestor_ref):
