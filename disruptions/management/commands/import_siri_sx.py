@@ -29,11 +29,11 @@ def handle_item(item, source):
         created = False
     except Situation.DoesNotExist:
         situation = Situation(source=source, situation_number=situation_number)
+        created = True
     situation.data = xml
     situation.created = created_time
     situation.publication_window = get_period(item.find('PublicationWindow'))
     situation.current = item.find('Progress').text == 'open'
-    created = True
 
     reason = item.find('MiscellaneousReason')
     if reason is not None:
