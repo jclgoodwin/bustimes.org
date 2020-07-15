@@ -40,12 +40,12 @@ class VehiclesTests(TestCase):
         cls.vehicle_2 = Vehicle.objects.create(code='50', fleet_number=50, reg='UWW2X', livery=livery,
                                                vehicle_type=spectra, operator=cls.lynx, data={'Depot': 'Long Sutton'})
 
-        journey = VehicleJourney.objects.create(vehicle=cls.vehicle_1, datetime=cls.datetime, source=source,
-                                                service=service, route_name='2')
+        cls.journey = VehicleJourney.objects.create(vehicle=cls.vehicle_1, datetime=cls.datetime, source=source,
+                                                    service=service, route_name='2')
 
-        location = VehicleLocation.objects.create(datetime=cls.datetime, latlong=Point(0, 51),
-                                                  journey=journey, current=True)
-        cls.vehicle_1.latest_location = location
+        cls.location = VehicleLocation.objects.create(datetime=cls.datetime, latlong=Point(0, 51),
+                                                      journey=cls.journey, current=True)
+        cls.vehicle_1.latest_location = cls.location
         cls.vehicle_1.save()
 
         cls.vehicle_1.features.set([cls.wifi])
@@ -438,6 +438,9 @@ class VehiclesTests(TestCase):
             response = self.client.get('/map')
         self.assertContains(response, 'bigmap.min.js')
 
+        with self.assertNumQueries(0):
+            response = self.client.get('/map2')
+
     def test_vehicles(self):
         with self.assertNumQueries(1):
             self.client.get('/vehicles')
@@ -447,6 +450,16 @@ class VehiclesTests(TestCase):
             response = self.client.get('/vehicle-tracking-report')
         self.assertContains(response, 'Vehicle tracking report')
         self.assertContains(response, '<a href="/services/spixworth-hunworth-happisburgh/vehicles">Yes</a>*')
+
+    def test_journey_detail(self):
+        with self.assertNumQueries(2):
+            response = self.client.get(f'/journeys/{self.journey.id}')
+        self.assertContains(response, '<th colspan="2"></th><th>Timetable</th><th>Live</th></tr>')
+
+    def test_location_detail(self):
+        with self.assertNumQueries(1):
+            response = self.client.get(f'/vehicles/locations/{self.location.id}')
+        self.assertContains(response, '<a href="/services/spixworth-hunworth-happisburgh"></a>')
 
     def test_service_vehicle_history(self):
         with self.assertNumQueries(5):
