@@ -80,7 +80,7 @@ def do_stops(archive):
     for stop in stops_to_create:
         admin_area_id = stop.atco_code[:3]
         if admin_area_id not in admin_areas:
-            admin_areas[admin_area_id] = AdminArea.objects.filter(id=stop_id[:3]).exists()
+            admin_areas[admin_area_id] = AdminArea.objects.filter(id=admin_area_id).exists()
         if admin_areas[admin_area_id]:
             stop.admin_area_id = admin_area_id
 
