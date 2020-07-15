@@ -22,7 +22,7 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
         self.accept()
 
     def move_vehicle(self, message):
-        if self.bounds.covers(Point(*message['latlong'])):
+        if self.bounds and self.bounds.covers(Point(*message['latlong'])):
             self.send_json([{
                 'i': message['id'],
                 'd': message['datetime'],
