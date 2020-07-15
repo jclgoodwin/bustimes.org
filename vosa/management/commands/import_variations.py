@@ -20,6 +20,7 @@ def maybe_update(thing, fields):
 
 
 class Command(ImportFromCSVCommand):
+    encoding = 'utf-8'
     licence = None
     registration = None
     previous_row = None
