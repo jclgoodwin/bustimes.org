@@ -552,7 +552,7 @@ class ServiceDetailView(DetailView):
             publication_window__contains=now,
             consequence__services=self.object,
             current=True
-        ).prefetch_related(
+        ).distinct().prefetch_related(
             Prefetch('consequence_set', queryset=consequences, to_attr='consequences'),
             'link_set'
         )
