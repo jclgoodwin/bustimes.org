@@ -16,7 +16,7 @@ operator_refs = {
     'AYK': ('WRAY',),
     'YTG': ('YTIG',),
     'ATS': ('ASES', 'ARBB', 'GLAR'),
-    'ASC': ('ARHE', 'AKSS', 'AMTM'),
+    'ASC': ('ARHE', 'AKSS', 'AMTM', 'GLAR'),
     'AMD': ('AMNO', 'AMID', 'AFCL'),
 }
 vehicles = Vehicle.objects.select_related('latest_location__journey')
