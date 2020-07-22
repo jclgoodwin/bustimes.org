@@ -314,7 +314,7 @@ class Command(BaseCommand):
             if nonoperation_days:
                 calendar_dates += [
                     CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
-                                 operation=False)
+                                 special=True, operation=False)
                     for date_range in nonoperation_days
                 ]
 
@@ -323,7 +323,7 @@ class Command(BaseCommand):
             if operation_days:
                 calendar_dates += [
                     CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
-                                 operation=True)
+                                 special=True, operation=True)
                     for date_range in operation_days
                 ]
 
