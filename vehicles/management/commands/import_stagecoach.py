@@ -163,7 +163,8 @@ class Command(ImportLiveVehiclesCommand):
             if service in alternatives:
                 service = alternatives[service]
             services = Service.objects.filter(current=True, operator__parent='Stagecoach')
-            services = services.filter(stops__locality__stoppoint=item['or']).distinct()
+            if item['or']:
+                services = services.filter(stops__locality__stoppoint=item['or']).distinct()
             latlong = get_latlong(item)
             try:
                 journey.service = self.get_service(services.filter(line_name__iexact=service), latlong)
