@@ -57,10 +57,10 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
         """)
 
     def tfn(self, terminate):
-        self.source = DataSource.objects.get(name='Transport for the North')
-
         if not terminate and cache.get('Heartbeat:TransportAPI'):
             return  # received a heartbeat recently, no need to resubscribe
+
+        self.source = DataSource.objects.get(name='Transport for the North')
 
         now = timezone.localtime()
 
@@ -90,10 +90,10 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
         """)
 
     def arriva(self, terminate):
-        self.source = DataSource.objects.get(name='Arriva')
-
         if not terminate and cache.get('Heartbeat:HAConTest'):
             return  # received a heartbeat recently, no need to resubscribe
+
+        self.source = DataSource.objects.get(name='Arriva')
 
         now = timezone.localtime()
 
@@ -104,7 +104,7 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
 
         # Access to the subscription endpoint is restricted to certain IP addresses,
         # so use a Digital Ocean floating IP address
-        self.session.mount('http://', SourceAddressAdapter('10.16.0.6'))
+        self.session.mount('http://', SourceAddressAdapter('10.16.0.7'))
 
         # terminate any previous subscription just in case
         self.terminate_subscription(timestamp, requestor_ref)
