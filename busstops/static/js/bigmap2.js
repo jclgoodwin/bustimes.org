@@ -211,15 +211,15 @@
     }
 
     function handleMarkerClick(event) {
-        if (clickedMarker) {
+        marker = event.target;
+        var item = marker.options.item;
+        if (clickedMarker && clickedMarker !== item.i) {
             // deselect previous clicked marker
             var marker = vehicles[clickedMarker];
             if (marker) {
                 marker.setIcon(getBusIcon(marker.options.item));
             }
         }
-        marker = event.target;
-        var item = marker.options.item;
         clickedMarker = item.i;
 
         reqwest(
@@ -275,7 +275,9 @@
         backoff = 1000;
 
     function connect() {
-        socket = new WebSocket((window.location.protocol === 'http:' ? 'ws' : 'wss') + '://' + window.location.host + '/ws/vehicle_positions');
+        var url = (window.location.protocol === 'http:' ? 'ws' : 'wss') + '://' + window.location.host + '/ws/vehicle_positions';
+        // url = 'wss://bustimes.org/ws/vehicle_positions';
+        socket = new WebSocket(url);
 
         socket.onopen = function() {
             var bounds = map.getBounds();
@@ -334,7 +336,7 @@
 
         for (var id in vehicles) {
             var vehicle = vehicles[id];
-            if (id != clickedMarker && !bounds.contains(vehicle.getLatLng())) {
+            if (id !== clickedMarker && !bounds.contains(vehicle.getLatLng())) {
                 map.removeLayer(vehicle);
                 delete vehicles[id];
             }
