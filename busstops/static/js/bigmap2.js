@@ -26,8 +26,8 @@
         showStops = true;
 
     stopsGroup.on('add', function(e) {
-        if (map.getZoom() < 15) {
-            map.setZoom(15); // loadStops will be called by moveend handler
+        if (map.getZoom() < 14) {
+            map.setZoom(14); // loadStops will be called by moveend handler
         } else if (!showStops) {
             loadStops();
         }
@@ -182,17 +182,6 @@
 
     var clickedMarker;
 
-    map.on('click', function(event) {
-        if (clickedMarker) {
-            // deselect previous clicked marker
-            var marker = vehicles[clickedMarker];
-            if (marker) {
-                marker.setIcon(getBusIcon(marker.options.item));
-            }
-            clickedMarker = null;
-        }
-    });
-
     function getPopupContent(item) {
         var delta = '';
         if (item.e === 0) {
@@ -232,7 +221,6 @@
         marker = event.target;
         var item = marker.options.item;
         clickedMarker = item.i;
-        marker.setIcon(getBusIcon(item, true));
 
         reqwest(
             '/vehicles/locations/' + clickedMarker,
@@ -241,6 +229,18 @@
                 marker.bindPopup(content + getPopupContent(item)).openPopup();
             }
         );
+
+        marker.setIcon(getBusIcon(item, true));
+
+        marker.on('popupclose', function(event) {
+            // deselect previous clicked marker
+            var marker = vehicles[clickedMarker];
+            if (marker) {
+                marker.setIcon(getBusIcon(marker.options.item));
+            }
+            clickedMarker = null;
+        });
+
     }
 
     var vehicles = {};
@@ -256,7 +256,10 @@
             marker.setIcon(icon);
             marker.options.item = item;
             if (isClickedMarker) {
-                marker.getPopup().setContent(marker.options.popupContent + getPopupContent(item));
+                var popup = marker.getPopup();
+                if (popup) {
+                    popup.setContent(marker.options.popupContent + getPopupContent(item));
+                }
             }
         } else {
             vehicles[item.i] = L.marker(latLng, {
@@ -347,7 +350,7 @@
         }
 
         if (showStops) {
-            if (map.getZoom() < 15) {
+            if (map.getZoom() < 14) {
                 stopsGroup.remove();
                 showStops = true;
             } else {
@@ -363,6 +366,18 @@
 
     connect();
 
+    function handleVisibilityChange(event) {
+        if (event.target.hidden) {
+            socket.close();
+        } else {
+            connect();
+        }
+    }
+
+    if (document.addEventListener) {
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+    }
+
     var parts;
     if (location.hash) {
         parts = location.hash.substring(1).split('/');
@@ -377,7 +392,7 @@
             if (parts.length === 3) {
                 map.setView([parts[1], parts[2]], parts[0]);
             } else {
-                map.setView([parts[0], parts[1]], 15);
+                map.setView([parts[0], parts[1]], 14);
             }
         } catch (error) {
             // oh well
