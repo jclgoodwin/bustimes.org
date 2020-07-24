@@ -32,9 +32,9 @@ celery = {extras = ["redis"],version = "*"}
 requests-toolbelt = "*"
 pyyaml = "*"
 asgiref = "*"
-importlib-metadata = "*"
 polyline = "*"
 pid = "*"
+xmltodict = "*"
 channels = "*"
 channels-redis = "*"
 
