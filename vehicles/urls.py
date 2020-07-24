@@ -16,5 +16,5 @@ urlpatterns = [
     path('journeys/<int:pk>.json', views.journey_json),
     path('vehicles/locations/<int:location_id>', views.location_detail),
     path('siri', views.siri),
-    path('map2', views.map2),
+    path('map', views.map2),
 ]

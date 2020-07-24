@@ -376,8 +376,6 @@ class VehicleDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.object.withdrawn:
-            raise Http404()
         journeys = self.object.vehiclejourney_set
         context['pending_edits'] = self.object.vehicleedit_set.filter(approved=None).exists()
         dates = list(journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date'))

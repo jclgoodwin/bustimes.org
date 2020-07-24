@@ -112,11 +112,6 @@ def data(request):
     return render(request, 'data.html')
 
 
-def map(request):
-    """The full-page slippy map"""
-    return render(request, 'map.html')
-
-
 def stops(request):
     """JSON endpoint accessed by the JavaScript map,
     listing the active StopPoints within a rectangle,
