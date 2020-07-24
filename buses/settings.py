@@ -373,9 +373,9 @@ BOD_OPERATORS = (
     ('WBTR', 'NW', {
         'NW': 'WBTR',
     }, False),
-    ('HIPK', 'EM', {
-        'HPB': 'HIPK'
-    }, False),
+    # ('HIPK', 'EM', {
+    #     'HPB': 'HIPK'
+    # }, False),
     # ('ANEA', None, {
     #     'ACYM': 'ACYM',
     #     'AFCL': 'AFCL',  # (code not used in data)
@@ -485,7 +485,7 @@ FIRST_OPERATORS = [
     ('FirstOldham', 'NW', {'FMAN': 'FMAN'}),
     ('FirstSomerset', 'SW', {'FBOS': 'FBOS'}),
     ('FirstCornwall', 'SW', {'FCWL': 'FCWL'}),
-    ('FirstLeicester', 'EM', {'FLEI': 'FLEI'}),
+    # ('FirstLeicester', 'EM', {'FLEI': 'FLEI'}),
     ('FirstNorwich', 'EA', {'FECS': 'FECS'}),
     ('FirstIpswich', 'EA', {'FECS': 'FECS'}),
     ('FirstDorset', 'SW', {'FDOR': 'FDOR'}),
