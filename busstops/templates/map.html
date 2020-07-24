@@ -44,9 +44,9 @@
 
 {% block footer %}
     {% load static %}
-    {% load pipeline %}
     <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
     <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
     <script src="{% static 'js/leaflet.locatecontrol/L.Control.Locate.min.js' %}"></script>
-    {% javascript 'bigmap' %}
+    <script src="{% static 'js/reqwest.min.js' %}"></script>
+    <script src="{% static 'js/bigmap2.js' %}"></script>
 {% endblock %}

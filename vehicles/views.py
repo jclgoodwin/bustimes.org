@@ -83,8 +83,8 @@ def vehicles(request):
     })
 
 
-def map2(request):
-    return render(request, 'map2.html')
+def map(request):
+    return render(request, 'map.html')
 
 
 def operator_vehicles(request, slug=None, parent=None):

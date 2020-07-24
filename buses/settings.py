@@ -168,16 +168,6 @@ PIPELINE = {
                 'async': True
             }
         },
-        'bigmap': {
-            'source_filenames': (
-                'js/reqwest.min.js',
-                'js/bigmap.js',
-            ),
-            'output_filename': 'js/bigmap.min.js',
-            'extra_context': {
-                'async': not DEBUG
-            }
-        },
         'servicemap': {
             'source_filenames': (
                 'js/loadjs/loadjs.min.js',
