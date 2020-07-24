@@ -135,6 +135,9 @@ def first():
 
             handle_file(command, filename)
 
+            if not command.service_ids:  # nothing was imported
+                continue
+
             command.mark_old_services_as_not_current()
 
             clean_up(operators.values(), sources)
