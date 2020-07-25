@@ -211,35 +211,27 @@
     }
 
     function handleMarkerClick(event) {
-        marker = event.target;
-        var item = marker.options.item;
-        if (clickedMarker && clickedMarker !== item.i) {
-            // deselect previous clicked marker
-            var marker = vehicles[clickedMarker];
-            if (marker) {
-                marker.setIcon(getBusIcon(marker.options.item));
-            }
-        }
-        clickedMarker = item.i;
+        var marker = event.target,
+            item = marker.options.item;
 
-        reqwest(
-            '/vehicles/locations/' + clickedMarker,
-            function(content) {
-                marker.options.popupContent = content;
-                marker.bindPopup(content + getPopupContent(item)).openPopup();
-            }
-        );
+        clickedMarker = item.i;
 
         marker.setIcon(getBusIcon(item, true));
 
-        marker.on('popupclose', function(event) {
-            // deselect previous clicked marker
-            var marker = vehicles[clickedMarker];
-            if (marker) {
-                marker.setIcon(getBusIcon(marker.options.item));
-            }
-            clickedMarker = null;
-        });
+        if (!marker.getPopup()) {
+            reqwest(
+                '/vehicles/locations/' + clickedMarker,
+                function(content) {
+                    marker.options.popupContent = content;
+                    marker.bindPopup(content + getPopupContent(item)).openPopup();
+
+                    marker.on('popupclose', function(event) {
+                        event.target.setIcon(getBusIcon(event.target.options.item));
+                        clickedMarker = null;
+                    });
+                }
+            );
+        }
 
     }
 
