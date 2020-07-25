@@ -211,26 +211,40 @@
     }
 
     function handleMarkerClick(event) {
-        var marker = event.target,
-            item = marker.options.item;
+        if (clickedMarker) {
+            // deselect previous clicked marker
+            // (not always covered by popupclose handler, if popup hasn't opened yet)
+            var marker = vehicles[clickedMarker];
+            if (marker) {
+                marker.setIcon(getBusIcon(marker.options.item));
+            }
+        }
+
+        marker = event.target;
+        var item = marker.options.item;
 
         clickedMarker = item.i;
 
         marker.setIcon(getBusIcon(item, true));
 
-        if (!marker.getPopup()) {
-            reqwest(
-                '/vehicles/locations/' + clickedMarker,
-                function(content) {
+        marker.on('popupclose', function(event) {
+            event.target.setIcon(getBusIcon(event.target.options.item));
+            clickedMarker = null;
+        });
+
+        var popup = marker.getPopup();
+        if (!popup) {
+            reqwest({
+                url: '/vehicles/locations/' + clickedMarker,
+                success: function(content) {
                     marker.options.popupContent = content;
                     marker.bindPopup(content + getPopupContent(item)).openPopup();
-
-                    marker.on('popupclose', function(event) {
-                        event.target.setIcon(getBusIcon(event.target.options.item));
-                        clickedMarker = null;
-                    });
+                },
+                error: function() {
+                    marker.options.popupContent = '';
+                    marker.bindPopup(getPopupContent(item)).openPopup();
                 }
-            );
+            });
         }
 
     }
@@ -247,11 +261,9 @@
             marker.setLatLng(latLng);
             marker.setIcon(icon);
             marker.options.item = item;
-            if (isClickedMarker) {
-                var popup = marker.getPopup();
-                if (popup) {
-                    popup.setContent(marker.options.popupContent + getPopupContent(item));
-                }
+            var popup = marker.getPopup();
+            if (popup) {
+                popup.setContent(marker.options.popupContent + getPopupContent(item));
             }
         } else {
             vehicles[item.i] = L.marker(latLng, {
