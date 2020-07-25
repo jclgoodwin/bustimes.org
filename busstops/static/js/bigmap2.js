@@ -227,11 +227,6 @@
 
         marker.setIcon(getBusIcon(item, true));
 
-        marker.on('popupclose', function(event) {
-            event.target.setIcon(getBusIcon(event.target.options.item));
-            clickedMarker = null;
-        });
-
         var popup = marker.getPopup();
         if (!popup) {
             reqwest({
@@ -244,6 +239,11 @@
                     marker.options.popupContent = '';
                     marker.bindPopup(getPopupContent(item)).openPopup();
                 }
+            });
+
+            marker.on('popupclose', function(event) {
+                event.target.setIcon(getBusIcon(event.target.options.item));
+                clickedMarker = null;
             });
         }
 
