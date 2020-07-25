@@ -48,7 +48,8 @@ class EditVehiclesForm(forms.Form):
     def clean_other_colour(self):
         if self.cleaned_data['other_colour']:
             if self.cleaned_data['colours'] != 'Other':
-                self.cleaned_data['other_colour'] = ''
+                return
+        return self.cleaned_data['other_colour']
 
     def __init__(self, *args, **kwargs):
         operator = kwargs.pop('operator', None)

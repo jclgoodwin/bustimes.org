@@ -434,6 +434,7 @@ def edit_vehicle(request, vehicle_id):
         'vehicle_type': vehicle.vehicle_type,
         'features': vehicle.features.all(),
         'colours': str(vehicle.livery_id or vehicle.colours),
+        'other_colour': '#ffffff',
         'branding': vehicle.branding,
         'name': vehicle.name,
         'previous_reg': vehicle.data and vehicle.data.get('Previous reg') or None,
@@ -449,7 +450,7 @@ def edit_vehicle(request, vehicle_id):
 
     if request.method == 'POST':
         form = EditVehicleForm(request.POST, initial=initial, operator=vehicle.operator, vehicle=vehicle)
-        if not form.has_changed():
+        if not form.has_changed() or form.changed_data == ['name']:
             form.add_error(None, 'You haven\'t changed anything')
         elif form.is_valid():
             data = {key: form.cleaned_data[key] for key in form.changed_data}
