@@ -161,6 +161,7 @@ class VehiclesTests(TestCase):
                 'features': self.wifi.id,
                 'operator': self.lynx.id,
                 'colours': '#FF0000',
+                'other_colour': '#ffffff',
                 'notes': 'Trent Barton',
             })
         self.assertFalse(response.context['form'].has_changed())
@@ -193,6 +194,7 @@ class VehiclesTests(TestCase):
                 'features': self.wifi.id,
                 'operator': self.lynx.id,
                 'colours': 'Other',
+                'other_colour': '#ffffff',
                 'notes': 'Trent Barton',
             })
         self.assertTrue(response.context['form'].has_changed())
@@ -216,6 +218,7 @@ class VehiclesTests(TestCase):
                 'features': self.wifi.id,
                 'operator': self.lynx.id,
                 'colours': self.vehicle_2.livery_id,
+                'other_colour': '#ffffff',
                 'notes': 'Trent Barton',
                 'name': 'Colin',
                 'url': 'http://localhost'
@@ -232,6 +235,7 @@ class VehiclesTests(TestCase):
                 'features': self.usb.id,
                 'operator': self.lynx.id,
                 'colours': self.vehicle_2.livery_id,
+                'other_colour': '#ffffff',
                 'notes': 'Trent Barton',
                 'name': 'Colin',
                 'url': 'https://bustimes.org'
@@ -255,6 +259,7 @@ class VehiclesTests(TestCase):
                 'features': self.wifi.id,
                 'operator': self.lynx.id,
                 'colours': '#FFFF00',
+                'other_colour': '#ffffff',
                 'notes': 'Trent Barton',
             })
         self.assertTrue(response.context['form'].has_changed())
@@ -297,6 +302,7 @@ class VehiclesTests(TestCase):
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
                 'operator': self.lynx.id,
                 'colours': self.vehicle_2.livery_id,
+                'other_colour': '#ffffff',
                 'notes': '',
                 'depot': 'Long Sutton'
             })
@@ -315,6 +321,7 @@ class VehiclesTests(TestCase):
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
                 'operator': self.bova.id,
                 'colours': self.vehicle_2.livery_id,
+                'other_colour': '#ffffff',
                 'notes': 'Ex Ipswich Buses',
                 'depot': 'Holt',
                 'name': 'Luther Blisset',

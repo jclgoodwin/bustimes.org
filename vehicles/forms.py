@@ -47,7 +47,7 @@ class EditVehiclesForm(forms.Form):
 
     def clean_other_colour(self):
         if self.cleaned_data['other_colour']:
-            if self.cleaned_data['colours'] != 'Other':
+            if self.cleaned_data.get('colours') != 'Other':
                 return
         return self.cleaned_data['other_colour']
 
