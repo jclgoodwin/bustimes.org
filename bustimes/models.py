@@ -1,5 +1,5 @@
 from django.db.models import Q
-from django.contrib.gis.db import models
+from django.db import models
 from django.contrib.postgres.fields import DateRangeField
 from django.urls import reverse
 

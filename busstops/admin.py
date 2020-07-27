@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.contrib.gis.forms import OSMWidget
 from django.db.models import Count, Q
 from django.contrib.gis.db.models import PointField
+from bustimes.models import Route
 from .models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, StopCode, Operator, Service, ServiceLink,
     Note, ServiceCode, OperatorCode, DataSource, Place, SIRISource, PaymentMethod, ServiceColour
@@ -93,6 +94,10 @@ class ServiceCodeInline(admin.TabularInline):
     model = ServiceCode
 
 
+class RouteInline(admin.StackedInline):
+    model = Route
+
+
 class ServiceAdmin(admin.ModelAdmin):
     list_display = ('service_code', '__str__', 'mode', 'region', 'current', 'show_timetable', 'timetable_wrong')
     list_filter = ('current', 'show_timetable', 'timetable_wrong', 'mode', 'region',
@@ -101,7 +106,7 @@ class ServiceAdmin(admin.ModelAdmin):
     search_fields = ('service_code', 'line_name', 'line_brand', 'description')
     raw_id_fields = ('operator', 'stops')
     ordering = ('service_code',)
-    inlines = [ServiceCodeInline]
+    inlines = [ServiceCodeInline, RouteInline]
 
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
@@ -158,7 +163,7 @@ class ServiceCodeAdmin(admin.ModelAdmin):
 
 
 class ServiceColourAdmin(admin.ModelAdmin):
-    list_display = ('id', 'foreground', 'background')
+    list_display = ('name', 'preview', 'foreground', 'background')
 
 
 class PlaceAdmin(admin.ModelAdmin):

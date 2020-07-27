@@ -1,5 +1,15 @@
 from django.contrib import admin
-from .models import Route, Trip, Calendar, Note
+from .models import Route, Trip, Calendar, Note, StopTime
+
+
+class TripInline(admin.TabularInline):
+    model = Trip
+    raw_id_fields = ['destination', 'calendar', 'notes']
+
+
+class StopTimeInline(admin.TabularInline):
+    model = StopTime
+    autocomplete_fields = ['stop']
 
 
 class RouteAdmin(admin.ModelAdmin):
@@ -9,10 +19,12 @@ class RouteAdmin(admin.ModelAdmin):
     ]
     raw_id_fields = ['service']
     search_fields = ['line_name', 'line_brand', 'description']
+    inlines = [TripInline]
 
 
 class TripAdmin(admin.ModelAdmin):
     raw_id_fields = ['route', 'destination', 'calendar', 'notes']
+    inlines = [StopTimeInline]
 
 
 class NoteAdmin(admin.ModelAdmin):

@@ -16,6 +16,7 @@ from django.db.models import Q
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
+from django.utils.html import format_html
 from bustimes.models import Route
 from bustimes.timetables import Timetable
 
@@ -521,6 +522,11 @@ class ServiceColour(models.Model):
 
     def __str__(self):
         return self.name
+
+    def preview(self, name=False):
+        return format_html('<div style="background:{};color:{}">{}</div>',
+                            self.background, self.foreground, self.name)
+
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
