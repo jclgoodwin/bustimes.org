@@ -17,8 +17,10 @@
 
     L.control.locate().addTo(map);
 
-    L.control.layers({}, {
+    L.control.layers(null, {
         'Show stops': stopsGroup
+    }, {
+        collapsed: false
     }).addTo(map);
 
     var lastStopsReq,
