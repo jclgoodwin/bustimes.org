@@ -40,23 +40,38 @@ class VehiclesTasksTests(TestCase):
 
     def test_log_vehicle_journey(self):
         with self.assertNumQueries(1):
-            tasks.log_vehicle_journey(
-                'FMR', 'FMR-66692', None, '49', '2019-02-09T12:10:00Z', '311_4560_220', 'EVESHAM Bus Station',
-                'Worcestershire', 'http://example.com'
-            )
+            tasks.log_vehicle_journey(None, {
+                'OperatorRef': 'FMR',
+                'VehicleRef': 'FMR-66692',
+                'LineRef': '49',
+                'OriginAimedDepartureTime': '2019-02-09T12:10:00Z',
+                'FramedVehicleJourneyRef': {
+                    'DatedVehicleJourneyRef': '311_4560_220',
+                },
+            }, None, 'EVESHAM Bus Station', 'Worcestershire', 'http://example.com')
         self.assertFalse(Vehicle.objects.filter(code='66692').exists())
 
         with self.assertNumQueries(12):
-            tasks.log_vehicle_journey(
-                'FMR', 'FMR-66692', self.service.id, '49', '2019-02-09T12:10:00Z', '311_4560_220',
-                'EVESHAM Bus Station', 'Worcestershire', 'http://example.com'
-            )
+            tasks.log_vehicle_journey(self.service.id, {
+                'OperatorRef': 'FMR',
+                'VehicleRef': 'FMR-66692',
+                'LineRef': '49',
+                'OriginAimedDepartureTime': '2019-02-09T12:10:00Z',
+                'FramedVehicleJourneyRef': {
+                    'DatedVehicleJourneyRef': '311_4560_220',
+                },
+            }, None, 'EVESHAM Bus Station', 'Worcestershire', 'http://example.com')
 
         with self.assertNumQueries(5):
-            tasks.log_vehicle_journey(
-                'FMR', 'FMR-66692', self.service.id, '49', '2019-02-09T12:10:00Z', '311_4560_220',
-                'EVESHAM Bus Station', 'Worcestershire', 'http://example.com'
-            )
+            tasks.log_vehicle_journey(self.service.id, {
+                'OperatorRef': 'FMR',
+                'VehicleRef': 'FMR-66692',
+                'LineRef': '49',
+                'OriginAimedDepartureTime': '2019-02-09T12:10:00Z',
+                'FramedVehicleJourneyRef': {
+                    'DatedVehicleJourneyRef': '311_4560_220',
+                },
+            }, None, 'EVESHAM Bus Station', 'Worcestershire', 'http://example.com')
 
         vehicle = Vehicle.objects.get(code='66692')
         self.assertEqual(vehicle.code, '66692')
@@ -64,16 +79,25 @@ class VehiclesTasksTests(TestCase):
 
     def test_log_vehicle_journey_2(self):
         with self.assertNumQueries(9):
-            tasks.log_vehicle_journey(
-                'FMR', 'FMR-11111', self.service.id, '49', '2019-02-09T12:10:00Z', '311_4560_220',
-                'EVESHAM Bus Station', 'Worcestershire', 'http://example.com'
-            )
+            tasks.log_vehicle_journey(self.service.id, {
+                'OperatorRef': 'FMR',
+                'VehicleRef': 'FMR-11111',
+                'LineRef': '49',
+                'OriginAimedDepartureTime': '2019-02-09T12:10:00Z',
+                'FramedVehicleJourneyRef': {
+                    'DatedVehicleJourneyRef': '311_4560_220',
+                },
+            }, None, 'EVESHAM Bus Station', 'Worcestershire', 'http://example.com')
         vehicle = Vehicle.objects.get(code='POOP-11111')
         self.assertEqual(1, vehicle.vehiclejourney_set.count())
 
     def test_log_vehicle_journey_3(self):
-        tasks.log_vehicle_journey(
-            None, 'ASES-SPMK', self.service_2.id, '5', '2020-06-09T13:47:00+01:00',
-            '4621265', 'CMK & Wolverton', 'Milton Keynes', 'http://example.com'
-        )
+        tasks.log_vehicle_journey(self.service_2.id, {
+            'VehicleRef': 'ASES-SPMK',
+            'LineRef': '5',
+            'OriginAimedDepartureTime': '2020-06-09T13:47:00+01:00',
+            'FramedVehicleJourneyRef': {
+                'DatedVehicleJourneyRef': '4621265',
+            },
+        }, None, 'CMK & Wolverton', 'Milton Keynes', 'http://example.com')
         Vehicle.objects.get(code='SPMK')

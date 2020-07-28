@@ -53,11 +53,23 @@ def create_journey_code(destination, service_id, journey_ref, source_id):
 
 
 @shared_task
-def log_vehicle_journey(operator_ref, vehicle, service, route_name, time, journey_ref, destination, source_name, url):
+def log_vehicle_journey(service, data, time, destination, source_name, url):
+    operator_ref = data['OperatorRef']
     if operator_ref in {'UNIB', 'GCB', 'PLYC', 'OBC', 'SOX'}:
         return
+
+    if not time:
+        time = data['OriginAimedDepartureTime']
+
+    if 'FramedVehicleJourneyRef' in data and 'DatedVehicleJourneyRef' in data['FramedVehicleJourneyRef']:
+        journey_ref = data['FramedVehicleJourneyRef']['DatedVehicleJourneyRef']
+    else:
+        journey_ref = None
+
     if not (time or journey_ref):
         return
+
+    vehicle = data['VehicleRef']
 
     if operator_ref and vehicle.startswith(operator_ref + '-'):
         vehicle = vehicle[len(operator_ref) + 1:]
@@ -114,6 +126,7 @@ def log_vehicle_journey(operator_ref, vehicle, service, route_name, time, journe
     time = parse_datetime(time)
 
     destination = destination or ''
+    route_name = data.get('LineName') or data.get('LineRef')
     if journey_ref:
         try:
             existing_journey = VehicleJourney.objects.get(vehicle=vehicle, route_name=route_name, code=journey_ref,

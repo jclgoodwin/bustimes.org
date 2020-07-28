@@ -525,8 +525,7 @@ class ServiceColour(models.Model):
 
     def preview(self, name=False):
         return format_html('<div style="background:{};color:{}">{}</div>',
-                            self.background, self.foreground, self.name)
-
+                           self.background, self.foreground, self.name)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

@@ -6,15 +6,15 @@ import requests
 import pytz
 import dateutil.parser
 import logging
+import xmltodict
 import xml.etree.cElementTree as ET
 from pytz.exceptions import AmbiguousTimeError
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
 from django.utils import timezone
-from busstops.models import Service, ServiceCode, DataSource, SIRISource
+from busstops.models import Service, ServiceCode, SIRISource
 from bustimes.models import get_calendars, StopTime
-from vehicles.models import Vehicle, VehicleJourney
 from vehicles.tasks import create_service_code, create_journey_code, log_vehicle_journey
 
 
@@ -504,8 +504,10 @@ class NorfokDepartures(Departures):
 
 class TimetableDepartures(Departures):
     def get_row(self, stop_time, midnight):
-        destination = stop_time.trip.destination
+        trip = stop_time.trip
+        destination = trip.destination
         return {
+            'origin_departure_time': midnight + trip.start,
             'time': midnight + stop_time.departure,
             'destination': destination.locality or destination.town or destination,
             'service': stop_time.trip.route.service,
@@ -550,76 +552,30 @@ class SiriSmDepartures(Departures):
 
     def __init__(self, source, stop, services):
         self.source = source
-        self.line_refs = set()
         super().__init__(stop, services)
 
-    def get_row(self, element):
-        aimed_time = element.find('s:MonitoredCall/s:AimedDepartureTime', self.ns)
-        expected_time = element.find('s:MonitoredCall/s:ExpectedDepartureTime', self.ns)
-        line_name = element.find('s:PublishedLineName', self.ns)
-        line_ref = element.find('s:LineRef', self.ns)
-        destination = element.find('s:DestinationName', self.ns)
-        if aimed_time is not None:
-            aimed_time = parse_datetime(aimed_time.text)
-        if expected_time is not None:
-            expected_time = parse_datetime(expected_time.text)
-        if line_name is None:
-            line_name = line_ref
-        if line_name is not None:
-            line_name = line_name.text
-        if destination is None:
-            destination = element.find('s:DestinationDisplay', self.ns)
-        if destination is not None:
-            destination = destination.text
-        operator = element.find('s:OperatorRef', self.ns)
-        if operator is not None:
-            operator = operator.text
-        vehicle = element.find('s:VehicleRef', self.ns)
-        if vehicle is not None:
-            vehicle = vehicle.text
+    def get_row(self, item):
+        journey = item['MonitoredVehicleJourney']
+
+        call = journey['MonitoredCall']
+        aimed_time = call.get('AimedDepartureTime')
+        expected_time = call.get('ExpectedDepartureTime')
+        if aimed_time:
+            aimed_time = parse_datetime(aimed_time)
+        if expected_time:
+            expected_time = parse_datetime(expected_time)
+
+        line_name = journey.get('LineName') or journey.get('LineRef')
+        destination = journey.get('DestinationName') or journey.get('DestinationDisplay')
+
         service = self.get_service(line_name)
-
-        scheme = self.source.name
-        url = self.source.url
-
-        journey_ref = element.find('s:FramedVehicleJourneyRef/s:DatedVehicleJourneyRef', self.ns)
-        if journey_ref is not None:
-            journey_ref = journey_ref.text
-
-        # Record some information about the vehicle and journey,
-        # for enthusiasts,
-        # because the source doesn't support vehicle locations
-        if vehicle:
-            if not ('sslink' in url or 'SIRIHandler' in url or scheme in {'Reading', 'Surrey'}):
-                origin_aimed_departure_time = element.find('s:OriginAimedDepartureTime', self.ns)
-                if origin_aimed_departure_time is not None:
-                    log_vehicle_journey.delay(operator, vehicle,
-                                              service.pk if type(service) is Service else None, line_name,
-                                              origin_aimed_departure_time.text,
-                                              journey_ref, destination, scheme, url)
-
-        if type(service) is Service:
-            # Create a "service code",
-            # because the source supports vehicle locations.
-            # For Norfolk, the code is useful for deciphering out what route a vehicle is on.
-            # For other sources, it just denotes that some live tracking is available.
-            if line_ref is not None:
-                if expected_time and ('icarus' in url or 'sslink' in url):
-                    scheme += ' SIRI'
-                    line_ref = line_ref.text
-                    if line_ref and line_ref not in self.line_refs and operator != 'TD':
-                        create_service_code.delay(line_ref, service.pk, scheme)
-                        self.line_refs.add(line_ref)
-
-            # Create a "journey code", which can be used to work out the destination of a vehicle.
-            if 'SIRIHandler' in url and destination and journey_ref:
-                create_journey_code.delay(destination, service.pk, journey_ref, self.source.id)
 
         return {
             'time': aimed_time,
             'live': expected_time,
             'service': service,
             'destination': destination,
+            'data': journey
         }
 
     def get_poorly_key(self):
@@ -629,15 +585,9 @@ class SiriSmDepartures(Departures):
         if not response.text or 'Client.AUTHENTICATION_FAILED' in response.text:
             cache.set(self.get_poorly_key(), True, 1800)  # back off for 30 minutes
             return
-        try:
-            tree = ET.fromstring(response.text).find('s:ServiceDelivery', self.ns)
-        except ET.ParseError as e:
-            logger.error(e, exc_info=True)
-            return
-        if tree is None:
-            return
-        departures = tree.findall('s:StopMonitoringDelivery/s:MonitoredStopVisit/s:MonitoredVehicleJourney', self.ns)
-        return [self.get_row(element) for element in departures]
+        data = xmltodict.parse(response.text)
+        data = data['Siri']['ServiceDelivery']['StopMonitoringDelivery']['MonitoredStopVisit']
+        return [self.get_row(item) for item in data]
 
     def get_response(self):
         if self.source.requestor_ref:
@@ -745,37 +695,6 @@ def get_departure_order(departure):
     return timezone.make_naive(time, LOCAL_TIMEZONE)
 
 
-def log_journeys(departures, source):
-    data_source = None
-    for item in departures:
-        if item.get('origin_departure_time') and item.get('vehicle'):
-            if not data_source:
-                data_source, _ = DataSource.objects.get_or_create({'url': source.url}, name=source.name)
-            defaults = {
-                'source': data_source
-            }
-            vehicle = item['vehicle']
-            operator = item['operator']
-            service = item['service']
-            if operator and vehicle.startswith(operator + '-'):
-                vehicle = vehicle[len(operator) + 1:]
-            operator = service.operator.all()[0]
-            operator_id = operator.id
-            if vehicle.isdigit():
-                defaults['fleet_number'] = vehicle
-            elif operator_id == 'FBRI':
-                operator_id = 'ABUS'
-            if operator.name.startswith('Stagecoach '):
-                continue
-            else:
-                vehicle, created = Vehicle.objects.get_or_create(defaults, code=vehicle, operator_id=operator_id)
-            existing_journey = vehicle.vehiclejourney_set.filter(datetime=item['origin_departure_time'])
-            if created or not existing_journey.exists():
-                VehicleJourney.objects.create(source=data_source, vehicle=vehicle, service=service,
-                                              datetime=item['origin_departure_time'],
-                                              destination=item['destination'])
-
-
 def blend(departures, live_rows, stop=None):
     added = False
     for live_row in live_rows:
@@ -785,9 +704,8 @@ def blend(departures, live_rows, stop=None):
                 if abs(row['time'] - live_row['time']) <= datetime.timedelta(minutes=2):
                     if live_row.get('live'):
                         row['live'] = live_row['live']
-                    if 'vehicle' in live_row:
-                        row['vehicle'] = live_row['vehicle']
-                        row['operator'] = live_row['operator']
+                    if 'data' in live_row:
+                        row['data'] = live_row['data']
                     replaced = True
                     break
         if not replaced and (live_row.get('live') or live_row['time']):
@@ -882,10 +800,10 @@ def get_departures(stop, services):
                         break
 
             if source:
-                if source.name == 'Bristol':
-                    live_rows = WestDepartures(stop, services).get_departures()
-                else:
-                    live_rows = SiriSmDepartures(source, stop, services).get_departures()
+                # if source.name == 'Bristol':
+                #     live_rows = WestDepartures(stop, services).get_departures()
+                # else:
+                live_rows = SiriSmDepartures(source, stop, services).get_departures()
             elif any(operator.id in {'FSCE', 'FCYM', 'FESX', 'FECS'} for operator in operators):
                 live_rows = TransportApiDepartures(stop, services, now.date()).get_departures()
             elif stop.atco_code[:3] == '430':
@@ -913,8 +831,44 @@ def get_departures(stop, services):
             if live_rows:
                 blend(departures, live_rows)
 
-                if source and source.name == 'Bristol':
-                    log_journeys(departures, source)
+                if source:
+                    # Record some information about the vehicle and journey,
+                    # for enthusiasts,
+                    # because the source doesn't support vehicle locations
+                    if 'sslink' not in source.url and 'SIRIHandler' not in source.url:
+                        if source.name not in {'Reading', 'Surrey'}:
+                            for row in departures:
+                                if 'data' in row and 'VehicleRef' in row['data']:
+                                    log_vehicle_journey.delay(
+                                        row['service'].pk if type(row['service']) is Service else None,
+                                        row['data'],
+                                        str(row['origin_departure_time']) if 'origin_departure_time' in row else None,
+                                        row['destination'],
+                                        source.name,
+                                        source.url
+                                    )
+
+                    # Create a "service code",
+                    # because the source supports vehicle locations.
+                    # For Norfolk, the code was useful for deciphering out what route a vehicle is on.
+                    # For other sources, it just denotes that some live tracking is available.
+                    if 'icarus' in source.url or 'sslink' in source.url:
+                        line_refs = set()
+                        for row in departures:
+                            if type(row['service']) is Service and 'data' in row and 'LineRef' in row['data']:
+                                line_ref = row['data']['LineRef']
+                                create_service_code.delay(line_ref, row['service'].pk, f'{source.name} SIRI')
+                                line_refs.add(line_ref)
+
+                    # Create a "journey code", which can be used to work out the destination of a vehicle.
+                    if 'SIRIHandler' in source.url:
+                        for row in departures:
+                            if type(row['service']) is Service and 'FramedVehicleJourneyRef' in row['data']:
+                                if 'DatedVehicleJourneyRef' in row['data']['FramedVehicleJourneyRef']:
+                                    create_journey_code.delay(
+                                        row['destination'], service.pk,
+                                        row['data']['FramedVehicleJourneyRef']['DatedVehicleJourneyRef'], source.id
+                                    )
 
     max_age = 60
 

@@ -422,8 +422,30 @@ class LiveDeparturesTest(TestCase):
         self.assertContains(response, 'EVESHAM Bus Station')
         self.assertNotContains(response, 'WORCESTER')
         log_vehicle_journey.assert_called_with(
-            'FMR', 'FMR-66692', None, 'X50', '2019-02-09T12:10:00Z', '311_4560_220', 'EVESHAM Bus Station',
-            'Worcestershire', 'http://worcestershire-rt-http.trapezenovus.co.uk:8080'
+            None,
+            {
+                'LineRef': 'X50',
+                'DirectionRef': 'O',
+                'FramedVehicleJourneyRef': {
+                    'DataFrameRef': '2019_02_09_311_4560_220',
+                    'DatedVehicleJourneyRef': '311_4560_220',
+                },
+                'OperatorRef': 'FMR',
+                'OriginRef': '2000G000106',
+                'OriginName': 'Crowngate Bus Station',
+                'DestinationRef': '2000G000400',
+                'DestinationName': 'EVESHAM Bus Station',
+                'OriginAimedDepartureTime': '2019-02-09T12:10:00Z',
+                'Monitored': 'true',
+                'Delay': 'PT0M0S',
+                'VehicleRef': 'FMR-66692',
+                'MonitoredCall': {
+                    'AimedDepartureTime': '2019-02-09T12:10:00Z',
+                    'ExpectedDepartureTime': '2019-02-09T12:10:00Z',
+                    'DepartureStatus': 'onTime',
+                },
+            },
+            None, 'EVESHAM Bus Station', 'Worcestershire', 'http://worcestershire-rt-http.trapezenovus.co.uk:8080'
         )
         self.assertEqual(0, VehicleJourney.objects.count())
 
