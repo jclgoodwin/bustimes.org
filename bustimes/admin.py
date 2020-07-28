@@ -4,7 +4,9 @@ from .models import Route, Trip, Calendar, Note, StopTime
 
 class TripInline(admin.TabularInline):
     model = Trip
+    show_change_link = True
     raw_id_fields = ['destination', 'calendar', 'notes']
+    fields = ['calendar', 'start', 'end']
 
 
 class StopTimeInline(admin.TabularInline):

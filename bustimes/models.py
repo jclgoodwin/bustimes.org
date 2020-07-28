@@ -124,22 +124,18 @@ class Trip(models.Model):
             b_time = b.start
             a_times = a.stoptime_set.all()
             b_times = b.stoptime_set.all()
-            if a_times[0].stop_code != b_times[0].stop_code:
+            if a_times[0].get_key() != b_times[0].get_key():
                 if a.destination_id == b.destination_id:
                     a_time = a.end
                     b_time = b.end
                 else:
-                    times = {time.stop_code: time.arrival or time.departure for time in a_times}
+                    times = {time.get_key(): time.arrival or time.departure for time in a_times}
                     for time in b_times:
-                        if time.stop_code in times:
-                            a_time = times[time.stop_code]
+                        key = time.get_key()
+                        if key in times:
+                            a_time = times[key]
                             b_time = time.arrival or time.departure
                             break
-                        # if cell.arrival_time >= y.departure_time:
-                        #     if times[cell.stopusage.stop.atco_code] >= x.departure_time:
-                        #         x_time = times[cell.stopusage.stop.atco_code]
-                        #         y_time = cell.arrival_time
-                        # break
         if a_time > b_time:
             return 1
         if a_time < b_time:
@@ -153,13 +149,16 @@ class Trip(models.Model):
 class StopTime(models.Model):
     id = models.BigAutoField(primary_key=True)
     trip = models.ForeignKey(Trip, models.CASCADE)
-    stop_code = models.CharField(max_length=255)
+    stop_code = models.CharField(max_length=255, blank=True)
     stop = models.ForeignKey('busstops.StopPoint', models.SET_NULL, null=True, blank=True)
     arrival = models.DurationField()
     departure = models.DurationField()
     sequence = models.PositiveSmallIntegerField()
     timing_status = models.CharField(max_length=3, blank=True)
     activity = models.CharField(max_length=16, blank=True)
+
+    def get_key(self):
+        return self.stop_id or self.stop_code
 
     class Meta:
         ordering = ('sequence',)
