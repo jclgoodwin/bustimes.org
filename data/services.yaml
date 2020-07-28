@@ -6,6 +6,10 @@ bed_44-46-_-y08:
 bed_41-18-_-y08:
     outbound_description: Dereham - Billingford - Bawdeswell - Foulsham - Guist - Dereham
     inbound_description: Dereham - Guist - Foulsham - Bawdeswell - Billingford - Dereham
+bed_41-50A-_-y08:
+    current: false
+bed_41-50-_-y08:
+    current: false
 # FECS
 suf_1-99-_-y08:
     line_brand: Coastal Clipper
