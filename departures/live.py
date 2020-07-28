@@ -843,7 +843,7 @@ def get_departures(stop, services):
                                         row['service'].pk if type(row['service']) is Service else None,
                                         row['data'],
                                         str(row['origin_departure_time']) if 'origin_departure_time' in row else None,
-                                        row['destination'],
+                                        str(row['destination']),
                                         source.name,
                                         source.url
                                     )
