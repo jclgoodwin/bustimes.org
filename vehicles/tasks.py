@@ -60,13 +60,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
 
     if not time:
         time = data.get('OriginAimedDepartureTime')
-
-    if 'FramedVehicleJourneyRef' in data and 'DatedVehicleJourneyRef' in data['FramedVehicleJourneyRef']:
-        journey_ref = data['FramedVehicleJourneyRef']['DatedVehicleJourneyRef']
-    else:
-        journey_ref = None
-
-    if not (time or journey_ref):
+    if not time:
         return
 
     vehicle = data['VehicleRef']
@@ -80,6 +74,11 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
 
     if not vehicle or vehicle == '-':
         return
+
+    if 'FramedVehicleJourneyRef' in data and 'DatedVehicleJourneyRef' in data['FramedVehicleJourneyRef']:
+        journey_ref = data['FramedVehicleJourneyRef']['DatedVehicleJourneyRef']
+    else:
+        journey_ref = None
 
     if operator_ref == 'FB' and not vehicle.isdigit():
         operator_ref = 'ABUS'
