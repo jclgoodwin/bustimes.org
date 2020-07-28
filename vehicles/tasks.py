@@ -59,7 +59,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
         return
 
     if not time:
-        time = data['OriginAimedDepartureTime']
+        time = data.get('OriginAimedDepartureTime')
 
     if 'FramedVehicleJourneyRef' in data and 'DatedVehicleJourneyRef' in data['FramedVehicleJourneyRef']:
         journey_ref = data['FramedVehicleJourneyRef']['DatedVehicleJourneyRef']

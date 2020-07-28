@@ -586,8 +586,12 @@ class SiriSmDepartures(Departures):
             cache.set(self.get_poorly_key(), True, 1800)  # back off for 30 minutes
             return
         data = xmltodict.parse(response.text)
-        data = data['Siri']['ServiceDelivery']['StopMonitoringDelivery']['MonitoredStopVisit']
-        return [self.get_row(item) for item in data]
+        data = data['Siri']['ServiceDelivery']['StopMonitoringDelivery']
+        if 'MonitoredStopVisit' in data:
+            if type(data['MonitoredStopVisit']) is list:
+                return [self.get_row(item) for item in data['MonitoredStopVisit']]
+            else:
+                return [self.get_row(data['MonitoredStopVisit'])]
 
     def get_response(self):
         if self.source.requestor_ref:
