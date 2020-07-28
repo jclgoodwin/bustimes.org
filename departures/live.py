@@ -872,7 +872,7 @@ def get_departures(stop, services):
                                 if 'data' in row and 'FramedVehicleJourneyRef' in row['data']:
                                     if 'DatedVehicleJourneyRef' in row['data']['FramedVehicleJourneyRef']:
                                         create_journey_code.delay(
-                                            row['destination'], service.pk,
+                                            str(row['destination']), service.pk,
                                             row['data']['FramedVehicleJourneyRef']['DatedVehicleJourneyRef'], source.id
                                         )
 
