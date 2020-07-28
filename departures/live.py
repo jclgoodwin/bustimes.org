@@ -586,12 +586,13 @@ class SiriSmDepartures(Departures):
             cache.set(self.get_poorly_key(), True, 1800)  # back off for 30 minutes
             return
         data = xmltodict.parse(response.text)
-        data = data['Siri']['ServiceDelivery']['StopMonitoringDelivery']
-        if 'MonitoredStopVisit' in data:
-            if type(data['MonitoredStopVisit']) is list:
-                return [self.get_row(item) for item in data['MonitoredStopVisit']]
-            else:
-                return [self.get_row(data['MonitoredStopVisit'])]
+        try:
+            data = data['Siri']['ServiceDelivery']['StopMonitoringDelivery']['MonitoredStopVisit']
+        except KeyError:
+            return
+        if type(data) is list:
+            return [self.get_row(item) for item in data]
+        return [self.get_row(data)]
 
     def get_response(self):
         if self.source.requestor_ref:
@@ -867,12 +868,13 @@ def get_departures(stop, services):
                     # Create a "journey code", which can be used to work out the destination of a vehicle.
                     if 'SIRIHandler' in source.url:
                         for row in departures:
-                            if type(row['service']) is Service and 'FramedVehicleJourneyRef' in row['data']:
-                                if 'DatedVehicleJourneyRef' in row['data']['FramedVehicleJourneyRef']:
-                                    create_journey_code.delay(
-                                        row['destination'], service.pk,
-                                        row['data']['FramedVehicleJourneyRef']['DatedVehicleJourneyRef'], source.id
-                                    )
+                            if type(row['service']) is Service:
+                                if 'data' in row and 'FramedVehicleJourneyRef' in row['data']:
+                                    if 'DatedVehicleJourneyRef' in row['data']['FramedVehicleJourneyRef']:
+                                        create_journey_code.delay(
+                                            row['destination'], service.pk,
+                                            row['data']['FramedVehicleJourneyRef']['DatedVehicleJourneyRef'], source.id
+                                        )
 
     max_age = 60
 
