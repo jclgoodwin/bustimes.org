@@ -588,7 +588,7 @@ class SiriSmDepartures(Departures):
         data = xmltodict.parse(response.text)
         try:
             data = data['Siri']['ServiceDelivery']['StopMonitoringDelivery']['MonitoredStopVisit']
-        except KeyError:
+        except (KeyError, TypeError):
             return
         if type(data) is list:
             return [self.get_row(item) for item in data]
