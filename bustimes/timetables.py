@@ -15,7 +15,7 @@ def get_journey_patterns(trips):
     pattern_hashes = set()
 
     for trip in trips:
-        pattern = [stoptime.stop_code for stoptime in trip.stoptime_set.all()]
+        pattern = [stoptime.stop_id for stoptime in trip.stoptime_set.all()]
         pattern_hash = str(pattern)
         if pattern_hash not in pattern_hashes:
             patterns.append(pattern)
@@ -36,12 +36,13 @@ def get_stop_usages(trips):
             grouping = 0
         rows = groupings[grouping]
 
-        new_rows = [stoptime.stop_code for stoptime in trip.stoptime_set.all()]
+        new_rows = [stoptime.stop_id for stoptime in trip.stoptime_set.all()]
         diff = differ.compare(rows, new_rows)
 
         y = 0  # how many rows down we are
 
         for stoptime in trip.stoptime_set.all():
+            key = stoptime.get_key()
             if y < len(rows):
                 existing_row = rows[y]
             else:
@@ -58,14 +59,14 @@ def get_stop_usages(trips):
                         existing_row = None
                 instruction = next(diff)
 
-            assert instruction[2:] == stoptime.stop_code
+            assert instruction[2:] == key
 
             if instruction[0] == '+':
                 if not existing_row:
-                    rows.append(stoptime.stop_code)
+                    rows.append(key)
                 else:
-                    rows = groupings[grouping] = rows[:y] + [stoptime.stop_code] + rows[y:]
-                existing_row = stoptime.stop_code
+                    rows = groupings[grouping] = rows[:y] + [key] + rows[y:]
+                existing_row = key
             else:
                 assert instruction[2:] == existing_row
 
@@ -239,13 +240,15 @@ class Grouping:
         else:
             x = 0
         previous_list = [row.stop.atco_code for row in rows]
-        current_list = [stoptime.stop_code for stoptime in trip.stoptime_set.all()]
+        current_list = [stoptime.get_key() for stoptime in trip.stoptime_set.all()]
         diff = differ.compare(previous_list, current_list)
 
         y = 0  # how many rows along we are
         first = True
 
         for stoptime in trip.stoptime_set.all():
+            key = stoptime.get_key()
+
             if y < len(rows):
                 existing_row = rows[y]
             else:
@@ -262,10 +265,10 @@ class Grouping:
                         existing_row = None
                 instruction = next(diff)
 
-            assert instruction[2:] == stoptime.stop_code
+            assert instruction[2:] == key
 
             if instruction[0] == '+':
-                row = Row(Stop(stoptime.stop_code), [''] * x)
+                row = Row(Stop(key), [''] * x)
                 row.timing_status = stoptime.timing_status
                 if not existing_row:
                     rows.append(row)

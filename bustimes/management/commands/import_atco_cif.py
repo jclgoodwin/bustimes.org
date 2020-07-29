@@ -198,7 +198,7 @@ class Command(BaseCommand):
                     StopTime(
                         arrival=departure,
                         departure=departure,
-                        stop_code=line[2:14].decode(),
+                        stop_id=line[2:14].decode(),
                         sequence=0,
                         trip=self.trip
                     )
@@ -218,7 +218,7 @@ class Command(BaseCommand):
                     StopTime(
                         arrival=parse_time(line[14:18]),
                         departure=parse_time(line[18:22]),
-                        stop_code=line[2:14].decode(),
+                        stop_id=line[2:14].decode(),
                         sequence=self.sequence,
                         trip=self.trip,
                         timing_status=timing_status
@@ -234,7 +234,7 @@ class Command(BaseCommand):
                     StopTime(
                         arrival=arrival,
                         departure=arrival,
-                        stop_code=stop_code,
+                        stop_id=stop_code,
                         sequence=self.sequence,
                         trip=self.trip
                     )

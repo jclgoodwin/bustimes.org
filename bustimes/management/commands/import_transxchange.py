@@ -413,7 +413,6 @@ class Command(BaseCommand):
                 elif timing_status == 'principleTimingPoint':
                     timing_status = 'PTP'
                 stop_time = StopTime(
-                    stop_code=cell.stopusage.stop.atco_code,
                     trip=trip,
                     arrival=cell.arrival_time,
                     departure=cell.departure_time,
@@ -423,9 +422,11 @@ class Command(BaseCommand):
                 )
                 if i == 0:
                     trip.start = stop_time.arrival or stop_time.departure
-                if stop_time.stop_code in stops:
-                    stop_time.stop_id = stop_time.stop_code
-                    trip.destination_id = stop_time.stop_code
+                if cell.stopusage.stop.atco_code in stops:
+                    stop_time.stop_id = cell.stopusage.stop.atco_code
+                    trip.destination_id = stop_time.stop_id
+                else:
+                    stop_time.stop_code = cell.stopusage.stop.atco_code
                 stop_times.append(stop_time)
 
             trip.end = stop_time.departure or stop_time.arrival

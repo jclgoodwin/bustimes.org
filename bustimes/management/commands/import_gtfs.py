@@ -62,6 +62,7 @@ def get_stop_id(stop_id):
 def do_stops(archive):
     stops = {}
     admin_areas = {}
+    stops_not_created = {}
     for line in read_file(archive, 'stops.txt'):
         stop_id = get_stop_id(line['stop_id'])
         if stop_id[0] in '78' and len(stop_id) <= 16:
@@ -73,7 +74,7 @@ def do_stops(archive):
                 active=True
             )
         else:
-            print(stop_id)
+            stops_not_created[stop_id] = line['stop_name'][:48]
     existing_stops = StopPoint.objects.in_bulk(stops)
     stops_to_create = [stop for stop in stops.values() if stop.atco_code not in existing_stops]
 
@@ -85,7 +86,7 @@ def do_stops(archive):
             stop.admin_area_id = admin_area_id
 
     StopPoint.objects.bulk_create(stops_to_create)
-    return StopPoint.objects.in_bulk(stops)
+    return StopPoint.objects.in_bulk(stops), stops_not_created
 
 
 def handle_zipfile(path, collection, url):
@@ -169,7 +170,7 @@ def handle_zipfile(path, collection, url):
                 route.trip_set.all().delete()
             routes[line['route_id']] = route
 
-        stops = do_stops(archive)
+        stops, stops_not_created = do_stops(archive)
 
         calendars = {}
         for line in read_file(archive, 'calendar.txt'):
@@ -256,17 +257,20 @@ def handle_zipfile(path, collection, url):
             trip_id = line['trip_id']
             trip = trips[trip_id]
             stop = stops.get(line['stop_id'])
+            stop_time = StopTime(
+                stop=stop,
+                arrival=line['arrival_time'],
+                departure=line['departure_time'],
+                sequence=line['stop_sequence'],
+            )
             if stop:
                 trip.destination = stop
-            stop_times.append(
-                StopTime(
-                    stop_code=line['stop_id'],
-                    stop=stop,
-                    arrival=line['arrival_time'],
-                    departure=line['departure_time'],
-                    sequence=line['stop_sequence'],
-                )
-            )
+            elif line['stop_id'] in stops_not_created:
+                stop_time.stop_code = stops_not_created[line['stop_id']]
+            else:
+                stop_time.stop_code = line['stop_id']
+                print(line)
+            stop_times.append(stop_time)
     trip.start = stop_times[0].departure
     trip.end = stop_times[-1].arrival
     trip.save()
