@@ -42,8 +42,11 @@ class Command(ImportLiveVehiclesCommand):
         if self.source.settings and 'OperatorRef' in self.source.settings:
             item['OperatorRef'] = self.source.settings['OperatorRef']
 
-        operators = ['NXHH', 'WNGS']
-        if item['OperatorRef'] not in operators:
+        if item['OperatorRef'] in {'NXHH', 'WNGS'}:
+            operators = ['NXHH', 'WNGS']
+        elif item['OperatorRef'] == 'SESX':
+            operators = ['SESX', 'NIBS']
+        else:
             operators = [item['OperatorRef']]
 
         return Vehicle.objects.select_related('latest_location__journey__service').get_or_create(
