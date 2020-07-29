@@ -54,8 +54,8 @@ def create_journey_code(destination, service_id, journey_ref, source_id):
 
 @shared_task
 def log_vehicle_journey(service, data, time, destination, source_name, url):
-    operator_ref = data['OperatorRef']
-    if operator_ref in {'UNIB', 'GCB', 'PLYC', 'OBC', 'SOX'}:
+    operator_ref = data.get('OperatorRef')
+    if operator_ref and operator_ref in {'UNIB', 'GCB', 'PLYC', 'OBC', 'SOX'}:
         return
 
     if not time:
@@ -65,7 +65,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
 
     vehicle = data['VehicleRef']
 
-    if operator_ref and vehicle.startswith(operator_ref + '-'):
+    if operator_ref and vehicle.startswith(f'{operator_ref}-'):
         vehicle = vehicle[len(operator_ref) + 1:]
     elif operator_ref == 'FAB' and vehicle.startswith('111-'):  # Aberdeen
         vehicle = vehicle[4:]
@@ -83,11 +83,15 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
     if operator_ref == 'FB' and not vehicle.isdigit():
         operator_ref = 'ABUS'
 
-    try:
-        operator = Operator.objects.get(id=operator_ref)
-    except Operator.DoesNotExist:
-        if not service:
-            return
+    operator = None
+    if operator_ref:
+        try:
+            operator = Operator.objects.get(id=operator_ref)
+        except Operator.DoesNotExist:
+            if not service:
+                return
+
+    if not operator:
         try:
             operator = Operator.objects.get(service=service)
         except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):

@@ -93,7 +93,6 @@ class VehiclesTasksTests(TestCase):
 
     def test_log_vehicle_journey_3(self):
         tasks.log_vehicle_journey(self.service_2.id, {
-            'OperatorRef': None,
             'VehicleRef': 'ASES-SPMK',
             'LineRef': '5',
             'OriginAimedDepartureTime': '2020-06-09T13:47:00+01:00',
