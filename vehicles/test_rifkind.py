@@ -8,7 +8,9 @@ from bustimes.models import Route, Calendar, Trip, StopTime
 class RifkindTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        source = DataSource.objects.create(name='Rifkind', url='https://rifkind.co.uk/api.php apikey')
+        source = DataSource.objects.create(name='Rifkind', url='https://rifkind.co.uk/api.php', settings={
+            'apiKey': 'apikey'
+        })
 
         destination = StopPoint.objects.create(common_name="Inspector Resnick's house", active=True)
         region = Region.objects.create(id='EM', name='EM')

@@ -15,14 +15,13 @@ session = Session()
 
 
 def register_user(source):
-    parts = source.url.split()
-    response = session.post(parts[0], json={
+    response = session.post(source.url, json={
         "operatingSystem": "iOS",
         "function": "register_user",
-        "apiKey": parts[1],
+        "apiKey": source.settings['apiKey'],
     })
     user_token = response.json()['data']['user_token']
-    source.url = f'{parts[0]} {parts[1]} {user_token}'
+    source.settings['token'] = user_token
     source.save()
 
 
@@ -131,20 +130,18 @@ def handle_item(source, item):
 
 
 def get_stop_departures(source, stop_code):
-    parts = source.url.split()
-    if len(parts) < 3:
+    if 'token' not in source.settings:
         register_user(source)
-        parts = source.url.split()
 
-    cache_key = f'{parts[0]}:{stop_code}'
+    cache_key = f'{source.url}:{stop_code}'
     if cache.get(cache_key):
         return
     cache.set(cache_key, True, 69)
 
-    response = session.post(parts[0], json={
-        "apiKey": parts[1],
+    response = session.post(source.url, json={
+        "apiKey": source.settings['apiKey'],
         "function": "get_realtime_full",
-        "token": parts[2],
+        "token": source.settings['token'],
         "atcoCode": stop_code
     }, timeout=2)
     return response.json()['data']
