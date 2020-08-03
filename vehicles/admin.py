@@ -31,6 +31,7 @@ class VehicleEditInline(admin.TabularInline):
     fields = ['approved', 'datetime', 'fleet_number', 'reg', 'vehicle_type', 'livery', 'colours', 'branding', 'notes',
               'changes', 'username']
     readonly_fields = fields[1:]
+    show_change_link = True
 
 
 class VehicleAdmin(admin.ModelAdmin):
@@ -78,13 +79,16 @@ def vehicle(obj):
     return mark_safe(f'<a href="{url}">{obj.vehicle}</a>')
 
 
-def username(obj):
+def user(obj):
     url = reverse('admin:vehicles_vehicleedit_changelist')
     return mark_safe(f'<a href="{url}?username={obj.username}">{obj.username}</a>')
 
 
 def fleet_number(obj):
     return obj.get_diff('fleet_number')
+
+
+fleet_number.short_description = 'no'
 
 
 def reg(obj):
@@ -95,8 +99,14 @@ def vehicle_type(obj):
     return obj.get_diff('vehicle_type')
 
 
+vehicle_type.short_description = 'type'
+
+
 def branding(obj):
     return obj.get_diff('branding')
+
+
+branding.short_description = 'brand'
 
 
 def name(obj):
@@ -181,11 +191,15 @@ def apply_edits(queryset):
                 vehicle.data = edit.changes
             update_fields.append('data')
         for field in ('branding', 'name', 'notes'):
-            if getattr(edit, field):
-                if getattr(edit, field) == f'-{getattr(vehicle, field)}':
-                    setattr(vehicle, field, '')
+            new_value = getattr(edit, field)
+            if new_value:
+                if new_value.startswith('-'):
+                    if new_value == f'-{getattr(vehicle, field)}':
+                        setattr(vehicle, field, '')
+                    else:
+                        continue
                 else:
-                    setattr(vehicle, field, getattr(edit, field))
+                    setattr(vehicle, field, new_value)
                 update_fields.append(field)
         if edit.vehicle_type:
             try:
@@ -248,6 +262,10 @@ class ChangeFilter(admin.SimpleListFilter):
             ('branding', 'branding'),
             ('name', 'name'),
             ('notes', 'notes'),
+            ('withdrawn', 'withdrawn'),
+            ('USB charging', 'USB charging'),
+            ('open top', 'open top'),
+            ('bike storage', 'bike storage'),
             ('changes__Depot', 'depot'),
             ('changes__Previous reg', 'previous reg'),
         )
@@ -257,6 +275,8 @@ class ChangeFilter(admin.SimpleListFilter):
         if value:
             if value == 'colours':
                 return queryset.filter(~Q(colours='') | Q(livery__isnull=False))
+            if value in {'USB charging', 'open top', 'bike storage'}:
+                return queryset.filter(vehicleeditfeature__feature__name=value)
             if value.startswith('changes__'):
                 return queryset.filter(**{f'{value}__isnull': False})
             return queryset.filter(~Q(**{value: ''}))
@@ -297,8 +317,8 @@ class UserFilter(admin.SimpleListFilter):
 
 
 class VehicleEditAdmin(admin.ModelAdmin):
-    list_display = ['id', 'datetime', vehicle, fleet_number, reg, vehicle_type, branding, name, 'current', 'suggested',
-                    notes, 'withdrawn', features, changes, 'edit_count', 'last_seen', 'flickr', username, url]
+    list_display = ['datetime', vehicle, 'edit_count', 'last_seen', fleet_number, reg, vehicle_type, branding, name,
+                    'current', 'suggested', notes, 'withdrawn', features, changes,  'flickr', url, user]
     list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'vehicle__latest_location',
                            'livery']
     list_filter = [
@@ -363,11 +383,13 @@ class VehicleEditAdmin(admin.ModelAdmin):
     def edit_count(self, obj):
         return obj.edit_count
     edit_count.admin_order_field = 'edit_count'
+    edit_count.short_description = 'edits'
 
     def last_seen(self, obj):
         if obj.vehicle.latest_location:
             return obj.vehicle.latest_location.datetime
     last_seen.admin_order_field = 'vehicle__latest_location__datetime'
+    last_seen.short_description = 'seen'
 
 
 class ServiceIsNullFilter(admin.SimpleListFilter):

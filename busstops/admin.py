@@ -96,6 +96,7 @@ class ServiceCodeInline(admin.TabularInline):
 
 class RouteInline(admin.StackedInline):
     model = Route
+    show_change_link = True
 
 
 class ServiceAdmin(admin.ModelAdmin):

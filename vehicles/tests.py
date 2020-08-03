@@ -207,7 +207,6 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '127.0.0.1 (2)')
         self.assertContains(response, 'Wi-Fi')
         self.assertNotContains(response, '<del>Wi-Fi</del>')
-        self.assertNotContains(response, 'USB')
 
         # edit type, livery and name with bad URL
         with self.assertNumQueries(14):
