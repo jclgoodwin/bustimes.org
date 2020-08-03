@@ -162,9 +162,9 @@ def rifkind(service_id):
     source.datetime = now
     stops = set()
     for trip in trips:
-        stops.add(trip.stoptime_set.exclude(activity='setDown').last().stop_code)
-    for stop_code in stops:
-        items = get_stop_departures(source, stop_code)
+        stops.add(trip.stoptime_set.exclude(activity='setDown').last().stop_id)
+    for stop_id in stops:
+        items = get_stop_departures(source, stop_id)
         if items:
             for item in items:
                 handle_item(source, item)

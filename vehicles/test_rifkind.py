@@ -19,7 +19,7 @@ class RifkindTest(TestCase):
         calendar = Calendar.objects.create(start_date='2019-11-17', mon=False, tue=False, wed=False, thu=False,
                                            fri=False, sat=False, sun=True)
         trip = Trip.objects.create(route=route, start='12:25', end='12:35', calendar=calendar, destination=destination)
-        StopTime.objects.create(stop_code='1000DCMP4529', arrival='12:30', departure='12:30', sequence=0, trip=trip)
+        StopTime.objects.create(arrival='12:30', departure='12:30', sequence=0, trip=trip)
 
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_vehicles_json(self):
