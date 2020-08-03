@@ -168,7 +168,7 @@ class Command(ImportLiveVehiclesCommand):
                     fleet_number = vehicle_code.split('-', 1)[-1]
                     if fleet_number.isdigit():
                         defaults['fleet_number'] = fleet_number
-                        if operator.parent in {'Stagecoach', 'Plymouth Citybus'}:
+                        if operator.parent in {'Stagecoach', 'Go South West'}:
                             vehicle_code = fleet_number
                         return self.vehicles.filter(
                             operator__parent=operator.parent
