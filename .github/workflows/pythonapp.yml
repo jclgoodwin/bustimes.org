@@ -41,7 +41,8 @@ jobs:
         PGUSER: postgres
         DB_NAME: postgres
       run: |
-       pipenv run coverage run -m pytest
+       pipenv run coverage run ./manage.py collectstatic --noinput
+       pipenv run coverage run --append -m pytest
        pipenv run coverage run --append ./manage.py test
        pipenv run coverage html
     - name: Upload coverage
