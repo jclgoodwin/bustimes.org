@@ -13,7 +13,6 @@ jobs:
       with:
         path: |
           ~/.cache/pip
-          ~/.local/share/virtualenvs
           ~/.local/share/pyppeteer
         key: ${{ runner.os }}-${{ hashFiles('Pipfile.lock') }}
         restore-keys: |
