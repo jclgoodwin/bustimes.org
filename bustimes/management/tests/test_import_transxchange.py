@@ -650,7 +650,7 @@ class ImportTransXChangeTest(TestCase):
             """,
             html=True
         )
-        self.assertContains(res, '/js/timetable.min.js')
+        self.assertContains(res, '/js/timetable.js')
 
         timetable = res.context_data['timetable']
         self.assertFalse(timetable.groupings[0].has_minor_stops())

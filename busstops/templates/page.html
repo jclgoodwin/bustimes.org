@@ -17,11 +17,10 @@
 {% load static %}
 <link rel="manifest" href="{% static 'manifest.webmanifest' %}">
 <!--[if gte IE 9]><!-->
-    {% load pipeline %}
-    {% stylesheet 'main' %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />    
 <!--<![endif]-->
 <!--[if lt IE 9]>
-    {% stylesheet 'ie' %}
+    <link rel="stylesheet" href="{% static 'css/ie.css' %}" />
     <script src="{% static "js/html5shiv/html5shiv-printshiv.min.js" %}"></script>
 <![endif]-->
 {% block head %}
@@ -101,7 +100,7 @@ ga('send', 'pageview');
     }
 </script>
 
-{% javascript 'global' %}
+<script async src="{% static 'js/global.js' %}"></script>
 {% block foot %}{% endblock %}
 </body>
 </html>

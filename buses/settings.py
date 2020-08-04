@@ -28,7 +28,6 @@ INSTALLED_APPS = [
     'disruptions',
     'vehicles',
     'vosa',
-    'pipeline',
     'antispam',
     'email_obfuscator',
     'channels',
@@ -75,15 +74,15 @@ if TEST:
     NUM_SLOW_TESTS = 10
 
 
-if os.environ.get('READ_ONLY_DB_HOST'):
-    REPLICA_DATABASES = []
-    for i, host in enumerate(os.environ['READ_ONLY_DB_HOST'].split()):
-        key = f'read-only-{i}'
-        DATABASES[key] = DATABASES['default'].copy()
-        DATABASES[key]['HOST'] = host
-        REPLICA_DATABASES.append(key)
-    DATABASE_ROUTERS = ['multidb.PinningReplicaRouter']
-    MIDDLEWARE.append('busstops.middleware.admin_db_middleware')
+# if os.environ.get('READ_ONLY_DB_HOST'):
+#     REPLICA_DATABASES = []
+#     for i, host in enumerate(os.environ['READ_ONLY_DB_HOST'].split()):
+#         key = f'read-only-{i}'
+#         DATABASES[key] = DATABASES['default'].copy()
+#         DATABASES[key]['HOST'] = host
+#         REPLICA_DATABASES.append(key)
+#     DATABASE_ROUTERS = ['multidb.PinningReplicaRouter']
+#     MIDDLEWARE.append('busstops.middleware.admin_db_middleware')
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = None
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
@@ -113,80 +112,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.environ.get('STATIC_ROOT', os.path.join(BASE_DIR, '..', 'bustimes-static'))
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.environ.get('MEDIA_ROOT', os.path.join(BASE_DIR, '..', 'bustimes-media'))
-
-if DEBUG:
-    STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
-else:
-    STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
-STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'pipeline.finders.PipelineFinder',
-)
-PIPELINE = {
-    'COMPILERS': [
-        'busstops.compilers.AutoprefixerSASSCompiler',
-    ],
-    'STYLESHEETS': {
-        'main': {
-            'source_filenames': (
-                'css/style.scss',
-            ),
-            'output_filename': 'css/style.css',
-        },
-        'ie': {
-            'source_filenames': (
-                'css/ie.scss',
-            ),
-            'output_filename': 'css/ie.css',
-        }
-    },
-    'JAVASCRIPT': {
-        'frontpage': {
-            'source_filenames': (
-                'js/frontpage.js',
-            ),
-            'output_filename': 'js/frontpage.min.js',
-            'extra_context': {
-                'async': True
-            }
-        },
-        'global': {
-            'source_filenames': (
-                'js/global.js',
-            ),
-            'output_filename': 'js/global.min.js',
-            'extra_context': {
-                'async': True
-            }
-        },
-        'timetable': {
-            'source_filenames': (
-                'js/timetable.js',
-            ),
-            'output_filename': 'js/timetable.min.js',
-            'extra_context': {
-                'async': True
-            }
-        },
-        'servicemap': {
-            'source_filenames': (
-                'js/loadjs/loadjs.min.js',
-                'js/reqwest.min.js',
-                'js/servicemap.js',
-            ),
-            'output_filename': 'js/servicemap.min.js',
-            'extra_context': {
-                'async': not DEBUG
-            }
-        },
-
-    },
-    'YUGLIFY_BINARY': os.path.join(BASE_DIR, 'node_modules', '.bin', 'yuglify'),
-    'CSS_COMPRESSOR': None,
-    'SASS_BINARY': os.path.join(BASE_DIR, 'node_modules', '.bin', 'sass'),
-    'SASS_ARGUMENTS': '--style compressed',
-}
-PIPELINE_AUTOPREFIXER_BINARY = os.path.join(BASE_DIR, 'node_modules', '.bin', 'postcss')
 
 TEMPLATE_MINIFER_STRIP_FUNCTION = 'buses.utils.minify'
 TEMPLATES = [

@@ -218,9 +218,7 @@
     {% endif %}
 {% endfor %}
 
-
 {% load static %}
-{% load pipeline %}
 
 {% if object.geometry %}
     <script>
@@ -228,11 +226,13 @@
         LEAFLET_CSS_URL = '{% static 'js/leaflet/leaflet.css' %}';
         LEAFLET_JS_URL = '{% static 'js/leaflet/leaflet.js' %}';
     </script>
-    {% javascript 'servicemap' %}
+    <script src="{% static 'js/loadjs.min.js' %}"></script>
+    <script src="{% static 'js/reqwest.min.js' %}"></script>
+    <script async src="{% static 'js/servicemap.js' %}"></script>
 {% endif %}
 
 {% if timetable %}
-    {% javascript 'timetable' %}
+    <script async src="{% static 'js/timetable.js' %}"></script>
 {% endif %}
 
 {% endblock %}

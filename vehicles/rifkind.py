@@ -4,7 +4,7 @@ from django.contrib.gis.geos import Point
 from django.db.models import Q
 from django.core.cache import cache
 from django.utils import timezone
-from multidb.pinning import use_primary_db
+# from multidb.pinning import use_primary_db
 from busstops.models import DataSource, Service
 from bustimes.models import get_calendars, Trip
 from .models import Vehicle, VehicleLocation, VehicleJourney
@@ -147,7 +147,7 @@ def get_stop_departures(source, stop_code):
     return response.json()['data']
 
 
-@use_primary_db
+# @use_primary_db
 def rifkind(service_id):
     source = DataSource.objects.get(name='Rifkind')
     now = timezone.localtime()

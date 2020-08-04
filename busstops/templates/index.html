@@ -49,7 +49,7 @@
     <li><a href="/regions/IM">Isle of Man</a></li>
 </ul>
 
-{% load pipeline %}
-{% javascript 'frontpage' %}
+{% load static %}
+<script src="{% static 'js/frontpage.js' %}"></script>
 
 {% endblock %}

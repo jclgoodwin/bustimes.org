@@ -15,7 +15,7 @@ from django.views.decorators.http import last_modified
 from django.views.generic.detail import DetailView
 from django.urls import reverse
 from django.utils import timezone
-from multidb.pinning import use_primary_db
+# from multidb.pinning import use_primary_db
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service, ServiceCode, SIRISource, DataSource
 from bustimes.models import get_calendars, Trip
@@ -217,7 +217,7 @@ def get_locations(request):
     return locations
 
 
-@use_primary_db
+# @use_primary_db
 def siri_one_shot(code, now):
     source = 'Icarus'
     siri_source = SIRISource.objects.get(name=code.scheme[:-5])
