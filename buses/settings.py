@@ -43,6 +43,8 @@ MIDDLEWARE = [
     'busstops.middleware.not_found_redirect_middleware',
 ]
 
+SECURE_REFERRER_POLICY = None
+
 if DEBUG and 'runserver' in sys.argv:
     INTERNAL_IPS = ['127.0.0.1']
     INSTALLED_APPS.append('debug_toolbar')
