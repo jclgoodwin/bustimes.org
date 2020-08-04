@@ -12,6 +12,8 @@ data/*.csv
 data/NPTG
 node_modules
 htmlcov
+busstops/static/css/*.css
+busstops/static/css/*.css.map
 .env
 .coverage
 slim-bustimes.sql
