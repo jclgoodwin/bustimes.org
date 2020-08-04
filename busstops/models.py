@@ -7,7 +7,6 @@ import yaml
 from urllib.parse import urlencode, quote
 from autoslug import AutoSlugField
 from django.contrib.gis.db import models
-from django.contrib.postgres.fields import JSONField
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.indexes import GinIndex
@@ -185,7 +184,7 @@ class DataSource(models.Model):
     name = models.CharField(max_length=255)
     url = models.URLField(blank=True)
     datetime = models.DateTimeField(null=True, blank=True)
-    settings = JSONField(null=True, blank=True)
+    settings = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -262,7 +261,7 @@ class StopPoint(models.Model):
     locality = models.ForeignKey('Locality', models.SET_NULL, null=True, editable=False)
     suburb = models.CharField(max_length=48, blank=True)
     town = models.CharField(max_length=48, blank=True)
-    locality_centre = models.NullBooleanField()
+    locality_centre = models.BooleanField(null=True)
 
     places = models.ManyToManyField(Place, blank=True)
 
@@ -314,7 +313,7 @@ class StopPoint(models.Model):
     admin_area = models.ForeignKey('AdminArea', models.SET_NULL, null=True, blank=True)
     active = models.BooleanField(db_index=True)
 
-    osm = JSONField(null=True, blank=True)
+    osm = models.JSONField(null=True, blank=True)
 
     class Meta:
         ordering = ('common_name', 'atco_code')
@@ -564,7 +563,7 @@ class Service(SearchMixin, models.Model):
     geometry = models.MultiLineStringField(null=True, editable=False)
 
     source = models.ForeignKey(DataSource, models.SET_NULL, null=True, blank=True)
-    tracking = models.NullBooleanField()
+    tracking = models.BooleanField(null=True)
     payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
 

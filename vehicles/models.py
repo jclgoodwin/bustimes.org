@@ -9,7 +9,6 @@ from datetime import timedelta
 from django.utils import timezone
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.contrib.postgres.fields import JSONField
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.exceptions import ValidationError
@@ -156,7 +155,7 @@ class Vehicle(models.Model):
                                         related_name='latest_vehicle', editable=False)
     features = models.ManyToManyField(VehicleFeature, blank=True)
     withdrawn = models.BooleanField(default=False)
-    data = JSONField(null=True, blank=True)
+    data = models.JSONField(null=True, blank=True)
 
     def save(self, force_insert=False, force_update=False, **kwargs):
         if self.fleet_number and not self.fleet_code:
@@ -295,7 +294,7 @@ class VehicleEdit(models.Model):
     notes = models.CharField(max_length=255, blank=True)
     features = models.ManyToManyField(VehicleFeature, blank=True, through=VehicleEditFeature)
     withdrawn = models.BooleanField(null=True)
-    changes = JSONField(null=True, blank=True)
+    changes = models.JSONField(null=True, blank=True)
     url = models.URLField(blank=True, max_length=255)
     approved = models.BooleanField(null=True, db_index=True)
     datetime = models.DateTimeField(null=True, blank=True)
