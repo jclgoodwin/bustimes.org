@@ -36,13 +36,12 @@ def get_stop_usages(trips):
             grouping = 0
         rows = groupings[grouping]
 
-        new_rows = [stoptime.stop_id for stoptime in trip.stoptime_set.all()]
+        new_rows = [stoptime.stop_id for stoptime in trip.stoptime_set.all() if stoptime.stop_id]
         diff = differ.compare(rows, new_rows)
 
         y = 0  # how many rows down we are
 
-        for stoptime in trip.stoptime_set.all():
-            key = stoptime.get_key()
+        for key in new_rows:
             if y < len(rows):
                 existing_row = rows[y]
             else:
