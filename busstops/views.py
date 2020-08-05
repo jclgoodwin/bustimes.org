@@ -535,6 +535,12 @@ class ServiceDetailView(DetailView):
         if context['operators']:
             context['breadcrumb'].append(context['operators'][0])
             context['payment_methods'] = context['operators'][0].payment_methods.all()
+            for operator in context['operators']:
+                if operator.is_national_express() or self.object.service_code == 'DNAX090':
+                    context['links'].append({
+                        'url': operator.get_national_express_url(),
+                        'text': 'Buy tickets at nationalexpress.com'
+                    })
 
         for url, text in self.object.get_traveline_links(date):
             context['links'].append({
