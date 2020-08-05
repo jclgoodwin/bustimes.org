@@ -634,7 +634,10 @@ class TransXChange:
                 if detector.done:
                     break
             detector.close()
-            parser = ET.XMLParser(encoding=detector.result['encoding'])
+            encoding = detector.result['encoding']
+            if encoding == 'UTF-8-SIG':
+                encoding = 'utf-8'
+            parser = ET.XMLParser(encoding=encoding)
         except TypeError:
             parser = None
 
