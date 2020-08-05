@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef
 from django.db import models
 from django.contrib.postgres.fields import DateRangeField
 from django.urls import reverse
@@ -15,9 +15,12 @@ def get_calendars(when, calendar_ids=None):
     exclusions = calendar_dates.filter(operation=False)
     inclusions = calendar_dates.filter(operation=True)
     special_inclusions = inclusions.filter(special=True)
-    return calendars.filter(Q(end_date__gte=when) | Q(end_date=None),
-                            ~Q(calendardate__in=exclusions) | Q(calendardate__in=inclusions),
-                            Q(**{when.strftime('%a').lower(): True}) | Q(calendardate__in=special_inclusions))
+    only_special_dates = Exists(CalendarDate.objects.filter(calendar=OuterRef('id'), special=True, operation=True))
+    return calendars.filter(
+        Q(end_date__gte=when) | Q(end_date=None),
+        ~Q(calendardate__in=exclusions) | Q(calendardate__in=inclusions),
+        Q(calendardate__in=special_inclusions) | (Q(~only_special_dates) & Q(**{when.strftime('%a').lower(): True}))
+    )
 
 
 class Route(models.Model):
