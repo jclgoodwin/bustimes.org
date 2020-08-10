@@ -69,11 +69,11 @@ fi
 cd ..
 
 # Translink Metro
-metro_old=$(shasum metro_glider.zip)
+metro_old=$(shasum metro-glider-29-june-2020.zip)
 wget -qN https://www.opendatani.gov.uk/dataset/6d9677cf-8d03-4851-985c-16f73f7dd5fb/resource/153a47c3-59b1-404f-8ec6-e5230cc4377d/download/metro-glider-29-june-2020.zip
-metro_new=$(shasum metro_glider.zip)
+metro_new=$(shasum metro-glider-29-june-2020.zip)
 if [[ "$metro_old" != "$metro_new" ]]; then
-    ../manage.py import_atco_cif metro_glider.zip
+    ../manage.py import_atco_cif metro-glider-29-june-2020.zip
 fi
 
 # Ulsterbus

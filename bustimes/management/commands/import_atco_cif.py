@@ -166,11 +166,11 @@ class Command(BaseCommand):
                 if operator:
                     service.operator.add(operator)
                 self.route, created = Route.objects.update_or_create(
-                    code=key,
-                    service=service,
-                    line_name=line_name,
-                    description=description,
-                    source=self.source
+                    {
+                        'service': service,
+                        'line_name': line_name,
+                        'description': description,
+                    }, code=key, source=self.source
                 )
                 if not created:
                     self.route.trip_set.all().delete()
