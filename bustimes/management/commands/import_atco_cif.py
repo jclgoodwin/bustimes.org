@@ -33,7 +33,6 @@ class Command(BaseCommand):
         self.trip = None
         self.routes = {}
         self.calendars = {}
-        self.stops = {}
         self.stop_times = []
         self.notes = []
         if 'ulb' in archive_name.lower():
@@ -47,28 +46,8 @@ class Command(BaseCommand):
             for filename in archive.namelist():
                 if filename.endswith('.cif'):
                     with archive.open(filename) as open_file:
-                        detector = UniversalDetector()
-                        for line in open_file:
-                            detector.feed(line)
-                            if detector.done:
-                                break
-                        detector.close()
-                        encoding = detector.result['encoding']
-                        open_file.seek(0)
-
-                        self.handle_file(open_file, encoding)
+                        self.handle_file(open_file)
         assert self.stop_times == []
-
-        existing_stops = StopPoint.objects.in_bulk(self.stops.keys())
-        stops_to_update = []
-        new_stops = []
-        for stop_code in self.stops:
-            if stop_code in existing_stops:
-                stops_to_update.append(self.stops[stop_code])
-            else:
-                new_stops.append(self.stops[stop_code])
-        StopPoint.objects.bulk_update(stops_to_update, fields=['common_name', 'latlong'])
-        StopPoint.objects.bulk_create(new_stops)
 
         for route in self.routes.values():
             groupings = get_stop_usages(route.trip_set.all())
@@ -97,7 +76,51 @@ class Command(BaseCommand):
         self.source.service_set.filter(current=True).exclude(service_code__in=self.routes.keys()).update(current=False)
         self.source.save(update_fields=['datetime'])
 
-    def handle_file(self, open_file, encoding):
+    def handle_file(self, open_file):
+        # detect encoding
+        detector = UniversalDetector()
+        for line in open_file:
+            detector.feed(line)
+            if detector.done:
+                break
+        detector.close()
+        encoding = detector.result['encoding']
+
+        open_file.seek(0)
+
+        # stops
+        stops = {}
+        for line in open_file:
+            identity = line[:2]
+            if identity == b'QL' or identity == b'QB':
+                stop_code = line[3:15].decode().strip()
+                if identity == b'QL':
+                    name = line[15:]
+                    if name and stop_code not in stops:
+                        name = name.decode(encoding).strip()
+                        stops[stop_code] = StopPoint(atco_code=stop_code, common_name=name, active=True)
+                else:
+                    easting = line[15:23].strip()
+                    if easting:
+                        stops[stop_code].latlong = Point(
+                            int(easting),
+                            int(line[23:].strip()),
+                            srid=29902  # Irish Grid
+                        )
+        existing_stops = StopPoint.objects.in_bulk(stops.keys())
+        stops_to_update = []
+        new_stops = []
+        for stop_code in stops:
+            if stop_code in existing_stops:
+                stops_to_update.append(stops[stop_code])
+            else:
+                new_stops.append(stops[stop_code])
+        StopPoint.objects.bulk_update(stops_to_update, fields=['common_name', 'latlong'])
+        StopPoint.objects.bulk_create(new_stops)
+
+        open_file.seek(0)
+
+        # everything else
         previous_line = None
         for line in open_file:
             self.handle_line(line, previous_line, encoding)
@@ -271,20 +294,3 @@ class Command(BaseCommand):
                 self.notes.append(note)
             else:
                 print(previous_identity[:2], line)
-
-        elif identity == b'QL':
-            stop_code = line[3:15].decode().strip()
-            name = line[15:]
-            if name and stop_code not in self.stops:
-                name = name.decode(encoding).strip()
-                self.stops[stop_code] = StopPoint(atco_code=stop_code, common_name=name, active=True)
-
-        elif identity == b'QB':
-            stop_code = line[3:15].decode().strip()
-            easting = line[15:23].strip()
-            if easting:
-                self.stops[stop_code].latlong = Point(
-                    int(easting),
-                    int(line[23:].strip()),
-                    srid=29902  # Irish Grid
-                )
