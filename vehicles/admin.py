@@ -170,8 +170,8 @@ def apply_edits(queryset):
         ok = True
         vehicle = edit.vehicle
         update_fields = []
-        if edit.withdrawn:
-            vehicle.withdrawn = True
+        if edit.withdrawn is not None:
+            vehicle.withdrawn = edit.withdrawn
             update_fields.append('withdrawn')
         if edit.fleet_number:
             vehicle.fleet_code = edit.fleet_number
