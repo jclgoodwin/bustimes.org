@@ -288,7 +288,7 @@ class Command(BaseCommand):
 
         for holiday in operating_profile.operation_bank_holidays:
             if holiday in BANK_HOLIDAYS:
-                if (holiday == 'AllBankHolidays' or holiday == 'HolidayMondays') and self.region_id != 'S':
+                if (holiday == 'AllBankHolidays' or holiday == 'HolidayMondays') and self.region_id == 'S':
                     continue
                 date = BANK_HOLIDAYS[holiday]
                 if operating_period.contains(date):
@@ -300,7 +300,7 @@ class Command(BaseCommand):
 
         for holiday in operating_profile.nonoperation_bank_holidays:
             if holiday in BANK_HOLIDAYS:
-                if (holiday == 'AllBankHolidays' or holiday == 'HolidayMondays') and self.region_id != 'S':
+                if (holiday == 'AllBankHolidays' or holiday == 'HolidayMondays') and self.region_id == 'S':
                     continue
                 date = BANK_HOLIDAYS[holiday]
                 if operating_period.contains(date):
