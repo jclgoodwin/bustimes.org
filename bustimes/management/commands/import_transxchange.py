@@ -278,12 +278,12 @@ class Command(BaseCommand):
 
     def get_calendar(self, operating_profile, operating_period):
         calendar_dates = [
-            CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(), special=True,
+            CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
                          operation=False) for date_range in operating_profile.nonoperation_days
         ]
         calendar_dates += [
-            CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(), special=True,
-                         operation=True) for date_range in operating_profile.operation_days
+            CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
+                         special=True, operation=True) for date_range in operating_profile.operation_days
         ]
 
         for holiday in operating_profile.operation_bank_holidays:
@@ -305,7 +305,7 @@ class Command(BaseCommand):
                 date = BANK_HOLIDAYS[holiday]
                 if operating_period.contains(date):
                     calendar_dates.append(
-                        CalendarDate(start_date=date, end_date=date, dates=(date, date), special=True, operation=False)
+                        CalendarDate(start_date=date, end_date=date, dates=(date, date), operation=False)
                     )
             else:
                 self.undefined_holidays.add(holiday)
@@ -318,7 +318,7 @@ class Command(BaseCommand):
             if nonoperation_days:
                 calendar_dates += [
                     CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
-                                 special=True, operation=False)
+                                 operation=False)
                     for date_range in nonoperation_days
                 ]
 
@@ -327,7 +327,7 @@ class Command(BaseCommand):
             if operation_days:
                 calendar_dates += [
                     CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
-                                 special=True, operation=True)
+                                 operation=True)
                     for date_range in operation_days
                 ]
 

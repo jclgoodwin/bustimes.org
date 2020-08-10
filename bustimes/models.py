@@ -5,7 +5,8 @@ from django.urls import reverse
 
 
 def get_calendars(when, calendar_ids=None):
-    calendars = Calendar.objects.filter(start_date__lte=when)
+    calendars = Calendar.objects.filter(Q(end_date__gte=when) | Q(end_date=None),
+                                        start_date__lte=when)
     calendar_dates = CalendarDate.objects.filter(Q(end_date__gte=when) | Q(end_date=None),
                                                  start_date__lte=when)
     if calendar_ids is not None:
@@ -15,11 +16,13 @@ def get_calendars(when, calendar_ids=None):
     exclusions = calendar_dates.filter(operation=False)
     inclusions = calendar_dates.filter(operation=True)
     special_inclusions = inclusions.filter(special=True)
-    only_special_dates = Exists(CalendarDate.objects.filter(calendar=OuterRef('id'), special=True, operation=True))
+    only_certain_dates = Exists(CalendarDate.objects.filter(calendar=OuterRef('id'), special=False, operation=True))
     return calendars.filter(
-        Q(end_date__gte=when) | Q(end_date=None),
-        ~Q(calendardate__in=exclusions) | Q(calendardate__in=inclusions),
-        Q(calendardate__in=special_inclusions) | (Q(~only_special_dates) & Q(**{when.strftime('%a').lower(): True}))
+        ~Q(calendardate__in=exclusions)
+    ).filter(
+        Q(~only_certain_dates) | Q(calendardate__in=inclusions)
+    ).filter(
+        Q(**{when.strftime('%a').lower(): True}) | Q(calendardate__in=special_inclusions)
     )
 
 
@@ -66,12 +69,12 @@ class Calendar(models.Model):
 
     def allows(self, date):
         if getattr(self, date.strftime('%a').lower()):
-            for special in self.specials:
-                if not special.operation and special.contains(date):
+            for calendar_date in self.calendardate_set.all():
+                if not calendar_date.operation and calendar_date.contains(date):
                     return False
             return True
-        for special in self.specials:
-            if special.operation and special.contains(date):
+        for calendar_date in self.calendardate_set.all():
+            if calendar_date.operation and calendar_date.special and calendar_date.contains(date):
                 return True
 
     def __str__(self):
@@ -88,6 +91,15 @@ class CalendarDate(models.Model):
 
     def contains(self, date):
         return self.start_date <= date and (not self.end_date or self.end_date >= date)
+
+    def __str__(self):
+        if not self.operation:
+            prefix = 'Not '
+        elif self.special:
+            prefix = 'Also '
+        if self.start_date == self.end_date:
+            return f'{prefix}{self.start_date}'
+        return f'{prefix}{self.start_date} to {self.end_date}'
 
 
 class Note(models.Model):

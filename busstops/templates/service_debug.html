@@ -27,11 +27,14 @@
 
 {% for route in service.route_set.all %}
 
-<h3><a href="{{ route.get_absolute_url }}">{{ route.code }}</a></h3>
+<details>
+    <summary>
+        {{ route.start_date }}–{{ route.end_date }}
+    </summary>
 
-<p><a href="{% url 'admin:bustimes_route_change' route.id %}">Edit</a></p>
+    <h3><a href="{{ route.get_absolute_url }}">{{ route.code }}</a></h3>
 
-{{ route.start_date }}–{{ route.end_date }}
+    <a href="{% url 'admin:bustimes_route_change' route.id %}">Edit</a>
 
 <table>
     <thead>
@@ -63,7 +66,7 @@
     <td>
         <ul class="bulleted">
         {% for d in trip.calendar.calendardate_set.all %}
-            <li>{{ d.start_date }}–{{ d.end_date }}: {{ d.operation }}{% if d.special %} (special){% endif %}</li>
+            <li>{% if d.special %}Also {% endif %}{% if not d.operation %}Not {% endif %}{{ d.start_date }}{% if d.start_date != d.end_date %}–{{ d.end_date }}{% endif %}</li>
         {% endfor %}
         </ul>
     </td>
@@ -71,6 +74,7 @@
 {% endfor %}
 </tbody>
 </table>
+</details>
 {% endfor %}
 
 {% endblock %}

@@ -242,7 +242,7 @@ class ImportTransXChangeTest(TestCase):
         }])
 
         response = self.client.get(service.get_absolute_url() + '/debug')
-        self.assertContains(response, 'Wednesday 12 April 2017–Tuesday 30 May 2017: True')
+        self.assertContains(response, '<li>Wednesday 12 April 2017–Tuesday 30 May 2017</li>')
 
         response = self.client.get(service.get_absolute_url() + '?date=2017-04-20')
         timetable = response.context_data['timetable']
@@ -387,10 +387,10 @@ class ImportTransXChangeTest(TestCase):
         timetable = response.context_data['timetable']
         self.assertEqual('2017-09-13', str(timetable.date))
         self.assertContains(response, 'Budehaven School')
-        # rows = timetable.groupings[1].rows
-        # self.assertEqual(rows[-4].times, [time(8, 33, 10), '', '', '', time(15, 30, 10), ''])
-        # self.assertEqual(rows[-5].times, [time(8, 33), '', '', '', time(15, 30), ''])
-        # self.assertEqual(rows[-6].times, [time(8, 32, 18), '', '', '', time(15, 29, 18), ''])
+        rows = timetable.groupings[1].rows
+        self.assertEqual(str(rows[-4].times), "[08:33, '', '', '', 15:30, '']")
+        self.assertEqual(str(rows[-5].times), "[08:33, '', '', '', 15:30, '']")
+        self.assertEqual(str(rows[-6].times), "[08:32, '', '', '', 15:29, '']")
 
     @freeze_time('2017-01-23')
     def test_timetable_holidays_only(self):
@@ -420,7 +420,9 @@ class ImportTransXChangeTest(TestCase):
         timetable = response.context_data['timetable']
         # next day of operation
         self.assertEqual('2012-06-30', str(timetable.date))
-        self.assertEqual(0, len(timetable.groupings))
+        self.assertEqual(1, len(timetable.groupings))
+        self.assertEqual(str(timetable.groupings[0].rows[0].times),
+                         "['', 09:08, 09:48, 10:28, 11:08, 11:48, 12:28, 13:08, 13:48, 14:28, 15:08, '', '']")
 
         response = self.client.get(service.get_absolute_url() + '?date=2017-01-27')
         timetable = response.context_data['timetable']
