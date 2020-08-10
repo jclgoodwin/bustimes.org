@@ -109,6 +109,9 @@ def bus_open_data(api_key):
         if sources:
             clean_up(operators.values(), sources, incomplete)
 
+    if command.undefined_holidays:
+        print(command.undefined_holidays)
+
 
 def first():
     command = get_command()
@@ -160,6 +163,9 @@ def first():
 
             print(' ', Operator.objects.filter(service__route__source=command.source).distinct().values('id'))
 
+    if command.undefined_holidays:
+        print(command.undefined_holidays)
+
 
 def stagecoach():
     command = get_command()
@@ -200,6 +206,9 @@ def stagecoach():
             print(' ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
             print(' ', {o['id']: o['id'] for o in
                   Operator.objects.filter(service__route__source=command.source).distinct().values('id')})
+
+    if command.undefined_holidays:
+        print(command.undefined_holidays)
 
 
 class Command(BaseCommand):

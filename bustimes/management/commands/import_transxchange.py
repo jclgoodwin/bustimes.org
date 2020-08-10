@@ -55,10 +55,9 @@ ________________________________________________________________________________
 """
 
 BANK_HOLIDAYS = {
-    # 'AllBankHolidays': date(2020, 5, 25),
-    # 'HolidayMondays': date(2020, 5, 25),
+    'AllBankHolidays': date(2020, 8, 31),
+    'HolidayMondays': date(2020, 8, 31),
     'LateSummerBankHolidayNotScotland': date(2020, 8, 31),
-    'AugustBankHolidayScotland': date(2020, 8, 3),
 }
 
 
@@ -289,6 +288,8 @@ class Command(BaseCommand):
 
         for holiday in operating_profile.operation_bank_holidays:
             if holiday in BANK_HOLIDAYS:
+                if (holiday == 'AllBankHolidays' or holiday == 'HolidayMondays') and self.region_id != 'S':
+                    continue
                 date = BANK_HOLIDAYS[holiday]
                 if operating_period.contains(date):
                     calendar_dates.append(
@@ -296,8 +297,11 @@ class Command(BaseCommand):
                     )
             else:
                 self.undefined_holidays.add(holiday)
+
         for holiday in operating_profile.nonoperation_bank_holidays:
             if holiday in BANK_HOLIDAYS:
+                if (holiday == 'AllBankHolidays' or holiday == 'HolidayMondays') and self.region_id != 'S':
+                    continue
                 date = BANK_HOLIDAYS[holiday]
                 if operating_period.contains(date):
                     calendar_dates.append(
