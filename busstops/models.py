@@ -212,6 +212,9 @@ class DataSource(models.Model):
             url = 'https://www.stagecoachbus.com/open-data'
             text = self.name
             date = self.datetime
+        elif self.name == 'MET' or self.name == 'ULB':
+            url = self.url
+            text = 'Translink open data'
 
         if text:
             if url:
