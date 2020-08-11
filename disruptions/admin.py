@@ -1,10 +1,11 @@
 from django.contrib import admin
-from .models import Situation, Consequence, Link, ValidityPeriod
+from .models import Situation, Consequence, Link, ValidityPeriod, StopSuspension
 
 
 class ConsequenceInline(admin.StackedInline):
     model = Consequence
     autocomplete_fields = ['stops', 'services', 'operators']
+    show_change_link = True
 
 
 class ValidityPeriodInline(admin.TabularInline):
@@ -22,4 +23,9 @@ class SituationAdmin(admin.ModelAdmin):
     list_filter = ['reason', 'source', 'current']
 
 
+class StopSuspensionAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['stops', 'service']
+
+
 admin.site.register(Situation, SituationAdmin)
+admin.site.register(StopSuspension, StopSuspensionAdmin)

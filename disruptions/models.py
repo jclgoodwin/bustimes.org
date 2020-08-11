@@ -69,3 +69,10 @@ class Consequence(models.Model):
         if service:
             return service.get_absolute_url()
         return ''
+
+
+class StopSuspension(models.Model):
+    dates = DateTimeRangeField(null=True)
+    text = models.TextField(blank=True)
+    stops = models.ManyToManyField('busstops.StopPoint')
+    service = models.ForeignKey('busstops.Service', models.CASCADE, null=True, blank=True)
