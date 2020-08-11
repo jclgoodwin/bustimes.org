@@ -339,7 +339,7 @@ class VehicleJourney:
                 deadrun = False  # end of dead run
 
             if journey_timinglink and journey_timinglink.from_wait_time is not None:
-                wait_time = journey_timinglink.to_wait_time
+                wait_time = journey_timinglink.from_wait_time
             else:
                 wait_time = stopusage.wait_time or wait_time
 
