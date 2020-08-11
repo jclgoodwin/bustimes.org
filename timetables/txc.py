@@ -219,6 +219,14 @@ class VehicleJourneyTimingLink:
         if self.run_time is not None:
             self.run_time = parse_duration(self.run_time.text)
 
+        self.from_wait_time = element.find('txc:From/txc:WaitTime', NS)
+        if self.from_wait_time is not None:
+            self.from_wait_time = parse_duration(self.from_wait_time.text)
+
+        self.to_wait_time = element.find('txc:To/txc:WaitTime', NS)
+        if self.to_wait_time is not None:
+            self.to_wait_time = parse_duration(self.to_wait_time.text)
+
 
 class VehicleJourney:
     """A journey represents a scheduled journey that happens at most once per
@@ -322,28 +330,22 @@ class VehicleJourney:
         time = self.departure_time
         deadrun = self.start_deadrun is not None
         deadrun_next = False
+        wait_time = None
 
         for timinglink, journey_timinglink in self.get_timinglinks():
-            if stopusage and stopusage.wait_time:
-                wait_time = stopusage.wait_time
-            else:
-                wait_time = None
-
             stopusage = timinglink.origin
 
             if deadrun and self.start_deadrun == timinglink.id:
                 deadrun = False  # end of dead run
 
-            if not deadrun and not self.skip_stopusage(stopusage, time):
-                # Simonds Diss to Beccles
-                if stopusage.stop.atco_code == '2900R241' and timinglink.origin.stop.atco_code == '2900R2417':
-                    stopusage.stop = Stop(None)
-                    stopusage.stop.atco_code = None
-                    stopusage.stop.locality = 'Harleston'
-                    stopusage.stop.common_name = 'Redenhall Rd/Station Rd'
+            if journey_timinglink and journey_timinglink.from_wait_time is not None:
+                wait_time = journey_timinglink.to_wait_time
+            else:
+                wait_time = stopusage.wait_time or wait_time
 
-                if stopusage.wait_time or wait_time:
-                    next_time = time + (stopusage.wait_time or wait_time)
+            if not deadrun and not self.skip_stopusage(stopusage, time):
+                if wait_time:
+                    next_time = time + wait_time
                     yield Cell(stopusage, time, next_time)
                     time = next_time
                 else:
@@ -363,6 +365,11 @@ class VehicleJourney:
                 deadrun_next = True  # start of dead run
 
             stopusage = timinglink.destination
+
+            if journey_timinglink and journey_timinglink.to_wait_time is not None:
+                wait_time = journey_timinglink.to_wait_time
+            else:
+                wait_time = stopusage.wait_time
 
         if not deadrun:
             yield Cell(timinglink.destination, time, time)
