@@ -308,6 +308,8 @@ class VehicleEdit(models.Model):
             if edit:
                 if field == 'reg':
                     edit = edit.upper().replace(' ', '')
+                if edit.startswith('-'):
+                    edit = ''
                 vehicle = str(getattr(self.vehicle, field) or '')
                 if edit != vehicle:
                     changes[field] = edit
@@ -338,8 +340,9 @@ class VehicleEdit(models.Model):
         if vehicle != edit:
             if edit:
                 if vehicle:
-                    if edit == f'-{vehicle}':
-                        return format_html('<del>{}</del>', vehicle)
+                    if edit.startswith('-'):
+                        if edit == f'-{vehicle}':
+                            return format_html('<del>{}</del>', vehicle)
                     else:
                         return format_html('<del>{}</del><br><ins>{}</ins>', vehicle, edit)
                 else:

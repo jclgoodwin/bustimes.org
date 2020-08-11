@@ -340,7 +340,7 @@ class VehiclesTests(TestCase):
 
         edit = VehicleEdit.objects.get()
         self.assertEqual(edit.get_changes(), {'Depot': 'Holt', 'branding': 'Coastliner', 'name': 'Luther Blisset',
-                                              'notes': 'Ex Ipswich Buses', 'reg': '-UWW2X'})
+                                              'notes': 'Ex Ipswich Buses', 'reg': ''})
 
         self.assertTrue(str(edit).isdigit())
         self.assertEqual(self.vehicle_2.get_absolute_url(), edit.get_absolute_url())
