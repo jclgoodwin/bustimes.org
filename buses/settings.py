@@ -403,8 +403,8 @@ FIRST_OPERATORS = [
     ('FirstSomerset', 'SW', {'FBOS': 'FBOS'}),
     ('FirstCornwall', 'SW', {'FCWL': 'FCWL'}),
     # ('FirstLeicester', 'EM', {'FLEI': 'FLEI'}),
-    ('FirstNorwich', 'EA', {'FECS': 'FECS'}),
-    ('FirstIpswich', 'EA', {'FECS': 'FECS'}),
+    # ('FirstNorwich', 'EA', {'FECS': 'FECS'}),
+    # ('FirstIpswich', 'EA', {'FECS': 'FECS'}),
     ('FirstDorset', 'SW', {'FDOR': 'FDOR'}),
     # ('FirstHampshireAndDorset', 'SW', {
     #     'FHAM': 'FHAM',
