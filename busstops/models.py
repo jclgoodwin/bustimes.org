@@ -566,7 +566,7 @@ class Service(SearchMixin, models.Model):
     geometry = models.MultiLineStringField(null=True, editable=False)
 
     source = models.ForeignKey(DataSource, models.SET_NULL, null=True, blank=True)
-    tracking = models.BooleanField()
+    tracking = models.BooleanField(default=False)
     payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
 

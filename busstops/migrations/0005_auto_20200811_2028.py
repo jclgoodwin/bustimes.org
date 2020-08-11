@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='service',
             name='tracking',
-            field=models.BooleanField(),
+            field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
             model_name='stoppoint',
