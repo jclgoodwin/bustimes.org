@@ -666,10 +666,11 @@ class Service(SearchMixin, models.Model):
         return f'http://www.{domain}/lts/#/timetables?{urlencode(query)}', name
 
     def is_megabus(self):
-        return (self.line_name in {'FALCON', 'Oxford Tube'}
-                or self.pk in {'bed_1-X5-Z-y08', 'set_6-M2-_-y08', 'YWAX062', 'FSAG010', 'FSAM009', 'FSAG009',
-                               'EDAO900', 'EDAAIR0', 'YSBX010', 'ABAX010', 'ABAO010'}
-                or any(o.pk in {'MEGA', 'MBGD', 'SCMG'} for o in self.operator.all()))
+        return (
+            self.line_name in {'FLCN', 'TUBE'}
+            or self.service_code.startswith('460-X5_STB_PF_X5')
+            or any(o.pk in {'MEGA', 'SCMG'} for o in self.operator.all())
+        )
 
     def get_megabus_url(self):
         # Using a tuple of tuples, instead of a dict, because the order is important for tests
