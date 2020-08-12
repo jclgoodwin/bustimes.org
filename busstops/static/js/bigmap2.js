@@ -281,11 +281,16 @@
         backoff = 1000;
 
     function connect() {
+        if (socket && socket.readyState < 2) { // already CONNECTING or OPEN
+            return; // no need to reconnect
+        }
         var url = (window.location.protocol === 'http:' ? 'ws' : 'wss') + '://' + window.location.host + '/ws/vehicle_positions';
         // url = 'wss://bustimes.org/ws/vehicle_positions';
         socket = new WebSocket(url);
 
         socket.onopen = function() {
+            backoff = 1000;
+
             var bounds = map.getBounds();
             socket.send(JSON.stringify([
                 bounds.getWest(),
@@ -293,8 +298,6 @@
                 bounds.getEast(),
                 bounds.getNorth()
             ]));
-
-            backoff = 1000;
         };
 
         socket.onclose = function() {
