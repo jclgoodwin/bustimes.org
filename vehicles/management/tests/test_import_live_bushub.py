@@ -56,7 +56,7 @@ class BusHubTest(TestCase):
             "VehicleAtStop": False,
             "VisitNumber": "",
             "Distance": None,
-            "VehicleRef": "20052",
+            "VehicleRef": "11111",
             "Destination": None
         }
 
@@ -73,6 +73,7 @@ class BusHubTest(TestCase):
         self.assertIsNone(location.journey.service)
 
         item['OperatorRef'] = 'WNGS'
+        item['VehicleRef'] = '20052'
         item['Bearing'] = '-1'
         with self.assertNumQueries(5):
             command.handle_item(item, self.source.datetime)
