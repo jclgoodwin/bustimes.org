@@ -195,7 +195,7 @@ class LiveDeparturesTest(TestCase):
     @freeze_time('14 Mar 2017 20:00')
     def test_stagecoach(self):
         with vcr.use_cassette('data/vcr/stagecoach.yaml'):
-            with self.assertNumQueries(8):
+            with self.assertNumQueries(9):
                 res = self.client.get('/stops/64801092')
         self.assertContains(res, '<td><a href=/services/15>15</a></td>', html=True)
         self.assertContains(res, '<td>Hillend</td>')
@@ -210,7 +210,7 @@ class LiveDeparturesTest(TestCase):
     @freeze_time('28 Mar 2017 17:00')
     def test_stagecoach_timezone(self):
         with vcr.use_cassette('data/vcr/stagecoach_timezone.yaml'):
-            with self.assertNumQueries(8):
+            with self.assertNumQueries(9):
                 res = self.client.get('/stops/64801092')
         self.assertEqual(6, len(res.context_data['departures']))
         self.assertEqual(res.context_data['departures'][0]['destination'].common_name, 'Wood Street')
@@ -395,7 +395,7 @@ class LiveDeparturesTest(TestCase):
 
     def test_jersey(self):
         with vcr.use_cassette('data/vcr/jersey_live.yaml'):
-            with self.assertNumQueries(4):
+            with self.assertNumQueries(5):
                 response = self.client.get(self.jersey_stop.get_absolute_url())
         self.assertEqual(len(response.context_data['departures']), 9)
         self.assertEqual(response.context_data['departures'][0]['service'], '16')
@@ -405,7 +405,7 @@ class LiveDeparturesTest(TestCase):
     def test_worcestershire(self, log_vehicle_journey):
         with freeze_time('Sat Feb 09 10:45:45 GMT 2019'):
             with vcr.use_cassette('data/vcr/worcester.yaml'):
-                with self.assertNumQueries(10):
+                with self.assertNumQueries(11):
                     response = self.client.get(self.worcester_stop.get_absolute_url())
             with vcr.use_cassette('data/vcr/worcester.yaml'):
                 with self.assertNumQueries(3):

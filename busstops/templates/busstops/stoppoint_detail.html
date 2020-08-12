@@ -14,6 +14,14 @@
     <p>Buses point {{ stoppoint.get_bearing_display }}</p>
 {% endif %}
 
+{% for suspension in suspensions %}
+    <div class="situation">
+        {% load date_range %}
+        <h2>{{ suspension.dates|date_range }}</h2>
+        {{ suspension.text|linebreaks }}
+    </div>
+{% endfor %}
+
 {% if stoppoint.latlong %}
     <ul class="horizontal">
         <li><a href="/map#16/{{ object.latlong.y|floatformat:4 }}/{{ object.latlong.x|floatformat:4 }}">Map</a></li>

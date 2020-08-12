@@ -362,6 +362,8 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         if nearby is not None:
             context['nearby'] = nearby.exclude(pk=self.object.pk).prefetch_related(prefetch_stop_services).defer('osm')
 
+        context['suspensions'] = self.object.stopsuspension_set.filter(service=None)
+
         context['breadcrumb'] = [crumb for crumb in (
             region,
             self.object.admin_area,
