@@ -113,6 +113,9 @@ def operator_vehicles(request, slug=None, parent=None):
     vehicles = vehicles.order_by('fleet_number', 'fleet_code', 'reg', 'code')
     vehicles = vehicles.select_related('vehicle_type', 'livery', 'latest_location__journey__service')
 
+    pending_edits = VehicleEdit.objects.filter(approved=None, vehicle=OuterRef('id'))
+    vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
+
     submitted = False
     moved = False
     breadcrumb = [operator.region, operator]
@@ -151,8 +154,6 @@ def operator_vehicles(request, slug=None, parent=None):
         depots = vehicles.order_by().distinct('data__Depot').values_list('data__Depot', flat=True)
 
     else:
-        pending_edits = VehicleEdit.objects.filter(approved=None, vehicle=OuterRef('id'))
-        vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
         depots = None
 
     if operator.name == 'National Express':
