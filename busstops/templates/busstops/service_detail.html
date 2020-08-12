@@ -48,10 +48,6 @@
     <div class="service-map" id="map" data-service="{{ object.id }}"></div>
 {% endif %}
 
-{% for note in notes %}
-    <p class="message">{{ note|safe }}</p>
-{% endfor %}
-
 {% if object.timetable_change %}
     <p class="message">Timetable changes from {{ object.timetable_change }}</p>
 {% endif %}
@@ -100,7 +96,7 @@
                             <tr{% if not row.first and not row.last and row.is_minor %} class="minor"{% endif %}>
                                 <th>
                                     {% if row.stop.pk %}
-                                        <a href="{{ row.stop.get_absolute_url }}">{{ row.stop.get_qualified_name }}</a>
+                                        <a href="{{ row.stop.get_absolute_url }}">{% if row.stop.suspended %}🚧 {% endif %}{{ row.stop.get_qualified_name }}</a>
                                     {% else %}{{ row.stop }}{% endif %}
                                 </th>
                             {% for cell in row.times %}

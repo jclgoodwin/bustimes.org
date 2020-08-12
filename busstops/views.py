@@ -18,9 +18,9 @@ from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from departures import live
-from disruptions.models import Situation, Consequence
+from disruptions.models import Situation, Consequence, StopSuspension
 from .utils import format_gbp, get_bounding_box
-from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, Note, Place, ServiceColour
+from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, Place, ServiceColour
 from .forms import ContactForm, SearchForm
 
 
@@ -481,8 +481,6 @@ class ServiceDetailView(DetailView):
             return context
 
         context['operators'] = self.object.operator.all()
-        context['notes'] = Note.objects.filter(Q(operators__in=context['operators']) | Q(services=self.object)
-                                               | Q(services=None, operators=None))
         context['links'] = []
 
         context['related'] = self.object.get_similar_services()
@@ -508,10 +506,14 @@ class ServiceDetailView(DetailView):
         else:
             date = None
 
+        suspensions = StopSuspension.objects.filter(Q(service=None) | Q(service=self.object))
+
         if not context.get('timetable') or not context['timetable'].groupings:
             context['stopusages'] = self.object.stopusage_set.all().select_related(
                 'stop__locality'
-            ).defer('stop__osm', 'stop__locality__latlong')
+            ).defer(
+                'stop__osm', 'stop__locality__latlong'
+            ).prefetch_related(Prefetch('stop__stopsuspension_set', to_attr='suspended', queryset=suspensions))
             context['has_minor_stops'] = any(s.is_minor() for s in context['stopusages'])
         else:
             stops = StopPoint.objects.select_related('locality').defer('osm', 'latlong', 'locality__latlong')
@@ -519,10 +521,12 @@ class ServiceDetailView(DetailView):
                                               if type(grouping.rows) is not list or
                                               grouping.rows and grouping.rows[0].times]
             stop_codes = (row.stop.atco_code for grouping in context['timetable'].groupings for row in grouping.rows)
+            stops = stops.prefetch_related(Prefetch('stopsuspension_set', to_attr='suspended', queryset=suspensions))
             stops = stops.in_bulk(stop_codes)
             for grouping in context['timetable'].groupings:
                 for row in grouping.rows:
                     row.stop = stops.get(row.stop.atco_code, row.stop)
+
         try:
             context['breadcrumb'] = [Region.objects.filter(adminarea__stoppoint__service=self.object).distinct().get()]
         except (Region.DoesNotExist, Region.MultipleObjectsReturned):

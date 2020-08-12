@@ -319,7 +319,6 @@ class ViewsTests(TestCase):
         self.assertContains(response, 'ouibus')
         self.assertContains(response, '@dril on Twitter')
         self.assertContains(response, 'twitter.com/dril"')
-        self.assertContains(response, 'Mind your head')  # Note
         self.assertEqual(self.note.get_absolute_url(), '/operators/ainsleys-chariots')
 
     def test_national_express_service(self):
