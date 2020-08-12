@@ -1,6 +1,6 @@
 """Tests for timetables and date ranges"""
 import xml.etree.cElementTree as ET
-from datetime import timedelta, date
+from datetime import date
 from freezegun import freeze_time
 from django.test import TestCase
 from . import txc
@@ -13,13 +13,6 @@ class DescriptionTest(TestCase):
     def test_correct_description(self):
         self.assertEqual(txc.correct_description('Penryn College - Stitians'), 'Penryn College - Stithians')
         self.assertEqual(txc.correct_description('Sutton Benger- Swindon'), 'Sutton Benger - Swindon')
-
-
-class RepetitionTest(TestCase):
-    def test_repetition(self):
-        self.assertEqual(str(txc.Repetition(1, 1, timedelta(minutes=20))), 'then\u00A0every 20\u00A0minutes\u00A0until')
-        self.assertEqual(str(txc.Repetition(1, 1, timedelta(minutes=60))), 'then\u00A0hourly until')
-        self.assertEqual(str(txc.Repetition(1, 1, timedelta(minutes=120))), 'then\u00A0every 2\u00A0hours\u00A0until')
 
 
 class DateRangeTest(TestCase):

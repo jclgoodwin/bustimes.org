@@ -146,16 +146,13 @@ class JourneyPatternStopUsage:
         if self.stop is None:
             self.stop = Stop(element)
 
-        # for Ellenvale Coaches
-        if self.stop.atco_code == '090002492728':
-            self.activity = 'pickUpAndSetDown'
-
         self.timingstatus = element.find('txc:TimingStatus', NS).text
 
         self.wait_time = element.find('txc:WaitTime', NS)
         if self.wait_time is not None:
             self.wait_time = parse_duration(self.wait_time.text)
             if self.wait_time.total_seconds() > 10000:
+                # bad data detected
                 print(self.wait_time)
                 self.wait_time = None
 
@@ -170,27 +167,6 @@ class JourneyPatternTimingLink:
         self.origin.parent = self.destination.parent = self
         self.runtime = parse_duration(element.find('txc:RunTime', NS).text)
         self.id = element.get('id')
-        if self.id:
-            if self.id.startswith('JPL_21-9-A-y08-1'):  # Carters Coaches North Elmham stop
-                self.replace_atco_code('2900E074', '2900E0714', stops)
-            elif self.id.startswith('JPL_8-229-B-y11-1-'):  # Ensignbus Snitterfield
-                self.replace_atco_code('4200F063300', '4200F147412', stops)
-            elif self.id.startswith('JPL_18-X52-_-y08-1-2-R'):  # Notts & Derby Alton Towers
-                self.replace_atco_code('3390S9', '3390S10', stops)
-            elif self.id.startswith('JPL_4-X52-_-y11-1-'):  # Notts & Derby Alton Towers
-                self.replace_atco_code('3390BB01', '3390S10', stops)
-            elif self.id.startswith('JPTL'):
-                if self.origin.sequencenumber == 1 or self.origin.sequencenumber == 66:
-                    # x1-ruthin-chester-via-mold
-                    self.replace_atco_code('0610CH19065', '0610CH2395', stops)
-
-    def replace_atco_code(self, code, replacement, stops):
-        if self.origin.stop.atco_code == code:
-            self.origin.stop.atco_code = replacement
-            stops[replacement] = stops[code]
-        if self.destination.stop.atco_code == code:
-            self.destination.stop.atco_code = replacement
-            stops[replacement] = stops[code]
 
 
 def get_deadruns(journey_element):
@@ -287,26 +263,6 @@ class VehicleJourney:
                 for note_element in note_elements
             }
 
-    def skip_stopusage(self, stopusage, time):
-        # Ebley Coaches
-        if self.code.startswith('VJ_45-16A-_-y10-') and stopusage.timingstatus == 'OTH':
-            return True
-
-        # Shiel Buses ferry terminal
-        if stopusage.stop.atco_code == '670088829' and time.seconds == 40200:
-            return True
-
-        # Sanders 45, 45A Briston loop
-        if '-45-_-' in self.code or '-45A-_-' in self.code:
-            if stopusage.stop.atco_code in {'2900B511', '2900B517', '2900B5119', '2900B5120'}:
-                return True
-
-        # Sanders 24 Salle
-        if '-24-_-' in self.code and stopusage.stop.atco_code in {'2900S031', '2900S032'}:
-            return True
-
-        return False
-
     def get_timinglinks(self):
         pattern_links = self.journey_pattern.get_timinglinks()
         if self.timing_links:
@@ -343,13 +299,13 @@ class VehicleJourney:
             else:
                 wait_time = stopusage.wait_time or wait_time
 
-            if not deadrun and not self.skip_stopusage(stopusage, time):
-                if wait_time:
-                    next_time = time + wait_time
+            if wait_time:
+                next_time = time + wait_time
+                if not deadrun:
                     yield Cell(stopusage, time, next_time)
-                    time = next_time
-                else:
-                    yield Cell(stopusage, time, time)
+                time = next_time
+            elif not deadrun:
+                yield Cell(stopusage, time, time)
 
             if journey_timinglink and journey_timinglink.run_time is not None:
                 run_time = journey_timinglink.run_time
@@ -393,14 +349,6 @@ class ServicedOrganisation:
             self.holidays = [DateRange(e) for e in holidays_element]
         else:
             self.holidays = []
-
-        if self.name == 'Devon School Holidays':
-            self.holidays.append(DateRange(ET.fromstring("""
-                <DateRange xmlns="http://www.transxchange.org.uk/">
-                    <StartDate>2019-07-26</StartDate>
-                    <EndDate>2019-08-30</EndDate>
-                </DateRange>
-            """)))
 
 
 class ServicedOrganisationDayType:
@@ -723,31 +671,6 @@ class Cell:
         self.departure_time = departure_time
         self.wait_time = arrival_time and departure_time and arrival_time != departure_time
 
-
-class Repetition:
-    """Represents a special cell in a timetable, spanning multiple rows and columns,
-    with some text like 'then every 5 minutes until'.
-    """
-    def __init__(self, colspan, rowspan, duration):
-        self.colspan = colspan
-        self.rowspan = self.min_height = rowspan
-        self.duration = duration
-
-    def __str__(self):
-        # cleverly add non-breaking spaces if there aren't many rows
-        if self.duration.seconds == 3600:
-            if self.min_height < 3:
-                return 'then\u00A0hourly until'
-            return 'then hourly until'
-        if self.duration.seconds % 3600 == 0:
-            duration = '{} hours'.format(int(self.duration.seconds / 3600))
-        else:
-            duration = '{} minutes'.format(int(self.duration.seconds / 60))
-        if self.min_height < 3:
-            return 'then\u00A0every {}\u00A0until'.format(duration.replace(' ', '\u00A0'))
-        if self.min_height < 4:
-            return 'then every\u00A0{} until'.format(duration.replace(' ', '\u00A0'))
-        return 'then every {} until'.format(duration)
 
 
 class Grouping:
