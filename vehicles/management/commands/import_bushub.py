@@ -49,11 +49,18 @@ class Command(ImportLiveVehiclesCommand):
         else:
             operators = [item['OperatorRef']]
 
-        return Vehicle.objects.select_related('latest_location__journey__service').get_or_create(
-            {'fleet_number': fleet_number, 'source': self.source, 'operator_id': item['OperatorRef']},
-            code=code,
-            operator__in=operators
-        )
+        defaults = {'fleet_number': fleet_number, 'source': self.source, 'operator_id': item['OperatorRef']}
+        vehicles = Vehicle.objects.select_related('latest_location__journey__service')
+
+        if item['OperatorRef'] in {'NXHH', 'WNGS', 'GTRI', 'DIAM', 'PBLT'}:
+            return vehicles.get_or_create(defaults, code=code, operator__parent='Rotala')
+
+        if item['OperatorRef'] == 'SESX':
+            operators = ['SESX', 'NIBS', 'GECL']
+        else:
+            operators = [item['OperatorRef']]
+
+        return vehicles.objects.get_or_create(defaults, code=code, operator__in=operators)
 
     @classmethod
     def get_service(cls, item):
