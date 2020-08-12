@@ -322,11 +322,10 @@ class StopPoint(models.Model):
         ordering = ('common_name', 'atco_code')
 
     def __str__(self):
-        if self.indicator:
-            return '%s (%s)' % (self.common_name, self.indicator)
-        if self.atco_code[:3] == '940':
-            return self.common_name.replace(' Underground Station', '')
-        return self.common_name
+        name = self.get_unqualified_name()
+        if self.bearing:
+            name = f'{name} {self.get_arrow()}'
+        return name
 
     def get_heading(self):
         """Return the stop's bearing converted to degrees, for use with Google Street View."""
@@ -359,7 +358,20 @@ class StopPoint(models.Model):
         'outside': 'outside',
     }
 
+    def get_unqualified_name(self):
+        if self.indicator:
+            return f'{self.common_name} ({self.indicator})'
+        if self.atco_code[:3] == '940':
+            return self.common_name.replace(' Underground Station', '')
+        return self.common_name
+
+    def get_arrow(self):
+        if self.bearing:
+            return self.get_bearing_display()[-1]
+        return ''
+
     def get_qualified_name(self, short=True):
+        name = self.get_unqualified_name()
         if self.locality:
             locality_name = self.locality.name.replace(' Town Centre', '') \
                                                 .replace(' City Centre', '')
@@ -371,17 +383,17 @@ class StopPoint(models.Model):
                                                 .replace('South ', 'S ') \
                                                 .replace('West ', 'W ')
             if self.common_name in locality_name:
-                return locality_name.replace(self.common_name, str(self))  # Cardiff Airport
+                return locality_name.replace(self.common_name, name)  # Cardiff Airport
             if slugify(locality_name) not in slugify(self.common_name):
                 if self.indicator in self.prepositions:
                     indicator = self.indicator
                     if not short:
                         indicator = self.prepositions[indicator]
                     return '%s, %s %s' % (locality_name, indicator, self.common_name)
-                return '%s %s' % (locality_name, self)
+                return '%s %s' % (locality_name, name)
         elif self.town not in self.common_name:
-            return f'{self.town} {self}'
-        return str(self)
+            return f'{self.town} {name}'
+        return name
 
     def get_long_name(self):
         return self.get_qualified_name(short=False)

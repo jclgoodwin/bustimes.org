@@ -9,6 +9,7 @@
                         {% if stop.indicator in stop.prepositions %}
                             {{ stop.common_name }}
                         {% endif %}
+                        {{ stop.get_arrow }}
                     {% else %}
                         {{ stop }}
                     {% endif %}

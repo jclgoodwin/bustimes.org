@@ -152,7 +152,7 @@ class ImportNaptanTest(TestCase):
 
     def test_stops(self):
         legion = StopPoint.objects.get(pk='5820AWN26274')
-        self.assertEqual(str(legion), 'The Legion (o/s)')
+        self.assertEqual(str(legion), 'The Legion (o/s) ↖')
         self.assertEqual(legion.landmark, 'Port Talbot British Legion')
         self.assertEqual(legion.street, 'Talbot Road')  # converted from 'TALBOT ROAD'
         self.assertEqual(legion.crossing, 'Eagle Street')
@@ -160,13 +160,14 @@ class ImportNaptanTest(TestCase):
 
         plaza = StopPoint.objects.get(pk='5820AWN26259')
         self.assertEqual(plaza.get_qualified_name(), 'Port Talbot Plaza')
+        self.assertEqual(str(plaza), 'Plaza ↘')
         self.assertEqual(plaza.landmark, 'Port Talbot British Legion')
         self.assertEqual(plaza.crossing, 'Eagle Street')
         self.assertEqual(plaza.get_heading(), 135)
 
         club = StopPoint.objects.get(pk='5820AWN26438')
         # backtick should be replaced and 'NE - bound' should be normalised
-        self.assertEqual(str(club), "Ty'n y Twr Club (NE-bound)")
+        self.assertEqual(str(club), "Ty'n y Twr Club (NE-bound) ↗")
 
         parkway_station = StopPoint.objects.get(pk='5820AWN26361')
         self.assertEqual(parkway_station.crossing, '')  # '---' should be removed
@@ -219,7 +220,7 @@ class ImportNaptanTest(TestCase):
                 <ul class="has-smalls">
                     <li>
                         <a href="/stops/5820AWN26438">
-                            <span>Ty&#x27;n y Twr Club (NE-bound)</span>
+                            <span>Ty&#x27;n y Twr Club (NE-bound) ↗</span>
                             <small>44</small>
                         </a>
                     </li>
