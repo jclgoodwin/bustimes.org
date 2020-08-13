@@ -369,7 +369,7 @@ class Grouping:
     def apply_stops(self, stops):
         for row in self.rows:
             row.stop = stops.get(row.stop.atco_code, row.stop)
-        self.rows = [row for row in self.rows if not row.stop.permanently_suspended()]
+        self.rows = [row for row in self.rows if not row.permanently_suspended()]
         min_height = self.min_height()
         min_height = self.rowspan()
         for cell in self.rows[0].times:
@@ -397,6 +397,12 @@ class Row:
 
     def is_minor(self):
         return self.timing_status == 'OTH' or self.timing_status == 'TIP'
+
+    def permanently_suspended(self):
+        if type(self.stop) is not Stop:
+            for suspension in self.stop.suspended:
+                if suspension.service_id and not suspension.dates:
+                    return True
 
 
 class Stop:
