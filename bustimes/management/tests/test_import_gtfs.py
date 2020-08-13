@@ -102,7 +102,7 @@ class GTFSTest(TestCase):
 
         for day in (date(2017, 6, 11), date(2017, 12, 25), date(2015, 12, 3), date(2020, 12, 3)):
             with freeze_time(day):
-                with self.assertNumQueries(10   ):
+                with self.assertNumQueries(10):
                     response = self.client.get(f'/services/165?date={day}')
                 timetable = response.context_data['timetable']
                 self.assertEqual(day, timetable.date)

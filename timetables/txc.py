@@ -672,7 +672,6 @@ class Cell:
         self.wait_time = arrival_time and departure_time and arrival_time != departure_time
 
 
-
 class Grouping:
     """Probably either 'outbound' or 'inbound'.
     """
