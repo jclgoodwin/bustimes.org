@@ -409,6 +409,11 @@ class StopPoint(models.Model):
     def get_line_names(self):
         return [service.line_name for service in sorted(self.current_services, key=Service.get_order)]
 
+    def permanently_suspended(self):
+        for suspension in self.suspended:
+            if suspension.service_id and not suspension.dates:
+                return True
+
 
 class OperatorManager(models.Manager):
     def with_documents(self):

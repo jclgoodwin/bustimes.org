@@ -166,9 +166,8 @@ class Repetition:
     """Represents a special cell in a timetable, spanning multiple rows and columns,
     with some text like 'then every 5 minutes until'.
     """
-    def __init__(self, colspan, rowspan, duration):
+    def __init__(self, colspan, duration):
         self.colspan = colspan
-        self.rowspan = self.min_height = rowspan
         self.duration = duration
 
     def __str__(self):
@@ -193,8 +192,7 @@ def abbreviate(grouping, i, in_a_row, difference):
     seconds = difference.total_seconds()
     if not seconds or (seconds != 3600 and seconds > 1800):  # neither hourly nor more than every 30 minutes
         return
-    repetition = Repetition(in_a_row + 1, sum(2 if row.has_waittimes else 1 for row in grouping.rows), difference)
-    # repetition.min_height = sum(2 if row.has_waittimes else 1 for row in grouping.rows if not row.is_minor())
+    repetition = Repetition(in_a_row + 1, difference)
     grouping.rows[0].times[i - in_a_row - 2] = repetition
     for j in range(i - in_a_row - 1, i - 1):
         grouping.rows[0].times[j] = None
@@ -231,6 +229,12 @@ class Grouping:
     def get_order(self):
         if self.trips:
             return self.trips[0].start
+
+    def rowspan(self):
+        return sum(2 if row.has_waittimes else 1 for row in self.rows)
+
+    def min_height(self):
+        return sum(2 if row.has_waittimes else 1 for row in self.rows if not row.is_minor())
 
     def handle_trip(self, trip):
         rows = self.rows
@@ -361,6 +365,17 @@ class Grouping:
             # remove 'None' cells created during the abbreviation process
             # (actual empty cells will contain an empty string '')
             row.times = [time for time in row.times if time is not None]
+
+    def apply_stops(self, stops):
+        for row in self.rows:
+            row.stop = stops.get(row.stop.atco_code, row.stop)
+        self.rows = [row for row in self.rows if not row.stop.permanently_suspended()]
+        min_height = self.min_height()
+        min_height = self.rowspan()
+        for cell in self.rows[0].times:
+            if type(cell) is Repetition:
+                cell.min_height = min_height
+                cell.rowspan = min_height
 
 
 class ColumnHead:

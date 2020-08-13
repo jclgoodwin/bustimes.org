@@ -524,8 +524,7 @@ class ServiceDetailView(DetailView):
             stops = stops.prefetch_related(Prefetch('stopsuspension_set', to_attr='suspended', queryset=suspensions))
             stops = stops.in_bulk(stop_codes)
             for grouping in context['timetable'].groupings:
-                for row in grouping.rows:
-                    row.stop = stops.get(row.stop.atco_code, row.stop)
+                grouping.apply_stops(stops)
 
         try:
             context['breadcrumb'] = [Region.objects.filter(adminarea__stoppoint__service=self.object).distinct().get()]
