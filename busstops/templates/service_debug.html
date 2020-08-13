@@ -51,7 +51,7 @@
 {% for trip in route.trip_set.all %}
 <tr>
     <td>{{ trip.journey_pattern }}</td>
-    <td>{{ trip.destination_id }}</td>
+    <td>{% if trip.inbound %}In{% else %}Out{% endif %}bound</td>
     <td>{{ trip.start }}–{{ trip.end }}</td>
     <td>{{ trip.calendar.start_date }}–{{ trip.calendar.end_date }}</td>
     <td>

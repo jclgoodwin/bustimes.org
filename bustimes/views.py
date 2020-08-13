@@ -1,17 +1,23 @@
 import os
 import zipfile
 from django.conf import settings
+from django.db.models import Prefetch
 from django.views.generic.detail import DetailView
 from django.http import FileResponse, Http404
 from django.utils import timezone
 from busstops.models import Service
 from vehicles.views import siri_one_shot
-from .models import Route
+from .models import Route, Trip
 
 
 class ServiceDebugView(DetailView):
     model = Service
-    queryset = model.objects.prefetch_related('route_set__trip_set__calendar__calendardate_set')
+    queryset = model.objects.prefetch_related(
+        Prefetch(
+            'route_set__trip_set',
+            queryset=Trip.objects.prefetch_related('calendar__calendardate_set').order_by('calendar', 'inbound')
+        )
+    )
     template_name = 'service_debug.html'
 
     def get_context_data(self, **kwargs):
