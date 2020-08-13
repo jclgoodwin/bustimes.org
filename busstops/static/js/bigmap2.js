@@ -4,7 +4,6 @@
     var map = L.map('hugemap', {
             minZoom: 8
         }),
-        vehiclesGroup = L.layerGroup(),
         stopsGroup = L.layerGroup();
 
     map.attributionControl.setPrefix('');
@@ -12,8 +11,6 @@
     L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
         attribution: '<a href="https://stadiamaps.com/">© Stadia Maps</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/about/">© OpenStreetMap contributors</a>',
     }).addTo(map);
-
-    vehiclesGroup.addTo(map);
 
     L.control.locate().addTo(map);
 
@@ -271,14 +268,15 @@
             vehicles[item.i] = L.marker(latLng, {
                 icon: icon,
                 item: item
-            }).addTo(vehiclesGroup).on('click', handleMarkerClick);
+            }).addTo(map).on('click', handleMarkerClick);
         }
     }
 
     // websocket
 
     var socket,
-        backoff = 1000;
+        backoff = 1000,
+        firstVehiclesLoad;
 
     function connect() {
         if (socket && socket.readyState < 2) { // already CONNECTING or OPEN
@@ -290,6 +288,7 @@
 
         socket.onopen = function() {
             backoff = 1000;
+            firstVehiclesLoad = true;
 
             var bounds = map.getBounds();
             socket.send(JSON.stringify([
@@ -310,9 +309,12 @@
         };
 
         socket.onmessage = function(event) {
-            var vehicles = JSON.parse(event.data);
-            for (var i = vehicles.length - 1; i >= 0; i--) {
-                handleVehicle(vehicles[i]);
+            var items = JSON.parse(event.data);
+            for (var i = items.length - 1; i >= 0; i--) {
+                handleVehicle(items[i]);
+            }
+            if (firstVehiclesLoad) {
+                firstVehiclesLoad = false;
             }
         };
     }
@@ -365,6 +367,11 @@
                 stopsGroup.remove();
                 showStops = true;
             } else {
+                if (map.getZoom() > 14) {
+                    document.getElementById('hugemap').classList.add('zoomed-in');
+                } else {
+                    document.getElementById('hugemap').classList.remove('zoomed-in');
+                }
                 stopsGroup.addTo(map);
                 loadStops(first);
             }
@@ -379,10 +386,11 @@
 
     function handleVisibilityChange(event) {
         if (event.target.hidden) {
-            socket.close();
+            socket.close(1000);
         } else {
             connect();
         }
+
     }
 
     if (document.addEventListener) {

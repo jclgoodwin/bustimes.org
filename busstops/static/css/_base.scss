@@ -709,31 +709,41 @@ a:active .name {
             background: $black;
             border: 1px solid $white;
             border-radius: 0 8px 8px;
-            height: 15px;
+            height: 9px;
             position: absolute;
-            top: 0;
-            width: 15px;
-            z-index: -1;
+            left: 3px;
+            top: 3px;
+            width: 9px;
         }
 
         .no-direction {
             border-radius: 8px;
         }
-    }
 
-    &.stop-0 {
-        .stop-arrow {
-            height: 13px;
-            left: 1px;
-            top: 1px;
-            width: 13px;
+        .zoomed-in &,
+        &:hover {
+            .stop-arrow {
+                height: 14px;
+                left: 0px;
+                top: 0px;
+                width: 14px;
+                z-index: -1;
+            }
+
+            &.stop-0 {
+                .stop-arrow {
+                    height: 13px;
+                    left: 1px;
+                    top: 1px;
+                    width: 13px;
+                }
+            }
+        
+            &.stop-1 {
+                font-size: 11px;
+            }
         }
     }
-
-    &.stop-1 {
-        font-size: 11px;
-    }
-
 }
 
 .leaflet-bar {
