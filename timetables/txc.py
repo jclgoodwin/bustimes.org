@@ -146,7 +146,9 @@ class JourneyPatternStopUsage:
         if self.stop is None:
             self.stop = Stop(element)
 
-        self.timingstatus = element.find('txc:TimingStatus', NS).text
+        self.timingstatus = element.find('txc:TimingStatus', NS)
+        if self.timingstatus is not None:
+            self.timingstatus = self.timingstatus.text
 
         self.wait_time = element.find('txc:WaitTime', NS)
         if self.wait_time is not None:

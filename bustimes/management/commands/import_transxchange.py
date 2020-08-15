@@ -412,7 +412,7 @@ class Command(BaseCommand):
 
             for i, cell in enumerate(journey.get_times()):
                 timing_status = cell.stopusage.timingstatus
-                if timing_status == 'otherPoint':
+                if timing_status is None or timing_status == 'otherPoint':
                     timing_status = 'OTH'
                 elif timing_status == 'principleTimingPoint':
                     timing_status = 'PTP'
@@ -632,7 +632,7 @@ class Command(BaseCommand):
                             for i, row in enumerate(grouping.rows):
                                 if row.part.stop.atco_code in stops:
                                     timing_status = row.part.timingstatus
-                                    if timing_status == 'otherPoint':
+                                    if timing_status is None or timing_status == 'otherPoint':
                                         timing_status = 'OTH'
                                     elif timing_status == 'principleTimingPoint':
                                         timing_status = 'PTP'
