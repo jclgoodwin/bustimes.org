@@ -69,13 +69,13 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
             archive_name = 'stagecoach-scne-route-schedule-data-transxchange.zip'
             path = os.path.join(FIXTURES_DIR, archive_name)
 
-            with self.assertNumQueries(937):
+            with self.assertNumQueries(955):
                 call_command('import_bod', '')
             download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
             with self.assertNumQueries(1):
                 call_command('import_bod', '')
             DataSource.objects.update(datetime=None)
-            with self.assertNumQueries(948):
+            with self.assertNumQueries(954):
                 call_command('import_bod', '')
         self.assertEqual(3, Service.objects.count())
         self.assertEqual(6, Route.objects.count())
