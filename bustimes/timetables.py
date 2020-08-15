@@ -129,10 +129,6 @@ class Timetable:
                 row.has_waittimes = any(type(cell) is Cell and cell.wait_time for cell in row.times)
             grouping.do_heads_and_feet()
 
-        if len(set(route.service_id for route in routes)) < 2:
-            for grouping in self.groupings:
-                del grouping.heads
-
         if len(cache_key) <= 250:
             cache.set(cache_key, self.groupings)
 

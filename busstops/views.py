@@ -503,6 +503,10 @@ class ServiceDetailView(DetailView):
             timetable = self.object.get_timetable(date, parallel)
             if timetable and timetable.date:
                 context['timetable'] = timetable
+            if not parallel:
+                for grouping in self.groupings:
+                    del grouping.heads
+
         else:
             date = None
 
