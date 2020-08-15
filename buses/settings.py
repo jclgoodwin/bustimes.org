@@ -398,8 +398,18 @@ FIRST_OPERATORS = [
     # ('FirstChelmsford', 'SE', {'FESX': 'FESX'}),
     # ('FirstColchester', 'SE', {'FESX': 'FESX'}),
     # ('FirstHadleigh', 'SE', {'FESX': 'FESX'}),
+
     ('FirstCaledonia', 'S', {'FGLA': 'FGLA'}),
+    ('FirstCaledoniaNorth', 'S', {'FGLA': 'FGLA'}),
+    ('FirstCaledoniaEast', 'S', {'FGLA': 'FGLA'}),
+    ('FirstOvertown', 'S', {'FGLA': 'FGLA'}),
+    ('FirstDumbarton', 'S', {'FGLA': 'FGLA'}),
+    ('FirstBlantyre', 'S', {'FGLA': 'FGLA'}),
+    ('FirstScotstoun', 'S', {'FGLA': 'FGLA'}),
+
     ('FirstOldham', 'NW', {'FMAN': 'FMAN'}),
+    ('FirstVantage', 'NW', {'FMAN': 'FMAN'}),
+
     ('FirstSomerset', 'SW', {'FBOS': 'FBOS'}),
     ('FirstCornwall', 'SW', {'FCWL': 'FCWL'}),
     # ('FirstLeicester', 'EM', {'FLEI': 'FLEI'}),
@@ -426,6 +436,8 @@ FIRST_OPERATORS = [
     ('FirstBradford', 'Y', {'FBRA': 'FBRA'}),
     ('FirstHuddersfield', 'Y', {'FHUD': 'FHUD'}),
     ('FirstHalifax', 'Y', {'FHAL': 'FHAL'}),
+    # ('FirstHunslet
+    # ('FirstYellowSchool
     # ('FirstWestYorkshire', 'Y', {
     #     'FLDS': 'FLDS',
     #     'FWYO': 'FWYO'
