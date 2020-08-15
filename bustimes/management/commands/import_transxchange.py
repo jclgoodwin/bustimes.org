@@ -741,6 +741,7 @@ class Command(BaseCommand):
         stops_to_create = {atco_code: StopPoint(atco_code=atco_code, common_name=str(stop)[:48], active=True)
                            for atco_code, stop in transxchange_stops.items() if atco_code not in stops}
         if stops_to_create:
+            StopPoint.objects.bulk_create(stops_to_create.values())
             stops = {**stops, **stops_to_create}
 
         return stops
