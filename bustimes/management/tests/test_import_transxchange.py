@@ -552,7 +552,16 @@ class ImportTransXChangeTest(TestCase):
         with freeze_time('1 October 2017'):
             with self.assertNumQueries(15):
                 res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
-        self.assertNotContains(res, 'thead')
+        self.assertContains(res, """
+                <thead>
+                    <tr>
+                        <td></td>
+                        <td colspan="27">
+                            <a href="/services/237-glossop-stalybridge-ashton-2">237</a>
+                        </td>
+                    </tr>
+                </thead>
+        """, html=True)
         self.assertEqual(str(res.context_data['timetable'].date), '2017-10-03')
         self.assertEqual(27, len(res.context_data['timetable'].groupings[0].trips))
         self.assertEqual(30, len(res.context_data['timetable'].groupings[1].trips))

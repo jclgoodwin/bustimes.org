@@ -129,7 +129,9 @@ class Timetable:
                 row.has_waittimes = any(type(cell) is Cell and cell.wait_time for cell in row.times)
             grouping.do_heads_and_feet()
 
-            # del grouping.trips
+        if len(set(route.service_id for route in routes)) < 2:
+            for grouping in self.groupings:
+                del grouping.heads
 
         if len(cache_key) <= 250:
             cache.set(cache_key, self.groupings)
@@ -328,7 +330,7 @@ class Grouping:
                         self.column_feet[key].append(ColumnFoot(None, 1))
 
             if previous_trip:
-                if previous_trip.route_id != trip.route_id:
+                if previous_trip.route.service_id != trip.route.service_id:
                     self.heads.append(
                         ColumnHead(previous_trip.route.service, i - sum(head.span for head in self.heads)))
 
@@ -354,7 +356,7 @@ class Grouping:
             previous_notes = notes
             previous_note_ids = note_ids
 
-        if self.heads:  # or (previous_trip and previous_trip.route_id != self.parent.route_id):
+        if previous_trip:
             self.heads.append(ColumnHead(previous_trip.route.service,
                                          len(self.trips) - sum(head.span for head in self.heads)))
 
