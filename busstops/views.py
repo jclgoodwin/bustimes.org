@@ -661,7 +661,7 @@ def search(request):
                 ).order_by('distance').defer('latlong')[:2]
 
         if 'postcode' not in context:
-            query = SearchQuery(query_text, search_type="websearch", config="english")
+            query = SearchQuery(query_text, search_type="websearch")
 
             rank = SearchRank(F('search_vector'), query)
 
