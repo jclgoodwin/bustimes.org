@@ -17,8 +17,8 @@
         {% endifchanged %}
         <tr>
             <td>
-            {% if item.service.line_name %}
-                <a href={{ item.service.get_absolute_url }}>{{ item.service.line_name }}</a>
+            {% if item.service.id %}
+                <a href={{ item.service.get_absolute_url }}>{% firstof item.service.line_name item.service %}</a>
             {% elif item.service %}{{ item.service }}{% endif %}
             </td>
             <td>{{ item.destination }}</td>
