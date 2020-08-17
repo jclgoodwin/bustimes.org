@@ -25,12 +25,11 @@ class EditVehiclesForm(forms.Form):
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
     other_colour = forms.CharField(widget=forms.TextInput(attrs={"type": "color"}), required=False)
     branding = forms.CharField(required=False, max_length=255)
-    notes = forms.CharField(required=False, max_length=255)
     features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features',
                                               widget=forms.CheckboxSelectMultiple, required=False)
-    depot = forms.CharField(help_text="Best left blank if this changes frequently",
-                            required=False, max_length=255,
-                            widget=forms.TextInput(attrs={"list": "depots"}))
+    depot = forms.CharField(help_text="""I’d leave this blank if I were you. There are better places (not this website) for such
+details""", required=False, max_length=255, widget=forms.TextInput(attrs={"list": "depots"}))
+    notes = forms.CharField(help_text="Again, this should be blank in almost all cases", required=False, max_length=255)
     withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False)
     user = forms.CharField(label='Your name', help_text='If left blank, your IP address will be logged instead',
                            required=False, max_length=255)
@@ -74,11 +73,10 @@ class EditVehicleForm(EditVehiclesForm):
     reg = forms.CharField(label='Registration', required=False, max_length=14)
     name = forms.CharField(label='Name', required=False, max_length=255)
     previous_reg = forms.CharField(required=False, max_length=14)
-    url = forms.URLField(label='URL', help_text='Link to a web page or photo (helpful for verifying recent repaints)',
+    url = forms.URLField(label='URL', help_text='Link to a web page or photo showing changes',
                          required=False, max_length=255)
-    field_order = ['operator', 'fleet_number', 'reg', 'vehicle_type',
-                   'colours', 'other_colour', 'branding', 'name', 'previous_reg', 'depot',
-                   'notes', 'url']
+    field_order = ['operator', 'fleet_number', 'reg', 'vehicle_type', 'colours', 'other_colour', 'branding', 'name',
+                   'previous_reg', 'features', 'depot', 'notes']
 
     def __init__(self, *args, **kwargs):
         vehicle = kwargs.pop('vehicle', None)
@@ -87,3 +85,8 @@ class EditVehicleForm(EditVehiclesForm):
 
         if str(vehicle.fleet_number) in vehicle.code:
             self.fields['fleet_number'].disabled = True
+
+        # if not vehicle.notes:
+        #     del self.fields['notes']
+        #     if not vehicle.data or 'Depot' not in vehicle.data:
+        #         del self.fields['depot']
