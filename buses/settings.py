@@ -392,7 +392,7 @@ STAGECOACH_OPERATORS = [
     ('Y', 'tram', 'Stagecoach Supertram', {'SCST': 'SCST'}),
 ]
 FIRST_OPERATORS = [
-    ('FirstSlough', 'SE', {'FTVA': 'FTVA'}),
+    # ('FirstSlough', 'SE', {'FTVA': 'FTVA'}),
     # ('FirstBristol', 'SW', {'FBRI': 'FBRI'}),
     # ('FirstBasildon', 'SE', {'FESX': 'FESX'}),
     # ('FirstChelmsford', 'SE', {'FESX': 'FESX'}),
@@ -416,10 +416,11 @@ FIRST_OPERATORS = [
     # ('FirstNorwich', 'EA', {'FECS': 'FECS'}),
     # ('FirstIpswich', 'EA', {'FECS': 'FECS'}),
     ('FirstDorset', 'SW', {'FDOR': 'FDOR'}),
-    # ('FirstHampshireAndDorset', 'SW', {
-    #     'FHAM': 'FHAM',
-    #     'FHDO': 'FHDO',
-    # }),
+    # ('FirstSoton', 'SW', {
+    # ('FirstHoeford', 'SW', {
+    # ('FirstHilsea', 'SW', {
+    # ('FirstSoton', 'SW', {
+
     ('FirstPotteries', 'WM', {'FPOT': 'FPOT'}),
     ('FirstBalfron', 'S', {'FSCE': 'FSCE'}),
     ('FirstBannockburn', 'S', {'FSCE': 'FSCE'}),
@@ -433,6 +434,7 @@ FIRST_OPERATORS = [
     ('FirstMaesteg', 'W', {'FCYM': 'FCYM'}),
     ('FirstSwansea', 'W', {'FCYM': 'FCYM'}),
     ('FirstSheffield', 'Y', {'FSYO': 'FSYO'}),
+    ('FirstDoncaster', 'Y', {'FSYO': 'FSYO'}),
     ('FirstBradford', 'Y', {'FBRA': 'FBRA'}),
     ('FirstHuddersfield', 'Y', {'FHUD': 'FHUD'}),
     ('FirstHalifax', 'Y', {'FHAL': 'FHAL'}),
