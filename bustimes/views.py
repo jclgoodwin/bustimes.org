@@ -6,7 +6,7 @@ from django.views.generic.detail import DetailView
 from django.http import FileResponse, Http404
 from django.utils import timezone
 from busstops.models import Service
-from vehicles.views import siri_one_shot
+from vehicles.views import siri_one_shot, Poorly
 from .models import Route, Trip
 
 
@@ -28,7 +28,10 @@ class ServiceDebugView(DetailView):
         context['codes'] = self.object.servicecode_set.all()
         for code in context['codes']:
             if code.scheme.endswith(' SIRI'):
-                code.siri_one_shot = siri_one_shot(code, now)
+                try:
+                    code.siri_one_shot = siri_one_shot(code, now)
+                except Poorly:
+                    code.siri_one_shot = 'Poorly'
 
         context['breadcrumb'] = [self.object]
 
