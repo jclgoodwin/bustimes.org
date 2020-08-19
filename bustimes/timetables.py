@@ -2,13 +2,14 @@ import datetime
 from difflib import Differ
 from functools import cmp_to_key
 from django.core.cache import cache
-from .models import get_calendars, Calendar, Trip
+from django.db.models import Prefetch
+from .models import get_calendars, Calendar, Trip, StopTime
 
 differ = Differ(charjunk=lambda _: True)
 
 
 def get_journey_patterns(trips):
-    trips = trips.prefetch_related('stoptime_set')
+    trips = trips.prefetch_related(Prefetch('stoptime_set', queryset=StopTime.objects.filter(stop__isnull=False)))
 
     patterns = []
     pattern_hashes = set()
@@ -26,23 +27,26 @@ def get_journey_patterns(trips):
 def get_stop_usages(trips):
     groupings = [[], []]
 
-    trips = trips.prefetch_related('stoptime_set')
+    trips = trips.prefetch_related(Prefetch('stoptime_set', queryset=StopTime.objects.filter(stop__isnull=False)))
 
     for trip in trips:
         if trip.inbound:
-            grouping = 1
+            grouping_id = 1
         else:
-            grouping = 0
-        rows = groupings[grouping]
+            grouping_id = 0
+        grouping = groupings[grouping_id]
 
-        new_rows = [stoptime.stop_id for stoptime in trip.stoptime_set.all() if stoptime.stop_id]
-        diff = differ.compare(rows, new_rows)
+        stop_times = trip.stoptime_set.all()
+
+        old_rows = [stop_time.stop_id for stop_time in grouping]
+        new_rows = [stop_time.stop_id for stop_time in stop_times]
+        diff = differ.compare(old_rows, new_rows)
 
         y = 0  # how many rows down we are
 
-        for key in new_rows:
-            if y < len(rows):
-                existing_row = rows[y]
+        for stop_time in stop_times:
+            if y < len(old_rows):
+                existing_row = old_rows[y]
             else:
                 existing_row = None
 
@@ -51,20 +55,22 @@ def get_stop_usages(trips):
             while instruction[0] in '-?':
                 if instruction[0] == '-':
                     y += 1
-                    if y < len(rows):
-                        existing_row = rows[y]
+                    if y < len(old_rows):
+                        existing_row = old_rows[y]
                     else:
                         existing_row = None
                 instruction = next(diff)
 
-            assert instruction[2:] == key
+            assert instruction[2:] == stop_time.stop_id
 
             if instruction[0] == '+':
                 if not existing_row:
-                    rows.append(key)
+                    grouping.append(stop_time)
+                    old_rows.append(stop_time.stop_id)
                 else:
-                    rows = groupings[grouping] = rows[:y] + [key] + rows[y:]
-                existing_row = key
+                    groupings[grouping_id] = grouping[:y] + [stop_time] + grouping[y:]
+                    old_rows = old_rows[:y] + [stop_time.stop_id] + old_rows[y:]
+                # existing_row = stop_time.stop_id
             else:
                 assert instruction[2:] == existing_row
 

@@ -149,17 +149,3 @@ class OperatingPeriodTest(TestCase):
         """)
         operating_period = txc.OperatingPeriod(element)
         self.assertEqual(str(operating_period), 'until 1 June 2002')
-
-
-class StopTest(TestCase):
-    def test_is_at(self):
-        stop = txc.Stop(ET.fromstring("""
-            <AnnotatedStopPointRef xmlns="http://www.transxchange.org.uk/">
-                <StopPointRef>1800SB45781</StopPointRef>
-                <CommonName>Wythenshawe Hospital</CommonName>
-                <LocalityName>Newall Green</LocalityName>
-                <LocalityQualifier>Wythenshawe</LocalityQualifier>
-            </AnnotatedStopPointRef>
-        """))
-        self.assertEqual(stop.is_at('wythenshawe-hospital'), 2)
-        self.assertEqual(stop.is_at('wythenshawe'), 1)

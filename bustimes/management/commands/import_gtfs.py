@@ -288,11 +288,13 @@ def handle_zipfile(path, collection, url):
 
         service.stops.clear()
         stop_usages = [
-            StopUsage(service=service, stop_id=stop_id, direction='outbound', order=i)
-            for i, stop_id in enumerate(groupings[0]) if stop_id in stops
+            StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
+                      direction='outbound', order=i)
+            for i, stop_time in enumerate(groupings[0])
         ] + [
-            StopUsage(service=service, stop_id=stop_id, direction='inbound', order=i)
-            for i, stop_id in enumerate(groupings[1]) if stop_id in stops
+            StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
+                      direction='inbound', order=i)
+            for i, stop_time in enumerate(groupings[1])
         ]
         StopUsage.objects.bulk_create(stop_usages)
 

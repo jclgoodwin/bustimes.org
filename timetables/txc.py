@@ -83,23 +83,6 @@ class Stop:
             return self.common_name or self.atco_code
         return '%s %s' % (self.locality, self.common_name)
 
-    def is_at(self, text):
-        """Whether a given slugified string, roughly matches either
-        this stop's locality's name, or this stop's name
-        (e.g. 'kings-lynn' matches 'kings-lynn-bus-station' and vice versa).
-        """
-        name = slugify(self.stop.locality if self.stop else self.locality)
-        if name != 'none' and name in text or text in name:
-            if name == text:
-                return 2
-            return 1
-        name = slugify(self.common_name)
-        if text in name or name in text:
-            if name == text:
-                return 2
-            return 1
-        return False
-
 
 class JourneyPattern:
     """A collection of JourneyPatternSections, in order."""
@@ -653,17 +636,6 @@ class TransXChange:
         )[:10]
 
 
-class Row:
-    """A row in a grouping in a timetable.
-    Each row is associated with a Stop, and a list of times.
-    """
-    def __init__(self, part):
-        self.part = part
-        self.stop = part.stop
-        part.row = self
-        self.times = []
-
-
 class Cell:
     last = False
 
@@ -674,83 +646,40 @@ class Cell:
         self.wait_time = arrival_time and departure_time and arrival_time != departure_time
 
 
-class Grouping:
-    """Probably either 'outbound' or 'inbound'.
+def stop_is_at(stop, text):
+    """Whether a given slugified string, roughly matches either
+    this stop's locality's name, or this stop's name
+    (e.g. 'kings-lynn' matches 'kings-lynn-bus-station' and vice versa).
     """
-    differ = difflib.Differ(charjunk=lambda _: True)
+    if stop.locality:
+        name = slugify(stop.locality)
+        if name in text or text in name:
+            if name == text:
+                return 2
+            return 1
+    name = slugify(stop.common_name)
+    if text in name or name in text:
+        if name == text:
+            return 2
+        return 1
+    return False
 
-    def __init__(self, direction, parent):
-        self.direction = direction
-        self.parent = parent
-        self.description_parts = None
-        self.heads = []
-        self.column_feet = {}
-        self.journey_patterns = []
-        self.journeys = []
-        self.rows = []
 
-    def add_journey_pattern(self, journey_patttern):
-        # the rows traversed by this journey pattern
-        rows = []
+class Grouping:
+    def __init__(self, parent, origin, destination):
+        self.description_parts = parent.description_parts
+        self.via = parent.via
+        self.origin = origin
+        self.destination = destination
 
-        for timinglink in journey_patttern.get_timinglinks():
-            rows.append(Row(timinglink.origin))
-        rows.append(Row(timinglink.destination))
+    def starts_at(self, text):
+        return stop_is_at(self.origin, text)
 
-        if not rows:
-            return
-
-        # this grouping's current rows (an amalgamation from any previously handled journey patterns)
-        previous_list = [row.part.stop.atco_code for row in self.rows]
-
-        # this journey pattern again
-        current_list = [row.part.stop.atco_code for row in rows]
-        diff = self.differ.compare(previous_list, current_list)
-
-        i = 0
-        first = True
-        for row in rows:
-            if i < len(self.rows):
-                existing_row = self.rows[i]
-            else:
-                existing_row = None
-            instruction = next(diff)
-            while instruction[0] in '-?':
-                if instruction[0] == '-':
-                    i += 1
-                    if i < len(self.rows):
-                        existing_row = self.rows[i]
-                    else:
-                        existing_row = None
-                instruction = next(diff)
-
-            assert instruction[2:] == row.part.stop.atco_code
-
-            if instruction[0] == '+':
-                if not existing_row:
-                    self.rows.append(row)
-                else:
-                    self.rows = self.rows[:i] + [row] + self.rows[i:]
-                existing_row = row
-            else:
-                assert instruction[2:] == existing_row.part.stop.atco_code
-                row.part.row = existing_row
-
-            if first:
-                existing_row.first = True  # row is the first row of this pattern
-                first = False
-            i += 1
-
-        existing_row.last = True  # row is the last row of this pattern
-
-    def starts_at(self, locality_name):
-        return self.rows and self.rows[0].part.stop.is_at(locality_name)
-
-    def ends_at(self, locality_name):
-        return self.rows and self.rows[-1].part.stop.is_at(locality_name)
+    def ends_at(self, text):
+        return stop_is_at(self.destination, text)
 
     def __str__(self):
-        parts = self.description_parts or self.parent.description_parts
+        parts = self.description_parts
 
         if parts:
             start = slugify(parts[0])
@@ -767,8 +696,8 @@ class Grouping:
                 description = None
 
             if description:
-                if self.parent.via:
-                    description += ' via ' + self.parent.via
+                if self.via:
+                    description += ' via ' + self.via
                 return description
 
         return ''

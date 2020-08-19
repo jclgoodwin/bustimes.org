@@ -20,7 +20,8 @@ from django.db import transaction, IntegrityError
 from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
-from timetables.txc import TransXChange, Grouping, sanitize_description_part
+from ...timetables import get_stop_usages
+from timetables.txc import TransXChange, sanitize_description_part, Grouping
 
 
 logger = logging.getLogger(__name__)
@@ -386,6 +387,9 @@ class Command(BaseCommand):
 
         stop_times = []
 
+        trips = []
+        notes_by_trip = []
+
         for journey in transxchange.journeys:
             if journey.service_ref != txc_service.service_code:
                 continue
@@ -434,8 +438,9 @@ class Command(BaseCommand):
                 stop_times.append(stop_time)
 
             trip.end = stop_time.departure or stop_time.arrival
-            trip.save()
+            trips.append(trip)
 
+            notes = []
             for note in journey.notes:
                 note_cache_key = f'{note}:{journey.notes[note]}'
                 if note_cache_key in self.notes:
@@ -443,7 +448,14 @@ class Command(BaseCommand):
                 else:
                     note, _ = Note.objects.get_or_create(code=note or '', text=journey.notes[note])
                     self.notes[note_cache_key] = note
-                trip.notes.add(note)
+                notes.append(note)
+            notes_by_trip.append(notes)
+
+        Trip.objects.bulk_create(trips)
+
+        for i, trip in enumerate(trips):
+            if notes_by_trip[i]:
+                trip.notes.set(notes_by_trip[i])
 
         for stop_time in stop_times:
             stop_time.trip = stop_time.trip  # set trip_id
@@ -595,57 +607,16 @@ class Command(BaseCommand):
             if self.region_id:
                 defaults['region_id'] = self.region_id
 
-            groupings = {
-                'outbound': Grouping('outbound', txc_service),
-                'inbound': Grouping('inbound', txc_service)
-            }
-
-            for journey_pattern in txc_service.journey_patterns.values():
-                if journey_pattern.direction == 'inbound':
-                    grouping = groupings['inbound']
-                else:
-                    grouping = groupings['outbound']
-                grouping.add_journey_pattern(journey_pattern)
-
-            try:
-                stop_usages = []
-                for grouping in groupings.values():
-                    if grouping.rows:
-                        for i, row in enumerate(grouping.rows):
-                            if row.part.stop.atco_code in stops:
-                                timing_status = row.part.timingstatus
-                                if timing_status is None or timing_status == 'otherPoint':
-                                    timing_status = 'OTH'
-                                elif timing_status == 'principleTimingPoint':
-                                    timing_status = 'PTP'
-                                stop_usages.append(
-                                    StopUsage(
-                                        stop_id=row.part.stop.atco_code,
-                                        direction=grouping.direction,
-                                        order=i,
-                                        timing_status=timing_status
-                                    )
-                                )
-                        if grouping.direction == 'outbound' or grouping.direction == 'inbound':
-                            # grouping.description_parts = transxchange.description_parts
-                            defaults[grouping.direction + '_description'] = str(grouping)
-
-                    line_strings = []
-                    for pattern in txc_service.journey_patterns.values():
-                        line_string = line_string_from_journeypattern(pattern, stops)
-                        if line_string not in line_strings:
-                            line_strings.append(line_string)
+            line_strings = set()
+            for pattern in txc_service.journey_patterns.values():
+                line_string = line_string_from_journeypattern(pattern, stops)
+                if line_string not in line_strings:
+                    line_strings.add(line_string)
                 multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
-
-            except (AttributeError, IndexError) as error:
-                logger.error(error, exc_info=True)
-                defaults['show_timetable'] = False
-                stop_usages = [StopUsage(stop_id=stop, order=0) for stop in stops]
-                multi_line_string = None
 
             defaults['geometry'] = multi_line_string
 
-            if self.service_descriptions:
+            if self.service_descriptions:  # NCSD
                 defaults['outbound_description'], defaults['inbound_description'] = self.get_service_descriptions(
                     filename)
                 defaults['description'] = defaults['outbound_description'] or defaults['inbound_description']
@@ -668,13 +639,9 @@ class Command(BaseCommand):
                     service.operator.set(operators)
                 if service.id not in self.service_ids:
                     service.route_set.all().delete()
-                    service.stops.clear()
+                    # service.stops.clear()
             self.service_ids.add(service.id)
             linked_services.append(service.id)
-
-            for stop_usage in stop_usages:
-                stop_usage.service = service
-            StopUsage.objects.bulk_create(stop_usages)
 
             # a code used in Traveline Cymru URLs:
             if self.source.name == 'W':
@@ -710,6 +677,35 @@ class Command(BaseCommand):
                 route.trip_set.all().delete()
 
             self.handle_journeys(route, stops, transxchange, txc_service, line_id)
+
+            service.stops.clear()
+            outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=service))
+            stop_usages = [
+                StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
+                          direction='outbound', order=i)
+                for i, stop_time in enumerate(outbound)
+            ] + [
+                StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
+                          direction='inbound', order=i)
+                for i, stop_time in enumerate(inbound)
+            ]
+            StopUsage.objects.bulk_create(stop_usages)
+
+            changed_fields = []
+            if outbound:
+                outbound = Grouping(txc_service, outbound[0].stop, outbound[-1].stop)
+                outbound_description = str(outbound)
+                if outbound_description != service.outbound_description:
+                    service.outbound_description = outbound_description
+                    changed_fields.append('outbound_description')
+            if inbound:
+                inbound = Grouping(txc_service, inbound[0].stop, inbound[-1].stop)
+                inbound_description = str(inbound)
+                if inbound_description != service.inbound_description:
+                    service.inbound_description = inbound_description
+                    changed_fields.append('inbound_description')
+            if changed_fields:
+                service.save(update_fields=changed_fields)
 
             if service_code in self.corrections:
                 corrections = {}

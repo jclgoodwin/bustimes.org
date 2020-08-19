@@ -54,16 +54,18 @@ class Command(BaseCommand):
 
             route.service.stops.clear()
             stop_usages = [
-                StopUsage(service=route.service, stop_id=stop, direction='outbound', order=i)
-                for i, stop in enumerate(groupings[0])
+                StopUsage(service=route.service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
+                          direction='outbound', order=i)
+                for i, stop_time in enumerate(groupings[0])
             ] + [
-                StopUsage(service=route.service, stop_id=stop, direction='inbound', order=i)
-                for i, stop in enumerate(groupings[1])
+                StopUsage(service=route.service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
+                          direction='inbound', order=i)
+                for i, stop_time in enumerate(groupings[1])
             ]
             StopUsage.objects.bulk_create(stop_usages)
 
             # self.stops doesn't contain all stops, and has latlongs in the Irish Grid projection
-            stops = StopPoint.objects.in_bulk(stop_code for grouping in groupings for stop_code in grouping)
+            stops = StopPoint.objects.in_bulk(stop_time.stop_id for grouping in groupings for stop_time in grouping)
             line_strings = []
             for pattern in get_journey_patterns(route.trip_set.all()):
                 line_strings.append(LineString(*(stops[stop_code].latlong for stop_code in pattern)))
