@@ -6,7 +6,6 @@ import xml.etree.cElementTree as ET
 import calendar
 import datetime
 import ciso8601
-import difflib
 import logging
 from django.utils.text import slugify
 from django.utils.dateparse import parse_duration

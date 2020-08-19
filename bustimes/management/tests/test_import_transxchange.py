@@ -6,7 +6,6 @@ from tempfile import TemporaryDirectory
 from datetime import date
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
-from unittest import skip
 from django.utils import timezone
 from django.core.management import call_command
 from django.contrib.gis.geos import Point
@@ -436,7 +435,6 @@ class ImportTransXChangeTest(TestCase):
             self.assertEqual(date_options[0], date(2016, 2, 22))  # Monday
             self.assertEqual(date_options[-1], date(2017, 1, 27))
 
-    # @skip
     @freeze_time('2017-01-01')
     def test_cardiff_airport(self):
         """Should be able to distinguish between Cardiff and Cardiff Airport as start and end of a route"""
