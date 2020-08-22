@@ -692,7 +692,7 @@ class Service(SearchMixin, models.Model):
         return 'https://www.awin1.com/awclick.php?' + urlencode(query)
 
     def get_traveline_links(self, date=None):
-        if self.source_id and self.source.name in ('Y', 'S'):
+        if self.source_id and self.source.name == 'S':
             yield self.get_trapeze_link(date)
             return
 
