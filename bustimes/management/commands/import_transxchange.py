@@ -117,7 +117,10 @@ def get_operator_name(operator_element):
 
 def get_operator_by(scheme, code):
     if code:
-        return Operator.objects.filter(operatorcode__code=code, operatorcode__source__name=scheme).first()
+        try:
+            return Operator.objects.filter(operatorcode__code=code, operatorcode__source__name=scheme).distinct().get()
+        except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
+            pass
 
 
 def line_string_from_journeypattern(journeypattern, stops):
@@ -190,10 +193,19 @@ class Command(BaseCommand):
             ('LicenceNumber', 'Licence'),
         ):
             operator_code = get_operator_code(operator_element, tag_name)
+            if scheme == 'Licence' and operator_code.startswith('YW'):
+                operator_code = operator_code.replace('YW', 'PB')
             if operator_code:
                 operator = get_operator_by(scheme, operator_code)
                 if operator:
                     return operator
+
+        name = get_operator_name(operator_element)
+
+        try:
+            return Operator.objects.get(name=name)
+        except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
+            pass
 
         # Get by regional operator code
         operator_code = get_operator_code(operator_element, 'OperatorCode')
@@ -205,11 +217,6 @@ class Command(BaseCommand):
                 operator = get_operator_by('National Operator Codes', operator_code)
             if operator:
                 return operator
-
-        name = get_operator_name(operator_element)
-
-        if name == 'Bus Vannin':
-            return Operator.objects.get(name=name)
 
         if name not in {'Replacement Service', 'UNKWN'}:
             warnings.warn('Operator not found:\n{}'.format(ET.tostring(operator_element).decode()))
