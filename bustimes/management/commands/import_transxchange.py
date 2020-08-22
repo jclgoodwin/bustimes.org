@@ -194,9 +194,9 @@ class Command(BaseCommand):
             return operator
 
         licence_number = get_operator_code(operator_element, 'LicenceNumber')
-        if operator_code:
-            if operator_code.startswith('YW'):
-                operator_code = operator_code.replace('YW', 'PB')
+        if licence_number:
+            if licence_number.startswith('YW'):
+                licence_number = licence_number.replace('YW', 'PB')
             try:
                 return Operator.objects.get(licences__licence_number=licence_number)
             except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
