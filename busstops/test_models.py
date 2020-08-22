@@ -113,14 +113,6 @@ class ServiceTests(TestCase):
         self.assertEqual(list(self.london_service.get_traveline_links()),
                          [('https://tfl.gov.uk/bus/timetable/N41/', 'Transport for London')])
 
-        # Yorkshire
-        self.london_service.source = source
-        self.assertEqual(
-            list(self.london_service.get_traveline_links()),
-            [('http://www.yorkshiretravel.net/lts/#/timetables?timetableId='
-              + 'tfl_8-N41-_-y05&direction=OUTBOUND&queryDate=&queryTime=', 'Yorkshire Travel')]
-        )
-
     def test_get_operator_number(self):
         self.assertIsNone(self.london_service.get_operator_number('MGBD'))
 
