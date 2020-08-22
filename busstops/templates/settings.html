@@ -12,26 +12,50 @@
 
 <p class="helptext">Adverts pay the bills, but they are annoying. You could <a href="https://ko-fi.com/bustimes">buy us a coffee</a> instead</p>
 
+<p id="personalise-adverts-wrapper">
+    <label><input type="checkbox" id="personalise-adverts"> Show personalised adverts</label>
+</p>
+
 <script>
 (function () {
-    var input = document.getElementById('show-adverts');
+    var showAds = document.getElementById('show-adverts');
+    var personaliseAdsWrapper = document.getElementById('personalise-adverts-wrapper');
     if (localStorage && localStorage.hideAds) {
-        input.checked = false;
+        showAds.checked = false;
+        personaliseAdsWrapper.style.display = 'none';
     } else {
-        input.checked = true;
+        showAds.checked = true;
     }
 
-    function handleBoxCheck(event) {
+    function handleShowAds(event) {
         if (event.target.checked) {
             localStorage.removeItem('hideAds');
+            personaliseAdsWrapper.style.display = '';
         } else {
             localStorage.setItem('hideAds', '1');
+        personaliseAdsWrapper.style.display = 'none';
         }
     }
 
-    input.addEventListener('click', handleBoxCheck);
-})();
+    showAds.addEventListener('click', handleShowAds);
 
+    var personaliseAds = document.getElementById('personalise-adverts');
+    if (document.cookie.indexOf('personalise_ads=yes') !== -1) {
+        personaliseAds.checked = true;
+    } else {
+        personaliseAds.checked = false;
+    }
+
+    function handlePersonaliseAds(event) {
+        if (event.target.checked) {
+            document.cookie = 'personalise_ads=yes; max-age=31536000; path=/';
+        } else {
+            document.cookie = 'personalise_ads=no; max-age=31536000; path=/';
+        }
+    }
+
+    personaliseAds.addEventListener('click', handlePersonaliseAds);
+})();
 </script>
 
 {% endblock %}

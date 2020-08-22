@@ -8,23 +8,9 @@
 
 <h1>Cookies</h1>
 
-<p>‘Cookies’ are small text files stored on your computer when you visit some websites, including this one.</p>
+<p>‘Cookies’ are small text files stored on your computer when you use some websites, including this one.</p>
 
-<table>
-    <thead>
-        <tr>
-            <th scope="col">Name</th><th scope="col">Purpose</th><th scope="col">Expires&nbsp;after</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>location</td><td>Stores the last viewed <a href="/map">map</a> location in ‘local storage’</td><td>na</td>
-        </tr>
-        <tr>
-            <td>seen_&#8203;cookie_&#8203;message</td><td>Remembers if you’ve seen the ‘this site uses cookies’ message</td><td>1 year</td>
-        </tr>
-    </tbody>
-</table>
+<p>For example, we use cookies to remember your place on <a href="/map">the map</a>, and to remember whether you’d like to see personalised advertisements.</p>
 
 <h2>Google Analytics cookies</h2>
 
@@ -43,7 +29,7 @@
             <td>_ga</td><td>Lets me know if you’ve visited the site before</td><td>2 years</td>
         </tr>
         <tr>
-            <td>_gid</td><td>Lets me know if you’ve visited the site before</td><td>24 hours</td>
+            <td>_gid</td><td>Lets me know if you’ve visited the site recently</td><td>24 hours</td>
         </tr>
         <tr>
             <td>_gat</td><td>Lets me control how frequently I record pageviews</td><td>10 minutes</td>
@@ -56,7 +42,32 @@
 <p>I display adverts, using Google AdSense, to fund the cost of operating this website.
 Google and its partners use cookies ‘for frequency capping, aggregated ad reporting, and to combat fraud and abuse.’</p>
 
-<p>You can <a href="/settings">switch off adverts</a>.</p>
+<p>
+    <label><input type="checkbox" id="personalise-adverts"> Show personalised adverts</label>
+</p>
+
+<script>
+(function () {
+    var personaliseAds = document.getElementById('personalise-adverts');
+    if (document.cookie.indexOf('personalise_ads=yes') !== -1) {
+        personaliseAds.checked = true;
+    } else {
+        personaliseAds.checked = false;
+    }
+
+    function handlePersonaliseAds(event) {
+        if (event.target.checked) {
+            document.cookie = 'personalise_ads=yes; max-age=31536000; path=/';
+        } else {
+            document.cookie = 'personalise_ads=no; max-age=31536000; path=/';
+        }
+    }
+
+    personaliseAds.addEventListener('click', handlePersonaliseAds);
+})();
+</script>
+
+<o><a href="https://www.google.com/settings/ads">Google Ads Settings</a></o>
 
 {% endblock %}
 
