@@ -43,7 +43,7 @@ class Command(ImportLiveVehiclesCommand):
         'SQ': ('BLUS', 'SVCT', 'UNIL', 'SWWD', 'DAMY', 'TDTR', 'TOUR', 'WDBC'),
         'RB': ('RBUS', 'GLRB'),
         'TV': ('THVB', 'CTNY'),
-        'SCHI': ('SINV', 'SCOR'),
+        'SCHI': ('SCHI', 'SINV', 'SCOR'),
         'SCFI': ('SCFI', 'SSPH', 'SSTY'),
         'SCSO': ('SCHM', 'SCCO', 'SMSO', 'SCHW'),
         'SCNH': ('SCNH', 'SCWW'),
