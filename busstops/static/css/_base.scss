@@ -28,23 +28,17 @@ footer {
     display: block;
 }
 
-.cookie-message {
-    background: $white;
-    background: rgba(255, 255, 255, .9);
-    bottom: 0;
-    box-shadow: #ccc 0 0 1em;
-    margin: 0;
-    padding: 1em 0;
-    position: fixed;
-    right: 0;
-    z-index: 1001;
+#cookie-message {
+    display: none;
+    margin: 0 auto;
+    padding: 1em;
 
     p {
-        margin: 0 1em 1em;
+        margin: 0 0 1em;
     }
 
     button {
-        margin-left: 1em;
+        margin-right: 1em;
     }
 }
 

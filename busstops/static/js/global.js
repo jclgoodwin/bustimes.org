@@ -45,8 +45,7 @@ if (navigator.serviceWorker && location.protocol === 'https:') {
     }
 
     if (document.cookie.indexOf('seen_cookie_message=') === -1 && document.cookie.indexOf('personalise_ads=') === -1) {
-        var cookieDiv = document.createElement('div');
-        cookieDiv.className = 'cookie-message';
+        var cookieDiv = document.getElementById('cookie-message');
         cookieDiv.innerHTML = '<p>Can we show you personalised advertisements, using cookies?</p>';
 
         var ok = document.createElement('button');
@@ -68,13 +67,13 @@ if (navigator.serviceWorker && location.protocol === 'https:') {
         var no = document.createElement('button');
         no.innerHTML = 'No thanks';
         no.onclick = function() {
-            cookieDiv.innerHTML = '<p>Fair enough. You may see ads that are less relevant to you.<br>These ads use cookies, but not for personalization.</p>';
+            cookieDiv.innerHTML = '<p>Fair enough. You may see ads that are less relevant to you. These ads use cookies, but not for personalization.</p>';
             cookieDiv.appendChild(ok);
             loadAds();
         }
         cookieDiv.appendChild(no);
 
-        document.body.appendChild(cookieDiv);
+        cookieDiv.style.display = 'block';
 
         document.cookie = 'personalise_ads=no; max-age=31536000; path=/';
     } else {
