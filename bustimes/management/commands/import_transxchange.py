@@ -11,12 +11,13 @@ import csv
 import yaml
 import zipfile
 import xml.etree.cElementTree as ET
+from psycopg2.extras import DateRange
 from titlecase import titlecase
 from datetime import date
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import LineString, MultiLineString
-from django.db import transaction, IntegrityError
+from django.db import transaction, IntegrityError, DataError
 from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
@@ -267,7 +268,7 @@ class Command(BaseCommand):
                         with transaction.atomic():
                             try:
                                 self.handle_file(open_file, filename)
-                            except AttributeError as error:
+                            except (AttributeError, DataError) as error:
                                 logger.error(error, exc_info=True)
 
         self.mark_old_services_as_not_current()
@@ -292,9 +293,10 @@ class Command(BaseCommand):
                 if (holiday == 'AllBankHolidays' or holiday == 'HolidayMondays') and self.region_id == 'S':
                     continue
                 date = BANK_HOLIDAYS[holiday]
+                dates = DateRange(date, date, '[]')
                 if operating_period.contains(date):
                     calendar_dates.append(
-                        CalendarDate(start_date=date, end_date=date, dates=(date, date), special=True, operation=True)
+                        CalendarDate(start_date=date, end_date=date, dates=dates, special=True, operation=True)
                     )
             else:
                 self.undefined_holidays.add(holiday)
@@ -304,9 +306,10 @@ class Command(BaseCommand):
                 if (holiday == 'AllBankHolidays' or holiday == 'HolidayMondays') and self.region_id == 'S':
                     continue
                 date = BANK_HOLIDAYS[holiday]
+                dates = DateRange(date, date, '[]')
                 if operating_period.contains(date):
                     calendar_dates.append(
-                        CalendarDate(start_date=date, end_date=date, dates=(date, date), operation=False)
+                        CalendarDate(start_date=date, end_date=date, dates=dates, operation=False)
                     )
             else:
                 self.undefined_holidays.add(holiday)

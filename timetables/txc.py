@@ -7,6 +7,7 @@ import calendar
 import datetime
 import ciso8601
 import logging
+from psycopg2.extras import DateRange as PDateRange
 from django.utils.text import slugify
 from django.utils.dateparse import parse_duration
 from chardet.universaldetector import UniversalDetector
@@ -460,7 +461,7 @@ class DateRange:
         return self.start <= date and (not self.end or self.end >= date)
 
     def dates(self):
-        return (self.start, self.end, '[]')
+        return PDateRange(self.start, self.end, '[]')
 
 
 class OperatingPeriod(DateRange):
