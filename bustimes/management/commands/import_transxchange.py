@@ -188,17 +188,19 @@ class Command(BaseCommand):
     def get_operator(self, operator_element):
         "Given an Operator element, returns an operator code for an operator that exists."
 
-        for tag_name, scheme in (
-            ('NationalOperatorCode', 'National Operator Codes'),
-            ('LicenceNumber', 'Licence'),
-        ):
-            operator_code = get_operator_code(operator_element, tag_name)
-            if scheme == 'Licence' and operator_code.startswith('YW'):
+        operator_code = get_operator_code(operator_element, 'NationalOperatorCode')
+        operator = get_operator_by('NationalOperatorCode', operator_code)
+        if operator:
+            return operator
+
+        licence_number = get_operator_code(operator_element, 'LicenceNumber')
+        if operator_code:
+            if operator_code.startswith('YW'):
                 operator_code = operator_code.replace('YW', 'PB')
-            if operator_code:
-                operator = get_operator_by(scheme, operator_code)
-                if operator:
-                    return operator
+            try:
+                return Operator.objects.get(licence__licence_number=licence_number)
+            except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
+                pass
 
         name = get_operator_name(operator_element)
 
