@@ -189,7 +189,7 @@ class Command(BaseCommand):
         "Given an Operator element, returns an operator code for an operator that exists."
 
         operator_code = get_operator_code(operator_element, 'NationalOperatorCode')
-        operator = get_operator_by('NationalOperatorCode', operator_code)
+        operator = get_operator_by('National Operator Codes', operator_code)
         if operator:
             return operator
 
@@ -738,10 +738,9 @@ class Command(BaseCommand):
                     kwargs = {
                         'from_service_id': from_service,
                         'to_service_id': to_service,
-                        'how': 'parallel'
                     }
                     if not ServiceLink.objects.filter(**kwargs).exists():
-                        ServiceLink.objects.create(**kwargs)
+                        ServiceLink.objects.create(**kwargs, how='parallel')
 
     @staticmethod
     def do_stops(transxchange_stops):

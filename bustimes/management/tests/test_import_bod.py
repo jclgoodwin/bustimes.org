@@ -85,6 +85,7 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
         with self.assertNumQueries(16):
             response = self.client.get('/services/e2-sunderland-south-shields')
         self.assertContains(response, '<option selected value="2020-06-10">Wednesday 10 June 2020</option>')
+        self.assertContains(response, '<a href="/operators/sunderland">Sunderland</a>')
 
         route = Route.objects.first()
         response = self.client.get(route.get_absolute_url())
