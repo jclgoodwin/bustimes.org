@@ -254,7 +254,9 @@ AMNO:
 AMSY:
     url: https://www.arrivabus.co.uk/north-west/
 ANEA:
-    name: Arriva Durham County
+    name: Arriva North East
+ARDU:
+    name: Arriva North East (Yorkshire)
 ANUM:
     name: Arriva Northumbria
 A1CS:

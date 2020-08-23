@@ -11,7 +11,7 @@ ns = {
     'siri': 'http://www.siri.org.uk/siri'
 }
 operator_refs = {
-    'ANE': ('ANEA', 'ANUM'),
+    'ANE': ('ANEA', 'ANUM', 'ARDU'),
     'ANW': ('ANWE', 'AMSY', 'ACYM'),
     'AYK': ('WRAY',),
     'YTG': ('YTIG',),
