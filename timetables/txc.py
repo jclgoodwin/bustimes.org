@@ -547,7 +547,9 @@ class Service:
 
 
 class TransXChange:
-    service = None
+    def get_journeys(self, service_code, line_id):
+        return [journey for journey in self.journeys
+                if journey.service_ref == service_code and journey.line_ref == line_id]
 
     def __get_journeys(self, journeys_element, serviced_organisations):
         journeys = {
