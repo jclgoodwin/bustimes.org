@@ -394,7 +394,7 @@ class Command(BaseCommand):
 
         return calendar
 
-    def handle_journeys(self, route, stops, transxchange, txc_service, line_id):
+    def handle_journeys(self, route, stops, journeys, txc_service, line_id):
         default_calendar = None
 
         stop_times = []
@@ -402,12 +402,7 @@ class Command(BaseCommand):
         trips = []
         notes_by_trip = []
 
-        for journey in transxchange.journeys:
-            if journey.service_ref != txc_service.service_code:
-                continue
-            if journey.line_ref != line_id:
-                continue
-
+        for journey in journeys:
             calendar = None
             if journey.operating_profile:
                 calendar = self.get_calendar(journey.operating_profile, txc_service.operating_period)
@@ -655,10 +650,12 @@ class Command(BaseCommand):
             self.service_ids.add(service.id)
             linked_services.append(service.id)
 
+            journeys = transxchange.get_journeys(txc_service.service_code, line_id)
+
             # a code used in Traveline Cymru URLs:
             if self.source.name == 'W':
-                if transxchange.journeys and transxchange.journeys[0].private_code:
-                    private_code = transxchange.journeys[0].private_code
+                if transxchange.journeys and journeys[0].private_code:
+                    private_code = journeys[0].private_code
                     if ':' in private_code:
                         ServiceCode.objects.update_or_create({
                             'code': private_code.split(':', 1)[0]
@@ -688,7 +685,7 @@ class Command(BaseCommand):
             if not route_created:
                 route.trip_set.all().delete()
 
-            self.handle_journeys(route, stops, transxchange, txc_service, line_id)
+            self.handle_journeys(route, stops, journeys, txc_service, line_id)
 
             service.stops.clear()
             outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=service))
