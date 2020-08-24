@@ -285,6 +285,8 @@ BOD_OPERATORS = (
     }, True),
     ('TBTN', 'EM', {
         '574T': 'TBTN',
+    }, False),
+    ('KBUS', 'EM', {
         'KN': 'KBUS',
     }, False),
     ('WBTR', 'NW', {
