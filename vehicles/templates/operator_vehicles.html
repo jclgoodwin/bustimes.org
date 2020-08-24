@@ -88,14 +88,14 @@
                     {% if vehicle.latest_location %}
                         {% if vehicle.latest_location.journey.service %}
                             {{ vehicle.latest_location.journey.service.get_line_name_and_brand }}
-                        {% elif vehicle.latest_location.journey.route_name %}
+                        {% else %}
                             {{ vehicle.latest_location.journey.route_name }}
                         {% endif %}
                     {% else %}
                         {% for journey in vehicle.latest_journeys %}
                             {% if journey.service %}
                                 {{ journey.service.get_line_name_and_brand }}
-                            {% elif journey.route_name %}
+                            {% else %}
                                 {{ journey.route_name }}
                             {% endif %}
                         {% endfor %}
@@ -119,12 +119,13 @@
                     {% endif %}
                 </td>
                 <td>{{ vehicle.vehicle_type|default:"" }}</td>
-                <td{% if vehicle.colours and vehicle.colours != 'Other' or vehicle.livery %} class="livery-cell">
+                <td{% if vehicle.colours and vehicle.colours != 'Other' or vehicle.livery %} class="livery-cell"{% endif %}>
+                    {% if vehicle.colours == 'Other' %}
+                        {{ vehicle.colours }}
+                    {% elif vehicle.colours or vehicle.livery %}
                         <div class="livery" style="background:{{ vehicle.get_livery }}"></div>
-                        {% if vehicle.livery %}
-                            {{ vehicle.livery }}
-                        {% endif %}
-                    {% else %}>{% endif %}
+                        {{ vehicle.livery|default:"" }}
+                    {% endif %}
                 </td>
                 {% if branding_column %}<td>{{ vehicle.branding }}</td>{% endif %}
                 {% if name_column %}<td>{{ vehicle.name }}</td>{% endif %}
@@ -136,6 +137,10 @@
                 {% if not form %}
                     <td>
                         <a href="{{ vehicle.get_absolute_url }}/edit">Edit</a>{% if vehicle.pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}
+                    </td>
+                {% elif vehicle.pending_edits %}
+                    <td>
+                        <abbr title="pending edits">*</abbr>
                     </td>
                 {% endif %}
             </tr>

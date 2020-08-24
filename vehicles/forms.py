@@ -24,7 +24,7 @@ class EditVehiclesForm(forms.Form):
     vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False, empty_label='')
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
     other_colour = forms.CharField(widget=forms.TextInput(attrs={"type": "color"}), required=False)
-    branding = forms.CharField(required=False, max_length=255)
+    branding = forms.CharField(label="Other branding", required=False, max_length=255)
     features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features',
                                               widget=forms.CheckboxSelectMultiple, required=False)
     depot = forms.CharField(help_text="""I’d leave this blank if I were you. There are better places (not this website) for such
