@@ -751,7 +751,7 @@ class Command(BaseCommand):
         return stops
 
     def get_filename_parts(self, filename):
-        if self.source.name.startswith('Arriva') or self.source.name.startswith('Stagecoach'):
+        if self.source.name.startswith('Stagecoach'):
             parts = os.path.basename(filename)[:-4].split('_')
             if len(parts[-1]) < 3:
                 parts = parts[:-1]
