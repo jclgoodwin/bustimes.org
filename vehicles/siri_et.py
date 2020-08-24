@@ -80,7 +80,7 @@ def handle_journey(element, source, when):
             if operator:
                 services = Service.objects.filter(current=True, line_name=route_name, operator__in=operator)
                 try:
-                    service = services.filter(stop__locality__stoppoint=stop_id).distinct().get()
+                    service = services.filter(stops__locality__stoppoint=stop_id).distinct().get()
                 except Service.MultipleObjectsReturned:
                     pass
                 except Service.DoesNotExist:
