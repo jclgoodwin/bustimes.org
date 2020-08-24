@@ -75,22 +75,29 @@ def handle_journey(element, source, when):
             departure_time = parse_datetime(departure_time.text)
             route_name = journey_element.find('siri:PublishedLineName', ns).text
             destination = journey_element.find('siri:DirectionName', ns).text
-            try:
-                services = Service.objects.filter(current=True, stops=stop_id, line_name=route_name).distinct()
-                if operator:
-                    service = services.get(operator__in=operator)
-                else:
-                    service = services.get()
-                if not service.tracking:
-                    service.tracking = True
-                    service.save(update_fields=['tracking'])
-                if operator_ref[:2] == 'AN':
-                    for operator in service.operator.all():
-                        if operator.name.startswith('Arriva '):
-                            vehicle.maybe_change_operator(operator)
-                            break
-            except (Service.MultipleObjectsReturned, Service.DoesNotExist):
-                service = None
+
+            service = None
+            if operator:
+                services = Service.objects.filter(current=True, line_name=route_name, operator__in=operator)
+                try:
+                    service = services.filter(stop__locality__stoppoint=stop_id).distinct().get()
+                except Service.MultipleObjectsReturned:
+                    pass
+                except Service.DoesNotExist:
+                    try:
+                        service = services.distinct().get()
+                    except (Service.MultipleObjectsReturned, Service.DoesNotExist):
+                        pass
+
+                if service:
+                    if not service.tracking:
+                        service.tracking = True
+                        service.save(update_fields=['tracking'])
+                    if operator_ref[:2] == 'AN':
+                        for operator in service.operator.all():
+                            if operator.name.startswith('Arriva '):
+                                vehicle.maybe_change_operator(operator)
+                                break
 
             journeys = vehicle.vehiclejourney_set
             journey_created = False
