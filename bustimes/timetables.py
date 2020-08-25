@@ -82,6 +82,10 @@ def get_stop_usages(trips):
 class Timetable:
     def __init__(self, routes, date):
         self.routes = list(routes)
+
+        if not self.routes:
+            return
+
         self.groupings = [Grouping(), Grouping(True)]
 
         self.date = date
@@ -90,15 +94,15 @@ class Timetable:
             trip__route__in=self.routes
         ).distinct().prefetch_related('calendardate_set')
 
-        if not self.routes:
-            return
-
         if not self.date:
             for date in self.date_options():
                 self.date = date
                 break
         if not self.date:
             return
+
+        if not date and len(self.calendars) == 1:
+            self.calendar = str(self.calendars[0])
 
         cache_key = (f'{route.id}:{route.start_date}:{route.end_date}' for route in self.routes)
         cache_key = f'groupings:{":".join(cache_key)}:{self.date}'

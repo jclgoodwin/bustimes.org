@@ -280,12 +280,13 @@ class Command(BaseCommand):
                             except (AttributeError, DataError) as error:
                                 logger.error(error, exc_info=True)
 
-        self.mark_old_services_as_not_current()
-
         self.source.save(update_fields=['datetime'])
 
+        if not filenames:
+            self.mark_old_services_as_not_current()
+            self.source.service_set.filter(current=False, geometry__isnull=False).update(geometry=None)
+
         StopPoint.objects.filter(active=False, service__current=True).update(active=True)
-        self.source.service_set.filter(current=False, geometry__isnull=False).update(geometry=None)
 
     def get_calendar(self, operating_profile, operating_period):
         calendar_dates = [

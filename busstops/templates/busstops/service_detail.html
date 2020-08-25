@@ -53,14 +53,18 @@
 {% endif %}
 
 {% if timetable %}
-    <form class="timetable-date">
-        <select onchange="this.form.submit()" name="date" aria-label="Date">
-            {% for option in timetable.date_options %}
-                <option{% if option == timetable.date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
-            {% endfor %}
-        </select>
-        <noscript><input type="submit"></noscript>
-    </form>
+    {% if timetable.calendar %}
+        {{ timetable.calendar }}
+    {% else %}
+        <form class="timetable-date">
+            <select onchange="this.form.submit()" name="date" aria-label="Date">
+                {% for option in timetable.date_options %}
+                    <option{% if option == timetable.date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+            <noscript><input type="submit"></noscript>
+        </form>
+    {% endif %}
 
     {% for grouping in timetable.groupings %}
 

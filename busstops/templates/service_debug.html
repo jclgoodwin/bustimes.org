@@ -54,15 +54,7 @@
     <td>{% if trip.inbound %}In{% else %}Out{% endif %}bound</td>
     <td>{{ trip.start }}–{{ trip.end }}</td>
     <td>{{ trip.calendar.start_date }}–{{ trip.calendar.end_date }}</td>
-    <td>
-        {% if trip.calendar.mon %}mon{% endif %}
-        {% if trip.calendar.tue %}tue{% endif %}
-        {% if trip.calendar.wed %}wed{% endif %}
-        {% if trip.calendar.thu %}thu{% endif %}
-        {% if trip.calendar.fri %}fri{% endif %}
-        {% if trip.calendar.sat %}sat{% endif %}
-        {% if trip.calendar.sun %}sun{% endif %}
-    </td>
+    <td>{{ trip.calendar }}</td>
     <td>
         <ul class="bulleted">
         {% for d in trip.calendar.calendardate_set.all %}

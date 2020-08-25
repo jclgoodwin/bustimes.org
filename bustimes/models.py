@@ -78,7 +78,39 @@ class Calendar(models.Model):
                 return True
 
     def __str__(self):
-        return f'{self.start_date} to {self.end_date}'
+        day_keys = (
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+            'Sunday',
+        )
+        day_values = (self.mon, self.tue, self.wed, self.thu, self.fri, self.sat, self.sun)
+        days = [day_keys[i] for i, value in enumerate(day_values) if value]
+        if not days:
+            return ''
+        if len(days) == 1:
+            return f'{days[0]}s only'
+        if days == [
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+        ]:
+            return 'Monday to Friday'
+        if days == [
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
+        ]:
+            return 'Monday to Saturday'
+        return f"{'s, '.join(days[:-1])}s and {days[-1]}s"
 
 
 class CalendarDate(models.Model):
