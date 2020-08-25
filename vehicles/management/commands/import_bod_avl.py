@@ -6,11 +6,12 @@ import xmltodict
 from django.contrib.gis.geos import Point
 from django.db.models import Q
 from django.core.management.base import BaseCommand
-from busstops.models import DataSource, Operator
+from busstops.models import DataSource, Operator, Service
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 
 
 class Command(BaseCommand):
+    cache = set()
     operators = {
         'ASC': ['ARHE', 'AKSS', 'AMTM', 'GLAR'],
         'ANE': ['ANEA', 'ANUM', 'ARDU'],
@@ -25,9 +26,13 @@ class Command(BaseCommand):
         'CBLE': ['CBBH', 'CBNL'],
         'WPB': ['WHIP'],
         'UNO': ['UNOE', 'UNIB'],
+        'UNIB': ['UNOE', 'UNIB'],
         'GNE': ['GNEL'],
         'ENS': ['ENSB'],
-        'HAMSTRA': ['HAMS']
+        'HAMSTRA': ['HAMS'],
+        'RI': ['RCHC'],
+        'RG': ['RGNT'],
+        'WBT': ['WBTR'],
     }
     operator_cache = {}
 
@@ -88,14 +93,41 @@ class Command(BaseCommand):
             print(e, operator, vehicle_ref)
             return vehicles.first(), False
 
+    def get_service(self, operator, monitored_vehicle_journey):
+        line_ref = monitored_vehicle_journey.get('LineRef')
+        if not line_ref:
+            return
+
+        services = Service.objects.filter(current=True, line_name__iexact=line_ref)
+        if type(operator) is Operator:
+            services = services.filter(operator=operator)
+        elif type(operator) is list:
+            services = services.filter(operator__in=operator)
+
+        try:
+            return Service.objects.get()
+        except Service.DoesNotExist:
+            # print(e, line_ref)
+            return
+        except Service.MultipleObjectsReturned:
+            destination_ref = monitored_vehicle_journey.get('DestinationRef')
+            if not destination_ref:
+                return
+            try:
+                return services.filter(stops__locality__stoppoint=destination_ref).distinct().get()
+            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                # print(e, line_ref)
+                return
+
     def handle_item(self, item):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
 
         operator_ref = monitored_vehicle_journey['OperatorRef']
         operator = self.get_operator(operator_ref)
 
-        # if not operator:
-        #     print(item)
+        if not operator and operator_ref not in self.cache:
+            print(item)
+            self.cache.add(operator_ref)
 
         vehicle_ref = monitored_vehicle_journey['VehicleRef']
         vehicle, created = self.get_vehicle(operator, operator_ref, vehicle_ref)
@@ -116,7 +148,8 @@ class Command(BaseCommand):
                 route_name=route_name,
                 datetime=recorded_at_time,
                 vehicle=vehicle,
-                source=self.source
+                source=self.source,
+                data=item
             )
             if vehicle_journey_ref:
                 journey.code = vehicle_journey_ref
@@ -134,6 +167,11 @@ class Command(BaseCommand):
             vehicle.latest_location.current = True
             vehicle.latest_location.datetime = recorded_at_time
             vehicle.latest_location.save(update_fields=['latlong', 'datetime'])
+
+        if not vehicle.latest_location.journey.service:
+            vehicle.latest_location.journey.service = self.get_service(operator, monitored_vehicle_journey)
+            if vehicle.latest_location.journey.service:
+                vehicle.latest_location.journey.save(update_fields=['service'])
 
     def handle(self, **options):
         self.source = DataSource.objects.get(name='Bus Open Data')
