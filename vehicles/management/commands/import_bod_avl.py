@@ -13,12 +13,21 @@ from ...models import Vehicle, VehicleJourney, VehicleLocation
 class Command(BaseCommand):
     operators = {
         'ASC': ['ARHE', 'AKSS', 'AMTM', 'GLAR'],
+        'ANE': ['ANEA', 'ANUM', 'ARDU'],
+        'ANW': ['ANWE', 'AMSY', 'ACYM'],
         'ATS': ['ASES', 'ARBB', 'GLAR'],
+        'AMD': ['AMNO', 'AMID', 'AFCL'],
+        'AYT': ['YTIG'],
+        'AYK': ['WRAY'],
+        'FAR': ['FSRV'],
         'GEA': ['KCTB', 'HEDO', 'CHAM'],
         'GP': ['GPLM'],
         'CBLE': ['CBBH', 'CBNL'],
         'WPB': ['WHIP'],
-        'UNIB': ['UNOE', 'UNIB'],
+        'UNO': ['UNOE', 'UNIB'],
+        'GNE': ['GNEL'],
+        'ENS': ['ENSB'],
+        'HAMSTRA': ['HAMS']
     }
     operator_cache = {}
 
@@ -38,7 +47,7 @@ class Command(BaseCommand):
         self.operator_cache[operator_ref] = None
 
     def get_vehicle(self, operator, operator_ref, vehicle_ref):
-        if vehicle_ref.startswith(f'{operator_ref}-'):
+        if operator and vehicle_ref.startswith(f'{operator_ref}-'):
             vehicle_ref = vehicle_ref[len(operator_ref) + 1:]
 
         defaults = {
@@ -60,18 +69,23 @@ class Command(BaseCommand):
 
         assert vehicle_ref
 
-        if vehicle_ref.isdigit():
-            defaults['fleet_number'] = vehicle_ref
-            vehicles = vehicles.filter(Q(code=vehicle_ref) |
-                                       Q(code__endswith=f'-{vehicle_ref}') |
-                                       Q(code__startswith=f'{vehicle_ref}_'))
-        else:
-            vehicles = vehicles.filter(Q(code=vehicle_ref))
+        condition = Q(code=vehicle_ref)
+        if operator:
+            if vehicle_ref.isdigit():
+                defaults['fleet_number'] = vehicle_ref
+                condition |= Q(code__endswith=f'-{vehicle_ref}') | Q(code__startswith=f'{vehicle_ref}_')
+            else:
+                if '_-_' in vehicle_ref:
+                    fleet_number, reg = vehicle_ref.split('_-_', 2)
+                    if fleet_number.isdigit():
+                        condition |= Q(code=vehicle_ref)
+                        defaults['reg'] = reg.replace('_', '')
+        vehicles = vehicles.filter(condition)
 
         try:
             return vehicles.get_or_create(defaults)
         except Vehicle.MultipleObjectsReturned as e:
-            print(e, vehicle_ref)
+            print(e, operator, vehicle_ref)
             return vehicles.first(), False
 
     def handle_item(self, item):
