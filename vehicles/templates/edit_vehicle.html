@@ -73,12 +73,15 @@
             // withdrawn
             var withdrawnElement = document.getElementById('id_withdrawn');
             function handleWithdrawn() {
-                display = withdrawnElement.checked ? 'none' : '';
+                var display = withdrawnElement.checked ? 'none' : '';
                 document.querySelectorAll('main form > *').forEach(function(element) {
                     if ((element.querySelector('input, label')) && !element.querySelector('#id_withdrawn, #id_url, #id_user')) {
                         element.style.display = display;
                     }
                 });
+                if (display === '') {
+                    toggleOtherColour();
+                }
             }
             withdrawnElement.addEventListener('change', handleWithdrawn);
             handleWithdrawn();
