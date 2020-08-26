@@ -292,9 +292,9 @@ BOD_OPERATORS = (
     ('WBTR', 'NW', {
         'NW': 'WBTR',
     }, False),
-    # ('HIPK', 'EM', {
-    #     'HPB': 'HIPK'
-    # }, False),
+    ('konectbus', 'EA', {
+        'GEA': 'KCTB'
+    }, False),
     # ('ANEA', None, {
     #     'ACYM': 'ACYM',
     #     'AFCL': 'AFCL',  # (code not used in data)
