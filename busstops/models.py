@@ -610,7 +610,7 @@ class Service(SearchMixin, models.Model):
 
     def yaml(self):
         return yaml.dump({
-            self.pk: {
+            self.service_code: {
                 'line_name': self.line_name,
                 'line_brand': self.line_brand,
                 'description': self.description,

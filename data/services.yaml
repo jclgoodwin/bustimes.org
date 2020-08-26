@@ -10,6 +10,10 @@ bed_41-50A-_-y08:
     current: false
 bed_41-50-_-y08:
     current: false
+bed_44-80-_-y08:
+    current: false
+bed_49-15-_-y08:
+    current: false
 # FECS
 suf_1-99-_-y08:
     line_brand: Coastal Clipper
