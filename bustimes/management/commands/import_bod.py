@@ -70,9 +70,12 @@ def bus_open_data(api_key):
         url = 'https://data.bus-data.dft.gov.uk/api/v1/dataset/'
         params = {
             'api_key': api_key,
-            'noc': operator_id,
             'status': ['published', 'expiring']
         }
+        if operator_id.isupper():
+            params['noc'] = operator_id
+        else:
+            params['search'] = operator_id
 
         while url:
             response = session.get(url, params=params)
@@ -217,9 +220,9 @@ class Command(BaseCommand):
         parser.add_argument('api_key', type=str)
 
     def handle(self, api_key, **options):
-
-        stagecoach()
-
-        bus_open_data(api_key)
-
-        first()
+        if api_key == 'stagecoach':
+            stagecoach()
+        elif api_key == 'first':
+            first()
+        else:
+            bus_open_data(api_key)

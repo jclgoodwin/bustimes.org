@@ -503,7 +503,13 @@ class Service:
         self.description = correct_description(description)
 
         self.via = None
-        self.description_parts = list(map(sanitize_description_part, self.description.split(' - ')))
+        if ' - ' in self.description:
+            parts = self.description.split(' - ')
+        elif ' to ' in self.description:
+            parts = self.description.split(' to ')
+        else:
+            parts = [self.description]
+        self.description_parts = [sanitize_description_part(part) for part in parts]
         if ' via ' in self.description_parts[-1]:
             self.description_parts[-1], self.via = self.description_parts[-1].split(' via ', 1)
 

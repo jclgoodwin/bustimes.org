@@ -26,7 +26,7 @@ class ImportBusOpenDataTest(TestCase):
 
     @use_cassette(os.path.join(FIXTURES_DIR, 'bod_lynx.yaml'))
     @freeze_time('2020-05-01')
-    @override_settings(STAGECOACH_OPERATORS=(), FIRST_OPERATORS=(), BOD_OPERATORS=[
+    @override_settings(BOD_OPERATORS=[
         ('LYNX', 'EA', {
             'CO': 'LYNX',
         }, False),
@@ -59,7 +59,7 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
         'SCSU': 'SCSU',
         'SCTE': 'SCTE',
         'SCHA': 'SCHA'
-    })], FIRST_OPERATORS=(), BOD_OPERATORS=(), DATA_DIR=FIXTURES_DIR)
+    })], DATA_DIR=FIXTURES_DIR)
     @freeze_time('2020-06-10')
     def test_import_stagecoach(self):
 
@@ -70,13 +70,13 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
             path = os.path.join(FIXTURES_DIR, archive_name)
 
             with self.assertNumQueries(217):
-                call_command('import_bod', '')
+                call_command('import_bod', 'stagecoach')
             download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
             with self.assertNumQueries(1):
-                call_command('import_bod', '')
+                call_command('import_bod', 'stagecoach')
             DataSource.objects.update(datetime=None)
             with self.assertNumQueries(204):
-                call_command('import_bod', '')
+                call_command('import_bod', 'stagecoach')
         self.assertEqual(3, Service.objects.count())
         self.assertEqual(6, Route.objects.count())
 
