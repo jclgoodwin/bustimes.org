@@ -83,12 +83,12 @@ class Timetable:
     def __init__(self, routes, date):
         self.routes = list(routes)
 
-        if not self.routes:
-            return
+        self.date = date
 
         self.groupings = [Grouping(), Grouping(True)]
 
-        self.date = date
+        if not self.routes:
+            return
 
         self.calendars = Calendar.objects.filter(
             trip__route__in=self.routes
