@@ -12,7 +12,7 @@ def get_vehicle_locations(bounds):
     fifteen_minutes_ago = now - timedelta(minutes=15)
     locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, datetime__gte=fifteen_minutes_ago)
     locations = locations.filter(latlong__within=bounds).select_related('journey__vehicle__livery')
-    return locations.defer('journey__text', 'journey__data', 'journey__vehicle__data')
+    return locations.defer('journey__data', 'journey__vehicle__data')
 
 
 class VehicleMapConsumer(JsonWebsocketConsumer):
