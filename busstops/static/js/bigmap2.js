@@ -281,7 +281,8 @@
         } else {
             vehicles[item.i] = L.marker(latLng, {
                 icon: icon,
-                item: item
+                item: item,
+                zIndexOffset: 1000
             }).addTo(map).on('click', handleMarkerClick);
         }
     }
@@ -290,7 +291,7 @@
 
     var socket,
         backoff = 1000,
-        firstVehiclesLoad;
+        newSocket;
 
     function connect() {
         if (socket && socket.readyState < 2) { // already CONNECTING or OPEN
@@ -302,7 +303,7 @@
 
         socket.onopen = function() {
             backoff = 1000;
-            firstVehiclesLoad = true;
+            newSocket = true;
 
             var bounds = map.getBounds();
             socket.send(JSON.stringify([
@@ -324,11 +325,21 @@
 
         socket.onmessage = function(event) {
             var items = JSON.parse(event.data);
+
+            if (newSocket && !first) {
+                var oldVehicles = vehicles;
+                vehicles = {};
+            }
+            newSocket = false;
             for (var i = items.length - 1; i >= 0; i--) {
                 handleVehicle(items[i]);
             }
-            if (firstVehiclesLoad) {
-                firstVehiclesLoad = false;
+            if (oldVehicles) {
+                for (var id in oldVehicles) {
+                    if (!(id in vehicles)) {
+                        map.removeLayer(oldVehicles[id]);
+                    }
+                }
             }
         };
     }
