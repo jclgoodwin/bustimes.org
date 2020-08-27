@@ -102,11 +102,8 @@ def operator_vehicles(request, slug=None, parent=None):
             raise Http404
         operator = operators[0]
 
-    if parent:
-        vehicles = vehicles.order_by('code')
-    else:
-        vehicles = vehicles.order_by('fleet_number', 'fleet_code', 'reg', 'code')
-
+    vehicles = vehicles.order_by('fleet_number', 'fleet_code', 'reg', 'code')
+    if not parent:
         latest_journeys = Subquery(VehicleJourney.objects.filter(
             vehicle=OuterRef('pk')
         ).order_by('-datetime').values('pk')[:1])
