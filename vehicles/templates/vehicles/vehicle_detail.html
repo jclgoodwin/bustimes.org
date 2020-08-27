@@ -40,10 +40,12 @@
         <p>Features: {{ vehicle.features.all|join:", " }}</p>
     {% endif %}
 
-    <ul class="horizontal">
-        <li><a href="{{ vehicle.get_absolute_url }}/edit">Edit</a>{% if pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}</li>
-        <li>{{ vehicle.get_flickr_link }}</li>
-    </ul>
+    {% if vehicle.editable %}
+        <ul class="horizontal">
+            <li><a href="{{ vehicle.get_absolute_url }}/edit">Edit</a>{% if pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}</li>
+            <li>{{ vehicle.get_flickr_link }}</li>
+        </ul>
+    {% endif %}
 {% endif %}
 
 {% if date %}

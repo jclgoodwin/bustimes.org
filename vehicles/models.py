@@ -268,6 +268,11 @@ class Vehicle(models.Model):
         if service_id:
             cache.set(f'{service_id}:vehicles_last_modified', timezone.now())
 
+    def editable(self):
+        if self.notes == 'Spare ticket machine':
+            return False
+        return True
+
 
 class VehicleEditFeature(models.Model):
     feature = models.ForeignKey(VehicleFeature, models.CASCADE)

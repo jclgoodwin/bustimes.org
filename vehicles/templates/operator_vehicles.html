@@ -54,7 +54,7 @@
         <tr>
             {% if form %}<th></th>{% endif %}
             <th scope="col" colspan="{% if code_column %}3{% else %}2{% endif %}"></th>
-            <th scope="col" colspan="2">Last tracked</th>
+            {% if not parent %}<th scope="col" colspan="2">Last tracked</th>{% endif %}
             <th scope="col">Type</th>
             <th scope="col">Livery</th>
             {% if branding_column %}<th scope="col">Branding</th>{% endif %}
@@ -84,7 +84,7 @@
                 <td>
                     <a href="{{ vehicle.get_absolute_url }}">{% if vehicle.reg %}{{ vehicle.get_reg }}{% elif not vehicle.fleet_number and not vehicle.fleet_code %}{{ vehicle }}{% endif %}</a>
                 </td>
-                <td class="last-seen">
+                {% if not parent %}<td class="last-seen">
                     {% if vehicle.latest_location %}
                         {% if vehicle.latest_location.journey.service %}
                             {{ vehicle.latest_location.journey.service.get_line_name_and_brand }}
@@ -117,8 +117,8 @@
                             {% endif %}
                         {% endfor %}
                     {% endif %}
-                </td>
-                <td>{{ vehicle.vehicle_type|default:"" }}</td>
+                </td>{% endif %}
+                <td>{% if vehicle.notes == 'Spare ticket machine' %}{{ vehicle.notes }}{% else %}{{ vehicle.vehicle_type|default:"" }}{% endif %}</td>
                 <td{% if vehicle.colours and vehicle.colours != 'Other' or vehicle.livery %} class="livery-cell"{% endif %}>
                     {% if vehicle.colours == 'Other' %}
                         {{ vehicle.colours }}
@@ -129,19 +129,21 @@
                 </td>
                 {% if branding_column %}<td>{{ vehicle.branding }}</td>{% endif %}
                 {% if name_column %}<td>{{ vehicle.name }}</td>{% endif %}
-                {% if notes_column %}<td>{{ vehicle.notes }}</td>{% endif %}
+                {% if notes_column %}<td>{% if vehicle.notes != 'Spare ticket machine' %}{{ vehicle.notes }}{% endif %}</td>{% endif %}
                 {% for value in vehicle.column_values %}<td>{{ value|default:"" }}</td>{% endfor %}
                 {% if features_column %}<td>{{ vehicle.features.all|join:", " }}</td>{% endif %}
                 {% if parent %}<td>{{ vehicle.operator }}</td>{% endif %}
-                <td>{{ vehicle.get_flickr_link }}</td>
-                {% if not form %}
-                    <td>
-                        <a href="{{ vehicle.get_absolute_url }}/edit">Edit</a>{% if vehicle.pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}
-                    </td>
-                {% elif vehicle.pending_edits %}
-                    <td>
-                        <abbr title="pending edits">*</abbr>
-                    </td>
+                {% if vehicle.editable %}
+                    <td>{{ vehicle.get_flickr_link }}</td>
+                    {% if not form %}
+                        <td>
+                            <a href="{{ vehicle.get_absolute_url }}/edit">Edit</a>{% if vehicle.pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}
+                        </td>
+                    {% elif vehicle.pending_edits %}
+                        <td>
+                            <abbr title="pending edits">*</abbr>
+                        </td>
+                    {% endif %}
                 {% endif %}
             </tr>
         {% endfor %}

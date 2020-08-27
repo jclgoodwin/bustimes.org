@@ -96,25 +96,30 @@ def operator_vehicles(request, slug=None, parent=None):
             operator = get_object_or_404(operators, operatorcode__code=slug, operatorcode__source__name='slug')
         vehicles = operator.vehicle_set.filter(withdrawn=False)
     elif parent:
-        vehicles = Vehicle.objects.filter(operator__parent=parent, withdrawn=False).select_related('operator')
         operators = list(operators.filter(parent=parent))
+        vehicles = Vehicle.objects.filter(operator__in=operators, withdrawn=False).select_related('operator')
         if not operators:
             raise Http404
         operator = operators[0]
 
-    latest_journeys = Subquery(VehicleJourney.objects.filter(
-        vehicle=OuterRef('pk')
-    ).order_by('-datetime').values('pk')[:1])
-    latest_journeys = vehicles.filter(latest_location=None).annotate(latest_journey=latest_journeys)
-    latest_journeys = VehicleJourney.objects.filter(id__in=latest_journeys.values('latest_journey'))
-    prefetch = Prefetch('vehiclejourney_set',
-                        queryset=latest_journeys.select_related('service'), to_attr='latest_journeys')
-    vehicles = vehicles.prefetch_related(prefetch, 'features')
-    vehicles = vehicles.order_by('fleet_number', 'fleet_code', 'reg', 'code')
-    vehicles = vehicles.select_related('vehicle_type', 'livery', 'latest_location__journey__service')
+    if parent:
+        vehicles = vehicles.order_by('code')
+    else:
+        vehicles = vehicles.order_by('fleet_number', 'fleet_code', 'reg', 'code')
 
-    pending_edits = VehicleEdit.objects.filter(approved=None, vehicle=OuterRef('id'))
-    vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
+        latest_journeys = Subquery(VehicleJourney.objects.filter(
+            vehicle=OuterRef('pk')
+        ).order_by('-datetime').values('pk')[:1])
+        latest_journeys = vehicles.filter(latest_location=None).annotate(latest_journey=latest_journeys)
+        latest_journeys = VehicleJourney.objects.filter(id__in=latest_journeys.values('latest_journey'))
+        prefetch = Prefetch('vehiclejourney_set',
+                            queryset=latest_journeys.select_related('service'), to_attr='latest_journeys')
+        vehicles = vehicles.prefetch_related(prefetch, 'features')
+        pending_edits = VehicleEdit.objects.filter(approved=None, vehicle=OuterRef('id'))
+        vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
+        vehicles = vehicles.select_related('latest_location__journey__service')
+
+    vehicles = vehicles.select_related('livery', 'vehicle_type')
 
     submitted = False
     moved = False
@@ -169,7 +174,7 @@ def operator_vehicles(request, slug=None, parent=None):
     page = request.GET.get('page')
     vehicles = paginator.get_page(page)
 
-    features_column = any(vehicle.features.all() for vehicle in vehicles)
+    features_column = not parent and any(vehicle.features.all() for vehicle in vehicles)
 
     columns = set(key for vehicle in vehicles if vehicle.data for key in vehicle.data)
     for vehicle in vehicles:
@@ -186,7 +191,7 @@ def operator_vehicles(request, slug=None, parent=None):
         'code_column': any(v.fleet_number_mismatch() for v in vehicles),
         'branding_column': any(vehicle.branding for vehicle in vehicles),
         'name_column': any(vehicle.name for vehicle in vehicles),
-        'notes_column': any(vehicle.notes for vehicle in vehicles),
+        'notes_column': any(vehicle.notes and vehicle.notes != 'Spare ticket machine' for vehicle in vehicles),
         'features_column': features_column,
         'columns': columns,
         'edits': submitted,
@@ -430,6 +435,8 @@ class VehicleDetailView(DetailView):
 
 def edit_vehicle(request, vehicle_id):
     vehicle = get_object_or_404(Vehicle.objects.select_related('vehicle_type', 'livery', 'operator'), id=vehicle_id)
+    if not vehicle.editable():
+        raise Http404
     submitted = False
     moved_to = None
     initial = {
