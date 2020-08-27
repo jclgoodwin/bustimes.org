@@ -24,6 +24,10 @@
         highWater,
         showStops = true;
 
+    if (localStorage && localStorage.hideStops) {
+        showStops = false;
+    }
+
     stopsGroup.on('add', function(e) {
         if (map.getZoom() < 14) {
             map.setZoom(14); // loadStops will be called by moveend handler
@@ -31,8 +35,14 @@
             loadStops();
         }
         showStops = true;
+        if (localStorage) {
+            localStorage.removeItem('hideStops');
+        }
     }).on('remove', function(e) {
         showStops = false;
+        if (localStorage) {
+            localStorage.setItem('hideStops', '1');
+        }
     });
 
     function getTransform(heading, scale) {
