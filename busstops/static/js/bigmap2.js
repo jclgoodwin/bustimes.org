@@ -327,17 +327,20 @@
             var items = JSON.parse(event.data);
 
             if (newSocket && !first) {
-                var oldVehicles = vehicles;
-                vehicles = {};
+                var newVehicles = {};
             }
             newSocket = false;
             for (var i = items.length - 1; i >= 0; i--) {
                 handleVehicle(items[i]);
+                if (newVehicles) {
+                    newVehicles[items[i].i] = true;
+                }
             }
-            if (oldVehicles) {
-                for (var id in oldVehicles) {
-                    if (!(id in vehicles)) {
-                        map.removeLayer(oldVehicles[id]);
+            if (newVehicles) {
+                for (var id in vehicles) {
+                    if (!(id in newVehicles)) {
+                        map.removeLayer(vehicles[id]);
+                        delete vehicles[id];
                     }
                 }
             }
