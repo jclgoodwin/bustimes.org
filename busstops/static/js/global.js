@@ -36,15 +36,15 @@ if (navigator.serviceWorker && location.protocol === 'https:') {
         ok.innerHTML = 'OK';
         ok.onclick = function() {
             document.body.removeChild(cookieDiv);
-        }
+        };
 
         var yes = document.createElement('button');
         yes.innerHTML = 'Yes please';
         yes.onclick = function() {
-            cookieDiv.innerHTML = '<p>Great. If you change your mind you can use <a href="/cookies">change your settings</a>.</p>'
+            cookieDiv.innerHTML = '<p>Great. If you change your mind you can use <a href="/cookies">change your settings</a>.</p>';
             cookieDiv.appendChild(ok);
             document.cookie = 'personalise_ads=yes; max-age=31536000; path=/';
-        }
+        };
         cookieDiv.appendChild(yes);
 
         var no = document.createElement('button');
@@ -52,7 +52,7 @@ if (navigator.serviceWorker && location.protocol === 'https:') {
         no.onclick = function() {
             cookieDiv.innerHTML = '<p>Fair enough. You may see ads that are less relevant to you. These ads use <a href="/cookies">cookies</a>, but not for personalization./p>';
             cookieDiv.appendChild(ok);
-        }
+        };
         cookieDiv.appendChild(no);
 
         cookieDiv.style.display = 'block';

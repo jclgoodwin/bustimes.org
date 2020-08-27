@@ -1,6 +1,10 @@
 (function () {
     'use strict';
 
+    /*global
+        L, reqwest
+    */
+
     var map = L.map('hugemap', {
             minZoom: 8
         }),
@@ -28,7 +32,7 @@
         showStops = false;
     }
 
-    stopsGroup.on('add', function(e) {
+    stopsGroup.on('add', function() {
         if (map.getZoom() < 14) {
             map.setZoom(14); // loadStops will be called by moveend handler
         } else if (!showStops) {
@@ -38,7 +42,7 @@
         if (localStorage) {
             localStorage.removeItem('hideStops');
         }
-    }).on('remove', function(e) {
+    }).on('remove', function() {
         showStops = false;
         if (localStorage) {
             localStorage.setItem('hideStops', '1');
@@ -49,7 +53,7 @@
         if (heading === null && !scale) {
             return '';
         }
-        var transform = 'transform:'
+        var transform = 'transform:';
         if (heading !== null) {
             transform += ' rotate(' + heading + 'deg)';
         }
