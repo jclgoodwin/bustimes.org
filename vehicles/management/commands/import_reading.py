@@ -37,6 +37,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
         journey.route_name = item['service']
+        journey.data = item
 
         latest_journey = vehicle.latest_location and vehicle.latest_location.journey
         if latest_journey and latest_journey.service and latest_journey.route_name == journey.route_name:

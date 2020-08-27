@@ -102,7 +102,7 @@ class Command(ImportLiveVehiclesCommand):
             route_name=item['properties']['line'],
             direction=item['properties']['direction'][:8]
         )
-        journey.text = item
+        journey.data = item
 
         if len(self.operators) == 1:
             operator = list(self.operators.values())[0]

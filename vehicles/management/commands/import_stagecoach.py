@@ -133,15 +133,14 @@ class Command(ImportLiveVehiclesCommand):
         if not journey:
             journey = VehicleJourney(
                 code=code,
-                datetime=departure_time
+                datetime=departure_time,
+                data=item
             )
 
         if code:
             journey.destination = item.get('dd', '')
 
         journey.route_name = item.get('sn', '')
-
-        journey.text = item
 
         latest_location = vehicle.latest_location
         if journey.service:

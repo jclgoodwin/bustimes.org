@@ -85,11 +85,12 @@ class Command(ImportLiveVehiclesCommand):
                 print(e, item['OperatorRef'], item['PublishedLineName'], item['DestinationRef'])
 
     def get_journey(self, item, vehicle):
-        journey = VehicleJourney()
-
-        journey.route_name = item['PublishedLineName']
-        journey.code = item['JourneyCode']
-        journey.datetime = get_datetime(item['DepartureTime'])
+        journey = VehicleJourney(
+            route_name=item['PublishedLineName'],
+            code=item['JourneyCode'],
+            datetime=get_datetime(item['DepartureTime']),
+            data=item
+        )
         latest_location = vehicle.latest_location
         if (
             latest_location and latest_location.journey.code == journey.code and
