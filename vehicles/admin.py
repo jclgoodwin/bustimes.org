@@ -187,8 +187,8 @@ def apply_edits(queryset):
                 vehicle.data = {
                     **vehicle.data, **edit.changes
                 }
-                for field in vehicle.data:
-                    if not vehicle.data[field]:
+                for field in edit.changes:
+                    if not edit.changes[field]:
                         del vehicle.data[field]
             else:
                 vehicle.data = edit.changes
