@@ -52,14 +52,21 @@ class Command(ImportLiveVehiclesCommand):
         else:
             operators = [item['OperatorRef']]
 
-        return self.vehicles.get_or_create(defaults, code=code, operator__in=operators)
+        try:
+            return self.vehicles.get_or_create(defaults, code=code, operator__in=operators)
+        except self.vehicles.model.MultipleObjectsReturned:
+            return self.vehicles.filter(code=code, operator__in=operators).first()
 
     @classmethod
     def get_service(cls, item):
         line_name = item['PublishedLineName']
         if not line_name:
             return
-        services = Service.objects.filter(operator=item['OperatorRef'], current=True, line_name=line_name)
+        services = Service.objects.filter(current=True, line_name=line_name)
+        if item['OperatorRef'] == 'SESX':
+            services = services.filter(operator__in=['SESX', 'GECL'])
+        else:
+            services = services.filter(operator=item['OperatorRef'])
         try:
             return services.get()
         except Service.DoesNotExist as e:
