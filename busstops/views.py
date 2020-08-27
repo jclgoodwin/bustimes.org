@@ -8,7 +8,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models.functions import Distance
-from django.db.models import Q, Prefetch, F
+from django.db.models import Q, Prefetch, F, Exists, OuterRef
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
@@ -172,7 +172,11 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
         if len(context['areas']) == 1:
             context['districts'] = context['areas'][0].district_set.filter(locality__stoppoint__active=True).distinct()
             del context['areas']
-        context['operators'] = self.object.operator_set.filter(service__current=True).distinct()
+
+        services = Service.objects.filter(current=True, operator=OuterRef('pk')).only('id')
+        operators = self.object.operator_set.annotate(has_services=Exists(services))
+        context['operators'] = operators.filter(Q(has_services=True))
+
         if len(context['operators']) == 1:
             context['services'] = sorted(context['operators'][0].service_set.filter(current=True).defer('geometry'),
                                          key=Service.get_order)

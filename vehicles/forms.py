@@ -1,8 +1,8 @@
 import requests
 from django import forms
 from django.core.exceptions import ValidationError
-from django.db.models import Count, Q
-from busstops.models import Operator
+from django.db.models import Count, Q, Exists, OuterRef
+from busstops.models import Operator, Service
 from .models import VehicleType, VehicleFeature, Livery
 
 
@@ -60,9 +60,11 @@ details""", required=False, max_length=255, widget=forms.TextInput(attrs={"list"
 
         operators = None
         if operator and operator.parent:
+            services = Service.objects.filter(current=True, operator=OuterRef('pk')).only('id')
             operators = Operator.objects.filter(parent=operator.parent)
-            operators = operators.filter(Q(service__current=True) | Q(vehicle__isnull=False))
-            self.fields['operator'].queryset = operators.distinct().order_by('name')
+            operators = operators.annotate(has_services=Exists(services))
+            operators = operators.filter(Q(has_services=True) | Q(pk=operator.pk))
+            self.fields['operator'].queryset = operators
         else:
             del(self.fields['operator'])
 

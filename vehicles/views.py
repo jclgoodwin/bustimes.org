@@ -112,7 +112,7 @@ def operator_vehicles(request, slug=None, parent=None):
         prefetch = Prefetch('vehiclejourney_set',
                             queryset=latest_journeys.select_related('service'), to_attr='latest_journeys')
         vehicles = vehicles.prefetch_related(prefetch, 'features')
-        pending_edits = VehicleEdit.objects.filter(approved=None, vehicle=OuterRef('id'))
+        pending_edits = VehicleEdit.objects.filter(approved=None, vehicle=OuterRef('id')).only('id')
         vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
         vehicles = vehicles.select_related('latest_location__journey__service')
 
@@ -383,7 +383,7 @@ class VehicleDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         journeys = self.object.vehiclejourney_set
-        context['pending_edits'] = self.object.vehicleedit_set.filter(approved=None).exists()
+        context['pending_edits'] = self.object.vehicleedit_set.filter(approved=None).values('id').exists()
         dates = list(journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date'))
         if self.object.operator:
             context['breadcrumb'] = [self.object.operator, Vehicles(self.object.operator)]
