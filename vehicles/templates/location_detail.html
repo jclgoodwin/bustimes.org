@@ -1,6 +1,6 @@
 {% if location.journey.service or location.journey.route_name %}
     {% if location.journey.service %}
-        <a href="{{ location.journey.service.get_absolute_url }}">{{ location.journey.service.get_line_name_and_brand }}</a>
+        <a href="{{ location.journey.service.get_absolute_url }}">{{ location.journey.service.get_line_name_and_brand }}
     {% elif location.journey.route_name %}
         {{ location.journey.route_name }}
     {% endif %}
@@ -8,6 +8,7 @@
     {% if location.journey.destination %}
         to {{ location.journey.destination }}
     {% endif %}
+    {% if location.journey.service %}</a>{% endif %}
     <br>
 {% endif %}
 
