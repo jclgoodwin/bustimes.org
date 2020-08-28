@@ -210,20 +210,26 @@ class AdminAreaDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        stops = StopPoint.objects.filter(active=True)
+
         # Districts in this administrative area
-        context['districts'] = self.object.district_set.filter(locality__stoppoint__active=True).distinct()
+        context['districts'] = self.object.district_set.filter(Exists(
+            stops.filter(locality__district=OuterRef('pk'))
+        ))
 
         # Districtless localities in this administrative area
         context['localities'] = self.object.locality_set.filter(
-            Q(stoppoint__active=True) | Q(locality__stoppoint__active=True),
+            Exists(stops.filter(locality=OuterRef('pk'))) | Exists(stops.filter(locality__parent=OuterRef('pk'))),
             district=None,
             parent=None
-        ).defer('latlong').distinct()
+        ).defer('latlong')
 
         if not (context['localities'] or context['districts']):
-            context['services'] = sorted(Service.objects.filter(stops__admin_area=self.object,
-                                                                current=True).distinct().defer('geometry'),
-                                         key=Service.get_order)
+            services = Service.objects.filter(current=True).defer('geometry', 'search_vector')
+            services = services.filter(Exists(
+                StopPoint.objects.filter(service=OuterRef('pk'), admin_area=self.object)
+            ))
+            context['services'] = sorted(services, key=Service.get_order)
             context['modes'] = {service.mode for service in context['services'] if service.mode}
         context['breadcrumb'] = [self.object.region]
         return context
@@ -244,10 +250,14 @@ class DistrictDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        stops = StopPoint.objects.filter(active=True)
         context['localities'] = self.object.locality_set.filter(
-            Q(stoppoint__active=True) | Q(locality__stoppoint__active=True),
-        ).defer('latlong').distinct()
+            Exists(stops.filter(locality=OuterRef('pk'))) | Exists(stops.filter(locality__parent=OuterRef('pk'))),
+        ).defer('latlong')
+
         context['breadcrumb'] = [self.object.admin_area.region, self.object.admin_area]
+
         return context
 
     def render_to_response(self, context):
@@ -267,10 +277,11 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['localities'] = self.object.locality_set.filter(
-            Q(stoppoint__active=True) |
-            Q(locality__stoppoint__active=True),
-        ).defer('latlong').distinct()
+        stops = StopPoint.objects.filter(active=True)
+        has_stops = Exists(stops.filter(locality=OuterRef('pk')))
+        has_stops |= Exists(stops.filter(locality__parent=OuterRef('pk')))
+
+        context['localities'] = self.object.locality_set.filter(has_stops).defer('latlong')
 
         context['adjacent'] = Locality.objects.filter(
             Q(neighbour=self.object) |
@@ -280,16 +291,22 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             Q(locality__stoppoint__active=True),
         ).defer('latlong').distinct()
 
-        context['stops'] = self.object.stoppoint_set.filter(active=True, service__current=True).distinct()
-        context['stops'] = context['stops'].prefetch_related(prefetch_stop_services).defer('osm')
+        # context['adjacent'] = Locality.objects.filter(
+        #     has_stops,
+        #     Q(neighbour=self.object) | Q(adjacent=self.object)
+        # ).defer('latlong')
+
+        services = Service.objects.filter(current=True, stops=OuterRef('pk'))
+        stops = self.object.stoppoint_set.filter(Exists(services))
+        context['stops'] = stops.prefetch_related(prefetch_stop_services).defer('osm', 'latlong')
 
         if not (context['localities'] or context['stops']):
             raise Http404(f'Sorry, it looks like no services currently stop at {self.object}')
         elif context['stops']:
             context['services'] = sorted(Service.objects.filter(
-                stops__locality=self.object,
+                Exists(self.object.stoppoint_set.filter(service=OuterRef('pk'))),
                 current=True
-            ).prefetch_related('operator').defer('geometry').distinct(), key=Service.get_order)
+            ).prefetch_related('operator').defer('geometry'), key=Service.get_order)
             context['modes'] = {service.mode for service in context['services'] if service.mode}
 
         context['breadcrumb'] = [crumb for crumb in [

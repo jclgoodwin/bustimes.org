@@ -289,9 +289,9 @@ def vehicles_last_modified(request):
         operators = Operator.objects.filter(service=service_id)
         if not any(operator.id in {'CTNY', 'SCBD'} for operator in operators):
             codes = ServiceCode.objects.filter(scheme__in=schemes, service=service_id)
+            codes = codes.annotate(source_name=Replace('scheme', Value(' SIRI')))
             siri_sources = SIRISource.objects.filter(name=OuterRef('source_name'))
-            codes = codes.annotate(source_name=Replace('scheme', Value(' SIRI')), source=Exists(siri_sources))
-            codes = codes.filter(source=True)
+            codes = codes.filter(Exists(siri_sources))
 
             for code in codes:
                 try:

@@ -61,9 +61,7 @@ details""", required=False, max_length=255, widget=forms.TextInput(attrs={"list"
         operators = None
         if operator and operator.parent:
             services = Service.objects.filter(current=True, operator=OuterRef('pk')).only('id')
-            operators = Operator.objects.filter(parent=operator.parent)
-            operators = operators.annotate(has_services=Exists(services))
-            operators = operators.filter(Q(has_services=True) | Q(pk=operator.pk))
+            operators = Operator.objects.filter(Exists(services) | Q(pk=operator.pk), parent=operator.parent)
             self.fields['operator'].queryset = operators
         else:
             del(self.fields['operator'])
