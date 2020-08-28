@@ -35,11 +35,42 @@ def get_vehicle_edit(vehicle, fields, now, username):
 
 
 def do_revision(vehicle, data):
-    if 'operator' in data or 'reg' in data or 'depot' in data:
+    changes = {}
+    changed_fields = []
+
+    if 'reg' in data:
+        changes['reg'] = f"-{vehicle.reg}\n+{data['reg']}"
+        vehicle.reg = data['reg']
+        changed_fields.append('reg')
+        del data['reg']
+
+    for field in ('notes', 'branding', 'name'):
+        if field in data and not data[field]:
+            from_value = getattr(vehicle, field)
+            to_value = data[field]
+            changes[field] = f"-{from_value}\n+{to_value}"
+            setattr(vehicle, field, to_value)
+            changed_fields.append(field)
+            del data[field]
+
+    if 'depot' in data:
+        if vehicle.data:
+            from_depot = vehicle.data.get('Depot') or ''
+            vehicle.data['Depot'] = data['depot']
+        else:
+            from_depot = ''
+            vehicle.data = {'Depot': data['depot']}
+        changes['depot'] = f"-{from_depot}\n+{data['depot']}"
+        changed_fields.append('data')
+        del data['depot']
+
+    if changes or 'operator' in data:
         revision = VehicleRevision(
             vehicle=vehicle
         )
-        changed_fields = ['operator']
+
+        if changes:
+            revision.changes = changes
 
         if 'operator' in data:
             revision.from_operator = vehicle.operator
@@ -48,28 +79,6 @@ def do_revision(vehicle, data):
             changed_fields.append('operator')
             del data['operator']
 
-        changes = {}
-
-        if 'reg' in data:
-            changes['reg'] = f"-{vehicle.reg}\n+{data['reg']}"
-            vehicle.reg = data['reg']
-            changed_fields.append('reg')
-            del data['reg']
-
-        if 'depot' in data:
-            if vehicle.data:
-                depot = vehicle.data.get('Depot') or ''
-                vehicle.data['Depot'] = data['depot']
-            else:
-                depot = ''
-                vehicle.data = {'Depot': data['depot']}
-            changes['depot'] = f"-{depot}\n+{data['depot']}"
-            changed_fields.append('data')
-            del data['depot']
-
         vehicle.save(update_fields=changed_fields)
-
-        if changes:
-            revision.changes = changes
 
         return revision
