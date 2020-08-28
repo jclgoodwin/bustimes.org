@@ -119,7 +119,7 @@
                     {% endif %}
                 </td>{% endif %}
                 <td>{% if vehicle.notes == 'Spare ticket machine' %}{{ vehicle.notes }}{% else %}{{ vehicle.vehicle_type|default:"" }}{% endif %}</td>
-                <td{% if vehicle.colours and vehicle.colours != 'Other' or vehicle.livery %} class="livery-cell"{% endif %}{% if not vehicle.branding %} colspan="2"{% endif %}>
+                <td{% if vehicle.colours and vehicle.colours != 'Other' or vehicle.livery %} class="livery-cell"{% endif %}{% if branding_column and not vehicle.branding %} colspan="2"{% endif %}>
                     {% if vehicle.colours == 'Other' %}
                         {{ vehicle.colours }}
                     {% elif vehicle.colours or vehicle.livery %}
