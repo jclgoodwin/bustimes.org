@@ -81,6 +81,7 @@ def get_stop_usages(trips):
 
 class Timetable:
     calendar = None
+    start_date = None
 
     def __init__(self, routes, date):
         self.routes = list(routes)
@@ -97,7 +98,11 @@ class Timetable:
         ).distinct().prefetch_related('calendardate_set')
 
         if not date and len(self.calendars) == 1:
-            self.calendar = str(self.calendars[0])
+            calendar = self.calendars[0]
+            if str(calendar):
+                if calendar.start_date > datetime.date.today():
+                    self.start_date = calendar.start_date
+                self.calendar = calendar
 
         if not self.calendar:
             if not self.date:
