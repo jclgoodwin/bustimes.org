@@ -361,6 +361,17 @@ class VehicleEdit(models.Model):
         return str(self.id)
 
 
+class VehicleRevision(models.Model):
+    datetime = models.DateTimeField()
+    vehicle = models.ForeignKey(Vehicle, models.CASCADE)
+    from_operator = models.ForeignKey(Operator, models.CASCADE, null=True, blank=True, related_name='revision_from')
+    to_operator = models.ForeignKey(Operator, models.CASCADE, null=True, blank=True, related_name='revision_to')
+    changes = models.JSONField(null=True, blank=True)
+    message = models.TextField(blank=True)
+    username = models.CharField(max_length=255, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True)
+
+
 class VehicleJourney(models.Model):
     datetime = models.DateTimeField()
     service = models.ForeignKey(Service, models.SET_NULL, null=True, blank=True)

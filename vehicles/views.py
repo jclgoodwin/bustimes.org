@@ -19,10 +19,11 @@ from django.utils import timezone
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service, ServiceCode, SIRISource, DataSource
 from bustimes.models import get_calendars, Trip
-from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, VehicleEditFeature
+from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision
 from .forms import EditVehiclesForm, EditVehicleForm
 from .management.commands import import_sirivm
 from .rifkind import rifkind
+from .utils import get_vehicle_edit
 from .tasks import handle_siri_vm, handle_siri_et, handle_siri_sx
 
 
@@ -42,39 +43,6 @@ class Vehicles():
 
     def get_absolute_url(self):
         return reverse('operator_vehicles', args=(self.operator.slug,))
-
-
-def get_vehicle_edit(vehicle, fields):
-    edit = VehicleEdit(vehicle=vehicle, datetime=timezone.now())
-
-    for field in ('fleet_number', 'reg', 'vehicle_type', 'branding', 'name', 'notes'):
-        if field in fields and str(fields[field]) != str(getattr(vehicle, field)):
-            if fields[field]:
-                setattr(edit, field, fields[field])
-            else:
-                setattr(edit, field, f'-{getattr(vehicle, field)}')
-
-    changes = {}
-    if 'depot' in fields:
-        changes['Depot'] = fields['depot']
-    if 'previous_reg' in fields:
-        changes['Previous reg'] = fields['previous_reg'].upper()
-    if changes:
-        edit.changes = changes
-
-    edit.url = fields.get('url', '')
-
-    if fields.get('colours'):
-        if fields['colours'].isdigit():
-            edit.livery_id = fields['colours']
-        elif fields['colours']:
-            edit.colours = fields['colours']
-    if fields.get('other_colour'):
-        edit.colours = fields['other_colour']
-
-    edit.withdrawn = fields.get('withdrawn')
-
-    return edit
 
 
 def vehicles(request):
@@ -137,16 +105,26 @@ def operator_vehicles(request, slug=None, parent=None):
                 form.add_error(None, 'You haven\'t changed anything')
             elif form.is_valid():
                 data = {key: form.cleaned_data[key] for key in form.changed_data}
+                vehicle_ids = request.POST.getlist('vehicle')
+                now = timezone.now()
+                username = form.cleaned_data.get('user')
                 if 'operator' in data:
-                    ticked_vehicles = Vehicle.objects.filter(id__in=request.POST.getlist('vehicle'))
-                    moved = ticked_vehicles.update(operator=data['operator'])
+                    moved = Vehicle.objects.filter(id__in=vehicle_ids).update(operator=data['operator'])
+                    VehicleRevision.objects.bulk_create(VehicleRevision(
+                        vehicle_id=vehicle_id,
+                        datetime=now,
+                        username=username or '',
+                        from_operator=operator,
+                        to_operator=data['operator']
+                    ) for vehicle_id in vehicle_ids)
                     moved_to = data['operator']
                     del data['operator']
                 if data:
-                    ticked_vehicles = (v for v in vehicles if str(v.id) in request.POST.getlist('vehicle'))
-                    edits = [get_vehicle_edit(vehicle, data) for vehicle in ticked_vehicles]
-                    for edit in edits:
-                        edit.username = form.cleaned_data.get('user') or request.META['REMOTE_ADDR']
+                    username = username or request.META['REMOTE_ADDR']
+                    # this will fetch the vehicles list - slighly important that it occurs
+                    # any change of operator
+                    ticked_vehicles = [v for v in vehicles if str(v.id) in vehicle_ids]
+                    edits = [get_vehicle_edit(vehicle, data, now, username) for vehicle in ticked_vehicles]
                     edits = VehicleEdit.objects.bulk_create(edit for edit in edits if edit)
                     submitted = len(edits)
                     if 'features' in data:
@@ -462,14 +440,23 @@ def edit_vehicle(request, vehicle_id):
             form.add_error(None, 'You haven\'t changed anything')
         elif form.is_valid():
             data = {key: form.cleaned_data[key] for key in form.changed_data}
+            now = timezone.now()
+            username = form.cleaned_data.get('user')
             if 'operator' in data:
+                VehicleRevision.objects.create(
+                    vehicle=vehicle,
+                    datetime=now,
+                    username=username or '',
+                    from_operator=vehicle.operator,
+                    to_operator=data['operator']
+                )
                 vehicle.operator = data['operator']
                 vehicle.save(update_fields=['operator'])
                 moved_to = data['operator']
                 del data['operator']
             if data:
-                edit = get_vehicle_edit(vehicle, data)
-                edit.username = form.cleaned_data.get('user') or request.META['REMOTE_ADDR']
+                edit = get_vehicle_edit(vehicle, data, now,
+                                        username or request.META['REMOTE_ADDR'])
                 edit.save()
                 if 'features' in data:
                     for feature in vehicle.features.all():

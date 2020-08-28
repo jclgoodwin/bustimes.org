@@ -5,7 +5,8 @@ from django.utils.safestring import mark_safe
 from django.db.models import Count, Q
 from django.db.utils import ConnectionDoesNotExist
 from busstops.models import Operator
-from .models import VehicleType, VehicleFeature, Vehicle, VehicleEdit, VehicleJourney, Livery, JourneyCode
+from .models import (VehicleType, VehicleFeature, Vehicle, VehicleEdit,
+                     VehicleJourney, Livery, JourneyCode, VehicleRevision)
 
 
 class VehicleTypeAdmin(admin.ModelAdmin):
@@ -449,6 +450,10 @@ class LiveryAdmin(admin.ModelAdmin):
         return Livery.objects.annotate(vehicles=Count('vehicle'))
 
 
+class VehicleRevisionAdmin(admin.ModelAdmin):
+    raw_id_fields = ['from_operator', 'to_operator', 'vehicle']
+
+
 admin.site.register(VehicleType, VehicleTypeAdmin)
 admin.site.register(VehicleFeature)
 admin.site.register(Vehicle, VehicleAdmin)
@@ -456,3 +461,4 @@ admin.site.register(VehicleEdit, VehicleEditAdmin)
 admin.site.register(VehicleJourney, VehicleJourneyAdmin)
 admin.site.register(JourneyCode, JourneyCodeAdmin)
 admin.site.register(Livery, LiveryAdmin)
+admin.site.register(VehicleRevision, VehicleRevisionAdmin)

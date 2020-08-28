@@ -4,7 +4,8 @@ from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
 from busstops.models import DataSource, Region, Operator, Service
-from .models import Vehicle, VehicleType, VehicleFeature, Livery, VehicleJourney, VehicleLocation, VehicleEdit
+from .models import (Vehicle, VehicleType, VehicleFeature, Livery,
+                     VehicleJourney, VehicleLocation, VehicleEdit, VehicleRevision)
 from . import admin
 
 
@@ -313,7 +314,7 @@ class VehiclesTests(TestCase):
 
         self.assertNotContains(response, '/operators/bova-and-over')
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             response = self.client.post(url, {
                 'fleet_number': '50',
                 'reg': '',
@@ -332,6 +333,10 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '/operators/bova-and-over')
         self.assertContains(response, 'Vehicle moved to Bova and Over')
         self.assertContains(response, '<p>I’ll update the other details shortly</p>')
+
+        revision = VehicleRevision.objects.get()
+        self.assertEqual(revision.from_operator, self.lynx)
+        self.assertEqual(revision.to_operator, self.bova)
 
         with self.assertNumQueries(11):
             response = self.client.get(url)
@@ -376,12 +381,12 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'FD54\xa0JYA')
 
         # just updating operator should not create a VehicleEdit, but update the vehicle immediately
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(15):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
                 'operator': self.bova.id,
             })
-            self.assertNotContains(response, 'FD54\xa0JYA')
+        self.assertNotContains(response, 'FD54\xa0JYA')
         self.vehicle_1.refresh_from_db()
         self.assertEqual(self.bova, self.vehicle_1.operator)
         self.assertContains(response, '1 vehicle moved to Bova and Over')
