@@ -371,6 +371,9 @@ class VehicleRevision(models.Model):
     username = models.CharField(max_length=255, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True)
 
+    def __str__(self):
+        return f'changed operator from {self.from_operator_id} to {self.to_operator_id}'
+
 
 class VehicleJourney(models.Model):
     datetime = models.DateTimeField()

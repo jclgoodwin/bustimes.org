@@ -28,8 +28,9 @@ class EditVehiclesForm(forms.Form):
     features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features',
                                               widget=forms.CheckboxSelectMultiple, required=False)
     depot = forms.CharField(help_text="""I’d leave this blank if I were you. There are better places (not this website) for such
-details""", required=False, max_length=255, widget=forms.TextInput(attrs={"list": "depots"}))
-    notes = forms.CharField(help_text="Again, this should be blank in almost all cases", required=False, max_length=255)
+minutae""", required=False, max_length=255, widget=forms.TextInput(attrs={"list": "depots"}))
+    notes = forms.CharField(help_text="""Again, this should be blank in almost all cases. There’s no need to know a
+vehicle’s previous owners""", required=False, max_length=255)
     withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False)
     user = forms.CharField(label='Your name', help_text='If left blank, your IP address will be logged instead',
                            required=False, max_length=255)
