@@ -127,7 +127,7 @@
                         {{ vehicle.livery|default:"" }}
                     {% endif %}
                 </td>
-                {% if branding_column %}<td>{{ vehicle.branding }}</td>{% endif %}
+                {% if vehicle.branding %}<td>{{ vehicle.branding }}</td>{% endif %}
                 {% if name_column %}<td>{{ vehicle.name }}</td>{% endif %}
                 {% if notes_column %}<td>{% if vehicle.notes != 'Spare ticket machine' %}{{ vehicle.notes }}{% endif %}</td>{% endif %}
                 {% for value in vehicle.column_values %}<td>{{ value|default:"" }}</td>{% endfor %}
