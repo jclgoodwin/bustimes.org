@@ -8,16 +8,23 @@
 
 {% block content %}
 
-{% if submitted or moved_to %}
+{% if revision or submitted %}
 
     <h1>Thank you</h1>
 
-    {% if moved_to %}
-        <p>Vehicle moved to {{ moved_to }}</p>
+    {% if revision %}
+        <p>Details updated, and recorded in <a href="/vehicles/history">the changelog for all to see</a>:</p>
+
+        <p>
+            {% for key, from, to in revision.list_changes %}
+                Changed {{ key }} from {{ from }} to {{ to }}
+                {% if not forloop.last %}<br>{% endif %}
+            {% endfor %}
+        </p>
     {% endif %}
 
     {% if submitted %}
-        <p>I’ll update {% if moved_to %}the other{% else %}those{% endif %} details shortly</p>
+        <p>I’ll update {% if revision %}the other{% else %}those{% endif %} details shortly</p>
     {% endif %}
 
 {% else %}

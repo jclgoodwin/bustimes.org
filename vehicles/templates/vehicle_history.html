@@ -21,15 +21,23 @@
     <thead>
         <th scope="col">Date</th>
         {% if not vehicle %}<th scope="col">Vehicle</th>{% endif %}
-        <th scope="col">Change</th>
+        <th scope="col">Changed</th>
+        <th scope="col">From</th>
+        <th scope="col">To</th>
     </thead>
     <tbody>
         {% for revision in revisions %}
-            <tr>
-                <td>{{ revision.datetime }}</td>
-                {% if not vehicle %}<td><a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a></td>{% endif %}
-                <td>{% for change in revision.list_changes %}{{ change }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
-            </tr>
+            {% for key, from, to in revision.list_changes %}
+                <tr>
+                    <td>{{ revision.datetime }}</td>
+                    {% if not vehicle %}
+                        <td><a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a></td>
+                    {% endif %}
+                    <td>{{ key }}</td>
+                    <td>{{ from }}</td>
+                    <td>{{ to }}</td>
+                </tr>
+            {% endfor %}
         {% endfor %}
     </tbody>
 </table>
@@ -41,3 +49,4 @@
 {% endblock %}
 
 {% block ad %}{% endblock %}
+    

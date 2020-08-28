@@ -376,12 +376,12 @@ class VehicleRevision(models.Model):
 
     def list_changes(self):
         if self.from_operator_id or self.to_operator_id:
-            yield f'operator from ‘{self.from_operator}’ to ‘{self.to_operator}’'
+            yield ('operator', self.from_operator, self.to_operator)
         if self.changes:
             for key in self.changes:
                 before, after = self.changes[key].split('\n+')
                 before = before[1:]
-                yield f'{key} from ‘{before}’ to ‘{after}’'
+                yield (key, before, after)
 
 
 class VehicleJourney(models.Model):

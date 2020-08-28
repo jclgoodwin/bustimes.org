@@ -23,7 +23,7 @@ from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, Vehic
 from .forms import EditVehiclesForm, EditVehicleForm
 from .management.commands import import_sirivm
 from .rifkind import rifkind
-from .utils import get_vehicle_edit
+from .utils import get_vehicle_edit, do_revision
 from .tasks import handle_siri_vm, handle_siri_et, handle_siri_sx
 
 
@@ -413,7 +413,7 @@ def edit_vehicle(request, vehicle_id):
     if not vehicle.editable():
         raise Http404
     submitted = False
-    moved_to = None
+    revision = None
     initial = {
         'operator': vehicle.operator,
         'reg': vehicle.reg,
@@ -442,18 +442,13 @@ def edit_vehicle(request, vehicle_id):
             data = {key: form.cleaned_data[key] for key in form.changed_data}
             now = timezone.now()
             username = form.cleaned_data.get('user')
-            if 'operator' in data:
-                VehicleRevision.objects.create(
-                    vehicle=vehicle,
-                    datetime=now,
-                    username=username or '',
-                    from_operator=vehicle.operator,
-                    to_operator=data['operator']
-                )
-                vehicle.operator = data['operator']
-                vehicle.save(update_fields=['operator'])
-                moved_to = data['operator']
-                del data['operator']
+            revision = do_revision(vehicle, data)
+            if revision:
+                revision.datetime = now
+                if username:
+                    revision.username = username
+                revision.save()
+
             if data:
                 edit = get_vehicle_edit(vehicle, data, now,
                                         username or request.META['REMOTE_ADDR'])
@@ -491,8 +486,8 @@ def edit_vehicle(request, vehicle_id):
         'previous': vehicle.get_previous(),
         'next': vehicle.get_next(),
         'submitted': submitted,
-        'moved_to': moved_to,
-        'pending_edits': not submitted and not moved_to and vehicle.vehicleedit_set.filter(approved=None).exists()
+        'revision': revision,
+        'pending_edits': not submitted and not revision and vehicle.vehicleedit_set.filter(approved=None).exists()
     })
 
     if form and form.is_valid() and form.cleaned_data['user'] != request.COOKIES.get('username', ''):
@@ -503,11 +498,11 @@ def edit_vehicle(request, vehicle_id):
 
 def vehicle_history(request, vehicle_id):
     vehicle = get_object_or_404(Vehicle, id=vehicle_id)
-
+    revisions = vehicle.vehiclerevision_set.select_related('from_operator', 'to_operator').order_by('-id')
     return render(request, 'vehicle_history.html', {
         'breadcrumb': [vehicle.operator, Vehicles(vehicle.operator), vehicle],
         'vehicle': vehicle,
-        'revisions': vehicle.vehiclerevision_set.select_related('from_operator', 'to_operator').order_by('-id')
+        'revisions': revisions
     })
 
 
@@ -516,9 +511,8 @@ def vehicles_history(request):
     revisions = revisions.order_by('-id')
     paginator = Paginator(revisions, 100)
     page = request.GET.get('page')
-    revisions = paginator.get_page(page)
     return render(request, 'vehicle_history.html', {
-        'revisions': revisions
+        'revisions': paginator.get_page(page)
     })
 
 

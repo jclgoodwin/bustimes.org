@@ -76,7 +76,7 @@ class VehiclesTests(TestCase):
         vehicle.operator.name = 'Stagecoach Oxenholme'
         self.assertIn('search/?text=Stagecoach%20RML2604&sort', vehicle.get_flickr_url())
 
-    def test_vehicle_views(self):
+    def test_fleet_lists(self):
         with self.assertNumQueries(2):
             response = self.client.get('/operators/bova-and-over/vehicles')
         self.assertEqual(404, response.status_code)
@@ -98,6 +98,7 @@ class VehiclesTests(TestCase):
         self.assertTrue(response.context['code_column'])
         self.assertContains(response, '<td class="number">2</td>')
 
+    def test_vehicle_views(self):
         with self.assertNumQueries(8):
             response = self.client.get(self.vehicle_1.get_absolute_url() + '?date=poop')
         self.assertContains(response, 'Optare Tempo')
@@ -187,7 +188,7 @@ class VehiclesTests(TestCase):
         self.assertEqual(edit.colours, '')
 
         # edit reg, colour
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(12):
             response = self.client.post(url, {
                 'fleet_number': '1',
                 'reg': 'K292JVF',
@@ -199,7 +200,7 @@ class VehiclesTests(TestCase):
                 'notes': 'Trent Barton',
             })
         self.assertTrue(response.context['form'].has_changed())
-        self.assertContains(response, 'I’ll update those details')
+        self.assertContains(response, 'I’ll update the other details')
 
         self.assertEqual(2, VehicleEdit.objects.filter(approved=None).count())
 
@@ -213,7 +214,7 @@ class VehiclesTests(TestCase):
         with self.assertNumQueries(14):
             response = self.client.post(url, {
                 'fleet_number': '1',
-                'reg': 'FD54JYA',
+                'reg': 'K292JVF',
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
                 'features': self.wifi.id,
                 'operator': self.lynx.id,
@@ -230,7 +231,7 @@ class VehiclesTests(TestCase):
         with self.assertNumQueries(14):
             response = self.client.post(url, {
                 'fleet_number': '1',
-                'reg': 'FD54JYA',
+                'reg': 'K292JVF',
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
                 'features': self.usb.id,
                 'operator': self.lynx.id,
@@ -254,7 +255,7 @@ class VehiclesTests(TestCase):
         with self.assertNumQueries(14):
             response = self.client.post(url, {
                 'fleet_number': '',
-                'reg': 'FD54JYA',
+                'reg': 'K292JVF',
                 'vehicle_type': self.vehicle_1.vehicle_type_id,
                 'features': self.wifi.id,
                 'operator': self.lynx.id,
@@ -268,7 +269,7 @@ class VehiclesTests(TestCase):
 
         self.assertEqual(3, VehicleEdit.objects.filter(approved=None).count())
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(12):
             admin.apply_edits(VehicleEdit.objects.select_related('vehicle'))
         self.assertEqual(0, VehicleEdit.objects.filter(approved=None).count())
         vehicle = Vehicle.objects.get(notes='Trent Barton')
@@ -290,7 +291,7 @@ class VehiclesTests(TestCase):
         self.assertEqual(0, response.context_data['cl'].result_count)
 
         response = self.client.get('/admin/vehicles/vehicleedit/?change=reg')
-        self.assertEqual(1, response.context_data['cl'].result_count)
+        self.assertEqual(0, response.context_data['cl'].result_count)
 
     def test_vehicle_edit_2(self):
         url = self.vehicle_2.get_absolute_url() + '/edit'
@@ -331,33 +332,39 @@ class VehiclesTests(TestCase):
 
         # check vehicle operator has been changed
         self.assertContains(response, '/operators/bova-and-over')
-        self.assertContains(response, 'Vehicle moved to Bova and Over')
+        self.assertContains(response, 'Changed operator from Lynx to Bova and Over')
+        self.assertContains(response, 'Changed depot from Long Sutton to Holt')
         self.assertContains(response, '<p>I’ll update the other details shortly</p>')
 
         revision = VehicleRevision.objects.get()
         self.assertEqual(revision.from_operator, self.lynx)
         self.assertEqual(revision.to_operator, self.bova)
         self.assertEqual(str(revision), 'changed operator from LYNX to BOVA')
+
         response = self.client.get(f'{self.vehicle_2.get_absolute_url()}/history')
-        self.assertContains(response, 'operator from ‘Lynx’ to ‘Bova and Over’')
+        self.assertContains(response, '<td>operator</td>')
+        self.assertContains(response, '<td>Lynx</td>')
+        self.assertContains(response, '<td>Bova and Over</td>')
+
         response = self.client.get('/vehicles/history')
-        self.assertContains(response, 'operator from ‘Lynx’ to ‘Bova and Over’')
+        self.assertContains(response, '<td>operator</td>')
+        self.assertContains(response, '<td>Lynx</td>')
+        self.assertContains(response, '<td>Bova and Over</td>')
 
         with self.assertNumQueries(11):
             response = self.client.get(url)
-
         self.assertContains(response, 'already')
 
         edit = VehicleEdit.objects.get()
-        self.assertEqual(edit.get_changes(), {'Depot': 'Holt', 'branding': 'Coastliner', 'name': 'Luther Blisset',
-                                              'notes': 'Ex Ipswich Buses', 'reg': ''})
+        self.assertEqual(edit.get_changes(), {'branding': 'Coastliner', 'name': 'Luther Blisset',
+                                              'notes': 'Ex Ipswich Buses'})
 
         self.assertTrue(str(edit).isdigit())
         self.assertEqual(self.vehicle_2.get_absolute_url(), edit.get_absolute_url())
 
         self.assertTrue(admin.VehicleEditAdmin.flickr(None, edit))
         self.assertEqual(admin.fleet_number(edit), '50')
-        self.assertEqual(admin.reg(edit), '<del>UWW2X</del>')
+        # self.assertEqual(admin.reg(edit), '<del>UWW2X</del>')
         self.assertEqual(admin.notes(edit), '<ins>Ex Ipswich Buses</ins>')
 
         self.assertEqual(str(admin.vehicle_type(edit)), 'Optare Spectra')
