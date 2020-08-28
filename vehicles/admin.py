@@ -452,7 +452,7 @@ class LiveryAdmin(admin.ModelAdmin):
 
 class VehicleRevisionAdmin(admin.ModelAdmin):
     raw_id_fields = ['from_operator', 'to_operator', 'vehicle']
-    list_display = ['datetime', '__str__']
+    list_display = ['datetime', '__str__', 'changes']
 
 
 admin.site.register(VehicleType, VehicleTypeAdmin)
