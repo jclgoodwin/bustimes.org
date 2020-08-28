@@ -59,7 +59,7 @@ def do_revision(vehicle, data):
         if 'depot' in data:
             if vehicle.data:
                 depot = vehicle.data.get('Depot') or ''
-                vehicle.data['Depot'] = depot
+                vehicle.data['Depot'] = data['depot']
             else:
                 depot = ''
                 vehicle.data = {'Depot': data['depot']}
