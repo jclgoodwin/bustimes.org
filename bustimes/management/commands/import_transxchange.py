@@ -773,7 +773,7 @@ class Command(BaseCommand):
         parts = self.get_filename_parts(filename)
 
         for txc_service in transxchange.services.values():
-            if service.mode == 'underground':
+            if txc_service.mode == 'underground':
                 continue
 
             self.handle_service(filename, parts, transxchange, txc_service, today, stops)
