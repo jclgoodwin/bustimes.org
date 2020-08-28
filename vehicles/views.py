@@ -559,7 +559,7 @@ def location_detail(request, location_id):
 
 def journey_debug(request, pk):
     journey = get_object_or_404(VehicleJourney, id=pk)
-    return JsonResponse(journey.data)
+    return JsonResponse(journey.data or {})
 
 
 def siri(request):

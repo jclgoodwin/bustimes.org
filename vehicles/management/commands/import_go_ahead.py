@@ -101,9 +101,10 @@ class Command(ImportLiveVehiclesCommand):
         return super().get_old_locations().filter(datetime__lt=self.source.datetime - timedelta(minutes=10))
 
     def get_journey(self, item, vehicle):
-        journey = VehicleJourney()
-
-        journey.code = str(item['datedVehicleJourney'])
+        journey = VehicleJourney(
+            code=str(item['datedVehicleJourney']),
+            data=item
+        )
 
         try:
             journey.destination = str(Locality.objects.get(stoppoint=item['destination']['ref']))
