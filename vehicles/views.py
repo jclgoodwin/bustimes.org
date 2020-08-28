@@ -507,7 +507,18 @@ def vehicle_history(request, vehicle_id):
     return render(request, 'vehicle_history.html', {
         'breadcrumb': [vehicle.operator, Vehicles(vehicle.operator), vehicle],
         'vehicle': vehicle,
-        'revisions': vehicle.vehiclerevision_set.select_related('from_operator', 'to_operator')
+        'revisions': vehicle.vehiclerevision_set.select_related('from_operator', 'to_operator').order_by('-id')
+    })
+
+
+def vehicles_history(request):
+    revisions = VehicleRevision.objects.all().select_related('vehicle', 'from_operator', 'to_operator')
+    revisions = revisions.order_by('-id')
+    paginator = Paginator(revisions, 100)
+    page = request.GET.get('page')
+    revisions = paginator.get_page(page)
+    return render(request, 'vehicle_history.html', {
+        'revisions': revisions
     })
 
 

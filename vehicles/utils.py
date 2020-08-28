@@ -1,4 +1,4 @@
-from .models import VehicleEdit
+from .models import VehicleEdit, VehicleRevision
 
 
 def get_vehicle_edit(vehicle, fields, now, username):
@@ -32,3 +32,44 @@ def get_vehicle_edit(vehicle, fields, now, username):
     edit.withdrawn = fields.get('withdrawn')
 
     return edit
+
+
+def do_revision(vehicle, data):
+    if 'operator' in data or 'reg' in data or 'depot' in data:
+        revision = VehicleRevision(
+            vehicle=vehicle
+        )
+        changed_fields = ['operator']
+
+        if 'operator' in data:
+            revision.from_operator = vehicle.operator
+            revision.to_operator = data['operator']
+            vehicle.operator = data['operator']
+            changed_fields.append('operator')
+            del data['operator']
+
+        changes = {}
+
+        if 'reg' in data:
+            changes['reg'] = f"-{vehicle.reg}\n+{data['reg']}"
+            vehicle.reg = data['reg']
+            changed_fields.append('reg')
+            del data['reg']
+
+        if 'depot' in data:
+            if vehicle.data:
+                depot = vehicle.data.get('Depot') or ''
+                vehicle.data['Depot']
+            else:
+                depot = ''
+                vehicle.data = {'Depot': data['depot']}
+            changes['depot'] = f"-{depot}\n+{data['depot']}"
+            changed_fields.append('data')
+            del data['depot']
+
+        vehicle.save(update_fields=changed_fields)
+
+        if changes:
+            revision.changes = changes
+
+        return revision

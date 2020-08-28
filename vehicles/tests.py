@@ -339,7 +339,9 @@ class VehiclesTests(TestCase):
         self.assertEqual(revision.to_operator, self.bova)
         self.assertEqual(str(revision), 'changed operator from LYNX to BOVA')
         response = self.client.get(f'{self.vehicle_2.get_absolute_url()}/history')
-        self.assertContains(response, 'changed operator from Lynx to Bova and Over')
+        self.assertContains(response, 'operator from ‘Lynx’ to ‘Bova and Over’')
+        response = self.client.get('/vehicles/history')
+        self.assertContains(response, 'operator from ‘Lynx’ to ‘Bova and Over’')
 
         with self.assertNumQueries(11):
             response = self.client.get(url)
