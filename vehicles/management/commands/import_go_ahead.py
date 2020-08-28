@@ -139,7 +139,7 @@ class Command(ImportLiveVehiclesCommand):
                 except Service.DoesNotExist as e:
                     print(e, operators, item['lineRef'])
 
-                if journey.service:
+                if journey.service and not latest_location:
                     try:
                         operator = journey.service.operator.get()
                         if operator.id != vehicle.operator_id:
