@@ -482,7 +482,7 @@ class Command(BaseCommand):
         if not existing:
             return
 
-        if len(existing.source.name) <= 4:
+        if not existing.source or len(existing.source.name) <= 4:
             return existing
 
         if existing.service_code.startswith(f'{self.source.id}-'):
@@ -773,7 +773,7 @@ class Command(BaseCommand):
         parts = self.get_filename_parts(filename)
 
         for txc_service in transxchange.services.values():
-            # if service.mode == 'underground':
-            #     continue
+            if service.mode == 'underground':
+                continue
 
             self.handle_service(filename, parts, transxchange, txc_service, today, stops)
