@@ -361,7 +361,7 @@ class VehicleDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         journeys = self.object.vehiclejourney_set
-        context['pending_edits'] = self.object.vehicleedit_set.filter(approved=None).values('id').exists()
+        context['pending_edits'] = self.object.vehicleedit_set.filter(approved=None).exists()
         dates = list(journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date'))
         if self.object.operator:
             context['breadcrumb'] = [self.object.operator, Vehicles(self.object.operator)]
@@ -499,6 +499,16 @@ def edit_vehicle(request, vehicle_id):
         response.set_cookie('username', form.cleaned_data['user'], 60 * 60 * 24 * 31, httponly=True, samesite='Strict')
 
     return response
+
+
+def vehicle_history(request, vehicle_id):
+    vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+
+    return render(request, 'vehicle_history.html', {
+        'breadcrumb': [vehicle.operator, Vehicles(vehicle.operator), vehicle],
+        'vehicle': vehicle,
+        'revisions': vehicle.vehiclerevision_set.select_related('from_operator', 'to_operator')
+    })
 
 
 def tracking_report(request):

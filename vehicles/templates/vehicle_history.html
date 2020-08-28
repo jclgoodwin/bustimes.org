@@ -1,0 +1,30 @@
+{% extends 'page.html' %}
+
+{% block title %}History – {{ vehicle }} – bustimes.org{% endblock %}
+
+{% block canonical %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block bodyclass %}narrow{% endblock %}
+
+{% block content %}
+
+<h1>History</h1>
+
+<table>
+    <thead>
+        <th scope="col">Date</th>
+        <th scope="col">Change</th>
+    </thead>
+    <tbody>
+        {% for revision in revisions %}
+            <tr>
+                <td>{{ revision.datetime }}</td>
+                <td>changed operator from {{ revision.from_operator }} to {{ revision.to_operator }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
+
+{% block ad %}{% endblock %}

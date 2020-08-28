@@ -98,13 +98,13 @@ class VehiclesTests(TestCase):
         self.assertTrue(response.context['code_column'])
         self.assertContains(response, '<td class="number">2</td>')
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.get(self.vehicle_1.get_absolute_url() + '?date=poop')
         self.assertContains(response, 'Optare Tempo')
         self.assertContains(response, 'Trent Barton')
         self.assertContains(response, '#FF0000')
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             response = self.client.get(self.vehicle_2.get_absolute_url())
         self.assertEqual(200, response.status_code)
 
@@ -337,6 +337,9 @@ class VehiclesTests(TestCase):
         revision = VehicleRevision.objects.get()
         self.assertEqual(revision.from_operator, self.lynx)
         self.assertEqual(revision.to_operator, self.bova)
+        self.assertEqual(str(revision), 'changed operator from LYNX to BOVA')
+        response = self.client.get(f'{self.vehicle_2.get_absolute_url()}/history')
+        self.assertContains(response, 'changed operator from Lynx to Bova and Over')
 
         with self.assertNumQueries(11):
             response = self.client.get(url)

@@ -43,6 +43,9 @@
     {% if vehicle.editable %}
         <ul class="horizontal">
             <li><a href="{{ vehicle.get_absolute_url }}/edit">Edit</a>{% if pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}</li>
+            {% if vehicle.vehiclerevision_set.exists %}
+                <li><a href="{{ vehicle.get_absolute_url }}/history">History</a></li>
+            {% endif %}
             <li>{{ vehicle.get_flickr_link }}</li>
         </ul>
     {% endif %}
