@@ -526,8 +526,11 @@ class Command(BaseCommand):
         return len(self.source.name) <= 4
 
     def handle_service(self, filename, parts, transxchange, txc_service, today, stops):
-        if txc_service.operating_period.end and txc_service.operating_period.end < today:
-            if not self.source.name.startswith('First'):
+        if txc_service.operating_period.end:
+            if txc_service.operating_period.end < today:
+                if not self.source.name.startswith('First'):
+                    return
+            if txc_service.operating_period.end < txc_service.operating_period.start:
                 return
 
         operators = self.get_operators(transxchange, txc_service)

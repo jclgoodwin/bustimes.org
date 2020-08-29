@@ -8,6 +8,7 @@ import xml.etree.cElementTree as ET
 from ciso8601 import parse_datetime
 from django.core.management.base import BaseCommand
 from django.conf import settings
+from django.db import DataError
 from django.utils import timezone
 from busstops.models import DataSource, Operator, Service
 from .import_transxchange import Command as TransXChangeCommand
@@ -47,13 +48,15 @@ def handle_file(command, path):
                 with archive.open(filename) as open_file:
                     try:
                         command.handle_file(open_file, os.path.join(path, filename))
-                    except (ET.ParseError, ValueError) as e:
+                    except (ET.ParseError, ValueError, AttributeError, DataError) as e:
                         print(filename)
                         logger.error(e, exc_info=True)
     except zipfile.BadZipFile:
         with open(os.path.join(settings.DATA_DIR, path)) as open_file:
-            command.handle_file(open_file, path)
-
+            try:
+                command.handle_file(open_file, path)
+            except (AttributeError, DataError) as e:
+                logger.error(e, exc_info=True)
 
 def bus_open_data(api_key):
     command = get_command()
