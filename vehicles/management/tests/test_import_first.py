@@ -27,7 +27,7 @@ class FirstImportTest(TestCase):
         command = import_first.Command()
         command.source = self.source
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             command.handle_item(item, 'FYOR')
         with self.assertNumQueries(2):
             command.handle_item(item, 'FYOR')

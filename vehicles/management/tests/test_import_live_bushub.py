@@ -60,7 +60,7 @@ class BusHubTest(TestCase):
             "Destination": None
         }
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             command.handle_item(item, self.source.datetime)
 
         with self.assertNumQueries(1):

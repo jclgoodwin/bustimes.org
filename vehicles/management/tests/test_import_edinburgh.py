@@ -25,7 +25,7 @@ class EdinburghImportTest(TestCase):
             'longitude': -3.18718,
             'last_gps_fix': 1554038242,
         }
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(12):
             self.command.handle_item(item, None)
         with self.assertNumQueries(1):
             self.command.handle_item(item, None)
@@ -42,7 +42,7 @@ class EdinburghImportTest(TestCase):
         self.assertFalse(created)
 
         item['last_gps_fix'] += 200
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             self.command.handle_item(item, None)
 
     def test_vehicle_location(self):

@@ -2,9 +2,9 @@ from datetime import timedelta
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.gis.geos import Polygon, Point
+from django.contrib.gis.geos import Polygon
 from django.utils import timezone
-from .models import VehicleLocation
+from .models import VehicleLocation, Channel
 
 
 def get_vehicle_locations(bounds):
@@ -17,32 +17,31 @@ def get_vehicle_locations(bounds):
 
 class VehicleMapConsumer(JsonWebsocketConsumer):
     def connect(self):
-        self.bounds = None
-        async_to_sync(self.channel_layer.group_add)('vehicle_positions', self.channel_name)
+        self.channel = Channel(name=self.channel_name)
         self.accept()
 
     def move_vehicle(self, message):
-        if self.bounds and self.bounds.covers(Point(*message['latlong'])):
-            self.send_json([{
-                'i': message['id'],
-                'd': message['datetime'],
-                'l': message['latlong'],
-                'h': message['heading'],
-                'r': message['route'],
-                'c': message['css'],
-                't': message['text_colour'],
-                'e': message['early']
-            }])
+        self.send_json([{
+            'i': message['id'],
+            'd': message['datetime'],
+            'l': message['latlong'],
+            'h': message['heading'],
+            'r': message['route'],
+            'c': message['css'],
+            't': message['text_colour'],
+            'e': message['early']
+        }])
 
     def disconnect(self, close_code):
-        async_to_sync(self.channel_layer.group_discard)('vehicle_positions', self.channel_name)
+        self.channel.delete()
 
     def receive_json(self, content):
         new_bounds = Polygon.from_bbox(content)
         bounds = new_bounds
-        if self.bounds:
-            bounds -= self.bounds  # difference between new and old bounds
-        self.bounds = new_bounds
+        if self.channel.bounds:
+            bounds -= self.channel.bounds  # difference between new and old bounds
+        self.channel.bounds = new_bounds
+        self.channel.save()
         if bounds:  # if new bounds not completely covered by old bounds
             locations = get_vehicle_locations(bounds)
             # send data in batches of 50

@@ -5,7 +5,7 @@ from .models import VehicleLocation, Call
 from .tasks import handle_siri_vm, handle_siri_et
 
 
-class SiriETTest(TestCase):
+class SiriSubscriptionReceiveTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         Region.objects.create(id='EA', name='East Anglia')
@@ -206,5 +206,5 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.3">
         </Siri>
         """
 
-        with self.assertNumQueries(21):
+        with self.assertNumQueries(23):
             handle_siri_vm(xml)

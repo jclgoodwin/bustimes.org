@@ -449,6 +449,11 @@ class JourneyCode(models.Model):
         unique_together = ('code', 'service', 'siri_source')
 
 
+class Channel(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    bounds = models.PolygonField()
+
+
 class VehicleLocation(models.Model):
     datetime = models.DateTimeField()
     latlong = models.PointField()
@@ -476,17 +481,21 @@ class VehicleLocation(models.Model):
         channel_layer = get_channel_layer()
         if self.heading:
             self.heading = int(self.heading)
-        async_to_sync(channel_layer.group_send)('vehicle_positions', {
-            'type': 'move_vehicle',
-            'id': self.id,
-            'datetime': DjangoJSONEncoder.default(None, self.datetime),
-            'latlong': tuple(self.latlong),
-            'heading': self.heading,
-            'route': self.journey.route_name,
-            'css': vehicle.get_livery(self.heading),
-            'text_colour': vehicle.get_text_colour(),
-            'early': self.early
-        })
+            channels = Channel.objects.filter(bounds__covers=self.latlong).only('name')
+            if channels:
+                message = {
+                    'type': 'move_vehicle',
+                    'id': self.id,
+                    'datetime': DjangoJSONEncoder.default(None, self.datetime),
+                    'latlong': tuple(self.latlong),
+                    'heading': self.heading,
+                    'route': self.journey.route_name,
+                    'css': vehicle.get_livery(self.heading),
+                    'text_colour': vehicle.get_text_colour(),
+                    'early': self.early
+                }
+                for channel in channels:
+                    async_to_sync(channel_layer.send)(channel.name, message)
 
     def get_json(self, extended=False):
         journey = self.journey
