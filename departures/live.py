@@ -515,9 +515,9 @@ class TimetableDepartures(Departures):
 
     def get_times(self, when):
         times = get_stop_times(when, self.stop.atco_code, self.services)
-        times = times.select_related('trip__route__service',
-                                     'trip__destination__locality').defer('trip__route__service__geometry',
-                                                                          'trip__destination__locality__latlong')
+        times = times.select_related('trip__route__service', 'trip__destination__locality')
+        times = times.defer('trip__route__service__geometry', 'trip__route__service__search_vector',
+                            'trip__destination__locality__latlong', 'trip__destination__locality__search_vector')
         return times.order_by('departure')
 
     def get_departures(self):
