@@ -13,12 +13,12 @@
 <h1>{% firstof parent object %}</h1>
 
 {% if form %}
-    {% if moved %}
-        <p class="message">{{ moved }} vehicle{{ moved|pluralize }} moved to {{ moved_to }}</p>
+    {% if revisions %}
+        <p class="message">{{ revisions }} vehicle{{ revisions|pluralize }} updated</p>
     {% endif %}
 
     {% if edits %}
-        <p class="message">I’ll update {% if moved %}the other{% else %}those{% endif %} details ({{ edits }} vehicle{{ edits|pluralize }}) shortly</p>
+        <p class="message">I’ll update {% if revisions %}the other{% else %}those{% endif %} details ({{ edits }} vehicle{{ edits|pluralize }}) shortly</p>
     {% endif %}
 
     <p>Select vehicles to update:</p>

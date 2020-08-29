@@ -1,4 +1,4 @@
-from .models import VehicleEdit, VehicleRevision
+from .models import Vehicle, VehicleEdit, VehicleRevision
 
 
 def get_vehicle_edit(vehicle, fields, now, username):
@@ -32,6 +32,58 @@ def get_vehicle_edit(vehicle, fields, now, username):
     edit.withdrawn = fields.get('withdrawn')
 
     return edit
+
+
+def do_revisions(vehicle_ids, data):
+    if 'operator' in data or 'depot' in data:
+        changed = True
+    else:
+        changed = False
+        # for field in ('notes', 'branding'):
+        #     if field in data and not data[field]:
+        #         changed = True
+        #         break
+        if not changed:
+            return None, None
+
+    vehicles = Vehicle.objects.filter(id__in=vehicle_ids)
+    revisions = [VehicleRevision(vehicle=vehicle, changes={}) for vehicle in vehicles]
+    changed_fields = []
+
+    if 'operator' in data:
+        for revision in revisions:
+            revision.from_operator_id = revision.vehicle.operator_id
+            revision.to_operator = data['operator']
+            revision.vehicle.operator = data['operator']
+            changed_fields.append('operator')
+        del data['operator']
+
+    if 'depot' in data:
+        to_depot = data['depot']
+        for revision in revisions:
+            if revision.vehicle.data:
+                if revision.vehicle.data['Depot'] == to_depot:
+                    continue
+                from_depot = revision.vehicle.data['Depot']
+                revision.vehicle.data['Depot'] = to_depot
+            else:
+                from_depot = ''
+                revision.vehicle.data = {'Depot': to_depot}
+            revision.changes['depot'] = f"-{from_depot}\n+{to_depot}"
+        changed_fields.append('data')
+        del data['depot']
+
+    # for field in ('notes', 'branding'):
+    #     if field in data and not data[field]:
+    #         to_value = data[field]
+    #         for revision in revisions:
+    #             from_value = getattr(revision.vehicle, field)
+    #             revision.changes[field] = f"-{from_value}\n+{to_value}"
+    #             setattr(revision.vehicle, field, to_value)
+    #         changed_fields.append(field)
+    #         del data[field]
+
+    return revisions, changed_fields
 
 
 def do_revision(vehicle, data):

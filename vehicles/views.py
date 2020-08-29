@@ -23,7 +23,7 @@ from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, Vehic
 from .forms import EditVehiclesForm, EditVehicleForm
 from .management.commands import import_sirivm
 from .rifkind import rifkind
-from .utils import get_vehicle_edit, do_revision
+from .utils import get_vehicle_edit, do_revision, do_revisions
 from .tasks import handle_siri_vm, handle_siri_et, handle_siri_sx
 
 
@@ -87,7 +87,7 @@ def operator_vehicles(request, slug=None, parent=None):
     vehicles = vehicles.select_related('livery', 'vehicle_type')
 
     submitted = False
-    moved = False
+    revisions = False
     breadcrumb = [operator.region, operator]
 
     form = request.path.endswith('/edit')
@@ -108,17 +108,15 @@ def operator_vehicles(request, slug=None, parent=None):
                 vehicle_ids = request.POST.getlist('vehicle')
                 now = timezone.now()
                 username = form.cleaned_data.get('user')
-                if 'operator' in data:
-                    moved = Vehicle.objects.filter(id__in=vehicle_ids).update(operator=data['operator'])
-                    VehicleRevision.objects.bulk_create(VehicleRevision(
-                        vehicle_id=vehicle_id,
-                        datetime=now,
-                        username=username or '',
-                        from_operator=operator,
-                        to_operator=data['operator']
-                    ) for vehicle_id in vehicle_ids)
-                    moved_to = data['operator']
-                    del data['operator']
+
+                revisions, changed_fields = do_revisions(vehicle_ids, data)
+                if revisions:
+                    Vehicle.objects.bulk_update((revision.vehicle for revision in revisions), changed_fields)
+                    for revision in revisions:
+                        revision.datetime = now
+                        revision.username = username or ''
+                    VehicleRevision.objects.bulk_create(revisions)
+                    revisions = len(revisions)
                 if data:
                     username = username or request.META['REMOTE_ADDR']
                     # this will fetch the vehicles list - slighly important that it occurs
@@ -170,8 +168,8 @@ def operator_vehicles(request, slug=None, parent=None):
         'features_column': features_column,
         'columns': columns,
         'edits': submitted,
-        'moved': moved,
-        'moved_to': moved and moved_to,
+        'revisions': revisions,
+        'revision': revisions and revision,
         'form': form,
         'depots': depots
     })
