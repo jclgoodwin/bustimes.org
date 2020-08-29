@@ -1,14 +1,11 @@
 /*jslint browser: true*/
 /*global accessibleAutocomplete*/
 
-window.addEventListener('load', function() {
+window.addEventListener('DOMContentLoaded', function() {
     // vehicle type
-    var selectElement = document.getElementById('id_vehicle_type');
-    if (selectElement) {
-        accessibleAutocomplete.enhanceSelectElement({
-            selectElement: selectElement
-        });
-    }
+    accessibleAutocomplete.enhanceSelectElement({
+        selectElement: document.getElementById('id_vehicle_type')
+    });
 
     // withdrawn
     var withdrawnElement = document.getElementById('id_withdrawn');
