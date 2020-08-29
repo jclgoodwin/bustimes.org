@@ -10,6 +10,25 @@
 
 <p>Sorry, it seems like you’re not connected to the Internet, or there’s a problem with the website</p>
 
+<div id="history"></div>
+
+<script>
+(async function listPages() {
+    const cache = await caches.open('0003pages');
+    const keys = await cache.keys();
+    if (keys.length) {
+        let markup = '<p>But you still access these pages offline:</p><ul>';
+        keys.forEach(request => {
+            markup += `<li><a href="${ request.url }">${ request.url }</a></li>`;
+        });
+        markup += '</ul>';
+        document.getElementById('history').insertAdjacentHTML('beforeend', markup);
+    }
+})();
+</script>
+
+
 {% endblock %}
 
 {% block ad %}{% endblock %}
+å

@@ -65,7 +65,7 @@ self.addEventListener('fetch', event => {
     let request = event.request;
     let url = new URL(request.url);
 
-    if (url.origin !== location.origin) {
+    if (url.origin !== location.origin || request.url.includes('.json') || request.url.includes('/locations/')) {
         return;
     }
 
