@@ -62,10 +62,13 @@ def do_revisions(vehicle_ids, data):
         to_depot = data['depot']
         for revision in revisions:
             if revision.vehicle.data:
-                if revision.vehicle.data['Depot'] == to_depot:
+                from_depot = revision.vehicle.data.get('Depot') or ''
+                if from_depot == to_depot:
                     continue
-                from_depot = revision.vehicle.data['Depot']
-                revision.vehicle.data['Depot'] = to_depot
+                if to_depot:
+                    revision.vehicle.data['Depot'] = to_depot
+                elif from_depot:
+                    del revision.vehicle.data['Depot']
             else:
                 from_depot = ''
                 revision.vehicle.data = {'Depot': to_depot}
@@ -108,7 +111,10 @@ def do_revision(vehicle, data):
     if 'depot' in data:
         if vehicle.data:
             from_depot = vehicle.data.get('Depot') or ''
-            vehicle.data['Depot'] = data['depot']
+            if data['depot']:
+                vehicle.data['Depot'] = data['depot']
+            elif from_depot:
+                del vehicle.data['Depot']
         else:
             from_depot = ''
             vehicle.data = {'Depot': data['depot']}
