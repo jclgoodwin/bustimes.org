@@ -45,7 +45,7 @@ class Command(ImportLiveVehiclesCommand):
         'TV': ('THVB', 'CTNY'),
         'SCHI': ('SCHI', 'SINV', 'SCOR'),
         'SCFI': ('SCFI', 'SSPH', 'SSTY'),
-        'SCSO': ('SCHM', 'SCCO', 'SMSO', 'SCHW'),
+        'SCSO': ('SCHM', 'SCCO', 'SMSO', 'SCHW', 'SCPY'),
         'SCNH': ('SCNH', 'SCWW'),
         'CBLE': ('CBBH', 'CBNL'),
         'CSLB': ('CSLB', 'OXBC'),
