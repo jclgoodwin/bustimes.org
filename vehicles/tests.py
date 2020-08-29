@@ -464,12 +464,6 @@ class VehiclesTests(TestCase):
         with self.assertNumQueries(1):
             self.client.get('/vehicles')
 
-    def test_dashboard(self):
-        with self.assertNumQueries(2):
-            response = self.client.get('/vehicle-tracking-report')
-        self.assertContains(response, 'Vehicle tracking report')
-        self.assertContains(response, '<a href="/services/spixworth-hunworth-happisburgh/vehicles">Yes</a>*')
-
     def test_journey_detail(self):
         with self.assertNumQueries(2):
             response = self.client.get(f'/journeys/{self.journey.id}')

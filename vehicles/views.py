@@ -536,22 +536,6 @@ def vehicles_history(request):
     })
 
 
-def tracking_report(request):
-    week_ago = timezone.now() - timedelta(days=7)
-    full_tracking = VehicleJourney.objects.filter(datetime__gt=week_ago)
-    full_tracking = full_tracking.filter(service=OuterRef('pk')).exclude(source__name='Icarus')
-
-    services = Service.objects.filter(current=True).annotate(full_tracking=Exists(full_tracking)).defer('geometry')
-    prefetch = Prefetch('service_set', queryset=services)
-    operators = Operator.objects.filter(
-        Q(service__tracking=True, service__current=True) | Q(name__startswith='Arriva ', service__current=True)
-    ).prefetch_related(prefetch).distinct()
-
-    return render(request, 'vehicles/dashboard.html', {
-        'operators': operators
-    })
-
-
 class JourneyDetailView(DetailView):
     model = VehicleJourney
     queryset = model.objects.select_related('vehicle', 'service')
