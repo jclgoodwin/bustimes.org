@@ -307,6 +307,29 @@ def vehicles_json(request):
     })
 
 
+def get_dates(journeys, vehicle=None, service=None):
+    if vehicle:
+        key = f'vehicle:{vehicle.id}:dates'
+    else:
+        key = f'service:{service.id}:dates'
+
+    dates = cache.get(key)
+    print(dates)
+
+    if not dates:
+        dates = list(journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date'))
+        if dates:
+            now = timezone.now()
+            if dates[-1] == now.date():
+                time_until_midnight = timedelta(days=1)
+                time_until_midnight -= timedelta(hours=now.hour, minutes=now.minute, seconds=now.second)
+                time_until_midnight = time_until_midnight.total_seconds()
+                if time_until_midnight > 0:
+                    cache.set(key, dates, int(time_until_midnight))
+
+    return dates
+
+
 def service_vehicles_history(request, slug):
     service = get_object_or_404(Service, slug=slug)
     journeys = service.vehiclejourney_set
@@ -316,9 +339,9 @@ def service_vehicles_history(request, slug):
             date = parse_datetime(date).date()
         except ValueError:
             date = None
-    dates = journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date')
+    dates = get_dates(journeys, service=service)
     if not date:
-        date = dates.last()
+        date = dates[-1]
         if not date:
             raise Http404()
     # calls = Call.objects.filter(journey=OuterRef('pk'))
@@ -360,7 +383,7 @@ class VehicleDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         journeys = self.object.vehiclejourney_set
         context['pending_edits'] = self.object.vehicleedit_set.filter(approved=None).exists()
-        dates = list(journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date'))
+        dates = get_dates(journeys, vehicle=self.object)
         if self.object.operator:
             context['breadcrumb'] = [self.object.operator, Vehicles(self.object.operator)]
 

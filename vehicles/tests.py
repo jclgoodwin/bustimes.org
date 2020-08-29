@@ -481,7 +481,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '<a href="/services/spixworth-hunworth-happisburgh"> </a>', html=True)
 
     def test_service_vehicle_history(self):
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(4):
             response = self.client.get('/services/spixworth-hunworth-happisburgh/vehicles?date=poop')
         self.assertContains(response, 'Vehicles')
         self.assertContains(response, '/vehicles/')
