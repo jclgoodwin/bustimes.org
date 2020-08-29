@@ -14,7 +14,7 @@
 
 <script>
 (async function listPages() {
-    const cache = await caches.open('0003pages');
+    const cache = await caches.open('0004pages');
     const keys = await cache.keys();
     if (keys.length) {
         let markup = '<p>But you still access these pages offline:</p><ul>';
