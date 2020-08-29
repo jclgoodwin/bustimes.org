@@ -744,7 +744,7 @@ class Command(BaseCommand):
                         'to_service_id': to_service,
                     }
                     if not ServiceLink.objects.filter(**kwargs).exists():
-                        ServiceLink.objects.create(**kwargs, how='parallel')
+                        ServiceLink.objects.create(**kwargs, how='also')
 
     @staticmethod
     def do_stops(transxchange_stops):
