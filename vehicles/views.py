@@ -314,7 +314,6 @@ def get_dates(journeys, vehicle=None, service=None):
         key = f'service:{service.id}:dates'
 
     dates = cache.get(key)
-    print(dates)
 
     if not dates:
         dates = list(journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date'))
@@ -325,7 +324,7 @@ def get_dates(journeys, vehicle=None, service=None):
                 time_until_midnight -= timedelta(hours=now.hour, minutes=now.minute, seconds=now.second)
                 time_until_midnight = time_until_midnight.total_seconds()
                 if time_until_midnight > 0:
-                    cache.set(key, dates, int(time_until_midnight))
+                    cache.set(key, dates, time_until_midnight)
 
     return dates
 
