@@ -63,7 +63,7 @@ class CambridgeImportTest(TestCase):
         with self.assertNumQueries(12):
             self.command.handle_data(data)
 
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(5):
             self.command.handle_data(data)
 
         vehicle = Vehicle.objects.get()
