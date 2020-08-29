@@ -339,10 +339,10 @@ def service_vehicles_history(request, slug):
         except ValueError:
             date = None
     dates = get_dates(journeys, service=service)
+    if not dates:
+        raise Http404()
     if not date:
         date = dates[-1]
-        if not date:
-            raise Http404()
     # calls = Call.objects.filter(journey=OuterRef('pk'))
     # journeys = journeys.annotate(calls=Exists(calls))
     journeys = journeys.filter(datetime__date=date).select_related('vehicle').order_by('datetime')
