@@ -65,7 +65,13 @@ self.addEventListener('fetch', event => {
     let request = event.request;
     let url = new URL(request.url);
 
-    if (url.origin !== location.origin || request.url.includes('.json') || request.url.includes('/locations/')) {
+    if (url.origin !== location.origin
+        || url.pathname.endswith('.json')
+        || url.pathname.includes('/locations/')
+        || url.pathname.includes('/edit')
+        || url.pathname == '/contact'
+        || url.pathname.startswith('/admin/')
+    ) {
         return;
     }
 
