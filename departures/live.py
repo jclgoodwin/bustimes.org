@@ -721,10 +721,11 @@ def blend(departures, live_rows, stop=None):
 
 
 def get_stop_times(when, stop, services):
-    time_since_midnight = datetime.timedelta(hours=when.hour, minutes=when.minute, seconds=when.second,
-                                             microseconds=when.microsecond)
-    return StopTime.objects.filter(~Q(activity='setDown'), stop_id=stop, departure__gte=time_since_midnight,
-                                   trip__route__service__in=services, trip__calendar__in=get_calendars(when))
+    time_since_midnight = datetime.timedelta(hours=when.hour, minutes=when.minute, seconds=when.second)
+    times = StopTime.objects.filter(~Q(activity='setDown'), stop_id=stop)
+    if time_since_midnight:
+        times = times.filter(departure__gte=time_since_midnight)
+    return times.filter(trip__route__service__in=services, trip__calendar__in=get_calendars(when))
 
 
 def get_departures(stop, services):
