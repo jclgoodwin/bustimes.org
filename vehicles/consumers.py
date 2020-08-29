@@ -33,7 +33,8 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
         }])
 
     def disconnect(self, close_code):
-        self.channel.delete()
+        if self.channel.id:
+            self.channel.delete()
 
     def receive_json(self, content):
         new_bounds = Polygon.from_bbox(content)
