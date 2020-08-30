@@ -92,29 +92,34 @@
                                 <a href="{{ journey.get_absolute_url }}">Times</a>
                             {% elif journey.locations %}
                                 <a href="#journeys/{{ journey.id }}">Map</a>
-                                <div class="journey" id="journeys/{{ journey.id }}">
-                                    <div class="map"></div>
-                                    <div class="details">
-                                        <a class="button next" href="#">Close</a>
-                                        <p>{% if not vehicle %}
-                                                {{ journey.vehicle }}{% else %}{% firstof journey.service.get_line_name_and_brand journey.route_name %}
-                                            {% endif %} – {{ journey.datetime|time }}
-                                            {% if journey.destination %} to {{ journey.destination }}{% endif %}
-                                        </p>
-                                        {% if journey.previous %}
-                                            <p class="previous"><a href="#journeys/{{ journey.previous.id }}">&larr; {{ journey.previous.datetime|time }}</a></p>
-                                        {% endif %}
-                                        {% if journey.next %}
-                                            <p class="next"><a href="#journeys/{{ journey.next.id }}">{{ journey.next.datetime|time }} &rarr;</a></p>
-                                        {% endif %}
-                                    </div>
-                                </div>
                             {% endif %}
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+
+        {% for journey in journeys %}
+            {% if journey.locations %}
+                <div class="journey" id="journeys/{{ journey.id }}">
+                    <div class="map"></div>
+                    <div class="details">
+                        <a class="button next" href="#">Close</a>
+                        <p>{% if not vehicle %}
+                                {{ journey.vehicle }}{% else %}{% firstof journey.service.get_line_name_and_brand journey.route_name %}
+                            {% endif %} – {{ journey.datetime|time }}
+                            {% if journey.destination %} to {{ journey.destination }}{% endif %}
+                        </p>
+                        {% if journey.previous %}
+                            <p class="previous"><a href="#journeys/{{ journey.previous.id }}">&larr; {{ journey.previous.datetime|time }}</a></p>
+                        {% endif %}
+                        {% if journey.next %}
+                            <p class="next"><a href="#journeys/{{ journey.next.id }}">{{ journey.next.datetime|time }} &rarr;</a></p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
 
         {% load static %}
         <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
