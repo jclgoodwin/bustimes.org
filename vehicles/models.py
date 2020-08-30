@@ -2,6 +2,7 @@ import re
 import redis
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from channels.exceptions import ChannelFull
 from math import ceil
 from urllib.parse import quote
 from webcolors import html5_parse_simple_color
@@ -495,7 +496,10 @@ class VehicleLocation(models.Model):
                     'early': self.early
                 }
                 for channel in channels:
-                    async_to_sync(channel_layer.send)(channel.name, message)
+                    try:
+                        async_to_sync(channel_layer.send)(channel.name, message)
+                    except ChannelFull:
+                        pass
 
     def get_json(self, extended=False):
         journey = self.journey
