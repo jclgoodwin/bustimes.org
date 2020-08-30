@@ -68,13 +68,15 @@ def get_stop_usages(trips):
                     grouping.append(stop_time)
                     old_rows.append(stop_time.stop_id)
                 else:
-                    groupings[grouping_id] = grouping[:y] + [stop_time] + grouping[y:]
+                    grouping = grouping[:y] + [stop_time] + grouping[y:]
                     old_rows = old_rows[:y] + [stop_time.stop_id] + old_rows[y:]
                 # existing_row = stop_time.stop_id
             else:
                 assert instruction[2:] == existing_row
 
             y += 1
+
+        groupings[grouping_id] = grouping
 
     return groupings
 

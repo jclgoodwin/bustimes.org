@@ -65,10 +65,11 @@ class Command(BaseCommand):
             StopUsage.objects.bulk_create(stop_usages)
 
             # self.stops doesn't contain all stops, and has latlongs in the Irish Grid projection
-            stops = StopPoint.objects.in_bulk(stop_time.stop_id for grouping in groupings for stop_time in grouping)
+            stops = StopPoint.objects.in_bulk(stop_usage.stop_id for stop_usage in stop_usages)
             line_strings = []
             for pattern in get_journey_patterns(route.trip_set.all()):
-                line_strings.append(LineString(*(stops[stop_code].latlong for stop_code in pattern)))
+                points = (stops[stop_code].latlong for stop_code in pattern if stop_code in stops)
+                line_strings.append(LineString(*points))
             route.service.geometry = MultiLineString(*line_strings)
 
         Service.objects.bulk_update((route.service for route in self.routes.values()),

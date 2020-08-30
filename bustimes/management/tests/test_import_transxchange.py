@@ -219,6 +219,8 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(75, len(timetable.groupings[0].rows))
         self.assertEqual(82, len(timetable.groupings[1].rows))
 
+        self.assertEqual(157, route.service.stopusage_set.count())
+
     @freeze_time('23 January 2017')
     def test_do_service_wales(self):
         """Test a timetable from Wales (with SequenceNumbers on Journeys),
@@ -256,6 +258,8 @@ class ImportTransXChangeTest(TestCase):
             'data from <a href="https://www.travelinedata.org.uk/">the Traveline National Dataset</a>'
         )
 
+        self.assertEqual(19, service.stopusage_set.count())
+
     @freeze_time('2016-12-15')
     def test_timetable_ne(self):
         """Test timetable with some abbreviations"""
@@ -278,6 +282,8 @@ class ImportTransXChangeTest(TestCase):
         # self.assertTrue(timetable.groupings[1].rows[44].has_waittimes)
         # self.assertFalse(timetable.groupings[1].rows[45].has_waittimes)
         self.assertEqual(str(timetable.groupings[0].rows[0].times[:6]), '[05:20, 06:20, 07:15, 08:10, 09:10, 10:10]'),
+
+        self.assertEqual(201, service.stopusage_set.count())
 
     @freeze_time('2017-08-29')
     def test_timetable_abbreviations_notes(self):
@@ -303,6 +309,8 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(service.outbound_description, 'Basildon - South Benfleet - Southend On Sea via Hadleigh')
         self.assertEqual(service.inbound_description, 'Southend On Sea - South Benfleet - Basildon via Hadleigh')
+
+        self.assertEqual(138, service.stopusage_set.count())
 
     @freeze_time('2017-12-10')
     def test_timetable_derby_alvaston_circular(self):
@@ -367,6 +375,8 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(str(timetable.groupings[0].rows[-2].times[2:]), "[17:04, 18:05, 19:05, '']")
         self.assertEqual(str(timetable.groupings[0].rows[-1].times[2:]), "[17:06, 18:07, 19:07, '']")
 
+        self.assertEqual(102, service.stopusage_set.count())
+
         # Several journeys a day on bank holidays
         # deadruns = txc.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml', date(2017, 4, 14))
         # self.assertEqual(7, len(deadruns.groupings[0].rows[0].times))
@@ -393,6 +403,8 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(str(rows[-5].times), "[08:33, '', '', '', 15:30, '']")
         self.assertEqual(str(rows[-6].times), "[08:32, '', '', '', 15:29, '']")
 
+        self.assertEqual(114, service.stopusage_set.count())
+
     @freeze_time('2017-01-23')
     def test_timetable_holidays_only(self):
         """Test a service with a HolidaysOnly operating profile
@@ -410,6 +422,8 @@ class ImportTransXChangeTest(TestCase):
             self.assertEqual(timetable.date, date(2017, 5, 1))
             self.assertEqual(8, len(timetable.groupings[0].rows[0].times))
             self.assertEqual(8, len(timetable.groupings[1].rows[0].times))
+
+        self.assertEqual(107, service.stopusage_set.count())
 
     @freeze_time('2012-06-27')
     def test_timetable_goole(self):
@@ -436,6 +450,8 @@ class ImportTransXChangeTest(TestCase):
             self.assertEqual(date_options[0], date(2016, 2, 22))  # Monday
             self.assertEqual(date_options[-1], date(2017, 1, 27))
 
+        self.assertEqual(37, service.stopusage_set.count())
+
     @freeze_time('2017-01-01')
     def test_cardiff_airport(self):
         """Should be able to distinguish between Cardiff and Cardiff Airport as start and end of a route"""
@@ -443,6 +459,8 @@ class ImportTransXChangeTest(TestCase):
         service = Service.objects.get()
         self.assertEqual(service.inbound_description, 'Cardiff  - Cardiff Airport')
         self.assertEqual(service.outbound_description, 'Cardiff Airport - Cardiff ')
+
+        self.assertEqual(17, service.stopusage_set.count())
 
     @freeze_time('2018-09-24')
     def test_timetable_plymouth(self):
@@ -463,6 +481,8 @@ class ImportTransXChangeTest(TestCase):
         # self.assertTrue(timetable.groupings[1].rows[4].has_waittimes)
         self.assertFalse(timetable.groupings[1].rows[5].has_waittimes)
         self.assertFalse(timetable.groupings[1].rows[6].has_waittimes)
+
+        self.assertEqual(74, service.stopusage_set.count())
 
         route = service.route_set.get()
 
@@ -615,6 +635,8 @@ class ImportTransXChangeTest(TestCase):
                 <a href="/stops/639004554">Witton Park (opp)</a>
             </li>
         """, html=True)
+
+        self.assertEqual(88, service.stopusage_set.count())
 
     @freeze_time('22 January 2017')
     def test_megabus(self):
