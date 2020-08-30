@@ -258,7 +258,6 @@
                 clickedMarker = null;
             });
         }
-
     }
 
     var vehicles = {};

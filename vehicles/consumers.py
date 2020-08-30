@@ -1,5 +1,4 @@
 from datetime import timedelta
-from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.gis.geos import Polygon
@@ -7,11 +6,12 @@ from django.utils import timezone
 from .models import VehicleLocation, Channel
 
 
-def get_vehicle_locations(bounds):
+def get_vehicle_locations(**kwargs):
     now = timezone.now()
     fifteen_minutes_ago = now - timedelta(minutes=15)
-    locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, datetime__gte=fifteen_minutes_ago)
-    locations = locations.filter(latlong__within=bounds).select_related('journey__vehicle__livery')
+    locations = VehicleLocation.objects.filter(**kwargs)
+    locations = locations.filter(latest_vehicle__isnull=False, datetime__gte=fifteen_minutes_ago)
+    locations = locations.select_related('journey__vehicle__livery')
     return locations.defer('journey__data', 'journey__vehicle__data')
 
 
@@ -44,18 +44,33 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
         self.channel.bounds = new_bounds
         self.channel.save()
         if bounds:  # if new bounds not completely covered by old bounds
-            locations = get_vehicle_locations(bounds)
-            # send data in batches of 50
-            for chunk in (locations[i:i+50] for i in range(0, len(locations), 50)):
-                self.send_json(
-                    [{
-                        'i': location.id,
-                        'd': DjangoJSONEncoder.default(None, location.datetime),
-                        'l': tuple(location.latlong),
-                        'h': location.heading,
-                        'r': location.journey.route_name,
-                        'c': location.journey.vehicle.get_livery(location.heading),
-                        't': location.journey.vehicle.get_text_colour(),
-                        'e': location.early
-                    } for location in chunk]
-                )
+            locations = get_vehicle_locations(latlong__within=bounds)
+            self.send_locations(locations)
+
+    def send_locations(self, locations):
+        # send data in batches of 50
+        for chunk in (locations[i:i+50] for i in range(0, len(locations), 50)):
+            self.send_json(
+                [{
+                    'i': location.id,
+                    'd': DjangoJSONEncoder.default(None, location.datetime),
+                    'l': tuple(location.latlong),
+                    'h': location.heading,
+                    'r': location.journey.route_name,
+                    'c': location.journey.vehicle.get_livery(location.heading),
+                    't': location.journey.vehicle.get_text_colour(),
+                    'e': location.early
+                } for location in chunk]
+            )
+
+
+class ServiceMapConsumer(VehicleMapConsumer):
+    def connect(self):
+        self.channel = Channel(name=self.channel_name)
+        self.accept()
+        service_ids = self.scope['url_route']['kwargs']['service_ids']
+        locations = get_vehicle_locations(journey__service=service_ids)
+        self.send_locations(locations)
+
+    def recieve_json(self, content):
+        pass
