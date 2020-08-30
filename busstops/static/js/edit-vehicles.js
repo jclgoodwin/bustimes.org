@@ -1,7 +1,7 @@
 /*jslint browser: true*/
 /*global accessibleAutocomplete*/
 
-window.addEventListener('load', function() {
+window.addEventListener('DOMContentLoaded', function() {
     // vehicle
     accessibleAutocomplete.enhanceSelectElement({
         selectElement: document.getElementById('id_vehicle_type')
