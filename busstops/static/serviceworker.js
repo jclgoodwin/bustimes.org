@@ -57,7 +57,7 @@ self.addEventListener('activate', event => {
 self.addEventListener('message', event => {
     if (event.data.command === 'trimCaches') {
         trimCache(pagesCacheName, 50);
-        trimCache(staticCacheName, 50);
+        trimCache(staticCacheName, 100);
     }
 });
 
@@ -65,7 +65,7 @@ self.addEventListener('fetch', event => {
     let request = event.request;
     let url = new URL(request.url);
 
-    if (url.origin !== location.origin
+    if (url.origin !== location.origin && url.host !== 'tiles.stadiamaps.com'
         || url.pathname.endsWith('.json')
         || url.pathname.includes('/locations/')
         || url.pathname.includes('/edit')
@@ -106,7 +106,7 @@ self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(request).then(response => response || fetch(request).then(response => {
             // If the request is for a static file, stash a copy of this image in the static file cache
-            if (request.url.includes('/static/css/') || request.url.includes('/static/js/')) {
+            if (request.url.includes('/static/') || request.url.includes('tiles.stadiamaps.com')) {
                 let copy = response.clone();
                 stashInCache(staticCacheName, request, copy);
             }
