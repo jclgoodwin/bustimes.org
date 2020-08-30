@@ -137,9 +137,10 @@
                     <td>{{ vehicle.get_flickr_link }}</td>
                     {% if not form %}
                         <td>
-                            <a href="{{ vehicle.get_absolute_url }}/edit">Edit</a>{% if vehicle.pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}
+                            <a href="{{ vehicle.get_absolute_url }}/edit">Edit</a>
                         </td>
-                    {% elif vehicle.pending_edits %}
+                    {% endif %}
+                    {% if vehicle.pending_edits %}
                         <td>
                             <abbr title="pending edits">*</abbr>
                         </td>
