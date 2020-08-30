@@ -636,6 +636,9 @@ class TransXChange:
             elif tag == 'Service':
                 service = Service(element, serviced_organisations, journey_pattern_sections)
                 self.services[service.service_code] = service
+            elif tag == 'Garages':
+                print(ET.tostring(element).decode())
+                element.clear()
 
         self.element = element
 

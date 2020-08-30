@@ -58,6 +58,7 @@ def handle_file(command, path):
             except (AttributeError, DataError) as e:
                 logger.error(e, exc_info=True)
 
+
 def bus_open_data(api_key):
     command = get_command()
 
@@ -66,6 +67,7 @@ def bus_open_data(api_key):
         command.region_id = region_id
         command.service_descriptions = {}
         command.service_ids = set()
+        command.route_ids = set()
         command.calendar_cache = {}
 
         sources = []
@@ -137,6 +139,7 @@ def first():
             command.region_id = region_id
             command.service_descriptions = {}
             command.service_ids = set()
+            command.route_ids = set()
             command.calendar_cache = {}
 
             command.source, created = DataSource.objects.get_or_create({'name': operator}, url=url)
@@ -195,6 +198,7 @@ def stagecoach():
             command.region_id = region_id
             command.service_descriptions = {}
             command.service_ids = set()
+            command.route_ids = set()
             command.calendar_cache = {}
 
             # avoid importing old data

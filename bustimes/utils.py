@@ -21,12 +21,12 @@ def download_if_changed(path, url):
     modified = True
     if os.path.exists(path):
         headers['if-modified-since'] = http_date(os.path.getmtime(path))
-        response = requests.head(url, headers=headers)
+        response = requests.head(url, headers=headers, timeout=10)
         if response.status_code == 304:
             modified = False
 
     if modified:
-        response = requests.get(url, headers=headers, stream=True)
+        response = requests.get(url, headers=headers, stream=True, timeout=10)
 
         if response.status_code == 304:
             modified = False

@@ -99,6 +99,9 @@ class Command(BaseCommand):
                         if dates[0] <= str(command.source.datetime.date()):
                             break
 
+                    routes = Route.objects.filter(service__source=self.source)
+                    print('duplicate routes:', routes.exclude(source=self.source).delete())
+
                     # delete route data from TNDS
                     routes = Route.objects.filter(service__operator__in=operators.values())
                     print('other source routes:', routes.exclude(source__name__in=sources).delete())

@@ -75,7 +75,7 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
             with self.assertNumQueries(1):
                 call_command('import_bod', 'stagecoach')
             DataSource.objects.update(datetime=None)
-            with self.assertNumQueries(204):
+            with self.assertNumQueries(195):
                 call_command('import_bod', 'stagecoach')
         self.assertEqual(3, Service.objects.count())
         self.assertEqual(6, Route.objects.count())

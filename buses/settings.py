@@ -435,6 +435,7 @@ FIRST_OPERATORS = [
     ('FirstTycroes', 'W', {'FCYM': 'FCYM'}),
     ('FirstMaesteg', 'W', {'FCYM': 'FCYM'}),
     ('FirstSwansea', 'W', {'FCYM': 'FCYM'}),
+    ('FirstCarmarthen', 'W', {'FCYM': 'FCYM'}),
     ('FirstSheffield', 'Y', {'FSYO': 'FSYO'}),
     ('FirstDoncaster', 'Y', {'FSYO': 'FSYO'}),
     ('FirstBradford', 'Y', {'FBRA': 'FBRA'}),

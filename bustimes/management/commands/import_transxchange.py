@@ -255,10 +255,11 @@ class Command(BaseCommand):
     def mark_old_services_as_not_current(self):
         old_services = self.source.service_set.filter(current=True).exclude(id__in=self.service_ids)
         old_services.update(current=False)
-        self.source.route_set.exclude(service__in=self.service_ids).delete()
+        self.source.route_set.exclude(id__in=self.route_ids).delete()
 
     def handle_archive(self, archive_name, filenames):
         self.service_ids = set()
+        self.route_ids = set()
 
         self.set_region(archive_name)
 
@@ -651,9 +652,6 @@ class Command(BaseCommand):
                     service.operator.add(*operators)
                 else:
                     service.operator.set(operators)
-                if service.id not in self.service_ids:
-                    service.route_set.all().delete()
-                    # service.stops.clear()
             self.service_ids.add(service.id)
             linked_services.append(service.id)
 
@@ -691,6 +689,7 @@ class Command(BaseCommand):
                                                                   source=self.source, code=route_code)
             if not route_created:
                 route.trip_set.all().delete()
+            self.route_ids.add(route.id)
 
             self.handle_journeys(route, stops, journeys, txc_service, line_id)
 

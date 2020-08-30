@@ -66,6 +66,7 @@ class ImportTransXChangeTest(TestCase):
         command = import_transxchange.Command()
         command.service_descriptions = {}
         command.service_ids = set()
+        command.route_ids = set()
         command.undefined_holidays = set()
         command.calendar_cache = {}
         command.corrections = {}
