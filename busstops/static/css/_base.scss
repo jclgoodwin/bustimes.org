@@ -883,6 +883,12 @@ td {
     border-top: 1px solid $border-color;
 }
 
+table a {
+    display: block;
+    margin: -.25em -.5em;
+    padding: .25em .5em;
+}
+
 th,
 td {
     border-left: 1px solid $border-color;
@@ -892,10 +898,20 @@ td {
     &:first-child {
         border-left: 0;
         padding-left: 0;
+
+        a {
+            margin-left: 0;
+            padding-left: 0;
+        }
     }
 
     &:last-child {
         padding-right: 0;
+
+        a {
+            margin-right: 0;
+            padding-right: 0;
+        }
     }
 }
 
@@ -986,11 +1002,9 @@ input:not(:checked) + label {
         white-space: nowrap;
 
         a {
-            display: block;
             margin: -.25em 0;
             max-width: calc(100vw - 12em);
             overflow: hidden;
-            padding: .25em .5em;
             padding-left: 0;
             text-overflow: ellipsis;
         }
