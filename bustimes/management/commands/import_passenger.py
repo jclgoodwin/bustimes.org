@@ -43,6 +43,7 @@ class Command(BaseCommand):
             command.region_id = region_id
             command.service_descriptions = {}
             command.service_ids = set()
+            command.route_ids = set()
 
             versions = []
             try:
@@ -99,8 +100,8 @@ class Command(BaseCommand):
                         if dates[0] <= str(command.source.datetime.date()):
                             break
 
-                    routes = Route.objects.filter(service__source=self.source)
-                    print('duplicate routes:', routes.exclude(source=self.source).delete())
+                    routes = Route.objects.filter(service__source=command.source)
+                    print('duplicate routes:', routes.exclude(source=command.source).delete())
 
                     # delete route data from TNDS
                     routes = Route.objects.filter(service__operator__in=operators.values())
