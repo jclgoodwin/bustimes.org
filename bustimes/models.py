@@ -126,12 +126,14 @@ class CalendarDate(models.Model):
 
     def __str__(self):
         if not self.operation:
-            prefix = 'Not '
+            prefix = 'Not'
         elif self.special:
-            prefix = 'Also '
+            prefix = 'Also'
+        else:
+            prefix = 'Only'
         if self.start_date == self.end_date:
-            return f'{prefix}{self.start_date}'
-        return f'{prefix}{self.start_date} to {self.end_date}'
+            return f'{prefix} {self.start_date}'
+        return f'{prefix} {self.start_date} to {self.end_date}'
 
 
 class Note(models.Model):

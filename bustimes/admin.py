@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Route, Trip, Calendar, Note, StopTime
+from .models import Route, Trip, Calendar, CalendarDate, Note, StopTime
 
 
 class TripInline(admin.TabularInline):
@@ -29,6 +29,14 @@ class TripAdmin(admin.ModelAdmin):
     inlines = [StopTimeInline]
 
 
+class CalendarDateInline(admin.TabularInline):
+    model = CalendarDate
+
+
+class CalendarAdmin(admin.ModelAdmin):
+    inlines = [CalendarDateInline]
+
+
 class NoteAdmin(admin.ModelAdmin):
     list_display = ['code', 'text']
     search_fields = ['code', 'text']
@@ -36,5 +44,5 @@ class NoteAdmin(admin.ModelAdmin):
 
 admin.site.register(Route, RouteAdmin)
 admin.site.register(Trip, TripAdmin)
-admin.site.register(Calendar)
+admin.site.register(Calendar, CalendarAdmin)
 admin.site.register(Note, NoteAdmin)
