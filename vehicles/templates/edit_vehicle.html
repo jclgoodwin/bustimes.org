@@ -8,7 +8,7 @@
 
 {% block content %}
 
-{% if revision or submitted %}
+{% if not form %}
 
     <h1>Thank you</h1>
 
@@ -65,7 +65,9 @@
 {% block ad %}{% endblock %}
 
 {% block foot %}
-    {% load static %}
-    <script src="{% static 'js/accessible-autocomplete/accessible-autocomplete.min.js' %}"></script>
-    <script async src="{% static 'js/edit-vehicle.js' %}"></script>
+   {% if form %}
+        {% load static %}
+        <script src="{% static 'js/accessible-autocomplete/accessible-autocomplete.min.js' %}"></script>
+        <script async src="{% static 'js/edit-vehicle.js' %}"></script>
+    {% endif %}
 {% endblock %}

@@ -174,9 +174,8 @@ def operator_vehicles(request, slug=None, parent=None):
         'depots': depots
     })
 
-    if form and form.is_valid() and form.cleaned_data['user'] != request.COOKIES.get('username', ''):
-        response.set_cookie('username', form.cleaned_data['user'], 60 * 60 * 24 * 31, httponly=True,
-                            samesite='Strict')
+    if username and username != initial['user']:
+        response.set_cookie('username', username, 60 * 60 * 24 * 31, httponly=True, samesite='Strict')
 
     return response
 
@@ -454,6 +453,8 @@ def edit_vehicle(request, vehicle_id):
     elif vehicle.fleet_number is not None:
         initial['fleet_number'] = str(vehicle.fleet_number)
 
+    username = None
+
     if request.method == 'POST':
         form = EditVehicleForm(request.POST, initial=initial, operator=vehicle.operator, vehicle=vehicle)
         if not form.has_changed() or all(key == 'user' or key == 'url' for key in form.changed_data):
@@ -484,6 +485,7 @@ def edit_vehicle(request, vehicle_id):
                     for feature in data['features']:
                         edit.features.add(feature)
                 submitted = True
+            form = None
     else:
         form = EditVehicleForm(initial=initial, operator=vehicle.operator, vehicle=vehicle)
 
@@ -507,7 +509,7 @@ def edit_vehicle(request, vehicle_id):
         'next': vehicle.get_next(),
         'submitted': submitted,
         'revision': revision,
-        'pending_edits': not submitted and not revision and vehicle.vehicleedit_set.filter(approved=None).exists()
+        'pending_edits': form and vehicle.vehicleedit_set.filter(approved=None).exists()
     })
 
     if form and form.is_valid() and form.cleaned_data['user'] != request.COOKIES.get('username', ''):

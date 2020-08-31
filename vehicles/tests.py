@@ -226,6 +226,7 @@ class VehiclesTests(TestCase):
             })
         self.assertTrue(response.context['form'].has_changed())
         self.assertContains(response, 'That URL does')
+        self.assertContains(response, '/edit-vehicle.')
 
         # edit type, livery, name and feature
         with self.assertNumQueries(14):
@@ -243,6 +244,7 @@ class VehiclesTests(TestCase):
             })
         self.assertTrue(response.context['form'].has_changed())
         self.assertContains(response, 'I’ll update those details')
+        self.assertNotContains(response, '/edit-vehicle.')
         edit = VehicleEdit.objects.last()
         self.assertEqual(edit.url, 'https://bustimes.org')
         self.assertEqual(str(edit.get_changes()), "{'vehicle_type': 'Optare Spectra', 'name': 'Colin', 'features': \
