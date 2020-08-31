@@ -49,7 +49,7 @@ def handle_file(command, path):
                     try:
                         command.handle_file(open_file, os.path.join(path, filename))
                     except (ET.ParseError, ValueError, AttributeError, DataError) as e:
-                        print(filename)
+                        print(filename, e)
                         logger.error(e, exc_info=True)
     except zipfile.BadZipFile:
         with open(os.path.join(settings.DATA_DIR, path)) as open_file:
@@ -176,6 +176,47 @@ def first():
         print(command.undefined_holidays)
 
 
+def ticketer():
+    command = get_command()
+
+    for region_id, noc, name in [
+        ('NW', 'WBTR', 'Warrington’s Own Buses')
+    ]:
+        url = f'https://opendata.ticketer.com/uk/{noc}/routes_and_timetables/current.zip'
+        filename = f'{noc}.zip'
+        path = os.path.join(settings.DATA_DIR, filename)
+        command.source, created = DataSource.objects.get_or_create({'name': name}, url=url)
+
+        modified, last_modified = download_if_changed(path, url)
+
+        if modified:
+            print(url, last_modified)
+            command.region_id = region_id
+            command.service_descriptions = {}
+            command.service_ids = set()
+            command.route_ids = set()
+            command.calendar_cache = {}
+
+            # avoid importing old data
+            command.source.datetime = timezone.now()
+
+            handle_file(command, filename)
+
+            command.mark_old_services_as_not_current()
+
+            clean_up([noc], [command.source])
+
+            command.source.datetime = last_modified
+            command.source.save(update_fields=['datetime'])
+
+            print(' ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
+            print(' ', {o['id']: o['id'] for o in
+                  Operator.objects.filter(service__route__source=command.source).distinct().values('id')})
+
+    if command.undefined_holidays:
+        print(command.undefined_holidays)
+
+
 def stagecoach():
     command = get_command()
 
@@ -231,5 +272,7 @@ class Command(BaseCommand):
             stagecoach()
         elif api_key == 'first':
             first()
+        elif api_key == 'ticketer':
+            ticketer()
         else:
             bus_open_data(api_key)
