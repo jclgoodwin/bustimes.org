@@ -87,6 +87,8 @@ class EditVehicleForm(EditVehiclesForm):
 
         if str(vehicle.fleet_number) in vehicle.code:
             self.fields['fleet_number'].disabled = True
+        if vehicle.reg and vehicle.reg in vehicle.code.replace('_', '').replace(' ', '').replace('-', ''):
+            self.fields['reg'].disabled = True
 
         # if not vehicle.notes:
         #     del self.fields['notes']
