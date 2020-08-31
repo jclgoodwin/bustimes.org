@@ -181,7 +181,7 @@ class VehiclesTests(TestCase):
                 'other_colour': '#FF0000',
                 'notes': 'Trent Barton',
             })
-        self.assertTrue(response.context['form'].has_changed())
+        self.assertIsNone(response.context['form'])
         self.assertContains(response, 'I’ll update those details')
 
         edit = VehicleEdit.objects.filter(approved=None).get()
@@ -199,7 +199,7 @@ class VehiclesTests(TestCase):
                 'other_colour': '#ffffff',
                 'notes': 'Trent Barton',
             })
-        self.assertTrue(response.context['form'].has_changed())
+        self.assertIsNone(response.context['form'])
         self.assertContains(response, 'I’ll update the other details')
 
         self.assertEqual(2, VehicleEdit.objects.filter(approved=None).count())
@@ -242,7 +242,7 @@ class VehiclesTests(TestCase):
                 'name': 'Colin',
                 'url': 'https://bustimes.org'
             })
-        self.assertTrue(response.context['form'].has_changed())
+        self.assertIsNone(response.context['form'])
         self.assertContains(response, 'I’ll update those details')
         self.assertNotContains(response, '/edit-vehicle.')
         edit = VehicleEdit.objects.last()
@@ -330,7 +330,7 @@ class VehiclesTests(TestCase):
                 'name': 'Luther Blisset',
                 'branding': 'Coastliner',
             })
-        self.assertTrue(response.context['form'].has_changed())
+        self.assertIsNone(response.context['form'])
 
         # check vehicle operator has been changed
         self.assertContains(response, '/operators/bova-and-over')
