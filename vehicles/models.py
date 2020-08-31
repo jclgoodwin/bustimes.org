@@ -499,7 +499,7 @@ class VehicleLocation(models.Model):
                     try:
                         async_to_sync(channel_layer.send)(channel.name, message)
                     except ChannelFull:
-                        pass
+                        channel.delete()
 
     def get_json(self, extended=False):
         journey = self.journey

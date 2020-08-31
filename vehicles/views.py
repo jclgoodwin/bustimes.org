@@ -174,8 +174,8 @@ def operator_vehicles(request, slug=None, parent=None):
         'depots': depots
     })
 
-    if username and username != initial['user']:
-        response.set_cookie('username', username, 60 * 60 * 24 * 31, httponly=True, samesite='Strict')
+    if form and form.is_valid() and form.cleaned_data['user'] != request.COOKIES.get('username', ''):
+        response.set_cookie('username', form.cleaned_data['user'], 60 * 60 * 24 * 31, httponly=True, samesite='Strict')
 
     return response
 
@@ -512,8 +512,8 @@ def edit_vehicle(request, vehicle_id):
         'pending_edits': form and vehicle.vehicleedit_set.filter(approved=None).exists()
     })
 
-    if form and form.is_valid() and form.cleaned_data['user'] != request.COOKIES.get('username', ''):
-        response.set_cookie('username', form.cleaned_data['user'], 60 * 60 * 24 * 31, httponly=True, samesite='Strict')
+    if username and username != initial['user']:
+        response.set_cookie('username', username, 60 * 60 * 24 * 31, httponly=True, samesite='Strict')
 
     return response
 
