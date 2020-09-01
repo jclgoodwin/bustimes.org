@@ -450,10 +450,32 @@ class LiveryAdmin(admin.ModelAdmin):
         return Livery.objects.annotate(vehicles=Count('vehicle'))
 
 
+class RevisionChangeFilter(admin.SimpleListFilter):
+    title = 'changed field'
+    parameter_name = 'change'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('changes__reg', 'reg'),
+            ('changes__depot', 'depot'),
+        )
+
+    def queryset(self, request, queryset):
+        value = self.value()
+        if value and value.startswith('changes__'):
+            return queryset.filter(**{f'{value}__isnull': False})
+        return queryset
+
+
 class VehicleRevisionAdmin(admin.ModelAdmin):
     raw_id_fields = ['from_operator', 'to_operator', 'vehicle']
     list_display = ['datetime', '__str__', 'changes']
     actions = ['revert']
+    list_filter = [
+        RevisionChangeFilter,
+        'ip_address',
+        ('vehicle__operator', admin.RelatedOnlyFieldListFilter),
+    ]
 
     def revert(self, request, queryset):
         for revision in queryset.prefetch_related('vehicle'):
