@@ -32,8 +32,7 @@ minutae""", required=False, max_length=255, widget=forms.TextInput(attrs={"list"
     notes = forms.CharField(help_text="""Again, this should be blank in almost all cases. There’s no need to know a
 vehicle’s previous owners""", required=False, max_length=255)
     withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False)
-    user = forms.CharField(label='Your name', help_text='If left blank, your IP address will be logged instead',
-                           required=False, max_length=255)
+    user = forms.CharField(label='Your name', required=False, max_length=255)
 
     def clean_url(self):
         if self.cleaned_data['url']:
