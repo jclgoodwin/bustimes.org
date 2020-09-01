@@ -453,6 +453,18 @@ class LiveryAdmin(admin.ModelAdmin):
 class VehicleRevisionAdmin(admin.ModelAdmin):
     raw_id_fields = ['from_operator', 'to_operator', 'vehicle']
     list_display = ['datetime', '__str__', 'changes']
+    actions = ['revert']
+
+    def revert(self, request, queryset):
+        for revision in queryset.prefetch_related('vehicle'):
+            if list(revision.changes.keys()) == ['reg']:
+                before, after = revision.changes['reg'].split('\n+')
+                before = before[1:]
+                if revision.vehicle.reg == after:
+                    revision.vehicle.reg = before
+                    revision.vehicle.save(update_fields=['reg'])
+                    revision.delete()
+                    self.message_user(request, f'Reverted {after} to {before}')
 
 
 admin.site.register(VehicleType, VehicleTypeAdmin)
