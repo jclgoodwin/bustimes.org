@@ -80,6 +80,14 @@ class EditVehicleForm(EditVehiclesForm):
     field_order = ['operator', 'fleet_number', 'reg', 'vehicle_type', 'colours', 'other_colour', 'branding', 'name',
                    'previous_reg', 'features', 'depot', 'notes']
 
+    def clean_reg(self):
+        reg = self.cleaned_data['reg']
+        if 'reg' in self.changed_data:
+            reg = reg.upper().replace(' ', '')
+            if reg == self.initial['reg']:
+                self.changed_data.remove('reg')
+        return reg
+
     def __init__(self, *args, **kwargs):
         vehicle = kwargs.pop('vehicle', None)
 
