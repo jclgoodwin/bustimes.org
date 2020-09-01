@@ -1,7 +1,9 @@
 /*jslint browser: true*/
 /*global accessibleAutocomplete*/
 
-window.addEventListener('DOMContentLoaded', function() {
+(function () {
+    'use strict';
+
     // vehicle type
     accessibleAutocomplete.enhanceSelectElement({
         selectElement: document.getElementById('id_vehicle_type')
@@ -33,5 +35,4 @@ window.addEventListener('DOMContentLoaded', function() {
         radio.addEventListener('change', toggleOtherColour);
     });
     toggleOtherColour();
-});
-
+})();
