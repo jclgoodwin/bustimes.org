@@ -11,14 +11,11 @@
     var container = document.getElementById('map'),
         service = container.getAttribute('data-service'),
         map,
-        statusBar,
         bounds,
-        // lastReq,
-        // response,
-        // oldVehicles = {},
-        // newVehicles = {},
         busesOnline = document.getElementById('buses-online'),
-        button = busesOnline.getElementsByTagName('a')[0];
+        button = busesOnline.getElementsByTagName('a')[0],
+        vehicles = {},
+        vehicleMarkers = {};
 
     function setLocationHash(hash) {
         if (history.replaceState) {
@@ -43,10 +40,6 @@
             map.invalidateSize();
         } else {
             loadjs([window.LEAFLET_CSS_URL, window.LEAFLET_JS_URL], setUpMap);
-            // if (busesOnlineCount) {
-            //     clearTimeout(timeout);
-            //     load();
-            // }
         }
     }
 
@@ -58,17 +51,6 @@
         L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
             attribution: '<a href="https://stadiamaps.com/">© Stadia Maps</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/about/">© OpenStreetMap contributors</a>',
         }).addTo(map);
-
-        statusBar = L.control({
-            position: 'bottomleft'
-        });
-
-        statusBar.onAdd = function() {
-            var div = L.DomUtil.create('div', 'hugemap-status');
-            return div;
-        };
-
-        statusBar.addTo(map);
 
         var closeButton = L.control();
 
@@ -116,9 +98,9 @@
             }).addTo(map);
         });
 
-        // if (response) {
-        //     processData(response);
-        // }
+        for (var id in vehicles) {
+            handleVehicle(vehicles[id]);
+        }
     }
 
     function getTransform(heading, scale) {
@@ -210,7 +192,7 @@
         if (clickedMarker) {
             // deselect previous clicked marker
             // (not always covered by popupclose handler, if popup hasn't opened yet)
-            var marker = vehicles[clickedMarker];
+            var marker = vehicleMarkers[clickedMarker];
             if (marker) {
                 marker.setIcon(getBusIcon(marker.options.item));
             }
@@ -244,53 +226,31 @@
         }
     }
 
-    var vehicles = {};
-
     function handleVehicle(item) {
-        var isClickedMarker = item.i === clickedMarker,
-            icon = getBusIcon(item, isClickedMarker),
-            latLng = L.latLng(item.l[1], item.l[0]);
+        if (map) {
+            var isClickedMarker = item.i === clickedMarker,
+                icon = getBusIcon(item, isClickedMarker),
+                latLng = L.latLng(item.l[1], item.l[0]);
 
-        if (item.i in vehicles) {
-            var marker = vehicles[item.i];
-            marker.setLatLng(latLng);
-            marker.setIcon(icon);
-            marker.options.item = item;
-            var popup = marker.getPopup();
-            if (popup) {
-                popup.setContent(marker.options.popupContent + getPopupContent(item));
+            if (item.i in vehicleMarkers) {
+                var marker = vehicleMarkers[item.i];
+                marker.setLatLng(latLng);
+                marker.setIcon(icon);
+                marker.options.item = item;
+                var popup = marker.getPopup();
+                if (popup) {
+                    popup.setContent(marker.options.popupContent + getPopupContent(item));
+                }
+            } else {
+                vehicleMarkers[item.i] = L.marker(latLng, {
+                    icon: icon,
+                    item: item,
+                    zIndexOffset: 1000
+                }).addTo(map).on('click', handleMarkerClick);
             }
-        } else {
-            vehicles[item.i] = L.marker(latLng, {
-                icon: icon,
-                item: item,
-                zIndexOffset: 1000
-            }).addTo(map).on('click', handleMarkerClick);
         }
+        vehicles[item.i] = item;
     }
-
-    // function processData(data) {
-    //     bounds = L.latLngBounds();
-
-    //     for (var i = data.features.length - 1; i >= 0; i -= 1) {
-    //         handleVehicle(data.features[i]);
-    //     }
-    //     for (var vehicle in oldVehicles) {
-    //         if (!(vehicle in newVehicles)) {
-    //             map.removeLayer(oldVehicles[vehicle]);
-    //         }
-    //     }
-    //     oldVehicles = newVehicles;
-    //     newVehicles = {};
-
-    //     if (!map._loaded && bounds.isValid()) {
-    //         map.fitBounds(bounds, {
-    //             padding: [10, 10],
-    //             maxZoom: 12
-    //         });
-    //     }
-    //     statusBar.getContainer().innerHTML = '';
-    // }
 
     var timeout, busesOnlineCount;
 
@@ -312,14 +272,6 @@
         socket.onopen = function() {
             backoff = 1000;
             newSocket = true;
-
-            // var bounds = map.getBounds();
-            // socket.send(JSON.stringify([
-            //     bounds.getWest(),
-            //     bounds.getSouth(),
-            //     bounds.getEast(),
-            //     bounds.getNorth()
-            // ]));
         };
 
         socket.onclose = function() {
@@ -348,8 +300,6 @@
                 }
             }
 
-
-
             if (newSocket && !first) {
                 var newVehicles = {};
             }
@@ -363,63 +313,16 @@
             if (newVehicles) {
                 for (var id in vehicles) {
                     if (!(id in newVehicles)) {
-                        map.removeLayer(vehicles[id]);
+                        if (map) {
+                            map.removeLayer(vehicles[id]);
+                            delete vehicleMarkers[id];
+                        }
                         delete vehicles[id];
                     }
                 }
             }
         };
     }
-
-        // if (statusBar) {
-        //     statusBar.getContainer().innerHTML = 'Loading\u2026';
-        // }
-        // if (lastReq) {
-        //     lastReq.abort();
-        // }
-        // lastReq = reqwest('/vehicles.json?service=' + service, function(data) {
-        //     if (lastReq.request.status === 200 && data && data.features) {
-        //         if (!busesOnlineCount) { // first load
-        //             if (data.features.length) {
-        //                 busesOnlineCount = document.createElement('span');
-        //                 busesOnline.appendChild(busesOnlineCount);
-        //                 if (document.addEventListener) {
-        //                     document.addEventListener('visibilitychange', handleVisibilityChange);
-        //                 }
-        //             } else {
-        //                 if (statusBar) {
-        //                     statusBar.getContainer().innerHTML = '';
-        //                 }
-        //                 return;
-        //             }
-        //         }
-
-        //         if (data.features.length === 0) {
-        //             busesOnlineCount.innerHTML = '';
-        //         } else if (data.features.length === 1) {
-        //             busesOnlineCount.innerHTML = 'Tracking 1 bus';
-        //         } else {
-        //             busesOnlineCount.innerHTML = 'Tracking ' + data.features.length + ' buses';
-        //         }
-        //         if (map) {
-        //             processData(data);
-        //         } else {
-        //             response = data;
-        //         }
-        //     }
-        //     timeout = setTimeout(function() {
-        //         load();
-        //     }, map ? 10000 : 120000); // 10 seconds or 2 minute
-        // });
-    // }
-
-    // function handleVisibilityChange(event) {
-    //     if (event.target.hidden) {
-    //         clearTimeout(timeout);
-    //     } else {
-    //         load();
-    //     }
-    // }
 
     function closeMap() {
         container.className = container.className.replace(' expanded', '');
@@ -444,6 +347,7 @@
     };
 
     connect();
+
     if (window.location.hash === '#map') {
         openMap();
     }

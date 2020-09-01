@@ -1,3 +1,4 @@
+from asgiref.sync import async_to_sync
 from datetime import timedelta
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.core.serializers.json import DjangoJSONEncoder
@@ -20,6 +21,10 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
         self.channel = Channel(name=self.channel_name)
         self.accept()
 
+    def disconnect(self, close_code):
+        if self.channel.id:
+            self.channel.delete()
+
     def move_vehicle(self, message):
         self.send_json([{
             'i': message['id'],
@@ -31,10 +36,6 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
             't': message['text_colour'],
             'e': message['early']
         }])
-
-    def disconnect(self, close_code):
-        if self.channel.id:
-            self.channel.delete()
 
     def receive_json(self, content):
         new_bounds = Polygon.from_bbox(content)
@@ -66,11 +67,16 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
 
 class ServiceMapConsumer(VehicleMapConsumer):
     def connect(self):
-        self.channel = Channel(name=self.channel_name)
         self.accept()
-        service_ids = self.scope['url_route']['kwargs']['service_ids']
-        locations = get_vehicle_locations(journey__service=service_ids)
+        self.service_ids = self.scope['url_route']['kwargs']['service_ids'].split(',')
+        locations = get_vehicle_locations(journey__service__in=self.service_ids)
         self.send_locations(locations)
+        for service_id in self.service_ids:
+            async_to_sync(self.channel_layer.group_add)(f'service{service_id}', self.channel_name)
+
+    def disconnect(self, close_code):
+        for service_id in self.service_ids:
+            async_to_sync(self.channel_layer.group_discard)(f'service{service_id}', self.channel_name)
 
     def recieve_json(self, content):
         pass

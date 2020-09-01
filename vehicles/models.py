@@ -486,24 +486,24 @@ class VehicleLocation(models.Model):
         channel_layer = get_channel_layer()
         if self.heading:
             self.heading = int(self.heading)
-            channels = Channel.objects.filter(bounds__covers=self.latlong).only('name')
-            if channels:
-                message = {
-                    'type': 'move_vehicle',
-                    'id': self.id,
-                    'datetime': DjangoJSONEncoder.default(None, self.datetime),
-                    'latlong': tuple(self.latlong),
-                    'heading': self.heading,
-                    'route': self.journey.route_name,
-                    'css': vehicle.get_livery(self.heading),
-                    'text_colour': vehicle.get_text_colour(),
-                    'early': self.early
-                }
-                for channel in channels:
-                    try:
-                        async_to_sync(channel_layer.send)(channel.name, message)
-                    except ChannelFull:
-                        channel.delete()
+            message = {
+                'type': 'move_vehicle',
+                'id': self.id,
+                'datetime': DjangoJSONEncoder.default(None, self.datetime),
+                'latlong': tuple(self.latlong),
+                'heading': self.heading,
+                'route': self.journey.route_name,
+                'css': vehicle.get_livery(self.heading),
+                'text_colour': vehicle.get_text_colour(),
+                'early': self.early
+            }
+            for channel in Channel.objects.filter(bounds__covers=self.latlong).only('name'):
+                try:
+                    async_to_sync(channel_layer.send)(channel.name, message)
+                except ChannelFull:
+                    channel.delete()
+            if self.journey.service_id:
+                async_to_sync(channel_layer.group_send)(f'service{self.journey.service_id}', message)
 
     def get_json(self, extended=False):
         journey = self.journey
