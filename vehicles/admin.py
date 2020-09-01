@@ -469,18 +469,20 @@ class RevisionChangeFilter(admin.SimpleListFilter):
 
 class VehicleRevisionAdmin(admin.ModelAdmin):
     raw_id_fields = ['from_operator', 'to_operator', 'vehicle']
-    list_display = ['datetime', '__str__', 'changes']
+    list_display = ['datetime', 'vehicle', '__str__', 'ip_address']
     actions = ['revert']
     list_filter = [
         RevisionChangeFilter,
         'ip_address',
         ('vehicle__operator', admin.RelatedOnlyFieldListFilter),
     ]
+    list_select_related = ['from_operator', 'to_operator', 'vehicle']
 
     def revert(self, request, queryset):
         for revision in queryset.prefetch_related('vehicle'):
             if list(revision.changes.keys()) == ['reg']:
                 before, after = revision.changes['reg'].split('\n+')
+                after = after.replace(' ', '').upper()
                 before = before[1:]
                 if revision.vehicle.reg == after:
                     revision.vehicle.reg = before

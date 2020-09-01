@@ -375,7 +375,9 @@ class VehicleRevision(models.Model):
     ip_address = models.GenericIPAddressField(null=True, blank=True)
 
     def __str__(self):
-        return f'changed operator from {self.from_operator_id} to {self.to_operator_id}'
+        return ', '.join(
+            f'{key}: {before} → {after}' for key, before, after in self.list_changes()
+        )
 
     def list_changes(self):
         if self.from_operator_id or self.to_operator_id:
