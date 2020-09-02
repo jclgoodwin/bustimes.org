@@ -28,7 +28,9 @@
         highWater,
         showStops = true;
 
-    if (localStorage && localStorage.hideStops) {
+    if (document.referrer && document.referrer.indexOf('/stops/') > -1) {
+        var referrerStop = '/stops/' + document.referrer.split('/stops/')[1];
+    } else if (localStorage && localStorage.hideStops) {
         showStops = false;
     }
 
@@ -117,7 +119,7 @@
         newStops[data.properties.url] = marker;
     }
 
-    function loadStops(first) {
+    function loadStops() {
         var bounds = map.getBounds();
         var params = '?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest();
 
@@ -138,13 +140,10 @@
                         stopsGroup.removeLayer(oldStops[stop]);
                     }
                 }
-                if (first) {
-                    if (document.referrer && document.referrer.indexOf('/stops/') > -1) {
-                        stop = '/stops/' + document.referrer.split('/stops/')[1];
-                        stop = newStops[stop];
-                        if (stop) {
-                            stop.openPopup();
-                        }
+                if (referrerStop) {
+                    stop = newStops[referrerStop];
+                    if (stop) {
+                        stop.openPopup();
                     }
                 }
                 oldStops = newStops;
@@ -401,7 +400,7 @@
                     document.getElementById('hugemap').classList.remove('zoomed-in');
                 }
                 stopsGroup.addTo(map);
-                loadStops(first);
+                loadStops();
             }
         }
 
