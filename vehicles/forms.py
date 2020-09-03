@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Count, Q, Exists, OuterRef
 from busstops.models import Operator, Service
 from .models import VehicleType, VehicleFeature, Livery
+from .fields import RegField
 
 
 def get_livery_choices(operator):
@@ -50,6 +51,13 @@ vehicle’s previous owners""", required=False, max_length=255)
                 return
         return self.cleaned_data['other_colour']
 
+    def has_really_changed(self):
+        if not self.has_changed():
+            return False
+        if all(key == 'user' or key == 'url' for key in self.changed_data):
+            return False
+        return True
+
     def __init__(self, *args, **kwargs):
         operator = kwargs.pop('operator', None)
 
@@ -71,21 +79,13 @@ class EditVehicleForm(EditVehiclesForm):
     """With some extra fields, only applicable to editing a single vehicle
     """
     fleet_number = forms.CharField(required=False, max_length=14)
-    reg = forms.CharField(label='Registration', required=False, max_length=14)
+    reg = RegField(label='Registration', required=False, max_length=14)
     name = forms.CharField(label='Name', required=False, max_length=255)
-    previous_reg = forms.CharField(required=False, max_length=14)
+    previous_reg = RegField(required=False, max_length=14)
     url = forms.URLField(label='URL', help_text='Link to a web page or photo showing changes',
                          required=False, max_length=255)
     field_order = ['operator', 'fleet_number', 'reg', 'vehicle_type', 'colours', 'other_colour', 'branding', 'name',
                    'previous_reg', 'features', 'depot', 'notes']
-
-    def clean_reg(self):
-        reg = self.cleaned_data['reg']
-        if 'reg' in self.changed_data:
-            reg = reg.upper().replace(' ', '')
-            if reg == self.initial['reg']:
-                self.changed_data.remove('reg')
-        return reg
 
     def __init__(self, *args, **kwargs):
         vehicle = kwargs.pop('vehicle', None)
@@ -101,3 +101,7 @@ class EditVehicleForm(EditVehiclesForm):
         #     del self.fields['notes']
         #     if not vehicle.data or 'Depot' not in vehicle.data:
         #         del self.fields['depot']
+        #     if not vehicle.name:
+        #         del self.fields['name']
+        #     if not vehicle.branding:
+        #         self.fields['branding'].disabled = True

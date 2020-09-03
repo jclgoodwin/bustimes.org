@@ -101,11 +101,9 @@ def operator_vehicles(request, slug=None, parent=None):
         }
         if request.method == 'POST':
             form = EditVehiclesForm(request.POST, initial=initial, operator=operator)
-            if not form.is_valid():
-                pass
-            elif not form.has_changed() or all(key == 'user' or key == 'url' for key in form.changed_data):
+            if not form.has_really_changed():
                 form.add_error(None, 'You haven\'t changed anything')
-            else:
+            elif form.is_valid():
                 data = {key: form.cleaned_data[key] for key in form.changed_data}
                 vehicle_ids = request.POST.getlist('vehicle')
                 now = timezone.now()
@@ -121,6 +119,10 @@ def operator_vehicles(request, slug=None, parent=None):
                         revision.ip_address = ip_address
                     VehicleRevision.objects.bulk_create(revisions)
                     revisions = len(revisions)
+
+                if 'user' in data:
+                    del data['user']
+
                 if data:
                     username = username or ip_address
                     # this will fetch the vehicles list - slighly important that it occurs
@@ -461,11 +463,9 @@ def edit_vehicle(request, vehicle_id):
 
     if request.method == 'POST':
         form = EditVehicleForm(request.POST, initial=initial, operator=vehicle.operator, vehicle=vehicle)
-        if not form.is_valid():
-            pass
-        elif not form.has_changed() or all(key == 'user' or key == 'url' for key in form.changed_data):
+        if not form.has_really_changed():
             form.add_error(None, 'You haven\'t changed anything')
-        else:
+        elif form.is_valid():
             data = {key: form.cleaned_data[key] for key in form.changed_data}
             now = timezone.now()
             username = form.cleaned_data.get('user')
@@ -479,6 +479,9 @@ def edit_vehicle(request, vehicle_id):
                 revision.save()
 
             form = None
+
+            if 'user' in data:
+                del data['user']
 
             if data:
                 edit = get_vehicle_edit(vehicle, data, now,
