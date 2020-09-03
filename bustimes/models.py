@@ -124,6 +124,16 @@ class CalendarDate(models.Model):
     def contains(self, date):
         return self.start_date <= date and (not self.end_date or self.end_date >= date)
 
+    def relevant(self, operating_period):
+        if self.end_date:
+            if self.end_date < self.start_date:
+                return False
+            if operating_period.start > self.end_date:
+                return False
+        if operating_period.end and operating_period.end < self.start_date:
+            return False
+        return True
+
     def __str__(self):
         if not self.operation:
             prefix = 'Not'

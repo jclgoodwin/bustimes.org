@@ -346,8 +346,8 @@ class Command(BaseCommand):
                     for date_range in operation_days
                 ]
 
-        # remove date ranges which end before they start?!
-        calendar_dates = [dates for dates in calendar_dates if not dates.end_date or dates.end_date >= dates.start_date]
+        # remove date ranges which end before they start?! etc
+        calendar_dates = [dates for dates in calendar_dates if dates.relevant(operating_period)]
 
         if not calendar_dates and not operating_profile.regular_days:
             return
