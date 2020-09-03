@@ -228,7 +228,11 @@
     </script>
     <script src="{% static 'js/loadjs/loadjs.min.js' %}"></script>
     <script src="{% static 'js/reqwest.min.js' %}"></script>
-    <script async src="{% static 'js/servicemap2.js' %}"></script>
+    {% if object.region_id == 'EA' %}
+        <script async src="{% static 'js/servicemap2.js' %}"></script>
+    {% else %}
+        <script async src="{% static 'js/servicemap.js' %}"></script>
+    {% endif %}
 {% endif %}
 
 {% if timetable %}
