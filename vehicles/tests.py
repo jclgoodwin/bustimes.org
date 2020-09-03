@@ -341,7 +341,7 @@ class VehiclesTests(TestCase):
         revision = VehicleRevision.objects.get()
         self.assertEqual(revision.from_operator, self.lynx)
         self.assertEqual(revision.to_operator, self.bova)
-        self.assertEqual(str(revision), 'operator: LYNX → BOVA')
+        self.assertEqual(str(revision), 'operator: Lynx → Bova and Over, reg: UWW2X → , depot: Long Sutton → Holt')
 
         response = self.client.get(f'{self.vehicle_2.get_absolute_url()}/history')
         self.assertContains(response, '<td>operator</td>')
