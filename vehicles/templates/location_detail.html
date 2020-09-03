@@ -9,10 +9,8 @@
         to {{ location.journey.destination }}
     {% endif %}
     {% if location.journey.service %}</a>{% endif %}
-    <br>
 {% endif %}
 
 {% if location.journey.vehicle %}
     <a href="{{ location.journey.vehicle.get_absolute_url }}">{{ location.journey.vehicle }}</a>
-    <br>
 {% endif %}
