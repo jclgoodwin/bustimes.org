@@ -722,6 +722,7 @@ class Command(BaseCommand):
             if changed_fields:
                 service.save(update_fields=changed_fields)
 
+            service_code = service.service_code
             if service_code in self.corrections:
                 corrections = {}
                 for field in self.corrections[service_code]:
