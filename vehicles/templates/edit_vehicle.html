@@ -47,6 +47,10 @@
             {% for depot in depots %}{% if depot %}<option value="{{ depot }}">{% endif %}{% endfor %}
         </datalist>
 
+        {% if user.is_authenticated %}
+            <p>You’re logged in as <strong>{{ user }}</strong>. <a href="{% url 'logout' %}">Log out</a></p>
+        {% endif %}
+
         <input type="submit" value="Save changes">
     </form>
 

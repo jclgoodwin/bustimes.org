@@ -38,7 +38,7 @@
         <p>There’s also <a href="/groups/{{ object.parent}}/vehicles">a list of all {{ object.parent }} vehicles</a>.</p>
     {% endif %}
 
-    {% if user.is_authenticated %}
+    {% if user.username == 'josh' %}
         <p><a href="{% url 'admin:vehicles_vehicle_changelist' %}?o=2&amp;operator__id__exact={{ object.id }}">Edit</a></p>
     {% endif %}
 {% endif %}
@@ -166,6 +166,10 @@
     <datalist id="depots">
         {% for depot in depots %}{% if depot %}<option value="{{ depot }}">{% endif %}{% endfor %}
     </datalist>
+
+    {% if user.is_authenticated %}
+        <p>You’re logged in as <strong>{{ user }}</strong>. <a href="{% url 'logout' %}">Log out</a></p>
+    {% endif %}
 
     <input type="submit" value="Save changes">
 
