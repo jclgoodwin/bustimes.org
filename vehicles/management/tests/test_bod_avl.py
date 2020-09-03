@@ -1,10 +1,10 @@
 import os
 from vcr import use_cassette
 from django.conf import settings
-from django.core.management import call_command
 from django.test import TestCase
 from busstops.models import Region, DataSource, Operator
 from ...models import VehicleLocation
+from ..commands import import_bod_avl
 
 
 class BusOpenDataVehicleLocationsTest(TestCase):
@@ -20,11 +20,16 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             Operator(id='WHIP', region=region),
             Operator(id='UNOE', region=region),
         ])
-        DataSource.objects.create(name='Bus Open Data',
-                                  url='https://data.bus-data.dft.gov.uk/avl/download/bulk_archive')
+        cls.source = DataSource.objects.create(
+            name='Bus Open Data',
+            url='https://data.bus-data.dft.gov.uk/avl/download/bulk_archive'
+        )
 
-    @use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'bod_avl.yaml'))
     def test_handle(self):
-        call_command('import_bod_avl')
+        command = import_bod_avl.Command()
+        command.source = self.source
 
-        self.assertEqual(841, VehicleLocation.objects.count())
+        with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'bod_avl.yaml')):
+            command.update()
+
+        self.assertEqual(835, VehicleLocation.objects.count())

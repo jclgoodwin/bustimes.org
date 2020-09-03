@@ -5,12 +5,14 @@ from ciso8601 import parse_datetime
 import xmltodict
 from django.contrib.gis.geos import Point
 from django.db.models import Q
-from django.core.management.base import BaseCommand
-from busstops.models import DataSource, Operator, Service
+from ..import_live_vehicles import ImportLiveVehiclesCommand
+from busstops.models import Operator, Service, Locality
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 
 
-class Command(BaseCommand):
+class Command(ImportLiveVehiclesCommand):
+    source_name = 'Bus Open Data'
+
     cache = set()
     operators = {
         'ASC': ['ARHE', 'AKSS', 'AMTM', 'GLAR'],
@@ -36,6 +38,10 @@ class Command(BaseCommand):
     }
     operator_cache = {}
 
+    @staticmethod
+    def get_datetime(item):
+        return parse_datetime(item['RecordedAtTime'])
+
     def get_operator(self, operator_ref):
         if operator_ref in self.operators:
             return self.operators[operator_ref]
@@ -51,7 +57,14 @@ class Command(BaseCommand):
         print(operator_ref)
         self.operator_cache[operator_ref] = None
 
-    def get_vehicle(self, operator, operator_ref, vehicle_ref):
+    def get_vehicle(self, item):
+        monitored_vehicle_journey = item['MonitoredVehicleJourney']
+
+        operator_ref = monitored_vehicle_journey['OperatorRef']
+        operator = self.get_operator(operator_ref)
+
+        vehicle_ref = monitored_vehicle_journey['VehicleRef']
+
         if operator and vehicle_ref.startswith(f'{operator_ref}-'):
             vehicle_ref = vehicle_ref[len(operator_ref) + 1:]
 
@@ -119,62 +132,67 @@ class Command(BaseCommand):
                 # print(e, line_ref)
                 return
 
-    def handle_item(self, item):
+    def get_journey(self, item, vehicle):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
 
-        operator_ref = monitored_vehicle_journey['OperatorRef']
-        operator = self.get_operator(operator_ref)
-
-        if not operator and operator_ref not in self.cache:
-            print(item)
-            self.cache.add(operator_ref)
-
-        vehicle_ref = monitored_vehicle_journey['VehicleRef']
-        vehicle, created = self.get_vehicle(operator, operator_ref, vehicle_ref)
-
-        recorded_at_time = parse_datetime(item['RecordedAtTime'])
         vehicle_journey_ref = monitored_vehicle_journey.get('VehicleJourneyRef')
         if vehicle_journey_ref == 'UNKNOWN':
             vehicle_journey_ref = None
 
-        location = monitored_vehicle_journey['VehicleLocation']
-        latlong = Point(float(location['Longitude']), float(location['Latitude']))
+        route_name = monitored_vehicle_journey.get('LineRef') or ''
+
+        origin_aimed_departure_time = monitored_vehicle_journey.get('OriginAimedDepartureTime')
+        if origin_aimed_departure_time:
+            origin_aimed_departure_time = parse_datetime(origin_aimed_departure_time)
+
+        journey = None
 
         latest_location = vehicle.latest_location
-        route_name = monitored_vehicle_journey.get('LineRef') or ''
-        if created or not (latest_location and latest_location.current and
-                           latest_location.journey.route_name == route_name):
+        if latest_location and vehicle_journey_ref:
+            if vehicle_journey_ref != latest_location.journey.code and '_' in vehicle_journey_ref:
+                journey = vehicle.vehiclejourney_set.filter(route_name=route_name, code=vehicle_journey_ref).first()
+
+        if not journey:
             journey = VehicleJourney(
                 route_name=route_name,
-                datetime=recorded_at_time,
                 vehicle=vehicle,
                 source=self.source,
-                data=item
+                data=item,
+                datetime=origin_aimed_departure_time,
+                destination=monitored_vehicle_journey.get('DestinationName') or ''
             )
-            if vehicle_journey_ref:
-                journey.code = vehicle_journey_ref
-            journey.save()
-            vehicle.latest_location = VehicleLocation(
-                journey=journey,
-                latlong=latlong,
-                datetime=recorded_at_time,
-                current=True
-            )
-            vehicle.latest_location.save()
-            vehicle.save(update_fields=['latest_location'])
+
+        if vehicle_journey_ref:
+            journey.code = vehicle_journey_ref
+
+        if not journey.destination:
+            destination_ref = monitored_vehicle_journey.get('DestinationRef')
+            if destination_ref:
+                try:
+                    journey.destination = Locality.objects.get(stoppoint=destination_ref).name
+                except Locality.DoesNotExist:
+                    pass
+
+        if latest_location and (latest_location.journey.code == journey.code
+                                and latest_location.journey.route_name == journey.route_name):
+            journey.service = latest_location.journey.service
         else:
-            vehicle.latest_location.latlong = latlong
-            vehicle.latest_location.current = True
-            vehicle.latest_location.datetime = recorded_at_time
-            vehicle.latest_location.save(update_fields=['latlong', 'datetime'])
+            operator_ref = monitored_vehicle_journey['OperatorRef']
+            operator = self.get_operator(operator_ref)
+            journey.service = self.get_service(operator, monitored_vehicle_journey)
 
-        if not vehicle.latest_location.journey.service:
-            vehicle.latest_location.journey.service = self.get_service(operator, monitored_vehicle_journey)
-            if vehicle.latest_location.journey.service:
-                vehicle.latest_location.journey.save(update_fields=['service'])
+        return journey
 
-    def handle(self, **options):
-        self.source = DataSource.objects.get(name='Bus Open Data')
+    def create_vehicle_location(self, item):
+        monitored_vehicle_journey = item['MonitoredVehicleJourney']
+        location = monitored_vehicle_journey['VehicleLocation']
+        latlong = Point(float(location['Longitude']), float(location['Latitude']))
+        return VehicleLocation(
+            latlong=latlong,
+        )
+
+    def get_items(self):
+        print('f')
 
         response = requests.get(self.source.url)
 
@@ -186,6 +204,8 @@ class Command(BaseCommand):
         self.source.datetime = parse_datetime(data['Siri']['ServiceDelivery']['ResponseTimestamp'])
 
         for item in data['Siri']['ServiceDelivery']['VehicleMonitoringDelivery']['VehicleActivity']:
-            self.handle_item(item)
+            yield item
 
-        self.source.save(update_fields=['datetime'])
+        print('f')
+
+        # self.source.save(update_fields=['datetime'])
