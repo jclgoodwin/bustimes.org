@@ -283,7 +283,7 @@ class ImportTransXChangeTest(TestCase):
         # self.assertFalse(timetable.groupings[1].rows[45].has_waittimes)
         self.assertEqual(str(timetable.groupings[0].rows[0].times[:6]), '[05:20, 06:20, 07:15, 08:10, 09:10, 10:10]'),
 
-        self.assertEqual(201, service.stopusage_set.count())
+        self.assertEqual(149, service.stopusage_set.order_by().distinct('stop_id').count())
 
     @freeze_time('2017-08-29')
     def test_timetable_abbreviations_notes(self):
