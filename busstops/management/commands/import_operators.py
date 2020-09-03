@@ -65,6 +65,12 @@ class Command(ImportFromCSVCommand):
         """Given a CSV row (a list), returns an Operator object"""
 
         operator_id = row['NOCCODE'].replace('=', '')
+
+        if row['Date Ceased']:
+            if Operator.objects.filter(service__current=True, id=operator_id).exists():
+                print(row)
+            return
+
         if operator_id in self.removed_operator_ids:
             return
         operator_name = self.get_name(row).replace('\'', '\u2019').strip()  # Fancy apostrophe
