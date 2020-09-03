@@ -108,7 +108,6 @@ def operator_vehicles(request, slug=None, parent=None):
                 vehicle_ids = request.POST.getlist('vehicle')
                 now = timezone.now()
                 username = form.cleaned_data.get('user')
-                ip_address = request.META['REMOTE_ADDR']
 
                 revisions, changed_fields = do_revisions(vehicle_ids, data)
                 if revisions:
@@ -116,7 +115,8 @@ def operator_vehicles(request, slug=None, parent=None):
                     for revision in revisions:
                         revision.datetime = now
                         revision.username = username or ''
-                        revision.ip_address = ip_address
+                        revision.ip_address = request.META['REMOTE_ADDR']
+                        revision.user = request.user
                     VehicleRevision.objects.bulk_create(revisions)
                     revisions = len(revisions)
 
@@ -124,11 +124,10 @@ def operator_vehicles(request, slug=None, parent=None):
                     del data['user']
 
                 if data:
-                    username = username or ip_address
-                    # this will fetch the vehicles list - slighly important that it occurs
-                    # any change of operator
+                    # this will fetch the vehicles list
+                    # - slightly important that it occurs before any change of operator
                     ticked_vehicles = [v for v in vehicles if str(v.id) in vehicle_ids]
-                    edits = [get_vehicle_edit(vehicle, data, now, username) for vehicle in ticked_vehicles]
+                    edits = [get_vehicle_edit(vehicle, data, now, username, request) for vehicle in ticked_vehicles]
                     edits = VehicleEdit.objects.bulk_create(edit for edit in edits if edit)
                     submitted = len(edits)
                     if 'features' in data:
@@ -484,9 +483,7 @@ def edit_vehicle(request, vehicle_id):
                 del data['user']
 
             if data:
-                edit = get_vehicle_edit(vehicle, data, now,
-                                        username or ip_address)
-                edit.ip_address = ip_address
+                edit = get_vehicle_edit(vehicle, data, now, username, request)
                 edit.save()
                 if 'features' in data:
                     for feature in vehicle.features.all():
