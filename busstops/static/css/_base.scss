@@ -1053,6 +1053,10 @@ input:not(:checked) + label {
     }
 }
 
+tfoot a {
+    display: inline;
+}
+
 .fancy {
     th {
         position: absolute;
