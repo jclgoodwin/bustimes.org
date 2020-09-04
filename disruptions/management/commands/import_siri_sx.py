@@ -94,14 +94,12 @@ def handle_item(item, source):
 
 
 class Command(BaseCommand):
-    def add_arguments(self, parser):
-        parser.add_argument('app_id', type=str)
-        parser.add_argument('app_key', type=str)
-
-    def fetch(self, app_id, app_key):
+    def fetch(self):
         url = 'http://api.transportforthenorth.com/siri/sx'
 
-        source, _ = DataSource.objects.get_or_create(name='Transport for the North', url=url)
+        source = DataSource.objects.get(name='Transport for the North')
+        app_id = source.settings['app_id']
+        app_key = source.settings['app_key']
         authorization = b64encode(f'{app_id}:{app_key}'.encode()).decode()
 
         situations = []
@@ -134,5 +132,5 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
 
         Situation.objects.filter(source=source, current=True).exclude(id__in=situations).update(current=False)
 
-    def handle(self, app_id, app_key, *args, **options):
-        self.fetch(app_id, app_key)
+    def handle(self, *args, **options):
+        self.fetch()

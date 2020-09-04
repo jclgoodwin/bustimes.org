@@ -17,7 +17,8 @@ class SiriSXTest(TestCase):
         operator = Operator.objects.create(region=region, id='HATT', name='Hattons of Huyton')
         service = Service.objects.create(line_name='156', service_code='156', date='2020-01-01', current=True)
         service.operator.add(operator)
-        DataSource.objects.create(name='Transport for the North', settings={'app_id': '', 'app_key': ''})
+        DataSource.objects.create(name='Transport for the North',
+                                  settings={'app_id': 'hen hom', 'app_key': 'roger poultry'})
         DataSource.objects.create(name='Arriva')
 
     def test_get(self):
@@ -691,11 +692,11 @@ Services will observe all bus stops on the diverted route. </Details>
 
     def test_siri_sx_request(self):
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
-            with self.assertNumQueries(75):
-                call_command('import_siri_sx', 'hen hom', 'roger poultry')
+            with self.assertNumQueries(72):
+                call_command('import_siri_sx')
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
             with self.assertNumQueries(11):
-                call_command('import_siri_sx', 'hen hom', 'roger poultry')
+                call_command('import_siri_sx')
 
         situation = Situation.objects.first()
 
