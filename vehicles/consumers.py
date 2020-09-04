@@ -5,6 +5,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.core.cache import cache
 from django.contrib.gis.geos import Polygon
 from django.utils import timezone
+from busstops.models import ServiceCode
 from .models import VehicleLocation, Channel
 
 
