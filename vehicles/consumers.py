@@ -72,6 +72,8 @@ class ServiceMapConsumer(VehicleMapConsumer):
         self.service_ids = self.scope['url_route']['kwargs']['service_ids'].split(',')
         locations = get_vehicle_locations(journey__service__in=self.service_ids)
         self.send_locations(locations)
+        if not locations:
+            self.send_json([])
         icarus = not any(location.journey.source_id != 75 for location in locations)
         for service_id in self.service_ids:
             async_to_sync(self.channel_layer.group_add)(f'service{service_id}', self.channel_name)
