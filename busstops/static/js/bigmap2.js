@@ -8,7 +8,8 @@
     var map = L.map('hugemap', {
             minZoom: 8
         }),
-        stopsGroup = L.layerGroup();
+        stopsGroup = L.layerGroup(),
+        vehiclesGroup = L.layerGroup();
 
     map.attributionControl.setPrefix('');
 
@@ -50,6 +51,8 @@
             localStorage.setItem('hideStops', '1');
         }
     });
+
+    vehiclesGroup.addTo(map);
 
     function getTransform(heading, scale) {
         if (heading === null && !scale) {
@@ -241,15 +244,14 @@
 
         var popup = marker.getPopup();
         if (!popup) {
+            marker.options.popupContent = '';
+            marker.bindPopup(getPopupContent(item)).openPopup();
+
             reqwest({
                 url: '/vehicles/locations/' + clickedMarker,
                 success: function(content) {
                     marker.options.popupContent = content;
-                    marker.bindPopup(content + getPopupContent(item)).openPopup();
-                },
-                error: function() {
-                    marker.options.popupContent = '';
-                    marker.bindPopup(getPopupContent(item)).openPopup();
+                    marker.getPopup().setContent(content + getPopupContent(item));
                 }
             });
 
@@ -281,7 +283,7 @@
                 icon: icon,
                 item: item,
                 zIndexOffset: 1000
-            }).addTo(map).on('click', handleMarkerClick);
+            }).addTo(vehiclesGroup).on('click', handleMarkerClick);
         }
     }
 
@@ -325,22 +327,12 @@
             var items = JSON.parse(event.data);
 
             if (newSocket && !first) {
-                var newVehicles = {};
+                vehiclesGroup.clearLayers();
+                vehicles = {};
             }
             newSocket = false;
             for (var i = items.length - 1; i >= 0; i--) {
                 handleVehicle(items[i]);
-                if (newVehicles) {
-                    newVehicles[items[i].i] = true;
-                }
-            }
-            if (newVehicles) {
-                for (var id in vehicles) {
-                    if (!(id in newVehicles)) {
-                        map.removeLayer(vehicles[id]);
-                        delete vehicles[id];
-                    }
-                }
             }
         };
     }
@@ -374,7 +366,7 @@
         for (var id in vehicles) {
             var vehicle = vehicles[id];
             if (id !== clickedMarker && !bounds.contains(vehicle.getLatLng())) {
-                map.removeLayer(vehicle);
+                vehiclesGroup.removeLayer(vehicle);
                 delete vehicles[id];
             }
         }
@@ -416,7 +408,6 @@
         } else {
             connect();
         }
-
     }
 
     if (document.addEventListener) {

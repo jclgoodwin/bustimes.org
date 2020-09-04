@@ -207,15 +207,13 @@
 
         var popup = marker.getPopup();
         if (!popup) {
+            marker.options.popupContent = '';
+            marker.bindPopup(getPopupContent(item)).openPopup();
             reqwest({
                 url: '/vehicles/locations/' + clickedMarker,
                 success: function(content) {
                     marker.options.popupContent = content;
-                    marker.bindPopup(content + getPopupContent(item)).openPopup();
-                },
-                error: function() {
-                    marker.options.popupContent = '';
-                    marker.bindPopup(getPopupContent(item)).openPopup();
+                    marker.getPopup().setContent(content + getPopupContent(item));
                 }
             });
 
@@ -347,6 +345,18 @@
     };
 
     connect();
+
+    function handleVisibilityChange(event) {
+        if (event.target.hidden) {
+            socket.close(1000);
+        } else {
+            connect();
+        }
+    }
+
+    if (document.addEventListener) {
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+    }
 
     if (window.location.hash === '#map') {
         openMap();
