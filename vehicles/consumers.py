@@ -79,8 +79,8 @@ class ServiceMapConsumer(VehicleMapConsumer):
         for service_id in self.service_ids:
             async_to_sync(self.channel_layer.group_add)(f'service{service_id}', self.channel_name)
             if icarus:
-                print(icarus)
-                cache.set(f'{service_id}:connected', True, 300)
+                if locations or ServiceCode.objects.filter(service=service_id, scheme__endswith=' SIRI').exists():
+                    cache.set(f'{service_id}:connected', True, 300)
 
     def disconnect(self, close_code):
         for service_id in self.service_ids:
