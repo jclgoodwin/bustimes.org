@@ -2,6 +2,7 @@ from asgiref.sync import async_to_sync
 from datetime import timedelta
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.cache import cache
 from django.contrib.gis.geos import Polygon
 from django.utils import timezone
 from .models import VehicleLocation, Channel
@@ -71,8 +72,12 @@ class ServiceMapConsumer(VehicleMapConsumer):
         self.service_ids = self.scope['url_route']['kwargs']['service_ids'].split(',')
         locations = get_vehicle_locations(journey__service__in=self.service_ids)
         self.send_locations(locations)
+        icarus = not any(location.journey.source_id != 75 for location in locations)
         for service_id in self.service_ids:
             async_to_sync(self.channel_layer.group_add)(f'service{service_id}', self.channel_name)
+            if icarus:
+                print(icarus)
+                cache.set(f'{service_id}:connected', True, 300)
 
     def disconnect(self, close_code):
         for service_id in self.service_ids:
