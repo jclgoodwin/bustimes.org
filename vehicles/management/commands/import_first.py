@@ -98,8 +98,8 @@ class Command(BaseCommand):
 
     def get_extents(self):
         for operator in ['FECS', 'FPOT', 'FESX']:
-            stops = StopPoint.objects.filter(service__operator=operator, service__current=True)
-            extent = stops.aggregate(Extent('latlong'))['latlong__extent']
+            services = Service.objects.filter(operator=operator, current=True)
+            extent = services.aggregate(Extent('geometry'))['geometry__extent']
             if not extent:
                 continue
 
