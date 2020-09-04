@@ -4,7 +4,7 @@ from .models import Vehicle, VehicleEdit, VehicleRevision
 def get_vehicle_edit(vehicle, fields, now, username, request):
     edit = VehicleEdit(vehicle=vehicle, datetime=now)
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         edit.user = request.user
 
     edit.ip_address = request.META['REMOTE_ADDR']

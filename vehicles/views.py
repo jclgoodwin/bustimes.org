@@ -116,7 +116,7 @@ def operator_vehicles(request, slug=None, parent=None):
                         revision.datetime = now
                         revision.username = username or ''
                         revision.ip_address = request.META['REMOTE_ADDR']
-                        if request.user.is_authenticated():
+                        if request.user.is_authenticated:
                             revision.user = request.user
                     VehicleRevision.objects.bulk_create(revisions)
                     revisions = len(revisions)
@@ -475,7 +475,7 @@ def edit_vehicle(request, vehicle_id):
                 revision.datetime = now
                 if username:
                     revision.username = username
-                if request.user.is_authenticated():
+                if request.user.is_authenticated:
                     revision.user = request.user
                 revision.ip_address = ip_address
                 revision.save()
