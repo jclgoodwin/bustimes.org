@@ -314,9 +314,11 @@
             ]));
         };
 
-        socket.onclose = function() {
-            window.setTimeout(connect, backoff);
-            backoff += 500;
+        socket.onclose = function(event) {
+            if (event.code > 1000) {  // not 'normal closure'
+                window.setTimeout(connect, backoff);
+                backoff += 500;
+            }
         };
 
         socket.onerror = function(event) {
