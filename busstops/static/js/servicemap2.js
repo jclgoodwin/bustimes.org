@@ -28,6 +28,7 @@
     }
 
     function openMap() {
+        connect();
         container.className += ' expanded';
         if (document.body.style.paddingTop) {
             container.style.top = document.body.style.paddingTop;
@@ -294,6 +295,9 @@
                         busesOnlineCount.innerHTML = 'Tracking ' + items.length + ' buses';
                     }
                 } else {
+                    if (!map) {
+                        socket.close(1000);
+                    }
                     return;
                 }
             }
@@ -326,6 +330,8 @@
         container.className = container.className.replace(' expanded', '');
         document.body.style.overflow = '';
         setLocationHash('');
+
+        socket.close(1000);
 
         return false;
     }
