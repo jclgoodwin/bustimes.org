@@ -560,7 +560,7 @@ class Command(BaseCommand):
                 if operators and all(operator.id in self.incomplete_operators for operator in operators):
                     if Service.objects.filter(
                         operator__in=operators, line_name=line_name, current=True
-                    ).exclude(source=self.source):
+                    ).exclude(source=self.source).exists():
                         continue
 
                 service_code = get_service_code(filename)
