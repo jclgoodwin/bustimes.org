@@ -99,11 +99,11 @@ def do_revision(vehicle, data):
     changes = {}
     changed_fields = []
 
-    if 'reg' in data:
-        changes['reg'] = f"-{vehicle.reg}\n+{data['reg']}"
-        vehicle.reg = data['reg']
-        changed_fields.append('reg')
-        del data['reg']
+    # if 'reg' in data:
+    #     changes['reg'] = f"-{vehicle.reg}\n+{data['reg']}"
+    #     vehicle.reg = data['reg']
+    #     changed_fields.append('reg')
+    #     del data['reg']
 
     for field in ('notes', 'branding', 'name'):
         if field in data and not data[field]:

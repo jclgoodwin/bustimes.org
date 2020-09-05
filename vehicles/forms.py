@@ -97,11 +97,11 @@ class EditVehicleForm(EditVehiclesForm):
         if vehicle.reg and vehicle.reg in vehicle.code.replace('_', '').replace(' ', '').replace('-', ''):
             self.fields['reg'].disabled = True
 
-        # if not vehicle.notes:
-        #     del self.fields['notes']
-        #     if not vehicle.data or 'Depot' not in vehicle.data:
-        #         del self.fields['depot']
-        #     if not vehicle.name:
-        #         del self.fields['name']
-        #     if not vehicle.branding:
-        #         self.fields['branding'].disabled = True
+        if not vehicle.notes:
+            del self.fields['notes']
+            if not vehicle.data or 'Depot' not in vehicle.data:
+                del self.fields['depot']
+            if not vehicle.name:
+                del self.fields['name']
+            if not vehicle.branding:
+                del self.fields['branding']
