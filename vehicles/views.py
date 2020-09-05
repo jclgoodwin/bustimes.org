@@ -250,10 +250,8 @@ def siri_one_shot(code, now):
         command.handle_item(item, now, code)
 
 
-schemes = ('Cornwall SIRI', 'Devon SIRI', 'Highland SIRI', 'Dundee SIRI', 'Bristol SIRI',
-           'Leicestershire SIRI', 'Dorset SIRI', 'Hampshire SIRI', 'West Sussex SIRI', 'Bucks SIRI',
-           'Peterborough SIRI', 'Bracknell Siri')
-# ('Essex SIRI', 'Southampton SIRI', 'Slough SIRI', 'Staffordshire SIRI')
+schemes = ('Cornwall SIRI', 'Devon SIRI', 'Bristol SIRI', 'Bucks SIRI'
+           'Leicestershire SIRI', 'Hampshire SIRI', 'West Sussex SIRI')
 
 
 def vehicles_last_modified(request):
