@@ -71,6 +71,7 @@ self.addEventListener('fetch', event => {
         || url.pathname.includes('/edit')
         || url.pathname == '/contact'
         || url.pathname.startsWith('/admin/')
+        || url.pathname.startsWith('/accounts/')
     ) {
         return;
     }
