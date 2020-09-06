@@ -93,23 +93,8 @@ class Calendar(models.Model):
             return ''
         if len(days) == 1:
             return f'{days[0]}s only'
-        if days == [
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-        ]:
-            return 'Monday to Friday'
-        if days == [
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday',
-        ]:
-            return 'Monday to Saturday'
+        if days in day_keys:
+            return f'{days[0]} to {days[-1]}'
         return f"{'s, '.join(days[:-1])}s and {days[-1]}s"
 
 
