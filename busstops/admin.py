@@ -6,7 +6,7 @@ from django.contrib.gis.db.models import PointField
 from bustimes.models import Route
 from .models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, StopCode, Operator, Service, ServiceLink,
-    Note, ServiceCode, OperatorCode, DataSource, Place, SIRISource, PaymentMethod, ServiceColour
+    ServiceCode, OperatorCode, DataSource, Place, SIRISource, PaymentMethod, ServiceColour
 )
 
 
@@ -138,10 +138,6 @@ class LocalityAdmin(admin.ModelAdmin):
     list_filter = ('admin_area', 'admin_area__region')
 
 
-class NoteAdmin(admin.ModelAdmin):
-    autocomplete_fields = ('operators', 'services')
-
-
 class OperatorCodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'operator', 'source', 'code')
     list_filter = [
@@ -203,7 +199,6 @@ admin.site.register(Operator, OperatorAdmin)
 admin.site.register(ServiceColour, ServiceColourAdmin)
 admin.site.register(Service, ServiceAdmin)
 admin.site.register(ServiceLink, ServiceLinkAdmin)
-admin.site.register(Note, NoteAdmin)
 admin.site.register(OperatorCode, OperatorCodeAdmin)
 admin.site.register(ServiceCode, ServiceCodeAdmin)
 admin.site.register(DataSource, DataSourceAdmin)

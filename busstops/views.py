@@ -460,8 +460,10 @@ class OperatorDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['services'] = sorted(self.object.service_set.filter(current=True).defer('geometry'),
                                      key=Service.get_order)
+
+        context['vehicles'] = self.object.vehicle_set.exists()
+
         if context['services']:
-            context['notes'] = self.object.note_set.all()
             context['modes'] = {service.mode for service in context['services'] if service.mode}
             context['breadcrumb'] = [self.object.region]
 
@@ -472,7 +474,7 @@ class OperatorDetailView(DetailView):
         return context
 
     def render_to_response(self, context):
-        if not context['services']:
+        if not context['services'] and not context['vehicles']:
             alternative = self.model.objects.filter(
                 name=self.object.name,
                 service__current=True

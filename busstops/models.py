@@ -844,19 +844,6 @@ class Contact(models.Model):
     referrer = models.URLField(blank=True)
 
 
-class Note(models.Model):
-    """A note about an error in the timetable, the operator going bust, or something"""
-    operators = models.ManyToManyField(Operator, blank=True)
-    services = models.ManyToManyField(Service, blank=True)
-    text = models.TextField()
-
-    def __str__(self):
-        return self.text
-
-    def get_absolute_url(self):
-        return (self.operators.first() or self.services.first()).get_absolute_url()
-
-
 class SIRISource(models.Model):
     name = models.CharField(max_length=255)
     url = models.URLField()

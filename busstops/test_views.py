@@ -6,7 +6,7 @@ from django.test import TestCase
 from django.core import mail
 from django.contrib.gis.geos import Point
 from django.shortcuts import render
-from .models import Region, AdminArea, District, Locality, StopPoint, StopUsage, Operator, Service, Note
+from .models import Region, AdminArea, District, Locality, StopPoint, StopUsage, Operator, Service
 
 
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -142,11 +142,6 @@ class ViewsTests(TestCase):
         cls.service.operator.add(cls.chariots)
         cls.inactive_service.operator.add(cls.chariots)
 
-        cls.note = Note.objects.create(
-            text='Mind your head'
-        )
-        cls.note.operators.set((cls.chariots,))
-
     def test_index(self):
         """Home page works and doesn't contain a breadcrumb"""
         response = self.client.get('/')
@@ -280,9 +275,6 @@ class ViewsTests(TestCase):
         self.assertContains(response, 'Sorry, it looks like no services currently stop at', status_code=404)
 
     def test_operator_found(self):
-        """The normal and Accelerated Mobile pages versions should be mostly the same
-        (but slightly different)
-        """
         response = self.client.get('/operators/ains')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'An airline operator in')
@@ -293,15 +285,14 @@ class ViewsTests(TestCase):
                             '&#112;&#108;&#101;&#46;&#99;&#111;&#109;')
         self.assertContains(response, 'http://www.ouibus.com')
         self.assertContains(response, '@dril on Twitter')
-        self.assertContains(response, 'Mind your head')  # Note
 
     def test_operator_not_found(self):
         """An operator with no services, or that doesn't exist, should should return a 404 response"""
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(5):
             response = self.client.get('/operators/VENT')
             self.assertContains(response, 'Page not found', status_code=404)
 
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(5):
             response = self.client.get('/operators/nu-venture')
             self.assertContains(response, 'Page not found', status_code=404)
 
@@ -319,7 +310,6 @@ class ViewsTests(TestCase):
         self.assertContains(response, 'ouibus')
         self.assertContains(response, '@dril on Twitter')
         self.assertContains(response, 'twitter.com/dril"')
-        self.assertEqual(self.note.get_absolute_url(), '/operators/ainsleys-chariots')
 
     def test_national_express_service(self):
         self.chariots.name = 'Hotel Hoppa'

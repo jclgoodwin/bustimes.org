@@ -18,15 +18,17 @@
     <p class="message">{{ note|safe }}</p>
 {% endfor %}
 
-<h2>{% include 'modes.html' with modes=modes noun='services' %} operated by {{ object }}</h2>
+{% if services %}
+    <h2>{% include 'modes.html' with modes=modes noun='services' %} operated by {{ object }}</h2>
 
-{% include 'services.html' with services=services %}
+    {% include 'services.html' with services=services %}
+{% endif %}
 
 {% if operator.licences.all %}
     <p>PSV operator licence: {% for licence in operator.licences.all %}<a href="{{ licence.get_absolute_url }}">{{ licence }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
 {% endif %}
 
-{% if operator.vehicle_set.exists %}
+{% if vehicles %}
     <p><a href="{{ object.get_absolute_url }}/vehicles">Unofficial, incomplete fleet list</a></p>
 {% endif %}
 
