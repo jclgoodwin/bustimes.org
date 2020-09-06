@@ -251,12 +251,13 @@ GPWS:
 AMNO:
     name: Arriva Midlands North
     url: https://www.arrivabus.co.uk/midlands/
+AFCL:
+    name: Arriva Derby
+    url: https://www.arrivabus.co.uk/midlands/
 AMSY:
     url: https://www.arrivabus.co.uk/north-west/
 ANEA:
     name: Arriva North East
-ARDU:
-    name: Arriva North East (Yorkshire)
 ANUM:
     name: Arriva Northumbria
 A1CS:

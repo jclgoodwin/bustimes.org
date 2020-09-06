@@ -255,8 +255,11 @@ def stagecoach():
             command.source.save(update_fields=['datetime'])
 
             print(' ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
-            print(' ', {o['id']: o['id'] for o in
-                  Operator.objects.filter(service__route__source=command.source).distinct().values('id')})
+            operators = Operator.objects.filter(service__route__source=command.source).distinct().values('id')
+            operators = {o['id']: o['id'] for o in operators}
+            print(' ', operators)
+            if 'ARDU' in operators:
+                command.source.service_set.filter(operator='ARDU').delete()
 
     if command.undefined_holidays:
         print(command.undefined_holidays)
