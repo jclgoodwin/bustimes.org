@@ -81,6 +81,7 @@ class ServiceMapConsumer(VehicleMapConsumer):
             if icarus:
                 if locations or ServiceCode.objects.filter(service=service_id, scheme__endswith=' SIRI').exists():
                     cache.set(f'{service_id}:connected', True, 300)
+        cache.close()
 
     def disconnect(self, close_code):
         for service_id in self.service_ids:
