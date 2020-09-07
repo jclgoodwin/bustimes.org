@@ -179,10 +179,7 @@ def first():
 def ticketer():
     command = get_command()
 
-    for region_id, noc, name in [
-        ('NW', 'WBTR', 'Warrington’s Own Buses'),
-        ('EA', 'LYNX', 'Lynx'),
-    ]:
+    for region_id, noc, name in settings.TICKETER_OPERATORS:
         url = f'https://opendata.ticketer.com/uk/{noc}/routes_and_timetables/current.zip'
         filename = f'{noc}.zip'
         path = os.path.join(settings.DATA_DIR, filename)

@@ -162,6 +162,8 @@ class Command(BaseCommand):
             open_data_operators += operators.values()
         for _, _, _, operators in settings.STAGECOACH_OPERATORS:
             open_data_operators += operators.values()
+        for _, operator, _ in settings.TICKETER_OPERATORS:
+            open_data_operators.append(operator)
         self.open_data_operators = set(open_data_operators)
         self.incomplete_operators = set(incomplete_operators)
         for archive_name in options['archives']:

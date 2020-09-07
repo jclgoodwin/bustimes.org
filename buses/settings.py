@@ -276,9 +276,9 @@ PASSENGER_OPERATORS = (
     }),
 )
 BOD_OPERATORS = (
-    ('LYNX', 'EA', {
-        'CO': 'LYNX',
-    }, True),
+    # ('LYNX', 'EA', {
+    #     'CO': 'LYNX',
+    # }, True),
     ('UNOE', 'SE', {
         'UBL': 'UNOE',
         'UBN': 'UNOE'
@@ -289,9 +289,9 @@ BOD_OPERATORS = (
     ('KBUS', 'EM', {
         'KN': 'KBUS',
     }, False),
-    ('WBTR', 'NW', {
-        'NW': 'WBTR',
-    }, False),
+    # ('WBTR', 'NW', {
+    #     'NW': 'WBTR',
+    # }, False),
     # ('HIPK', 'EM', {
     #     'HPB': 'HIPK'
     # }, False),
@@ -449,4 +449,8 @@ FIRST_OPERATORS = [
     # }),
     ('FirstWorcester', 'WM', {'FSMR': 'FSMR'}),
     ('FirstYork', 'Y', {'FYOR': 'FYOR'}),
+]
+TICKETER_OPERATORS = [
+    ('NW', 'WBTR', 'Warrington’s Own Buses'),
+    ('EA', 'LYNX', 'Lynx'),
 ]
