@@ -180,8 +180,8 @@ def ticketer():
     command = get_command()
 
     for region_id, noc, name in [
-        ('NW', 'WBTR', 'Warrington’s Own Buses')
-        ('EA', 'LYNX', 'Lynx')
+        ('NW', 'WBTR', 'Warrington’s Own Buses'),
+        ('EA', 'LYNX', 'Lynx'),
     ]:
         url = f'https://opendata.ticketer.com/uk/{noc}/routes_and_timetables/current.zip'
         filename = f'{noc}.zip'
