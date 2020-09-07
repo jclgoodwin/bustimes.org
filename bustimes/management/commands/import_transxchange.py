@@ -212,7 +212,7 @@ class Command(BaseCommand):
         # Get by regional operator code
         operator_code = get_operator_code(operator_element, 'OperatorCode')
         if operator_code:
-            if len(self.source.name) > 4:  # not a TNDS source
+            if not self.is_tnds():
                 operator_code = self.operators.get(operator_code, operator_code)
             operator = get_operator_by(self.region_id, operator_code)
             if not operator:
@@ -524,7 +524,7 @@ class Command(BaseCommand):
         return description
 
     def is_tnds(self):
-        return len(self.source.name) <= 4
+        return len(self.source.name) <= 4 and self.source.name.isupper()
 
     def handle_service(self, filename, parts, transxchange, txc_service, today, stops):
         if txc_service.operating_period.end:
