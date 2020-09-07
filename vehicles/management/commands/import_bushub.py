@@ -2,7 +2,7 @@ from datetime import datetime
 from ciso8601 import parse_datetime
 from django.utils import timezone
 from django.contrib.gis.geos import Point
-from busstops.models import Service
+from busstops.models import Service, DataSource
 from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
@@ -27,6 +27,13 @@ class Command(ImportLiveVehiclesCommand):
     def handle(self, source_name, **options):
         self.source_name = source_name
         super().handle(**options)
+
+    def do_source(self):
+        try:
+            super().do_source()
+        except DataSource.MultipleObjectsReturned:
+            self.source = DataSource.objects.get(name=self.source_name, url__contains='/nearby?')
+            self.url = self.source.url
 
     @staticmethod
     def get_datetime(item):

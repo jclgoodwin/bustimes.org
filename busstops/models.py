@@ -208,6 +208,12 @@ class DataSource(models.Model):
             url = self.url.replace('download/', '')
             text = self.name.split('_')[0] + '/Bus Open Data Service'
             date = self.datetime
+        elif self.url.startswith('https://travelinedatahosting.basemap.co.uk/'):
+            text = self.name
+            date = self.datetime
+        elif self.url.startswith('https://opendata.ticketer.com/uk/'):
+            text = self.name
+            date = self.datetime
         elif 'stagecoach' in self.url:
             url = 'https://www.stagecoachbus.com/open-data'
             text = self.name
