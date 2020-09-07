@@ -2,6 +2,7 @@ import io
 import requests
 import zipfile
 from ciso8601 import parse_datetime
+from datetime import datetime
 import xmltodict
 from django.contrib.gis.geos import Point
 from django.db.models import Q
@@ -35,8 +36,11 @@ class Command(ImportLiveVehiclesCommand):
         'RI': ['RCHC'],
         'RG': ['RGNT'],
         'WBT': ['WBTR'],
+        'WOB': ['WBTR'],
+        'TDY': ['YCST', 'LNUD', 'ROST', 'BPTR', 'KDTR', 'HRGT'],
     }
     operator_cache = {}
+    vehicle_cache = {}
 
     @staticmethod
     def get_datetime(item):
@@ -61,9 +65,14 @@ class Command(ImportLiveVehiclesCommand):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
 
         operator_ref = monitored_vehicle_journey['OperatorRef']
-        operator = self.get_operator(operator_ref)
-
         vehicle_ref = monitored_vehicle_journey['VehicleRef']
+        cache_key = f'{operator_ref}-{vehicle_ref}'
+        try:
+            return self.vehicles.get(id=self.vehicle_cache[cache_key]), False
+        except (KeyError, Vehicle.DoesNotExist):
+            pass
+
+        operator = self.get_operator(operator_ref)
 
         if operator and vehicle_ref.startswith(f'{operator_ref}-'):
             vehicle_ref = vehicle_ref[len(operator_ref) + 1:]
@@ -76,14 +85,14 @@ class Command(ImportLiveVehiclesCommand):
         if type(operator) is Operator:
             defaults['operator'] = operator
             if operator.parent:
-                vehicles = Vehicle.objects.filter(operator__parent=operator.parent)
+                vehicles = self.vehicles.filter(operator__parent=operator.parent)
             else:
-                vehicles = operator.vehicle_set
+                vehicles = self.vehicles.filter(operator=operator)
         elif type(operator) is list:
             defaults['operator_id'] = operator[0]
-            vehicles = Vehicle.objects.filter(operator__in=operator)
+            vehicles = self.vehicles.filter(operator__in=operator)
         else:
-            vehicles = Vehicle.objects.filter(operator=None)
+            vehicles = self.vehicles.filter(operator=None)
 
         assert vehicle_ref
 
@@ -101,10 +110,14 @@ class Command(ImportLiveVehiclesCommand):
         vehicles = vehicles.filter(condition)
 
         try:
-            return vehicles.get_or_create(defaults)
+            vehicle, created = vehicles.get_or_create(defaults)
         except Vehicle.MultipleObjectsReturned as e:
             print(e, operator, vehicle_ref)
-            return vehicles.first(), False
+            vehicle = vehicles.first()
+            created = False
+
+        self.vehicle_cache[cache_key] = vehicle.id
+        return vehicle, created
 
     def get_service(self, operator, monitored_vehicle_journey):
         line_ref = monitored_vehicle_journey.get('LineRef')
@@ -192,7 +205,7 @@ class Command(ImportLiveVehiclesCommand):
         )
 
     def get_items(self):
-        print('f')
+        before = datetime.now()
 
         response = requests.get(self.source.url)
 
@@ -206,6 +219,8 @@ class Command(ImportLiveVehiclesCommand):
         for item in data['Siri']['ServiceDelivery']['VehicleMonitoringDelivery']['VehicleActivity']:
             yield item
 
-        print('f')
+        after = datetime.now()
+
+        print(after - before)
 
         # self.source.save(update_fields=['datetime'])
