@@ -1,30 +1,11 @@
-bed_44-46-_-y08:
-    line_brand: Holt Circular
-    description: Wells-next-the-Sea - Langham - Blakeney - Cley - Glandford - Holt
-    outbound_description: Wells-next-the-Sea - Langham - Blakeney - Cley - Glandford - Holt
-    inbound_description: Holt - Glandford - Cley - Blakeney - Langham - Wells-next-the-Sea
-bed_41-18-_-y08:
-    outbound_description: Dereham - Billingford - Bawdeswell - Foulsham - Guist - Dereham
-    inbound_description: Dereham - Guist - Foulsham - Bawdeswell - Billingford - Dereham
-bed_41-50A-_-y08:
+bed_44-80-_-y08:  # Sanders 80
     current: false
-bed_41-50-_-y08:
+bed_49-15-_-y08:  # Semmence 15
     current: false
-bed_44-80-_-y08:
-    current: false
-bed_49-15-_-y08:
-    current: false
-# FECS
-suf_1-99-_-y08:
-    line_brand: Coastal Clipper
 FSAW032:
     description: Castlebay - Barra
 FSBW033:
     description: Castlebay - Vatersay
-YNAO042S:
-    description: York - Naburn - Cawood - Selby
-YNAO042:
-    description: Cawood - Selby
 FWAO266:
     description: Newmains or Shotts - Hamilon
 FWAO267:
@@ -45,60 +26,11 @@ BOBO131:  # Peter Hogg cross-border
     current: false
 NE_310_PM6161_131:
     description: Jedburgh - Newcastle upon Tyne
-NW_04_ROST_469_1:
-    line_brand: Tottington Line
-NW_05_LUL_X41_1:
-    line_brand: Red Express
-NW_05_BPT_X43_1:
-    line_brand: Witch Way
-NW_05_BPT_M1_1:
-    line_brand: Mainline
-NW_05_BPT_M2_1:
-    line_brand: Mainline
-NW_05_BPT_M3_1:
-    line_brand: Mainline
-NW_05_BPT_M4_1:
-    line_brand: Mainline
-YWAO840:
-    line_brand: Coastliner
-YWAO843:
-    line_brand: Coastliner
-YNAO022:
-    line_brand: Little Explorers
-YNBO022:
-    line_brand: Little Explorers
-YNCO022:
-    line_brand: Little Explorers
-YNCO023:
-    line_brand: Little Explorers
-YNDO023:
-    line_brand: Little Explorers
-YNEO023:
-    line_brand: Little Explorers
-YWAO036:
-    line_brand: Riding Redefined
-YWAB001:
-    line_brand: Brontë Bus
-YWAB002:
-    line_brand: Brontë Bus
-YWAB003:
-    line_brand: Brontë Bus
-swe_40-376-_-y10:
-    line_brand: Mendip Xplorer
-NE_130_PB3954_50:
-    line_brand: Whey Aye Five O
-NE_130_PB3954_50A:
-    line_brand: Whey Aye Five O
-NE_410_PB1954_1:
-    line_brand: Coaster
-NE_410_PB1954_1A:
-    line_brand: Coaster
 swe_41-633-_-y10:  # Hatch Green Coaches
     current: false
-# typo
-em_18-CC-_-y08:
-    line_name: calverton connection
-    line_brand: C
+swe_40-3S-_-y10:
+    operator:
+        - FBRI
 swe_38-m1-_-y10:
     operator:
         - FBRI
@@ -135,7 +67,3 @@ PXAO011:
     current: false
 NAAO303:
     description: Bridgend - Llantwit Major - (Barry)
-swe_44-7-_-y10:
-    line_brand: The Star
-swe_44-8-D-y10:
-    line_brand: The Star
