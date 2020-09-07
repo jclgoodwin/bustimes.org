@@ -83,7 +83,10 @@ def handle_item(item, source):
         consequence.save()
 
         for line in consequence_element.findall('Affects/Networks/AffectedNetwork/AffectedLine'):
-            line_name = line.find('PublishedLineName').text
+            line_name = line.find('PublishedLineName')
+            if line_name is None:
+                line_name = line.find('LineRef')
+            line_name = line_name.text
             for operator in line.findall('AffectedOperator'):
                 operator_ref = operator.find('OperatorRef').text
                 services = Service.objects.filter(current=True, line_name__iexact=line_name, operator=operator_ref)
