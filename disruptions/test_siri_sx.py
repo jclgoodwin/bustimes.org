@@ -5,7 +5,7 @@ from django.test import TestCase, override_settings
 from django.core.cache import cache
 from django.conf import settings
 from django.core.management import call_command
-from busstops.models import Region, Operator, Service, DataSource
+from busstops.models import Region, Operator, Service, DataSource, StopPoint
 from vehicles.tasks import handle_siri_sx
 from .models import Situation
 
@@ -17,6 +17,68 @@ class SiriSXTest(TestCase):
         operator = Operator.objects.create(region=region, id='HATT', name='Hattons of Huyton')
         service = Service.objects.create(line_name='156', service_code='156', date='2020-01-01', current=True)
         service.operator.add(operator)
+        StopPoint.objects.bulk_create([
+            StopPoint(atco_code='1800EB00151', active=True),
+            StopPoint(atco_code='1800EB06881', active=True),
+            StopPoint(atco_code='1800EB13721', active=True),
+            StopPoint(atco_code='1800NF28251', active=True),
+            StopPoint(atco_code='1800NF28261', active=True),
+            StopPoint(atco_code='1800NF28271', active=True),
+            StopPoint(atco_code='1800NF28281', active=True),
+            StopPoint(atco_code='1800NF28291', active=True),
+            StopPoint(atco_code='1800NF28301', active=True),
+            StopPoint(atco_code='1800NF28541', active=True),
+            StopPoint(atco_code='1800NF28551', active=True),
+            StopPoint(atco_code='1800NF28781', active=True),
+            StopPoint(atco_code='1800NF28791', active=True),
+            StopPoint(atco_code='1800NF28801', active=True),
+            StopPoint(atco_code='1800NF28811', active=True),
+            StopPoint(atco_code='1800NF28821', active=True),
+            StopPoint(atco_code='1800NF28831', active=True),
+            StopPoint(atco_code='1800NF28841', active=True),
+            StopPoint(atco_code='1800NF28851', active=True),
+            StopPoint(atco_code='1800NF28861', active=True),
+            StopPoint(atco_code='1800NF28931', active=True),
+            StopPoint(atco_code='1800NF28941', active=True),
+            StopPoint(atco_code='1800NF28951', active=True),
+            StopPoint(atco_code='1800NF28961', active=True),
+            StopPoint(atco_code='1800NF28971', active=True),
+            StopPoint(atco_code='1800NF28981', active=True),
+            StopPoint(atco_code='1800SB02041', active=True),
+            StopPoint(atco_code='1800SB05841', active=True),
+            StopPoint(atco_code='1800SB12051', active=True),
+            StopPoint(atco_code='1800SB12491', active=True),
+            StopPoint(atco_code='1800SB14291', active=True),
+            StopPoint(atco_code='1800SB14301', active=True),
+            StopPoint(atco_code='1800SB15431', active=True),
+            StopPoint(atco_code='1800SB33551', active=True),
+            StopPoint(atco_code='1800SB33701', active=True),
+            StopPoint(atco_code='1800SB33721', active=True),
+            StopPoint(atco_code='1800SB33731', active=True),
+            StopPoint(atco_code='1800SB33741', active=True),
+            StopPoint(atco_code='1800SB33751', active=True),
+            StopPoint(atco_code='1800SB33781', active=True),
+            StopPoint(atco_code='1800SB33791', active=True),
+            StopPoint(atco_code='1800SB33801', active=True),
+            StopPoint(atco_code='1800SB33811', active=True),
+            StopPoint(atco_code='1800SB33821', active=True),
+            StopPoint(atco_code='1800SB33841', active=True),
+            StopPoint(atco_code='1800SB33851', active=True),
+            StopPoint(atco_code='2800S11031B', active=True),
+            StopPoint(atco_code='2800S11050A', active=True),
+            StopPoint(atco_code='2800S11051B', active=True),
+            StopPoint(atco_code='2800S11052A', active=True),
+            StopPoint(atco_code='2800S11053A', active=True),
+            StopPoint(atco_code='2800S11085A', active=True),
+            StopPoint(atco_code='2800S46043C', active=True),
+            StopPoint(atco_code='2800S46075A', active=True),
+            StopPoint(atco_code='2800S46075B', active=True),
+            StopPoint(atco_code='2800S61011A', active=True),
+            StopPoint(atco_code='2800S61012B', active=True),
+            StopPoint(atco_code='2800S61012C', active=True),
+            StopPoint(atco_code='2800S61013A', active=True),
+            StopPoint(atco_code='2800S61013B', active=True),
+        ])
         DataSource.objects.create(name='Transport for the North',
                                   settings={'app_id': 'hen hom', 'app_key': 'roger poultry'})
         DataSource.objects.create(name='Arriva')
@@ -685,14 +747,14 @@ Services will observe all bus stops on the diverted route. </Details>
                 self.client.post('/siri', xml, content_type='text/xml')
             siri_sx.assert_called_with(xml)
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(12):
             handle_siri_sx(xml)
         with self.assertNumQueries(2):
             handle_siri_sx(xml)
 
     def test_siri_sx_request(self):
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
-            with self.assertNumQueries(72):
+            with self.assertNumQueries(96):
                 call_command('import_siri_sx')
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
             with self.assertNumQueries(11):

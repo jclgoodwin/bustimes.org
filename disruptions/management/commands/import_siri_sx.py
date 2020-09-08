@@ -93,6 +93,10 @@ def handle_item(item, source):
                 for service in services:
                     consequence.services.add(service)
 
+        stops = consequence_element.findall('Affects/StopPoints/AffectedStopPoint')
+        stops = [stop.find('StopPointRef').text for stop in stops]
+        consequence.stops.set(stops)
+
     return situation.id
 
 
