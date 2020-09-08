@@ -716,7 +716,7 @@ closures from Monday 11th May until Thursday 14th may. ')
 Didsbury Rail Station as this will be the last stop. From here its a short walk to the terminus. \n
 Towards Manchester the 142 service will begin outside Didsbury Cricket club . """)
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             response = self.client.get('/services/156')
 
         self.assertContains(response, "<p>East Lancashire Road will be subjected to restrictions, at Liverpool Road,\

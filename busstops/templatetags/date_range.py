@@ -6,6 +6,8 @@ register = template.Library()
 
 @register.filter
 def date_range(date_range):
+    if not date_range:
+        return ''
     to_format = '%-d %B %Y'
     if date_range.lower and date_range.upper:
         if date_range.lower.year == date_range.upper.year:

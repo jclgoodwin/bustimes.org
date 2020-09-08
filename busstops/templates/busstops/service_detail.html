@@ -32,6 +32,9 @@
                 </div>
             {% endif %}
             <h2>{{ situation.summary }}</h2>
+            {% if situation.validityperiod_set.all|length == 1%}
+                {{ situation.validityperiod_set.all.0 }}
+            {% endif %}
         </div>
         {{ situation.text|linebreaks }}
         {% for consequence in situation.consequences %}

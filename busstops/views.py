@@ -587,7 +587,8 @@ class ServiceDetailView(DetailView):
             current=True
         ).distinct().prefetch_related(
             Prefetch('consequence_set', queryset=consequences, to_attr='consequences'),
-            'link_set'
+            'link_set',
+            'validityperiod_set'
         )
 
         return context
