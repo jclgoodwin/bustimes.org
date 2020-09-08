@@ -250,6 +250,8 @@ class Vehicle(models.Model):
         return f'https://www.flickr.com/search/?text={quote(search)}&sort=date-taken-desc'
 
     def get_flickr_link(self):
+        if self.notes == 'Spare ticket machine':
+            return ''
         return format_html('<a href="{}" target="_blank" rel="noopener">Flickr</a>', self.get_flickr_url())
 
     get_flickr_link.short_description = 'Flickr'
@@ -270,7 +272,7 @@ class Vehicle(models.Model):
             cache.set(f'{service_id}:vehicles_last_modified', timezone.now())
 
     def editable(self):
-        if self.id > 242957 or self.notes == 'Spare ticket machine':
+        if self.notes == 'Spare ticket machine':
             return False
         return True
 
