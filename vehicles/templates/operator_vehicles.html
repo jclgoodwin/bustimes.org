@@ -69,9 +69,7 @@
         {% for vehicle in vehicles %}
             <tr>
                 {% if form %}
-                    <td>
-                        <input type="checkbox" name="vehicle" value="{{ vehicle.id }}">
-                    </td>
+                    <td>{% if vehicle.editable %}<input type="checkbox" name="vehicle" value="{{ vehicle.id }}">{% endif %}</td>
                 {% endif %}
                 {% if code_column %}
                     <td class="number">{% if vehicle.fleet_number_mismatch %}{{ vehicle.code }}{% endif %}</td>
