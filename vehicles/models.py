@@ -411,8 +411,10 @@ class VehicleJourney(models.Model):
     class Meta:
         ordering = ('id',)
         index_together = (
-            ('vehicle', 'datetime'),
             ('service', 'datetime'),
+        )
+        unique_together = (
+            ('vehicle', 'datetime'),
         )
 
 
@@ -442,6 +444,9 @@ class Call(models.Model):
     class Meta:
         index_together = (
             ('stop', 'expected_departure_time'),
+        )
+        unique_together = (
+            ('journey', 'visit_number'),
         )
 
 

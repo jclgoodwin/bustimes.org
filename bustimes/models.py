@@ -1,5 +1,5 @@
 from django.db.models import Q, Exists, OuterRef
-from django.db import models
+from django.contrib.gis.db import models
 from django.contrib.postgres.fields import DateRangeField
 from django.urls import reverse
 
@@ -36,6 +36,7 @@ class Route(models.Model):
     end_date = models.DateField(null=True, blank=True)
     dates = DateRangeField(null=True, blank=True)
     service = models.ForeignKey('busstops.Service', models.CASCADE)
+    geometry = models.MultiLineStringField(null=True, editable=False)
 
     class Meta:
         unique_together = ('source', 'code')
