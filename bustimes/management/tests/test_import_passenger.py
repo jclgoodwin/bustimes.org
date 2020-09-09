@@ -34,8 +34,8 @@ class ImportPassengerTest(TestCase):
             call_command('import_passenger')
 
             download_if_new.assert_called_with(
-                os.path.join(settings.DATA_DIR, 'unilink_1586941252.zip'),
-                'https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1586941252.zip'
+                os.path.join(settings.DATA_DIR, 'unilink_1586941252.gtfs.zip'),
+                'https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/gtfs/unilink_1586941252.zip'
             )
 
         self.assertFalse(Route.objects.all())

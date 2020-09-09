@@ -25,6 +25,65 @@ def download_if_new(path, url):
     return False
 
 
+def handle_gtfs(operators, path):
+    operator = operators[0]
+    with zipfile.ZipFile(path) as archive:
+        for line in read_file(archive, 'routes.txt'):
+            foreground = line['route_text_color']
+            background = line['route_color']
+            if foreground == '000000' and background == 'FFFFFF':
+                continue
+            try:
+                service = Service.objects.get(operator__in=operators, line_name=line['route_short_name'], current=True)
+            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                continue
+            colour, _ = ServiceColour.objects.get_or_create(
+                {'name': service.line_brand},
+                foreground=f"#{foreground}",
+                background=f"#{background}",
+                operator_id=operator,
+            )
+            service.colour = colour
+            service.save(update_fields=['colour'])
+
+
+def get_versions(session, url):
+    versions = []
+    try:
+        response = session.get(url, timeout=5)
+    except requests.RequestException as e:
+        print(url, e)
+        sleep(5)
+        return
+    if not response.ok:
+        print(url, response)
+        sleep(5)
+        return
+    for element in response.html.find():
+        if element.tag == 'h3':
+            heading = element.text
+        elif element.tag == 'a':
+            url = element.attrs['href']
+            if '/txc/' in url:
+                url = element.attrs['href']
+                filename = url.split('/')[-1]
+                path = os.path.join(settings.DATA_DIR, filename)
+                modified = download_if_new(path, url)
+                gtfs_path = f'{path[:-3]}gtfs.zip'
+                download_if_new(gtfs_path, url.replace('/txc/', '/gtfs/'))
+                dates = heading.split(' to ')
+                versions.append({
+                    'filename': filename,
+                    'gtfs_path': gtfs_path,
+                    'modified': modified,
+                    'dates': dates
+                })
+
+    versions.sort(key=lambda v: (v['dates'][0], v['filename']), reverse=True)
+
+    return versions
+
+
 class Command(BaseCommand):
     def handle(self, *args, **options):
         command = TransXChangeCommand()
@@ -45,82 +104,61 @@ class Command(BaseCommand):
             command.service_ids = set()
             command.route_ids = set()
 
-            versions = []
-            try:
-                response = session.get(url, timeout=5)
-            except requests.RequestException as e:
-                print(url, e)
-                sleep(5)
+            versions = get_versions(session, url)
+
+            if not versions or not any(version['modified'] for version in versions):
                 continue
-            if not response.ok:
-                print(url, response)
-                sleep(5)
-                continue
-            for element in response.html.find():
-                if element.tag == 'h3':
-                    heading = element.text
-                elif element.tag == 'a':
-                    url = element.attrs['href']
-                    if '/txc/' in url:
-                        url = element.attrs['href']
-                        filename = url.split('/')[-1]
-                        path = os.path.join(settings.DATA_DIR, filename)
-                        modified = download_if_new(path, url)
-                        dates = heading.split(' to ')
-                        versions.append(
-                            (filename, modified, dates)
-                        )
 
-            versions.sort(key=lambda t: (t[2][0], t[0]), reverse=True)
+            previous_date = None
 
-            if any(modified for _, modified, _ in versions):
-                previous_date = None
+            with transaction.atomic():
 
-                with transaction.atomic():
+                for version in versions:  # newest first
+                    print(version)
 
-                    for path, modified, dates in versions:  # newest first
-                        print(path, modified, dates)
+                    command.calendar_cache = {}
+                    handle_file(command, version['filename'])
 
-                        command.calendar_cache = {}
-                        handle_file(command, path)
+                    start_date = dateparse.parse_date(version['dates'][0])
 
-                        start_date = dateparse.parse_date(dates[0])
+                    routes = command.source.route_set.filter(code__startswith=version['filename'])
+                    calendars = Calendar.objects.filter(trip__route__in=routes)
+                    calendars.filter(start_date__lt=start_date).update(start_date=start_date)
+                    routes.filter(start_date__lt=start_date).update(start_date=start_date)
 
-                        routes = command.source.route_set.filter(code__startswith=path)
-                        calendars = Calendar.objects.filter(trip__route__in=routes)
-                        calendars.filter(start_date__lt=start_date).update(start_date=start_date)
-                        routes.filter(start_date__lt=start_date).update(start_date=start_date)
+                    if previous_date:  # if there is a newer dataset, set end date
+                        new_end_date = previous_date - timedelta(days=1)
+                        calendars.update(end_date=new_end_date)
+                        routes.update(end_date=new_end_date)
+                    previous_date = start_date
 
-                        if previous_date:  # if there is a newer dataset, set end date
-                            new_end_date = previous_date - timedelta(days=1)
-                            calendars.update(end_date=new_end_date)
-                            routes.update(end_date=new_end_date)
-                        previous_date = start_date
+                    if version['dates'][0] <= str(command.source.datetime.date()):
+                        break
 
-                        if dates[0] <= str(command.source.datetime.date()):
-                            break
+                routes = Route.objects.filter(service__source=command.source)
+                print('duplicate routes:', routes.exclude(source=command.source).delete())
 
-                    routes = Route.objects.filter(service__source=command.source)
-                    print('duplicate routes:', routes.exclude(source=command.source).delete())
+                # delete route data from TNDS
+                routes = Route.objects.filter(service__operator__in=operators.values())
+                print('other source routes:', routes.exclude(source__name__in=sources).delete())
 
-                    # delete route data from TNDS
-                    routes = Route.objects.filter(service__operator__in=operators.values())
-                    print('other source routes:', routes.exclude(source__name__in=sources).delete())
+                services = Service.objects.filter(operator__in=operators.values(), current=True, route=None)
+                print('other source services:', services.update(current=False))
 
-                    services = Service.objects.filter(operator__in=operators.values(), current=True, route=None)
-                    print('other source services:', services.update(current=False))
+                # delete route data from old versions
+                routes = command.source.route_set
+                for prefix, _, _, dates in versions:
+                    routes = routes.exclude(code__startswith=prefix)
+                    if dates[0] <= str(command.source.datetime.date()):
+                        break
+                print('old routes:', routes.delete())
 
-                    # delete route data from old versions
-                    routes = command.source.route_set
-                    for prefix, _, dates in versions:
-                        routes = routes.exclude(code__startswith=prefix)
-                        if dates[0] <= str(command.source.datetime.date()):
-                            break
-                    print('old routes:', routes.delete())
+                # mark old services as not current
+                print('old services:', command.mark_old_services_as_not_current())
 
-                    # mark old services as not current
-                    print('old services:', command.mark_old_services_as_not_current())
+            for version in versions:
+                handle_gtfs(list(command.operators.values()), version['gtfs_path'])
 
-                command.source.save(update_fields=['datetime'])
-            else:
-                sleep(2)
+            command.source.save(update_fields=['datetime'])
+        else:
+            sleep(2)
