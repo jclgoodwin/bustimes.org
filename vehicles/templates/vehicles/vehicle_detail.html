@@ -32,8 +32,10 @@
         <p>{{ vehicle.notes }}</p>
     {% endif %}
 
-    {% for key, value in vehicle.data.items %}
-        <p>{{ key }}: {{ value }}</p>
+    {% for key, value in vehicle.data_get %}
+        {% if value %}
+            <p>{{ key }}: {{ value }}</p>
+        {% endif %}
     {% endfor %}
 
     {% if vehicle.features.all %}

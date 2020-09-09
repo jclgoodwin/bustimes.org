@@ -128,7 +128,7 @@
                 {% if vehicle.branding %}<td>{{ vehicle.branding }}</td>{% endif %}
                 {% if name_column %}<td>{{ vehicle.name }}</td>{% endif %}
                 {% if notes_column %}<td>{% if vehicle.notes != 'Spare ticket machine' %}{{ vehicle.notes }}{% endif %}</td>{% endif %}
-                {% for value in vehicle.column_values %}<td>{{ value|default:"" }}</td>{% endfor %}
+                {% for value in vehicle.column_values %}<td>{{ value }}</td>{% endfor %}
                 {% if features_column %}<td>{{ vehicle.features.all|join:", " }}</td>{% endif %}
                 {% if parent %}<td>{{ vehicle.operator }}</td>{% endif %}
                 <td>{{ vehicle.get_flickr_link }}</td>

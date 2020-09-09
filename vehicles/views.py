@@ -157,7 +157,7 @@ def operator_vehicles(request, slug=None, parent=None):
 
     columns = set(key for vehicle in vehicles if vehicle.data for key in vehicle.data)
     for vehicle in vehicles:
-        vehicle.column_values = [vehicle.data and vehicle.data.get(key) for key in columns]
+        vehicle.column_values = [vehicle.data and vehicle.data_get(key) or '' for key in columns]
 
     response = render(request, 'operator_vehicles.html', {
         'breadcrumb': breadcrumb,

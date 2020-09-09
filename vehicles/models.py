@@ -23,6 +23,16 @@ import json
 r = redis.from_url(settings.CELERY_BROKER_URL)
 
 
+def format_reg(reg):
+    if reg[-3:].isalpha():
+        return reg[:-3] + '\u00A0' + reg[-3:]
+    if reg[:3].isalpha():
+        return reg[:3] + '\u00A0' + reg[3:]
+    if reg[-2:].isalpha():
+        return reg[:-2] + '\u00A0' + reg[-2:]
+    return reg
+
+
 def get_css(colours, direction=None, horizontal=False, angle=None):
     if len(colours) == 1:
         return colours[0]
@@ -195,13 +205,20 @@ class Vehicle(models.Model):
             return vehicles.order_by('fleet_number').first()
 
     def get_reg(self):
-        if self.reg[-3:].isalpha():
-            return self.reg[:-3] + '\u00A0' + self.reg[-3:]
-        if self.reg[:3].isalpha():
-            return self.reg[:3] + '\u00A0' + self.reg[3:]
-        if self.reg[-2:].isalpha():
-            return self.reg[:-2] + '\u00A0' + self.reg[-2:]
-        return self.reg
+        return format_reg(self.reg)
+
+    def data_get(self, key=None):
+        if not key:
+            if self.data:
+                return [(key, self.data_get(key)) for key in self.data]
+            return ()
+        if self.data:
+            value = self.data.get(key)
+            if value:
+                if key == 'Previous reg':
+                    return format_reg(value)
+                return value
+        return ''
 
     def get_text_colour(self):
         colours = self.livery and self.livery.colours or self.colours
