@@ -50,7 +50,7 @@ if (navigator.serviceWorker && location.protocol === 'https:') {
         var no = document.createElement('button');
         no.innerHTML = 'No thanks';
         no.onclick = function() {
-            cookieDiv.innerHTML = '<p>Fair enough. You may see ads that are less relevant to you. These ads use <a href="/cookies">cookies</a>, but not for personalization./p>';
+            cookieDiv.innerHTML = '<p>Fair enough. You may see ads that are less relevant to you. These ads use <a href="/cookies">cookies</a>, but not for personalization.</p>';
             cookieDiv.appendChild(ok);
         };
         cookieDiv.appendChild(no);
