@@ -150,7 +150,7 @@ class Command(BaseCommand):
                 # delete route data from old versions
                 routes = command.source.route_set
                 for version in versions:
-                    routes = routes.exclude(code__startswith=version['path'])
+                    routes = routes.exclude(code__startswith=version['filename'])
                     if version['dates'][0] <= str(command.source.datetime.date()):
                         break
                 print('old routes:', routes.delete())
