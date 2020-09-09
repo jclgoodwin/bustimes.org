@@ -160,7 +160,7 @@ class ServiceCodeAdmin(admin.ModelAdmin):
 
 
 class ServiceColourAdmin(admin.ModelAdmin):
-    list_display = ('name', 'preview', 'foreground', 'background')
+    list_display = ('preview', 'foreground', 'background')
 
 
 class PlaceAdmin(admin.ModelAdmin):
