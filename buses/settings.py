@@ -13,9 +13,10 @@ TEST = 'test' in sys.argv or 'pytest' in sys.argv[0]
 DEBUG = bool(os.environ.get('DEBUG', False)) or TEST
 
 SERVER_EMAIL = 'contact@bustimes.org'
+DEFAULT_FROM_EMAIL = 'contact@bustimes.org'
 
 INSTALLED_APPS = [
-    'busstops',
+    'accounts',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -24,6 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'django.contrib.sitemaps',
+    'busstops',
     'bustimes',
     'disruptions',
     'vehicles',

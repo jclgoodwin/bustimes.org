@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import DateTimeRangeField
 from django.urls import reverse
-from django.utils.timezone import localdate
 from busstops.templatetags.date_range import date_range
 
 

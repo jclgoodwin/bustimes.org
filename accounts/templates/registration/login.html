@@ -20,6 +20,8 @@
 
 </form>
 
+<p><a href="{% url 'register' %}?next={{ next }}">Create an account</a></p>
+
 <p><a href="{% url 'password_reset' %}?next={{ next }}">Lost password?</a></p>
 
 {% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'page.html' %}
+
+{% block title %}Create an account – bustimes.org{% endblock %}
+
+{% block bodyclass %}narrow{% endblock %}
+
+{% block content %}
+
+{% if form %}
+	<h1>Create an account</h1>
+
+	<form method="post" action="{% url 'register' %}">
+
+	{{ form.as_p }}
+
+	<input type="submit" value="Register">
+
+	{% csrf_token %}
+
+	</form>
+{% else %}
+	<p>Check your email ({{ user }})</p>
+{% endif %}
+
+{% endblock %}
+
+{% block ad %}{% endblock %}
