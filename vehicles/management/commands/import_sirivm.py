@@ -199,20 +199,30 @@ class Command(ImportLiveVehiclesCommand):
             ).first(), False
 
     def get_journey(self, item, vehicle):
+        latest_location = vehicle.latest_location
+
         journey = VehicleJourney()
 
         mvj = item.find('siri:MonitoredVehicleJourney', NS)
         operator_ref = mvj.find('siri:OperatorRef', NS).text
         service = mvj.find('siri:LineRef', NS).text
 
+        departure_time = mvj.find('siri:OriginAimedDepartureTime', NS)
+        if departure_time is not None:
+            journey.datetime = ciso8601.parse_datetime(departure_time.text)
+
+            if latest_location and latest_location.datetime == journey.datetime:
+                journey = latest_location.journey
+            else:
+                try:
+                    journey = VehicleJourney.objects.get(vehicle=vehicle, datetime=journey.datetime)
+                except VehicleJourney.DoesNotExist:
+                    pass
+
         journey_code = mvj.find('siri:FramedVehicleJourneyRef/siri:DatedVehicleJourneyRef', NS)
         if operator_ref != 'GOCH':
             if journey_code is not None and journey_code.text != 'UNKNOWN':
                 journey.code = journey_code.text
-
-        departure_time = mvj.find('siri:OriginAimedDepartureTime', NS)
-        if departure_time is not None:
-            journey.datetime = ciso8601.parse_datetime(departure_time.text)
 
         if service is None and operator_ref == 'TG':
             service = 'Colchester Park & Ride'
@@ -220,14 +230,12 @@ class Command(ImportLiveVehiclesCommand):
         if service:
             journey.route_name = service
 
-        if vehicle.latest_location and vehicle.latest_location.journey.code == journey.code and (
-                                       vehicle.latest_location.journey.route_name == journey.route_name
-        ):
-
-            journey.service = vehicle.latest_location.journey.service
-            if vehicle.latest_location.journey.destination:
-                journey.destination = vehicle.latest_location.journey.destination
-            return journey
+        if latest_location and latest_location.journey.code == journey.code:
+            if latest_location.journey.route_name == journey.route_name:
+                journey.service = latest_location.journey.service
+                if latest_location.journey.destination:
+                    journey.destination = latest_location.journey.destination
+                return journey
 
         destination_ref = mvj.find('siri:DestinationRef', NS)
         if destination_ref is not None:

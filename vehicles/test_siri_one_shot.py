@@ -45,7 +45,7 @@ class SIRIOneShotTest(TestCase):
                 self.assertEqual('nothing scheduled', cache.get(f'{self.service.id}:Icarus'))
 
             with freeze_time('2019-06-08 20:37+01:00'):
-                with self.assertNumQueries(52):
+                with self.assertNumQueries(56):
                     self.client.get(url)
                 with self.assertNumQueries(2):
                     res = self.client.get(url)
