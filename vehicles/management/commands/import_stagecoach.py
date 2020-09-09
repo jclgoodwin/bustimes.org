@@ -10,6 +10,44 @@ from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
 
 
+# "fn" "fleetNumber": "10452",
+# "ut" "updateTime": "1599550016135",
+# "oc" "operatingCompany": "SDVN",
+# "sn" "serviceNumber": "RED",
+# "dn" "direction": "INBOUND",
+# "sd" "serviceId": "XDARED0.I",
+# "so" "shortOpco": "SCD",
+# "sr" "serviceDescription": "Honiton Road Park & Ride - Exeter, Paris Street",
+# "cd" "cancelled": "False",
+# "vc" "vehicleActivityCancellation": "False",
+# "la" "latitude": "50.7314606",
+# "lo" "longitude": "-3.7003877",
+# "hg" "heading": "66",
+# "cg" "calculatedHeading": "",
+# "dd" "destinationDisplay": "City Centre Paris S",
+# "or" "originStopReference": "1100DEC10843",
+# "on" "originStopName": "Honiton Road P&R",
+# "nr" "nextStopReference": "1100DEC10085",
+# "nn" "nextStopName": "Sidwell Street",
+# "fr" "finalStopReference": "1100DEC10468",
+# "fs" "finalStopName": "Paris Street",
+# "ao" "aimedOriginStopDepartureTime": "",
+# "eo" "expectedOriginStopDepartureTime": "1599414000000",
+# "an" "aimedNextStopArrivalTime": "1599414720000",
+# "en" "expectedNextStopArrivalTime": "1599414756000",
+# "ax" "aimedNextStopDepartureTime": "1599414720000",
+# "ex" "expectedNextStopDepartureTime": "1599414522000",
+# "af" "aimedFinalStopArrivalTime": "1599414780000",
+# "ef" "expectedFinalStopArrivalTime": "1599414728000",
+# "ku" "kmlUrl": "https://tis-kml-stagecoach.s3.amazonaws.com/kml/0017f465-8178-4bfb-bfaa-43a81386120e.kml",
+# "td" "tripId": "7127",
+# "pr" "previousStopOnRoute": "1100DEC10843",
+# "cs" "currentStopOnRoute": "",
+# "ns" "nextStopOnRoute": "",
+# "jc" "isJourneyCompletedHeuristic": "False",
+# "rg" "rag": "A"
+
+
 def get_latlong(item):
     return Point(float(item['lo']), float(item['la']))
 
@@ -155,9 +193,20 @@ class Command(ImportLiveVehiclesCommand):
             }
             if service in alternatives:
                 service = alternatives[service]
+
             services = Service.objects.filter(current=True, operator__parent='Stagecoach')
             if item['or']:
-                services = services.filter(stops__locality__stoppoint=item['or']).distinct()
+                services = services.filter(stops__locality__stoppoint=item['or'])
+            elif item['pr']:
+                services = services.filter(stops__locality__stoppoint=item['pr'])
+
+            if item['fr']:
+                services = services.filter(stops__locality__stoppoint=item['fr'])
+            elif item['nr']:
+                services = services.filter(stops__locality__stoppoint=item['nr'])
+
+            services = services.distinct()
+
             latlong = get_latlong(item)
             try:
                 journey.service = self.get_service(services.filter(line_name__iexact=service), latlong)
