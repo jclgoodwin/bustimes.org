@@ -130,6 +130,9 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
 
     destination = destination or ''
     route_name = data.get('LineName') or data.get('LineRef')
+    if VehicleJourney.objects.filter(vehicle=vehicle, datetime=time).exists():
+        return
+
     if journey_ref:
         try:
             existing_journey = VehicleJourney.objects.get(vehicle=vehicle, route_name=route_name, code=journey_ref,
@@ -142,6 +145,6 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
                                           code=journey_ref, datetime=time, source=data_source, destination=destination)
         except VehicleJourney.MultipleObjectsReturned:
             return
-    elif not VehicleJourney.objects.filter(vehicle=vehicle, route_name=route_name, datetime=time).exists():
+    else:
         VehicleJourney.objects.create(vehicle=vehicle, service_id=service, route_name=route_name,
                                       datetime=time, source=data_source, destination=destination)

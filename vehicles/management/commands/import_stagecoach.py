@@ -126,31 +126,25 @@ class Command(ImportLiveVehiclesCommand):
             departure_time = None
             code = ''
 
-        if code and departure_time:
-            journey = vehicle.vehiclejourney_set.filter(code=code, datetime=departure_time).first()
-        else:
-            journey = None
-        if not journey:
-            journey = VehicleJourney(
-                code=code,
-                datetime=departure_time,
-                data=item
-            )
+        latest_location = vehicle.latest_location
+
+        journey = VehicleJourney(datetime=departure_time, data=item)
+        if departure_time:
+            if latest_location and latest_location.journey.datetime == departure_time:
+                journey = latest_location.journey
+            else:
+                try:
+                    journey = vehicle.vehiclejourney_set.get(datetime=departure_time)
+                except VehicleJourney.DoesNotExist:
+                    pass
 
         if code:
+            journey.code = code
             journey.destination = item.get('dd', '')
 
         journey.route_name = item.get('sn', '')
 
-        latest_location = vehicle.latest_location
-        if journey.service:
-            pass
-        elif (
-            latest_location and latest_location.journey.code == journey.code and
-            latest_location.journey.route_name == journey.route_name and latest_location.journey.service
-        ):
-            journey.service = latest_location.journey.service
-        elif journey.route_name:
+        if not journey.service and journey.route_name:
             service = journey.route_name
             alternatives = {
                 'PULS': 'Pulse',

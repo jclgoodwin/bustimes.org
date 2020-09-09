@@ -51,7 +51,7 @@ class VehiclesTasksTests(TestCase):
             }, None, 'EVESHAM Bus Station', 'Worcestershire', 'http://example.com')
         self.assertFalse(Vehicle.objects.filter(code='66692').exists())
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             tasks.log_vehicle_journey(self.service.id, {
                 'OperatorRef': 'FMR',
                 'VehicleRef': 'FMR-66692',
@@ -78,7 +78,7 @@ class VehiclesTasksTests(TestCase):
         self.assertEqual(vehicle.operator, self.badgerline)
 
     def test_log_vehicle_journey_2(self):
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             tasks.log_vehicle_journey(self.service.id, {
                 'OperatorRef': 'FMR',
                 'VehicleRef': 'FMR-11111',
