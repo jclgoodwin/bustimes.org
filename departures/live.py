@@ -725,6 +725,7 @@ def get_stop_times(when, stop, services):
     times = StopTime.objects.filter(~Q(activity='setDown'), stop_id=stop)
     if time_since_midnight:
         times = times.filter(departure__gte=time_since_midnight)
+    services = [service for service in services if not service.timetable_wrong]
     return times.filter(trip__route__service__in=services, trip__calendar__in=get_calendars(when))
 
 
