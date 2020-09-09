@@ -60,7 +60,7 @@ class BusHubTest(TestCase):
             "Destination": None
         }
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(12):
             command.handle_item(item, self.source.datetime)
 
         with self.assertNumQueries(1):
@@ -75,7 +75,7 @@ class BusHubTest(TestCase):
         item['OperatorRef'] = 'WNGS'
         item['VehicleRef'] = '20052'
         item['Bearing'] = '-1'
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             command.handle_item(item, self.source.datetime)
         self.assertEqual(2, Vehicle.objects.count())
         self.vehicle.refresh_from_db()
