@@ -3,6 +3,7 @@
 
 import os
 import requests
+import zipfile
 from time import sleep
 from datetime import timedelta
 from requests_html import HTMLSession
@@ -10,9 +11,10 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone, dateparse
-from busstops.models import DataSource, Service
+from busstops.models import DataSource, Service, ServiceColour
 from .import_bod import handle_file
 from .import_transxchange import Command as TransXChangeCommand
+from .import_gtfs import read_file
 from ...utils import write_file
 from ...models import Route, Calendar
 
