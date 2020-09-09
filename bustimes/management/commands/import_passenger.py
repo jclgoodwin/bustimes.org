@@ -98,6 +98,11 @@ class Command(BaseCommand):
         sources = [source[0] for source in settings.PASSENGER_OPERATORS]
 
         for name, url, region_id, operators in settings.PASSENGER_OPERATORS:
+            versions = get_versions(session, url)
+
+            if not versions or not any(version['modified'] for version in versions):
+                continue
+
             command.source, _ = DataSource.objects.get_or_create({'name': name}, url=url)
             command.source.datetime = timezone.now()
             command.operators = operators
@@ -105,11 +110,6 @@ class Command(BaseCommand):
             command.service_descriptions = {}
             command.service_ids = set()
             command.route_ids = set()
-
-            versions = get_versions(session, url)
-
-            if not versions or not any(version['modified'] for version in versions):
-                continue
 
             previous_date = None
 
@@ -149,9 +149,9 @@ class Command(BaseCommand):
 
                 # delete route data from old versions
                 routes = command.source.route_set
-                for prefix, _, _, dates in versions:
-                    routes = routes.exclude(code__startswith=prefix)
-                    if dates[0] <= str(command.source.datetime.date()):
+                for version in versions:
+                    routes = routes.exclude(code__startswith=version['path'])
+                    if version['dates'][0] <= str(command.source.datetime.date()):
                         break
                 print('old routes:', routes.delete())
 
@@ -159,7 +159,7 @@ class Command(BaseCommand):
                 print('old services:', command.mark_old_services_as_not_current())
 
             for version in versions:
-                handle_gtfs(list(command.operators.values()), version['gtfs_path'])
+                handle_gtfs(list(operators.values()), version['gtfs_path'])
 
             command.source.save(update_fields=['datetime'])
         else:
