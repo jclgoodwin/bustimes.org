@@ -10,6 +10,7 @@ urlpatterns = [
     path('vehicles', views.vehicles),
     path('vehicles.json', views.vehicles_json),
     path('vehicles/<int:pk>', views.VehicleDetailView.as_view(), name='vehicle_detail'),
+    path('vehicles/<slug>', views.VehicleDetailView.as_view()),
     path('vehicles/<int:vehicle_id>/edit', views.edit_vehicle),
     path('vehicles/<int:vehicle_id>/history', views.vehicle_history),
     path('vehicles/history', views.vehicles_history),
