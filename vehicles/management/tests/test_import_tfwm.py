@@ -29,7 +29,7 @@ class TfWMImportTest(TestCase):
         with override_settings(TFWM={}):
             items = command.get_items()
 
-        with self.assertNumQueries(11):  # X12
+        with self.assertNumQueries(12):  # X12
             command.handle_item(items[0], self.source.datetime)
 
         with self.assertNumQueries(12):
@@ -41,4 +41,4 @@ class TfWMImportTest(TestCase):
         with self.assertNumQueries(11):
             command.handle_item(items[216], self.source.datetime)
 
-        self.assertEqual(2, Vehicle.objects.all().count())
+        self.assertEqual(3, Vehicle.objects.all().count())

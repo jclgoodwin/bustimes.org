@@ -55,6 +55,8 @@ class Command(ImportLiveVehiclesCommand):
                 service = Service.objects.get(current=True, servicecode__scheme='TfWM',
                                               servicecode__code=item.vehicle.trip.route_id)
                 operator = service.operator.first()
+
+                vehicle_code = vehicle_code[:-len(service.line_name)]
                 if operator:
                     if operator.name == 'Diamond Bus':
                         return None, None
@@ -67,7 +69,7 @@ class Command(ImportLiveVehiclesCommand):
                 print(e, item.vehicle.trip.route_id, vehicle_code)
                 pass
 
-        if vehicle_code[-3:] == 'X12':
+        elif vehicle_code[-3:] == 'X12':
             vehicle_code = vehicle_code[:-3]
             return self.vehicles.get_or_create(defaults, operator_id='MDCL', code=vehicle_code)
 
@@ -97,8 +99,8 @@ class Command(ImportLiveVehiclesCommand):
                 datetime.strptime(item.vehicle.trip.start_date + item.vehicle.trip.start_time, '%Y%m%d%H:%M:%S')
             )
 
-            # if vehicle.latest_location and vehicle.latest_location.journey.datetime == journey.datetime:
-            #     return vehicle.latest_location.journey
+            if vehicle.latest_location and vehicle.latest_location.journey.datetime == journey.datetime:
+                return vehicle.latest_location.journey
 
             try:
                 journey = vehicle.vehiclejourney_set.get(datetime=journey.datetime)
