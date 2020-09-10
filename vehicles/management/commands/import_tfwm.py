@@ -117,6 +117,10 @@ class Command(ImportLiveVehiclesCommand):
             journey.datetime = timezone.make_aware(
                 datetime.strptime(item.vehicle.trip.start_date + item.vehicle.trip.start_time, '%Y%m%d%H:%M:%S')
             )
+            try:
+                journey = vehicle.vehiclejourney_set.objects.get(datetime=journey.datetime)
+            except (VehicleJourney.DoesNotExist, VehicleJourney.MultipleObjectsReturned):
+                pass
 
         vehicle_code = item.vehicle.vehicle.id
         if vehicle_code.startswith(vehicle.code) and len(vehicle.code) < len(vehicle_code):
