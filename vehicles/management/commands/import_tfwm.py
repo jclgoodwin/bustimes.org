@@ -118,7 +118,7 @@ class Command(ImportLiveVehiclesCommand):
                 datetime.strptime(item.vehicle.trip.start_date + item.vehicle.trip.start_time, '%Y%m%d%H:%M:%S')
             )
             try:
-                journey = vehicle.vehiclejourney_set.objects.get(datetime=journey.datetime)
+                journey = vehicle.vehiclejourney_set.get(datetime=journey.datetime)
             except (VehicleJourney.DoesNotExist, VehicleJourney.MultipleObjectsReturned):
                 pass
 
