@@ -475,7 +475,10 @@ class JourneyCode(models.Model):
     destination = models.CharField(max_length=255, blank=True)
 
     class Meta:
-        unique_together = ('code', 'service', 'siri_source')
+        unique_together = (
+            ('code', 'service', 'siri_source'),
+            ('code', 'service', 'data_source'),
+        )
 
 
 class Channel(models.Model):
