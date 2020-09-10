@@ -24,7 +24,7 @@
         </ul>
     {% else %}
 
-        <h2>{{ localities.paginator.count }} place{{ localities.paginator.count|pluralize }}</h2>
+        <h2 id="places">{{ localities.paginator.count }} place{{ localities.paginator.count|pluralize }}</h2>
 
         {% if localities %}
             <ul>
@@ -33,10 +33,10 @@
                 {% endfor %}
             </ul>
 
-            {% include 'pagination.html' with page=localities %}
+            {% include 'pagination.html' with page=localities hash='#places' %}
         {% endif %}
 
-        <h2>{{ operators.paginator.count }} operator{{ operators.paginator.count|pluralize }}</h2>
+        <h2 id="operators">{{ operators.paginator.count }} operator{{ operators.paginator.count|pluralize }}</h2>
 
         {% if operators %}
             <ul>
@@ -45,10 +45,10 @@
                 {% endfor %}
             </ul>
 
-            {% include 'pagination.html' with page=operators %}
+            {% include 'pagination.html' with page=operators hash='#operators' %}
         {% endif %}
 
-        <h2>{{ services.paginator.count }} service{{ services.paginator.count|pluralize }}</h2>
+        <h2 id="services">{{ services.paginator.count }} service{{ services.paginator.count|pluralize }}</h2>
 
         {% if services %}
             <ul class="has-smalls">
@@ -62,7 +62,7 @@
                 {% endfor %}
             </ul>
 
-            {% include 'pagination.html' with page=services %}
+            {% include 'pagination.html' with page=services hash='#services' %}
         {% endif %}
     {% endif %}
 {% endif %}
