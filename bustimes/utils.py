@@ -16,17 +16,17 @@ def download(path, url):
     write_file(path, response)
 
 
-def download_if_changed(path, url):
+def download_if_changed(path, url, params=None):
     headers = {}
     modified = True
     if os.path.exists(path):
         headers['if-modified-since'] = http_date(os.path.getmtime(path))
-        response = requests.head(url, headers=headers, timeout=10)
+        response = requests.head(url, params=params, headers=headers, timeout=10)
         if response.status_code == 304:
             modified = False
 
     if modified:
-        response = requests.get(url, headers=headers, stream=True, timeout=10)
+        response = requests.get(url, params=params, headers=headers, stream=True, timeout=10)
 
         if response.status_code == 304:
             modified = False

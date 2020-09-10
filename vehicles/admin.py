@@ -427,6 +427,10 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
 class JourneyCodeAdmin(admin.ModelAdmin):
     list_display = ['code', 'service', 'destination']
     list_select_related = ['service']
+    list_filter = [
+        ('data_source', admin.RelatedOnlyFieldListFilter),
+        ('siri_source', admin.RelatedOnlyFieldListFilter),
+    ]
     raw_id_fields = ['service']
 
 
