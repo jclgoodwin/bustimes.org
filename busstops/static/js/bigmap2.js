@@ -256,8 +256,11 @@
             });
 
             marker.on('popupclose', function(event) {
-                event.target.setIcon(getBusIcon(event.target.options.item));
-                clickedMarker = null;
+                if (vehiclesGroup.hasLayer(event.target)) {
+                    clickedMarker = null;
+                    // make the icon small again
+                    event.target.setIcon(getBusIcon(event.target.options.item));
+                }
             });
         }
     }
