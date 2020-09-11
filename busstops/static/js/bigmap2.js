@@ -226,16 +226,7 @@
     }
 
     function handlePopupOpen(event) {
-        if (clickedMarker) {
-            // deselect previous clicked marker
-            // (not always covered by popupclose handler, if popup hasn't opened yet)
-            var marker = vehicles[clickedMarker];
-            if (marker) {
-                marker.setIcon(getBusIcon(marker.options.item));
-            }
-        }
-
-        marker = event.target;
+        var marker = event.target;
         var item = marker.options.item;
 
         clickedMarker = item.i;
@@ -243,7 +234,7 @@
         marker.setIcon(getBusIcon(item, true));
 
         reqwest({
-            url: '/vehicles/locations/' + clickedMarker,
+            url: '/vehicles/locations/' + item.i,
             success: function(content) {
                 marker.options.popupContent = content;
                 marker.getPopup().setContent(content + getPopupContent(item));
@@ -252,14 +243,14 @@
     }
 
     function handlePopupClose(event) {
-        if (vehiclesGroup.hasLayer(event.target)) {
+        if (map.hasLayer(event.target)) {
             clickedMarker = null;
             // make the icon small again
             event.target.setIcon(getBusIcon(event.target.options.item));
         }
     }
 
-    var vehicles = {};
+    var vehicles;
 
     function handleVehicle(item) {
         var isClickedMarker = item.i === clickedMarker,
@@ -282,6 +273,10 @@
             .bindPopup(getPopupContent(item))
             .on('popupopen', handlePopupOpen)
             .on('popupclose', handlePopupClose);
+
+            if (isClickedMarker) {
+                vehicles[item.i].openPopup();
+            }
         }
     }
 
@@ -325,10 +320,11 @@
 
         socket.onmessage = function(event) {
             var items = JSON.parse(event.data);
-
-            if (newSocket && !first) {
+            if (newSocket) {
+                if (vehicles) {
+                    vehiclesGroup.clearLayers();
+                }
                 vehicles = {};
-                vehiclesGroup.clearLayers();
             }
             newSocket = false;
             for (var i = items.length - 1; i >= 0; i--) {
