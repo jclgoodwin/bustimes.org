@@ -284,17 +284,9 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         context['localities'] = self.object.locality_set.filter(has_stops).defer('latlong')
 
         context['adjacent'] = Locality.objects.filter(
-            Q(neighbour=self.object) |
-            Q(adjacent=self.object)
-        ).filter(
-            Q(stoppoint__active=True) |
-            Q(locality__stoppoint__active=True),
-        ).defer('latlong').distinct()
-
-        # context['adjacent'] = Locality.objects.filter(
-        #     has_stops,
-        #     Q(neighbour=self.object) | Q(adjacent=self.object)
-        # ).defer('latlong')
+            has_stops,
+            adjacent=self.object
+        ).defer('latlong')
 
         services = Service.objects.filter(current=True, stops=OuterRef('pk'))
         stops = self.object.stoppoint_set.filter(Exists(services))

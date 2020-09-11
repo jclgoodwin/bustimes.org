@@ -129,7 +129,7 @@ class Locality(SearchMixin, models.Model):
     district = models.ForeignKey(District, models.SET_NULL, null=True, blank=True)
     parent = models.ForeignKey('Locality', models.SET_NULL, null=True, editable=False)
     latlong = models.PointField(null=True, blank=True)
-    adjacent = models.ManyToManyField('Locality', related_name='neighbour', blank=True)
+    adjacent = models.ManyToManyField('self', blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
 
     objects = LocalityManager()
