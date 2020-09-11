@@ -8,11 +8,10 @@ from datetime import datetime
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
-from django.db import Error
 from django.contrib.gis.db.models import Extent
 from django.utils import timezone
 from busstops.models import Service, DataSource
-from ...models import StopPoint, Vehicle, VehicleJourney, VehicleLocation
+from ...models import Vehicle, VehicleJourney, VehicleLocation
 
 
 class Command(BaseCommand):
@@ -86,11 +85,6 @@ class Command(BaseCommand):
             vehicle.latest_location = location
             vehicle.save(update_fields=['latest_location'])
 
-        try:
-            vehicle.update_last_modified()
-        except VehicleJourney.DoesNotExist as e:
-            print(e)
-
     @sync_to_async
     def handle_data(self, data, operator):
         for item in data['params']['resource']['member']:
@@ -130,16 +124,16 @@ class Command(BaseCommand):
             print(response)
 
             while ok:
-                response = await websocket.recv()
+                response = await asyncio.wait_for(websocket.recv(), timeout=600)
 
+                data = json.loads(response)
                 try:
-                    data = json.loads(response)
                     await self.handle_data(data, operator)
                     count = len(data['params']['resource']['member'])
                     if count >= 50:
                         print(operator, count)
                         ok = False
-                except (Error, KeyError, ValueError) as e:
+                except (KeyError, ValueError) as e:
                     print(e)
 
             width = max_lon - max_lon

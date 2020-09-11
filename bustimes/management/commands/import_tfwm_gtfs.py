@@ -53,6 +53,7 @@ class Command(BaseCommand):
                     )
                 except IntegrityError:
                     pass
+
             for line in read_file(archive, 'trips.txt'):
                 service = services.get(line['route_id'])
 
@@ -60,7 +61,5 @@ class Command(BaseCommand):
                     JourneyCode.objects.create(
                         service=service, data_source=source, destination=line['trip_headsign'], code=line['trip_id']
                     )
-                except IntegrityError as e:
-                    if not service:
-                        print(e)
+                except IntegrityError:
                     pass
