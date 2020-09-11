@@ -85,15 +85,15 @@ ga('send', 'pageview');
 </script>
 
 <script
-  src="https://browser.sentry-cdn.com/5.22.3/bundle.tracing.min.js"
-  integrity="sha384-HfEJlGrJtFM0B01Wt4sGzTbxWqLMcMeGAXCbyQyB+iK9BhnDmNAtIGovhekIQOa2"
+  src="https://browser.sentry-cdn.com/5.23.0/bundle.min.js"
+  integrity="sha384-5yYHk2XjpqhbWfLwJrxsdolnhl+HfgEnD1UhVzAs6Kd2fx+ZoD0wBFjd65mWgZOG"
   crossorigin="anonymous"
 ></script>
 <script>
     if (typeof Sentry !== 'undefined') {
         Sentry.init({
             dsn: 'https://0d628b6fff45463bb803d045b99aa542@sentry.io/1379883',
-            whitelistUrls: [/bustimes\.org\//]
+            whitelistUrls: [/bustimes\.org\/static\//]
         });
     }
 </script>
