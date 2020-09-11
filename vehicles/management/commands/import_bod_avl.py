@@ -161,9 +161,15 @@ class Command(ImportLiveVehiclesCommand):
         journey = None
 
         latest_location = vehicle.latest_location
-        if latest_location and vehicle_journey_ref:
-            if vehicle_journey_ref != latest_location.journey.code and '_' in vehicle_journey_ref:
-                journey = vehicle.vehiclejourney_set.filter(route_name=route_name, code=vehicle_journey_ref).first()
+        if latest_location:
+            if origin_aimed_departure_time == latest_location.journey.datetime:
+                journey = latest_location.journey
+            elif vehicle_journey_ref:
+                if vehicle_journey_ref != latest_location.journey.code and '_' in vehicle_journey_ref:
+                    journey = vehicle.vehiclejourney_set.filter(route_name=route_name, code=vehicle_journey_ref).first()
+
+            if not journey:
+                journey = vehicle.vehiclejourney_set.filter(datetime=origin_aimed_departure_time).first()
 
         if not journey:
             journey = VehicleJourney(

@@ -6,6 +6,7 @@ import pid
 from datetime import timedelta
 from time import sleep
 from django.core.management.base import BaseCommand
+from django.db import IntegrityError
 from django.utils import timezone
 from busstops.models import DataSource, ServiceCode
 from ..models import Vehicle, VehicleLocation
@@ -171,7 +172,11 @@ class ImportLiveVehiclesCommand(BaseCommand):
             journey.source = self.source
             if not journey.datetime:
                 journey.datetime = location.datetime
-            journey.save()
+            try:
+                journey.save()
+            except IntegrityError as e:
+                logger.error(e, exc_info=True)
+                return
             if journey.service and not journey.service.tracking:
                 journey.service.tracking = True
                 journey.service.save(update_fields=['tracking'])
