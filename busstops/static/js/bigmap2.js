@@ -225,7 +225,7 @@
         return delta + 'Updated at ' + datetime.toTimeString().slice(0, 5);
     }
 
-    function handleMarkerClick(event) {
+    function handlePopupOpen(event) {
         if (clickedMarker) {
             // deselect previous clicked marker
             // (not always covered by popupclose handler, if popup hasn't opened yet)
@@ -242,26 +242,20 @@
 
         marker.setIcon(getBusIcon(item, true));
 
-        var popup = marker.getPopup();
-        if (!popup) {
-            marker.options.popupContent = '';
-            marker.bindPopup(getPopupContent(item)).openPopup();
+        reqwest({
+            url: '/vehicles/locations/' + clickedMarker,
+            success: function(content) {
+                marker.options.popupContent = content;
+                marker.getPopup().setContent(content + getPopupContent(item));
+            }
+        });
+    }
 
-            reqwest({
-                url: '/vehicles/locations/' + clickedMarker,
-                success: function(content) {
-                    marker.options.popupContent = content;
-                    marker.getPopup().setContent(content + getPopupContent(item));
-                }
-            });
-
-            marker.on('popupclose', function(event) {
-                if (vehiclesGroup.hasLayer(event.target)) {
-                    clickedMarker = null;
-                    // make the icon small again
-                    event.target.setIcon(getBusIcon(event.target.options.item));
-                }
-            });
+    function handlePopupClose(event) {
+        if (vehiclesGroup.hasLayer(event.target)) {
+            clickedMarker = null;
+            // make the icon small again
+            event.target.setIcon(getBusIcon(event.target.options.item));
         }
     }
 
@@ -277,16 +271,17 @@
             marker.setLatLng(latLng);
             marker.setIcon(icon);
             marker.options.item = item;
-            var popup = marker.getPopup();
-            if (popup) {
-                popup.setContent(marker.options.popupContent + getPopupContent(item));
-            }
+            marker.getPopup().setContent((marker.options.popupContent || '') + getPopupContent(item));
         } else {
             vehicles[item.i] = L.marker(latLng, {
                 icon: icon,
                 item: item,
                 zIndexOffset: 1000
-            }).addTo(vehiclesGroup).on('click', handleMarkerClick);
+            })
+            .addTo(vehiclesGroup)
+            .bindPopup(getPopupContent(item))
+            .on('popupopen', handlePopupOpen)
+            .on('popupclose', handlePopupClose);
         }
     }
 
@@ -332,8 +327,8 @@
             var items = JSON.parse(event.data);
 
             if (newSocket && !first) {
-                vehiclesGroup.clearLayers();
                 vehicles = {};
+                vehiclesGroup.clearLayers();
             }
             newSocket = false;
             for (var i = items.length - 1; i >= 0; i--) {
