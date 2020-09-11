@@ -3,7 +3,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Q, Exists, OuterRef
 from busstops.models import Operator, Service
-from .models import VehicleType, VehicleFeature, Livery
+from .models import Vehicle, VehicleType, VehicleFeature, Livery
 from .fields import RegField
 
 
@@ -68,8 +68,9 @@ vehicle’s previous owners""", required=False, max_length=255)
 
         operators = None
         if operator and operator.parent:
-            services = Service.objects.filter(current=True, operator=OuterRef('pk')).only('id')
-            operators = Operator.objects.filter(Exists(services) | Q(pk=operator.pk), parent=operator.parent)
+            has_services = Exists(Service.objects.filter(current=True, operator=OuterRef('pk')).only('id'))
+            has_vehicles = Exists(Vehicle.objects.filter(operator=OuterRef('pk')).only('id'))
+            operators = Operator.objects.filter(has_services | has_vehicles | Q(pk=operator.pk), parent=operator.parent)
             self.fields['operator'].queryset = operators
         else:
             del(self.fields['operator'])
