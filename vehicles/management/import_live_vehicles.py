@@ -203,8 +203,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
         location.redis_append()
         location.channel_send(vehicle)
 
-        vehicle.update_last_modified()
-
         if latest:
             speed = calculate_speed(latest, location)
             if speed > 90:

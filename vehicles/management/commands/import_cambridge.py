@@ -184,8 +184,6 @@ class Command(BaseCommand):
             vehicle.latest_location = location
             vehicle.save(update_fields=['latest_location'])
 
-        vehicle.update_last_modified()
-
     def handle_data(self, data):
         for item in data['request_data']:
             try:

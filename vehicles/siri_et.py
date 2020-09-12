@@ -173,7 +173,6 @@ def handle_journey(element, source, when):
                     )
                     vehicle.save(update_fields=['latest_location'])
                 vehicle.latest_location.channel_send(vehicle)
-                vehicle.update_last_modified()
                 return
         previous_call = call
 

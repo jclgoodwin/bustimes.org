@@ -283,11 +283,6 @@ class Vehicle(models.Model):
                 self.operator_id = operator.id
                 self.save(update_fields=['operator'])
 
-    def update_last_modified(self):
-        service_id = self.latest_location.journey.service_id
-        if service_id:
-            cache.set(f'{service_id}:vehicles_last_modified', timezone.now())
-
     def editable(self):
         if self.notes == 'Spare ticket machine':
             return False
