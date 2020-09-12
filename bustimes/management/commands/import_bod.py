@@ -189,6 +189,23 @@ def ticketer():
 
         if modified:
             print(url, last_modified)
+
+            if noc == 'GOEA':
+                command.operators = {
+                    'GEA': 'KCTB',
+                    'CHAM': 'CHAM',
+                    'HEDO': 'HEDO',
+                    'KCTB': 'KCTB',
+                }
+            elif noc == 'ACYM':
+                command.operators = {
+                    'ANW': 'ACYM'
+                }
+            else:
+                command.operators = {
+                    noc: noc
+
+                }
             command.region_id = region_id
             command.service_descriptions = {}
             command.service_ids = set()

@@ -570,6 +570,13 @@ class Command(BaseCommand):
                     service_code = txc_service.service_code
 
             else:
+                if self.source.name == 'Go East Anglia' and not existing:
+                    try:
+                        existing = Service.objects.get(operator__parent='Go East Anglia', current=True,
+                                                       line_name__iexact=line_name)
+                    except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                        pass
+
                 operator_code = '-'.join(operator.id for operator in operators)
                 if operator_code == 'TDTR' and 'Swindon-Rural' in filename:
                     operator_code = 'SBCR'
@@ -647,10 +654,12 @@ class Command(BaseCommand):
             if service_created:
                 service.operator.set(operators)
             else:
-                if service.slug == service_code.lower():
+                if '_' in service.slug or '-' not in service.slug or existing and not existing.current:
                     service.slug = ''
                     service.save(update_fields=['slug'])
-                if service.id in self.service_ids or all(o.parent == 'Go South Coast' for o in operators):
+                if self.source.name == 'Go East Anglia':
+                    pass
+                elif service.id in self.service_ids or all(o.parent == 'Go South Coast' for o in operators):
                     service.operator.add(*operators)
                 else:
                     service.operator.set(operators)
