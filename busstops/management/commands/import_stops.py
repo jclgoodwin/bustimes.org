@@ -3,6 +3,7 @@
     ./manage.py import_stops < Stops.csv
 """
 
+import re
 from django.contrib.gis.geos import Point
 from titlecase import titlecase
 from ..import_from_csv import ImportFromCSVCommand
@@ -79,6 +80,12 @@ INDICATORS_TO_REPLACE = {
 }
 
 
+def correct_case(value):
+    if re.match(r'[A-Z]{3}', value) and any(char in 'AEIOU' for char in value):
+        value = titlecase(value)
+    return value
+
+
 class Command(ImportFromCSVCommand):
     input = 0
     encoding = 'windows-1252'
@@ -89,6 +96,8 @@ class Command(ImportFromCSVCommand):
             'active': (row.get('Status', 'act') == 'act'),
             'admin_area_id': row.get('AdministrativeAreaCode') or row['AdministrativeAreaRef']
         }
+
+        atco_code = row.get('ATCOCode') or row['AtcoCode']
 
         if row['Longitude'] and float(row['Longitude']) != 0:
             defaults['latlong'] = Point(
@@ -116,8 +125,8 @@ class Command(ImportFromCSVCommand):
                 if value.lower() in ('-', '--', '---', '*', 'tba', 'unknown', 'n/a',
                                      'data unavailable'):
                     value = ''
-                elif django_field_name != 'indicator' and value.isupper() and value != 'YMCA':
-                    value = titlecase(value)
+                elif django_field_name != 'indicator' and value.isupper():
+                    value = correct_case(value)
             defaults[django_field_name] = value.replace('`', '\'')  # replace backticks
 
         if defaults.get('indicator').lower() in INDICATORS_TO_REPLACE:
@@ -139,7 +148,6 @@ class Command(ImportFromCSVCommand):
         if 'CompassPoint' in row:
             defaults['bearing'] = row['CompassPoint']
 
-        atco_code = row.get('ATCOCode') or row['AtcoCode']
         StopPoint.objects.update_or_create(atco_code=atco_code, defaults=defaults)
 
     def __init__(self, *args, **kwargs):

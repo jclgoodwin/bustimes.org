@@ -24,6 +24,17 @@ class UpdateNaptanTest(TestCase):
     def test_get_old_rows(self):
         self.assertIsNone(self.command.get_old_rows())
 
+    def test_correct_case(self):
+        self.assertEqual(import_stops.correct_case('B&Q'), 'B&Q')
+        self.assertEqual(import_stops.correct_case('P&R'), 'P&R')
+        self.assertEqual(import_stops.correct_case('A1(M)'), 'A1(M)')
+        self.assertEqual(import_stops.correct_case('YKK'), 'YKK')
+        self.assertEqual(import_stops.correct_case('EE'), 'EE')
+        self.assertEqual(import_stops.correct_case('PH'), 'PH')
+        self.assertEqual(import_stops.correct_case('NUMBER 45'), 'Number 45')
+        self.assertEqual(import_stops.correct_case('KING STREET'), 'King Street')
+        self.assertEqual(import_stops.correct_case('DWP DEPOT'), 'DWP Depot')
+
     def test_get_diff(self):
         new_rows = [{
             'id': 1,
