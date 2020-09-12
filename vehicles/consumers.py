@@ -4,8 +4,11 @@ from channels.generic.websocket import JsonWebsocketConsumer
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.cache import cache
 from django.contrib.gis.geos import Polygon
+from django.db.models import Exists, OuterRef, Value
+from django.db.models.functions import Replace
 from django.utils import timezone
-from busstops.models import ServiceCode
+from busstops.models import ServiceCode, SIRISource
+from .siri_one_shot import siri_one_shot, schemes, Poorly
 from .models import VehicleLocation, Channel
 
 
@@ -79,8 +82,16 @@ class ServiceMapConsumer(VehicleMapConsumer):
         for service_id in self.service_ids:
             async_to_sync(self.channel_layer.group_add)(f'service{service_id}', self.channel_name)
             if icarus:
-                if locations or ServiceCode.objects.filter(service=service_id, scheme__endswith=' SIRI').exists():
-                    cache.set(f'{service_id}:connected', True, 300)
+                codes = ServiceCode.objects.filter(scheme__in=schemes, service=service_id)
+                codes = codes.annotate(source_name=Replace('scheme', Value(' SIRI')))
+                siri_sources = SIRISource.objects.filter(name=OuterRef('source_name'))
+                codes = codes.filter(Exists(siri_sources))
+                for code in codes:
+                    try:
+                        siri_one_shot(code, timezone.now(), bool(locations))
+                        break
+                    except Poorly:
+                        pass
         cache.close()
 
     def disconnect(self, close_code):

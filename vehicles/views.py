@@ -2,36 +2,23 @@ import redis
 import json
 import xml.etree.cElementTree as ET
 from datetime import timedelta
-from requests import Session, exceptions
 from ciso8601 import parse_datetime
-from django.db.models import Exists, OuterRef, Prefetch, Subquery, Q, Value
-from django.db.models.functions import Replace
+from django.db.models import Exists, OuterRef, Prefetch, Subquery
 from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
+# from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, Http404
-from django.views.decorators.http import last_modified
 from django.views.generic.detail import DetailView
 from django.urls import reverse
 from django.utils import timezone
-# from multidb.pinning import use_primary_db
 from busstops.utils import get_bounding_box
-from busstops.models import Operator, Service, ServiceCode, SIRISource, DataSource
-from bustimes.models import get_calendars, Trip
+from busstops.models import Operator, Service
 from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision
 from .forms import EditVehiclesForm, EditVehicleForm
-from .management.commands import import_sirivm
-from .rifkind import rifkind
 from .utils import get_vehicle_edit, do_revision, do_revisions
 from .tasks import handle_siri_vm, handle_siri_et, handle_siri_sx
-
-
-session = Session()
-
-
-class Poorly(Exception):
-    pass
 
 
 class Vehicles():
@@ -204,105 +191,17 @@ def get_locations(request):
     return locations
 
 
-# @use_primary_db
-def siri_one_shot(code, now):
-    source = 'Icarus'
-    siri_source = SIRISource.objects.get(name=code.scheme[:-5])
-    line_name_cache_key = f'{siri_source.url}:{siri_source.requestor_ref}:{code.code}'
-    service_cache_key = f'{code.service_id}:{source}'
-    if cache.get(line_name_cache_key):
-        return 'cached (line name)'
-    cached = cache.get(service_cache_key)
-    if cached:
-        return f'cached ({cached})'
-    if siri_source.get_poorly():
-        raise Poorly()
-    fifteen_minutes_ago = now - timedelta(minutes=15)
-    locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, journey__service=code.service_id,
-                                               datetime__gte=fifteen_minutes_ago, current=True)
-    if not locations.filter(journey__source__name=source).exists():
-        time_since_midnight = timedelta(hours=now.hour, minutes=now.minute, seconds=now.second,
-                                        microseconds=now.microsecond)
-        trips = Trip.objects.filter(calendar__in=get_calendars(now), route__service=code.service_id,
-                                    start__lte=time_since_midnight + timedelta(minutes=10),
-                                    end__gte=time_since_midnight - timedelta(minutes=10))
-        if not trips.exists():
-            # no journeys currently scheduled, and no vehicles online recently
-            cache.set(service_cache_key, 'nothing scheduled', 300)  # back off for 5 minutes
-            return 'nothing scheduled'
-    # from a different source
-    if locations.filter(~Q(journey__source__name=source)).exists():
-        cache.set(service_cache_key, 'different source', 3600)  # back off for for 1 hour
-        return 'deferring to a different source'
-    cache.set(line_name_cache_key, 'line name', 40)  # cache for 40 seconds
-    data = f"""<Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
-<ServiceRequest><RequestorRef>{siri_source.requestor_ref}</RequestorRef>
-<VehicleMonitoringRequest version="1.3"><LineRef>{code.code}</LineRef></VehicleMonitoringRequest>
-</ServiceRequest></Siri>"""
-    url = siri_source.url.replace('StopM', 'VehicleM', 1)
-    response = session.post(url, data=data, timeout=5)
-    if 'Client.AUTHENTICATION_FAILED' in response.text:
-        cache.set(siri_source.get_poorly_key(), True, 3600)  # back off for an hour
-        raise Poorly()
-    command = import_sirivm.Command()
-    command.source = DataSource.objects.get(name='Icarus')
-    for item in import_sirivm.items_from_response(response):
-        command.handle_item(item, now, code)
-
-
-schemes = ('Cornwall SIRI', 'Devon SIRI', 'Bristol SIRI',
-           'Leicestershire SIRI', 'Hampshire SIRI', 'West Sussex SIRI')
-
-
-def vehicles_last_modified(request):
-    request.nothing = False
+def vehicles_json(request):
+    locations = get_locations(request).order_by()
+    locations = locations.select_related('journey__vehicle__livery', 'journey__vehicle__vehicle_type')
 
     if 'service' in request.GET:
-        service_id = request.GET['service']
-        now = timezone.localtime()
-
-        last_modified = cache.get(f'{service_id}:vehicles_last_modified')
-        if last_modified and (now - last_modified).total_seconds() < 40:
-            return last_modified
-
-        operators = Operator.objects.filter(service=service_id)
-        if not any(operator.parent == 'Stagecoach' or operator.id in {'CTNY', 'OXBC'} for operator in operators):
-            codes = ServiceCode.objects.filter(scheme__in=schemes, service=service_id)
-            codes = codes.annotate(source_name=Replace('scheme', Value(' SIRI')))
-            siri_sources = SIRISource.objects.filter(name=OuterRef('source_name'))
-            codes = codes.filter(Exists(siri_sources))
-
-            for code in codes:
-                try:
-                    siri_one_shot(code, now)
-                    break
-                except (Poorly, exceptions.RequestException):
-                    continue
-
-            if any(operator.id in {'KBUS', 'TBTN', 'NOCT'} for operator in operators):
-                rifkind(service_id)
-
-        last_modified = cache.get(f'{service_id}:vehicles_last_modified')
-        if last_modified and (now - last_modified).total_seconds() > 900:  # older than 15 minutes
-            request.nothing = True
-        return last_modified
-
-
-@last_modified(vehicles_last_modified)
-def vehicles_json(request):
-    if request.nothing:
-        locations = ()
+        extended = False
+        locations = locations.prefetch_related('journey__vehicle__features')
     else:
-        locations = get_locations(request).order_by()
-        locations = locations.select_related('journey__vehicle__livery', 'journey__vehicle__vehicle_type')
-
-        if 'service' in request.GET:
-            extended = False
-            locations = locations.prefetch_related('journey__vehicle__features')
-        else:
-            extended = True
-            locations = locations.select_related('journey__service', 'journey__vehicle__operator')
-            locations = locations.defer('journey__service__geometry', 'journey__service__search_vector')
+        extended = True
+        locations = locations.select_related('journey__service', 'journey__vehicle__operator')
+        locations = locations.defer('journey__service__geometry', 'journey__service__search_vector')
 
     return JsonResponse({
         'type': 'FeatureCollection',

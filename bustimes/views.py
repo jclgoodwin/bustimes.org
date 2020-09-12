@@ -6,7 +6,7 @@ from django.views.generic.detail import DetailView
 from django.http import FileResponse, Http404
 from django.utils import timezone
 from busstops.models import Service
-from vehicles.views import siri_one_shot, Poorly
+from vehicles.siri_one_shot import siri_one_shot, Poorly
 from .models import Route, Trip
 
 
