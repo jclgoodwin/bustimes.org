@@ -32,10 +32,10 @@ class TfWMImportTest(TestCase):
         with self.assertNumQueries(10):  # X12
             command.handle_item(items[0], self.source.datetime)
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(10):
             command.handle_item(items[217], self.source.datetime)
 
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(2):
             command.handle_item(items[217], self.source.datetime)
 
         with self.assertNumQueries(11):

@@ -81,15 +81,11 @@ class Command(ImportLiveVehiclesCommand):
             defaults['reg'] = reg
             vehicle_code = vehicle_code[:-len(route)]
 
-            for operator in ['SLBL', 'JOHS']:
-                if Service.objects.filter(current=True, operator=operator, line_name__iexact=route).exists():
-                    return self.vehicles.get_or_create(defaults, operator_id=operator, code=vehicle_code)
-
         try:
             return self.vehicles.get_or_create(defaults, code=vehicle_code)
         except Vehicle.MultipleObjectsReturned:
             print(vehicle_code, item)
-            return None, None
+            return self.vehicles.filter(code=vehicle_code).first(), False
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
