@@ -6,7 +6,7 @@
     */
 
     var map = L.map('hugemap', {
-            minZoom: 8
+            minZoom: 10
         }),
         stopsGroup = L.layerGroup(),
         vehiclesGroup = L.layerGroup();
