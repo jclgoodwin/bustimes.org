@@ -150,7 +150,8 @@ VARNISH_HOST = os.environ.get('VARNISH_HOST')
 VARNISH_PORT = os.environ.get('VARNISH_PORT')
 if VARNISH_HOST and VARNISH_PORT:
     VARNISH = (VARNISH_HOST, int(VARNISH_PORT))
-
+else:
+    VARNISH = None
 
 TIME_FORMAT = 'H:i'
 DATE_FORMAT = 'l j F Y'
