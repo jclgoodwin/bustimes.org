@@ -148,7 +148,7 @@ CACHES = {
 
 VARNISH = os.environ.get('VARNISH')
 if VARNISH:
-    VARNISH = VARNISH.split()
+    VARNISH = tuple(VARNISH.split())
 
 TIME_FORMAT = 'H:i'
 DATE_FORMAT = 'l j F Y'

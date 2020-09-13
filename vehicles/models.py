@@ -17,6 +17,7 @@ from django.db.models import Index, Q
 from django.urls import reverse
 from django.utils.html import escape, format_html
 from busstops.models import Operator, Service, StopPoint, DataSource, SIRISource
+from buses.utils import varnish_ban
 import json
 
 
@@ -173,16 +174,7 @@ class Vehicle(models.Model):
             self.fleet_code = str(self.fleet_number)
         super().save(force_insert, force_update, **kwargs)
 
-        if settings.VARNISH:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            try:
-                sock.connect(settings.VARNISH)
-            except socket.error:
-                pass
-            else:
-                sock.sendall(f"BAN /vehicles/{self.id} HTTP/1.1\r\nHost: bustimes.org\r\n\r\n".encode())
-            finally:
-                sock.close()
+        varnish_ban(f'/vehicles/{self.id}')
 
     class Meta:
         unique_together = ('code', 'operator')
