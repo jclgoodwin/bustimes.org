@@ -1,7 +1,6 @@
 import math
 import requests
 import logging
-import sys
 import pid
 from datetime import timedelta
 from time import sleep
@@ -12,7 +11,7 @@ from busstops.models import DataSource, ServiceCode
 from ..models import Vehicle, VehicleLocation
 
 
-logger = logging.getLogger(sys.argv[1])
+logger = logging.getLogger(__name__)
 
 
 def calculate_bearing(a, b):

@@ -10,7 +10,6 @@ from datetime import timedelta
 from django.utils import timezone
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.exceptions import ValidationError
 from django.db.models import Index, Q
