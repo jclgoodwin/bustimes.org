@@ -64,6 +64,10 @@ class VehiclesTests(TestCase):
         self.assertEqual(str(vehicle), '3990\xa0ME')
         self.assertIn('search/?text=3990ME%20or%20%223990%20ME%22&sort', vehicle.get_flickr_url())
 
+        vehicle.fleet_number = '11111'
+        self.assertIn('search/?text=3990ME%20or%20%223990%20ME%22%20or%2011111&sort', vehicle.get_flickr_url())
+        vehicle.fleet_number = None
+
         vehicle.reg = 'J122018'
         self.assertEqual(str(vehicle), 'J122018')
 
