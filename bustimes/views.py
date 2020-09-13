@@ -29,7 +29,7 @@ class ServiceDebugView(DetailView):
         for code in context['codes']:
             if code.scheme.endswith(' SIRI'):
                 try:
-                    code.siri_one_shot = siri_one_shot(code, now)
+                    code.siri_one_shot = siri_one_shot(code, now, False)
                 except Poorly:
                     code.siri_one_shot = 'Poorly'
 

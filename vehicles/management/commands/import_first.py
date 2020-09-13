@@ -136,35 +136,35 @@ class Command(BaseCommand):
                 except (KeyError, ValueError) as e:
                     print(e)
 
-            width = max_lon - max_lon
-            height = max_lat - min_lat
-            if width < height:
-                extent_1 = [
-                    min_lon,
-                    min_lat,
-                    max_lon,
-                    (min_lat + max_lat) / 2
-                ]
-                extent_2 = [
-                    min_lon,
-                    (min_lat + max_lat) / 2,
-                    max_lon,
-                    max_lat
-                ]
-            else:
-                extent_1 = [
-                    min_lon,
-                    min_lat,
-                    (min_lon + max_lon) / 2,
-                    max_lat
-                ]
-                extent_2 = [
-                    (min_lon + max_lon) / 2,
-                    min_lat,
-                    max_lon,
-                    max_lat
-                ]
-            await asyncio.wait([self.sock_it(operator, extent_1), self.sock_it(operator, extent_2)])
+        width = max_lon - max_lon
+        height = max_lat - min_lat
+        if width < height:
+            extent_1 = [
+                min_lon,
+                min_lat,
+                max_lon,
+                (min_lat + max_lat) / 2
+            ]
+            extent_2 = [
+                min_lon,
+                (min_lat + max_lat) / 2,
+                max_lon,
+                max_lat
+            ]
+        else:
+            extent_1 = [
+                min_lon,
+                min_lat,
+                (min_lon + max_lon) / 2,
+                max_lat
+            ]
+            extent_2 = [
+                (min_lon + max_lon) / 2,
+                min_lat,
+                max_lon,
+                max_lat
+            ]
+        await asyncio.wait([self.sock_it(operator, extent_1), self.sock_it(operator, extent_2)])
 
     async def sock_them(self, extents):
         await asyncio.wait([self.sock_it(*extent) for extent in extents])

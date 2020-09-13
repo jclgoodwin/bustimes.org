@@ -58,5 +58,5 @@ async def test_my_consumer():
     assert message_b == [
         {'i': 13, 'd': '3', 'l': [1.31, 52.644], 'h': 2, 'r': '33', 'c': '', 't': '', 'e': -1}
     ]
-
+    await communicator.receive_nothing()
     await communicator.disconnect()
