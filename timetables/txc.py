@@ -448,7 +448,7 @@ class DateRange:
     def __init__(self, element):
         self.start = ciso8601.parse_datetime(element.find('txc:StartDate', NS).text).date()
         self.end = element.find('txc:EndDate', NS)
-        if self.end is not None:
+        if self.end is not None and self.end.text:
             self.end = ciso8601.parse_datetime(self.end.text).date()
 
     def __str__(self):
