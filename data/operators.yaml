@@ -11,6 +11,8 @@ GRTL:
     phone: ""
     email: ""
     address: ""
+VCBO:
+    url: http://villagerbus.co.uk/
 SEAD:
     url: http://www.seafordanddistrict.co.uk
 STAR:
