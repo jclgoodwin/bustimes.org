@@ -343,24 +343,24 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Changed depot from Long Sutton to Holt')
         self.assertContains(response, '<p>I’ll update the other details shortly</p>')
 
-        # revision = VehicleRevision.objects.get()
-        # self.assertEqual(revision.from_operator, self.lynx)
-        # self.assertEqual(revision.to_operator, self.bova)
-        # self.assertEqual(str(revision), 'operator: Lynx → Bova and Over, reg: UWW2X → , depot: Long Sutton → Holt')
+        response = self.client.get('/vehicles/history')
+        self.assertContains(response, '<td>operator</td>')
+        self.assertContains(response, '<td>Lynx</td>')
+        self.assertContains(response, '<td>Bova and Over</td>')
 
-        # response = self.client.get(f'{self.vehicle_2.get_absolute_url()}/history')
-        # self.assertContains(response, '<td>operator</td>')
-        # self.assertContains(response, '<td>Lynx</td>')
-        # self.assertContains(response, '<td>Bova and Over</td>')
+        revision = response.context['revisions'][0]
+        self.assertEqual(revision.from_operator, self.lynx)
+        self.assertEqual(revision.to_operator, self.bova)
+        self.assertEqual(str(revision), 'operator: Lynx → Bova and Over, depot: Long Sutton → Holt')
 
-        # response = self.client.get('/vehicles/history')
-        # self.assertContains(response, '<td>operator</td>')
-        # self.assertContains(response, '<td>Lynx</td>')
-        # self.assertContains(response, '<td>Bova and Over</td>')
+        response = self.client.get(f'{self.vehicle_2.get_absolute_url()}/history')
+        self.assertContains(response, '<td>operator</td>')
+        self.assertContains(response, '<td>Lynx</td>')
+        self.assertContains(response, '<td>Bova and Over</td>')
 
-        # with self.assertNumQueries(13):
-        #     response = self.client.get(url)
-        # self.assertContains(response, 'already')
+        with self.assertNumQueries(13):
+            response = self.client.get(url)
+        self.assertContains(response, 'already')
 
         # edit = VehicleEdit.objects.get()
         # self.assertEqual(edit.get_changes(), {'branding': 'Coastliner', 'name': 'Luther Blisset',
