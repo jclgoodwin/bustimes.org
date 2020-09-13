@@ -263,10 +263,10 @@ class Vehicle(models.Model):
         if self.reg:
             reg = self.get_reg().replace('\xa0', ' ')
             search = f'{self.reg} or "{reg}"'
-            if self.fleet_number:
+            if self.fleet_number and self.operator and self.operator.parent:
                 number = str(self.fleet_number)
                 if len(number) >= 5:
-                    search = f'{search} or {number}'
+                    search = f'{search} or {self.operator.parent} {number}'
         else:
             if self.fleet_code or self.fleet_number:
                 search = self.fleet_code or str(self.fleet_number)

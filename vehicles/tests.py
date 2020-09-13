@@ -64,12 +64,13 @@ class VehiclesTests(TestCase):
         self.assertEqual(str(vehicle), '3990\xa0ME')
         self.assertIn('search/?text=3990ME%20or%20%223990%20ME%22&sort', vehicle.get_flickr_url())
 
-        vehicle.fleet_number = '11111'
-        self.assertIn('search/?text=3990ME%20or%20%223990%20ME%22%20or%2011111&sort', vehicle.get_flickr_url())
-        vehicle.fleet_number = None
-
         vehicle.reg = 'J122018'
         self.assertEqual(str(vehicle), 'J122018')
+        self.assertTrue(vehicle.editable())
+
+        vehicle.notes = 'Spare ticket machine'
+        self.assertEqual('', vehicle.get_flickr_link())
+        self.assertFalse(vehicle.editable())
 
         vehicle = Vehicle(code='RML2604')
         self.assertIn('search/?text=RML2604&sort', vehicle.get_flickr_url())
@@ -77,8 +78,20 @@ class VehiclesTests(TestCase):
         vehicle.operator = Operator(name='Lynx')
         self.assertIn('search/?text=Lynx%20RML2604&sort', vehicle.get_flickr_url())
 
-        vehicle.operator.name = 'Stagecoach Oxenholme'
-        self.assertIn('search/?text=Stagecoach%20RML2604&sort', vehicle.get_flickr_url())
+        vehicle.fleet_number = '11111'
+        self.assertIn('search/?text=Lynx%2011111&sort', vehicle.get_flickr_url())
+
+        vehicle.reg = 'YN69GHA'
+        vehicle.operator.parent = 'Stagecoach'
+        vehicle.fleet_number = '11111'
+
+        self.assertIn('search/?text=YN69GHA%20or%20%22YN69%20GHA%22%20or%20Stagecoach%2011111&sort',
+                      vehicle.get_flickr_url())
+
+        vehicle.code = 'YN_69_GHA'
+        self.assertFalse(vehicle.fleet_number_mismatch())
+        vehicle.code = 'YN19GHA'
+        self.assertTrue(vehicle.fleet_number_mismatch())
 
     def test_fleet_lists(self):
         with self.assertNumQueries(2):
