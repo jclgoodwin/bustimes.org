@@ -54,7 +54,8 @@ class Command(ImportLiveVehiclesCommand):
         'ATS': ('ASES', 'ARBB', 'GLAR'),
         'ASC': ('ARHE', 'GLAR'),
         'NXB': ('TNXB', 'TCVW'),
-        'PLYC': ('PLYC', 'TFCN')
+        'PLYC': ('PLYC', 'TFCN'),
+        'FHDO': ('FHDO', 'FHAM'),
     }
     operators = {}
 

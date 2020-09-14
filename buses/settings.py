@@ -422,7 +422,7 @@ FIRST_OPERATORS = [
     ('FirstVantage', 'NW', {'FMAN': 'FMAN'}),
 
     ('FirstSomerset', 'SW', {'FBOS': 'FBOS'}),
-    ('FirstCornwall', 'SW', {'FCWL': 'FCWL'}),
+    # ('FirstCornwall', 'SW', {'FCWL': 'FCWL'}),
     # ('FirstLeicester', 'EM', {'FLEI': 'FLEI'}),
     # ('FirstNorwich', 'EA', {'FECS': 'FECS'}),
     # ('FirstIpswich', 'EA', {'FECS': 'FECS'}),
