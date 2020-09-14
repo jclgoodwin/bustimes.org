@@ -127,30 +127,29 @@ def handle_journey(element, source, when):
         expected_departure_time = call.find('siri:ExpectedDepartureTime', ns)
         if expected_departure_time is not None:
             expected_departure_time = parse_datetime(expected_departure_time.text)
-        if journey_created:
-            call = Call(stop_id=stop_id, journey=journey, visit_number=visit_number,
-                        aimed_arrival_time=aimed_arrival_time, aimed_departure_time=aimed_departure_time)
-            call_created = False
-        else:
+
+        call = None
+
+        if not journey_created:
             try:
-                call, call_created = Call.objects.get_or_create({
-                    'aimed_arrival_time': aimed_arrival_time,
-                    'expected_arrival_time': expected_arrival_time,
-                    'aimed_departure_time': aimed_departure_time,
-                    'expected_departure_time': expected_departure_time
-                }, stop_id=stop_id, journey=journey, visit_number=visit_number)
-            except Call.MultipleObjectsReturned as e:
-                print(e)
-                call = Call.objects.filter(stop_id=stop_id, journey=journey, visit_number=visit_number).first()
-                call_created = False
-        if not call_created:
-            call.expected_arrival_time = expected_arrival_time
-            call.expected_departure_time = expected_departure_time
-            calls.append(call)
+                call = Call.objects.get(journey=journey, visit_number=visit_number)
+            except Call.DoesNotExist:
+                pass
+
+        if not call:
+            call = Call(journey=journey, visit_number=visit_number)
+
+        call.stop_id = stop_id
+        call.aimed_arrival_time = aimed_arrival_time
+        call.expected_arrival_time = expected_arrival_time
+        call.aimed_departure_time = aimed_departure_time
+        call.expected_departure_time = expected_departure_time
     if journey_created:
         Call.objects.bulk_create(calls)
     else:
-        Call.objects.bulk_update(calls, fields=['expected_arrival_time', 'expected_departure_time'])
+        Call.objects.bulk_update(calls, fields=['stop_id', 'aimed_arrival_time', 'expected_arrival_time',
+                                 'aimed_departure_time', 'expected_departure_time'])
+
     previous_call = None
     for call in journey.call_set.order_by('visit_number'):
         if previous_call:
