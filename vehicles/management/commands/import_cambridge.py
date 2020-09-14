@@ -46,6 +46,9 @@ class Command(BaseCommand):
                 return self.vehicles.get_or_create(defaults, operator=operator, fleet_number=vehicle)
             defaults = {'fleet_number': vehicle}
 
+            if item['OperatorRef'] == 'WPB':
+                return None, None
+
         vehicles = self.vehicles
         if type(operator) is tuple:
             defaults['operator_id'] = operator[0]
@@ -98,6 +101,9 @@ class Command(BaseCommand):
             operator_options = ('CBBH', 'CBNL')
 
         vehicle, created = self.get_vehicle(operator_options or operator, item)
+
+        if not vehicle:
+            return
 
         journey = None
 
