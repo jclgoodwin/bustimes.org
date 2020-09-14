@@ -117,10 +117,10 @@ class Command(BaseCommand):
         if not created and vehicle.latest_location:
             location = vehicle.latest_location
             latest_journey = location.journey
-            if line_name == latest_journey.route_name and journey_code == latest_journey.code:
-                if departure_time is None or departure_time == latest_journey.datetime:
-                    if recorded_at_time - location.datetime < timedelta(hours=1):
-                        journey = journey = latest_journey
+            if latest_journey.datetime == departure_time:
+                journey = latest_journey
+            elif departure_time:
+                journey = vehicle.vehiclejourney_set.filter(datetime=departure_time).first()
         else:
             location = VehicleLocation()
 
@@ -235,12 +235,4 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.source = DataSource.objects.get(name='cambridge')
 
-        while True:
-            try:
-                asyncio.get_event_loop().run_until_complete(self.sock_it())
-            except (
-                websockets.exceptions.ConnectionClosed,
-                asyncio.InvalidStateError,
-                pyppeteer.errors.TimeoutError
-            ) as e:
-                print(e)
+        asyncio.get_event_loop().run_until_complete(self.sock_it())
