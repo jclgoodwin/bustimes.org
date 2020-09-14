@@ -8,9 +8,6 @@ from django.conf import settings
 from django.core.management import call_command
 from ...models import Region, Operator, Service
 from ..commands import import_operators
-with vcr.use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'scotch_operators.yaml')):
-    from ..commands import import_scotch_operator_contacts
-
 DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -85,29 +82,6 @@ class ImportOperatorsTest(TestCase):
     def test_operator_ignore(self):
         """Were some rows correctly ignored?"""
         self.assertFalse(len(Operator.objects.filter(id='TVSR')))
-
-    def test_scotch_operator_contacts(self):
-        bluebus = Operator.objects.get(id='BLUE')
-        self.assertEqual(bluebus.url, '')
-
-        bluebus.url = 'http://www.bluebusscotland.co.uk'
-        bluebus.email = 'colin@jackson.com'
-        bluebus.phone = '0800 99 1066'
-        bluebus.save()
-
-        command = import_scotch_operator_contacts.Command()
-        command.input = os.path.join(DIR, 'fixtures/NOC_DB.csv')
-        command.handle()
-
-        first_aberdeen = Operator.objects.get(id='FABD')
-        self.assertEqual(first_aberdeen.name, 'First Aberdeen')
-        self.assertEqual(first_aberdeen.url, 'http://www.firstgroup.com/aberdeen')
-
-        bluebus = Operator.objects.get(id='BLUE')
-        # blank fields should not overwrite existing data
-        self.assertEqual(bluebus.url, 'http://www.bluebusscotland.co.uk')
-        self.assertEqual(bluebus.email, 'colin@jackson.com')
-        self.assertEqual(bluebus.phone, '01501 820598')
 
     def test_operator_twitter(self):
         bluebus = Operator.objects.get(id='BLUE')

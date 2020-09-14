@@ -140,7 +140,6 @@ if [[ $noc_old != $noc_new ]]; then
     wget -qN www.travelinedata.org.uk/noc/api/1.0/nocrecords.xml
     ../manage.py import_operators < NOC_DB.csv
     ../manage.py import_operator_contacts < nocrecords.xml
-    ../manage.py import_scotch_operator_contacts < NOC_DB.csv
     ../manage.py correct_operators
 fi
 
