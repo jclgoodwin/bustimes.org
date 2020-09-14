@@ -144,6 +144,7 @@ def handle_journey(element, source, when):
         call.expected_arrival_time = expected_arrival_time
         call.aimed_departure_time = aimed_departure_time
         call.expected_departure_time = expected_departure_time
+        calls.append(call)
     if journey_created:
         Call.objects.bulk_create(calls)
     else:
