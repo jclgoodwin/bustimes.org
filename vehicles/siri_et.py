@@ -94,11 +94,6 @@ def handle_journey(element, source, when):
                     if not service.tracking:
                         service.tracking = True
                         service.save(update_fields=['tracking'])
-                    if operator_ref[:2] == 'AN':
-                        for operator in service.operator.all():
-                            if operator.name.startswith('Arriva '):
-                                vehicle.maybe_change_operator(operator)
-                                break
 
             journeys = vehicle.vehiclejourney_set
             journey_created = False

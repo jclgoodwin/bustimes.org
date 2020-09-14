@@ -280,15 +280,7 @@ class Vehicle(models.Model):
 
     get_flickr_link.short_description = 'Flickr'
 
-    clean = Livery.clean
-
-    def maybe_change_operator(self, operator):
-        if self.operator_id != operator.id:
-            week_ago = timezone.now() - timedelta(days=7)
-            # hasn't operated as the current operator in the last week
-            if not self.vehiclejourney_set.filter(service__operator=self.operator_id, datetime__gt=week_ago).exists():
-                self.operator_id = operator.id
-                self.save(update_fields=['operator'])
+    clean = Livery.clean  # validate colours field
 
     def editable(self):
         if self.notes == 'Spare ticket machine':

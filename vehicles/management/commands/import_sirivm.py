@@ -308,14 +308,6 @@ class Command(ImportLiveVehiclesCommand):
             except (JourneyCode.DoesNotExist, JourneyCode.MultipleObjectsReturned):
                 pass
 
-        if operator_options and operator and journey.service and operator.id == operator_options[0]:
-            if operator.id not in {'RBUS', 'ARBB', 'ARHE'}:
-                try:
-                    operator = journey.service.operator.get()
-                    vehicle.maybe_change_operator(operator)
-                except (Operator.MultipleObjectsReturned, Operator.DoesNotExist):
-                    pass
-
         return journey
 
     def create_vehicle_location(self, item):
