@@ -60,7 +60,8 @@ def handle_journey(element, source, when):
     else:
         journey = None
 
-    calls = []
+    calls_to_create = []
+    calls_to_update = []
 
     calls_element = journey_element.find('siri:EstimatedCalls', ns)
     if calls_element is None:
@@ -144,12 +145,14 @@ def handle_journey(element, source, when):
         call.expected_arrival_time = expected_arrival_time
         call.aimed_departure_time = aimed_departure_time
         call.expected_departure_time = expected_departure_time
-        calls.append(call)
-    if journey_created:
-        Call.objects.bulk_create(calls)
-    else:
-        Call.objects.bulk_update(calls, fields=['stop_id', 'aimed_arrival_time', 'expected_arrival_time',
-                                 'aimed_departure_time', 'expected_departure_time'])
+        if call.id:
+            calls_to_update.append(call)
+        else:
+            calls_to_create.append(call)
+
+    Call.objects.bulk_create(calls_to_create)
+    Call.objects.bulk_update(calls_to_update, fields=['stop_id', 'aimed_arrival_time', 'expected_arrival_time',
+                             'aimed_departure_time', 'expected_departure_time'])
 
     previous_call = None
     for call in journey.call_set.order_by('visit_number'):
