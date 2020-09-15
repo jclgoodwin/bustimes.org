@@ -764,28 +764,34 @@ Services will observe all bus stops on the diverted route. </Details>
 
         self.assertEqual(situation.situation_number, 'RGlzcnVwdGlvbk5vZGU6MTA3NjM=')
         self.assertEqual(situation.reason, 'roadworks')
-        self.assertEqual(situation.summary, 'East Didsbury bus service changes Monday 11th May until Thursday 14th \
-May. ')
-        self.assertEqual(situation.text, 'Due to resurfacing works there will be bus service diversions and bus stop \
-closures from Monday 11th May until Thursday 14th may. ')
+        self.assertEqual(situation.summary, 'East Didsbury bus service changes'
+                         ' Monday 11th May until Thursday 14th May. ')
+        self.assertEqual(situation.text, 'Due to resurfacing works there will '
+                         'be bus service diversions and bus stop closures from'
+                         ' Monday 11th May until Thursday 14th may. ')
         self.assertEqual(situation.reason, 'roadworks')
 
         response = self.client.get(situation.get_absolute_url())
         self.assertContains(response, '2020-05-10T23:01:00Z')
 
         consequence = situation.consequence_set.get()
-        self.assertEqual(consequence.text, """Towards East Didsbury terminus customers should alight opposite East \
-Didsbury Rail Station as this will be the last stop. From here its a short walk to the terminus. \n
-Towards Manchester the 142 service will begin outside Didsbury Cricket club . """)
+        self.assertEqual(consequence.text, "Towards East Didsbury terminus customers should alight opposite East "
+                         "Didsbury Rail Station as this will be the last stop. "
+                         "From here its a short walk to the terminus. \n\n"
+                         "Towards Manchester the 142 service will begin outside Didsbury Cricket club . ")
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             response = self.client.get('/services/156')
 
-        self.assertContains(response, "<p>East Lancashire Road will be subjected to restrictions, at Liverpool Road,\
- from Monday 17 February 2020 for approximately 7 months.</p>")
-        self.assertContains(response, "<p>Route 156 will travel as normal from St Helens to Haydock Lane, then u-turn \
-at Moore Park Way roundabout, Haydock Lane, Millfield Lane, Tithebarn Road, then as normal route to Garswood (omitting \
-East Lancashire Road and Liverpool Road).</p>""")
+        self.assertContains(response, "<p>East Lancashire Road will be subjected to restrictions,"
+                            " at Liverpool Road, from Monday 17 February 2020 for approximately 7 months.</p>")
+        self.assertContains(response, "<p>Route 156 will travel as normal from St Helens to Haydock Lane, then "
+                            "u-turn at Moore Park Way roundabout, Haydock Lane, Millfield Lane, Tithebarn Road,"
+                            " then as normal route to Garswood (omitting East Lancashire Road and Liverpool Road).</p>")
 
-        self.assertContains(response, '<a href="https://www.merseytravel.gov.uk/travel-updates/east-lancashire-road-(haydock)/" \
-rel="nofollow">www.merseytravel.gov.uk/travel-updates/east-lancashire-road-(haydock)</a>')
+        self.assertContains(response, '<a href="https://www.merseytravel.gov.uk/travel-updates/east-lancashire-road'
+                            '-(haydock)/" rel="nofollow">www.merseytravel.gov.uk/travel-updates/east-lancashire-road'
+                            '-(haydock)</a>')
+
+        with self.assertNumQueries(5):
+            response = self.client.get('/stops/1800NF28951')

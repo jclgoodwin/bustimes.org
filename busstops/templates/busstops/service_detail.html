@@ -23,28 +23,7 @@
     {% endif %}
 </p>
 
-{% for situation in situations %}
-    <div class="situation">
-        <div class="summary">
-            {% if situation.reason %}
-                <div class="reason">
-                    {% if situation.reason == 'roadClosed' %}Road closed{% elif situation.reason == 'routeDiversion' %}Diversion{% else %}{{ situation.reason|title }}{% endif %}
-                </div>
-            {% endif %}
-            <h2>{{ situation.summary }}</h2>
-            {% if situation.validityperiod_set.all|length == 1%}
-                {{ situation.validityperiod_set.all.0 }}
-            {% endif %}
-        </div>
-        {{ situation.text|linebreaks }}
-        {% for consequence in situation.consequences %}
-            {{ consequence.text|linebreaks }}
-        {% endfor %}
-        {% for link in situation.link_set.all %}
-            {{ link.url|urlise }}
-        {% endfor %}
-    </div>
-{% endfor %}
+{% include 'situations.html' %}
 
 {% if object.geometry %}
     <p id="buses-online"><a class="button" href="#map">Map</a></p>
@@ -103,7 +82,7 @@
                             <tr{% if not row.first and not row.last and row.is_minor %} class="minor"{% endif %}>
                                 <th>
                                     {% if row.stop.pk %}
-                                        <a href="{{ row.stop.get_absolute_url }}">{% if row.stop.suspended %}🚧 {% endif %}{{ row.stop.get_qualified_name }}</a>
+                                        <a href="{{ row.stop.get_absolute_url }}">{% if row.stop.suspended %}🚧 {% elif row.stop.situation %}⚠️ {% endif %}{{ row.stop.get_qualified_name }}</a>
                                     {% else %}{{ row.stop }}{% endif %}
                                 </th>
                             {% for cell in row.times %}

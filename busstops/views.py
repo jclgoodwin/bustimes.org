@@ -9,6 +9,7 @@ from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models.functions import Distance
 from django.db.models import Q, Prefetch, F, Exists, OuterRef
+from django.db.models.functions import Now
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
@@ -377,6 +378,17 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         context['suspensions'] = self.object.stopsuspension_set.filter(service=None)
 
+        consequences = Consequence.objects.filter(stops=self.object)
+        context['situations'] = Situation.objects.filter(
+            publication_window__contains=Now(),
+            consequence__stops=self.object,
+            current=True
+        ).distinct().prefetch_related(
+            Prefetch('consequence_set', queryset=consequences, to_attr='consequences'),
+            'link_set',
+            'validityperiod_set'
+        )
+
         context['breadcrumb'] = [crumb for crumb in (
             region,
             self.object.admin_area,
@@ -500,14 +512,12 @@ class ServiceDetailView(DetailView):
 
         context['related'] = self.object.get_similar_services()
 
-        now = timezone.localtime()
-
         if self.object.show_timetable and not self.object.timetable_wrong:
             date = self.request.GET.get('date')
             if date:
                 try:
                     date = ciso8601.parse_datetime(date).date()
-                    if date < now.date():
+                    if date < timezone.localtime().date():
                         date = None
                 except ValueError:
                     date = None
@@ -525,6 +535,22 @@ class ServiceDetailView(DetailView):
         else:
             date = None
 
+        consequences = Consequence.objects.filter(services=self.object)
+        context['situations'] = Situation.objects.filter(
+            publication_window__contains=Now(),
+            consequence__services=self.object,
+            current=True
+        ).distinct().prefetch_related(
+            Prefetch('consequence_set', queryset=consequences.prefetch_related('stops'), to_attr='consequences'),
+            'link_set',
+            'validityperiod_set'
+        )
+        stop_situations = {}
+        for situation in context['situations']:
+            for consequence in situation.consequences:
+                for stop in consequence.stops.all():
+                    stop_situations[stop.atco_code] = situation
+
         suspensions = StopSuspension.objects.filter(Q(service=None) | Q(service=self.object))
 
         if not context.get('timetable') or not context['timetable'].groupings:
@@ -536,12 +562,15 @@ class ServiceDetailView(DetailView):
             context['has_minor_stops'] = any(s.is_minor() for s in context['stopusages'])
         else:
             stops = StopPoint.objects.select_related('locality').defer('osm', 'latlong', 'locality__latlong')
-            context['timetable'].groupings = [grouping for grouping in context['timetable'].groupings
-                                              if type(grouping.rows) is not list or
-                                              grouping.rows and grouping.rows[0].times]
+            context['timetable'].groupings = [grouping for grouping in context['timetable'].groupings if grouping.rows]
             stop_codes = (row.stop.atco_code for grouping in context['timetable'].groupings for row in grouping.rows)
-            stops = stops.prefetch_related(Prefetch('stopsuspension_set', to_attr='suspended', queryset=suspensions))
+            stops = stops.prefetch_related(
+                Prefetch('stopsuspension_set', to_attr='suspended', queryset=suspensions)
+            )
             stops = stops.in_bulk(stop_codes)
+            for atco_code in stops:
+                if atco_code in stop_situations:
+                    stops[atco_code].situation = True
             for grouping in context['timetable'].groupings:
                 grouping.apply_stops(stops)
 
@@ -569,19 +598,8 @@ class ServiceDetailView(DetailView):
         for url, text in self.object.get_traveline_links(date):
             context['links'].append({
                 'url': url,
-                'text': f'Timetable on the {text} website'
+                'text': text
             })
-
-        consequences = Consequence.objects.filter(services=self.object)
-        context['situations'] = Situation.objects.filter(
-            publication_window__contains=now,
-            consequence__services=self.object,
-            current=True
-        ).distinct().prefetch_related(
-            Prefetch('consequence_set', queryset=consequences, to_attr='consequences'),
-            'link_set',
-            'validityperiod_set'
-        )
 
         return context
 

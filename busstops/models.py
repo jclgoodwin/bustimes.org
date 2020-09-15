@@ -666,7 +666,7 @@ class Service(SearchMixin, models.Model):
 
     def get_trapeze_link(self, date):
         domain = 'travelinescotland.com'
-        name = 'Traveline Scotland'
+        name = 'Timetable on the Traveline Scotland website'
         if date:
             date = int(time.mktime(date.timetuple()) * 1000)
         else:
@@ -698,11 +698,14 @@ class Service(SearchMixin, models.Model):
         return 'https://www.awin1.com/awclick.php?' + urlencode(query)
 
     def get_traveline_links(self, date=None):
-        if self.source_id and self.source.name == 'S':
+        if not self.source:
+            return
+
+        if self.source.name == 'S':
             yield self.get_trapeze_link(date)
             return
 
-        if self.region_id == 'W':
+        if self.source.name == 'W' or self.region_id == 'W':
             for service_code in self.servicecode_set.filter(scheme='Traveline Cymru'):
                 query = (
                     ('routeNum', self.line_name),
@@ -710,13 +713,13 @@ class Service(SearchMixin, models.Model):
                     ('timetable_key', service_code.code)
                 )
                 url = 'https://www.traveline.cymru/timetables/?' + urlencode(query)
-                yield (url, 'Traveline Cymru')
+                yield (url, 'Timetable on the Traveline Cymru website')
             return
 
         base_url = 'http://www.travelinesoutheast.org.uk/se'
         base_query = [('command', 'direct'), ('outputFormat', 0)]
 
-        if self.region_id == 'GB':
+        if self.source.name == 'NCSD':
             parts = self.service_code.split('_')
             operator_number = self.get_operator_number(parts[1])
             if operator_number is not None:
@@ -726,19 +729,19 @@ class Service(SearchMixin, models.Model):
                          ('project', 'y08')]
                 yield (
                     f'{base_url}/XSLT_TTB_REQUEST?{urlencode(query + base_query)}',
-                    'Traveline'
+                    'Timetable on the Traveline website'
                 )
 
-        elif '-' in self.service_code and '_' in self.service_code[2:4]:
+        elif self.source.name in {'SE', 'SW', 'EM', 'WM', 'EA', 'L'}:
             if self.servicecode_set.filter(scheme='TfL').exists():
-                yield (self.get_tfl_url(), 'Transport for London')
+                yield (self.get_tfl_url(), 'Timetable on the Transport for London website')
                 return
 
             if self.service_code.startswith('tfl_'):
                 return
 
             try:
-                for route in self.route_set.all():
+                for i, route in enumerate(self.route_set.order_by('start_date')):
                     parts = route.code.split('-')
                     net, line = parts[0].split('_')
                     line_ver = parts[4][:-4]
@@ -751,9 +754,15 @@ class Service(SearchMixin, models.Model):
                     if parts[2] != '_':
                         query.append(('sup', parts[2]))
 
+                    text = 'Timetable'
+                    if i:
+                        date = route.start_date.strftime('%-d %B')
+                        text = f'{text} from {date}'
+                    text = f'{text} on the Traveline website'
+
                     yield (
                         f'{base_url}/XSLT_TTB_REQUEST?{urlencode(query + base_query)}',
-                        'Traveline'
+                        text
                     )
             except (ValueError, IndexError):
                 pass
@@ -794,7 +803,10 @@ class Service(SearchMixin, models.Model):
         if self.region_id == 'NI' or self.source and self.source.name.endswith(' GTFS'):
             return Timetable(self.route_set.all(), day)
 
-        routes = Route.objects.filter(service__in=[self] + related).order_by('start_date')
+        if related:
+            routes = Route.objects.filter(service__in=[self] + related).order_by('start_date')
+        else:
+            routes = self.route_set.order_by('start_date')
         try:
             timetable = Timetable(routes, day)
         except (IndexError, UnboundLocalError) as e:

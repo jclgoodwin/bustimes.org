@@ -75,6 +75,11 @@ class ServiceTests(TestCase):
             service_code='tfl_8-N41-_-y05', line_name='N41',
             date='2000-1-1', region_id='L'
         )
+        source = DataSource.objects.create(name='EA')
+        cls.service = Service.objects.create(service_code='ea_21-1A-_-y08', source=source, region=cls.region,
+                                             date='2018-01-01')
+        Route.objects.create(code='ea_21-1A-_-y08-2.xml', service=cls.service, start_date='2012-05-01', source=source)
+        Route.objects.create(code='ea_21-1A-_-y08-1.xml', service=cls.service, start_date='2012-01-01', source=source)
 
     def test_str(self):
         self.assertEqual(str(self.london_service), 'N41')
@@ -108,10 +113,13 @@ class ServiceTests(TestCase):
 
         self.assertEqual([], list(self.london_service.get_traveline_links()))
 
-        # TfL
-        ServiceCode.objects.create(service=self.london_service, code='N41', scheme='TfL')
-        self.assertEqual(list(self.london_service.get_traveline_links()),
-                         [('https://tfl.gov.uk/bus/timetable/N41/', 'Transport for London')])
+        links = list(self.service.get_traveline_links())
+        self.assertEqual(links, [
+            ('http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST?line=2101A&lineVer=1&net=ea&project=y08&command'
+                '=direct&outputFormat=0', 'Timetable on the Traveline website'),
+            ('http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST?line=2101A&lineVer=2&net=ea&project=y08&command'
+                '=direct&outputFormat=0', 'Timetable from 1 May on the Traveline website'),
+            ])
 
     def test_get_operator_number(self):
         self.assertIsNone(self.london_service.get_operator_number('MGBD'))

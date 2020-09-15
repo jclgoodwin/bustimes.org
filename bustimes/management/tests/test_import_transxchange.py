@@ -154,8 +154,9 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(service.operator.first(), self.fecs)
         self.assertEqual(
             list(service.get_traveline_links()),
-            [('http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST' +
-             '?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0', 'Traveline')]
+            [('http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST'
+             '?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0',
+                'Timetable on the Traveline website')]
         )
 
         res = self.client.get(service.get_absolute_url())
@@ -602,8 +603,9 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(service.operator.first(), self.fabd)
         self.assertEqual(
             list(service.get_traveline_links()),
-            [('http://www.travelinescotland.com/lts/#/timetables?' +
-             'timetableId=ABBN017&direction=OUTBOUND&queryDate=&queryTime=', 'Traveline Scotland')]
+            [('http://www.travelinescotland.com/lts/#/timetables?'
+             'timetableId=ABBN017&direction=OUTBOUND&queryDate=&queryTime=',
+                'Timetable on the Traveline Scotland website')]
         )
         self.assertEqual(service.geometry.coords, ((
             (53.7423055225, -2.504212506), (53.7398252112, -2.5083672338),
@@ -664,8 +666,9 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(service.operator.first(), self.megabus)
         self.assertEqual(
             list(service.get_traveline_links()),
-            [('http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST' +
-             '?line=11M11&sup=A&net=nrc&project=y08&command=direct&outputFormat=0', 'Traveline')]
+            [('http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST'
+             '?line=11M11&sup=A&net=nrc&project=y08&command=direct&outputFormat=0',
+                'Timetable on the Traveline website')]
         )
 
         self.assertEqual(res.context_data['breadcrumb'], [self.gb, self.megabus])
