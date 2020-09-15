@@ -46,6 +46,25 @@
 
     button.onclick = openMap;
 
+    function getStopMarker(feature, latlng) {
+
+        var className = '';
+        if (feature.properties.bearing !== null) {
+            var html = '<div class="stop-arrow" style="' + getTransform(feature.properties.bearing + 45) + '"></div>';
+        } else {
+            html = '<div class="stop-arrow no-direction"></div>';
+        }
+        var icon = L.divIcon({
+            iconSize: [9, 9],
+            html: html,
+            className: 'stop'
+        });
+
+        return L.marker(latlng, {
+            icon: icon
+        }).bindPopup('<a href="' + feature.properties.url + '">' + feature.properties.name + '</a>');
+    }
+
     function setUpMap() {
         map = L.map(container),
         map.attributionControl.setPrefix('');
@@ -82,20 +101,12 @@
                 style: {
                     weight: 3,
                     color: '#87f'
-                }
+                },
+                interactive: false
             }).addTo(map);
-            var options = {
-                radius: 3,
-                fillColor: '#fff',
-                color: '#87f',
-                weight: 2,
-                fillOpacity: 1
-            };
 
             L.geoJson(data.stops, {
-                pointToLayer: function (feature, latlng) {
-                    return L.circleMarker(latlng, options).bindPopup('<a href="' + feature.properties.url + '">' + feature.properties.name + '</a>');
-                }
+                pointToLayer: getStopMarker
             }).addTo(map);
         });
 
@@ -258,8 +269,6 @@
         backoff = 1000,
         newSocket;
 
-    var first = false;
-
     function connect() {
         if (socket && socket.readyState < 2) { // already CONNECTING or OPEN
             return; // no need to reconnect
@@ -303,7 +312,7 @@
                 }
             }
 
-            if (newSocket && !first) {
+            if (newSocket) {
                 var newVehicles = {};
             }
             newSocket = false;
