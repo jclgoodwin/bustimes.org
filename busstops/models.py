@@ -18,6 +18,7 @@ from django.utils.text import slugify
 from django.utils.html import format_html
 from bustimes.models import Route
 from bustimes.timetables import Timetable
+from buses.utils import varnish_ban
 
 
 logger = logging.getLogger(__name__)
@@ -819,6 +820,9 @@ class Service(SearchMixin, models.Model):
                     break
 
         return timetable
+
+    def varnish_ban(self):
+        varnish_ban(self.get_absolute_url())
 
 
 class ServiceCode(models.Model):

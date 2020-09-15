@@ -32,12 +32,20 @@ def handle_siri_vm(request_body):
 def handle_siri_sx(request_body):
     source = DataSource.objects.get(name='Transport for the North')
     iterator = ET.iterparse(StringIO(request_body))
+    situation_ids = []
     for _, element in iterator:
         if element.tag[:29] == '{http://www.siri.org.uk/siri}':
             element.tag = element.tag[29:]
+            if element.tag == 'SubscriptionRef':
+                subscription_ref = element.text
             if element.tag == 'PtSituationElement':
-                siri_sx(element, source)
+                situation_ids.append(siri_sx(element, source))
                 element.clear()
+
+    if subscription_ref != source.settings.get('subscription_ref'):
+        source.settings['subscription_ref'] = subscription_ref
+        source.save(update_fields=['settings'])
+        source.situation_set.filter(current=True).exclude(id__in=situation_ids).update(current=False)
 
 
 @shared_task

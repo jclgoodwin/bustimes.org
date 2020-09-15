@@ -747,7 +747,7 @@ Services will observe all bus stops on the diverted route. </Details>
                 self.client.post('/siri', xml, content_type='text/xml')
             siri_sx.assert_called_with(xml)
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(14):
             handle_siri_sx(xml)
         with self.assertNumQueries(2):
             handle_siri_sx(xml)
@@ -793,5 +793,6 @@ Services will observe all bus stops on the diverted route. </Details>
                             '-(haydock)/" rel="nofollow">www.merseytravel.gov.uk/travel-updates/east-lancashire-road'
                             '-(haydock)</a>')
 
-        with self.assertNumQueries(5):
-            response = self.client.get('/stops/1800NF28951')
+        with self.assertNumQueries(8):
+            response = self.client.get('/stops/2800S11031B')
+        self.assertContains(response, 'subjected to restrictions, at Liverpool Road, from Monday 17 February 2020')

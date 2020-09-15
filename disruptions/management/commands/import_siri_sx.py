@@ -92,6 +92,7 @@ def handle_item(item, source):
                 services = Service.objects.filter(current=True, line_name__iexact=line_name, operator=operator_ref)
                 for service in services:
                     consequence.services.add(service)
+                    service.varnish_ban()
 
         stops = consequence_element.findall('Affects/StopPoints/AffectedStopPoint')
         stops = [stop.find('StopPointRef').text for stop in stops]
