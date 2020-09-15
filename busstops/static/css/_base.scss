@@ -697,26 +697,31 @@ table {
         }
     }
 
-    &.stop {
+    .stop-arrow {
+        background: $black;
+        border: 1px solid $white;
+        border-radius: 0 8px 8px;
+        height: 9px;
+        width: 9px;
+
+        &.no-direction {
+            border-radius: 8px;
+        }
+    }
+}
+
+#hugemap {
+    .stop-arrow {
+        position: absolute;
+        left: 3px;
+        top: 3px;
+    }
+
+    .stop {
         color: #fff;
         font-size: 9px;
         line-height: 16px;
         text-align: center;
-
-        .stop-arrow {
-            background: $black;
-            border: 1px solid $white;
-            border-radius: 0 8px 8px;
-            height: 9px;
-            position: absolute;
-            left: 3px;
-            top: 3px;
-            width: 9px;
-        }
-
-        .no-direction {
-            border-radius: 8px;
-        }
 
         .zoomed-in &,
         &:hover {
@@ -741,6 +746,15 @@ table {
                 font-size: 11px;
             }
         }
+    }
+}
+
+.service-map {
+    .stop-arrow {
+        background: #fff;
+        border: 2px solid #87f;
+        height: 5px;
+        width: 5px;
     }
 }
 
