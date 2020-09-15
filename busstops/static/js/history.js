@@ -26,6 +26,7 @@
         fillColor: '#000',
         fillOpacity: 1,
         weight: 0,
+        interactive: false
     };
 
     function closeMap() {
@@ -140,7 +141,8 @@
                 style: {
                     weight: 3,
                     color: '#87f'
-                }
+                },
+                interactive: false
             });
             line.addTo(layerGroup);
             bounds = line.getBounds();
