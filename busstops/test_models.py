@@ -1,7 +1,7 @@
 from django.test import TestCase
 from bustimes.models import Route
 from .models import (
-    Region, AdminArea, DataSource, District, Locality, Operator, Service, StopPoint, ServiceCode
+    Region, AdminArea, DataSource, District, Locality, Operator, Service, StopPoint
 )
 from .admin import OperatorAdmin
 

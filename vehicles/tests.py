@@ -5,8 +5,7 @@ from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
 from busstops.models import DataSource, Region, Operator, Service
 from .models import (Vehicle, VehicleType, VehicleFeature, Livery,
-                     VehicleJourney, VehicleLocation, VehicleEdit, VehicleRevision)
-from . import admin
+                     VehicleJourney, VehicleLocation, VehicleEdit)
 
 
 @override_settings(CELERY_BROKER_URL='redis://localhost:69')

@@ -1,14 +1,11 @@
 import re
 import redis
-import socket
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from channels.exceptions import ChannelFull
 from math import ceil
 from urllib.parse import quote
 from webcolors import html5_parse_simple_color
-from datetime import timedelta
-from django.utils import timezone
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.serializers.json import DjangoJSONEncoder
