@@ -112,7 +112,6 @@
 
         a.innerHTML = '<span>' + data.properties.name + '</span><small>' + data.properties.services.join('</small><small>') + '</small>';
         a.href = data.properties.url;
-        a.className = 'stop';
 
         marker.bindPopup(a.outerHTML, {
             autoPan: false
