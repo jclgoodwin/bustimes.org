@@ -77,6 +77,7 @@ if TEST:
     TEST_RUNNER = 'django_slowtests.testrunner.DiscoverSlowestTestsRunner'
     NUM_SLOW_TESTS = 10
 
+AUTH_USER_MODEL = 'accounts.User'
 
 # if os.environ.get('READ_ONLY_DB_HOST'):
 #     REPLICA_DATABASES = []
