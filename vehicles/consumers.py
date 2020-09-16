@@ -54,20 +54,18 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
             self.send_locations(locations)
 
     def send_locations(self, locations):
-        # send data in batches of 50
-        for chunk in (locations[i:i+50] for i in range(0, len(locations), 50)):
-            self.send_json(
-                [{
-                    'i': location.id,
-                    'd': DjangoJSONEncoder.default(None, location.datetime),
-                    'l': tuple(location.latlong),
-                    'h': location.heading,
-                    'r': location.journey.route_name,
-                    'c': location.journey.vehicle.get_livery(location.heading),
-                    't': location.journey.vehicle.get_text_colour(),
-                    'e': location.early
-                } for location in chunk]
-            )
+        self.send_json(
+            [{
+                'i': location.id,
+                'd': DjangoJSONEncoder.default(None, location.datetime),
+                'l': tuple(location.latlong),
+                'h': location.heading,
+                'r': location.journey.route_name,
+                'c': location.journey.vehicle.get_livery(location.heading),
+                't': location.journey.vehicle.get_text_colour(),
+                'e': location.early
+            } for location in locations]
+        )
 
 
 class ServiceMapConsumer(VehicleMapConsumer):
