@@ -28,8 +28,7 @@ class EditVehiclesForm(forms.Form):
     branding = forms.CharField(label="Other branding", required=False, max_length=255)
     features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features',
                                               widget=forms.CheckboxSelectMultiple, required=False)
-    depot = forms.CharField(help_text="""I’d leave this blank if I were you. There are better places (not this website) for such
-minutae""", required=False, max_length=255, widget=forms.TextInput(attrs={"list": "depots"}))
+    depot = forms.ChoiceField(required=False)
     notes = forms.CharField(help_text="""Again, this should be blank in almost all cases. There’s no need to know a
 vehicle’s previous owners""", required=False, max_length=255)
     withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False)
@@ -65,6 +64,12 @@ vehicle’s previous owners""", required=False, max_length=255)
 
         if operator:
             self.fields['colours'].choices = get_livery_choices(operator)
+            depots = operator.vehicle_set.distinct('data__Depot').values_list('data__Depot', flat=True)
+            depots = [('', '')] + sorted([(depot, depot) for depot in depots if depot])
+            if depots:
+                self.fields['depot'].choices = depots
+            else:
+                del self.fields['depot']
 
         operators = None
         if operator and operator.parent:
@@ -100,8 +105,6 @@ class EditVehicleForm(EditVehiclesForm):
 
         if not vehicle.notes:
             del self.fields['notes']
-            if not vehicle.data or 'Depot' not in vehicle.data:
-                del self.fields['depot']
             if not vehicle.name:
                 del self.fields['name']
             if not vehicle.branding:

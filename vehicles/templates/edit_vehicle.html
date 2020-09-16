@@ -43,10 +43,6 @@
 
         {{ form.as_p }}
 
-        <datalist id="depots">
-            {% for depot in depots %}{% if depot %}<option value="{{ depot }}">{% endif %}{% endfor %}
-        </datalist>
-
         {% if user.is_authenticated %}
             <p>You’re logged in as <strong>{{ user }}</strong>. <a href="{% url 'logout' %}">Log out</a></p>
         {% endif %}

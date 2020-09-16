@@ -125,11 +125,6 @@ def operator_vehicles(request, slug=None, parent=None):
         else:
             form = EditVehiclesForm(initial=initial, operator=operator)
 
-        depots = vehicles.order_by().distinct('data__Depot').values_list('data__Depot', flat=True)
-
-    else:
-        depots = None
-
     if operator.name == 'National Express':
         vehicles = sorted(vehicles, key=lambda v: v.notes)
 
@@ -164,7 +159,6 @@ def operator_vehicles(request, slug=None, parent=None):
         'revisions': revisions,
         'revision': revisions and revision,
         'form': form,
-        'depots': depots
     })
 
     if form and form.is_valid() and form.cleaned_data['user'] != request.COOKIES.get('username', ''):
@@ -401,11 +395,6 @@ def edit_vehicle(request, vehicle_id):
         form = EditVehicleForm(initial=initial, operator=vehicle.operator, vehicle=vehicle)
 
     if vehicle.operator:
-        depots = vehicle.operator.vehicle_set.distinct('data__Depot').values_list('data__Depot', flat=True)
-    else:
-        depots = ()
-
-    if vehicle.operator:
         breadcrumb = [vehicle.operator, Vehicles(vehicle.operator), vehicle]
     else:
         breadcrumb = [vehicle]
@@ -413,7 +402,6 @@ def edit_vehicle(request, vehicle_id):
     response = render(request, 'edit_vehicle.html', {
         'breadcrumb': breadcrumb,
         'form': form,
-        'depots': depots,
         'object': vehicle,
         'vehicle': vehicle,
         'previous': vehicle.get_previous(),
