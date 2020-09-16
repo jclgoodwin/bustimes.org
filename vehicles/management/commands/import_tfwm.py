@@ -32,15 +32,17 @@ class Command(ImportLiveVehiclesCommand):
             vehicle_code = vehicle_code[:5]
             defaults['fleet_number'] = vehicle_code
             try:
-                vehicle, created = self.vehicles.get_or_create(defaults, operator__in=['DIAM', 'FSMR'],
-                                                               code=vehicle_code)
-                if not vehicle.operator_id:
-                    print(item)
+                vehicle = self.vehicles.get(operator__parent__in=['Rotala', 'First'], code=vehicle_code)
                 if vehicle.operator_id == 'DIAM':
                     return None, None
-                return vehicle, created
-            except Vehicle.MultipleObjectsReturned as e:
-                print(e)
+                return vehicle, False
+            except Vehicle.MultipleObjectsReturned:
+                try:
+                    vehicle = self.vehicles.get(operator__in=['FSMR', 'DIAM'], code=vehicle_code)
+                except (Vehicle.DoesNotExist, Vehicle.MultipleObjectsReturned):
+                    return None, None
+            except Vehicle.DoesNotExist:
+                pass
 
         elif vehicle_code.startswith('BUS_'):
             line_names = Service.objects.filter(current=True, operator='SLBS').values_list('line_name', flat=True)
