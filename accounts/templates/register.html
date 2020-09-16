@@ -6,20 +6,22 @@
 
 {% block content %}
 
-{% if form %}
-	<h1>Create an account</h1>
-
-	<form method="post" action="{% url 'register' %}">
-
-	{{ form.as_p }}
-
-	<input type="submit" value="Register">
-
-	{% csrf_token %}
-
-	</form>
+{% if form.user %}
+    <p>Check your email ({{ form.user.email }})</p>
 {% else %}
-	<p>Check your email ({{ user }})</p>
+    <h1>Create an account</h1>
+
+    <form method="post" action="{% url 'register' %}">
+
+    {{ form.as_p }}
+
+    <input type="submit" value="Register">
+
+    <input type="hidden" name="next" value="{{ next }}">
+
+    {% csrf_token %}
+
+    </form>
 {% endif %}
 
 {% endblock %}

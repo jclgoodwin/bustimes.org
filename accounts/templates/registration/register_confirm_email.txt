@@ -1,0 +1,8 @@
+Thank you for making a bustimes.org account.
+
+Follow the following link to log in and set a password:
+
+{{ protocol }}://{{ domain }}{% url 'register_confirm' uidb64=uid token=token %}
+
+(If you didn't create an account, perhaps someone typed your email address
+by mistake. Don't worry, you can ignore this email and get on with your life.)

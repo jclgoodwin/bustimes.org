@@ -1,27 +1,22 @@
-from django.contrib.auth.models import User
-from django.db import IntegrityError
 from django.shortcuts import render
+from django.contrib.auth import get_user_model
+from django.contrib.auth.views import PasswordResetConfirmView
+
 from .forms import RegistrationForm
 
 
 def register(request):
-    user = None
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            try:
-                user = User.objects.create_user(
-                    form.cleaned_data['email_address'],
-                    form.cleaned_data['email_address']
-                )
-            except IntegrityError:
-                user = User.objects.filter(username=form.cleaned_data['email_address']).first()
-                pass
-            form = None
+            form.save(request=request)
     else:
         form = RegistrationForm()
 
     return render(request, 'register.html', {
         'form': form,
-        'user': user
     })
+
+
+class RegisterConfirmView(PasswordResetConfirmView):
+    pass
