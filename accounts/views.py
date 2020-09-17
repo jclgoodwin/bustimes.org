@@ -21,15 +21,19 @@ class RegisterConfirmView(auth_views.PasswordResetConfirmView):
 
 
 class LoginView(auth_views.LoginView):
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'].fields['username'].label = 'Email address'
-        context['form'].fields['username'].widget.input_type = 'email'
-        return context
+    pass
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['form'].fields['username'].label = 'Email address'
+    #     context['form'].fields['username'].widget.input_type = 'email'
+    #     return context
 
 
 class PasswordResetView(auth_views.PasswordResetView):
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'].fields['email'].label = 'Email address'
-        return context
+    pass
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['form'].fields['email'].label = 'Email address'
+    #     return context

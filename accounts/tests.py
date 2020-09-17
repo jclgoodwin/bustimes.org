@@ -5,7 +5,7 @@ from .models import User
 
 class RegistrationTest(TestCase):
     def test_registration(self):
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             response = self.client.post('/accounts/register/', {
                 'email': 'rufus@herring.pizza',
             })
@@ -14,4 +14,5 @@ class RegistrationTest(TestCase):
         self.assertIn('a bustimes.org account', mail.outbox[0].body)
 
         user = User.objects.get()
+        self.assertEqual(user.username, 'rufus@herring.pizza')
         self.assertEqual(user.email, 'rufus@herring.pizza')

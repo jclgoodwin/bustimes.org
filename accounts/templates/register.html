@@ -8,18 +8,20 @@
 
 {% if form.user %}
     <p>Check your email ({{ form.user.email }})</p>
+
+    <p>Outlook/Hotmail users: you might have to wait for your email because it’s been mistaken for spam. Sorry. Working on it.</p>
 {% else %}
     <h1>Create an account</h1>
 
     <form method="post" action="{% url 'register' %}">
 
-    {{ form.as_p }}
+        {{ form.as_p }}
 
-    <input type="submit" value="Continue">
+        <input type="submit" value="Continue">
 
-    <input type="hidden" name="next" value="{{ next }}">
+        <input type="hidden" name="next" value="{{ next }}">
 
-    {% csrf_token %}
+        {% csrf_token %}
 
     </form>
 {% endif %}
