@@ -465,7 +465,7 @@ class OperatorDetailView(DetailView):
         context['services'] = sorted(self.object.service_set.filter(current=True).defer('geometry'),
                                      key=Service.get_order)
 
-        context['vehicles'] = self.object.vehicle_set.exists()
+        context['vehicles'] = self.object.vehicle_set.filter(withdrawn=False).exists()
 
         if context['services']:
             context['modes'] = {service.mode for service in context['services'] if service.mode}
