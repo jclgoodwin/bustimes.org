@@ -64,9 +64,9 @@ vehicle’s previous owners""", required=False, max_length=255)
         if operator:
             self.fields['colours'].choices = get_livery_choices(operator)
             depots = operator.vehicle_set.distinct('data__Depot').values_list('data__Depot', flat=True)
-            depots = [('', '')] + sorted([(depot, depot) for depot in depots if depot])
+            depots = [(depot, depot) for depot in depots if depot]
             if depots:
-                self.fields['depot'].choices = depots
+                self.fields['depot'].choices = [('', '')] + sorted(depots)
             else:
                 del self.fields['depot']
 
