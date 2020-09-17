@@ -13,6 +13,11 @@ class RegistrationTest(TestCase):
         self.assertEquals('bustimes.org account', mail.outbox[0].subject)
         self.assertIn('a bustimes.org account', mail.outbox[0].body)
 
+        with self.assertNumQueries(1):
+            response = self.client.post('/accounts/register/', {
+                'email': 'RUFUS@HeRRInG.piZZa',
+            })
+
         user = User.objects.get()
         self.assertEqual(user.username, 'rufus@herring.pizza')
         self.assertEqual(user.email, 'rufus@herring.pizza')

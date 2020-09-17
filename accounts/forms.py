@@ -8,7 +8,7 @@ UserModel = get_user_model()
 class RegistrationForm(PasswordResetForm):
     def save(self, request=None):
         try:
-            self.user = UserModel.objects.get(email=self.cleaned_data['email'])
+            self.user = UserModel.objects.get(email__iexact=self.cleaned_data['email'])
         except UserModel.DoesNotExist:
             self.user = UserModel.objects.create_user(
                 self.cleaned_data['email'],
