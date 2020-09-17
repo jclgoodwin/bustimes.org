@@ -6,6 +6,10 @@ UserModel = get_user_model()
 
 
 class RegistrationForm(PasswordResetForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['email'].label = 'Email address'
+
     def save(self, request=None):
         try:
             self.user = UserModel.objects.create_user(
@@ -23,4 +27,4 @@ class RegistrationForm(PasswordResetForm):
         )
 
     def get_users(self, _):
-        yield self.user
+        return [self.user]

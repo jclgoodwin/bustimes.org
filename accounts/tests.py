@@ -11,8 +11,7 @@ class RegistrationTest(TestCase):
             })
         self.assertContains(response, 'Check your email (rufus@herring.pizza')
         self.assertEquals('bustimes.org account', mail.outbox[0].subject)
-        print(mail.outbox[0].body)
-        self.assertIn('a bustimes.org account ', mail.outbox[0].body)
+        self.assertIn('a bustimes.org account', mail.outbox[0].body)
 
         user = User.objects.get()
         self.assertEqual(user.email, 'rufus@herring.pizza')

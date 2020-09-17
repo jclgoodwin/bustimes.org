@@ -8,7 +8,7 @@ from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404
-# from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, Http404
 from django.views.generic.detail import DetailView
 from django.urls import reverse
@@ -325,6 +325,7 @@ class VehicleDetailView(DetailView):
         return context
 
 
+@login_required
 def edit_vehicle(request, vehicle_id):
     vehicle = get_object_or_404(Vehicle.objects.select_related('vehicle_type', 'livery', 'operator'), id=vehicle_id)
     if not vehicle.editable():

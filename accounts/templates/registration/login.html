@@ -10,19 +10,20 @@
 
 <form method="post" action="{% url 'login' %}">
 
-{{ form.as_p }}
+	{{ form.as_p }}
 
-<input type="submit" value="Log in">
+	<input type="submit" value="Log in">
 
-<input type="hidden" name="next" value="{{ next }}">
+	<input type="hidden" name="next" value="{{ next }}">
 
-{% csrf_token %}
+	{% csrf_token %}
 
 </form>
 
-<p><a href="{% url 'register' %}?next={{ next }}">Create an account</a></p>
-
-<p><a href="{% url 'password_reset' %}?next={{ next }}">Lost password?</a></p>
+<ul class="horizontal">
+	<li><a href="{% url 'register' %}?next={{ next }}">Create an account</a></li>
+	<li><a href="{% url 'password_reset' %}?next={{ next }}">Lost password?</a></li>
+</ul>
 
 {% endblock %}
 

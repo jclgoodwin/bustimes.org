@@ -1,7 +1,5 @@
 from django.shortcuts import render
-from django.contrib.auth import get_user_model
-from django.contrib.auth.views import PasswordResetConfirmView
-
+from django.contrib.auth import views as auth_views
 from .forms import RegistrationForm
 
 
@@ -18,5 +16,20 @@ def register(request):
     })
 
 
-class RegisterConfirmView(PasswordResetConfirmView):
+class RegisterConfirmView(auth_views.PasswordResetConfirmView):
     pass
+
+
+class LoginView(auth_views.LoginView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'].fields['username'].label = 'Email address'
+        context['form'].fields['username'].widget.input_type = 'email'
+        return context
+
+
+class PasswordResetView(auth_views.PasswordResetView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'].fields['email'].label = 'Email address'
+        return context
