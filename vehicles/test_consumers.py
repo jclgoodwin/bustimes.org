@@ -42,6 +42,7 @@ async def test_my_consumer():
     await communicator.send_json_to(
         [1.2105560302734377, 50.63129172228801, 1.4577484130859377, 52.66524398541177]
     )
+    await communicator.receive_nothing()
 
     await communicator.send_input({
         'type': 'move_vehicle',
