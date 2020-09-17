@@ -32,7 +32,6 @@ class EditVehiclesForm(forms.Form):
     notes = forms.CharField(help_text="""Again, this should be blank in almost all cases. There’s no need to know a
 vehicle’s previous owners""", required=False, max_length=255)
     withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False)
-    user = forms.CharField(label='Your name', required=False, max_length=255)
 
     def clean_url(self):
         if self.cleaned_data['url']:
@@ -53,7 +52,7 @@ vehicle’s previous owners""", required=False, max_length=255)
     def has_really_changed(self):
         if not self.has_changed():
             return False
-        if all(key == 'user' or key == 'url' for key in self.changed_data):
+        if all(key == 'url' for key in self.changed_data):
             return False
         return True
 

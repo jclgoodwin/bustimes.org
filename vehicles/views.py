@@ -7,7 +7,7 @@ from django.db.models import Exists, OuterRef, Prefetch, Subquery
 from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.conf import settings
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, Http404
 from django.views.generic.detail import DetailView
@@ -80,11 +80,13 @@ def operator_vehicles(request, slug=None, parent=None):
     form = request.path.endswith('/edit')
 
     if form:
+        if not request.user.is_authenticated:
+            return redirect(f'/login/?next={request.path}')
+
         breadcrumb.append(Vehicles(operator))
         initial = {
             'operator': operator,
             'other_colour': '#ffffff',
-            'user': request.COOKIES.get('username')
         }
         if request.method == 'POST':
             form = EditVehiclesForm(request.POST, initial=initial, operator=operator)
@@ -94,28 +96,23 @@ def operator_vehicles(request, slug=None, parent=None):
                 data = {key: form.cleaned_data[key] for key in form.changed_data}
                 vehicle_ids = request.POST.getlist('vehicle')
                 now = timezone.now()
-                username = form.cleaned_data.get('user')
 
                 revisions, changed_fields = do_revisions(vehicle_ids, data)
                 if revisions:
                     Vehicle.objects.bulk_update((revision.vehicle for revision in revisions), changed_fields)
                     for revision in revisions:
                         revision.datetime = now
-                        revision.username = username or ''
                         revision.ip_address = request.META['REMOTE_ADDR']
                         if request.user.is_authenticated:
                             revision.user = request.user
                     VehicleRevision.objects.bulk_create(revisions)
                     revisions = len(revisions)
 
-                if 'user' in data:
-                    del data['user']
-
                 if data:
                     # this will fetch the vehicles list
                     # - slightly important that it occurs before any change of operator
                     ticked_vehicles = [v for v in vehicles if str(v.id) in vehicle_ids]
-                    edits = [get_vehicle_edit(vehicle, data, now, username, request) for vehicle in ticked_vehicles]
+                    edits = [get_vehicle_edit(vehicle, data, now, request) for vehicle in ticked_vehicles]
                     edits = VehicleEdit.objects.bulk_create(edit for edit in edits if edit)
                     submitted = len(edits)
                     if 'features' in data:
@@ -160,9 +157,6 @@ def operator_vehicles(request, slug=None, parent=None):
         'revision': revisions and revision,
         'form': form,
     })
-
-    if form and form.is_valid() and form.cleaned_data['user'] != request.COOKIES.get('username', ''):
-        response.set_cookie('username', form.cleaned_data['user'], 60 * 60 * 24 * 31, httponly=True, samesite='Strict')
 
     return response
 
@@ -344,15 +338,12 @@ def edit_vehicle(request, vehicle_id):
         'previous_reg': vehicle.data and vehicle.data.get('Previous reg') or None,
         'depot': vehicle.data and vehicle.data.get('Depot') or None,
         'notes': vehicle.notes,
-        'user': request.COOKIES.get('username'),
         'withdrawn': vehicle.withdrawn
     }
     if vehicle.fleet_code:
         initial['fleet_number'] = vehicle.fleet_code
     elif vehicle.fleet_number is not None:
         initial['fleet_number'] = str(vehicle.fleet_number)
-
-    username = None
 
     if request.method == 'POST':
         form = EditVehicleForm(request.POST, initial=initial, operator=vehicle.operator, vehicle=vehicle)
@@ -361,13 +352,10 @@ def edit_vehicle(request, vehicle_id):
         elif form.is_valid():
             data = {key: form.cleaned_data[key] for key in form.changed_data}
             now = timezone.now()
-            username = form.cleaned_data.get('user')
             ip_address = request.META['REMOTE_ADDR']
             revision = do_revision(vehicle, data)
             if revision:
                 revision.datetime = now
-                if username:
-                    revision.username = username
                 if request.user.is_authenticated:
                     revision.user = request.user
                 revision.ip_address = ip_address
@@ -375,11 +363,8 @@ def edit_vehicle(request, vehicle_id):
 
             form = None
 
-            if 'user' in data:
-                del data['user']
-
             if data:
-                edit = get_vehicle_edit(vehicle, data, now, username, request)
+                edit = get_vehicle_edit(vehicle, data, now, request)
                 edit.save()
                 if 'features' in data:
                     for feature in vehicle.features.all():
@@ -411,9 +396,6 @@ def edit_vehicle(request, vehicle_id):
         'revision': revision,
         'pending_edits': form and vehicle.vehicleedit_set.filter(approved=None).exists()
     })
-
-    if username and username != initial['user']:
-        response.set_cookie('username', username, 60 * 60 * 24 * 31, httponly=True, samesite='Strict')
 
     return response
 

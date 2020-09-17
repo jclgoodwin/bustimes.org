@@ -1,8 +1,8 @@
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
-from django.contrib.auth.models import User
 from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
+from accounts.models import User
 from busstops.models import DataSource, Region, Operator, Service
 from .models import (Vehicle, VehicleType, VehicleFeature, Livery,
                      VehicleJourney, VehicleLocation, VehicleEdit)

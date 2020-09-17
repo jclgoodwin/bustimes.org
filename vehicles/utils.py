@@ -1,14 +1,13 @@
 from .models import Vehicle, VehicleEdit, VehicleRevision
 
 
-def get_vehicle_edit(vehicle, fields, now, username, request):
+def get_vehicle_edit(vehicle, fields, now, request):
     edit = VehicleEdit(vehicle=vehicle, datetime=now)
 
     if request.user.is_authenticated:
         edit.user = request.user
 
     edit.ip_address = request.META['REMOTE_ADDR']
-    edit.username = username or edit.ip_address
 
     for field in ('fleet_number', 'reg', 'vehicle_type', 'branding', 'name', 'notes'):
         if field in fields and str(fields[field]) != str(getattr(vehicle, field)):
