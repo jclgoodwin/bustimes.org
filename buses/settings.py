@@ -13,7 +13,17 @@ TEST = 'test' in sys.argv or 'pytest' in sys.argv[0]
 DEBUG = bool(os.environ.get('DEBUG', False)) or TEST
 
 SERVER_EMAIL = 'contact@bustimes.org'
-DEFAULT_FROM_EMAIL = 'contact@bustimes.org'
+DEFAULT_FROM_EMAIL = 'bustimes.org <contact@bustimes.org>'
+
+if TEST:
+    EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+else:
+    EMAIL_HOST = 'smtp.fastmail.com'
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+    EMAIL_PORT = 465
+    EMAIL_USE_SSL = True
+    EMAIL_TIMEOUT = 10
 
 INSTALLED_APPS = [
     'accounts',
@@ -109,9 +119,6 @@ else:
         }
     }
 
-
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.environ.get('STATIC_ROOT', os.path.join(BASE_DIR, '..', 'bustimes-static'))
