@@ -1,0 +1,38 @@
+{% extends 'page.html' %}
+
+{% block title %}User {{ object.id }} – bustimes.org{% endblock %}
+
+{% block canonical %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block content %}
+
+    <h1>User {{ object.id }}</h1>
+
+    <table>
+        <thead>
+            <th scope="col">Date</th>
+            <th scope="col">Vehicle</th>
+            <th scope="col">Changed</th>
+            <th scope="col">From</th>
+            <th scope="col">To</th>
+        </thead>
+        <tbody>
+            {% for revision in revisions %}
+                {% for key, from, to in revision.list_changes %}
+                    <tr>
+                        <td>{{ revision.datetime }}</td>
+                        <td><a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a></td>
+                        <td>{{ key }}</td>
+                        <td>{{ from }}</td>
+                        <td>{{ to }}</td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% include 'pagination.html' with page=revisions %}
+
+{% endblock %}
+
+{% block ad %}{% endblock %}

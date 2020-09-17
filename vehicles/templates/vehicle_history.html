@@ -30,7 +30,7 @@
         {% for revision in revisions %}
             {% for key, from, to in revision.list_changes %}
                 <tr>
-                    <td>{{ revision.user.id }}</td>
+                    <td>{% if revision.user_id %}<a href="/accounts/users/{{ revision.user_id }}/">{{ revision.user_id }}</a>{% endif %}</td>
                     <td>{{ revision.datetime }}</td>
                     {% if not vehicle %}
                         <td><a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a></td>

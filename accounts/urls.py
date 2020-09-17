@@ -17,4 +17,6 @@ urlpatterns = [
 
     path('register/', views.register, name='register'),
     path('register/confirm/<uidb64>/<token>/', views.RegisterConfirmView.as_view(), name='register_confirm'),
+
+    path('users/<int:pk>/', views.user_detail, name='user_detail')
 ]
