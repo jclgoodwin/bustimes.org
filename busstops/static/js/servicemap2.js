@@ -96,7 +96,7 @@
             map.fitBounds([[window.EXTENT[1], window.EXTENT[0]], [window.EXTENT[3], window.EXTENT[2]]]);
         }
 
-        reqwest('/services/' + service + '.json', function(data) {
+        reqwest('/services/' + service.split(',')[0] + '.json', function(data) {
             L.geoJson(data.geometry, {
                 style: {
                     weight: 3,

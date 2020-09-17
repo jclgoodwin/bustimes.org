@@ -27,7 +27,7 @@
 
 {% if object.geometry %}
     <p id="buses-online"><a class="button" href="#map">Map</a></p>
-    <div class="service-map" id="map" data-service="{{ object.id }}"></div>
+    <div class="service-map" id="map" data-service="{{ object.id }}{% for service_id in linked_services %},{{ service.id }}{% endfor %}"></div>
 {% endif %}
 
 {% if object.timetable_change %}

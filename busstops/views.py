@@ -523,6 +523,7 @@ class ServiceDetailView(DetailView):
                     date = None
             if context['related']:
                 parallel = self.object.get_linked_services()
+                context['linked_services'] = parallel
             else:
                 parallel = []
             timetable = self.object.get_timetable(date, parallel)
