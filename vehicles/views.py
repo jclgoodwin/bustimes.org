@@ -81,7 +81,7 @@ def operator_vehicles(request, slug=None, parent=None):
 
     if form:
         if not request.user.is_authenticated:
-            return redirect(f'/login/?next={request.path}')
+            return redirect(f'/accounts/login/?next={request.path}')
 
         breadcrumb.append(Vehicles(operator))
         initial = {
