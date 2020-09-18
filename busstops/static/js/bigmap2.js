@@ -231,6 +231,7 @@
         clickedMarker = item.i;
 
         marker.setIcon(getBusIcon(item, true));
+        marker.setZIndexOffset(2000);
 
         reqwest({
             url: '/vehicles/locations/' + item.i,
@@ -246,6 +247,7 @@
             clickedMarker = null;
             // make the icon small again
             event.target.setIcon(getBusIcon(event.target.options.item));
+            event.target.setZIndexOffset(1000);
         }
     }
 

@@ -201,24 +201,16 @@
 
 
     function handlePopupOpen(event) {
-        if (clickedMarker) {
-            // deselect previous clicked marker
-            // (not always covered by popupclose handler, if popup hasn't opened yet)
-            var marker = vehicleMarkers[clickedMarker];
-            if (marker) {
-                marker.setIcon(getBusIcon(marker.options.item));
-            }
-        }
-
-        marker = event.target;
+        var marker = event.target;
         var item = marker.options.item;
 
         clickedMarker = item.i;
 
         marker.setIcon(getBusIcon(item, true));
+        marker.setZIndexOffset(2000);
 
         reqwest({
-            url: '/vehicles/locations/' + clickedMarker,
+            url: '/vehicles/locations/' + item.i,
             success: function(content) {
                 marker.options.popupContent = content;
                 marker.getPopup().setContent(content + getPopupContent(item));
@@ -231,6 +223,7 @@
             clickedMarker = null;
             // make the icon small again
             event.target.setIcon(getBusIcon(event.target.options.item));
+            event.target.setZIndexOffset(1000);
         }
     }
 
