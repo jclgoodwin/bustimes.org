@@ -18,6 +18,14 @@ sro-288:
     current: false
 expressbus-787:
     current: false
+534-LYNX-n48:
+    description: King's Lynn - Grimston
+    outbound_description: King's Lynn - Grimston
+    inbound_description: Grimston - King's Lynn
+bed_42-36-_-y08:
+    description: King's Lynn - Hunstanton - Wells - Fakenham
+    outbound_description: King's Lynn - Hunstanton - Wells - Fakenham
+    inbound_description: Fakenham - Wells - Hunstanton - King's Lynn
 em_12-40-A-y08:
     description: Leicester Outer Circle
     inbound_description: Clockwise

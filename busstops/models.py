@@ -207,7 +207,7 @@ class DataSource(models.Model):
             date = self.datetime
         elif self.url.startswith('https://data.bus-data.dft.gov.uk'):
             url = self.url.replace('download/', '')
-            text = self.name.split('_')[0] + '/Bus Open Data Service'
+            text = self.name.split('_')[0]
             date = self.datetime
         elif self.url.startswith('http://travelinedatahosting.basemap.co.uk/'):
             text = self.name
@@ -222,6 +222,12 @@ class DataSource(models.Model):
         elif self.name == 'MET' or self.name == 'ULB':
             url = self.url
             text = 'Translink open data'
+
+        if not url and self.settings and 'url' in self.settings:
+            url = self.settings['url']
+
+        if url and 'bus-data.dft.gov.uk' in url:
+            text = f'{text}/Bus Open Data Service'
 
         if text:
             if url:
