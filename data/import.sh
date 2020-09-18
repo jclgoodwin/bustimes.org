@@ -150,7 +150,7 @@ if [[ $USERNAME == '' || $PASSWORD == '' ]]; then
    exit 1
 fi
 
-./manage.py import_tnds
+./manage.py import_tnds "$USERNAME" "$PASSWORD"
 
 cd data/variations
 
