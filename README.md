@@ -1,23 +1,36 @@
-# Bus Times
-
 [![Python application](https://github.com/jclgoodwin/bustimes.org/workflows/Python%20application/badge.svg)](https://github.com/jclgoodwin/bustimes.org/actions)
 
 [Coverage](https://bustimes-coverage.ams3.digitaloceanspaces.com/index.html)
 
 ## What's this?
 
-It's [a thing about buses](https://bustimes.org/).
+Source code for [the website bustimes](https://bustimes.org/).
+
+It's a magnificent monolithic Django app that's evolved over time (since 2015). The structure doesn't make complete sense:
+
+app      | concern
+---------|------------
+buses    | contains the site settings.py
+busstops | bus stops - but also operating companies, places, and routes 🤯 and all the site CSS and JavaScript
+bustimes | getting timetable data out of various formats (GTFS, TransXChange, ATCO-CIF) and into a database and doing stuff therewith 
+vehicles | tracking buses's locations and showing them on a map
+departures | listing the "next departues" at a bus stop – from a timetable and/or predicted by an API
+disruptions | information about like roadworks, diversions and stuff
+vosa     | the Great Britain Traffic Commissioners' bus service registration data. VOSA is the name of a defunct UK government agency. 
+
+This documentation is incomplete and out of date. And that's OK (?) because I don't expect anyone to need to follow it. I will try to document some things for my own reference.
 
 ## Installing
 
-Python 3.6 or newer is required. Use [Pipenv](https://docs.pipenv.org/en/latest/) to install the Python dependencies (Django, etc):
+I'm using Python 3.8 and I don't know if any lower versions still work.
+Use [Pipenv](https://docs.pipenv.org/en/latest/) to install the Python dependencies (Django, etc):
 
-    pipenv --python 3.6
+    pipenv --python 3.8
     pipenv install --dev
 
 There are also some JavaScript dependencies:
 
-	npm install
+    npm install
 
 ## Importing data
 
