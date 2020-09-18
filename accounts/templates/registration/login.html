@@ -27,8 +27,6 @@
 	<li><a href="{% url 'password_reset' %}?next={{ next }}">Lost password?</a></li>
 </ul>
 
-<p>Hotmail/Outlook users still waiting to receive an email: sorry, it’s been mistaken for spam. Please go through the motions of <a href="{% url 'register' %}?next={{ next }}">registering again</a> or using <a href="{% url 'password_reset' %}?next={{ next }}">the password reset form</a>.</p>
-
 {% endblock %}
 
 {% block ad %}{% endblock %}
