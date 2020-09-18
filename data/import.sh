@@ -143,46 +143,16 @@ if [[ $noc_old != $noc_new ]]; then
     ../manage.py correct_operators
 fi
 
+cd ..
+
 if [[ $USERNAME == '' || $PASSWORD == '' ]]; then
    echo 'TNDS username and/or password not supplied :('
    exit 1
 fi
 
-date=$(date +%Y-%m-%d)
+./manage.py import_tnds
 
-cd TNDS
-for region in "${REGIONS[@]}"; do
-    region_old=$(ls -l "$region.zip")
-    if [[ $region == "NCSD" ]]; then
-       wget -qN --user="$USERNAME" --password="$PASSWORD" "ftp://ftp.tnds.basemap.co.uk/$region.zip"
-    else
-       wget -qN --user="$USERNAME" --password="$PASSWORD" "ftp://ftp.tnds.basemap.co.uk/TNDSV2.5/$region.zip"
-    fi
-    region_new=$(ls -l "$region.zip")
-    wait
-    if [[ $region_old != $region_new ]]; then
-        updated_services=1
-        nice -n 10 ../../manage.py import_transxchange "$region.zip" &
-        if [[ $region_id == "L" ]]; then
-            wait
-            ../../manage.py import_tfl
-        fi
-    fi
-done
-wait
-cd ..
-
-[ $updated_services ] && ../manage.py update_search_indexes
-
-accessibility_old=$(ls -l accessibility-data.zip)
-wget -qN http://naptan.dft.gov.uk/Journeyweb/accessibility/accessibility-data.zip
-accessibility_new=$(ls -l accessibility-data.zip)
-if [[ $accessibility_old != $accessibility_new ]]; then
-    ../manage.py import_accessibility
-fi
-
-
-cd variations
+cd data/variations
 
 for region in F B C M K G D H; do
     old=$(shasum "Bus_Variation_$region.csv")
