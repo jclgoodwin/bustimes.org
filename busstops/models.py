@@ -723,7 +723,8 @@ class Service(SearchMixin, models.Model):
                 yield (url, 'Timetable on the Traveline Cymru website')
             return
 
-        base_url = 'http://www.travelinesoutheast.org.uk/se'
+        base_url = 'http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?'
+
         base_query = [('command', 'direct'), ('outputFormat', 0)]
 
         if self.source.name == 'NCSD':
@@ -735,8 +736,8 @@ class Service(SearchMixin, models.Model):
                          ('net', 'nrc'),
                          ('project', 'y08')]
                 yield (
-                    f'{base_url}/XSLT_TTB_REQUEST?{urlencode(query + base_query)}',
-                    'Timetable on the Traveline website'
+                    f'{base_url}{urlencode(query + base_query)}',
+                    'Timetable on the Traveline South West website'
                 )
 
         elif self.source.name in {'SE', 'SW', 'EM', 'WM', 'EA', 'L'}:
@@ -749,6 +750,7 @@ class Service(SearchMixin, models.Model):
 
             try:
                 for i, route in enumerate(self.route_set.order_by('start_date')):
+
                     parts = route.code.split('-')
                     net, line = parts[0].split('_')
                     line_ver = parts[4][:-4]
@@ -765,10 +767,10 @@ class Service(SearchMixin, models.Model):
                     if i:
                         date = route.start_date.strftime('%-d %B')
                         text = f'{text} from {date}'
-                    text = f'{text} on the Traveline website'
+                    text = f'{text} on the Traveline South West website'
 
                     yield (
-                        f'{base_url}/XSLT_TTB_REQUEST?{urlencode(query + base_query)}',
+                        f'{base_url}{urlencode(query + base_query)}',
                         text
                     )
             except (ValueError, IndexError):
