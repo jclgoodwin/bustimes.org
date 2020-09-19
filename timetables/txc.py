@@ -599,6 +599,8 @@ class TransXChange:
         # element = None
         serviced_organisations = None
 
+        journey_pattern_sections = {}
+
         for _, element in iterator:
             tag = element.tag[33:]
 
@@ -617,11 +619,10 @@ class TransXChange:
             elif tag == 'Operators':
                 self.operators = element
             elif tag == 'JourneyPatternSections':
-                journey_pattern_sections = {
-                    section.id: section for section in (
-                        JourneyPatternSection(section, self.stops) for section in element
-                    ) if section.timinglinks
-                }
+                for section in element:
+                    section = JourneyPatternSection(section, self.stops)
+                    if section.timinglinks:
+                        journey_pattern_sections[section.id] = section
                 element.clear()
             elif tag == 'ServicedOrganisations':
                 serviced_organisations = (ServicedOrganisation(child) for child in element)

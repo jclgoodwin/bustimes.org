@@ -636,7 +636,7 @@ class Command(BaseCommand):
                 line_string = line_string_from_journeypattern(pattern, stops)
                 if line_string not in line_strings:
                     line_strings.add(line_string)
-                multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
+            multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
 
             defaults['geometry'] = multi_line_string
 
