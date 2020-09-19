@@ -154,7 +154,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(service.operator.first(), self.fecs)
         self.assertEqual(
             list(service.get_traveline_links()),
-            [('http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST'
+            [('http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST'
              '?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0',
                 'Timetable on the Traveline website')]
         )
@@ -670,7 +670,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(service.operator.first(), self.megabus)
         self.assertEqual(
             list(service.get_traveline_links()),
-            [('http://www.travelinesoutheast.org.uk/se/XSLT_TTB_REQUEST'
+            [('http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST'
              '?line=11M11&sup=A&net=nrc&project=y08&command=direct&outputFormat=0',
                 'Timetable on the Traveline website')]
         )
