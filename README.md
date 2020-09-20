@@ -13,8 +13,8 @@ app      | concern
 buses    | contains the site settings.py
 busstops | bus stops - but also operating companies, places, and routes 🤯 and all the site CSS and JavaScript
 bustimes | getting timetable data out of various formats (GTFS, TransXChange, ATCO-CIF) and into a database and doing stuff therewith 
-vehicles | tracking buses's locations and showing them on a map
-departures | listing the "next departues" at a bus stop – from a timetable and/or predicted by an API
+vehicles | tracking buses' locations and showing them on a map, and pointless details about vehicles' colours and features
+departures | listing the "next departures" at a bus stop – from a timetable and/or predicted by an API
 disruptions | information about like roadworks, diversions and stuff
 vosa     | the Great Britain Traffic Commissioners' bus service registration data. VOSA is the name of a defunct UK government agency. 
 
