@@ -2,15 +2,13 @@
 
 if (navigator.serviceWorker && location.protocol === 'https:') {
     window.addEventListener('load', function() {
-        if (navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({'command': 'trimCaches'});
-        } else {
-            navigator.serviceWorker.register('/serviceworker.js', {
-                scope: '/'
-            }).catch(function() {
-                // never mind
-            });
-        }
+        navigator.serviceWorker.getRegistrations().then(
+            function (registrations) {
+                registrations.forEach(function(registration) {
+                    registration.unregister();
+                });
+            }
+        );
     });
 }
 

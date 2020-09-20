@@ -37,7 +37,7 @@ class Command(BaseCommand):
 
         # do the 'TNDSV2.5' version if possible
         ftp.cwd('TNDSV2.5')
-        v2_files = {name: details for name, details in ftp.mlsd()}
+        v2_files = {name: details for name, details in ftp.mlsd() if name != 'SW.zip'}
         self.do_files(ftp, v2_files)
 
         # add any missing regions (NCSD)

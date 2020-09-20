@@ -22,7 +22,6 @@ trap finish EXIT SIGINT SIGTERM
 
 USERNAME=$1
 PASSWORD=$2
-REGIONS=(IOM NCSD W EM Y NW S WM SW SE EA NE L) # roughly in ascending size order. SE before EA in case any more Norfolk services are reclassified (!)
 
 function import_csv {
     # name of a zip archive:
@@ -69,11 +68,11 @@ fi
 cd ..
 
 # Translink Metro
-metro_old=$(shasum metro-glider-29-june-2020.zip)
-wget -qN https://www.opendatani.gov.uk/dataset/6d9677cf-8d03-4851-985c-16f73f7dd5fb/resource/153a47c3-59b1-404f-8ec6-e5230cc4377d/download/metro-glider-29-june-2020.zip
-metro_new=$(shasum metro-glider-29-june-2020.zip)
+metro_old=$(shasum metro-and-glider.zip)
+wget -qN https://www.opendatani.gov.uk/dataset/6d9677cf-8d03-4851-985c-16f73f7dd5fb/resource/153a47c3-59b1-404f-8ec6-e5230cc4377d/download/metro-and-glider.zip
+metro_new=$(shasum metro-and-glider.zip)
 if [[ "$metro_old" != "$metro_new" ]]; then
-    ../manage.py import_atco_cif metro-glider-29-june-2020.zip
+    ../manage.py import_atco_cif metro-and-glider.zip
 fi
 
 # Ulsterbus

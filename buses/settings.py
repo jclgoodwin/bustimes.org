@@ -89,6 +89,7 @@ if TEST:
     NUM_SLOW_TESTS = 10
 
 AUTH_USER_MODEL = 'accounts.User'
+LOGIN_REDIRECT_URL = '/vehicles'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
@@ -418,7 +419,6 @@ STAGECOACH_OPERATORS = [
 ]
 FIRST_OPERATORS = [
     # ('FirstSlough', 'SE', {'FTVA': 'FTVA'}),
-    # ('FirstBristol', 'SW', {'FBRI': 'FBRI'}),
     # ('FirstBasildon', 'SE', {'FESX': 'FESX'}),
     # ('FirstChelmsford', 'SE', {'FESX': 'FESX'}),
     # ('FirstColchester', 'SE', {'FESX': 'FESX'}),
@@ -436,14 +436,15 @@ FIRST_OPERATORS = [
     ('FirstVantage', 'NW', {'FMAN': 'FMAN'}),
 
     ('FirstSomerset', 'SW', {'FBOS': 'FBOS'}),
-    # ('FirstCornwall', 'SW', {'FCWL': 'FCWL'}),
+    ('FirstCornwall', 'SW', {'FCWL': 'FCWL'}),
     # ('FirstLeicester', 'EM', {'FLEI': 'FLEI'}),
     # ('FirstNorwich', 'EA', {'FECS': 'FECS'}),
     # ('FirstIpswich', 'EA', {'FECS': 'FECS'}),
     ('FirstDorset', 'SW', {'FDOR': 'FDOR'}),
-    # ('FirstSoton', 'SW', {
-    # ('FirstHoeford', 'SW', {
-    # ('FirstHilsea', 'SW', {
+    # ('FirstBristol', 'SW', {'FBRI': 'FBRI'}),
+    ('FirstSoton', 'SW', {'FHAM': 'FHAM'}),
+    ('FirstHoeford', 'SW', {'FHAM': 'FHAM'}),
+    ('FirstHilsea', 'SW', {'FHAM': 'FHAM'}),
     # ('FirstSoton', 'SW', {
 
     ('FirstPotteries', 'WM', {'FPOT': 'FPOT'}),
@@ -476,4 +477,5 @@ FIRST_OPERATORS = [
 TICKETER_OPERATORS = [
     ('NW', 'WBTR', 'Warrington’s Own Buses'),
     ('EA', 'LYNX', 'Lynx'),
+    ('SW', 'PLYC', 'Go South West'),
 ]
