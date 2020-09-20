@@ -1,11 +1,16 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import PasswordResetForm
-# from django.db import IntegrityError
 
 UserModel = get_user_model()
 
 
 class RegistrationForm(PasswordResetForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['email'].label = 'Email address'
+        self.fields['email'].help_text = 'Will be kept private'
+
     def save(self, request=None):
         try:
             self.user = UserModel.objects.get(email__iexact=self.cleaned_data['email'])

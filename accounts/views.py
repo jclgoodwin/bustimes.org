@@ -28,7 +28,10 @@ class LoginView(auth_views.LoginView):
 
 
 class PasswordResetView(auth_views.PasswordResetView):
-    pass
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        context_data['form'].fields['email'].label = 'Email address'
+        return context_data
 
 
 def user_detail(request, pk):
