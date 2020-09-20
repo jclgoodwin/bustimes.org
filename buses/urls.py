@@ -19,7 +19,7 @@ class VehicleSerializer(serializers.HyperlinkedModelSerializer):
         return {
             'name': obj.livery and str(obj.livery),
             'left': obj.get_livery(),
-            'right': obj.get_livery(270)
+            'right': obj.get_livery(90)
         }
 
     class Meta:
