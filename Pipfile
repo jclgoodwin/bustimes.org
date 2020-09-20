@@ -37,6 +37,7 @@ xmltodict = "*"
 channels = "*"
 channels-redis = "*"
 django-rest-framework = "*"
+django-filter = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

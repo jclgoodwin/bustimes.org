@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'antispam',
     'email_obfuscator',
     'channels',
-    'rest_framework'
+    'rest_framework',
+    'django_filters'
 ]
 
 MIDDLEWARE = [

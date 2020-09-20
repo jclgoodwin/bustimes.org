@@ -1,5 +1,6 @@
 from django.urls import include, path
 from django.contrib import admin
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import routers, serializers, viewsets
 from vehicles.models import Vehicle, VehicleType
 
@@ -37,6 +38,8 @@ class VehicleTypeSerializer(serializers.ModelSerializer):
 class VehicleViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Vehicle.objects.select_related('operator', 'vehicle_type', 'livery').all()
     serializer_class = VehicleSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['operator', 'vehicle_type', 'livery', 'withdrawn', 'reg']
 
 
 class VehicleTypeViewSet(viewsets.ReadOnlyModelViewSet):
