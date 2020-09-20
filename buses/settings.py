@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'antispam',
     'email_obfuscator',
     'channels',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -88,6 +89,11 @@ if TEST:
     NUM_SLOW_TESTS = 10
 
 AUTH_USER_MODEL = 'accounts.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100
+}
 
 # if os.environ.get('READ_ONLY_DB_HOST'):
 #     REPLICA_DATABASES = []

@@ -36,6 +36,7 @@ pid = "*"
 xmltodict = "*"
 channels = "*"
 channels-redis = "*"
+django-rest-framework = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
