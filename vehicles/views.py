@@ -102,7 +102,6 @@ def operator_vehicles(request, slug=None, parent=None):
                     Vehicle.objects.bulk_update((revision.vehicle for revision in revisions), changed_fields)
                     for revision in revisions:
                         revision.datetime = now
-                        revision.ip_address = request.META['REMOTE_ADDR']
                         if request.user.is_authenticated:
                             revision.user = request.user
                     VehicleRevision.objects.bulk_create(revisions)
@@ -352,13 +351,11 @@ def edit_vehicle(request, vehicle_id):
         elif form.is_valid():
             data = {key: form.cleaned_data[key] for key in form.changed_data}
             now = timezone.now()
-            ip_address = request.META['REMOTE_ADDR']
             revision = do_revision(vehicle, data)
             if revision:
                 revision.datetime = now
                 if request.user.is_authenticated:
                     revision.user = request.user
-                revision.ip_address = ip_address
                 revision.save()
 
             form = None

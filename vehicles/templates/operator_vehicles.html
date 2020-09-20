@@ -162,7 +162,7 @@
     {{ form.as_p }}
 
     {% if user.is_authenticated %}
-        <p>You’re logged in as <strong>{{ user }}</strong>. <a href="{% url 'logout' %}">Log out</a></p>
+        <p>You’re logged in as <strong>user {{ user.id }}</strong>. <a href="{% url 'logout' %}">Log out</a></p>
     {% endif %}
 
     <input type="submit" value="Save changes">
