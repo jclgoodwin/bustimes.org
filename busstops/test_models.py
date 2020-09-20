@@ -116,9 +116,11 @@ class ServiceTests(TestCase):
         links = list(self.service.get_traveline_links())
         self.assertEqual(links, [
             ('http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?line=2101A&lineVer=1'
-                '&net=ea&project=y08&command=direct&outputFormat=0', 'Timetable on the Traveline website'),
+                '&net=ea&project=y08&command=direct&outputFormat=0',
+                'Timetable on the Traveline South West website'),
             ('http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?line=2101A&lineVer=2'
-                '&net=ea&project=y08&command=direct&outputFormat=0', 'Timetable from 1 May on the Traveline website'),
+                '&net=ea&project=y08&command=direct&outputFormat=0',
+                'Timetable from 1 May on the Traveline South West website'),
             ])
 
     def test_get_operator_number(self):

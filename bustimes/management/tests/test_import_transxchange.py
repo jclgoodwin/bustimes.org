@@ -156,7 +156,7 @@ class ImportTransXChangeTest(TestCase):
             list(service.get_traveline_links()),
             [('http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST'
              '?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0',
-                'Timetable on the Traveline website')]
+                'Timetable on the Traveline South West website')]
         )
 
         res = self.client.get(service.get_absolute_url())
@@ -672,7 +672,7 @@ class ImportTransXChangeTest(TestCase):
             list(service.get_traveline_links()),
             [('http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST'
              '?line=11M11&sup=A&net=nrc&project=y08&command=direct&outputFormat=0',
-                'Timetable on the Traveline website')]
+                'Timetable on the Traveline South West website')]
         )
 
         self.assertEqual(res.context_data['breadcrumb'], [self.gb, self.megabus])
