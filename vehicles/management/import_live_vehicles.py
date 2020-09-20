@@ -6,7 +6,10 @@ from datetime import timedelta
 from time import sleep
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
+from django.db.models import Exists, OuterRef, Q
+from django.db.models.functions import Now
 from django.utils import timezone
+from bustimes.models import Route
 from busstops.models import DataSource, ServiceCode
 from ..models import Vehicle, VehicleLocation
 
@@ -91,6 +94,15 @@ class ImportLiveVehiclesCommand(BaseCommand):
     def get_service(queryset, latlong):
         for filtered_queryset in (
             queryset,
+            queryset.filter(
+                Exists(
+                    Route.objects.filter(
+                        Q(end_date__gte=Now()) | Q(end_date=None),
+                        Q(start_date__lte=Now()) | Q(start_date=None),
+                        service=OuterRef('id')
+                    )
+                )
+            ),
             queryset.filter(geometry__bboverlaps=latlong.buffer(0.1)),
             queryset.filter(geometry__bboverlaps=latlong.buffer(0.05)),
             queryset.filter(geometry__bboverlaps=latlong)
