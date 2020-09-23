@@ -9,58 +9,11 @@ interactions:
     method: GET
     uri: http://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx
   response:
-    body: {string: '{"page":1,"total":147,"records":147,"rows":[{"id":109,"cell":["S","Shetland
-        Islands","603","19/09/2017","918","45","0","0","378","0","0","V2","10/1/2017"]}]}'}
+    body: {string: '[{"Region":"S","LocalityName":"Shetland Islands","DataBaseID":"603","LastUpload":"03/09/2020",
+        "ActiveStops":918,"PendingStops":0,"DeletedStops":45,"ArchivedStops":0,"ArchivedStopAreas":0,"ActiveStopAreas":378,
+        "PendingStopAreas":0,"DeletedStopAreas":0,"PK":59}]'}
     headers:
-      Cache-Control: [private]
-      Content-Length: ['16163']
       Content-Type: [application/json; charset=utf-8]
-      Date: ['Sun, 01 Oct 2017 16:55:19 GMT']
-      Server: [Microsoft-IIS/8.5]
-      X-AspNet-Version: [4.0.30319]
-      X-Powered-By: [ASP.NET]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.18.4]
-    method: GET
-    uri: http://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx
-  response:
-    body: {string: '{"page":1,"total":147,"records":147,"rows":[{"id":109,"cell":["S","Shetland
-        Islands","603","19/09/2017","918","45","0","0","378","0","0","V2","10/1/2017"]}]}'}
-    headers:
-      Cache-Control: [private]
-      Content-Length: ['16163']
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Sun, 01 Oct 2017 16:55:19 GMT']
-      Server: [Microsoft-IIS/8.5]
-      X-AspNet-Version: [4.0.30319]
-      X-Powered-By: [ASP.NET]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.18.4]
-    method: GET
-    uri: http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv&LA=603
-  response:
-    body: {string: these pretzels are making me thirsty}
-    headers:
-      Cache-Control: [private]
-      Content-Length: ['182925']
-      Content-Type: [application/zip]
-      Date: ['Sun, 01 Oct 2017 16:55:19 GMT']
-      Server: [Microsoft-IIS/8.5]
-      X-AspNet-Version: [4.0.30319]
-      X-Powered-By: [ASP.NET]
-      content-disposition: [attachment; filename=DATA_165519.zip]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -72,16 +25,40 @@ interactions:
     method: GET
     uri: http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv
   response:
-    body:
-    body: {string: these pretzels are making me thirsty again}
+    body: {string: this is all the data}
     headers:
-      Cache-Control: [private]
-      Content-Length: ['30621994']
       Content-Type: [application/zip]
-      Date: ['Fri, 18 Jan 2019 21:19:14 GMT']
-      Server: [Microsoft-IIS/8.5]
-      X-AspNet-Version: [4.0.30319]
-      X-Powered-By: [ASP.NET]
+      content-disposition: [attachment; filename=NaPTANcsv.zip]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.18.4]
+    method: GET
+    uri: http://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx
+  response:
+    body: {string: '[{"Region":"S","LocalityName":"Shetland Islands","DataBaseID":"603","LastUpload":"03/09/2020",
+        "ActiveStops":918,"PendingStops":0,"DeletedStops":45,"ArchivedStops":0,"ArchivedStopAreas":0,"ActiveStopAreas":378,
+        "PendingStopAreas":0,"DeletedStopAreas":0,"PK":59}]'}
+    headers:
+      Content-Type: [application/json; charset=utf-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python-requests/2.21.0]
+    method: GET
+    uri: http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv&LA=603
+  response:
+    body: {string: this is the shetland data}
+    headers:
+      Content-Type: [application/zip]
       content-disposition: [attachment; filename=NaPTANcsv.zip]
     status: {code: 200, message: OK}
 version: 1

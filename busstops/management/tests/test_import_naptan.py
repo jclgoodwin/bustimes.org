@@ -1,12 +1,12 @@
 """Tests for importing NaPTAN data
 """
 import os
-import json
 import vcr
+from mock import patch
 from warnings import catch_warnings
 from django.core.management import call_command
 from django.test import TestCase, override_settings
-from ...models import Region, AdminArea, StopPoint, Locality, Service, StopUsage
+from ...models import Region, AdminArea, StopPoint, Locality, Service, StopUsage, DataSource
 from ..commands import (update_naptan, import_stop_areas, import_stops, import_stops_in_area,
                         import_stop_area_hierarchy)
 
@@ -19,11 +19,51 @@ FIXTURES_DIR = os.path.join(DIR, 'fixtures')
 class UpdateNaptanTest(TestCase):
     """Test the update_naptan command
     """
-    command = update_naptan.Command()
+    def test_handle(self):
+        naptan_dir = os.path.join(FIXTURES_DIR, 'NaPTAN')
+        if not os.path.exists(naptan_dir):
+            os.mkdir(naptan_dir)
+        zipfile_path = os.path.join(naptan_dir, 'naptan.zip')
 
-    def test_get_old_rows(self):
-        self.assertIsNone(self.command.get_old_rows())
+        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan.yml')):
+            call_command('update_naptan')
 
+        source = DataSource.objects.get(name='NaPTAN')
+        self.assertEqual(source.settings[0]['LastUpload'], '03/09/2020')
+
+        with open(zipfile_path) as open_file:
+            self.assertEqual(open_file.read(), 'this is all the data')
+
+        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan.yml')):
+            with patch('busstops.management.commands.update_naptan.Command.get_data') as get_data:
+                call_command('update_naptan')
+                get_data.assert_not_called()
+
+        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan.yml')):
+            source.settings[0]['LastUpload'] = '01/09/2020'
+            source.save(update_fields=['settings'])
+
+            call_command('update_naptan')
+
+        source.refresh_from_db()
+        self.assertEqual(source.settings[0]['LastUpload'], '03/09/2020')
+
+        with open(zipfile_path) as open_file:
+            self.assertEqual(open_file.read(), 'this is the shetland data')
+
+        # simulate a problem with the region-specific NaPTAN download, so all regions are downloaded
+        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan-error.yml')):
+            with override_settings(DATA_DIR=FIXTURES_DIR):
+                call_command('update_naptan')
+        with open(zipfile_path) as open_file:
+            self.assertEqual(open_file.read(), 'these pretzels are making me thirsty again')
+
+        # clean up afterwards
+        os.remove(zipfile_path)
+        os.rmdir(naptan_dir)
+
+
+class ImportStopsTest(TestCase):
     def test_correct_case(self):
         self.assertEqual(import_stops.correct_case('B&Q'), 'B&Q')
         self.assertEqual(import_stops.correct_case('P&R'), 'P&R')
@@ -34,65 +74,6 @@ class UpdateNaptanTest(TestCase):
         self.assertEqual(import_stops.correct_case('NUMBER 45'), 'Number 45')
         self.assertEqual(import_stops.correct_case('KING STREET'), 'King Street')
         self.assertEqual(import_stops.correct_case('DWP DEPOT'), 'DWP Depot')
-
-    def test_get_diff(self):
-        new_rows = [{
-            'id': 1,
-            'cell': [
-                'S',
-                'Aberdeen',
-                '639',
-                '07/06/2016',
-                '1354',
-                '143',
-                '0',
-                '0',
-                '0',
-                '0',
-                '0',
-                'V2',
-                '7/17/2016'
-            ]
-        }]
-        self.assertEqual(self.command.get_diff(new_rows, None), (['S'], ['639']))
-        self.assertEqual(self.command.get_diff(new_rows, new_rows), ([], []))
-
-    def test_handle(self):
-        naptan_dir = os.path.join(FIXTURES_DIR, 'NaPTAN')
-        json_path = os.path.join(naptan_dir, 'NPTGLastSubs_Load.ashx')
-        os.mkdir(naptan_dir)
-        zipfile_path = os.path.join(naptan_dir, 'naptan.zip')
-
-        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan.yml')):
-
-            self.command.handle()
-
-            with open(zipfile_path) as open_file:
-                self.assertEqual(open_file.read(), 'these pretzels are making me thirsty again')
-
-            with open(os.path.join(json_path), 'w') as open_file:
-                json.dump({'rows': [{
-                    'id': 109,
-                    'cell': ['S', 'Shetland', '603', '10/09/2017', '918', '45', '0', '0', '378', '', '', '', '']
-                }]}, open_file)
-
-            self.command.handle()
-
-        # verify that a pretend zipfile containing some text was downloaded and saved
-        with open(zipfile_path) as open_file:
-            self.assertEqual(open_file.read(), 'these pretzels are making me thirsty')
-
-        # simulate a problem with the region-specific NaPTAN download, so all regions are downloaded
-        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan-error.yml')):
-            with override_settings(DATA_DIR=FIXTURES_DIR):
-                self.command.handle()
-        with open(zipfile_path) as open_file:
-            self.assertEqual(open_file.read(), 'these pretzels are making me thirsty again')
-
-        # clean up afterwards
-        os.remove(zipfile_path)
-        os.remove(json_path)
-        os.rmdir(naptan_dir)
 
 
 class ImportNaptanTest(TestCase):

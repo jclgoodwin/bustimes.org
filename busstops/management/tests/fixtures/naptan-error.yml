@@ -9,8 +9,9 @@ interactions:
     method: GET
     uri: http://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx
   response:
-    body: {string: '{"page":1,"total":147,"records":147,"rows":[{"id":109,"cell":["S","Shetland
-        Islands","603","20/09/2017","918","45","0","0","378","0","0","V2","10/1/2017"]}]}'}
+    body: {string: '[{"Region":"S","LocalityName":"Shetland Islands","DataBaseID":"603","LastUpload":"04/09/2020",
+        "ActiveStops":918,"PendingStops":0,"DeletedStops":45,"ArchivedStops":0,"ArchivedStopAreas":0,"ActiveStopAreas":378,
+        "PendingStopAreas":0,"DeletedStopAreas":0,"PK":59}]'}
     headers:
       Cache-Control: [private]
       Content-Length: ['16163']

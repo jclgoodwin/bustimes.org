@@ -1,69 +1,38 @@
 import os
-import json
 import requests
 from django.conf import settings
 from django.core.management.base import BaseCommand
-
-
-JSON_NAME = 'NPTGLastSubs_Load.ashx'
+from busstops.models import DataSource
 
 
 class Command(BaseCommand):
-    @staticmethod
-    def get_old_rows():
-        try:
-            with open(os.path.join(settings.DATA_DIR, 'NaPTAN', JSON_NAME)) as old_file:
-                old_json = json.load(old_file)
-        except IOError:
-            return
-        return old_json.get('rows')
+    url = 'http://naptan.app.dft.gov.uk'
 
-    @staticmethod
-    def get_diff(new_rows, old_rows):
-        changed_regions = []
-        changed_areas = []
-
-        for i, row in enumerate(new_rows):
-            cells = row.get('cell')[:-1]
-            if old_rows:
-                old_cells = old_rows[i].get('cell')[:-1]
-
-            if not old_rows or cells != old_cells:
-                if cells[0] not in changed_regions:
-                    changed_regions.append(cells[0])
-                changed_areas.append(cells[2])
-
-        return (changed_regions, changed_areas)
-
-    @staticmethod
-    def get_data(areas=None):
+    def get_data(self, areas=None):
         params = {
             'format': 'csv'
         }
         if areas:
             params['LA'] = '|'.join(areas)
-        return requests.get('http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx', params, stream=True, timeout=60)
+        return requests.get(f'{self.url}/DataRequest/Naptan.ashx', params, stream=True, timeout=60)
 
     def handle(self, *args, **options):
-        new_response = requests.get('http://naptan.app.dft.gov.uk/GridMethods/%s' % JSON_NAME, timeout=60)
-        new_rows = [row for row in new_response.json()['rows'] if row['cell'][0]]
-        old_rows = self.get_old_rows()
+        source, created = DataSource.objects.get_or_create(name='NaPTAN')
+
+        response = requests.get('http://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx', timeout=10)
+        new_rows = response.json()
+        old_rows = source.settings
 
         if old_rows:
-            old_rows = [row for row in self.get_old_rows() if row['cell'][0]]
+            changes = [new_row['DataBaseID'] for i, new_row in enumerate(new_rows) if old_rows[i] != new_row]
 
-            changed_regions, changed_areas = self.get_diff(new_rows, old_rows)
-
-            if not changed_areas:
+            if not changes:
                 return
 
-            response = self.get_data(changed_areas)  # get data for changed areas only
+            response = self.get_data(changes)  # get data for changed areas only
 
             if response.headers.get('Content-Type') != 'application/zip':
-                print(response)
-                print(response.url)
-                print(response.content)
-                print(response.headers)
+                print(response.content.decode())
                 response = self.get_data()
         else:  # get all data
             response = self.get_data()
@@ -72,5 +41,5 @@ class Command(BaseCommand):
             for chunk in response.iter_content(chunk_size=102400):
                 zip_file.write(chunk)
 
-        with open(os.path.join(settings.DATA_DIR, 'NaPTAN', JSON_NAME), 'w') as json_file:
-            json_file.write(new_response.text)
+        source.settings = new_rows
+        source.save(update_fields=['settings'])
