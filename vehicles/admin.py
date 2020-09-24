@@ -4,9 +4,12 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.db.models import Count, Q
 from django.db.utils import ConnectionDoesNotExist
+from django.contrib.auth import get_user_model
 from busstops.models import Operator
 from .models import (VehicleType, VehicleFeature, Vehicle, VehicleEdit,
                      VehicleJourney, Livery, JourneyCode, VehicleRevision)
+
+UserModel = get_user_model()
 
 
 class VehicleTypeAdmin(admin.ModelAdmin):
@@ -27,10 +30,15 @@ class VehicleAdminForm(forms.ModelForm):
         }
 
 
+def user(obj):
+    url = reverse('admin:vehicles_vehicleedit_changelist')
+    return mark_safe(f'<a href="{url}?user={obj.user_id}">{obj.user}</a>')
+
+
 class VehicleEditInline(admin.TabularInline):
     model = VehicleEdit
     fields = ['approved', 'datetime', 'fleet_number', 'reg', 'vehicle_type', 'livery', 'colours', 'branding', 'notes',
-              'changes', 'username']
+              'changes', user]
     readonly_fields = fields[1:]
     show_change_link = True
 
@@ -78,11 +86,6 @@ class VehicleAdmin(admin.ModelAdmin):
 def vehicle(obj):
     url = reverse('admin:vehicles_vehicle_change', args=(obj.vehicle_id,))
     return mark_safe(f'<a href="{url}">{obj.vehicle}</a>')
-
-
-def user(obj):
-    url = reverse('admin:vehicles_vehicleedit_changelist')
-    return mark_safe(f'<a href="{url}?username={obj.username}">{obj.username}</a>')
 
 
 def fleet_number(obj):
@@ -304,25 +307,27 @@ class UrlFilter(admin.SimpleListFilter):
 
 class UserFilter(admin.SimpleListFilter):
     title = 'user'
-    parameter_name = 'username'
+    parameter_name = 'user'
 
     def lookups(self, request, model_admin):
-        yield ('1', 'Not blank')
-        edits = VehicleEdit.objects.filter(~Q(username=''), approved=None)
-        for edit in edits.values('username').annotate(count=Count('username')).order_by('-count'):
-            yield (edit['username'], f"{edit['username']} ({edit['count']})")
+        users = UserModel.objects
+        model = model_admin.model.__name__.lower()
+        count = Count(model)
+        if model == 'vehicleedit':
+            count.filter = Q(**{f'{model}__approved': None})
+        users = users.annotate(count=count).filter(count=True).order_by('-count')
+        for user in users:
+            yield (user.id, f"{user} ({user.count})")
 
     def queryset(self, request, queryset):
         if self.value():
-            if self.value() == '1':
-                return queryset.exclude(username='')
-            return queryset.filter(username=self.value())
+            return queryset.filter(user=self.value())
         return queryset
 
 
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['datetime', vehicle, 'edit_count', 'last_seen', fleet_number, reg, vehicle_type, branding, name,
-                    'current', 'suggested', notes, 'withdrawn', features, changes, 'flickr', 'user', url]
+                    'current', 'suggested', notes, 'withdrawn', features, changes, 'flickr', user, url]
     list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'vehicle__latest_location',
                            'livery', 'user']
     list_filter = [
@@ -332,7 +337,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
         'vehicle__withdrawn',
         ChangeFilter,
         OperatorFilter,
-        'user',
+        UserFilter,
     ]
     raw_id_fields = ['vehicle', 'livery']
     actions = ['apply_edits', 'approve', 'disapprove', 'make_livery', 'delete_vehicles']
@@ -473,14 +478,14 @@ class RevisionChangeFilter(admin.SimpleListFilter):
 
 class VehicleRevisionAdmin(admin.ModelAdmin):
     raw_id_fields = ['from_operator', 'to_operator', 'vehicle']
-    list_display = ['datetime', 'vehicle', '__str__', 'ip_address']
+    list_display = ['datetime', 'vehicle', '__str__', user]
     actions = ['revert']
     list_filter = [
         RevisionChangeFilter,
-        'user',
+        UserFilter,
         ('vehicle__operator', admin.RelatedOnlyFieldListFilter),
     ]
-    list_select_related = ['from_operator', 'to_operator', 'vehicle']
+    list_select_related = ['from_operator', 'to_operator', 'vehicle', 'user']
 
     def revert(self, request, queryset):
         for revision in queryset.prefetch_related('vehicle'):
