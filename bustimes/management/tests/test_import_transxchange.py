@@ -601,6 +601,7 @@ class ImportTransXChangeTest(TestCase):
         self.handle_files('S.zip', ['SVRABBN017.xml'])
 
         service = Service.objects.get(service_code='ABBN017')
+        service.update_geometry()
 
         self.assertEqual(str(service), 'N17 - Aberdeen - Dyce')
         self.assertTrue(service.show_timetable)

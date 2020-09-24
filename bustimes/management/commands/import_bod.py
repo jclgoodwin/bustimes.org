@@ -107,6 +107,7 @@ def bus_open_data(api_key):
 
                     print(' ', Operator.objects.filter(service__route__source=command.source).distinct().values('id'))
 
+                    command.update_geometries()
                     command.mark_old_services_as_not_current()
 
                 sources.append(command.source)
@@ -150,6 +151,7 @@ def first():
             if not command.service_ids:  # nothing was imported
                 continue
 
+            command.update_geometries()
             command.mark_old_services_as_not_current()
 
             clean_up(operators.values(), sources)
@@ -208,6 +210,7 @@ def ticketer():
 
             handle_file(command, filename)
 
+            command.update_geometries()
             command.mark_old_services_as_not_current()
 
             clean_up(operators, [command.source])
@@ -253,6 +256,7 @@ def stagecoach():
 
             handle_file(command, filename)
 
+            command.update_geometries()
             command.mark_old_services_as_not_current()
 
             clean_up(command.operators.values(), [command.source])

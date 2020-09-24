@@ -16,7 +16,6 @@ from titlecase import titlecase
 from datetime import date
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.contrib.gis.geos import LineString, MultiLineString
 from django.db import transaction, IntegrityError, DataError
 from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
@@ -121,22 +120,6 @@ def get_operator_by(scheme, code):
             return Operator.objects.filter(operatorcode__code=code, operatorcode__source__name=scheme).distinct().get()
         except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
             pass
-
-
-def line_string_from_journeypattern(journeypattern, stops):
-    points = []
-    stop = stops.get(journeypattern.sections[0].timinglinks[0].origin.stop.atco_code)
-    if stop and stop.latlong:
-        points.append(stop.latlong)
-    for timinglink in journeypattern.get_timinglinks():
-        stop = stops.get(timinglink.destination.stop.atco_code)
-        if stop and stop.latlong:
-            points.append(stop.latlong)
-    try:
-        linestring = LineString(points)
-        return linestring
-    except ValueError:
-        pass
 
 
 class Command(BaseCommand):
@@ -288,6 +271,8 @@ class Command(BaseCommand):
                             except (AttributeError, DataError) as error:
                                 logger.error(error, exc_info=True)
 
+        self.update_geometries()
+
         self.source.save(update_fields=['datetime'])
 
         if not filenames:
@@ -295,6 +280,10 @@ class Command(BaseCommand):
             self.source.service_set.filter(current=False, geometry__isnull=False).update(geometry=None)
 
         StopPoint.objects.filter(active=False, service__current=True).update(active=True)
+
+    def update_geometries(self):
+        for service in Service.objects.filter(id__in=self.service_ids):
+            service.update_geometry()
 
     def get_calendar(self, operating_profile, operating_period):
         calendar_dates = [
@@ -634,15 +623,6 @@ class Command(BaseCommand):
                 defaults['line_brand'] = line_brand
             if self.region_id:
                 defaults['region_id'] = self.region_id
-
-            line_strings = set()
-            for pattern in txc_service.journey_patterns.values():
-                line_string = line_string_from_journeypattern(pattern, stops)
-                if line_string not in line_strings:
-                    line_strings.add(line_string)
-            multi_line_string = MultiLineString(*(ls for ls in line_strings if ls))
-
-            defaults['geometry'] = multi_line_string
 
             if self.service_descriptions:  # NCSD
                 defaults['outbound_description'], defaults['inbound_description'] = self.get_service_descriptions(

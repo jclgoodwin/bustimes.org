@@ -2,6 +2,8 @@ from django import forms
 from django.contrib import admin
 from django.contrib.gis.forms import OSMWidget
 from django.db.models import Count, Q
+from django.db.models.functions import Concat
+from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.gis.db.models import PointField
 from bustimes.models import Route
 from .models import (
@@ -173,9 +175,12 @@ class DataSourceAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'datetime', 'settings', 'operators')
     list_editable = ('datetime', 'settings')
 
-    @staticmethod
-    def operators(obj):
-        return ', '.join(o.pk for o in Operator.objects.filter(service__route__source=obj).distinct())
+    def get_queryset(self, request, **kwargs):
+        queryset = super().get_queryset(request, **kwargs)
+        return queryset.annotate(operators=StringAgg('route__service__operator', ', ', distinct=True))
+
+    def operators(self, obj):
+        return obj.operators
 
 
 class SIRISourceAdmin(admin.ModelAdmin):

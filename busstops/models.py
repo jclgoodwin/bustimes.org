@@ -7,6 +7,7 @@ import yaml
 from urllib.parse import urlencode, quote
 from autoslug import AutoSlugField
 from django.contrib.gis.db import models
+from django.contrib.gis.geos import LineString, MultiLineString
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.indexes import GinIndex
@@ -16,7 +17,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.html import format_html
-from bustimes.models import Route
+from bustimes.models import Route, Trip
 from bustimes.timetables import Timetable
 from buses.utils import varnish_ban
 
@@ -42,7 +43,8 @@ class SearchMixin:
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if 'update_fields' in kwargs:
-            if 'search_vector' in kwargs['update_fields'] or kwargs['update_fields'] == ['tracking']:
+            fields = kwargs['update_fields']
+            if 'search_vector' in fields or all(field == 'tracking' or field == 'geometry' for field in fields):
                 return
         self.update_search_vector()
 
@@ -831,6 +833,22 @@ class Service(SearchMixin, models.Model):
 
     def varnish_ban(self):
         varnish_ban(self.get_absolute_url())
+
+    def update_geometry(self):
+        patterns = []
+        linestrings = []
+        for trip in Trip.objects.filter(route__service=self).prefetch_related('stoptime_set__stop'):
+            stops = [stoptime.stop for stoptime in trip.stoptime_set.all() if stoptime.stop and stoptime.stop.latlong]
+            pattern = [stop.pk for stop in stops]
+            if pattern in patterns:
+                continue
+            patterns.append(pattern)
+            points = [stop.latlong for stop in stops]
+            if points:
+                linestrings.append(LineString(points))
+        if linestrings:
+            self.geometry = MultiLineString(*linestrings)
+            self.save(update_fields=['geometry'])
 
 
 class ServiceCode(models.Model):
