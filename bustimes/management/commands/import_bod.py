@@ -179,7 +179,8 @@ def first():
 def ticketer():
     command = get_command()
 
-    for region_id, noc, name in settings.TICKETER_OPERATORS:
+    for region_id, operators, name in settings.TICKETER_OPERATORS:
+        noc = operators[0]
         url = f'https://opendata.ticketer.com/uk/{noc}/routes_and_timetables/current.zip'
         filename = f'{noc}.zip'
         path = os.path.join(settings.DATA_DIR, filename)
@@ -190,22 +191,12 @@ def ticketer():
         if modified:
             print(url, last_modified)
 
+            command.operators = {code: code for code in operators}
             if noc == 'GOEA':
-                command.operators = {
-                    'GEA': 'KCTB',
-                    'CHAM': 'CHAM',
-                    'HEDO': 'HEDO',
-                    'KCTB': 'KCTB',
-                }
+                command.operators['GEA'] = 'KCTB'
             elif noc == 'ACYM':
-                command.operators = {
-                    'ANW': 'ACYM'
-                }
-            else:
-                command.operators = {
-                    noc: noc
+                command.operators['ANW'] = 'ACYM'
 
-                }
             command.region_id = region_id
             command.service_descriptions = {}
             command.service_ids = set()
@@ -219,7 +210,7 @@ def ticketer():
 
             command.mark_old_services_as_not_current()
 
-            clean_up([noc], [command.source])
+            clean_up(operators, [command.source])
 
             command.source.datetime = last_modified
             command.source.save(update_fields=['datetime'])

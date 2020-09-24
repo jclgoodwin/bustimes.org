@@ -476,7 +476,9 @@ FIRST_OPERATORS = [
     ('FirstYork', 'Y', {'FYOR': 'FYOR'}),
 ]
 TICKETER_OPERATORS = [
-    ('NW', 'WBTR', 'Warrington’s Own Buses'),
-    ('EA', 'LYNX', 'Lynx'),
-    ('SW', 'PLYC', 'Go South West'),
+    ('NW', ['WBTR'], 'Warrington’s Own Buses'),
+    ('EA', ['LYNX'], 'Lynx'),
+    ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
+    ('SW', ['PLYC', 'TFCN'], 'Go South West'),
+    ('SE', ['METR'], 'Metrobus'),
 ]

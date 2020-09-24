@@ -171,6 +171,7 @@ class PlaceAdmin(admin.ModelAdmin):
 class DataSourceAdmin(admin.ModelAdmin):
     search_fields = ('name', 'url')
     list_display = ('name', 'url', 'datetime', 'settings', 'operators')
+    list_editable = ('datetime', 'settings')
 
     @staticmethod
     def operators(obj):

@@ -162,8 +162,13 @@ class Command(BaseCommand):
             open_data_operators += operators.values()
         for _, _, _, operators in settings.STAGECOACH_OPERATORS:
             open_data_operators += operators.values()
-        for _, operator, _ in settings.TICKETER_OPERATORS:
-            open_data_operators.append(operator)
+        for _, operators, _ in settings.TICKETER_OPERATORS:
+            open_data_operators += operators
+
+        if 'SCLI' in open_data_operators:
+            open_data_operators.remove('SCLI')
+            incomplete_operators.append('SCLI')
+
         self.open_data_operators = set(open_data_operators)
         self.incomplete_operators = set(incomplete_operators)
         for archive_name in options['archives']:
@@ -569,7 +574,7 @@ class Command(BaseCommand):
                     service_code = txc_service.service_code
 
             else:
-                if self.source.name == 'Go East Anglia' and not existing:
+                if self.source.name in {'Go East Anglia', 'Go South West'} and not existing:
                     try:
                         existing = Service.objects.get(operator__parent='Go East Anglia', current=True,
                                                        line_name__iexact=line_name)
@@ -656,7 +661,7 @@ class Command(BaseCommand):
                 if '_' in service.slug or '-' not in service.slug or existing and not existing.current:
                     service.slug = ''
                     service.save(update_fields=['slug'])
-                if self.source.name == 'Go East Anglia':
+                if self.source.name in {'Go East Anglia', 'Go South West'}:
                     pass
                 elif service.id in self.service_ids or all(o.parent == 'Go South Coast' for o in operators):
                     service.operator.add(*operators)
