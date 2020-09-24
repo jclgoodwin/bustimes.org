@@ -576,7 +576,7 @@ class Command(BaseCommand):
             else:
                 if self.source.name in {'Go East Anglia', 'Go South West'} and not existing:
                     try:
-                        existing = Service.objects.get(operator__parent='Go East Anglia', current=True,
+                        existing = Service.objects.get(operator__parent=self.source.name, current=True,
                                                        line_name__iexact=line_name)
                     except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                         pass
