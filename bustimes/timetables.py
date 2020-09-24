@@ -114,14 +114,6 @@ class Timetable:
             if not self.date:
                 return
 
-        cache_key = (f'{route.id}:{route.start_date}:{route.end_date}' for route in self.routes)
-        cache_key = f'groupings:{":".join(cache_key)}:{self.date}'
-        if len(cache_key) <= 250:
-            cached_groupings = cache.get(cache_key)
-            if cached_groupings is not None:
-                self.groupings = cached_groupings
-                return
-
         trips = Trip.objects.filter(route__in=self.routes)
         if not self.calendar:
             calendar_ids = [calendar.id for calendar in self.calendars]
@@ -150,9 +142,6 @@ class Timetable:
             for row in grouping.rows:
                 row.has_waittimes = any(type(cell) is Cell and cell.wait_time for cell in row.times)
             grouping.do_heads_and_feet()
-
-        if len(cache_key) <= 250:
-            cache.set(cache_key, self.groupings)
 
     def date_options(self):
         date = datetime.date.today()
