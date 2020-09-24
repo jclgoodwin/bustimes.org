@@ -322,9 +322,9 @@ class UserFilter(admin.SimpleListFilter):
 
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['datetime', vehicle, 'edit_count', 'last_seen', fleet_number, reg, vehicle_type, branding, name,
-                    'current', 'suggested', notes, 'withdrawn', features, changes,  'flickr', url, user]
+                    'current', 'suggested', notes, 'withdrawn', features, changes, 'flickr', 'user', url]
     list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'vehicle__latest_location',
-                           'livery']
+                           'livery', 'user']
     list_filter = [
         'approved',
         UrlFilter,
@@ -332,7 +332,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
         'vehicle__withdrawn',
         ChangeFilter,
         OperatorFilter,
-        UserFilter,
+        'user',
     ]
     raw_id_fields = ['vehicle', 'livery']
     actions = ['apply_edits', 'approve', 'disapprove', 'make_livery', 'delete_vehicles']
@@ -477,7 +477,7 @@ class VehicleRevisionAdmin(admin.ModelAdmin):
     actions = ['revert']
     list_filter = [
         RevisionChangeFilter,
-        'ip_address',
+        'user',
         ('vehicle__operator', admin.RelatedOnlyFieldListFilter),
     ]
     list_select_related = ['from_operator', 'to_operator', 'vehicle']
