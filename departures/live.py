@@ -251,29 +251,6 @@ class EdinburghDepartures(Departures):
             return departures
 
 
-class GoAheadDepartures(Departures):
-    def get_request_url(self):
-        return 'https://api.otrl-bus.io/api/stops/departures/' + self.stop.pk
-
-    def get_request_headers(self):
-        return {
-            'opco': 'goNorthWest'
-        }
-
-    def get_row(self, row):
-        time = row['monitoredCall']['aimedDepartureTimeUTC']
-        live = row['monitoredCall']['expectedDepartureTimeUTC']
-        return {
-            'time': parse_datetime(time),
-            'live': parse_datetime(live) if live and row['monitored'] else None,
-            'service': self.get_service(row['publishedLineName']),
-            'destination': row['destinationName']
-        }
-
-    def departures_from_response(self, res):
-        return [self.get_row(row) for row in res.json()['data']]
-
-
 class AcisHorizonDepartures(Departures):
     """Departures from a SOAP endpoint (lol)"""
     request_url = 'http://belfastapp.acishorizon.com/DataService.asmx'
@@ -739,8 +716,6 @@ def get_departures(stop, services):
         elif departures:
             if any(operator.id in {'LOTH', 'LCBU', 'NELB', 'EDTR'} for operator in operators):
                 live_rows = EdinburghDepartures(stop, services, now).get_departures()
-            elif any(operator.id == 'GONW' for operator in operators):
-                live_rows = GoAheadDepartures(stop, services).get_departures()
             if live_rows:
                 blend(departures, live_rows)
                 live_rows = None

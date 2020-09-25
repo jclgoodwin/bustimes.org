@@ -199,11 +199,11 @@ class Command(ImportLiveVehiclesCommand):
                 services = services.filter(stops__locality__stoppoint=item['or'])
             elif item['pr']:
                 services = services.filter(stops__locality__stoppoint=item['pr'])
+            elif item['nr']:
+                services = services.filter(stops__locality__stoppoint=item['nr'])
 
             if item['fr']:
                 services = services.filter(stops__locality__stoppoint=item['fr'])
-            elif item['nr']:
-                services = services.filter(stops__locality__stoppoint=item['nr'])
 
             services = services.distinct()
 
