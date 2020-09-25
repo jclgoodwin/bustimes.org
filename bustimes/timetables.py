@@ -1,7 +1,6 @@
 import datetime
 from difflib import Differ
 from functools import cmp_to_key
-from django.core.cache import cache
 from django.db.models import Prefetch
 from .models import get_calendars, Calendar, Trip, StopTime
 

@@ -274,25 +274,6 @@ class GoAheadDepartures(Departures):
         return [self.get_row(row) for row in res.json()['data']]
 
 
-class PolarBearDepartures(Departures):
-    def get_request_url(self):
-        return 'https://{}.arcticapi.com/network/stops/{}/visits'.format(self.prefix, self.stop.pk)
-
-    def departures_from_response(self, res):
-        res = res.json()
-        if '_embedded' in res:
-            return [{
-                'time': ciso8601.parse_datetime(item['aimedDepartureTime']),
-                'live': ciso8601.parse_datetime(item['expectedDepartureTime']),
-                'service': self.get_service(item['_links']['transmodel:line']['name']),
-                'destination': item['destinationName'],
-            } for item in res['_embedded']['timetable:visit'] if 'expectedDepartureTime' in item]
-
-    def __init__(self, prefix, stop, services):
-        self.prefix = prefix
-        super().__init__(stop, services)
-
-
 class AcisHorizonDepartures(Departures):
     """Departures from a SOAP endpoint (lol)"""
     request_url = 'http://belfastapp.acishorizon.com/DataService.asmx'
@@ -432,37 +413,6 @@ class UKTrainDepartures(Departures):
             'service': item['operator_name'],
             'destination': item['destination_name']
         } for item in res['departures']['all']]
-
-
-class WestDepartures(Departures):
-    request_url = 'https://journeyplanner.travelwest.info/api/idox/'
-
-    def get_request_params(self):
-        return {
-            'stopID': self.stop.atco_code,
-            'maxItems': 10,
-            'lookAheadMinutes': 180
-        }
-
-    def get_row(self, item):
-        time = item['scheduledCall']['scheduledDepartureTime']
-        if not time:
-            return
-        live = item.get('expectedDepartureTime')
-        if live:
-            live = ciso8601.parse_datetime(live)
-        return {
-            'time': ciso8601.parse_datetime(time),
-            'live': live,
-            'service': self.get_service(item['routeInfo']['lineName']),
-            'destination': item['tripInfo']['headsign'],
-            'vehicle': item['vehicleRTI']['vehicleID'],
-            'operator': item['agencyCode'],
-        }
-
-    def departures_from_response(self, res):
-        rows = (self.get_row(item) for item in res.json()['data']['rtiReports'][0]['upcomingCalls'])
-        return [row for row in rows if row]
 
 
 class NorfokDepartures(Departures):
@@ -807,16 +757,11 @@ def get_departures(stop, services):
                         break
 
             if source:
-                # if source.name == 'Bristol':
-                #     live_rows = WestDepartures(stop, services).get_departures()
-                # else:
                 live_rows = SiriSmDepartures(source, stop, services).get_departures()
             elif any(operator.id in {'FSCE', 'FCYM', 'FESX', 'FECS'} for operator in operators):
                 live_rows = TransportApiDepartures(stop, services, now.date()).get_departures()
             elif stop.atco_code[:3] == '430':
                 live_rows = WestMidlandsDepartures(stop, services).get_departures()
-            elif any(operator.id in {'YCST', 'HRGT', 'KDTR'} for operator in operators):
-                live_rows = PolarBearDepartures('transdevblazefield', stop, services).get_departures()
             elif stop.atco_code[:3] == '290':
                 live_rows = NorfokDepartures(stop, services, now).get_departures()
 
