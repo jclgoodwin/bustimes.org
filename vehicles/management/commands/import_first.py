@@ -91,7 +91,7 @@ class Command(BaseCommand):
             self.handle_item(item, operator)
 
     def get_extents(self):
-        for operator in ['FECS', 'FPOT', 'FESX']:
+        for operator in ['FECS', 'FPOT', 'FESX', 'FYOR']:
             services = Service.objects.filter(operator=operator, current=True)
             extent = services.aggregate(Extent('geometry'))['geometry__extent']
             if not extent:
@@ -124,7 +124,7 @@ class Command(BaseCommand):
             print(response)
 
             while ok:
-                response = await asyncio.wait_for(websocket.recv(), timeout=600)
+                response = await websocket.recv()
 
                 data = json.loads(response)
                 try:
