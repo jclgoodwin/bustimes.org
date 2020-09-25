@@ -72,8 +72,11 @@ class Command(BaseCommand):
                 line_strings.append(LineString(*points))
             route.service.geometry = MultiLineString(*line_strings)
 
-        Service.objects.bulk_update((route.service for route in self.routes.values()),
+        services = {route.service.id: route.service for route in self.routes.values()}.values()
+        Service.objects.bulk_update(services,
                                     fields=['geometry', 'description', 'outbound_description', 'inbound_description'])
+        for service in services:
+            service.update_search_vector()
 
         self.source.route_set.exclude(code__in=self.routes.keys()).delete()
         self.source.service_set.filter(current=True).exclude(service_code__in=self.routes.keys()).update(current=False)

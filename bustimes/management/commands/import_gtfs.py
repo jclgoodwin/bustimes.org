@@ -303,6 +303,7 @@ def handle_zipfile(path, collection, url):
         ).order_by('-adminarea__stoppoint__service__count').first()
         if service.region:
             service.save(update_fields=['region'])
+        service.update_search_vector()
 
     for operator in operators.values():
         operator.region = Region.objects.filter(adminarea__stoppoint__service__operator=operator).annotate(

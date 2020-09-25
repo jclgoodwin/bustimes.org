@@ -44,7 +44,7 @@ class SearchMixin:
         super().save(*args, **kwargs)
         if 'update_fields' in kwargs:
             fields = kwargs['update_fields']
-            if 'search_vector' in fields or all(field == 'tracking' or field == 'geometry' for field in fields):
+            if 'search_vector' in fields:
                 return
         self.update_search_vector()
 
@@ -572,7 +572,7 @@ class ServiceManager(models.Manager):
         return self.get_queryset().annotate(document=vector)
 
 
-class Service(SearchMixin, models.Model):
+class Service(models.Model):
     """A bus service"""
     service_code = models.CharField(max_length=64, unique=True)
     line_name = models.CharField(max_length=64, blank=True)
@@ -600,6 +600,7 @@ class Service(SearchMixin, models.Model):
     colour = models.ForeignKey(ServiceColour, models.SET_NULL, null=True, blank=True)
 
     objects = ServiceManager()
+    update_search_vector = SearchMixin.update_search_vector
 
     class Meta:
         ordering = ['service_code']

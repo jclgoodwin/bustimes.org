@@ -730,6 +730,8 @@ class Command(BaseCommand):
                 Trip.objects.filter(route__service=service, start='15:05').delete()
                 Trip.objects.filter(route__service=service, start='15:30').delete()
 
+            service.update_search_vector()
+
         if len(linked_services) > 1:
             for i, from_service in enumerate(linked_services):
                 for i, to_service in enumerate(linked_services[i+1:]):
