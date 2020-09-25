@@ -63,14 +63,7 @@ def bus_open_data(api_key):
     command = get_command()
 
     for operator_id, region_id, operators, incomplete in settings.BOD_OPERATORS:
-        command.operators = operators
-        command.region_id = region_id
-        command.service_descriptions = {}
-        command.service_ids = set()
-        command.route_ids = set()
-        command.calendar_cache = {}
-
-        sources = []
+        datasets = []
 
         url = 'https://data.bus-data.dft.gov.uk/api/v1/dataset/'
         params = {
@@ -85,37 +78,45 @@ def bus_open_data(api_key):
         while url:
             response = session.get(url, params=params)
             json = response.json()
-
-            for result in json['results']:
-                filename = result['name']
-                url = result['url']
-                path = os.path.join(settings.DATA_DIR, filename)
-
-                modified = parse_datetime(result['modified'])
-
-                command.source, created = DataSource.objects.get_or_create({'name': filename}, url=url)
-
-                if command.source.datetime != modified:
-                    print(response.url, filename)
-                    command.source.datetime = modified
-                    download(path, url)
-                    handle_file(command, filename)
-
-                    if not created:
-                        command.source.name = filename
-                    command.source.save(update_fields=['name', 'datetime'])
-
-                    print(' ', Operator.objects.filter(service__route__source=command.source).distinct().values('id'))
-
-                    command.update_geometries()
-                    command.mark_old_services_as_not_current()
-
-                sources.append(command.source)
-
+            for dataset in json['results']:
+                dataset['source'], created = DataSource.objects.get_or_create(url=dataset['url'])
+                dataset['modified'] = parse_datetime(dataset['modified'])
+                datasets.append(dataset)
             url = json['next']
             params = None
 
-        if sources:
+        if any(dataset['source'].datetime != dataset['modified'] for dataset in datasets):
+            command.operators = operators
+            command.region_id = region_id
+            command.service_descriptions = {}
+            command.service_ids = set()
+            command.route_ids = set()
+            command.calendar_cache = {}
+
+            sources = []
+
+            for dataset in datasets:
+                filename = dataset['name']
+                url = dataset['url']
+                path = os.path.join(settings.DATA_DIR, filename)
+
+                command.source = dataset['source']
+
+                print(response.url, filename)
+                command.source.name = filename
+                command.source.datetime = dataset['modified']
+                download(path, url)
+                handle_file(command, filename)
+
+                command.source.save(update_fields=['name', 'datetime'])
+
+                print(' ', Operator.objects.filter(service__route__source=command.source).distinct().values('id'))
+
+                command.update_geometries()
+                command.mark_old_services_as_not_current()
+
+                sources.append(command.source)
+
             clean_up(operators.values(), sources, incomplete)
 
     if command.undefined_holidays:
