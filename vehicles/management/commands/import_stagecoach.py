@@ -195,14 +195,14 @@ class Command(ImportLiveVehiclesCommand):
                 service = alternatives[service]
 
             services = Service.objects.filter(current=True, operator__parent='Stagecoach')
-            if item['or']:
+            if item.get('or'):
                 services = services.filter(stops__locality__stoppoint=item['or'])
-            elif item['pr']:
+            elif item.get('pr'):
                 services = services.filter(stops__locality__stoppoint=item['pr'])
-            elif item['nr']:
+            elif item.get('nr'):
                 services = services.filter(stops__locality__stoppoint=item['nr'])
 
-            if item['fr']:
+            if item.get('fr'):
                 services = services.filter(stops__locality__stoppoint=item['fr'])
 
             services = services.distinct()
@@ -222,7 +222,7 @@ class Command(ImportLiveVehiclesCommand):
                 pass
 
             if not journey.service:
-                print(service, item['or'], vehicle.get_absolute_url())
+                print(service, item.get('or'), vehicle.get_absolute_url())
 
         return journey
 
