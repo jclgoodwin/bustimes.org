@@ -113,7 +113,8 @@ class District(models.Model):
 
 class LocalityManager(models.Manager):
     def with_documents(self):
-        vector = SearchVector('name', weight='A') + SearchVector('qualifier_name', weight='B')
+        vector = SearchVector('name', weight='A', config='english')
+        vector += SearchVector('qualifier_name', weight='B', config='english')
         return self.get_queryset().annotate(document=vector)
 
 
@@ -427,7 +428,8 @@ class StopPoint(models.Model):
 
 class OperatorManager(models.Manager):
     def with_documents(self):
-        vector = SearchVector('name', weight='A') + SearchVector('aka', weight='B')
+        vector = SearchVector('name', weight='A', config='english')
+        vector += SearchVector('aka', weight='B', config='english')
         return self.get_queryset().annotate(document=vector)
 
 
@@ -564,11 +566,12 @@ class ServiceColour(models.Model):
 
 class ServiceManager(models.Manager):
     def with_documents(self):
-        vector = SearchVector('line_name', weight='A') + SearchVector('line_brand', weight='A')
-        vector += SearchVector('description', weight='B')
-        vector += SearchVector(StringAgg('operator__name', delimiter=' '), weight='B')
-        vector += SearchVector(StringAgg('stops__locality__name', delimiter=' '), weight='C')
-        vector += SearchVector(StringAgg('stops__common_name', delimiter=' '), weight='D')
+        vector = SearchVector('line_name', weight='A', config='english')
+        vector += SearchVector('line_brand', weight='A', config='english')
+        vector += SearchVector('description', weight='B', config='english')
+        vector += SearchVector(StringAgg('operator__name', delimiter=' '), weight='B', config='english')
+        vector += SearchVector(StringAgg('stops__locality__name', delimiter=' '), weight='C', config='english')
+        vector += SearchVector(StringAgg('stops__common_name', delimiter=' '), weight='D', config='english')
         return self.get_queryset().annotate(document=vector)
 
 
