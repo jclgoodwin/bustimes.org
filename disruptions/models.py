@@ -6,11 +6,11 @@ from busstops.templatetags.date_range import date_range
 
 class Situation(models.Model):
     source = models.ForeignKey('busstops.DataSource', models.CASCADE)
-    situation_number = models.CharField(max_length=36)
-    reason = models.CharField(max_length=25)
-    summary = models.CharField(max_length=255)
-    text = models.TextField()
-    data = models.TextField()
+    situation_number = models.CharField(max_length=36, blank=True)
+    reason = models.CharField(max_length=25, blank=True)
+    summary = models.CharField(max_length=255, blank=True)
+    text = models.TextField(blank=True)
+    data = models.TextField(blank=True)
     created = models.DateTimeField()
     publication_window = DateTimeRangeField()
     current = models.BooleanField(default=True)
@@ -45,11 +45,11 @@ class ValidityPeriod(models.Model):
 
 class Consequence(models.Model):
     situation = models.ForeignKey(Situation, models.CASCADE)
-    stops = models.ManyToManyField('busstops.StopPoint')
-    services = models.ManyToManyField('busstops.Service')
-    operators = models.ManyToManyField('busstops.Operator')
-    text = models.TextField()
-    data = models.TextField()
+    stops = models.ManyToManyField('busstops.StopPoint', blank=True)
+    services = models.ManyToManyField('busstops.Service', blank=True)
+    operators = models.ManyToManyField('busstops.Operator', blank=True)
+    text = models.TextField(blank=True)
+    data = models.TextField(blank=True)
 
     def __str__(self):
         return self.text
