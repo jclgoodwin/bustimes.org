@@ -56,9 +56,8 @@ ________________________________________________________________________________
 """
 
 BANK_HOLIDAYS = {
-    'AllBankHolidays': date(2020, 8, 31),
-    'HolidayMondays': date(2020, 8, 31),
-    'LateSummerBankHolidayNotScotland': date(2020, 8, 31),
+    'StAndrewsDay': date(2020, 11, 30),
+    'Jan2ndScotland': date(2021, 1, 2),
 }
 
 

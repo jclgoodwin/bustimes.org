@@ -1,4 +1,5 @@
 import os
+from datetime import date
 from ciso8601 import parse_datetime
 from tempfile import TemporaryDirectory
 from vcr import use_cassette
@@ -63,20 +64,24 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
     @freeze_time('2020-06-10')
     def test_import_stagecoach(self):
 
-        with patch('bustimes.management.commands.import_bod.download_if_changed',
-                   return_value=(True, parse_datetime('2020-06-10T12:00:00+01:00'))) as download_if_changed:
+        archive_name = 'stagecoach-scne-route-schedule-data-transxchange.zip'
+        path = os.path.join(FIXTURES_DIR, archive_name)
 
-            archive_name = 'stagecoach-scne-route-schedule-data-transxchange.zip'
-            path = os.path.join(FIXTURES_DIR, archive_name)
-
-            with self.assertNumQueries(226):
-                call_command('import_bod', 'stagecoach')
-            download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
-            with self.assertNumQueries(1):
-                call_command('import_bod', 'stagecoach')
-            DataSource.objects.update(datetime=None)
-            with self.assertNumQueries(204):
-                call_command('import_bod', 'stagecoach')
+        with patch(
+            'bustimes.management.commands.import_bod.download_if_changed',
+            return_value=(True, parse_datetime('2020-06-10T12:00:00+01:00'))
+        ) as download_if_changed:
+            with patch('bustimes.management.commands.import_transxchange.BANK_HOLIDAYS', {
+                'AllBankHolidays': date(2020, 8, 31),
+            }):
+                with self.assertNumQueries(226):
+                    call_command('import_bod', 'stagecoach')
+                download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
+                with self.assertNumQueries(1):
+                    call_command('import_bod', 'stagecoach')
+                DataSource.objects.update(datetime=None)
+                with self.assertNumQueries(204):
+                    call_command('import_bod', 'stagecoach')
         self.assertEqual(3, Service.objects.count())
         self.assertEqual(6, Route.objects.count())
 
