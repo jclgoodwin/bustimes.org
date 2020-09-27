@@ -24,7 +24,8 @@ class Command(BaseCommand):
         old_rows = source.settings
 
         if old_rows:
-            changes = [new_row['DataBaseID'] for i, new_row in enumerate(new_rows) if old_rows[i] != new_row]
+            changes = [new_row['DataBaseID'] for i, new_row in enumerate(new_rows)
+                       if old_rows[i]['LastUpload'] != new_row['LastUpload']]
 
             if not changes:
                 return
