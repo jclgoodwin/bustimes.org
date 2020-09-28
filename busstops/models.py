@@ -14,9 +14,9 @@ from django.contrib.postgres.indexes import GinIndex
 from django.core.cache import cache
 from django.db.models import Q
 from django.urls import reverse
-from django.utils.safestring import mark_safe
 from django.utils.text import slugify
-from django.utils.html import format_html
+from django.utils.html import format_html, escape
+from django.utils.safestring import mark_safe
 from bustimes.models import Route, Trip
 from bustimes.timetables import Timetable
 from buses.utils import varnish_ban
@@ -234,7 +234,9 @@ class DataSource(models.Model):
 
         if text:
             if url:
-                text = f'<a href="{url}">{text}</a>'
+                text = format_html('<a href="{}">{}</a>', url, text)
+            else:
+                text = escape(text)
             if date:
                 date = date.strftime('%-d %B %Y')
                 text = f'{text}, {date}'
