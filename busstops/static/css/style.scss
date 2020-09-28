@@ -11,3 +11,7 @@
 @media (min-width: 62.5em) {
     @import '62em';
 }
+
+@media print {
+    @import 'print';
+}

@@ -1,7 +1,9 @@
 header,
 .breadcrumb,
+.button,
 input,
 label,
+.ad,
 footer {
     display: none;
 }
@@ -19,18 +21,29 @@ main {
 
 h1 {
     font-size: 1.75em;
+    margin-top: 0;
+}
+
+.timetable-date {
+    select {
+        border: 0;
+        height: auto;
+        padding: 0;
+    }
+
+    &:after {
+        display: none;
+    }
 }
 
 .timetable-wrapper {
     margin-top: 0;
 }
 
-table tbody tr,
-.timetable tr:first-child td,
-.timetable th {
-    border-color: #eee;
-}
-
-main p a[href^='http'] {
-    display: none;
+.timetable {
+    thead td,
+    td,
+    th {
+        border-color: #eee;
+    }
 }
