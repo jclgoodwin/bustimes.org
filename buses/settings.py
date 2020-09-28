@@ -465,8 +465,8 @@ TICKETER_OPERATORS = [
     ('Y', ['WRAY'], 'Arriva Yorkshire'),
     ('Y', ['YTIG'], 'Yorkshire Tiger'),
     ('WM', ['AMNO'], 'Arriva Midlands North'),
-    ('EM', ['AMID'], 'Arriva Midlands'),
-    ('SE', ['ARBB'], 'Arriva Beds & Bucks'),
-    ('SE', ['AMTM'], 'Arriva Thameside'),
+    ('EM', ['AMID', 'AFCL'], 'Arriva Midlands'),
+    ('SE', ['ARBB', 'ASES'], 'Arriva Beds & Bucks'),
+    ('SE', ['AMTM', 'ARHE'], 'Arriva Thameside'),
     ('SE', ['AKSS'], 'Arriva Kent & Surrey'),
 ]
