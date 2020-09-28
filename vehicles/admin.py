@@ -315,7 +315,7 @@ class UserFilter(admin.SimpleListFilter):
         count = Count(model)
         if model == 'vehicleedit':
             count.filter = Q(**{f'{model}__approved': None})
-        users = users.annotate(count=count).filter(count=True).order_by('-count')
+        users = users.annotate(count=count).filter(count__gt=0).order_by('-count')
         for user in users:
             yield (user.id, f"{user} ({user.count})")
 
