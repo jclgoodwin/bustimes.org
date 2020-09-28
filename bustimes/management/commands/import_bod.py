@@ -201,6 +201,8 @@ def ticketer():
                 command.operators['ANW'] = noc
             elif noc == 'AMID':
                 command.operators['AMD'] = noc
+            elif noc == 'AMTM':
+                command.operators['ASC'] = noc
 
             command.region_id = region_id
             command.service_descriptions = {}
