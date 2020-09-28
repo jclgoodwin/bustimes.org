@@ -20,7 +20,7 @@ class Command(ImportLiveVehiclesCommand):
         'ANE': ['ANEA', 'ANUM', 'ARDU'],
         'ANW': ['ANWE', 'AMSY', 'ACYM'],
         'ATS': ['ASES', 'ARBB', 'GLAR'],
-        'AMD': ['AMNO', 'AMID', 'AFCL'],
+        'AMD': ['AMID', 'AMNO' 'AFCL'],
         'AYT': ['YTIG'],
         'AYK': ['WRAY'],
         'FAR': ['FSRV'],

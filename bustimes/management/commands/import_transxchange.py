@@ -689,6 +689,26 @@ class Command(BaseCommand):
 
             service.stops.clear()
             outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=service))
+
+            changed_fields = []
+
+            if self.source.name.startswith('Arriva ') or self.source.name == 'Yorkshire Tiger':
+                if outbound:
+                    changed = 0
+                    origin_stop = outbound[0].stop
+                    destination_stop = outbound[-1].stop
+                    if origin_stop.common_name == txc_service.origin:
+                        if origin_stop.locality.name not in txc_service.origin:
+                            txc_service.origin = f'{origin_stop.locality.name} {txc_service.origin}'
+                        changed += 1
+                    if destination_stop.common_name == txc_service.destination:
+                        if destination_stop.locality.name not in txc_service.destination:
+                            txc_service.destination = f'{destination_stop.locality.name} {txc_service.destination}'
+                        changed += 1
+                    if changed == 2:
+                        service.description = f'{txc_service.origin} - {txc_service.destination}'
+                        changed_fields.append('description')
+
             stop_usages = [
                 StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
                           direction='outbound', order=i)
@@ -700,7 +720,6 @@ class Command(BaseCommand):
             ]
             StopUsage.objects.bulk_create(stop_usages)
 
-            changed_fields = []
             if outbound:
                 outbound = Grouping(txc_service, outbound[0].stop, outbound[-1].stop)
                 outbound_description = str(outbound)
@@ -761,6 +780,10 @@ class Command(BaseCommand):
             assert len(parts[-1]) >= 8
             assert parts[-1].isdigit()
             return '_'.join(parts[:-1])
+        if 'opendata.ticketer' in self.source.url:
+            parts = os.path.basename(filename).split('_')
+            assert len(parts) == 7
+            return '_'.join(parts[:2])
 
     def handle_file(self, open_file, filename):
         transxchange = TransXChange(open_file)

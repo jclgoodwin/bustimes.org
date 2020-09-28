@@ -3,7 +3,7 @@ import zipfile
 from django.conf import settings
 from django.db.models import Prefetch
 from django.views.generic.detail import DetailView
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, HttpResponse
 from django.utils import timezone
 from busstops.models import Service
 from vehicles.siri_one_shot import siri_one_shot, Poorly
@@ -53,6 +53,10 @@ def route_xml(request, source, code):
         with zipfile.ZipFile(os.path.join(settings.DATA_DIR, path)) as archive:
             code = code[len(path) + 1:]
             return FileResponse(archive.open(code), content_type='text/xml')
-
     path = os.path.join(settings.DATA_DIR, code)
+
+    if code.endswith('.zip'):
+        with zipfile.ZipFile(os.path.join(settings.DATA_DIR, path)) as archive:
+            return HttpResponse('\n'.join(archive.namelist()), content_type='text/plain')
+
     return FileResponse(open(path, 'rb'), content_type='text/xml')

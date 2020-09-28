@@ -301,9 +301,6 @@ PASSENGER_OPERATORS = (
     }),
 )
 BOD_OPERATORS = (
-    # ('LYNX', 'EA', {
-    #     'CO': 'LYNX',
-    # }, True),
     ('UNOE', 'SE', {
         'UBL': 'UNOE',
         'UBN': 'UNOE'
@@ -314,29 +311,6 @@ BOD_OPERATORS = (
     ('KBUS', 'EM', {
         'KN': 'KBUS',
     }, False),
-    # ('WBTR', 'NW', {
-    #     'NW': 'WBTR',
-    # }, False),
-    # ('HIPK', 'EM', {
-    #     'HPB': 'HIPK'
-    # }, False),
-    # ('ANEA', None, {
-    #     'ACYM': 'ACYM',
-    #     'AFCL': 'AFCL',  # (code not used in data)
-    #     # 'AKSS': 'AKSS',  # no data yet
-    #     'AMID': 'AMID',
-    #     'AMNO': 'AMNO',
-    #     'AMSY': 'AMSY',
-    #     # 'AMTM': 'AMTM',  # no data yet
-    #     'ANEA': 'ANEA',
-    #     'ANUM': 'ANUM',
-    #     'ANWE': 'ANWE',
-    #     'ARBB': 'ARBB',  # (code not used in data)
-    #     # 'ARHE': 'ARHE',  # no data yet
-    #     'ASES': 'ASES',
-    #     'WRAY': 'WRAY',
-    #     # 'YTIG': 'YTIG',
-    # }, False),
 )
 STAGECOACH_OPERATORS = [
     ('S', 'sblb', 'Stagecoach Bluebird', {'SBLB': 'SBLB'}),
@@ -481,4 +455,18 @@ TICKETER_OPERATORS = [
     ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
     ('SW', ['PLYC', 'TFCN'], 'Go South West'),
     ('SE', ['METR'], 'Metrobus'),
+    # ('SE', ['OXBC', 'CSLB', 'THTR'], 'Go-Ahead'),
+    # ('NW', ['GONW'], 'Go North West'),
+    ('W', ['ACYM'], 'Arriva Cymru'),
+    ('NW', ['AMAN', 'ANWE'], 'Arriva North West'),
+    ('NW', ['AMSY'], 'Arriva Merseyside'),
+    ('NE', ['ARDU'], 'Arriva Durham'),
+    ('NE', ['ANUM'], 'Arriva Northumbria'),
+    ('Y', ['WRAY'], 'Arriva Yorkshire'),
+    ('Y', ['YTIG'], 'Yorkshire Tiger'),
+    ('WM', ['AMNO'], 'Arriva Midlands North'),
+    ('EM', ['AMID'], 'Arriva Midlands'),
+    ('SE', ['ARBB'], 'Arriva Beds & Bucks'),
+    ('SE', ['AMTM'], 'Arriva Thameside'),
+    ('SE', ['AKSS'], 'Arriva Kent & Surrey'),
 ]

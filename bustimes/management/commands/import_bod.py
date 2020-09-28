@@ -198,7 +198,9 @@ def ticketer():
             if noc == 'GOEA':
                 command.operators['GEA'] = 'KCTB'
             elif noc == 'ACYM':
-                command.operators['ANW'] = 'ACYM'
+                command.operators['ANW'] = noc
+            elif noc == 'AMID':
+                command.operators['AMD'] = noc
 
             command.region_id = region_id
             command.service_descriptions = {}

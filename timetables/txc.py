@@ -543,6 +543,10 @@ class Service:
         self.origin = element.find('txc:StandardService/txc:Origin', NS).text
         self.destination = element.find('txc:StandardService/txc:Destination', NS).text
         self.vias = element.find('txc:StandardService/txc:Vias', NS)
+        if self.origin:
+            self.origin = self.origin.replace('`', "'").strip()
+        if self.destination:
+            self.destination = self.destination.replace('`', "'").strip()
         if self.vias:
             self.vias = [via.text for via in self.vias]
 
