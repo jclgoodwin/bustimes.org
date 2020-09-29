@@ -460,7 +460,7 @@ TICKETER_OPERATORS = [
     ('W', ['ACYM'], 'Arriva Cymru'),
     ('NW', ['AMAN', 'ANWE'], 'Arriva North West'),
     ('NW', ['AMSY'], 'Arriva Merseyside'),
-    ('NE', ['ARDU'], 'Arriva Durham'),
+    ('NE', ['ARDU', 'ANEA'], 'Arriva Durham'),
     ('NE', ['ANUM'], 'Arriva Northumbria'),
     ('Y', ['WRAY'], 'Arriva Yorkshire'),
     ('Y', ['YTIG'], 'Yorkshire Tiger'),
