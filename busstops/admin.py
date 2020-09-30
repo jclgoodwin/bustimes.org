@@ -57,6 +57,7 @@ class OperatorAdmin(admin.ModelAdmin):
                     'service_count', 'vehicle_count', 'twitter']
     list_filter = ('region', 'vehicle_mode', 'payment_methods', 'parent')
     search_fields = ('id', 'name')
+    raw_id_fields = ('region', 'regions', 'siblings', 'colour')
     inlines = [OperatorCodeInline]
     prepopulated_fields = {"slug": ("name",)}
     autocomplete_fields = ('licences',)
