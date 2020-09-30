@@ -31,8 +31,9 @@ class VehicleAdminForm(forms.ModelForm):
 
 
 def user(obj):
-    url = reverse('admin:vehicles_vehicleedit_changelist')
-    return mark_safe(f'<a href="{url}?user={obj.user_id}">{obj.user}</a>')
+    if obj.user:
+        url = reverse('admin:vehicles_vehicleedit_changelist')
+        return mark_safe(f'<a href="{url}?user={obj.user_id}">{obj.user}</a>')
 
 
 class VehicleEditInline(admin.TabularInline):
