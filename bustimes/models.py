@@ -31,7 +31,10 @@ class Route(models.Model):
     code = models.CharField(max_length=255)
     line_brand = models.CharField(max_length=255, blank=True)
     line_name = models.CharField(max_length=255)
-    description = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, blank=True)
+    origin = models.CharField(max_length=255, blank=True)
+    destinaton = models.CharField(max_length=255, blank=True)
+    via = models.CharField(max_length=255, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     dates = DateRangeField(null=True, blank=True)
@@ -51,6 +54,16 @@ class Route(models.Model):
         return reverse('route_xml', args=(self.source_id, self.code.split('#')[0]))
 
 
+class BankHoliday(models.Model):
+    name = models.CharField(unique=True, max_length=255)
+
+
+class BankHolidayDate(models.Model):
+    bank_holiday = models.ForeignKey(BankHoliday, models.CASCADE)
+    date = models.DateField()
+    scotland = models.BooleanField(null=True)
+
+
 class Calendar(models.Model):
     mon = models.BooleanField()
     tue = models.BooleanField()
@@ -62,6 +75,7 @@ class Calendar(models.Model):
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     dates = DateRangeField(null=True)
+    summary = models.CharField(max_length=255, blank=True)
 
     class Meta:
         index_together = (
@@ -106,6 +120,7 @@ class CalendarDate(models.Model):
     dates = DateRangeField(null=True)
     operation = models.BooleanField(db_index=True)
     special = models.BooleanField(default=False, db_index=True)
+    summary = models.CharField(max_length=255, blank=True)
 
     def contains(self, date):
         return self.start_date <= date and (not self.end_date or self.end_date >= date)
@@ -144,6 +159,8 @@ class Trip(models.Model):
     route = models.ForeignKey(Route, models.CASCADE)
     inbound = models.BooleanField(default=False)
     journey_pattern = models.CharField(max_length=255, blank=True)
+    ticket_machine_code = models.CharField(max_length=255, blank=True, db_index=True)
+    block = models.CharField(max_length=255, blank=True, db_index=True)
     destination = models.ForeignKey('busstops.StopPoint', models.SET_NULL, null=True, blank=True)
     calendar = models.ForeignKey(Calendar, models.CASCADE)
     sequence = models.PositiveSmallIntegerField(null=True, blank=True)

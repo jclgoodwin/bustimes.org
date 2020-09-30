@@ -150,8 +150,8 @@ class VehicleFeature(models.Model):
 class Vehicle(models.Model):
     code = models.CharField(max_length=255)
     fleet_number = models.PositiveIntegerField(null=True, blank=True)
-    fleet_code = models.CharField(max_length=24, blank=True)
-    reg = models.CharField(max_length=24, blank=True)
+    fleet_code = models.CharField(max_length=24, blank=True, db_index=True)
+    reg = models.CharField(max_length=24, blank=True, db_index=True)
     source = models.ForeignKey(DataSource, models.CASCADE, null=True, blank=True)
     operator = models.ForeignKey(Operator, models.SET_NULL, null=True, blank=True)
     vehicle_type = models.ForeignKey(VehicleType, models.SET_NULL, null=True, blank=True)
@@ -412,6 +412,7 @@ class VehicleJourney(models.Model):
     destination = models.CharField(max_length=255, blank=True)
     direction = models.CharField(max_length=8, blank=True)
     data = models.JSONField(null=True, blank=True)
+    trip = models.ForeignKey('bustimes.Trip', models.SET_NULL, null=True, blank=True)
 
     def get_absolute_url(self):
         return reverse('journey_detail', args=(self.id,))
