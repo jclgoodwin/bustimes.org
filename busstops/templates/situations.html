@@ -2,20 +2,26 @@
 
 {% for situation in situations %}
     <div class="situation">
-        <div class="summary">
-            {% if situation.reason %}
-                <div class="reason">
-                    {% if situation.reason == 'roadClosed' %}Road closed{% elif situation.reason == 'routeDiversion' %}Diversion{% else %}{{ situation.reason|title }}{% endif %}
-                </div>
-            {% endif %}
-            <h2>{{ situation.summary }}</h2>
-            {% if situation.validityperiod_set.all|length == 1%}
-                {{ situation.validityperiod_set.all.0 }}
-            {% endif %}
-        </div>
-        {{ situation.text|linebreaks }}
+        {% if situation.summary %}
+            <div class="summary">
+                {% if situation.reason %}
+                    <div class="reason">
+                        {% if situation.reason == 'roadClosed' %}Road closed{% elif situation.reason == 'routeDiversion' %}Diversion{% else %}{{ situation.reason|title }}{% endif %}
+                    </div>
+                {% endif %}
+                <h2>{{ situation.summary }}</h2>
+                {% if situation.validityperiod_set.all|length == 1%}
+                    {{ situation.validityperiod_set.all.0 }}
+                {% endif %}
+            </div>
+        {% endif %}
+        {% if situation.text %}
+            {{ situation.text|linebreaks }}
+        {% endif %}
         {% for consequence in situation.consequences %}
-            {{ consequence.text|linebreaks }}
+            {% if consuequence.text %}
+                {{ consequence.text|linebreaks }}
+            {% endif %}
         {% endfor %}
         {% for link in situation.link_set.all %}
             {{ link.url|urlise }}
