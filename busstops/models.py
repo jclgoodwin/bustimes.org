@@ -43,8 +43,7 @@ class SearchMixin:
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if 'update_fields' in kwargs:
-            fields = kwargs['update_fields']
-            if 'search_vector' in fields:
+            if 'search_vector' in kwargs['update_fields']:
                 return
         self.update_search_vector()
 

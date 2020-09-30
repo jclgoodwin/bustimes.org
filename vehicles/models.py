@@ -167,8 +167,11 @@ class Vehicle(models.Model):
     data = models.JSONField(null=True, blank=True)
 
     def save(self, force_insert=False, force_update=False, **kwargs):
-        if self.fleet_number and not self.fleet_code:
-            self.fleet_code = str(self.fleet_number)
+        if 'update_fields' not in kwargs or 'fleet_number' in self.kwargs:
+            if self.fleet_number and (not self.fleet_code or self.fleet_code.isdigit()):
+                self.fleet_code = str(self.fleet_number)
+                if 'update_fields' in kwargs and 'fleet_code' not in kwargs['update_fields']:
+                    kwargs['update_fields'].append('fleet_code')
         super().save(force_insert, force_update, **kwargs)
 
         varnish_ban(f'/vehicles/{self.id}')
