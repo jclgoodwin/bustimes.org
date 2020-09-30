@@ -442,8 +442,11 @@ class Operator(SearchMixin, models.Model):
     aka = models.CharField(max_length=100, blank=True)
     slug = AutoSlugField(populate_from=str, unique=True, editable=True)
     vehicle_mode = models.CharField(max_length=48, blank=True)
-    parent = models.CharField(max_length=48, blank=True)
-    region = models.ForeignKey(Region, models.CASCADE)
+    parent = models.CharField(max_length=48, blank=True, db_index=True)
+    siblings = models.ManyToManyField('self', blank=True)
+    region = models.ForeignKey(Region, models.SET_NULL, null=True, blank=True)
+    regions = models.ManyToManyField(Region, blank=True, related_name='operators')
+    colour = models.ForeignKey('ServiceColour', models.SET_NULL, null=True, blank=True)
 
     address = models.CharField(max_length=128, blank=True)
     url = models.URLField(blank=True)
@@ -548,9 +551,9 @@ class StopUsage(models.Model):
 
 class ServiceColour(models.Model):
     name = models.CharField(max_length=64)
-    operator = models.ForeignKey(Operator, models.SET_NULL, null=True, blank=True)
     foreground = models.CharField(max_length=20, blank=True)
     background = models.CharField(max_length=20, blank=True)
+    border = models.CharField(max_length=20, blank=True)
 
     def __str__(self):
         return self.name
@@ -558,11 +561,6 @@ class ServiceColour(models.Model):
     def preview(self, name=False):
         return format_html('<div style="background:{};color:{}">{}</div>',
                            self.background, self.foreground, self.name or self.operator_id or '\u00A0')
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if self.operator_id and self.name:
-            Service.objects.filter(operator=self.operator_id, current=True, line_brand=self.name).update(colour=self)
 
 
 class ServiceManager(models.Manager):
