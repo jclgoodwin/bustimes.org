@@ -19,16 +19,7 @@
 {% if services %}
     <h2>{% include 'modes.html' with modes=modes noun='services' %}</h2>
 
-    <ul class="long wide has-smalls">
-        {% for service in services %}
-            <li>
-                <a href="{{ service.get_absolute_url }}">
-                    <span>{{ service }}</span>
-                    {% if service.operator %}<small>{{ service.operator.all|join:", " }}</small>{% endif %}
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
+    {% include 'service_list.html' with services=services class="long wide has-smalls" %}
 {% endif %}
 
 {% if adjacent %}

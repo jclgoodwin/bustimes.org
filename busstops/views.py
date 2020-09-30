@@ -301,6 +301,9 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
                 current=True
             ).prefetch_related('operator').defer('geometry'), key=Service.get_order)
             context['modes'] = {service.mode for service in context['services'] if service.mode}
+            colours = set(service.colour_id for service in context['services'] if service.colour_id)
+            if colours:
+                context['colours'] = ServiceColour.objects.filter(id__in=colours)
 
         context['breadcrumb'] = [crumb for crumb in [
             self.object.admin_area.region,
@@ -352,6 +355,9 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
             context['text'] = text[0].upper() + text[1:]
 
         context['modes'] = {service.mode for service in context['services'] if service.mode}
+        colours = set(service.colour_id for service in context['services'] if service.colour_id)
+        if colours:
+            context['colours'] = ServiceColour.objects.filter(id__in=colours)
 
         region = self.object.get_region()
 
@@ -511,6 +517,11 @@ class ServiceDetailView(DetailView):
         context['links'] = []
 
         context['related'] = self.object.get_similar_services()
+
+        if context['related']:
+            colours = set(service.colour_id for service in context['related'] if service.colour_id)
+            if colours:
+                context['colours'] = ServiceColour.objects.filter(id__in=colours)
 
         if self.object.show_timetable and not self.object.timetable_wrong:
             date = self.request.GET.get('date')

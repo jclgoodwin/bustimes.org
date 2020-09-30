@@ -51,16 +51,7 @@
         <h2 id="services">{{ services.paginator.count }} service{{ services.paginator.count|pluralize }}</h2>
 
         {% if services %}
-            <ul class="has-smalls">
-                {% for result in services %}
-                    <li>
-                        <a href="{{ result.get_absolute_url }}">
-                            <span>{% firstof result.get_qualified_name result %}</span>
-                            {% if result.operator %}<small>{{ result.operator.all|join:", " }}</small>{% endif %}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
+            {% include 'service_list.html' with services=services class="has-smalls" %}
 
             {% include 'pagination.html' with page=services hash='#services' %}
         {% endif %}

@@ -204,7 +204,8 @@ class ImportNaptanTest(TestCase):
         res = self.client.get('/stops/5820AWN26274')
         self.assertContains(res, 'On Talbot Road, near Eagle Street, near Port Talbot British Legion')
         self.assertContains(res, 'Services')
-        self.assertContains(res, '44 - Port Talbot Circular')
+        self.assertContains(res, '44')
+        self.assertContains(res, 'Port Talbot Circular')
         self.assertContains(res, """
             <div class="aside">
                 <h2>Nearby stops</h2>

@@ -425,7 +425,8 @@ main li {
 
 .has-smalls {
     li {
-        a {
+        a,
+        a:hover .name {
             text-decoration: none;
         }
 
@@ -540,6 +541,15 @@ table {
         border-left: 0;
         margin-left: -1em;
     }
+}
+
+.has-smalls .name {
+    margin-right: .75em;
+
+    + .name {
+        margin-left: -.75em;
+    }
+
 }
 
 #regions {
