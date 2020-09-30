@@ -2,6 +2,8 @@
 plugins =
     django_coverage_plugin
 source =
+    accounts
+    api
     buses
     busstops
     bustimes
