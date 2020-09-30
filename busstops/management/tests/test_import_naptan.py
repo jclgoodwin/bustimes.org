@@ -166,7 +166,8 @@ class ImportNaptanTest(TestCase):
 
         res = self.client.get('/localities/N0078801')
         self.assertContains(res, 'Services')
-        self.assertContains(res, '44 - Port Talbot Circular')
+        self.assertContains(res, '<span class="name">44</span>', html=True)
+        self.assertContains(res, 'Port Talbot Circular')
 
         irish_stop = StopPoint.objects.get(atco_code='7000B6310001')
         self.assertEqual(irish_stop.common_name, 'Belcoo')

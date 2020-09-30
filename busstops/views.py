@@ -31,6 +31,12 @@ prefetch_stop_services = Prefetch(
 )
 
 
+def get_colours(services):
+    colours = set(service.colour_id for service in services if service.colour_id)
+    if colours:
+        return ServiceColour.objects.filter(id__in=colours)
+
+
 def index(request):
     """The home page with a list of regions"""
     return render(request, 'index.html', {
@@ -301,10 +307,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
                 current=True
             ).prefetch_related('operator').defer('geometry'), key=Service.get_order)
             context['modes'] = {service.mode for service in context['services'] if service.mode}
-            colours = set(service.colour_id for service in context['services'] if service.colour_id)
-            if colours:
-                context['colours'] = ServiceColour.objects.filter(id__in=colours)
-
+            context['colours'] = get_colours(context['services'])
         context['breadcrumb'] = [crumb for crumb in [
             self.object.admin_area.region,
             self.object.admin_area,
@@ -355,9 +358,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
             context['text'] = text[0].upper() + text[1:]
 
         context['modes'] = {service.mode for service in context['services'] if service.mode}
-        colours = set(service.colour_id for service in context['services'] if service.colour_id)
-        if colours:
-            context['colours'] = ServiceColour.objects.filter(id__in=colours)
+        context['colours'] = get_colours(context['services'])
 
         region = self.object.get_region()
 
@@ -477,9 +478,7 @@ class OperatorDetailView(DetailView):
             context['modes'] = {service.mode for service in context['services'] if service.mode}
             context['breadcrumb'] = [self.object.region]
 
-            colours = set(service.colour_id for service in context['services'] if service.colour_id)
-            if colours:
-                context['colours'] = ServiceColour.objects.filter(id__in=colours)
+            context['colours'] = get_colours(context['services'])
 
         return context
 
@@ -519,9 +518,7 @@ class ServiceDetailView(DetailView):
         context['related'] = self.object.get_similar_services()
 
         if context['related']:
-            colours = set(service.colour_id for service in context['related'] if service.colour_id)
-            if colours:
-                context['colours'] = ServiceColour.objects.filter(id__in=colours)
+            context['colours'] = get_colours(context['related'])
 
         if self.object.show_timetable and not self.object.timetable_wrong:
             date = self.request.GET.get('date')
