@@ -8,7 +8,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models.functions import Distance
-from django.db.models import Q, Prefetch, F, Exists, OuterRef
+from django.db.models import Q, Prefetch, F, Exists, OuterRef, Count
 from django.db.models.functions import Now
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.utils import timezone
@@ -21,7 +21,8 @@ from django.core.mail import EmailMessage
 from departures import live
 from disruptions.models import Situation, Consequence, StopSuspension
 from .utils import format_gbp, get_bounding_box
-from .models import Region, StopPoint, AdminArea, Locality, District, Operator, Service, Place, ServiceColour
+from .models import (Region, StopPoint, AdminArea, Locality, District, Operator,
+                     Service, Place, ServiceColour, DataSource)
 from .forms import ContactForm, SearchForm
 
 
@@ -116,7 +117,16 @@ def cookies(request):
 
 def data(request):
     """Data sources"""
-    return render(request, 'data.html')
+    sources = DataSource.objects.annotate(
+        count=Count('route__service', filter=Q(route__service__current=True), distinct=True),
+    ).order_by('url').filter(
+        ~Q(count=0),
+        ~Q(name__contains='GTFS'),
+        ~Q(name='MET'),
+    )
+    return render(request, 'data.html', {
+        'sources': sources
+    })
 
 
 def stops(request):

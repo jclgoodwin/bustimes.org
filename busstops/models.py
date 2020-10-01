@@ -192,41 +192,49 @@ class DataSource(models.Model):
     def __str__(self):
         return self.name
 
+    def get_nice_name(self):
+        return self.name.split('_')[0]
+
+    def get_nice_url(self):
+        if self.url.startswith('https://data.bus-data.dft.gov.uk'):
+            return self.url.replace('download/', '')
+        if 'open-data' in self.url or 'data.discover' in self.url:
+            return self.url
+        if 'stagecoach' in self.url:
+            return 'https://www.stagecoachbus.com/open-data'
+        if self.settings and 'url' in self.settings:
+            return self.settings['url']
+
+    def get_nice_link(self):
+        name = self.get_nice_name()
+        url = self.get_nice_url()
+        if url:
+            return format_html('<a href="{}">{}</a>', url, name)
+        return name
+
     def credit(self):
-        url = None
+        url = self.get_nice_url()
         text = None
         date = None
 
         if 'tnds' in self.url:
             url = 'https://www.travelinedata.org.uk/'
             text = 'the Traveline National Dataset'
+        elif url:
+            text = self.get_nice_name()
+            date = self.datetime
         elif 'transportforireland' in self.url:
             url = 'https://www.transportforireland.ie/transitData/PT_Data.html'
             text = 'Transport for Ireland'
-        elif 'open-data' in self.url or 'data.discover' in self.url:
-            url = self.url
-            text = self.name
-            date = self.datetime
-        elif self.url.startswith('https://data.bus-data.dft.gov.uk'):
-            url = self.url.replace('download/', '')
-            text = self.name.split('_')[0]
-            date = self.datetime
         elif self.url.startswith('http://travelinedatahosting.basemap.co.uk/'):
             text = self.name
             date = self.datetime
         elif self.url.startswith('https://opendata.ticketer.com/uk/'):
             text = self.name
             date = self.datetime
-        elif 'stagecoach' in self.url:
-            url = 'https://www.stagecoachbus.com/open-data'
-            text = self.name
-            date = self.datetime
         elif self.name == 'MET' or self.name == 'ULB':
             url = self.url
             text = 'Translink open data'
-
-        if not url and self.settings and 'url' in self.settings:
-            url = self.settings['url']
 
         if url and 'bus-data.dft.gov.uk' in url:
             text = f'{text}/Bus Open Data Service'
