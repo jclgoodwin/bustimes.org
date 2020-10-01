@@ -470,4 +470,8 @@ TICKETER_OPERATORS = [
     ('SE', ['AMTM', 'ARHE'], 'Arriva Thameside'),
     ('SE', ['AKSS'], 'Arriva Kent & Surrey'),
     ('EM', ['NOCT'], 'CT4N'),
+    ('WM', ['DIAM'], 'Diamond Bus'),
+    ('NW', ['GTRI'], 'Diamond Bus North West'),
+    ('NW', ['PBLT'], 'Preston Bus'),
+    # ('SE', ['WNGS', 'NXHH'], 'Hallmark Connections'),
 ]

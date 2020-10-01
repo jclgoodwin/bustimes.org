@@ -418,10 +418,12 @@ class Command(BaseCommand):
                 journey_pattern=journey.journey_pattern.id,
             )
 
+            blank = False
             for i, cell in enumerate(journey.get_times()):
                 timing_status = cell.stopusage.timingstatus
                 if timing_status is None:
                     timing_status = ''
+                    blank = True
                 elif timing_status == 'otherPoint':
                     timing_status = 'OTH'
                 elif timing_status == 'principleTimingPoint':
@@ -445,6 +447,12 @@ class Command(BaseCommand):
 
             trip.end = stop_time.departure or stop_time.arrival
             trips.append(trip)
+
+            if blank and any(stop_time.timing_status for stop_time in stop_times):
+                # not all timing statuses are blank - mark any blank ones as minor
+                for stop_time in stop_times:
+                    if not stop_time.timing_status:
+                        stop_time.timing_status = 'OTH'
 
             notes = []
             for note in journey.notes:
@@ -576,13 +584,21 @@ class Command(BaseCommand):
                     operator_code = 'SBCR'
 
                 if parts:
-                    service_code = f'{self.source.id}-{parts}-{line_name}'
-                    if not existing:
-                        existing = Service.objects.filter(service_code=service_code, line_name=line_name).first()
+                    if 'opendata.ticketer' in self.source.url:
+                        service_code = parts
+                        try:
+                            existing = Service.objects.get(operator__in=operators, current=True,
+                                                           line_name__iexact=line_name)
+                        except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                            pass
+                    else: # Stagecoach
+                        service_code = f'{self.source.id}-{parts}-{line_name}'
+
                     if not existing:
                         existing = self.source.service_set.filter(
                             line_name=line_name, route__code__contains=f'/{parts}_'
                         ).order_by('-current', 'service_code').first()
+
                 else:
                     service_code = f'{self.source.id}-{operator_code}-{txc_service.service_code}'
                     if len(lines) > 1:

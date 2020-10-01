@@ -79,7 +79,7 @@
                     {% endif %}
                     <tbody>
                         {% for row in grouping.rows %}
-                            <tr{% if not row.first and not row.last and row.is_minor %} class="minor"{% endif %}>
+                            <tr{% if row.is_minor %} class="minor"{% endif %}>
                                 <th>
                                     {% if row.stop.pk %}
                                         <a href="{{ row.stop.get_absolute_url }}">{% if row.stop.suspended %}🚧 {% elif row.stop.situation %}⚠️ {% endif %}{{ row.stop.get_qualified_name }}</a>

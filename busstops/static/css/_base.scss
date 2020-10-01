@@ -962,7 +962,7 @@ thead {
 input:not(:checked) + label {
     + .timetable-wrapper,
     + .route {
-        .minor {
+        .minor:not(:first-child):not(:last-child) {
             display: none;
         }
 
