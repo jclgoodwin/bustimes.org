@@ -41,6 +41,7 @@ class Command(ImportLiveVehiclesCommand):
         journey.route_name = trip['route_number']
         journey.datetime = parse_datetime(trip['route'][0]['departure']['scheduled'])
         journey.service = Service.objects.get(current=True, operator='EMBR', line_name=journey.route_name)
+        journey.destination = trip['route'][-1]['location']['region_name']
 
         time = localtime(journey.datetime).time()
         try:
