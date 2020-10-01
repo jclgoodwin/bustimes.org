@@ -449,7 +449,7 @@ def journey_json(request, pk):
 
 
 def location_detail(request, location_id):
-    locations = VehicleLocation.objects.select_related('journey__vehicle', 'journey__service')
+    locations = VehicleLocation.objects.select_related('journey__vehicle__vehicle_type', 'journey__service')
     locations = locations.defer('journey__service__geometry', 'journey__service__search_vector')
     location = get_object_or_404(locations, id=location_id)
     return render(request, 'location_detail.html', {
