@@ -122,12 +122,6 @@
                 </div>
             {% endif %}
         {% endfor %}
-
-        {% load static %}
-        <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
-        <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
-        <script src="{% static 'js/reqwest.min.js' %}"></script>
-        <script async src="{% static 'js/history.js' %}"></script>
     {% endif %}
 
 {% endif %}
@@ -140,4 +134,14 @@
     <p class="next"><a href="{{ next.get_absolute_url }}">{{ next }} &rarr;</a></p>
 {% endif %}
 
+{% endblock %}
+
+{% block foot %}
+    {% if journeys %}
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
+        <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
+        <script src="{% static 'js/reqwest.min.js' %}"></script>
+        <script async src="{% static 'js/history.js' %}"></script>
+    {% endif %}
 {% endblock %}

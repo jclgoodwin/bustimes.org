@@ -191,21 +191,23 @@
     {% endif %}
 {% endfor %}
 
-{% load static %}
+{% endblock %}
 
-{% if object.geometry %}
-    <script>
-        EXTENT = [{{ object.geometry.extent|join:"," }}];
-        LEAFLET_CSS_URL = '{% static 'js/leaflet/leaflet.css' %}';
-        LEAFLET_JS_URL = '{% static 'js/leaflet/leaflet.js' %}';
-    </script>
-    <script src="{% static 'js/loadjs/loadjs.min.js' %}"></script>
-    <script src="{% static 'js/reqwest.min.js' %}"></script>
-    <script async src="{% static 'js/servicemap2.js' %}"></script>
-{% endif %}
+{% block foot %}
+    {% load static %}
 
-{% if timetable %}
-    <script async src="{% static 'js/timetable.js' %}"></script>
-{% endif %}
+    {% if object.geometry %}
+        <script>
+            EXTENT = [{{ object.geometry.extent|join:"," }}];
+            LEAFLET_CSS_URL = '{% static 'js/leaflet/leaflet.css' %}';
+            LEAFLET_JS_URL = '{% static 'js/leaflet/leaflet.js' %}';
+        </script>
+        <script src="{% static 'js/loadjs/loadjs.min.js' %}"></script>
+        <script src="{% static 'js/reqwest.min.js' %}"></script>
+        <script async src="{% static 'js/servicemap2.js' %}"></script>
+    {% endif %}
 
+    {% if timetable %}
+        <script async src="{% static 'js/timetable.js' %}"></script>
+    {% endif %}
 {% endblock %}
