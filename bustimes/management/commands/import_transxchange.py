@@ -420,7 +420,9 @@ class Command(BaseCommand):
 
             for i, cell in enumerate(journey.get_times()):
                 timing_status = cell.stopusage.timingstatus
-                if timing_status is None or timing_status == 'otherPoint':
+                if timing_status is None:
+                    timing_status = ''
+                elif timing_status == 'otherPoint':
                     timing_status = 'OTH'
                 elif timing_status == 'principleTimingPoint':
                     timing_status = 'PTP'
@@ -519,7 +521,7 @@ class Command(BaseCommand):
         return description
 
     def is_tnds(self):
-        return len(self.source.name) <= 4 and self.source.name.isupper()
+        return self.source.url.startswith('ftp://ftp.tnds.basemap.co.uk/')
 
     def handle_service(self, filename, parts, transxchange, txc_service, today, stops):
         if txc_service.operating_period.end:

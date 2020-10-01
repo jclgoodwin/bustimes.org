@@ -43,7 +43,7 @@ class ImportTransXChangeTest(TestCase):
         OperatorCode.objects.create(operator=cls.megabus, source=nocs, code='MEGA')
         OperatorCode.objects.create(operator=cls.fabd, source=nocs, code='FABD')
 
-        source = DataSource.objects.create(name='EA', url='https://www.example.co.uk/open-data')
+        source = DataSource.objects.create(name='EA', url='ftp://ftp.tnds.basemap.co.uk/open-data')
         OperatorCode.objects.create(operator=cls.fecs, source=source, code='FECS')
 
         StopPoint.objects.bulk_create(
@@ -195,8 +195,6 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual('', timetable.groupings[0].rows[0].times[-1])
 
         # self.assertEqual(['', '', '', '', '', '', '', ''], timetable.groupings[1].rows[0].times[-8:])
-
-        self.assertContains(res, 'data from <a href="https://www.example.co.uk/open-data">EA</a>')
 
         # Test the fallback version without a timetable (just a list of stops)
         service.show_timetable = False
