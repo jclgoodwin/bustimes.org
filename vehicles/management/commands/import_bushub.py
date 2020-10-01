@@ -2,6 +2,7 @@ from datetime import datetime
 from ciso8601 import parse_datetime
 from django.utils import timezone
 from django.contrib.gis.geos import Point
+from django.db.models import Q
 from busstops.models import Service, DataSource
 from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -60,6 +61,9 @@ class Command(ImportLiveVehiclesCommand):
             operators = [item['OperatorRef']]
 
         try:
+            if item['OperatorRef'] == 'WBSV' and code.isdigit():
+                defaults['code'] = code
+                return self.vehicles.filter(Q(code=code) | Q(fleet_code=code), operator='WBSV').get_or_create(defaults)
             return self.vehicles.get_or_create(defaults, code=code, operator__in=operators)
         except self.vehicles.model.MultipleObjectsReturned:
             return self.vehicles.filter(code=code, operator__in=operators).first()
