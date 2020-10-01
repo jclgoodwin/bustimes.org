@@ -179,6 +179,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
             location.journey = latest.journey
             if location.heading is None:
                 location.heading = calculate_bearing(latest.latlong, location.latlong)
+                if location.heading is None:
+                    location.heading = latest.heading
         else:
             journey.source = self.source
             if not journey.datetime:
