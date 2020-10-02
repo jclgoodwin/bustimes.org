@@ -28,7 +28,6 @@ def download_if_new(path, url):
 
 
 def handle_gtfs(operators, path):
-    operator = operators[0]
     with zipfile.ZipFile(path) as archive:
         for line in read_file(archive, 'routes.txt'):
             foreground = line['route_text_color']
@@ -43,7 +42,6 @@ def handle_gtfs(operators, path):
                 {'name': service.line_brand},
                 foreground=f"#{foreground}",
                 background=f"#{background}",
-                operator_id=operator,
             )
             service.colour = colour
             service.save(update_fields=['colour'])
