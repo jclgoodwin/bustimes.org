@@ -40,11 +40,9 @@
         }
     };
 
+    var lastRequest;
+
     window.onhashchange = function(event) {
-        if (map) {
-            map.remove();
-            map = null;
-        }
         maybeOpenMap();
         event.preventDefault();
         return false;
@@ -58,7 +56,16 @@
             return;
         }
 
-        reqwest('/' + journey + '.json', function(locations) {
+        if (lastRequest) {
+            lastRequest.abort();
+        }
+
+        if (map) {
+            map.remove();
+            map = null;
+        }
+
+        lastRequest = reqwest('/' + journey + '.json', function(locations) {
 
             var mapContainer = element.getElementsByClassName('map')[0],
                 layerGroup = L.layerGroup();
