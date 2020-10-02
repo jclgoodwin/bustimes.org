@@ -117,7 +117,12 @@ def bus_open_data(api_key):
 
                 sources.append(command.source)
 
-            clean_up(operators.values(), sources, incomplete)
+            if operators:
+                operators = operators.values()
+            else:
+                operators = [operator_id]
+
+            clean_up(operators, sources, incomplete)
 
     if command.undefined_holidays:
         print(command.undefined_holidays)
