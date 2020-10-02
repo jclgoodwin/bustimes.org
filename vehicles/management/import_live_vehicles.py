@@ -5,6 +5,7 @@ import pid
 from datetime import timedelta
 from time import sleep
 from django.core.management.base import BaseCommand
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.db.models.functions import Now
@@ -142,7 +143,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
                         self.current_location_ids.add(latest.id)
                         return
 
-        journey = self.get_journey(item, vehicle)
+        try:
+            journey = self.get_journey(item, vehicle)
+        except ObjectDoesNotExist:
+            vehicle.latest_location_id = None
+            vehicle.save(update_fields=['latest_location'])
+            latest = None
+            journey = self.get_journey(item, vehicle)
         journey.vehicle = vehicle
         if not journey:
             return
