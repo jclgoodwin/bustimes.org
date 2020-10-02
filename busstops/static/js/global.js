@@ -1,6 +1,6 @@
 /*jslint browser: true*/
 
-if (navigator.serviceWorker && location.protocol === 'https:') {
+if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations && location.protocol === 'https:') {
     window.addEventListener('load', function() {
         navigator.serviceWorker.getRegistrations().then(
             function (registrations) {
