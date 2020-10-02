@@ -1223,7 +1223,12 @@ tfoot a {
 }
 
 nav {
+    margin: 1em auto;
     overflow: hidden;
+
+    p {
+        margin: 0;
+    }
 }
 
 .ad {
@@ -1235,6 +1240,10 @@ nav {
     display: inline-block;
     height: 100px;
     width: 100%;
+}
+
+.adsbygoogle[style="width: 0px; height: 0px;"] {
+    display: none;
 }
 
 .horizontal {

@@ -1,3 +1,4 @@
+{% if page.has_other_pages %}
 <nav>
     {% if page.has_previous %}
         <p class="previous"><a href="?{% if query %}q={{ query }}&amp;{% endif %}page={{ page.previous_page_number }}{{ hash }}" rel="prev">&larr; Page {{ page.previous_page_number }}</a>
@@ -7,3 +8,4 @@
         <p class="next"><a href="?{% if query %}q={{ query }}&amp;{% endif %}page={{ page.next_page_number }}{{ hash }}" rel="next">Page {{ page.next_page_number }} &rarr;</a>
     {% endif %}
 </nav>
+{% endif %}

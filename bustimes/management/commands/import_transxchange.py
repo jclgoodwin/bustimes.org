@@ -591,7 +591,7 @@ class Command(BaseCommand):
                                                            line_name__iexact=line_name)
                         except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                             pass
-                    else: # Stagecoach
+                    else:  # Stagecoach
                         service_code = f'{self.source.id}-{parts}-{line_name}'
 
                     if not existing:
