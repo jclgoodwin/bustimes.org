@@ -130,11 +130,9 @@
         </div>
 
         {% if not forloop.last and grouping.rows|length > 20 %}
-            <div class="ad">
-                <!--[if gte IE 9]><!-->
-                    <ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457"></ins>
-                <!--<![endif]-->
-            </div>
+            <!--[if gte IE 9]><!-->
+                <div class="ad"><ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-full-width-responsive="true"></ins></div>
+            <!--<![endif]-->
         {% endif %}
 
     {% empty %}

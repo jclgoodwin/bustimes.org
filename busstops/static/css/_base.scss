@@ -1228,16 +1228,11 @@ nav {
 
 .ad {
     margin: 1em auto;
-}
-
-main {
-    position: relative;
+    text-align: center;
 }
 
 .adsbygoogle {
-    display: block;
-    margin: 0 auto;
-    // width: 100%;
+    display: inline-block;
     height: 100px;
 }
 
