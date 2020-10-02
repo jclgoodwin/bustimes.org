@@ -311,6 +311,8 @@ BOD_OPERATORS = (
     ('KBUS', 'EM', {
         'KN': 'KBUS',
     }, False),
+    ('HNTS', 'EM', {
+    }, False),
 )
 STAGECOACH_OPERATORS = [
     ('S', 'sblb', 'Stagecoach Bluebird', {'SBLB': 'SBLB'}),
@@ -474,4 +476,5 @@ TICKETER_OPERATORS = [
     ('NW', ['GTRI'], 'Diamond Bus North West'),
     ('NW', ['PBLT'], 'Preston Bus'),
     # ('SE', ['WNGS', 'NXHH'], 'Hallmark Connections'),
+    ('WM', ['LMST'], 'LMS Travel'),
 ]
