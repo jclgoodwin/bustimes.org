@@ -1234,53 +1234,11 @@ main {
     position: relative;
 }
 
-.side-ad {
-    display: none;
-}
-
-.wide {
-    .side-ad {
-        @media (min-width: 90em) {
-            bottom: 1em;
-            display: block;
-            position: absolute;
-            top: 1em;
-            width: 10em;
-
-            .adsbygoogle {
-                height: 100%;
-                position: absolute;
-                width: 100%;
-            }
-
-            &.left {
-                left: -12em;
-            }
-
-            &.right {
-                right: -12em;
-            }
-        }
-
-        @media (min-width: 95em) {
-            width: 12.5em;
-
-            &.left {
-                left: -14.5em;
-            }
-
-            &.right {
-                right: -14.5em;
-            }
-        }
-    }
-}
-
-
 .adsbygoogle {
     display: block;
     margin: 0 auto;
-    max-width: 60.5em;
+    // width: 100%;
+    height: 100px;
 }
 
 .horizontal {
