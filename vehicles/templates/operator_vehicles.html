@@ -149,13 +149,7 @@
     </tbody>
 </table>
 
-{% if vehicles.has_previous %}
-    <p class="previous"><a href="?page={{ vehicles.previous_page_number }}" rel="prev">&larr; Page {{ vehicles.previous_page_number }}</a>
-{% endif %}
-
-{% if vehicles.has_next %}
-    <p class="next"><a href="?page={{ vehicles.next_page_number }}" rel="next">Page {{ vehicles.next_page_number }} &rarr;</a>
-{% endif %}
+{% include 'pagination.html' with page=vehicles %}
 
 {% if form %}
 
