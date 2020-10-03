@@ -66,6 +66,9 @@
     }
 
     function setUpMap() {
+        if (map) {
+            return;
+        }
         map = L.map(container),
         map.attributionControl.setPrefix('');
         L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
