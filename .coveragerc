@@ -9,7 +9,7 @@ source =
     bustimes
     departures
     disruptions
-    timetables
+    transxchange
     vehicles
     vosa
 omit =

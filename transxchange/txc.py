@@ -1,6 +1,3 @@
-"""Represent TransXChange concepts, and generate a matrix timetable from
-TransXChange documents
-"""
 import re
 import xml.etree.cElementTree as ET
 import calendar
@@ -61,9 +58,6 @@ def correct_description(description):
 
 class Stop:
     """A TransXChange StopPoint."""
-    stop = None
-    locality = None
-
     def __init__(self, element):
         if element:
             self.atco_code = element.find('txc:StopPointRef', NS)
@@ -71,24 +65,25 @@ class Stop:
                 self.atco_code = element.find('txc:AtcoCode', NS)
             if self.atco_code is not None:
                 self.atco_code = self.atco_code.text or ''
+
             self.common_name = element.find('txc:CommonName', NS)
-            self.locality = element.find('txc:LocalityName', NS)
             if self.common_name is not None:
                 self.common_name = self.common_name.text
+
+            self.locality = element.find('txc:LocalityName', NS)
             if self.locality is not None:
                 self.locality = self.locality.text
 
     def __str__(self):
         if not self.locality or self.locality in self.common_name:
             return self.common_name or self.atco_code
-        return '%s %s' % (self.locality, self.common_name)
+        return f'{self.locality} {self.common_name}'
 
 
 class JourneyPattern:
     """A collection of JourneyPatternSections, in order."""
     def __init__(self, element, sections):
         self.id = element.attrib.get('id')
-        # self.journeys = []
         self.sections = [
             sections[section_element.text]
             for section_element in element.findall('txc:JourneyPatternSectionRefs', NS)
@@ -190,10 +185,7 @@ class VehicleJourneyTimingLink:
 
 
 class VehicleJourney:
-    """A journey represents a scheduled journey that happens at most once per
-    day. A sort of "instance" of a JourneyPattern, made distinct by having its
-    own start time (and possibly operating profile and dead run).
-    """
+    """A scheduled journey that happens at most once per day"""
     operating_profile = None
     journey_pattern = None
     journey_ref = None
@@ -317,6 +309,7 @@ class VehicleJourney:
 
 
 class ServicedOrganisation:
+    """Like a school, college, or workplace"""
     def __init__(self, element):
         self.code = element.find('txc:OrganisationCode', NS).text
         self.name = element.find('txc:Name', NS)
@@ -516,8 +509,6 @@ class Service:
             self.description_parts[-1], self.via = self.description_parts[-1].split(' via ', 1)
 
     def __init__(self, element, serviced_organisations, journey_pattern_sections):
-        self.element = element
-
         mode_element = element.find('txc:Mode', NS)
         if mode_element is not None:
             self.mode = mode_element.text
@@ -556,6 +547,21 @@ class Service:
                for journey_pattern in element.findall('txc:StandardService/txc:JourneyPattern', NS)
             ) if journey_pattern.sections
         }
+
+        self.lines = get_lines(element)
+
+
+def get_lines(service_element):
+    lines = []
+    for line_element in service_element.find('txc:Lines', NS):
+        line_id = line_element.attrib['id']
+        line_name = (line_element.find('txc:LineName', NS).text or '').strip()
+        if '|' in line_name:
+            line_name, line_brand = line_name.split('|', 1)
+        else:
+            line_brand = ''
+        lines.append((line_id, line_name, line_brand))
+    return lines
 
 
 class TransXChange:
@@ -600,7 +606,6 @@ class TransXChange:
 
         self.services = {}
 
-        # element = None
         serviced_organisations = None
 
         journey_pattern_sections = {}
@@ -644,10 +649,7 @@ class TransXChange:
                 service = Service(element, serviced_organisations, journey_pattern_sections)
                 self.services[service.service_code] = service
             elif tag == 'Garages':
-                # print(ET.tostring(element).decode())
                 element.clear()
-
-        self.element = element
 
         self.transxchange_date = max(
             element.attrib['CreationDateTime'], element.attrib['ModificationDateTime']

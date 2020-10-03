@@ -21,7 +21,7 @@ from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
 from ...timetables import get_stop_usages
-from timetables.txc import TransXChange, sanitize_description_part, Grouping
+from transxchange.txc import TransXChange, sanitize_description_part, Grouping
 
 
 logger = logging.getLogger(__name__)
@@ -71,19 +71,6 @@ def sanitize_description(name):
 
     parts = [sanitize_description_part(part) for part in name.split(' - ')]
     return ' - '.join(parts)
-
-
-def get_lines(service_element):
-    lines = []
-    for line_element in service_element.find('txc:Lines', NS):
-        line_id = line_element.attrib['id']
-        line_name = (line_element.find('txc:LineName', NS).text or '').strip()
-        if '|' in line_name:
-            line_name, line_brand = line_name.split('|', 1)
-        else:
-            line_brand = ''
-        lines.append((line_id, line_name, line_brand))
-    return lines
 
 
 def get_service_code(filename):
@@ -543,13 +530,11 @@ class Command(BaseCommand):
         if self.is_tnds() and operators and all(operator.id in self.open_data_operators for operator in operators):
             return
 
-        lines = get_lines(txc_service.element)
-
         linked_services = []
 
         description = self.get_description(txc_service)
 
-        for line_id, line_name, line_brand in lines:
+        for line_id, line_name, line_brand in txc_service.lines:
             existing = None
 
             if operators and description and line_name:
@@ -601,7 +586,7 @@ class Command(BaseCommand):
 
                 else:
                     service_code = f'{self.source.id}-{operator_code}-{txc_service.service_code}'
-                    if len(lines) > 1:
+                    if len(txc_service.lines) > 1:
                         service_code += '-' + line_name
 
                     if not existing and operator_code != 'SBCR':
@@ -694,7 +679,7 @@ class Command(BaseCommand):
             route_code = filename
             if len(transxchange.services) > 1:
                 route_code += f'#{txc_service.service_code}'
-            if len(lines) > 1:
+            if len(txc_service.lines) > 1:
                 route_code += f'#{line_id}'
 
             route, route_created = Route.objects.update_or_create(route_defaults,
