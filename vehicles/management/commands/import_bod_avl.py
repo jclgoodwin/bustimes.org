@@ -105,8 +105,11 @@ class Command(ImportLiveVehiclesCommand):
                 if '_-_' in vehicle_ref:
                     fleet_number, reg = vehicle_ref.split('_-_', 2)
                     if fleet_number.isdigit():
-                        condition |= Q(code=vehicle_ref)
+                        defaults['fleet_number'] = fleet_number
                         defaults['reg'] = reg.replace('_', '')
+                elif operator_ref == 'BDRB' or operator_ref == 'COMT':
+                    reg = vehicle_ref.replace('_', '')
+                    condition |= Q(reg=reg)
         vehicles = vehicles.filter(condition)
 
         try:

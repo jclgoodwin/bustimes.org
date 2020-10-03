@@ -105,7 +105,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
         except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
             return
 
-    if operator.parent == 'Stagecoach':
+    if operator.parent == 'Stagecoach' or operator.id == 'EYMS':
         return
 
     data_source, _ = DataSource.objects.get_or_create({'url': url}, name=source_name)
@@ -127,7 +127,10 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
         vehicles = vehicles.filter(Q(code=vehicle)
                                    | Q(code__endswith=f'-{vehicle}') | Q(code__startswith=f'{vehicle}_-_'))
     else:
-        vehicles = vehicles.filter(code=vehicle)
+        if operator.id == 'COMT':
+            vehicles = vehicles.filter(Q(code=vehicle) | Q(reg=vehicle))
+        else:
+            vehicles = vehicles.filter(code=vehicle)
 
     vehicle, created = vehicles.get_or_create(defaults)
 
