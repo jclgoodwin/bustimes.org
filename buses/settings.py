@@ -477,4 +477,5 @@ TICKETER_OPERATORS = [
     ('NW', ['PBLT'], 'Preston Bus'),
     # ('SE', ['WNGS', 'NXHH'], 'Hallmark Connections'),
     ('WM', ['LMST'], 'LMS Travel'),
+    ('SE', ['ENSB'], 'Ensignbus'),
 ]
