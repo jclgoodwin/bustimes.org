@@ -1,5 +1,6 @@
 from ciso8601 import parse_datetime
 from django.test import TestCase
+from mock import patch
 from busstops.models import Region, Operator, DataSource
 from ...models import Vehicle
 from ..commands.import_polar import Command
@@ -39,7 +40,9 @@ class PolarTest(TestCase):
                 "vehicle": "YCD-3635",
             }
         }
-        command.handle_item(item, parse_datetime('2018-08-06T22:41:15+01:00'))
+        with patch('builtins.print') as mocked_print:
+            command.handle_item(item, parse_datetime('2018-08-06T22:41:15+01:00'))
+        mocked_print.assert_called_with('LCHS', 'LCHS', 'POO')
 
         vehicle = Vehicle.objects.get()
         self.assertEqual(str(vehicle), '3635')

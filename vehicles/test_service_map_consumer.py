@@ -42,6 +42,8 @@ class WebsocketConsumerTest(TestCase):
                 message = await communicator.receive_json_from()
                 self.assertEqual(message, [])
 
+                self.assertTrue(await communicator.receive_nothing())
+
     def test_siri_one_shot(self):
         # url = f'/vehicles.json?service={self.service.id}'
 

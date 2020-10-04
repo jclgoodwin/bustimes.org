@@ -1,3 +1,4 @@
+from mock import patch
 from django.test import TestCase
 from django.contrib.gis.geos import Point
 from busstops.models import DataSource, Region, Operator, StopPoint
@@ -207,4 +208,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.3">
         """
 
         with self.assertNumQueries(23):
-            handle_siri_vm(xml)
+            with patch('builtins.print') as mocked_print:
+                handle_siri_vm(xml)
+        mocked_print.assert_called()

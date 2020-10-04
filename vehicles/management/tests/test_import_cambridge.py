@@ -1,4 +1,5 @@
 import requests
+from mock import patch
 from django.test import TestCase
 from freezegun import freeze_time
 from pyppeteer.errors import NetworkError
@@ -61,7 +62,9 @@ class CambridgeImportTest(TestCase):
         }
 
         with self.assertNumQueries(12):
-            self.command.handle_data(data)
+            with patch('builtins.print') as mocked_print:
+                self.command.handle_data(data)
+        mocked_print.assert_called()
 
         with self.assertNumQueries(5):
             self.command.handle_data(data)

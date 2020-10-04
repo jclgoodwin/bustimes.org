@@ -1,4 +1,5 @@
 from django.test import TestCase
+from mock import patch
 from busstops.models import DataSource, Region, Operator
 from ...models import Vehicle
 from ..commands import import_first
@@ -28,9 +29,14 @@ class FirstImportTest(TestCase):
         command.source = self.source
 
         with self.assertNumQueries(11):
-            command.handle_item(item, 'FYOR')
+            with patch('builtins.print') as mocked_print:
+                command.handle_item(item, 'FYOR')
+        mocked_print.assert_called()
+
         with self.assertNumQueries(2):
-            command.handle_item(item, 'FYOR')
+            with patch('builtins.print') as mocked_print:
+                command.handle_item(item, 'FYOR')
+        mocked_print.assert_not_called()
 
         vehicle = Vehicle.objects.get(code=69375)
         self.assertEqual('FYOR', vehicle.operator_id)

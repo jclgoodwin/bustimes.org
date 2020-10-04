@@ -138,7 +138,10 @@ class NatExpTest(TestCase):
         with patch(
             "vehicles.management.commands.import_nx.Command.get_items",
             return_value=items,
-        ):
-            self.nat_exp_command.update()
+        ) as get_items:
+            with patch('builtins.print') as mocked_print:
+                self.nat_exp_command.update()
+        mocked_print.assert_called()
+        get_items.assert_called()
 
         self.assertEqual(2, Vehicle.objects.all().count())

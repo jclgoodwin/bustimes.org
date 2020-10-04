@@ -1,6 +1,7 @@
 import os
 from freezegun import freeze_time
 from vcr import use_cassette
+from mock import patch
 from django.test import TestCase, override_settings
 from busstops.models import Region, Operator, DataSource
 from ...models import Vehicle
@@ -30,15 +31,23 @@ class TfWMImportTest(TestCase):
             items = command.get_items()
 
         with self.assertNumQueries(10):  # X12
-            command.handle_item(items[0], self.source.datetime)
+            with patch('builtins.print') as mocked_print:
+                command.handle_item(items[0], self.source.datetime)
+        mocked_print.assert_called()
 
         with self.assertNumQueries(10):
-            command.handle_item(items[217], self.source.datetime)
+            with patch('builtins.print') as mocked_print:
+                command.handle_item(items[217], self.source.datetime)
+        mocked_print.assert_called()
 
         with self.assertNumQueries(2):
-            command.handle_item(items[217], self.source.datetime)
+            with patch('builtins.print') as mocked_print:
+                command.handle_item(items[217], self.source.datetime)
+        mocked_print.assert_called()
 
         with self.assertNumQueries(11):
-            command.handle_item(items[216], self.source.datetime)
+            with patch('builtins.print') as mocked_print:
+                command.handle_item(items[216], self.source.datetime)
+        mocked_print.assert_called()
 
         self.assertEqual(3, Vehicle.objects.all().count())

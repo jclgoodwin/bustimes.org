@@ -30,7 +30,9 @@ class ACISImportTest(TestCase):
         command.do_source()
 
         with use_cassette(os.path.join('data', 'vcr', 'import_live_acis.yaml'), match_on=['body']):
-            command.update()
+            with patch('builtins.print') as mocked_print:
+                command.update()
+        mocked_print.assert_called()
 
         # Should only create 18 items - two are duplicates
         self.assertEqual(18, VehicleLocation.objects.all().count())
