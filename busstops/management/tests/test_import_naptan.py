@@ -53,7 +53,9 @@ class UpdateNaptanTest(TestCase):
         # simulate a problem with the region-specific NaPTAN download, so all regions are downloaded
         with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan-error.yml')):
             with override_settings(DATA_DIR=FIXTURES_DIR):
-                call_command('update_naptan')
+                with patch('builtins.print') as mocked_print:
+                    call_command('update_naptan')
+                mocked_print.assert_called_with('Problem with request Naptan download: V2nacsv')
         with open(zipfile_path) as open_file:
             self.assertEqual(open_file.read(), 'these pretzels are making me thirsty again')
 

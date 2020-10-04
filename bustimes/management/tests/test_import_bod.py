@@ -35,7 +35,13 @@ class ImportBusOpenDataTest(TestCase):
     def test_import_bod(self):
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=directory):
-                call_command('import_bod', '')
+                with patch('builtins.print') as mocked_print:
+                    call_command('import_bod', '')
+                mocked_print.assert_called_with({'GoodFriday', 'NewYearsDay', 'EasterMonday', 'BoxingDay', 'MayDay',
+                                                 'BoxingDayHoliday', 'ChristmasDay', 'ChristmasDayHoliday',
+                                                 'NewYearsDayHoliday', 'LateSummerBankHolidayNotScotland',
+                                                 'SpringBank'})
+
                 call_command('import_bod', '')
 
         route = Route.objects.get()
@@ -74,14 +80,21 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
             with patch('bustimes.management.commands.import_transxchange.BANK_HOLIDAYS', {
                 'AllBankHolidays': date(2020, 8, 31),
             }):
-                with self.assertNumQueries(217):
-                    call_command('import_bod', 'stagecoach')
+                with self.assertNumQueries(216):
+                    with patch('builtins.print') as mocked_print:
+                        call_command('import_bod', 'stagecoach')
                 download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
+                mocked_print.assert_called_with({'ChristmasDay', 'NewYearsDay', 'BoxingDay'})
+
                 with self.assertNumQueries(1):
                     call_command('import_bod', 'stagecoach')
+
                 DataSource.objects.update(datetime=None)
-                with self.assertNumQueries(210):
-                    call_command('import_bod', 'stagecoach')
+                with self.assertNumQueries(209):
+                    with patch('builtins.print') as mocked_print:
+                        call_command('import_bod', 'stagecoach')
+                mocked_print.assert_called_with({'ChristmasDay', 'NewYearsDay', 'BoxingDay'})
+
         self.assertEqual(3, Service.objects.count())
         self.assertEqual(6, Route.objects.count())
 

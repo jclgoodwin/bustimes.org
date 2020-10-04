@@ -3,44 +3,30 @@
 import os
 import warnings
 import zipfile
+from mock import patch, call
+from tempfile import TemporaryDirectory
 from django.test import TransactionTestCase
 from django.core.management import call_command
 from ...models import Region, AdminArea, Locality, StopPoint
 from ..commands import import_ie_naptan_csv
 
 
-DIR = os.path.dirname(os.path.abspath(__file__))
-FIXTURES_DIR = os.path.join(DIR, 'fixtures')
-ZIPFILE_PATH = os.path.join(FIXTURES_DIR, 'ie_naptan.zip')
-
-
 class ImportIrelandTest(TransactionTestCase):
     """Test the import_ie_nptg and import_ie_nptg command
     """
-    @classmethod
-    def setUp(cls):
-        call_command('import_ie_nptg', os.path.join(FIXTURES_DIR, 'ie_nptg.xml'))
+    def test_ie_nptg_and_naptan(self):
+        directory = os.path.dirname(os.path.abspath(__file__))
+        fixtures_dir = os.path.join(directory, 'fixtures')
 
-        with zipfile.ZipFile(ZIPFILE_PATH, 'a') as open_zipfile:
-            open_zipfile.write(os.path.join(FIXTURES_DIR, 'ie_naptan.xml'))
+        # NPTG (places):
 
-        with warnings.catch_warnings(record=True) as caught_warnings:
-            call_command('import_ie_naptan_xml', ZIPFILE_PATH)
-            cls.caught_warnings = caught_warnings
+        call_command('import_ie_nptg', os.path.join(fixtures_dir, 'ie_nptg.xml'))
 
-        os.remove(ZIPFILE_PATH)
-
-    def test_warnings(self):
-        self.assertEqual(str(self.caught_warnings[0].message), 'Stop 700000004096 has an unexpected property: Crossing')
-        self.assertEqual(str(self.caught_warnings[1].message), 'Stop 8250B1002801 has no location')
-
-    def test_regions(self):
         regions = Region.objects.all().order_by('name')
         self.assertEqual(len(regions), 5)
         self.assertEqual(regions[0].name, 'Connacht')
         self.assertEqual(regions[2].name, 'Munster')
 
-    def test_areas(self):
         areas = AdminArea.objects.all().order_by('name')
         self.assertEqual(len(areas), 40)
 
@@ -50,7 +36,6 @@ class ImportIrelandTest(TransactionTestCase):
         self.assertEqual(areas[2].name, 'Carlow')
         self.assertEqual(areas[2].region.name, 'Leinster')
 
-    def test_localities(self):
         localities = Locality.objects.all().order_by('name')
         self.assertEqual(len(localities), 3)
 
@@ -64,7 +49,24 @@ class ImportIrelandTest(TransactionTestCase):
         self.assertAlmostEqual(localities[2].latlong.x, -9.070427)
         self.assertAlmostEqual(localities[2].latlong.y, 53.262565)
 
-    def test_stops_from_xml(self):
+        # NaPTAN (stops):
+
+        with TemporaryDirectory() as temp_dir:
+            zipfile_path = os.path.join(temp_dir, 'ie_naptan.zip')
+            with zipfile.ZipFile(zipfile_path, 'a') as open_zipfile:
+                open_zipfile.write(os.path.join(fixtures_dir, 'ie_naptan.xml'))
+
+            with warnings.catch_warnings(record=True) as caught_warnings:
+                with patch('builtins.print') as mocked_print:
+                    call_command('import_ie_naptan_xml', zipfile_path)
+
+        mocked_print.assert_has_calls([
+            call('700'), call('700'), call('700'), call('E0853142'), call('E0824005')
+        ])
+
+        self.assertEqual(str(caught_warnings[0].message), 'Stop 700000004096 has an unexpected property: Crossing')
+        self.assertEqual(str(caught_warnings[1].message), 'Stop 8250B1002801 has no location')
+
         stops = StopPoint.objects.all().order_by('atco_code')
         self.assertEqual(len(stops), 6)
         self.assertEqual(stops[0].atco_code, '700000004096')
@@ -98,7 +100,8 @@ class ImportIrelandTest(TransactionTestCase):
         self.assertEqual(stop.admin_area_id, 846)
         self.assertEqual(stop.locality_id, 'E0846001')
 
-    def test_stops_from_csv(self):
+        # stop from CSV:
+
         import_ie_naptan_csv.Command().handle_row({
             'Stop number': '17159',
             'Name without locality': 'Baxter',
@@ -159,7 +162,9 @@ class ImportIrelandTest(TransactionTestCase):
         # Should run without an error:
         import_ie_naptan_csv.Command().handle_row({'NaPTANId': ''})
 
-    # def test_transxchange(self):
-    #     self.assertEqual(Locality.objects.get(id='E0824005').name, '')
-    #     call_command('import_ie_transxchange', os.path.join(FIXTURES_DIR, 'ie_transxchange.xml'))
-    #     self.assertEqual(Locality.objects.get(id='E0824005').name, 'Balbriggan')
+        self.assertEqual(Locality.objects.get(id='E0824005').name, 'Balbriggan')
+
+        with patch('builtins.print') as mocked_print:
+            call_command('import_ie_transxchange', os.path.join(fixtures_dir, 'ie_transxchange.xml'))
+        mocked_print.assert_called_with('Bal-briggan')
+        self.assertEqual(Locality.objects.get(id='E0824005').name, 'Bal-briggan')

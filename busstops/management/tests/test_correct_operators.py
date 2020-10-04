@@ -1,4 +1,5 @@
 from django.test import TestCase
+from mock import patch
 from ...models import Region, Operator, Service
 from ..commands import correct_operators
 
@@ -34,7 +35,9 @@ class CorrectOperatorsTest(TestCase):
         self.assertEqual(self.goodwins.region_id, 'E')
         self.assertEqual(self.tellings.region_id, 'E')
 
-        self.command.handle()
+        with patch('builtins.print') as mock_print:
+            self.command.handle()
+        mock_print.assert_called_with('moved Go Goodwins to West')
 
         self.assertEqual(Operator.objects.get(id='GDWN').region_id, 'W')
         self.assertEqual(Operator.objects.get(id='TGML').region_id, 'E')

@@ -1,4 +1,5 @@
 import os
+from mock import patch
 from vcr import use_cassette
 from django.test import TestCase
 from django.core.management import call_command
@@ -20,7 +21,10 @@ class ImportTfLTest(TestCase):
         self.assertEqual(list(self.service.get_traveline_links()), [])
 
         with use_cassette(os.path.join('data', 'vcr', 'import_tfl.yaml'), decode_compressed_response=True):
-            call_command('import_tfl')
+            with patch('builtins.print') as mocked_print:
+                call_command('import_tfl')
+
+        mocked_print.assert_called()
 
         self.assertEqual(list(self.service.get_traveline_links()),
                          [('https://tfl.gov.uk/bus/timetable/RV1/', 'Timetable on the Transport for London website')])
