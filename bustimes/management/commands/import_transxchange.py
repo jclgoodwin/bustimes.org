@@ -684,9 +684,11 @@ class Command(BaseCommand):
 
             route, route_created = Route.objects.update_or_create(route_defaults,
                                                                   source=self.source, code=route_code)
-            if not route_created:
-                route.trip_set.all().delete()
             self.route_ids.add(route.id)
+            if not route_created:
+                if 'opendata.ticketer' in self.source.url:
+                    continue
+                route.trip_set.all().delete()
 
             self.handle_journeys(route, stops, journeys, txc_service, line_id)
 
