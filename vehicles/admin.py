@@ -421,12 +421,13 @@ class ServiceIsNullFilter(admin.SimpleListFilter):
 class VehicleJourneyAdmin(admin.ModelAdmin):
     list_display = ('datetime', 'vehicle', 'service', 'route_name', 'code', 'destination')
     list_select_related = ('vehicle', 'service')
-    raw_id_fields = ('vehicle', 'service')
+    raw_id_fields = ('vehicle', 'service', 'source', 'trip')
     list_filter = (
         ServiceIsNullFilter,
         'source',
         'vehicle__operator',
     )
+    show_full_result_count = False
     ordering = ('-id',)
 
 
