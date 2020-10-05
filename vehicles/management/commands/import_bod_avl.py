@@ -16,10 +16,10 @@ class Command(ImportLiveVehiclesCommand):
 
     cache = set()
     operators = {
-        'ASC': ['ARHE', 'AKSS', 'AMTM', 'GLAR'],
+        'ASC': ['AKSS', 'ARHE', 'AMTM', 'GLAR'],
         'ANE': ['ANEA', 'ANUM', 'ARDU'],
         'ANW': ['ANWE', 'AMSY', 'ACYM'],
-        'ATS': ['ASES', 'ARBB', 'GLAR'],
+        'ATS': ['ARBB', 'ASES', 'GLAR'],
         'AMD': ['AMID', 'AMNO', 'AFCL'],
         'AYT': ['YTIG'],
         'AYK': ['WRAY'],
