@@ -548,12 +548,12 @@ class Command(BaseCommand):
             if self.is_tnds():
                 if operators and all(operator.id in self.incomplete_operators for operator in operators):
                     if Service.objects.filter(
-                        operator__in=operators, line_name=line_name, current=True
+                        operator__in=operators, line_name__iexact=line_name, current=True
                     ).exclude(source=self.source).exists():
                         continue
                     if any(operator.id == 'SCLI' for operator in operators):
                         if Service.objects.filter(
-                            operator__parent='Stagecoach', line_name=line_name, current=True
+                            operator__parent='Stagecoach', line_name__iexact=line_name, current=True
                         ).exclude(source=self.source).exists():
                             continue
 
