@@ -53,6 +53,7 @@ class Command(ImportLiveVehiclesCommand):
         'SCCM': ('SCCM', 'SCPB', 'SCHU', 'SCBD'),
         'ATS': ('ARBB', 'ASES', 'GLAR'),
         'ASC': ('AKSS', 'ARHE', 'AMTM', 'GLAR'),
+        'AKE': ('AMTM', 'AKSS', 'GLAR'),
         'NXB': ('TNXB', 'TCVW'),
         'PLYC': ('PLYC', 'TFCN'),
         'FHDO': ('FHDO', 'FHAM'),
