@@ -86,8 +86,12 @@
                                 {{ journey.route_name }}
                             {% endif %}
                         </td>
-                        <td>{{ journey.datetime|time }}</td>
-                        <td>{% if journey.code|length < 40 and '_' not in journey.code %}{{ journey.code }}{% endif %}</td>
+                        {% if journey.code|length < 40 and '_' not in journey.code %}
+                            <td>{{ journey.datetime|time }}</td>
+                            <td>{{ journey.code }}</td>
+                        {% else %}
+                            <td colspan="2">{{ journey.datetime|time }}</td>
+                        {% endif %}
                         <td>{% firstof journey.destination journey.direction %}</td>
                         <td>
                             {% if journey.calls %}

@@ -82,6 +82,16 @@ def handle_item(item, source):
         consequence.data = ET.tostring(consequence_element).decode()
         consequence.save()
 
+        stops = consequence_element.findall('Affects/StopPoints/AffectedStopPoint')
+        stops = [stop.find('StopPointRef').text for stop in stops]
+        consequence.stops.set(stops)
+
+        consequence.services.clear()
+
+        services = Service.objects.filter(current=True)
+        if stops:
+            services = services.filter(stops__in=stops).distinct()
+
         for line in consequence_element.findall('Affects/Networks/AffectedNetwork/AffectedLine'):
             line_name = line.find('PublishedLineName')
             if line_name is None:
@@ -89,14 +99,9 @@ def handle_item(item, source):
             line_name = line_name.text
             for operator in line.findall('AffectedOperator'):
                 operator_ref = operator.find('OperatorRef').text
-                services = Service.objects.filter(current=True, line_name__iexact=line_name, operator=operator_ref)
-                for service in services:
+                for service in services.filter(line_name__iexact=line_name, operator=operator_ref):
                     consequence.services.add(service)
                     service.varnish_ban()
-
-        stops = consequence_element.findall('Affects/StopPoints/AffectedStopPoint')
-        stops = [stop.find('StopPointRef').text for stop in stops]
-        consequence.stops.set(stops)
 
     return situation.id
 

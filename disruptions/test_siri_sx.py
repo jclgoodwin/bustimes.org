@@ -5,7 +5,7 @@ from django.test import TestCase, override_settings
 from django.core.cache import cache
 from django.conf import settings
 from django.core.management import call_command
-from busstops.models import Region, Operator, Service, DataSource, StopPoint
+from busstops.models import Region, Operator, Service, DataSource, StopPoint, StopUsage
 from vehicles.tasks import handle_siri_sx
 from .models import Situation
 
@@ -79,6 +79,7 @@ class SiriSXTest(TestCase):
             StopPoint(atco_code='2800S61013A', active=True),
             StopPoint(atco_code='2800S61013B', active=True),
         ])
+        StopUsage.objects.create(service=service, stop_id='2800S11053A', order=69)
         DataSource.objects.create(name='Transport for the North',
                                   settings={'app_id': 'hen hom', 'app_key': 'roger poultry'})
         DataSource.objects.create(name='Arriva')
@@ -747,14 +748,14 @@ Services will observe all bus stops on the diverted route. </Details>
                 self.client.post('/siri', xml, content_type='text/xml')
             siri_sx.assert_called_with(xml)
 
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(16):
             handle_siri_sx(xml)
         with self.assertNumQueries(2):
             handle_siri_sx(xml)
 
     def test_siri_sx_request(self):
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
-            with self.assertNumQueries(96):
+            with self.assertNumQueries(110):
                 call_command('import_siri_sx')
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
             with self.assertNumQueries(11):
@@ -780,7 +781,7 @@ Services will observe all bus stops on the diverted route. </Details>
                          "From here its a short walk to the terminus. \n\n"
                          "Towards Manchester the 142 service will begin outside Didsbury Cricket club . ")
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(12):
             response = self.client.get('/services/156')
 
         self.assertContains(response, "<p>East Lancashire Road will be subjected to restrictions,"
