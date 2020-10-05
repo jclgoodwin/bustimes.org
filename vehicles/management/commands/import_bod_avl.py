@@ -41,6 +41,7 @@ class Command(ImportLiveVehiclesCommand):
     }
     operator_cache = {}
     vehicle_cache = {}
+    reg_operators = {'BDRB', 'COMT', 'TDY'}
 
     @staticmethod
     def get_datetime(item):
@@ -107,7 +108,7 @@ class Command(ImportLiveVehiclesCommand):
                     if fleet_number.isdigit():
                         defaults['fleet_number'] = fleet_number
                         defaults['reg'] = reg.replace('_', '')
-                elif operator_ref == 'BDRB' or operator_ref == 'COMT':
+                elif operator_ref in self.reg_operators:
                     reg = vehicle_ref.replace('_', '')
                     condition |= Q(reg=reg)
         vehicles = vehicles.filter(condition)
