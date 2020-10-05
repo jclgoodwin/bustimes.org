@@ -135,9 +135,8 @@ class Command(ImportLiveVehiclesCommand):
             services = services.filter(operator__in=operator)
 
         try:
-            return Service.objects.get()
+            return services.get()
         except Service.DoesNotExist:
-            # print(e, line_ref)
             return
         except Service.MultipleObjectsReturned:
             destination_ref = monitored_vehicle_journey.get('DestinationRef')
