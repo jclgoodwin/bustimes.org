@@ -551,6 +551,11 @@ class Command(BaseCommand):
                         operator__in=operators, line_name=line_name, current=True
                     ).exclude(source=self.source).exists():
                         continue
+                    if any(operator.id == 'SCLI' for operator in operators):
+                        if Service.objects.filter(
+                            operator__parent='Stagecoach', line_name=line_name, current=True
+                        ).exclude(source=self.source).exists():
+                            continue
 
                 service_code = get_service_code(filename)
                 if service_code is None:
