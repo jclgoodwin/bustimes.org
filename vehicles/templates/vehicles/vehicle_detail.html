@@ -86,7 +86,7 @@
                                 {{ journey.route_name }}
                             {% endif %}
                         </td>
-                        {% if journey.code|length < 40 and '_' not in journey.code %}
+                        {% if journey_code and journey.code|length < 40 and '_' not in journey.code %}
                             <td>{{ journey.datetime|time }}</td>
                             <td>{{ journey.code }}</td>
                         {% else %}
