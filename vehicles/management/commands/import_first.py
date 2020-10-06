@@ -18,6 +18,10 @@ class Command(BaseCommand):
     operators = {}
     vehicles = Vehicle.objects.select_related('latest_location__journey__service')
 
+    @staticmethod
+    def add_arguments(parser):
+        parser.add_argument('operators', nargs='+')
+
     def handle_item(self, item, operator):
         vehicle_id = item['status']['vehicle_id']
         parts = vehicle_id.split('-')
@@ -90,8 +94,8 @@ class Command(BaseCommand):
         for item in data['params']['resource']['member']:
             self.handle_item(item, operator)
 
-    def get_extents(self):
-        for operator in ['FECS', 'FPOT', 'FESX', 'FYOR']:
+    def get_extents(self, operators):
+        for operator in operators:
             services = Service.objects.filter(operator=operator, current=True)
             extent = services.aggregate(Extent('geometry'))['geometry__extent']
             if not extent:
@@ -169,12 +173,12 @@ class Command(BaseCommand):
     async def sock_them(self, extents):
         await asyncio.wait([self.sock_it(*extent) for extent in extents])
 
-    def handle(self, *args, **options):
+    def handle(self, operators, *args, **options):
         try:
             with pid.PidFile('First'):
                 self.source = DataSource.objects.get(name='First')
 
-                extents = list(self.get_extents())
+                extents = list(self.get_extents(operators))
 
                 loop = asyncio.get_event_loop()
                 loop.run_until_complete(self.sock_them(extents))
