@@ -17,17 +17,19 @@ try {
 }
 
 (function () {
-    try {
-        if (localStorage && localStorage.hideAds) {
-            return;
-        }
-    } catch (error) {
-        // never mind
-    }
-
     var ads = document.getElementsByClassName('adsbygoogle');
     if (!ads.length) {
         return;
+    }
+
+    try {
+        if (localStorage && localStorage.hideAds) {
+            for (var i = ads.length - 1; i >= 0; i -= 1) {
+                ads[i].style.display = 'none'
+            }
+        }
+    } catch (error) {
+        // never mind
     }
 
     if (document.cookie.indexOf('seen_cookie_message=') === -1 && document.cookie.indexOf('personalise_ads=') === -1) {

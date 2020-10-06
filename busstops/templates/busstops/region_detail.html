@@ -8,6 +8,12 @@
     <h2>Areas in {{ region.the }}</h2>
 
     {% include 'list.html' with list=areas %}
+
+    {% if operators %}
+        <!--[if gte IE 9]><!-->
+            <div class="ad"><ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="5070920457" data-full-width-responsive="false"></ins></div>
+        <!--<![endif]-->
+    {% endif %}
 {% elif districts %}
     <h2>Districts in {{ region.the }}</h2>
 
