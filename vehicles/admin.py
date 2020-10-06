@@ -59,7 +59,7 @@ class VehicleAdmin(admin.ModelAdmin):
                      'livery', 'colours', 'branding', 'name', 'notes')
     autocomplete_fields = ('vehicle_type', 'livery')
     raw_id_fields = ('operator', 'source')
-    search_fields = ('code', 'fleet_number', 'reg', 'notes')
+    search_fields = ('code', 'vehicle_code', 'reg')
     ordering = ('-id',)
     actions = ('copy_livery', 'copy_type')
     inlines = [VehicleEditInline]

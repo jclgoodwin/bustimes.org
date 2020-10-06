@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib import admin
 from django.contrib.gis.forms import OSMWidget
-from django.db.models import Count, Q
+from django.contrib.postgres.search import SearchQuery, SearchRank
+from django.db.models import Count, Q, F
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.gis.db.models import PointField
 from bustimes.models import Route
@@ -26,12 +27,24 @@ class StopPointAdmin(admin.ModelAdmin):
     list_select_related = ('locality', 'admin_area')
     list_filter = ('stop_type', 'service__region', 'admin_area')
     raw_id_fields = ('places',)
-    search_fields = ('atco_code', 'common_name', 'locality__name')
+    search_fields = ('atco_code',)
     ordering = ('atco_code',)
     formfield_overrides = {
         PointField: {'widget': OSMWidget}
     }
     inlines = [StopCodeInline]
+    show_full_result_count = False
+
+    def get_search_results(self, request, queryset, search_term):
+        if not search_term:
+            return super().get_search_results(request, queryset, search_term)
+
+        query = SearchQuery(search_term, search_type="websearch", config="english")
+        rank = SearchRank(F('locality__search_vector'), query)
+        queryset = (
+            queryset.annotate(rank=rank).filter(locality__search_vector=query).order_by("-rank")
+        )
+        return queryset, False
 
 
 class StopCodeAdmin(admin.ModelAdmin):
@@ -112,12 +125,15 @@ class ServiceAdmin(admin.ModelAdmin):
     inlines = [ServiceCodeInline, RouteInline]
 
     def get_search_results(self, request, queryset, search_term):
-        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        if not search_term:
+            return super().get_search_results(request, queryset, search_term)
 
-        if request.path.endswith('/autocomplete/'):
-            queryset = queryset.filter(current=True)
-
-        return queryset, use_distinct
+        query = SearchQuery(search_term, search_type="websearch", config="english")
+        rank = SearchRank(F('search_vector'), query)
+        queryset = (
+            queryset.annotate(rank=rank).filter(search_vector=query).order_by("-rank")
+        )
+        return queryset, False
 
 
 class ServiceLinkAdmin(admin.ModelAdmin):

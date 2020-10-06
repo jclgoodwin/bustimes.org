@@ -4,7 +4,7 @@
 
 ## What's this?
 
-Source code for [the website bustimes](https://bustimes.org/).
+Source code for [the website bustimes.org](https://bustimes.org/).
 
 It's a magnificent monolithic Django app that's evolved over time (since 2015). The structure doesn't make complete sense:
 
