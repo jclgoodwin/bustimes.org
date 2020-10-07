@@ -89,6 +89,9 @@ def do_revisions(vehicle_ids, data):
     #         changed_fields.append(field)
     #         del data[field]
 
+    if 'operator' not in data:
+        revisions = [revision for revision in revisions if revision.changes]
+
     return revisions, changed_fields
 
 
