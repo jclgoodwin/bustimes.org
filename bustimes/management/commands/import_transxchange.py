@@ -707,11 +707,11 @@ class Command(BaseCommand):
                     changed = 0
                     origin_stop = outbound[0].stop
                     destination_stop = outbound[-1].stop
-                    if origin_stop.common_name == txc_service.origin:
+                    if txc_service.origin in origin_stop.common_name:
                         if origin_stop.locality.name not in txc_service.origin:
                             txc_service.origin = f'{origin_stop.locality.name} {txc_service.origin}'
                         changed += 1
-                    if destination_stop.common_name == txc_service.destination:
+                    if txc_service.destination in destination_stop.common_name:
                         if destination_stop.locality.name not in txc_service.destination:
                             txc_service.destination = f'{destination_stop.locality.name} {txc_service.destination}'
                         changed += 1
