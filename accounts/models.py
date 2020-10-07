@@ -11,3 +11,8 @@ class User(AbstractUser):
 
     def get_absolute_url(self):
         return reverse('user_detail', args=(self.id,))
+
+    def __str__(self):
+        if self.is_staff:
+            return self.username
+        return f'{self.id}'

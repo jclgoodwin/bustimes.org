@@ -38,7 +38,7 @@
         <p>There’s also <a href="/groups/{{ object.parent}}/vehicles">a list of all {{ object.parent }} vehicles</a>.</p>
     {% endif %}
 
-    {% if user.username == 'josh' %}
+    {% if user.is_staff %}
         <p><a href="{% url 'admin:vehicles_vehicle_changelist' %}?o=2&amp;operator__id__exact={{ object.id }}">Edit</a></p>
     {% endif %}
 {% endif %}
