@@ -130,7 +130,6 @@
 
 {% endif %}
 
-
 {% if next or previous %}
     <nav>
         {% if previous %}
@@ -144,6 +143,8 @@
 {% endif %}
 
 {% endblock %}
+
+{% block ad %}{% endblock %}
 
 {% block foot %}
     {% if journeys %}
