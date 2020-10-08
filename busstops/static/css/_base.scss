@@ -233,6 +233,17 @@ header {
     }
 }
 
+.search {
+    p {
+        display: flex;
+    }
+
+    input[type='search'] {
+        flex-grow: 1;
+        margin-right: .5em;
+    }
+}
+
 @media (min-width: 22em) {
     .site-name {
         background: url('/static/svg/bus.svg') no-repeat;

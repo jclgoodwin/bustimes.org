@@ -21,6 +21,12 @@ h1 {
     width: 25%;
 }
 
+.panes {
+    display: flex;
+    margin-top: -1em;
+    justify-content: space-between;
+}
+
 .services,
 .contact-details {
     column-count: 2;

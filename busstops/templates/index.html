@@ -6,51 +6,27 @@
 
 <p>
     <strong>bustimes.org</strong>
-    is the unofficial home for bus, coach and ferry transport information
+    is the unofficial home of bus, coach and ferry transport information
 </p>
 
-<div id="regions">
+<div class="panes">
+    <div class="pane">
+        <h2>Search</h2>
 
-    <h2>Great Britain</h2>
+        <p>Search for places, operators, services or full UK postcodes</p>
 
-    <ul>
-        <li><a href="/regions/EA">East Anglia</a></li>
-        <li><a href="/regions/EM">East Midlands</a></li>
-        <li><a href="/regions/GB">Great Britain</a></li>
-        <li><a href="/regions/L">London</a></li>
-        <li><a href="/regions/NE">North East</a></li>
-        <li><a href="/regions/NW">North West</a></li>
-        <li><a href="/regions/S">Scotland</a></li>
-        <li><a href="/regions/SE">South East</a></li>
-        <li><a href="/regions/SW">South West</a></li>
-        <li><a href="/regions/W">Wales</a></li>
-        <li><a href="/regions/WM">West Midlands</a></li>
-        <li><a href="/regions/Y">Yorkshire</a></li>
-    </ul>
+        <form method="get" action="/search" class="search">
+            <p><input name="q" type="search" required> <input type="submit" value="Search"></p>
+        </form>
+    </div>
 
-    <h2>Ireland</h2>
+    <div class="pane">
+        <h2>Map</h2>
 
-    <ul>
-        <li><a href="/regions/CO">Connacht</a></li>
-        <li><a href="/regions/LE">Leinster</a></li>
-        <li><a href="/regions/MU">Munster</a></li>
-        <li><a href="/regions/UL">Ulster</a></li>
-    </ul>
-
-    <!--[if gte IE 9]><!-->
-        {% include 'regions.svg' %}
-    <!--<![endif]-->
+        <p><a href="/map">Track buses and find bus stops</a></p>
+    </div>
 </div>
 
-<ul>
-    <li><a href="/regions/GG">Guernsey</a></li>
-    <li><a href="/regions/JE">Jersey</a></li>
-    <li><a href="/regions/IM">Isle of Man</a></li>
-</ul>
-
 {% endblock %}
 
-{% block foot %}
-    {% load static %}
-    <script src="{% static 'js/frontpage.js' %}"></script>
-{% endblock %}
+{% block ad %}{% endblock %}
