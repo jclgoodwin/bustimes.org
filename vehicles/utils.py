@@ -53,14 +53,6 @@ def do_revisions(vehicle_ids, data):
     revisions = [VehicleRevision(vehicle=vehicle, changes={}) for vehicle in vehicles]
     changed_fields = []
 
-    if 'operator' in data:
-        for revision in revisions:
-            revision.from_operator_id = revision.vehicle.operator_id
-            revision.to_operator = data['operator']
-            revision.vehicle.operator = data['operator']
-            changed_fields.append('operator')
-        del data['operator']
-
     if 'depot' in data:
         to_depot = data['depot']
         for revision in revisions:
@@ -89,7 +81,14 @@ def do_revisions(vehicle_ids, data):
     #         changed_fields.append(field)
     #         del data[field]
 
-    if 'operator' not in data:
+    if 'operator' in data:
+        for revision in revisions:
+            revision.from_operator_id = revision.vehicle.operator_id
+            revision.to_operator = data['operator']
+            revision.vehicle.operator = data['operator']
+        changed_fields.append('operator')
+        del data['operator']
+    else:
         revisions = [revision for revision in revisions if revision.changes]
 
     return revisions, changed_fields
