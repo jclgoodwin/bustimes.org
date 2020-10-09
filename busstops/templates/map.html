@@ -32,7 +32,9 @@
     <div id="hugemap"></div>
 {% endblock %}
 
-{% block footer %}
+{% block footer %}{% endif %}
+
+{% block foot %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
     <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
