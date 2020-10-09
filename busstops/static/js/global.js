@@ -1,19 +1,21 @@
 /*jslint browser: true*/
 
 try {
-    if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations && location.protocol === 'https:') {
+    if (navigator.serviceWorker && location.protocol === 'https:') {
         window.addEventListener('load', function() {
-            navigator.serviceWorker.getRegistrations().then(
-                function (registrations) {
-                    registrations.forEach(function(registration) {
-                        registration.unregister();
-                    });
-                }
-            );
+            try {
+                navigator.serviceWorker.getRegistrations().then(
+                    function (registrations) {
+                        registrations.forEach(function(registration) {
+                            registration.unregister();
+                        });
+                    }
+                );
+            } catch (error) {
+            }
         });
     }
 } catch (error) {
-    // fine
 }
 
 (function () {
