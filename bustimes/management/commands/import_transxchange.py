@@ -395,7 +395,7 @@ class Command(BaseCommand):
                     default_calendar = self.get_calendar(txc_service.operating_profile, txc_service.operating_period)
                 calendar = default_calendar
 
-            if not calendar:
+            if calendar is None:
                 continue
 
             trip = Trip(

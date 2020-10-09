@@ -544,7 +544,7 @@ class Service:
         if destination is not None:
             destination = destination.text
             if destination:
-                self.destination = self.destination.replace('`', "'").strip()
+                self.destination = destination.replace('`', "'").strip()
 
         self.vias = element.find('txc:StandardService/txc:Vias', NS)
         if self.vias:
