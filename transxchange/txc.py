@@ -487,6 +487,7 @@ class Service:
     description = None
     description_parts = None
     via = None
+    operating_profile = None
 
     def set_description(self, description):
         if description.isupper():
@@ -580,8 +581,12 @@ class TransXChange:
         # Some Journeys do not have a direct reference to a JourneyPattern,
         # but rather a reference to another Journey which has a reference to a JourneyPattern
         for journey in iter(journeys.values()):
-            if journey.journey_ref and not journey.journey_pattern:
-                journey.journey_pattern = journeys[journey.journey_ref].journey_pattern
+            if journey.journey_ref:
+                referenced_journey = journeys[journey.journey_ref]
+                if journey.journey_pattern is None:
+                    journey.journey_pattern = referenced_journey.journey_pattern
+                if journey.operating_profile is None:
+                    journey.operating_profile = referenced_journey.operating_profile
 
         return [journey for journey in journeys.values() if journey.journey_pattern]
 
