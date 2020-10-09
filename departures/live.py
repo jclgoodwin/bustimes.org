@@ -44,9 +44,10 @@ class Departures:
             else:
                 self.services_by_name[line_name] = service
 
-            if '_' in service.service_code[2:4] and service.service_code[:3].islower():
+            service_code = service.service_code
+            if '-' in service_code and '_' in service_code[2:4] and service_code[:3].islower():
                 # there's sometimes an alternative abbreviated line name hidden in the service code
-                parts = service.service_code.split('-')
+                parts = service_code.split('-')
                 part = parts[1].lower()
                 if part in self.services_by_alternative_name:
                     duplicate_alternative_names.add(part)
