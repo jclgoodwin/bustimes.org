@@ -486,6 +486,8 @@ class OperatingPeriod(DateRange):
 class Service:
     description = None
     description_parts = None
+    origin = None
+    destination = None
     via = None
     operating_profile = None
 
@@ -532,13 +534,19 @@ class Service:
         if description_element is not None:
             self.set_description(description_element.text)
 
-        self.origin = element.find('txc:StandardService/txc:Origin', NS).text
-        self.destination = element.find('txc:StandardService/txc:Destination', NS).text
+        origin = element.find('txc:StandardService/txc:Origin', NS)
+        if origin is not None:
+            origin = origin.text
+            if origin:
+                self.origin = origin.replace('`', "'").strip()
+
+        destination = element.find('txc:StandardService/txc:Destination', NS)
+        if destination is not None:
+            destination = destination.text
+            if destination:
+                self.destination = self.destination.replace('`', "'").strip()
+
         self.vias = element.find('txc:StandardService/txc:Vias', NS)
-        if self.origin:
-            self.origin = self.origin.replace('`', "'").strip()
-        if self.destination:
-            self.destination = self.destination.replace('`', "'").strip()
         if self.vias:
             self.vias = [via.text for via in self.vias]
 
