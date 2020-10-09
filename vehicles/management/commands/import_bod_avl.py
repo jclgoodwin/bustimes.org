@@ -1,6 +1,7 @@
 import io
 import requests
 import zipfile
+from xml.parsers.expat import ExpatError
 from ciso8601 import parse_datetime
 from datetime import datetime
 import xmltodict
@@ -217,11 +218,21 @@ class Command(ImportLiveVehiclesCommand):
         before = datetime.now()
 
         response = requests.get(self.source.url)
+        if not response.ok:
+            print(response)
+            return ()
 
-        with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
-            assert archive.namelist() == ['siri.xml']
-            with archive.open('siri.xml') as open_file:
-                data = xmltodict.parse(open_file)
+        try:
+            with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+                assert archive.namelist() == ['siri.xml']
+                with archive.open('siri.xml') as open_file:
+                    try:
+                        data = xmltodict.parse(open_file)
+                    except ExpatError:
+                        return ()
+        except zipfile.BadZipFile:
+            print(response.content)
+            return ()
 
         self.source.datetime = parse_datetime(data['Siri']['ServiceDelivery']['ResponseTimestamp'])
 
