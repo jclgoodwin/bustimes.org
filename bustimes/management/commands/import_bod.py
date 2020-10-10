@@ -5,6 +5,7 @@ import logging
 import requests
 import zipfile
 import xml.etree.cElementTree as ET
+from io import StringIO
 from ciso8601 import parse_datetime
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -46,8 +47,15 @@ def handle_file(command, path):
                 if filename.endswith('.csv'):
                     continue
                 with archive.open(filename) as open_file:
+                    qualified_filename = os.path.join(path, filename)
                     try:
-                        command.handle_file(open_file, os.path.join(path, filename))
+                        try:
+                            command.handle_file(open_file, qualified_filename)
+                        except ET.ParseError:
+                            open_file.seek(0)
+                            content = open_file.read().decode('utf-16')
+                            fake_file = StringIO(content)
+                            command.handle_file(fake_file, qualified_filename)
                     except (ET.ParseError, ValueError, AttributeError, DataError) as e:
                         print(filename, e)
                         logger.error(e, exc_info=True)
