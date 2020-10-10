@@ -93,7 +93,8 @@ class Command(ImportLiveVehiclesCommand):
                 if operator.id == 'FBRI' and not vehicle_ref.isdigit():
                     condition |= Q(operator='ABUS')
                 # (do something similar with Connexions in Leeds?)
-
+                vehicles = self.vehicles.filter(condition)
+            else:
                 vehicles = self.vehicles.filter(operator=operator)
         elif type(operator) is list:
             defaults['operator_id'] = operator[0]
