@@ -31,7 +31,7 @@ class VehicleSerializer(serializers.ModelSerializer):
 
 
 class VehicleViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Vehicle.objects.select_related('operator', 'vehicle_type', 'livery').all()
+    queryset = Vehicle.objects.select_related('operator', 'vehicle_type', 'livery').order_by('id')
     serializer_class = VehicleSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['operator', 'vehicle_type', 'livery', 'withdrawn', 'reg', 'fleet_code']

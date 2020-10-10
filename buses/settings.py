@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'antispam',
     'email_obfuscator',
     'channels',
+    'api',
     'rest_framework',
     'django_filters'
 ]
