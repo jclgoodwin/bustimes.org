@@ -345,6 +345,9 @@ class ServicedOrganisationDayType:
         self.operation_holidays = None
         self.operation_workingdays = None
 
+        if not servicedorgs:
+            return
+
         # Days of non-operation:
         noop_element = element.find('txc:DaysOfNonOperation', NS)
         if noop_element is not None:
