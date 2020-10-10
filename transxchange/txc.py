@@ -189,6 +189,8 @@ class VehicleJourney:
     operating_profile = None
     journey_pattern = None
     journey_ref = None
+    block = None
+    ticket_machine_code = None
 
     def __str__(self):
         return str(self.departure_time)
@@ -198,6 +200,13 @@ class VehicleJourney:
         self.private_code = element.find('txc:PrivateCode', NS)
         if self.private_code is not None:
             self.private_code = self.private_code.text
+
+        ticket_machine_code = element.find('txc:Operational/txc:TicketMachine/txc:JourneyCode', NS)
+        if ticket_machine_code is not None:
+            self.ticket_machine_code = ticket_machine_code.text
+        block = element.find('txc:Operational/txc:Block/txc:BlockNumber', NS)
+        if block is not None:
+            self.block = block.text
 
         self.service_ref = element.find('txc:ServiceRef', NS).text
         self.line_ref = element.find('txc:LineRef', NS).text

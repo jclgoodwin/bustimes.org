@@ -403,6 +403,8 @@ class Command(BaseCommand):
                 calendar=calendar,
                 route=route,
                 journey_pattern=journey.journey_pattern.id,
+                ticket_machine_code=journey.ticket_machine_code or '',
+                block=journey.block or ''
             )
 
             blank = False
