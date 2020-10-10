@@ -1243,12 +1243,12 @@ nav {
 }
 
 .ad {
-    margin: 1em;
     text-align: center;
 }
 
 .adsbygoogle {
-    display: inline-block;
+    margin: 1em 0;
+    display: block;
     height: 100px;
     width: 100%;
 }

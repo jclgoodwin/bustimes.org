@@ -30,6 +30,11 @@
     <a href="#content" class="skip">Skip to main content</a>
     <div id="cookie-message"></div> 
 {% block header %}
+    {% block ad %}
+        <!--[if gte IE 9]><!-->
+            <div class="ad"><ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="3118790034" data-full-width-responsive="false"></ins></div>
+        <!--<![endif]-->
+    {% endblock %}
 <header>
     <div>
         <a href="/" class="site-name{% if object.mode == 'ferry' %} ferry{% endif %}">{% if object.mode == 'ferry' %}Ferry Times{% else %}bustimes.org{% endif %}</a>
@@ -54,11 +59,6 @@
 
 {% block footer %}
 <footer>
-    {% block ad %}
-        <!--[if gte IE 9]><!-->
-            <div class="ad"><ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="3118790034" data-full-width-responsive="false"></ins></div>
-        <!--<![endif]-->
-    {% endblock %}
     <ul>
         <li><a href="/contact">Contact</a></li>
         <li><a href="/data">Data sources</a></li>
