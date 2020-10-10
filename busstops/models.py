@@ -855,7 +855,7 @@ class Service(models.Model):
                 continue
             patterns.append(pattern)
             points = [stop.latlong for stop in stops]
-            if points:
+            if len(points) > 1:
                 linestrings.append(LineString(points))
         if linestrings:
             self.geometry = MultiLineString(*linestrings)
