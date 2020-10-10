@@ -63,7 +63,7 @@ def create_journey_code(destination, service_id, journey_ref, source_id):
 @shared_task
 def log_vehicle_journey(service, data, time, destination, source_name, url):
     operator_ref = data.get('OperatorRef')
-    if operator_ref and operator_ref in {'UNIB', 'GCB', 'PLYC', 'OBC', 'SOX'}:
+    if operator_ref and operator_ref in {'UNIB', 'GCB', 'PLYC', 'OBC', 'SOX', 'MCG'}:
         return
 
     if not time:
@@ -105,7 +105,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
         except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
             return
 
-    if operator.parent == 'Stagecoach' or operator.id == 'EYMS':
+    if operator.parent == 'Stagecoach' or operator.id in {'EYMS', 'MCGL'}:
         return
 
     data_source, _ = DataSource.objects.get_or_create({'url': url}, name=source_name)
