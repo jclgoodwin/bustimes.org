@@ -4,6 +4,7 @@ from ftplib import FTP
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
 from django.conf import settings
+from django.utils import timezone
 
 
 class Command(BaseCommand):
@@ -49,4 +50,6 @@ class Command(BaseCommand):
 
         for file in self.changed_files:
             print(file)
+            before = timezone.now()
             call_command('import_transxchange', file)
+            print(timezone.now() - before)
