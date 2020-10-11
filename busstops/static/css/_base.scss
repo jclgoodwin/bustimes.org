@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 @import 'variables';
 
 body {
@@ -1247,8 +1249,9 @@ nav {
 }
 
 .adsbygoogle {
-    margin: 1em 0;
+    margin: 1em auto;
     display: block;
+    max-width: 60.5em;
     height: 100px;
     width: 100%;
 }
