@@ -37,7 +37,7 @@ jobs:
     - name: JavaScript
       run: |
         npm install
-        ./build-static.sh
+        make build-static
     - name: Test
       env:
         SECRET_KEY: wormprovision
