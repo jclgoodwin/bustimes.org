@@ -19,3 +19,6 @@ class Price(models.Model):
 class FareZone(models.Model):
     name = models.CharField(max_length=255)
     stops = models.ManyToManyField('busstops.StopPoint')
+
+    def __str__(self):
+        return self.name

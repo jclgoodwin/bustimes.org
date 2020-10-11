@@ -3,7 +3,7 @@ from .models import Price, FareZone
 
 
 class FareZoneAdmin(admin.ModelAdmin):
-    raw_id_fields = ['stops']
+    autocomplete_fields = ['stops']
 
 
 admin.site.register(Price)
