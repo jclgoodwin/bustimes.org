@@ -297,13 +297,13 @@ class StopPoint(models.Model):
 
     BEARING_CHOICES = (
         ('N', 'north ↑'),
-        ('NE', 'north-east ↗'),
+        ('NE', 'north-east \u2197\uFE0E'),
         ('E', 'east →'),
-        ('SE', 'south-east ↘'),
+        ('SE', 'south-east \u2198\uFE0E'),
         ('S', 'south ↓'),
-        ('SW', 'south-west ↙'),
+        ('SW', 'south-west \u2199\uFE0E'),
         ('W', 'west ←'),
-        ('NW', 'north-west ↖')
+        ('NW', 'north-west \u2196\uFE0E')
     )
     bearing = models.CharField(max_length=2, choices=BEARING_CHOICES, blank=True)
 
@@ -392,7 +392,7 @@ class StopPoint(models.Model):
 
     def get_arrow(self):
         if self.bearing:
-            return self.get_bearing_display()[-1]
+            return self.get_bearing_display()[-2:]
         return ''
 
     def get_qualified_name(self, short=True):
