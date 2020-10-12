@@ -204,6 +204,21 @@ class Trip(models.Model):
             return -1
         return 0
 
+    def copy(self, start):
+        difference = start - self.start
+        new_trip = Trip.objects.get(id=self.id)
+        times = list(new_trip.stoptime_set.all())
+        new_trip.id = None
+        new_trip.start += difference
+        new_trip.end += difference
+        new_trip.save()
+        for time in times:
+            time.id = None
+            time.arrival += difference
+            time.departure += difference
+            time.trip = new_trip
+            time.save()
+
     def __repr__(self):
         return str(self.start)
 
