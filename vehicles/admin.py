@@ -31,15 +31,15 @@ class VehicleAdminForm(forms.ModelForm):
 
 
 def user(obj):
-    if obj.user:
-        url = reverse('admin:vehicles_vehicleedit_changelist')
-        return mark_safe(f'<a href="{url}?user={obj.user_id}">{obj.user}</a>')
+    if obj.user_id:
+        url = reverse('admin:accounts_user_change', args=(obj.user_id,))
+        return mark_safe(f'<a href="{url}">{obj.user_id}</a>')
 
 
 class VehicleEditInline(admin.TabularInline):
     model = VehicleEdit
-    fields = ['approved', 'datetime', 'fleet_number', 'reg', 'vehicle_type', 'livery', 'colours', 'branding', 'notes',
-              'changes', user]
+    fields = ['approved', 'datetime', 'fleet_number', 'reg', 'vehicle_type', 'livery_id', 'colours', 'branding',
+              'notes', 'changes', user]
     readonly_fields = fields[1:]
     show_change_link = True
 
@@ -330,7 +330,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['datetime', vehicle, 'edit_count', 'last_seen', fleet_number, reg, vehicle_type, branding, name,
                     'current', 'suggested', notes, 'withdrawn', features, changes, 'flickr', user, url]
     list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'vehicle__latest_location',
-                           'livery', 'user']
+                           'livery']
     list_filter = [
         'approved',
         UrlFilter,
@@ -487,7 +487,7 @@ class VehicleRevisionAdmin(admin.ModelAdmin):
         UserFilter,
         ('vehicle__operator', admin.RelatedOnlyFieldListFilter),
     ]
-    list_select_related = ['from_operator', 'to_operator', 'vehicle', 'user']
+    list_select_related = ['from_operator', 'to_operator', 'vehicle']
 
     def revert(self, request, queryset):
         for revision in queryset.prefetch_related('vehicle'):

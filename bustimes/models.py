@@ -186,7 +186,7 @@ class Trip(models.Model):
             b_time = b.start
             a_times = a.stoptime_set.all()
             b_times = b.stoptime_set.all()
-            if a_times[0].get_key() != b_times[0].get_key():
+            if a_times and b_times and a_times[0].get_key() != b_times[0].get_key():
                 if a.destination_id == b.destination_id:
                     a_time = a.end
                     b_time = b.end
