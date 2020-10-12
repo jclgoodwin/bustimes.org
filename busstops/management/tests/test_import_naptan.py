@@ -153,7 +153,7 @@ class ImportNaptanTest(TestCase):
 
         plaza = StopPoint.objects.get(pk='5820AWN26259')
         self.assertEqual(plaza.get_qualified_name(), 'Port Talbot Plaza')
-        self.assertEqual(str(plaza), 'Plaza ↘')
+        self.assertEqual(str(plaza), 'Plaza \u2198\uFE0E')
         self.assertEqual(plaza.landmark, 'Port Talbot British Legion')
         self.assertEqual(plaza.crossing, 'Eagle Street')
         self.assertEqual(plaza.get_heading(), 135)
