@@ -7,8 +7,6 @@ from ..commands import correct_operators
 class CorrectOperatorsTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.command = correct_operators.Command()
-
         cls.east = Region.objects.create(id='E', name='East')
         cls.west = Region.objects.create(id='W', name='West')
         cls.north = Region.objects.create(id='N', name='North')
@@ -36,7 +34,7 @@ class CorrectOperatorsTest(TestCase):
         self.assertEqual(self.tellings.region_id, 'E')
 
         with patch('builtins.print') as mock_print:
-            self.command.handle()
+            correct_operators.Command().handle()
         mock_print.assert_called_with('moved Go Goodwins to West')
 
         self.assertEqual(Operator.objects.get(id='GDWN').region_id, 'W')
@@ -47,7 +45,7 @@ class CorrectOperatorsTest(TestCase):
         self.west.services = 10
         self.north.services = 6
 
-        self.assertEqual(
-            "consider moving Tellings Golden Miller from East to [('W', 10), ('N', 6)]",
-            self.command.maybe_move_operator(self.tellings, [self.west, self.north])
-        )
+        with patch('builtins.print') as mock_print:
+            correct_operators.maybe_move_operator(self.tellings, [self.west, self.north])
+        mock_print.assert_called_with("consider moving Tellings Golden Miller "
+                                      "from East to [('W', 10), ('N', 6)]")
