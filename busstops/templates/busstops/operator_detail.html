@@ -16,8 +16,7 @@
     {% if operator.regions.all %}
         in
         {% for region in operator.regions.all %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}
-            <a href="{{ region.get_absolute_url }}">{{ region.the }}</a>
-        {% endfor %}
+        <a href="{{ region.get_absolute_url }}">{{ region.the }}</a>{% endfor %}
     {% elif operator.region %}in <a href="{{ object.region.get_absolute_url }}">{{ object.region.the }}</a>{% endif %}
 </p>
 

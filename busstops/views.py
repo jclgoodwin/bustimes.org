@@ -191,8 +191,10 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
             del context['areas']
 
         services = Service.objects.filter(current=True, operator=OuterRef('pk'))
-        operators = Operator.objects.filter(Q(region=self.object) | Q(regions=self.object)).distinct()
-        context['operators'] = operators.filter(Exists(services))
+        context['operators'] = Operator.objects.filter(
+            Exists(services),
+            Q(region=self.object) | Q(regions=self.object)
+        ).distinct()
 
         if len(context['operators']) == 1:
             context['services'] = sorted(context['operators'][0].service_set.filter(current=True).defer('geometry'),
