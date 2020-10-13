@@ -51,6 +51,11 @@
             <li>{{ vehicle.get_flickr_link }}</li>
         </ul>
     {% endif %}
+{% else %}
+    <ul class="tabs">
+        <li><a href="{{ object.get_absolute_url }}">Timetable</a></li>
+        <li>Vehicles</li>
+    </ul>
 {% endif %}
 
 {% if date %}

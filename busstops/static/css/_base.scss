@@ -1247,6 +1247,30 @@ nav {
     }
 }
 
+.tabs {
+    border-bottom: 1px solid $brand-color-darker;
+    height: 2em;
+    padding-top: .75em;
+
+    li {
+        background: #fff;
+        border: 1px solid $brand-color-darker;
+        border-bottom-color: #fff;
+        display: inline;
+        padding: .75em 1em;
+        position: relative;
+        top: -1px;
+        margin-right: -1px;
+
+        a {
+            display: inline;
+            padding: .75em 1em;
+            margin: 0 -1em;
+            border-bottom: 1px solid $brand-color-darker;
+        }
+    }
+}
+
 .regions {
     // li {
     //     overflow: hidden;

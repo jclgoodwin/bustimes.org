@@ -25,7 +25,12 @@
 {% endfor %}
 
 {% if services %}
-    <h2>{% include 'modes.html' with modes=modes noun='services' %} operated by {{ object }}</h2>
+    <ul class="tabs">
+        <li>{% include 'modes.html' with modes=modes noun='services' %}</li>
+        {% if vehicles %}
+            <li><a href="{{ object.get_absolute_url }}/vehicles">Vehicles</a></li>
+        {% endif %}
+    </ul>
 
     {% include 'services.html' with services=services %}
 {% endif %}
@@ -34,9 +39,6 @@
     <p>PSV operator licence: {% for licence in operator.licences.all %}<a href="{{ licence.get_absolute_url }}">{{ licence }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
 {% endif %}
 
-{% if vehicles %}
-    <p><a href="{{ object.get_absolute_url }}/vehicles">Unofficial, incomplete fleet list</a></p>
-{% endif %}
 
 {% if object.address or object.url or object.email or object.phone %}
     <h2>Contact {{ object }}</h2>

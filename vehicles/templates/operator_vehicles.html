@@ -12,6 +12,13 @@
 
 <h1>{% firstof parent object %}</h1>
 
+{% if not parent %}
+    <ul class="tabs">
+        <li><a href="{{ object.get_absolute_url }}">Services</a></li>
+        <li>Vehicles</li>
+    </ul>
+{% endif %}
+
 {% if form %}
     {% if revisions %}
         <p class="message">{{ revisions }} vehicle{{ revisions|pluralize }} updated</p>
