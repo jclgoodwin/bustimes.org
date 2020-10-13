@@ -13,7 +13,7 @@ import zipfile
 import xml.etree.cElementTree as ET
 from psycopg2.extras import DateRange
 from titlecase import titlecase
-from datetime import date
+from datetime import date, datetime
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction, IntegrityError, DataError
@@ -239,7 +239,7 @@ class Command(BaseCommand):
 
         self.set_region(archive_name)
 
-        self.source.datetime = timezone.now()
+        self.source.datetime = datetime.fromtimestamp(os.path.getmtime(archive_name), timezone.utc)
 
         with open(os.path.join(settings.DATA_DIR, 'services.yaml')) as open_file:
             self.corrections = yaml.load(open_file, Loader=yaml.FullLoader)

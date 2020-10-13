@@ -1,6 +1,7 @@
+import os
 import zipfile
 from chardet.universaldetector import UniversalDetector
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.utils import timezone
@@ -40,7 +41,8 @@ class Command(BaseCommand):
         else:
             source_name = 'MET'
         self.source, source_created = DataSource.objects.get_or_create(name=source_name)
-        self.source.datetime = timezone.localtime()
+
+        self.source.datetime = datetime.fromtimestamp(os.path.getmtime(archive_name), timezone.utc)
 
         with zipfile.ZipFile(archive_name) as archive:
             for filename in archive.namelist():

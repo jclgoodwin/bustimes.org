@@ -235,6 +235,7 @@ class DataSource(models.Model):
         elif self.name == 'MET' or self.name == 'ULB':
             url = self.url
             text = 'Translink open data'
+            date = self.datetime
 
         if url and 'bus-data.dft.gov.uk' in url:
             text = f'{text}/Bus Open Data Service'
