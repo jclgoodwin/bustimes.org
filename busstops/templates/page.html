@@ -48,17 +48,17 @@
 {% endblock %}
 <main>
     {% block breadcrumb %}{% include 'breadcrumb.html' %}{% endblock %}
-    {% block ad %}
-        <!--[if gte IE 9]><!-->
-            <div class="ad"><ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="8547897685" data-full-width-responsive="false"></ins></div>
-        <!--<![endif]-->
-    {% endblock %}
     <div id="content"></div>
     {% block content %}{% endblock %}
 </main>
 
 {% block footer %}
 <footer>
+    {% block ad %}
+        <!--[if gte IE 9]><!-->
+            <div class="ad"><ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="3118790034" data-full-width-responsive="false"></ins></div>
+        <!--<![endif]-->
+    {% endblock %}
     <ul>
         <li><a href="/contact">Contact</a></li>
         <li><a href="/data">Data sources</a></li>
