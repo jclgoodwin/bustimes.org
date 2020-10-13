@@ -190,8 +190,8 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
             context['districts'] = context['areas'][0].district_set.filter(locality__stoppoint__active=True).distinct()
             del context['areas']
 
-        services = Service.objects.filter(current=True, operator=OuterRef('pk')).only('id')
-        operators = Operator.objects.filter(Q(region=self.object) | Q(regions=self.object))
+        services = Service.objects.filter(current=True, operator=OuterRef('pk'))
+        operators = Operator.objects.filter(Q(region=self.object) | Q(regions=self.object)).distinct()
         context['operators'] = operators.filter(Exists(services))
 
         if len(context['operators']) == 1:
