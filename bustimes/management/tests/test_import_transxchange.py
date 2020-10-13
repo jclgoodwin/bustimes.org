@@ -2,6 +2,7 @@ import os
 import zipfile
 import xml.etree.cElementTree as ET
 import warnings
+from mock import patch
 from tempfile import TemporaryDirectory
 from datetime import date
 from freezegun import freeze_time
@@ -492,7 +493,7 @@ class ImportTransXChangeTest(TestCase):
             self.client.get(route.get_absolute_url())
 
     def test_multiple_operators(self):
-        with freeze_time('2020-02-22'):
+        with patch('os.path.getmtime', return_value=1582385679):
             self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
         service = Service.objects.get()
         self.assertTrue(service.current)
@@ -503,21 +504,21 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(service.slug, 'abao421')
 
         # after operating period
-        with freeze_time('2022-02-22'):
+        with patch('os.path.getmtime', return_value=1645544079):
             self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
         service = Service.objects.get()
         self.assertFalse(service.current)
         self.assertEqual(service.slug, 'abao421')
 
         # back within operating period - should update slug
-        with freeze_time('2020-02-22'):
+        with patch('os.path.getmtime', return_value=1582385679):
             self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
         service = Service.objects.get()
         self.assertTrue(service.current)
         self.assertEqual(service.slug, '421-inverurie-alford')
 
     def test_multiple_services(self):
-        with freeze_time('2020-02-22'):
+        with patch('os.path.getmtime', return_value=1582385679):
             self.handle_files('IOM.zip', ['Ser 16 16A 16B.xml'])
         services = Service.objects.filter(region='IM')
         self.assertEqual(3, len(services))
