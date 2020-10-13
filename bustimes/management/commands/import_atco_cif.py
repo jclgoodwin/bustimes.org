@@ -101,16 +101,17 @@ class Command(BaseCommand):
             if identity == b'QL' or identity == b'QB':
                 stop_code = line[3:15].decode().strip()
                 if identity == b'QL':
-                    name = line[15:]
+                    name = line[15:63]
                     if name and stop_code not in stops:
                         name = name.decode(encoding).strip()
                         stops[stop_code] = StopPoint(atco_code=stop_code, common_name=name, active=True)
                 else:
                     easting = line[15:23].strip()
+                    northing = line[23:31].strip()
                     if easting:
                         stops[stop_code].latlong = Point(
                             int(easting),
-                            int(line[23:].strip()),
+                            int(northing),
                             srid=29902  # Irish Grid
                         )
         existing_stops = StopPoint.objects.in_bulk(stops.keys())
@@ -247,7 +248,7 @@ class Command(BaseCommand):
                     StopTime(
                         arrival=parse_time(line[14:18]),
                         departure=parse_time(line[18:22]),
-                        stop_id=line[2:14].decode(),
+                        stop_id=line[2:14].decode().strip(),
                         sequence=self.sequence,
                         trip=self.trip,
                         timing_status=timing_status
@@ -258,7 +259,7 @@ class Command(BaseCommand):
             if self.trip:
                 arrival = parse_time(line[14:18])
                 self.sequence += 1
-                stop_code = line[2:14].decode()
+                stop_code = line[2:14].decode().strip()
                 self.stop_times.append(
                     StopTime(
                         arrival=arrival,
