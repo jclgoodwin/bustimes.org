@@ -13,7 +13,7 @@
     <div class="pane">
         <h2>Search</h2>
 
-        <p>Search for places, operators, services or full UK postcodes</p>
+        <p>Search for places, operators or services</p>
 
         <form method="get" action="/search" class="search">
             <p><input name="q" type="search" required> <input type="submit" value="Search"></p>
@@ -26,6 +26,26 @@
         <p><a href="/map">Track buses and find bus stops</a></p>
     </div>
 </div>
+
+<h2>Regions</h2>
+
+<ul class="regions">
+    <li>England
+        <ul class="long"><li><a href="/regions/EA">East Anglia</a></li>
+            <li><a href="/regions/EM">East Midlands</a></li>
+            <li><a href="/regions/L">London</a></li>
+            <li><a href="/regions/NE">North East</a></li>
+            <li><a href="/regions/NW">North West</a></li>
+            <li><a href="/regions/SE">South East</a></li>
+            <li><a href="/regions/SW">South West</a></li>
+            <li><a href="/regions/WM">West Midlands</a></li>
+            <li><a href="/regions/Y">Yorkshire</a></li>
+        </ul>
+    </li>
+    <li><a href="/regions/W">Wales</a></li>
+    <li><a href="/regions/S">Scotland</a></li>
+    <li><a href="/regions/NI">Northern Ireland</a></li>
+</ul>
 
 {% endblock %}
 

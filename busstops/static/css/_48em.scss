@@ -17,13 +17,9 @@ h1 {
     font-size: 2em;
 }
 
-#regions ul {
-    width: 25%;
-}
-
 .panes {
     display: flex;
-    margin-top: -1em;
+    margin: -1em 0;
     justify-content: space-between;
 }
 

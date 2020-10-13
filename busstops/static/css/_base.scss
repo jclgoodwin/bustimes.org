@@ -565,38 +565,6 @@ table {
 
 }
 
-#regions {
-    position: relative;
-}
-
-#svgmap {
-    bottom: 0;
-    height: 100%;
-    max-width: 50%;
-    position: absolute;
-    right: 0;
-    width: auto;
-
-    path {
-        fill: $brand-color-darker;
-        stroke: $white;
-    }
-
-    a {
-        cursor: pointer;
-    }
-
-    .highlight,
-    a:focus,
-    a:hover {
-        outline: 0;
-
-        path {
-            fill: $brand-color-darker-darker;
-        }
-    }
-}
-
 #buses-online {
     .button {
         margin-right: .5em;
@@ -1276,6 +1244,20 @@ nav {
         &:first-child::before {
             display: none;
         }
+    }
+}
+
+.regions {
+    // li {
+    //     overflow: hidden;
+    // }
+
+    // a {
+    //     float: left;
+    // }
+
+    ul {
+        margin: .25em 0 .25em 1em;
     }
 }
 
