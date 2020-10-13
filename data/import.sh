@@ -68,19 +68,19 @@ fi
 cd ..
 
 # Translink Metro
-metro_old=$(shasum metro-and-glider.zip)
-wget -qN https://www.opendatani.gov.uk/dataset/6d9677cf-8d03-4851-985c-16f73f7dd5fb/resource/153a47c3-59b1-404f-8ec6-e5230cc4377d/download/metro-and-glider.zip
-metro_new=$(shasum metro-and-glider.zip)
+metro_old=$(shasum metro--glider-opendata.zip)
+wget -qN https://www.opendatani.gov.uk/dataset/6d9677cf-8d03-4851-985c-16f73f7dd5fb/resource/153a47c3-59b1-404f-8ec6-e5230cc4377d/download/metro--glider-opendata.zip
+metro_new=$(shasum metro--glider-opendata.zip)
 if [[ "$metro_old" != "$metro_new" ]]; then
-    ../manage.py import_atco_cif metro-and-glider.zip
+    ../manage.py import_atco_cif metro--glider-opendata.zip
 fi
 
 # Ulsterbus
-ulb_old=$(shasum ulb.zip)
-wget -qN https://www.opendatani.gov.uk/dataset/c1acee5b-a400-46bd-a795-9bf7637ff879/resource/291cbb54-7bb3-4df7-8599-0c8f49a20be6/download/ulb.zip
-ulb_new=$(shasum ulb.zip)
+ulb_old=$(shasum ulb--goldline-opendata.zip)
+wget -qN https://www.opendatani.gov.uk/dataset/c1acee5b-a400-46bd-a795-9bf7637ff879/resource/291cbb54-7bb3-4df7-8599-0c8f49a20be6/download/ulb--goldline-opendata.zip
+ulb_new=$(shasum ulb--goldline-opendata.zip)
 if [[ "$ulb_old" != "$ulb_new" ]]; then
-    ../manage.py import_atco_cif ulb.zip
+    ../manage.py import_atco_cif ulb--goldline-opendata.zip
 fi
 
 
