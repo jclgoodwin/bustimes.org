@@ -13,9 +13,12 @@ class Command(ImportLiveVehiclesCommand):
 
     @staticmethod
     def get_datetime(item):
-        return parse_datetime(item['gps']['last_updated'])
+        if 'gps' in item:
+            return parse_datetime(item['gps']['last_updated'])
 
     def get_vehicle(self, item):
+        if 'gps' not in item:
+            return None, None
         return self.vehicles.get_or_create(
             {
                 'reg': item['plate_number'],
@@ -25,9 +28,6 @@ class Command(ImportLiveVehiclesCommand):
         )
 
     def get_journey(self, item, vehicle):
-        journey = VehicleJourney()
-        journey.data = item
-
         trip = item['previous_trip']
         last_stop = trip['route'][-1]['departure']
         if 'actual' in last_stop:
@@ -38,16 +38,23 @@ class Command(ImportLiveVehiclesCommand):
         if parse_datetime(end) < self.source.datetime:
             trip = item['next_trip']
 
-        journey.route_name = trip['route_number']
-        journey.datetime = parse_datetime(trip['route'][0]['departure']['scheduled'])
-        journey.service = Service.objects.get(current=True, operator='EMBR', line_name=journey.route_name)
-        journey.destination = trip['route'][-1]['location']['region_name']
+        when = parse_datetime(trip['route'][0]['departure']['scheduled'])
+        journey = vehicle.vehiclejourney_set.filter(datetime=when).first()
+        if not journey:
+            journey = VehicleJourney(
+                route_name=trip['route_number'],
+                data=item,
+                datetime=when,
+                destination=trip['route'][-1]['location']['region_name']
+            )
+            journey.service = Service.objects.get(current=True, operator='EMBR', line_name=journey.route_name)
 
-        time = localtime(journey.datetime).time()
-        try:
-            journey.trip = Trip.objects.get(route__service=journey.service, start=time)
-        except (Trip.DoesNotExist, Trip.MultipleObjectsReturned) as e:
-            print(e)
+        if not journey.trip:
+            time = localtime(journey.datetime).time()
+            try:
+                journey.trip = Trip.objects.get(route__service=journey.service, start=time, **{f"calendar__{when.strftime('%a').lower()}": True})
+            except (Trip.DoesNotExist, Trip.MultipleObjectsReturned) as e:
+                print(e)
 
         return journey
 

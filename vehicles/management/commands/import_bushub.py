@@ -66,7 +66,7 @@ class Command(ImportLiveVehiclesCommand):
                 return self.vehicles.filter(Q(code=code) | Q(fleet_code=code), operator='WBSV').get_or_create(defaults)
             return self.vehicles.get_or_create(defaults, code=code, operator__in=operators)
         except self.vehicles.model.MultipleObjectsReturned:
-            return self.vehicles.filter(code=code, operator__in=operators).first()
+            return self.vehicles.filter(code=code, operator__in=operators).first(), False
 
     @classmethod
     def get_service(cls, item):
