@@ -943,12 +943,8 @@ thead {
 input:not(:checked) + label {
     + .timetable-wrapper,
     + .route {
-        .minor:not(:first-child):not(:last-child) {
+        .minor:not(:first-child):not(:last-child):not(.referrer) {
             display: none;
-        }
-
-        .referrer {
-            display: table-row;
         }
     }
 }
