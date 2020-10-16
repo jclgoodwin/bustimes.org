@@ -607,8 +607,14 @@ class ServiceDetailView(DetailView):
             })
 
         if context['operators']:
-            context['breadcrumb'].append(context['operators'][0])
-            context['payment_methods'] = context['operators'][0].payment_methods.all()
+            operator = context['operators'][0]
+            context['breadcrumb'].append(operator)
+            context['payment_methods'] = []
+            for method in operator.payment_methods.all():
+                if 'app' in method.name and method.url:
+                    context['app'] = method
+                else:
+                    context['payment_methods'].append(method)
             for operator in context['operators']:
                 if operator.is_national_express() or self.object.service_code == 'DNAX090':
                     context['links'].append({

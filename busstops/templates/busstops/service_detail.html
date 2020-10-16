@@ -159,6 +159,10 @@
     </p>
 {% endif %}
 
+{% if app %}
+    <p>Mobile tickets and live bus tracking available on <a href="{{ app.url }}">the {{ app }}</a></p>
+{% endif %}
+
 {% if related %}
     <h2>Similar services</h2>
     {% include 'service_list.html' with services=related class="has-smalls" %}
