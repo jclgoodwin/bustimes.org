@@ -121,8 +121,11 @@ class Command(ImportLiveVehiclesCommand):
             line_name = 'ONE'
 
         latest_location = vehicle.latest_location
-        if latest_location and latest_location.current and latest_location.journey.route_name == journey.route_name:
-            journey.service = latest_location.journey.service
+        if latest_location and latest_location.current:
+            if latest_location.journey.route_name == journey.route_name:
+                journey.service = latest_location.journey.service
+            elif latest_location.datetime == self.source.datetime:
+                journey = vehicle.vehiclejourney_set.filter(route_name=journey.route_name).last()
         else:
             services = Service.objects.filter(current=True, line_name=line_name)
             if self.source.name in {'salisburyreds', 'morebus', 'swindonbus', 'bluestar'}:
