@@ -177,14 +177,14 @@ TIME_ZONE = 'Europe/London'
 USE_TZ = True
 USE_I18N = False
 
-if not DEBUG and not TEST and 'collectstatic' not in sys.argv:
+if not DEBUG and not TEST and 'collectstatic' not in sys.argv and 'SENTRY_DSN' in os.environ:
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
     from sentry_sdk.integrations.redis import RedisIntegration
     from sentry_sdk.integrations.celery import CeleryIntegration
 
     sentry_sdk.init(
-        dsn=os.environ.get('SENTRY_DSN'),
+        dsn=os.environ['SENTRY_DSN'],
         integrations=[DjangoIntegration(), RedisIntegration(), CeleryIntegration()],
         ignore_errors=[KeyboardInterrupt],
         traces_sample_rate=0.25
@@ -304,7 +304,8 @@ PASSENGER_OPERATORS = (
 BOD_OPERATORS = (
     ('UNOE', 'SE', {
         'UBL': 'UNOE',
-        'UBN': 'UNOE'
+        'UBN': 'UNOE',
+        'OP': 'UNOE',
     }, True),
     ('TBTN', 'EM', {
         '574T': 'TBTN',
@@ -312,8 +313,9 @@ BOD_OPERATORS = (
     ('KBUS', 'EM', {
         'KN': 'KBUS',
     }, False),
-    ('HNTS', 'EM', {
-    }, False),
+    ('HNTS', 'EM', {}, False),
+    ('PULH', 'SE', {}, False),
+    ('FRSV', 'SW', {}, False),
 )
 STAGECOACH_OPERATORS = [
     ('S', 'sblb', 'Stagecoach Bluebird', {'SBLB': 'SBLB'}),

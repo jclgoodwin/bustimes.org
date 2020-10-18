@@ -5,6 +5,7 @@ import datetime
 import ciso8601
 import logging
 from psycopg2.extras import DateRange as PDateRange
+from django.contrib.gis.geos import Point, LineString
 from django.utils.text import slugify
 from django.utils.dateparse import parse_duration
 from chardet.universaldetector import UniversalDetector
@@ -78,6 +79,30 @@ class Stop:
         if not self.locality or self.locality in self.common_name:
             return self.common_name or self.atco_code
         return f'{self.locality} {self.common_name}'
+
+
+class Route:
+    def __init__(self, element):
+        self.id = element.get('id')
+        self.route_section_ref = element.find('txc:RouteSectionRef', NS).text
+
+
+class RouteSection:
+    def __init__(self, element):
+        self.id = element.get('id')
+        self.links = [RouteLink(link) for link in element.findall('txc:RouteLink', NS)]
+
+
+class RouteLink:
+    def __init__(self, element):
+        locations = element.findall('txc:Track/txc:Mapping/txc:Location/txc:Translation', NS)
+        if not locations:
+            locations = element.findall('txc:Track/txc:Mapping/txc:Location', NS)
+        locations = (Point(
+            float(location.find('txc:Longitude', NS).text),
+            float(location.find('txc:Latitude', NS).text)
+        ) for location in locations)
+        self.track = LineString(*locations)
 
 
 class JourneyPattern:
@@ -630,6 +655,9 @@ class TransXChange:
         iterator = ET.iterparse(open_file, parser=parser)
 
         self.services = {}
+        self.stops = {}
+        self.routes = {}
+        self.route_sections = {}
 
         serviced_organisations = None
 
@@ -639,14 +667,19 @@ class TransXChange:
             tag = element.tag[33:]
 
             if tag == 'StopPoints':
-                stops = (Stop(stop) for stop in element)
-                self.stops = {stop.atco_code: stop for stop in stops}
+                for stop_element in element:
+                    stop = Stop(stop_element)
+                    self.stops[stop.atco_code] = stop
+                element.clear()
+            elif tag == 'RouteSections':
+                for section_element in element:
+                    section = RouteSection(section_element)
+                    self.route_sections[section.id] = section
                 element.clear()
             elif tag == 'Routes':
-                # routes = {
-                #     route.get('id'): route.find('txc:Description', NS).text
-                #     for route in element
-                # }
+                for route_element in element:
+                    route = Route(route_element)
+                    self.routes[route.id] = route
                 element.clear()
             elif tag == 'RouteSections':
                 element.clear()

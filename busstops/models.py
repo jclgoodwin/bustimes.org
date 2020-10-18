@@ -754,7 +754,7 @@ class Service(models.Model):
                     'Timetable on the Traveline South West website'
                 )
 
-        elif self.source.name in {'SE', 'SW', 'EM', 'WM', 'EA', 'L'}:
+        elif self.source.name in {'SE', 'SW', 'EM', 'WM', 'EA', 'L'} or '.gov.' in self.source.url:
             if self.servicecode_set.filter(scheme='TfL').exists():
                 yield (self.get_tfl_url(), 'Timetable on the Transport for London website')
                 return
@@ -765,7 +765,11 @@ class Service(models.Model):
             try:
                 for i, route in enumerate(self.route_set.order_by('start_date')):
 
-                    parts = route.code.split('-')
+                    code = route.code
+                    if '/' in code:
+                        code = code.split('/')[-1]
+
+                    parts = code.split('-')
                     net, line = parts[0].split('_')
                     line_ver = parts[4][:-4]
                     line = line.zfill(2) + parts[1].zfill(3)
@@ -847,6 +851,11 @@ class Service(models.Model):
         varnish_ban(self.get_absolute_url())
 
     def update_geometry(self):
+        for route in self.route_set.all():
+            if route.geometry:
+                self.geometry = route.geometry
+                self.save(update_fields=['geometry'])
+                return
         patterns = []
         linestrings = []
         for trip in Trip.objects.filter(route__service=self).prefetch_related('stoptime_set__stop'):

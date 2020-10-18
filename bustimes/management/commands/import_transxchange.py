@@ -15,6 +15,7 @@ from psycopg2.extras import DateRange
 from titlecase import titlecase
 from datetime import date, datetime
 from django.conf import settings
+from django.contrib.gis.geos import MultiLineString
 from django.core.management.base import BaseCommand
 from django.db import transaction, IntegrityError, DataError
 from django.utils import timezone
@@ -86,7 +87,7 @@ def get_service_code(filename):
 
 
 def get_operator_code(operator_element, element_name):
-    element = operator_element.find('txc:{}'.format(element_name), NS)
+    element = operator_element.find(f'txc:{element_name}', NS)
     if element is not None:
         return element.text
 
@@ -682,6 +683,16 @@ class Command(BaseCommand):
             }
             if 'description' in defaults:
                 route_defaults['description'] = defaults['description']
+
+            if transxchange.route_sections and len(transxchange.services) == 1 and len(txc_service.lines) == 1:
+                geometry = []
+                for route in transxchange.routes.values():
+                    section = transxchange.route_sections[route.route_section_ref]
+                    for link in section.links:
+                        if link.track:
+                            geometry.append(link.track)
+                if geometry:
+                    route_defaults['geometry'] = MultiLineString(geometry)
 
             route_code = filename
             if len(transxchange.services) > 1:
