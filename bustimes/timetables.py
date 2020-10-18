@@ -144,7 +144,13 @@ class Timetable:
 
     def date_options(self):
         date = datetime.date.today()
-        start_dates = [route.start_date for route in self.routes if route.start_date]
+
+        for calendar in self.calendars:
+            for calendar_date in calendar.calendardate_set.all():
+                if not calendar_date.operation and calendar_date.contains(date):
+                    calendar.start_date = calendar_date.end_date
+                    break
+        start_dates = [calendar.start_date for calendar in self.calendars]
         if start_dates:
             date = max(date, min(start_dates))
 
