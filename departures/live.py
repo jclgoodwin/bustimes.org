@@ -393,7 +393,7 @@ class UKTrainDepartures(Departures):
         } for item in res['departures']['all']]
 
 
-class NorfokDepartures(Departures):
+class NorfolkDepartures(Departures):
     request_url = 'https://ldb.norfolkbus.info/public/displays/ncc1/transitdb/querylegacytable/timetable'
 
     def get_request_params(self):
@@ -734,12 +734,10 @@ def get_departures(stop, services):
 
             if source:
                 live_rows = SiriSmDepartures(source, stop, services).get_departures()
-            elif any(operator.id in {'FSCE', 'FCYM', 'FESX', 'FECS'} for operator in operators):
-                live_rows = TransportApiDepartures(stop, services, now.date()).get_departures()
             elif stop.atco_code[:3] == '430':
                 live_rows = WestMidlandsDepartures(stop, services).get_departures()
             elif stop.atco_code[:3] == '290':
-                live_rows = NorfokDepartures(stop, services, now).get_departures()
+                live_rows = NorfolkDepartures(stop, services, now).get_departures()
 
             if any(operator.name[:11] == 'Stagecoach ' for operator in operators):
                 if not (live_rows and any(
