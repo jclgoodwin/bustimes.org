@@ -14,7 +14,7 @@ from ...models import Vehicle, VehicleJourney, VehicleLocation
 
 class Command(ImportLiveVehiclesCommand):
     source_name = 'Bus Open Data'
-
+    wait = 30
     cache = set()
     operators = {
         'ASC': ['AKSS', 'ARHE', 'AMTM', 'GLAR'],
@@ -26,11 +26,11 @@ class Command(ImportLiveVehiclesCommand):
         'AYK': ['WRAY'],
         'FAR': ['FSRV'],
         'GEA': ['KCTB', 'HEDO', 'CHAM'],
-        'GP': ['GPLM'],
+        #'GP': ['GPLM'],
+        'BOWE': ['HIPK'],
         'CBLE': ['CBBH', 'CBNL'],
-        'WPB': ['WHIP'],
-        'UNO': ['UNOE', 'UNIB'],
-        'UNIB': ['UNOE', 'UNIB'],
+        # 'UNO': ['UNOE', 'UNIB'],
+        # 'UNIB': ['UNOE', 'UNIB'],
         'GNE': ['GNEL'],
         'ENS': ['ENSB'],
         'HAMSTRA': ['HAMS'],
@@ -60,13 +60,13 @@ class Command(ImportLiveVehiclesCommand):
                 return operator
             except Operator.DoesNotExist:
                 pass
-        print(operator_ref)
         self.operator_cache[operator_ref] = None
 
     def get_vehicle(self, item):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
 
         operator_ref = monitored_vehicle_journey['OperatorRef']
+
         vehicle_ref = monitored_vehicle_journey['VehicleRef']
         cache_key = f'{operator_ref}-{vehicle_ref}'
         try:
@@ -118,6 +118,9 @@ class Command(ImportLiveVehiclesCommand):
                 elif operator_ref in self.reg_operators:
                     reg = vehicle_ref.replace('_', '')
                     condition |= Q(reg=reg)
+                elif operator_ref == 'WHIP':
+                    code = vehicle_ref.replace('_', '')
+                    condition |= Q(fleet_code=code)
         vehicles = vehicles.filter(condition)
 
         try:
@@ -135,7 +138,13 @@ class Command(ImportLiveVehiclesCommand):
         if not line_ref:
             return
 
-        services = Service.objects.filter(current=True, line_name__iexact=line_ref)
+        services = Service.objects.filter(current=True)
+
+        if line_ref == 'TP':  # High Peak Transpeak
+            services = services.filter(line_name__startswith=line_ref)
+        else:
+            services = services.filter(line_name__iexact=line_ref)
+
         if type(operator) is Operator:
             services = services.filter(operator=operator)
         elif type(operator) is list:
@@ -146,9 +155,10 @@ class Command(ImportLiveVehiclesCommand):
         except Service.DoesNotExist:
             return
         except Service.MultipleObjectsReturned:
-            destination_ref = monitored_vehicle_journey.get('DestinationRef')
-            if not destination_ref:
-                return
+            pass
+
+        destination_ref = monitored_vehicle_journey.get('DestinationRef')
+        if destination_ref:
             try:
                 return services.filter(stops__locality__stoppoint=destination_ref).distinct().get()
             except (Service.DoesNotExist, Service.MultipleObjectsReturned):
@@ -202,8 +212,11 @@ class Command(ImportLiveVehiclesCommand):
                 except Locality.DoesNotExist:
                     pass
 
-        if latest_location and (latest_location.journey.code == journey.code
-                                and latest_location.journey.route_name == journey.route_name):
+        if (
+            latest_location and latest_location.journey.service
+            and latest_location.journey.code == journey.code
+            and latest_location.journey.route_name == journey.route_name
+        ):
             journey.service = latest_location.journey.service
         else:
             operator_ref = monitored_vehicle_journey['OperatorRef']
@@ -235,6 +248,7 @@ class Command(ImportLiveVehiclesCommand):
                     try:
                         data = xmltodict.parse(open_file)
                     except ExpatError:
+                        print(response.content)
                         return ()
         except zipfile.BadZipFile:
             print(response.content)
@@ -248,5 +262,4 @@ class Command(ImportLiveVehiclesCommand):
         after = datetime.now()
 
         print(after - before)
-
-        # self.source.save(update_fields=['datetime'])
+        print(self.operator_cache)

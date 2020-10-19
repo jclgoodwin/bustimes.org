@@ -76,6 +76,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
     current_location_ids = set()
     vehicles = Vehicle.objects.select_related('latest_location__journey__service')
     url = ''
+    wait = 60
 
     @staticmethod
     def get_datetime(self):
@@ -254,9 +255,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
             return 300  # no items - wait five minutes
 
         time_taken = (timezone.now() - now).total_seconds()
-        if time_taken < 60:
-            return 60 - time_taken
-        return 0
+        if time_taken < self.wait:
+            return self.wait - time_taken
+        return 0  # took longer than self.wait
 
     def handle(self, *args, **options):
         try:
