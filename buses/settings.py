@@ -317,6 +317,9 @@ BOD_OPERATORS = (
     ('PULH', 'SE', {}, False),
     ('CNTY', 'SW', {}, False),
     ('HGCO', 'SW', {}, False),
+    ('WHIP', 'EA', {
+        'OP': 'WHIP'
+    }, False),
     ('HIPK', 'EM', {
         'OP': 'HIPK',
         'HPB': 'HIPK',

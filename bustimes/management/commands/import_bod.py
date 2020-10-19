@@ -130,7 +130,8 @@ def bus_open_data(api_key):
             else:
                 operators = [operator_id]
 
-            clean_up(operators, sources, incomplete)
+            if Service.objects.filter(source__in=sources, operator__in=operators).exists():
+                clean_up(operators, sources, incomplete)
 
     if command.undefined_holidays:
         print(command.undefined_holidays)
