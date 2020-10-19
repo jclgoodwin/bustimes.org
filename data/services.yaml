@@ -81,3 +81,24 @@ PXAO011:
     current: false
 NAAO303:
     description: Bridgend - Llantwit Major - (Barry)
+M10_MEGA:
+    description: Swanesa - Cardiff - Bristol - Heathrow - London Victoria
+M11_MEGA:
+    description: Glasgow - Manchester - London Victoria
+M12_MEGA:
+    description: (Newcastle) - Leeds - London Victoria
+M16_MEGA:
+    description: Norwich - UEA - Thetford - London Stratford
+M20_MEGA:
+    description: Glasgow - Edinburgh - Newcastle - (Leeds) - London Victoria
+M22_MEGA:
+    description: Nottingham - London Victoria
+M34_MEGA:
+    description: (Newcastle) - Manchester - Birmingham - Coventry - Oxford - Southampton - Portsmouth
+M35_MEGA:
+    description: Newcastle - Leeds - Birmingham - Bristol - Newport - Northville
+M92_MEGA:
+    description: Edinburgh - Kinross - Dundee - Aberdeen
+MP3_MEGA:
+    line_brand: Megabusplus
+    description: Hull - Huddersfield - London St Pancras
