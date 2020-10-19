@@ -308,11 +308,20 @@ class Command(BaseCommand):
             else:
                 self.undefined_holidays.add(holiday)
 
-        if operating_profile.servicedorganisation:
-            org = operating_profile.servicedorganisation
+        sodt = operating_profile.serviced_organisation_day_type
+        summary = ''
+        if sodt:
+            if sodt.nonoperation_workingdays:
+                if sodt.nonoperation_workingdays.name:
+                    summary = f'Not {sodt.nonoperation_workingdays.name} days'
+                nonoperation_days = sodt.nonoperation_workingdays.working_days
+            elif sodt.nonoperation_holidays:
+                if sodt.nonoperation_holidays.name:
+                    summary = f'Not {sodt.nonoperation_holidays.name} holidays'
+                nonoperation_days = sodt.nonoperation_holidays.holidays
+            else:
+                nonoperation_days = None
 
-            nonoperation_days = (org.nonoperation_workingdays and org.nonoperation_workingdays.working_days or
-                                 org.nonoperation_holidays and org.nonoperation_holidays.holidays)
             if nonoperation_days:
                 calendar_dates += [
                     CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
@@ -320,8 +329,17 @@ class Command(BaseCommand):
                     for date_range in nonoperation_days
                 ]
 
-            operation_days = (org.operation_workingdays and org.operation_workingdays.working_days or
-                              org.operation_holidays and org.operation_holidays.holidays)
+            if sodt.operation_workingdays:
+                if sodt.operation_workingdays.name:
+                    summary = f'{sodt.operation_workingdays.name} days only'
+                operation_days = sodt.operation_workingdays.working_days
+            elif sodt.operation_holidays:
+                if sodt.operation_holidays.name:
+                    summary = f'{sodt.operation_holidays.name} holidays only'
+                operation_days = sodt.operation_holidays.holidays
+            else:
+                operation_days = None
+
             if operation_days:
                 calendar_dates += [
                     CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
@@ -341,6 +359,11 @@ class Command(BaseCommand):
         if calendar_hash in self.calendar_cache:
             return self.calendar_cache[calendar_hash]
 
+        if summary:
+            summary = summary.replace('Schooldays days', 'school days').replace('Schools days', 'school days')
+            summary = summary.replace('Schooldays holidays', 'school holidays').replace('AnySchool', 'school')
+            summary = summary.replace('SCHOOLDAYS days', 'school days').replace('SCHOOLDAYS holidays', 'school holidays')
+
         calendar = Calendar(
             mon=False,
             tue=False,
@@ -351,7 +374,8 @@ class Command(BaseCommand):
             sun=False,
             start_date=operating_period.start,
             end_date=operating_period.end,
-            dates=operating_period.dates()
+            dates=operating_period.dates(),
+            summary=summary
         )
 
         for day in operating_profile.regular_days:

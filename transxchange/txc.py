@@ -364,13 +364,13 @@ class ServicedOrganisation:
 
 
 class ServicedOrganisationDayType:
-    def __init__(self, element, servicedorgs):
+    def __init__(self, element, serviced_organisations):
         self.nonoperation_holidays = None
         self.nonoperation_workingdays = None
         self.operation_holidays = None
         self.operation_workingdays = None
 
-        if not servicedorgs:
+        if not serviced_organisations:
             return
 
         # Days of non-operation:
@@ -380,10 +380,10 @@ class ServicedOrganisationDayType:
             noop_workingdays_element = noop_element.find('txc:WorkingDays/txc:ServicedOrganisationRef', NS)
 
             if noop_hols_element is not None:
-                self.nonoperation_holidays = servicedorgs[noop_hols_element.text]
+                self.nonoperation_holidays = serviced_organisations[noop_hols_element.text]
 
             if noop_workingdays_element is not None:
-                self.nonoperation_workingdays = servicedorgs[noop_workingdays_element.text]
+                self.nonoperation_workingdays = serviced_organisations[noop_workingdays_element.text]
 
         # Days of operation:
         op_element = element.find('txc:DaysOfOperation', NS)
@@ -392,10 +392,10 @@ class ServicedOrganisationDayType:
             op_workingdays_element = op_element.find('txc:WorkingDays/txc:ServicedOrganisationRef', NS)
 
             if op_hols_element is not None:
-                self.operation_holidays = servicedorgs[op_hols_element.text]
+                self.operation_holidays = serviced_organisations[op_hols_element.text]
 
             if op_workingdays_element is not None:
-                self.operation_workingdays = servicedorgs[op_workingdays_element.text]
+                self.operation_workingdays = serviced_organisations[op_workingdays_element.text]
 
 
 class DayOfWeek:
@@ -415,11 +415,11 @@ class DayOfWeek:
 
 
 class OperatingProfile:
-    servicedorganisation = None
+    serviced_organisation_day_type = None
     nonoperation_days = ()
     operation_days = ()
 
-    def __init__(self, element, servicedorgs):
+    def __init__(self, element, serviced_organisations):
         element = element
 
         week_days_element = element.find('txc:RegularDayType/txc:DaysOfWeek', NS)
@@ -454,10 +454,11 @@ class OperatingProfile:
 
         # Serviced Organisation:
 
-        servicedorg_days_element = element.find('txc:ServicedOrganisationDayType', NS)
+        serviced_organisation_day_type_element = element.find('txc:ServicedOrganisationDayType', NS)
 
-        if servicedorg_days_element is not None:
-            self.servicedorganisation = ServicedOrganisationDayType(servicedorg_days_element, servicedorgs)
+        if serviced_organisation_day_type_element is not None:
+            self.serviced_organisation_day_type = ServicedOrganisationDayType(serviced_organisation_day_type_element,
+                                                                              serviced_organisations)
 
         # Bank Holidays
 

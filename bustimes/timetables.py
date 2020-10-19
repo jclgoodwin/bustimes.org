@@ -100,7 +100,7 @@ class Timetable:
 
         if not date and len(self.calendars) == 1:
             calendar = self.calendars[0]
-            if not calendar.calendardate_set.all() and str(calendar):
+            if (calendar.summary or not calendar.calendardate_set.all()) and str(calendar):
                 if calendar.start_date > datetime.date.today():
                     self.start_date = calendar.start_date
                 self.calendar = calendar

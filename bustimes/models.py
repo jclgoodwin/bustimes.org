@@ -107,10 +107,16 @@ class Calendar(models.Model):
         if not days:
             return ''
         if len(days) == 1:
-            return f'{days[0]}s only'
-        if days[0] == 'Monday' and days[-1] == day_keys[len(days)-1]:
-            return f'{days[0]} to {days[-1]}'
-        return f"{'s, '.join(days[:-1])}s and {days[-1]}s"
+            days = f'{days[0]}s only'
+        elif days[0] == 'Monday' and days[-1] == day_keys[len(days)-1]:
+            days = f'{days[0]} to {days[-1]}'
+        else:
+            days = f"{'s, '.join(days[:-1])}s and {days[-1]}s"
+
+        if self.summary:
+            return f'{days}, {self.summary}'
+
+        return days
 
 
 class CalendarDate(models.Model):

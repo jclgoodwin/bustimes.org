@@ -34,6 +34,7 @@ class CalendarDateInline(admin.TabularInline):
 
 
 class CalendarAdmin(admin.ModelAdmin):
+    list_display = ['id', '__str__', 'summary']
     inlines = [CalendarDateInline]
 
 

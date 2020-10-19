@@ -27,12 +27,10 @@
 
 {% for route in service.route_set.all %}
 
-<details>
+<details{% if forloop.first and forloop.last %} open{% endif %}>
     <summary>
-        {{ route.start_date }}–{{ route.end_date }}
+        <a href="{{ route.get_absolute_url }}">{{ route.code }}</a><br>{{ route.start_date }}–{{ route.end_date }}
     </summary>
-
-    <h3><a href="{{ route.get_absolute_url }}">{{ route.code }}</a></h3>
 
     <a href="{% url 'admin:bustimes_route_change' route.id %}">Edit</a>
 
