@@ -5,9 +5,7 @@ config/gunicorn.py
 data/TNDS/*.zip
 data/*.zip
 data/*.xml
-data/Arriva UK Bus_*
-data/Lynx_*
-data/trentbarton_*
+data/*_*_*_*
 data/*.csv
 data/NPTG
 node_modules
