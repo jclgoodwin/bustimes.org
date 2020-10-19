@@ -9,6 +9,8 @@
         to {{ location.journey.destination }}
     {% endif %}
     {% if location.journey.service %}</a>{% endif %}
+{% elif location.journey.destination %}
+    To {{ location.journey.destination }}
 {% endif %}
 
 {% if location.journey.vehicle %}
