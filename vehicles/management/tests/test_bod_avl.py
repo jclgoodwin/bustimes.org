@@ -1,5 +1,4 @@
 import os
-from datetime import timedelta
 from mock import patch
 from freezegun import freeze_time
 from vcr import use_cassette
@@ -36,7 +35,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'bod_avl.yaml')):
             with patch('builtins.print') as mocked_print:
                 items = list(command.get_items())
-        mocked_print.assert_called_with(timedelta(0))
+        mocked_print.assert_called_with({})
 
         self.assertEqual(841, len(items))
 
