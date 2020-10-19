@@ -115,8 +115,11 @@ class JourneyPattern:
             if section_element.text in sections
         ]
 
-        self.direction = element.find('txc:Direction', NS)
+        self.route_ref = element.find('txc:RouteRef', NS)
+        if self.route_ref is not None:
+            self.route_ref = self.route_ref.text
 
+        self.direction = element.find('txc:Direction', NS)
         if self.direction is not None:
             self.direction = self.direction.text
 

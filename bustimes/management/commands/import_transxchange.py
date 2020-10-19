@@ -708,15 +708,18 @@ class Command(BaseCommand):
             if 'description' in defaults:
                 route_defaults['description'] = defaults['description']
 
-            if transxchange.route_sections and len(transxchange.services) == 1 and len(txc_service.lines) == 1:
+            if transxchange.route_sections:
                 geometry = []
-                for route in transxchange.routes.values():
+                routes = [journey.journey_pattern.route_ref for journey in journeys if journey.journey_pattern]
+                routes = [transxchange.routes[route_id] for route_id in transxchange.routes if route_id in routes]
+                for route in routes:
                     section = transxchange.route_sections[route.route_section_ref]
                     for link in section.links:
                         if link.track:
                             geometry.append(link.track)
                 if geometry:
-                    route_defaults['geometry'] = MultiLineString(geometry)
+                    geometry = MultiLineString(geometry)
+                    route_defaults['geometry'] = geometry
 
             route_code = filename
             if len(transxchange.services) > 1:
