@@ -57,7 +57,6 @@ def handle_file(command, path):
                             fake_file = StringIO(content)
                             command.handle_file(fake_file, qualified_filename)
                     except (ET.ParseError, ValueError, AttributeError, DataError) as e:
-                        print(filename, e)
                         logger.error(e, exc_info=True)
     except zipfile.BadZipFile:
         with open(os.path.join(settings.DATA_DIR, path)) as open_file:

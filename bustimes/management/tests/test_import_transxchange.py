@@ -668,12 +668,11 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(str(service), 'M11A - Belgravia - Liverpool')
         self.assertTrue(service.show_timetable)
         self.assertEqual(service.operator.first(), self.megabus)
-        self.assertEqual(
-            list(service.get_traveline_links()),
-            [('http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST'
-             '?line=11M11&sup=A&net=nrc&project=y08&command=direct&outputFormat=0',
-                'Timetable on the Traveline South West website')]
-        )
+        self.assertEqual(list(service.get_traveline_links()), [])
+        #     [('http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST'
+        #      '?line=11M11&sup=A&net=nrc&project=y08&command=direct&outputFormat=0',
+        #         'Timetable on the Traveline South West website')]
+        # )
 
         self.assertEqual(res.context_data['breadcrumb'], [self.gb, self.megabus])
         self.assertTemplateUsed(res, 'busstops/service_detail.html')
