@@ -104,7 +104,5 @@ class EditVehicleForm(EditVehiclesForm):
 
         if not vehicle.notes:
             del self.fields['notes']
-            if not vehicle.name:
-                del self.fields['name']
             if not vehicle.branding:
                 del self.fields['branding']
