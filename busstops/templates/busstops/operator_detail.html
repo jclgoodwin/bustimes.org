@@ -8,6 +8,10 @@
 
 {% block content %}
 
+{% if services|length > 3 %}
+    {% include 'ad.html' %}
+{% endif %}
+
 <div itemscope itemtype="http://schema.org/LocalBusiness">
 
 <h1 itemprop="name">{{ object }}</h1>

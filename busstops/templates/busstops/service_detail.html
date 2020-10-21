@@ -12,6 +12,8 @@
 
 {% block content %}
 
+{% include 'ad.html' %}
+
 <h1>{{ object }}</h1>
 
 <p>
@@ -129,10 +131,8 @@
             </div>
         </div>
 
-        {% if not forloop.last and grouping.min_height > 6 %}
-            <!--[if gte IE 9]><!-->
-                <div class="ad"><ins class="adsbygoogle" data-ad-client="ca-pub-4420219114164200" data-ad-slot="8547897685" data-full-width-responsive="false"></ins></div>
-            <!--<![endif]-->
+        {% if not forloop.last and grouping.min_height > 10 %}
+            {% include 'ad.html' %}
         {% endif %}
 
     {% empty %}

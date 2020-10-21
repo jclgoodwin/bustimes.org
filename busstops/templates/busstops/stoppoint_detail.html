@@ -4,6 +4,8 @@
 
 {% block content %}
 
+{% include 'ad.html' %}
+
 <h1>{{ stoppoint.get_long_name }}</h1>
 
 {% if text %}
@@ -52,3 +54,5 @@
 </div>
 
 {% endblock %}
+
+{% block ad %}{% endblock %}

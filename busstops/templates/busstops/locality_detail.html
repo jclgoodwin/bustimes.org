@@ -14,6 +14,10 @@
     <h2>Stops in {{ locality }}</h2>
 
     {% include 'stops.html' with stops=stops class=' long' %}
+
+    {% if services|length > 6 %}
+        {% include 'ad.html' %}
+    {% endif %}
 {% endif %}
 
 {% if services %}
