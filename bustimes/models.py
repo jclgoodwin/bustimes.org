@@ -39,7 +39,7 @@ class Route(models.Model):
     end_date = models.DateField(null=True, blank=True)
     dates = DateRangeField(null=True, blank=True)
     service = models.ForeignKey('busstops.Service', models.CASCADE)
-    geometry = models.MultiLineStringField(null=True, editable=False)
+    geometry = models.MultiLineStringField(null=True)
 
     class Meta:
         unique_together = ('source', 'code')

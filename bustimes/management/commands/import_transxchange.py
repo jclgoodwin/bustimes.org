@@ -514,7 +514,7 @@ class Command(BaseCommand):
         description = txc_service.description
         if description and ('timetable' in description.lower() or 'Database Refresh' in description):
             description = None
-        elif self.source.name.startswith('Stagecoach'):
+        elif self.source.name.startswith('Stagecoach') or self.source.name.startswith('Coach Services'):
             description = None
         if not description:
             origin = txc_service.origin
@@ -547,9 +547,11 @@ class Command(BaseCommand):
 
     def handle_service(self, filename, parts, transxchange, txc_service, today, stops):
         if txc_service.operating_period.end:
-            if txc_service.operating_period.end < today:
+            if self.source.name.startswith('Coach Services'):
+                txc_service.operating_period.end = None
+            elif txc_service.operating_period.end < today:
                 return
-            if txc_service.operating_period.end < txc_service.operating_period.start:
+            elif txc_service.operating_period.end < txc_service.operating_period.start:
                 return
 
         operators = self.get_operators(transxchange, txc_service)
@@ -708,17 +710,33 @@ class Command(BaseCommand):
             if 'description' in defaults:
                 route_defaults['description'] = defaults['description']
 
+            geometry = []
             if transxchange.route_sections:
-                geometry = []
-                routes = [journey.journey_pattern.route_ref for journey in journeys if journey.journey_pattern]
-                routes = [transxchange.routes[route_id] for route_id in transxchange.routes if route_id in routes]
-                for route in routes:
-                    section = transxchange.route_sections[route.route_section_ref]
-                    for link in section.links:
-                        if link.track:
-                            geometry.append(link.track)
+                patterns = {
+                    journey.journey_pattern.id: journey.journey_pattern for journey in journeys
+                }
+                routes = [pattern.route_ref for pattern in patterns.values() if pattern.route_ref]
+                if routes:
+                    routes = [transxchange.routes[route_id] for route_id in transxchange.routes if route_id in routes]
+                    for route in routes:
+                        section = transxchange.route_sections[route.route_section_ref]
+                        for link in section.links:
+                            if link.track:
+                                geometry.append(link.track)
+                else:
+                    route_links = {}
+                    for section in transxchange.route_sections.values():
+                        for link in section.links:
+                            route_links[link.id] = link
+                    for journey in journeys:
+                        if journey.journey_pattern:
+                            for section in journey.journey_pattern.sections:
+                                for link in section.timinglinks:
+                                    link = route_links[link.route_link_ref]
+                                    if link.track:
+                                        geometry.append(link.track)
                 if geometry:
-                    geometry = MultiLineString(geometry)
+                    geometry = MultiLineString(geometry).simplify()
                     route_defaults['geometry'] = geometry
 
             route_code = filename

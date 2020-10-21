@@ -334,6 +334,9 @@ BOD_OPERATORS = (
     ('WHIP', 'EA', {
         'OP': 'WHIP'
     }, False),
+    ('CSVC', 'EA', {
+        'CS': 'CSVC'
+    }, False),
     ('HIPK', 'EM', {
         'OP': 'HIPK',
         'HPB': 'HIPK',

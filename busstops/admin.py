@@ -1,10 +1,10 @@
 from django import forms
 from django.contrib import admin
+from django.contrib.gis.db.models import PointField
 from django.contrib.gis.forms import OSMWidget
+from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import Count, Q, F
-from django.contrib.postgres.aggregates import StringAgg
-from django.contrib.gis.db.models import PointField
 from bustimes.models import Route
 from .models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, StopCode, Operator, Service, ServiceLink,

@@ -95,6 +95,7 @@ class RouteSection:
 
 class RouteLink:
     def __init__(self, element):
+        self.id = element.get('id')
         locations = element.findall('txc:Track/txc:Mapping/txc:Location/txc:Translation', NS)
         if not locations:
             locations = element.findall('txc:Track/txc:Mapping/txc:Location', NS)
@@ -175,6 +176,9 @@ class JourneyPatternTimingLink:
         self.origin.parent = self.destination.parent = self
         self.runtime = parse_duration(element.find('txc:RunTime', NS).text)
         self.id = element.get('id')
+        self.route_link_ref = element.find('txc:RouteLinkRef', NS)
+        if self.route_link_ref is not None:
+            self.route_link_ref = self.route_link_ref.text
 
 
 def get_deadruns(journey_element):
@@ -355,13 +359,13 @@ class ServicedOrganisation:
 
         working_days_element = element.find('txc:WorkingDays', NS)
         if working_days_element is not None:
-            self.working_days = [DateRange(e) for e in working_days_element]
+            self.working_days = [DateRange(e) for e in working_days_element.findall('txc:DateRange', NS)]
         else:
             self.working_days = []
 
         holidays_element = element.find('txc:Holidays', NS)
         if holidays_element is not None:
-            self.holidays = [DateRange(e) for e in holidays_element]
+            self.holidays = [DateRange(e) for e in holidays_element.findall('txc:DateRange', NS)]
         else:
             self.holidays = []
 
