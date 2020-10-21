@@ -529,6 +529,7 @@ class OperatingPeriod(DateRange):
 
 
 class Service:
+    marketing_name = None
     description = None
     description_parts = None
     origin = None
@@ -574,6 +575,10 @@ class Service:
         self.operating_period = OperatingPeriod(element.find('txc:OperatingPeriod', NS))
 
         self.service_code = element.find('txc:ServiceCode', NS).text
+
+        marketing_name = element.find('txc:MarketingName', NS)
+        if marketing_name is not None:
+            self.marketing_name = marketing_name.text
 
         description_element = element.find('txc:Description', NS)
         if description_element is not None:

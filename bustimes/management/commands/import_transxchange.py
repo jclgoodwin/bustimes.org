@@ -653,10 +653,19 @@ class Command(BaseCommand):
             if description:
                 defaults['description'] = description
 
-            if txc_service.mode:
-                defaults['mode'] = txc_service.mode
+            if txc_service.marketing_name:
+                line_brand = txc_service.marketing_name
+                if line_name in line_brand:
+                    line_brand_parts = line_brand.split()
+                    line_brand_parts.remove(line_name)
+                    line_brand = ' '.join(line_brand_parts)
+                print(line_brand)
             if line_brand:
                 defaults['line_brand'] = line_brand
+
+            if txc_service.mode:
+                defaults['mode'] = txc_service.mode
+
             if self.region_id:
                 defaults['region_id'] = self.region_id
 
