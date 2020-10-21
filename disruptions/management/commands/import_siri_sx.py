@@ -10,9 +10,7 @@ from ...models import Situation, Consequence, ValidityPeriod, Link
 
 def get_period(element):
     start = element.find('StartTime').text
-    end = element.find('EndTime')
-    if end is not None:
-        end = end.text
+    end = element.findtext('EndTime')
     return DateTimeTZRange(start, end, '[]')
 
 
@@ -35,9 +33,9 @@ def handle_item(item, source):
     situation.publication_window = get_period(item.find('PublicationWindow'))
     situation.current = item.find('Progress').text == 'open'
 
-    reason = item.find('MiscellaneousReason')
-    if reason is not None:
-        situation.reason = reason.text
+    reason = item.findtext('MiscellaneousReason')
+    if reason:
+        situation.reason = reason
 
     situation.summary = item.find('Summary').text
     situation.text = item.find('Description').text
@@ -93,10 +91,7 @@ def handle_item(item, source):
             services = services.filter(stops__in=stops).distinct()
 
         for line in consequence_element.findall('Affects/Networks/AffectedNetwork/AffectedLine'):
-            line_name = line.find('PublishedLineName')
-            if line_name is None:
-                line_name = line.find('LineRef')
-            line_name = line_name.text
+            line_name = line.findtext('PublishedLineName') or line.findtext('LineRef')
             for operator in line.findall('AffectedOperator'):
                 operator_ref = operator.find('OperatorRef').text
                 for service in services.filter(line_name__iexact=line_name, operator=operator_ref):

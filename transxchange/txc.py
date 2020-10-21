@@ -15,9 +15,6 @@ from titlecase import titlecase
 logger = logging.getLogger(__name__)
 
 
-NS = {
-    'txc': 'http://www.transxchange.org.uk/'
-}
 # A safe date, far from any daylight savings changes or leap seconds
 DESCRIPTION_REGEX = re.compile(r'.+,([^ ].+)$')
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}
@@ -61,19 +58,13 @@ class Stop:
     """A TransXChange StopPoint."""
     def __init__(self, element):
         if element:
-            self.atco_code = element.find('txc:StopPointRef', NS)
-            if self.atco_code is None:
-                self.atco_code = element.find('txc:AtcoCode', NS)
-            if self.atco_code is not None:
-                self.atco_code = self.atco_code.text or ''
+            self.atco_code = element.findtext('StopPointRef')
+            if not self.atco_code:
+                self.atco_code = element.findtext('AtcoCode', '')
 
-            self.common_name = element.find('txc:CommonName', NS)
-            if self.common_name is not None:
-                self.common_name = self.common_name.text
+            self.common_name = element.findtext('CommonName')
 
-            self.locality = element.find('txc:LocalityName', NS)
-            if self.locality is not None:
-                self.locality = self.locality.text
+            self.locality = element.findtext('LocalityName')
 
     def __str__(self):
         if not self.locality or self.locality in self.common_name:
@@ -84,24 +75,24 @@ class Stop:
 class Route:
     def __init__(self, element):
         self.id = element.get('id')
-        self.route_section_ref = element.find('txc:RouteSectionRef', NS).text
+        self.route_section_ref = element.find('RouteSectionRef').text
 
 
 class RouteSection:
     def __init__(self, element):
         self.id = element.get('id')
-        self.links = [RouteLink(link) for link in element.findall('txc:RouteLink', NS)]
+        self.links = [RouteLink(link) for link in element.findall('RouteLink')]
 
 
 class RouteLink:
     def __init__(self, element):
         self.id = element.get('id')
-        locations = element.findall('txc:Track/txc:Mapping/txc:Location/txc:Translation', NS)
+        locations = element.findall('Track/Mapping/Location/Translation')
         if not locations:
-            locations = element.findall('txc:Track/txc:Mapping/txc:Location', NS)
+            locations = element.findall('Track/Mapping/Location')
         locations = (Point(
-            float(location.find('txc:Longitude', NS).text),
-            float(location.find('txc:Latitude', NS).text)
+            float(location.find('Longitude').text),
+            float(location.find('Latitude').text)
         ) for location in locations)
         self.track = LineString(*locations)
 
@@ -112,17 +103,13 @@ class JourneyPattern:
         self.id = element.attrib.get('id')
         self.sections = [
             sections[section_element.text]
-            for section_element in element.findall('txc:JourneyPatternSectionRefs', NS)
+            for section_element in element.findall('JourneyPatternSectionRefs')
             if section_element.text in sections
         ]
 
-        self.route_ref = element.find('txc:RouteRef', NS)
-        if self.route_ref is not None:
-            self.route_ref = self.route_ref.text
+        self.route_ref = element.findtext('RouteRef')
 
-        self.direction = element.find('txc:Direction', NS)
-        if self.direction is not None:
-            self.direction = self.direction.text
+        self.direction = element.findtext('Direction')
 
     def get_timinglinks(self):
         for section in self.sections:
@@ -141,23 +128,23 @@ class JourneyPatternSection:
 
 
 class JourneyPatternStopUsage:
+    sequencenumber = None
+
     """Either a 'From' or 'To' element in TransXChange."""
     def __init__(self, element, stops):
-        self.activity = element.find('txc:Activity', NS)
-        if self.activity is not None:
-            self.activity = self.activity.text
-        self.sequencenumber = element.get('SequenceNumber')
-        if self.sequencenumber is not None:
-            self.sequencenumber = int(self.sequencenumber)
-        self.stop = stops.get(element.find('txc:StopPointRef', NS).text)
+        self.activity = element.findtext('Activity')
+
+        sequencenumber = element.get('SequenceNumber')
+        if sequencenumber is not None:
+            self.sequencenumber = int(sequencenumber)
+
+        self.stop = stops.get(element.find('StopPointRef').text)
         if self.stop is None:
             self.stop = Stop(element)
 
-        self.timingstatus = element.find('txc:TimingStatus', NS)
-        if self.timingstatus is not None:
-            self.timingstatus = self.timingstatus.text
+        self.timingstatus = element.findtext('TimingStatus')
 
-        self.wait_time = element.find('txc:WaitTime', NS)
+        self.wait_time = element.find('WaitTime')
         if self.wait_time is not None:
             self.wait_time = parse_duration(self.wait_time.text)
             if self.wait_time.total_seconds() > 10000:
@@ -171,20 +158,18 @@ class JourneyPatternStopUsage:
 
 class JourneyPatternTimingLink:
     def __init__(self, element, stops):
-        self.origin = JourneyPatternStopUsage(element.find('txc:From', NS), stops)
-        self.destination = JourneyPatternStopUsage(element.find('txc:To', NS), stops)
+        self.origin = JourneyPatternStopUsage(element.find('From'), stops)
+        self.destination = JourneyPatternStopUsage(element.find('To'), stops)
         self.origin.parent = self.destination.parent = self
-        self.runtime = parse_duration(element.find('txc:RunTime', NS).text)
+        self.runtime = parse_duration(element.find('RunTime').text)
         self.id = element.get('id')
-        self.route_link_ref = element.find('txc:RouteLinkRef', NS)
-        if self.route_link_ref is not None:
-            self.route_link_ref = self.route_link_ref.text
+        self.route_link_ref = element.findtext('RouteLinkRef')
 
 
 def get_deadruns(journey_element):
     """Given a VehicleJourney element, return a tuple."""
-    start_element = journey_element.find('txc:StartDeadRun', NS)
-    end_element = journey_element.find('txc:EndDeadRun', NS)
+    start_element = journey_element.find('StartDeadRun')
+    end_element = journey_element.find('EndDeadRun')
     return (get_deadrun_ref(start_element), get_deadrun_ref(end_element))
 
 
@@ -193,25 +178,23 @@ def get_deadrun_ref(deadrun_element):
     return the ID of a JourneyPetternTimingLink.
     """
     if deadrun_element is not None:
-        element = deadrun_element.find('txc:ShortWorking/txc:JourneyPatternTimingLinkRef', NS)
-        if element is not None:
-            return element.text
+        return deadrun_element.findtext('ShortWorking/JourneyPatternTimingLinkRef')
         # ignore PositioningLinks
 
 
 class VehicleJourneyTimingLink:
     def __init__(self, element):
         self.id = element.attrib.get('id')
-        self.journeypatterntiminglinkref = element.find('txc:JourneyPatternTimingLinkRef', NS).text
-        self.run_time = element.find('txc:RunTime', NS)
+        self.journeypatterntiminglinkref = element.find('JourneyPatternTimingLinkRef').text
+        self.run_time = element.find('RunTime')
         if self.run_time is not None:
             self.run_time = parse_duration(self.run_time.text)
 
-        self.from_wait_time = element.find('txc:From/txc:WaitTime', NS)
+        self.from_wait_time = element.find('From/WaitTime')
         if self.from_wait_time is not None:
             self.from_wait_time = parse_duration(self.from_wait_time.text)
 
-        self.to_wait_time = element.find('txc:To/txc:WaitTime', NS)
+        self.to_wait_time = element.find('To/WaitTime')
         if self.to_wait_time is not None:
             self.to_wait_time = parse_duration(self.to_wait_time.text)
 
@@ -222,41 +205,34 @@ class VehicleJourney:
     journey_pattern = None
     journey_ref = None
     block = None
-    ticket_machine_code = None
 
     def __str__(self):
         return str(self.departure_time)
 
     def __init__(self, element, services, serviced_organisations):
-        self.code = element.find('txc:VehicleJourneyCode', NS).text
-        self.private_code = element.find('txc:PrivateCode', NS)
-        if self.private_code is not None:
-            self.private_code = self.private_code.text
+        self.code = element.find('VehicleJourneyCode').text
+        self.private_code = element.findtext('PrivateCode')
 
-        ticket_machine_code = element.find('txc:Operational/txc:TicketMachine/txc:JourneyCode', NS)
-        if ticket_machine_code is not None:
-            self.ticket_machine_code = ticket_machine_code.text
-        block = element.find('txc:Operational/txc:Block/txc:BlockNumber', NS)
-        if block is not None:
-            self.block = block.text
+        self.ticket_machine_code = element.findtext('Operational/TicketMachine/JourneyCode')
+        self.block = element.findtext('Operational/Block/BlockNumber')
 
-        self.service_ref = element.find('txc:ServiceRef', NS).text
-        self.line_ref = element.find('txc:LineRef', NS).text
+        self.service_ref = element.find('ServiceRef').text
+        self.line_ref = element.find('LineRef').text
 
-        journeypatternref_element = element.find('txc:JourneyPatternRef', NS)
+        journeypatternref_element = element.find('JourneyPatternRef')
         if journeypatternref_element is not None:
             self.journey_pattern = services[self.service_ref].journey_patterns.get(journeypatternref_element.text)
         else:
             # Journey has no direct reference to a JourneyPattern.
             # Instead, it has a reference to another journey...
-            self.journey_ref = element.find('txc:VehicleJourneyRef', NS).text
+            self.journey_ref = element.find('VehicleJourneyRef').text
 
-        operatingprofile_element = element.find('txc:OperatingProfile', NS)
+        operatingprofile_element = element.find('OperatingProfile')
         if operatingprofile_element is not None:
             self.operating_profile = OperatingProfile(operatingprofile_element, serviced_organisations)
 
         departure_time = datetime.datetime.strptime(
-            element.find('txc:DepartureTime', NS).text, '%H:%M:%S'
+            element.find('DepartureTime').text, '%H:%M:%S'
         )
         self.departure_time = datetime.timedelta(hours=departure_time.hour,
                                                  minutes=departure_time.minute,
@@ -264,20 +240,18 @@ class VehicleJourney:
 
         self.start_deadrun, self.end_deadrun = get_deadruns(element)
 
-        self.operator = element.find('txc:OperatorRef', NS)
-        if self.operator is not None:
-            self.operator = self.operator.text
+        self.operator = element.findtext('OperatorRef')
 
         sequencenumber = element.get('SequenceNumber')
         self.sequencenumber = sequencenumber and int(sequencenumber)
 
-        timing_links = element.findall('txc:VehicleJourneyTimingLink', NS)
+        timing_links = element.findall('VehicleJourneyTimingLink')
         self.timing_links = [VehicleJourneyTimingLink(timing_link) for timing_link in timing_links]
 
-        note_elements = element.findall('txc:Note', NS)
+        note_elements = element.findall('Note')
         if note_elements is not None:
             self.notes = {
-                note_element.find('txc:NoteCode', NS).text: note_element.find('txc:NoteText', NS).text
+                note_element.find('NoteCode').text: note_element.find('NoteText').text
                 for note_element in note_elements
             }
 
@@ -352,20 +326,18 @@ class VehicleJourney:
 class ServicedOrganisation:
     """Like a school, college, or workplace"""
     def __init__(self, element):
-        self.code = element.find('txc:OrganisationCode', NS).text
-        self.name = element.find('txc:Name', NS)
-        if self.name is not None:
-            self.name = self.name.text
+        self.code = element.find('OrganisationCode').text
+        self.name = element.findtext('Name')
 
-        working_days_element = element.find('txc:WorkingDays', NS)
+        working_days_element = element.find('WorkingDays')
         if working_days_element is not None:
-            self.working_days = [DateRange(e) for e in working_days_element.findall('txc:DateRange', NS)]
+            self.working_days = [DateRange(e) for e in working_days_element.findall('DateRange')]
         else:
             self.working_days = []
 
-        holidays_element = element.find('txc:Holidays', NS)
+        holidays_element = element.find('Holidays')
         if holidays_element is not None:
-            self.holidays = [DateRange(e) for e in holidays_element.findall('txc:DateRange', NS)]
+            self.holidays = [DateRange(e) for e in holidays_element.findall('DateRange')]
         else:
             self.holidays = []
 
@@ -381,10 +353,10 @@ class ServicedOrganisationDayType:
             return
 
         # Days of non-operation:
-        noop_element = element.find('txc:DaysOfNonOperation', NS)
+        noop_element = element.find('DaysOfNonOperation')
         if noop_element is not None:
-            noop_hols_element = noop_element.find('txc:Holidays/txc:ServicedOrganisationRef', NS)
-            noop_workingdays_element = noop_element.find('txc:WorkingDays/txc:ServicedOrganisationRef', NS)
+            noop_hols_element = noop_element.find('Holidays/ServicedOrganisationRef')
+            noop_workingdays_element = noop_element.find('WorkingDays/ServicedOrganisationRef')
 
             if noop_hols_element is not None:
                 self.nonoperation_holidays = serviced_organisations[noop_hols_element.text]
@@ -393,10 +365,10 @@ class ServicedOrganisationDayType:
                 self.nonoperation_workingdays = serviced_organisations[noop_workingdays_element.text]
 
         # Days of operation:
-        op_element = element.find('txc:DaysOfOperation', NS)
+        op_element = element.find('DaysOfOperation')
         if op_element is not None:
-            op_hols_element = op_element.find('txc:Holidays/txc:ServicedOrganisationRef', NS)
-            op_workingdays_element = op_element.find('txc:WorkingDays/txc:ServicedOrganisationRef', NS)
+            op_hols_element = op_element.find('Holidays/ServicedOrganisationRef')
+            op_workingdays_element = op_element.find('WorkingDays/ServicedOrganisationRef')
 
             if op_hols_element is not None:
                 self.operation_holidays = serviced_organisations[op_hols_element.text]
@@ -429,10 +401,10 @@ class OperatingProfile:
     def __init__(self, element, serviced_organisations):
         element = element
 
-        week_days_element = element.find('txc:RegularDayType/txc:DaysOfWeek', NS)
+        week_days_element = element.find('RegularDayType/DaysOfWeek')
         self.regular_days = []
         if week_days_element is not None:
-            for day in [e.tag[33:] for e in week_days_element]:
+            for day in [e.tag for e in week_days_element]:
                 if 'To' in day:
                     day_range_bounds = [WEEKDAYS[i] for i in day.split('To')]
                     day_range = range(day_range_bounds[0], day_range_bounds[1] + 1)
@@ -446,22 +418,22 @@ class OperatingProfile:
 
         # Special Days:
 
-        special_days_element = element.find('txc:SpecialDaysOperation', NS)
+        special_days_element = element.find('SpecialDaysOperation')
 
         if special_days_element is not None:
-            nonoperation_days_element = special_days_element.find('txc:DaysOfNonOperation', NS)
+            nonoperation_days_element = special_days_element.find('DaysOfNonOperation')
 
             if nonoperation_days_element is not None:
-                self.nonoperation_days = list(map(DateRange, nonoperation_days_element.findall('txc:DateRange', NS)))
+                self.nonoperation_days = list(map(DateRange, nonoperation_days_element.findall('DateRange')))
 
-            operation_days_element = special_days_element.find('txc:DaysOfOperation', NS)
+            operation_days_element = special_days_element.find('DaysOfOperation')
 
             if operation_days_element is not None:
-                self.operation_days = list(map(DateRange, operation_days_element.findall('txc:DateRange', NS)))
+                self.operation_days = list(map(DateRange, operation_days_element.findall('DateRange')))
 
         # Serviced Organisation:
 
-        serviced_organisation_day_type_element = element.find('txc:ServicedOrganisationDayType', NS)
+        serviced_organisation_day_type_element = element.find('ServicedOrganisationDayType')
 
         if serviced_organisation_day_type_element is not None:
             self.serviced_organisation_day_type = ServicedOrganisationDayType(serviced_organisation_day_type_element,
@@ -469,23 +441,23 @@ class OperatingProfile:
 
         # Bank Holidays
 
-        bank_holidays_operation_element = element.find('txc:BankHolidayOperation/txc:DaysOfOperation', NS)
-        bank_holidays_nonoperation_element = element.find('txc:BankHolidayOperation/txc:DaysOfNonOperation', NS)
+        bank_holidays_operation_element = element.find('BankHolidayOperation/DaysOfOperation')
+        bank_holidays_nonoperation_element = element.find('BankHolidayOperation/DaysOfNonOperation')
         if bank_holidays_operation_element is not None:
-            self.operation_bank_holidays = [e.tag[33:] for e in bank_holidays_operation_element]
+            self.operation_bank_holidays = [e.tag for e in bank_holidays_operation_element]
         else:
             self.operation_bank_holidays = []
 
         if bank_holidays_nonoperation_element is not None:
-            self.nonoperation_bank_holidays = [e.tag[33:] for e in bank_holidays_nonoperation_element]
+            self.nonoperation_bank_holidays = [e.tag for e in bank_holidays_nonoperation_element]
         else:
             self.nonoperation_bank_holidays = []
 
 
 class DateRange:
     def __init__(self, element):
-        self.start = ciso8601.parse_datetime(element.find('txc:StartDate', NS).text).date()
-        self.end = element.find('txc:EndDate', NS)
+        self.start = ciso8601.parse_datetime(element.find('StartDate').text).date()
+        self.end = element.find('EndDate')
         if self.end is not None:
             self.end = self.end.text
             if self.end:
@@ -529,11 +501,8 @@ class OperatingPeriod(DateRange):
 
 
 class Service:
-    marketing_name = None
     description = None
     description_parts = None
-    origin = None
-    destination = None
     via = None
     operating_profile = None
 
@@ -558,52 +527,40 @@ class Service:
             self.description_parts[-1], self.via = self.description_parts[-1].split(' via ', 1)
 
     def __init__(self, element, serviced_organisations, journey_pattern_sections):
-        mode_element = element.find('txc:Mode', NS)
-        if mode_element is not None:
-            self.mode = mode_element.text
-        else:
-            self.mode = ''
+        self.mode = element.findtext('Mode', '')
 
-        self.operator = element.find('txc:RegisteredOperatorRef', NS)
-        if self.operator is not None:
-            self.operator = self.operator.text
+        self.operator = element.findtext('RegisteredOperatorRef')
 
-        operatingprofile_element = element.find('txc:OperatingProfile', NS)
+        operatingprofile_element = element.find('OperatingProfile')
         if operatingprofile_element is not None:
             self.operating_profile = OperatingProfile(operatingprofile_element, serviced_organisations)
 
-        self.operating_period = OperatingPeriod(element.find('txc:OperatingPeriod', NS))
+        self.operating_period = OperatingPeriod(element.find('OperatingPeriod'))
 
-        self.service_code = element.find('txc:ServiceCode', NS).text
+        self.service_code = element.find('ServiceCode').text
 
-        marketing_name = element.find('txc:MarketingName', NS)
-        if marketing_name is not None:
-            self.marketing_name = marketing_name.text
+        self.marketing_name = element.findtext('MarketingName')
 
-        description_element = element.find('txc:Description', NS)
+        description_element = element.find('Description')
         if description_element is not None:
             self.set_description(description_element.text)
 
-        origin = element.find('txc:StandardService/txc:Origin', NS)
-        if origin is not None:
-            origin = origin.text
-            if origin:
-                self.origin = origin.replace('`', "'").strip()
+        self.origin = element.findtext('StandardService/Origin')
+        if self.origin:
+            self.origin = self.origin.replace('`', "'").strip()
 
-        destination = element.find('txc:StandardService/txc:Destination', NS)
-        if destination is not None:
-            destination = destination.text
-            if destination:
-                self.destination = destination.replace('`', "'").strip()
+        self.destination = element.findtext('StandardService/Destination')
+        if self.destination:
+            self.destination = self.destination.replace('`', "'").strip()
 
-        self.vias = element.find('txc:StandardService/txc:Vias', NS)
+        self.vias = element.find('StandardService/Vias')
         if self.vias:
             self.vias = [via.text for via in self.vias]
 
         self.journey_patterns = {
             journey_pattern.id: journey_pattern for journey_pattern in (
                JourneyPattern(journey_pattern, journey_pattern_sections)
-               for journey_pattern in element.findall('txc:StandardService/txc:JourneyPattern', NS)
+               for journey_pattern in element.findall('StandardService/JourneyPattern')
             ) if journey_pattern.sections
         }
 
@@ -612,9 +569,9 @@ class Service:
 
 def get_lines(service_element):
     lines = []
-    for line_element in service_element.find('txc:Lines', NS):
+    for line_element in service_element.find('Lines'):
         line_id = line_element.attrib['id']
-        line_name = (line_element.find('txc:LineName', NS).text or '').strip()
+        line_name = (line_element.find('LineName').text or '').strip()
         if '|' in line_name:
             line_name, line_brand = line_name.split('|', 1)
         else:
@@ -677,7 +634,9 @@ class TransXChange:
         journey_pattern_sections = {}
 
         for _, element in iterator:
-            tag = element.tag[33:]
+            if element.tag[:33] == '{http://www.transxchange.org.uk/}':
+                element.tag = element.tag[33:]
+            tag = element.tag
 
             if tag == 'StopPoints':
                 for stop_element in element:

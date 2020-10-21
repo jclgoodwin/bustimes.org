@@ -743,12 +743,12 @@ class ImportTransXChangeTest(TestCase):
 
     def test_get_operator_name(self):
         blue_triangle_element = ET.fromstring("""
-            <txc:Operator xmlns:txc='http://www.transxchange.org.uk/' id='OId_BE'>
-                <txc:OperatorCode>BE</txc:OperatorCode>
-                <txc:OperatorShortName>BLUE TRIANGLE BUSES LIM</txc:OperatorShortName>
-                <txc:OperatorNameOnLicence>BLUE TRIANGLE BUSES LIMITED</txc:OperatorNameOnLicence>
-                <txc:TradingName>BLUE TRIANGLE BUSES LIMITED</txc:TradingName>
-            </txc:Operator>
+            <Operator id='OId_BE'>
+                <OperatorCode>BE</OperatorCode>
+                <OperatorShortName>BLUE TRIANGLE BUSES LIM</OperatorShortName>
+                <OperatorNameOnLicence>BLUE TRIANGLE BUSES LIMITED</OperatorNameOnLicence>
+                <TradingName>BLUE TRIANGLE BUSES LIMITED</TradingName>
+            </Operator>
         """)
         self.assertEqual(import_transxchange.get_operator_name(blue_triangle_element), 'BLUE TRIANGLE BUSES LIMITED')
 
@@ -756,20 +756,20 @@ class ImportTransXChangeTest(TestCase):
         command = import_transxchange.Command()
         command.set_region('EA.zip')
         element = ET.fromstring("""
-            <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_RRS">
-                <txc:OperatorCode>RRS</txc:OperatorCode>
-                <txc:OperatorShortName>Replacement Service</txc:OperatorShortName>
-                <txc:OperatorNameOnLicence>Replacement Service</txc:OperatorNameOnLicence>
-                <txc:TradingName>Replacement Service</txc:TradingName>
-            </txc:Operator>
+            <Operator id="OId_RRS">
+                <OperatorCode>RRS</OperatorCode>
+                <OperatorShortName>Replacement Service</OperatorShortName>
+                <OperatorNameOnLicence>Replacement Service</OperatorNameOnLicence>
+                <TradingName>Replacement Service</TradingName>
+            </Operator>
         """)
         self.assertIsNone(command.get_operator(element))
 
         with warnings.catch_warnings(record=True) as caught_warnings:
             self.assertIsNone(command.get_operator(ET.fromstring("""
-                <txc:Operator xmlns:txc="http://www.transxchange.org.uk/" id="OId_RRS">
-                    <txc:OperatorCode>BEAN</txc:OperatorCode>
-                    <txc:TradingName>Bakers</txc:TradingName>
-                </txc:Operator>
+                <Operator id="OId_RRS">
+                    <OperatorCode>BEAN</OperatorCode>
+                    <TradingName>Bakers</TradingName>
+                </Operator>
             """)))
             self.assertTrue('Operator not found:' in str(caught_warnings[0].message))

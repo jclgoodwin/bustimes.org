@@ -27,8 +27,6 @@ from transxchange.txc import TransXChange, sanitize_description_part, Grouping
 
 logger = logging.getLogger(__name__)
 
-
-NS = {'txc': 'http://www.transxchange.org.uk/'}
 """
 _________________________________________________________________________________________________
 | AllBankHolidays | AllHolidaysExceptChristmas | Holidays             | NewYearsDay              |
@@ -86,17 +84,11 @@ def get_service_code(filename):
             return '-'.join(parts[:-1])
 
 
-def get_operator_code(operator_element, element_name):
-    element = operator_element.find(f'txc:{element_name}', NS)
-    if element is not None:
-        return element.text
-
-
 def get_operator_name(operator_element):
     "Given an Operator element, returns the operator name or None"
 
     for element_name in ('TradingName', 'OperatorNameOnLicence', 'OperatorShortName'):
-        name = get_operator_code(operator_element, element_name)
+        name = operator_element.findtext(element_name)
         if name:
             return name.replace('&amp;', '&')
 
@@ -165,12 +157,12 @@ class Command(BaseCommand):
     def get_operator(self, operator_element):
         "Given an Operator element, returns an operator code for an operator that exists."
 
-        operator_code = get_operator_code(operator_element, 'NationalOperatorCode')
+        operator_code = operator_element.findtext('NationalOperatorCode')
         operator = get_operator_by('National Operator Codes', operator_code)
         if operator:
             return operator
 
-        licence_number = get_operator_code(operator_element, 'LicenceNumber')
+        licence_number = operator_element.findtext('LicenceNumber')
         if licence_number:
             if licence_number.startswith('YW'):
                 licence_number = licence_number.replace('YW', 'PB')
@@ -187,7 +179,7 @@ class Command(BaseCommand):
             pass
 
         # Get by regional operator code
-        operator_code = get_operator_code(operator_element, 'OperatorCode')
+        operator_code = operator_element.findtext('OperatorCode')
         if operator_code:
             if not self.is_tnds():
                 operator_code = self.operators.get(operator_code, operator_code)
@@ -362,7 +354,8 @@ class Command(BaseCommand):
         if summary:
             summary = summary.replace('Schooldays days', 'school days').replace('Schools days', 'school days')
             summary = summary.replace('Schooldays holidays', 'school holidays').replace('AnySchool', 'school')
-            summary = summary.replace('SCHOOLDAYS days', 'school days').replace('SCHOOLDAYS holidays', 'school holidays')
+            summary = summary.replace('SCHOOLDAYS days', 'school days')
+            summary = summary.replace('SCHOOLDAYS holidays', 'school holidays')
 
         calendar = Calendar(
             mon=False,
