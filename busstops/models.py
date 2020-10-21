@@ -741,20 +741,7 @@ class Service(models.Model):
 
         base_query = [('command', 'direct'), ('outputFormat', 0)]
 
-        if self.source.name == 'NCSD':
-            parts = self.service_code.split('_')
-            operator_number = self.get_operator_number(parts[1])
-            if operator_number is not None:
-                query = [('line', operator_number + parts[0][:3].zfill(3)),
-                         ('sup', parts[0][3:]),
-                         ('net', 'nrc'),
-                         ('project', 'y08')]
-                yield (
-                    f'{base_url}{urlencode(query + base_query)}',
-                    'Timetable on the Traveline South West website'
-                )
-
-        elif self.source.name in {'SE', 'SW', 'EM', 'WM', 'EA', 'L'} or '.gov.' in self.source.url:
+        if self.source.name in {'SE', 'SW', 'EM', 'WM', 'EA', 'L'} or '.gov.' in self.source.url:
             if self.servicecode_set.filter(scheme='TfL').exists():
                 yield (self.get_tfl_url(), 'Timetable on the Transport for London website')
                 return
