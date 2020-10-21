@@ -737,6 +737,8 @@ class Command(BaseCommand):
                                         geometry.append(link.track)
                 if geometry:
                     geometry = MultiLineString(geometry).simplify()
+                    if not isinstance(geometry, MultiLineString):
+                        geometry = MultiLineString(geometry)
                     route_defaults['geometry'] = geometry
 
             route_code = filename
