@@ -88,6 +88,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         command = TransXChangeCommand()
         command.undefined_holidays = set()
+        command.missing_operators = []
         command.notes = {}
         command.corrections = {}
 
@@ -99,6 +100,7 @@ class Command(BaseCommand):
             versions = get_versions(session, url)
 
             if not versions or not any(version['modified'] for version in versions):
+                sleep(2)
                 continue
 
             command.source, _ = DataSource.objects.get_or_create({'name': name}, url=url)
@@ -161,5 +163,5 @@ class Command(BaseCommand):
                 handle_gtfs(list(operators.values()), version['gtfs_path'])
 
             command.source.save(update_fields=['datetime'])
-        else:
-            sleep(2)
+
+        command.debrief()

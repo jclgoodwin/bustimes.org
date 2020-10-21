@@ -69,6 +69,7 @@ class ImportTransXChangeTest(TestCase):
         command.service_ids = set()
         command.route_ids = set()
         command.undefined_holidays = set()
+        command.missing_operators = []
         command.calendar_cache = {}
         command.corrections = {}
         command.open_data_operators = set()
@@ -494,9 +495,17 @@ class ImportTransXChangeTest(TestCase):
 
     def test_multiple_operators(self):
         with patch('os.path.getmtime', return_value=1582385679):
-            self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
+            with patch('builtins.print') as mocked_print:
+                self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
         service = Service.objects.get()
         self.assertTrue(service.current)
+
+        mocked_print.assert_called_with("""<Operator id="BLB">
+      <NationalOperatorCode>SBLB</NationalOperatorCode>
+      <OperatorCode>BLB</OperatorCode>
+      <OperatorShortName>Stagecoach North Scotlan</OperatorShortName>
+    </Operator>
+    """)
 
         service.slug = 'abao421'
         service.save(update_fields=['slug'])
@@ -512,10 +521,18 @@ class ImportTransXChangeTest(TestCase):
 
         # back within operating period - should update slug
         with patch('os.path.getmtime', return_value=1582385679):
-            self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
+            with patch('builtins.print') as mocked_print:
+                self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
         service = Service.objects.get()
         self.assertTrue(service.current)
         self.assertEqual(service.slug, '421-inverurie-alford')
+
+        mocked_print.assert_called_with("""<Operator id="BLB">
+      <NationalOperatorCode>SBLB</NationalOperatorCode>
+      <OperatorCode>BLB</OperatorCode>
+      <OperatorShortName>Stagecoach North Scotlan</OperatorShortName>
+    </Operator>
+    """)
 
     def test_multiple_services(self):
         with patch('os.path.getmtime', return_value=1582385679):
@@ -754,6 +771,7 @@ class ImportTransXChangeTest(TestCase):
 
     def test_get_operator(self):
         command = import_transxchange.Command()
+        command.missing_operators = []
         command.set_region('EA.zip')
         element = ET.fromstring("""
             <Operator id="OId_RRS">
@@ -764,12 +782,12 @@ class ImportTransXChangeTest(TestCase):
             </Operator>
         """)
         self.assertIsNone(command.get_operator(element))
+        self.assertEqual(1, len(command.missing_operators))
 
-        with warnings.catch_warnings(record=True) as caught_warnings:
-            self.assertIsNone(command.get_operator(ET.fromstring("""
-                <Operator id="OId_RRS">
-                    <OperatorCode>BEAN</OperatorCode>
-                    <TradingName>Bakers</TradingName>
-                </Operator>
-            """)))
-            self.assertTrue('Operator not found:' in str(caught_warnings[0].message))
+        self.assertIsNone(command.get_operator(ET.fromstring("""
+            <Operator id="OId_RRS">
+                <OperatorCode>BEAN</OperatorCode>
+                <TradingName>Bakers</TradingName>
+            </Operator>
+        """)))
+        self.assertEqual(2, len(command.missing_operators))

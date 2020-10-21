@@ -177,7 +177,9 @@ TIME_ZONE = 'Europe/London'
 USE_TZ = True
 USE_I18N = False
 
-if not DEBUG and not TEST and 'collectstatic' not in sys.argv and 'SENTRY_DSN' in os.environ:
+if TEST:
+    pass
+elif not DEBUG and 'collectstatic' not in sys.argv and 'SENTRY_DSN' in os.environ:
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
     from sentry_sdk.integrations.redis import RedisIntegration

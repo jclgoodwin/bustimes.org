@@ -110,6 +110,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.calendar_cache = {}
         self.undefined_holidays = set()
+        self.missing_operators = []
         self.notes = {}
         open_data_operators = []
         incomplete_operators = []
@@ -135,8 +136,14 @@ class Command(BaseCommand):
         self.incomplete_operators = set(incomplete_operators)
         for archive_name in options['archives']:
             self.handle_archive(archive_name, options['files'])
+
+        self.debrief()
+
+    def debrief(self):
         if self.undefined_holidays:
             print(self.undefined_holidays)
+        for operator in self.missing_operators:
+            print(operator)
 
     def set_region(self, archive_name):
         archive_name = os.path.basename(archive_name)
@@ -189,8 +196,7 @@ class Command(BaseCommand):
             if operator:
                 return operator
 
-        if name not in {'Replacement Service', 'UNKWN'}:
-            warnings.warn('Operator not found:\n{}'.format(ET.tostring(operator_element).decode()))
+        self.missing_operators.append(ET.tostring(operator_element, encoding="unicode"))
 
     def get_operators(self, transxchange, service):
         operators = transxchange.operators

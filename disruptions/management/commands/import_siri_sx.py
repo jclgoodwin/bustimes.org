@@ -16,7 +16,7 @@ def get_period(element):
 
 def handle_item(item, source):
     situation_number = item.find('SituationNumber').text
-    xml = ET.tostring(item).decode()
+    xml = ET.tostring(item, encoding="unicode")
 
     created_time = parse_datetime(item.find('CreationTime').text)
 
@@ -77,7 +77,7 @@ def handle_item(item, source):
                 pass
 
         consequence.text = consequence_element.find('Advice/Details').text
-        consequence.data = ET.tostring(consequence_element).decode()
+        consequence.data = ET.tostring(consequence_element, encoding="unicode")
         consequence.save()
 
         stops = consequence_element.findall('Affects/StopPoints/AffectedStopPoint')

@@ -58,10 +58,15 @@ class GTFSTest(TestCase):
                     open_zipfile.write(os.path.join(dir_path, item), item)
 
         with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'google_transit_ie') + '.yaml'):
-            call_command('import_gtfs', '--force', '-v2')
+            with patch('builtins.print') as mocked_print:
+                call_command('import_gtfs', '--force', '-v2')
+        mocked_print.assert_called_with((0, {}))
+
+        # import a second time - test that it's OK if stuff already exists
         with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'google_transit_ie') + '.yaml'):
-            # import a second time - test that it's OK if stuff already exists
-            call_command('import_gtfs', '--force')
+            with patch('builtins.print') as mocked_print:
+                call_command('import_gtfs', '--force')
+        mocked_print.assert_called_with((0, {}))
 
         for collection in settings.IE_COLLECTIONS:
             dir_path = os.path.join(FIXTURES_DIR, 'google_transit_' + collection)
@@ -152,6 +157,8 @@ class GTFSTest(TestCase):
         self.assertFalse(Route.objects.all())
 
         with patch('bustimes.management.commands.import_gtfs.download_if_changed', return_value=(True, None)):
-            with self.assertRaises(FileNotFoundError):
-                call_command('import_gtfs')
+            with patch('builtins.print') as mocked_print:
+                with self.assertRaises(FileNotFoundError):
+                    call_command('import_gtfs')
+        mocked_print.assert_called_with('mortons')
         self.assertFalse(Route.objects.all())

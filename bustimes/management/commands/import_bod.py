@@ -33,6 +33,7 @@ def clean_up(operators, sources, incomplete=False):
 def get_command():
     command = TransXChangeCommand()
     command.undefined_holidays = set()
+    command.missing_operators = []
     command.notes = {}
     command.corrections = {}
 
@@ -132,8 +133,7 @@ def bus_open_data(api_key):
             if Service.objects.filter(source__in=sources, operator__in=operators).exists():
                 clean_up(operators, sources, incomplete)
 
-    if command.undefined_holidays:
-        print(command.undefined_holidays)
+    command.debrief()
 
 
 def first():
@@ -188,8 +188,7 @@ def first():
 
             print(' ', Operator.objects.filter(service__route__source=command.source).distinct().values('id'))
 
-    if command.undefined_holidays:
-        print(command.undefined_holidays)
+    command.debrief()
 
 
 def ticketer():
@@ -240,8 +239,7 @@ def ticketer():
             print(' ', {o['id']: o['id'] for o in
                   Operator.objects.filter(service__route__source=command.source).distinct().values('id')})
 
-    if command.undefined_holidays:
-        print(command.undefined_holidays)
+    command.debrief()
 
 
 def stagecoach():
@@ -289,8 +287,7 @@ def stagecoach():
             if 'ARDU' in operators:
                 command.source.service_set.filter(operator='ARDU').delete()
 
-    if command.undefined_holidays:
-        print(command.undefined_holidays)
+    command.debrief()
 
 
 class Command(BaseCommand):
