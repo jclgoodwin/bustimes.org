@@ -189,6 +189,20 @@ if not DEBUG and not TEST and 'collectstatic' not in sys.argv and 'SENTRY_DSN' i
         ignore_errors=[KeyboardInterrupt],
         traces_sample_rate=0.25
     )
+else:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'root': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+        },
+    }
 
 TRANSPORTAPI = {
    'app_id': os.environ.get('TRANSPORTAPI_APP_ID'),
