@@ -1,3 +1,4 @@
+from urllib.parse import quote
 from datetime import timedelta
 from requests import Session
 from django.core.cache import cache
@@ -21,7 +22,7 @@ schemes = ('Cornwall SIRI', 'Devon SIRI', 'Bristol SIRI',
 def siri_one_shot(code, now, locations):
     source = 'Icarus'
     siri_source = SIRISource.objects.get(name=code.scheme[:-5])
-    line_name_cache_key = f'{siri_source.url}:{siri_source.requestor_ref}:{code.code}'
+    line_name_cache_key = f'{siri_source.url}:{siri_source.requestor_ref}:{quote(code.code)}'
     service_cache_key = f'{code.service_id}:{source}'
     if cache.get(line_name_cache_key):
         return 'cached (line name)'
