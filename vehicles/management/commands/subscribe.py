@@ -62,7 +62,7 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
 
         self.source = DataSource.objects.get(name='Transport for the North')
 
-        now = timezone.localtime()
+        now = timezone.now()
 
         self.session = requests.Session()
 
@@ -95,7 +95,7 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
 
         self.source = DataSource.objects.get(name='Arriva')
 
-        now = timezone.localtime()
+        now = timezone.now()
 
         self.session = requests.Session()
 
