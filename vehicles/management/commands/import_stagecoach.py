@@ -148,7 +148,10 @@ class Command(ImportLiveVehiclesCommand):
                 defaults['fleet_number'] = vehicle_code
             if operator:
                 defaults['operator'] = operator
-                vehicles = self.vehicles.filter(operator__parent='Stagecoach')
+                if operator_id == 'SCLK':  # Scottish Citylink
+                    vehicles = self.vehicles.filter(operator=operator_id)
+                else:
+                    vehicles = self.vehicles.filter(operator__parent='Stagecoach')
                 vehicle, created = vehicles.get_or_create(defaults, code=vehicle_code)
                 self.vehicles_ids[vehicle_code] = vehicle.id
             else:
