@@ -1,8 +1,8 @@
 # coding=utf-8
 """View definitions."""
 import json
-import ciso8601
 import requests
+import datetime
 from ukpostcodeutils import validation
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.postgres.search import SearchQuery, SearchRank
@@ -536,8 +536,8 @@ class ServiceDetailView(DetailView):
             date = self.request.GET.get('date')
             if date:
                 try:
-                    date = ciso8601.parse_datetime(date).date()
-                    if date < timezone.localtime().date():
+                    date = datetime.date.fromisoformat(date)
+                    if date < timezone.localdate():
                         date = None
                 except ValueError:
                     date = None

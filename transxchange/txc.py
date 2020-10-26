@@ -2,7 +2,6 @@ import re
 import xml.etree.cElementTree as ET
 import calendar
 import datetime
-import ciso8601
 import logging
 from psycopg2.extras import DateRange as PDateRange
 from django.contrib.gis.geos import Point, LineString
@@ -457,12 +456,10 @@ class OperatingProfile:
 
 class DateRange:
     def __init__(self, element):
-        self.start = ciso8601.parse_datetime(element.find('StartDate').text).date()
-        self.end = element.find('EndDate')
-        if self.end is not None:
-            self.end = self.end.text
-            if self.end:
-                self.end = ciso8601.parse_datetime(self.end).date()
+        self.start = datetime.date.fromisoformat(element.findtext("StartDate"))
+        self.end = element.findtext("EndDate")
+        if self.end:
+            self.end = datetime.date.fromisoformat(self.end)
 
     def __str__(self):
         if self.start == self.end:
