@@ -5,7 +5,6 @@ Usage:
 """
 
 import logging
-import warnings
 import os
 import csv
 import yaml

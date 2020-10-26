@@ -1,7 +1,6 @@
 import os
 import zipfile
 import xml.etree.cElementTree as ET
-import warnings
 from mock import patch
 from tempfile import TemporaryDirectory
 from datetime import date

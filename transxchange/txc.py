@@ -15,9 +15,10 @@ from titlecase import titlecase
 logger = logging.getLogger(__name__)
 
 
-# A safe date, far from any daylight savings changes or leap seconds
-DESCRIPTION_REGEX = re.compile(r'.+,([^ ].+)$')
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}
+
+
+DESCRIPTION_REGEX = re.compile(r'.+,([^ ].+)$')
 
 
 def sanitize_description_part(part):
