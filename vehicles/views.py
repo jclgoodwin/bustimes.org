@@ -1,8 +1,7 @@
 import redis
 import json
 import xml.etree.cElementTree as ET
-from datetime import timedelta
-from ciso8601 import parse_datetime
+import datetime
 from django.db.models import Exists, OuterRef, Prefetch, Subquery
 from django.core.cache import cache
 from django.core.paginator import Paginator
@@ -137,12 +136,32 @@ def operator_vehicles(request, slug=None, parent=None):
     for vehicle in vehicles:
         vehicle.column_values = [vehicle.data and vehicle.data_get(key) or '' for key in columns]
 
+    if not parent:
+        today = timezone.localdate()
+        for vehicle in vehicles:
+            if vehicle.latest_location:
+                journey = vehicle.latest_location.journey
+                when = vehicle.latest_location.datetime
+            elif vehicle.latest_journeys:
+                journey = vehicle.latest_journeys[0]
+                when = journey.datetime
+            else:
+                continue
+            if journey.service:
+                service = journey.service.get_line_name_and_brand()
+            else:
+                service = journey.route_name
+            vehicle.last_seen = {
+                'service': service,
+                'when': when,
+                'today': timezone.localdate(when) == today,
+            }
+
     response = render(request, 'operator_vehicles.html', {
         'breadcrumb': breadcrumb,
         'parent': parent,
         'operators': parent and operators,
         'object': operator,
-        'today': timezone.localtime().date(),
         'vehicles': vehicles,
         'paginator': paginator,
         'code_column': any(v.fleet_number_mismatch() for v in vehicles),
@@ -162,7 +181,7 @@ def operator_vehicles(request, slug=None, parent=None):
 
 def get_locations(request):
     now = timezone.now()
-    fifteen_minutes_ago = now - timedelta(minutes=15)
+    fifteen_minutes_ago = now - datetime.timedelta(minutes=15)
     locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, datetime__gte=fifteen_minutes_ago,
                                                current=True)
 
@@ -207,10 +226,10 @@ def get_dates(journeys, vehicle=None, service=None):
     if not dates:
         dates = list(journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date'))
         if dates:
-            now = timezone.now()
+            now = timezone.localtime()
             if dates[-1] == now.date():
-                time_until_midnight = timedelta(days=1)
-                time_until_midnight -= timedelta(hours=now.hour, minutes=now.minute, seconds=now.second)
+                time_until_midnight = datetime.timedelta(days=1)
+                time_until_midnight -= datetime.timedelta(hours=now.hour, minutes=now.minute, seconds=now.second)
                 time_until_midnight = time_until_midnight.total_seconds()
                 if time_until_midnight > 0:
                     cache.set(key, dates, time_until_midnight)
@@ -224,7 +243,7 @@ def service_vehicles_history(request, slug):
     date = request.GET.get('date')
     if date:
         try:
-            date = parse_datetime(date).date()
+            date = datetime.date.fromisoformat(date)
         except ValueError:
             date = None
     dates = get_dates(journeys, service=service)
@@ -284,7 +303,7 @@ class VehicleDetailView(DetailView):
             date = self.request.GET.get('date')
             if date:
                 try:
-                    date = parse_datetime(date).date()
+                    date = datetime.date.fromisoformat(date)
                 except ValueError:
                     date = None
             if not date:

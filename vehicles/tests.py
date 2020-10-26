@@ -12,7 +12,7 @@ from .models import (Vehicle, VehicleType, VehicleFeature, Livery,
 class VehiclesTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.datetime = '2018-12-25 19:47+00:00'
+        cls.datetime = '2020-10-19 23:47+00:00'
 
         source = DataSource.objects.create(name='HP', datetime=cls.datetime)
 
@@ -100,17 +100,17 @@ class VehiclesTests(TestCase):
         self.assertFalse(str(response.context['exception']))
 
         # last seen today - should only show time
-        with freeze_time('2018-12-25 19:50+00:00'):
+        with freeze_time('2020-10-20 12:00+01:00'):
             with self.assertNumQueries(4):
                 response = self.client.get('/operators/lynx/vehicles')
-        self.assertNotContains(response, '25 Dec')
-        self.assertContains(response, '19:47')
+        self.assertNotContains(response, '20 Oct')
+        self.assertContains(response, '00:47')
 
-        # last seen today - should only show time
-        with freeze_time('2018-12-26 12:00+00:00'):
+        # last seen yesterday - should show date
+        with freeze_time('2020-10-21 00:10+01:00'):
             with self.assertNumQueries(4):
                 response = self.client.get('/operators/lynx/vehicles')
-        self.assertContains(response, '25 Dec 19:47')
+        self.assertContains(response, '20 Oct 00:47')
 
         self.assertTrue(response.context['code_column'])
         self.assertContains(response, '<td class="number">2</td>')
@@ -422,8 +422,6 @@ class VehiclesTests(TestCase):
             self.assertEqual(features[0]['properties']['service'],
                              {'line_name': '', 'url': '/services/spixworth-hunworth-happisburgh'})
 
-            # self.assertEqual(response.get('last-modified'), 'Tue, 25 Dec 2018 19:47:00 GMT')
-
             VehicleJourney.objects.update(service=None)
             with self.assertNumQueries(1):
                 response = self.client.get('/vehicles.json')
@@ -482,7 +480,7 @@ class VehiclesTests(TestCase):
             response = self.client.get('/services/spixworth-hunworth-happisburgh/vehicles?date=poop')
         self.assertContains(response, 'Vehicles')
         self.assertContains(response, '/vehicles/')
-        self.assertContains(response, '<option selected value="2018-12-25">Tuesday 25 December 2018</option>')
+        self.assertContains(response, '<option selected value="2020-10-20">Tuesday 20 October 2020</option>')
         self.assertContains(response, '1 - FD54\xa0JYA')
 
         with self.assertNumQueries(4):
