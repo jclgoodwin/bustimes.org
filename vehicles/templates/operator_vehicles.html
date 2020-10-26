@@ -90,37 +90,13 @@
                     <a href="{{ vehicle.get_absolute_url }}">{% if vehicle.reg %}{{ vehicle.get_reg }}{% elif not vehicle.fleet_number and not vehicle.fleet_code %}{{ vehicle }}{% endif %}</a>
                 </td>
                 {% if not parent %}<td class="last-seen">
-                    {% if vehicle.latest_location %}
-                        {% if vehicle.latest_location.journey.service %}
-                            {{ vehicle.latest_location.journey.service.get_line_name_and_brand }}
-                        {% else %}
-                            {{ vehicle.latest_location.journey.route_name }}
-                        {% endif %}
-                    {% else %}
-                        {% for journey in vehicle.latest_journeys %}
-                            {% if journey.service %}
-                                {{ journey.service.get_line_name_and_brand }}
-                            {% else %}
-                                {{ journey.route_name }}
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
+                    {{ vehicle.last_seen.service }}
                 </td>
                 <td class="last-seen">
-                    {% if vehicle.latest_location %}
-                        {% if vehicle.latest_location.datetime.date == today %}
-                            {{ vehicle.latest_location.datetime | time }}
-                        {% else %}
-                            {{ vehicle.latest_location.datetime }}
-                        {% endif %}
+                    {% if vehicle.last_seen.today %}
+                        {{ vehicle.last_seen.when|time }}
                     {% else %}
-                        {% for journey in vehicle.latest_journeys %}
-                            {% if journey.datetime.date == today %}
-                                {{ journey.datetime | time }}
-                            {% else %}
-                                {{ journey.datetime }}
-                            {% endif %}
-                        {% endfor %}
+                        {{ vehicle.last_seen.when }}
                     {% endif %}
                 </td>{% endif %}
                 <td>{% if vehicle.notes == 'Spare ticket machine' %}{{ vehicle.notes }}{% else %}{{ vehicle.vehicle_type|default:"" }}{% endif %}</td>
