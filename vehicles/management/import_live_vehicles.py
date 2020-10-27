@@ -74,7 +74,7 @@ def same_journey(latest_location, journey, when):
 class ImportLiveVehiclesCommand(BaseCommand):
     session = requests.Session()
     current_location_ids = set()
-    vehicles = Vehicle.objects.select_related('latest_location__journey__service')
+    vehicles = Vehicle.objects.select_related('latest_location__journey__service', 'livery')
     url = ''
     wait = 60
 
