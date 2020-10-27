@@ -26,7 +26,7 @@ class Command(ImportLiveVehiclesCommand):
         'GEA': ['KCTB', 'HEDO', 'CHAM'],
         # 'GP': ['GPLM'],
         'BOWE': ['HIPK'],
-        'CBLE': ['CBBH', 'CBNL'],
+        'CBBH': ['CBBH', 'CBNL'],
         # 'UNO': ['UNOE', 'UNIB'],
         'UNIB': ['UNOE', 'UNIB'],
         'GNE': ['GNEL'],
@@ -40,7 +40,7 @@ class Command(ImportLiveVehiclesCommand):
     }
     operator_cache = {}
     vehicle_cache = {}
-    reg_operators = {'BDRB', 'COMT', 'TDY'}
+    reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST'}
 
     @staticmethod
     def get_datetime(item):
