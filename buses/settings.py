@@ -151,7 +151,8 @@ if DEBUG:
     TEMPLATES[0]['OPTIONS']['loaders'] = ['django.template.loaders.app_directories.Loader']
 else:
     TEMPLATES[0]['OPTIONS']['loaders'] = [('django.template.loaders.cached.Loader', [
-        'template_minifier.template.loaders.app_directories.Loader',
+        # 'django.template.loaders.app_directories.Loader'
+        'template_minifier.template.loaders.app_directories.Loader'
     ])]
 
 CACHES = {
