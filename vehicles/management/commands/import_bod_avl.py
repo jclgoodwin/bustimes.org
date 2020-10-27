@@ -1,10 +1,10 @@
 import io
-import os
 import zipfile
 from xml.parsers.expat import ExpatError
 from ciso8601 import parse_datetime
-from datetime import datetime
+from multiprocessing.dummy import Pool
 import xmltodict
+from django.utils import timezone
 from django.contrib.gis.geos import Point
 from django.db.models import Q
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -236,9 +236,30 @@ class Command(ImportLiveVehiclesCommand):
             latlong=latlong,
         )
 
-    def get_items(self):
-        before = datetime.now()
+    def update(self):
+        now = timezone.now()
 
+        self.current_location_ids = set()
+
+        pool = Pool(4)
+        items = self.get_items()
+        if items:
+            pool.starmap(self.handle_item, ((item, now) for item in items))
+
+            self.get_old_locations().update(current=False)
+
+            print(self.operator_cache)
+        else:
+            return 300  # no items - wait five minutes
+
+        time_taken = (timezone.now() - now)
+        print(time_taken)
+        time_taken = time_taken.total_seconds()
+        if time_taken < self.wait:
+            return self.wait - time_taken
+        return 0  # took longer than self.wait
+
+    def get_items(self):
         response = self.session.get(self.source.url, params=self.source.settings)
         if not response.ok:
             if 'datafeed' in self.source.url:
@@ -271,10 +292,4 @@ class Command(ImportLiveVehiclesCommand):
 
         self.source.datetime = parse_datetime(data['Siri']['ServiceDelivery']['ResponseTimestamp'])
 
-        for item in data['Siri']['ServiceDelivery']['VehicleMonitoringDelivery']['VehicleActivity']:
-            yield item
-
-        after = datetime.now()
-
-        print(after - before)
-        print(self.operator_cache)
+        return data['Siri']['ServiceDelivery']['VehicleMonitoringDelivery']['VehicleActivity']

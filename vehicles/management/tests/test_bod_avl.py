@@ -33,9 +33,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command.source = self.source
 
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'bod_avl.yaml')):
-            with patch('builtins.print') as mocked_print:
-                items = list(command.get_items())
-        mocked_print.assert_called_with({})
+            items = list(command.get_items())
 
         self.assertEqual(841, len(items))
 
