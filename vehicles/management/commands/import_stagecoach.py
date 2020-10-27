@@ -175,7 +175,7 @@ class Command(ImportLiveVehiclesCommand):
                 journey = latest_location.journey
             else:
                 try:
-                    journey = vehicle.vehiclejourney_set.get(datetime=departure_time)
+                    journey = vehicle.vehiclejourney_set.select_related('service').get(datetime=departure_time)
                 except VehicleJourney.DoesNotExist:
                     pass
 

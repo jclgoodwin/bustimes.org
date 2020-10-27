@@ -104,7 +104,7 @@ class Command(ImportLiveVehiclesCommand):
             journey = latest_location.journey
         else:
             try:
-                journey = VehicleJourney.objects.get(vehicle=vehicle, datetime=datetime)
+                journey = VehicleJourney.objects.select_related('service').get(vehicle=vehicle, datetime=datetime)
             except VehicleJourney.DoesNotExist:
                 journey = VehicleJourney(datetime=datetime, data=item)
 

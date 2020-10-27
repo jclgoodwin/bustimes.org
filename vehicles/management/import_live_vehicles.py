@@ -240,7 +240,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             self.url = self.source.url
 
     def update(self):
-        now = timezone.localtime()
+        now = timezone.now()
         self.source.datetime = now
 
         self.current_location_ids = set()
