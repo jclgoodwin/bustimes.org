@@ -96,6 +96,9 @@ class Livery(models.Model):
     name = models.CharField(max_length=255, db_index=True)
     colours = models.CharField(max_length=255, blank=True)
     css = models.CharField(max_length=255, blank=True)
+    left_css = models.CharField(max_length=255, blank=True)
+    right_css = models.CharField(max_length=255, blank=True)
+    white_text = models.BooleanField(default=False)
     horizontal = models.BooleanField(default=False)
     angle = models.PositiveSmallIntegerField(null=True, blank=True)
 
@@ -317,9 +320,7 @@ class VehicleEdit(models.Model):
     url = models.URLField(blank=True, max_length=255)
     approved = models.BooleanField(null=True, db_index=True)
     datetime = models.DateTimeField(null=True, blank=True)
-    username = models.CharField(max_length=255, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True)
-    ip_address = models.GenericIPAddressField(null=True, blank=True)
 
     def get_changes(self):
         changes = {}
@@ -383,9 +384,7 @@ class VehicleRevision(models.Model):
     to_operator = models.ForeignKey(Operator, models.CASCADE, null=True, blank=True, related_name='revision_to')
     changes = models.JSONField(null=True, blank=True)
     message = models.TextField(blank=True)
-    username = models.CharField(max_length=255, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True)
-    ip_address = models.GenericIPAddressField(null=True, blank=True)
 
     def __str__(self):
         return ', '.join(
