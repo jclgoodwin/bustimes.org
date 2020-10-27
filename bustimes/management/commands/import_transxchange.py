@@ -600,7 +600,7 @@ class Command(BaseCommand):
                 if operator_code == 'TDTR' and 'Swindon-Rural' in filename:
                     operator_code = 'SBCR'
 
-                if parts:
+                if parts:  # Ticketer or Stagecoach
                     existing = self.source.service_set.filter(
                         line_name=line_name, route__code__contains=f'/{parts}_'
                     ).order_by('-current', 'id').first()
@@ -625,8 +625,8 @@ class Command(BaseCommand):
                     if not existing and operator_code != 'SBCR':
                         existing = self.get_existing_service(line_name, operators)
 
-            if existing and existing.id in self.service_ids and description and existing.description != description:
-                existing = None
+                    if existing and existing.id in self.service_ids and description and existing.description != description:
+                        existing = None
 
             if not existing:
                 existing = Service.objects.filter(service_code=service_code).first()
