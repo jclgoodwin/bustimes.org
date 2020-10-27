@@ -126,7 +126,7 @@ class Livery(models.Model):
             return get_css(self.colours.split(), direction, self.horizontal, self.angle)
 
     def preview(self, name=False, right=False):
-        background = self.left_css
+        background = escape(self.left_css)
         if not background:
             return
         div = f'<div style="height:1.5em;width:2.25em;background:{background}"'
@@ -146,10 +146,10 @@ class Livery(models.Model):
     def save(self, force_insert=False, force_update=False, **kwargs):
         if 'update_fields' not in kwargs:
             if self.css or self.colours:
-                css = self.get_css(escape=False)
+                css = self.get_css(escape_css=False)
                 if css:
                     self.left_css = css
-                    self.right_css = self.get_css(90, escape=False)
+                    self.right_css = self.get_css(90, escape_css=False)
                     if self.colours:
                         self.white_text = (get_text_colour(self.colours) == '#fff')
         super().save(force_insert, force_update, **kwargs)
@@ -247,10 +247,12 @@ class Vehicle(models.Model):
 
     def get_livery(self, direction=None):
         if self.livery:
-            return self.livery.get_css(direction=direction)
-        else:
-            colours = self.colours
-        if colours and self.colours != 'Other':
+            if direction is not None and direction < 180:
+                return escape(self.livery.right_css)
+            return escape(self.livery.left_css)
+
+        colours = self.colours
+        if colours and colours != 'Other':
             colours = colours.split()
             return get_css(colours, direction, self.livery and self.livery.horizontal)
 

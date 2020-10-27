@@ -155,6 +155,7 @@ class VehiclesTests(TestCase):
         self.assertIsNone(self.vehicle_1.get_text_colour())
 
         self.vehicle_1.livery.colours = '#c0c0c0'
+        self.vehicle_1.livery.save()
         self.assertEqual('#c0c0c0', self.vehicle_1.get_livery(200))
 
         livery.css = 'linear-gradient(45deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)'
