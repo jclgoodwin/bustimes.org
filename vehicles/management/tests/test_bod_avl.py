@@ -24,7 +24,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         ])
         cls.source = DataSource.objects.create(
             name='Bus Open Data',
-            url='https://data.bus-data.dft.gov.uk/avl/download/bulk_archive'
+            url='https://data.bus-data.dft.gov.uk/api/v1/datafeed/'
         )
 
     @freeze_time('2020-05-01')
