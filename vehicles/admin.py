@@ -2,6 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 from django.db.models import Count, Q
 from django.db.utils import ConnectionDoesNotExist
 from django.contrib.auth import get_user_model
@@ -446,16 +447,29 @@ class LiveryAdminForm(forms.ModelForm):
         widgets = {
             'colours': forms.Textarea,
             'css': forms.Textarea,
+            'left_css': forms.Textarea,
+            'right_css': forms.Textarea,
         }
 
 
 class LiveryAdmin(admin.ModelAdmin):
     form = LiveryAdminForm
     search_fields = ['name']
-    list_display = ['name', 'preview', 'vehicles']
+    list_display = ['name', 'vehicles', 'left', 'right', 'white_text']
+
+    def right(self, obj):
+        if obj.right_css:
+            return format_html('<div style="height:1.5em;width:2.25em;background:{}"></div>', obj.right_css)
+    right.admin_order_field = 'right_css'
+
+    def left(self, obj):
+        if obj.left_css:
+            return format_html('<div style="height:1.5em;width:2.25em;background:{}"></div>', obj.left_css)
+    left.admin_order_field = 'left_css'
 
     def vehicles(self, obj):
         return obj.vehicles
+    vehicles.admin_order_field = 'vehicles'
 
     def get_queryset(self, _):
         return Livery.objects.annotate(vehicles=Count('vehicle'))

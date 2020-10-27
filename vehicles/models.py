@@ -109,7 +109,7 @@ class Livery(models.Model):
     def __str__(self):
         return self.name
 
-    def get_css(self, direction=None):
+    def get_css(self, direction=None, escape_css=True):
         if self.css:
             css = self.css
             if direction is not None and direction < 180:
@@ -118,12 +118,15 @@ class Livery(models.Model):
                     css = css.replace(f'({angle}deg,', f'({replacement}deg,', 1)
                     # doesn't work with e.g. angles {a, b} where a = 360 - b
                 css = css.replace('left', 'right')
-            return escape(css)
+            if escape_css:
+                return escape(css)
+            else:
+                return css
         if self.colours and self.colours != 'Other':
             return get_css(self.colours.split(), direction, self.horizontal, self.angle)
 
-    def preview(self, name=False):
-        background = self.get_css()
+    def preview(self, name=False, right=False):
+        background = self.left_css
         if not background:
             return
         div = f'<div style="height:1.5em;width:2.25em;background:{background}"'
@@ -139,6 +142,17 @@ class Livery(models.Model):
             raise ValidationError({
                 'colours': str(e)
             })
+
+    def save(self, force_insert=False, force_update=False, **kwargs):
+        if 'update_fields' not in kwargs:
+            if self.css or self.colours:
+                css = self.get_css(escape=False)
+                if css:
+                    self.left_css = css
+                    self.right_css = self.get_css(90, escape=False)
+                    if self.colours:
+                        self.white_text = (get_text_colour(self.colours) == '#fff')
+        super().save(force_insert, force_update, **kwargs)
 
 
 class VehicleFeature(models.Model):
