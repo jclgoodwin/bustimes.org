@@ -601,20 +601,21 @@ class Command(BaseCommand):
                     operator_code = 'SBCR'
 
                 if parts:
+                    existing = self.source.service_set.filter(
+                        line_name=line_name, route__code__contains=f'/{parts}_'
+                    ).order_by('-current', 'id').first()
+
                     if 'opendata.ticketer' in self.source.url:
                         service_code = parts
-                        try:
-                            existing = Service.objects.get(operator__in=operators, current=True,
-                                                           line_name__iexact=line_name)
-                        except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-                            pass
+
+                        if not existing:
+                            try:
+                                existing = Service.objects.get(operator__in=operators, current=True,
+                                                               line_name__iexact=line_name)
+                            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                                pass
                     else:  # Stagecoach
                         service_code = f'{self.source.id}-{parts}-{line_name}'
-
-                    if not existing:
-                        existing = self.source.service_set.filter(
-                            line_name=line_name, route__code__contains=f'/{parts}_'
-                        ).order_by('-current', 'service_code').first()
 
                 else:
                     service_code = f'{self.source.id}-{operator_code}-{txc_service.service_code}'
