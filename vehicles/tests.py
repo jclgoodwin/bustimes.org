@@ -143,9 +143,8 @@ class VehiclesTests(TestCase):
         livery.horizontal = False
         livery.angle = 45
         livery.save()
-        self.assertEqual('linear-gradient(45deg,#7D287D 34%,#FDEE00 34%)', livery.get_css())
-        self.assertEqual('linear-gradient(315deg,#7D287D 34%,#FDEE00 34%)', livery.get_css(10))
-        self.assertEqual('linear-gradient(45deg,#7D287D 34%,#FDEE00 34%)', livery.get_css(300))
+        self.assertEqual('linear-gradient(45deg,#7D287D 34%,#FDEE00 34%)', livery.left_css)
+        self.assertEqual('linear-gradient(315deg,#7D287D 34%,#FDEE00 34%)', livery.right_css)
 
         livery.angle = None
         livery.save()
@@ -159,12 +158,9 @@ class VehiclesTests(TestCase):
         self.assertEqual('#c0c0c0', self.vehicle_1.get_livery(200))
 
         livery.css = 'linear-gradient(45deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)'
-        livery.save()
-        self.assertEqual(livery.get_css(), 'linear-gradient(45deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
-        self.assertEqual(livery.get_css(0), 'linear-gradient(315deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
-        self.assertEqual(livery.get_css(10), 'linear-gradient(315deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
-        self.assertEqual(livery.get_css(180), 'linear-gradient(45deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
-        self.assertEqual(livery.get_css(181), 'linear-gradient(45deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
+        livery.set_css()
+        self.assertEqual(livery.left_css, 'linear-gradient(45deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
+        self.assertEqual(livery.right_css, 'linear-gradient(315deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
 
     def test_vehicle_edit_1(self):
         self.client.force_login(self.user)

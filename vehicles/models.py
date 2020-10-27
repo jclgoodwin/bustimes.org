@@ -109,25 +109,26 @@ class Livery(models.Model):
     def __str__(self):
         return self.name
 
-    def get_css(self, direction=None, escape_css=True):
+    def set_css(self):
         if self.css:
             css = self.css
-            if direction is not None and direction < 180:
-                for angle in re.findall(r'\((\d+)deg,', css):
-                    replacement = 360 - int(angle)
-                    css = css.replace(f'({angle}deg,', f'({replacement}deg,', 1)
-                    # doesn't work with e.g. angles {a, b} where a = 360 - b
-                css = css.replace('left', 'right')
-            if escape_css:
-                return escape(css)
-            else:
-                return css
-        if self.colours and self.colours != 'Other':
-            return get_css(self.colours.split(), direction, self.horizontal, self.angle)
+            self.left_css = css
+            for angle in re.findall(r'\((\d+)deg,', css):
+                replacement = 360 - int(angle)
+                css = css.replace(f'({angle}deg,', f'({replacement}deg,', 1)
+                # doesn't work with e.g. angles {a, b} where a = 360 - b
+            self.right_css = css.replace('left', 'right')
 
-    def preview(self, name=False, right=False):
-        background = escape(self.left_css)
-        if not background:
+        elif self.colours and self.colours != 'Other':
+            self.left_css = get_css(self.colours.split(), None, self.horizontal, self.angle)
+            self.right_css = get_css(self.colours.split(), 90, self.horizontal, self.angle)
+
+    def preview(self, name=False):
+        if self.left_css:
+            background = escape(self.left_css)
+        elif self.colours:
+            background = get_css(self.colours.split())
+        else:
             return
         div = f'<div style="height:1.5em;width:2.25em;background:{background}"'
         if name:
@@ -146,12 +147,9 @@ class Livery(models.Model):
     def save(self, force_insert=False, force_update=False, **kwargs):
         if 'update_fields' not in kwargs:
             if self.css or self.colours:
-                css = self.get_css(escape_css=False)
-                if css:
-                    self.left_css = css
-                    self.right_css = self.get_css(90, escape_css=False)
-                    if self.colours:
-                        self.white_text = (get_text_colour(self.colours) == '#fff')
+                self.set_css()
+                if self.colours:
+                    self.white_text = (get_text_colour(self.colours) == '#fff')
         super().save(force_insert, force_update, **kwargs)
 
 
