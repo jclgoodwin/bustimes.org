@@ -1,4 +1,6 @@
-import requests
+import io
+import os
+import zipfile
 from xml.parsers.expat import ExpatError
 from ciso8601 import parse_datetime
 from datetime import datetime
@@ -236,17 +238,33 @@ class Command(ImportLiveVehiclesCommand):
 
         response = self.session.get(self.source.url, params=self.source.settings)
         if not response.ok:
-            print(response.content.decode())
+            if 'datafeed' in self.source.url:
+                print(response.content.decode())
+            else:
+                print(response)
             return
 
-        try:
-            data = xmltodict.parse(
-                response.content,
-                dict_constructor=dict  # override OrderedDict, cos dict is ordered in modern versions of Python
-            )
-        except ExpatError:
-            print(response.content.decode())
-            return
+        if 'datafeed' in self.source.url:
+            try:
+                data = xmltodict.parse(
+                    response.content,
+                    dict_constructor=dict  # override OrderedDict, cos dict is ordered in modern versions of Python
+                )
+            except ExpatError:
+                print(response.content.decode())
+                return
+        else:
+            try:
+                with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+                    assert archive.namelist() == ['siri.xml']
+                    with archive.open('siri.xml') as open_file:
+                        try:
+                            data = xmltodict.parse(open_file, dict_constructor=dict)
+                        except ExpatError:
+                            print(open_file.read())
+                            return
+            except zipfile.BadZipFile:
+                print(response.content.decode())
 
         self.source.datetime = parse_datetime(data['Siri']['ServiceDelivery']['ResponseTimestamp'])
 
