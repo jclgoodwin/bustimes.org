@@ -826,6 +826,13 @@ class Command(BaseCommand):
                 Trip.objects.filter(route__service=service, start='15:05').delete()
                 Trip.objects.filter(route__service=service, start='15:30').delete()
 
+            elif service_code == 'bed_44-34-_-y08':  # Sanders 34 Happisburgh - Stalham
+                StopTime.objects.filter(
+                    trip__route__service=service,
+                    trip__start='16:15',
+                    arrival__gte='16:50'
+                ).update(activity='setDown')
+
             service.update_search_vector()
 
         if len(linked_services) > 1:
