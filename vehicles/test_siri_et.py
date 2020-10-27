@@ -118,10 +118,10 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" version="1.3">
 </Siri>
         """
 
-        with self.assertNumQueries(34):
+        with self.assertNumQueries(35):
             handle_siri_et(xml)
 
-        with self.assertNumQueries(17):
+        with self.assertNumQueries(18):
             handle_siri_et(xml)
 
         self.assertEqual(4, Call.objects.count())
