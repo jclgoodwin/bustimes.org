@@ -430,8 +430,9 @@ FIRST_OPERATORS = [
 TICKETER_OPERATORS = [
     ('NW', ['WBTR'], 'Warrington’s Own Buses'),
     ('EA', ['LYNX'], 'Lynx'),
+    ('Y', ['RELD'], 'Reliance Motor Services'),
     ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
-    ('SW', ['PLYC', 'TFCN'], 'Go South West'),
+    # ('SW', ['PLYC', 'TFCN'], 'Go South West'),
     ('SE', ['METR'], 'Metrobus'),
     # ('SE', ['OXBC', 'CSLB', 'THTR'], 'Go-Ahead'),
     # ('NW', ['GONW'], 'Go North West'),
