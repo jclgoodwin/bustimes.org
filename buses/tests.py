@@ -19,6 +19,12 @@ class UtilsTests(TestCase):
                 {% endif %}
             </marquee>
             """), """
+
 <marquee>
-{% if foo %}{% if bar %}<strong>Golf sale</strong>  \n{% endif %}{% endif %}</marquee>
+{% if foo %}
+
+{% if bar %}
+<strong>Golf sale</strong>  \n{% endif %}
+{% endif %}
+</marquee>
 """)
