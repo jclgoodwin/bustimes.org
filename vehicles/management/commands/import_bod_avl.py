@@ -115,6 +115,8 @@ class Command(ImportLiveVehiclesCommand):
                     if fleet_number.isdigit():
                         defaults['fleet_number'] = fleet_number
                         defaults['reg'] = reg.replace('_', '')
+                        if operator_ref in self.reg_operators:
+                            condition |= Q(reg=reg)
                 elif operator_ref in self.reg_operators:
                     reg = vehicle_ref.replace('_', '')
                     condition |= Q(reg=reg)
