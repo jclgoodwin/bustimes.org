@@ -487,3 +487,19 @@ class VehiclesTests(TestCase):
         with self.assertNumQueries(4):
             response = self.client.get('/services/spixworth-hunworth-happisburgh/vehicles?date=2004-04-04')
         self.assertNotContains(response, '1 - FD54\xa0JYA')
+
+    def test_api(self):
+        with self.assertNumQueries(2):
+            response = self.client.get('/api/vehicles/')
+        data = response.json()
+        self.assertEqual(2, data['count'])
+
+        with self.assertNumQueries(1):
+            response = self.client.get('/api/vehicles/?reg=sa60twp')
+        data = response.json()
+        self.assertEqual(0, data['count'])
+
+        with self.assertNumQueries(2):
+            response = self.client.get('/api/vehicles/?search=fd54jya')
+        data = response.json()
+        self.assertEqual(1, data['count'])
