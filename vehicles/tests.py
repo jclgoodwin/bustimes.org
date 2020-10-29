@@ -259,8 +259,9 @@ class VehiclesTests(TestCase):
 #         self.assertEqual(str(edit.get_changes()), "{'vehicle_type': 'Optare Spectra', 'name': 'Colin', 'features': \
 # [<VehicleEditFeature: <del>Wi-Fi</del>>, <VehicleEditFeature: <ins>USB</ins>>]}")
 
-#         response = self.client.get('/admin/vehicles/vehicleedit/')
-#         self.assertContains(response, '<del>Wi-Fi</del>')
+        response = self.client.get('/admin/vehicles/vehicleedit/')
+        self.assertContains(response, '<td class="field-reg">FD54JYA</td>')
+        self.assertContains(response, '<td class="field-vehicle_type">Optare Tempo</td>')
 
         # should not create an edit
         with self.assertNumQueries(16):

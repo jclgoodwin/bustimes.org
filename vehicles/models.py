@@ -370,21 +370,23 @@ class VehicleEdit(models.Model):
         return changes
 
     def get_diff(self, field):
-        vehicle = str(getattr(self.vehicle, field) or '')
+        original = str(getattr(self.vehicle, field) or '')
         edit = str(getattr(self, field) or '')
         if field == 'reg':
             edit = edit.upper().replace(' ', '')
-        if vehicle != edit:
+        elif field == 'fleet_number':
+            original = self.vehicle.fleet_code or original
+        if original != edit:
             if edit:
-                if vehicle:
+                if original:
                     if edit.startswith('-'):
-                        if edit == f'-{vehicle}':
-                            return format_html('<del>{}</del>', vehicle)
+                        if edit == f'-{original}':
+                            return format_html('<del>{}</del>', original)
                     else:
-                        return format_html('<del>{}</del><br><ins>{}</ins>', vehicle, edit)
+                        return format_html('<del>{}</del><br><ins>{}</ins>', original, edit)
                 else:
                     return format_html('<ins>{}</ins>', edit)
-        return vehicle
+        return original
 
     def get_absolute_url(self):
         return self.vehicle.get_absolute_url()
