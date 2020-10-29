@@ -1,5 +1,6 @@
 import re
 import redis
+from aioredis import ReplyError
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from channels.exceptions import ChannelFull
@@ -536,13 +537,16 @@ class VehicleLocation(models.Model):
             'text_colour': vehicle.get_text_colour(),
             'early': self.early
         }
-        for channel in Channel.objects.filter(bounds__covers=self.latlong).only('name'):
-            try:
-                async_to_sync(channel_layer.send)(channel.name, message)
-            except ChannelFull:
-                channel.delete()
-        if self.journey.service_id:
-            async_to_sync(channel_layer.group_send)(f'service{self.journey.service_id}', message)
+        try:
+            for channel in Channel.objects.filter(bounds__covers=self.latlong).only('name'):
+                try:
+                    async_to_sync(channel_layer.send)(channel.name, message)
+                except ChannelFull:
+                    channel.delete()
+            if self.journey.service_id:
+                async_to_sync(channel_layer.group_send)(f'service{self.journey.service_id}', message)
+        except ReplyError:
+            return
 
     def get_json(self, extended=False):
         journey = self.journey
