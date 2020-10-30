@@ -7,7 +7,6 @@ header .search label {
         width: 45.5em + 2em;
     }
 
-    #cookie-message,
     main {
         width: 45.5em;
     }
@@ -40,4 +39,9 @@ h1 {
 
 .adsbygoogle {
     height: 90px;
+}
+
+#cookie-message {
+    margin: 1em;
+    left: auto;
 }
