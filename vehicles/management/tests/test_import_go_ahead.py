@@ -74,7 +74,10 @@ class GoAheadImportTest(TestCase):
         item['recordedTime'] = '2019-03-31T12:30:00.000Z'
         item['geo']['longitude'] = 0
         with self.assertNumQueries(4):
-            self.command.handle_item(item, self.command.source.datetime)
+            with patch('builtins.print') as mocked_print:
+                self.command.handle_item(item, self.command.source.datetime)
 
         location = VehicleLocation.objects.last()
         self.assertEqual(270, location.heading)
+
+        mocked_print.assert_called_with(f'1049.9874494117646 mph\t/vehicles/{location.journey.vehicle_id}')

@@ -1,3 +1,4 @@
+from mock import patch
 from django.test import TestCase
 from busstops.models import Region, Operator, DataSource, Service
 from ...models import VehicleLocation, Vehicle
@@ -61,7 +62,10 @@ class BusHubTest(TestCase):
         }
 
         with self.assertNumQueries(12):
-            command.handle_item(item, self.source.datetime)
+            with patch('builtins.print') as mocked_print:
+                command.handle_item(item, self.source.datetime)
+
+        mocked_print.assert_called()
 
         with self.assertNumQueries(1):
             command.handle_item(item, self.source.datetime)
