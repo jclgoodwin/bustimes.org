@@ -14,7 +14,6 @@ urlpatterns = [
     path('vehicles/<slug>', views.VehicleDetailView.as_view()),
     path('vehicles/<int:vehicle_id>/edit', views.edit_vehicle),
     path('vehicles/<int:vehicle_id>/history', views.vehicle_history),
-    path('journeys/<int:pk>', views.JourneyDetailView.as_view(), name='journey_detail'),
     path('journeys/<int:pk>/debug', views.journey_debug),
     path('journeys/<int:pk>.json', views.journey_json),
     path('vehicles/locations/<int:location_id>', views.location_detail),

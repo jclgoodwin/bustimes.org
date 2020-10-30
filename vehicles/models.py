@@ -448,38 +448,6 @@ class VehicleJourney(models.Model):
         )
 
 
-class Call(models.Model):
-    journey = models.ForeignKey(VehicleJourney, models.CASCADE, editable=False)
-    visit_number = models.PositiveSmallIntegerField()
-    stop = models.ForeignKey(StopPoint, models.CASCADE)
-    aimed_arrival_time = models.DateTimeField(null=True)
-    expected_arrival_time = models.DateTimeField(null=True)
-    aimed_departure_time = models.DateTimeField(null=True)
-    expected_departure_time = models.DateTimeField(null=True)
-
-    def arrival_delay(self):
-        if self.expected_arrival_time and self.aimed_arrival_time:
-            delay = (self.expected_arrival_time - self.aimed_arrival_time).total_seconds()
-            if delay:
-                return '{0:+d}'.format(int(delay / 60))
-        return ''
-
-    def departure_delay(self):
-        if self.expected_departure_time and self.aimed_departure_time:
-            delay = (self.expected_departure_time - self.aimed_departure_time).total_seconds()
-            if delay:
-                return '{0:+d}'.format(int(delay / 60))
-        return ''
-
-    class Meta:
-        index_together = (
-            ('stop', 'expected_departure_time'),
-        )
-        unique_together = (
-            ('journey', 'visit_number'),
-        )
-
-
 class JourneyCode(models.Model):
     code = models.CharField(max_length=64, blank=True)
     service = models.ForeignKey(Service, models.SET_NULL, null=True, blank=True)

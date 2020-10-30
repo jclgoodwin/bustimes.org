@@ -467,10 +467,10 @@ class VehiclesTests(TestCase):
         with self.assertNumQueries(1):
             self.client.get('/vehicles')
 
-    def test_journey_detail(self):
-        with self.assertNumQueries(2):
-            response = self.client.get(f'/journeys/{self.journey.id}')
-        self.assertContains(response, '<th colspan="2"></th><th>Timetable</th><th>Live</th></tr>')
+    def test_journey_debug(self):
+        with self.assertNumQueries(1):
+            response = self.client.get(f'/journeys/{self.journey.id}/debug')
+        self.assertEqual({}, response.json())
 
     def test_location_detail(self):
         with self.assertNumQueries(1):

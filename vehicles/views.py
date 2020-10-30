@@ -17,7 +17,7 @@ from busstops.models import Operator, Service
 from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision
 from .forms import EditVehiclesForm, EditVehicleForm
 from .utils import get_vehicle_edit, do_revision, do_revisions
-from .tasks import handle_siri_vm, handle_siri_et, handle_siri_sx
+from .tasks import handle_siri_vm, handle_siri_sx
 
 
 class Vehicles():
@@ -436,19 +436,6 @@ def vehicles_history(request):
     })
 
 
-class JourneyDetailView(DetailView):
-    model = VehicleJourney
-    queryset = model.objects.select_related('vehicle', 'service')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context['breadcrumb'] = [self.object.service]
-        context['calls'] = self.object.call_set.order_by('visit_number').select_related('stop__locality')
-
-        return context
-
-
 def journey_json(request, pk):
     try:
         r = redis.from_url(settings.CELERY_BROKER_URL)
@@ -492,14 +479,13 @@ def siri(request):
                 break
     elif 'VehicleLocation' in body:
         handle_siri_vm.delay(body)
-    elif 'SituationElement' in body:
-        handle_siri_sx.delay(body)
     else:
-        handle_siri_et.delay(body)
+        assert 'SituationElement' in body
+        handle_siri_sx.delay(body)
     return HttpResponse(f"""<?xml version="1.0" ?>
 <Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
   <DataReceivedAcknowledgement>
-    <ResponseTimestamp>{timezone.localtime().isoformat()}</ResponseTimestamp>
+    <ResponseTimestamp>{timezone.now().isoformat()}</ResponseTimestamp>
     <Status>true</Status>
   </DataReceivedAcknowledgement>
 </Siri>""", content_type='text/xml')

@@ -7,12 +7,6 @@ from django.db.models import Q
 from disruptions.management.commands.import_siri_sx import handle_item as siri_sx
 from .management.commands import import_sirivm
 from .models import JourneyCode, Vehicle, VehicleJourney
-from .siri_et import siri_et
-
-
-@shared_task
-def handle_siri_et(request_body):
-    siri_et(request_body)
 
 
 @shared_task
