@@ -75,7 +75,7 @@ class Stop:
 class Route:
     def __init__(self, element):
         self.id = element.get('id')
-        self.route_section_ref = element.find('RouteSectionRef').text
+        self.route_section_refs = [section.text for section in element.findall('RouteSectionRef')]
 
 
 class RouteSection:

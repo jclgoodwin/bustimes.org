@@ -727,10 +727,11 @@ class Command(BaseCommand):
                 if routes:
                     routes = [transxchange.routes[route_id] for route_id in transxchange.routes if route_id in routes]
                     for route in routes:
-                        section = transxchange.route_sections[route.route_section_ref]
-                        for link in section.links:
-                            if link.track:
-                                geometry.append(link.track)
+                        for section_ref in route.route_section_refs:
+                            section = transxchange.route_sections[section_ref]
+                            for link in section.links:
+                                if link.track:
+                                    geometry.append(link.track)
                 else:
                     route_links = {}
                     for section in transxchange.route_sections.values():
