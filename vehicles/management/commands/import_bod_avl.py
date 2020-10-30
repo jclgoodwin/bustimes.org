@@ -183,6 +183,14 @@ class Command(ImportLiveVehiclesCommand):
 
         journey = None
 
+        destination = monitored_vehicle_journey.get('DestinationName') or ''
+        if vehicle.operator_id == 'TGTC' and destination and not route_name:
+            parts = destination.split()
+            if parts[0].isdigit() or parts[0][:-1].isdigit():
+                route_name = parts[0]
+                destination = ' '.join(parts[1:])
+                monitored_vehicle_journey['LineRef'] = route_name
+
         latest_location = vehicle.latest_location
         if latest_location:
             if origin_aimed_departure_time == latest_location.journey.datetime:
@@ -201,7 +209,7 @@ class Command(ImportLiveVehiclesCommand):
                 source=self.source,
                 data=item,
                 datetime=origin_aimed_departure_time,
-                destination=monitored_vehicle_journey.get('DestinationName') or ''
+                destination=destination
             )
 
         if vehicle_journey_ref:

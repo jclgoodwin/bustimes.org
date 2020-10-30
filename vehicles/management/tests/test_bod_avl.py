@@ -1,5 +1,4 @@
 import os
-from mock import patch
 from freezegun import freeze_time
 from vcr import use_cassette
 from django.conf import settings
@@ -14,13 +13,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
     def setUpTestData(cls):
         region = Region.objects.create(id='EA')
         Operator.objects.bulk_create([
-            Operator(id='ARHE', region=region),
-            Operator(id='ASES', region=region),
-            Operator(id='CBBH', region=region),
-            Operator(id='GPLM', region=region),
-            Operator(id='KCTB', region=region),
             Operator(id='WHIP', region=region),
-            Operator(id='UNOE', region=region),
+            Operator(id='TGTC', region=region),
+            Operator(id='HAMS', region=region),
         ])
         cls.source = DataSource.objects.create(
             name='Bus Open Data',
@@ -67,3 +62,50 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(1, VehicleJourney.objects.count())
         self.assertEqual(1, VehicleLocation.objects.count())
         self.assertEqual(1, Vehicle.objects.count())
+
+        item = {
+            "ItemIdentifier": "3d723567-dbd6-424c-a3e5-8bbc4932c8b8",
+            "RecordedAtTime": "2020-10-30T05:06:29+00:00",
+            "ValidUntilTime": "2020-10-30T05:11:31.887243",
+            "MonitoredVehicleJourney": {
+                "OriginRef": "43000575801",
+                "OriginName": "843X Roughley",
+                "VehicleRef": "SN56 AFE",
+                "OperatorRef": "TGTC",
+                "DestinationRef": "43000280301",
+                "DestinationName": "843X Soho Road",
+                "VehicleLocation": {
+                    "Latitude": "52.4972115",
+                    "Longitude": "-1.9283381"
+                }
+            }
+        }
+        with self.assertNumQueries(10):
+            command.handle_item(item, None)
+        location = VehicleLocation.objects.last()
+        self.assertEqual(location.journey.route_name, '843X')
+        self.assertEqual(location.journey.destination, 'Soho Road')
+
+        item = {
+            "ItemIdentifier": "87043019-595c-4269-b4de-a359ae17a474",
+            "RecordedAtTime": "2020-10-15T07:46:08+00:00",
+            "ValidUntilTime": "2020-10-15T18:02:11.033673",
+            "MonitoredVehicleJourney": {
+                "LineRef": "C",
+                "BlockRef": "503",
+                "VehicleRef": "DW18_HAM",
+                "OperatorRef": "HAMSTRA",
+                "DirectionRef": "outbound",
+                "DestinationRef": "2400103099",
+                "VehicleLocation": {
+                    "Latitude": "51.2135",
+                    "Longitude": "0.285348"
+                },
+                "PublishedLineName": "C",
+                "VehicleJourneyRef": "C_20201015_05_53"
+            }
+        }
+        with self.assertNumQueries(10):
+            command.handle_item(item, None)
+        location = VehicleLocation.objects.last()
+        self.assertEqual(location.journey.vehicle.operator_id, 'HAMS')

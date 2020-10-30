@@ -14,7 +14,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Index, Q
 from django.urls import reverse
 from django.utils.html import escape, format_html
-from busstops.models import Operator, Service, StopPoint, DataSource, SIRISource
+from busstops.models import Operator, Service, DataSource, SIRISource
 from buses.utils import varnish_ban
 import json
 
