@@ -29,7 +29,7 @@ class Command(ImportLiveVehiclesCommand):
         # 'GP': ['GPLM'],
         'BOWE': ['HIPK'],
         'CBBH': ['CBBH', 'CBNL'],
-        # 'UNO': ['UNOE', 'UNIB'],
+        'UNO': ['UNOE', 'UNIB'],
         'UNIB': ['UNOE', 'UNIB'],
         'GNE': ['GNEL'],
         'ENS': ['ENSB'],
@@ -234,7 +234,12 @@ class Command(ImportLiveVehiclesCommand):
             journey.service = latest_location.journey.service
         else:
             operator_ref = monitored_vehicle_journey['OperatorRef']
-            operator = self.get_operator(operator_ref)
+            if operator_ref == 'FWYO' and vehicle.operator_id == 'HCTY':
+                operator = ['FWYO', 'HCTY']  # First West Yorkshire/Connexions
+            elif operator_ref == 'RRAR':
+                operator = ['RRAR', 'FTVA']  # Reading RailAir/First Berkshire
+            else:
+                operator = self.get_operator(operator_ref)
             journey.service = self.get_service(operator, monitored_vehicle_journey)
 
         return journey
