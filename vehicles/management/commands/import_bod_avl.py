@@ -90,9 +90,12 @@ class Command(ImportLiveVehiclesCommand):
                 condition = Q(operator__parent=operator.parent)
 
                 # Abus operate the 349 using First ticket machines
-                if operator.id == 'FBRI' and not vehicle_ref.isdigit():
+                if operator.id == 'FBRI' and not vehicle_ref.isdigit() and vehicle_ref.isupper():
                     condition |= Q(operator='ABUS')
-                # (do something similar with Connexions in Leeds?)
+                # Connexions Buses 64
+                elif operator.id == 'FWYO' and not vehicle_ref.isdigit() and vehicle_ref.isupper():
+                    condition |= Q(operator='HCTY')
+
                 vehicles = self.vehicles.filter(condition)
             else:
                 vehicles = self.vehicles.filter(operator=operator)
