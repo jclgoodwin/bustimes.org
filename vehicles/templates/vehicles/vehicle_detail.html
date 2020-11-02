@@ -20,7 +20,7 @@
         {% if vehicle.livery and vehicle.branding != 'None' %}{{ vehicle.livery }}{% endif %}
     {% endif %}
 
-    {% if vehicle.branding %}
+    {% if vehicle.branding and vehicle.branding != 'None' %}
         <p>Branding: {{ vehicle.branding }}</p>
     {% endif %}
 
@@ -33,7 +33,7 @@
     {% endif %}
 
     {% for key, value in vehicle.data_get %}
-        {% if value and value != 'None' %}
+        {% if value %}
             <p>{{ key }}: {{ value }}</p>
         {% endif %}
     {% endfor %}
