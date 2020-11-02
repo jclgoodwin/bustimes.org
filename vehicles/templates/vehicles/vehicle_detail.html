@@ -33,7 +33,7 @@
     {% endif %}
 
     {% for key, value in vehicle.data_get %}
-        {% if value %}
+        {% if value and value != 'None' %}
             <p>{{ key }}: {{ value }}</p>
         {% endif %}
     {% endfor %}
