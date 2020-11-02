@@ -17,7 +17,7 @@
 
     {% if vehicle.colours and vehicle.colours != 'Other' or vehicle.livery %}
         <div class="livery" style="background:{{ vehicle.get_livery }}"></div>
-        {% if vehicle.livery %}{{ vehicle.livery }}{% endif %}
+        {% if vehicle.livery and vehicle.branding != 'None' %}{{ vehicle.livery }}{% endif %}
     {% endif %}
 
     {% if vehicle.branding %}

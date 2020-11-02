@@ -165,7 +165,7 @@ def operator_vehicles(request, slug=None, parent=None):
         'vehicles': vehicles,
         'paginator': paginator,
         'code_column': any(v.fleet_number_mismatch() for v in vehicles),
-        'branding_column': any(vehicle.branding for vehicle in vehicles),
+        'branding_column': any(vehicle.branding and vehicle.branding != 'None' for vehicle in vehicles),
         'name_column': any(vehicle.name for vehicle in vehicles),
         'notes_column': any(vehicle.notes and vehicle.notes != 'Spare ticket machine' for vehicle in vehicles),
         'features_column': features_column,

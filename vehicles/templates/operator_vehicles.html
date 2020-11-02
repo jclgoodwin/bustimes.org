@@ -105,10 +105,10 @@
                         {{ vehicle.colours }}
                     {% elif vehicle.colours or vehicle.livery %}
                         <div class="livery" style="background:{{ vehicle.get_livery }}"></div>
-                        {{ vehicle.livery|default:"" }}
+                        {% if vehicle.livery and vehicle.branding != 'None' %}{{ vehicle.livery }}{% endif %}
                     {% endif %}
                 </td>
-                {% if vehicle.branding %}<td>{{ vehicle.branding }}</td>{% endif %}
+                {% if vehicle.branding and vehicle.branding != 'None' %}<td>{{ vehicle.branding }}</td>{% endif %}
                 {% if name_column %}<td>{{ vehicle.name }}</td>{% endif %}
                 {% if notes_column %}<td>{% if vehicle.notes != 'Spare ticket machine' %}{{ vehicle.notes }}{% endif %}</td>{% endif %}
                 {% for value in vehicle.column_values %}<td>{{ value }}</td>{% endfor %}
