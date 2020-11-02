@@ -6,6 +6,7 @@ Usage:
 
 import logging
 import os
+import re
 import csv
 import yaml
 import zipfile
@@ -57,6 +58,20 @@ BANK_HOLIDAYS = {
     'StAndrewsDay': date(2020, 11, 30),
     'Jan2ndScotland': date(2021, 1, 2),
 }
+
+
+def get_summary(summary):
+    # London wtf
+    if summary == 'not School vacation in free public holidays regulation holidays':
+        return 'not school holidays'
+
+    summary = summary.replace(' days days', ' days')
+    summary = summary.replace('olidays holidays', 'olidays')
+    summary = summary.replace('AnySchool', 'school')
+
+    summary = re.sub(r'(?i)(school(day)?s)', 'school', summary)
+
+    return summary
 
 
 def sanitize_description(name):
@@ -310,11 +325,11 @@ class Command(BaseCommand):
         if sodt:
             if sodt.nonoperation_workingdays:
                 if sodt.nonoperation_workingdays.name:
-                    summary = f'Not {sodt.nonoperation_workingdays.name} days'
+                    summary = f'not {sodt.nonoperation_workingdays.name} days'
                 nonoperation_days = sodt.nonoperation_workingdays.working_days
             elif sodt.nonoperation_holidays:
                 if sodt.nonoperation_holidays.name:
-                    summary = f'Not {sodt.nonoperation_holidays.name} holidays'
+                    summary = f'not {sodt.nonoperation_holidays.name} holidays'
                 nonoperation_days = sodt.nonoperation_holidays.holidays
             else:
                 nonoperation_days = None
@@ -357,10 +372,7 @@ class Command(BaseCommand):
             return self.calendar_cache[calendar_hash]
 
         if summary:
-            summary = summary.replace('Schooldays days', 'school days').replace('Schools days', 'school days')
-            summary = summary.replace('Schooldays holidays', 'school holidays').replace('AnySchool', 'school')
-            summary = summary.replace('SCHOOLDAYS days', 'school days')
-            summary = summary.replace('SCHOOLDAYS holidays', 'school holidays')
+            summary = get_summary(summary)
 
         calendar = Calendar(
             mon=False,

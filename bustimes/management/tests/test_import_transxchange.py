@@ -790,3 +790,24 @@ class ImportTransXChangeTest(TestCase):
             </Operator>
         """)))
         self.assertEqual(2, len(command.missing_operators))
+
+    def test_summary(self):
+        self.assertEqual(
+            import_transxchange.get_summary('not School vacation in free public holidays regulation holidays'),
+            'not school holidays'
+        )
+        self.assertEqual(
+            import_transxchange.get_summary('University days days only'),
+            'University days only'
+        )
+        self.assertEqual(
+            import_transxchange.get_summary('Staffordshire School Holidays holidays only'),
+            'Staffordshire School Holidays only'
+        )
+
+        self.assertEqual(import_transxchange.get_summary('Schooldays days only'), 'school days only')
+        self.assertEqual(import_transxchange.get_summary('Schools days'), 'school days')
+        self.assertEqual(import_transxchange.get_summary('SCHOOLDAYS days'), 'school days')
+        self.assertEqual(import_transxchange.get_summary('Schooldays holidays'), 'school holidays')
+        self.assertEqual(import_transxchange.get_summary('AnySchool'), 'school')
+        self.assertEqual(import_transxchange.get_summary('SCHOOLDAYS holidays'), 'school holidays')
