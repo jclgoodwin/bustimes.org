@@ -304,7 +304,7 @@ class Grouping:
 
             y += 1
 
-        if y:  # (there was at least 1 stoptime in the trip)
+        if not first:  # (there was at least 1 stoptime in the trip)
             cell.last = True
 
         if x:
