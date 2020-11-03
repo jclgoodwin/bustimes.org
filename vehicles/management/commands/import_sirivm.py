@@ -173,6 +173,7 @@ class Command(ImportLiveVehiclesCommand):
                         defaults['fleet_number'] = fleet_number
                         if operator.parent in {'Stagecoach', 'Go South West'}:
                             vehicle_code = fleet_number
+                        defaults['code'] = vehicle_code
                         return self.vehicles.filter(
                             operator__parent=operator.parent
                         ).get_or_create(defaults, fleet_number=fleet_number)
