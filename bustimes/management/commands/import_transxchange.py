@@ -529,7 +529,7 @@ class Command(BaseCommand):
         if not description:
             origin = txc_service.origin
             destination = txc_service.destination
-            if not (origin == 'Origin' and destination == 'Destination'):
+            if origin and destination and origin != 'Origin' and destination != 'Destination':
                 if origin.isupper() and destination.isupper():
                     origin = titlecase(origin)
                     destination = titlecase(destination)
