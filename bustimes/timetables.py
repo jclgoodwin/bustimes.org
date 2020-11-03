@@ -253,7 +253,7 @@ class Grouping:
     def handle_trip(self, trip):
         rows = self.rows
         if rows:
-            x = len(rows[0].times)
+            x = len(rows[0].times)  # number of existing columns
         else:
             x = 0
         previous_list = [row.stop.atco_code for row in rows]
@@ -304,7 +304,8 @@ class Grouping:
 
             y += 1
 
-        cell.last = True
+        if y:  # (there was at least 1 stoptime in the trip)
+            cell.last = True
 
         if x:
             for row in rows:
