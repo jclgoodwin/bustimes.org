@@ -45,7 +45,7 @@ mkdir -p NPTG/previous NaPTAN TNDS variations
 
 cd NPTG
 nptg_old=$(shasum nptg.ashx\?format=csv)
-wget -qN http://naptan.app.dft.gov.uk/datarequest/nptg.ashx?format=csv
+wget -qN https://naptan.app.dft.gov.uk/datarequest/nptg.ashx?format=csv
 nptg_new=$(shasum nptg.ashx\?format=csv)
 
 if [[ $nptg_old != "$nptg_new" ]]; then

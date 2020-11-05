@@ -6,7 +6,7 @@ from busstops.models import DataSource
 
 
 class Command(BaseCommand):
-    url = 'http://naptan.app.dft.gov.uk'
+    url = 'https://naptan.app.dft.gov.uk'
 
     def get_data(self, areas=None):
         params = {
@@ -19,7 +19,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         source, created = DataSource.objects.get_or_create(name='NaPTAN')
 
-        response = requests.get('http://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx', timeout=10)
+        response = requests.get(f'{self.url}/GridMethods/NPTGLastSubs_Load.ashx', timeout=10)
         new_rows = response.json()
         old_rows = source.settings
 

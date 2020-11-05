@@ -7,7 +7,7 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [python-requests/2.18.4]
     method: GET
-    uri: http://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx
+    uri: https://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx
   response:
     body: {string: '[{"Region":"S","LocalityName":"Shetland Islands","DataBaseID":"603","LastUpload":"04/09/2020",
         "ActiveStops":918,"PendingStops":0,"DeletedStops":45,"ArchivedStops":0,"ArchivedStopAreas":0,"ActiveStopAreas":378,
@@ -29,7 +29,7 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [python-requests/2.18.4]
     method: GET
-    uri: http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv&LA=603
+    uri: https://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv&LA=603
   response:
     body: {string: 'Problem with request Naptan download: V2nacsv'}
     headers:
@@ -50,7 +50,7 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [python-requests/2.18.4]
     method: GET
-    uri: http://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv
+    uri: https://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv
   response:
     body:
       string: 'these pretzels are making me thirsty again'
