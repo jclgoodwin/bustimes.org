@@ -245,14 +245,21 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         self.current_location_ids = set()
 
-        items = self.get_items()
-        if items:
-            for item in items:
-                self.handle_item(item, now)
-            # mark any vehicles that have gone offline as not current
-            self.get_old_locations().update(current=False)
-        else:
-            return 300  # no items - wait five minutes
+        try:
+            items = self.get_items()
+            if items:
+                for item in items:
+                    try:
+                        self.handle_item(item, now)
+                    except IntegrityError as e:
+                        logger.error(e, exc_info=True)
+                # mark any vehicles that have gone offline as not current
+                self.get_old_locations().update(current=False)
+            else:
+                return 300  # no items - wait five minutes
+        except requests.exceptions.RequestException as e:
+            logger.error(e, exc_info=True)
+            return 120
 
         time_taken = (timezone.now() - now).total_seconds()
         if time_taken < self.wait:
