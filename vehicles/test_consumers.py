@@ -25,7 +25,7 @@ def django_db_setup(django_db_setup, django_db_blocker):
 @freeze_time('2018-12-25 19:47+00:00')
 async def test_my_consumer():
 
-    communicator = WebsocketCommunicator(VehicleMapConsumer, "/ws/vehicle_positions")
+    communicator = WebsocketCommunicator(VehicleMapConsumer.as_asgi(), "/ws/vehicle_positions")
     connected, subprotocol = await communicator.connect()
     assert connected
 
