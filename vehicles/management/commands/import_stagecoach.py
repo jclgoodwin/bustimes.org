@@ -2,10 +2,11 @@
 from time import sleep
 from datetime import datetime
 from requests.exceptions import RequestException
+from django.db.models import Exists, OuterRef
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models import Extent
 from django.utils import timezone
-from busstops.models import Operator, Service
+from busstops.models import Operator, Service, StopPoint
 from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
 
@@ -66,6 +67,7 @@ class Command(ImportLiveVehiclesCommand):
     }
     operators = {}
     vehicles_ids = {}
+    services = {}
 
     def get_boxes(self):
         # geojson = {"type": "FeatureCollection", "features": []}
@@ -111,7 +113,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         for params in self.get_boxes():
             try:
-                response = self.session.get(self.url, params=params, timeout=50)
+                response = self.session.get(self.url, params=params, timeout=5)
                 # print(response.url)
                 for item in response.json()['services']:
                     yield item
@@ -157,6 +159,12 @@ class Command(ImportLiveVehiclesCommand):
             else:
                 return None, None
 
+        #if vehicle.latest_location:
+        #    if vehicle.latest_location.journey.source_id != self.source.id:
+        #        if (self.source.datetime - vehicle.latest_location.datetime).total_seconds() < 300:
+        #            print(vehicle)
+        #            return None, None
+
         return vehicle, created
 
     def get_journey(self, item, vehicle):
@@ -169,15 +177,16 @@ class Command(ImportLiveVehiclesCommand):
 
         latest_location = vehicle.latest_location
 
-        journey = VehicleJourney(datetime=departure_time, data=item)
         if departure_time:
             if latest_location and latest_location.journey.datetime == departure_time:
-                journey = latest_location.journey
+                return latest_location.journey
             else:
                 try:
-                    journey = vehicle.vehiclejourney_set.select_related('service').get(datetime=departure_time)
+                    return vehicle.vehiclejourney_set.select_related('service').get(datetime=departure_time)
                 except VehicleJourney.DoesNotExist:
                     pass
+
+        journey = VehicleJourney(datetime=departure_time, data=item)
 
         if code:
             journey.code = code
@@ -198,31 +207,29 @@ class Command(ImportLiveVehiclesCommand):
                 service = alternatives[service]
 
             services = Service.objects.filter(current=True, operator__parent='Stagecoach')
-            if item.get('or'):
-                services = services.filter(stops__locality__stoppoint=item['or'])
-            elif item.get('pr'):
-                services = services.filter(stops__locality__stoppoint=item['pr'])
-            elif item.get('nr'):
-                services = services.filter(stops__locality__stoppoint=item['nr'])
+
+            stop = item.get('or') or item.get('pr') or item.get('nr')
+
+            if stop:
+                key = f'{stop}-{service}'
+                if key in self.services:
+                   journey.service = self.services[key]
+                   return journey
+
+                services = services.filter(Exists(StopPoint.objects.filter(service=OuterRef('pk'), locality__stoppoint=stop)))
 
             if item.get('fr'):
-                services = services.filter(stops__locality__stoppoint=item['fr'])
+                services = services.filter(Exists(StopPoint.objects.filter(service=OuterRef('pk'), locality__stoppoint=item['fr'])))
 
-            services = services.distinct()
+            journey.service = services.filter(line_name__iexact=service).first()
+            if not journey.service:
+                try:
+                    journey.service = services.get(service_code__icontains=f'-{service}-')
+                except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                    pass
 
-            latlong = get_latlong(item)
-            try:
-                journey.service = self.get_service(services.filter(line_name__iexact=service), latlong)
-                if journey.service:
-                    return journey
-            except Service.DoesNotExist:
-                pass
-            try:
-                journey.service = self.get_service(services.filter(service_code__icontains=f'-{service}-'), latlong)
-                if journey.service:
-                    return journey
-            except Service.DoesNotExist:
-                pass
+            if stop:
+                self.services[key] = journey.service
 
             if not journey.service:
                 print(service, item.get('or'), vehicle.get_absolute_url())
