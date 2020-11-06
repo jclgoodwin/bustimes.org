@@ -15,7 +15,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def do_source(self):
         self.url = f'https://{self.source_name}.arcticapi.com/network/vehicles'
-        self.source = DataSource.objects.get(url=self.url)
+        self.source = DataSource.objects.get(url=self.url)  # we can't rely on the source name being unique
         self.operators = self.source.settings['operators']
 
     def get_items(self):
@@ -121,11 +121,13 @@ class Command(ImportLiveVehiclesCommand):
             line_name = 'ONE'
 
         latest_location = vehicle.latest_location
-        if latest_location and latest_location.current:
-            if latest_location.journey.route_name == journey.route_name:
-                journey.service = latest_location.journey.service
-            elif latest_location.datetime == self.source.datetime:
-                journey = vehicle.vehiclejourney_set.filter(route_name=journey.route_name).last()
+
+        if latest_location and latest_location.datetime == self.source.datetime:
+            maybe_journey = vehicle.vehiclejourney_set.filter(route_name=journey.route_name).last()
+            if maybe_journey:
+                journey = maybe_journey
+        elif latest_location and latest_location.current and latest_location.journey.route_name == journey.route_name:
+            journey.service = latest_location.journey.service
         else:
             services = Service.objects.filter(current=True, line_name=line_name)
             if self.source.name in {'salisburyreds', 'morebus', 'swindonbus', 'bluestar'}:

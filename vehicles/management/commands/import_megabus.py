@@ -29,15 +29,14 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_services(self):
         now = self.source.datetime
-        if self.last_got_services and now - self.last_got_services < timedelta(hours=3):
-            return self.services
+        if self.last_got_services:
+            for service in self.services:
+                yield service
+            return
         self.services = []
-        # for string in ['m11']:
         for string in ['m1', 'm2', 'm3', 'm4', 'm9']:
             url = f'{self.url}/getLookup.php/{string}?byservice=true'
-            print(url)
             response = self.session.get(url, timeout=1)
-            print(response.url)
             sleep(1)
             for service in response.json():
                 yield service
@@ -47,12 +46,13 @@ class Command(ImportLiveVehiclesCommand):
     def get_trips(self):
         now = self.source.datetime
         if self.last_got_trips and now - self.last_got_trips < timedelta(hours=3):
-            return self.trips
+            for trip in self.trips:
+                yield trip
+            return
         self.trips = []
         for service in self.get_services():
             ticket_name = service['ticketName']
             response = self.session.get(f'{self.url}/getServices.php/{ticket_name}/0/service/', timeout=5)
-            print(response.url)
             sleep(1)
             for trip in response.json()['services']:
                 yield trip
@@ -61,8 +61,8 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_items(self):
         now = self.source.datetime
-        print(now)
-        for trip in self.get_trips():
+        trips = self.get_trips()
+        for trip in trips:
             start = parse_datetime(trip['startTime']['dateTime'])
             if start > now:
                 continue
@@ -74,13 +74,18 @@ class Command(ImportLiveVehiclesCommand):
             direction = trip['dir']
             journey = trip['journeyId']
             url = f'{link_date}/{route}/{direction}/{journey}'
-            print(url)
             if url in self.dead_trips:
                 continue
-            response = self.session.get(f'{self.url}/getTrip.php/{url}/false',
-                                        timeout=5)
-            print(response.url)
+            try:
+                response = self.session.get(f'{self.url}/getTrip.php/{url}/false', timeout=5)
+            except Exception as e:
+                print(e)
+                sleep(1)
+                continue
             sleep(1)
+            if not response.ok:
+                print(response.content)
+                continue
             any_live = False
             for service in response.json()['services']:
                 if service['live']:
