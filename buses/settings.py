@@ -18,9 +18,9 @@ DEFAULT_FROM_EMAIL = 'bustimes.org <contact@bustimes.org>'
 if TEST:
     EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
 else:
-    EMAIL_HOST = 'smtp.fastmail.com'
-    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+    EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
     EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
     EMAIL_PORT = 465
     EMAIL_USE_SSL = True
     EMAIL_TIMEOUT = 10
