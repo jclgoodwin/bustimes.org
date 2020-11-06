@@ -40,6 +40,7 @@ class Command(ImportLiveVehiclesCommand):
         'WOB': ['WBTR'],
         'TDY': ['YCST', 'LNUD', 'ROST', 'BPTR', 'KDTR', 'HRGT'],
         'PB': ['MTLN'],
+        'YOP': ['KJTR']
     }
     operator_cache = {}
     vehicle_cache = {}
