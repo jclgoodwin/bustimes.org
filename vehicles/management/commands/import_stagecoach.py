@@ -1,10 +1,8 @@
-# import json
 from time import sleep
 from datetime import datetime
 from requests.exceptions import RequestException
 from django.db.models import Exists, OuterRef
-from django.contrib.gis.geos import Point, Polygon
-from django.contrib.gis.db.models import Extent
+from django.contrib.gis.geos import Point
 from django.utils import timezone
 from busstops.models import Operator, Service, StopPoint
 from ...models import VehicleLocation, VehicleJourney
@@ -58,60 +56,31 @@ def get_datetime(timestamp):
         return datetime.fromtimestamp(int(timestamp) / 1000, timezone.utc)
 
 
+def has_stop(stop):
+    return Exists(StopPoint.objects.filter(service=OuterRef('pk'), locality__stoppoint=stop))
+
+
 class Command(ImportLiveVehiclesCommand):
     url = 'https://api.stagecoach-technology.net/vehicle-tracking/v1/vehicles'
     source_name = 'Stagecoach'
+    operator_codes = [
+        'SDVN', 'SCMN', 'SCCU', 'SCGL', 'SSWL', 'SCNH', 'STWS', 'SCEM', 'SCCM', 'SCOX', 'SCHI', 'SCNE',
+        'SCFI', 'SBLB', 'SYRK', 'SCEK', 'SCMY', 'SCLK', 'SCSO'
+    ]
     operator_ids = {
-        'SCEM': 'SCLI',
+        'SCEM': 'SCGH',
         'SCSO': 'SCCO'
     }
-    operators = {}
     vehicles_ids = {}
     services = {}
 
-    def get_boxes(self):
-        # geojson = {"type": "FeatureCollection", "features": []}
-        i = 0
-        operators = Operator.objects.filter(parent='Stagecoach', service__current=True, vehicle_mode='bus')
-        services = Service.objects.filter(operator__in=operators)
-        extent = services.aggregate(Extent('geometry'))['geometry__extent']
-
-        lng = extent[0]
-        while lng <= extent[2]:
-            lat = extent[1]
-            while lat <= extent[3]:
-                bbox = (
-                    lng,
-                    lat,
-                    lng + 1.5,
-                    lat + 1,
-                )
-                polygon = Polygon.from_bbox(bbox)
-                i += 1
-                if services.filter(geometry__bboverlaps=polygon).exists():
-                    # geojson['features'].append({
-                    #     "type": "Feature",
-                    #     "geometry": json.loads(polygon.json),
-                    #     "properties": {
-                    #         "name": str(i)
-                    #     }
-                    # })
-
-                    yield {
-                        'latne': bbox[3],
-                        'lngne': bbox[2],
-                        'latsw': bbox[1],
-                        'lngsw': bbox[0],
-                        # 'clip': 1,
-                        # 'descriptive_fields': 1
-                    }
-
-                lat += 1
-            lng += 1.5
-        # print(json.dumps(geojson))
-
     def get_items(self):
-        for params in self.get_boxes():
+        for operator in self.operator_codes:
+            params = {
+                # 'clip': 1,
+                # 'descriptive_fields': 1,
+                'services': f':{operator}:::'
+            }
             try:
                 response = self.session.get(self.url, params=params, timeout=5)
                 # print(response.url)
@@ -143,9 +112,9 @@ class Command(ImportLiveVehiclesCommand):
                     logger.error(e, exc_info=True, extra={
                         'operator': operator_id
                     })
-                defaults = {
-                    'source': self.source
-                }
+            defaults = {
+                'source': self.source
+            }
             if vehicle_code.isdigit():
                 defaults['fleet_number'] = vehicle_code
             if operator:
@@ -153,13 +122,13 @@ class Command(ImportLiveVehiclesCommand):
                 if operator_id == 'SCLK':  # Scottish Citylink
                     vehicles = self.vehicles.filter(operator=operator_id)
                 else:
-                    vehicles = self.vehicles.filter(operator__parent='Stagecoach')
+                    vehicles = self.vehicles.filter(operator__in=self.operators)
                 vehicle, created = vehicles.get_or_create(defaults, code=vehicle_code)
                 self.vehicles_ids[vehicle_code] = vehicle.id
             else:
                 return None, None
 
-        #if vehicle.latest_location:
+        # if vehicle.latest_location:
         #    if vehicle.latest_location.journey.source_id != self.source.id:
         #        if (self.source.datetime - vehicle.latest_location.datetime).total_seconds() < 300:
         #            print(vehicle)
@@ -206,20 +175,20 @@ class Command(ImportLiveVehiclesCommand):
             if service in alternatives:
                 service = alternatives[service]
 
-            services = Service.objects.filter(current=True, operator__parent='Stagecoach')
+            services = Service.objects.filter(current=True, operator__in=self.operators)
 
             stop = item.get('or') or item.get('pr') or item.get('nr')
 
             if stop:
                 key = f'{stop}-{service}'
                 if key in self.services:
-                   journey.service = self.services[key]
-                   return journey
+                    journey.service = self.services[key]
+                    return journey
 
-                services = services.filter(Exists(StopPoint.objects.filter(service=OuterRef('pk'), locality__stoppoint=stop)))
+                services = services.filter(has_stop(stop))
 
             if item.get('fr'):
-                services = services.filter(Exists(StopPoint.objects.filter(service=OuterRef('pk'), locality__stoppoint=item['fr'])))
+                services = services.filter(has_stop(item['fr']))
 
             journey.service = services.filter(line_name__iexact=service).first()
             if not journey.service:
@@ -257,3 +226,8 @@ class Command(ImportLiveVehiclesCommand):
             delay=delay,
             early=early
         )
+
+    def handle(self, *args, **options):
+        self.operators = Operator.objects.filter(parent='Stagecoach').in_bulk()
+
+        return super().handle(*args, **options)
