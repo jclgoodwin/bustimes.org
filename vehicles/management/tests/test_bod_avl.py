@@ -85,6 +85,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         location = VehicleLocation.objects.last()
         self.assertEqual(location.journey.route_name, '843X')
         self.assertEqual(location.journey.destination, 'Soho Road')
+        self.assertEqual(location.journey.vehicle.reg, 'SN56AFE')
 
         item = {
             "ItemIdentifier": "87043019-595c-4269-b4de-a359ae17a474",
@@ -109,3 +110,4 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             command.handle_item(item, None)
         location = VehicleLocation.objects.last()
         self.assertEqual(location.journey.vehicle.operator_id, 'HAMS')
+        self.assertEqual(location.journey.vehicle.reg, 'DW18HAM')

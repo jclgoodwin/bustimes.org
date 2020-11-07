@@ -188,6 +188,10 @@ class Vehicle(models.Model):
                 self.fleet_code = str(self.fleet_number)
                 if 'update_fields' in kwargs and 'fleet_code' not in kwargs['update_fields']:
                     kwargs['update_fields'].append('fleet_code')
+        if 'update_fields' not in kwargs and not self.reg:
+            reg = re.match(r"^[A-Z]\w_?\d\d?[_ ]?[A-Z]{3}$", self.code)
+            if reg:
+                self.reg = self.code.replace(' ', '').replace('_', '')
         super().save(force_insert, force_update, **kwargs)
 
         varnish_ban(f'/vehicles/{self.id}')
