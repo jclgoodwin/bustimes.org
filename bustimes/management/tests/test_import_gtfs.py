@@ -160,5 +160,5 @@ class GTFSTest(TestCase):
             with patch('builtins.print') as mocked_print:
                 with self.assertRaises(FileNotFoundError):
                     call_command('import_gtfs')
-        mocked_print.assert_called_with('mortons')
+        mocked_print.assert_called_with('mortons', None)
         self.assertFalse(Route.objects.all())

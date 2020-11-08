@@ -8,7 +8,6 @@ from tempfile import TemporaryDirectory
 from django.test import TransactionTestCase
 from django.core.management import call_command
 from ...models import Region, AdminArea, Locality, StopPoint
-from ..commands import import_ie_naptan_csv
 
 
 class ImportIrelandTest(TransactionTestCase):
@@ -99,70 +98,6 @@ class ImportIrelandTest(TransactionTestCase):
         self.assertAlmostEqual(stop.latlong.y, 53.2719763661735)
         self.assertEqual(stop.admin_area_id, 846)
         self.assertEqual(stop.locality_id, 'E0846001')
-
-        # stop from CSV:
-
-        import_ie_naptan_csv.Command().handle_row({
-            'Stop number': '17159',
-            'Name without locality': 'Baxter',
-            'Locality': 'Galway',
-            'Locality number': 'E0846001',
-            'Code': 'YYY',
-            'Name': 'Chutney',
-            'NaPTAN stop class': 'BCT',
-            'NaPTANId': '8460TR000124',
-            'Easting': '529650',
-            'Northing': '725146'
-        })
-        stop = StopPoint.objects.get(atco_code='8460TR000124')
-
-        self.assertEqual(stop.common_name, "Supermac's")  # Not modified
-        self.assertEqual(stop.street, 'Bridge Street')
-        self.assertEqual(stop.indicator, 'opp')
-        self.assertEqual(stop.stop_type, 'BCT')  # Modified (not sure it should be)
-        self.assertAlmostEqual(stop.latlong.x, -9.054698981718873)
-        self.assertAlmostEqual(stop.latlong.y, 53.27197636346384)
-        self.assertEqual(stop.admin_area_id, 846)
-        self.assertEqual(stop.locality_id, 'E0846001')
-
-        import_ie_naptan_csv.Command().handle_row({
-            'Easting': '617392',
-            'Name': 'Forte Retail Park',
-            'Northing': '910970',
-            'Locality number': '99032868',
-            'Name without locality': 'Forte Retail Park',
-            'Locality': 'Leck (Donegal)',
-            'NaPTAN stop class': 'BCT',
-            'Code': '1',
-            'NaPTANId': '853000249',
-            'Stop number': '191'
-        })
-        stop = StopPoint.objects.get(atco_code='853000249')
-        self.assertEqual(stop.common_name, 'Forte Retail Park')
-        self.assertEqual(stop.locality.name, 'Leck')
-        self.assertEqual(stop.locality.qualifier_name, 'Donegal')
-
-        with warnings.catch_warnings(record=True) as caught_warnings:
-            import_ie_naptan_csv.Command().handle_row({
-                'Stop number': '14440',
-                'Name without locality': "Saint Paul's Crescent",
-                'Locality': 'Balbriggan',
-                'Locality number': 'E0824005',
-                'Code': '1',
-                'Name': 'Church',
-                'NaPTAN stop class': 'BCT',
-                'NaPTANId': '8250B1002801',
-                'Easting': '',
-                'Northing': ''
-            })
-            self.assertTrue(' has no location' in str(caught_warnings[0].message))
-        stop = StopPoint.objects.get(atco_code='8250B1002801')
-        self.assertEqual(stop.indicator, '1')
-
-        # Should run without an error:
-        import_ie_naptan_csv.Command().handle_row({'NaPTANId': ''})
-
-        self.assertEqual(Locality.objects.get(id='E0824005').name, 'Balbriggan')
 
         with patch('builtins.print') as mocked_print:
             call_command('import_ie_transxchange', os.path.join(fixtures_dir, 'ie_transxchange.xml'))
