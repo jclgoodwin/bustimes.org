@@ -6,9 +6,10 @@ from multiprocessing.dummy import Pool
 import xmltodict
 from django.utils import timezone
 from django.contrib.gis.geos import Point
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef
 from ..import_live_vehicles import ImportLiveVehiclesCommand
-from busstops.models import Operator, Service, Locality
+from busstops.models import Operator, Service, Locality, StopPoint
+from bustimes.models import Trip
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 
 
@@ -51,10 +52,17 @@ class Command(ImportLiveVehiclesCommand):
         return parse_datetime(item['RecordedAtTime'])
 
     def get_operator(self, operator_ref):
+        if operator_ref == "SCEM":
+            operator_ref = "SCGH"
+        elif operator_ref == "SCSO":
+            operator_ref = "SCCO"
+
         if operator_ref in self.operators:
             return self.operators[operator_ref]
+
         if operator_ref in self.operator_cache:
             return self.operator_cache[operator_ref]
+
         if len(operator_ref) == 4:
             try:
                 operator = Operator.objects.get(id=operator_ref)
@@ -62,6 +70,7 @@ class Command(ImportLiveVehiclesCommand):
                 return operator
             except Operator.DoesNotExist:
                 pass
+
         self.operator_cache[operator_ref] = None
 
     def get_vehicle(self, item):
@@ -153,25 +162,38 @@ class Command(ImportLiveVehiclesCommand):
         else:
             services = services.filter(line_name__iexact=line_ref)
 
-        if type(operator) is Operator:
-            services = services.filter(operator=operator)
-        elif type(operator) is list:
-            services = services.filter(operator__in=operator)
+        if type(operator) is Operator and operator.parent == 'Stagecoach':
+            services = services.filter(operator__parent='Stagecoach')
+        else:
+            if type(operator) is Operator:
+                services = services.filter(operator=operator)
+            elif type(operator) is list:
+                services = services.filter(operator__in=operator)
 
-        try:
-            return services.get()
-        except Service.DoesNotExist:
-            return
-        except Service.MultipleObjectsReturned:
-            pass
+            try:
+                return services.get()
+            except Service.DoesNotExist:
+                return
+            except Service.MultipleObjectsReturned:
+                pass
 
         destination_ref = monitored_vehicle_journey.get('DestinationRef')
         if destination_ref:
             try:
-                return services.filter(stops__locality__stoppoint=destination_ref).distinct().get()
-            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-                # print(e, line_ref)
+                stops = StopPoint.objects.filter(service=OuterRef("pk"), locality__stoppoint=destination_ref)
+                return services.filter(Exists(stops)).get()
+            except Service.DoesNotExist:
                 return
+            except Service.MultipleObjectsReturned:
+                pass
+
+        vehicle_journey_ref = monitored_vehicle_journey.get('VehicleJourneyRef')
+        if vehicle_journey_ref and vehicle_journey_ref.isdigit():
+            try:
+                trips = Trip.objects.filter(route__service=OuterRef('pk'), ticket_machine_code=vehicle_journey_ref)
+                return services.filter(Exists(trips)).get()
+            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                pass
 
     def get_journey(self, item, vehicle):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
