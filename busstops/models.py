@@ -226,6 +226,7 @@ class DataSource(models.Model):
         elif 'transportforireland' in self.url:
             url = 'https://www.transportforireland.ie/transitData/PT_Data.html'
             text = 'Transport for Ireland'
+            date = self.datetime
         elif self.url.startswith('http://travelinedatahosting.basemap.co.uk/'):
             text = self.name
             date = self.datetime

@@ -12,7 +12,6 @@ from django.core.management.base import BaseCommand
 from django.db.models import Count
 from django.contrib.gis.geos import Point
 from django.contrib.gis.geos import LineString, MultiLineString
-from django.utils import timezone
 from busstops.models import Region, DataSource, StopPoint, Service, StopUsage, Operator, AdminArea
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime
 from ...timetables import get_stop_usages
@@ -89,11 +88,11 @@ def do_stops(archive):
     return StopPoint.objects.in_bulk(stops), stops_not_created
 
 
-def handle_zipfile(path, collection, url):
+def handle_zipfile(path, collection, url, last_modified):
     source = DataSource.objects.update_or_create(
         {
             'url': url,
-            'datetime': timezone.now()
+            'datetime': last_modified
         }, name=f'{collection} GTFS'
     )[0]
 
@@ -328,8 +327,7 @@ class Command(BaseCommand):
         for collection in options['collections'] or settings.IE_COLLECTIONS:
             path = os.path.join(settings.DATA_DIR, f'google_transit_{collection}.zip')
             url = f'https://www.transportforireland.ie/transitData/google_transit_{collection}.zip'
-            modifed, _ = download_if_changed(path, url)
-            if not modifed and not options['force']:
-                continue
-            print(collection)
-            handle_zipfile(path, collection, url)
+            modifed, last_modified = download_if_changed(path, url)
+            if modifed or options['force']:
+                print(collection, last_modified)
+                handle_zipfile(path, collection, url, last_modified)
