@@ -365,7 +365,7 @@ class Command(BaseCommand):
         if not calendar_dates and not operating_profile.regular_days:
             return
 
-        calendar_hash = f'{operating_profile.regular_days}{operating_period.dates()}'
+        calendar_hash = f'{operating_profile.regular_days}{operating_period.dates()}{summary}'
         calendar_hash += ''.join(f'{date.dates}{date.operation}{date.special}' for date in calendar_dates)
 
         if calendar_hash in self.calendar_cache:
