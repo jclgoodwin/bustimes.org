@@ -8,6 +8,9 @@ from ...models import Vehicle
 from ..commands import import_tfwm
 
 
+DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 class TfWMImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -20,7 +23,7 @@ class TfWMImportTest(TestCase):
             Operator(id='SLBS', region_id='WM', name='Select Bus Services'),
         ])
 
-    @use_cassette(os.path.join('data', 'vcr', 'import_tfwm.yaml'), decode_compressed_response=True)
+    @use_cassette(os.path.join(DIR, 'vcr', 'import_tfwm.yaml'), decode_compressed_response=True)
     @freeze_time('2018-08-21 00:00:09')
     def test_handle(self):
         command = import_tfwm.Command()

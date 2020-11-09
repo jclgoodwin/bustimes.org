@@ -8,6 +8,9 @@ from ...models import VehicleLocation, JourneyCode
 from ..commands import import_sirivm
 
 
+DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 class SiriVMImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -22,7 +25,7 @@ class SiriVMImportTest(TestCase):
         OperatorCode.objects.create(operator=cls.operator, source=cls.command.source, code='FE')
         JourneyCode.objects.create(service=cls.service, code='14', destination='Hundred Acre Wood')
 
-    @use_cassette(os.path.join('data', 'vcr', 'import_sirivm.yaml'), decode_compressed_response=True)
+    @use_cassette(os.path.join(DIR, 'vcr', 'import_sirivm.yaml'), decode_compressed_response=True)
     def test_handle(self):
         items = self.command.get_items()
         item = next(items)

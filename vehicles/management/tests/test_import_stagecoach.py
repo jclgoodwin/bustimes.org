@@ -1,4 +1,5 @@
 import vcr
+import os
 from mock import patch
 from freezegun import freeze_time
 from django.test import TestCase
@@ -10,6 +11,9 @@ from ..commands.import_stagecoach import Command
 
 class MockException(Exception):
     pass
+
+
+DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 @freeze_time('2019-11-17T16:17:49.000Z')
@@ -29,7 +33,7 @@ class StagecoachTest(TestCase):
 
     @patch('vehicles.management.commands.import_stagecoach.sleep', side_effect=MockException)
     def test_handle(self, sleep):
-        with vcr.use_cassette('data/vcr/stagecoach_vehicles.yaml'):
+        with vcr.use_cassette(os.path.join(DIR, 'vcr', 'stagecoach_vehicles.yaml')):
             with self.assertRaises(MockException):
                 with self.assertLogs(level='ERROR'):
                     with self.assertNumQueries(20):

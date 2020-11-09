@@ -1,11 +1,13 @@
 import os
 from freezegun import freeze_time
 from vcr import use_cassette
-from django.conf import settings
 from django.test import TestCase
 from busstops.models import Region, DataSource, Operator
 from ...models import VehicleLocation, VehicleJourney, Vehicle
 from ..commands import import_bod_avl
+
+
+DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class BusOpenDataVehicleLocationsTest(TestCase):
@@ -27,7 +29,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command = import_bod_avl.Command()
         command.source = self.source
 
-        with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'bod_avl.yaml')):
+        with use_cassette(os.path.join(DIR, 'vcr', 'bod_avl.yaml')):
             items = list(command.get_items())
 
         self.assertEqual(841, len(items))

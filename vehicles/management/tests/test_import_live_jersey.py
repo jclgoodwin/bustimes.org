@@ -6,13 +6,16 @@ from busstops.models import Region, Operator, DataSource
 from ..commands import import_live_jersey
 
 
+DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 class JerseyImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         Region.objects.create(id='JE')
         Operator.objects.create(id='libertybus', region_id='JE')
 
-    @use_cassette(os.path.join('data', 'vcr', 'import_live_jersey.yaml'), decode_compressed_response=True)
+    @use_cassette(os.path.join(DIR, 'vcr', 'import_live_jersey.yaml'), decode_compressed_response=True)
     @freeze_time('2018-08-21 00:00:09')
     def test_handle(self):
         command = import_live_jersey.Command()

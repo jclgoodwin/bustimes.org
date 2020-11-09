@@ -7,6 +7,9 @@ from ...models import VehicleLocation
 from ..commands import import_live_acis
 
 
+DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 class ACISImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -17,7 +20,6 @@ class ACISImportTest(TestCase):
             Operator(id='ULB', region_id='NI'),
         ])
 
-    @use_cassette(os.path.join('data', 'vcr', 'import_live_acis.yaml'))
     @patch('vehicles.management.commands.import_live_acis.sleep')
     @patch('vehicles.management.commands.import_live_acis.Command.get_points')
     def test_handle(self, get_points, sleep):
@@ -29,7 +31,7 @@ class ACISImportTest(TestCase):
         command = import_live_acis.Command()
         command.do_source()
 
-        with use_cassette(os.path.join('data', 'vcr', 'import_live_acis.yaml'), match_on=['body']):
+        with use_cassette(os.path.join(DIR, 'vcr', 'import_live_acis.yaml'), match_on=['body']):
             with patch('builtins.print') as mocked_print:
                 command.update()
         mocked_print.assert_called()
@@ -37,7 +39,7 @@ class ACISImportTest(TestCase):
         # Should only create 18 items - two are duplicates
         self.assertEqual(18, VehicleLocation.objects.all().count())
 
-        with use_cassette(os.path.join('data', 'vcr', 'import_live_acis.yaml'), match_on=['body']):
+        with use_cassette(os.path.join(DIR, 'vcr', 'import_live_acis.yaml'), match_on=['body']):
             command.update()
 
         # Should create no new items - no changes
