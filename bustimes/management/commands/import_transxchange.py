@@ -128,11 +128,11 @@ class Command(BaseCommand):
         self.notes = {}
         open_data_operators = []
         incomplete_operators = []
-        for _, _, operators, incomplete in settings.BOD_OPERATORS:
+        for operator_code, _, _, incomplete in settings.BOD_OPERATORS:
             if incomplete:
-                incomplete_operators += operators.values()
+                incomplete_operators.append(operator_code)
             else:
-                open_data_operators += operators.values()
+                open_data_operators.append(operator_code)
         for _, _, _, operators in settings.PASSENGER_OPERATORS:
             open_data_operators += operators.values()
         for _, _, operators in settings.FIRST_OPERATORS:
