@@ -334,6 +334,10 @@ BOD_OPERATORS = (
     ('PULH', 'SE', {}, False),
     ('CNTY', 'SW', {}, False),
     ('HGCO', 'SW', {}, False),
+    ('GPLM', 'SE', {
+        'OP': 'GPLM',
+        'GP': 'GPLM'
+    }, False),
     ('WHIP', 'EA', {
         'OP': 'WHIP'
     }, False),
