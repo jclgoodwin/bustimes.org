@@ -50,23 +50,26 @@ def calculate_speed(a, b):
 def same_journey(latest_location, journey, when):
     if not latest_location:
         return False
+    latest_journey = latest_location.journey
     if journey.id:
-        return journey.id == latest_location.journey_id
+        return journey.id == latest_journey
     time_since_last_location = when - latest_location.datetime
     if time_since_last_location > timedelta(hours=1):
         return False
-    if latest_location.journey.route_name and journey.route_name:
-        same_route = latest_location.journey.route_name == journey.route_name
+    if latest_journey.route_name and journey.route_name:
+        same_route = latest_journey.route_name == journey.route_name
     else:
-        same_route = latest_location.journey.service_id == journey.service_id
+        same_route = latest_journey.service_id == journey.service_id
     if same_route:
-        if latest_location.journey.datetime == journey.datetime:
+        if latest_journey.datetime == journey.datetime:
             return True
-        elif latest_location.journey.code and journey.code:
-            return str(latest_location.journey.code) == str(journey.code)
-        elif latest_location.journey.direction and journey.direction:
-            if latest_location.journey.direction != journey.direction:
+        elif latest_journey.code and journey.code:
+            return str(latest_journey.code) == str(journey.code)
+        elif latest_journey.direction and journey.direction:
+            if latest_journey.direction != journey.direction:
                 return False
+        elif latest_journey.destination and journey.destination:
+            return latest_journey.destination == journey.destination
         return time_since_last_location < timedelta(minutes=15)
     return False
 

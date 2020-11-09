@@ -209,6 +209,7 @@ class Command(ImportLiveVehiclesCommand):
 
         journey = None
 
+        # do destination now, in case the route name is in the destination field
         destination = monitored_vehicle_journey.get('DestinationName') or ''
         if vehicle.operator_id == 'TGTC' and destination and not route_name:
             parts = destination.split()
