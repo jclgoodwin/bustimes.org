@@ -163,9 +163,18 @@ class VehiclesTests(TestCase):
         self.assertEqual(livery.right_css, 'linear-gradient(315deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
 
     def test_vehicle_edit_1(self):
-        self.client.force_login(self.user)
-
         url = self.vehicle_1.get_absolute_url() + '/edit'
+
+        with self.assertNumQueries(0):
+            response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, f'/accounts/login/?next={url}')
+
+        with self.assertNumQueries(0):
+            response = self.client.get(response.url)
+        self.assertContains(response, '<p>To edit vehicle details, please log in.</p>')
+
+        self.client.force_login(self.user)
 
         with self.assertNumQueries(13):
             response = self.client.get(url)
