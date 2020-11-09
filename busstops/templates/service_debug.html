@@ -37,7 +37,8 @@
 <table>
     <thead>
         <tr>
-            <th scope="col">jp</th>
+            <th scope="col">block</th>
+            <th scope="col">code</th>
             <th scope="col">dest</th>
             <th scope="col">time</th>
             <th scope="col">dates</th>
@@ -48,6 +49,8 @@
     <tbody>
 {% for trip in route.trip_set.all %}
 <tr>
+    <td>{{ trip.block }}</td>
+    <td>{{ trip.ticket_machine_code }}</td>
     <td>{{ trip.journey_pattern }}</td>
     <td>{% if trip.inbound %}In{% else %}Out{% endif %}bound</td>
     <td>{{ trip.start }}–{{ trip.end }}</td>
