@@ -28,16 +28,14 @@
     <p class="message">{{ note|safe }}</p>
 {% endfor %}
 
-{% if services %}
-    <ul class="tabs">
-        <li>{% include 'modes.html' with modes=modes noun='services' %}</li>
-        {% if vehicles %}
-            <li><a href="{{ object.get_absolute_url }}/vehicles">Vehicles</a></li>
-        {% endif %}
-    </ul>
+<ul class="tabs">
+    <li>{% include 'modes.html' with modes=modes noun='services' %}</li>
+    {% if vehicles %}
+        <li><a href="{{ object.get_absolute_url }}/vehicles">Vehicles</a></li>
+    {% endif %}
+</ul>
 
-    {% include 'services.html' with services=services %}
-{% endif %}
+{% include 'services.html' with services=services %}
 
 {% if operator.licences.all %}
     <p>PSV operator licence: {% for licence in operator.licences.all %}<a href="{{ licence.get_absolute_url }}">{{ licence }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
