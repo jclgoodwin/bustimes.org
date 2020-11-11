@@ -263,7 +263,7 @@ class Command(ImportLiveVehiclesCommand):
             elif operator_ref == 'RRAR':
                 operator = ['RRAR', 'FTVA']  # Reading RailAir/First Berkshire
             elif operator_ref == 'ROST':
-                operator = ['ROST', 'LNUD']  # Rosso/Blackburn
+                operator = ['ROST', 'LNUD', 'BPTR']  # Rosso/Blackburn/Burnley
             else:
                 operator = self.get_operator(operator_ref)
             journey.service = self.get_service(operator, monitored_vehicle_journey)
