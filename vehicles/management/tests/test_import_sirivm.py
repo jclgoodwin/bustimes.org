@@ -129,19 +129,3 @@ class SiriVMImportTest(TestCase):
         self.assertEqual(240, location.heading)
         self.assertEqual('1607', location.journey.code)
         self.assertEqual('Rail Station', location.journey.destination)
-
-    def test_create_vehicle_location_invalid_bearing(self):
-        item = ET.fromstring("""
-            <VehicleActivity xmlns="http://www.siri.org.uk/siri">
-                <RecordedAtTime>2018-12-27T15:44:38Z</RecordedAtTime>
-                <MonitoredVehicleJourney>
-                    <VehicleLocation>
-                        <Longitude>-3.4924729173875</Longitude>
-                        <Latitude>50.7195777544765</Latitude>
-                    </VehicleLocation>
-                    <Bearing>-1</Bearing>
-                </MonitoredVehicleJourney>
-            </VehicleActivity>
-        """)
-        location = self.command.create_vehicle_location(item)
-        self.assertIsNone(location.heading)
