@@ -96,8 +96,6 @@ class Command(ImportLiveVehiclesCommand):
 
     def create_vehicle_location(self, item):
         bearing = item['vehicle']['bearing']
-        if bearing == -1:
-            bearing = None
         pos = item['vehicle']['pos']
         delay = item['service']['delay']
         if delay is not None:

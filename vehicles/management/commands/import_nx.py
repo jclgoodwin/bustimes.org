@@ -94,8 +94,6 @@ class Command(ImportLiveVehiclesCommand):
 
     def create_vehicle_location(self, item):
         heading = item['live']['bearing']
-        if heading == -1:
-            heading = None
         return VehicleLocation(
             latlong=Point(item['live']['lon'], item['live']['lat']),
             heading=heading

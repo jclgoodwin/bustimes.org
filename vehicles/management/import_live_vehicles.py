@@ -163,6 +163,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     return  # defer to other source
         if not location:
             location = self.create_vehicle_location(item)
+        if location.heading == -1:
+            location.heading = None
         location.datetime = datetime
         if latest:
             if location.datetime:

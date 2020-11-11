@@ -318,9 +318,7 @@ class Command(ImportLiveVehiclesCommand):
         heading = mvj.find('siri:Bearing', NS)
         if heading is not None:
             heading = int(heading.text)
-            if heading == -1 or heading == 0:
-                heading = None
-            elif heading == 0:
+            if heading == 0:
                 operator_ref = mvj.find('siri:OperatorRef', NS).text
                 if operator_ref == 'ATS':
                     heading = None
