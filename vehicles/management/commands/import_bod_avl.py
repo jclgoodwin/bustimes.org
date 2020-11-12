@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.contrib.gis.geos import Point
 from django.db.models import Q, Exists, OuterRef
 from ..import_live_vehicles import ImportLiveVehiclesCommand
-from busstops.models import Operator, Service, Locality, StopPoint
+from busstops.models import Operator, Service, Locality, StopPoint, ServiceCode
 from bustimes.models import Trip
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 
@@ -23,24 +23,11 @@ class Command(ImportLiveVehiclesCommand):
         'ANW': ['ANWE', 'AMSY', 'ACYM'],
         'ATS': ['ARBB', 'ASES', 'GLAR'],
         'AMD': ['AMID', 'AMNO', 'AFCL'],
-        'AYT': ['YTIG'],
-        'AYK': ['WRAY'],
-        'FAR': ['FSRV'],
         'GOEA': ['KCTB', 'HEDO', 'CHAM'],
-        'BOWE': ['HIPK'],
         'CBBH': ['CBBH', 'CBNL'],
         'UNO': ['UNOE', 'UNIB'],
         'UNIB': ['UNOE', 'UNIB'],
-        'GNE': ['GNEL'],
-        'ENS': ['ENSB'],
-        'HAMSTRA': ['HAMS'],
-        'RI': ['RCHC'],
-        'RG': ['RGNT'],
-        'WBT': ['WBTR'],
-        'WOB': ['WBTR'],
         'TDY': ['YCST', 'LNUD', 'ROST', 'BPTR', 'KDTR', 'HRGT'],
-        'PB': ['MTLN'],
-        'YOP': ['KJTR']
     }
     operator_cache = {}
     vehicle_cache = {}
@@ -62,13 +49,16 @@ class Command(ImportLiveVehiclesCommand):
         if operator_ref in self.operator_cache:
             return self.operator_cache[operator_ref]
 
+        condition = Exists(self.source.operatorcode_set.filter(operator=OuterRef('id'), code=operator_ref))
         if len(operator_ref) == 4:
-            try:
-                operator = Operator.objects.get(id=operator_ref)
-                self.operator_cache[operator_ref] = operator
-                return operator
-            except Operator.DoesNotExist:
-                pass
+            condition |= Q(id=operator_ref)
+
+        try:
+            operator = Operator.objects.get(condition)
+            self.operator_cache[operator_ref] = operator
+            return operator
+        except Operator.DoesNotExist:
+            pass
 
         self.operator_cache[operator_ref] = None
 
@@ -154,12 +144,10 @@ class Command(ImportLiveVehiclesCommand):
         if not line_ref:
             return
 
-        services = Service.objects.filter(current=True)
+        condition = Exists(ServiceCode.objects.filter(service=OuterRef('id'), scheme__endswith=' SIRI', code=line_ref))
+        condition |= Q(line_name__iexact=line_ref)
+        services = Service.objects.filter(condition, current=True)
 
-        if line_ref == 'TP':  # High Peak Transpeak
-            services = services.filter(line_name__startswith=line_ref)
-        else:
-            services = services.filter(line_name__iexact=line_ref)
 
         if type(operator) is Operator and operator.parent == 'Stagecoach':
             services = services.filter(operator__parent='Stagecoach')

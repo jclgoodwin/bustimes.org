@@ -2,7 +2,7 @@ import os
 from freezegun import freeze_time
 from vcr import use_cassette
 from django.test import TestCase
-from busstops.models import Region, DataSource, Operator
+from busstops.models import Region, DataSource, Operator, OperatorCode
 from ...models import VehicleLocation, VehicleJourney, Vehicle
 from ..commands import import_bod_avl
 
@@ -23,6 +23,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             name='Bus Open Data',
             url='https://data.bus-data.dft.gov.uk/api/v1/datafeed/'
         )
+        OperatorCode.objects.create(operator_id='HAMS', source=cls.source, code='HAMSTRA')
 
     @freeze_time('2020-05-01')
     def test_get_items(self):
@@ -108,7 +109,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "VehicleJourneyRef": "C_20201015_05_53"
             }
         }
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             command.handle_item(item, None)
         location = VehicleLocation.objects.last()
         self.assertEqual(location.journey.vehicle.operator_id, 'HAMS')
