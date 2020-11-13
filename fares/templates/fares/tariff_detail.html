@@ -1,0 +1,15 @@
+{% extends 'page.html' %}
+
+{% block content %}
+
+    <h1>{{ object }}</h1>
+
+    {% for distance_matrix_element in object.distancematrixelement_set.all %}
+
+        <p>{{ distance_matrix_element }} {{ distance_matrix_element.price_group }}</p>
+
+    {% endfor %}
+
+{% endblock %}
+
+{% block ad %}{% endblock %}

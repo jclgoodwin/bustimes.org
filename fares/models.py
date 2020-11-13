@@ -1,24 +1,36 @@
 from django.db import models
+from django.urls import reverse
 
 
-class Currency(models.TextChoices):
-    GBP = "GBP", "Pound Sterling"
-    EUR = "EUR", "Euro"
+# class Currency(models.TextChoices):
+#     GBP = "GBP", "Pound Sterling"
+#     EUR = "EUR", "Euro"
 
 
-class Price(models.Model):
-    currency = models.CharField(
-        max_length=3,
-        choices=Currency.choices,
-        default=Currency.GBP,
-    )
-    value = models.DecimalField(max_digits=5, decimal_places=2)  # maximum £999.99
+# currency = models.CharField(
+#     max_length=3,
+#     choices=Currency.choices,
+#     default=Currency.GBP,
+# )
+
+
+class PriceGroup(models.Model):
+    code = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=5, decimal_places=2)  # maximum £999.99
+
+    def __str__(self):
+        return self.code
 
 
 class Tariff(models.Model):
-    # dates =
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('tariff_detail', args=(self.id,))
 
 
 class UserProfile(models.Model):
@@ -30,12 +42,33 @@ class UserProfile(models.Model):
     min_age = models.PositiveSmallIntegerField(null=True, blank=True)
     max_age = models.PositiveSmallIntegerField(null=True, blank=True)
 
+    def __str__(self):
+        return self.name
+
 
 class FareTable(models.Model):
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255, blank=True)
-    user_profile = models.ForeignKey("UserProfile")
+    user_profile = models.ForeignKey(UserProfile, models.CASCADE)
+    tariff = models.ForeignKey(Tariff, models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+
+class Column(models.Model):
+    table = models.ForeignKey(FareTable, models.CASCADE)
+    code = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    order = models.PositiveSmallIntegerField(null=True)
+
+
+class Row(models.Model):
+    table = models.ForeignKey(FareTable, models.CASCADE)
+    code = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    order = models.PositiveSmallIntegerField(null=True)
 
 
 class FareZone(models.Model):
@@ -47,15 +80,17 @@ class FareZone(models.Model):
         return self.name
 
 
-class PriceGroup(models.Model):
-    code = models.CharField(max_length=255)
-
-
 class DistanceMatrixElement(models.Model):
     code = models.CharField(max_length=255)
-    price_groups = models.ManyToManyField("PriceGroup")
+    price_group = models.ForeignKey(PriceGroup, models.CASCADE)
+    start_zone = models.ForeignKey(FareZone, models.CASCADE, related_name='starting')
+    end_zone = models.ForeignKey(FareZone, models.CASCADE, related_name='ending')
+    tariff = models.ForeignKey(Tariff, models.CASCADE)
+
+    def __str__(self):
+        return self.code
 
 
 class DistanceMatrixElementPrice(models.Model):
-    distance_matrix_element = models.ForeignKey(DistanceMatrixElement)
-    price_group = models.ForeignKey(PriceGroup)
+    distance_matrix_element = models.ForeignKey(DistanceMatrixElement, models.CASCADE)
+    price_group = models.ForeignKey(PriceGroup, models.CASCADE)
