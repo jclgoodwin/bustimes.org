@@ -635,7 +635,7 @@ class ImportTransXChangeTest(TestCase):
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data['breadcrumb'], [self.sc, self.fabd])
         self.assertTemplateUsed(res, 'busstops/service_detail.html')
-        self.assertContains(res, '<td rowspan="63">then every 30 minutes until</td>', html=True)
+        self.assertContains(res, '<td rowspan="63" class="then-every">then every 30 minutes until</td>', html=True)
 
         timetable = res.context_data['timetable']
         self.assertEqual('2016-06-25', str(timetable.date))
