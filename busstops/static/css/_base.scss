@@ -945,6 +945,7 @@ thead {
     margin-right: calc(env(safe-area-inset-left) * -1 - 1.14em);
     margin-top: 1em;
     overflow: auto;
+    position: relative;
 }
 
 input:not(:checked) + label {
@@ -1000,10 +1001,13 @@ input:not(:checked) + label {
     }
 
     th {
+        background: #fff;
         border-right: 1px solid $border-color;
         border-top: 1px solid $border-color;
         font-weight: normal;
+        left: 0;
         padding-right: 0;
+        position: sticky;
         white-space: nowrap;
 
         a {
@@ -1063,16 +1067,6 @@ input:not(:checked) + label {
 
 tfoot a {
     display: inline;
-}
-
-.fancy {
-    th {
-        position: absolute;
-
-        a {
-            max-width: inherit;
-        }
-    }
 }
 
 .route {
