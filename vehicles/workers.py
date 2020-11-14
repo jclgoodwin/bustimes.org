@@ -4,10 +4,10 @@ from .management.commands import import_bod_avl
 
 
 class SiriConsumer(SyncConsumer):
-    def __init__(self):
-        print('init')
-        self.command = import_bod_avl.Command()
-        self.command.source = DataSource.objects.get(name='Bus Open Data')
+    command = None
 
     def sirivm(self, message):
+        if self.command is None:
+            self.command = import_bod_avl.Command()
+            self.command.source = DataSource.objects.get(name='Bus Open Data')
         self.command.handle_item(message['item'], None)
