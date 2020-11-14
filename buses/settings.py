@@ -70,7 +70,7 @@ if DEBUG and 'runserver' in sys.argv:
 
 ROOT_URLCONF = 'buses.urls'
 
-ASGI_APPLICATION = 'buses.routing.application'
+ASGI_APPLICATION = 'vehicles.routing.application'
 
 DATABASES = {
     'default': {
@@ -237,7 +237,7 @@ IE_COLLECTIONS = (
     'lallycoach', 'halpenny', 'eurobus', 'donnellys', 'cmadigan', 'bkavanagh',
     'ptkkenneally', 'farragher', 'fedateoranta', 'ashbourneconnect'
 )
-PASSENGER_OPERATORS = (
+PASSENGER_OPERATORS = [
     ('Nottingham City Transport', 'https://www.nctx.co.uk/open-data', 'EM', {
         'NCT': 'NCTR'
     }),
@@ -317,8 +317,8 @@ PASSENGER_OPERATORS = (
         'MCG': 'MCGL',
         'McG': 'MCGL',
     }),
-)
-BOD_OPERATORS = (
+]
+BOD_OPERATORS = [
     ('UNOE', 'SE', {
         'UBL': 'UNOE',
         'UBN': 'UNOE',
@@ -348,7 +348,7 @@ BOD_OPERATORS = (
         'OP': 'HIPK',
         'HPB': 'HIPK',
     }, False),
-)
+]
 STAGECOACH_OPERATORS = [
     ('S', 'sblb', 'Stagecoach Bluebird', {'SBLB': 'SBLB'}),
     ('S', 'scfi', 'Stagecoach East Scotland', {

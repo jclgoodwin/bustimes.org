@@ -1,8 +1,14 @@
 from django.urls import re_path
-from vehicles import consumers
+from channels.routing import ProtocolTypeRouter, URLRouter, ChannelNameRouter
+from vehicles import consumers, workers
 
 
-websocket_urlpatterns = [
-    re_path(r'^ws/vehicle_positions$', consumers.VehicleMapConsumer.as_asgi()),
-    re_path(r'^ws/vehicle_positions/services/(?P<service_ids>[\d,]+)$', consumers.ServiceMapConsumer.as_asgi()),
-]
+application = ProtocolTypeRouter({
+    "websocket": URLRouter((
+        re_path(r'^ws/vehicle_positions$', consumers.VehicleMapConsumer.as_asgi()),
+        re_path(r'^ws/vehicle_positions/services/(?P<service_ids>[\d,]+)$', consumers.ServiceMapConsumer.as_asgi()),
+    )),
+    "channel": ChannelNameRouter({
+        "sirivm": workers.SiriConsumer()
+    })
+})
