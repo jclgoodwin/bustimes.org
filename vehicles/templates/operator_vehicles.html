@@ -12,13 +12,6 @@
 
 <h1>{% firstof parent object %}</h1>
 
-{% if not parent %}
-    <ul class="tabs">
-        <li><a href="{{ object.get_absolute_url }}">Services</a></li>
-        <li>Vehicles</li>
-    </ul>
-{% endif %}
-
 {% if form %}
     {% if revisions %}
         <p class="message">{{ revisions }} vehicle{{ revisions|pluralize }} updated</p>
@@ -32,6 +25,13 @@
 
     <p><kbd>Shift</kbd> + click to select multiple consecutive vehicles</p>
 {% else %}
+    {% if not parent %}
+        <ul class="tabs">
+            <li><a href="{{ object.get_absolute_url }}">Services</a></li>
+            <li>Vehicles</li>
+        </ul>
+    {% endif %}
+
     <p>This is an <strong>unofficial</strong> and probably incomplete list of {% firstof parent object %}
     {% if parent %} ({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %}){% endif %} vehicles (well, ticket machines) that have ever appeared in the live bus tracking system.</p>
 
