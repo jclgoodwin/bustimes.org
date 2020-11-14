@@ -311,10 +311,7 @@ class Command(ImportLiveVehiclesCommand):
                         chunk = []
 
             # remainder
-            try:
-                self.send_items(send, chunk)
-            except ChannelFull:
-                pass
+            self.send_items(send, chunk)
 
             self.identifiers = identifiers
         else:
