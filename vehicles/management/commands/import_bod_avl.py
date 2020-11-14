@@ -92,7 +92,7 @@ class Command(ImportLiveVehiclesCommand):
             if operator.parent:
                 condition = Q(operator__parent=operator.parent)
 
-                if vehicle_ref.isdigit() and vehicle_ref.isupper():
+                if not vehicle_ref.isdigit() and vehicle_ref.isupper():
                     # Abus operate the 349 using First ticket machines
                     if operator.id == "FBRI":
                         condition |= Q(operator="ABUS")
