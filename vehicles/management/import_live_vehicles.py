@@ -200,9 +200,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 journey.datetime = location.datetime
             try:
                 journey.save()
-            except IntegrityError as e:
-                logger.error(e, exc_info=True)
-                return
+            except IntegrityError:
+                journey = vehicle.vehiclejourney_set.get(datetime=journey.datetime)
+
             if journey.service and not journey.service.tracking:
                 journey.service.tracking = True
                 journey.service.save(update_fields=['tracking'])
