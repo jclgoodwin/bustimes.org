@@ -148,7 +148,6 @@ class Command(ImportLiveVehiclesCommand):
         condition |= Q(line_name__iexact=line_ref)
         services = Service.objects.filter(condition, current=True)
 
-
         if type(operator) is Operator and operator.parent == 'Stagecoach':
             services = services.filter(operator__parent='Stagecoach')
         else:
@@ -248,6 +247,8 @@ class Command(ImportLiveVehiclesCommand):
             operator_ref = monitored_vehicle_journey['OperatorRef']
             if operator_ref == 'FWYO' and vehicle.operator_id == 'HCTY':
                 operator = ['FWYO', 'HCTY']  # First West Yorkshire/Connexions
+            if operator_ref == 'FBRI' and vehicle.operator_id == 'ABUS':
+                operator = ['FBRI', 'ABUS']
             elif operator_ref == 'RRAR':
                 operator = ['RRAR', 'FTVA']  # Reading RailAir/First Berkshire
             elif operator_ref == 'ROST':

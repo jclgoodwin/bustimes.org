@@ -38,13 +38,6 @@ NE_310_PM6161_131:
     description: Jedburgh - Newcastle upon Tyne
 swe_41-633-_-y10:  # Hatch Green Coaches
     current: false
-swe_40-349-A-y10:
-    operator:
-        - ABUS
-        - FBRI
-swe_40-3S-_-y10:
-    operator:
-        - FBRI
 swe_38-m1-_-y10:
     operator:
         - FBRI
