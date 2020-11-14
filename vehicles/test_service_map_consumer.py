@@ -6,7 +6,7 @@ from django.core.cache import cache
 from django.utils import timezone
 from busstops.models import Region, Service, ServiceCode, StopPoint, DataSource, SIRISource, Operator
 from bustimes.models import Route, Calendar, Trip
-from buses.routing import application
+from vehicles.routing import application
 from .siri_one_shot import siri_one_shot
 
 
