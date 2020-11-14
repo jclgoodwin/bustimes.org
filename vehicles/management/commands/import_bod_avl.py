@@ -2,9 +2,11 @@ import io
 import zipfile
 from xml.parsers.expat import ExpatError
 from ciso8601 import parse_datetime
-from multiprocessing.dummy import Pool
 import xmltodict
 from django.utils import timezone
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from channels.exceptions import ChannelFull
 from django.contrib.gis.geos import Point
 from django.db.models import Q, Exists, OuterRef
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -32,6 +34,7 @@ class Command(ImportLiveVehiclesCommand):
     operator_cache = {}
     vehicle_cache = {}
     reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST'}
+    idenfitiers = set()
 
     @staticmethod
     def get_datetime(item):
@@ -259,7 +262,8 @@ class Command(ImportLiveVehiclesCommand):
 
         return journey
 
-    def create_vehicle_location(self, item):
+    @staticmethod
+    def create_vehicle_location(item):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
         location = monitored_vehicle_journey['VehicleLocation']
         latlong = Point(float(location['Longitude']), float(location['Latitude']))
@@ -267,19 +271,52 @@ class Command(ImportLiveVehiclesCommand):
             latlong=latlong,
         )
 
+    @staticmethod
+    def get_idenfitier(item):
+        mvj = item['MonitoredVehicleJourney']
+        op = mvj['OperatorRef']
+        v = mvj['VehicleRef']
+        when = item['RecordedAtTime']
+        return f'{op}-{v}-{when}'
+
+    @staticmethod
+    def send_items(send, items):
+        try:
+            send('sirivm', {
+                'type': 'sirivm',
+                'items': items
+            })
+        except ChannelFull:
+            print('full')
+
     def update(self):
         now = timezone.now()
 
-        self.current_location_ids = set()
-
-        pool = Pool(4)
         items = self.get_items()
+
+        identifiers = set()
+
         if items:
-            pool.starmap(self.handle_item, ((item, now) for item in items))
+            send = async_to_sync(get_channel_layer().send)
+            chunk = []
+            for item in items:
+                identifier = self.get_idenfitier(item)
+                if identifier not in self.idenfitiers:
+                    identifiers.add(identifier)
 
-            self.get_old_locations().update(current=False)
+                    chunk.append(item)
 
-            print(self.operator_cache)
+                    if len(chunk) == 100:
+                        self.send_items(send, chunk)
+                        chunk = []
+
+            # remainder
+            try:
+                self.send_items(send, chunk)
+            except ChannelFull:
+                pass
+
+            self.identifiers = identifiers
         else:
             return 300  # no items - wait five minutes
 

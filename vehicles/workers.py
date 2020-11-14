@@ -10,4 +10,5 @@ class SiriConsumer(SyncConsumer):
         if self.command is None:
             self.command = import_bod_avl.Command()
             self.command.source = DataSource.objects.get(name='Bus Open Data')
-        self.command.handle_item(message['item'], None)
+        for item in message['items']:
+            self.command.handle_item(item, None)
