@@ -92,12 +92,13 @@ class Command(ImportLiveVehiclesCommand):
             if operator.parent:
                 condition = Q(operator__parent=operator.parent)
 
-                # Abus operate the 349 using First ticket machines
-                if operator.id == 'FBRI' and not vehicle_ref.isdigit() and vehicle_ref.isupper():
-                    condition |= Q(operator='ABUS')
-                # Connexions Buses 64
-                elif operator.id == 'FWYO' and not vehicle_ref.isdigit() and vehicle_ref.isupper():
-                    condition |= Q(operator='HCTY')
+                if vehicle_ref.isdigit() and vehicle_ref.isupper():
+                    # Abus operate the 349 using First ticket machines
+                    if operator.id == "FBRI":
+                        condition |= Q(operator="ABUS")
+                    # Connexions Buses 64
+                    elif operator.id == "FWYO":
+                        condition |= Q(operator="HCTY")
 
                 vehicles = self.vehicles.filter(condition)
             else:
@@ -151,8 +152,11 @@ class Command(ImportLiveVehiclesCommand):
         condition |= Q(line_name__iexact=line_ref)
         services = Service.objects.filter(condition, current=True)
 
-        if type(operator) is Operator and operator.parent == 'Stagecoach':
-            services = services.filter(operator__parent='Stagecoach')
+        if type(operator) is Operator and (
+            operator.parent == "Stagecoach"
+            or operator.parent == "Ambassador Travel"
+        ):
+            services = services.filter(operator__parent=operator.parent)
         else:
             if type(operator) is Operator:
                 services = services.filter(operator=operator)
@@ -247,15 +251,20 @@ class Command(ImportLiveVehiclesCommand):
         ):
             journey.service = latest_location.journey.service
         else:
-            operator_ref = monitored_vehicle_journey['OperatorRef']
-            if operator_ref == 'FWYO' and vehicle.operator_id == 'HCTY':
-                operator = ['FWYO', 'HCTY']  # First West Yorkshire/Connexions
-            if operator_ref == 'FBRI' and vehicle.operator_id == 'ABUS':
-                operator = ['FBRI', 'ABUS']
-            elif operator_ref == 'RRAR':
-                operator = ['RRAR', 'FTVA']  # Reading RailAir/First Berkshire
-            elif operator_ref == 'ROST':
-                operator = ['ROST', 'LNUD', 'BPTR']  # Rosso/Blackburn/Burnley
+            operator_ref = monitored_vehicle_journey["OperatorRef"]
+            if operator_ref == "FWYO":
+                if vehicle.operator_id == "HCTY":
+                    operator = ["HCTY"]  # First West Yorkshire/Connexions
+                else:
+                    operator = ["FWYO", "FLDS"]
+            elif operator_ref == "FHAL":
+                operator = ["FHAL", "FHUD"]
+            elif operator_ref == "FBRI" and vehicle.operator_id == "ABUS":
+                operator = ["ABUS"]
+            elif operator_ref == "RRAR":
+                operator = ["RRAR", "FTVA"]  # Reading RailAir/First Berkshire
+            elif operator_ref == "ROST":
+                operator = ["ROST", "LNUD", "BPTR"]  # Rosso/Blackburn/Burnley
             else:
                 operator = self.get_operator(operator_ref)
             journey.service = self.get_service(operator, monitored_vehicle_journey)
@@ -317,7 +326,7 @@ class Command(ImportLiveVehiclesCommand):
         else:
             return 300  # no items - wait five minutes
 
-        time_taken = (timezone.now() - now)
+        time_taken = timezone.now() - now
         print(time_taken)
         time_taken = time_taken.total_seconds()
         if time_taken < self.wait:

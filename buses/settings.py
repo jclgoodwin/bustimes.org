@@ -459,4 +459,5 @@ TICKETER_OPERATORS = [
     # ('SE', ['WNGS', 'NXHH'], 'Hallmark Connections'),
     ('WM', ['LMST'], 'LMS Travel'),
     ('SE', ['ENSB'], 'Ensignbus'),
+    ('EA', ['AMBS'], 'Ambassador Travel'),
 ]
