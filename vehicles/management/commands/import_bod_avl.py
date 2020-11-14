@@ -33,6 +33,7 @@ class Command(ImportLiveVehiclesCommand):
     }
     operator_cache = {}
     vehicle_cache = {}
+    service_cache = {}
     reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST'}
     identifiers = {}
 
@@ -143,19 +144,22 @@ class Command(ImportLiveVehiclesCommand):
         self.vehicle_cache[cache_key] = vehicle.id
         return vehicle, created
 
-    def get_service(self, operator, monitored_vehicle_journey):
+    def get_service(self, operator, item):
+        monitored_vehicle_journey = item['MonitoredVehicleJourney']
+
         line_ref = monitored_vehicle_journey.get('LineRef')
         if not line_ref:
             return
+
+        cache_key = f'{operator}:{line_ref}'
+        if cache_key in self.service_cache:
+            return self.service_cache[cache_key]
 
         condition = Exists(ServiceCode.objects.filter(service=OuterRef('id'), scheme__endswith=' SIRI', code=line_ref))
         condition |= Q(line_name__iexact=line_ref)
         services = Service.objects.filter(condition, current=True)
 
-        if type(operator) is Operator and (
-            operator.parent == "Stagecoach"
-            or operator.parent == "Ambassador Travel"
-        ):
+        if type(operator) is Operator and operator.parent == "Stagecoach":
             services = services.filter(operator__parent=operator.parent)
         else:
             if type(operator) is Operator:
@@ -166,24 +170,38 @@ class Command(ImportLiveVehiclesCommand):
             try:
                 return services.get()
             except Service.DoesNotExist:
+                self.service_cache[cache_key] = None
                 return
             except Service.MultipleObjectsReturned:
                 pass
 
-        destination_ref = monitored_vehicle_journey.get('DestinationRef')
+        destination_ref = monitored_vehicle_journey.get("DestinationRef")
         if destination_ref:
             try:
                 stops = StopPoint.objects.filter(service=OuterRef("pk"), locality__stoppoint=destination_ref)
                 return services.filter(Exists(stops)).get()
             except Service.DoesNotExist:
+                self.service_cache[cache_key] = None
                 return
             except Service.MultipleObjectsReturned:
-                pass
+                try:
+                    trips = Trip.objects.filter(route__service=OuterRef("pk"), destination=destination_ref)
+                    return services.filter(Exists(trips)).get()
+                except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                    pass
+
+        try:
+            when = self.get_datetime(item)
+            when = when.strftime('%a').lower()
+            trips = Trip.objects.filter(**{'calendar__{when}': True}, route__service=OuterRef("pk"))
+            return services.filter(Exists(trips))
+        except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+            pass
 
         vehicle_journey_ref = monitored_vehicle_journey.get('VehicleJourneyRef')
         if vehicle_journey_ref and vehicle_journey_ref.isdigit():
             try:
-                trips = Trip.objects.filter(route__service=OuterRef('pk'), ticket_machine_code=vehicle_journey_ref)
+                trips = Trip.objects.filter(route__service=OuterRef("pk"), ticket_machine_code=vehicle_journey_ref)
                 return services.filter(Exists(trips)).get()
             except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                 pass
@@ -267,7 +285,7 @@ class Command(ImportLiveVehiclesCommand):
                 operator = ["ROST", "LNUD", "BPTR"]  # Rosso/Blackburn/Burnley
             else:
                 operator = self.get_operator(operator_ref)
-            journey.service = self.get_service(operator, monitored_vehicle_journey)
+            journey.service = self.get_service(operator, item)
 
         return journey
 
