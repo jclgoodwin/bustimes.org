@@ -17,7 +17,7 @@ from ...models import Vehicle, VehicleJourney, VehicleLocation
 
 class Command(ImportLiveVehiclesCommand):
     source_name = 'Bus Open Data'
-    wait = 30
+    wait = 20
     cache = set()
     operators = {
         'ASC': ['AKSS', 'ARHE', 'AMTM', 'GLAR'],
@@ -34,7 +34,7 @@ class Command(ImportLiveVehiclesCommand):
     operator_cache = {}
     vehicle_cache = {}
     reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST'}
-    idenfitiers = set()
+    identifiers = {}
 
     @staticmethod
     def get_datetime(item):
@@ -280,21 +280,22 @@ class Command(ImportLiveVehiclesCommand):
             latlong=latlong,
         )
 
-    @staticmethod
-    def get_idenfitier(item):
-        mvj = item['MonitoredVehicleJourney']
-        op = mvj['OperatorRef']
-        v = mvj['VehicleRef']
-        when = item['RecordedAtTime']
-        return f'{op}-{v}-{when}'
+    def send_items(self, send, items):
+        modified_items = []
+        identifiers = {}
+        for item in items:
+            monitored_vehicle_journey = item['MonitoredVehicleJourney']
+            key = f"{monitored_vehicle_journey['OperatorRef']}-{monitored_vehicle_journey['VehicleRef']}"
+            if self.identifiers.get(key) != item['RecordedAtTime']:
+                modified_items.append(item)
+                identifiers[key] = item['RecordedAtTime']
 
-    @staticmethod
-    def send_items(send, items):
         try:
             send('sirivm', {
                 'type': 'sirivm',
-                'items': items
+                'items': modified_items
             })
+            self.identifiers.update(identifiers)
         except ChannelFull:
             print('full')
 
@@ -303,26 +304,18 @@ class Command(ImportLiveVehiclesCommand):
 
         items = self.get_items()
 
-        identifiers = set()
-
         if items:
             send = async_to_sync(get_channel_layer().send)
             chunk = []
             for item in items:
-                identifier = self.get_idenfitier(item)
-                if identifier not in self.idenfitiers:
-                    identifiers.add(identifier)
+                chunk.append(item)
 
-                    chunk.append(item)
-
-                    if len(chunk) == 100:
-                        self.send_items(send, chunk)
-                        chunk = []
+                if len(chunk) == 100:
+                    self.send_items(send, chunk)
+                    chunk = []
 
             # remainder
             self.send_items(send, chunk)
-
-            self.identifiers = identifiers
         else:
             return 300  # no items - wait five minutes
 
