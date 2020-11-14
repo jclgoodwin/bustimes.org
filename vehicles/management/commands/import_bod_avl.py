@@ -194,7 +194,7 @@ class Command(ImportLiveVehiclesCommand):
             when = self.get_datetime(item)
             when = when.strftime('%a').lower()
             trips = Trip.objects.filter(**{f'calendar__{when}': True}, route__service=OuterRef("pk"))
-            return services.filter(Exists(trips))
+            return services.filter(Exists(trips)).get()
         except (Service.DoesNotExist, Service.MultipleObjectsReturned):
             pass
 
