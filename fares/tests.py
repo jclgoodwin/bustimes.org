@@ -7,7 +7,7 @@ class FaresTest(TestCase):
     def test_netex(self):
         call_command('import_netex_fares')
 
-        tariff = Tariff.objects.first()
+        tariff = Tariff.objects.get(name="A C Williams WM06 - single fares")
 
         response = self.client.get(tariff.get_absolute_url())
 
