@@ -344,6 +344,14 @@ class Command(ImportLiveVehiclesCommand):
             return self.wait - time_taken
         return 0  # took longer than self.wait
 
+    @staticmethod
+    def items_from_response(response):
+        return xmltodict.parse(
+            response,
+            dict_constructor=dict,  # override OrderedDict, cos dict is ordered in modern versions of Python
+            force_list=['MonitoredVehicleJourney']
+        )
+
     def get_items(self):
         response = self.session.get(self.source.url, params=self.source.settings)
         if not response.ok:
@@ -355,10 +363,7 @@ class Command(ImportLiveVehiclesCommand):
 
         if 'datafeed' in self.source.url:
             try:
-                data = xmltodict.parse(
-                    response.content,
-                    dict_constructor=dict  # override OrderedDict, cos dict is ordered in modern versions of Python
-                )
+                data = self.items_from_response(response.content)
             except ExpatError:
                 print(response.content.decode())
                 return
@@ -368,12 +373,13 @@ class Command(ImportLiveVehiclesCommand):
                     assert archive.namelist() == ['siri.xml']
                     with archive.open('siri.xml') as open_file:
                         try:
-                            data = xmltodict.parse(open_file, dict_constructor=dict)
+                            data = self.items_from_response(open_file)
                         except ExpatError:
                             print(open_file.read())
                             return
             except zipfile.BadZipFile:
                 print(response.content.decode())
+                return
 
         self.source.datetime = parse_datetime(data['Siri']['ServiceDelivery']['ResponseTimestamp'])
 
