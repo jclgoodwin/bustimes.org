@@ -57,20 +57,6 @@ class FareTable(models.Model):
         return self.name
 
 
-class Column(models.Model):
-    table = models.ForeignKey(FareTable, models.CASCADE)
-    code = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)
-    order = models.PositiveSmallIntegerField(null=True)
-
-
-class Row(models.Model):
-    table = models.ForeignKey(FareTable, models.CASCADE)
-    code = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)
-    order = models.PositiveSmallIntegerField(null=True)
-
-
 class FareZone(models.Model):
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
@@ -91,6 +77,25 @@ class DistanceMatrixElement(models.Model):
         return self.code
 
 
-class DistanceMatrixElementPrice(models.Model):
+class Column(models.Model):
+    table = models.ForeignKey(FareTable, models.CASCADE)
+    code = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    order = models.PositiveSmallIntegerField(null=True)
+
+    def __str__(self):
+        return self.name.replace("/", "/\u200B")
+
+
+class Row(models.Model):
+    table = models.ForeignKey(FareTable, models.CASCADE)
+    code = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    order = models.PositiveSmallIntegerField(null=True)
+
+
+class Cell(models.Model):
+    column = models.ForeignKey(Column, models.CASCADE)
+    row = models.ForeignKey(Row, models.CASCADE)
     distance_matrix_element = models.ForeignKey(DistanceMatrixElement, models.CASCADE)
     price_group = models.ForeignKey(PriceGroup, models.CASCADE)

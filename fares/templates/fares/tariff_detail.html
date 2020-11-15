@@ -1,12 +1,76 @@
 {% extends 'page.html' %}
 
+{% block head %}
+<style>
+table {
+    font-size: .875em;
+    white-space: nowrap;
+}
+
+th, td {
+    border-top: 0;
+    border-bottom: 1px solid #fe9;
+    border-right: 1px solid #fe9;
+    text-align: right;
+}
+
+th:last-child,
+td:last-child {
+    padding-right: .5em;
+    border-right: 1px solid #fe9;
+}
+
+th {
+    position: sticky;
+    left: 0;
+    top: 0;
+    background: #fff;
+}
+
+tr.head th {
+    z-index: 1;
+    white-space: normal;
+
+}
+
+/*
+tbody tr:hover th,
+td:hover {
+    background: #eee;
+}
+*/
+</style>
+{% endblock %}
+
+{% block bodyclass %}{% endblock %}
+
 {% block content %}
 
     <h1>{{ object }}</h1>
 
-    {% for distance_matrix_element in object.distancematrixelement_set.all %}
+    {% for table in object.faretable_set.all %}
 
-        <p>{{ distance_matrix_element }} {{ distance_matrix_element.price_group }}</p>
+        <h2>{{ table }}</h2>
+
+        <p>{{ table.user_profile }} fares</p>
+
+        <table>
+            <tbody>
+                <tr class="head">
+                    <th></th>
+                    {% for column in table.column_set.all %}
+                        <th scope="col">{{ column }}</th>
+                    {% endfor %}
+                </tr>
+                {% for row in table.row_set.all %}
+                    <tr>
+                        <th>{{ row.name }}</th>
+                        {% for cell in row.cell_set.all %}
+                            <td>£{{ cell.price_group.amount }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+        </table>
 
     {% endfor %}
 
