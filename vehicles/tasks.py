@@ -111,10 +111,12 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
     }
 
     vehicles = Vehicle.objects
-    if operator.parent == 'First':
-        vehicles = Vehicle.objects.filter(operator__parent='First')
+    if operator.parent:
+        vehicles = Vehicle.objects.filter(operator__parent=operator.parent)
     else:
         vehicles = operator.vehicle_set
+
+    vehicles = vehicles.select_related('latest_location')
 
     if vehicle.isdigit():
         defaults['fleet_number'] = vehicle
@@ -132,6 +134,10 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
         journey_ref = ''
 
     time = parse_datetime(time)
+
+    if vehicle.latest_location and (time - vehicle.latest_location.datetime).total_seconds() < 7200:
+        # vehicle tracked 2 hours ago (or more recently)
+        return
 
     destination = destination or ''
     route_name = data.get('LineName') or data.get('LineRef')
