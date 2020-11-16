@@ -121,30 +121,20 @@ def handle_zipfile(path, collection, url, last_modified):
             operators[line['agency_id']] = operator
 
         for line in read_file(archive, 'routes.txt'):
-            if line['route_short_name'] and len(line['route_short_name']) <= 8:
-                route_id = line['route_short_name']
-            elif line['route_long_name'] and len(line['route_long_name']) <= 4:
-                route_id = line['route_long_name']
-            else:
-                route_id = line['route_id'].split()[0]
-
-            service_code = collection + '-' + route_id
-            assert len(service_code) <= 24
-
             defaults = {
-                'region_id': 'LE',
                 'line_name': line['route_short_name'],
                 'description': line['route_long_name'],
                 'date': time.strftime('%Y-%m-%d'),
                 'mode': MODES.get(int(line['route_type']), ''),
                 'current': True,
-                'show_timetable': True
+                'show_timetable': True,
+                'source': source,
+                'service_code': ''
             }
-            service, created = Service.objects.update_or_create(
-                defaults,
-                service_code=service_code,
-                source=source
-            )
+            service, created = Service.objects.filter(
+                source=source,
+                route__code=line['route_id']
+            ).update_or_create(defaults)
 
             try:
                 operator = operators[line['agency_id']]

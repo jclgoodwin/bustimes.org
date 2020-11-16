@@ -3,6 +3,7 @@ import zipfile
 import vcr
 from freezegun import freeze_time
 from mock import patch
+from tempfile import TemporaryDirectory
 from datetime import date
 from django.test import TestCase, override_settings
 from django.conf import settings
@@ -50,27 +51,25 @@ class GTFSTest(TestCase):
         # Create an existing operator (with a slightly different name) to test that it is re-used
         Operator.objects.create(id=132, name='Seumas Doherty', region=cls.leinster)
 
-        for collection in settings.IE_COLLECTIONS:
-            dir_path = os.path.join(FIXTURES_DIR, 'google_transit_' + collection)
-            feed_path = dir_path + '.zip'
-            with zipfile.ZipFile(feed_path, 'a') as open_zipfile:
-                for item in os.listdir(dir_path):
-                    open_zipfile.write(os.path.join(dir_path, item), item)
+        with TemporaryDirectory() as directory:
+            for collection in settings.IE_COLLECTIONS:
+                dir_path = os.path.join(FIXTURES_DIR, f'google_transit_{collection}')
+                feed_path = os.path.join(directory, f'google_transit_{collection}.zip')
+                with zipfile.ZipFile(feed_path, 'a') as open_zipfile:
+                    for item in os.listdir(dir_path):
+                        open_zipfile.write(os.path.join(dir_path, item), item)
 
-        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'google_transit_ie') + '.yaml'):
-            with patch('builtins.print') as mocked_print:
-                call_command('import_gtfs', '--force', '-v2')
-        mocked_print.assert_called_with((0, {}))
+            with override_settings(DATA_DIR=directory):
+                with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'google_transit_ie') + '.yaml'):
+                    with patch('builtins.print') as mocked_print:
+                        call_command('import_gtfs', '--force', '-v2')
+                mocked_print.assert_called_with((0, {}))
 
-        # import a second time - test that it's OK if stuff already exists
-        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'google_transit_ie') + '.yaml'):
-            with patch('builtins.print') as mocked_print:
-                call_command('import_gtfs', '--force')
-        mocked_print.assert_called_with((0, {}))
-
-        for collection in settings.IE_COLLECTIONS:
-            dir_path = os.path.join(FIXTURES_DIR, 'google_transit_' + collection)
-            os.remove(dir_path + '.zip')
+                # import a second time - test that it's OK if stuff already exists
+                with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'google_transit_ie') + '.yaml'):
+                    with patch('builtins.print') as mocked_print:
+                        call_command('import_gtfs', '--force')
+                mocked_print.assert_called_with((0, {}))
 
     def test_stops(self):
         stops = StopPoint.objects.all()
@@ -114,7 +113,7 @@ class GTFSTest(TestCase):
                 self.assertEqual(timetable.groupings, [])
 
     def test_big_timetable(self):
-        service = Service.objects.get(service_code='seamusdoherty-963-1')
+        service = Service.objects.get(route__code='21-963-1-y11-1')
         timetable = service.get_timetable(date(2017, 6, 7))
         self.assertEqual(str(timetable.groupings[0].rows[0].times), "['', 10:15, '', 14:15, 17:45]")
         self.assertEqual(str(timetable.groupings[0].rows[1].times), "['', 10:20, '', 14:20, 17:50]")
