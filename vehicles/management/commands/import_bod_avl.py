@@ -145,14 +145,14 @@ class Command(ImportLiveVehiclesCommand):
         self.vehicle_cache[cache_key] = vehicle.id
         return vehicle, created
 
-    def get_service(self, operator, item):
+    def get_service(self, operator, item, vehicle_operator_id):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
 
         line_ref = monitored_vehicle_journey.get('LineRef')
         if not line_ref:
             return
 
-        cache_key = f'{operator}:{line_ref}'
+        cache_key = f'{operator}:{vehicle_operator_id}:{line_ref}'
         if cache_key in self.service_cache:
             return self.service_cache[cache_key]
 
@@ -164,7 +164,10 @@ class Command(ImportLiveVehiclesCommand):
             services = services.filter(operator__parent=operator.parent)
         else:
             if type(operator) is Operator:
-                services = services.filter(operator=operator)
+                condition = Q(operator=operator)
+                if vehicle_operator_id != operator.id:
+                    condition |= Q(operator=vehicle_operator_id)
+                services = services.filter(condition)
             elif type(operator) is list:
                 services = services.filter(operator__in=operator)
 
@@ -287,7 +290,7 @@ class Command(ImportLiveVehiclesCommand):
                 operator = ["ROST", "LNUD", "BPTR"]  # Rosso/Blackburn/Burnley
             else:
                 operator = self.get_operator(operator_ref)
-            journey.service = self.get_service(operator, item)
+            journey.service = self.get_service(operator, item, vehicle.operator_id)
 
         return journey
 

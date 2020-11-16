@@ -39,7 +39,7 @@
         <tr>
             <th scope="col">block</th>
             <th scope="col">code</th>
-            <th scope="col">dest</th>
+            <th scope="col">direction</th>
             <th scope="col">time</th>
             <th scope="col">dates</th>
             <th scope="col">days</th>
@@ -51,7 +51,6 @@
 <tr>
     <td>{{ trip.block }}</td>
     <td>{{ trip.ticket_machine_code }}</td>
-    <td>{{ trip.journey_pattern }}</td>
     <td>{% if trip.inbound %}In{% else %}Out{% endif %}bound</td>
     <td>{{ trip.start }}–{{ trip.end }}</td>
     <td>{{ trip.calendar.start_date }}–{{ trip.calendar.end_date }}</td>

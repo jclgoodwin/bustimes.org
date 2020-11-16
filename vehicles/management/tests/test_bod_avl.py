@@ -135,3 +135,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         location = VehicleLocation.objects.last()
         self.assertEqual(location.journey.vehicle.operator_id, 'HAMS')
         self.assertEqual(location.journey.vehicle.reg, 'DW18HAM')
+
+        self.assertEqual(
+            command.service_cache,
+            {'WHIP:WHIP:U': None, 'TGTC:TGTC:843X': None, 'HAMS:HAMS:C': None}
+        )
