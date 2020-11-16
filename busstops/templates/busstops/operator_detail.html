@@ -6,11 +6,13 @@
     <link rel="shortlink" href="https://bustimes.org/operators/{{ object.id }}">
 {% endblock %}
 
-{% block content %}
+{% block topad %}
+    {% if services|length > 3 %}
+        {% include 'ad.html' %}
+    {% endif %}
+{% endblock %}
 
-{% if services|length > 3 %}
-    {% include 'ad.html' %}
-{% endif %}
+{% block content %}
 
 <div itemscope itemtype="http://schema.org/LocalBusiness">
 

@@ -26,9 +26,7 @@ try {
 
     try {
         if (localStorage && localStorage.hideAds) {
-            for (var i = ads.length - 1; i >= 0; i -= 1) {
-                ads[i].style.display = 'none'
-            }
+            return;
         }
     } catch (error) {
         // never mind

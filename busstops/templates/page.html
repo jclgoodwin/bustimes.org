@@ -25,6 +25,7 @@
 {% endblock %}
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}">
+    <script>if(localStorage&&localStorage.hideAds){document.body.className+=' hide-ads'}</script>
     <a href="#content" class="skip">Skip to main content</a>
 {% block header %}
 <header>
@@ -45,6 +46,7 @@
 {% endblock %}
 <main>
     {% block breadcrumb %}{% include 'breadcrumb.html' %}{% endblock %}
+    {% block topad %}{% endblock %}
     <div id="content"></div>
     {% block content %}{% endblock %}
 </main>

@@ -1,8 +1,10 @@
 {% extends 'page.html' %}
 
-{% block content %}
+{% block topad %}
+    {% include 'ad.html' %}
+{% endblock %}
 
-{% include 'ad.html' %}
+{% block content %}
 
 <h1>{{ stoppoint.get_long_name }}</h1>
 
