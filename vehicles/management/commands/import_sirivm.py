@@ -317,11 +317,7 @@ class Command(ImportLiveVehiclesCommand):
         latlong = get_latlong(mvj)
         heading = mvj.find('siri:Bearing', NS)
         if heading is not None:
-            heading = int(heading.text)
-            if heading == 0:
-                operator_ref = mvj.find('siri:OperatorRef', NS).text
-                if operator_ref == 'ATS':
-                    heading = None
+            heading = int(heading.text) or None
         delay = mvj.find('siri:Delay', NS)
         if (delay is not None) and delay.text:
             try:
