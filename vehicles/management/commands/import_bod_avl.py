@@ -35,6 +35,7 @@ class Command(ImportLiveVehiclesCommand):
     vehicle_cache = {}
     service_cache = {}
     reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST'}
+    parents = {"Stagecoach", "Ambassador Travel", "Go South Coast"}
     identifiers = {}
 
     @staticmethod
@@ -159,7 +160,7 @@ class Command(ImportLiveVehiclesCommand):
         condition |= Q(line_name__iexact=line_ref)
         services = Service.objects.filter(condition, current=True)
 
-        if type(operator) is Operator and operator.parent == "Stagecoach":
+        if type(operator) is Operator and operator.parent in self.parents:
             services = services.filter(operator__parent=operator.parent)
         else:
             if type(operator) is Operator:
