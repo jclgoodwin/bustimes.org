@@ -168,6 +168,7 @@ class Command(ImportLiveVehiclesCommand):
             elif type(operator) is list:
                 services = services.filter(operator__in=operator)
 
+        if not (type(operator) is Operator and operator.parent == "Stagecoach"):
             try:
                 return services.get()
             except Service.DoesNotExist:
