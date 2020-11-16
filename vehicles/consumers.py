@@ -55,31 +55,34 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
 
     def send_locations(self, locations):
         if locations:
-            self.send_json(
-                [{
-                    'i': location.id,
-                    'd': DjangoJSONEncoder.default(None, location.datetime),
-                    'l': tuple(location.latlong),
-                    'h': location.heading,
-                    'r': location.journey.route_name,
-                    'c': location.journey.vehicle.get_livery(location.heading),
-                    't': location.journey.vehicle.get_text_colour(),
-                    'e': location.early
-                } for location in locations]
-            )
+            for chunk in (locations[i:i+1000] for i in range(0, len(locations), 1000)):
+                self.send_json(
+                    [{
+                        'i': location.id,
+                        'd': DjangoJSONEncoder.default(None, location.datetime),
+                        'l': tuple(location.latlong),
+                        'h': location.heading,
+                        'r': location.journey.route_name,
+                        'c': location.journey.vehicle.get_livery(location.heading),
+                        't': location.journey.vehicle.get_text_colour(),
+                        'e': location.early
+                    } for location in chunk]
+                )
 
 
 class ServiceMapConsumer(VehicleMapConsumer):
     def connect(self):
         self.accept()
-        self.service_ids = self.scope['url_route']['kwargs']['service_ids'].split(',')
-        locations = get_vehicle_locations(journey__service__in=self.service_ids)
+        service_ids = self.scope['url_route']['kwargs']['service_ids'].split(',')
+        locations = get_vehicle_locations(journey__service__in=service_ids)
         self.send_locations(locations)
         if not locations:
             self.send_json([])
         icarus = not any(location.journey.source_id != 75 for location in locations)
-        for service_id in self.service_ids:
-            async_to_sync(self.channel_layer.group_add)(f'service{service_id}', self.channel_name)
+        for service_id in service_ids:
+            group = f'service{service_id}'
+            self.groups.append(group)
+            async_to_sync(self.channel_layer.group_add)(group, self.channel_name)
             if icarus:
                 codes = ServiceCode.objects.filter(scheme__in=schemes, service=service_id)
                 codes = codes.annotate(source_name=Replace('scheme', Value(' SIRI')))
@@ -94,8 +97,7 @@ class ServiceMapConsumer(VehicleMapConsumer):
         cache.close()
 
     def disconnect(self, close_code):
-        for service_id in self.service_ids:
-            async_to_sync(self.channel_layer.group_discard)(f'service{service_id}', self.channel_name)
+        pass
 
     def recieve_json(self, content):
         pass
