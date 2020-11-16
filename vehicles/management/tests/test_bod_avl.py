@@ -118,7 +118,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             "MonitoredVehicleJourney": {
                 "LineRef": "C",
                 "BlockRef": "503",
-                "VehicleRef": "DW18_HAM",
+                "VehicleRef": "DW18-HAM",
                 "OperatorRef": "HAMSTRA",
                 "DirectionRef": "outbound",
                 "DestinationRef": "2400103099",
