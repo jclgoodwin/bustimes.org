@@ -586,7 +586,7 @@ class ServiceManager(models.Manager):
 
 class Service(models.Model):
     """A bus service"""
-    service_code = models.CharField(max_length=64, unique=True)
+    service_code = models.CharField(max_length=64, db_index=True, blank=True)
     line_name = models.CharField(max_length=64, blank=True)
     line_brand = models.CharField(max_length=64, blank=True)
     description = models.CharField(max_length=255, blank=True, db_index=True)
