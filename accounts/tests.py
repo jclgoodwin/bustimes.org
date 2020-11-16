@@ -10,6 +10,9 @@ class RegistrationTest(TestCase):
         self.assertContains(response, "This field is required")
 
     def test_registration(self):
+        response = self.client.get("/accounts/register/")
+        self.assertContains(response, "Email address")
+
         with self.assertNumQueries(2):
             response = self.client.post(
                 "/accounts/register/",
