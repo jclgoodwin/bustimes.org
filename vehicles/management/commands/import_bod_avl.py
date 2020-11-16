@@ -349,7 +349,7 @@ class Command(ImportLiveVehiclesCommand):
         return xmltodict.parse(
             response,
             dict_constructor=dict,  # override OrderedDict, cos dict is ordered in modern versions of Python
-            force_list=['MonitoredVehicleJourney']
+            force_list=['VehicleActivity']
         )
 
     def get_items(self):
