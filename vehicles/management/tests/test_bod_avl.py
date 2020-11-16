@@ -138,5 +138,5 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         self.assertEqual(
             command.service_cache,
-            {'WHIP:WHIP:U': None, 'TGTC:TGTC:843X': None, 'HAMS:HAMS:C': None}
+            {'WHIP:WHIP:U:0500CCITY544': None, 'TGTC:TGTC:843X:43000280301': None, 'HAMS:HAMS:C:2400103099': None}
         )

@@ -35,7 +35,6 @@ class Command(ImportLiveVehiclesCommand):
     vehicle_cache = {}
     service_cache = {}
     reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST'}
-    parents = {"Stagecoach", "Ambassador Travel", "Go South Coast"}
     identifiers = {}
 
     @staticmethod
@@ -152,16 +151,22 @@ class Command(ImportLiveVehiclesCommand):
         if not line_ref:
             return
 
-        cache_key = f'{operator}:{vehicle_operator_id}:{line_ref}'
+        destination_ref = monitored_vehicle_journey.get("DestinationRef")
+
+        cache_key = f"{operator}:{vehicle_operator_id}:{line_ref}:{destination_ref}"
         if cache_key in self.service_cache:
             return self.service_cache[cache_key]
 
-        condition = Exists(ServiceCode.objects.filter(service=OuterRef('id'), scheme__endswith=' SIRI', code=line_ref))
-        condition |= Q(line_name__iexact=line_ref)
-        services = Service.objects.filter(condition, current=True)
+        services = Service.objects.filter(
+            Exists(ServiceCode.objects.filter(service=OuterRef('id'), scheme__endswith=' SIRI', code=line_ref))
+            | Q(line_name__iexact=line_ref),
+            current=True
+        )
 
-        if type(operator) is Operator and operator.parent in self.parents:
+        if type(operator) is Operator and operator.parent and destination_ref:
             services = services.filter(operator__parent=operator.parent)
+            # we will use the destination ref to find out exactly which operator it is
+
         else:
             if type(operator) is Operator:
                 condition = Q(operator=operator)
@@ -171,7 +176,6 @@ class Command(ImportLiveVehiclesCommand):
             elif type(operator) is list:
                 services = services.filter(operator__in=operator)
 
-        if not (type(operator) is Operator and operator.parent == "Stagecoach"):
             try:
                 return services.get()
             except Service.DoesNotExist:
@@ -180,7 +184,6 @@ class Command(ImportLiveVehiclesCommand):
             except Service.MultipleObjectsReturned:
                 pass
 
-        destination_ref = monitored_vehicle_journey.get("DestinationRef")
         if destination_ref:
             try:
                 stops = StopPoint.objects.filter(service=OuterRef("pk"), locality__stoppoint=destination_ref)
