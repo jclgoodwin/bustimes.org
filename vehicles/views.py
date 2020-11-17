@@ -12,6 +12,7 @@ from django.http import HttpResponse, JsonResponse, Http404
 from django.views.generic.detail import DetailView
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
 from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision
@@ -177,6 +178,28 @@ def operator_vehicles(request, slug=None, parent=None):
     })
 
     return response
+
+
+def operator_map(request, slug):
+    operator = get_object_or_404(Operator.objects.select_related('region'), slug=slug)
+
+    services = mark_safe(json.dumps({
+        'type': 'FeatureCollection',
+        'features': [{
+            'type': 'Feature',
+            'geometry': json.loads(service.geometry.simplify().json),
+            'properties': {
+                'name': str(service)
+            }
+        } for service in operator.service_set.filter(current=True)]
+    }))
+
+    return render(request, 'operator_map.html', {
+        'object': operator,
+        'operator': operator,
+        'breadcrumb': [operator.region, operator],
+        'services': services
+    })
 
 
 def get_locations(request):

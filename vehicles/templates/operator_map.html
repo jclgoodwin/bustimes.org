@@ -1,0 +1,53 @@
+{% extends 'page.html' %}
+
+{% block title %}Map – {{ object }} – bustimes.org{% endblock %}
+
+{% block head %}
+    <style>
+    #map {
+        bottom: 3em;
+        position: absolute;
+        top: 7.5em;
+        width: 100%;
+    }
+
+    footer {
+        bottom: 0;
+        position: absolute;
+        width: 100%;
+    }
+
+    footer ul,
+    .breadcrumb {
+        border: 0;
+    }
+    </style>
+{% endblock %}
+
+{% block bodyclass %}{% endblock %}
+
+{% block content %}
+
+    <!--
+    <h1>{{ operator }}</h1>
+
+    <ul class="tabs">
+        <li><a href="{{ object.get_absolute_url }}">Services</a></li>
+        <li>Map</li>
+    </ul>
+     -->
+
+    <div id="map"></div>
+
+{% endblock %}
+
+{% block ad %}{% endblock %}
+
+{% block foot %}
+    {% load static %}
+    <script>SERVICES={{ services }}</script>
+    <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
+    <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
+    <!-- <script src="{% static 'js/reqwest.min.js' %}"></script> -->
+    <script async src="{% static 'js/operator-map.js' %}"></script>
+{% endblock %}
