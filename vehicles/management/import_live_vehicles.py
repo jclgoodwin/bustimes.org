@@ -128,10 +128,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if not vehicle:
             return
 
-        if vehicle.withdrawn:
-            vehicle.withdrawn = False
-            vehicle.save(update_fields=['withdrawn'])
-
         if vehicle_created:
             latest = None
         else:
@@ -228,6 +224,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         location.redis_append()
         location.channel_send(vehicle)
+
+        if vehicle.withdrawn:
+            vehicle.withdrawn = False
+            vehicle.save(update_fields=['withdrawn'])
 
         if latest:
             speed = calculate_speed(latest, location)
