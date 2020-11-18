@@ -284,8 +284,8 @@ def stagecoach():
             operators = Operator.objects.filter(service__route__source=command.source).distinct().values('id')
             operators = {o['id']: o['id'] for o in operators}
             print(' ', operators)
-            if 'ARDU' in operators:
-                command.source.service_set.filter(operator='ARDU').delete()
+            if 'ANEA' in operators or 'OXBC' in operators:
+                print(command.source.service_set.filter(operator__in=['ANEA', 'OXBC']).delete())
 
     command.debrief()
 
