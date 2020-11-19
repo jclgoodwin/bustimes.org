@@ -16,7 +16,8 @@ def get_livery_choices(operator):
         if not vehicle.livery_id and vehicle.colours and vehicle.colours != 'Other':
             choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'Like {vehicle}')
     choices = [(key, livery.preview(name=True)) for key, livery in choices.items()]
-    choices.append(('Other', 'Other'))
+    if choices:
+        choices.append(('Other', 'Other'))
     return choices
 
 
@@ -62,7 +63,12 @@ vehicle’s previous owners""", required=False, max_length=255)
         super().__init__(*args, **kwargs)
 
         if operator:
-            self.fields['colours'].choices = get_livery_choices(operator)
+            colours = get_livery_choices(operator)
+            if colours:
+                self.fields['colours'].choices = colours
+            else:
+                del self.fields['colours']
+                del self.fields['other_colour']
             depots = operator.vehicle_set.distinct('data__Depot').values_list('data__Depot', flat=True)
             depots = [(depot, depot) for depot in depots if depot]
             if depots:
@@ -101,8 +107,3 @@ class EditVehicleForm(EditVehiclesForm):
             self.fields['fleet_number'].disabled = True
         if vehicle.reg and vehicle.reg in vehicle.code.replace('_', '').replace(' ', '').replace('-', ''):
             self.fields['reg'].disabled = True
-
-        if not vehicle.notes:
-            del self.fields['notes']
-            if not vehicle.branding:
-                del self.fields['branding']

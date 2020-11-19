@@ -39,7 +39,9 @@
         <p>Ticket machine code:<br>
         {{ vehicle.code }}</p>
 
-        {{ form.as_p }}
+        <div class="edit-vehicle">
+            {{ form.as_p }}
+        </div>
 
         {% if user.is_authenticated %}
             <p>You’re logged in as <strong>user {{ user.id }}</strong>. <a href="{% url 'logout' %}">Log out</a></p>

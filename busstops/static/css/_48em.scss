@@ -45,3 +45,16 @@ h1 {
     margin: 1em;
     left: auto;
 }
+
+.edit-vehicle p:first-child {
+    float: left;
+    width: 24%;
+    margin-top: 0;
+    margin-right: 2%;
+
+    + p {
+        width: 74%;
+        float: right;
+        margin-top: 0;
+    }
+}
