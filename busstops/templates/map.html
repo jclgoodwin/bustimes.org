@@ -23,6 +23,14 @@
 {% block header %}
    <header>
         <a href="/" class="site-name">bustimes.org</a>
+
+        <form method="GET" action="/search" class="search">
+            <label>
+                Search
+                <input name="q" placeholder="Search" type="search" value="{{ query }}" required>
+            </label>
+            <input type="submit" value="Search">
+        </form>
     </header>
 {% endblock %}
 
