@@ -19,9 +19,6 @@ from buses.utils import varnish_ban
 import json
 
 
-r = redis.from_url(settings.CELERY_BROKER_URL)
-
-
 def format_reg(reg):
     if reg[-3:].isalpha():
         return reg[:-3] + '\u00A0' + reg[-3:]
@@ -488,6 +485,7 @@ class VehicleLocation(models.Model):
         )
 
     def redis_append(self):
+        r = redis.from_url(settings.REDIS_URL)
         appendage = [self.datetime, tuple(self.latlong), self.heading, self.early]
         try:
             r.rpush(f'journey{self.journey_id}', json.dumps(appendage, cls=DjangoJSONEncoder))

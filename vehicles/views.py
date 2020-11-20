@@ -278,7 +278,7 @@ def service_vehicles_history(request, slug):
     # journeys = journeys.annotate(calls=Exists(calls))
     journeys = journeys.filter(datetime__date=date).select_related('vehicle').order_by('datetime')
     try:
-        r = redis.from_url(settings.CELERY_BROKER_URL)
+        r = redis.from_url(settings.REDIS_URL)
         pipe = r.pipeline()
         for journey in journeys:
             pipe.exists(f'journey{journey.id}')
@@ -339,7 +339,7 @@ class VehicleDetailView(DetailView):
             journeys = journeys.select_related('service')
 
             try:
-                r = redis.from_url(settings.CELERY_BROKER_URL)
+                r = redis.from_url(settings.REDIS_URL)
                 pipe = r.pipeline()
                 for journey in journeys:
                     pipe.exists(f'journey{journey.id}')
@@ -461,7 +461,7 @@ def vehicles_history(request):
 
 def journey_json(request, pk):
     try:
-        r = redis.from_url(settings.CELERY_BROKER_URL)
+        r = redis.from_url(settings.REDIS_URL)
         locations = r.lrange(f'journey{pk}', 0, -1)
         if locations:
             locations = [json.loads(location) for location in locations]

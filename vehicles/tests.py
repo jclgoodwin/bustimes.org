@@ -8,7 +8,7 @@ from .models import (Vehicle, VehicleType, VehicleFeature, Livery,
                      VehicleJourney, VehicleLocation, VehicleEdit)
 
 
-@override_settings(CELERY_BROKER_URL='redis://localhost:69')
+@override_settings(REDIS_URL='redis://localhost:69')
 class VehiclesTests(TestCase):
     @classmethod
     def setUpTestData(cls):
