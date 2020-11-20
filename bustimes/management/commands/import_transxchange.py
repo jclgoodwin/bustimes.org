@@ -668,8 +668,9 @@ class Command(BaseCommand):
                 line_brand = txc_service.marketing_name
                 if line_name in line_brand:
                     line_brand_parts = line_brand.split()
-                    line_brand_parts.remove(line_name)
-                    line_brand = ' '.join(line_brand_parts)
+                    if line_name in line_brand_parts:
+                        line_brand_parts.remove(line_name)
+                        line_brand = ' '.join(line_brand_parts)
                 print(line_brand)
             if line_brand:
                 defaults['line_brand'] = line_brand
