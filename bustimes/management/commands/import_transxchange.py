@@ -602,12 +602,11 @@ class Command(BaseCommand):
 
                 if not existing:
                     # assume service code is at least unique within a source
-                    existing = self.source.service_set.filter(service_code=service_code).first()
+                    services = self.source.service_set.filter(service_code=service_code)
+                    existing = services.first()
 
                 if existing:
                     services = Service.objects.filter(id=existing.id)
-                else:
-                    services = Service.objects
 
             else:
                 if self.source.name in {'Go East Anglia', 'Go South West'} and not existing:
