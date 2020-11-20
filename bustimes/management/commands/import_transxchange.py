@@ -600,6 +600,15 @@ class Command(BaseCommand):
                 if service_code is None:
                     service_code = txc_service.service_code
 
+                if not existing:
+                    # assume service code is at least unique within a source
+                    existing = self.source.service_set.filter(service_code=service_code).first()
+
+                if existing:
+                    services = Service.objects.filter(id=existing.id)
+                else:
+                    services = Service.objects
+
             else:
                 if self.source.name in {'Go East Anglia', 'Go South West'} and not existing:
                     try:
@@ -640,16 +649,16 @@ class Command(BaseCommand):
                     if existing and existing.id in self.service_ids and description and existing.description != description:
                         existing = None
 
-            if not existing:
-                existing = Service.objects.filter(service_code=service_code).first()
-                if existing and existing.current and existing.line_name != line_name:
-                    service_code = f'{service_code}-{line_name}'
-                existing = None
+                if not existing:
+                    existing = Service.objects.filter(service_code=service_code).first()
+                    if existing and existing.current and existing.line_name != line_name:
+                        service_code = f'{service_code}-{line_name}'
+                    existing = None
 
-            if existing:
-                services = Service.objects.filter(id=existing.id)
-            else:
-                services = Service.objects.filter(service_code=service_code)
+                if existing:
+                    services = Service.objects.filter(id=existing.id)
+                else:
+                    services = Service.objects.filter(service_code=service_code)
 
             defaults = {
                 'line_name': line_name,
