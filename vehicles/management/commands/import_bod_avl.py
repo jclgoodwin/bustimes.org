@@ -2,11 +2,9 @@ import io
 import zipfile
 from xml.parsers.expat import ExpatError
 from ciso8601 import parse_datetime
+from multiprocessing.dummy import Pool
 import xmltodict
 from django.utils import timezone
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
-from channels.exceptions import ChannelFull
 from django.contrib.gis.geos import Point
 from django.db.models import Q, Exists, OuterRef
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -306,42 +304,23 @@ class Command(ImportLiveVehiclesCommand):
             latlong=latlong,
         )
 
-    def send_items(self, send, items):
-        modified_items = []
+    def get_changed_items(self, items):
         identifiers = {}
         for item in items:
             monitored_vehicle_journey = item['MonitoredVehicleJourney']
             key = f"{monitored_vehicle_journey['OperatorRef']}-{monitored_vehicle_journey['VehicleRef']}"
             if self.identifiers.get(key) != item['RecordedAtTime']:
-                modified_items.append(item)
+                yield item
                 identifiers[key] = item['RecordedAtTime']
-
-        try:
-            send('sirivm', {
-                'type': 'sirivm',
-                'items': modified_items
-            })
-            self.identifiers.update(identifiers)
-        except ChannelFull:
-            print('full')
 
     def update(self):
         now = timezone.now()
 
+        pool = Pool(8)
         items = self.get_items()
 
         if items:
-            send = async_to_sync(get_channel_layer().send)
-            chunk = []
-            for item in items:
-                chunk.append(item)
-
-                if len(chunk) == 100:
-                    self.send_items(send, chunk)
-                    chunk = []
-
-            # remainder
-            self.send_items(send, chunk)
+            pool.starmap(self.handle_item, ((item, now) for item in self.get_changed_items(items)))
         else:
             return 300  # no items - wait five minutes
 
