@@ -41,20 +41,20 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         with patch('vehicles.management.commands.import_bod_avl.Command.get_items', return_value=[]):
             self.assertEqual(300, command.update())
 
-    def test_send(self):
-        def send(_, __):
-            pass
+    # def test_send(self):
+    #     def send(_, __):
+    #         pass
 
-        command = import_bod_avl.Command()
-        command.send_items(send, [{
-            "RecordedAtTime": "2020-10-15T07:46:08+00:00",
-            "MonitoredVehicleJourney": {
-                "VehicleRef": "DW18_HAM",
-                "OperatorRef": "HAMSTRA",
-            }
-        }])
+    #     command = import_bod_avl.Command()
+    #     command.send_items(send, [{
+    #         "RecordedAtTime": "2020-10-15T07:46:08+00:00",
+    #         "MonitoredVehicleJourney": {
+    #             "VehicleRef": "DW18_HAM",
+    #             "OperatorRef": "HAMSTRA",
+    #         }
+    #     }])
 
-        self.assertEqual(command.identifiers, {'HAMSTRA-DW18_HAM': '2020-10-15T07:46:08+00:00'})
+    #     self.assertEqual(command.identifiers, {'HAMSTRA-DW18_HAM': '2020-10-15T07:46:08+00:00'})
 
     def test_handle(self):
         command = import_bod_avl.Command()
