@@ -7,8 +7,11 @@ class Licence(models.Model):
     trading_name = models.CharField(max_length=48)
     traffic_area = models.CharField(max_length=1)
     licence_number = models.CharField(max_length=20, unique=True)
-    discs = models.PositiveIntegerField()
-    authorised_discs = models.PositiveIntegerField()
+    discs = models.PositiveSmallIntegerField()
+    authorised_discs = models.PositiveSmallIntegerField()
+    description = models.CharField(max_length=255)
+    granted_date = models.DateField(null=True)
+    address = models.TextField()
 
     def __str__(self):
         return self.licence_number
@@ -21,12 +24,12 @@ class Registration(models.Model):
     licence = models.ForeignKey(Licence, models.CASCADE)
     registration_number = models.CharField(max_length=20, unique=True)
     service_number = models.CharField(max_length=100)
-    description = models.CharField(max_length=255)
     start_point = models.CharField(max_length=255)
     finish_point = models.CharField(max_length=255)
     via = models.CharField(blank=True, max_length=255)
     subsidies_description = models.CharField(max_length=255)
     subsidies_details = models.CharField(max_length=255)
+    service_type_description = models.CharField(max_length=255, blank=True)
     licence_status = models.CharField(max_length=255)
     registration_status = models.CharField(max_length=255, db_index=True)
     traffic_area_office_covered_by_area = models.CharField(max_length=100)
@@ -43,7 +46,7 @@ class Registration(models.Model):
 
 class Variation(models.Model):
     registration = models.ForeignKey(Registration, models.CASCADE)
-    variation_number = models.PositiveIntegerField()
+    variation_number = models.PositiveSmallIntegerField()
     granted_date = models.DateField()
     expiry_date = models.DateField()
     effective_date = models.DateField(null=True)
@@ -52,7 +55,6 @@ class Variation(models.Model):
     service_type_other_details = models.TextField()
     registration_status = models.CharField(max_length=255)
     publication_text = models.TextField()
-    service_type_description = models.CharField(max_length=255)
     short_notice = models.CharField(max_length=255)
     authority_description = models.CharField(max_length=255)
 

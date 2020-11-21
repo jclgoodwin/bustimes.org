@@ -66,17 +66,17 @@ Other details: Daily Service Every Twenty Minutes""",
         command = import_variations.Command()
         command.input = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures', 'Bus_Variation_F.csv')
 
-        with self.assertNumQueries(296):
+        with self.assertNumQueries(297):
             command.handle()
 
-        with self.assertNumQueries(142):
+        with self.assertNumQueries(143):
             command.handle()
 
         command.licence = None
         command.registration = None
         command.previous_row = None
 
-        with self.assertNumQueries(144):
+        with self.assertNumQueries(145):
             command.handle()
 
         response = self.client.get('/licences/PF0000003')

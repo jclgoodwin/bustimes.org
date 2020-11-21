@@ -32,6 +32,7 @@ class Command(ImportFromCSVCommand):
             'traffic_area': row['Current Traffic Area'],
             'discs': row['Discs in Possession'] or 0,
             'authorised_discs': row['AUTHDISCS'] or 0,
+            'description': row['Description'],
         }
         self.licence, created = Licence.objects.get_or_create(defaults, licence_number=row['Lic_No'])
         if not created:
@@ -40,7 +41,6 @@ class Command(ImportFromCSVCommand):
     def get_registration_defaults(self, row):
         return {
             'licence': self.licence,
-            'description': row['Description'],
             'start_point': row['start_point'],
             'finish_point': row['finish_point'],
             'via': row['via'],
@@ -50,6 +50,7 @@ class Command(ImportFromCSVCommand):
             'subsidies_details': row['Subsidies_Details'],
             'traffic_area_office_covered_by_area': row['TAO Covered BY Area'],
             'service_number': row['Service Number'],
+            'service_type_description': row['Service_Type_Description'],
         }
 
     def handle_registration(self, row):
@@ -70,7 +71,6 @@ class Command(ImportFromCSVCommand):
             'service_type_other_details': row['Service_Type_Other_Details'],
             'registration_status': row['Registration Status'],
             'publication_text': row['Pub_Text'],
-            'service_type_description': row['Service_Type_Description'],
             'short_notice': row['Short Notice'],
             'authority_description': row['Auth_Description'],
         }
