@@ -6,7 +6,7 @@ from .models import User
 
 class VehicleRevisionInline(admin.TabularInline):
     model = VehicleRevision
-    fields = ['datetime', 'vehicle_id', 'from_operator', 'to_operator', 'changes']
+    fields = ['datetime', 'vehicle_id', 'from_operator_id', 'to_operator_id', 'changes']
     readonly_fields = fields
     show_change_link = True
 

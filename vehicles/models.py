@@ -413,7 +413,10 @@ class VehicleRevision(models.Model):
 
     def list_changes(self):
         if self.from_operator_id or self.to_operator_id:
-            yield ('operator', self.from_operator, self.to_operator)
+            if __class__.from_operator.is_cached(self):
+                yield ('operator', self.from_operator, self.to_operator)
+            else:
+                yield ('operator', self.from_operator_id, self.from_operator_id)
         if self.changes:
             for key in self.changes:
                 before, after = self.changes[key].split('\n+')
