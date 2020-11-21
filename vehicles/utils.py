@@ -37,20 +37,21 @@ def get_vehicle_edit(vehicle, fields, now, request):
     return edit
 
 
-def do_revisions(vehicle_ids, data):
+def do_revisions(vehicle_ids, data, user):
     if 'operator' in data or 'depot' in data:
         changed = True
     else:
         changed = False
-        # for field in ('notes', 'branding'):
-        #     if field in data and not data[field]:
-        #         changed = True
-        #         break
+        if user.trusted:
+            for field in ('notes', 'branding'):
+                if field in data:
+                    changed = True
+                    break
         if not changed:
             return None, None
 
     vehicles = Vehicle.objects.filter(id__in=vehicle_ids)
-    revisions = [VehicleRevision(vehicle=vehicle, changes={}) for vehicle in vehicles]
+    revisions = [VehicleRevision(vehicle=vehicle, user=user, changes={}) for vehicle in vehicles]
     changed_fields = []
 
     if 'depot' in data:
@@ -71,15 +72,17 @@ def do_revisions(vehicle_ids, data):
         changed_fields.append('data')
         del data['depot']
 
-    # for field in ('notes', 'branding'):
-    #     if field in data and not data[field]:
-    #         to_value = data[field]
-    #         for revision in revisions:
-    #             from_value = getattr(revision.vehicle, field)
-    #             revision.changes[field] = f"-{from_value}\n+{to_value}"
-    #             setattr(revision.vehicle, field, to_value)
-    #         changed_fields.append(field)
-    #         del data[field]
+    if user.trusted:
+        for field in ('notes', 'branding'):
+            if field in data:
+                to_value = data[field]
+                for revision in revisions:
+                    from_value = getattr(revision.vehicle, field)
+                    if from_value != to_value:
+                        revision.changes[field] = f"-{from_value}\n+{to_value}"
+                        setattr(revision.vehicle, field, to_value)
+                changed_fields.append(field)
+                del data[field]
 
     if 'operator' in data:
         for revision in revisions:
@@ -94,24 +97,25 @@ def do_revisions(vehicle_ids, data):
     return revisions, changed_fields
 
 
-def do_revision(vehicle, data):
+def do_revision(vehicle, data, user):
     changes = {}
     changed_fields = []
 
-    # if 'reg' in data:
-    #     changes['reg'] = f"-{vehicle.reg}\n+{data['reg']}"
-    #     vehicle.reg = data['reg']
-    #     changed_fields.append('reg')
-    #     del data['reg']
+    if user.trusted and 'reg' in data:
+        changes['reg'] = f"-{vehicle.reg}\n+{data['reg']}"
+        vehicle.reg = data['reg']
+        changed_fields.append('reg')
+        del data['reg']
 
     for field in ('notes', 'branding', 'name'):
-        if field in data and not data[field]:
-            from_value = getattr(vehicle, field)
-            to_value = data[field]
-            changes[field] = f"-{from_value}\n+{to_value}"
-            setattr(vehicle, field, to_value)
-            changed_fields.append(field)
-            del data[field]
+        if field in data:
+            if user.trusted or not data[field]:
+                from_value = getattr(vehicle, field)
+                to_value = data[field]
+                changes[field] = f"-{from_value}\n+{to_value}"
+                setattr(vehicle, field, to_value)
+                changed_fields.append(field)
+                del data[field]
 
     if 'depot' in data:
         if vehicle.data:
@@ -129,7 +133,8 @@ def do_revision(vehicle, data):
 
     if changes or 'operator' in data:
         revision = VehicleRevision(
-            vehicle=vehicle
+            vehicle=vehicle,
+            user=user
         )
 
         if changes:

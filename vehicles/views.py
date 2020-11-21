@@ -4,6 +4,7 @@ import xml.etree.cElementTree as ET
 import datetime
 from django.db.models import Exists, OuterRef, Prefetch, Subquery
 from django.core.cache import cache
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
@@ -47,8 +48,8 @@ def operator_vehicles(request, slug=None, parent=None):
     operators = Operator.objects.select_related('region')
     if slug:
         try:
-            operator = get_object_or_404(operators, slug=slug.lower())
-        except Http404:
+            operator = operators.get(slug=slug.lower())
+        except Operator.DoesNotExist:
             operator = get_object_or_404(operators, operatorcode__code=slug, operatorcode__source__name='slug')
         vehicles = operator.vehicle_set.filter(withdrawn=False)
     elif parent:
@@ -83,6 +84,8 @@ def operator_vehicles(request, slug=None, parent=None):
     if form:
         if not request.user.is_authenticated:
             return redirect(f'/accounts/login/?next={request.path}')
+        if request.user.trusted is False:
+            raise PermissionDenied
 
         breadcrumb.append(Vehicles(operator))
         initial = {
@@ -98,13 +101,11 @@ def operator_vehicles(request, slug=None, parent=None):
                 vehicle_ids = request.POST.getlist('vehicle')
                 now = timezone.now()
 
-                revisions, changed_fields = do_revisions(vehicle_ids, data)
+                revisions, changed_fields = do_revisions(vehicle_ids, data, request.user)
                 if revisions:
                     Vehicle.objects.bulk_update((revision.vehicle for revision in revisions), changed_fields)
                     for revision in revisions:
                         revision.datetime = now
-                        if request.user.is_authenticated:
-                            revision.user = request.user
                     VehicleRevision.objects.bulk_create(revisions)
                     revisions = len(revisions)
 
@@ -368,6 +369,8 @@ class VehicleDetailView(DetailView):
 
 @login_required
 def edit_vehicle(request, vehicle_id):
+    if request.user.trusted is False:
+        raise PermissionDenied
     vehicle = get_object_or_404(Vehicle.objects.select_related('vehicle_type', 'livery', 'operator'), id=vehicle_id)
     if not vehicle.editable():
         raise Http404
@@ -399,11 +402,9 @@ def edit_vehicle(request, vehicle_id):
         elif form.is_valid():
             data = {key: form.cleaned_data[key] for key in form.changed_data}
             now = timezone.now()
-            revision = do_revision(vehicle, data)
+            revision = do_revision(vehicle, data, request.user)
             if revision:
                 revision.datetime = now
-                if request.user.is_authenticated:
-                    revision.user = request.user
                 revision.save()
 
             form = None
