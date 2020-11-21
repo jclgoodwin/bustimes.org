@@ -95,7 +95,7 @@ class EditVehicleForm(EditVehiclesForm):
     previous_reg = RegField(required=False, max_length=14)
     url = forms.URLField(label='URL', help_text="Optional link to a public (not Facebook) web page or photo "
                          "showing repaint", required=False, max_length=255)
-    field_order = ['operator', 'fleet_number', 'reg', 'vehicle_type', 'colours', 'other_colour', 'branding', 'name',
+    field_order = ['fleet_number', 'reg', 'operator', 'vehicle_type', 'colours', 'other_colour', 'branding', 'name',
                    'previous_reg', 'features', 'depot', 'notes']
 
     def __init__(self, *args, **kwargs):
