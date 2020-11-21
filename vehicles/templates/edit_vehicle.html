@@ -15,7 +15,7 @@
 
         <p>
             {% for key, from, to in revision.list_changes %}
-                Changed {{ key }} from {{ from }} to {{ to }}
+                Changed {{ key }} {% if from %}from {{ from }} {% endif %}to {{ to }}
                 {% if not forloop.last %}<br>{% endif %}
             {% endfor %}
         </p>

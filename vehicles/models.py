@@ -146,7 +146,7 @@ class Livery(models.Model):
         if 'update_fields' not in kwargs:
             if self.css or self.colours:
                 self.set_css()
-                if self.colours:
+                if self.colours and not self.id:
                     self.white_text = (get_text_colour(self.colours) == '#fff')
         super().save(force_insert, force_update, **kwargs)
 

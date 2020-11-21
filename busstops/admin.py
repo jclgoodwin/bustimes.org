@@ -75,11 +75,14 @@ class OperatorAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
     autocomplete_fields = ('licences',)
 
-    def get_queryset(self, _):
-        service_count = Count('service', filter=Q(service__current=True))
-        return Operator.objects.annotate(
-            service_count=service_count
-        ).prefetch_related('operatorcode_set')
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if 'changelist' in request.resolver_match.view_name:
+            service_count = Count('service', filter=Q(service__current=True))
+            return queryset.annotate(
+                service_count=service_count
+            ).prefetch_related('operatorcode_set')
+        return queryset
 
     def service_count(self, obj):
         return obj.service_count
@@ -191,9 +194,11 @@ class DataSourceAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'datetime', 'settings', 'operators')
     list_editable = ('datetime', 'settings')
 
-    def get_queryset(self, request, **kwargs):
-        queryset = super().get_queryset(request, **kwargs)
-        return queryset.annotate(operators=StringAgg('route__service__operator', ', ', distinct=True))
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if 'changelist' in request.resolver_match.view_name:
+            return queryset.annotate(operators=StringAgg('route__service__operator', ', ', distinct=True))
+        return queryset
 
     def operators(self, obj):
         return obj.operators
@@ -202,8 +207,11 @@ class DataSourceAdmin(admin.ModelAdmin):
 class SIRISourceAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'requestor_ref', 'areas', 'get_poorly')
 
-    def get_queryset(self, _):
-        return self.model.objects.prefetch_related('admin_areas')
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if 'changelist' in request.resolver_match.view_name:
+            return queryset.prefetch_related('admin_areas')
+        return queryset
 
     @staticmethod
     def areas(obj):

@@ -344,10 +344,13 @@ class VehicleEditAdmin(admin.ModelAdmin):
     raw_id_fields = ['vehicle', 'livery']
     actions = ['apply_edits', 'approve', 'disapprove', 'delete_vehicles']
 
-    def get_queryset(self, _):
-        edit_count = Count('vehicle__vehicleedit', filter=Q(vehicle__vehicleedit__approved=None))
-        edits = VehicleEdit.objects.annotate(edit_count=edit_count)
-        return edits.prefetch_related('vehicleeditfeature_set__feature', 'vehicle__features')
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if 'changelist' in request.resolver_match.view_name:
+            edit_count = Count('vehicle__vehicleedit', filter=Q(vehicle__vehicleedit__approved=None))
+            queryset = queryset.annotate(edit_count=edit_count)
+            return queryset.prefetch_related('vehicleeditfeature_set__feature', 'vehicle__features')
+        return queryset
 
     def apply_edits(self, request, queryset):
         apply_edits(queryset)
@@ -463,8 +466,11 @@ class LiveryAdmin(admin.ModelAdmin):
         return obj.vehicles
     vehicles.admin_order_field = 'vehicles'
 
-    def get_queryset(self, _):
-        return Livery.objects.annotate(vehicles=Count('vehicle'))
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if 'changelist' in request.resolver_match.view_name:
+            return queryset.annotate(vehicles=Count('vehicle'))
+        return queryset
 
 
 class RevisionChangeFilter(admin.SimpleListFilter):
