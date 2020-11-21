@@ -645,8 +645,9 @@ class Command(BaseCommand):
                     if not existing and operator_code != 'SBCR':
                         existing = self.get_existing_service(line_name, operators)
 
-                    if existing and existing.id in self.service_ids and description and existing.description != description:
-                        existing = None
+                    if existing and existing.id in self.service_ids:
+                        if description and existing.description != description:
+                            existing = None
 
                 if not existing:
                     existing = Service.objects.filter(service_code=service_code).first()
