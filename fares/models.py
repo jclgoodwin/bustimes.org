@@ -14,17 +14,46 @@ from django.urls import reverse
 # )
 
 
+class DataSet(models.Model):
+    name = models.CharField(max_length=255)
+    url = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.name
+
+
 class PriceGroup(models.Model):
-    code = models.CharField(max_length=255)
+    code = models.CharField(max_length=255, blank=True)
     amount = models.DecimalField(max_digits=5, decimal_places=2)  # maximum £999.99
 
     def __str__(self):
         return self.code
 
 
+class TimeInterval(models.Model):
+    code = models.CharField(max_length=255, blank=True)
+    name = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)
+
+
+class TimeIntervalPrice(models.Model):
+    code = models.CharField(max_length=255, blank=True)
+    amount = models.DecimalField(max_digits=5, decimal_places=2)  # maximum £999.99
+    time_interval = models.ForeignKey(TimeInterval, models.CASCADE)
+
+
+class SalesOfferPackage(models.Model):
+    code = models.CharField(max_length=255, blank=True)
+    name = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)
+
+
 class Tariff(models.Model):
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
+    services = models.ManyToManyField('busstops.Service')
+    operators = models.ManyToManyField('busstops.Operator')
+    source = models.ForeignKey(DataSet, models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -79,9 +108,9 @@ class DistanceMatrixElement(models.Model):
 
 class Column(models.Model):
     table = models.ForeignKey(FareTable, models.CASCADE)
-    code = models.CharField(max_length=255)
+    code = models.CharField(max_length=255, blank=True)
     name = models.CharField(max_length=255)
-    order = models.PositiveSmallIntegerField(null=True)
+    order = models.PositiveSmallIntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.name.replace("/", "/\u200B")
@@ -89,13 +118,14 @@ class Column(models.Model):
 
 class Row(models.Model):
     table = models.ForeignKey(FareTable, models.CASCADE)
-    code = models.CharField(max_length=255)
+    code = models.CharField(max_length=255, blank=True)
     name = models.CharField(max_length=255)
-    order = models.PositiveSmallIntegerField(null=True)
+    order = models.PositiveSmallIntegerField(null=True, blank=True)
 
 
 class Cell(models.Model):
     column = models.ForeignKey(Column, models.CASCADE)
     row = models.ForeignKey(Row, models.CASCADE)
-    distance_matrix_element = models.ForeignKey(DistanceMatrixElement, models.CASCADE)
-    price_group = models.ForeignKey(PriceGroup, models.CASCADE)
+    distance_matrix_element = models.ForeignKey(DistanceMatrixElement, models.CASCADE, null=True)
+    price_group = models.ForeignKey(PriceGroup, models.CASCADE, null=True)
+    time_interval_price = models.ForeignKey(TimeIntervalPrice, models.CASCADE, null=True)

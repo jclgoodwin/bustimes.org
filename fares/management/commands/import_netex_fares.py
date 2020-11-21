@@ -25,7 +25,7 @@ def get_user_profile(element):
 
 
 class Command(BaseCommand):
-    def handle_file(self, open_file):
+    def handle_file(self, source, open_file):
         iterator = ET.iterparse(open_file)
 
         for _, element in iterator:
@@ -63,7 +63,7 @@ class Command(BaseCommand):
         distance_matrix_elements = {}
         for tariff_element in element.find("dataObjects/CompositeFrame/frames/FareFrame/tariffs"):
             tariff, created = models.Tariff.objects.get_or_create(
-                code=tariff_element.attrib['id'], name=tariff_element.findtext("Name")
+                code=tariff_element.attrib['id'], name=tariff_element.findtext("Name"), source=source,
             )
 
             for fare_structure_element in tariff_element.find("fareStructureElements"):
@@ -150,5 +150,6 @@ class Command(BaseCommand):
         path = os.path.join(BASE_DIR, 'data')
         for filename in os.listdir(path):
             print(filename)
+            source, created = models.DataSet.objects.get_or_create(name=filename)
             with open(os.path.join(path, filename), "rb") as open_file:
-                self.handle_file(open_file)
+                self.handle_file(source, open_file)
