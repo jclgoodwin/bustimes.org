@@ -17,6 +17,7 @@ class UserAdmin(admin.ModelAdmin):
                     'approved', 'disapproved', 'pending']
     raw_id_fields = ['user_permissions']
     inlines = [VehicleEditInline, VehicleRevisionInline]
+    actions = ['trust', 'distrust']
 
     def approved(self, obj):
         return obj.approved
@@ -39,6 +40,14 @@ class UserAdmin(admin.ModelAdmin):
                 pending=Count('vehicleedit', filter=Q(vehicleedit__approved=None)),
             )
         return queryset
+
+    def trust(self, request, queryset):
+        count = queryset.update(trusted=True)
+        self.message_user(request, f'Trusted {count} users')
+
+    def distrust(self, request, queryset):
+        count = queryset.update(trusted=False)
+        self.message_user(request, f'Disusted {count} users')
 
 
 admin.site.register(User, UserAdmin)
