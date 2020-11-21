@@ -1,4 +1,4 @@
-from .models import Vehicle, VehicleEdit, VehicleRevision
+from .models import Vehicle, VehicleEdit, VehicleRevision, VehicleType
 
 
 def get_vehicle_edit(vehicle, fields, now, request):
@@ -15,8 +15,6 @@ def get_vehicle_edit(vehicle, fields, now, request):
                 setattr(edit, field, f'-{getattr(vehicle, field)}')
 
     changes = {}
-    if 'depot' in fields:
-        changes['Depot'] = fields['depot']
     if 'previous_reg' in fields:
         changes['Previous reg'] = fields['previous_reg'].upper()
     if changes:
@@ -32,24 +30,10 @@ def get_vehicle_edit(vehicle, fields, now, request):
     if fields.get('other_colour'):
         edit.colours = fields['other_colour']
 
-    edit.withdrawn = fields.get('withdrawn')
-
     return edit
 
 
 def do_revisions(vehicle_ids, data, user):
-    if 'operator' in data or 'depot' in data:
-        changed = True
-    else:
-        changed = False
-        if user.trusted:
-            for field in ('notes', 'branding'):
-                if field in data:
-                    changed = True
-                    break
-        if not changed:
-            return None, None
-
     vehicles = Vehicle.objects.filter(id__in=vehicle_ids)
     revisions = [VehicleRevision(vehicle=vehicle, user=user, changes={}) for vehicle in vehicles]
     changed_fields = []
@@ -72,6 +56,13 @@ def do_revisions(vehicle_ids, data, user):
         changed_fields.append('data')
         del data['depot']
 
+    if data.get('withdrawn'):
+        for revision in revisions:
+            revision.vehicle.withdrawn = True
+            revision.changes['withdrawn'] = "-No\n+Yes"
+        changed_fields.append('withdrawn')
+        del data['withdrawn']
+
     if user.trusted:
         for field in ('notes', 'branding'):
             if field in data:
@@ -83,6 +74,15 @@ def do_revisions(vehicle_ids, data, user):
                         setattr(revision.vehicle, field, to_value)
                 changed_fields.append(field)
                 del data[field]
+
+        if 'vehicle_type' in data:
+            vehicle_type = VehicleType.objects.get(name=data['vehicle_type'])
+            for revision in revisions:
+                if revision.vehicle.vehicle_type_id != vehicle_type.id:
+                    revision.changes['vehicle_type'] = f'-{revision.vehicle.vehicle_type}\n+{vehicle_type}'
+                    revision.vehicle.vehicle_type = vehicle_type
+            changed_fields.append('vehicle_type')
+            del data['vehicle_type']
 
     if 'operator' in data:
         for revision in revisions:
@@ -101,11 +101,27 @@ def do_revision(vehicle, data, user):
     changes = {}
     changed_fields = []
 
-    if user.trusted and 'reg' in data:
-        changes['reg'] = f"-{vehicle.reg}\n+{data['reg']}"
-        vehicle.reg = data['reg']
-        changed_fields.append('reg')
-        del data['reg']
+    if user.trusted:
+        if 'reg' in data:
+            changes['reg'] = f"-{vehicle.reg}\n+{data['reg']}"
+            vehicle.reg = data['reg']
+            changed_fields.append('reg')
+            del data['reg']
+
+        if 'vehicle_type' in data:
+            vehicle_type = VehicleType.objects.get(name=data['vehicle_type'])
+            changes['vehicle_type'] = f'-{vehicle.vehicle_type}\n+{vehicle_type}'
+            vehicle.vehicle_type = vehicle_type
+            changed_fields.append('vehicle_type')
+            del data['vehicle_type']
+
+    if 'withdrawn' in data:
+        from_value = 'Yes' if vehicle.withdrawn else 'No'
+        to_value = 'Yes' if data['withdrawn'] else 'No'
+        changes['withdrawn'] = f"-{from_value}\n+{to_value}"
+        vehicle.withdrawn = data['withdrawn']
+        changed_fields.append('withdrawn')
+        del data['withdrawn']
 
     for field in ('notes', 'branding', 'name'):
         if field in data:

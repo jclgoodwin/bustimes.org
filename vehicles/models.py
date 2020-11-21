@@ -421,6 +421,7 @@ class VehicleRevision(models.Model):
             for key in self.changes:
                 before, after = self.changes[key].split('\n+')
                 before = before[1:]
+                key = key.replace('vehicle_', '')
                 yield (key, before, after)
 
 

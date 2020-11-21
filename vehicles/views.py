@@ -102,7 +102,7 @@ def operator_vehicles(request, slug=None, parent=None):
                 now = timezone.now()
 
                 revisions, changed_fields = do_revisions(vehicle_ids, data, request.user)
-                if revisions:
+                if revisions and changed_fields:
                     Vehicle.objects.bulk_update((revision.vehicle for revision in revisions), changed_fields)
                     for revision in revisions:
                         revision.datetime = now
