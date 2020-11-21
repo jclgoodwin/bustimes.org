@@ -5,3 +5,6 @@ build-static:
 
 watch:
 	node_modules/.bin/sass --style=compressed busstops/static/css/style.scss busstops/static/css/style.css --watch
+
+lint:
+	./node_modules/.bin/eslint busstops/static/js

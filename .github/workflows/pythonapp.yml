@@ -37,6 +37,7 @@ jobs:
     - name: JavaScript
       run: |
         npm install
+        make lint
         make build-static
     - name: Test
       env:
