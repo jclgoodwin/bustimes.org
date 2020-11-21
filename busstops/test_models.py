@@ -1,9 +1,9 @@
 from django.test import TestCase
 from bustimes.models import Route
+from accounts.models import User
 from .models import (
     Region, AdminArea, DataSource, District, Locality, Operator, Service, StopPoint
 )
-from .admin import OperatorAdmin
 
 
 class RegionTests(TestCase):
@@ -55,16 +55,27 @@ class OperatorTests(TestCase):
         cls.north = Region.objects.create(pk='N', name='North')
         cls.chariots = Operator.objects.create(pk='CHAR', region=cls.north,
                                                name='Ainsley\'s Chariots')
+        cls.user = User.objects.create(username='josh', is_staff=True, is_superuser=True)
 
     def test_get_qualified_name(self):
         self.assertEqual(str(self.chariots), 'Ainsley\'s Chariots')
 
     def test_admin(self):
-        admin = OperatorAdmin(Operator, None)
-        operators = admin.get_queryset(None)
-        self.assertEqual(len(operators), 1)
-        self.assertEqual(admin.service_count(operators[0]), 0)
-        self.assertEqual(admin.operator_codes(operators[0]), '')
+        self.client.force_login(self.user)
+
+        response = self.client.get('/admin/busstops/operator/')
+        self.assertContains(response, '<td class="field-operator_codes"></td>')
+        self.assertContains(response, '<td class="field-service_count">0</td><td class="field-vehicle_count">0</td>')
+        self.assertEqual(1, response.context_data['cl'].result_count)
+
+        response = self.client.get('/admin/busstops/operator/?q=ainsley')
+        self.assertEqual(1, response.context_data['cl'].result_count)
+
+        response = self.client.get('/admin/busstops/operator/?q=sanders')
+        self.assertEqual(0, response.context_data['cl'].result_count)
+
+        response = self.client.get('/admin/busstops/operator/autocomplete/?q=ainsley')
+        self.assertEqual(response.json(), {"results": [], "pagination": {"more": False}})
 
 
 class ServiceTests(TestCase):
@@ -80,6 +91,7 @@ class ServiceTests(TestCase):
                                              date='2018-01-01')
         Route.objects.create(code='ea_21-1A-_-y08-2.xml', service=cls.service, start_date='2012-05-01', source=source)
         Route.objects.create(code='ea_21-1A-_-y08-1.xml', service=cls.service, start_date='2012-01-01', source=source)
+        cls.user = User.objects.create(username='josh', is_staff=True, is_superuser=True)
 
     def test_str(self):
         self.assertEqual(str(self.london_service), 'N41')
@@ -138,14 +150,29 @@ class ServiceTests(TestCase):
         self.assertEqual('20', self.london_service.get_operator_number('WAIR'))
         self.assertEqual('18', self.london_service.get_operator_number('TVSN'))
 
+    def test_admin(self):
+        self.client.force_login(self.user)
+
+        response = self.client.get('/admin/busstops/service/')
+        self.assertEqual(2, response.context_data['cl'].result_count)
+
+        response = self.client.get('/admin/busstops/service/?q=21')
+        self.assertEqual(0, response.context_data['cl'].result_count)
+
 
 class StopPointTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.cardiff_airport_locality = Locality(name='Cardiff Airport')
-        cls.cardiff_airport_stop = StopPoint(common_name='Airport', locality=cls.cardiff_airport_locality)
-        cls.ballyblack_church = StopPoint.objects.create(atco_code='700000002498', locality_centre=False, active=True,
-                                                         common_name='Ballyblack Church', town='Ballyblack')
+        region = Region.objects.create(id='R')
+        admin_area = AdminArea.objects.create(id=1, atco_code=1, region=region)
+        cls.cardiff_airport_locality = Locality.objects.create(name='Cardiff Airport', admin_area=admin_area)
+        cls.cardiff_airport_stop = StopPoint.objects.create(
+            common_name='Airport', locality=cls.cardiff_airport_locality, active=True,
+        )
+        cls.ballyblack_church = StopPoint.objects.create(
+            atco_code='700000002498', active=True, common_name='Ballyblack Church', town='Ballyblack'
+        )
+        cls.user = User.objects.create(username='josh', is_staff=True, is_superuser=True)
 
     def test_get_qualified_name(self):
         self.assertEqual('Ballyblack Church', self.ballyblack_church.get_qualified_name())
@@ -155,3 +182,15 @@ class StopPointTests(TestCase):
         self.assertEqual('Cardiff Airport', self.cardiff_airport_stop.get_qualified_name())
         self.cardiff_airport_stop.indicator = 'Stop M'
         self.assertEqual('Cardiff Airport (Stop M)', self.cardiff_airport_stop.get_qualified_name())
+
+    def test_admin(self):
+        self.client.force_login(self.user)
+
+        response = self.client.get('/admin/busstops/stoppoint/')
+        self.assertEqual(2, response.context_data['cl'].result_count)
+
+        response = self.client.get('/admin/busstops/stoppoint/?q=cardiff+airport')
+        self.assertEqual(1, response.context_data['cl'].result_count)
+
+        response = self.client.get('/admin/busstops/stoppoint/?q=holland')
+        self.assertEqual(0, response.context_data['cl'].result_count)
