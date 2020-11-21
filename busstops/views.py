@@ -67,6 +67,10 @@ def settings(request):
     return render(request, 'settings.html')
 
 
+def change_password(request):
+    return redirect('/accounts/password_reset/')
+
+
 def contact(request):
     """Contact page with form"""
     submitted = False

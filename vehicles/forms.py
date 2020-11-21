@@ -30,8 +30,8 @@ class EditVehiclesForm(forms.Form):
     features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features',
                                               widget=forms.CheckboxSelectMultiple, required=False)
     depot = forms.ChoiceField(required=False)
-    notes = forms.CharField(help_text="""Again, this should be blank in almost all cases. There’s no need to know a
-vehicle’s previous owners""", required=False, max_length=255)
+    notes = forms.CharField(help_text="Please <strong>don’t</strong> add information about depots, previous operators, etc",
+                            required=False, max_length=255)
     withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False)
 
     def clean_url(self):
@@ -93,8 +93,8 @@ class EditVehicleForm(EditVehiclesForm):
     reg = RegField(label='Number plate', required=False, max_length=14)
     name = forms.CharField(label='Name', required=False, max_length=255)
     previous_reg = RegField(required=False, max_length=14)
-    url = forms.URLField(label='URL', help_text='Link to a public (not Facebook) web page or photo showing changes',
-                         required=False, max_length=255)
+    url = forms.URLField(label='URL', help_text="Optional link to a public (not Facebook) web page or photo "
+                         "showing repaint", required=False, max_length=255)
     field_order = ['operator', 'fleet_number', 'reg', 'vehicle_type', 'colours', 'other_colour', 'branding', 'name',
                    'previous_reg', 'features', 'depot', 'notes']
 

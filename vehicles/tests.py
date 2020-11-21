@@ -280,7 +280,16 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Select a valid choice. #FFFF00 is not one of the available choices')
         self.assertContains(response, 'already')
 
-        # self.assertEqual(3, VehicleEdit.objects.filter(approved=None).count())
+        self.assertEqual(1, VehicleEdit.objects.all().count())
+
+        response = self.client.get('/admin/accounts/user/')
+        self.assertContains(response, '<td class="field-approved">0</td><td class="field-disapproved">0</td>'
+                            '<td class="field-pending">1</td>')
+
+        with self.assertNumQueries(9):
+            response = self.client.get('/admin/vehicles/vehicleedit/')
+        self.assertContains(response, '<del>1</del><br><ins>2</ins>')
+        self.assertEqual(1, response.context_data['cl'].result_count)
 
         # with self.assertNumQueries(12):
         #     admin.apply_edits(VehicleEdit.objects.select_related('vehicle'))
@@ -291,20 +300,6 @@ class VehiclesTests(TestCase):
         # self.assertEqual(self.usb, vehicle.features.get())
         # self.assertEqual(str(vehicle.vehicle_type), 'Optare Spectra')
         # self.assertEqual(vehicle.fleet_number, 2)
-
-        # with self.assertNumQueries(10):
-        #     response = self.client.get('/admin/vehicles/vehicleedit/?username=1')
-        # self.assertNotContains(response, 'Lynx')
-        # self.assertEqual(3, response.context_data['cl'].result_count)
-
-        # response = self.client.get('/admin/vehicles/vehicleedit/?change=colours')
-        # self.assertEqual(2, response.context_data['cl'].result_count)
-
-        # response = self.client.get('/admin/vehicles/vehicleedit/?change=changes__Depot')
-        # self.assertEqual(0, response.context_data['cl'].result_count)
-
-        # response = self.client.get('/admin/vehicles/vehicleedit/?change=reg')
-        # self.assertEqual(0, response.context_data['cl'].result_count)
 
     def test_vehicle_edit_2(self):
         self.client.force_login(self.user)

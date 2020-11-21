@@ -13,7 +13,7 @@
     var withdrawnElement = document.getElementById('id_withdrawn');
     function handleWithdrawn() {
         var display = withdrawnElement.checked ? 'none' : '';
-        document.querySelectorAll('main form > *').forEach(function(element) {
+        document.querySelectorAll('.edit-vehicle > *').forEach(function(element) {
             if ((element.querySelector('input, label')) && !element.querySelector('#id_withdrawn, #id_url, #id_user')) {
                 element.style.display = display;
             }

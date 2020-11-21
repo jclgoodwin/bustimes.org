@@ -42,6 +42,7 @@ urlpatterns = [
          name='django.contrib.sitemaps.views.sitemap'),
     path('search', views.search),
     path('journey', views.journey),
+    path('.well-known/change-password', views.change_password)
 ] + bustimes_views + disruptions_urls + vehicles_urls + vosa_urls
 
 
