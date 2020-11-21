@@ -11,7 +11,6 @@
     var container = document.getElementById('map'),
         service = container.getAttribute('data-service'),
         map,
-        bounds,
         busesOnline = document.getElementById('buses-online'),
         button = busesOnline.getElementsByTagName('a')[0],
         vehicles = {},
@@ -47,8 +46,6 @@
     button.onclick = openMap;
 
     function getStopMarker(feature, latlng) {
-
-        var className = '';
         if (feature.properties.bearing !== null) {
             var html = '<div class="stop-arrow" style="' + getTransform(feature.properties.bearing + 45) + '"></div>';
         } else {
@@ -257,7 +254,7 @@
         vehicles[item.i] = item;
     }
 
-    var timeout, busesOnlineCount;
+    var busesOnlineCount;
 
     // websocket
 

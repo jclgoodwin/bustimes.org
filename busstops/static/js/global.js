@@ -12,10 +12,12 @@ try {
                     }
                 );
             } catch (error) {
+                // ok
             }
         });
     }
 } catch (error) {
+    // ok
 }
 
 (function () {

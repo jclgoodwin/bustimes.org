@@ -5,12 +5,11 @@
         browser: true
     */
     /*global
-        L, reqwest, loadjs
+        L, reqwest
     */
 
     var container = document.getElementById('map'),
         map = L.map(container),
-        bounds,
         vehicles = {},
         vehicleMarkers = {};
 
