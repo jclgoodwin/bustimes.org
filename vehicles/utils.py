@@ -1,4 +1,4 @@
-from .models import Vehicle, VehicleEdit, VehicleRevision, VehicleType
+from .models import Vehicle, VehicleEdit, VehicleRevision, VehicleType, Livery
 
 
 def get_vehicle_edit(vehicle, fields, now, request):
@@ -79,10 +79,21 @@ def do_revisions(vehicle_ids, data, user):
             vehicle_type = VehicleType.objects.get(name=data['vehicle_type'])
             for revision in revisions:
                 if revision.vehicle.vehicle_type_id != vehicle_type.id:
-                    revision.changes['vehicle_type'] = f'-{revision.vehicle.vehicle_type}\n+{vehicle_type}'
+                    revision.from_type = revision.vehicle.vehicle_type
+                    revision.to_type = vehicle_type
                     revision.vehicle.vehicle_type = vehicle_type
             changed_fields.append('vehicle_type')
             del data['vehicle_type']
+
+        if 'colours' in data and data['colours'].isdigit():
+            livery = Livery.objects.get(id=data['colours'])
+            for revision in revisions:
+                if revision.vehicle.livery_id != livery.id:
+                    revision.from_livery = revision.vehicle.livery
+                    revision.to_livery = livery
+                    revision.vehicle.livery = livery
+            changed_fields.append('livery')
+            del data['colours']
 
     if 'operator' in data:
         for revision in revisions:
@@ -107,13 +118,6 @@ def do_revision(vehicle, data, user):
             vehicle.reg = data['reg']
             changed_fields.append('reg')
             del data['reg']
-
-        if 'vehicle_type' in data:
-            vehicle_type = VehicleType.objects.get(name=data['vehicle_type'])
-            changes['vehicle_type'] = f'-{vehicle.vehicle_type}\n+{vehicle_type}'
-            vehicle.vehicle_type = vehicle_type
-            changed_fields.append('vehicle_type')
-            del data['vehicle_type']
 
     if 'withdrawn' in data:
         from_value = 'Yes' if vehicle.withdrawn else 'No'
@@ -147,22 +151,38 @@ def do_revision(vehicle, data, user):
         changed_fields.append('data')
         del data['depot']
 
-    if changes or 'operator' in data:
-        revision = VehicleRevision(
-            vehicle=vehicle,
-            user=user
-        )
+    revision = VehicleRevision(
+        vehicle=vehicle,
+        user=user
+    )
+    if changes:
+        revision.changes = changes
 
-        if changes:
-            revision.changes = changes
+    if 'operator' in data:
+        revision.from_operator = vehicle.operator
+        revision.to_operator = data['operator']
+        vehicle.operator = data['operator']
+        changed_fields.append('operator')
+        del data['operator']
 
-        if 'operator' in data:
-            revision.from_operator = vehicle.operator
-            revision.to_operator = data['operator']
-            vehicle.operator = data['operator']
-            changed_fields.append('operator')
-            del data['operator']
+    if user.trusted:
+        if 'vehicle_type' in data:
+            vehicle_type = VehicleType.objects.get(name=data['vehicle_type'])
+            revision.from_type = vehicle.vehicle_type
+            revision.to_type = vehicle_type
+            vehicle.vehicle_type = vehicle_type
+            changed_fields.append('vehicle_type')
+            del data['vehicle_type']
 
+        if 'colours' in data and data['colours'].isdigit():
+            livery = Livery.objects.get(id=data['colours'])
+            revision.from_livery = vehicle.livery
+            revision.to_livery = livery
+            vehicle.livery = livery
+            changed_fields.append('livery')
+            del data['colours']
+
+    if changed_fields:
         vehicle.save(update_fields=changed_fields)
 
         return revision

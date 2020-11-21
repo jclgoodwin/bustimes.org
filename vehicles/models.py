@@ -416,16 +416,16 @@ class VehicleRevision(models.Model):
         )
 
     def list_changes(self):
-        if self.from_operator_id or self.to_operator_id:
-            if __class__.from_operator.is_cached(self):
-                yield ('operator', self.from_operator, self.to_operator)
-            else:
-                yield ('operator', self.from_operator_id, self.from_operator_id)
+        for field in ('operator', 'type', 'livery'):
+            if getattr(self, f'from_{field}_id') or getattr(self, f'to_{field}_id'):
+                if getattr(__class__, f'from_{field}').is_cached(self):
+                    yield (field, getattr(self, f'from_{field}'), getattr(self, f'to_{field}'))
+                else:
+                    yield (field, getattr(self, f'from_{field}_id'), getattr(self, f'to_{field}_id'))
         if self.changes:
             for key in self.changes:
                 before, after = self.changes[key].split('\n+')
                 before = before[1:]
-                key = key.replace('vehicle_', '')
                 yield (key, before, after)
 
 

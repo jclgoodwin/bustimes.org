@@ -448,7 +448,9 @@ def edit_vehicle(request, vehicle_id):
 
 def vehicle_history(request, vehicle_id):
     vehicle = get_object_or_404(Vehicle, id=vehicle_id)
-    revisions = vehicle.vehiclerevision_set.select_related('from_operator', 'to_operator').order_by('-id')
+    revisions = vehicle.vehiclerevision_set.select_related(
+        'vehicle', 'from_operator', 'to_operator', 'from_livery', 'to_livery', 'from_type', 'to_type', 'user'
+    ).order_by('-id')
     return render(request, 'vehicle_history.html', {
         'breadcrumb': [vehicle.operator, Vehicles(vehicle.operator), vehicle],
         'vehicle': vehicle,
@@ -457,7 +459,9 @@ def vehicle_history(request, vehicle_id):
 
 
 def vehicles_history(request):
-    revisions = VehicleRevision.objects.all().select_related('vehicle', 'from_operator', 'to_operator')
+    revisions = VehicleRevision.objects.all().select_related(
+        'vehicle', 'from_operator', 'to_operator', 'from_livery', 'to_livery', 'from_type', 'to_type', 'user'
+    )
     revisions = revisions.order_by('-id')
     paginator = Paginator(revisions, 100)
     page = request.GET.get('page')
