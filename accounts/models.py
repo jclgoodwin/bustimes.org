@@ -1,10 +1,11 @@
-from django.db.models.fields import EmailField
+from django.db.models.fields import EmailField, BooleanField
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 
 
 class User(AbstractUser):
     email = EmailField(unique=True, verbose_name='email address')
+    trusted = BooleanField(null=True)
 
     REQUIRED_FIELDS = []
     USERNAME_FIELD = 'email'
