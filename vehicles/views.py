@@ -8,11 +8,12 @@ from django.core.paginator import Paginator
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.gis.db.models import Extent
 from django.http import HttpResponse, JsonResponse, Http404
 from django.views.generic.detail import DetailView
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.safestring import mark_safe
+# from django.utils.safestring import mark_safe
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
 from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision
@@ -183,22 +184,27 @@ def operator_vehicles(request, slug=None, parent=None):
 def operator_map(request, slug):
     operator = get_object_or_404(Operator.objects.select_related('region'), slug=slug)
 
-    services = mark_safe(json.dumps({
-        'type': 'FeatureCollection',
-        'features': [{
-            'type': 'Feature',
-            'geometry': json.loads(service.geometry.simplify().json),
-            'properties': {
-                'name': str(service)
-            }
-        } for service in operator.service_set.filter(current=True)]
-    }))
+    services = operator.service_set.filter(current=True)
+    extent = services.aggregate(Extent('geometry'))['geometry__extent']
+
+    # services = mark_safe(json.dumps({
+    #     'type': 'FeatureCollection',
+    #     'features': [{
+    #         'type': 'Feature',
+    #         'geometry': json.loads(service.geometry.simplify().json),
+    #         'properties': {
+    #             'name': str(service)
+    #         }
+    #     } for service in services]
+    # }))
 
     return render(request, 'operator_map.html', {
         'object': operator,
         'operator': operator,
         'breadcrumb': [operator.region, operator],
-        'services': services
+        # 'services': services
+        'service_ids': services.values_list('id', flat=True),
+        'extent': extent
     })
 
 

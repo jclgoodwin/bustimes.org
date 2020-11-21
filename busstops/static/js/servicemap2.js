@@ -248,9 +248,9 @@
                     item: item,
                     zIndexOffset: 1000
                 }).addTo(map)
-                .bindPopup(getPopupContent(item))
-                .on('popupopen', handlePopupOpen)
-                .on('popupclose', handlePopupClose);
+                    .bindPopup(getPopupContent(item))
+                    .on('popupopen', handlePopupOpen)
+                    .on('popupclose', handlePopupClose);
 
             }
         }

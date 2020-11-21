@@ -270,10 +270,10 @@
                 item: item,
                 zIndexOffset: 1000
             })
-            .addTo(vehiclesGroup)
-            .bindPopup(getPopupContent(item))
-            .on('popupopen', handlePopupOpen)
-            .on('popupclose', handlePopupClose);
+                .addTo(vehiclesGroup)
+                .bindPopup(getPopupContent(item))
+                .on('popupopen', handlePopupOpen)
+                .on('popupclose', handlePopupClose);
 
             if (isClickedMarker) {
                 vehicles[item.i].openPopup();

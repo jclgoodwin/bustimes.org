@@ -28,15 +28,6 @@
 
 {% block content %}
 
-    <!--
-    <h1>{{ operator }}</h1>
-
-    <ul class="tabs">
-        <li><a href="{{ object.get_absolute_url }}">Services</a></li>
-        <li>Map</li>
-    </ul>
-     -->
-
     <div id="map"></div>
 
 {% endblock %}
@@ -45,9 +36,9 @@
 
 {% block foot %}
     {% load static %}
-    <script>SERVICES={{ services }}</script>
+    <script>EXTENT = [{{ extent|join:"," }}];SERVICE_IDS="{{ service_ids|join:"," }}";</script>
     <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
     <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
-    <!-- <script src="{% static 'js/reqwest.min.js' %}"></script> -->
+    <script src="{% static 'js/reqwest.min.js' %}"></script>
     <script async src="{% static 'js/operator-map.js' %}"></script>
 {% endblock %}
