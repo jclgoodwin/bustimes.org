@@ -410,7 +410,7 @@ form p select {
         top: 1em;
     }
 
-    + table {
+    + .table-wrapper {
         margin-top: 1em;
     }
 }
@@ -935,9 +935,14 @@ thead {
     margin-left: calc(env(safe-area-inset-left) * -1 - 1em);
     margin-right: calc(env(safe-area-inset-right) * -1 - 1em);
     overflow: auto;
-    padding-left: calc(env(safe-area-inset-left) + 1em);
-    padding-right: calc(env(safe-area-inset-right) + 1em);
-    white-space: nowrap;
+
+    table {
+        border-collapse: separate;
+        border-spacing: 0;
+        padding-left: calc(env(safe-area-inset-left) + 1rem);
+        padding-right: calc(env(safe-area-inset-right) + 1rem);
+        white-space: nowrap;
+    }
 }
 
 .timetable-wrapper-wrapper {
@@ -972,7 +977,6 @@ input:not(:checked) + label {
     font-variant-numeric: tabular-nums;
     padding-right: 1.14em;
     padding-right: calc(env(safe-area-inset-left) + 1.14em);
-    table-layout: fixed;
 
     td {
         border-left: 0;
