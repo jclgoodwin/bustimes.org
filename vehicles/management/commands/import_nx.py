@@ -71,10 +71,10 @@ class Command(ImportLiveVehiclesCommand):
             except VehicleJourney.DoesNotExist:
                 pass
 
+        journey.route_name = item['route']
         if journey.route_name.endswith('X'):
             journey.route_name = f'{journey.route_name[:-1]}-x'
 
-        journey.route_name = item['route']
         journey.destination = item['arrival']
         journey.code = item['journeyId']
 
