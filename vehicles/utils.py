@@ -63,9 +63,8 @@ def do_revisions(vehicle_ids, data, user):
         changed_fields.append('withdrawn')
         del data['withdrawn']
 
-    if user.trusted:
         for field in ('notes', 'branding'):
-            if field in data:
+            if field in data and not data['field']:
                 to_value = data[field]
                 for revision in revisions:
                     from_value = getattr(revision.vehicle, field)
@@ -75,6 +74,7 @@ def do_revisions(vehicle_ids, data, user):
                 changed_fields.append(field)
                 del data[field]
 
+    if user.trusted:
         if 'vehicle_type' in data:
             vehicle_type = VehicleType.objects.get(name=data['vehicle_type'])
             for revision in revisions:
@@ -129,7 +129,7 @@ def do_revision(vehicle, data, user):
 
     for field in ('notes', 'branding', 'name'):
         if field in data:
-            if user.trusted or not data[field]:
+            if not data[field]:
                 from_value = getattr(vehicle, field)
                 to_value = data[field]
                 changes[field] = f"-{from_value}\n+{to_value}"
