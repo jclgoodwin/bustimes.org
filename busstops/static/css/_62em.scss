@@ -11,6 +11,13 @@ main {
     padding-right: calc(env(safe-area-inset-right) + 2em);
 }
 
+.table-wrapper {
+    margin-left: calc(env(safe-area-inset-left) * -1 - 2em);
+    margin-right: calc(env(safe-area-inset-right) * -1 - 2em);
+    padding-left: calc(env(safe-area-inset-left) + 2em);
+    padding-right: calc(env(safe-area-inset-right) + 2em);
+}
+
 .breadcrumb {
     margin: 0 -2em;
     padding-left: 2em;
@@ -60,6 +67,10 @@ main {
 
 .fleet {
     td {
+        max-width: none;
+    }
+
+    .livery-cell {
         max-width: none;
     }
 }

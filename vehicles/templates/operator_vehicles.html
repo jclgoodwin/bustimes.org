@@ -56,6 +56,7 @@
     <p><a class="button" href="{{ object.get_absolute_url }}/vehicles/edit">Edit</a></p>
 {% endif %}
 
+<div class="table-wrapper">
 <table class="fleet">
     <thead>
         <tr>
@@ -65,10 +66,10 @@
             <th scope="col">Type</th>
             <th scope="col">Livery</th>
             {% if branding_column %}<th scope="col">Branding</th>{% endif %}
-            {% if name_column %}<th scope="col">Name</th>{% endif %}
-            {% if notes_column %}<th scope="col">Notes</th>{% endif %}
-            {% for col in columns %}<th scope="col">{{ col }}</th>{% endfor %}
-            {% if features_column %}<th scope="col">Special features</th>{% endif %}
+            {% if name_column %}<th scope="col" class="trivia">Name</th>{% endif %}
+            {% if notes_column %}<th scope="col" class="trivia">Notes</th>{% endif %}
+            {% for col in columns %}<th scope="col" class="trivia">{{ col }}</th>{% endfor %}
+            {% if features_column %}<th scope="col" class="trivia">Special features</th>{% endif %}
             {% if parent %}<th>Operator</th>{% endif %}
         </tr>
     </thead>
@@ -109,10 +110,10 @@
                     {% endif %}
                 </td>
                 {% if vehicle.branding and vehicle.branding != 'None' %}<td>{{ vehicle.branding }}</td>{% endif %}
-                {% if name_column %}<td>{{ vehicle.name }}</td>{% endif %}
-                {% if notes_column %}<td>{% if vehicle.notes != 'Spare ticket machine' %}{{ vehicle.notes }}{% endif %}</td>{% endif %}
-                {% for value in vehicle.column_values %}<td>{{ value }}</td>{% endfor %}
-                {% if features_column %}<td>{{ vehicle.features.all|join:", " }}</td>{% endif %}
+                {% if name_column %}<td class="trivia">{{ vehicle.name }}</td>{% endif %}
+                {% if notes_column %}<td class="trivia">{% if vehicle.notes != 'Spare ticket machine' %}{{ vehicle.notes }}{% endif %}</td>{% endif %}
+                {% for value in vehicle.column_values %}<td class="trivia">{{ value }}</td>{% endfor %}
+                {% if features_column %}<td class="trivia">{{ vehicle.features.all|join:", " }}</td>{% endif %}
                 {% if parent %}<td>{{ vehicle.operator }}</td>{% endif %}
                 <td>{{ vehicle.get_flickr_link }}</td>
                 {% if vehicle.editable %}
@@ -131,6 +132,7 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
 
 {% include 'pagination.html' with page=vehicles %}
 

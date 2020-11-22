@@ -68,6 +68,7 @@
     </form>
 
     {% if journeys %}
+        <div class="table-wrapper">
         <table>
             <thead>
                 <tr>
@@ -107,6 +108,7 @@
                 {% endfor %}
             </tbody>
         </table>
+        </div>
 
         {% for journey in journeys %}
             {% if journey.locations %}

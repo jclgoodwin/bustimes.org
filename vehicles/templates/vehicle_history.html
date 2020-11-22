@@ -17,6 +17,7 @@
     <p>They haven’t been verified or moderated. 😮</p>
 {% endif %}
 
+<div class="table-wrapper">
 <table>
     <thead>
         <th scope="col">User</th>
@@ -43,6 +44,7 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
 
 {% if not vehicle %}
     {% include 'pagination.html' with page=revisions %}
