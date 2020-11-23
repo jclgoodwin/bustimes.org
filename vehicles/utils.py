@@ -64,7 +64,7 @@ def do_revisions(vehicle_ids, data, user):
         del data['withdrawn']
 
     for field in ('notes', 'branding'):
-        if field in data and not data['field']:
+        if field in data and not data[field]:
             to_value = data[field]
             for revision in revisions:
                 from_value = getattr(revision.vehicle, field)
