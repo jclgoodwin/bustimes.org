@@ -42,11 +42,11 @@ class UserAdmin(admin.ModelAdmin):
         return queryset
 
     def trust(self, request, queryset):
-        count = queryset.update(trusted=True)
+        count = queryset.order_by().update(trusted=True)
         self.message_user(request, f'Trusted {count} users')
 
     def distrust(self, request, queryset):
-        count = queryset.update(trusted=False)
+        count = queryset.order_by().update(trusted=False)
         self.message_user(request, f'Disusted {count} users')
 
 
