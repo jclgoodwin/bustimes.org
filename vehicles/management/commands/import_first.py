@@ -11,7 +11,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.gis.db.models import Extent
 from django.utils import timezone
 from busstops.models import Service, DataSource
-from ...models import Vehicle, VehicleJourney, VehicleLocation
+from ...models import Vehicle, VehicleJourney, VehicleLocation, Channel
 
 
 class Command(BaseCommand):
@@ -83,7 +83,8 @@ class Command(BaseCommand):
 
         location.save()
         location.redis_append()
-        location.channel_send(vehicle)
+        channels = list(Channel.objects.filter(bounds__covers=location.latlong).only('name'))
+        location.channel_send(vehicle, channels)
 
         if not vehicle.latest_location_id:
             vehicle.latest_location = location
@@ -168,10 +169,13 @@ class Command(BaseCommand):
                 max_lon,
                 max_lat
             ]
-        await asyncio.wait([self.sock_it(operator, extent_1), self.sock_it(operator, extent_2)])
+
+        futures = [self.sock_it(operator, extent_1), self.sock_it(operator, extent_2)]
+        await asyncio.wait(futures, asyncio.FIRST_EXCEPTION)
 
     async def sock_them(self, extents):
-        await asyncio.wait([self.sock_it(*extent) for extent in extents])
+        futures = [self.sock_it(*extent) for extent in extents]
+        await asyncio.wait(futures, asyncio.FIRST_EXCEPTION)
 
     def handle(self, operators, *args, **options):
         try:

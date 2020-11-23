@@ -12,7 +12,7 @@ from django.db.models.functions import Now
 from django.utils import timezone
 from bustimes.models import Route
 from busstops.models import DataSource, ServiceCode
-from ..models import Vehicle, VehicleLocation
+from ..models import Vehicle, VehicleLocation, Channel
 
 
 logger = logging.getLogger(__name__)
@@ -223,7 +223,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
         self.current_location_ids.add(location.id)
 
         location.redis_append()
-        location.channel_send(vehicle)
+        channels = list(Channel.objects.filter(bounds__covers=location.latlong).only('name'))
+        location.channel_send(vehicle, channels)
 
         if vehicle.withdrawn:
             vehicle.withdrawn = False
