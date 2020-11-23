@@ -454,7 +454,7 @@ class LiveryAdminForm(forms.ModelForm):
 class LiveryAdmin(admin.ModelAdmin):
     form = LiveryAdminForm
     search_fields = ['name']
-    list_display = ['name', 'vehicles', 'left', 'right', 'white_text']
+    list_display = ['id', 'name', 'vehicles', 'left', 'right', 'white_text']
 
     def right(self, obj):
         if obj.right_css:

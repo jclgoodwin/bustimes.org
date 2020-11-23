@@ -26,12 +26,9 @@ class EditVehiclesForm(forms.Form):
     vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False, empty_label='')
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
     other_colour = forms.CharField(widget=forms.TextInput(attrs={"type": "color"}), required=False)
-    branding = forms.CharField(label="Other branding", required=False, max_length=255)
     features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features',
                                               widget=forms.CheckboxSelectMultiple, required=False)
     depot = forms.ChoiceField(required=False)
-    notes = forms.CharField(help_text="Please <strong>don’t</strong> add information about depots, previous operators, etc",
-                            required=False, max_length=255)
     withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False)
 
     def clean_url(self):
@@ -90,9 +87,13 @@ class EditVehicleForm(EditVehiclesForm):
     """With some extra fields, only applicable to editing a single vehicle
     """
     fleet_number = forms.CharField(required=False, max_length=14)
-    reg = RegField(label='Number plate', required=False, max_length=14)
+    reg = RegField(label='Number plate', required=False, max_length=10)
+    branding = forms.CharField(label="Other branding", required=False, max_length=255)
     name = forms.CharField(label='Name', required=False, max_length=255)
     previous_reg = RegField(required=False, max_length=14)
+    depot = forms.ChoiceField(required=False)
+    notes = forms.CharField(help_text="Please <strong>don’t</strong> add information about depots, previous operators, etc",
+                            required=False, max_length=255)
     url = forms.URLField(label='URL', help_text="Optional link to a public (not Facebook) web page or photo "
                          "showing repaint", required=False, max_length=255)
     field_order = ['fleet_number', 'reg', 'operator', 'vehicle_type', 'colours', 'other_colour', 'branding', 'name',
@@ -107,3 +108,12 @@ class EditVehicleForm(EditVehiclesForm):
             self.fields['fleet_number'].disabled = True
         if vehicle.reg and vehicle.reg in vehicle.code.replace('_', '').replace(' ', '').replace('-', ''):
             self.fields['reg'].disabled = True
+
+        if not vehicle.notes:
+            del self.fields['notes']
+        if not vehicle.branding:
+            del self.fields['branding']
+        if not vehicle.name:
+            del self.fields['name']
+        if not (vehicle.data and 'Previous reg' in vehicle.data):
+            del self.fields['previous_reg']
