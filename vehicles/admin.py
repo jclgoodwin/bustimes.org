@@ -180,14 +180,18 @@ def apply_edits(queryset):
             vehicle.withdrawn = edit.withdrawn
             update_fields.append('withdrawn')
         if edit.fleet_number:
-            vehicle.fleet_code = edit.fleet_number
+            if edit.fleet_number.startswith('-'):
+                if edit.fleet_number == f'-{vehicle.fleet_code or vehicle.fleet_number}':
+                    vehicle.fleet_code = ''
+                    vehicle.fleet_number = None
+            else:
+                vehicle.fleet_code = edit.fleet_number
+                if edit.fleet_number.isdigit():
+                    vehicle.fleet_number = edit.fleet_number
+                else:
+                    vehicle.fleet_number = None
             update_fields.append('fleet_code')
-            if edit.fleet_number.isdigit():
-                vehicle.fleet_number = edit.fleet_number
-                update_fields.append('fleet_number')
-        if edit.reg:
-            vehicle.reg = edit.reg
-            update_fields.append('reg')
+            update_fields.append('fleet_number')
         if edit.changes:
             if vehicle.data:
                 vehicle.data = {
@@ -199,7 +203,7 @@ def apply_edits(queryset):
             else:
                 vehicle.data = edit.changes
             update_fields.append('data')
-        for field in ('branding', 'name', 'notes'):
+        for field in ('branding', 'name', 'notes', 'reg'):
             new_value = getattr(edit, field)
             if new_value:
                 if new_value.startswith('-'):

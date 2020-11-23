@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from accounts.models import User
 from busstops.models import DataSource, Region, Operator, Service
 from .models import (Vehicle, VehicleType, VehicleFeature, Livery,
-                     VehicleJourney, VehicleLocation, VehicleEdit)
+                     VehicleJourney, VehicleLocation, VehicleEdit, VehicleRevision)
 
 
 @override_settings(REDIS_URL='redis://localhost:69')
@@ -51,7 +51,20 @@ class VehiclesTests(TestCase):
 
         cls.vehicle_1.features.set([cls.wifi])
 
-        cls.user = User.objects.create(username='josh', is_staff=True, is_superuser=True)
+        cls.user = User.objects.create(username='josh', is_staff=True, is_superuser=True, email='j@example.com')
+        cls.trusted_user = User.objects.create(username='norma', trusted=True, email='n@example.com')
+        cls.untrusted_user = User.objects.create(username='clem', trusted=False, email='c@example.com')
+
+    def test_untrusted_user(self):
+        self.client.force_login(self.untrusted_user)
+
+        with self.assertNumQueries(2):
+            response = self.client.get(self.vehicle_1.get_absolute_url() + '/edit')
+        self.assertEqual(response.status_code, 403)
+
+        with self.assertNumQueries(3):
+            response = self.client.get('/operators/lynx/vehicles/edit')
+        self.assertEqual(response.status_code, 403)
 
     def test_parent(self):
         response = self.client.get('/groups/Madrigal Electromotive/vehicles')
@@ -212,29 +225,6 @@ class VehiclesTests(TestCase):
             'fleet_number': '2'
         })
 
-        # # edit reg, colour
-        # with self.assertNumQueries(14):
-        #     response = self.client.post(url, {
-        #         'fleet_number': '1',
-        #         'reg': 'K292JVF',
-        #         'vehicle_type': self.vehicle_1.vehicle_type_id,
-        #         'features': self.wifi.id,
-        #         'operator': self.lynx.id,
-        #         'colours': 'Other',
-        #         'other_colour': '#ffffff',
-        #         'notes': 'Trent Barton',
-        #     })
-        # self.assertIsNone(response.context['form'])
-        # self.assertContains(response, 'I’ll update the other details')
-
-        # self.assertEqual(2, VehicleEdit.objects.filter(approved=None).count())
-
-        # response = self.client.get('/admin/vehicles/vehicleedit/')
-        # self.assertContains(response, 'Lynx (2)')
-        # self.assertContains(response, '127.0.0.1 (2)')
-        # self.assertContains(response, 'Wi-Fi')
-        # self.assertNotContains(response, '<del>Wi-Fi</del>')
-
         # edit type, livery and name with bad URL
         initial['vehicle_type'] = self.vehicle_2.vehicle_type_id
         initial['colours'] = self.vehicle_2.livery_id
@@ -245,28 +235,6 @@ class VehiclesTests(TestCase):
         self.assertTrue(response.context['form'].has_changed())
         self.assertContains(response, 'That URL does')
         self.assertContains(response, '/edit-vehicle.')
-
-#         # edit type, livery, name and feature
-#         with self.assertNumQueries(16):
-#             response = self.client.post(url, {
-#                 'fleet_number': '1',
-#                 'reg': 'K292JVF',
-#                 'vehicle_type': self.vehicle_2.vehicle_type_id,
-#                 'features': self.usb.id,
-#                 'operator': self.lynx.id,
-#                 'colours': self.vehicle_2.livery_id,
-#                 'other_colour': '#ffffff',
-#                 'notes': 'Trent Barton',
-#                 'name': 'Colin',
-#                 'url': 'https://bustimes.org'
-#             })
-#         self.assertIsNone(response.context['form'])
-#         self.assertContains(response, 'I’ll update those details')
-#         self.assertNotContains(response, '/edit-vehicle.')
-#         edit = VehicleEdit.objects.last()
-#         self.assertEqual(edit.url, 'https://bustimes.org')
-#         self.assertEqual(str(edit.get_changes()), "{'vehicle_type': 'Optare Spectra', 'name': 'Colin', 'features': \
-# [<VehicleEditFeature: <del>Wi-Fi</del>>, <VehicleEditFeature: <ins>USB</ins>>]}")
 
         response = self.client.get('/admin/vehicles/vehicleedit/')
         self.assertContains(response, '<td class="field-reg">FD54JYA</td>')
@@ -290,16 +258,6 @@ class VehiclesTests(TestCase):
             response = self.client.get('/admin/vehicles/vehicleedit/')
         self.assertContains(response, '<del>1</del><br><ins>2</ins>')
         self.assertEqual(1, response.context_data['cl'].result_count)
-
-        # with self.assertNumQueries(12):
-        #     admin.apply_edits(VehicleEdit.objects.select_related('vehicle'))
-        # self.assertEqual(0, VehicleEdit.objects.filter(approved=None).count())
-        # vehicle = Vehicle.objects.get(notes='Trent Barton')
-        # self.assertEqual(vehicle.reg, 'K292JVF')
-        # self.assertEqual(vehicle.name, 'Colin')
-        # self.assertEqual(self.usb, vehicle.features.get())
-        # self.assertEqual(str(vehicle.vehicle_type), 'Optare Spectra')
-        # self.assertEqual(vehicle.fleet_number, 2)
 
     def test_vehicle_edit_2(self):
         self.client.force_login(self.user)
@@ -362,23 +320,36 @@ class VehiclesTests(TestCase):
             response = self.client.get(url)
         self.assertContains(response, 'already')
 
-        # edit = VehicleEdit.objects.get()
-        # self.assertEqual(edit.get_changes(), {'branding': 'Coastliner', 'name': 'Luther Blisset',
-        #                                       'notes': 'Ex Ipswich Buses'})
+    def test_remove_fleet_number(self):
+        self.client.force_login(self.user)
 
-        # self.assertTrue(str(edit).isdigit())
-        # self.assertEqual(self.vehicle_2.get_absolute_url(), edit.get_absolute_url())
+        url = self.vehicle_1.get_absolute_url() + '/edit'
 
-        # self.assertTrue(admin.VehicleEditAdmin.flickr(None, edit))
-        # self.assertEqual(admin.fleet_number(edit), '50')
-        # # self.assertEqual(admin.reg(edit), '<del>UWW2X</del>')
-        # self.assertEqual(admin.notes(edit), '<ins>Ex Ipswich Buses</ins>')
+        with self.assertNumQueries(15):
+            self.client.post(url, {
+                'fleet_number': '',
+                'reg': '',
+                'operator': self.lynx.id,
+            })
 
-        # self.assertEqual(str(admin.vehicle_type(edit)), 'Optare Spectra')
-        # edit.vehicle_type = 'Ford Transit'
-        # self.assertEqual(str(admin.vehicle_type(edit)), '<del>Optare Spectra</del><br><ins>Ford Transit</ins>')
-        # edit.vehicle.vehicle_type = None
-        # self.assertEqual(admin.vehicle_type(edit), '<ins>Ford Transit</ins>')
+        revision = VehicleRevision.objects.get()
+        self.assertEqual(str(revision), 'depot: Holt → , notes: Trent Barton → ')
+
+        edit = VehicleEdit.objects.get()
+
+        with self.assertNumQueries(15):
+            self.client.post('/admin/vehicles/vehicleedit/', {
+                'action': 'apply_edits',
+                '_selected_action': edit.id
+            })
+
+        edit.refresh_from_db()
+        self.assertIsNone(edit.approved)
+
+        vehicle = Vehicle.objects.get(id=self.vehicle_1.id)
+        self.assertIsNone(vehicle.fleet_number)
+        self.assertEqual('', vehicle.fleet_code)
+        self.assertEqual('', vehicle.reg)
 
     def test_vehicles_edit(self):
         self.client.force_login(self.user)
