@@ -18,7 +18,7 @@ def handle_siri_vm(request_body):
         if element.tag[:5] != '{http':
             element.tag = '{http://www.siri.org.uk/siri}' + element.tag
         if element.tag[-15:] == 'VehicleActivity':
-            command.handle_item(element, None)
+            command.handle_item(element)
             element.clear()
 
 

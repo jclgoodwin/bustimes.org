@@ -117,7 +117,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             except queryset.model.MultipleObjectsReturned:
                 continue
 
-    def handle_item(self, item, now, service_code=None):
+    def handle_item(self, item, now=None, service_code=None):
         datetime = self.get_datetime(item)
         location = None
         try:

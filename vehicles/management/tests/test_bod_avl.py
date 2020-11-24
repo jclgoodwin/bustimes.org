@@ -105,7 +105,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             }
         }
         with self.assertNumQueries(10):
-            command.handle_item(item, None)
+            command.handle_item(item)
         location = VehicleLocation.objects.last()
         self.assertEqual(location.journey.route_name, '843X')
         self.assertEqual(location.journey.destination, 'Soho Road')
@@ -131,7 +131,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             }
         }
         with self.assertNumQueries(11):
-            command.handle_item(item, None)
+            command.handle_item(item)
         location = VehicleLocation.objects.last()
         self.assertEqual(location.journey.vehicle.operator_id, 'HAMS')
         self.assertEqual(location.journey.vehicle.reg, 'DW18HAM')

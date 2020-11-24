@@ -26,9 +26,9 @@ class EdinburghImportTest(TestCase):
             'last_gps_fix': 1554038242,
         }
         with self.assertNumQueries(12):
-            self.command.handle_item(item, None)
+            self.command.handle_item(item)
         with self.assertNumQueries(1):
-            self.command.handle_item(item, None)
+            self.command.handle_item(item)
         journey = self.command.source.vehiclejourney_set.get()
 
         self.assertEqual('1135', journey.code)
@@ -43,7 +43,7 @@ class EdinburghImportTest(TestCase):
 
         item['last_gps_fix'] += 200
         with self.assertNumQueries(3):
-            self.command.handle_item(item, None)
+            self.command.handle_item(item)
 
     def test_vehicle_location(self):
         item = {
