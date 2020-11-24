@@ -16,11 +16,11 @@ from ...models import Vehicle, VehicleJourney, VehicleLocation, Channel
 
 class Command(BaseCommand):
     operators = {}
-    vehicles = Vehicle.objects.select_related('latest_location__journey__service')
+    vehicles = Vehicle.objects.select_related('latest_location__journey__service', 'livery')
 
     @staticmethod
     def add_arguments(parser):
-        parser.add_argument('operators', nargs='+')
+        parser.add_argument('operator')
 
     def handle_item(self, item, operator):
         vehicle_id = item['status']['vehicle_id']
@@ -95,14 +95,10 @@ class Command(BaseCommand):
         for item in data['params']['resource']['member']:
             self.handle_item(item, operator)
 
-    def get_extents(self, operators):
-        for operator in operators:
-            services = Service.objects.filter(operator=operator, current=True)
-            extent = services.aggregate(Extent('geometry'))['geometry__extent']
-            if not extent:
-                continue
-
-            yield operator, extent
+    @staticmethod
+    def get_extent(operator):
+        services = Service.objects.filter(operator=operator, current=True)
+        return services.aggregate(Extent('geometry'))['geometry__extent']
 
     async def sock_it(self, operator, extent):
         min_lon, min_lat, max_lon, max_lat = extent
@@ -171,21 +167,16 @@ class Command(BaseCommand):
             ]
 
         futures = [self.sock_it(operator, extent_1), self.sock_it(operator, extent_2)]
-        await asyncio.wait(futures, asyncio.FIRST_EXCEPTION)
+        await asyncio.wait(futures, return_when=asyncio.FIRST_EXCEPTION)
 
-    async def sock_them(self, extents):
-        futures = [self.sock_it(*extent) for extent in extents]
-        await asyncio.wait(futures, asyncio.FIRST_EXCEPTION)
-
-    def handle(self, operators, *args, **options):
+    def handle(self, operator, *args, **options):
         try:
-            with pid.PidFile('First'):
+            with pid.PidFile(f'First{operator}'):
                 self.source = DataSource.objects.get(name='First')
 
-                extents = list(self.get_extents(operators))
-
+                extent = self.get_extent(operator)
                 loop = asyncio.get_event_loop()
-                loop.run_until_complete(self.sock_them(extents))
+                loop.run_until_complete(self.sock_it(operator, extent))
                 loop.close()
         except pid.PidFileError:
             return
