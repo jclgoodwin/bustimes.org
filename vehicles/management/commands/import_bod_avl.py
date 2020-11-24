@@ -306,20 +306,21 @@ class Command(ImportLiveVehiclesCommand):
             latlong=latlong,
         )
 
-    def has_changed(self, item):
-        monitored_vehicle_journey = item['MonitoredVehicleJourney']
-        key = f"{monitored_vehicle_journey['OperatorRef']}-{monitored_vehicle_journey['VehicleRef']}"
-        if key in self.identifiers and self.identifiers[key] == item['RecordedAtTime']:
-            return False
-        self.identifiers[key] = item['RecordedAtTime']
-        return True
-
     @async_to_sync
     async def send_items(self, items):
+        identifiers = {}
+        changed_items = []
+        for item in items:
+            monitored_vehicle_journey = item['MonitoredVehicleJourney']
+            key = f"{monitored_vehicle_journey['OperatorRef']}-{monitored_vehicle_journey['VehicleRef']}"
+            if self.identifiers.get(key) != item['RecordedAtTime']:
+                identifiers[key] = item['RecordedAtTime']
+                changed_items.append(item)
         await get_channel_layer().send('sirivm', {
             'type': 'sirivm',
-            'items': items
+            'items': changed_items
         })
+        self.identifiers.update(identifiers)  # channel wasn't full
 
     def update(self):
         now = timezone.now()
@@ -330,9 +331,8 @@ class Command(ImportLiveVehiclesCommand):
             chunk = []
             try:
                 for item in items:
-                    if self.has_changed(item):
-                        chunk.append(item)
-                    if len(chunk) == 50:
+                    chunk.append(item)
+                    if len(chunk) == 200:
                         self.send_items(chunk)
                         chunk = []
                 self.send_items(chunk)
