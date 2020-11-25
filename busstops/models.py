@@ -615,6 +615,7 @@ class Service(models.Model):
     update_search_vector = SearchMixin.update_search_vector
 
     class Meta:
+        ordrering = ['id']
         indexes = [
             GinIndex(fields=['search_vector'])
         ]

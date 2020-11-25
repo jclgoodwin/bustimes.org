@@ -30,6 +30,9 @@ prefetch_stop_services = Prefetch(
     'service_set', to_attr='current_services',
     queryset=Service.objects.filter(current=True).distinct('line_name', 'stops').order_by().defer('geometry')
 )
+has_current_services = Exists(
+    Service.objects.filter(current=True, operator=OuterRef('pk'))
+)
 
 
 def get_colours(services):
@@ -194,9 +197,8 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
             context['districts'] = context['areas'][0].district_set.filter(locality__stoppoint__active=True).distinct()
             del context['areas']
 
-        services = Service.objects.filter(current=True, operator=OuterRef('pk'))
         context['operators'] = Operator.objects.filter(
-            Exists(services),
+            has_current_services,
             Q(region=self.object) | Q(regions=self.object)
         ).distinct()
 
@@ -500,9 +502,9 @@ class OperatorDetailView(DetailView):
 
     def render_to_response(self, context):
         if not context['services'] and not context['vehicles']:
-            alternative = self.model.objects.filter(
+            alternative = Operator.objects.filter(
+                has_current_services,
                 name=self.object.name,
-                service__current=True
             ).first()
             if alternative:
                 return redirect(alternative)
@@ -688,14 +690,14 @@ class OperatorSitemap(Sitemap):
     protocol = 'https'
 
     def items(self):
-        return Operator.objects.filter(service__current=True).distinct()
+        return Operator.objects.filter(has_current_services).defer('search_vector')
 
 
 class ServiceSitemap(Sitemap):
     protocol = 'https'
 
     def items(self):
-        return Service.objects.filter(current=True).defer('geometry')
+        return Service.objects.filter(current=True).defer('geometry', 'search_vector')
 
 
 def search(request):
