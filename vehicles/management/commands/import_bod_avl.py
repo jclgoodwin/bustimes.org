@@ -29,12 +29,13 @@ class Command(ImportLiveVehiclesCommand):
         'CBBH': ['CBBH', 'CBNL'],
         'UNO': ['UNOE', 'UNIB'],
         'UNIB': ['UNOE', 'UNIB'],
+        'TBTN': ['TBTN', 'KBUS'],
         'TDY': ['YCST', 'LNUD', 'ROST', 'BPTR', 'KDTR', 'HRGT'],
     }
     operator_cache = {}
     vehicle_cache = {}
     service_cache = {}
-    reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST'}
+    reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST', 'CT4N'}
     identifiers = {}
 
     @staticmethod
