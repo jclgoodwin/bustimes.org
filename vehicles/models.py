@@ -1,8 +1,9 @@
 import re
 import redis
-import asyncio
+from aioredis import ReplyError
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from channels.exceptions import ChannelFull
 from math import ceil
 from urllib.parse import quote
 from webcolors import html5_parse_simple_color
@@ -499,9 +500,7 @@ class VehicleLocation(models.Model):
         except redis.exceptions.ConnectionError:
             pass
 
-    @async_to_sync
-    async def channel_send(self, vehicle, channels):
-        channel_layer = get_channel_layer()
+    def channel_send(self, vehicle):
         if self.heading:
             self.heading = int(self.heading)
         message = {
@@ -515,13 +514,21 @@ class VehicleLocation(models.Model):
             'text_colour': vehicle.get_text_colour(),
             'early': self.early
         }
-        futures = []
-        for channel in channels:
-            futures.append(channel_layer.send(channel.name, message))
-        if self.journey.service_id:
-            futures.append(channel_layer.group_send(f'service{self.journey.service_id}', message))
-        if futures:
-            await asyncio.wait(futures)
+
+        channel_layer = get_channel_layer()
+        send = async_to_sync(channel_layer.group_send)
+        group_send = async_to_sync(channel_layer.group_send)
+
+        try:
+            for channel in Channel.objects.filter(bounds__covers=self.latlong).only('name'):
+                try:
+                    send(channel.name, message)
+                except ChannelFull:
+                    channel.delete()
+            if self.journey.service_id:
+                group_send(f'service{self.journey.service_id}', message)
+        except ReplyError:
+            return
 
     def get_json(self, extended=False):
         journey = self.journey

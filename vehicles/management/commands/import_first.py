@@ -3,7 +3,6 @@ import websockets
 import json
 import pid
 from asgiref.sync import sync_to_async
-from channels.exceptions import ChannelFull
 from uuid import uuid4
 from datetime import datetime
 from ciso8601 import parse_datetime
@@ -12,7 +11,7 @@ from django.core.management.base import BaseCommand
 from django.contrib.gis.db.models import Extent
 from django.utils import timezone
 from busstops.models import Service, DataSource
-from ...models import Vehicle, VehicleJourney, VehicleLocation, Channel
+from ...models import Vehicle, VehicleJourney, VehicleLocation
 
 
 class Command(BaseCommand):
@@ -84,11 +83,7 @@ class Command(BaseCommand):
 
         location.save()
         location.redis_append()
-        channels = list(Channel.objects.filter(bounds__covers=location.latlong).only('name'))
-        try:
-            location.channel_send(vehicle, channels)
-        except ChannelFull:
-            pass
+        location.channel_send(vehicle)
 
         if not vehicle.latest_location_id:
             vehicle.latest_location = location

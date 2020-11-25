@@ -4,7 +4,6 @@ import logging
 import pid
 from datetime import timedelta
 from time import sleep
-from channels.exceptions import ChannelFull
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
@@ -13,7 +12,7 @@ from django.db.models.functions import Now
 from django.utils import timezone
 from bustimes.models import Route
 from busstops.models import DataSource, ServiceCode
-from ..models import Vehicle, VehicleLocation, Channel
+from ..models import Vehicle, VehicleLocation
 
 
 logger = logging.getLogger(__name__)
@@ -224,11 +223,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         self.current_location_ids.add(location.id)
 
         location.redis_append()
-        channels = list(Channel.objects.filter(bounds__covers=location.latlong).only('name'))
-        try:
-            location.channel_send(vehicle, channels)
-        except ChannelFull:
-            pass
+        location.channel_send(vehicle)
 
         if vehicle.withdrawn:
             vehicle.withdrawn = False
