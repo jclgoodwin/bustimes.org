@@ -262,7 +262,7 @@ class Command(ImportLiveVehiclesCommand):
                     datetime = self.get_datetime(item)
                     if vehicle_journey_ref == latest_location.journey.code:
                         if datetime - latest_location.journey.datetime < TWELVE_HOURS:
-                            journey = latest_location.journey.datetime
+                            journey = latest_location.journey
                     else:
                         twelve_hours_ago = datetime - TWELVE_HOURS
                         journey = journeys.filter(
