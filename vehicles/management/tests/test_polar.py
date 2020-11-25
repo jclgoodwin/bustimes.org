@@ -17,6 +17,7 @@ class PolarTest(TestCase):
 
     def test_do_source(self):
         command = Command()
+        command.wait = 0
         with self.assertRaises(DataSource.DoesNotExist):
             command.handle('loaches')
 

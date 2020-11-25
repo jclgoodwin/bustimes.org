@@ -31,8 +31,9 @@ class StagecoachTest(TestCase):
                                    geometry='MULTILINESTRING((-0.1475818977 51.4928233539,-0.1460401487 51.496737716))')
         s.operator.add(o)
 
+    @patch('vehicles.management.import_live_vehicles.sleep')
     @patch('vehicles.management.commands.import_stagecoach.sleep', side_effect=MockException)
-    def test_handle(self, sleep):
+    def test_handle(self, sleep_1, sleep_2):
         with vcr.use_cassette(os.path.join(DIR, 'vcr', 'stagecoach_vehicles.yaml')):
             with self.assertRaises(MockException):
                 with self.assertLogs(level='ERROR'):
@@ -40,6 +41,7 @@ class StagecoachTest(TestCase):
                         with patch('builtins.print'):
                             self.command.handle()
 
-        self.assertTrue(sleep.called)
+        self.assertTrue(sleep_1.called)
+        self.assertTrue(sleep_2.called)
         self.assertEqual(self.command.operators, {'SCOX': Operator(id='SCOX')})
         self.assertEqual(VehicleLocation.objects.count(), 1)
