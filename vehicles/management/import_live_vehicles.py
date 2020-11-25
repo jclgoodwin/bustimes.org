@@ -53,7 +53,7 @@ def same_journey(latest_location, journey, when):
         return False
     latest_journey = latest_location.journey
     if journey.id:
-        return journey.id == latest_journey
+        return journey.id == latest_journey.id
     time_since_last_location = when - latest_location.datetime
     if time_since_last_location > timedelta(hours=1):
         return False

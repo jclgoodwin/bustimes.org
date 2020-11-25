@@ -1,6 +1,7 @@
 import io
 import zipfile
 import xmltodict
+from datetime import timedelta
 from xml.parsers.expat import ExpatError
 from ciso8601 import parse_datetime
 from asgiref.sync import async_to_sync
@@ -13,6 +14,9 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 from busstops.models import Operator, Service, Locality, StopPoint, ServiceCode
 from bustimes.models import Trip
 from ...models import Vehicle, VehicleJourney, VehicleLocation
+
+
+TWELVE_HOURS = timedelta(hours=12)
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -239,16 +243,32 @@ class Command(ImportLiveVehiclesCommand):
                 destination = ' '.join(parts[1:])
                 monitored_vehicle_journey['LineRef'] = route_name
 
+        journeys = vehicle.vehiclejourney_set
+
         latest_location = vehicle.latest_location
         if latest_location:
-            if origin_aimed_departure_time == latest_location.journey.datetime:
-                journey = latest_location.journey
+            if origin_aimed_departure_time:
+                if latest_location.journey.datetime == origin_aimed_departure_time:
+                    journey = latest_location.journey
+                else:
+                    journey = journeys.filter(datetime=origin_aimed_departure_time).first()
             elif vehicle_journey_ref:
-                if vehicle_journey_ref != latest_location.journey.code and '_' in vehicle_journey_ref:
-                    journey = vehicle.vehiclejourney_set.filter(route_name=route_name, code=vehicle_journey_ref).first()
-
-            if not journey:
-                journey = vehicle.vehiclejourney_set.filter(datetime=origin_aimed_departure_time).first()
+                if '_' in vehicle_journey_ref:
+                    if vehicle_journey_ref == latest_location.journey.code:
+                        journey = latest_location.journey
+                    else:
+                        journey = journeys.filter(route_name=route_name, code=vehicle_journey_ref).first()
+                else:
+                    datetime = self.get_datetime(item)
+                    if vehicle_journey_ref == latest_location.journey.code:
+                        if datetime - latest_location.journey.datetime < TWELVE_HOURS:
+                            journey = latest_location.journeys.datetime
+                    else:
+                        twelve_hours_ago = datetime - TWELVE_HOURS
+                        journey = journeys.filter(
+                            route_name=route_name, code=vehicle_journey_ref,
+                            datetime__gt=twelve_hours_ago
+                        ).last()
 
         if not journey:
             journey = VehicleJourney(
