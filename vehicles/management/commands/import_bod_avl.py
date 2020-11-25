@@ -141,14 +141,13 @@ class Command(ImportLiveVehiclesCommand):
 
         try:
             vehicle, created = vehicles.get_or_create(defaults)
+            if operator_ref in self.reg_operators and vehicle.code != vehicle_ref:
+                vehicle.code = vehicle_ref
+                vehicle.save(update_fields=['code'])
         except Vehicle.MultipleObjectsReturned as e:
             print(e, operator, vehicle_ref)
             vehicle = vehicles.first()
             created = False
-
-        if operator_ref in self.reg_operators and vehicle.code != vehicle_ref:
-            vehicle.code = vehicle_ref
-            vehicle.save(update_fields=['code'])
 
         self.vehicle_cache[cache_key] = vehicle.id
         return vehicle, created
