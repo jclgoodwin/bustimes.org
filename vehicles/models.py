@@ -518,6 +518,7 @@ class VehicleLocation(models.Model):
         channel_layer = get_channel_layer()
         send = async_to_sync(channel_layer.group_send)
         group_send = async_to_sync(channel_layer.group_send)
+        send = async_to_sync(channel_layer.send)
 
         try:
             for channel in Channel.objects.filter(bounds__covers=self.latlong).only('name'):
