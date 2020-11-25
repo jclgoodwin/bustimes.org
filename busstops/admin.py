@@ -115,17 +115,18 @@ class ServiceCodeInline(admin.TabularInline):
 class RouteInline(admin.StackedInline):
     model = Route
     show_change_link = True
+    readonly_fields = ['geometry']
 
 
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('service_code', '__str__', 'mode', 'region', 'current', 'show_timetable', 'timetable_wrong')
+    list_display = ('service_code', '__str__', 'mode', 'region_id', 'current', 'show_timetable', 'timetable_wrong')
     list_filter = ('current', 'show_timetable', 'timetable_wrong', 'mode', 'region',
                    ('source', admin.RelatedOnlyFieldListFilter),
                    ('operator', admin.RelatedOnlyFieldListFilter))
     search_fields = ('service_code', 'line_name', 'line_brand', 'description')
     raw_id_fields = ('operator', 'stops')
-    ordering = ('service_code',)
     inlines = [ServiceCodeInline, RouteInline]
+    readonly_fields = ['geometry', 'search_vector']
 
     def get_search_results(self, request, queryset, search_term):
         if not search_term:
@@ -177,7 +178,7 @@ class ServiceCodeAdmin(admin.ModelAdmin):
         'service__stops__admin_area'
     )
     search_fields = ('code', 'service__line_name', 'service__description')
-    raw_id_fields = ('service',)
+    autocomplete_fields = ['service']
 
 
 class ServiceColourAdmin(admin.ModelAdmin):
