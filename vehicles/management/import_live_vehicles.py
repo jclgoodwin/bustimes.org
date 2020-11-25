@@ -4,6 +4,7 @@ import logging
 import pid
 from datetime import timedelta
 from time import sleep
+from channels.exceptions import ChannelFull
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
@@ -134,7 +135,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             latest = vehicle.latest_location
             if latest:
                 if datetime:
-                    if latest.datetime >= datetime:
+                    if latest.datetime == datetime:
                         self.current_location_ids.add(latest.id)
                         return
                 else:
@@ -224,7 +225,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         location.redis_append()
         channels = list(Channel.objects.filter(bounds__covers=location.latlong).only('name'))
-        location.channel_send(vehicle, channels)
+        try:
+            location.channel_send(vehicle, channels)
+        except ChannelFull:
+            pass
 
         if vehicle.withdrawn:
             vehicle.withdrawn = False

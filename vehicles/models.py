@@ -2,7 +2,6 @@ import re
 import redis
 import asyncio
 from asgiref.sync import async_to_sync
-from channels.exceptions import ChannelFull
 from channels.layers import get_channel_layer
 from math import ceil
 from urllib.parse import quote
@@ -518,10 +517,7 @@ class VehicleLocation(models.Model):
         }
         futures = []
         for channel in channels:
-            try:
-                futures.append(channel_layer.send(channel.name, message))
-            except ChannelFull:
-                pass
+            futures.append(channel_layer.send(channel.name, message))
         if self.journey.service_id:
             futures.append(channel_layer.group_send(f'service{self.journey.service_id}', message))
         if futures:

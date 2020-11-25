@@ -3,6 +3,7 @@ import websockets
 import json
 import pid
 from asgiref.sync import sync_to_async
+from channels.exceptions import ChannelFull
 from uuid import uuid4
 from datetime import datetime
 from ciso8601 import parse_datetime
@@ -84,7 +85,10 @@ class Command(BaseCommand):
         location.save()
         location.redis_append()
         channels = list(Channel.objects.filter(bounds__covers=location.latlong).only('name'))
-        location.channel_send(vehicle, channels)
+        try:
+            location.channel_send(vehicle, channels)
+        except ChannelFull:
+            pass
 
         if not vehicle.latest_location_id:
             vehicle.latest_location = location
