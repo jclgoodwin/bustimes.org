@@ -102,8 +102,8 @@ def do_revisions(vehicle_ids, data, user):
             revision.vehicle.operator = data['operator']
         changed_fields.append('operator')
         del data['operator']
-    else:
-        revisions = [revision for revision in revisions if revision.changes]
+
+    revisions = [revision for revision in revisions if str(revision)]
 
     return revisions, changed_fields
 
