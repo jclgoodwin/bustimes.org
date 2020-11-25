@@ -39,7 +39,7 @@ class Command(ImportLiveVehiclesCommand):
     operator_cache = {}
     vehicle_cache = {}
     service_cache = {}
-    reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST', 'CT4N'}
+    reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST', 'CT4N', 'TBTN'}
     identifiers = {}
 
     @staticmethod
@@ -145,6 +145,10 @@ class Command(ImportLiveVehiclesCommand):
             print(e, operator, vehicle_ref)
             vehicle = vehicles.first()
             created = False
+
+        if operator_ref in self.reg_operators and vehicle.code != vehicle_ref:
+            vehicle.code = vehicle_ref
+            vehicle.save(update_fields=['code'])
 
         self.vehicle_cache[cache_key] = vehicle.id
         return vehicle, created
