@@ -462,11 +462,15 @@ class Command(BaseCommand):
                 )
                 if i == 0:
                     trip.start = stop_time.arrival or stop_time.departure
-                if cell.stopusage.stop.atco_code in stops:
-                    stop_time.stop_id = cell.stopusage.stop.atco_code
-                    trip.destination_id = stop_time.stop_id
+                atco_code = cell.stopusage.stop.atco_code
+                if atco_code in stops:
+                    if type(stops[atco_code]) is str:
+                        stop_time.stop_code = stops[atco_code]
+                    else:
+                        stop_time.stop_id = cell.stopusage.stop.atco_code
+                        trip.destination_id = stop_time.stop_id
                 else:
-                    stop_time.stop_code = cell.stopusage.stop.atco_code
+                    stop_time.stop_code = atco_code
                 stop_times.append(stop_time)
 
             trip.end = stop_time.departure or stop_time.arrival
@@ -872,8 +876,14 @@ class Command(BaseCommand):
     @staticmethod
     def do_stops(transxchange_stops):
         stops = StopPoint.objects.in_bulk(transxchange_stops.keys())
-        stops_to_create = {atco_code: StopPoint(atco_code=atco_code, common_name=str(stop)[:48], active=True)
-                           for atco_code, stop in transxchange_stops.items() if atco_code not in stops}
+        stops_to_create = {}
+        for atco_code, stop in transxchange_stops.items():
+            if atco_code not in stops:
+                if atco_code.startswith('000'):
+                    stops[atco_code] = str(stop)[:255]
+                else:
+                    stops_to_create[atco_code] = StopPoint(atco_code=atco_code, common_name=str(stop)[:48], active=True)
+
         if stops_to_create:
             StopPoint.objects.bulk_create(stops_to_create.values())
             stops = {**stops, **stops_to_create}
