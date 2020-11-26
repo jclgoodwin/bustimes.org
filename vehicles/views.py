@@ -160,7 +160,7 @@ def operator_vehicles(request, slug=None, parent=None):
                 'today': timezone.localdate(when) == today,
             }
 
-    response = render(request, 'operator_vehicles.html', {
+    context = {
         'breadcrumb': breadcrumb,
         'parent': parent,
         'operators': parent and operators,
@@ -177,9 +177,12 @@ def operator_vehicles(request, slug=None, parent=None):
         'revisions': revisions,
         'revision': revisions and revision,
         'form': form,
-    })
+    }
 
-    return response
+    if not parent and not form:
+        context['map'] = any(vehicle.latest_location_id for vehicle in vehicles)
+
+    return render(request, 'operator_vehicles.html', context)
 
 
 def operator_map(request, slug):
@@ -204,7 +207,7 @@ def operator_map(request, slug):
         'operator': operator,
         'breadcrumb': [operator.region, operator],
         # 'services': services
-        'service_ids': services.values_list('id', flat=True),
+        'operator_id': operator.id,
         'extent': extent
     })
 

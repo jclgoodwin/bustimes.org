@@ -521,12 +521,14 @@ class VehicleLocation(models.Model):
 
         try:
             for channel in Channel.objects.filter(bounds__covers=self.latlong).only('name'):
+                if self.journey.service_id:
+                    group_send(f'service{self.journey.service_id}', message)
+                if vehicle.operator_id:
+                    group_send(f'operator{vehicle.operator_id}', message)
                 try:
                     send(channel.name, message)
                 except ChannelFull:
                     channel.delete()
-            if self.journey.service_id:
-                group_send(f'service{self.journey.service_id}', message)
         except ReplyError:
             return
 

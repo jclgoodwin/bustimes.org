@@ -170,9 +170,9 @@
         }
         var protocol = (window.location.protocol === 'http:' ? 'ws' : 'wss');
         var host = window.location.host;
-        protocol = 'wss';
-        host = 'bustimes.org';
-        var url = protocol + '://' + host + '/ws/vehicle_positions/services/' + window.SERVICE_IDS;
+        // protocol = 'wss';
+        // host = 'bustimes.org';
+        var url = protocol + '://' + host + '/ws/vehicle_positions/operators/' + window.OPERATOR_ID;
         socket = new WebSocket(url);
 
         socket.onopen = function() {

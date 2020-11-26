@@ -493,10 +493,12 @@ class OperatorDetailView(DetailView):
         context['vehicles'] = self.object.vehicle_set.filter(withdrawn=False).exists()
 
         if context['services']:
-            context['modes'] = {service.mode for service in context['services'] if service.mode}
             context['breadcrumb'] = [self.object.region]
 
             context['colours'] = get_colours(context['services'])
+
+            if context['vehicles']:
+                context['map'] = self.object.vehicle_set.filter(latest_location__isnull=False).exists()
 
         return context
 

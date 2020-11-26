@@ -101,3 +101,14 @@ class ServiceMapConsumer(VehicleMapConsumer):
 
     def recieve_json(self, content):
         pass
+
+
+class OperatorMapConsumer(ServiceMapConsumer):
+    def connect(self):
+        self.accept()
+        operator_id = self.scope['url_route']['kwargs']['operator_id']
+        locations = get_vehicle_locations(latest_vehicle__operator=operator_id)
+        self.send_locations(locations)
+        group = f'operator{operator_id}'
+        self.groups.append(group)
+        async_to_sync(self.channel_layer.group_add)(group, self.channel_name)

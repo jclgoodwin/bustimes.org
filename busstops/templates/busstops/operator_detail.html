@@ -31,8 +31,11 @@
 {% endfor %}
 
 <ul class="tabs">
-    <li>{% include 'modes.html' with modes=modes noun='services' %}</li>
+    <li>Services</li>
     {% if vehicles %}
+        {% if map %}
+            <li><a href="{{ object.get_absolute_url }}/map">Map</a></li>
+        {% endif %}
         <li><a href="{{ object.get_absolute_url }}/vehicles">Vehicles</a></li>
     {% endif %}
 </ul>

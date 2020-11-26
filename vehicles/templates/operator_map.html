@@ -36,7 +36,7 @@
 
 {% block foot %}
     {% load static %}
-    <script>EXTENT = [{{ extent|join:"," }}];SERVICE_IDS="{{ service_ids|join:"," }}";</script>
+    <script>EXTENT = [{{ extent|join:"," }}];OPERATOR_ID="{{ operator_id }}";</script>
     <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
     <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
     <script src="{% static 'js/reqwest.min.js' %}"></script>
