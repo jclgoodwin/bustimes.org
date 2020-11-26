@@ -569,11 +569,13 @@ def get_lines(service_element):
     lines = []
     for line_element in service_element.find('Lines'):
         line_id = line_element.attrib['id']
-        line_name = (line_element.find('LineName').text or '').strip()
+        line_name = (line_element.find('LineName').text or '')
         if '|' in line_name:
             line_name, line_brand = line_name.split('|', 1)
+            line_brand = line_brand.strip()
         else:
             line_brand = ''
+        line_name = line_name.strip()
         lines.append((line_id, line_name, line_brand))
     return lines
 
