@@ -244,6 +244,9 @@ class Grouping:
         if self.trips:
             return self.trips[0].start
 
+    def width(self):
+        return len(self.rows[0].times)
+
     def rowspan(self):
         return sum(2 if row.has_waittimes else 1 for row in self.rows)
 
@@ -386,11 +389,11 @@ class Grouping:
             row.stop = stops.get(row.stop.atco_code, row.stop)
         self.rows = [row for row in self.rows if not row.permanently_suspended()]
         min_height = self.min_height()
-        min_height = self.rowspan()
+        rowspan = self.rowspan()
         for cell in self.rows[0].times:
             if type(cell) is Repetition:
                 cell.min_height = min_height
-                cell.rowspan = min_height
+                cell.rowspan = rowspan
 
 
 class ColumnHead:

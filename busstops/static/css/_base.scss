@@ -955,11 +955,17 @@ thead {
 }
 
 .timetable-wrapper {
+    margin-left: -1.14em;
+    margin-left: calc(env(safe-area-inset-left) * -1 - 1.14em);
     margin-right: -1.14em;
-    margin-right: calc(env(safe-area-inset-left) * -1 - 1.14em);
+    margin-right: calc(env(safe-area-inset-right) * -1 - 1.14em);
     margin-top: 1em;
     overflow: auto;
     position: relative;
+
+    &.wide {
+        margin-left: 0;
+    }
 }
 
 input:not(:checked) + label {
@@ -975,8 +981,13 @@ input:not(:checked) + label {
     border-collapse: separate;
     border-spacing: 0;
     font-variant-numeric: tabular-nums;
-    padding-right: 1.14em;
-    padding-right: calc(env(safe-area-inset-left) + 1.14em);
+    padding: 0 1.14em;
+    padding-left: calc(env(safe-area-inset-left) + 1.14em);
+    padding-right: calc(env(safe-area-inset-right) + 1.14em);
+
+    .wide & {
+        padding-left: 0;
+    }
 
     td {
         border-left: 0;
@@ -1013,26 +1024,11 @@ input:not(:checked) + label {
         }
     }
 
-    th {
-        background: #fff;
-        border-right: 1px solid $border-color;
-        border-top: 1px solid $border-color;
-        font-weight: normal;
-        left: 0;
-        padding-right: 0;
-        position: sticky;
-        white-space: nowrap;
-
-        a {
-            margin: -.25em 0;
-            max-width: calc(100vw - 12em);
-            overflow: hidden;
-            padding-left: 0;
-            text-overflow: ellipsis;
-        }
-    }
-
     thead {
+        th {
+            border-top: 0;
+        }
+
         td {
             border: 1px solid $border-color;
             border-width: 0 1px 1px 0;
@@ -1075,6 +1071,29 @@ input:not(:checked) + label {
                 padding-left: 1em;
             }
         }
+    }
+
+
+    th {
+        background: #fff;
+        border-right: 1px solid $border-color;
+        border-top: 1px solid $border-color;
+        font-weight: normal;
+        padding-right: 0;
+        white-space: nowrap;
+
+        a {
+            margin-right: 0;
+        }
+    }
+}
+
+.wide {
+    th {
+        left: 0;
+        overflow: hidden;
+        position: sticky;
+        max-width: calc(100vw - 12em);
     }
 }
 

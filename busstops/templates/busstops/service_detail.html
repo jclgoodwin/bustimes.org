@@ -65,12 +65,12 @@
                 <input type="checkbox" id="show-all-stops-{{ forloop.counter }}">
                 <label for="show-all-stops-{{ forloop.counter }}">Show all stops</label>
             {% endif %}
-            <div class="timetable-wrapper">
+            <div class="timetable-wrapper{% if grouping.width > 3 %} wide{% endif %}">
                 <table class="timetable">
                     {% if grouping.heads %}
                         <thead>
                             <tr>
-                                <td></td>
+                                <th></th>
                                 {% for head in grouping.heads %}
                                     <td{% if head.span > 1 %} colspan="{{ head.span }}"{% endif %}>
                                         {% if object != head.service %}
