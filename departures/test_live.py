@@ -166,19 +166,6 @@ class LiveDeparturesTest(TestCase):
             </div>
         """, html=True)
 
-    def test_dublin(self):
-        stop = StopPoint(atco_code='8220DB07602')
-        with vcr.use_cassette('data/vcr/dublin.yaml'):
-            departures, max_age = live.get_departures(stop, ())
-        self.assertEqual(max_age, 60)
-        self.assertEqual(len(departures['departures']), 12)
-        self.assertEqual(departures['departures'][4], {
-            'time': datetime(2017, 6, 5, 12, 43),
-            'live': datetime(2017, 6, 5, 12, 35, 58),
-            'destination': 'Dublin Airport',
-            'service': '16'
-        })
-
     @freeze_time('27 October 2018')
     def test_translink_metro(self):
         with vcr.use_cassette('data/vcr/translink_metro.yaml'):

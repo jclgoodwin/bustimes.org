@@ -140,24 +140,6 @@ class Departures:
         self.set_poorly(1800)  # back off for 30 minutes
 
 
-class DublinDepartures(Departures):
-    def get_request_url(self):
-        return 'http://data.smartdublin.ie/cgi-bin/rtpi/realtimebusinformation'
-
-    def get_request_params(self):
-        return {
-            'stopid': int(self.stop.atco_code.split('B', 1)[-1])
-        }
-
-    def departures_from_response(self, response):
-        return [{
-            'time': dateutil.parser.parse(item['scheduleddeparturedatetime'], dayfirst=True),
-            'live': dateutil.parser.parse(item['departuredatetime'], dayfirst=True),
-            'destination': item['destination'],
-            'service': self.get_service(item['route'])
-        } for item in response.json()['results']]
-
-
 class JerseyDepartures(Departures):
     def get_request_url(self):
         return 'http://sojbuslivetimespublic.azurewebsites.net/api/Values/v1/BusStop/' + self.stop.atco_code[3:]
@@ -658,13 +640,6 @@ def get_departures(stop, services):
         departures = TflDepartures(stop, services)
         return ({
             'departures': departures,
-            'today': datetime.date.today(),
-        }, 60)
-
-    # Dublin
-    if stop.atco_code[0] == '8' and 'DB' in stop.atco_code:
-        return ({
-            'departures': DublinDepartures(stop, services).get_departures(),
             'today': datetime.date.today(),
         }, 60)
 
