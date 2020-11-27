@@ -442,8 +442,8 @@ class Cell:
 
     def __init__(self, stoptime, arrival, departure):
         self.stoptime = stoptime
-        self.arrival = arrival
-        self.departure = departure
+        self.arrival = arrival or departure
+        self.departure = departure or arrival
         self.wait_time = arrival and departure and arrival != departure
 
     def __repr__(self):

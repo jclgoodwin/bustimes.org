@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
         migrations.RunSQL(
             """
                 ALTER TABLE "bustimes_stoptime" ALTER COLUMN "arrival" TYPE integer USING EXTRACT(EPOCH FROM "arrival"), ALTER COLUMN "arrival" DROP NOT NULL;
-                ALTER TABLE "bustimes_stoptime" ALTER COLUMN "departure" TYPE integer USING EXTRACT(EPOCH FROM "departure"), ALTER COLUMN "arrival" DROP NOT NULL;
+                ALTER TABLE "bustimes_stoptime" ALTER COLUMN "departure" TYPE integer USING EXTRACT(EPOCH FROM "departure"), ALTER COLUMN "departure" DROP NOT NULL;
                 ALTER TABLE "bustimes_trip" ALTER COLUMN "end" TYPE integer USING EXTRACT(EPOCH FROM "end");
                 ALTER TABLE "bustimes_trip" ALTER COLUMN "start" TYPE integer USING EXTRACT(EPOCH FROM "start");
             """,

@@ -454,12 +454,18 @@ class Command(BaseCommand):
                     timing_status = 'PTP'
                 stop_time = StopTime(
                     trip=trip,
-                    arrival=cell.arrival_time,
-                    departure=cell.departure_time,
                     sequence=i,
                     timing_status=timing_status,
                     activity=cell.stopusage.activity or ''
                 )
+                if stop_time.activity == 'pickUp' or stop_time.activity == 'pass':
+                    stop_time.set_down = False
+                if stop_time.activity == 'setDown' or stop_time.activity == 'pass':
+                    stop_time.pick_up = False
+
+                stop_time.departure = cell.departure_time
+                if cell.arrival_time != cell.departure_time:
+                    stop_time.arrival = cell.arrival_time
                 if i == 0:
                     trip.start = stop_time.arrival or stop_time.departure
                 atco_code = cell.stopusage.stop.atco_code
@@ -473,6 +479,10 @@ class Command(BaseCommand):
                     stop_time.stop_code = atco_code
                 stop_times.append(stop_time)
 
+            # last stop
+            if not stop_time.arrival:
+                stop_time.arrival = stop_time.departure
+                stop_time.departure = None
             trip.end = stop_time.departure or stop_time.arrival
             trips.append(trip)
 
