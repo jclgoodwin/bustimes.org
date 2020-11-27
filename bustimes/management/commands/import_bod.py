@@ -191,11 +191,15 @@ def first():
     command.debrief()
 
 
-def ticketer():
+def ticketer(operator=None):
     command = get_command()
 
     for region_id, operators, name in settings.TICKETER_OPERATORS:
         noc = operators[0]
+
+        if operator and operator != noc:
+            continue
+
         url = f'https://opendata.ticketer.com/uk/{noc}/routes_and_timetables/current.zip'
         filename = f'{noc}.zip'
         path = os.path.join(settings.DATA_DIR, filename)
@@ -203,7 +207,7 @@ def ticketer():
 
         modified, last_modified = download_if_changed(path, url)
 
-        if modified:
+        if modified or operator == noc:
             print(url, last_modified)
 
             command.operators = {code: code for code in operators}
@@ -294,13 +298,14 @@ class Command(BaseCommand):
     @staticmethod
     def add_arguments(parser):
         parser.add_argument('api_key', type=str)
+        parser.add_argument('operator', type=str, nargs='?')
 
-    def handle(self, api_key, **options):
+    def handle(self, api_key, operator, **options):
         if api_key == 'stagecoach':
             stagecoach()
         elif api_key == 'first':
             first()
         elif api_key == 'ticketer':
-            ticketer()
+            ticketer(operator)
         else:
             bus_open_data(api_key)
