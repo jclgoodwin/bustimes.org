@@ -232,9 +232,14 @@ def handle_zipfile(path, collection, url, last_modified):
         stop_times = []
         trip_id = None
         trip = None
+        stop_time = None
         for line in read_file(archive, 'stop_times.txt'):
             if trip_id != line['trip_id']:
+                # previous trip
                 if trip:
+                    if not stop_time.arrival:
+                        stop_time.arrival = stop_time.departure
+                        stop_time.departure = None
                     trip.start = stop_times[0].departure
                     trip.end = stop_times[-1].arrival
                     trip.save()
@@ -246,10 +251,14 @@ def handle_zipfile(path, collection, url, last_modified):
             trip_id = line['trip_id']
             trip = trips[trip_id]
             stop = stops.get(line['stop_id'])
+            arrival_time = line['arrival_time']
+            departure_time = line['departure_time']
+            if arrival_time == departure_time:
+                arrival_time = None
             stop_time = StopTime(
                 stop=stop,
-                arrival=line['arrival_time'],
-                departure=line['departure_time'],
+                arrival=arrival_time,
+                departure=departure_time,
                 sequence=line['stop_sequence'],
             )
             if stop:
@@ -260,6 +269,11 @@ def handle_zipfile(path, collection, url, last_modified):
                 stop_time.stop_code = line['stop_id']
                 print(line)
             stop_times.append(stop_time)
+
+    # last trip
+    if not stop_time.arrival:
+        stop_time.arrival = stop_time.departure
+        stop_time.departure = None
     trip.start = stop_times[0].departure
     trip.end = stop_times[-1].arrival
     trip.save()

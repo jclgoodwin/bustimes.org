@@ -101,15 +101,15 @@ class LiveDeparturesTest(TestCase):
                                              start_date='2017-03-28', end_date='2017-03-28')
         route = Route.objects.create(service=cls.stagecoach_service, start_date='2017-03-04', source=source)
         trip_1 = Trip.objects.create(calendar=calendar_1, route=route, destination=cls.cardiff_stop,
-                                     start='0', end='21:23')
+                                     start='0', end='21:23:00')
         trip_2 = Trip.objects.create(calendar=calendar_2, route=route, destination=cls.cardiff_stop,
-                                     start='0', end='20:00')
+                                     start='0', end='20:00:00')
         StopTime.objects.bulk_create(
             StopTime(trip=trip, sequence=0, arrival=when, departure=when, stop_id='64801092')
             for trip, when in (
-                (trip_1, '20:23'),
-                (trip_1, '21:23'),
-                (trip_2, '18:53')
+                (trip_1, '20:23:00'),
+                (trip_1, '21:23:00'),
+                (trip_2, '18:53:00')
             )
         )
 
@@ -119,8 +119,8 @@ class LiveDeparturesTest(TestCase):
                                            start_date='2019-02-09', end_date='2019-02-09')
         worcester_route = Route.objects.create(service=worcester_44, start_date='2017-03-04', source=source, code='44')
         trip = Trip.objects.create(calendar=calendar, route=worcester_route, destination=cls.worcester_stop,
-                                   start='0', end='11:00')
-        StopTime.objects.create(trip=trip, sequence=0, arrival='10:54', departure='10:54',
+                                   start='0', end='11:00:00')
+        StopTime.objects.create(trip=trip, sequence=0, arrival='10:54:00', departure='10:54:00',
                                 stop_id=cls.worcester_stop.pk)
         StopUsage.objects.create(stop_id=cls.worcester_stop.pk, service=worcester_44, order=1)
 

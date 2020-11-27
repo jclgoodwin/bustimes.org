@@ -2,6 +2,7 @@ from django.db.models import Q, Exists, OuterRef
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import DateRangeField
 from django.urls import reverse
+from .fields import SecondsField
 
 
 def get_calendars(when, calendar_ids=None):
@@ -171,8 +172,8 @@ class Trip(models.Model):
     calendar = models.ForeignKey(Calendar, models.CASCADE)
     sequence = models.PositiveSmallIntegerField(null=True, blank=True)
     notes = models.ManyToManyField(Note, blank=True)
-    start = models.DurationField()
-    end = models.DurationField()
+    start = SecondsField()
+    end = SecondsField()
 
     def __str__(self):
         return f'{self.start}'
@@ -234,11 +235,13 @@ class StopTime(models.Model):
     trip = models.ForeignKey(Trip, models.CASCADE)
     stop_code = models.CharField(max_length=255, blank=True)
     stop = models.ForeignKey('busstops.StopPoint', models.SET_NULL, null=True, blank=True)
-    arrival = models.DurationField()
-    departure = models.DurationField()
+    arrival = SecondsField(null=True, blank=True)
+    departure = SecondsField(null=True, blank=True)
     sequence = models.PositiveSmallIntegerField()
     timing_status = models.CharField(max_length=3, blank=True)
     activity = models.CharField(max_length=16, blank=True)
+    pick_up = models.BooleanField(default=True)
+    set_down = models.BooleanField(default=True)
 
     def get_key(self):
         return self.stop_id or self.stop_code
