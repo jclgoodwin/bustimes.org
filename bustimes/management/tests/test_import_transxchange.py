@@ -580,7 +580,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(res, """
                 <thead>
                     <tr>
-                        <td></td>
+                        <th></th>
                         <td>237</td>
                         <td colspan="17"><a href="/services/237-glossop-stalybridge-ashton-2">237</a></td>
                     </tr>
@@ -596,7 +596,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(res, """
                 <thead>
                     <tr>
-                        <td></td>
+                        <th></th>
                         <td colspan="27">
                             <a href="/services/237-glossop-stalybridge-ashton-2">237</a>
                         </td>
