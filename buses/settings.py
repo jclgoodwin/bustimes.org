@@ -3,6 +3,8 @@
 
 import os
 import sys
+from aioredis import ReplyError
+from autobahn.exception import Disconnected
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -178,6 +180,15 @@ DATETIME_FORMAT = 'j M H:i'
 TIME_ZONE = 'Europe/London'
 USE_TZ = True
 USE_I18N = False
+
+
+def before_send(event, hint):
+    if 'exc_info' in hint:
+        exc_type, exc_value, traceback = hint['exc_info']
+        if isinstance(exc_value, ReplyError) or isinstance(exc_value, Disconnected):
+            return
+    return event
+
 
 if TEST:
     pass
