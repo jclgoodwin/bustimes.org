@@ -57,7 +57,7 @@ def create_journey_code(destination, service_id, journey_ref, source_id):
 @shared_task
 def log_vehicle_journey(service, data, time, destination, source_name, url):
     operator_ref = data.get('OperatorRef')
-    if operator_ref and operator_ref in {'UNIB', 'GCB', 'PLYC', 'OBC', 'SOX', 'MCG'}:
+    if operator_ref and operator_ref in {'UNIB', 'GCB', 'PLYC', 'OBC', 'SOX', 'MCG', '753BDR', 'FECS'}:
         return
 
     if not time:
