@@ -143,6 +143,11 @@ class ImportLiveVehiclesCommand(BaseCommand):
                         self.current_location_ids.add(latest.id)
                         return
 
+                # take a snapshot here, to see if they have changed later,
+                # cos get_journey() might return latest.journey
+                original_service = latest.journey.service
+                original_destination = latest.journey.destination
+
         try:
             journey = self.get_journey(item, vehicle)
         except ObjectDoesNotExist:
@@ -177,10 +182,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if latest.journey.source_id != self.source.id:
                 latest.journey.source = self.source
                 changed = True
-            if journey.service and not latest.journey.service:
+            if journey.service and not original_service:
                 latest.journey.service = journey.service
                 changed = True
-            if journey.destination and not latest.journey.destination:
+            if journey.destination and not original_destination:
                 latest.journey.destination = journey.destination
                 changed = True
             if changed:

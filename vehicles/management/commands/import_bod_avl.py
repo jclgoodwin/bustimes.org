@@ -290,21 +290,23 @@ class Command(ImportLiveVehiclesCommand):
                 source=self.source,
                 data=item,
                 datetime=origin_aimed_departure_time,
-                destination=destination
             )
 
         if vehicle_journey_ref:
             journey.code = vehicle_journey_ref
 
         if not journey.destination:
-            destination_ref = monitored_vehicle_journey.get('DestinationRef')
-            if destination_ref:
-                try:
-                    journey.destination = Locality.objects.get(stoppoint=destination_ref).name
-                except Locality.DoesNotExist:
-                    pass
-            if not journey.destination:
-                journey.direction = monitored_vehicle_journey.get('DestinationRef', '')[:8]
+            if destination:
+                journey.destination = destination
+            else:
+                destination_ref = monitored_vehicle_journey.get('DestinationRef')
+                if destination_ref:
+                    try:
+                        journey.destination = Locality.objects.get(stoppoint=destination_ref).name
+                    except Locality.DoesNotExist:
+                        pass
+                if not journey.destination:
+                    journey.direction = monitored_vehicle_journey.get('DirectionRef', '')[:8]
 
         if (
             latest_location and latest_location.journey.service

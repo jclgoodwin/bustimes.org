@@ -3,10 +3,10 @@ from mock import patch
 from freezegun import freeze_time
 from vcr import use_cassette
 from django.test import TestCase
-from busstops.models import Region, DataSource, Operator, OperatorCode
+from busstops.models import Region, DataSource, Operator, OperatorCode, StopPoint, Locality, AdminArea
 from ...models import VehicleLocation, VehicleJourney, Vehicle
+from ...workers import SiriConsumer
 from ..commands import import_bod_avl
-
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -25,6 +25,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             url='https://data.bus-data.dft.gov.uk/api/v1/datafeed/'
         )
         OperatorCode.objects.create(operator_id='HAMS', source=cls.source, code='HAMSTRA')
+
+        suffolk = AdminArea.objects.create(region=region, id=1, atco_code=390, name='Suffolk')
+        southwold = Locality.objects.create(admin_area=suffolk, name='Southwold')
+        StopPoint.objects.create(atco_code='390071066', locality=southwold, active=True, common_name='Kings Head')
 
     @freeze_time('2020-05-01')
     def test_get_items(self):
@@ -140,3 +144,49 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             command.service_cache,
             {'WHIP:WHIP:U:0500CCITY544': None, 'TGTC:TGTC:843X:43000280301': None, 'HAMS:HAMS:C:2400103099': None}
         )
+
+    def test_worker(self):
+        consumer = SiriConsumer()
+        message = {
+            "items": [{
+                "ItemIdentifier": "2cb5543a-add1-4e14-ae7a-a1ee730d9814",
+                "RecordedAtTime": "2020-11-28T12:58:25+00:00",
+                "ValidUntilTime": "2020-11-28T13:04:06.989808",
+                "MonitoredVehicleJourney": {
+                    "LineRef": "146",
+                    "BlockRef": "2",
+                    "VehicleRef": "BB62_BUS",
+                    "OperatorRef": "BDRB",
+                    "DirectionRef": "inbound",
+                    "VehicleLocation": {
+                        "Latitude": "52.62269",
+                        "Longitude": "1.296443"
+                    },
+                    "PublishedLineName": "146",
+                    "VehicleJourneyRef": "146_20201128_12_58"
+                }
+            }, {
+                "RecordedAtTime": "2020-11-28T15:07:06+00:00",
+                "ItemIdentifier": "26ff29be-0d0a-4f5e-8160-bec0d831b681",
+                "ValidUntilTime": "2020-11-28T15:12:56.049069",
+                "MonitoredVehicleJourney": {
+                    "LineRef": "146",
+                    "DirectionRef": "inbound",
+                    "PublishedLineName": "146",
+                    "OperatorRef": "BDRB",
+                    "DestinationRef": "390071066",
+                    "VehicleLocation": {
+                        "Longitude": "1.675893",
+                        "Latitude": "52.328398",
+                    },
+                    "BlockRef": "2",
+                    "VehicleJourneyRef": "146_20201128_12_58",
+                    "VehicleRef": "BB62_BUS"
+                }
+            }]
+        }
+        consumer.sirivm(message)
+
+        journey = VehicleJourney.objects.get()
+        self.assertEqual(journey.direction, 'inbound')
+        self.assertEqual(journey.destination, 'Southwold')
