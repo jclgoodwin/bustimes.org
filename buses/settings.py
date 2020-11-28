@@ -128,6 +128,7 @@ else:
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             'hosts': [CELERY_BROKER_URL],
+            'expiry': 20
         }
     }
 
