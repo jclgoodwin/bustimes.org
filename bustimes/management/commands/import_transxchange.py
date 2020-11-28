@@ -142,9 +142,10 @@ class Command(BaseCommand):
         for _, operators, _ in settings.TICKETER_OPERATORS:
             open_data_operators += operators
 
-        if 'SCLI' in open_data_operators:
+        if 'SCLI' in open_data_operators:  # stagecoach lincs – cos a bloke complained about missing school services
             open_data_operators.remove('SCLI')
             incomplete_operators.append('SCLI')
+        incomplete_operators.append('SEMM')  # h semmence & co
 
         self.open_data_operators = set(open_data_operators)
         self.incomplete_operators = set(incomplete_operators)
