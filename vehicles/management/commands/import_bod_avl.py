@@ -303,6 +303,8 @@ class Command(ImportLiveVehiclesCommand):
                     journey.destination = Locality.objects.get(stoppoint=destination_ref).name
                 except Locality.DoesNotExist:
                     pass
+            if not journey.destination:
+                journey.direction = monitored_vehicle_journey.get('DestinationRef', '')[:8]
 
         if (
             latest_location and latest_location.journey.service
