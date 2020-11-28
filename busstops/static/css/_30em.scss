@@ -6,7 +6,7 @@ header {
     }
 
     .search {
-        padding-right: .5em;
+        padding-right: 1em;
         position: relative;
         top: .7em;
 
@@ -41,6 +41,10 @@ header {
             margin: 0;
             top: 0;
         }
+    }
+
+    ul + .search {
+        padding-right: .5em;
     }
 }
 

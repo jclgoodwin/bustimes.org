@@ -219,7 +219,7 @@ header {
         label {
             display: block;
             line-height: 1.5;
-            padding: 1em .5em;
+            padding: 1em;
             padding-left: 0;
 
             input {
@@ -238,6 +238,12 @@ header {
 
         label + input {
             display: none;
+        }
+    }
+
+    ul + .search {
+        label {
+            padding-right: .5em;
         }
     }
 }
