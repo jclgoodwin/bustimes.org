@@ -75,6 +75,16 @@ class VehicleAdmin(admin.ModelAdmin):
         count = queryset.update(vehicle_type=vehicle_type)
         self.message_user(request, f'Copied {vehicle_type} to {count} vehicles.')
 
+    def make_livery(self, request, queryset):
+        vehicle = queryset.first()
+        if vehicle.colours and vehicle.branding:
+            livery = Livery.objects.create(name=vehicle.branding, colours=vehicle.colours)
+            vehicles = Vehicle.objects.filter(colours=vehicle.colours, branding=vehicle.branding)
+            count = vehicles.update(colours='', branding='', livery=livery)
+            self.message_user(request, f'Updated {count} vehicles.')
+        else:
+            self.message_user(request, 'Select a vehicle with colours and branding.')
+
     def last_seen(self, obj):
         if obj.latest_location:
             return obj.latest_location.datetime
