@@ -190,20 +190,14 @@ class Command(ImportLiveVehiclesCommand):
                 condition = Q(operator=operator)
                 if vehicle_operator_id != operator.id:
                     condition |= Q(operator=vehicle_operator_id)
+                services = services.filter(condition)
             else:
-                condition = Q(operator__in=operator)
-            services = services.filter(condition)
+                services = services.filter(operator__in=operator)
             try:
                 return services.get()
             except Service.DoesNotExist:
-                # try ignoring line_ref - for Trent Barton
-                service = self.get_by_vehicle_journey_ref(
-                    Service.objects.filter(condition, current=True),
-                    monitored_vehicle_journey
-                )
-                if not service:
-                    self.service_cache[cache_key] = None
-                return service
+                self.service_cache[cache_key] = None
+                return
             except Service.MultipleObjectsReturned:
                 pass
 
