@@ -215,10 +215,10 @@ class Command(ImportLiveVehiclesCommand):
                 except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                     pass
 
-        elif type(operator) is list:
-            # for Arriva Merseyside
+        else:
             try:
-                return services.get(operator=vehicle_operator_id)
+                latlong = self.create_vehicle_location(item).latlong
+                return services.get(geometry__bboverlaps=latlong)
             except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                 pass
 
