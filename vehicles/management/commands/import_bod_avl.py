@@ -46,6 +46,16 @@ class Command(ImportLiveVehiclesCommand):
     def get_datetime(item):
         return parse_datetime(item['RecordedAtTime'])
 
+    @staticmethod
+    def get_by_vehicle_journey_ref(services, monitored_vehicle_journey):
+        vehicle_journey_ref = monitored_vehicle_journey.get('VehicleJourneyRef')
+        if vehicle_journey_ref and vehicle_journey_ref.isdigit():
+            trips = Trip.objects.filter(route__service=OuterRef("pk"), ticket_machine_code=vehicle_journey_ref)
+            try:
+                return services.get(Exists(trips))
+            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                pass
+
     def get_operator(self, operator_ref):
         if operator_ref == "SCEM":
             operator_ref = "SCGH"
@@ -175,52 +185,58 @@ class Command(ImportLiveVehiclesCommand):
             services = services.filter(operator__parent=operator.parent)
             # we will use the destination ref to find out exactly which operator it is
 
-        else:
+        elif operator:
             if type(operator) is Operator:
                 condition = Q(operator=operator)
                 if vehicle_operator_id != operator.id:
                     condition |= Q(operator=vehicle_operator_id)
-                services = services.filter(condition)
-            elif type(operator) is list:
-                services = services.filter(operator__in=operator)
-
+            else:
+                condition = Q(operator__in=operator)
+            services = services.filter(condition)
             try:
                 return services.get()
             except Service.DoesNotExist:
-                self.service_cache[cache_key] = None
-                return
+                # try ignoring line_ref - for Trent Barton
+                service = self.get_by_vehicle_journey_ref(
+                    Service.objects.filter(condition, current=True),
+                    monitored_vehicle_journey
+                )
+                if not service:
+                    self.service_cache[cache_key] = None
+                return service
             except Service.MultipleObjectsReturned:
                 pass
 
         if destination_ref:
             try:
                 stops = StopPoint.objects.filter(service=OuterRef("pk"), locality__stoppoint=destination_ref)
-                return services.filter(Exists(stops)).get()
+                return services.get(Exists(stops))
             except Service.DoesNotExist:
                 self.service_cache[cache_key] = None
                 return
             except Service.MultipleObjectsReturned:
                 try:
                     trips = Trip.objects.filter(route__service=OuterRef("pk"), destination=destination_ref)
-                    return services.filter(Exists(trips)).get()
+                    return services.get(Exists(trips))
                 except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                     pass
+
+        elif type(operator) is list:
+            # for Arriva Merseyside
+            try:
+                return services.get(operator=vehicle_operator_id)
+            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                pass
 
         try:
             when = self.get_datetime(item)
             when = when.strftime('%a').lower()
             trips = Trip.objects.filter(**{f'calendar__{when}': True}, route__service=OuterRef("pk"))
-            return services.filter(Exists(trips)).get()
+            return services.get(Exists(trips))
         except (Service.DoesNotExist, Service.MultipleObjectsReturned):
             pass
 
-        vehicle_journey_ref = monitored_vehicle_journey.get('VehicleJourneyRef')
-        if vehicle_journey_ref and vehicle_journey_ref.isdigit():
-            try:
-                trips = Trip.objects.filter(route__service=OuterRef("pk"), ticket_machine_code=vehicle_journey_ref)
-                return services.filter(Exists(trips)).get()
-            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-                pass
+        return self.get_by_vehicle_journey_ref(services, monitored_vehicle_journey)
 
     def get_journey(self, item, vehicle):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
