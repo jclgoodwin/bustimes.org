@@ -442,7 +442,7 @@ class VehicleJourney(models.Model):
     trip = models.ForeignKey('bustimes.Trip', models.SET_NULL, null=True, blank=True)
 
     def get_absolute_url(self):
-        return reverse('journey_detail', args=(self.id,))
+        return f"/vehicles/{self.vehicle_id}?date={self.datetime.date()}#journeys/{self.id}"
 
     def __str__(self):
         return f'{self.datetime}'
