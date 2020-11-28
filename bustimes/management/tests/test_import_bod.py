@@ -7,7 +7,7 @@ from mock import patch
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
 from django.core.management import call_command
-from busstops.models import Region, Operator, DataSource, OperatorCode, Service
+from busstops.models import Region, Operator, DataSource, OperatorCode, Service, ServiceCode
 from ...models import Route
 
 
@@ -46,6 +46,11 @@ class ImportBusOpenDataTest(TestCase):
 
         route = Route.objects.get()
         self.assertEqual(route.code, 'Lynx_Clenchwarton_54_20200330')
+
+        # a TicketMachineServiceCode should have been created
+        service_code = ServiceCode.objects.get()
+        self.assertEqual(service_code.code, '1')
+        self.assertEqual(service_code.scheme, ' SIRI')
 
         response = self.client.get('/services/54-kings-lynn-the-walpoles-via-clenchwarton')
 

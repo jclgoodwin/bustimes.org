@@ -438,7 +438,7 @@ class Command(BaseCommand):
                 calendar=calendar,
                 route=route,
                 journey_pattern=journey.journey_pattern.id,
-                ticket_machine_code=journey.ticket_machine_code or '',
+                ticket_machine_code=journey.ticket_machine_journey_code or '',
                 block=journey.block or ''
             )
 
@@ -732,11 +732,19 @@ class Command(BaseCommand):
 
             journeys = transxchange.get_journeys(txc_service.service_code, line_id)
 
-            # a code used in Traveline Cymru URLs:
-            if self.source.name == 'W':
-                if transxchange.journeys and journeys[0].private_code:
-                    private_code = journeys[0].private_code
-                    if ':' in private_code:
+            if journeys:
+                journey = journeys[0]
+
+                ticket_machine_service_code = journey.ticket_machine_service_code
+                if ticket_machine_service_code and ticket_machine_service_code != line_name:
+                    ServiceCode.objects.update_or_create({
+                        'code': ticket_machine_service_code
+                    }, service=service, scheme=' SIRI')
+
+                # a code used in Traveline Cymru URLs:
+                if self.source.name == 'W':
+                    private_code = journey.private_code
+                    if private_code and ':' in private_code:
                         ServiceCode.objects.update_or_create({
                             'code': private_code.split(':', 1)[0]
                         }, service=service, scheme='Traveline Cymru')

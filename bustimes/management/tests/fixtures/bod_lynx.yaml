@@ -3968,7 +3968,7 @@ interactions:
         \                </JourneyPattern>\n            </StandardService>\n     \
         \       <Direction>inboundAndOutbound</Direction>\n        </Service>\n  \
         \  </Services>\n    <VehicleJourneys>\n        <VehicleJourney>\n        \
-        \    <Operational>\n                <TicketMachine>\n                    <TicketMachineServiceCode>54</TicketMachineServiceCode>\n\
+        \    <Operational>\n                <TicketMachine>\n                    <TicketMachineServiceCode>1</TicketMachineServiceCode>\n\
         \                    <JourneyCode>1</JourneyCode>\n                </TicketMachine>\n\
         \            </Operational>\n            <OperatingProfile>\n            \
         \    <RegularDayType>\n                    <DaysOfWeek>\n                \
@@ -4066,7 +4066,7 @@ interactions:
         \                <JourneyPatternTimingLinkRef>jptl_22172189</JourneyPatternTimingLinkRef>\n\
         \            </VehicleJourneyTimingLink>\n        </VehicleJourney>\n    \
         \    <VehicleJourney>\n            <Operational>\n                <TicketMachine>\n\
-        \                    <TicketMachineServiceCode>54</TicketMachineServiceCode>\n\
+        \                    <TicketMachineServiceCode>1</TicketMachineServiceCode>\n\
         \                    <JourneyCode>1</JourneyCode>\n                </TicketMachine>\n\
         \            </Operational>\n            <OperatingProfile>\n            \
         \    <RegularDayType>\n                    <DaysOfWeek>\n                \
@@ -4161,7 +4161,7 @@ interactions:
         \                <JourneyPatternTimingLinkRef>jptl_22172189</JourneyPatternTimingLinkRef>\n\
         \            </VehicleJourneyTimingLink>\n        </VehicleJourney>\n    \
         \    <VehicleJourney>\n            <Operational>\n                <TicketMachine>\n\
-        \                    <TicketMachineServiceCode>54</TicketMachineServiceCode>\n\
+        \                    <TicketMachineServiceCode>1</TicketMachineServiceCode>\n\
         \                    <JourneyCode>2</JourneyCode>\n                </TicketMachine>\n\
         \            </Operational>\n            <OperatingProfile>\n            \
         \    <RegularDayType>\n                    <DaysOfWeek>\n                \
@@ -4247,7 +4247,7 @@ interactions:
         \                <JourneyPatternTimingLinkRef>jptl_22172123</JourneyPatternTimingLinkRef>\n\
         \            </VehicleJourneyTimingLink>\n        </VehicleJourney>\n    \
         \    <VehicleJourney>\n            <Operational>\n                <TicketMachine>\n\
-        \                    <TicketMachineServiceCode>54</TicketMachineServiceCode>\n\
+        \                    <TicketMachineServiceCode>1</TicketMachineServiceCode>\n\
         \                    <JourneyCode>2</JourneyCode>\n                </TicketMachine>\n\
         \            </Operational>\n            <OperatingProfile>\n            \
         \    <RegularDayType>\n                    <DaysOfWeek>\n                \

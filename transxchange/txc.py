@@ -213,7 +213,8 @@ class VehicleJourney:
         self.code = element.find('VehicleJourneyCode').text
         self.private_code = element.findtext('PrivateCode')
 
-        self.ticket_machine_code = element.findtext('Operational/TicketMachine/JourneyCode')
+        self.ticket_machine_journey_code = element.findtext('Operational/TicketMachine/JourneyCode')
+        self.ticket_machine_service_code = element.findtext('Operational/TicketMachine/TicketMachineServiceCode')
         self.block = element.findtext('Operational/Block/BlockNumber')
 
         self.service_ref = element.find('ServiceRef').text
