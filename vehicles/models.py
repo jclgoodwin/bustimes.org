@@ -451,12 +451,14 @@ class VehicleRevision(models.Model):
             for key in self.changes:
                 before, after = self.changes[key].split('\n+')
                 before = before[1:]
-                if key == 'depot' and vehicle.data.get('Depot') == after:
-                    vehicle.data['Depot'] = before
-                    fields.append('data')
-                elif key == 'reg' and vehicle.reg == after:
-                    vehicle.reg = before
-                    fields.append('reg')
+                if key == 'depot':
+                    if vehicle.data.get('Depot') == after:
+                        vehicle.data['Depot'] = before
+                        fields.append('data')
+                elif key == 'reg':
+                    if vehicle.reg == after:
+                        vehicle.reg = before
+                        fields.append('reg')
                 else:
                     print(f'vehicle {vehicle.id} not reverted {key}')
 
