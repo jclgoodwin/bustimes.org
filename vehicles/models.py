@@ -428,6 +428,31 @@ class VehicleRevision(models.Model):
                 before = before[1:]
                 yield (key, before, after)
 
+    def revert(self):
+        vehicle = self.vehicle
+        fields = []
+
+        if self.from_operator_id or self.to_operator_id:
+            if vehicle.operator_id == self.to_operator_id:
+                vehicle.operator_id = self.from_operator_id
+                fields.append('operator')
+
+        if self.from_type_id or self.to_type_id:
+            if vehicle.type_id == self.to_type_id:
+                vehicle.type_id = self.from_type_id
+                fields.append('type')
+
+        if self.from_livery_id or self.to_livery_id:
+            if vehicle.livery_id == self.to_livery_id:
+                vehicle.livery_id = self.from_livery_id
+                fields.append('livery')
+
+        if fields:
+            self.vehicle.save(update_fields=fields)
+            print(f'vehicle {vehicle.id} reverted {fields}')
+        if self.changes:
+            print(f'vehicle {vehicle.id} not reverted {self.changes}')
+
 
 class VehicleJourney(models.Model):
     datetime = models.DateTimeField()
