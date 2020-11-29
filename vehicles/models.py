@@ -438,9 +438,9 @@ class VehicleRevision(models.Model):
                 fields.append('operator')
 
         if self.from_type_id or self.to_type_id:
-            if vehicle.type_id == self.to_type_id:
-                vehicle.type_id = self.from_type_id
-                fields.append('type')
+            if vehicle.vehicle_type_id == self.to_type_id:
+                vehicle.vehicle_type_id = self.from_type_id
+                fields.append('vehicle_type')
 
         if self.from_livery_id or self.to_livery_id:
             if vehicle.livery_id == self.to_livery_id:
