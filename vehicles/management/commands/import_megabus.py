@@ -34,7 +34,7 @@ class Command(ImportLiveVehiclesCommand):
                 yield service
             return
         self.services = []
-        for string in ['m1', 'm2', 'm3', 'm4', 'm9']:
+        for string in ['m1', 'm2', 'm3', 'm4', 'm9', '90', '91', '92', '96', '97', 'n9', 'ai']:
             url = f'{self.url}/getLookup.php/{string}?byservice=true'
             response = self.session.get(url, timeout=1)
             sleep(1)
