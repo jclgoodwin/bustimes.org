@@ -447,11 +447,22 @@ class VehicleRevision(models.Model):
                 vehicle.livery_id = self.from_livery_id
                 fields.append('livery')
 
+        if self.changes:
+            for key in self.changes:
+                before, after = self.changes[key].split('\n+')
+                before = before[1:]
+                if key == 'depot' and vehicle.data.get('Depot') == after:
+                    vehicle.data['Depot'] = before
+                    fields.append('data')
+                elif key == 'reg' and vehicle.reg == after:
+                    vehicle.reg = before
+                    fields.append('reg')
+                else:
+                    print(f'vehicle {vehicle.id} not reverted {key}')
+
         if fields:
             self.vehicle.save(update_fields=fields)
             print(f'vehicle {vehicle.id} reverted {fields}')
-        if self.changes:
-            print(f'vehicle {vehicle.id} not reverted {self.changes}')
 
 
 class VehicleJourney(models.Model):
