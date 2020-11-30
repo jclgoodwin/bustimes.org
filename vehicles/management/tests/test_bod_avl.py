@@ -185,7 +185,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 }
             }]
         }
-        consumer.sirivm(message)
+        with self.assertNumQueries(18):
+            consumer.sirivm(message)
 
         journey = VehicleJourney.objects.get()
         self.assertEqual(journey.direction, 'inbound')

@@ -1,6 +1,7 @@
 import io
 import zipfile
 import xmltodict
+from django.core.cache import cache
 from datetime import timedelta
 from xml.parsers.expat import ExpatError
 from ciso8601 import parse_datetime
@@ -28,7 +29,6 @@ class Command(ImportLiveVehiclesCommand):
         'ANW': ['ANWE', 'AMSY', 'ACYM'],
         'ATS': ['ARBB', 'ASES', 'GLAR'],
         'AMD': ['AMID', 'AMNO', 'AFCL'],
-        'GOEA': ['KCTB', 'HEDO', 'CHAM'],
         'CBBH': ['CBBH', 'CBNL'],
         'UNO': ['UNOE', 'UNIB'],
         'UNIB': ['UNOE', 'UNIB'],
@@ -76,9 +76,7 @@ class Command(ImportLiveVehiclesCommand):
             self.operator_cache[operator_ref] = operator
             return operator
         except Operator.DoesNotExist:
-            pass
-
-        self.operator_cache[operator_ref] = None
+            self.operator_cache[operator_ref] = None
 
     def get_vehicle(self, item):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
@@ -181,10 +179,18 @@ class Command(ImportLiveVehiclesCommand):
         )
 
         if type(operator) is Operator and operator.parent and destination_ref:
+            condition = Q(parent=operator.parent)
+
+            # in case the vehicle operator has a different parent (e.g. ABUS or HCTY)
+            if vehicle_operator_id != operator.id:
+                condition |= Q(id=vehicle_operator_id)
+
+            services = services.filter(Exists(Operator.objects.filter(condition, service=OuterRef('pk'))))
             # we don't just use 'operator__parent=' because a service can have multiple operators
-            services = services.filter(Exists(Operator.objects.filter(parent=operator.parent), service=OuterRef('pk')))
-            # we will use the FestinationRef later to find out exactly which operator it is,
-            # because the OperatorRef field is unreliable – mixes up First South and West Yorkshire, for example
+
+            # we will use the DestinationRef later to find out exactly which operator it is,
+            # because the OperatorRef field is unreliable,
+            # e.g. sometimes has the wrong up First Yorkshire operator code
 
         elif operator:
             if type(operator) is Operator:
@@ -194,13 +200,15 @@ class Command(ImportLiveVehiclesCommand):
                 services = services.filter(condition)
             else:
                 services = services.filter(operator__in=operator)
-            try:
-                return services.get()
-            except Service.DoesNotExist:
-                self.service_cache[cache_key] = None
-                return
-            except Service.MultipleObjectsReturned:
-                pass
+
+            if type(operator) is Operator or not destination_ref:
+                try:
+                    return services.get()
+                except Service.DoesNotExist:
+                    self.service_cache[cache_key] = None
+                    return
+                except Service.MultipleObjectsReturned:
+                    pass
 
         if destination_ref:
             try:
@@ -302,10 +310,14 @@ class Command(ImportLiveVehiclesCommand):
             else:
                 destination_ref = monitored_vehicle_journey.get('DestinationRef')
                 if destination_ref:
-                    try:
-                        journey.destination = Locality.objects.get(stoppoint=destination_ref).name
-                    except Locality.DoesNotExist:
-                        pass
+                    cache_key = f'stop{destination_ref}locality'
+                    journey.destination = cache.get(cache_key)
+                    if journey.destination is None:
+                        try:
+                            journey.destination = Locality.objects.get(stoppoint=destination_ref).name
+                        except Locality.DoesNotExist:
+                            journey.destination = ''
+                        cache.set(cache_key, journey.destination)
                 if not journey.destination:
                     journey.direction = monitored_vehicle_journey.get('DirectionRef', '')[:8]
 
