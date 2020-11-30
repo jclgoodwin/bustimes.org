@@ -181,8 +181,10 @@ class Command(ImportLiveVehiclesCommand):
         )
 
         if type(operator) is Operator and operator.parent and destination_ref:
-            services = services.filter(operator__parent=operator.parent)
-            # we will use the destination ref to find out exactly which operator it is
+            # we don't just use 'operator__parent=' because a service can have multiple operators
+            services = services.filter(Exists(Operator.objects.filter(parent=operator.parent), service=OuterRef('pk')))
+            # we will use the FestinationRef later to find out exactly which operator it is,
+            # because the OperatorRef field is unreliable – mixes up First South and West Yorkshire, for example
 
         elif operator:
             if type(operator) is Operator:
