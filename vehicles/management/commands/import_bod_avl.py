@@ -22,7 +22,6 @@ TWELVE_HOURS = timedelta(hours=12)
 class Command(ImportLiveVehiclesCommand):
     source_name = 'Bus Open Data'
     wait = 20
-    cache = set()
     operators = {
         'ASC': ['AKSS', 'ARHE', 'AMTM', 'GLAR'],
         'ANE': ['ARDU', 'ANUM', 'ANEA'],
@@ -316,21 +315,7 @@ class Command(ImportLiveVehiclesCommand):
             journey.service = latest_location.journey.service
         else:
             operator_ref = monitored_vehicle_journey["OperatorRef"]
-            if operator_ref == "FWYO":
-                if vehicle.operator_id == "HCTY":
-                    operator = ["HCTY"]  # First West Yorkshire/Connexions
-                else:
-                    operator = ["FWYO", "FLDS"]
-            elif operator_ref == "FHAL":
-                operator = ["FHAL", "FHUD"]
-            elif operator_ref == "FBRI" and vehicle.operator_id == "ABUS":
-                operator = ["ABUS"]
-            elif operator_ref == "RRAR":
-                operator = ["RRAR", "FTVA"]  # Reading RailAir/First Berkshire
-            elif operator_ref == "ROST":
-                operator = ["ROST", "LNUD", "BPTR"]  # Rosso/Blackburn/Burnley
-            else:
-                operator = self.get_operator(operator_ref)
+            operator = self.get_operator(operator_ref)
             journey.service = self.get_service(operator, item, vehicle.operator_id)
 
         return journey
