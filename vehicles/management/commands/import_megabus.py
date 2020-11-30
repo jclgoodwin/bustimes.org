@@ -18,7 +18,7 @@ def parse_datetime(string):
 
 class Command(ImportLiveVehiclesCommand):
     source_name = 'Megabus'
-    operators = ['MEGA', 'SCMG']
+    operators = ['MEGA', 'SCMG', 'SCLK']
     dead_trips = set()
     last_got_services = None
     last_got_trips = None
