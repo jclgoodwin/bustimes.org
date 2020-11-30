@@ -37,6 +37,34 @@ class RegistrationTest(TestCase):
         self.assertEqual(user.email, "rufus@herring.pizza")
         self.assertEqual(str(user), str(user.id))
 
+        with self.assertNumQueries(2):
+            response = self.client.post(
+                "/accounts/register/",
+                {
+                    "email": "ROY@HotMail.com",
+                },
+            )
+
+        user = User.objects.get(email__iexact="ROY@HotMail.com")
+        self.assertEqual(user.username, "ROY@HotMail.com")
+        self.assertEqual(user.email, "ROY@hotmail.com")
+
+        self.assertContains(response, "Check your email (ROY@hotmail.com")
+        self.assertEqual(3, len(mail.outbox))
+
+        # username (email address) should be case insensitive
+        user.set_password('swim green twenty eggs')
+        user.save()
+        with self.assertNumQueries(9):
+            response = self.client.post(
+                "/accounts/login/",
+                {
+                    "username": "roY@hoTmail.com",
+                    "password": "swim green twenty eggs"
+                },
+            )
+            self.assertEqual(302, response.status_code)
+
     def test_password_reset(self):
         with self.assertNumQueries(0):
             response = self.client.get("/accounts/password_reset/")

@@ -1,18 +1,18 @@
 from django.contrib.auth import get_user_model, views as auth_views
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
-from .forms import RegistrationForm
+from . import forms
 
 UserModel = get_user_model()
 
 
 def register(request):
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+        form = forms.RegistrationForm(request.POST)
         if form.is_valid():
             form.save(request=request)
     else:
-        form = RegistrationForm()
+        form = forms.RegistrationForm()
 
     return render(request, 'register.html', {
         'form': form,
@@ -24,7 +24,7 @@ class RegisterConfirmView(auth_views.PasswordResetConfirmView):
 
 
 class LoginView(auth_views.LoginView):
-    pass
+    form_class = forms.LoginForm
 
 
 class PasswordResetView(auth_views.PasswordResetView):

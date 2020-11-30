@@ -1,5 +1,7 @@
+from django.forms import EmailField
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm
+
 
 UserModel = get_user_model()
 
@@ -29,3 +31,7 @@ class RegistrationForm(PasswordResetForm):
 
     def get_users(self, _):
         return [self.user]
+
+
+class LoginForm(AuthenticationForm):
+    username = EmailField()
