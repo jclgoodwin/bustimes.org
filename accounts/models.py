@@ -5,7 +5,6 @@ from django.urls import reverse
 
 class CustomUserManager(UserManager):
     def get_by_natural_key(self, username):
-        print(username)
         return self.get(email__iexact=username)
 
 
