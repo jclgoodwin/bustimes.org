@@ -95,7 +95,7 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
                     call_command('import_bod', 'stagecoach')
 
                 DataSource.objects.update(datetime=None)
-                with self.assertNumQueries(212):
+                with self.assertNumQueries(206):
                     with patch('builtins.print') as mocked_print:
                         call_command('import_bod', 'stagecoach')
                 mocked_print.assert_called_with({'ChristmasDay', 'NewYearsDay', 'BoxingDay'})
