@@ -1,10 +1,9 @@
-import os
+import io
 import xml.etree.cElementTree as ET
+import requests
+import zipfile
 from django.core.management.base import BaseCommand
 from ... import models
-
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def get_atco_code(stop):
@@ -139,17 +138,52 @@ class Command(BaseCommand):
                     price_ref = distance_matrix_element_price.find("GeographicalIntervalPriceRef")
                     distance_matrix_element_ref = distance_matrix_element_price.find("DistanceMatrixElementRef")
 
-                    models.Cell.objects.create(
-                        column=columns[columnn_ref],
-                        row=rows[row_ref],
-                        price_group=price_group_prices[price_ref.attrib["ref"]],
-                        distance_matrix_element=distance_matrix_elements[distance_matrix_element_ref.attrib["ref"]]
-                    )
+                    try:
+                        models.Cell.objects.create(
+                            column=columns[columnn_ref],
+                            row=rows[row_ref],
+                            price_group=price_group_prices[price_ref.attrib["ref"]],
+                            distance_matrix_element=distance_matrix_elements[distance_matrix_element_ref.attrib["ref"]]
+                        )
+                    except KeyError:
+                        print(rows, row_ref)
 
-    def handle(self, **kwargs):
-        path = os.path.join(BASE_DIR, 'data')
-        for filename in os.listdir(path):
-            print(filename)
-            source, created = models.DataSet.objects.get_or_create(name=filename)
-            with open(os.path.join(path, filename), "rb") as open_file:
-                self.handle_file(source, open_file)
+    @staticmethod
+    def add_arguments(parser):
+        parser.add_argument('api_key', type=str)
+
+    def handle(self, api_key, **kwargs):
+        session = requests.Session()
+
+        url = 'https://data.bus-data.dft.gov.uk/api/v1/fares/dataset/'
+        params = {
+            'api_key': api_key,
+            'status': 'published'
+        }
+        while url:
+            response = session.get(url, params=params)
+            data = response.json()
+
+            for item in data['results']:
+                dataset_url = f"https://data.bus-data.dft.gov.uk/fares/dataset/{item['id']}/"
+                try:
+                    dataset = models.DataSet.objects.get(url=dataset_url)
+                    # continue
+                except models.DataSet.DoesNotExist:
+                    dataset = models.DataSet(name=item['name'], url=dataset_url)
+                    dataset.save()
+                print(dataset_url)
+                download_url = f"{dataset_url}download/"
+                response = session.get(download_url, stream=True)
+
+                if response.headers['Content-Type'] == 'text/xml':
+                    self.handle_file(dataset, response.raw)
+                else:
+                    assert response.headers['Content-Type'] == 'application/zip'
+                    print(response.headers)
+                    with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+                        for filename in archive.namelist():
+                            print(' ', filename)
+                            self.handle_file(dataset, archive.open(filename))
+
+            url = data['next']

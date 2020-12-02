@@ -1,11 +1,20 @@
+import os
 from django.test import TestCase
-from django.core.management import call_command
-from .models import Tariff
+from .management.commands import import_netex_fares
+from .models import Tariff, DataSet
 
 
 class FaresTest(TestCase):
     def test_netex(self):
-        call_command('import_netex_fares')
+        command = import_netex_fares.Command()
+
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(base_dir, 'data')
+
+        for filename in os.listdir(path):
+            source, created = DataSet.objects.get_or_create(name=filename)
+            with open(os.path.join(path, filename), "rb") as open_file:
+                command.handle_file(source, open_file)
 
         tariff = Tariff.objects.get(name="A C Williams WM06 - single fares")
 

@@ -53,6 +53,8 @@ td:hover {
 
         <h2>{{ table }}</h2>
 
+        <p>{{ table.code }}</p>
+
         <p>{{ table.user_profile }} fares</p>
 
         <table>
@@ -74,6 +76,8 @@ td:hover {
         </table>
 
     {% endfor %}
+
+    <p>{{ object.source.url }}</p>
 
 {% endblock %}
 
