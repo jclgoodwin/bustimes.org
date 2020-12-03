@@ -1,34 +1,8 @@
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, CharFilter
-from rest_framework import routers, serializers, viewsets
-from vehicles.models import Vehicle
-
-
-class VehicleSerializer(serializers.ModelSerializer):
-    operator = serializers.SerializerMethodField()
-    livery = serializers.SerializerMethodField()
-
-    def get_operator(self, obj):
-        if obj.operator_id:
-            return {
-                'id': obj.operator_id,
-                'name': obj.operator.name,
-                'parent': obj.operator.parent,
-            }
-
-    def get_livery(self, obj):
-        if obj.colours or obj.livery_id:
-            return {
-                'id': obj.livery_id,
-                'name': obj.livery_id and str(obj.livery),
-                'left': obj.get_livery(),
-                'right': obj.get_livery(90)
-            }
-
-    class Meta:
-        model = Vehicle
-        depth = 1
-        exclude = ['code', 'source', 'latest_location', 'features', 'colours']
+from rest_framework import routers, viewsets
+from vehicles.models import Vehicle, Livery, VehicleType
+from .serializers import VehicleSerializer, LiverySerializer, VehicleTypeSerializer
 
 
 class VehicleFilter(FilterSet):
@@ -52,5 +26,17 @@ class VehicleViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = VehicleFilter
 
 
+class LiveryViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Livery.objects.all()
+    serializer_class = LiverySerializer
+
+
+class VehicleTypeViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = VehicleType.objects.all()
+    serializer_class = VehicleTypeSerializer
+
+
 router = routers.DefaultRouter()
 router.register('vehicles', VehicleViewSet)
+router.register('liveries', LiveryViewSet)
+router.register('vehicletypes', VehicleTypeViewSet)
