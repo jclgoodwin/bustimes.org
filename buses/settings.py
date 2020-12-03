@@ -101,14 +101,14 @@ REST_FRAMEWORK = {
 }
 
 if os.environ.get('READ_ONLY_DB_HOST'):
-    REPLICA_DATABASES = []
+    # REPLICA_DATABASES = []
     for i, host in enumerate(os.environ['READ_ONLY_DB_HOST'].split()):
         key = f'read-only-{i}'
         DATABASES[key] = DATABASES['default'].copy()
         DATABASES[key]['HOST'] = host
-        REPLICA_DATABASES.append(key)
-    DATABASE_ROUTERS = ['multidb.PinningReplicaRouter']
-    MIDDLEWARE.append('busstops.middleware.admin_db_middleware')
+        # REPLICA_DATABASES.append(key)
+    DATABASE_ROUTERS = ['busstops.routers.Router']
+    # MIDDLEWARE.append('busstops.middleware.admin_db_middleware')
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = None
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
