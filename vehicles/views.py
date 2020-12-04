@@ -93,7 +93,7 @@ def operator_vehicles(request, slug=None, parent=None):
             'other_colour': '#ffffff',
         }
         if request.method == 'POST':
-            form = EditVehiclesForm(request.POST, initial=initial, operator=operator)
+            form = EditVehiclesForm(request.POST, initial=initial, operator=operator, user=request.user)
             if not form.has_really_changed():
                 form.add_error(None, 'You haven\'t changed anything')
             elif form.is_valid():
@@ -119,9 +119,9 @@ def operator_vehicles(request, slug=None, parent=None):
                     if 'features' in data:
                         for edit in edits:
                             edit.features.set(data['features'])
-                form = EditVehiclesForm(initial=initial, operator=operator)
+                form = EditVehiclesForm(initial=initial, operator=operator, user=request.user)
         else:
-            form = EditVehiclesForm(initial=initial, operator=operator)
+            form = EditVehiclesForm(initial=initial, operator=operator, user=request.user)
 
     if operator.name == 'National Express':
         vehicles = sorted(vehicles, key=lambda v: v.notes)
@@ -399,7 +399,8 @@ def edit_vehicle(request, vehicle_id):
         initial['fleet_number'] = str(vehicle.fleet_number)
 
     if request.method == 'POST':
-        form = EditVehicleForm(request.POST, initial=initial, operator=vehicle.operator, vehicle=vehicle)
+        form = EditVehicleForm(request.POST,
+                               initial=initial, operator=vehicle.operator, vehicle=vehicle, user=request.user)
         if not form.has_really_changed():
             form.add_error(None, 'You haven\'t changed anything')
         elif form.is_valid():
@@ -427,7 +428,7 @@ def edit_vehicle(request, vehicle_id):
                         edit.features.add(feature)
                 submitted = True
     else:
-        form = EditVehicleForm(initial=initial, operator=vehicle.operator, vehicle=vehicle)
+        form = EditVehicleForm(initial=initial, operator=vehicle.operator, vehicle=vehicle, user=request.user)
 
     if vehicle.operator:
         breadcrumb = [vehicle.operator, Vehicles(vehicle.operator), vehicle]

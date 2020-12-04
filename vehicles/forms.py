@@ -54,9 +54,7 @@ class EditVehiclesForm(forms.Form):
             return False
         return True
 
-    def __init__(self, *args, **kwargs):
-        operator = kwargs.pop('operator', None)
-
+    def __init__(self, *args, operator=None, user=None, **kwargs):
         super().__init__(*args, **kwargs)
 
         if operator:
@@ -99,9 +97,7 @@ class EditVehicleForm(EditVehiclesForm):
     field_order = ['fleet_number', 'reg', 'operator', 'vehicle_type', 'colours', 'other_colour', 'branding', 'name',
                    'previous_reg', 'features', 'depot', 'notes']
 
-    def __init__(self, *args, **kwargs):
-        vehicle = kwargs.pop('vehicle', None)
-
+    def __init__(self, *args, vehicle=None, **kwargs):
         super().__init__(*args, **kwargs)
 
         if str(vehicle.fleet_number) in vehicle.code:
