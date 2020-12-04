@@ -418,7 +418,7 @@ class TimetableDepartures(Departures):
         destination = trip.destination
         return {
             'origin_departure_time': midnight + trip.start,
-            'time': midnight + stop_time.departure,
+            'time': midnight + (stop_time.departure or stop_time.arrival),
             'destination': destination.locality or destination.town or destination,
             'service': stop_time.trip.route.service,
         }
