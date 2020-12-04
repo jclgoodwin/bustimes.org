@@ -44,7 +44,7 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
 
     def move_vehicle(self, message):
         self.move_vehicles({
-            'items': message
+            'items': [message]
         })
 
     def receive_json(self, content):
