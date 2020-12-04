@@ -364,8 +364,10 @@ class Command(ImportLiveVehiclesCommand):
         now = timezone.now()
 
         items = self.get_items()
-
         if items:
+            # encourage items to be grouped by operator
+            items.sort(key=lambda item: item['MonitoredVehicleJourney']['OperatorRef'])
+
             chunk = []
             try:
                 for item in items:
