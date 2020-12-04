@@ -6,3 +6,4 @@ class Router:
     def db_for_read(model, **hints):
         if model is Channel:
             return 'read-only-0'
+        return 'default'

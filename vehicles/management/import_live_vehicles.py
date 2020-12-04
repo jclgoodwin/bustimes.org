@@ -272,7 +272,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     group_messages[group].append(message)
                 else:
                     group_messages[group] = [message]
-            for channel in Channel.objects.filter(bounds__covers=location.latlong).only('name'):
+            for channel in Channel.objects.filter(bounds__covers=location.latlong).defer('bounds'):
                 if channel.name in channel_messages:
                     channel_messages[channel.name].append(message)
                 else:
