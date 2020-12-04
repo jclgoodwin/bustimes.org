@@ -304,7 +304,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                         'items': channel_messages[channel_name]
                     })
                 except ChannelFull:
-                    channel.delete()
+                    pass
         except ReplyError:
             return
 
