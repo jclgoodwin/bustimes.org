@@ -5,7 +5,7 @@ from django.db.models import Prefetch
 from django.views.generic.detail import DetailView
 from django.http import FileResponse, Http404, HttpResponse
 from django.utils import timezone
-from busstops.models import Service
+from busstops.models import Service, SIRISource
 from vehicles.siri_one_shot import siri_one_shot, Poorly
 from .models import Route, Trip
 
@@ -30,6 +30,8 @@ class ServiceDebugView(DetailView):
             if code.scheme.endswith(' SIRI'):
                 try:
                     code.siri_one_shot = siri_one_shot(code, now, False)
+                except SIRISource.DoesNotExist:
+                    pass
                 except Poorly:
                     code.siri_one_shot = 'Poorly'
 
