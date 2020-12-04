@@ -64,11 +64,13 @@ class BusHubTest(TestCase):
         with self.assertNumQueries(12):
             with patch('builtins.print') as mocked_print:
                 command.handle_item(item, self.source.datetime)
+                command.save()
 
         mocked_print.assert_called()
 
         with self.assertNumQueries(1):
             command.handle_item(item, self.source.datetime)
+            command.save()
 
         location = VehicleLocation.objects.get()
         self.assertEqual('2018-08-31 21:49:33+00:00', str(location.datetime))
@@ -81,6 +83,7 @@ class BusHubTest(TestCase):
         item['Bearing'] = '-1'
         with self.assertNumQueries(7):
             command.handle_item(item, self.source.datetime)
+            command.save()
         self.assertEqual(2, Vehicle.objects.count())
         self.vehicle.refresh_from_db()
         self.assertIsNotNone(self.vehicle.latest_location)
@@ -90,3 +93,4 @@ class BusHubTest(TestCase):
         item["RecordedAtTime"] = "31/08/2018 23:10:33"
         with self.assertNumQueries(3):
             command.handle_item(item, self.source.datetime)
+            command.save()

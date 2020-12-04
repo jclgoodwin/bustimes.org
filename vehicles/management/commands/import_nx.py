@@ -48,6 +48,7 @@ class Command(ImportLiveVehiclesCommand):
                 for item in res.json()['services']:
                     if item['live']:
                         yield(item)
+            self.save()
             sleep(self.sleep)
 
     def get_vehicle(self, item):

@@ -90,6 +90,7 @@ class Command(ImportLiveVehiclesCommand):
                 self.source = source
                 for item in items_from_response(response):
                     yield item
+                self.save()
                 source.save(update_fields=['datetime'])
 
     def get_operator(self, operator_ref):

@@ -64,11 +64,12 @@ class Command(ImportLiveVehiclesCommand):
         trips = self.get_trips()
         for trip in trips:
             start = parse_datetime(trip['startTime']['dateTime'])
-            if start > now:
+            if start > now:  # not started yet
                 continue
             end = parse_datetime(trip['endTime']['dateTime'])
-            if end < now:
+            if end < now:  # finished
                 continue
+
             link_date = trip['linkDate']
             route = trip['route']
             direction = trip['dir']
@@ -82,17 +83,19 @@ class Command(ImportLiveVehiclesCommand):
                 print(e)
                 sleep(1)
                 continue
-            sleep(1)
-            if not response.ok:
+            if response.ok:
+                any_live = False
+                for service in response.json()['services']:
+                    if service['live']:
+                        any_live = True
+                        yield service
+                if any_live:
+                    self.save()
+                else:
+                    self.dead_trips.add(url)
+            else:
                 print(response.content)
-                continue
-            any_live = False
-            for service in response.json()['services']:
-                if service['live']:
-                    any_live = True
-                    yield service
-            if not any_live:
-                self.dead_trips.add(url)
+            sleep(1)
 
     def get_vehicle(self, item):
         defaults = {

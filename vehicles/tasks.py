@@ -20,6 +20,7 @@ def handle_siri_vm(request_body):
         if element.tag[-15:] == 'VehicleActivity':
             command.handle_item(element)
             element.clear()
+    command.save()
 
 
 @shared_task

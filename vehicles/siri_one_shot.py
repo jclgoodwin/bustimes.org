@@ -55,3 +55,4 @@ def siri_one_shot(code, now, locations):
     command.source = DataSource.objects.get(name='Icarus')
     for item in import_sirivm.items_from_response(response):
         command.handle_item(item, now, code)
+    command.save()

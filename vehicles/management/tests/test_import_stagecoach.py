@@ -20,10 +20,7 @@ DIR = os.path.dirname(os.path.abspath(__file__))
 class StagecoachTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        source = DataSource.objects.create(name='Stagecoach', datetime=timezone.now())
-        cls.command = Command()
-        cls.command.source = source
-        cls.command.operator_codes = ['SDVN']
+        cls.source = DataSource.objects.create(name='Stagecoach', datetime=timezone.now())
 
         r = Region.objects.create(pk='SE')
         o = Operator.objects.create(pk='SCOX', name='Oxford', parent='Stagecoach', vehicle_mode='bus', region=r)
@@ -34,14 +31,22 @@ class StagecoachTest(TestCase):
     @patch('vehicles.management.import_live_vehicles.sleep')
     @patch('vehicles.management.commands.import_stagecoach.sleep', side_effect=MockException)
     def test_handle(self, sleep_1, sleep_2):
+        command = Command()
+        command.source = self.source
+        command.operator_codes = ['SDVN']
+
         with vcr.use_cassette(os.path.join(DIR, 'vcr', 'stagecoach_vehicles.yaml')):
-            with self.assertRaises(MockException):
-                with self.assertLogs(level='ERROR'):
-                    with self.assertNumQueries(20):
-                        with patch('builtins.print'):
-                            self.command.handle()
+            with self.assertLogs(level='ERROR'):
+                with self.assertNumQueries(18):
+                    with patch('builtins.print'):
+                        with self.assertRaises(MockException):
+                            command.handle()
 
         self.assertTrue(sleep_1.called)
         self.assertTrue(sleep_2.called)
-        self.assertEqual(self.command.operators, {'SCOX': Operator(id='SCOX')})
+        self.assertEqual(command.operators, {
+            'SCOX': Operator(id='SCOX'),
+            'SCCM': None,
+            'SCEK': None, 
+        })
         self.assertEqual(VehicleLocation.objects.count(), 1)

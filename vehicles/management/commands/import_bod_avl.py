@@ -355,7 +355,8 @@ class Command(ImportLiveVehiclesCommand):
                 changed_items.append(item)
         await get_channel_layer().send('sirivm', {
             'type': 'sirivm',
-            'items': changed_items
+            'items': changed_items,
+            'when': self.when
         })
         self.identifiers.update(identifiers)  # channel wasn't full
 
@@ -422,6 +423,7 @@ class Command(ImportLiveVehiclesCommand):
                 print(response.content.decode())
                 return
 
-        self.source.datetime = parse_datetime(data['Siri']['ServiceDelivery']['ResponseTimestamp'])
+        self.when = data['Siri']['ServiceDelivery']['ResponseTimestamp']
+        self.source.datetime = parse_datetime(self.when)
 
         return data['Siri']['ServiceDelivery']['VehicleMonitoringDelivery']['VehicleActivity']

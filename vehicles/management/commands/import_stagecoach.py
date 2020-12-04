@@ -86,6 +86,7 @@ class Command(ImportLiveVehiclesCommand):
                 # print(response.url)
                 for item in response.json()['services']:
                     yield item
+                self.save()
                 sleep(1)
             except (RequestException, KeyError) as e:
                 print(e)
@@ -104,14 +105,18 @@ class Command(ImportLiveVehiclesCommand):
             created = False
         else:
             operator_id = self.operator_ids.get(item['oc'], item['oc'])
-            operator = self.operators.get(operator_id)
-            if not operator:
+            if operator_id in self.operators:
+                operator = self.operators[operator_id]
+            else:
                 try:
                     operator = Operator.objects.get(id=operator_id)
                 except Operator.DoesNotExist as e:
                     logger.error(e, exc_info=True, extra={
                         'operator': operator_id
                     })
+                    operator = None
+                self.operators[operator_id] = operator
+
             defaults = {
                 'source': self.source
             }

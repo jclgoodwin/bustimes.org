@@ -75,11 +75,15 @@ def same_journey(latest_location, journey, when):
 
 
 class ImportLiveVehiclesCommand(BaseCommand):
-    session = requests.Session()
-    current_location_ids = set()
-    vehicles = Vehicle.objects.select_related('latest_location__journey__service', 'livery')
     url = ''
+    vehicles = Vehicle.objects.select_related('latest_location__journey__service', 'livery')
     wait = 60
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.session = requests.Session()
+        self.current_location_ids = set()
+        self.to_save = []
 
     @staticmethod
     def get_datetime(self):
@@ -221,23 +225,43 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if latest:
             location.id = latest.id
         location.current = True
-        location.save()
-        if not latest:
-            journey.vehicle.latest_location = location
-            journey.vehicle.save(update_fields=['latest_location'])
-        self.current_location_ids.add(location.id)
 
-        location.redis_append()
-        location.channel_send(vehicle)
+        self.to_save.append((location, latest, vehicle))
 
-        if vehicle.withdrawn:
-            vehicle.withdrawn = False
-            vehicle.save(update_fields=['withdrawn'])
+    def save(self):
+        to_create = []
+        to_update = []
+        for location, latest, vehicle in self.to_save:
+            if location.id:
+                to_update.append(location)
+            else:
+                to_create.append(location)
 
-        if latest:
-            speed = calculate_speed(latest, location)
-            if speed > 90:
-                print('{} mph\t{}'.format(speed, journey.vehicle.get_absolute_url()))
+        VehicleLocation.objects.bulk_create(to_create)
+        if to_update:
+            VehicleLocation.objects.bulk_update(to_update, fields=['datetime', 'latlong', 'journey',
+                                                                   'heading', 'early', 'delay', 'current'])
+
+        for location, latest, vehicle in self.to_save:
+            if not vehicle.latest_location_id:
+                vehicle.latest_location = location
+                vehicle.save(update_fields=['latest_location'])
+
+            self.current_location_ids.add(location.id)
+
+            location.redis_append()
+            location.channel_send(vehicle)
+
+            if vehicle.withdrawn:
+                vehicle.withdrawn = False
+                vehicle.save(update_fields=['withdrawn'])
+
+            if latest:
+                speed = calculate_speed(latest, location)
+                if speed > 90:
+                    print('{} mph\t{}'.format(speed, vehicle.get_absolute_url()))
+
+        self.to_save = []
 
     def do_source(self):
         if self.url:
@@ -264,6 +288,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                         self.handle_item(item, now)
                     except IntegrityError as e:
                         logger.error(e, exc_info=True)
+                self.save()
                 # mark any vehicles that have gone offline as not current
                 self.get_old_locations().update(current=False)
             else:

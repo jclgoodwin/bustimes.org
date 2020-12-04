@@ -61,7 +61,7 @@ class WebsocketConsumerTest(TestCase):
             with freeze_time('2019-06-08 20:37+01:00'):
                 now = timezone.now()
 
-                with self.assertNumQueries(49):
+                with self.assertNumQueries(46):
                     self.assertIsNone(siri_one_shot(self.code_1, now, True))
                 with self.assertNumQueries(1):
                     self.assertEqual('cached (line name)', siri_one_shot(self.code_1, now, True))

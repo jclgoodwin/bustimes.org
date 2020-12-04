@@ -49,22 +49,26 @@ class SiriVMImportTest(TestCase):
 
         with self.assertNumQueries(9):
             self.command.handle_item(item)
+            self.command.save()
         self.assertIsNone(locations.get().heading)
 
         # if datetime is the same, shouldn't create new vehicle location
         with self.assertNumQueries(1):
             self.command.handle_item(item)
+            self.command.save()
         self.assertEqual(1, locations.count())
 
         # different datetime - should create new vehicle location
         item.find('siri:RecordedAtTime', import_sirivm.NS).text = '2018-08-06T21:45:32+01:00'
         with self.assertNumQueries(3):
             self.command.handle_item(item)
+            self.command.save()
 
         # another different datetime - but speed == 0
         item.find('siri:RecordedAtTime', import_sirivm.NS).text = '2018-08-06T21:46:32+01:00'
         with self.assertNumQueries(3):
             self.command.handle_item(item)
+            self.command.save()
 
         self.assertEqual(1, locations.count())
         last_location = locations.last()
@@ -72,7 +76,8 @@ class SiriVMImportTest(TestCase):
         self.assertEqual(last_location.early, -8)
 
         # test an item with an invalid delay ('-PT2M.492S')
-        item = next(items)
+        with self.assertNumQueries(0):
+            item = next(items)
         location = self.command.create_vehicle_location(item)
         self.assertIsNone(location.early)
 
@@ -124,6 +129,7 @@ class SiriVMImportTest(TestCase):
         """)
         with patch('vehicles.management.commands.import_sirivm.logger') as logger:
             self.command.handle_item(item)
+            self.command.save()
         self.assertTrue(logger.error.called)
         location = VehicleLocation.objects.get()
         self.assertEqual(240, location.heading)

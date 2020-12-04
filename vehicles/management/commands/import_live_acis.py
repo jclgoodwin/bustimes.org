@@ -79,6 +79,7 @@ class Command(ImportLiveVehiclesCommand):
         for latitute, longitude in self.get_points():
             for item in items_from_response(self.get_response(latitute, longitude)):
                 yield item
+            self.save()
             sleep(1)
 
     def get_old_locations(self):

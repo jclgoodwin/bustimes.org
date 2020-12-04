@@ -36,21 +36,25 @@ class TfWMImportTest(TestCase):
         with self.assertNumQueries(11):  # X12
             with patch('builtins.print') as mocked_print:
                 command.handle_item(items[0], self.source.datetime)
+                command.save()
         mocked_print.assert_called()
 
         with self.assertNumQueries(11):
             with patch('builtins.print') as mocked_print:
                 command.handle_item(items[217], self.source.datetime)
+                command.save()
         mocked_print.assert_called()
 
         with self.assertNumQueries(2):
             with patch('builtins.print') as mocked_print:
                 command.handle_item(items[217], self.source.datetime)
+                command.save()
         mocked_print.assert_called()
 
         with self.assertNumQueries(12):
             with patch('builtins.print') as mocked_print:
                 command.handle_item(items[216], self.source.datetime)
+                command.save()
         mocked_print.assert_called()
 
         self.assertEqual(3, Vehicle.objects.all().count())
