@@ -62,7 +62,7 @@ class VehicleAdmin(admin.ModelAdmin):
     raw_id_fields = ('operator', 'source')
     search_fields = ('code', 'fleet_code', 'reg')
     ordering = ('-id',)
-    actions = ('copy_livery', 'copy_type')
+    actions = ('copy_livery', 'copy_type', 'make_livery')
     inlines = [VehicleEditInline]
 
     def copy_livery(self, request, queryset):
