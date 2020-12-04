@@ -30,17 +30,22 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
         if self.channel.id:
             self.channel.delete()
 
-    def move_vehicle(self, message):
+    def move_vehicles(self, message):
         self.send_json([{
-            'i': message['id'],
-            'd': message['datetime'],
-            'l': message['latlong'],
-            'h': message['heading'],
-            'r': message['route'],
-            'c': message['css'],
-            't': message['text_colour'],
-            'e': message['early']
-        }])
+            'i': item['id'],
+            'd': item['datetime'],
+            'l': item['latlong'],
+            'h': item['heading'],
+            'r': item['route'],
+            'c': item['css'],
+            't': item['text_colour'],
+            'e': item['early']
+        } for item in message['items']])
+
+    def move_vehicle(self, message):
+        self.move_vehicles({
+            'items': message
+        })
 
     def receive_json(self, content):
         new_bounds = Polygon.from_bbox(content)

@@ -2,6 +2,10 @@ import math
 import requests
 import logging
 import pid
+from aioredis import ReplyError
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from channels.exceptions import ChannelFull
 from datetime import timedelta
 from time import sleep
 from django.core.management.base import BaseCommand
@@ -12,7 +16,7 @@ from django.db.models.functions import Now
 from django.utils import timezone
 from bustimes.models import Route
 from busstops.models import DataSource, ServiceCode
-from ..models import Vehicle, VehicleLocation
+from ..models import Vehicle, VehicleLocation, Channel
 
 
 logger = logging.getLogger(__name__)
@@ -242,6 +246,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
             VehicleLocation.objects.bulk_update(to_update, fields=['datetime', 'latlong', 'journey',
                                                                    'heading', 'early', 'delay', 'current'])
 
+        group_messages = {}
+        channel_messages = {}
+
         for location, latest, vehicle in self.to_save:
             if not vehicle.latest_location_id:
                 vehicle.latest_location = location
@@ -250,7 +257,26 @@ class ImportLiveVehiclesCommand(BaseCommand):
             self.current_location_ids.add(location.id)
 
             location.redis_append()
-            location.channel_send(vehicle)
+
+            message = location.get_message(vehicle)
+
+            if location.journey.service_id:
+                group = f'service{location.journey.service_id}'
+                if group in group_messages:
+                    group_messages[group].append(message)
+                else:
+                    group_messages[group] = [message]
+            if vehicle.operator_id:
+                group = f'operator{vehicle.operator_id}'
+                if group in group_messages:
+                    group_messages[group].append(message)
+                else:
+                    group_messages[group] = [message]
+            for channel in Channel.objects.filter(bounds__covers=location.latlong).only('name'):
+                if channel.name in channel_messages:
+                    channel_messages[channel.name].append(message)
+                else:
+                    channel_messages[channel.name] = [message]
 
             if vehicle.withdrawn:
                 vehicle.withdrawn = False
@@ -260,6 +286,27 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 speed = calculate_speed(latest, location)
                 if speed > 90:
                     print('{} mph\t{}'.format(speed, vehicle.get_absolute_url()))
+
+        channel_layer = get_channel_layer()
+        group_send = async_to_sync(channel_layer.group_send)
+        send = async_to_sync(channel_layer.send)
+
+        try:
+            for group in group_messages:
+                group_send(group, {
+                    'type': 'move_vehicles',
+                    'items': group_messages[group]
+                })
+            for channel_name in channel_messages:
+                try:
+                    send(channel_name, {
+                        'type': 'move_vehicles',
+                        'items': channel_messages[channel_name]
+                    })
+                except ChannelFull:
+                    channel.delete()
+        except ReplyError:
+            return
 
         self.to_save = []
 

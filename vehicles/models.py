@@ -538,11 +538,10 @@ class VehicleLocation(models.Model):
         except redis.exceptions.ConnectionError:
             pass
 
-    def channel_send(self, vehicle):
+    def get_message(self, vehicle):
         if self.heading:
             self.heading = int(self.heading)
-        message = {
-            'type': 'move_vehicle',
+        return {
             'id': self.id,
             'datetime': DjangoJSONEncoder.default(None, self.datetime),
             'latlong': tuple(self.latlong),
@@ -552,6 +551,10 @@ class VehicleLocation(models.Model):
             'text_colour': vehicle.get_text_colour(),
             'early': self.early
         }
+
+    def channel_send(self, vehicle):
+        message = self.get_message(vehicle)
+        message['type'] = 'move_vehicle'
 
         channel_layer = get_channel_layer()
         group_send = async_to_sync(channel_layer.group_send)
