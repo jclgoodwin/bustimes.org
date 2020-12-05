@@ -106,7 +106,7 @@ class Command(ImportLiveVehiclesCommand):
         if vehicle.isupper() and len(vehicle) == 8:
             defaults['reg'] = vehicle.replace(' ', '')
         defaults['operator_id'] = self.operators[0]
-        vehicles = self.vehicles.filter(Q(operator__parent='Stagecoach') | operator__in=['MEGA', 'SCLK'])
+        vehicles = self.vehicles.filter(Q(operator__parent='Stagecoach') | Q(operator__in=['MEGA', 'SCLK']))
         return vehicles.get_or_create(defaults, code=vehicle)
 
     def get_journey(self, item, vehicle):
