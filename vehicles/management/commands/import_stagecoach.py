@@ -124,10 +124,7 @@ class Command(ImportLiveVehiclesCommand):
                 defaults['fleet_number'] = vehicle_code
             if operator:
                 defaults['operator'] = operator
-                if operator_id == 'SCLK':  # Scottish Citylink
-                    vehicles = self.vehicles.filter(operator=operator_id)
-                else:
-                    vehicles = self.vehicles.filter(operator__in=self.operators)
+                vehicles = self.vehicles.filter(operator__in=self.operators)
                 vehicle, created = vehicles.get_or_create(defaults, code=vehicle_code)
                 self.vehicles_ids[vehicle_code] = vehicle.id
             else:
@@ -233,6 +230,6 @@ class Command(ImportLiveVehiclesCommand):
         )
 
     def handle(self, *args, **options):
-        self.operators = Operator.objects.filter(parent='Stagecoach').in_bulk()
+        self.operators = Operator.objects.filter(Q(parent='Stagecoach') | Q(id__in=['SCLK', 'MEGA'])).in_bulk()
 
         return super().handle(*args, **options)
