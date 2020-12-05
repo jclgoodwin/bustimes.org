@@ -359,11 +359,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 self.do_source()
                 while True:
                     wait = self.update()
-                    self.source.save(update_fields=['datetime'])
                     sleep(wait)
-                    if self.source_name == self.source.name:
-                        previous_datetime = self.source.datetime
-                        self.source.refresh_from_db()
-                        assert self.source.datetime == previous_datetime
         except pid.PidFileError:
             return
