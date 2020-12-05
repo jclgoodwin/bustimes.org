@@ -10,6 +10,7 @@ from datetime import timedelta
 from time import sleep
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.db.models.functions import Now
@@ -249,6 +250,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
         group_messages = {}
         channel_messages = {}
 
+        channels = Channel.objects.using(settings.READ_DATABASE).defer('bounds')
+
         for location, latest, vehicle in self.to_save:
             if not vehicle.latest_location_id:
                 vehicle.latest_location = location
@@ -272,7 +275,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     group_messages[group].append(message)
                 else:
                     group_messages[group] = [message]
-            for channel in Channel.objects.filter(bounds__covers=location.latlong).defer('bounds'):
+            for channel in channels.filter(bounds__intersects=location.latlong):
                 if channel.name in channel_messages:
                     channel_messages[channel.name].append(message)
                 else:

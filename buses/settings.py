@@ -107,8 +107,11 @@ if os.environ.get('READ_ONLY_DB_HOST'):
         DATABASES[key] = DATABASES['default'].copy()
         DATABASES[key]['HOST'] = host
         REPLICA_DATABASES.append(key)
-    DATABASE_ROUTERS = ['busstops.routers.Router', 'multidb.PinningReplicaRouter']
+    DATABASE_ROUTERS = ['multidb.PinningReplicaRouter']
     MIDDLEWARE.append('busstops.middleware.pin_db_middleware')
+    READ_DATABASE = key
+else:
+    READ_DATABASE = 'default'
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = None
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000

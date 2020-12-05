@@ -55,7 +55,7 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
         self.channel.bounds = new_bounds
         self.channel.save()
         if bounds:  # if new bounds not completely covered by old bounds
-            locations = get_vehicle_locations(latlong__within=bounds)
+            locations = get_vehicle_locations(latlong__intersects=bounds)
             self.send_locations(locations)
 
     def send_locations(self, locations):

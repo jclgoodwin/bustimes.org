@@ -2,6 +2,7 @@ import io
 import zipfile
 import xmltodict
 from django.core.cache import cache
+from django.conf import settings
 from datetime import timedelta
 from xml.parsers.expat import ExpatError
 from ciso8601 import parse_datetime
@@ -72,7 +73,7 @@ class Command(ImportLiveVehiclesCommand):
             condition |= Q(id=operator_ref)
 
         try:
-            operator = Operator.objects.get(condition)
+            operator = Operator.objects.using(settings.READ_DATABASE).get(condition)
             self.operator_cache[operator_ref] = operator
             return operator
         except Operator.DoesNotExist:
@@ -86,7 +87,7 @@ class Command(ImportLiveVehiclesCommand):
         vehicle_ref = monitored_vehicle_journey['VehicleRef']
         cache_key = f'{operator_ref}-{vehicle_ref}'
         try:
-            return self.vehicles.get(id=self.vehicle_cache[cache_key]), False
+            return self.vehicles.using(settings.READ_DATABASE).get(id=self.vehicle_cache[cache_key]), False
         except (KeyError, Vehicle.DoesNotExist):
             pass
 
@@ -172,7 +173,7 @@ class Command(ImportLiveVehiclesCommand):
         if cache_key in self.service_cache:
             return self.service_cache[cache_key]
 
-        services = Service.objects.filter(
+        services = Service.objects.using(settings.READ_DATABASE).filter(
             Exists(ServiceCode.objects.filter(service=OuterRef('id'), scheme__endswith=' SIRI', code=line_ref))
             | Q(line_name__iexact=line_ref),
             current=True
