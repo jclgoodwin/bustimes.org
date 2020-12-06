@@ -56,7 +56,10 @@ def not_found_redirect_middleware(get_response):
 
 def pin_db_middleware(get_response):
     def middleware(request):
-        if request.method == 'POST':
+        if request.method == 'POST' or (
+            request.path.startswith('/admin/') and 'HTTP_REFERER' in request.META
+            and request.META['HTTP_REFERER'] == request.get_full_path()
+        ):
             pin_this_thread()
         else:
             unpin_this_thread()
