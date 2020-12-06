@@ -136,61 +136,6 @@ def bus_open_data(api_key):
     command.debrief()
 
 
-def first():
-    command = get_command()
-
-    url_prefix = 'http://travelinedatahosting.basemap.co.uk/data/first/'
-    sources = DataSource.objects.filter(url__startswith=url_prefix)
-
-    for operator, region_id, operators in settings.FIRST_OPERATORS:
-        filename = operator + '.zip'
-        url = url_prefix + filename
-        modified, last_modified = download_if_changed(os.path.join(settings.DATA_DIR, filename), url)
-
-        if modified:
-            print(url)
-
-            command.operators = operators
-            command.region_id = region_id
-            command.service_descriptions = {}
-            command.service_ids = set()
-            command.route_ids = set()
-            command.calendar_cache = {}
-
-            command.source, created = DataSource.objects.get_or_create({'name': operator}, url=url)
-            command.source.datetime = timezone.now()
-
-            handle_file(command, filename)
-
-            if not command.service_ids:  # nothing was imported
-                continue
-
-            command.update_geometries()
-            command.mark_old_services_as_not_current()
-
-            clean_up(operators.values(), sources)
-
-            command.source.datetime = last_modified
-            command.source.save(update_fields=['datetime'])
-
-            routes = command.source.route_set
-            date_ranges = routes.distinct('start_date', 'end_date')
-            date_ranges = date_ranges.values('start_date', 'end_date')
-            print(' ', date_ranges)
-            if len(date_ranges) == 1:
-                update = {
-                    'end_date': None
-                }
-                if date_ranges[0]['start_date'] > last_modified.date():
-                    update['start_date'] = last_modified.date()
-                routes.update(**update)
-                Calendar.objects.filter(trip__route__source=command.source).update(**update)
-
-            print(' ', Operator.objects.filter(service__route__source=command.source).distinct().values('id'))
-
-    command.debrief()
-
-
 def ticketer(operator=None):
     command = get_command()
 
@@ -303,8 +248,6 @@ class Command(BaseCommand):
     def handle(self, api_key, operator, **options):
         if api_key == 'stagecoach':
             stagecoach()
-        elif api_key == 'first':
-            first()
         elif api_key == 'ticketer':
             ticketer(operator)
         else:

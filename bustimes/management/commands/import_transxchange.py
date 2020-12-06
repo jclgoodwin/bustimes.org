@@ -135,8 +135,6 @@ class Command(BaseCommand):
                 open_data_operators.append(operator_code)
         for _, _, _, operators in settings.PASSENGER_OPERATORS:
             open_data_operators += operators.values()
-        for _, _, operators in settings.FIRST_OPERATORS:
-            open_data_operators += operators.values()
         for _, _, _, operators in settings.STAGECOACH_OPERATORS:
             open_data_operators += operators.values()
         for _, operators, _ in settings.TICKETER_OPERATORS:

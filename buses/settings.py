@@ -445,8 +445,6 @@ STAGECOACH_OPERATORS = [
     ('W', 'sswl', 'Stagecoach South Wales', {'SSWL': 'SSWL'}),
     ('Y', 'tram', 'Stagecoach Supertram', {'SCST': 'SCST'}),
 ]
-FIRST_OPERATORS = [
-]
 TICKETER_OPERATORS = [
     ('NW', ['WBTR'], 'Warrington’s Own Buses'),
     ('EA', ['LYNX'], 'Lynx'),
