@@ -17,7 +17,8 @@ from titlecase import titlecase
 from django.conf import settings
 from django.contrib.gis.geos import MultiLineString
 from django.core.management.base import BaseCommand
-from django.db import transaction, IntegrityError, DataError
+from django.db import transaction, DataError
+from django.db.models import Exists, OuterRef
 from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
@@ -534,27 +535,6 @@ class Command(BaseCommand):
             stop_time.trip = stop_time.trip  # set trip_id
         StopTime.objects.bulk_create(stop_times)
 
-    def get_existing_service(self, line_name, operators):
-        services = Service.objects.filter(operator__in=operators, line_name__iexact=line_name)
-        services = services.select_related('source').defer('geometry')
-        try:
-            try:
-                existing = services.get(current=True)
-            except Service.DoesNotExist:
-                existing = services.get()
-        except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-            return
-        if not existing:
-            return
-
-        if not existing.source or len(existing.source.name) <= 4:
-            return existing
-
-        if existing.service_code.startswith(f'{self.source.id}-'):
-            return
-
-        return existing
-
     def get_description(self, txc_service):
         description = txc_service.description
         if description and ('timetable' in description.lower() or 'Database Refresh' in description):
@@ -610,14 +590,22 @@ class Command(BaseCommand):
 
         for line_id, line_name, line_brand in txc_service.lines:
             existing = None
+            service_code = None
 
-            if operators and description and line_name:
+            if operators and line_name:
                 if all(operator.parent == 'Go South Coast' for operator in operators):
                     existing = Service.objects.filter(operator__parent='Go South Coast')
                 else:
                     existing = Service.objects.filter(operator__in=operators)
-                existing = existing.filter(description=description, line_name=line_name)
-                existing = existing.order_by('-current', 'service_code').first()
+
+                if len(transxchange.services) == 1 and len(txc_service.lines) == 1:
+                    existing = existing.filter(
+                        Exists(StopTime.objects.filter(stop__in=stops, trip__route__service=OuterRef('id')))
+                    )
+                else:
+                    existing.filter(description=description)
+
+                existing = existing.filter(line_name__iexact=line_name).order_by('-current', 'id').first()
 
             if self.is_tnds():
                 if operators and all(operator.id in self.incomplete_operators for operator in operators):
@@ -636,12 +624,8 @@ class Command(BaseCommand):
                     service_code = txc_service.service_code
 
                 if not existing:
-                    # assume service code is at least unique within a source
-                    services = self.source.service_set.filter(service_code=service_code)
-                    existing = services.first()
-
-                if existing:
-                    services = Service.objects.filter(id=existing.id)
+                    # assume service code is at least unique within a TNDS region
+                    existing = self.source.service_set.filter(service_code=service_code).first()
 
             else:
                 if self.source.name in {'Go East Anglia', 'Go South West'} and not existing:
@@ -651,62 +635,28 @@ class Command(BaseCommand):
                     except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                         pass
 
-                operator_code = '-'.join(operator.id for operator in operators)
-                if operator_code == 'TDTR' and 'Swindon-Rural' in filename:
-                    operator_code = 'SBCR'
-
                 if parts:  # Ticketer or Stagecoach
-                    existing = self.source.service_set.filter(
-                        line_name=line_name, route__code__contains=f'/{parts}_'
-                    ).order_by('-current', 'id').first()
+                    if not existing:
+                        existing = self.source.service_set.filter(
+                            line_name=line_name, route__code__contains=f'/{parts}_'
+                        ).order_by('-current', 'id').first()
 
-                    if 'opendata.ticketer' in self.source.url:
-                        service_code = parts
+            if existing:
+                service = existing
+            else:
+                service = Service()
 
-                        if not existing:
-                            try:
-                                existing = Service.objects.get(operator__in=operators, current=True,
-                                                               line_name__iexact=line_name)
-                            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-                                pass
-                    else:  # Stagecoach
-                        service_code = f'{self.source.id}-{parts}-{line_name}'
+            service.line_name = line_name
+            service.date = today
+            service.current = True
+            service.source = self.source
+            service.show_timetable = True
 
-                else:
-                    service_code = f'{self.source.id}-{operator_code}-{txc_service.service_code}'
-                    if len(txc_service.lines) > 1:
-                        service_code += '-' + line_name
-
-                    if not existing and operator_code != 'SBCR':
-                        existing = self.get_existing_service(line_name, operators)
-
-                    if existing and existing.id in self.service_ids:
-                        if description and existing.description != description:
-                            existing = None
-
-                if not existing:
-                    existing = Service.objects.filter(service_code=service_code).first()
-                    if existing and existing.current and existing.line_name != line_name:
-                        service_code = f'{service_code}-{line_name}'
-                    existing = None
-
-                if existing:
-                    services = Service.objects.filter(id=existing.id)
-                else:
-                    services = Service.objects.filter(service_code=service_code)
-
-            defaults = {
-                'line_name': line_name,
-                'date': today,
-                'current': True,
-                'source': self.source,
-                'show_timetable': True
-            }
-            if not existing:
-                defaults['service_code'] = service_code
+            if service_code:
+                service.service_code = service_code
 
             if description:
-                defaults['description'] = description
+                service.description = description
 
             if txc_service.marketing_name:
                 line_brand = txc_service.marketing_name
@@ -717,24 +667,23 @@ class Command(BaseCommand):
                         line_brand = ' '.join(line_brand_parts)
                 print(line_brand)
             if line_brand:
-                defaults['line_brand'] = line_brand
+                service.line_brand = line_brand
 
             if txc_service.mode:
-                defaults['mode'] = txc_service.mode
+                service.mode = txc_service.mode
 
             if self.region_id:
-                defaults['region_id'] = self.region_id
+                service.region_id = self.region_id
 
             if self.service_descriptions:  # NCSD
-                defaults['outbound_description'], defaults['inbound_description'] = self.get_service_descriptions(
-                    filename)
-                defaults['description'] = defaults['outbound_description'] or defaults['inbound_description']
+                service.outbound_description, service.inbound_description = self.get_service_descriptions(filename)
+                service.description = service.outbound_description or service.inbound_description
 
-            try:
-                service, service_created = services.update_or_create(defaults)
-            except IntegrityError as e:
-                print(e, service_code)
-                continue
+            if service.id:
+                service_created = False
+            else:
+                service_created = True
+            service.save()
 
             if service_created:
                 service.operator.set(operators)
@@ -780,8 +729,8 @@ class Command(BaseCommand):
                 'dates': txc_service.operating_period.dates(),
                 'service': service,
             }
-            if 'description' in defaults:
-                route_defaults['description'] = defaults['description']
+            if description:
+                route_defaults['description'] = description
 
             geometry = []
             if transxchange.route_sections:
