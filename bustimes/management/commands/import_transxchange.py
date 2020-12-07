@@ -55,8 +55,8 @@ ________________________________________________________________________________
 """
 
 BANK_HOLIDAYS = {
-    'ChristmasEve':     [datetime.date(2020, 11, 24)],
-    'ChristmasDay':     [datetime.date(2020, 11, 25)],
+    'ChristmasEve':     [datetime.date(2020, 12, 24)],
+    'ChristmasDay':     [datetime.date(2020, 12, 25)],
     'BoxingDay':        [datetime.date(2020, 12, 26)],
     'BoxingDayHoliday': [datetime.date(2020, 12, 28)],
     'NewYearsEve':      [datetime.date(2020, 12, 31)],
@@ -305,25 +305,39 @@ class Command(BaseCommand):
                          special=True, operation=True) for date_range in operating_profile.operation_days
         ]
 
+        dates = []
         for holiday in operating_profile.operation_bank_holidays:
             if holiday in BANK_HOLIDAYS:
                 for date in BANK_HOLIDAYS[holiday]:
-                    dates = DateRange(date, date, '[]')
                     if operating_period.contains(date):
-                        calendar_dates.append(
-                            CalendarDate(start_date=date, end_date=date, dates=dates, special=True, operation=True)
-                        )
+                        if date not in dates:
+                            dates.append(date)
+                            calendar_dates.append(
+                                CalendarDate(
+                                    start_date=date, end_date=date,
+                                    dates=DateRange(date, date, '[]'),
+                                    special=True, operation=True,
+                                    summary=holiday
+                                )
+                            )
             else:
                 self.undefined_holidays.add(holiday)
 
+        dates = []
         for holiday in operating_profile.nonoperation_bank_holidays:
             if holiday in BANK_HOLIDAYS:
                 for date in BANK_HOLIDAYS[holiday]:
-                    dates = DateRange(date, date, '[]')
                     if operating_period.contains(date):
-                        calendar_dates.append(
-                            CalendarDate(start_date=date, end_date=date, dates=dates, operation=False)
-                        )
+                        if date not in dates:
+                            dates.append(date)
+                            calendar_dates.append(
+                                CalendarDate(
+                                    start_date=date, end_date=date,
+                                    dates=DateRange(date, date, '[]'),
+                                    operation=False,
+                                    summary=holiday
+                                )
+                            )
             else:
                 self.undefined_holidays.add(holiday)
 
