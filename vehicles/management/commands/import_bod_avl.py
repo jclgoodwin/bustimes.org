@@ -39,7 +39,7 @@ class Command(ImportLiveVehiclesCommand):
     operator_cache = {}
     vehicle_cache = {}
     service_cache = {}
-    reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST', 'CT4N', 'TBTN'}
+    reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST', 'CT4N', 'TBTN', 'OTSS'}
     identifiers = {}
 
     @staticmethod
