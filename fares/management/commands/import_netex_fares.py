@@ -3,6 +3,7 @@ import xml.etree.cElementTree as ET
 import requests
 import zipfile
 from django.core.management.base import BaseCommand
+from django.db.utils import IntegrityError
 from ... import models
 
 
@@ -35,6 +36,15 @@ class Command(BaseCommand):
         for usage_parameter in element.find("dataObjects/CompositeFrame/frames/FareFrame/usageParameters"):
             user_profile, created = get_user_profile(usage_parameter)
             user_profiles[user_profile.code] = user_profile
+
+        sales_offer_packages = {}
+        for sales_offer_package in element.find("dataObjects/CompositeFrame/frames/FareFrame/salesOfferPackages"):
+            sales_offer_package, created = models.SalesOfferPackage.objects.get_or_create(
+                code=sales_offer_package.attrib["id"],
+                name=sales_offer_package.findtext("Name", ""),
+                description=sales_offer_package.findtext("Description", "")
+            )
+            sales_offer_packages[sales_offer_package.code] = sales_offer_package
 
         price_groups = {}
         price_group_prices = {}
@@ -96,10 +106,12 @@ class Command(BaseCommand):
             user_profile_ref = fare_table_element.find("pricesFor/UserProfileRef").attrib["ref"]
             if user_profile_ref not in user_profiles:
                 user_profile_ref = f"fxc:{user_profile_ref}"
+            sales_offer_package_ref = fare_table_element.find("pricesFor/SalesOfferPackageRef").attrib["ref"]
             table, created = models.FareTable.objects.update_or_create(
                 {
                     "tariff": tariffs[tariff_ref],
                     "user_profile": user_profiles[user_profile_ref],
+                    "sales_offer_package": sales_offer_packages[sales_offer_package_ref],
                     "description": fare_table_element.findtext("Description")
                 },
                 code=fare_table_element.attrib["id"],
@@ -166,13 +178,17 @@ class Command(BaseCommand):
 
             for item in data['results']:
                 dataset_url = f"https://data.bus-data.dft.gov.uk/fares/dataset/{item['id']}/"
+                print(dataset_url)
                 try:
                     dataset = models.DataSet.objects.get(url=dataset_url)
                     # continue
                 except models.DataSet.DoesNotExist:
-                    dataset = models.DataSet(name=item['name'], url=dataset_url)
+                    dataset = models.DataSet(name=item["name"], description=item["description"], url=dataset_url)
                     dataset.save()
-                print(dataset_url)
+                try:
+                    dataset.operators.set(item["noc"])
+                except IntegrityError:
+                    print(item["noc"])
                 download_url = f"{dataset_url}download/"
                 response = session.get(download_url, stream=True)
 
@@ -180,7 +196,6 @@ class Command(BaseCommand):
                     self.handle_file(dataset, response.raw)
                 else:
                     assert response.headers['Content-Type'] == 'application/zip'
-                    print(response.headers)
                     with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
                         for filename in archive.namelist():
                             print(' ', filename)

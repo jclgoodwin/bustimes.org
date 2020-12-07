@@ -44,7 +44,8 @@ urlpatterns = [
     path('search', views.search),
     path('journey', views.journey),
     path('.well-known/change-password', views.change_password),
-] + bustimes_views + disruptions_urls + vehicles_urls + vosa_urls + fares_urls
+    path('fares/', include(fares_urls))
+] + bustimes_views + disruptions_urls + vehicles_urls + vosa_urls
 
 
 if settings.DEBUG and hasattr(staticfiles, 'views'):

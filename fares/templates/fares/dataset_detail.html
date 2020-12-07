@@ -1,0 +1,19 @@
+{% extends 'page.html' %}
+
+{% block bodyclass %}narrow{% endblock %}
+
+{% block content %}
+
+    <h1>{{ object }}</h1>
+
+    {% for tariff in object.tariff_set.all %}
+
+        <p><a href="{{ tariff.get_absolute_url }}">{{ tariff }}</a></p>
+
+    {% endfor %}
+
+    <p>{{ object.url | urlize }}</p>
+
+{% endblock %}
+
+{% block ad %}{% endblock %}

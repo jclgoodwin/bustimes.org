@@ -17,9 +17,14 @@ from django.urls import reverse
 class DataSet(models.Model):
     name = models.CharField(max_length=255)
     url = models.URLField(blank=True)
+    description = models.CharField(max_length=255)
+    operators = models.ManyToManyField('busstops.Operator')
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('dataset_detail', args=(self.id,))
 
 
 class PriceGroup(models.Model):
@@ -44,15 +49,18 @@ class TimeIntervalPrice(models.Model):
 
 class SalesOfferPackage(models.Model):
     code = models.CharField(max_length=255, blank=True)
-    name = models.CharField(max_length=255)
-    description = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=True)
+    description = models.CharField(max_length=255, blank=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Tariff(models.Model):
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
-    services = models.ManyToManyField('busstops.Service')
-    operators = models.ManyToManyField('busstops.Operator')
+    services = models.ManyToManyField('busstops.Service', blank=True)
+    operators = models.ManyToManyField('busstops.Operator', blank=True)
     source = models.ForeignKey(DataSet, models.CASCADE)
 
     def __str__(self):
@@ -80,10 +88,14 @@ class FareTable(models.Model):
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255, blank=True)
     user_profile = models.ForeignKey(UserProfile, models.CASCADE)
+    sales_offer_package = models.ForeignKey(SalesOfferPackage, models.CASCADE)
     tariff = models.ForeignKey(Tariff, models.CASCADE)
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return self.tariff.get_absolute_url()
 
 
 class FareZone(models.Model):

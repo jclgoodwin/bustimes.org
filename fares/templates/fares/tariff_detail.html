@@ -51,11 +51,9 @@ td:hover {
 
     {% for table in object.faretable_set.all %}
 
-        <h2>{{ table }}</h2>
+        {% ifchanged table.name %}<h2>{{ table }}</h2>{% endifchanged %}
 
-        <p>{{ table.code }}</p>
-
-        <p>{{ table.user_profile }} fares</p>
+        <p>{{ table.user_profile }} {{ table.sales_offer_package }}</p>
 
         <table>
             <tbody>
@@ -77,7 +75,7 @@ td:hover {
 
     {% endfor %}
 
-    <p>{{ object.source.url }}</p>
+    <p>{{ object.source.url | urlize }}</p>
 
 {% endblock %}
 
