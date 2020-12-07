@@ -364,6 +364,12 @@ BOD_OPERATORS = [
         'OP': 'HIPK',
         'HPB': 'HIPK',
     }, False),
+    ('AVMT', 'SW', {}, False),
+    ('OTSS', 'SW', {}, False),
+    ('LODG', 'SE', {}, False),
+    # ('SLBS', 'WM', {}, True),
+    ('DAGC', 'NW', {}, False),
+    # ('RLNE', 'SE', {}, True),
 ]
 STAGECOACH_OPERATORS = [
     ('S', 'sblb', 'Stagecoach Bluebird', {'SBLB': 'SBLB'}),
