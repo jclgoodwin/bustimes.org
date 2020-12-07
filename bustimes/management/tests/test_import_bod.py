@@ -32,6 +32,7 @@ class ImportBusOpenDataTest(TestCase):
             'CO': 'LYNX',
         }, False),
     ])
+    @patch('bustimes.management.commands.import_transxchange.BANK_HOLIDAYS', {})
     def test_import_bod(self):
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=directory):
@@ -83,7 +84,7 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
             return_value=(True, parse_datetime('2020-06-10T12:00:00+01:00'))
         ) as download_if_changed:
             with patch('bustimes.management.commands.import_transxchange.BANK_HOLIDAYS', {
-                'AllBankHolidays': date(2020, 8, 31),
+                'AllBankHolidays': [date(2020, 8, 31)],
             }):
                 with self.assertNumQueries(216):
                     with patch('builtins.print') as mocked_print:

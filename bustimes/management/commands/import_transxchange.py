@@ -11,9 +11,9 @@ import csv
 import yaml
 import zipfile
 import xml.etree.cElementTree as ET
+import datetime
 from psycopg2.extras import DateRange
 from titlecase import titlecase
-from datetime import date, datetime
 from django.conf import settings
 from django.contrib.gis.geos import MultiLineString
 from django.core.management.base import BaseCommand
@@ -55,9 +55,21 @@ ________________________________________________________________________________
 """
 
 BANK_HOLIDAYS = {
-    'StAndrewsDay': date(2020, 11, 30),
-    'Jan2ndScotland': date(2021, 1, 2),
+    'ChristmasEve':     [datetime.date(2020, 11, 24)],
+    'ChristmasDay':     [datetime.date(2020, 11, 25)],
+    'BoxingDay':        [datetime.date(2020, 12, 26)],
+    'BoxingDayHoliday': [datetime.date(2020, 12, 28)],
+    'NewYearsEve':      [datetime.date(2020, 12, 31)],
+    'NewYearsDay':      [datetime.date(2021, 1, 2)],
+    'Jan2ndScotland':   [datetime.date(2021, 1, 2)],
+    # 'GoodFriday': date(2021, 4, 2),
+    # 'EasterMonday': date(2021, 4, 5),
 }
+
+BANK_HOLIDAYS['EarlyRunOffDays'] = BANK_HOLIDAYS['ChristmasEve'] + BANK_HOLIDAYS['NewYearsEve']
+BANK_HOLIDAYS['Christmas'] = BANK_HOLIDAYS['ChristmasDay'] + BANK_HOLIDAYS['BoxingDay']
+BANK_HOLIDAYS['AllHolidaysExceptChristmas'] = BANK_HOLIDAYS['NewYearsDay']
+BANK_HOLIDAYS['AllBankHolidays'] = BANK_HOLIDAYS['Christmas'] + BANK_HOLIDAYS['AllHolidaysExceptChristmas']
 
 
 def get_summary(summary):
@@ -251,7 +263,7 @@ class Command(BaseCommand):
 
         self.set_region(archive_name)
 
-        self.source.datetime = datetime.fromtimestamp(os.path.getmtime(archive_name), timezone.utc)
+        self.source.datetime = datetime.datetime.fromtimestamp(os.path.getmtime(archive_name), timezone.utc)
 
         with open(os.path.join(settings.DATA_DIR, 'services.yaml')) as open_file:
             self.corrections = yaml.load(open_file, Loader=yaml.FullLoader)
@@ -295,27 +307,23 @@ class Command(BaseCommand):
 
         for holiday in operating_profile.operation_bank_holidays:
             if holiday in BANK_HOLIDAYS:
-                if (holiday == 'AllBankHolidays' or holiday == 'HolidayMondays') and self.region_id == 'S':
-                    continue
-                date = BANK_HOLIDAYS[holiday]
-                dates = DateRange(date, date, '[]')
-                if operating_period.contains(date):
-                    calendar_dates.append(
-                        CalendarDate(start_date=date, end_date=date, dates=dates, special=True, operation=True)
-                    )
+                for date in BANK_HOLIDAYS[holiday]:
+                    dates = DateRange(date, date, '[]')
+                    if operating_period.contains(date):
+                        calendar_dates.append(
+                            CalendarDate(start_date=date, end_date=date, dates=dates, special=True, operation=True)
+                        )
             else:
                 self.undefined_holidays.add(holiday)
 
         for holiday in operating_profile.nonoperation_bank_holidays:
             if holiday in BANK_HOLIDAYS:
-                if (holiday == 'AllBankHolidays' or holiday == 'HolidayMondays') and self.region_id == 'S':
-                    continue
-                date = BANK_HOLIDAYS[holiday]
-                dates = DateRange(date, date, '[]')
-                if operating_period.contains(date):
-                    calendar_dates.append(
-                        CalendarDate(start_date=date, end_date=date, dates=dates, operation=False)
-                    )
+                for date in BANK_HOLIDAYS[holiday]:
+                    dates = DateRange(date, date, '[]')
+                    if operating_period.contains(date):
+                        calendar_dates.append(
+                            CalendarDate(start_date=date, end_date=date, dates=dates, operation=False)
+                        )
             else:
                 self.undefined_holidays.add(holiday)
 
