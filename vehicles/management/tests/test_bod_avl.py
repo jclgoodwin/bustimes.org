@@ -4,7 +4,7 @@ from freezegun import freeze_time
 from vcr import use_cassette
 from django.test import TestCase
 from busstops.models import Region, DataSource, Operator, OperatorCode, StopPoint, Locality, AdminArea
-from ...models import VehicleLocation, VehicleJourney, Vehicle
+from ...models import VehicleLocation, VehicleJourney
 from ...workers import SiriConsumer
 from ..commands import import_bod_avl
 

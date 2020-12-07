@@ -2,13 +2,8 @@ from asgiref.sync import async_to_sync
 from datetime import timedelta
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.core.serializers.json import DjangoJSONEncoder
-from django.core.cache import cache
 from django.contrib.gis.geos import Polygon
-from django.db.models import Exists, OuterRef, Value
-from django.db.models.functions import Replace
 from django.utils import timezone
-from busstops.models import ServiceCode, SIRISource
-from .siri_one_shot import siri_one_shot, schemes, Poorly
 from .models import VehicleLocation, Channel
 
 
@@ -80,26 +75,14 @@ class ServiceMapConsumer(VehicleMapConsumer):
         self.accept()
         service_ids = self.scope['url_route']['kwargs']['service_ids'].split(',')
         locations = get_vehicle_locations(journey__service__in=service_ids)
-        self.send_locations(locations)
-        if not locations:
+        if locations:
+            self.send_locations(locations)
+        else:
             self.send_json([])
-        icarus = not any(location.journey.source_id != 75 for location in locations)
         for service_id in service_ids:
             group = f'service{service_id}'
             self.groups.append(group)
             async_to_sync(self.channel_layer.group_add)(group, self.channel_name)
-            if icarus:
-                codes = ServiceCode.objects.filter(scheme__in=schemes, service=service_id)
-                codes = codes.annotate(source_name=Replace('scheme', Value(' SIRI')))
-                siri_sources = SIRISource.objects.filter(name=OuterRef('source_name'))
-                codes = codes.filter(Exists(siri_sources))
-                for code in codes:
-                    try:
-                        siri_one_shot(code, timezone.now(), bool(locations))
-                        break
-                    except Poorly:
-                        pass
-        cache.close()
 
     def disconnect(self, close_code):
         pass
