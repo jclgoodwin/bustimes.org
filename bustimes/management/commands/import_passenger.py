@@ -85,7 +85,11 @@ def get_versions(session, url):
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **options):
+    @staticmethod
+    def add_arguments(parser):
+        parser.add_argument('operator', type=str, nargs='?')
+
+    def handle(self, operator, *args, **options):
         command = TransXChangeCommand()
         command.undefined_holidays = set()
         command.missing_operators = []
@@ -97,6 +101,9 @@ class Command(BaseCommand):
         sources = [source[0] for source in settings.PASSENGER_OPERATORS]
 
         for name, url, region_id, operators in settings.PASSENGER_OPERATORS:
+            if operator and operator != name:
+                continue
+
             versions = get_versions(session, url)
 
             if not versions or not any(version['modified'] for version in versions):
@@ -113,51 +120,49 @@ class Command(BaseCommand):
 
             previous_date = None
 
-            with transaction.atomic():
+            for version in versions:  # newest first
+                print(version)
 
-                for version in versions:  # newest first
-                    print(version)
+                command.calendar_cache = {}
+                handle_file(command, version['filename'])
 
-                    command.calendar_cache = {}
-                    handle_file(command, version['filename'])
+                start_date = dateparse.parse_date(version['dates'][0])
 
-                    start_date = dateparse.parse_date(version['dates'][0])
+                routes = command.source.route_set.filter(code__startswith=version['filename'])
+                calendars = Calendar.objects.filter(trip__route__in=routes)
+                calendars.filter(start_date__lt=start_date).update(start_date=start_date)
+                routes.filter(start_date__lt=start_date).update(start_date=start_date)
 
-                    routes = command.source.route_set.filter(code__startswith=version['filename'])
-                    calendars = Calendar.objects.filter(trip__route__in=routes)
-                    calendars.filter(start_date__lt=start_date).update(start_date=start_date)
-                    routes.filter(start_date__lt=start_date).update(start_date=start_date)
+                if previous_date:  # if there is a newer dataset, set end date
+                    new_end_date = previous_date - timedelta(days=1)
+                    calendars.update(end_date=new_end_date)
+                    routes.update(end_date=new_end_date)
+                previous_date = start_date
 
-                    if previous_date:  # if there is a newer dataset, set end date
-                        new_end_date = previous_date - timedelta(days=1)
-                        calendars.update(end_date=new_end_date)
-                        routes.update(end_date=new_end_date)
-                    previous_date = start_date
+                if version['dates'][0] <= str(command.source.datetime.date()):
+                    break
 
-                    if version['dates'][0] <= str(command.source.datetime.date()):
-                        break
+            routes = Route.objects.filter(service__source=command.source)
+            print('duplicate routes:', routes.exclude(source=command.source).delete())
 
-                routes = Route.objects.filter(service__source=command.source)
-                print('duplicate routes:', routes.exclude(source=command.source).delete())
+            # delete route data from TNDS
+            routes = Route.objects.filter(service__operator__in=operators.values())
+            print('other source routes:', routes.exclude(source__name__in=sources).delete())
 
-                # delete route data from TNDS
-                routes = Route.objects.filter(service__operator__in=operators.values())
-                print('other source routes:', routes.exclude(source__name__in=sources).delete())
+            services = Service.objects.filter(operator__in=operators.values(), current=True, route=None)
+            print('other source services:', services.update(current=False))
 
-                services = Service.objects.filter(operator__in=operators.values(), current=True, route=None)
-                print('other source services:', services.update(current=False))
+            # delete route data from old versions
+            routes = command.source.route_set
+            for version in versions:
+                routes = routes.exclude(code__startswith=version['filename'])
+                if version['dates'][0] <= str(command.source.datetime.date()):
+                    break
+            print('old routes:', routes.delete())
 
-                # delete route data from old versions
-                routes = command.source.route_set
-                for version in versions:
-                    routes = routes.exclude(code__startswith=version['filename'])
-                    if version['dates'][0] <= str(command.source.datetime.date()):
-                        break
-                print('old routes:', routes.delete())
-
-                # mark old services as not current
-                print('old services:', command.mark_old_services_as_not_current())
-                command.update_geometries()
+            # mark old services as not current
+            print('old services:', command.mark_old_services_as_not_current())
+            command.update_geometries()
 
             for version in versions:
                 handle_gtfs(list(operators.values()), version['gtfs_path'])

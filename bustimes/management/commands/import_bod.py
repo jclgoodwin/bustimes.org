@@ -67,10 +67,13 @@ def handle_file(command, path):
                 logger.error(e, exc_info=True)
 
 
-def bus_open_data(api_key):
+def bus_open_data(api_key, operator):
     command = get_command()
 
     for operator_id, region_id, operators, incomplete in settings.BOD_OPERATORS:
+        if operator and operator_id != operator:
+            continue
+
         datasets = []
 
         url = 'https://data.bus-data.dft.gov.uk/api/v1/dataset/'
@@ -191,15 +194,18 @@ def ticketer(operator=None):
     command.debrief()
 
 
-def stagecoach():
+def stagecoach(operator=None):
     command = get_command()
 
-    for region_id, noc, operator, operators in settings.STAGECOACH_OPERATORS:
+    for region_id, noc, name, operators in settings.STAGECOACH_OPERATORS:
+        if operator and operator != noc:
+            continue
+
         filename = f'stagecoach-{noc}-route-schedule-data-transxchange.zip'
         url = f'https://opendata.stagecoachbus.com/{filename}'
         path = os.path.join(settings.DATA_DIR, filename)
 
-        command.source, created = DataSource.objects.get_or_create({'name': operator}, url=url)
+        command.source, created = DataSource.objects.get_or_create({'name': name}, url=url)
 
         modified, last_modified = download_if_changed(path, url)
 
@@ -247,8 +253,8 @@ class Command(BaseCommand):
 
     def handle(self, api_key, operator, **options):
         if api_key == 'stagecoach':
-            stagecoach()
+            stagecoach(operator)
         elif api_key == 'ticketer':
             ticketer(operator)
         else:
-            bus_open_data(api_key)
+            bus_open_data(api_key, operator)
